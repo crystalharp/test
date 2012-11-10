@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="2dp" >
+    <TextView android:id="@+id/time_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:textColor="@android:color/black"
+        android:text="@string/dianying_1200"
+        android:textSize="16sp"
+        android:singleLine="true" />
+    <TextView 
+        android:id="@+id/version_txv"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_dianying_version"
+        android:text="@string/dianying_1200"
+        android:textSize="8sp"
+        android:textColor="@android:color/white"
+        android:singleLine="true">
+	</TextView>
+</LinearLayout>
+

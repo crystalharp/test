@@ -1,0 +1,4461 @@
+/**
+ * deCarta Android Mapping API
+ * deCarta confidential and proprietary.
+ * Copyright deCarta. All rights reserved.
+ */
+package com.decarta.android.map;
+
+import static android.opengl.GLES10.GL_BLEND;
+import static android.opengl.GLES10.GL_BYTE;
+import static android.opengl.GLES10.GL_CLAMP_TO_EDGE;
+import static android.opengl.GLES10.GL_COLOR_BUFFER_BIT;
+import static android.opengl.GLES10.GL_DEPTH_BUFFER_BIT;
+import static android.opengl.GLES10.GL_DITHER;
+import static android.opengl.GLES10.GL_FASTEST;
+import static android.opengl.GLES10.GL_FLOAT;
+import static android.opengl.GLES10.GL_MODELVIEW;
+import static android.opengl.GLES10.GL_NEAREST;
+import static android.opengl.GLES10.GL_PERSPECTIVE_CORRECTION_HINT;
+import static android.opengl.GLES10.GL_POINT_SMOOTH_HINT;
+import static android.opengl.GLES10.GL_PROJECTION;
+import static android.opengl.GLES10.GL_REPLACE;
+import static android.opengl.GLES10.GL_TEXTURE_2D;
+import static android.opengl.GLES10.GL_TEXTURE_COORD_ARRAY;
+import static android.opengl.GLES10.GL_TEXTURE_ENV;
+import static android.opengl.GLES10.GL_TEXTURE_ENV_MODE;
+import static android.opengl.GLES10.GL_TEXTURE_MAG_FILTER;
+import static android.opengl.GLES10.GL_TEXTURE_MIN_FILTER;
+import static android.opengl.GLES10.GL_TEXTURE_WRAP_S;
+import static android.opengl.GLES10.GL_TEXTURE_WRAP_T;
+import static android.opengl.GLES10.GL_TRIANGLE_STRIP;
+import static android.opengl.GLES10.GL_VERTEX_ARRAY;
+import static android.opengl.GLES10.glDeleteTextures;
+
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
+
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.Typeface;
+import android.graphics.Paint.Align;
+import android.graphics.Paint.Style;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.NinePatchDrawable;
+import android.graphics.Path;
+import android.graphics.RectF;
+import android.opengl.GLSurfaceView;
+import android.opengl.GLUtils;
+import android.util.DisplayMetrics;
+import android.view.Display;
+import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.WindowManager;
+
+import com.decarta.CONFIG;
+import com.decarta.Globals;
+import com.decarta.Profile;
+import com.decarta.android.exception.APIException;
+import com.decarta.android.location.BoundingBox;
+import com.decarta.android.location.Position;
+import com.decarta.android.map.InfoWindow.TextAlign;
+import com.decarta.android.map.MapLayer.MapLayerProperty;
+import com.decarta.android.map.MapLayer.MapLayerType;
+import com.decarta.android.map.MapView.MapType;
+import com.decarta.android.map.MapView.MoveEndEventListener;
+import com.decarta.android.map.RotationTilt.RotateReference;
+import com.decarta.android.map.RotationTilt.TiltReference;
+import com.decarta.android.util.LogWrapper;
+import com.decarta.android.util.Util;
+import com.decarta.android.util.XYDouble;
+import com.decarta.android.util.XYFloat;
+import com.decarta.android.util.XYInteger;
+import com.decarta.android.util.XYZ;
+import com.tigerknows.R;
+import com.tigerknows.Sphinx;
+import com.tigerknows.Sphinx.MyLocationObject;
+import com.tigerknows.maps.MapWord;
+import com.tigerknows.maps.TileDownload;
+import com.tigerknows.util.CommonUtils;
+
+/**
+ *This class provide all function implementation related to map. It's a child view of MapView.
+ *The name of this class is a little misleading, basically it means that any object that will move
+ *along with map/tiles should be included in this class.
+ */
+public class TilesView extends GLSurfaceView {
+	
+	private static final double ZOOM_PENALTY=0.8;
+	private static final int LONG_TOUCH_TIME_MIN=1000*1000000;
+	private static final int CLICK_DOWN_UP_TIME_MAX=300*1000000;
+	private static final int DOUBLE_CLICK_INTERVAL_TIME_MAX=500*1000000;
+	private static final int SAME_POINT_MOVED_DISTANCE_MAX=30;
+	private static final int MIN_PINCH_DISTANCE=150;
+	private static final int MIN_ROTATE_DISTANCE=80;
+	private static final float CLONE_MAP_LAYER_DRAW_PERCENT=0.4f;
+	private static final float DRAW_ZOOM_LAYER_DRAW_PERCENT=0.8f;
+	private static final int FADING_START_ALPHA=30;
+    private static final int TEXT_FADING_START_ALPHA=4;
+	private static final int ABNORMAL_DRAGGING_DIST=1600;
+	private static final int ABNORMAL_PINCH_CENTER_DIST=300;
+	private static final int ABNORMAL_ZROTATION=30;
+	
+	private static final int MAX_TILE_IMAGE_DEF=2;
+	private static final int MAX_TILE_TEXTURE_REF_DEF=128;
+	
+	private static final int XROTATION_YDIST=300;
+	private static final int XROTATION_TIME=500*1000000;
+	private static final int ZROTATION_TIME=500*1000000;
+	
+	private static Paint tileP;
+    private static Paint tilePText;
+    private static Paint orderP;
+	
+	private static Paint backgroundP;
+	
+	/**
+     * tile buffer so tiles can be loaded before they are visible
+     */
+	private static int TILE_BUFFER=0;
+	private static float ZOOMING_LAG=0.1f;
+	
+	/**
+     * the empty tile as background when the real tile is not loaded yet
+     */
+	//private static Bitmap EMPTY_TILE_IMG=null;
+	
+	private static float Cos30=(float)Math.cos(30*Math.PI/180);
+	private static float Cos60=(float)Math.cos(60*Math.PI/180);
+	
+	static{
+		backgroundP=new Paint();
+		backgroundP.setStrokeWidth(1);
+		//backgroundP.setColor(Color.YELLOW);
+		backgroundP.setColor(CONFIG.BACKGROUND_GRID_COLOR);
+    	
+    	tileP=new Paint();
+    	tilePText=new Paint();
+    	tilePText.setAntiAlias(true); //设置是否使用抗锯齿功能，会消耗较大资源，绘制图形速度会变慢。  
+//        tilePText.setDither(true); //设定是否使用图像抖动处理，会使绘制出来的图片颜色更加平滑和饱满，图像更加清晰  
+        tilePText.setTypeface(Typeface.DEFAULT); //设置字体Typeface包含了字体的类型，粗细，还有倾斜、颜色
+        tilePText.setStrokeWidth(4f); //设置描边的宽度
+        
+    	orderP = new Paint();
+    	orderP.setColor(0xff0059d1);
+    	orderP.setStyle(Paint.Style.FILL_AND_STROKE);
+    	orderP.setTextSize(Util.dip2px(Globals.g_metrics.density, 12));
+    	orderP.setAntiAlias(true);
+    	orderP.setTextAlign(Align.LEFT);
+    	
+    	//Drawable emptyTileD=Drawable.createFromStream(TilesView.class.getClassLoader().getResourceAsStream("ic_empty_tile.png"), "ic_empty_tile.png");
+    	//EMPTY_TILE_IMG=((BitmapDrawable)(emptyTileD)).getBitmap();
+    	//LogWrapper.i("TilesView","static init empty tile width,height:"+EMPTY_TILE_IMG.getWidth()+","+EMPTY_TILE_IMG.getHeight());
+        
+    }
+	
+	private int max_tile_image=Math.round(MAX_TILE_IMAGE_DEF*256f/CONFIG.TILE_SIZE);
+	private int max_tile_texture_ref=Math.round(MAX_TILE_TEXTURE_REF_DEF*256f/CONFIG.TILE_SIZE);
+	private int visibleLayerNum=0;
+	/**
+	 * parent {@link MapView}
+	 */
+	protected MapView mParentMapView;
+	/**
+	 * pins as overlays. each overlay contains their own pins.
+	 */
+	private List<ItemizedOverlay> overlays=new ArrayList<ItemizedOverlay>();
+	/**
+	 * shapes, including polyline
+	 */
+	private List<Shape> shapes=new ArrayList<Shape>();
+	/**
+	 * info window. There is only one instance of info window.
+	 */
+	private InfoWindow infoWindow = new InfoWindow();
+	
+	public static boolean OneBitmapMapText = true;
+	private MapText mapText = new MapText();
+    private long refreshMyLocationTime=0;
+    boolean isMyLocation = false;
+    boolean isDrawMapTextFinish = false;
+	
+	private XYInteger gridSize = new XYInteger(0,0);
+	private XYInteger displaySize = new XYInteger(0,0);
+    private DisplayMetrics metrics=new DisplayMetrics();
+    private XYFloat offset=new XYFloat(0f,0f);
+    private double radiusX;
+    private double radiusY;
+    private XYInteger panDirection=new XYInteger(1,1);
+     
+	private ArrayList<MapLayer> mapLayers=new ArrayList<MapLayer>();
+	private LinkedHashMap<Tile,TileResponse> tileImages=new LinkedHashMap<Tile,TileResponse>(max_tile_image*2,0.75f,true){
+		private static final long serialVersionUID = 1L;
+		@Override
+		protected boolean removeEldestEntry(
+				java.util.Map.Entry<Tile, TileResponse> eldest) {
+			if(size()>max_tile_image){
+				eldest.getValue().bitmap.recycle();
+				remove(eldest.getKey());
+			}
+			return false;
+		}
+	};
+	private LinkedHashMap<Tile,Integer> tileTextureRefs=new LinkedHashMap<Tile,Integer>(max_tile_texture_ref*2,0.75f,true){
+		private static final long serialVersionUID = 1L;
+
+		@Override
+		protected boolean removeEldestEntry(
+				java.util.Map.Entry<Tile, Integer> eldest) {
+			// TODO Auto-generated method stub
+			if(size()>max_tile_texture_ref){
+				int textureRef=eldest.getValue();
+				if(textureRef!=0){
+					IntBuffer textureRefBuf=IntBuffer.allocate(1);
+					textureRefBuf.clear();
+					textureRefBuf.put(0,textureRef);
+					textureRefBuf.position(0);
+    				glDeleteTextures(1, textureRefBuf);
+    				//Log.i("TilesView","tilePool removeEldestEntry texture:"+textureRef);
+    			}
+				remove(eldest.getKey());
+			}
+			return false;
+		}
+	};
+	private MapType mapType=MapType.STREET;
+	private XYZ centerXYZ=new XYZ(0,0,-1);
+    private XYZ centerXYZTK=new XYZ(0,0,-1);
+	private XYDouble centerXY=null;
+	private XYFloat centerDelta=new XYFloat(0f,0f);
+    private XYDouble moveXY=new XYDouble(0, 0);
+	private long fadingStartTime=0;
+    private long textFadingStartTime=0;
+	/**
+	 * thread pool to load tiles
+	 */
+	private TileThread tileRunners[]=new TileThread[CONFIG.TILE_THREAD_COUNT];
+    private DownloadThread downloadRunners[]=new DownloadThread[CONFIG.TILE_THREAD_COUNT];
+	/**
+	 * linked list to contain all tiles that's waiting for loading.
+	 */
+	private LinkedList<Tile> tilesWaitForLoading = new LinkedList<Tile>();
+    private LinkedList<TileDownload> tilesWaitForDownloading = new LinkedList<TileDownload>();
+	
+	private float zoomLevel=13;
+	private boolean zooming=false;
+	
+    private ZoomingRecord zoomingRecord=new ZoomingRecord();
+	private XYFloat lastCenterConv=new XYFloat(0f,0f);
+	private boolean multiTouch=false;
+	private XYFloat lastTouchConv = new XYFloat(0f,0f);
+	private XYFloat lastTouch=new XYFloat(0f,0f);
+	private TouchRecord touchRecord1=new TouchRecord(5);
+    private EasingRecord easingRecord=new EasingRecord();
+    private boolean infoWindowClicked=false;
+	private boolean longClicked=false;
+    private long lastTouchDownTime=0;
+	private XYFloat lastTouchDown=new XYFloat(0f,0f);
+	private float maxMoveFromTouchDown=0;
+	private long lastTouchUpTime=0;
+	private XYFloat lastTouchUp=new XYFloat(0f,0f);
+	private float lastDistConv=0;
+	private XYFloat lastDirection=null;
+	private XYFloat lastTouchY = null;
+	private int touchMode=0;
+	private TouchRecord touchRecord2=new TouchRecord(10);
+	
+	private float lastZoomLevel=-1;
+    private float lastXRotation=0;
+    private float lastZRotation=0;
+			
+	private MapMode mapMode=new MapMode();
+			
+	/**
+	 * contains information such as routeID, so we can show the route on map
+	 */
+	private MapPreference mapPreference = new MapPreference();
+	
+	/**
+	 * synchronize on this lock so there is no breaking part when move
+	 */
+	private Object drawingLock=new Object();
+	
+	private ArrayList<Tile> drawingTiles=new ArrayList<Tile>();
+	
+	private Compass compass=null;
+	private Rect padding = new Rect();
+	
+	public Rect getPadding() {
+	    return padding;
+	}
+
+	public MapText getMapText() {
+	    return mapText;
+	}
+	
+	/**
+	 * constructor, initialize all objects required.
+	 * @param context
+	 * @param mapView
+	 */
+	public TilesView(Context context, MapView mapView) {
+        super(context);
+        LogWrapper.i("TilesView","TilesView constructor");
+        this.mParentMapView=mapView;
+        		
+        for(int i=0;i<MapLayerType.values().length;i++){
+        	MapLayerProperty mapLayerProperty=MapLayerProperty.getInstance(MapLayerType.values()[i]);
+        	MapLayer mapLayer=new MapLayer(mapLayerProperty);
+        	mapLayers.add(mapLayer);
+        }
+        configureMapLayer();
+               
+        TileThread.startAllThreads();
+        for(int i=0;i<tileRunners.length;i++){
+        	tileRunners[i]=new TileThread(i,this);
+        	tileRunners[i].start();
+        }
+        DownloadThread.startAllThreads();
+        for(int i=0;i<downloadRunners.length;i++){
+            downloadRunners[i]=new DownloadThread(i,this);
+            downloadRunners[i].start();
+        }
+        MapTextThread.startThread();
+        MapTextThread mapTextThread = new MapTextThread(this);
+        mapTextThread.start();
+        
+        WindowManager winMan=(WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+		Display display=winMan.getDefaultDisplay();
+		display.getMetrics(metrics);
+		LogWrapper.i("TilesView","xdpi:"+metrics.xdpi+",ydpi:"+metrics.ydpi+",widthPixels:"+metrics.widthPixels+",heightPixesl:"+metrics.heightPixels+",density:"+metrics.density+",densityDpi:"+metrics.densityDpi);
+		
+		configureTileGrid(display.getWidth(),display.getHeight());
+		LogWrapper.i("TilesView","displaySize:"+displaySize+",gridSize:"+gridSize);
+    	
+        setFocusable(true);
+        
+        if(CONFIG.DRAW_BY_OPENGL){
+        	setRenderer(new MapRender(context)); 
+            setRenderMode(GLSurfaceView.RENDERMODE_WHEN_DIRTY);
+            requestFocus();
+            setFocusableInTouchMode(true);
+        }else{
+        	setWillNotDraw(false);
+        }
+        
+        Resources resources = context.getResources();
+        infoWindow.infoWindowExpendNormalBg = (NinePatchDrawable)resources.getDrawable(R.drawable.btn_prompt_expand_normal);
+        infoWindow.infoWindowExpendRect = new Rect(0, 0, infoWindow.infoWindowExpendNormalBg.getIntrinsicWidth(), infoWindow.infoWindowExpendNormalBg.getIntrinsicHeight());
+        infoWindow.infoWindowExpendLeftFocusedBg = (NinePatchDrawable)resources.getDrawable(R.drawable.btn_prompt_expand_left_focused);
+        infoWindow.infoWindowExpendRightFocusedBg = (NinePatchDrawable)resources.getDrawable(R.drawable.btn_prompt_expand_right_focused);
+        infoWindow.infoWindowSimpleNormalBg = (NinePatchDrawable)resources.getDrawable(R.drawable.btn_prompt_simple_normal);
+        infoWindow.infoWindowSimpleNormalRect = new Rect(0, 0, infoWindow.infoWindowSimpleNormalBg.getIntrinsicWidth(), infoWindow.infoWindowSimpleNormalBg.getIntrinsicHeight());
+        infoWindow.infoWindowSimpleFocusedBg = (NinePatchDrawable)resources.getDrawable(R.drawable.btn_prompt_simple_focused);
+        infoWindow.infoWindowLeftNormalDrw = resources.getDrawable(R.drawable.btn_prompt_traffic_start_normal);
+        infoWindow.infoWindowLeftNormalRect = new Rect(0, 0, infoWindow.infoWindowLeftNormalDrw.getIntrinsicWidth(), infoWindow.infoWindowLeftNormalDrw.getIntrinsicHeight());
+        infoWindow.infoWindowRightNormalDrw = resources.getDrawable(R.drawable.btn_prompt_traffic_end_normal);
+        Paint paint = getTextPaint(TextAlign.CENTER);
+        StringBuilder s = new StringBuilder();
+        float length = 0;
+        float textOffsetX=InfoWindow.INFO_TEXTOFFSET_HORIZONTAL*metrics.density;
+        int expendOffsetX=Math.round(InfoWindow.INFO_EXPENDOFFSET_HORIZONTAL*metrics.density);
+        for(;;) {
+            s.append("a0");
+            length = paint.measureText(s.toString());
+            if (length >= displaySize.x - 2*(textOffsetX + expendOffsetX)) {
+                InfoWindow.MAX_CHARS_PER_LINE_SIMPLE = s.length()/2;
+                break;
+            }
+        }
+        for(;;) {
+            s.append("a0");
+            length = paint.measureText(s.toString());
+            if (length >= displaySize.x - 2*(textOffsetX + expendOffsetX + infoWindow.infoWindowLeftNormalRect.width())) {
+                InfoWindow.MAX_CHARS_PER_LINE_EXPEND = s.length()/2;
+                break;
+            }
+        }
+    }
+	
+	/**
+	 * to make the orientation change work, we need to reset the coordinate of each tile and pin.
+	 */
+	@Override
+	public void surfaceChanged(SurfaceHolder holder, int format, int w, int h) {
+		// TODO Auto-generated method stub
+		LogWrapper.i("TilesView","TilesView.surfaceChanged w,h:"+w+","+h);
+		configureTileGrid(w,h);
+		
+        if(CONFIG.DRAW_BY_OPENGL)super.surfaceChanged(holder, format, w, h);
+	}
+	
+	@Override
+	public void surfaceCreated(SurfaceHolder holder) {
+		// TODO Auto-generated method stub
+		LogWrapper.i("TilesView","TilesView.surfaceCreated");
+		if(CONFIG.DRAW_BY_OPENGL)super.surfaceCreated(holder);
+	}
+	
+	@Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
+		// TODO Auto-generated method stub
+	    LogWrapper.i("TilesView","TilesView.surfaceDestroyed");
+		if(CONFIG.DRAW_BY_OPENGL)super.surfaceDestroyed(holder);
+	}
+	
+	public void refreshMap(){
+		if(CONFIG.DRAW_BY_OPENGL)requestRender();
+		else postInvalidate();
+    }
+    
+    public void refreshMapByTime(){
+        boolean isReDraw;
+        synchronized (drawingLock) {
+            isReDraw = (isMyLocation || isDrawMapTextFinish == false);            
+        }
+        if (isReDraw) {
+            if(CONFIG.DRAW_BY_OPENGL)requestRender();
+            else postInvalidate();
+        }
+    }
+	
+	/**
+	 * it's a wrapper of redraw request. parameters are used to define a rect to be redrawn.
+	 * @param left
+	 * @param top
+	 * @param right
+	 * @param bottom
+	 */
+	public void refreshMap(float left, float top, float right, float bottom){
+		if(CONFIG.DRAW_BY_OPENGL)requestRender();
+		else postInvalidate((int)left, (int)top, (int)right, (int)bottom);
+    }
+	
+	private void configureTileGrid(int w, int h){
+		displaySize.x=w;
+		displaySize.y=h;
+		
+		gridSize.x=(int) Math.ceil(displaySize.x/(float)CONFIG.TILE_SIZE) + 2+ TILE_BUFFER;
+		if(gridSize.x%2==0) gridSize.x++;
+        gridSize.y=(int) Math.ceil(displaySize.y/(float)CONFIG.TILE_SIZE) + 2+ TILE_BUFFER;
+		if(gridSize.y%2==0) gridSize.y++;
+		
+		offset.x = (float)(displaySize.x - (CONFIG.TILE_SIZE * gridSize.x)) / 2;
+	    offset.y = (float)(displaySize.y - (CONFIG.TILE_SIZE * gridSize.y)) / 2;
+	    LogWrapper.i("TilesView","configureTileGrid displaySize,offset,gridSize:"+displaySize+","+offset+","+gridSize);
+		
+        mapMode.configViewDepth(displaySize);
+        mapMode.configViewSize(displaySize);
+        
+    }
+	
+	public void changeMapType(MapType mapType){
+		if(this.mapType.equals(mapType)) return;
+		this.mapType=mapType;
+		synchronized(drawingLock){
+			configureMapLayer();
+		}
+		//refreshTileRequests(1, 1);
+		refreshMap();
+		
+	}
+	
+	public void rotateXToDegree(float xRotation){
+		if(!CONFIG.DRAW_BY_OPENGL) return;
+		if(xRotation>0 || xRotation<MapView.MAP_TILT_MIN){
+			LogWrapper.e("TilesView","x rotation must be between "+MapView.MAP_TILT_MIN+" to 0");
+			return;
+			//throw new APIException("x rotation must be between "+MapView.MAP_TILT_MIN+" to 0");
+		}
+		synchronized(drawingLock){
+			mapMode.xRotating=true;
+			mapMode.xRotationEndTime=System.nanoTime()+(long)(XROTATION_TIME*Math.abs((xRotation-mapMode.getxRotation())/MapView.MAP_TILT_MIN));
+			mapMode.xRotationEnd=xRotation;
+			
+			refreshMap();
+		}
+				
+	}
+	
+	public void rotateZToDegree(float zRotation){
+		synchronized(drawingLock){
+			zRotation=((zRotation+180)%360+360)%360-180;
+			float diff=zRotation-mapMode.getzRotation();
+			if(diff>180) diff-=360;
+			else if(diff<-180) diff+=360;
+			mapMode.zRotating=true;
+			mapMode.zRotationEndTime=System.nanoTime()+(long)(ZROTATION_TIME*Math.abs((diff)/180));
+			mapMode.zRotationEnd=zRotation;
+			
+			refreshMap();
+		}
+				
+	}
+    
+    float locationZRotation;
+    public void rotateLocationZToDegree(float zRotation){
+        synchronized(drawingLock){
+            locationZRotation = zRotation;
+            
+            refreshMap();
+        }
+    }
+	private void configureMapLayer(){
+		float sum=0;
+		visibleLayerNum=0;
+		for(int i=0;i<mapLayers.size();i++){
+			MapLayer mapLayer=mapLayers.get(i);
+			MapLayerProperty mapLayerProperty=mapLayer.getMapLayerProperty();
+			if(MapView.MapType_MapLayer_Visibility.get(mapType).contains(mapLayerProperty.mapLayerType)){
+				mapLayer.visible=true;
+				sum+=mapLayerProperty.tileImageSizeFactor;
+				visibleLayerNum++;
+			}else{
+				mapLayer.visible=false;
+			}
+		}
+		
+		if(sum!=0){
+			int max=Math.round((MAX_TILE_IMAGE_DEF*256f/CONFIG.TILE_SIZE)*visibleLayerNum/sum);
+			if(max<max_tile_image && tileImages.size()>max){
+				Iterator<Tile> i=tileImages.keySet().iterator();
+				while(tileImages.size()>max && i.hasNext()){
+					i.next();
+					i.remove();
+				}
+				
+			}
+			max_tile_image=max;
+		}
+		LogWrapper.i("TilesView","configureMapLayer visible num,max image,image size,max texture ref:"+visibleLayerNum+","+max_tile_image+","+tileImages.size()+","+max_tile_texture_ref);
+	}
+    
+	public MapPreference getMapPreference() {
+		return mapPreference;
+	}
+
+	/**
+	 * clear the routeId, overlays and infowindow
+	 * @throws APIException
+	 */
+	public void clearMap()throws APIException{
+//		overlays.clear();
+        for(int i=overlays.size()-1;i>=0;i--){
+            if(!overlays.get(i).getName().equals(ItemizedOverlay.MY_LOCATION_OVERLAY)){
+                overlays.remove(i);
+            }
+        }
+		shapes.clear();
+		
+		infoWindow.setAssociatedOverlayItem(null);
+		infoWindow.setVisible(false);
+		
+		if(mapPreference.getRouteId()!=null){
+			mapPreference.setRouteId(null);
+		}
+		refreshMap();
+		
+	}
+	
+	@Override
+	protected void onDetachedFromWindow() {
+		// TODO Auto-generated method stub
+		LogWrapper.i("TilesView","TilesView.onDetachedFromWindow");
+		if(CONFIG.DRAW_BY_OPENGL) super.onDetachedFromWindow();
+		clearTilesWaitForLoading();
+		
+		tileImages.clear();
+		overlays.clear();
+		shapes.clear();
+		TileThread.stopAllThreads();
+        DownloadThread.stopAllThreads();
+        MapTextThread.stopThread();
+		//WebServices.reset();
+	}
+	
+	public void clearTilesWaitForLoading(){
+		synchronized (tilesWaitForLoading) {
+			tilesWaitForLoading.clear();
+		}
+	}
+	
+	/**
+	 * instantiate once and use forever
+	 * @return Paint for info window text drawing
+	 */
+	private Paint getTextPaint(InfoWindow.TextAlign textAlign){
+		if(displaySize.x==0) return null;
+		Paint textP=new Paint();
+		textP.setColor(InfoWindow.INFO_TEXT_COLOR);
+    	if(textAlign==InfoWindow.TextAlign.LEFT){
+    		textP.setTextAlign(Align.LEFT);
+    	}else{
+    		textP.setTextAlign(Align.CENTER);
+	    }
+		textP.setTextSize(InfoWindow.INFO_TEXT_SIZE*metrics.density);
+		textP.setAntiAlias(InfoWindow.INFO_TEXT_ANTIALIAS);
+		//LogWrapper.d("TilesView","text paint textScaleX:"+textP.getTextScaleX()+",textSize:"+textP.getTextSize());
+			
+    	return textP;
+	}
+	
+	private XYFloat screenXYToScreenXYConv(float left,float top){
+		if(mapMode.getzRotation()==0 && mapMode.getxRotation()==0){
+			return new XYFloat(left,top);
+		}
+		
+		left-=displaySize.x/2;
+		top-=displaySize.y/2;
+		float cosX=mapMode.getCosX();
+		float sinX=mapMode.getSinX();
+		float y0=(mapMode.middleZ*top)/(mapMode.nearZ*mapMode.scale*cosX-top*mapMode.scale*sinX);
+		float x0=(left*mapMode.middleZ+left*mapMode.scale*y0*sinX)/(mapMode.nearZ*mapMode.scale);
+		float cosZ=mapMode.getCosZ();
+		float sinZ=-mapMode.getSinZ();
+		float x=cosZ*x0-sinZ*y0;
+		float y=sinZ*x0+cosZ*y0;
+		x+=displaySize.x/2;
+		y+=displaySize.y/2;
+		
+		return new XYFloat(x,y);
+	}
+	
+	private XYFloat getDirection(float x0,float y0,float x1,float y1){
+		float vecX=x0-x1;
+		float vecY=y0-y1;
+		float mag=(float)Math.sqrt(vecX*vecX+vecY*vecY);
+		if(mag==0) return new XYFloat(0,0);
+		return new XYFloat(vecX/mag,vecY/mag);
+	}
+	
+	private void rotateZ(XYFloat o,XYFloat n){
+		if((o.x==0 && o.y==0) || (n.x==0 && n.y==0)) return;
+		
+		double sin=(o.x*n.y-o.y*n.x);
+		double asin=Math.asin(sin)*180/Math.PI;
+		//Log.i("TilesView","rotateZ asin,o,n:"+asin+","+o+","+n);
+		
+		if(Math.abs(asin)>ABNORMAL_ZROTATION){
+			LogWrapper.e("TilesView","rotateZ asin abnormal:"+asin);
+			return;
+		}
+		
+		float r=mapMode.getzRotation();
+		r+=(float)asin;
+		r=((r+180)%360+360)%360-180;
+		
+		mapMode.setZRotation(r,displaySize);
+		
+	}
+	
+	private void rotateX(float delXRotation){
+		if(!CONFIG.DRAW_BY_OPENGL) return;
+		float r=mapMode.getxRotation();
+		r+=(delXRotation);
+		if(r>0){
+			r=0;
+		}
+		else if(r<MapView.MAP_TILT_MIN){
+			r=MapView.MAP_TILT_MIN;
+		}
+		mapMode.setXRotation(r,displaySize);
+	}
+	
+	private XYDouble screenXYConvToMercXY(float convX, float convY, float zoomLevel){
+		double scale2=Math.pow(2,this.zoomLevel-centerXYZ.z);
+		double x=centerXY.x*scale2-displaySize.x/2+convX;
+		double y=centerXY.y*scale2+displaySize.y/2-convY;
+		double scale1=Math.pow(2,zoomLevel-this.zoomLevel);
+		return new XYDouble(x*scale1,y*scale1);
+	}
+	
+	public XYFloat mercXYToScreenXYConv(XYDouble mercXY, float zoomLevel){
+		double scale1=Math.pow(2,this.zoomLevel-zoomLevel);
+		double scale2=Math.pow(2,this.zoomLevel-centerXYZ.z);
+		double x=mercXY.x*scale1-centerXY.x*scale2+displaySize.x/2;
+		double y=centerXY.y*scale2+displaySize.y/2-mercXY.y*scale1;
+		return new XYFloat((float)x,(float)y);
+	}
+	
+	private  ArrayList<OverlayItem> snapToOverlay(ItemizedOverlay overlay, XYDouble mercXY, float screenX, float screenY){
+		ArrayList<Tile> touchTiles=Util.getTouchTiles(mercXY,centerXYZ.z,ItemizedOverlay.TOUCH_RADIUS);
+		ArrayList<ArrayList<OverlayItem>> clusters=overlay.getVisiblePins(centerXYZ.z, touchTiles);
+		int size=clusters.size();
+		if(size==0) return null;
+		
+		int start=new Random().nextInt(size);
+		float cosZ=mapMode.getCosZ();
+		float sinZ=mapMode.getSinZ();
+		float buffer=ItemizedOverlay.SNAP_BUFFER*metrics.density;
+		for(int i=0;i<size;i++){
+			ArrayList<OverlayItem> cluster=clusters.get((i+start)%size);
+			if(cluster.size()==0){
+				LogWrapper.e("ItemizedOverlay", "onSnapToItem cluster is empty");
+			}
+			OverlayItem pin=null;
+			for(int ii=0;ii<cluster.size();ii++){
+				OverlayItem pinL=cluster.get(ii);
+				if(pinL.getIcon().getImage()!=null && pinL.getMercXY()!=null && pinL.isVisible()){
+					pin=pinL;
+					break;
+				}
+			}
+			if(pin==null) continue;
+			
+			XYFloat xyConv=mercXYToScreenXYConv(pin.getMercXY(),ItemizedOverlay.ZOOM_LEVEL);
+			float x1=xyConv.x-displaySize.x/2;
+			float y1=xyConv.y-displaySize.y/2;
+			float x2=cosZ*x1-sinZ*y1;
+			float y2=sinZ*x1+cosZ*y1;
+			y2*=(mapMode.scale);
+			x2*=(mapMode.scale);
+			float sinX=mapMode.getSinX();
+			float cosX=mapMode.getCosX();
+			float z=y2*sinX+mapMode.middleZ;
+			y2*=(cosX);
+			
+			RotationTilt rt=pin.getRotationTilt();
+			float cosT=rt.getCosT();
+			float sinT=rt.getSinT();
+			if(rt.getTiltRelativeTo().equals(TiltReference.MAP)){
+				cosT=rt.getCosT()*mapMode.getCosX()-rt.getSinT()*mapMode.getSinX();
+				sinT=rt.getSinT()*mapMode.getCosX()+rt.getCosT()*mapMode.getSinX();
+			}
+			float cosR=rt.getCosR();
+			float sinR=rt.getSinR();
+			if(rt.getRotateRelativeTo().equals(RotateReference.MAP)){
+				cosR=rt.getCosR()*mapMode.getCosZ()-rt.getSinR()*mapMode.getSinZ();
+				sinR=rt.getSinR()*mapMode.getCosZ()+rt.getCosR()*mapMode.getSinZ();
+			}
+			float xt=(screenX-displaySize.x/2);
+			float yt=(screenY-displaySize.y/2);
+			float yd=(yt*z-y2*mapMode.nearZ)/(mapMode.nearZ*cosT-yt*sinT);
+			float xd=xt*(z+yd*sinT)/mapMode.nearZ-x2;
+			
+			float xTouch2=cosR*xd+sinR*yd;
+			float yTouch2=-sinR*xd+cosR*yd;
+			
+			float scaleToM=mapMode.middleZ/(float)mapMode.nearZ;
+			//yTouch2/=mapMode.scale;
+			//xTouch2/=mapMode.scale;
+			yTouch2/=scaleToM;
+			xTouch2/=scaleToM;
+			
+			XYInteger pinSize=pin.getIcon().getSize();
+			XYInteger offset=pin.getIcon().getOffset();
+			if(xTouch2<-offset.x+pinSize.x+buffer && xTouch2>-offset.x-buffer &&
+					yTouch2<-offset.y+pinSize.y+buffer && yTouch2>-offset.y-buffer){
+				return cluster;
+			}
+		}
+		return null;
+	}
+	
+	private int snapToInfoWindow(float screenX,float screenY){
+		int clickType=0;
+		float scaleToM=mapMode.middleZ/(float)mapMode.nearZ;
+		
+		XYFloat xyConv=mercXYToScreenXYConv(infoWindow.getMercXY(),InfoWindow.ZOOM_LEVEL);
+		float x1=xyConv.x-displaySize.x/2;
+		float y1=xyConv.y-displaySize.y/2;
+		float cosZ=mapMode.getCosZ();
+		float sinZ=mapMode.getSinZ();
+		float x2=cosZ*x1-sinZ*y1;
+		float y2=sinZ*x1+cosZ*y1;
+		y2*=(mapMode.scale);
+		x2*=(mapMode.scale);
+		float sinX=mapMode.getSinX();
+		float cosX=mapMode.getCosX();
+		float z=y2*sinX+mapMode.middleZ;
+		y2*=(cosX);
+				
+		RotationTilt rt=infoWindow.getOffsetRotationTilt();
+		float cosR=rt.getCosR();
+		float sinR=rt.getSinR();
+		if(rt.getRotateRelativeTo().equals(RotateReference.MAP)){
+			cosR=rt.getCosR()*mapMode.getCosZ()-rt.getSinR()*mapMode.getSinZ();
+			sinR=rt.getSinR()*mapMode.getCosZ()+rt.getCosR()*mapMode.getSinZ();
+		}
+		float xOff=-infoWindow.getOffset().x;
+		float yOff=-infoWindow.getOffset().y;
+		float xOff2=cosR*xOff-sinR*yOff;
+		float yOff2=sinR*xOff+cosR*yOff;
+		//xOff2*=(mapMode.scale);
+		//yOff2*=(mapMode.scale);
+		xOff2*=scaleToM;
+		yOff2*=scaleToM;
+		
+		float cosT=rt.getCosT();
+		float sinT=rt.getSinT();
+		if(rt.getTiltRelativeTo().equals(TiltReference.MAP)){
+			cosT=rt.getCosT()*mapMode.getCosX()-rt.getSinT()*mapMode.getSinX();
+			sinT=rt.getSinT()*mapMode.getCosX()+rt.getCosT()*mapMode.getSinX();
+		}
+		z+=yOff2*sinT;
+		y2+=yOff2*cosT;
+		x2+=xOff2;
+		
+		float yTouch=(screenY-displaySize.y/2)*z/mapMode.nearZ;
+		float xTouch=(screenX-displaySize.x/2)*z/mapMode.nearZ;
+		yTouch-=y2;
+		xTouch-=x2;
+		//yTouch/=mapMode.scale;
+		//xTouch/=mapMode.scale;
+		yTouch/=scaleToM;
+		xTouch/=scaleToM;
+		
+		float expand = 5.0f;
+		RectF infoRect =getInfoWindowRecF(infoWindow,new XYFloat(0f,0f));
+		RectF rect = new RectF(infoRect.left - expand, infoRect.top - expand, infoRect.right + expand, infoRect.bottom + expand);
+		if(xTouch>rect.left && xTouch<rect.right && yTouch>rect.top && yTouch<rect.bottom){
+		    if (infoWindow.type == InfoWindow.TYPE_SIMPLE) {
+		        infoWindow.setBackgroundColor(InfoWindow.BACKGROUND_COLOR_CLICKED);
+		        clickType = InfoWindow.BACKGROUND_COLOR_CLICKED;
+		    } else {
+		    	// 对于xTouch的计算有误， 左边的xTouch向右偏了大约20, 右边的xTouch向左偏了大约20
+		        if (xTouch>rect.left && xTouch<rect.left+infoWindow.infoWindowLeftNormalDrw.getIntrinsicWidth()+20+3*expand && yTouch>rect.top && yTouch<rect.bottom) {
+		            infoWindow.setBackgroundColor(InfoWindow.BACKGROUND_COLOR_CLICKED_LEFT);
+		            clickType = InfoWindow.BACKGROUND_COLOR_CLICKED_LEFT;
+		        } else if (xTouch>rect.right-infoWindow.infoWindowLeftNormalDrw.getMinimumWidth()-20-3*expand && xTouch<rect.right && yTouch>rect.top && yTouch<rect.bottom) {
+		            infoWindow.setBackgroundColor(InfoWindow.BACKGROUND_COLOR_CLICKED_RIGHT);
+		            clickType = InfoWindow.BACKGROUND_COLOR_CLICKED_RIGHT;
+		        }
+		        LogWrapper.d("TilesView", "snapToInfoWindow() screenX,screenY;rect="+screenX+","+screenY+";"+rect);
+		    }
+		}
+		
+		return clickType;
+	}
+	
+	/**
+	 * main method handle touch related events
+	 */
+	@Override
+    public boolean onTouchEvent(MotionEvent event) {
+		if(centerXY==null) return true;
+		
+		int action = event.getAction() & MotionEvent.ACTION_MASK;
+		int pCount = event.getPointerCount();
+		
+		XYFloat xy0Conv=screenXYToScreenXYConv(event.getX(0), event.getY(0));
+		
+		if (action == MotionEvent.ACTION_DOWN) {
+			touchRecord1.reset();
+			touchRecord2.reset();
+			
+			synchronized(drawingLock){
+				mapMode.resetXEasing();
+				mapMode.resetZEasing();
+				easingRecord.reset();
+	    		zoomingRecord.reset();
+			}
+    		    		
+    		infoWindowClicked=false;
+    		longClicked=false;
+    		
+    		multiTouch=false;
+    		lastDistConv=0;
+    		lastTouchY=null;
+    		lastDirection=null;
+    		touchMode=0;//zooming
+    		
+    		lastZoomLevel=zoomLevel;
+    		lastXRotation=mapMode.getxRotation();
+    		lastZRotation=mapMode.getzRotation();
+    		
+    		long time=System.nanoTime();
+			touchRecord1.push(time, xy0Conv.x, xy0Conv.y);
+			//Log.i("TilesView","onTouchEvent touch down x,y,pCount:"+(int)(time/1000000)+","+event.getX()+","+event.getY()+","+pCount);
+    		
+    		if(pCount==1){
+    			lastTouchDownTime=System.nanoTime();
+    			lastTouchDown.x=event.getX(0);
+        		lastTouchDown.y=event.getY(0);
+        		maxMoveFromTouchDown=0;
+        		
+        		lastTouchConv.x = xy0Conv.x;
+        		lastTouchConv.y = xy0Conv.y;
+        		lastTouch.x=event.getX(0);
+        		lastTouch.y=event.getY(0);
+        		
+        		Position position=screenXYConvToPos(xy0Conv.x,xy0Conv.y);
+        		mParentMapView.executeTouchDownListeners(position);
+        		
+        		if(infoWindow.isVisible() && infoWindow.getMercXY()!=null) {
+        			int clickType = snapToInfoWindow(event.getX(0),event.getY(0));
+        			if(InfoWindow.validateClickType(clickType)){
+        				infoWindowClicked=true;
+    	    			infoWindow.setBackgroundColor(clickType);
+    	    			refreshMap();
+        			}
+    	    		
+				}
+    		}else if(pCount>1){
+    			multiTouch=true;
+    		}
+			
+    	} else if (action == MotionEvent.ACTION_MOVE) {
+    		if(!multiTouch && pCount==1){
+    			if(longClicked) return true;
+    			if(infoWindowClicked){
+    				int clickType = snapToInfoWindow(event.getX(0),event.getY(0)); 
+    				if(InfoWindow.validateClickType(clickType)){
+    	    			int oriColor=infoWindow.getBackgroundColor();
+    	    			infoWindow.setBackgroundColor(clickType);
+    	    			if(oriColor!=clickType) refreshMap();
+    	    		}else{
+    	    			int oriColor=infoWindow.getBackgroundColor();
+    	    			infoWindow.setBackgroundColor(InfoWindow.BACKGROUND_COLOR_UNCLICKED);
+    	    			if(oriColor!=InfoWindow.BACKGROUND_COLOR_UNCLICKED) refreshMap();
+    	    		}
+    	    		return true;
+    			}
+    			
+    			float moveFromTouchDownX=event.getX(0)-lastTouchDown.x;
+        		float moveFromTouchDownY=event.getY(0)-lastTouchDown.y;
+        		float moveFromTouchDown=moveFromTouchDownX*moveFromTouchDownX+moveFromTouchDownY*moveFromTouchDownY;
+        		if(moveFromTouchDown>maxMoveFromTouchDown) maxMoveFromTouchDown=moveFromTouchDown;
+        		if(maxMoveFromTouchDown<SAME_POINT_MOVED_DISTANCE_MAX*SAME_POINT_MOVED_DISTANCE_MAX && (System.nanoTime()-lastTouchDownTime)>LONG_TOUCH_TIME_MIN){
+        			longClicked=true;
+        			Position pos;
+        			pos=screenXYConvToPos(xy0Conv.x,xy0Conv.y);
+        			mParentMapView.executeLongClickListeners(pos);
+        			return true;
+        		}
+        		
+        		XYFloat draggingConv=new XYFloat(0f,0f);
+            	draggingConv.x = xy0Conv.x-lastTouchConv.x;
+        		draggingConv.y = xy0Conv.y-lastTouchConv.y;
+        		//Log.i("Moving","onTouchEvent dragging:"+dragging);
+        		if(Math.abs(event.getX(0)-lastTouch.x)+Math.abs(event.getY(0)-lastTouch.y)>ABNORMAL_DRAGGING_DIST){
+        			LogWrapper.e("Moving","onTouchEvent dragging abruptly:"+draggingConv);
+        		}else{
+        			long time=System.nanoTime();
+                    touchRecord1.push(time, xy0Conv.x, xy0Conv.y);
+            		//Log.i("TilesView","onTouchEvent touchRecord1:"+(int)(time/1000000)+","+event.getX()+","+event.getY());
+            		lastTouchConv.x = xy0Conv.x;
+            		lastTouchConv.y = xy0Conv.y;
+            		lastTouch.x=event.getX(0);
+            		lastTouch.y=event.getY(0);
+            		synchronized(drawingLock){
+            			moveView(draggingConv.x,draggingConv.y);
+            		}
+            		refreshMap();
+        		}
+    		}else if(pCount>1){
+    			multiTouch=true;
+    			//Log.i("TilesView","onTouchEvent event.x0,event.y0,event.x1,event.y1:"+(int)event.getX(0)+","+(int)event.getY(0)+","+(int)event.getX(1)+","+(int)event.getY(1));
+    			
+    			touchRecord2.push(0, event.getX(0), event.getY(0));
+    			touchRecord2.push(0, event.getX(1), event.getY(1));
+    			if(touchRecord2.size>=2*2){
+    				int touchModeL=0;//zooming
+    				
+    				int index=touchRecord2.index;
+    				int start=(index-(touchRecord2.size-1)+touchRecord2.capacity)%touchRecord2.capacity;
+    				float x0=touchRecord2.screenXYs[index-1].x-touchRecord2.screenXYs[start].x;
+					float y0=touchRecord2.screenXYs[index-1].y-touchRecord2.screenXYs[start].y;
+					float x1=touchRecord2.screenXYs[index].x-touchRecord2.screenXYs[start+1].x;
+					float y1=touchRecord2.screenXYs[index].y-touchRecord2.screenXYs[start+1].y;
+					float vx=touchRecord2.screenXYs[start+1].x-touchRecord2.screenXYs[start].x;
+					float vy=touchRecord2.screenXYs[start+1].y-touchRecord2.screenXYs[start].y;
+					
+					double r0=Math.sqrt(x0*x0+y0*y0);
+					double r1=Math.sqrt(x1*x1+y1*y1);
+					if(r0==0 || r1==0){
+						if(r0!=0 || r1!=0){
+							double r=Math.sqrt(vx*vx+vy*vy);
+							if(Math.abs(x0*vx+y0*vy+x1*vx+y1*vy)/((r0+r1)*r)<Cos60){
+								touchModeL=1;//rotating
+							}
+						}
+					}
+					else if((x0*x1+y0*y1)/(r0*r1)>Cos30){
+						if(Math.abs(y0)/r0>Cos30 && Math.abs(y1)/r1>Cos30) 
+							touchModeL=2;//tilt
+					}
+					else if((x0*x1+y0*y1)/(r0*r1)<-Cos30){
+						double r=Math.sqrt(vx*vx+vy*vy);
+						if(Math.abs(x0*vx+y0*vy)/(r0*r)<Cos60 && Math.abs(x1*vx+y1*vy)/(r1*r)<Cos60){
+							touchModeL=1;//rotating
+						}
+					}
+					
+					//Log.i("TilesView","onTouchEvent mode,x0,y0,x1,y1,vx,vy,index,start:"+touchModeL+","+x0+","+y0+","+x1+","+y1+","+vx+","+vy+","+index+","+start);
+					
+					if(touchModeL!=touchMode){
+						lastDistConv=0;
+	    				lastDirection=null;
+	    				lastTouchY=null;
+						touchMode=touchModeL;
+					}
+    			}
+    			if(touchMode==0){//zooming
+    				XYFloat xy1Conv=screenXYToScreenXYConv(event.getX(1),event.getY(1));
+        			float distXConv=xy0Conv.x-xy1Conv.x;
+        			float distYConv=xy0Conv.y-xy1Conv.y;
+        			float distConv=(float)Math.sqrt(distXConv*distXConv+distYConv*distYConv);
+        			if(distConv<MIN_PINCH_DISTANCE) {
+        				lastDistConv=0;
+        				return true;
+        			}
+    				else if(lastDistConv==0) {
+    					lastCenterConv.x=(xy0Conv.x+xy1Conv.x)/2;
+    	    			lastCenterConv.y=(xy0Conv.y+xy1Conv.y)/2;
+    	    			lastDistConv=distConv;
+    				}
+    				else if(distConv!=lastDistConv){
+    					float centerDistXConv=Math.abs((xy0Conv.x+xy1Conv.x)/2-lastCenterConv.x);
+						float centerDistYConv=Math.abs((xy0Conv.y+xy1Conv.y)/2-lastCenterConv.y);
+						if((centerDistXConv+centerDistYConv)>ABNORMAL_PINCH_CENTER_DIST){
+							lastDistConv=0;
+							LogWrapper.e("TilesView","onTouchEvent pinch abnormal center dist:"+(centerDistXConv+centerDistYConv));
+						}else{
+							lastCenterConv.x=(xy0Conv.x+xy1Conv.x)/2;
+			    			lastCenterConv.y=(xy0Conv.y+xy1Conv.y)/2;
+			    			float newZoomLevel=zoomLevel+(float)(Math.log(distConv/lastDistConv)/Math.log(2));
+							//Log.i("TilesView","onTouchEvent newZoom,lastDist,dist:"+newZoomLevel+","+lastDist+","+dist);
+		        			lastDistConv=distConv;
+		            		synchronized(drawingLock){
+		            			try{
+		            				zoomView(newZoomLevel,lastCenterConv);
+		            			}catch(Exception e){
+		            				e.printStackTrace();
+		            				return true;
+		            			}
+		            		}
+		            		refreshMap();
+		            	}
+    				}
+    			}else if(touchMode==1){//rotating
+    				float distX=event.getX(1)-event.getX(0);
+    				float distY=event.getY(1)-event.getY(0);
+    				float dist=(float)Math.sqrt(distX*distX+distY*distY);
+    				if(dist<MIN_ROTATE_DISTANCE) {
+        				lastDirection=null;
+        				return true;
+        			}
+    				if(lastDirection==null){
+    					lastDirection=getDirection(event.getX(0),event.getY(0),event.getX(1),event.getY(1));
+    	    		}else{
+//    	    			synchronized(drawingLock){
+//    						XYFloat newDirection=getDirection(event.getX(0),event.getY(0),event.getX(1),event.getY(1));
+//    						rotateZ(lastDirection,newDirection);
+//    						lastDirection=newDirection;
+//    					}
+//    	    			refreshMap();
+    				}
+    			}else if(touchMode==2){//tilting
+    				if(lastTouchY==null){
+        				lastTouchY=new XYFloat(event.getY(0),event.getY(1));
+        			}else{
+        				float delY0=event.getY(0)-lastTouchY.x;
+        				float delY1=event.getY(1)-lastTouchY.y;
+        				lastTouchY.x=event.getY(0);
+        				lastTouchY.y=event.getY(1);
+        				if(delY0*delY1>0){
+        					synchronized(drawingLock){
+        						float delX=(delY0+delY1)/2*MapView.MAP_TILT_MIN/XROTATION_YDIST;
+            					rotateX(delX);
+            				}
+        					refreshMap();
+        				}
+        			}
+    			}
+    			return true;
+    			
+    		}else if(multiTouch && pCount==1){
+    			lastDistConv=0;
+    			lastDirection=null;
+    			lastTouchY=null;
+    			touchRecord2.reset();
+    		}
+    		
+    		
+        } else if (action == MotionEvent.ACTION_UP) {
+        	//Log.i("TilesView","onTouchEvent touchup pCount:"+pCount);
+        	if(!multiTouch && pCount==1){
+        		if(longClicked){
+    				longClicked=false;
+    				return true;
+    			}else {
+    				float moveFromTouchDownX=event.getX(0)-lastTouchDown.x;
+    				float moveFromTouchDownY=event.getY(0)-lastTouchDown.y;
+    				float moveFromTouchDown=moveFromTouchDownX*moveFromTouchDownX+moveFromTouchDownY*moveFromTouchDownY;
+    				if(moveFromTouchDown>maxMoveFromTouchDown) maxMoveFromTouchDown=moveFromTouchDown;
+    				if(maxMoveFromTouchDown<SAME_POINT_MOVED_DISTANCE_MAX*SAME_POINT_MOVED_DISTANCE_MAX && (System.nanoTime()-lastTouchDownTime)>LONG_TOUCH_TIME_MIN){
+            			Position pos=screenXYConvToPos(xy0Conv.x,xy0Conv.y);
+            			mParentMapView.executeLongClickListeners(pos);
+            			return true;
+            		}
+    			}
+    			
+        		long touchUpTime=System.nanoTime();
+    			Position position=screenXYConvToPos(xy0Conv.x,xy0Conv.y);
+    			infoWindow.setBackgroundColor(InfoWindow.BACKGROUND_COLOR_UNCLICKED);
+				
+    			if(lastTouchDownTime!=0 && (touchUpTime-lastTouchDownTime)<CLICK_DOWN_UP_TIME_MAX
+            			&& (Math.abs(event.getX(0)-lastTouchDown.x)+Math.abs(event.getY(0)-lastTouchDown.y))<SAME_POINT_MOVED_DISTANCE_MAX){
+    				if(compass!=null && compass.isVisible()){
+    					if(compass.snapTo(new XYFloat(event.getX(0),event.getY(0)), displaySize, padding)){
+    						compass.executeTouchListeners();
+    						return true;
+    					}
+    				}
+    			}
+    			
+    			if(infoWindowClicked) {
+    				int clickType = snapToInfoWindow(event.getX(0),event.getY(0)); 
+    				if(InfoWindow.validateClickType(clickType)){
+    					infoWindow.executeTouchListeners(position, clickType);
+    	    			infoWindowClicked=false;
+    	    		}
+    	    		refreshMap();
+    	    		return true;
+    			}
+    			
+    			if(lastTouchDownTime!=0 && (touchUpTime-lastTouchDownTime)<CLICK_DOWN_UP_TIME_MAX
+        			&& (Math.abs(event.getX(0)-lastTouchDown.x)+Math.abs(event.getY(0)-lastTouchDown.y))<SAME_POINT_MOVED_DISTANCE_MAX){
+    				ArrayList<OverlayItem> cluster=null;
+        			int size=overlays.size();
+        			if(size>0){
+        				synchronized(drawingLock){
+            				int start=new Random().nextInt(size);
+            				XYDouble mercXY=screenXYConvToMercXY(xy0Conv.x,xy0Conv.y,centerXYZ.z);
+                			for(int i=0;i<size;i++){
+                				ItemizedOverlay overlay=overlays.get((i+start)%size);
+                				if (!ItemizedOverlay.MY_LOCATION_OVERLAY.equals(overlay.getName())) {
+                					cluster=snapToOverlay(overlay,mercXY,event.getX(0),event.getY(0));
+                    				if(cluster!=null) {
+                    					break;
+                    				}
+                				}
+                			}
+            				
+            			}
+        			}
+        			        			
+        			if(cluster!=null){
+        				//Log.i("TilesView","onTouchEvent snap to:"+overlayItem.getPosition()+","+overlayItem.getMessage());
+        				if(cluster.size()==0){
+        					LogWrapper.e("TilesView", "onTouchEvent touchUp cluster size is 0");
+        				}
+        				ArrayList<OverlayItem> visiblePins=new ArrayList<OverlayItem>();
+        				for(int ii=0;ii<cluster.size();ii++){
+        					OverlayItem pinL=cluster.get(ii);
+        					if(pinL.getIcon().getImage()!=null && pinL.getMercXY()!=null && pinL.isVisible()){
+        						visiblePins.add(pinL);
+        					}
+        				}
+        				if(visiblePins.size()>0){
+        					ItemizedOverlay overlay=visiblePins.get(0).getOwnerOverlay();
+            				if(overlay.isClustering() && visiblePins.size()>1){
+            					if(overlay.getClusterTouchEventListener()!=null){
+            						overlay.getClusterTouchEventListener().onTouchEvent(overlay, visiblePins);
+            					}
+            				}else{
+            					OverlayItem overlayItem=visiblePins.get(new Random().nextInt(visiblePins.size()));
+            					overlayItem.executeTouchListeners();
+            				}
+        				}
+        				
+        			
+        			}else{
+        				/*
+        				 * 点击第一次InfoWindow消失, 第二次大头针消失 
+        				 */
+        				if (infoWindow.isVisible()) {
+        					infoWindow.setVisible(false);
+        				} else if (mParentMapView.getCurrentOverlay() == mParentMapView.getOverlaysByName(ItemizedOverlay.PIN_OVERLAY)) {
+        					mParentMapView.deleteOverlaysByName(ItemizedOverlay.PIN_OVERLAY);
+        				}
+        				
+        				mParentMapView.executeTouchListeners(position);
+        				
+        				if(lastTouchUpTime!=0 && (touchUpTime-lastTouchUpTime)<DOUBLE_CLICK_INTERVAL_TIME_MAX
+        						&& (Math.abs(event.getX(0)-lastTouchUp.x)+Math.abs(event.getY(0)-lastTouchUp.y))<SAME_POINT_MOVED_DISTANCE_MAX){
+        					lastTouchUp.x=0;
+        					lastTouchUp.y=0;
+        					lastTouchUpTime=0;
+        					mParentMapView.executeDoubleClickListeners(position);
+        				}else{
+        					lastTouchUp.x=event.getX(0);
+            				lastTouchUp.y=event.getY(0);
+            				lastTouchUpTime=touchUpTime;
+        				}
+    	        	}	        				
+        			
+        			refreshMap();
+        			
+        			//Log.i("Thread","TilesView.onTouchEvent finish tapping notifyTilesWaitForLoading");
+    			}else{
+    				if(CONFIG.DECELERATE_RATE>0 && touchRecord1.size>=2){
+            			float xDist=touchRecord1.screenXYs[touchRecord1.index].x-touchRecord1.screenXYs[(touchRecord1.index-(touchRecord1.size-1)+touchRecord1.capacity)%touchRecord1.capacity].x;
+    					float yDist=touchRecord1.screenXYs[touchRecord1.index].y-touchRecord1.screenXYs[(touchRecord1.index-(touchRecord1.size-1)+touchRecord1.capacity)%touchRecord1.capacity].y;
+            			double s=Math.sqrt(xDist*xDist+yDist*yDist);
+            			long timeInterval=touchRecord1.times[touchRecord1.index]-touchRecord1.times[(touchRecord1.index-(touchRecord1.size-1)+touchRecord1.capacity)%touchRecord1.capacity];
+            			synchronized(drawingLock){
+            				easingRecord.speed=s/timeInterval;
+                			if(easingRecord.speed>easingRecord.MAXIMUM_SPEED){
+                				LogWrapper.e("Moving","too high speed:"+easingRecord.speed);
+                				easingRecord.speed=easingRecord.MAXIMUM_SPEED;
+                			}
+                			easingRecord.startMoveTime=touchUpTime;
+                			easingRecord.direction.x=(float)(xDist/s);
+                			easingRecord.direction.y=(float)(yDist/s);
+                			easingRecord.movedDistance=0;
+                			easingRecord.listener=null;
+            			}
+            			//Log.i("Moving","onTouchEvent s:"+s+",t(ms):"+(int)(timeInterval/1000000));
+            			//Log.i("Moving","onTouchEvent speed:"+easingRecord.speed+",decelerate:"+easingRecord.decelerate_rate+",direction:"+easingRecord.direction);
+            		}
+        			if(CONFIG.DECELERATE_RATE<=0 || easingRecord.speed<=0){
+        				Position center;
+        				synchronized(drawingLock){
+        					easingRecord.reset();
+        					center=getCenterPosition();
+        				}
+        				if(center!=null) mParentMapView.executeMoveEndListeners(center);
+            		}
+            		refreshMap();
+            	}
+        	}else if(multiTouch){
+        		if(!CONFIG.SNAP_TO_CLOSEST_ZOOMLEVEL){
+        			if(lastZoomLevel!=zoomLevel){
+        				mParentMapView.executeZoomEndListeners(Math.round(zoomLevel));
+            		}
+    			}
+        		//else if(lastDistConv!=0){
+        		else if(Math.round(zoomLevel)!=zoomLevel){
+        			synchronized(drawingLock){
+                		zoomingRecord.digitalZooming=true;
+                		int newZoomLevel=Math.round(zoomLevel);
+                		zoomingRecord.zoomToLevel=newZoomLevel;
+                		zoomingRecord.digitalZoomEndTime=System.nanoTime()+Math.round(MapView.DIGITAL_ZOOMING_TIME_PER_LEVEL*Math.abs(newZoomLevel-zoomLevel));
+                		zoomingRecord.speed=1.0/MapView.DIGITAL_ZOOMING_TIME_PER_LEVEL*(newZoomLevel>zoomLevel?1:-1);
+                		zoomingRecord.zoomCenterXY.x=lastCenterConv.x;
+                		zoomingRecord.zoomCenterXY.y=lastCenterConv.y;
+                		zoomingRecord.listener=null;
+                	}
+        			refreshMap();
+        		}
+    			
+        		if(lastZRotation!=mapMode.getzRotation()){
+        			mParentMapView.executeRotateEndListeners(mapMode.getzRotation());
+            	}
+        		
+        		if(lastXRotation!=mapMode.getxRotation()){
+        			mParentMapView.executeTiltEndListeners(mapMode.getxRotation());
+        		}
+        	}
+        }
+	
+		return true;
+    }
+	
+	//status[0]:moving, status[1]:movingJustDone, status[2]:zooming, status[3]:zoomingJustDone
+	//status[4]:rotatingZ, status[5]:rotatingZJustDone, status[6]:rotatingX status[7]:rotatingXJustDone
+	private void updateViewBeforeDraw(boolean status[]){
+		if(CONFIG.DRAW_BY_OPENGL && mapMode.xRotating){
+			long currentTime=System.nanoTime();
+			float newRotationX;
+			
+			if(currentTime<mapMode.xRotationEndTime){
+				float rotateDirection=mapMode.xRotationEnd>mapMode.getxRotation()?Math.abs(MapView.MAP_TILT_MIN):-Math.abs(MapView.MAP_TILT_MIN);
+				newRotationX=mapMode.xRotationEnd-(float)(mapMode.xRotationEndTime-currentTime)/XROTATION_TIME*rotateDirection;
+				status[6]=true;
+			}else{
+				newRotationX=mapMode.xRotationEnd;
+				status[7]=true;
+			}
+			//Log.i("TilesView","onDraw rotatingX currentTime,endTime,newRotatinX,oldRotationX:"+currentTime/1000000+","+mapModeRecord.xRotationEndTime/1000000+","+newRotationX+","+mapModeRecord.getxRotation());
+			
+			lastXRotation=mapMode.getxRotation();
+			mapMode.setXRotation(newRotationX,displaySize);
+			
+			if(currentTime>=mapMode.xRotationEndTime){
+				mapMode.resetXEasing();
+			}
+		}
+		
+		if(mapMode.zRotating){
+			long currentTime=System.nanoTime();
+			float newRotationZ;
+			
+			if(currentTime<mapMode.zRotationEndTime){
+				float diff=mapMode.zRotationEnd-mapMode.getzRotation();
+				if(diff>180) diff-=360;
+				else if(diff<-180) diff+=360;
+				float rotateDirection=(diff>0?180:-180);
+				newRotationZ=mapMode.zRotationEnd-(float)(mapMode.zRotationEndTime-currentTime)/ZROTATION_TIME*rotateDirection;
+				status[4]=true;
+			}else{
+				newRotationZ=mapMode.zRotationEnd;
+				status[5]=true;
+			}
+			//Log.i("TilesView","onDraw rotatingZ currentTime,endTime,newRotatinZ,oldRotationZ:"+currentTime/1000000+","+mapModeRecord.zRotationEndTime/1000000+","+newRotationZ+","+mapModeRecord.getzRotation());
+			lastZRotation=mapMode.getzRotation();
+			mapMode.setZRotation(newRotationZ,displaySize);
+			
+			if(currentTime>=mapMode.zRotationEndTime){
+				mapMode.resetZEasing();
+			}
+		}
+		
+		if(zoomingRecord.digitalZooming){
+			long currentTime=System.nanoTime();
+			float newZoomLevel;
+			
+			long timeLeft=zoomingRecord.digitalZoomEndTime-currentTime;
+			if(timeLeft>0){
+				//int zoomDirection=zoomingRecord.zoomToLevel>zoomLevel?1:-1;
+				//newZoomLevel=zoomingRecord.zoomToLevel-(float)(zoomingRecord.digitalZoomEndTime-currentTime)/MapView.DIGITAL_ZOOMING_TIME_PER_LEVEL*zoomDirection;
+				newZoomLevel=zoomingRecord.zoomToLevel-(float)(zoomingRecord.speed*timeLeft);
+				status[2]=true;
+			}else{
+				newZoomLevel=zoomingRecord.zoomToLevel;
+				status[3]=true;
+			}
+			//Log.i("TilesView.onDraw.zoomView","currentTime,endTime,newLevel,oldLevel:"+currentTime/1000000+","+zoomingRecord.digitalZoomEndTime/1000000+","+newZoomLevel+","+zoomLevel);
+			try{
+				zoomView(newZoomLevel,zoomingRecord.zoomCenterXY);
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			if(currentTime>=zoomingRecord.digitalZoomEndTime){
+				zoomingRecord.reset();
+			}
+			
+		}
+		else if(CONFIG.DECELERATE_RATE>0 && easingRecord.speed>0){
+			long currentTime=System.nanoTime();
+			long timeElapsed=currentTime-easingRecord.startMoveTime;
+			double newSpeed=easingRecord.speed*Math.pow(easingRecord.decelerate_rate, timeElapsed/easingRecord.TIME_SCALE)   ;
+			double distance=0;
+			//if(newSpeed<=easingRecord.speed*easingRecord.MINIMUM_SPEED_RATIO){
+			if(newSpeed<=easingRecord.CUTOFF_SPEED){
+				distance=-easingRecord.TIME_SCALE*(easingRecord.speed-newSpeed)/Math.log(easingRecord.decelerate_rate)-easingRecord.movedDistance;
+				newSpeed=0;
+				status[1]=true;
+			}else{
+				distance=-easingRecord.TIME_SCALE*(easingRecord.speed-newSpeed)/Math.log(easingRecord.decelerate_rate)-easingRecord.movedDistance;
+				easingRecord.movedDistance+=(float)distance;
+				status[0]=true;
+			}
+			moveView((float)(distance)*easingRecord.direction.x, (float)(distance)*easingRecord.direction.y);
+			if(newSpeed<=0){
+				easingRecord.reset();
+			}
+			//Log.i("Moving","TilesView.onDraw distance:"+(int)distance+",timeElapsed:"+(int)(timeElapsed/(1E6))+",newSpeed:"+newSpeed);
+		}
+	}
+    
+    private void drawMapText(Canvas canvas, MapWord[] mapWords, XYFloat offset) {
+        if (mapWords == null) {
+            return;
+        }
+       
+        for (com.tigerknows.maps.MapWord mapWord : mapWords) {
+            int fontSize = mapWord.getFontSize();
+            tilePText.setTextSize(fontSize);
+            String name = mapWord.getName();
+            
+            MapWord.Icon icon = mapWord.icon;
+            if (icon != null) {
+                if (MapWord.Icon.TYPE_NORMAL == icon.type) {
+                    Bitmap bm = icon.getBitmap();
+                    if (bm != null) {
+                        canvas.drawBitmap(bm, icon.x+offset.x, icon.y+offset.y, tileP);
+                    }
+                } else if (MapWord.Icon.TYPE_EXPEND == icon.type) {
+                    float length=tilePText.measureText(name);
+                    float padding = Globals.g_metrics.density*1;
+                    float width=length+2*padding;
+                    float height=(-tilePText.ascent()+tilePText.descent())+2*padding;
+                    NinePatchDrawable drawable = MapWord.Icon.getNinePatchDrawable(icon.index);
+                    if (drawable != null) {
+                        drawable.setBounds((int)(icon.x+offset.x-padding), 
+                                (int)(icon.y+offset.y-padding), 
+                                (int)(icon.x+offset.x+width-padding), 
+                                (int)(icon.y+offset.y+height-padding));
+                        drawable.draw(canvas);
+                    }
+                }
+            }
+
+            float x = mapWord.getX()+offset.x;
+            float y = mapWord.getY()+offset.y+fontSize;
+            int slope = mapWord.getSlope();
+            if ((slope > 0) && (slope < 45)) {
+                slope = -slope;
+            } else if ((slope >= 45) && (slope < 90)){
+                slope = 90-slope;
+            } else if ((slope >= 90) && (slope < 135)){
+                slope = -(slope-90);
+            } else if ((slope >= 135) && (slope < 180)){
+                slope = 180-slope;
+            }
+            
+            if (MapWord.Icon.TYPE_EXPEND == icon.type) {
+                tilePText.setColor(0x00000000);
+            } else {
+                tilePText.setColor(mapWord.getOutlineColor() | 0xff000000); //ɫ ͸RGB
+            }
+            tilePText.setStyle(Style.STROKE); //ֻ
+            
+            if (Math.abs(slope) > 10) {
+                canvas.save();
+                canvas.rotate(slope, x, y);
+                canvas.drawText(name, x, y, tilePText);
+                
+                tilePText.setColor(mapWord.getFontColor() | 0xff000000);
+                tilePText.setStyle(Style.FILL); 
+                canvas.drawText(name, x, y, tilePText);
+                canvas.restore();
+            } else {
+                canvas.drawText(name, x, y, tilePText);
+                
+                tilePText.setColor(mapWord.getFontColor() | 0xff000000);
+                tilePText.setStyle(Style.FILL);
+                canvas.drawText(name, x, y, tilePText);
+            }
+        }
+    }
+	
+	/**
+	 * main method for repaint. zoom layer and overlays have their center position stored, 
+	 * move canvas the distance between stored center and current map center before draw these
+	 * items.
+	 */
+	@Override
+    public void onDraw(Canvas canvas) {
+		if(centerXY==null){
+			return;
+		}
+		
+		boolean movingL=false;
+		boolean movingJustDoneL=false;
+		MapView.MoveEndEventListener movingListener=easingRecord.listener;
+		boolean zoomingL=false;
+		boolean zoomingJustDoneL=false;
+		MapView.ZoomEndEventListener zoomingListener=zoomingRecord.listener;
+		boolean rotatingZ=false;
+		boolean rotatingZJustDoneL=false;
+		
+		synchronized(drawingLock){
+			//status[0]:moving, status[1]:movingJustDone, status[2]:zooming, status[3]:zoomingJustDone
+			//status[4]:rotatingZ, status[5]:rotatingZJustDone, status[6]:rotatingX status[7]:rotatingXJustDone
+			boolean[] status=new boolean[8];
+			status[0]=movingL;
+			status[1]=movingJustDoneL;
+			status[2]=zooming;
+			status[3]=zoomingJustDoneL;
+			status[4]=rotatingZ;
+			status[5]=rotatingZJustDoneL;
+			updateViewBeforeDraw(status);
+			movingL=status[0];
+			movingJustDoneL=status[1];
+			zoomingL=status[2];
+			zoomingJustDoneL=status[3];
+			rotatingZ=status[4];
+			rotatingZJustDoneL=status[5];
+			
+			//Log.i("Thread","TilesView onDraw after synchronize to drawingLock");
+			long drawStart=System.nanoTime();
+							
+			try{
+				canvas.translate(displaySize.x/2,displaySize.y/2);
+				canvas.rotate(mapMode.getzRotation());
+				canvas.translate(-displaySize.x/2, -displaySize.y/2);
+				
+				//canvas.drawColor(Color.GRAY);
+				canvas.drawColor(CONFIG.BACKGROUND_COLOR_CANVAS);
+		        
+				float displaySizeX=mapMode.displaySizeConvXR+mapMode.displaySizeConvXL;
+    			float displaySizeY=mapMode.displaySizeConvYB+mapMode.displaySizeConvYT;
+                int gridSizeX=mapMode.gridSizeConvXR+mapMode.gridSizeConvXL;
+                int gridSizeY=mapMode.gridSizeConvYB+mapMode.gridSizeConvYT;
+                
+                float centerScreenX=displaySize.x/2f+centerDelta.x;
+                float centerScreenY=displaySize.y/2f+centerDelta.y;
+                
+				//draw empty tiles
+	            if(centerXY!=null){
+	            	//long bgStart=System.nanoTime();
+	            	float tx=((centerDelta.x%CONFIG.TILE_SIZE)-CONFIG.TILE_SIZE)%CONFIG.TILE_SIZE;
+	            	float ty=((centerDelta.y%CONFIG.TILE_SIZE)-CONFIG.TILE_SIZE)%CONFIG.TILE_SIZE;
+	            	int sizeX=(int)Math.ceil((-tx+displaySizeX)/CONFIG.TILE_SIZE);
+	            	int sizeY=(int)Math.ceil((-ty+displaySizeY)/CONFIG.TILE_SIZE);
+	            	float oriX=(displaySize.x-displaySizeX)/2;
+	            	float oriY=(displaySize.y-displaySizeY)/2;
+	            	for(int i=1;i<sizeY;i++){
+	            		canvas.drawLine(oriX, oriY+CONFIG.TILE_SIZE*i+ty, oriX+displaySizeX, oriY+CONFIG.TILE_SIZE*i+ty, backgroundP);
+	            	}
+	            	for(int i=1;i<sizeX;i++){
+	            		canvas.drawLine(oriX+CONFIG.TILE_SIZE*i+tx,oriY, oriX+CONFIG.TILE_SIZE*i+tx,oriY+displaySizeY,backgroundP);
+	            	}
+	            	//Log.i("TilesView","onDraw time,sizeX,sizeY,tx,ty:"+(System.nanoTime()-bgStart)/1E6+","+sizeX+","+sizeY+","+tx+","+ty);
+	            	
+	            }
+	            
+				LinkedList<Tile> requestTiles=new LinkedList<Tile>();
+				drawingTiles.clear();
+				boolean haveDrawingTiles=false;
+				boolean fading=false;
+				double scaleF=Math.pow(2,zoomLevel-centerXYZ.z);
+				double topLeftXf=centerXY.x*scaleF-displaySize.x/2;
+				double topLeftYf=centerXY.y*scaleF+displaySize.y/2;
+				boolean drawFullTile = false;
+				
+				for(int s=0;s<mapLayers.size();s++){
+					MapLayer mapLayer=mapLayers.get(s);
+					if(!mapLayer.visible) continue;
+					
+					if(mapLayer.centerXY!=null &&
+							(mapLayer.mainLayerDrawPercent<DRAW_ZOOM_LAYER_DRAW_PERCENT || 
+									System.nanoTime()-fadingStartTime<CONFIG.FADING_TIME*1E6)){
+						double xx=0, yy=0;
+			        	double mapScale=Math.pow(2,mapLayer.centerXYZ.z-centerXYZ.z);
+	                    xx = mapLayer.centerXY.x - centerXY.x*mapScale;
+	                    yy = -(mapLayer.centerXY.y - centerXY.y*mapScale);
+	                    float mapLayerCenterScreenX=displaySize.x/2f+mapLayer.centerDelta.x;
+	                    float mapLayerCenterScreenY=displaySize.y/2f+mapLayer.centerDelta.y;
+	                     
+	                    double zoomScale=Math.pow(2,zoomLevel-mapLayer.centerXYZ.z);
+	                    int leftDistO,rightDistO,topDistO,bottomDistO;
+	                    int leftDist=leftDistO=(int)(Math.floor((-(xx+mapLayer.centerDelta.x)*zoomScale-displaySizeX*0.5)/(CONFIG.TILE_SIZE*zoomScale)+0.5));
+	                	if(leftDist<-gridSizeX/2) leftDist=-gridSizeX/2;
+	                	int rightDist=rightDistO=(int)(Math.ceil((-(xx+mapLayer.centerDelta.x)*zoomScale+displaySizeX*0.5)/(CONFIG.TILE_SIZE*zoomScale)-0.5));
+	                	if(rightDist>gridSizeX/2) rightDist=gridSizeX/2;
+	                	int topDist=topDistO=(int)(Math.floor((-(yy+mapLayer.centerDelta.y)*zoomScale-displaySizeY*0.5)/(CONFIG.TILE_SIZE*zoomScale)+0.5));
+	                	if(topDist<-gridSizeY/2) topDist=-gridSizeY/2;
+	                	int bottomDist=bottomDistO=(int)(Math.ceil((-(yy+mapLayer.centerDelta.y)*zoomScale+displaySizeY*0.5)/(CONFIG.TILE_SIZE*zoomScale)-0.5));
+	                	if(bottomDist>gridSizeY/2) bottomDist=gridSizeY/2;
+	                	//Log.i("TilesView","onDraw zoomLayerLevel,zoomLevel,LRTB:"+mapLayer.centerXYZ.z+","+zoomLevel+","+leftDist+","+rightDist+","+topDist+","+bottomDist);
+	                	if(bottomDist>=topDist && rightDist>=leftDist){
+	                		int beforeDigitalZoom=canvas.save();
+		                	canvas.scale((float)zoomScale,(float)zoomScale,((float)displaySize.x)/2, ((float)displaySize.y)/2);
+		                	canvas.translate((float)xx, (float)yy);
+		                	int drawNum=0;
+		                	for(int i=topDist;i<=bottomDist;i++){
+		                		int y=mapLayer.centerXYZ.y-i;
+		                		int yiTK=mapLayer.centerXYZTK.y+i;
+		                		for(int j=leftDist;j<=rightDist;j++){
+		                			int x=mapLayer.centerXYZ.x+j;
+		                			int xiTK=mapLayer.centerXYZTK.x+j;
+		                			Tile requestTile=mapLayer.createTile();
+		                			requestTile.xyz.x=x;
+		                			requestTile.xyz.y=y;
+		                			requestTile.xyz.z=mapLayer.centerXYZ.z;
+		                			requestTile.xyz.x=Util.indexXMod(requestTile.xyz.x, requestTile.xyz.z);
+                                    requestTile.xyzTK.x = xiTK; //Util.xyzToTKXYZ(requestTile.xyz).x;
+                                    requestTile.xyzTK.y = yiTK;
+                                    requestTile.xyzTK.z = mapLayer.centerXYZTK.z;
+		                			TileResponse tileResponse =tileImages.get(requestTile);
+		            				if(tileResponse!=null && tileResponse.bitmap!=null){
+		              	                //canvas.drawBitmap(tile.graphic, tile.screenXY.x, tile.screenXY.y, null);
+		            					float sx=mapLayerCenterScreenX+(j-0.5f)*CONFIG.TILE_SIZE;
+		            					float sy=mapLayerCenterScreenY+(i-0.5f)*CONFIG.TILE_SIZE;
+		            					canvas.drawBitmap(tileResponse.bitmap, null, new RectF(sx+CONFIG.BORDER/2, sy+CONFIG.BORDER/2, sx+CONFIG.TILE_SIZE-CONFIG.BORDER/2, sy+CONFIG.TILE_SIZE-CONFIG.BORDER/2), null);
+		            					drawNum++;
+		            				}
+		                		}
+		                	}
+		                	mapLayer.zoomLayerDrawPercent=(float)drawNum/((bottomDistO-topDistO+1)*(rightDistO-leftDistO+1));
+		                	canvas.restoreToCount(beforeDigitalZoom);
+	                	}else{
+	                		mapLayer.zoomLayerDrawPercent=0;
+	                	}
+			        	
+			        	
+			        }else mapLayer.zoomLayerDrawPercent=0;   
+			        
+			        //draw the normal tiles
+			        if(true){
+			        	double zoomScale=Math.pow(2,zoomLevel-centerXYZ.z);
+	                	int leftDistO,rightDistO,topDistO,bottomDistO;
+			        	int leftDist=leftDistO=(int)(Math.floor((-centerDelta.x*zoomScale-displaySizeX*0.5)/(CONFIG.TILE_SIZE*zoomScale)+0.5));
+	                	//if(leftDist<-(gridSize.x)/2) leftDist=-(gridSize.x)/2;
+	                	int rightDist=rightDistO=(int)(Math.ceil((-centerDelta.x*zoomScale+displaySizeX*0.5)/(CONFIG.TILE_SIZE*zoomScale)-0.5));
+	                	//if(rightDist>(gridSize.x)/2) rightDist=(gridSize.x)/2;
+	                	int topDist=topDistO=(int)(Math.floor((-centerDelta.y*zoomScale-displaySizeY*0.5)/(CONFIG.TILE_SIZE*zoomScale)+0.5));
+	                	//if(topDist<-(gridSize.y)/2) topDist=-(gridSize.y)/2;
+	                	int bottomDist=bottomDistO=(int)(Math.ceil((-centerDelta.y*zoomScale+displaySizeY*0.5)/(CONFIG.TILE_SIZE*zoomScale)-0.5));
+	                	//if(bottomDist>(gridSize.y)/2) bottomDist=(gridSize.y)/2;
+		               	//Log.i("TilesView","onDraw mapLayerLevel,zoomLevel,LRTB:"+centerXYZ.z+","+zoomLevel+","+leftDist+","+rightDist+","+topDist+","+bottomDist);
+	                	if(bottomDist>=topDist && rightDist>=leftDist){
+	                		int beforeDigitalZoom=canvas.save();
+		                	canvas.scale((float)zoomScale,(float)zoomScale,((float)displaySize.x)/2, ((float)displaySize.y)/2);
+		                	//Log.i("TilesView.onDraw","zoomScale,moveX,moveY:"+zoomScale+","+mapLayer.tilesMove.x+","+mapLayer.tilesMove.y);
+		                	int drawNum=0;
+                            if (mapText.canvasSize.x == 0 || mapText.canvasSize.y == 0) {
+                                int max = Math.max(displaySize.x, displaySize.y);
+                                mapText.canvasSize.x=max;
+                                mapText.canvasSize.y=max;
+                                XYFloat offset = new XYFloat(0, 0);
+                                mapText.setOffset(offset, new RotationTilt());
+                                LogWrapper.d("TilesView", "tileTextCanvasSize="+mapText.canvasSize+",offset="+offset);
+                            }
+		                	for(int i=topDist;i<=bottomDist;i++){
+		                		int y=centerXYZ.y-i;
+		                		int yiTK=centerXYZTK.y+i;
+		                		for(int j=leftDist;j<=rightDist;j++){
+		                			int x=centerXYZ.x+j;
+		                			int xiTK=centerXYZTK.x+j;
+		                			Tile requestTile = mapLayer.createTile();
+		                			requestTile.xyz.x=x;
+		                			requestTile.xyz.y=y;
+		                			requestTile.xyz.z=centerXYZ.z;
+		                			requestTile.xyz.x=Util.indexXMod(requestTile.xyz.x, requestTile.xyz.z);
+                                    requestTile.xyzTK.x = xiTK; //Util.xyzToTKXYZ(requestTile.xyz).x;
+                                    requestTile.xyzTK.y = yiTK;
+                                    requestTile.xyzTK.z = centerXYZTK.z;
+		                			if(!haveDrawingTiles) drawingTiles.add(requestTile);
+									TileResponse tileResponse=tileImages.get(requestTile);
+									float sx=centerScreenX+(j-0.5f)*CONFIG.TILE_SIZE;
+									float sy=centerScreenY+(i-0.5f)*CONFIG.TILE_SIZE;
+									if(tileResponse != null && tileResponse.bitmap!=null){
+										if(CONFIG.FADING_TIME>0){
+											long fadeTime=fadingStartTime;//Math.max(fadingStartTime, tileResponse.availTime);
+											long curTime=System.nanoTime();
+											float fadingAnim = (float)((curTime - fadeTime)/(CONFIG.FADING_TIME*1E6));
+											if (fadingAnim > 1)	fadingAnim = 1;
+											if(fadingAnim<1) fading=true;
+											tileP.setAlpha((int) Math.floor(FADING_START_ALPHA+fadingAnim*(255-FADING_START_ALPHA)));
+											if(fadingAnim<1){
+												//Log.i("TilesView","onDraw tileP.alpha,fadingStartTime,availTime:"+tileP.getAlpha()+","+(curTime-fadingStartTime)/1E6+","+(curTime-tileResponse.availTime)/1E6);
+											}
+										}
+		                				canvas.drawBitmap(tileResponse.bitmap, null, new RectF(sx+CONFIG.BORDER/2, sy+CONFIG.BORDER/2, sx+CONFIG.TILE_SIZE-CONFIG.BORDER/2, sy+CONFIG.TILE_SIZE-CONFIG.BORDER/2), tileP);
+		                				drawNum++;
+									}else{
+										requestTile.distanceFromCenter=Math.abs(i)+Math.abs(j);
+										if(i*panDirection.y<=0 && j*panDirection.x<=0){
+                                        	requestTiles.addFirst(requestTile);
+                                        }else{
+                                        	requestTiles.add(requestTile);
+                                        }
+									}
+		                			
+		                		}
+		                	}
+		                	drawFullTile = (drawNum == ((bottomDist-topDist+1)*(rightDist-leftDist+1)));
+                            int mapTextZoomLevel = mapText.getZoomLevel();
+                            XYDouble mapTextMercXY = mapText.getMercXY();
+                            boolean same = true;
+                            long time = System.nanoTime();
+                            if (!(zoomingL || fading || movingL || rotatingZ) &&
+                                    time - mapText.lastTime >= 1000000000*1.5 && 
+                                    (drawFullTile || time - mapText.lastTime >= 1000000000*6)) {
+                                XYFloat mapTextScreenXY = mercXYToScreenXYConv(mapTextMercXY, mapTextZoomLevel);
+                                if (Math.abs(mapTextScreenXY.x - displaySize.x / 2) > (mapText.canvasSize.x - displaySize.x) / 2
+                                        || Math.abs(mapTextScreenXY.y - displaySize.y / 2) > (mapText.canvasSize.y - displaySize.y) / 2
+                                        || mapTextZoomLevel != zoomLevel
+                                        || (mapText.drawNum != drawNum)) {
+                                    same = false;
+                                }
+                            }
+                            if (!same) {
+                                mapText.mercXYGetting.x = centerXY.x;
+                                mapText.mercXYGetting.y = centerXY.y;
+                                mapText.zoomLevelGetting = centerXYZ.z;
+                                mapText.drawNum = drawNum;
+                                mapText.screenTextGetting = true;
+                                mapText.lastTime = time;
+                            }
+		                	mapLayer.mainLayerDrawPercent=(float)drawNum/((bottomDistO-topDistO+1)*(rightDistO-leftDistO+1));
+		                	canvas.restoreToCount(beforeDigitalZoom);
+	                	}else{
+	                		mapLayer.mainLayerDrawPercent=0;
+	                	}
+	                	
+			        }
+			        haveDrawingTiles=true;
+				}
+				
+                
+                //draw tile text
+                if(mapText.isVisible() && mapText.getZoomLevel()-zoomLevel == 0) {
+                    int beforeDigitalZoom=canvas.save();
+                	double zoomScale=(float)Math.pow(2,zoomLevel-mapText.getZoomLevel());
+                    canvas.scale((float)zoomScale,(float)zoomScale,((float)displaySize.x)/2, ((float)displaySize.y)/2);
+                    float x=(float)(mapText.getMercXY().x*zoomScale-topLeftXf);
+                    float y=(float)(-mapText.getMercXY().y*zoomScale+topLeftYf);
+                    canvas.translate(x,y);
+    				drawMapText(canvas,mapText.getMapWords(),new XYFloat(0,0));
+    				canvas.restoreToCount(beforeDigitalZoom);
+    				if (mapText.screenTextGetting == false && drawFullTile) {
+                        isDrawMapTextFinish = true;
+                    } else {
+                        isDrawMapTextFinish = false;
+                    }
+                }				
+		        
+		        //draw the shapes
+		        for(int i=0;i<shapes.size();i++){
+		        	Shape shape=shapes.get(i);
+		        	if(shape instanceof Polyline){
+		        		Polyline polyline=(Polyline)shape;
+		        		if(polyline.getPositions()==null) continue;
+		        		
+		        		polyline.renderCanvas(canvas, new XYDouble(topLeftXf,topLeftYf), zoomLevel, centerXYZ.z, drawingTiles);
+		        	}else if(shape instanceof Circle){
+                    	Circle circle=(Circle)shape;
+                    	if(circle.getPosition()==null){
+	    					continue;
+	    				}
+                    	circle.renderCanvas(canvas,new XYDouble(topLeftXf,topLeftYf),zoomLevel);
+					}
+		        	else if(shape instanceof Polygon){
+		        		Polygon polygon=(Polygon)shape;
+		        		if(polygon.getPositions()==null){
+		        			continue;
+		        		}
+		        		polygon.renderCanvas(canvas, new XYDouble(topLeftXf,topLeftYf), zoomLevel);
+		        	}
+                }
+		        
+		    	//draw the overlays
+		        double overlayZoomScale=Math.pow(2,zoomLevel-ItemizedOverlay.ZOOM_LEVEL);
+		        for(int i=0;i<overlays.size();i++){
+	    			ItemizedOverlay overlay=overlays.get(i);
+	    				    			
+	    			ArrayList<ArrayList<OverlayItem>> clusters=overlay.getVisiblePins(centerXYZ.z,drawingTiles);
+	    			//Log.i("TilesView","onDraw pins length,visible length,zoomLevel:"+overlay.size()+","+pins.size()+","+centerXYZ.z);
+                    OverlayItem focusedPin = null;
+	                for(int j=clusters.size()-1;j>=0;j--){
+	    				ArrayList<OverlayItem> cluster=clusters.get(j);
+	    				ArrayList<OverlayItem> visiblePins=new ArrayList<OverlayItem>();
+        				for(int ii=0;ii<cluster.size();ii++){
+        					OverlayItem pinL=cluster.get(ii);
+        					if(pinL.getIcon().getImage()!=null && pinL.getMercXY()!=null && pinL.isVisible()){
+        						visiblePins.add(pinL);
+        					}
+        				}
+	    				if(visiblePins.size()==0) continue;
+	    				
+	    				OverlayItem pin=visiblePins.get(0);
+    					
+                        boolean isMylocation = overlay.getName().equals(ItemizedOverlay.MY_LOCATION_OVERLAY);
+                        Icon icon=pin.getIcon();
+                        if (isMylocation && pin.isFoucsed) {
+                            icon = (Icon)pin.getAssociatedObject();
+                        }
+    					XYInteger pinSize=icon.getSize();
+	    				XYInteger offset=icon.getOffset();
+	    				
+	    				float x=(float)(pin.getMercXY().x*overlayZoomScale-topLeftXf);
+	    				float y=(float)(-pin.getMercXY().y*overlayZoomScale+topLeftYf);
+	    				RotationTilt rt=pin.getRotationTilt();
+	    				float zRot=rt.getRotation();
+	    				if(rt.getRotateRelativeTo().equals(RotateReference.SCREEN)){
+	    					zRot-=mapMode.getzRotation();
+	    				}
+	    				canvas.save();
+	    				canvas.translate(x,y);
+	    				if (isMylocation) {
+                            zRot-=locationZRotation;
+                        } else if (pin.isFoucsed) {
+                            focusedPin = pin;
+                        }
+	    				canvas.rotate(zRot);
+	    				canvas.drawBitmap(icon.getImage(), null, new RectF(-offset.x, -offset.y,-offset.x+pinSize.x,-offset.y+pinSize.y), null);
+	    				int order = icon.getOrder();
+	                    if (order > 0) {
+	                        String orderStr = String.valueOf(order);
+	                        int width = Math.round(orderP.measureText(orderStr));
+	                        int height = Math.round(orderP.measureText("0"));
+	                        canvas.drawText(orderStr, -offset.x+pinSize.x/2-width/2, -offset.y+pinSize.x/2-height/2, orderP);
+	                    }
+	    				canvas.restore();
+	    				
+	    			}
+	                if (focusedPin != null) {
+                        Icon icon=focusedPin.getIcon();
+                        XYInteger pinSize=icon.getSize();
+                        XYInteger offset=icon.getOffset();
+                        
+                        float x=(float)(focusedPin.getMercXY().x*overlayZoomScale-topLeftXf);
+                        float y=(float)(-focusedPin.getMercXY().y*overlayZoomScale+topLeftYf);
+                        RotationTilt rt=focusedPin.getRotationTilt();
+                        float zRot=rt.getRotation();
+                        if(rt.getRotateRelativeTo().equals(RotateReference.SCREEN)){
+                            zRot-=mapMode.getzRotation();
+                        }
+                        canvas.save();
+                        canvas.translate(x,y);
+                        canvas.rotate(zRot);
+                        canvas.drawBitmap(icon.getImage(), null, new RectF(-offset.x, -offset.y,-offset.x+pinSize.x,-offset.y+pinSize.y), null);
+                        int order = icon.getOrder();
+                        if (order > 0) {
+                            String orderStr = String.valueOf(order);
+                            int width = Math.round(orderP.measureText(orderStr));
+                            int height = Math.round(orderP.measureText("0"));
+                            canvas.drawText(orderStr, -offset.x+pinSize.x/2-width/2, -offset.y+pinSize.x/2-height/2, orderP);
+	    				}
+	    				
+	    				canvas.restore();
+	    				
+	    			}
+	    			
+	    		}
+		    	
+		    	//draw the info window
+		        if(infoWindow.isVisible() && infoWindow.getMercXY()!=null) {
+		        	double infoZoomScale=(float)Math.pow(2,zoomLevel-InfoWindow.ZOOM_LEVEL);
+			        float x=(float)(infoWindow.getMercXY().x*infoZoomScale-topLeftXf);
+    				float y=(float)(-infoWindow.getMercXY().y*infoZoomScale+topLeftYf);
+    				RotationTilt rt=infoWindow.getOffsetRotationTilt();
+    				float zRot=rt.getRotation();
+    				if(rt.getRotateRelativeTo().equals(RotateReference.SCREEN)){
+    					zRot-=mapMode.getzRotation();
+    				}
+    				canvas.save();
+    				canvas.translate(x,y);
+    				canvas.rotate(zRot);
+    				canvas.translate(-infoWindow.getOffset().x, -infoWindow.getOffset().y);
+    				canvas.rotate(-(zRot+mapMode.getzRotation()));
+    				drawInfoWindow(canvas,infoWindow,new XYFloat(0,0));
+    				canvas.restore();
+    				
+				}
+		        
+		        //draw the compass
+                if(compass!=null && compass.isVisible()){
+                	XYInteger screenXY=compass.getScreenXY(displaySize);
+                	canvas.save();
+                	canvas.rotate(-mapMode.getzRotation(),displaySize.x/2,displaySize.y/2+padding.top);
+                	canvas.translate(screenXY.x,screenXY.y+padding.top);
+                	canvas.rotate(locationZRotation);
+                	Icon icon = compass.getIcon();
+                    canvas.drawBitmap(icon.getImage(), -icon.getOffset().x, -icon.getOffset().y, tileP);
+                	canvas.restore();
+                	
+                }
+                //end of draw
+		        
+		        //if(visibleLayerNum>1 && requestTiles.size()>0){
+		        if(requestTiles.size()>0){
+		        	Collections.sort(requestTiles);
+		        	synchronized(tilesWaitForLoading){
+		        		tilesWaitForLoading.clear();
+			        	tilesWaitForLoading.addAll(0,requestTiles);
+			        	tilesWaitForLoading.notifyAll();
+		        	}
+		        }
+		        if (mapText.screenTextGetting) {
+                    if (Math.abs(System.currentTimeMillis()-MapTextThread.time) > 256) {
+                        synchronized (mapText) {
+                            mapText.notifyAll();
+                        }
+                    } else {
+                        postInvalidateDelayed(256);
+                    }
+                }
+				if(zoomingL || fading || movingL || rotatingZ) invalidate();
+				else if (isSnap && mapText.screenTextGetting == false && drawFullTile){
+                    isSnap = false;
+                }
+				
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			
+			Profile.drawInc(System.nanoTime()-drawStart);
+			
+			if(movingJustDoneL){
+				try{
+					Position cp=getCenterPosition();
+					if(movingListener!=null){
+						movingListener.onMoveEndEvent(mParentMapView, cp);
+					}
+					mParentMapView.executeMoveEndListeners(cp);
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+			}
+			if(zoomingJustDoneL){
+	            MapTextThread.time = 0;
+				if(zoomingListener!=null){
+					zoomingListener.onZoomEndEvent(mParentMapView, Math.round(zoomLevel));
+				}
+				mParentMapView.executeZoomEndListeners(Math.round(zoomLevel));
+			}
+			
+			if(rotatingZJustDoneL && lastZRotation!=mapMode.getzRotation()){
+				mParentMapView.executeRotateEndListeners(mapMode.getzRotation());
+			}
+		}
+	
+	}
+	
+	/**
+	 * draw info window to canvas. This method is also used in opengl drawing, because otherwise
+	 * we need to create a font bitmap buffer to write any text, which should be very painful.
+	 * @param canvas
+	 * @param infoWindow
+	 * @param screenXY
+	 */
+    private void drawInfoWindow(Canvas canvas, InfoWindow infoWindow, XYFloat screenXY){
+    	RectF infoWindowRect=getInfoWindowRecF(infoWindow,screenXY);
+    	float textOffsetY=InfoWindow.INFO_TEXTOFFSET_VERTICAL*metrics.density;
+    	float textOffsetX=InfoWindow.INFO_TEXTOFFSET_HORIZONTAL*metrics.density;
+        int expendOffsetY=Math.round(InfoWindow.INFO_EXPENDOFFSET_VERTICAL*metrics.density);
+        int expendOffsetX=Math.round(InfoWindow.INFO_EXPENDOFFSET_HORIZONTAL*metrics.density);
+		Paint paint=getTextPaint(infoWindow.getTextAlign());
+		float textSizeY=-paint.ascent()+paint.descent();
+		
+		if (infoWindow.type == InfoWindow.TYPE_SIMPLE) {
+            if (infoWindow.getBackgroundColor() == InfoWindow.BACKGROUND_COLOR_CLICKED) {
+                infoWindow.infoWindowSimpleFocusedBg.setBounds(new Rect((int)infoWindowRect.left, (int)infoWindowRect.top, (int)infoWindowRect.right, (int)infoWindowRect.bottom));
+                infoWindow.infoWindowSimpleFocusedBg.draw(canvas);
+            } else {
+                infoWindow.infoWindowSimpleNormalBg.setBounds(new Rect((int)infoWindowRect.left, (int)infoWindowRect.top, (int)infoWindowRect.right, (int)infoWindowRect.bottom));
+                infoWindow.infoWindowSimpleNormalBg.draw(canvas);
+            }
+		} else {
+            
+            Drawable drawable = infoWindow.infoWindowLeftNormalDrw;
+            if (infoWindow.getBackgroundColor() == InfoWindow.BACKGROUND_COLOR_CLICKED_LEFT) {
+                drawable = infoWindow.infoWindowExpendLeftFocusedBg;
+            } else if (infoWindow.getBackgroundColor() == InfoWindow.BACKGROUND_COLOR_CLICKED_RIGHT) {
+                drawable = infoWindow.infoWindowExpendRightFocusedBg;
+            } else {
+                drawable = infoWindow.infoWindowExpendNormalBg;
+            }
+            drawable.setBounds((int)infoWindowRect.left, 
+                    (int)infoWindowRect.top, 
+                    (int)infoWindowRect.right, 
+                    (int)infoWindowRect.bottom);
+            drawable.draw(canvas);
+            
+            drawable = infoWindow.infoWindowLeftNormalDrw;
+		    drawable.setBounds(new Rect((int)infoWindowRect.left+expendOffsetX, 
+                    (int)infoWindowRect.top+expendOffsetY, 
+                    (int)infoWindowRect.left+infoWindow.infoWindowLeftNormalRect.width()+expendOffsetX, 
+                    (int)infoWindowRect.top+infoWindow.infoWindowLeftNormalRect.height()+expendOffsetY));
+		    drawable.draw(canvas);
+		    
+            drawable = infoWindow.infoWindowRightNormalDrw;
+            drawable.setBounds(new Rect((int)infoWindowRect.right-infoWindow.infoWindowLeftNormalRect.width()-expendOffsetX, 
+                    (int)infoWindowRect.top+expendOffsetY, 
+                    (int)infoWindowRect.right-expendOffsetX, 
+                    (int)infoWindowRect.top+infoWindow.infoWindowLeftNormalRect.height()+expendOffsetY));
+            drawable.draw(canvas);
+		}
+		
+//		canvas.drawRoundRect(infoWindowRect, roundRadius, roundRadius, getInfoWindowInnerPaint());
+//		canvas.drawRoundRect(infoWindowRect, roundRadius, roundRadius, infoWindowBorderP);
+
+		String[] msgs=infoWindow.getMessage().split("\n");
+		for(int i=0;i<msgs.length;i++){
+			String msg_line=msgs[i];
+			if(msg_line.length()>InfoWindow.MAX_CHARS_PER_LINE(infoWindow.type)){
+				msg_line=msg_line.substring(0,InfoWindow.MAX_CHARS_PER_LINE(infoWindow.type)-3)+"...";
+			}
+			int paddingTop = 0;
+			int paddingLeft = 0;
+			if (infoWindow.type == InfoWindow.TYPE_EXPEND) {
+			    paddingLeft = (int)textOffsetX/5;
+			    if (msgs.length == 1)
+			        paddingTop = (int)((-paint.ascent()+paint.descent())*(2f/3));
+			}
+			if(infoWindow.getTextAlign()==InfoWindow.TextAlign.LEFT){
+				canvas.drawText(msg_line,infoWindowRect.left+textOffsetX+paddingLeft,infoWindowRect.top+paddingTop+textOffsetY+(i+0.8f)*(textSizeY),paint);
+				
+			}else if(infoWindow.getTextAlign()==InfoWindow.TextAlign.CENTER){
+				canvas.drawText(msg_line,(infoWindowRect.left+infoWindowRect.right)/2+paddingLeft,infoWindowRect.top+paddingTop+textOffsetY+(i+0.8f)*(textSizeY),paint);
+			}
+		}
+		
+//		int x = (int)infoWindowRect.left+(int)((infoWindowRect.right-infoWindowRect.left)/2);
+//	    int y = (int)infoWindowRect.bottom-1;
+//
+//	    // Points of the triangle pointer on info window
+//	    
+//	    Point triangleTL = new Point(x-InfoWindow.INFO_TRIANGLE_WIDTH/2,y);        
+//	    Point triangleTR = new Point(x+InfoWindow.INFO_TRIANGLE_WIDTH/2,y);
+//	    Point triangleBC = new Point(x,y+InfoWindow.INFO_TRIANGLE_HEIGHT+1);
+//
+//	    // triangle background
+//	    Path triangleBGPath = new Path();
+//	    triangleBGPath.setFillType(Path.FillType.EVEN_ODD);
+//	    triangleBGPath.moveTo(triangleTL.x,triangleTL.y);
+//	    triangleBGPath.lineTo(triangleTR.x,triangleTR.y);
+//	    triangleBGPath.lineTo(triangleBC.x,triangleBC.y);
+//	    triangleBGPath.lineTo(triangleTL.x,triangleTL.y);
+//	    triangleBGPath.close();
+//	    canvas.drawPath(triangleBGPath, getInfoWindowInnerPaint());
+//	    
+//	    // triangle border
+//	    Path triangleBorderPath = new Path();
+//	    triangleBorderPath.setFillType(Path.FillType.EVEN_ODD);	    
+//	    triangleBorderPath.moveTo(triangleTL.x,triangleTL.y+1);	
+//	    triangleBorderPath.lineTo(triangleBC.x,triangleBC.y);
+//	    triangleBorderPath.lineTo(triangleTR.x,triangleTR.y+1);
+//	    canvas.drawPath(triangleBorderPath, infoWindowBorderP);
+    } 
+    
+    /**
+     * calculate the outer containing rectangular of the info window from the screen coordinate
+     * @param infoWindow
+     * @param screenXY the screen coordinate of the anchor point of the info window
+     */
+    public RectF getInfoWindowRecF(InfoWindow infoWindow, XYFloat screenXY){
+    	Paint paint=getTextPaint(infoWindow.getTextAlign());
+		
+    	float textOffsetX=InfoWindow.INFO_TEXTOFFSET_HORIZONTAL*metrics.density;
+		float textOffsetY=InfoWindow.INFO_TEXTOFFSET_VERTICAL*metrics.density;
+        int expendOffsetX=Math.round(InfoWindow.INFO_EXPENDOFFSET_HORIZONTAL*metrics.density);
+        float triangleHeight=InfoWindow.INFO_TRIANGLE_HEIGHT*metrics.density;
+		String msg=infoWindow.getMessage();
+		String[] msgs=msg.split("\n");
+		float maxLength=0;
+		String msg_line="";
+		for(int i=0;i<msgs.length;i++){
+			msg_line=msgs[i];
+			if(msg_line.length()>InfoWindow.MAX_CHARS_PER_LINE(infoWindow.type)) msg_line=msg_line.substring(0,InfoWindow.MAX_CHARS_PER_LINE(infoWindow.type)-3)+"...";
+			float length=paint.measureText(msg_line);
+			if(length>maxLength) maxLength=length;
+		}
+		float infoWindowWidth=maxLength+2*textOffsetX;
+		float infoWindowHeight=(-paint.ascent()+paint.descent())*msgs.length+2*textOffsetY+triangleHeight;
+        if (infoWindow.type == InfoWindow.TYPE_EXPEND) {
+            infoWindowWidth += (expendOffsetX + infoWindow.infoWindowLeftNormalRect.width()) *2 + textOffsetX;
+        }
+		
+		RectF infoWindowRect=new RectF(screenXY.x-infoWindowWidth/2,
+				screenXY.y-infoWindowHeight,screenXY.x+infoWindowWidth/2,screenXY.y);
+		
+		float width = infoWindowRect.width();
+		int minWidth;
+		if (infoWindow.type == InfoWindow.TYPE_SIMPLE) {
+		    minWidth = infoWindow.infoWindowSimpleNormalRect.width();
+		} else {
+		    minWidth = infoWindow.infoWindowExpendRect.width();
+		}
+		if (width < minWidth) {
+		    float offset = (minWidth - width)/2;
+		    infoWindowRect.left -= offset;
+            infoWindowRect.right += offset;
+		}
+        
+        float height = infoWindowRect.height();
+        int minHeight;
+        if (infoWindow.type == InfoWindow.TYPE_SIMPLE) {
+            minHeight = infoWindow.infoWindowSimpleNormalRect.height();
+        } else {
+            minHeight = infoWindow.infoWindowExpendRect.height();
+        }
+        if (height < minHeight) {
+            float offset = minHeight - height;
+            infoWindowRect.top -= offset;
+        }
+		return infoWindowRect;
+    }
+    
+    public InfoWindow getInfoWindow() {
+		return infoWindow;
+	}
+
+	public void setInfoWindow(InfoWindow infoWindow) {
+		this.infoWindow = infoWindow;
+	}
+
+	/**
+     * centers the map on a given position and renders tiles
+     * @param position
+     */
+    public void centerOnPosition(Position position) throws APIException{
+        centerOnPosition(position, zoomLevel);
+    }
+    
+    /**
+     * center the map on a given position and zoom level, and render tiles
+     * @param position
+     * @param zoomLevel
+     * @throws APIException
+     */
+    public void centerOnPosition(Position position, float zoomLevel) throws APIException{
+    	centerOnPosition(position, zoomLevel, false);
+    }
+    
+    public void centerOnPosition(Position position, float zoomLevel, boolean clear) throws APIException{
+        if (zoomLevel < CONFIG.ZOOM_LOWER_BOUND || zoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
+            throw new APIException("invalid zoom level: " + zoomLevel + " must be between "+CONFIG.ZOOM_LOWER_BOUND+" - "+CONFIG.ZOOM_UPPER_BOUND);
+        }
+        if (position == null) {
+            return;
+        }
+    	synchronized(drawingLock){
+    		try{
+    		    if (clear) {
+    		        tileImages.clear();
+    		    }
+        		
+    			int z=Math.round(zoomLevel);
+                LogWrapper.i("TilesView","centerOnPosition z:"+z+",position:"+ position);
+        		XYDouble centerXYL=Util.posToMercPix(position, z);
+                LogWrapper.i("TilesView","centerOnPosition centerXYL:"+centerXYL);
+        		
+        		TileGridResponse resp=Util.handlePortrayMapRequest(centerXYL,z);
+                LogWrapper.w("TilesView", "centerOnPosition(), centerXYL="+centerXYL+", zoomLevel= "+zoomLevel+", clear="+clear);
+            	
+            	this.zoomLevel=zoomLevel;
+        		renderMap(resp);
+        		
+        	}catch(Exception e){
+        		overlays.clear();
+        		shapes.clear();
+        		infoWindow.setAssociatedOverlayItem(null);
+        		infoWindow.setVisible(false);
+        		this.mapPreference.routeId=null;
+        		this.mapPreference.realTimeTraffic=false;
+        		centerXY=null;
+        		throw APIException.wrapToAPIException(e);
+        		
+        	}
+    	}
+		refreshMap();
+        mParentMapView.executeMoveEndListeners(getCenterPosition());
+        mParentMapView.executeZoomEndListeners(Math.round(zoomLevel));
+    }
+    	
+        
+    /**
+     * hide all overlays
+     */
+    public void hideOverlays(){
+    	for(int i=0;i<overlays.size();i++){
+    		for(int j=0;j<overlays.get(i).size();j++){
+    			overlays.get(i).get(j).setVisible(false);
+    		}
+    	}
+    	
+    }
+    
+    /**
+     * show all overlays
+     */
+    public void showOverlays(){
+    	for(int i=0;i<overlays.size();i++){
+    		for(int j=0;j<overlays.get(i).size();j++){
+    			overlays.get(i).get(j).setVisible(true);
+    		}
+    	}
+    	
+    }
+    
+    public void showOverlay(String overlayName, boolean top){
+        synchronized (drawingLock) {
+            for(int i=0;i<overlays.size();i++){
+                if (overlayName.equals(overlays.get(i).getName())) {
+                    ItemizedOverlay itemizedOverlay = overlays.remove(i);
+                    if (top) {
+                        overlays.add(itemizedOverlay);
+                    } else {
+                        overlays.add(0, itemizedOverlay);
+                    }
+                    break;
+                }
+            }
+        }
+        refreshMap();
+    }
+    
+    
+
+    public LinkedHashMap<Tile, TileResponse> getTileImages() {
+		return tileImages;
+	}
+	
+    public LinkedHashMap<Tile, Integer> getTileTextureRefs() {
+		return tileTextureRefs;
+	}
+
+	/**
+     * moves the map to a given position
+     * @param position
+     */
+	private void panToPosition(Position position, long duration, MapView.MoveEndEventListener listener) throws APIException{
+		if(position==null) return;
+		
+		boolean moveJustDown=false;
+		if (duration == -1) {
+		    duration = MapView.PAN_TO_POSITION_TIME_DEF;
+		}
+		synchronized(drawingLock){
+			easingRecord.reset();
+			XYDouble newMercXY=Util.posToMercPix(position, zoomLevel);
+			double scale=Math.pow(2,zoomLevel-centerXYZ.z);
+			float x = (float)(centerXY.x*scale - newMercXY.x);
+			float y = (float)(newMercXY.y - centerXY.y*scale);
+			if(CONFIG.DECELERATE_RATE>0){
+				easingRecord.startMoveTime=System.nanoTime();
+				double s=Math.sqrt(x*x+y*y);
+				easingRecord.direction.x=(float)(x/s);
+				easingRecord.direction.y=(float)(y/s);
+				easingRecord.decelerate_rate=Math.pow(easingRecord.MINIMUM_SPEED_RATIO, easingRecord.TIME_SCALE/duration);
+				easingRecord.speed=-s/easingRecord.TIME_SCALE*Math.log(easingRecord.decelerate_rate);
+				easingRecord.listener=listener;
+				LogWrapper.d("Moving","panToPosition speed,decelerate,s:"+easingRecord.speed+","+easingRecord.decelerate_rate+","+s);
+				
+				refreshMap();
+				
+			}else{
+				moveView(x,y);
+				moveJustDown=true;
+			}
+		}
+		
+		if(moveJustDown){
+			mParentMapView.executeMoveEndListeners(position);
+		}
+		
+	}
+    
+	/**
+	 * calculate the current map center position
+	 */
+	public Position getCenterPosition(){
+    	if(centerXY==null) return null;
+    	return Util.mercPixToPos(centerXY,centerXYZ.z);
+    	
+    }
+    
+    /**
+     * distance between center to left border of screen
+     */
+    public double getRadiusX() {
+        return radiusX;
+    }
+    /**
+     * distance between center to top border of screen
+     */
+    public double getRadiusY() {
+        return radiusY;
+    }
+    /**
+     * returns the current boundingbox for the viewable area of map on the screen, useful for clipping
+     * @return BoundingBox
+     */
+    public BoundingBox getScreenBoundingBox(){
+        double scale=Math.pow(2, zoomLevel-centerXYZ.z);
+        return new BoundingBox(
+        		Util.mercPixToPos(new XYDouble(centerXY.x*scale-displaySize.x/2,centerXY.y*scale+displaySize.y/2), zoomLevel),
+        		Util.mercPixToPos(new XYDouble(centerXY.x*scale+displaySize.x/2,centerXY.y*scale-displaySize.y/2), zoomLevel)
+        		);
+    }
+    
+    
+    /**
+     * current zoom level, zoom level is represented in global explore format, 
+     * higher zoom level means more zoom in
+     */
+    public float getZoomLevel() {
+        return zoomLevel;
+    }
+    
+    public XYInteger getDisplaySize(){
+    	return new XYInteger(displaySize.x,displaySize.y);
+    }
+    
+    public XYFloat positionToScreenXY(Position pos) throws APIException{
+    	XYFloat xyConv=positionToScreenXYConv(pos);
+    	float xConv=xyConv.x-displaySize.x/2;
+		float yConv=xyConv.y-displaySize.y/2;
+		float cosZ=mapMode.getCosZ();
+		float sinZ=mapMode.getSinZ();
+		float xConv2=cosZ*xConv-sinZ*yConv;
+		float yConv2=sinZ*xConv+cosZ*yConv;
+		float cosX=mapMode.getCosX();
+		float sinX=mapMode.getSinX();
+		float y=yConv2*mapMode.scale*cosX*mapMode.nearZ/(mapMode.middleZ+yConv2*mapMode.scale*sinX);
+		float x=xConv2*mapMode.scale*mapMode.nearZ/(mapMode.middleZ+yConv2*mapMode.scale*sinX);
+		x+=displaySize.x/2;
+		y+=displaySize.y/2;
+		return new XYFloat(x,y);
+	}
+    
+    /**
+     * retrieve the screen coordinate from the lat lon based on current center and zoom level 
+     * @param pos
+     * 
+     */
+	private XYFloat positionToScreenXYConv(Position pos) throws APIException{
+    	XYDouble mercXY=Util.posToMercPix(pos, zoomLevel);
+    	return mercXYToScreenXYConv(mercXY, zoomLevel);
+    }
+		
+	/**
+	 * retrieve the lat lon from the screen coordinate
+	 * @param screenXY
+	 * 
+	 */
+    private Position screenXYConvToPos ( float sx, float sy ) {
+        XYDouble xy=screenXYConvToMercXY(sx, sy, zoomLevel);
+        return Util.mercPixToPos( xy,zoomLevel );
+    } 
+    
+    public Position screenXYToPos ( XYFloat screenXY ) {
+    	XYFloat xyConv=screenXYToScreenXYConv(screenXY.x,screenXY.y);
+    	return screenXYConvToPos(xyConv.x,xyConv.y);
+    } 
+    
+    /**
+     * sets new zoom level for next request that centers the map.
+     * @param newLevel
+     */
+    public void setZoomLevel(float newLevel) throws APIException{
+        newLevel = TKJumpZoomLevel(newLevel);
+        if (newLevel < CONFIG.ZOOM_LOWER_BOUND || newLevel > CONFIG.ZOOM_UPPER_BOUND) {
+            throw new APIException("invalid zoom level: " + newLevel + " must be between "+CONFIG.ZOOM_LOWER_BOUND+" - "+CONFIG.ZOOM_UPPER_BOUND);
+        }
+        if(centerXY==null || displaySize==null || displaySize.x==0 || displaySize.y==0){
+        	zoomLevel=newLevel;
+        }else{
+        	zoomView(newLevel, new XYFloat(displaySize.x/2,displaySize.y/2));
+        }
+        
+    }
+
+    public void zoomTo(int newZoomLevel, final Position zoomCenter, long duration, final MapView.ZoomEndEventListener listener) throws APIException{
+        newZoomLevel = (int)TKJumpZoomLevel(newZoomLevel);
+        if (newZoomLevel < CONFIG.ZOOM_LOWER_BOUND || newZoomLevel > CONFIG.ZOOM_UPPER_BOUND) {
+            throw new APIException("invalid zoom level: " + newZoomLevel + " must be between "+CONFIG.ZOOM_LOWER_BOUND+" - "+CONFIG.ZOOM_UPPER_BOUND);
+        }
+    	final XYFloat zc=new XYFloat(displaySize.x/2,displaySize.y/2);
+    	if(zoomCenter!=null){
+            XYFloat screenXY=positionToScreenXYConv(zoomCenter);
+            try{
+                if (screenXY.equals(zc)) {
+                    if(duration==-1){
+                        duration=Math.round(MapView.DIGITAL_ZOOMING_TIME_PER_LEVEL*Math.abs(newZoomLevel-zoomLevel));
+                    }
+                    zoomTo(newZoomLevel, zc, duration, listener);
+                } else {
+                    final int finalnewZoomLevel = newZoomLevel;
+                    panToPosition(zoomCenter, duration, new MoveEndEventListener() {
+                        
+                        @Override
+                        public void onMoveEndEvent(MapView mapView, Position position) {
+                            try {
+                                centerOnPosition(zoomCenter, finalnewZoomLevel);
+                                if (listener != null) {
+                                    listener.onZoomEndEvent(mapView, finalnewZoomLevel);
+                                }
+                            }catch (APIException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });                    
+                }
+            }catch (APIException e) {
+                e.printStackTrace();
+            }
+    	} else if ((zoomLevel > CONFIG.ZOOM_JUMP && newZoomLevel == CONFIG.ZOOM_JUMP-1) || (zoomLevel < CONFIG.ZOOM_JUMP && newZoomLevel == CONFIG.ZOOM_JUMP+1)) {
+            setZoomLevel(newZoomLevel);
+            refreshMap();
+            mParentMapView.executeZoomEndListeners(newZoomLevel);
+        } else {
+            if(duration==-1){
+                duration=Math.round(MapView.DIGITAL_ZOOMING_TIME_PER_LEVEL*Math.abs(newZoomLevel-zoomLevel));
+            }
+    	    zoomTo(newZoomLevel,zc,duration,listener);
+        }
+    }
+    
+    private void zoomTo(int newZoomLevel, XYFloat zoomCenterXYConv, long duration, MapView.ZoomEndEventListener listener){
+    	synchronized(drawingLock){
+            newZoomLevel = (int)TKJumpZoomLevel(newZoomLevel);
+    		float zDif=newZoomLevel-zoomLevel;
+    		if(zDif!=0 && duration==0){
+    			LogWrapper.w("TilesView", "zoom from "+zoomLevel+" to "+newZoomLevel+" duration==0");
+    			return;
+    		}
+    		zoomingRecord.digitalZooming=true;
+    		zoomingRecord.digitalZoomEndTime=System.nanoTime()+duration;
+    		zoomingRecord.speed=(duration==0)?0:zDif/duration;
+    		zoomingRecord.zoomToLevel=newZoomLevel;
+    		zoomingRecord.zoomCenterXY=zoomCenterXYConv;
+    		
+    		zoomingRecord.listener=listener;
+    		refreshMap();
+    	}
+    }
+    
+    public void zoomView(float newZoomLevel, XYFloat zoomCenterXY) throws APIException{
+//        LogWrapper.d("TilesView","zoomView() newZoomLevel="+newZoomLevel+","+zoomLevel);
+        newZoomLevel = TKJumpZoomLevel(newZoomLevel);
+    	if(zooming || newZoomLevel==zoomLevel) return;
+    	if(newZoomLevel < CONFIG.ZOOM_LOWER_BOUND || newZoomLevel > CONFIG.ZOOM_UPPER_BOUND){
+    		LogWrapper.e("TilesView","zoomTo invalid zoom level:"+newZoomLevel+", must between "+CONFIG.ZOOM_LOWER_BOUND+"-"+CONFIG.ZOOM_UPPER_BOUND);
+    		return;
+    	}
+    	try{
+        	zooming=true;
+        	if(zoomCenterXY.x!=displaySize.x/2 || zoomCenterXY.y!=displaySize.y/2){
+        		//Log.i("TilesView.zoomView","zoomCenter:"+zoomCenterXY.x+","+zoomCenterXY.y+",displaySize:"+displaySize.x+","+displaySize.y);
+        		double deltaX=(zoomCenterXY.x-displaySize.x/2)*(Math.pow(2,newZoomLevel-zoomLevel)-1);
+            	float moveX=-(float)(deltaX*Math.pow(2, centerXYZ.z-newZoomLevel));
+            	double deltaY=(zoomCenterXY.y-displaySize.y/2)*(Math.pow(2,newZoomLevel-zoomLevel)-1);
+            	float moveY=-(float)(deltaY*Math.pow(2, centerXYZ.z-newZoomLevel));
+            	
+            	if (!Util.inChina(new XYDouble(centerXY.x-moveX, centerXY.y+moveY), centerXYZ.z)) {
+                    return;
+                }
+//                LogWrapper.d("TilesView","zoomView() deltaX="+deltaX+", deltaY="+deltaY+", moveX="+moveX+", moveY="+moveY+", zoomCenterXY="+zoomCenterXY);
+        		centerXY.x-=moveX;
+        		centerXY.x=Util.mercXMod(centerXY.x,centerXYZ.z);
+        		
+        		if(moveY>0){
+        			if(centerXY.y>=Util.MERC_X_MODS[centerXYZ.z]) moveY=0;
+        			else if(centerXY.y+moveY>Util.MERC_X_MODS[centerXYZ.z]) 
+        				moveY=(float)(Util.MERC_X_MODS[centerXYZ.z]-centerXY.y);
+        		}else if(moveY<0){
+        			if(centerXY.y<=-Util.MERC_X_MODS[centerXYZ.z]) moveY=0;
+        			else if(centerXY.y+moveY<-Util.MERC_X_MODS[centerXYZ.z]) 
+        				moveY=(float)(-Util.MERC_X_MODS[centerXYZ.z]-centerXY.y);
+        		}
+        		
+        		centerXY.y+=moveY;
+        		centerDelta.x+=moveX;
+        		centerDelta.y+=moveY;
+        	}
+        	    		
+    		zoomLevel=newZoomLevel;
+    		
+        	if(zoomLevel>centerXYZ.z+0.5+ZOOMING_LAG || zoomLevel<centerXYZ.z-0.5-ZOOMING_LAG){
+        		int roundLevel=Math.round(zoomLevel);
+        		if(roundLevel>CONFIG.ZOOM_UPPER_BOUND || roundLevel<CONFIG.ZOOM_LOWER_BOUND) return;
+        		
+        		clearTilesWaitForLoading();
+        		for(int i=0;i<mapLayers.size();i++){
+             		MapLayer mapLayer=mapLayers.get(i);
+             		if(!mapLayer.visible)continue; 
+             		//Log.i("TilesView.zoomView","mapLayer percent,level;zoomLayer percent,level:"+mapLayer.mainLayerDrawPercent+","+centerXYZ.z+";"+mapLayer.zoomLayerDrawPercent+","+mapLayer.centerXYZ.z);
+            		
+             		double factorMain=1.0f;
+             		double factorZoom=1.0f;
+             		if(roundLevel>mapLayer.centerXYZ.z){
+             			factorZoom=Math.pow(ZOOM_PENALTY, roundLevel-mapLayer.centerXYZ.z);
+             			if(roundLevel>centerXYZ.z){
+             				factorMain=Math.pow(ZOOM_PENALTY, roundLevel-centerXYZ.z);
+             			}
+             		}
+             		if(mapLayer.mainLayerDrawPercent>=CLONE_MAP_LAYER_DRAW_PERCENT || mapLayer.centerXY==null || mapLayer.mainLayerDrawPercent*factorMain>=mapLayer.zoomLayerDrawPercent*factorZoom){
+                     	mapLayer.centerXY=new XYDouble(centerXY.x,centerXY.y);
+                     	mapLayer.centerXYZ=new XYZ(centerXYZ.x,centerXYZ.y,centerXYZ.z);
+                        mapLayer.centerXYZTK=new XYZ(centerXYZTK.x,centerXYZTK.y,centerXYZTK.z);
+                     	mapLayer.centerDelta=new XYFloat(centerDelta.x,centerDelta.y);
+                     	mapLayer.zoomLayerDrawPercent=mapLayer.mainLayerDrawPercent;
+                     	mapLayer.mainLayerDrawPercent=0;
+                    }
+             	}
+        		
+        		double mapScale=Math.pow(2, roundLevel-centerXYZ.z);
+        		TileGridResponse resp= Util.handlePortrayMapRequest(new XYDouble(centerXY.x*mapScale,centerXY.y*mapScale), roundLevel);
+             	renderMap(resp);
+             	fadingStartTime=System.nanoTime();
+                zooming=false;
+        	}
+        	
+       }catch(Exception e){
+        	throw APIException.wrapToAPIException(e);
+        }finally{
+        	zooming=false;
+        }
+        
+    }
+    
+    private float TKJumpZoomLevel(float newZoomLevel) {
+        if (newZoomLevel < CONFIG.ZOOM_JUMP+1 && newZoomLevel >= CONFIG.ZOOM_JUMP) {
+            if (zoomLevel > CONFIG.ZOOM_JUMP) {
+                newZoomLevel -=1;
+            } else if (zoomLevel < CONFIG.ZOOM_JUMP) {
+                newZoomLevel +=1;
+            }
+        }
+        return newZoomLevel;
+    }
+    
+    /*private TileGridResponse renderMap(InputStream is) throws APIException {
+        try{
+        	TileGridResponse resp = XMLProcessor.processTileGrid(is);
+        	String tileUrl=resp.getSeedTileURL();
+        	resp.centerXYZ=new XYZ(Util.getE(tileUrl),Util.getN(tileUrl),Util.getZ(tileUrl));
+        	resp.centerXY=Util.posToMercPix(resp.getCenterPosition(), resp.centerXYZ.z);
+        	
+        	MapLayerProperty.getInstance(MapLayerType.STREET).templateSeedTileUrl=tileUrl;
+        	MapLayerProperty.getInstance(MapLayerType.STREET).sessionId=Util.getSessionId(tileUrl);
+        	MapLayerProperty.getInstance(MapLayerType.STREET).configuration=Util.getConfiguration(tileUrl);
+        	
+        	MapLayerProperty.getInstance(MapLayerType.TRANSPARENT).templateSeedTileUrl=Util.tileUrlToTransparent(tileUrl);
+        	MapLayerProperty.getInstance(MapLayerType.TRANSPARENT).sessionId=Util.getSessionId(tileUrl);
+        	MapLayerProperty.getInstance(MapLayerType.TRANSPARENT).configuration=CONFIG.transparentConfiguration;
+        	renderMap(resp);
+            return resp;
+
+        }catch(Exception e){
+        	throw APIException.wrapToAPIException(e);
+        }
+    }*/
+    
+   /**
+    * initilize/reset tiles, set coordinate for each tile, put tiles for loading queue
+    * @param resp
+    */
+    private void renderMap(TileGridResponse resp) throws APIException{
+    	//Log.i("TilesView","TilesView renderMap start");
+    	try{
+    		easingRecord.reset();
+    		
+    		centerXY=new XYDouble(resp.centerXY.x,resp.centerXY.y);
+            centerXYZ.x=resp.centerXYZ.x;
+        	centerXYZ.y=resp.centerXYZ.y;
+        	centerXYZ.z=resp.centerXYZ.z;
+            centerXYZTK.x=resp.centerXYZTK.x;
+            centerXYZTK.y=resp.centerXYZTK.y;
+            centerXYZTK.z=resp.centerXYZTK.z;        	
+        	centerDelta.x=resp.getFixedGridPixelOffset().x;
+        	centerDelta.y=resp.getFixedGridPixelOffset().y;
+        	moveXY.x = 0;
+        	moveXY.y = 0;
+        	
+            this.radiusY = resp.getRadiusY().toMeters() * displaySize.y/CONFIG.TILE_SIZE;
+            this.radiusX = resp.getRadiusY().toMeters() * displaySize.x/CONFIG.TILE_SIZE;
+            
+            for(int i=0;i<mapLayers.size();i++){
+            	MapLayer mapLayer=mapLayers.get(i);
+            	mapLayer.mainLayerDrawPercent=0;
+            }
+            
+            LogWrapper.w("TilesView", "renderMap(TileGridResponse resp), centerXY="+centerXY+", centerXYZ= "+centerXYZ+", centerDelta="+centerDelta);
+            //refreshTileRequests(1,1);
+    	}catch(Exception e){
+    		throw APIException.wrapToAPIException(e);
+    	}
+        
+     }
+    
+    /**
+     * move all tiles as if they are inside one container
+     * @param left
+     * @param top
+     * 
+     */
+	public void moveView(float left, float top) {
+		if (zooming)
+			return;
+
+		if (centerXY == null) {
+			return;
+		}
+		double mapScale=Math.pow(2, centerXYZ.z-zoomLevel);
+		float moveX=left*(float)mapScale;
+    	float moveY=top*(float)(mapScale);
+    	if (!Util.inChina(new XYDouble(centerXY.x-moveX, centerXY.y+moveY), centerXYZ.z)) {
+    	    return;
+    	}
+    	
+    	centerXY.x-=moveX;
+		centerXY.x=Util.mercXMod(centerXY.x, centerXYZ.z);
+		
+		if(moveY>0){
+			if(centerXY.y>=Util.MERC_X_MODS[centerXYZ.z]) moveY=0;
+			else if(centerXY.y+moveY>Util.MERC_X_MODS[centerXYZ.z]) 
+				moveY=(float)(Util.MERC_X_MODS[centerXYZ.z]-centerXY.y);
+		}else if(moveY<0){
+			if(centerXY.y<=-Util.MERC_X_MODS[centerXYZ.z]) moveY=0;
+			else if(centerXY.y+moveY<-Util.MERC_X_MODS[centerXYZ.z]) 
+				moveY=(float)(-Util.MERC_X_MODS[centerXYZ.z]-centerXY.y);
+		}
+		
+		centerXY.y+=moveY;
+		
+		centerDelta.x+=moveX;
+		centerDelta.y+=moveY;
+		moveXY.x+=moveX;
+		moveXY.y+=moveY;
+		
+		if(Math.abs(centerDelta.x)>CONFIG.TILE_SIZE || Math.abs(centerDelta.y)>CONFIG.TILE_SIZE){
+			
+			//refreshTileRequests(numX>=0?1:-1, numY>=0?1:-1);
+            if (Math.abs(moveXY.x) > 1024 || Math.abs(moveXY.y) > 1024) {
+                try {
+                    int roundLevel=Math.round(zoomLevel);
+                    if(roundLevel>CONFIG.ZOOM_UPPER_BOUND || roundLevel<CONFIG.ZOOM_LOWER_BOUND) return;
+                    TileGridResponse resp= Util.handlePortrayMapRequest(new XYDouble(centerXY.x*mapScale,centerXY.y*mapScale), roundLevel);
+                    
+                    centerXYZ.x=resp.centerXYZ.x;
+                    centerXYZ.y=resp.centerXYZ.y;
+                    centerXYZ.z=resp.centerXYZ.z;
+                    centerXYZTK.x=resp.centerXYZTK.x;
+                    centerXYZTK.y=resp.centerXYZTK.y;
+                    centerXYZTK.z=resp.centerXYZTK.z;           
+                    centerDelta.x=resp.getFixedGridPixelOffset().x;
+                    centerDelta.y=resp.getFixedGridPixelOffset().y;
+                    moveXY.x = 0;
+                    moveXY.y = 0;
+                } catch (APIException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                int numX=Math.round(centerDelta.x/CONFIG.TILE_SIZE);
+                int numY=Math.round(centerDelta.y/CONFIG.TILE_SIZE);
+                centerXYZ.x-=numX;
+                centerXYZ.x=Util.indexXMod(centerXYZ.x, centerXYZ.z);
+                centerXYZ.y+=numY;
+                centerXYZTK.x-=numX;
+                centerXYZTK.y-=numY;
+                centerDelta.x-=(numX*CONFIG.TILE_SIZE);
+                centerDelta.y-=(numY*CONFIG.TILE_SIZE);
+                
+                panDirection.x=numX>=0?1:-1;
+                panDirection.y=numY>=0?1:-1;
+            }
+		}
+		
+		
+	}
+	
+	/*private void refreshTileRequests(int westFirst, int northFirst){
+		if(visibleLayerNum>1) return;
+		
+		long start=System.nanoTime();
+		ArrayList<Tile> requestTiles=new ArrayList<Tile>();
+		//Log.i("TilesView.refreshTileRequest begin","northFirst,westFirst"+northFirst+","+westFirst);
+		for(int s=0;s<mapLayers.size();s++){
+			MapLayer mapLayer=mapLayers.get(s);
+			if(!mapLayer.visible) continue;
+			for(int i=-gridSize.y/2;i<=gridSize.y/2;i++){
+				int y=centerXYZ.y-i*northFirst;
+				for(int j=-gridSize.x/2;j<=gridSize.x/2;j++){
+					int x=centerXYZ.x+j*westFirst;
+					Tile requestTile = mapLayer.createTile();
+        			requestTile.xyz.x=x;
+        			requestTile.xyz.y=y;
+        			requestTile.xyz.z=centerXYZ.z;
+        			if(tileImages.containsKey(requestTile)){
+        				continue;
+        			}
+        			requestTile.distanceFromCenter=Math.abs(i)+Math.abs(j);
+        			requestTiles.add(requestTile);
+				}
+			}
+		}
+		
+		if(requestTiles.size()>0){
+        	Collections.sort(requestTiles);
+        	synchronized(tilesWaitForLoading){
+        		tilesWaitForLoading.clear();
+        		tilesWaitForLoading.addAll(0,requestTiles);
+        		tilesWaitForLoading.notifyAll();
+        	}
+        	
+        }
+		 
+		Profile.rotateInc(System.nanoTime()-start);
+		
+	
+	}*/
+	 
+    public LinkedList<Tile> getTilesWaitForLoading() {
+		return tilesWaitForLoading;
+	}
+     
+    public LinkedList<TileDownload> getTilesWaitForDownloading() {
+        return tilesWaitForDownloading;
+    }
+
+	public List<ItemizedOverlay> getOverlays(){
+		return overlays;
+	}
+	
+	public List<Shape> getShapes(){
+		return shapes;
+	}
+	
+    public Object getDrawingLock() {
+		return drawingLock;
+	}
+	
+	public MapType getMapType(){
+		return mapType;
+	}
+	
+	public Compass getCompass() {
+		return compass;
+	}
+
+	public void setCompass(Compass compass) {
+		this.compass = compass;
+	}
+
+	//end of normal methods
+	
+	
+	/**
+     * add the MapPreference class for map preference, it contains routeId
+     * and will be used when composing new portraymap request
+     *
+     */
+    public class MapPreference {
+        //add the routeId to the map
+
+        private String routeId;
+        //real Time Traffic
+        private boolean realTimeTraffic;
+
+        public boolean isRealTimeTraffic() {
+            return realTimeTraffic;
+        }
+
+        public void setRealTimeTraffic(boolean realTimeTraffic) {
+            this.realTimeTraffic = realTimeTraffic;
+        }
+        public String getRouteId() {
+            return routeId;
+        }
+
+        public void setRouteId(String routeId) {
+            this.routeId = routeId;
+        }
+    }
+            
+    /**
+     * structure to store moving points 
+     *
+     */
+    public class TouchRecord{
+    	private int capacity=0;
+    	private long[] times;
+    	private XYFloat[] screenXYs;
+    	int index=-1;
+    	int size=0;
+    	public TouchRecord(int capacity){
+    		this.capacity=capacity;
+    		times=new long[capacity];
+    		screenXYs=new XYFloat[capacity];
+    		for(int i=0;i<capacity;i++){
+    			times[i]=0;
+    			screenXYs[i]=new XYFloat(0f,0f);
+    		}
+    	}
+    	
+    	public void push(long time, float x, float y){
+    		index=(index+1)%capacity;
+    		screenXYs[index].x=x;
+    		screenXYs[index].y=y;
+    		times[index]=time;
+    		
+    		size++;
+    		if(size>capacity) size=capacity;
+    	}
+    	
+    	public void reset(){
+    		index=-1;
+    		size=0;
+    	}
+    }
+    
+    /**
+     * 
+     * structure to store easing related parameters
+     *
+     */
+    public class EasingRecord{
+    	public double TIME_SCALE=33*1E6; //33 miniseconds
+    	public double MAXIMUM_SPEED=10E-6; //7 pixels per miniseconds
+    	public double MINIMUM_SPEED_RATIO=0.001; //ratio to original speed
+    	public double CUTOFF_SPEED=60*1E-9;
+    	
+    	public double decelerate_rate=CONFIG.DECELERATE_RATE;
+    	public double speed=0;
+    	public long startMoveTime=0;
+    	public float movedDistance=0;
+    	public XYFloat direction=new XYFloat(0f,0f);
+    	
+    	public MapView.MoveEndEventListener listener=null;
+    	
+    	public void reset(){
+    		decelerate_rate=CONFIG.DECELERATE_RATE;
+    		speed=0;
+    		startMoveTime=0;
+    		movedDistance=0;
+    		direction.x=0f;
+    		direction.y=0f;
+    		
+    		listener=null;
+    	}
+    }
+    
+    public class ZoomingRecord{
+    	public int zoomToLevel=-1;
+    	public long digitalZoomEndTime=0;
+    	double speed=0;
+    	public boolean digitalZooming=false;
+    	public XYFloat zoomCenterXY=new XYFloat(0,0);
+    	
+    	public MapView.ZoomEndEventListener listener=null;
+    	
+    	public void reset(){
+    		zoomToLevel=-1;
+    		digitalZoomEndTime=0;
+    		speed=0;
+    		digitalZooming=false;
+    		zoomCenterXY.x=0;
+    		zoomCenterXY.y=0;
+    		
+    		listener=null;
+    		try {
+                zoomView(Math.round(zoomLevel), new XYFloat(displaySize.x/2, displaySize.y/2));
+            } catch (APIException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+    	}
+    	
+    }
+    
+    public static class TileResponse{
+    	public Bitmap bitmap = null;
+    	public long availTime=0;
+        public List<TileDownload> lostTileInfos = null;
+        
+        public TileResponse(Bitmap bitmap, long availTime){
+            this.bitmap=bitmap;
+            this.availTime=availTime;
+        }
+        
+        public boolean equals(Object object) {
+            if (this == object) {
+                return true;
+            }
+            if(object==null) return false;
+            if (object instanceof TileResponse) {
+                TileResponse other = (TileResponse) object;
+                if (other.lostTileInfos != null && lostTileInfos != null) {
+                    if (other.lostTileInfos.size() == lostTileInfos.size()) {
+                        int i = 0;
+                        for(TileDownload tileDownload : lostTileInfos) {
+                            if (!tileDownload.equals(other.lostTileInfos.get(i++))) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                } else if (other.lostTileInfos == null && lostTileInfos == null) {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+    }
+        
+    public static class Texture {
+        public int textureRef=0;
+        public XYInteger size=new XYInteger(0, 0);
+    }
+    /**
+     * the render class for opengl drawing 
+     *
+     */
+    public class MapRender implements GLSurfaceView.Renderer {
+		
+		/**
+		 * coordinate for the square texture. it's never changed in the whole life cycle
+		 */
+    	private ByteBuffer TEXTURE_COORDS;
+    	//private FloatBuffer bgTexCoords;
+		/**
+		 * store vertexes of the tile
+		 */
+    	private FloatBuffer mVertexBuffer;
+		
+		//private int EMPTY_TILE_REF=0;
+		private int MAX_ICON_SIZE=32; 
+		private int MAX_CLUSTER_TEXT_SIZE=30;
+        private int MAX_WORD_SIZE=128; 
+        private LinkedHashMap<XYInteger,Bitmap> textBitmapPool=new LinkedHashMap<XYInteger,Bitmap>(MAX_ICON_SIZE*2,0.75f,true){
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected boolean removeEldestEntry(
+                    java.util.Map.Entry<XYInteger, Bitmap> eldest) {
+                // TODO Auto-generated method stub
+                if(size()>MAX_ICON_SIZE){
+                    Bitmap bm =eldest.getValue();
+                    if(bm!=null && bm.isRecycled() == false){
+                        bm.recycle();
+                    }
+                    remove(eldest.getKey());
+                }
+                return false;
+            }
+        };
+		private LinkedHashMap<Icon,Integer> iconPool=new LinkedHashMap<Icon,Integer>(MAX_ICON_SIZE*2,0.75f,true){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected boolean removeEldestEntry(
+					java.util.Map.Entry<Icon, Integer> eldest) {
+				// TODO Auto-generated method stub
+				if(size()>MAX_ICON_SIZE){
+					int textureRef=eldest.getValue();
+					if(textureRef!=0){
+						IntBuffer textureRefBuf=IntBuffer.allocate(1);
+						textureRefBuf.clear();
+						textureRefBuf.put(0,textureRef);
+						textureRefBuf.position(0);
+	    				glDeleteTextures(1, textureRefBuf);
+	    				LogWrapper.i("TilesView","iconPool removeEldestEntry texture:"+textureRef);
+	    			}
+					remove(eldest.getKey());
+				}
+				return false;
+			}
+		};
+        
+        private LinkedHashMap<MapWord,Texture> mapWordPool=new LinkedHashMap<MapWord,Texture>(MAX_WORD_SIZE*2,0.75f,true){
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected boolean removeEldestEntry(
+                    java.util.Map.Entry<MapWord, Texture> eldest) {
+                // TODO Auto-generated method stub
+                if(size()>MAX_WORD_SIZE){
+                    Texture texture=eldest.getValue();
+                    if(texture!=null && texture.textureRef != 0){
+                        IntBuffer textureRefBuf=IntBuffer.allocate(1);
+                        textureRefBuf.clear();
+                        textureRefBuf.put(0,texture.textureRef);
+                        textureRefBuf.position(0);
+                        glDeleteTextures(1, textureRefBuf);
+                    }
+                    remove(eldest.getKey());
+                }
+                return false;
+            }
+        };
+        
+        private LinkedHashMap<MapWord.Icon,Texture> mapWordIconPool=new LinkedHashMap<MapWord.Icon,Texture>(MAX_WORD_SIZE*2,0.75f,true){
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            protected boolean removeEldestEntry(
+                    java.util.Map.Entry<MapWord.Icon, Texture> eldest) {
+                // TODO Auto-generated method stub
+                if(size()>MAX_WORD_SIZE){
+                    Texture texture=eldest.getValue();
+                    if(texture != null && texture.textureRef!=0){
+                        IntBuffer textureRefBuf=IntBuffer.allocate(1);
+                        textureRefBuf.clear();
+                        textureRefBuf.put(0,texture.textureRef);
+                        textureRefBuf.position(0);
+                        glDeleteTextures(1, textureRefBuf);
+                    }
+                    remove(eldest.getKey());
+                }
+                return false;
+            }
+        };
+		
+		private LinkedHashMap<String,Integer> clusterTextPool=new LinkedHashMap<String,Integer>(MAX_CLUSTER_TEXT_SIZE*2,0.75f,true){
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected boolean removeEldestEntry(
+					java.util.Map.Entry<String, Integer> eldest) {
+				// TODO Auto-generated method stub
+				if(size()>MAX_CLUSTER_TEXT_SIZE){
+					int textureRef=eldest.getValue();
+					if(textureRef!=0){
+						IntBuffer textureRefBuf=IntBuffer.allocate(1);
+						textureRefBuf.clear();
+						textureRefBuf.put(0,textureRef);
+						textureRefBuf.position(0);
+	    				glDeleteTextures(1, textureRefBuf);
+	    				LogWrapper.i("TilesView","clusterTextPool removeEldestEntry texture:"+textureRef);
+	    			}
+					remove(eldest.getKey());
+				}
+				return false;
+			}
+		};
+		
+		public MapRender(Context context) {
+			ByteBuffer tbb = ByteBuffer.allocateDirect(1 * 2 * 4);
+			tbb.order(ByteOrder.nativeOrder());
+			TEXTURE_COORDS = tbb;
+			TEXTURE_COORDS.put((byte)0);
+			TEXTURE_COORDS.put((byte)0);
+			TEXTURE_COORDS.put((byte)0);
+			TEXTURE_COORDS.put((byte)1);
+			TEXTURE_COORDS.put((byte)1);
+			TEXTURE_COORDS.put((byte)0);
+			TEXTURE_COORDS.put((byte)1);
+			TEXTURE_COORDS.put((byte)1);
+			
+			//ByteBuffer tbb2 = ByteBuffer.allocateDirect(4 * 2 * 4);
+			//tbb2.order(ByteOrder.nativeOrder());
+			//bgTexCoords = tbb2.asFloatBuffer();
+						
+			ByteBuffer vbb = ByteBuffer.allocateDirect(4 * 2 * 4);
+			vbb.order(ByteOrder.nativeOrder());
+			mVertexBuffer=vbb.asFloatBuffer();
+			
+		}
+		
+		
+		public void onSurfaceCreated(GL10 gl, EGLConfig config) {
+			LogWrapper.i("TilesView","MapRender.onSurfaceCreated");
+			gl.glClearColor(1f, 1f, 1f, 1);
+			gl.glDisable(GL_DITHER);
+			gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+			gl.glHint(GL_POINT_SMOOTH_HINT, GL_FASTEST);
+			
+			gl.glEnable(GL_TEXTURE_2D);
+
+		}
+		
+		private int genTextureRef(GL10 gl){
+			IntBuffer textureRefBuf=IntBuffer.allocate(1);
+			textureRefBuf.clear();
+			textureRefBuf.position(0);
+			gl.glGenTextures(1, textureRefBuf);
+			return textureRefBuf.get(0);
+			
+		}
+		
+		private void deleteTextureRef(GL10 gl, int textureRef){
+			if(textureRef==0) return;
+			IntBuffer textureRefBuf=IntBuffer.allocate(1);
+			textureRefBuf.clear();
+			textureRefBuf.put(0,textureRef);
+			textureRefBuf.position(0);
+			glDeleteTextures(1, textureRefBuf);
+		}
+		
+		/**
+		 * the main method to draw all the map elements
+		 */
+		public void onDrawFrame(GL10 gl){
+			if(centerXY==null){
+				return;
+			}
+			
+//			LogWrapper.d("TilesView", "onDrawFrame() centerXY="+centerXY);
+			boolean movingL=false;
+			boolean movingJustDoneL=false;
+			MapView.MoveEndEventListener movingListener=easingRecord.listener;
+			boolean zoomingL=false;
+			boolean zoomingJustDoneL=false;
+			MapView.ZoomEndEventListener zoomingListener=zoomingRecord.listener;
+			boolean rotatingX=false;
+			boolean rotatingXJustDoneL=false;
+			boolean rotatingZ=false;
+			boolean rotatingZJustDoneL=false;
+			
+			synchronized(drawingLock){
+				//status[0]:moving, status[1]:movingJustDone, status[2]:zooming, status[3]:zoomingJustDone
+				//status[4]:rotatingZ, status[5]:rotatingZJustDone, status[6]:rotatingX status[7]:rotatingXJustDone
+				boolean[] status=new boolean[8];
+				status[0]=movingL;
+				status[1]=movingJustDoneL;
+				status[2]=zooming;
+				status[3]=zoomingJustDoneL;
+				status[4]=rotatingZ;
+				status[5]=rotatingZJustDoneL;
+				status[6]=rotatingX;
+				status[7]=rotatingXJustDoneL;
+				updateViewBeforeDraw(status);
+				movingL=status[0];
+				movingJustDoneL=status[1];
+				zoomingL=status[2];
+				zoomingJustDoneL=status[3];
+				rotatingZ=status[4];
+				rotatingZJustDoneL=status[5];
+				rotatingX=status[6];
+				rotatingXJustDoneL=status[7];
+                isDrawMapTextFinish = false;
+                isMyLocation = false;
+
+				//Log.i("Thread","TilesView onDraw after synchronize to drawingLock");
+				long drawStart=System.nanoTime();
+				
+				try{
+					gl.glViewport(0, 0, displaySize.x, displaySize.y);
+					
+					gl.glMatrixMode(GL_MODELVIEW);
+					gl.glLoadIdentity();
+					gl.glTranslatef(-displaySize.x/2f,displaySize.y/2f, -mapMode.middleZ);
+					gl.glRotatef(180,1,0,0);
+					
+					gl.glTranslatef(displaySize.x/2f, displaySize.y/2f, 0);
+					gl.glScalef(mapMode.scale, mapMode.scale, mapMode.scale);
+					gl.glRotatef(mapMode.getxRotation(), 1, 0, 0);
+					gl.glRotatef(mapMode.getzRotation(),0,0,1);
+					gl.glTranslatef(-displaySize.x/2f, -displaySize.y/2f, 0);
+					//end of config matrix
+					
+					gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+					//gl.glClearColor(0, 0, 0, 1);
+					float bgr=((CONFIG.BACKGROUND_COLOR_OPENGL&0x00ff0000)>>16)/255.0f;
+					float bgg=((CONFIG.BACKGROUND_COLOR_OPENGL&0x0000ff00)>>8)/255.0f;
+					float bgb=(CONFIG.BACKGROUND_COLOR_OPENGL&0x000000ff)/255.0f;
+					gl.glClearColor(bgr, bgg, bgb, 1);
+					
+		            gl.glEnable(GL_TEXTURE_2D);
+	    			gl.glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+	    			gl.glEnableClientState(GL_VERTEX_ARRAY);
+	    			gl.glVertexPointer(2, GL_FLOAT, 0, mVertexBuffer);
+	    			gl.glTexCoordPointer(2, GL_BYTE, 0, TEXTURE_COORDS);
+	    			gl.glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_REPLACE);
+	    			gl.glColor4f(1, 1, 1, 1);
+	    			gl.glDisable(GL_BLEND);
+	    			//gl.glDepthMask(false);
+	    			
+	    			float scaleToM=mapMode.middleZ/(mapMode.nearZ*mapMode.scale);
+	    			
+	    			//draw empty tiles
+	    			float displaySizeXR=mapMode.displaySizeConvXR;
+	    			float displaySizeXL=mapMode.displaySizeConvXL;
+	                float displaySizeYB=mapMode.displaySizeConvYB;
+	                float displaySizeYT=mapMode.displaySizeConvYT;
+	                int gridSizeXR=mapMode.gridSizeConvXR;
+	                int gridSizeXL=mapMode.gridSizeConvXL;
+	                int gridSizeYB=mapMode.gridSizeConvYB;
+	                int gridSizeYT=mapMode.gridSizeConvYT;
+	                
+	                float centerScreenX=displaySize.x/2f+centerDelta.x;
+	                float centerScreenY=displaySize.y/2f+centerDelta.y;
+	                boolean drawFullTile = false;
+	                	                
+		            if(centerXY!=null){
+		            	gl.glDisable(GL_TEXTURE_2D);
+		    			//int fillColor=0x00ffff00;
+		    			float red=((CONFIG.BACKGROUND_GRID_COLOR & 0x00ff0000)>>16)/(float)255;
+		    			float green=((CONFIG.BACKGROUND_GRID_COLOR & 0x0000ff00)>>8)/(float)255;
+		    			float blue=((CONFIG.BACKGROUND_GRID_COLOR & 0x000000ff))/(float)255;
+		    			gl.glColor4f(red, green, blue, 1);
+		    			
+		    			float tx=(((int)centerDelta.x%CONFIG.TILE_SIZE)-CONFIG.TILE_SIZE)%CONFIG.TILE_SIZE;
+		    			float ty=(((int)centerDelta.y%CONFIG.TILE_SIZE)-CONFIG.TILE_SIZE)%CONFIG.TILE_SIZE;
+		    			float displaySizeX=Math.max(displaySizeXR,displaySizeXL)*2;
+		    			float displaySizeY=Math.max(displaySizeYB,displaySizeYT)*2;
+		    			int sizeX=(int)Math.ceil((-tx+displaySizeX)/CONFIG.TILE_SIZE);
+		    			int sizeY=(int)Math.ceil((-ty+displaySizeY)/CONFIG.TILE_SIZE);
+		    			float oriX=(displaySize.x-displaySizeX)/2;
+		    			float oriY=(displaySize.y-displaySizeY)/2;
+		    			for(int i=1;i<sizeY;i++){
+		    				mVertexBuffer.clear();
+		    				mVertexBuffer.put(oriX);
+		    				mVertexBuffer.put(oriY+CONFIG.TILE_SIZE*i+ty);
+		    				mVertexBuffer.put(oriX+displaySizeX);
+		    				mVertexBuffer.put(oriY+CONFIG.TILE_SIZE*i+ty);
+		    				mVertexBuffer.position(0);
+		    				gl.glDrawArrays(GL10.GL_LINE_STRIP, 0, 2);
+		    				
+		    			}
+		    			for(int i=1;i<sizeX;i++){
+		    				mVertexBuffer.clear();
+		    				mVertexBuffer.put(oriX+CONFIG.TILE_SIZE*i+tx);
+		    				mVertexBuffer.put(oriY);
+		    				mVertexBuffer.put(oriX+CONFIG.TILE_SIZE*i+tx);
+		    				mVertexBuffer.put(oriY+displaySizeY);
+		    				mVertexBuffer.position(0);
+		    				gl.glDrawArrays(GL10.GL_LINE_STRIP, 0, 2);
+		    				
+		    			}	
+		    			gl.glEnable(GL_TEXTURE_2D);
+		    			gl.glColor4f(1, 1, 1, 1);
+		            			    			
+		            }
+		            
+		            LinkedList<Tile> requestTiles = new LinkedList<Tile>();
+	                drawingTiles.clear();
+	                boolean haveDrawingTiles = false;
+	                boolean fading = false;
+	                double scaleF = Math.pow(2, zoomLevel - centerXYZ.z);
+	                double topLeftXf = centerXY.x * scaleF - displaySize.x / 2;
+	                double topLeftYf = centerXY.y * scaleF + displaySize.y / 2;
+	                	               
+	                gl.glEnable(GL10.GL_BLEND);
+        	        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+                	for (int s = 0; s < mapLayers.size(); s++) {
+	                    MapLayer mapLayer = mapLayers.get(s);
+	                    if(!mapLayer.visible) continue;
+
+	                    if (mapLayer.centerXY != null && 
+	                    		(mapLayer.mainLayerDrawPercent < DRAW_ZOOM_LAYER_DRAW_PERCENT || 
+	                            		System.nanoTime() - fadingStartTime < CONFIG.FADING_TIME * 1E6)) {
+	                    	double xx = 0, yy = 0;
+	                        double mapScale = Math.pow(2, mapLayer.centerXYZ.z - centerXYZ.z);
+	                        xx = mapLayer.centerXY.x - centerXY.x*mapScale;
+		                    yy = -(mapLayer.centerXY.y - centerXY.y*mapScale);
+		                    
+		                    float mapLayerCenterScreenX=displaySize.x/2f+mapLayer.centerDelta.x;
+		                    float mapLayerCenterScreenY=displaySize.y/2f+mapLayer.centerDelta.y;
+		                     
+		                    double zoomScale=Math.pow(2,zoomLevel-mapLayer.centerXYZ.z);
+		                    int leftDistO,rightDistO,topDistO,bottomDistO;
+		                    int leftDist=leftDistO=(int)(Math.floor((-(xx+mapLayer.centerDelta.x)*zoomScale-displaySizeXL)/(CONFIG.TILE_SIZE*zoomScale)+0.5));
+		                	if(leftDist<-gridSizeXL) leftDist=-gridSizeXL;
+		                	int rightDist=rightDistO=(int)(Math.ceil((-(xx+mapLayer.centerDelta.x)*zoomScale+displaySizeXR)/(CONFIG.TILE_SIZE*zoomScale)-0.5));
+		                	if(rightDist>gridSizeXR) rightDist=gridSizeXR;
+		                	int topDist=topDistO=(int)(Math.floor((-(yy+mapLayer.centerDelta.y)*zoomScale-displaySizeYT)/(CONFIG.TILE_SIZE*zoomScale)+0.5));
+		                	if(topDist<-gridSizeYT) topDist=-gridSizeYT;
+		                	int bottomDist=bottomDistO=(int)(Math.ceil((-(yy+mapLayer.centerDelta.y)*zoomScale+displaySizeYB)/(CONFIG.TILE_SIZE*zoomScale)-0.5));
+		                	if(bottomDist>gridSizeYB) bottomDist=gridSizeYB;
+		                	//Log.i("TilesView","onDraw zoomLayerLevel,zoomLevel,LRTB:"+mapLayer.centerXYZ.z+","+zoomLevel+","+leftDist+","+rightDist+","+topDist+","+bottomDist);
+		                	if(bottomDist>=topDist && rightDist>=leftDist){
+		                		gl.glPushMatrix();
+			                	gl.glTranslatef(displaySize.x/2f,displaySize.y/2f,0);
+			                	gl.glScalef((float)zoomScale, (float)zoomScale, 1);
+			                	gl.glTranslatef(-displaySize.x/2f+(float)xx,-displaySize.y/2f+(float)yy,0);
+			                	int drawNum = 0;
+	                            for (int i = topDist; i <= bottomDist; i++) {
+	                                int yi = mapLayer.centerXYZ.y - i;
+                                    int yiTK = mapLayer.centerXYZTK.y + i;
+	                                for (int j = leftDist; j <= rightDist; j++) {
+	                                    int xi = mapLayer.centerXYZ.x + j;
+                                        int xiTK = mapLayer.centerXYZTK.x + j;
+	                                    Tile requestTile = mapLayer.createTile();
+	                                    requestTile.xyz.x = xi;
+	                                    requestTile.xyz.y = yi;
+	                                    requestTile.xyz.z = mapLayer.centerXYZ.z;
+	                                    requestTile.xyz.x=Util.indexXMod(requestTile.xyz.x, requestTile.xyz.z);
+                                        requestTile.xyzTK.x = xiTK; //Util.xyzToTKXYZ(requestTile.xyz).x;
+                                        requestTile.xyzTK.y = yiTK;
+                                        requestTile.xyzTK.z = mapLayer.centerXYZTK.z;
+	                                    int textureRef=0;
+	                                    if(tileTextureRefs.containsKey(requestTile)){
+                                            textureRef=tileTextureRefs.get(requestTile);
+                                        }else{
+                                            TileResponse tileResponse = tileImages.get(requestTile);
+                                            if (tileResponse != null && tileResponse.bitmap != null) {
+	                                        	textureRef=genTextureRef(gl);
+	                                        	gl.glBindTexture(GL_TEXTURE_2D, textureRef);
+	                                        	try{
+	    		        							gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
+	    				        					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+	    				        					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	    				        					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	    				        					GLUtils.texImage2D(GL_TEXTURE_2D, 0, tileResponse.bitmap, 0);
+    				        					    tileTextureRefs.put(requestTile, textureRef);
+	    				        					//Log.i("TilesView","tilePool zoomLayer put textureRef,tile:"+textureRef+","+requestTile.toString());
+	    	                                        
+	    		        						}catch(Exception e){
+	    		        							deleteTextureRef(gl,textureRef);
+	    		        							textureRef=0;
+	    		        						}
+	    		        					}
+	                                    }
+	                                    if(textureRef==0) continue;
+	                                    gl.glBindTexture(GL_TEXTURE_2D, textureRef);
+	                                    
+	                                    float sx=mapLayerCenterScreenX+(j)*CONFIG.TILE_SIZE;
+		            					float sy=mapLayerCenterScreenY+(i)*CONFIG.TILE_SIZE;
+		            					mVertexBuffer.clear();
+		            					mVertexBuffer.put(sx-CONFIG.TILE_SIZE/2f+CONFIG.BORDER/2f);
+		            					mVertexBuffer.put(sy-CONFIG.TILE_SIZE/2f+CONFIG.BORDER/2f);
+		            					mVertexBuffer.put(sx-CONFIG.TILE_SIZE/2f+CONFIG.BORDER/2f);
+		            					mVertexBuffer.put(sy+CONFIG.TILE_SIZE/2f-CONFIG.BORDER/2f);
+		            					mVertexBuffer.put(sx+CONFIG.TILE_SIZE/2f-CONFIG.BORDER/2f);
+		            					mVertexBuffer.put(sy-CONFIG.TILE_SIZE/2f+CONFIG.BORDER/2f);
+		            					mVertexBuffer.put(sx+CONFIG.TILE_SIZE/2f-CONFIG.BORDER/2f);
+		            					mVertexBuffer.put(sy+CONFIG.TILE_SIZE/2f-CONFIG.BORDER/2f);
+		            					mVertexBuffer.position(0);
+			        					TEXTURE_COORDS.position(0);
+			        					gl.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			        					drawNum++;
+			        				}
+			                	}
+			                	mapLayer.zoomLayerDrawPercent=(float)drawNum/((bottomDistO-topDistO+1)*(rightDistO-leftDistO+1));
+			                	gl.glPopMatrix();
+		                	}else{
+		                		mapLayer.zoomLayerDrawPercent=0;
+		                	}
+				        	
+		                	//Log.i("TilesView.onDraw","zoom layer take:"+(System.nanoTime()-drawStart)/1000000);	
+		                }else mapLayer.zoomLayerDrawPercent=0;  
+	                    
+	                    //draw the normal tiles
+	                    if (true) {
+	                    	double zoomScale=Math.pow(2,zoomLevel-centerXYZ.z);
+		                	int leftDistO,rightDistO,topDistO,bottomDistO;
+				        	int leftDist=leftDistO=(int)(Math.floor((-centerDelta.x*zoomScale-displaySizeXL)/(CONFIG.TILE_SIZE*zoomScale)+0.5));
+		                	//if(leftDist<-(gridSize.x)/2) leftDist=-(gridSize.x)/2;
+		                	int rightDist=rightDistO=(int)(Math.ceil((-centerDelta.x*zoomScale+displaySizeXR)/(CONFIG.TILE_SIZE*zoomScale)-0.5));
+		                	//if(rightDist>(gridSize.x)/2) rightDist=(gridSize.x)/2;
+		                	int topDist=topDistO=(int)(Math.floor((-centerDelta.y*zoomScale-displaySizeYT)/(CONFIG.TILE_SIZE*zoomScale)+0.5));
+		                	//if(topDist<-(gridSize.y)/2) topDist=-(gridSize.y)/2;
+		                	int bottomDist=bottomDistO=(int)(Math.ceil((-centerDelta.y*zoomScale+displaySizeYB)/(CONFIG.TILE_SIZE*zoomScale)-0.5));
+		                	//if(bottomDist>(gridSize.y)/2) bottomDist=(gridSize.y)/2;
+			               	//Log.i("TilesView","onDraw mapLayerLevel,zoomLevel,LRTB:"+centerXYZ.z+","+zoomLevel+","+leftDist+","+rightDist+","+topDist+","+bottomDist);
+		                	if(bottomDist>=topDist && rightDist>=leftDist){
+	                            //Log.i("TilesView.onDraw","zoomScale,moveX,moveY:"+zoomScale+","+mapLayer.tilesMove.x+","+mapLayer.tilesMove.y);
+		                		gl.glPushMatrix();
+			                	gl.glTranslatef(displaySize.x/2f,displaySize.y/2f,0);
+			                	gl.glScalef((float)zoomScale, (float)zoomScale, 1);
+			                	gl.glTranslatef(-displaySize.x/2f,-displaySize.y/2f,0);
+			                	
+		                		int drawNum = 0;
+                                if (mapText.canvasSize.x == 0 || mapText.canvasSize.y == 0) {
+                                    mapText.canvasSize.x=displaySize.x;
+                                    mapText.canvasSize.y=displaySize.y;
+                                    XYFloat offset = new XYFloat(0, 0);
+                                    float x = findPower2(mapText.canvasSize.x)-mapText.canvasSize.x;
+                                    float y =findPower2(mapText.canvasSize.y)-mapText.canvasSize.y;
+                                    offset.x = x/2;
+                                    offset.y = y/2;
+                                    mapText.canvasSize.x += x;
+                                    mapText.canvasSize.y += y;
+                                    mapText.setOffset(offset, new RotationTilt());
+                                    LogWrapper.d("TilesView", "tileTextCanvasSize="+mapText.canvasSize+",offset="+offset);
+                                    if (OneBitmapMapText && (mapText.bitmap == null || mapText.bitmap.isRecycled())) {
+                                        Bitmap.Config config = Bitmap.Config.ARGB_4444;
+                                        mapText.bitmap = Bitmap.createBitmap(mapText.canvasSize.x, mapText.canvasSize.y, config);
+                                    }
+                                }
+	                            for (int i = topDist; i <= bottomDist; i++) {
+	                                int yi = centerXYZ.y - i;
+	                                int yiTK = centerXYZTK.y + i; 
+	                                for (int j = leftDist; j <= rightDist; j++) {
+	                                    int xi = centerXYZ.x + j;
+                                        int xiTK = centerXYZTK.x + j;
+	                                    Tile requestTile = mapLayer.createTile();
+	                                    requestTile.xyz.x = xi;
+	                                    requestTile.xyz.y = yi;
+	                                    requestTile.xyz.z = centerXYZ.z;
+	                                    requestTile.xyz.x=Util.indexXMod(requestTile.xyz.x, requestTile.xyz.z);
+                                        requestTile.xyzTK.x = xiTK; //Util.xyzToTKXYZ(requestTile.xyz).x;
+                                        requestTile.xyzTK.y = yiTK;
+                                        requestTile.xyzTK.z = centerXYZTK.z;
+	                                    if(!haveDrawingTiles) drawingTiles.add(requestTile);
+	                                    
+                                        float sx=centerScreenX+(j)*CONFIG.TILE_SIZE;
+                                        float sy=centerScreenY+(i)*CONFIG.TILE_SIZE;
+	                                    //long availTime=0;
+	                                    int textureRef=0;
+	                                    if(tileTextureRefs.containsKey(requestTile)){
+	                                    	textureRef=tileTextureRefs.get(requestTile);
+					    					drawNum++;
+	                                    }else{
+	                                    	TileResponse tileResponse = tileImages.get(requestTile);
+	                                        if (tileResponse != null && tileResponse.bitmap != null) {
+	                                        	textureRef=genTextureRef(gl);
+	                                        	gl.glBindTexture(GL_TEXTURE_2D, textureRef);
+	                                        	try{
+	    		        							gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
+	    				        					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+	    				        					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	    				        					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	    				        					GLUtils.texImage2D(GL_TEXTURE_2D, 0, tileResponse.bitmap, 0);
+	    				        					tileTextureRefs.put(requestTile, textureRef);
+	    				        					//Log.i("TilesView","tilePool mapLayer put textureRef,tile:"+textureRef+","+requestTile.toString());
+	    	                                        
+	    		        						}catch(Exception e){
+	    		        							deleteTextureRef(gl,textureRef);
+	    		        							textureRef=0;
+	    		        						}
+	    		        						//availTime=tileResponse.availTime;
+	    				    					drawNum++;
+	    		        					}else {
+	                                            requestTile.distanceFromCenter = Math.abs(i) + Math.abs(j);
+	                                            if(i*panDirection.y<=0 && j*panDirection.x<=0){
+	                                            	requestTiles.addFirst(requestTile);
+	                                            }else{
+	                                            	requestTiles.add(requestTile);
+	                                            }
+	                                        }
+	                                    }
+	                                    if(textureRef==0) continue;
+	                                    gl.glBindTexture(GL_TEXTURE_2D, textureRef);
+	                                    
+		            					mVertexBuffer.clear();
+		            					mVertexBuffer.put(sx-CONFIG.TILE_SIZE/2f+CONFIG.BORDER/2f);
+		            					mVertexBuffer.put(sy-CONFIG.TILE_SIZE/2f+CONFIG.BORDER/2f);
+		            					mVertexBuffer.put(sx-CONFIG.TILE_SIZE/2f+CONFIG.BORDER/2f);
+		            					mVertexBuffer.put(sy+CONFIG.TILE_SIZE/2f-CONFIG.BORDER/2f);
+		            					mVertexBuffer.put(sx+CONFIG.TILE_SIZE/2f-CONFIG.BORDER/2f);
+		            					mVertexBuffer.put(sy-CONFIG.TILE_SIZE/2f+CONFIG.BORDER/2f);
+		            					mVertexBuffer.put(sx+CONFIG.TILE_SIZE/2f-CONFIG.BORDER/2f);
+		            					mVertexBuffer.put(sy+CONFIG.TILE_SIZE/2f-CONFIG.BORDER/2f);
+		            					mVertexBuffer.position(0);
+		            					TEXTURE_COORDS.position(0);
+				    					
+				    					if (CONFIG.FADING_TIME > 0){
+				    						long fadeTime = fadingStartTime;//Math.max(fadingStartTime, availTime);
+                                            long curTime=System.nanoTime();
+											float fadingAnim = (float)((curTime - fadeTime)/(CONFIG.FADING_TIME*1E6));
+											if (fadingAnim > 1)	fadingAnim = 1;
+											if(fadingAnim<1) fading=true;
+                                            gl.glColor4f(1, 1, 1, (FADING_START_ALPHA+fadingAnim*(255-FADING_START_ALPHA))/(float)255);
+                                            if (fadingAnim < 1) {
+                                                //Log.i("TilesView","onDraw tileP.alpha,fadingStartTime,availTime:"+tileP.getAlpha()+","+(curTime-fadingStartTime)/1E6+","+(curTime-tileResponse.availTime)/1E6);
+                                            }
+                                        }
+				    					gl.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+				    				}
+			                	}
+
+	                            drawFullTile = (drawNum == ((bottomDist-topDist+1)*(rightDist-leftDist+1)));
+                                int mapTextZoomLevel = mapText.getZoomLevel();
+                                XYDouble mapTextMercXY = mapText.getMercXY();
+                                boolean same = true;
+                                long time = System.nanoTime();
+                                if (!(zoomingL || fading || movingL || rotatingX || rotatingZ) &&
+                                        time - mapText.lastTime >= 1000000000*1.5 && 
+                                        (drawFullTile || time - mapText.lastTime >= 1000000000*6)) {
+                                    XYFloat mapTextScreenXY = mercXYToScreenXYConv(mapTextMercXY, mapTextZoomLevel);
+                                    if (Math.abs(mapTextScreenXY.x - displaySize.x / 2) > (mapText.canvasSize.x - displaySize.x) / 2
+                                            || Math.abs(mapTextScreenXY.y - displaySize.y / 2) > (mapText.canvasSize.y - displaySize.y) / 2
+                                            || mapTextZoomLevel != zoomLevel
+                                            || (mapText.drawNum != drawNum)) {
+                                        same = false;
+                                    }
+                                }
+                                if (!same) {
+                                    mapText.mercXYGetting.x = centerXY.x;
+                                    mapText.mercXYGetting.y = centerXY.y;
+                                    mapText.zoomLevelGetting = centerXYZ.z;
+                                    mapText.drawNum = drawNum;
+                                    mapText.screenTextGetting = true;
+                                    mapText.lastTime = time;
+                                }
+			                	mapLayer.mainLayerDrawPercent=(float)drawNum/((bottomDistO-topDistO+1)*(rightDistO-leftDistO+1));
+			                	gl.glPopMatrix();
+		                	}else{
+		                		mapLayer.mainLayerDrawPercent=0;
+		                	}
+		                	gl.glColor4f(1,1,1,1);
+		                }
+	                    haveDrawingTiles = true;
+	                }
+                                        
+                    //draw the tile text
+                    if(mapText.isVisible() && Math.abs(zoomLevel-mapText.getZoomLevel()) < 1) {
+                        double scaleF1=Math.pow(2,zoomLevel-mapText.getZoomLevel());
+                        if (OneBitmapMapText) {
+                            if (zoomLevel-mapText.getZoomLevel() == 0) {
+                                double topLeftXf1 = centerXY.x * scaleF1 - displaySize.x / 2;
+                                double topLeftYf1 = centerXY.y * scaleF1 + displaySize.y / 2;
+                                float x=(float)(mapText.getMercXY().x*scaleF1-topLeftXf1);
+                                float y=(float)(-mapText.getMercXY().y*scaleF1+topLeftYf1);
+                                RotationTilt rt=mapText.getOffsetRotationTilt();
+                                float zRot=rt.getRotation();
+                                if(rt.getRotateRelativeTo().equals(RotateReference.MAP)){
+                                    zRot+=mapMode.getzRotation();
+                                }
+                                float xRot=rt.getTilt();
+                                if(rt.getTiltRelativeTo().equals(TiltReference.SCREEN)){
+                                    xRot-=mapMode.getxRotation();
+                                }
+                                gl.glPushMatrix();
+                                gl.glTranslatef(x/2,y/2,0);
+                                gl.glScalef((float)scaleF1, (float)scaleF1, 1);
+                                gl.glTranslatef(x/2,y/2,0);
+                                
+                                if (drawTileTextOpenGL(gl,mapText,new XYFloat(0,0), drawFullTile)) {
+                                    fading = true;
+                                }
+                                gl.glPopMatrix();
+                            }
+                        } else {
+                            gl.glEnable(GL10.GL_BLEND);
+                            gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
+                            MapWord[] mapWords = mapText.getMapWords();
+                            if(mapText.texImageChanged) {
+                                mapText.texImageChanged = false;
+                                if (mapText.screenTextGetting == false && drawFullTile) {
+                                    isDrawMapTextFinish = true;
+                                } else {
+                                    isDrawMapTextFinish = false;
+                                }
+                            }
+                            textFadingStartTime = System.nanoTime();
+                            if (mapWords != null) {
+                                Bitmap bm;
+                                for (MapWord mapWord : mapWords) {
+                                    bm = mapWord.icon.getBitmap(); 
+                                    if (bm != null) {
+                                        int textureRef = 0;
+                                        int width = 0;
+                                        int height = 0;
+                                        if (mapWordIconPool.containsKey(mapWord.icon)) {
+                                            Texture texture = mapWordIconPool.get(mapWord.icon); 
+                                            textureRef=texture.textureRef;
+                                            width=texture.size.x;
+                                            height=texture.size.y;
+                                        } else {
+                                            IntBuffer bf=IntBuffer.allocate(1);
+                                            gl.glGenTextures(1, bf);
+                                            textureRef=bf.get(0);
+                                            
+                                            gl.glBindTexture(GL_TEXTURE_2D, textureRef);
+                                            try {
+                                                width = findPower2(bm.getWidth());
+                                                height = findPower2(bm.getHeight());
+                                                Bitmap.Config config = Bitmap.Config.ARGB_4444;
+                                                Bitmap bitmap = Bitmap.createBitmap(width, height, config);
+                                                Canvas canvas = new Canvas(bitmap);
+                                                canvas.drawBitmap(bm, 0, 0, tilePText);
+                                                gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
+                                                gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+                                                gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                                                gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                                                GLUtils.texImage2D(GL_TEXTURE_2D, 0, bitmap, 0);
+                                                Texture texture = new Texture();
+                                                texture.textureRef = textureRef;
+                                                texture.size.x = width;
+                                                texture.size.y = height;
+                                                mapWordIconPool.put(mapWord.icon, texture);
+                                            } catch (Exception e) {
+                                                deleteTextureRef(gl,textureRef);
+                                                textureRef=0;
+                                            }
+                                        }
+                                        gl.glBindTexture(GL_TEXTURE_2D, textureRef);
+    
+                                        float x=(float)(mapWord.icon.mercXY.x*scaleF1-topLeftXf);
+                                        float y=(float)(-mapWord.icon.mercXY.y*scaleF1+topLeftYf);
+                                        
+                                        float zRot=0;
+//                                        if(mapWord.icon.index == -1){
+                                            zRot+=mapMode.getzRotation();
+//                                        }
+                                        float xRot=0;
+//                                        if(mapWord.icon.index != -1){
+                                            xRot-=mapMode.getxRotation();
+//                                        }
+                                        gl.glPushMatrix();
+                                        gl.glTranslatef(x, y,0);
+                                        gl.glRotatef(-mapMode.getzRotation(),0,0,1);
+                                        gl.glRotatef(xRot, 1,0, 0);
+                                        gl.glRotatef(zRot,0,0,1);
+                                        gl.glScalef(scaleToM, scaleToM, 1);
+                                        
+                                        x = 0;
+                                        y = 0;
+                                        mVertexBuffer.clear();
+                                        mVertexBuffer.put(x);
+                                        mVertexBuffer.put(y);
+                                        //mVertexBuffer.put(0);
+                                        mVertexBuffer.put(x);
+                                        mVertexBuffer.put(y+height);
+                                        //mVertexBuffer.put(0);
+                                        mVertexBuffer.put(x+width);
+                                        mVertexBuffer.put(y);
+                                        //mVertexBuffer.put(0);
+                                        mVertexBuffer.put(x+width);
+                                        mVertexBuffer.put(y+height);
+                                        //mVertexBuffer.put(0);
+                                        mVertexBuffer.position(0);
+                                        
+                                        TEXTURE_COORDS.position(0);
+//                                        if (CONFIG.TEXT_FADING_TIME > 0){
+//                                            long fadeTime = textFadingStartTime;//Math.max(fadingStartTime, availTime);
+//                                            long curTime=System.nanoTime();
+//                                            float fadingAnim = (float)((curTime - fadeTime)/(CONFIG.TEXT_FADING_TIME*1E6));
+//                                            if (fadingAnim > 1) fadingAnim = 1;
+//                                            if(fadingAnim<1) fading=true;
+//                                            gl.glColor4f(1, 1, 1, (TEXT_FADING_START_ALPHA+fadingAnim*(255-TEXT_FADING_START_ALPHA))/(float)255);
+//                                            if (fadingAnim < 1) {
+//                                                //Log.i("TilesView","onDraw tileP.alpha,fadingStartTime,availTime:"+tileP.getAlpha()+","+(curTime-fadingStartTime)/1E6+","+(curTime-tileResponse.availTime)/1E6);
+//                                            }
+//                                        }
+                                        gl.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+                                        gl.glPopMatrix();
+                                    }
+                                    
+                                    int textureRef = 0;
+                                    int width = 0;
+                                    int height = 0;
+                                    if (mapWordPool.containsKey(mapWord)) {
+                                        Texture texture=mapWordPool.get(mapWord);
+                                        textureRef = texture.textureRef;
+                                        width = texture.size.x;
+                                        height = texture.size.y;
+                                    } else {
+                                        IntBuffer bf=IntBuffer.allocate(1);
+                                        gl.glGenTextures(1, bf);
+                                        textureRef=bf.get(0);
+                                        
+                                        gl.glBindTexture(GL_TEXTURE_2D, textureRef);
+                                        try {
+                                            bm = drawMapWordItemToBitmap(mapWord);
+                                            width = bm.getWidth();
+                                            height = bm.getHeight();
+                                            gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
+                                            gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+                                            gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                                            gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                                            GLUtils.texImage2D(GL_TEXTURE_2D, 0, bm, 0);
+                                            Texture texture = new Texture();
+                                            texture.size.x = width;
+                                            texture.size.y = height;
+                                            texture.textureRef = textureRef;
+                                            mapWordPool.put(mapWord, texture);
+                                        } catch (Exception e) {
+                                            deleteTextureRef(gl,textureRef);
+                                            textureRef=0;
+                                        }
+                                    }
+                                    gl.glBindTexture(GL_TEXTURE_2D, textureRef);
+
+                                    float x=(float)(mapWord.mercXY.x*scaleF1-topLeftXf);
+                                    float y=(float)(-mapWord.mercXY.y*scaleF1+topLeftYf);
+                                    
+                                    float zRot=0;
+//                                    if(mapWord.icon.index == -1){
+                                        zRot+=mapMode.getzRotation();
+//                                    }
+                                    float xRot=0;
+//                                    if(mapWord.icon.index != -1){
+                                        xRot-=mapMode.getxRotation();
+//                                    }
+                                    gl.glPushMatrix();
+                                    gl.glTranslatef(x, y,0);
+                                    gl.glRotatef(-mapMode.getzRotation(),0,0,1);
+                                    gl.glRotatef(xRot, 1,0, 0);
+                                    gl.glRotatef(zRot,0,0,1);
+                                    gl.glScalef(scaleToM, scaleToM, 1);
+                                    
+                                    x = 0;
+                                    y = 0;
+                                    mVertexBuffer.clear();
+                                    mVertexBuffer.put(x);
+                                    mVertexBuffer.put(y);
+                                    //mVertexBuffer.put(0);
+                                    mVertexBuffer.put(x);
+                                    mVertexBuffer.put(y+height);
+                                    //mVertexBuffer.put(0);
+                                    mVertexBuffer.put(x+width);
+                                    mVertexBuffer.put(y);
+                                    //mVertexBuffer.put(0);
+                                    mVertexBuffer.put(x+width);
+                                    mVertexBuffer.put(y+height);
+                                    //mVertexBuffer.put(0);
+                                    mVertexBuffer.position(0);
+                                    
+                                    TEXTURE_COORDS.position(0);
+//                                    if (CONFIG.TEXT_FADING_TIME > 0){
+//                                        long fadeTime = textFadingStartTime;//Math.max(fadingStartTime, availTime);
+//                                        long curTime=System.nanoTime();
+//                                        float fadingAnim = (float)((curTime - fadeTime)/(CONFIG.TEXT_FADING_TIME*1E6));
+//                                        if (fadingAnim > 1) fadingAnim = 1;
+//                                        if(fadingAnim<1) fading=true;
+//                                        gl.glColor4f(1, 1, 1, (TEXT_FADING_START_ALPHA+fadingAnim*(255-TEXT_FADING_START_ALPHA))/(float)255);
+//                                        if (fadingAnim < 1) {
+//                                            //Log.i("TilesView","onDraw tileP.alpha,fadingStartTime,availTime:"+tileP.getAlpha()+","+(curTime-fadingStartTime)/1E6+","+(curTime-tileResponse.availTime)/1E6);
+//                                        }
+//                                    }
+                                    gl.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+                                    gl.glPopMatrix();
+                                }
+                            }
+                            
+                            gl.glDisable(GL10.GL_BLEND);
+                            gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+                        }
+                        
+                    }
+                    gl.glDisable(GL_BLEND);
+	                
+	                //draw the shapes
+	                gl.glEnable(GL10.GL_BLEND);
+	                gl.glDisable(GL_TEXTURE_2D);
+					for (int i = 0; i < shapes.size(); i++) {
+	                    Shape shape = shapes.get(i);
+	                    if(!shape.isVisible()){
+	                    	continue;
+	                    }
+	                    if (shape instanceof Polyline) {
+	                    	Polyline polyline=(Polyline)shape;
+			        		if(polyline.getPositions()==null) continue;
+			        		polyline.renderGL(gl, new XYDouble(topLeftXf, topLeftYf), zoomLevel, centerXYZ.z, drawingTiles);
+	                    }else if(shape instanceof Circle){
+	                    	Circle circle=(Circle)shape;
+	                    	if(circle.getPosition()==null){
+		    					continue;
+		    				}
+	                    	circle.renderGL(gl,new XYDouble(topLeftXf,topLeftYf),zoomLevel);
+						}else if(shape instanceof Polygon){
+							Polygon polygon=(Polygon)shape;
+							if(polygon.getPositions()==null) continue;
+							polygon.renderGL(gl, new XYDouble(topLeftXf,topLeftYf), zoomLevel);
+						}
+	                }
+	            	gl.glColor4f(1, 1, 1, 1);
+	            	gl.glDisable(GL_BLEND);
+					gl.glEnable(GL_TEXTURE_2D);
+					gl.glVertexPointer(2, GL_FLOAT, 0, mVertexBuffer);
+			        
+			    	//draw the overlays
+			        double overlayZoomScale=Math.pow(2,zoomLevel-ItemizedOverlay.ZOOM_LEVEL);
+			        gl.glEnable(GL10.GL_BLEND);
+//        	        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+                    gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
+        	        for(int i=0;i<overlays.size();i++){
+		    			ItemizedOverlay overlay=overlays.get(i);
+		    			
+		    			ArrayList<ArrayList<OverlayItem>> clusters=overlay.getVisiblePins(centerXYZ.z,drawingTiles);
+		    			OverlayItem focusedPin = null;
+		    			//Log.i("TilesView","onDraw pins length,visible length,zoomLevel:"+overlay.size()+","+pins.size()+","+centerXYZ.z);
+		                for(int j=clusters.size()-1;j>=0;j--){
+		    				ArrayList<OverlayItem> cluster=clusters.get(j);
+		    				ArrayList<OverlayItem> visiblePins=new ArrayList<OverlayItem>();
+	        				for(int ii=0;ii<cluster.size();ii++){
+	        					OverlayItem pinL=cluster.get(ii);
+	        					if(pinL.getIcon().getImage()!=null && pinL.getMercXY()!=null && pinL.isVisible()){
+	        						visiblePins.add(pinL);
+	        					}
+	        				}
+		    				if(visiblePins.size()==0) continue;
+		    				
+		    				OverlayItem pin=visiblePins.get(0);
+        					
+        					float x=(float)(pin.getMercXY().x*overlayZoomScale-topLeftXf);
+		    				float y=(float)(-pin.getMercXY().y*overlayZoomScale+topLeftYf);
+		    				
+		    				RotationTilt rt=pin.getRotationTilt();
+		    				float zRot=rt.getRotation();
+		    				if(rt.getRotateRelativeTo().equals(RotateReference.MAP)){
+		    					zRot+=mapMode.getzRotation();
+		    				}
+		    				isMyLocation = overlay.getName().equals(ItemizedOverlay.MY_LOCATION_OVERLAY);
+		    				long time = System.nanoTime();
+		    				if (isMyLocation && time - refreshMyLocationTime > 1000000000*1.5) {
+		    				    refreshMyLocationTime = time;
+		    				    pin.isFoucsed = !pin.isFoucsed;
+		    				}
+	                        if (isMyLocation) {
+	                            zRot-=locationZRotation;
+	                        } else if (pin.isFoucsed){
+	                            focusedPin = pin;
+	                        }
+		    				float xRot=rt.getTilt();
+		    				if(rt.getTiltRelativeTo().equals(TiltReference.SCREEN)){
+		    					xRot-=mapMode.getxRotation();
+		    				}
+		    				gl.glPushMatrix();
+		    				gl.glTranslatef(x, y,0);
+		    				gl.glRotatef(-mapMode.getzRotation(),0,0,1);
+		    				gl.glRotatef(xRot, 1,0, 0);
+		    				gl.glRotatef(zRot,0,0,1);
+		    				gl.glScalef(scaleToM, scaleToM, 1);
+		    				drawOverlayItemOpenGL(gl,pin,0,0,isMyLocation);
+		    				if(overlay.isClustering() && cluster.size()>1){
+		    					drawClusterTextOpenGL(gl,pin,""+cluster.size(),0,0);
+			    			}
+		    				gl.glPopMatrix();
+		                	
+		    			}
+		                if (focusedPin != null) {
+                            
+                            float x=(float)(focusedPin.getMercXY().x*overlayZoomScale-topLeftXf);
+                            float y=(float)(-focusedPin.getMercXY().y*overlayZoomScale+topLeftYf);
+                            
+                            RotationTilt rt=focusedPin.getRotationTilt();
+                            float zRot=rt.getRotation();
+                            if(rt.getRotateRelativeTo().equals(RotateReference.MAP)){
+                                zRot+=mapMode.getzRotation();
+                            }
+
+                            float xRot=rt.getTilt();
+                            if(rt.getTiltRelativeTo().equals(TiltReference.SCREEN)){
+                                xRot-=mapMode.getxRotation();
+                            }
+                            gl.glPushMatrix();
+                            gl.glTranslatef(x, y,0);
+                            gl.glRotatef(-mapMode.getzRotation(),0,0,1);
+                            gl.glRotatef(xRot, 1,0, 0);
+                            gl.glRotatef(zRot,0,0,1);
+                            gl.glScalef(scaleToM, scaleToM, 1);
+                            drawOverlayItemOpenGL(gl,focusedPin,0,0,false);
+                            gl.glPopMatrix();
+		                }
+		    		}
+        	        gl.glDisable(GL10.GL_BLEND);
+                    gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+					
+					//draw the info window
+    		        if(infoWindow.isVisible() && infoWindow.getMercXY()!=null) {
+    		        	double infoZoomScale=(float)Math.pow(2,zoomLevel-InfoWindow.ZOOM_LEVEL);
+    			        float x=(float)(infoWindow.getMercXY().x*infoZoomScale-topLeftXf);
+        				float y=(float)(-infoWindow.getMercXY().y*infoZoomScale+topLeftYf);
+        				
+        				RotationTilt rt=infoWindow.getOffsetRotationTilt();
+        				float zRot=rt.getRotation();
+	    				if(rt.getRotateRelativeTo().equals(RotateReference.MAP)){
+	    					zRot+=mapMode.getzRotation();
+	    				}
+	    				float xRot=rt.getTilt();
+	    				if(rt.getTiltRelativeTo().equals(TiltReference.SCREEN)){
+	    					xRot-=mapMode.getxRotation();
+	    				}
+	    				gl.glPushMatrix();
+        				gl.glTranslatef(x,y,0);
+        				gl.glRotatef(-mapMode.getzRotation(),0,0,1);
+	    				gl.glRotatef(xRot,1,0,0);
+	    				gl.glRotatef(zRot, 0, 0, 1);
+	    				gl.glTranslatef(-infoWindow.getOffset().x*scaleToM, -infoWindow.getOffset().y*scaleToM, 0);
+	    				
+	    				gl.glRotatef(-zRot,0,0,1);
+	    				gl.glRotatef(-mapMode.getxRotation()-xRot,1,0,0);
+	    				gl.glScalef(scaleToM, scaleToM, 1);
+	    				drawInfoWindowOpenGL(gl,infoWindow,new XYFloat(0,0));
+	    				gl.glPopMatrix();
+        			}
+    		        
+	                //draw the compass
+	                if(compass!=null && compass.isVisible()){
+	                	XYInteger screenXY=compass.getScreenXY(displaySize);
+                        gl.glEnable(GL10.GL_BLEND);
+//                        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+                        gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
+	                	
+	                	gl.glLoadIdentity();
+						gl.glTranslatef(-displaySize.x/2f,displaySize.y/2f+padding.top, -mapMode.middleZ);
+						gl.glRotatef(180,1,0,0);
+						
+						gl.glTranslatef(displaySize.x/2f,displaySize.y/2f+padding.top,0);
+						float scale=mapMode.middleZ/mapMode.nearZ;
+						gl.glScalef(scale, scale, scale);
+						gl.glTranslatef(screenXY.x-displaySize.x/2f, screenXY.y-displaySize.y/2f+padding.top, 0);
+						gl.glRotatef(mapMode.getxRotation(), 1, 0, 0);
+                        float zRot=locationZRotation;
+						gl.glRotatef(zRot,0,0,1);
+						
+						Icon icon = compass.getIcon();
+			            XYInteger size=icon.getSize();
+			            XYInteger offset=icon.getOffset();
+			            int bmSizeX=findPower2(size.x);
+			            int bmSizeY=findPower2(size.y);
+			            if(compass.textureRef==0){
+			                IntBuffer bf=IntBuffer.allocate(1);
+			                gl.glGenTextures(1, bf);
+			                compass.textureRef=bf.get(0);
+			                gl.glBindTexture(GL_TEXTURE_2D, compass.textureRef);
+			                try{
+			                    Bitmap.Config config=Config.ARGB_8888;
+			                    Bitmap bm=Bitmap.createBitmap(bmSizeX,bmSizeY,config);
+			                    Canvas canvas=new Canvas(bm);
+			                    bm.eraseColor(0);
+			                    
+			                    //canvas.drawRect(new RectF(0, 0,size.x,size.y), new Paint());
+			                    canvas.drawBitmap(icon.getImage(), null, new RectF(0, 0,size.x,size.y), null);
+			                    
+			                    gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
+			                    gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+			                    gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			                    gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			                    GLUtils.texImage2D(GL_TEXTURE_2D, 0, bm, 0);
+			                    //Log.d("TilesView","iconPool put textureRef,pin:"+textureRef+","+pin.getMessage());
+			                }catch(Exception e){
+			                    deleteTextureRef(gl,compass.textureRef);
+			                    compass.textureRef=0;
+			                }
+			            }
+                        gl.glBindTexture(GL_TEXTURE_2D, compass.textureRef);
+			            
+			            XYInteger xy = new XYInteger(0, 0);
+			            xy.x-=offset.x;
+			            xy.y-=offset.y;
+			            mVertexBuffer.clear();
+			            mVertexBuffer.put(xy.x);
+			            mVertexBuffer.put(xy.y);
+			            mVertexBuffer.put(xy.x);
+			            mVertexBuffer.put(xy.y+bmSizeY);
+			            mVertexBuffer.put(xy.x+bmSizeX);
+			            mVertexBuffer.put(xy.y);
+			            mVertexBuffer.put(xy.x+bmSizeX);
+			            mVertexBuffer.put(xy.y+bmSizeY);
+			            mVertexBuffer.position(0);
+			            TEXTURE_COORDS.position(0);
+			            gl.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	                    gl.glDisable(GL10.GL_BLEND);
+	                    gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+	                }
+	                //end of draw
+	                 
+    		        //if(visibleLayerNum>1 && requestTiles.size()>0){
+    		        if(requestTiles.size()>0){
+    		        	Collections.sort(requestTiles);
+    		        	synchronized(tilesWaitForLoading){
+    		        		tilesWaitForLoading.clear();
+    			        	tilesWaitForLoading.addAll(0,requestTiles);
+    			        	tilesWaitForLoading.notifyAll();
+    		        	}
+    		        }
+    		        
+    		        if (mapText.screenTextGetting) {
+    		            if (Math.abs(System.currentTimeMillis()-MapTextThread.time) > 256) {
+                            synchronized (mapText) {
+                                mapText.notifyAll();
+                            }
+    		            }
+                    }
+    		        
+    		        if(zoomingL || fading || movingL || rotatingX || rotatingZ) requestRender();
+    		        else if (isSnap && mapText.texImageChanged == false && mapText.screenTextGetting == false && drawFullTile){
+                        snapBmp = savePixels(0, 0, displaySize.x, displaySize.y, gl);
+                        isSnap = false;
+    		        }
+					
+				}catch(Exception e){
+					e.printStackTrace();
+				}
+				
+				Profile.drawInc(System.nanoTime()-drawStart);
+				
+				if(movingJustDoneL){
+					try{
+						Position cp=getCenterPosition();
+						if(movingListener!=null){
+							movingListener.onMoveEndEvent(mParentMapView, cp);
+						}
+						mParentMapView.executeMoveEndListeners(cp);
+					}catch(Exception e){
+						e.printStackTrace();
+					}
+				}
+				if(zoomingJustDoneL){
+		            MapTextThread.time = 0;
+					if(zoomingListener!=null){
+						zoomingListener.onZoomEndEvent(mParentMapView, Math.round(zoomLevel));
+					}
+					mParentMapView.executeZoomEndListeners(Math.round(zoomLevel));
+				}
+				
+				if(rotatingZJustDoneL && lastZRotation!=mapMode.getzRotation()){
+					mParentMapView.executeRotateEndListeners(mapMode.getzRotation());
+				}
+				
+				if(rotatingXJustDoneL && lastXRotation!=mapMode.getxRotation()){
+					mParentMapView.executeTiltEndListeners(mapMode.getxRotation());
+				}
+			}
+			
+		}
+		
+        private boolean drawTileTextOpenGL(GL10 gl, MapText mapText, XYFloat screenXY, boolean drawFullTile){
+            boolean fading = false;
+            gl.glEnable(GL10.GL_BLEND);
+//            gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+            gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
+            
+            if(mapText.textureRef==0){
+                //infoWindow.textureRef=Util.getNextTexRef();
+                IntBuffer bf=IntBuffer.allocate(1);
+                gl.glGenTextures(1, bf);
+                mapText.textureRef=bf.get(0);
+            }
+            gl.glBindTexture(GL_TEXTURE_2D, mapText.textureRef);
+
+            if(mapText.texImageChanged && mapText.bitmap != null){
+                mapText.bitmap.eraseColor(0);
+                Canvas infoImageCanvas= new Canvas(mapText.bitmap);
+                drawMapText(infoImageCanvas, mapText.getMapWords(), new XYFloat(0f, 0f));
+                
+                gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
+                gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+                gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+                gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                GLUtils.texImage2D(GL_TEXTURE_2D, 0, mapText.bitmap, 0);
+                
+                mapText.texImageChanged = false;
+//                File file = new File(TigerknowsConfig.getDataPath(true) + "tileText.jpg");
+//                file.delete();
+//                Uri uri = Uri.fromFile(file);
+//                Util.writeBitmap2Uri(getContext(), uri, mapTextBitmap);
+                if (mapText.screenTextGetting == false && drawFullTile) {
+                    isDrawMapTextFinish = true;
+                } else {
+                    isDrawMapTextFinish = false;
+                }
+            }
+
+            float x = (screenXY.x - mapText.canvasSize.x)/2;//-mapText.getOffset().x
+            float y = (screenXY.y - mapText.canvasSize.y)/2;//mapText.getOffset().y
+            mVertexBuffer.clear();
+            mVertexBuffer.put(x);
+            mVertexBuffer.put(y);
+            mVertexBuffer.put(x);
+            mVertexBuffer.put(y+mapText.canvasSize.y);
+            mVertexBuffer.put(x+mapText.canvasSize.x);
+            mVertexBuffer.put(y);
+            mVertexBuffer.put(x+mapText.canvasSize.x);
+            mVertexBuffer.put(y+mapText.canvasSize.y);
+            mVertexBuffer.position(0);
+            
+            TEXTURE_COORDS.position(0);
+            
+            gl.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+                        
+            gl.glDisable(GL10.GL_BLEND);
+            gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+            return fading;
+        }
+    
+        private Bitmap drawMapWordItemToBitmap(MapWord mapWord) {
+            int fontSize = mapWord.getFontSize();
+            tilePText.setTextSize(fontSize);
+
+            float width=tilePText.measureText(mapWord.getName());
+            float height=(-tilePText.ascent()+tilePText.descent());
+//            int iconWidth = 0;
+            
+//            MapWord.Icon icon = mapWord.icon;
+//            Bitmap iconBm = null;
+//            if (icon != null) {
+//                iconBm = icon.getBitmap();
+//                if (iconBm != null) {
+//                    iconWidth = iconBm.getWidth();
+//                }
+//            }
+//            
+//            width += iconWidth;
+
+            float x = 0;
+            float y = fontSize;
+            int slope = mapWord.getSlope();
+            if ((slope > 0) && (slope < 45)) {
+                slope = -slope;
+            } else if ((slope >= 45) && (slope < 90)){
+                slope = 90-slope;
+            } else if ((slope >= 90) && (slope < 135)){
+                slope = -(slope-90);
+            } else if ((slope >= 135) && (slope < 180)){
+                slope = 180-slope;
+            }
+
+            width = findPower2(width);
+            height = findPower2(height);
+            XYInteger size = new XYInteger((int)width, (int)height);
+            Bitmap bitmap = textBitmapPool.get(size);
+            if (bitmap != null) {
+                bitmap.eraseColor(0);
+            } else {
+                Bitmap.Config config = Bitmap.Config.ARGB_4444;
+                bitmap = Bitmap.createBitmap((int)width, (int)height, config);
+                textBitmapPool.put(size, bitmap);
+            }
+            Canvas canvas = new Canvas(bitmap);
+//            if (iconBm != null) {
+//                canvas.drawBitmap(iconBm, 0, 0, tilePText);
+//            }
+            
+            tilePText.setColor(mapWord.getOutlineColor() | 0xff000000); //ɫ ͸RGB
+            tilePText.setStyle(Style.STROKE); //ֻ
+            String name = mapWord.getName();
+            if (Math.abs(slope) > 10) {
+                canvas.save();
+                canvas.rotate(slope, width/2, height/2);
+                canvas.drawText(name, x, y, tilePText);
+                
+                tilePText.setColor(mapWord.getFontColor() | 0xff000000);
+                tilePText.setStyle(Style.FILL); 
+                canvas.drawText(name, x, y, tilePText);
+                canvas.restore();
+            } else {
+                canvas.drawText(name, x, y, tilePText);
+                
+                tilePText.setColor(mapWord.getFontColor() | 0xff000000);
+                tilePText.setStyle(Style.FILL);
+                canvas.drawText(name, x, y, tilePText);
+            }
+            
+            return bitmap;
+        }
+        
+		private void drawInfoWindowOpenGL(GL10 gl, InfoWindow infoWindow, XYFloat screenXY){
+			gl.glEnable(GL10.GL_BLEND);
+	        gl.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
+	        
+	        if(infoWindow.textureRef==0){
+    			//infoWindow.textureRef=Util.getNextTexRef();
+    			IntBuffer bf=IntBuffer.allocate(1);
+				gl.glGenTextures(1, bf);
+				infoWindow.textureRef=bf.get(0);
+				//Log.d("TilesView","infoWindow.textureRef:"+infoWindow.textureRef);
+    		}
+    		gl.glBindTexture(GL_TEXTURE_2D, infoWindow.textureRef);
+    		
+    		if(infoWindow.texImageChanged){
+    			RectF infoWindowRect=getInfoWindowRecF(infoWindow, new XYFloat(0f,0f));
+    			infoWindow.canvasSize.x=findPower2(infoWindowRect.width());
+    			infoWindow.canvasSize.y=findPower2(infoWindowRect.height());
+    		}
+    		float originX=infoWindow.canvasSize.x/2f;
+			float originY=infoWindow.canvasSize.y;
+			float x=screenXY.x-infoWindow.canvasSize.x/2f;
+			float y=screenXY.y-infoWindow.canvasSize.y;
+										
+    		if(infoWindow.texImageChanged){
+    			//Log.i("MapRender","infoWindow bind texture image start");
+    			Bitmap.Config config = Bitmap.Config.ARGB_8888;
+    			Bitmap infoBitmap=Bitmap.createBitmap(infoWindow.canvasSize.x, infoWindow.canvasSize.y, config);
+    			Canvas infoImageCanvas= new Canvas(infoBitmap);
+        		
+    			infoBitmap.eraseColor(0);
+    			drawInfoWindow(infoImageCanvas, infoWindow, new XYFloat(originX,originY));
+    			
+    			gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
+    			gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+    			gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    			gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    			GLUtils.texImage2D(GL_TEXTURE_2D, 0, infoBitmap, 0);
+    			
+    			infoWindow.texImageChanged=false;
+    		}
+    	
+			mVertexBuffer.clear();
+			mVertexBuffer.put(x);
+			mVertexBuffer.put(y);
+			//mVertexBuffer.put(0);
+			mVertexBuffer.put(x);
+			mVertexBuffer.put(y+infoWindow.canvasSize.y);
+			//mVertexBuffer.put(0);
+			mVertexBuffer.put(x+infoWindow.canvasSize.x);
+			mVertexBuffer.put(y);
+			//mVertexBuffer.put(0);
+			mVertexBuffer.put(x+infoWindow.canvasSize.x);
+			mVertexBuffer.put(y+infoWindow.canvasSize.y);
+			//mVertexBuffer.put(0);
+			mVertexBuffer.position(0);
+			
+			TEXTURE_COORDS.position(0);
+			
+			gl.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    		    		
+    		gl.glDisable(GL10.GL_BLEND);
+		}
+		
+		private int findPower2(float size){
+			int r=1;
+			while(r<size){
+				r*=2;
+			}
+			return r;
+		}
+		
+		private void drawClusterTextOpenGL(GL10 gl, OverlayItem pin, String clusterText, float x, float y){
+			if(clusterText==null || clusterText.equals("") || pin.getOwnerOverlay()==null) return;
+			
+			ItemizedOverlay overlay=pin.getOwnerOverlay();
+			int textureRef=0;
+			XYInteger offset=pin.getIcon().getOffset();
+			XYInteger clusterOff=overlay.getClusterTextOffset();
+			
+			float borderSize=ItemizedOverlay.OVERLAY_CLUSTER_BORDER_SIZE*metrics.density;
+			float roundRadius=ItemizedOverlay.OVERLAY_CLUSTER_ROUND_RADIUS*metrics.density;
+			float textSize=ItemizedOverlay.OVERLAY_CLUSTER_TEXT_SIZE*metrics.density;
+			Paint textPaint=new Paint();
+			textPaint.setColor(overlay.getClusterTextColor());
+			textPaint.setTextAlign(Align.CENTER);
+			textPaint.setTextSize(textSize);
+			textPaint.setAntiAlias(ItemizedOverlay.OVERLAY_CLUSTER_TEXT_ANTIALIAS);
+			float textOffsetX=ItemizedOverlay.OVERLAY_CLUSTER_TEXT_OFFSET_X*metrics.density;
+			float textOffsetY=ItemizedOverlay.OVERLAY_CLUSTER_TEXT_OFFSET_Y*metrics.density;
+			float textHeight=-textPaint.ascent()+textPaint.descent();
+			float textLength=textPaint.measureText(clusterText);
+			
+			int bmSizeX=findPower2(textLength+2*textOffsetX);
+			int bmSizeY=findPower2(textHeight+2*textOffsetY);
+			
+			String key=clusterText+"|"+overlay.getClusterBackgroundColor()+"|"+overlay.getClusterBorderColor()+"|"+overlay.getClusterTextColor();
+			if(clusterTextPool.containsKey(key)){
+				textureRef=clusterTextPool.get(key);
+			}else{
+				textureRef=genTextureRef(gl);
+				gl.glBindTexture(GL_TEXTURE_2D, textureRef);
+				try{
+					
+    				Paint innerPaint=new Paint();
+    				innerPaint.setColor(overlay.getClusterBackgroundColor());
+    				innerPaint.setAntiAlias(ItemizedOverlay.OVERLAY_CLUSTER_INNER_ANTIALIAS);
+    				Paint borderPaint=new Paint();
+    				borderPaint.setColor(overlay.getClusterBorderColor());
+    				borderPaint.setStyle(Style.STROKE);
+    				borderPaint.setStrokeWidth(borderSize);
+    				borderPaint.setAntiAlias(ItemizedOverlay.OVERLAY_CLUSTER_BORDER_ANTIALIAS);
+    				
+    				Bitmap.Config config=Config.ARGB_4444;
+					Bitmap bm=Bitmap.createBitmap(bmSizeX,bmSizeY,config);
+					Canvas canvas=new Canvas(bm);
+					bm.eraseColor(0);
+					
+					RectF rect=new RectF(0,0,textLength+2*textOffsetX,textHeight+2*textOffsetY);
+					canvas.drawRoundRect(rect, roundRadius, roundRadius, innerPaint);
+    				canvas.drawRoundRect(rect, roundRadius, roundRadius, borderPaint);
+    				canvas.drawText(clusterText,(rect.left+rect.right)/2,rect.top+textOffsetY+0.8f*textHeight,textPaint);
+    				
+    				gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+					GLUtils.texImage2D(GL_TEXTURE_2D, 0, bm, 0);
+					clusterTextPool.put(key, textureRef);
+					LogWrapper.d("TilesView","clusterTextPool put textureRef,key:"+textureRef+","+key);
+					
+				}catch(Exception e){
+					deleteTextureRef(gl,textureRef);
+					textureRef=0;
+				}
+			}
+			
+			gl.glBindTexture(GL_TEXTURE_2D, textureRef);
+			
+			x-=offset.x;
+			y-=offset.y;
+			x+=clusterOff.x;
+			y+=clusterOff.y;
+			mVertexBuffer.clear();
+			mVertexBuffer.put(x);
+			mVertexBuffer.put(y);
+			mVertexBuffer.put(x);
+			mVertexBuffer.put(y+bmSizeY);
+			mVertexBuffer.put(x+bmSizeX);
+			mVertexBuffer.put(y);
+			mVertexBuffer.put(x+bmSizeX);
+			mVertexBuffer.put(y+bmSizeY);
+			mVertexBuffer.position(0);
+			TEXTURE_COORDS.position(0);
+			gl.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+		}
+		
+		private void drawOverlayItemOpenGL(GL10 gl, OverlayItem pin, float x, float y, boolean isMylocation){
+			int textureRef=0;
+			Icon icon=pin.getIcon();
+			if (isMylocation) {
+			    MyLocationObject myLocationObject = (MyLocationObject)pin.getAssociatedObject();
+			    if (myLocationObject.status == Sphinx.LOCATION_BUTTON_STATUS_ROTATION) {
+			        icon = myLocationObject.roration;
+			    } else if (pin.isFoucsed) {
+			        icon = myLocationObject.focused;
+			    }
+			}
+			XYInteger size=icon.getSize();
+			XYInteger offset=icon.getOffset();
+			int bmSizeX=findPower2(size.x);
+			int bmSizeY=findPower2(size.y);
+			
+			if(iconPool.containsKey(icon)){
+				textureRef=iconPool.get(icon);
+			}else{
+				textureRef=genTextureRef(gl);
+				gl.glBindTexture(GL_TEXTURE_2D, textureRef);
+				try{
+					Bitmap.Config config;
+		            if (isMylocation && pin.isFoucsed) {
+		                config=Config.ARGB_8888;
+		            } else {
+		                config=Config.ARGB_4444;
+		            }
+					Bitmap bm=Bitmap.createBitmap(bmSizeX,bmSizeY,config);
+					Canvas canvas=new Canvas(bm);
+					bm.eraseColor(0);
+					
+					//canvas.drawRect(new RectF(0, 0,size.x,size.y), new Paint());
+					canvas.drawBitmap(icon.getImage(), null, new RectF(0, 0,size.x,size.y), null);
+					int order = icon.getOrder();
+                    if (order > 0) {
+                        String orderStr = String.valueOf(order);
+                        int width = Math.round(orderP.measureText(orderStr));
+                        int height=Math.round(-orderP.ascent()+orderP.descent());
+                        canvas.drawText(orderStr, size.x/2-width/2, size.y/8+height, orderP);
+                    }
+					
+					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL10.GL_LINEAR);
+					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL10.GL_LINEAR);
+					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+					GLUtils.texImage2D(GL_TEXTURE_2D, 0, bm, 0);
+					iconPool.put(icon.clone(), textureRef);
+					//Log.d("TilesView","iconPool put textureRef,pin:"+textureRef+","+pin.getMessage());
+				}catch(Exception e){
+					deleteTextureRef(gl,textureRef);
+					textureRef=0;
+				}
+				
+			}
+			gl.glBindTexture(GL_TEXTURE_2D, textureRef);
+			
+			x-=offset.x;
+			y-=offset.y;
+			mVertexBuffer.clear();
+			mVertexBuffer.put(x);
+			mVertexBuffer.put(y);
+			mVertexBuffer.put(x);
+			mVertexBuffer.put(y+bmSizeY);
+			mVertexBuffer.put(x+bmSizeX);
+			mVertexBuffer.put(y);
+			mVertexBuffer.put(x+bmSizeX);
+			mVertexBuffer.put(y+bmSizeY);
+			mVertexBuffer.position(0);
+			TEXTURE_COORDS.position(0);
+			gl.glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+			
+		}
+		
+		/**
+		 * set the view port and do the top level coordinate matrix operation here, it will convert 
+		 * the coordinate from the normal canvas coordinate to coordinate system relative to screen center.
+		 */
+		public void onSurfaceChanged(GL10 gl, int w, int h) {
+			LogWrapper.i("TilesView","MapRender.onSurfaceChanged "+"w:"+w+",h:"+h+",displaySize:"+displaySize);
+			
+			gl.glMatrixMode(GL_PROJECTION);
+			gl.glLoadIdentity();
+			gl.glFrustumf(-displaySize.x/2f, displaySize.x/2f, -displaySize.y/2f, displaySize.y/2f, mapMode.nearZ, mapMode.farZ+1);
+						
+			clearTexRefs(gl);
+		}
+		
+		private void clearTexRefs(GL10 gl){
+			LogWrapper.i("TilesView","clean tilePool total texture num:"+tileTextureRefs.size());
+			Iterator<Integer> iterator1=tileTextureRefs.values().iterator();
+			while(iterator1.hasNext()){
+				int textureRef=iterator1.next();
+				deleteTextureRef(gl,textureRef);
+			}
+			tileTextureRefs.clear();
+			
+			LogWrapper.i("TilesView","clean iconPool total texture num:"+iconPool.size());
+			Iterator<Integer> iterator2=iconPool.values().iterator();
+			while(iterator2.hasNext()){
+				int textureRef=iterator2.next();
+				deleteTextureRef(gl,textureRef);
+			}
+			iconPool.clear();
+			
+			LogWrapper.i("TilesView","clean clusterTextPool total texture num:"+clusterTextPool.size());
+			Iterator<Integer> iterator3=clusterTextPool.values().iterator();
+			while(iterator3.hasNext()){
+				int textureRef=iterator3.next();
+				deleteTextureRef(gl,textureRef);
+			}
+			clusterTextPool.clear();
+			
+            Iterator<Texture> iterator4=mapWordPool.values().iterator();
+            while(iterator4.hasNext()){
+                Texture texture = iterator4.next();
+                if (texture != null && texture.textureRef != 0) {
+                    int textureRef=texture.textureRef;
+                    deleteTextureRef(gl,textureRef);
+                }
+            }
+            mapWordPool.clear();
+            
+            Iterator<Texture> iterator5=mapWordIconPool.values().iterator();
+            while(iterator5.hasNext()){
+                Texture texture = iterator5.next();
+                if (texture != null && texture.textureRef != 0) {
+                    int textureRef=texture.textureRef;
+                    deleteTextureRef(gl,textureRef);
+                }
+            }
+            mapWordIconPool.clear();
+            
+			if (compass.textureRef != 0) {
+                deleteTextureRef(gl,compass.textureRef);
+                compass.textureRef = 0;
+			}
+			
+			if(infoWindow.textureRef!=0){
+				deleteTextureRef(gl,infoWindow.textureRef);
+				infoWindow.textureRef=0;
+				infoWindow.texImageChanged=true;
+			}
+			if(OneBitmapMapText && mapText.textureRef!=0){
+                deleteTextureRef(gl,mapText.textureRef);
+                mapText.textureRef=0;
+			}
+			mapText.screenTextGetting=true;
+			mapText.lastTime = 0;
+			mapText.drawNum = 0;
+			
+			Iterator<Bitmap> iterator6=textBitmapPool.values().iterator();
+            while(iterator6.hasNext()){
+                Bitmap bm = iterator6.next();
+                if (bm != null && bm.isRecycled() == false) {
+                    bm.recycle();
+                }
+            }
+            textBitmapPool.clear();
+		}
+	}
+
+    public void noticeDownload(int state) {
+        mParentMapView.executeDownloadListeners(state);
+    }	
+    
+    boolean isSnap = false;
+    Bitmap snapBmp;
+    public void cancelSnap() {
+        isSnap = false;
+    }
+    public void snap() {
+        isSnap = true;
+        snapBmp = null;
+        refreshMap();
+    }
+    public Bitmap getSnapBitmap() {
+        if (CONFIG.DRAW_BY_OPENGL) {
+        	Bitmap bm = snapBmp;
+        	snapBmp = null;
+            return bm;
+        } else {
+            snapBmp = CommonUtils.viewToBitmap(this);
+            return snapBmp;
+        }
+    }
+    public boolean isSnap() {
+        return isSnap;
+    }
+    public static Bitmap savePixels(int x, int y, int w, int h, GL10 gl)
+    {  
+        int b[]=new int[w*h];
+        int bt[]=new int[w*h];
+        IntBuffer ib=IntBuffer.wrap(b);
+        ib.position(0);
+        gl.glReadPixels(x, y, w, h, GL10.GL_RGBA, GL10.GL_UNSIGNED_BYTE, ib);
+
+        /*  remember, that OpenGL bitmap is incompatible with 
+            Android bitmap and so, some correction need.
+         */   
+        for(int i=0; i<h; i++)
+        {         
+            for(int j=0; j<w; j++)
+            {
+                int pix=b[i*w+j];
+                int pb=(pix>>16)&0xff;
+                int pr=(pix<<16)&0x00ff0000;
+                int pix1=(pix&0xff00ff00) | pr | pb;
+                bt[(h-i-1)*w+j]=pix1;
+            }
+        }              
+        Bitmap sb=Bitmap.createBitmap(bt, w, h, Config.ARGB_4444);
+        return sb;
+    }
+} 

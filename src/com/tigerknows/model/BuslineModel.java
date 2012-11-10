@@ -1,0 +1,700 @@
+package com.tigerknows.model;
+
+
+import com.decarta.android.exception.APIException;
+import com.decarta.android.location.Position;
+import com.decarta.android.util.Util;
+import com.tigerknows.R;
+import com.tigerknows.TKConfig;
+import com.tigerknows.model.xobject.XArray;
+import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.provider.Tigerknows;
+import com.tigerknows.provider.Tigerknows.Favorite;
+import com.tigerknows.provider.Tigerknows.History;
+import com.tigerknows.util.ByteUtil;
+import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.SqliteWrapper;
+
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.text.TextUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+/**
+ * BuslineModel
+ * 		|
+ * 		|____EMPTY
+ * 		|
+ * 		|____LINE
+ * 		|	   |
+ * 		|	   |
+ * 		|____STATION	
+ * 
+ * 
+ * 表示公交线路查询结果的数据结构
+ * @author pengwenyue
+ *
+ */
+
+public class BuslineModel extends XMapData {
+    
+    // 0表示空结果
+    public static final int TYPE_EMPTY = 0;
+    
+    // 1有公交线路
+    public static final int TYPE_BUSLINE = 1;
+    
+    // 2表示只有公交站点
+    public static final int TYPE_STATION = 2;
+
+    // 3表示当前城市不支持公交线路查询
+    public static final int TYPE_UNSUPPORT = 3;
+    
+    // 0x00 x_int 结果类型，0表示空结果，1有公交线路，2表示只有公交站点
+    private static final byte FIELD_TYPE = 0x00;
+
+    // 0x01 x_int 查询到的线路数量或公交站数量（可能比本次结果集大）
+    private static final byte FIELD_TOTAL = 0x01;
+
+    // 0x10 x_array<x_map> 线路结果，每个map　是一条线路（类型为１时才有）
+    private static final byte FIELD_LINE = 0x10;
+
+    public static class Line extends BaseData {
+        // 0x01 x_int 线路总长度
+        private static final byte FIELD_LENGTH = 0x01;
+
+        // 0x02 x_array<int> 线路点序列的x坐标（增量方式存储）
+        private static final byte FIELD_X = 0x02;
+
+        // 0x03 x_array<int> 线路点序列的y坐标（增量方式存储）
+        private static final byte FIELD_Y = 0x03;
+
+        // 0x10 x_string 线路名称
+        private static final byte FIELD_NAME = 0x10;
+        
+        // 0x11	x_string 线路运营时间
+        private static final byte FIELD_TIME = 0x11;
+
+        // 0x20 x_array<x_map> 线路经过的车站，　每一个map是一个车站
+        private static final byte FIELD_STATION = 0x20;
+
+        private int length;
+        private List<Integer> x;
+        private List<Integer> y;
+        private String name;
+        private String time;
+        private List<Station> stationList;
+        private List<Position> positionList;
+        
+        public void setPositionList(List<Position> positionList) {
+            if (positionList == null) {
+                return;
+            }
+            this.positionList = (ArrayList<Position>)positionList;
+            this.x = new ArrayList<Integer>();
+            this.y = new ArrayList<Integer>();
+            int i = 0;
+            int lon = 0;
+            int lat = 0;
+            int previousLon = 0;
+            int previousLat = 0;
+            for(Position position : positionList) {
+                if (i == 0) {
+                    lon = (int)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
+                    lat = (int)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
+                    previousLon = lon;
+                    previousLat = lat;
+                } else {
+                    lon = previousLon - (int)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
+                    lat = previousLat - (int)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
+                    previousLon = (int)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
+                    previousLat = (int)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
+                }
+                this.x.add(lon);
+                this.y.add(lat);
+            }
+        }
+        
+        public List<Position> getPositionList() {
+            return positionList;
+        }
+        
+        public int getLength() {
+            return length;
+        }
+
+        public void setLength(int length) {
+            this.length = length;
+        }
+
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public List<Station> getStationList() {
+            return stationList;
+        }
+
+        public String getTime() {
+			return time;
+		}
+
+		public void setTime(String time) {
+			this.time = time;
+		}
+
+		public void setStationList(List<Station> stationList) {
+            this.stationList = stationList;
+        }
+        
+        public Line() {
+        }
+        
+        public Line(XMap data) throws APIException {
+            super(data);
+            init(data);
+        }
+
+        @SuppressWarnings("unchecked")
+        public void init(XMap data) throws APIException {
+            super.init(data);
+            if (this.data.containsKey(FIELD_LENGTH)) {
+                length = (int)this.data.getInt(FIELD_LENGTH);
+            }
+
+            if (this.data.containsKey(FIELD_X) && this.data.containsKey(FIELD_Y)) {
+                this.x = this.data.getXArray(FIELD_X).toIntList();
+                this.y = this.data.getXArray(FIELD_Y).toIntList();
+            
+                if (this.x.size() == this.y.size()) {
+                    int i = 0;
+                    Position position;
+                    this.positionList = new ArrayList<Position>(this.x.size());
+                    double lon = 0d;
+                    double lat = 0d;
+                    for(int x : this.x) {
+                        if (i == 0) {
+                            position = new Position(((double)this.y.get(i))/TKConfig.LON_LAT_DIVISOR, ((double)x)/TKConfig.LON_LAT_DIVISOR);
+                            lon = position.getLon();
+                            lat = position.getLat();
+                        } else {
+                            position = new Position(lat + ((double)this.y.get(i))/TKConfig.LON_LAT_DIVISOR, lon + ((double)x)/TKConfig.LON_LAT_DIVISOR);
+                            lon = position.getLon();
+                            lat = position.getLat();
+                        }
+                        this.positionList.add(position);
+                        i++;
+                    }
+                }
+            }
+            
+            if (this.data.containsKey(FIELD_NAME)) {
+                name = this.data.getString(FIELD_NAME);
+            }
+            
+            if (this.data.containsKey(FIELD_TIME)) {
+            	time = this.data.getString(FIELD_TIME);
+            }
+            
+            XArray<XMap> xstationList;
+            XMap xstation;
+            if (this.data.containsKey(FIELD_STATION)) {
+                xstationList = (XArray<XMap>)this.data.getXArray(FIELD_STATION);
+                int size = xstationList.size();
+                this.stationList = new ArrayList<Station>(size);
+                for(int i = 0; i < size; i++) {
+                    xstation = xstationList.get(i);
+                    this.stationList.add(new Station(xstation));
+                }
+            }
+        }
+
+        public XMap getData() {
+            if (this.data == null) {
+                this.data = new XMap();
+                
+                this.data.put(FIELD_TYPE, this.length);
+                if (this.x != null && this.y != null) {
+                    this.data.put(FIELD_X, XArray.fromIntList(this.x));
+                    this.data.put(FIELD_Y, XArray.fromIntList(this.y));
+                }
+                this.data.put(FIELD_NAME, this.name);
+                this.data.put(FIELD_TIME, this.time);
+                if (this.stationList != null) {
+                    XArray<XMap> statcions = new XArray<XMap>();
+                    for(Station station : this.stationList) {
+                        statcions.add(station.getData());
+                    }
+                    this.data.put(FIELD_STATION, statcions);
+                }
+            }
+            
+            return this.data;
+        }
+        
+        public Uri writeToDatabases(Context context, long parentId, int storeType) {
+            boolean isFailed = false;
+            this.storeType = storeType;
+            this.parentId = parentId;
+            ContentValues values = new ContentValues();
+            if (!TextUtils.isEmpty(name)) {
+                values.put(Tigerknows.Busline.BUSLINE_NAME, name);
+            }
+            values.put(Tigerknows.Busline.TOTAL_LENGTH, length);
+            values.put(Tigerknows.Busline.BUSLINE_NUM, this.stationList.size());
+            try {
+                byte[] data = ByteUtil.xobjectToByte(getData());
+                if (data.length > 0) {
+                    values.put(Tigerknows.Busline.DATA, data);
+                }
+            } catch (Exception e) {
+                isFailed = true;
+            }
+            
+            Uri uri = null;
+            if (!isFailed) {
+                uri = writeToDatabasesInternal(context, Tigerknows.Busline.CONTENT_URI, values, storeType, 
+                        (storeType == Tigerknows.STORE_TYPE_FAVORITE) ? Favorite.FAVORITE_BUSLINE : History.HISTORY_BUSLINE);
+            }
+            
+            return uri;
+        }
+
+        /**
+         * 从数据库中读取Line
+         * 
+         * @param id
+         */
+        public static List<Line> readFormDatabases(Context context, long parentId, int storeType) {
+            List<Line> lineList = new ArrayList<Line>();
+            Cursor c = SqliteWrapper.query(context, context.getContentResolver(),
+                    Tigerknows.Busline.CONTENT_URI, null, "(" + Tigerknows.Busline.PARENT_ID + "="
+                            + parentId + ") AND (" + Tigerknows.Busline.STORE_TYPE + "="
+                            + storeType + ")", null, null);
+            if (c != null) {
+                if (c.getCount() > 0) {
+                    c.moveToFirst();
+                    for (int i = 0; i < c.getCount(); i++) {
+                        lineList.add(readFormCursor(context, c));
+                        c.moveToNext();
+                    }
+                }
+                c.close();
+            }
+            return lineList;
+        }
+
+        public static Line readFormCursor(Context context, Cursor c) {
+            Line line = new Line();
+            String str;
+            if (c != null) {
+                line.id = c.getLong(c.getColumnIndex(Tigerknows.TransitPlan._ID));
+                line.parentId = c.getLong(c.getColumnIndex(Tigerknows.TransitPlan.PARENT_ID));
+                line.storeType = c.getInt(c.getColumnIndex(Tigerknows.TransitPlan.STORE_TYPE));
+                str = c.getString(c.getColumnIndex(Tigerknows.Busline.BUSLINE_NAME));
+                if (!TextUtils.isEmpty(str)) {
+                    line.setName(str);
+                }
+                line.setLength(c.getInt(c.getColumnIndex(Tigerknows.Busline.TOTAL_LENGTH)));
+                byte[] data = c.getBlob(c.getColumnIndex(Tigerknows.Busline.DATA));
+                try {
+                    XMap xmap = (XMap) ByteUtil.byteToXObject(data);
+                    line.init(xmap);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            return line;
+        }
+
+        @Override
+        public BaseData checkStore(Context context, int store_Type) {
+            BaseData baseData = null;
+            //运营时间是否也要判断?
+            Cursor c = SqliteWrapper.query(context, context.getContentResolver(),
+                    Tigerknows.Busline.CONTENT_URI, null, "(" + Tigerknows.Busline.BUSLINE_NAME
+                            + "='" + name.replace("'", "''") + "') AND ("
+                            + Tigerknows.Busline.TOTAL_LENGTH + "=" + length
+                            + ") AND (" + Tigerknows.Busline.STORE_TYPE + "=" + store_Type + ")",
+                    null, null);
+            if (c != null) {
+                int count = c.getCount();
+                if (count > 0) {
+                    c.moveToFirst();
+                    for(int i = 0; i < count; i++) {
+                        Line other = readFormCursor(context, c);
+                        if((null != other && !other.equals(this)) || (null == other && other != this)) {
+                        } else {
+                            baseData = other;
+                            break;
+                        }
+                        c.moveToNext();
+                    }
+                }
+                c.close();
+            }
+            return baseData;
+        }
+        
+        public boolean equals(Object object) {
+            if (this == object) {
+                return true;
+            }
+            
+            if (object instanceof Line) {
+                Line other = (Line) object;
+                if((null != other.data && !other.data.equals(data)) || (null == other.data && other.data != data)) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+            
+            return false;
+        }
+        
+        public String getSMSString(Context context) {
+            StringBuilder body = new StringBuilder();
+            body.append(context.getString(R.string.busline_, name));
+            body.append(context.getString(R.string.busline_line_listitem_title, CommonUtils.meter2kilometre(length), stationList.size()));
+            body.append("\n");
+            int i = 0;
+            for(Station station : stationList) {
+                if (i > 0) {
+                    body.append(";");
+                }
+                body.append(i+1);
+                body.append(".");
+                body.append(station.getName());
+                i++;
+            }
+            return body.toString();
+        }
+
+        public void updateHistory(Context context) {
+            BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_HISTORY);
+            if (baseData != null) {
+                com.tigerknows.model.History history = com.tigerknows.model.History.readFormDatabases(context, baseData.parentId);
+                if (history != null) {
+                    history.updateHistory(context);
+                }
+            } else {
+                try {
+                    Line line = new Line();
+                    line.init(getData());
+                    line.writeToDatabases(context, -1, Tigerknows.STORE_TYPE_HISTORY);
+                } catch (APIException e) {
+                    // TODO: handle exception
+                }
+            }
+        }
+    }
+
+    // 0x20 x_array<x_map> 站点结果，每个map　是一个公交站（类型为２时才有）
+    private static final byte FIELD_STATION = 0x20;
+
+    public static class Station extends BaseData {
+
+        // 0x01 x_int 公交站在线路上的位置,只有在结果类型为1时才有
+        private static final byte FIELD_INDEX = 0x01;
+
+        // 0x02 x_int x坐标
+        private static final byte FIELD_X = 0x02;
+
+        // 0x03 x_int y坐标
+        private static final byte FIELD_Y = 0x03;
+
+        // 0x10 x_string 公交站名称
+        private static final byte FIELD_NAME = 0x10;
+
+        // 0x20 x_array<x_string> 经过公交站的线路，　只有在结果类型为２时才有
+        private static final byte FIELD_LINE = 0x20;
+        
+        public static final int TOTAL_LENGTH = -1;
+        
+        private int index;
+        private int x;
+        private int y;
+        private String name;
+        private List<String> lineList;
+        private Position position;
+        
+        public Position getPosition() {
+            return this.position;
+        }
+        
+        public void setPosition(Position position) {
+            if (!Util.inChina(position)) {
+                return;
+            }
+            
+            this.x = (int)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
+            this.y = (int)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
+            this.position = position;
+        }
+
+        public int getIndex() {
+            return index;
+        }
+
+        public void setIndex(int index) {
+            this.index = index;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public List<String> getLineList() {
+            return lineList;
+        }
+
+        public void setLineList(List<String> lineList) {
+            this.lineList = lineList;
+        }
+        
+        public Station() {
+        }
+
+        public Station(XMap data) throws APIException {
+            super(data);
+            init(data);
+        }
+
+        @SuppressWarnings("unchecked")
+        public void init(XMap data) throws APIException {
+            super.init(data);
+            
+            if (this.data.containsKey(FIELD_INDEX)) {
+                index = (int)this.data.getInt(FIELD_INDEX);
+            }
+            
+            if (this.data.containsKey(FIELD_X) && this.data.containsKey(FIELD_Y)) {
+                x = (int)this.data.getInt(FIELD_X);
+                y = (int)this.data.getInt(FIELD_Y);
+                this.position = new Position(((double)this.y)/TKConfig.LON_LAT_DIVISOR, ((double)this.x)/TKConfig.LON_LAT_DIVISOR);
+            }
+                        
+            if (this.data.containsKey(FIELD_NAME)) {
+                name = this.data.getString(FIELD_NAME);
+            }
+
+            if (this.data.containsKey(FIELD_LINE)) {
+                this.lineList = this.data.getXArray(FIELD_LINE).toStringList();
+            }
+        }
+
+        public POI toPOI() {
+            POI poi = new POI();
+            poi.setName(name);
+            if (this.position == null) {
+                this.position = new Position(((double)this.y)/TKConfig.LON_LAT_DIVISOR, ((double)this.x)/TKConfig.LON_LAT_DIVISOR);
+            }
+            poi.setPosition(this.position);
+            return poi;
+        }
+        
+        public XMap getData() {
+            if (this.data == null) {
+                this.data = new XMap();
+                this.data.put(FIELD_INDEX, this.index);
+                if (!TextUtils.isEmpty(this.name)) {
+                    this.data.put(FIELD_NAME, this.name);
+                }
+                this.data.put(FIELD_X, this.x);
+                this.data.put(FIELD_Y, this.y);
+                
+                if (this.lineList != null) {
+                    this.data.put(FIELD_LINE, XArray.fromStringList(this.lineList));
+                }
+            }
+            
+            return this.data;
+        }
+        
+        public Uri writeToDatabases(Context context, long parentId, int storeType) {
+            boolean isFailed = false;
+            this.storeType = storeType;
+            this.parentId = parentId;
+            if (storeType == Tigerknows.STORE_TYPE_FAVORITE && checkFavorite(context)) {
+                return ContentUris.withAppendedId(Tigerknows.Busline.CONTENT_URI, id);
+            }
+            ContentValues values = new ContentValues();
+            if (!TextUtils.isEmpty(name)) {
+                values.put(Tigerknows.Busline.BUSLINE_NAME, name);
+            }
+            values.put(Tigerknows.Busline.TOTAL_LENGTH, TOTAL_LENGTH);
+            values.put(Tigerknows.Busline.BUSLINE_NUM, this.lineList.size());
+            try {
+                byte[] data = ByteUtil.xobjectToByte(getData());
+                if (data.length > 0) {
+                    values.put(Tigerknows.Busline.DATA, data);
+                }
+            } catch (Exception e) {
+                isFailed = true;
+            }
+            
+            Uri uri = null;
+            if (!isFailed) {
+                uri = writeToDatabasesInternal(context, Tigerknows.Busline.CONTENT_URI, values, storeType, 
+                        (storeType == Tigerknows.STORE_TYPE_FAVORITE) ? Favorite.FAVORITE_BUSLINE : History.HISTORY_BUSLINE);
+            }
+            
+            return uri;
+        }
+
+        /**
+         * 从数据库中读取Line
+         * 
+         * @param id
+         */
+        public static List<Station> readFormDatabases(Context context, long parentId, int storeType) {
+            List<Station> lineList = new ArrayList<Station>();
+            Cursor c = SqliteWrapper.query(context, context.getContentResolver(),
+                    Tigerknows.Busline.CONTENT_URI, null, "(" + Tigerknows.Busline.PARENT_ID + "="
+                            + parentId + ") AND (" + Tigerknows.Busline.STORE_TYPE + "="
+                            + storeType + ")", null, null);
+            if (c != null) {
+                if (c.getCount() > 0) {
+                    c.moveToFirst();
+                    for (int i = 0; i < c.getCount(); i++) {
+                        lineList.add(readFormCursor(context, c));
+                        c.moveToNext();
+                    }
+                }
+                c.close();
+            }
+            return lineList;
+        }
+
+        public static Station readFormCursor(Context context, Cursor c) {
+            Station station = new Station();
+            String str;
+            if (c != null) {
+                station.id = c.getLong(c.getColumnIndex(Tigerknows.TransitPlan._ID));
+                station.parentId = c.getLong(c.getColumnIndex(Tigerknows.TransitPlan.PARENT_ID));
+                station.storeType = c.getInt(c.getColumnIndex(Tigerknows.TransitPlan.STORE_TYPE));
+                str = c.getString(c.getColumnIndex(Tigerknows.Busline.BUSLINE_NAME));
+                if (!TextUtils.isEmpty(str)) {
+                    station.setName(str);
+                }
+                byte[] data = c.getBlob(c.getColumnIndex(Tigerknows.Busline.DATA));
+                try {
+                    XMap xmap = (XMap) ByteUtil.byteToXObject(data);
+                    station.init(xmap);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+            return station;
+        }
+        
+        public String getSMSString(Context context) {
+            StringBuilder body = new StringBuilder();
+            body.append(name);
+            body.append(context.getString(R.string.busline_station_listitem_title, lineList.size()));
+            body.append("\n");
+            int i = 0;
+            for(String lineName : lineList) {
+                if (i > 0) {
+                    body.append(";");
+                }
+                body.append(lineName);
+                i++;
+            }
+            return body.toString();
+        }
+    }
+    
+    private int type;
+    private List<Line> lineList;
+    private List<Station> stationList;    
+    private int total;
+
+    public int getTotal() {
+        return total;
+    }
+
+    public void setTotal(int total) {
+        this.total = total;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public List<Line> getLineList() {
+        return lineList;
+    }
+
+    public void setLineList(List<Line> lineList) {
+        this.lineList = (List<Line>)lineList;
+    }
+
+    public List<Station> getStationList() {
+        return stationList;
+    }
+
+    public void setStationList(List<Station> stationList) {
+        this.stationList = stationList;
+    }
+    
+    public BuslineModel() {
+        
+    }
+    
+    @SuppressWarnings("unchecked")
+    public BuslineModel(XMap data) throws APIException {
+        super(data);
+        if (this.data.containsKey(FIELD_TYPE)) {
+            type = (int)this.data.getInt(FIELD_TYPE);
+        }
+        if (this.data.containsKey(FIELD_TOTAL)) {
+            total = (int)this.data.getInt(FIELD_TOTAL);
+        }
+        XArray<XMap> array;
+        if (this.data.containsKey(FIELD_LINE)) {
+            array = (XArray<XMap>)this.data.getXArray(FIELD_LINE);
+            int size = array.size();
+            XMap xmap;
+            this.lineList = new ArrayList<Line>(size);
+            for(int i = 0; i < size; i++) {
+                xmap = array.get(i);
+                this.lineList.add(new Line(xmap));
+            }
+        }
+        
+        XArray<XMap> xstations;
+        XMap xstation;
+        if (this.data.containsKey(FIELD_STATION)) {
+            xstations = (XArray<XMap>)this.data.getXArray(FIELD_STATION);
+            int size = xstations.size();
+            this.stationList = new ArrayList<Station>(size);
+            for(int i = 0; i < size; i++) {
+                xstation = xstations.get(i);
+                this.stationList.add(new Station(xstation));
+            }
+        }
+    }        
+}

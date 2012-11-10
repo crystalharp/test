@@ -1,0 +1,16 @@
+engine bug list:
+1. TKMapLoader.c ---read_point()---add res!=null
+2. TKVMGeo.c ---tk_geo_drawlinefeature() --- if (distance <= radius){ --> if ((distance <= radius) && (pfeature->name_length > 0)){
+3. 地图引擎需要lat，lon，width，height,zoom画一张bmp，
+4. 要求获得一个bmp时，dl=0时生成一个新的tileInfos赋予下载线程nextTileInfos，防止引用错误，下载线程运行时nextTileInfos赋予mTileInfos，下载线程中网络下载请求被更新前一直使用mTileInfos;
+5.return value: the pointer to the string of the region info 
+ * in the format "中文名字, English name, file size, city id". 
+ */
+char *tk_get_region_info(int rid);
+city id返回的时chinese city name
+6.TKVMGeo.c ---tk_judge_feature_env_relation()函数中 if(pft->name_index>=0) memcpy(logc, pft->name, pft->name_length);的长度为-1；
+7.-1解决方法：TKMapLoader.c中，read_feature()中加入this->name_length = 0; 及if (this->name_length < 0) {this->name_length = 0;}
+8.
+
+2.下载元数据完成后，解压在主线程进行；
+3.地图下载页面与边看边下载使用同一个数据结构记录本次下载成功的元数据；

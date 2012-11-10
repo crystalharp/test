@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@android:color/white">
+	<include android:id="@+id/title_view"
+	    layout="@layout/title" 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" />
+	<ScrollView
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:scrollbars="vertical"
+	    android:gravity="top"
+	    android:fillViewport="true"
+	    android:fadingEdge="none">
+		<LinearLayout 
+		    android:layout_width="fill_parent" 
+		    android:layout_height="fill_parent"
+            android:orientation="vertical"
+            android:padding="8dp">
+    
+			<LinearLayout 
+			    android:layout_width="fill_parent" 
+			    android:layout_height="wrap_content"
+			    android:orientation="horizontal"
+		        android:paddingTop="2dp"
+		        android:paddingBottom="2dp"
+		        android:gravity="left|center_vertical">
+			    <TextView
+			        android:layout_width="72dp"
+			        android:layout_height="wrap_content"
+			        android:layout_marginRight="4dp"
+			        android:gravity="left|center_vertical"
+			        android:text="@string/shanghumingcheng"
+			        android:textSize="16sp"/>
+			        
+			    <EditText android:id="@+id/shanghumingcheng_edt"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:maxLength="80"
+			        android:textSize="14sp"
+				    android:layout_marginTop="2dp"
+				    android:layout_marginBottom="6dp"
+				    android:singleLine="true"
+				    android:ellipsize="end"
+			        android:hint="@string/bitian" />
+		    </LinearLayout>
+    
+			<LinearLayout 
+			    android:layout_width="fill_parent" 
+			    android:layout_height="wrap_content"
+			    android:orientation="horizontal"
+		        android:paddingTop="2dp"
+		        android:paddingBottom="2dp"
+		        android:gravity="left|center_vertical">
+			    <TextView
+			        android:layout_width="72dp"
+			        android:layout_height="wrap_content"
+			        android:layout_marginRight="4dp"
+			        android:gravity="left|center_vertical"
+			        android:text="@string/shanghuleixing"
+			        android:textSize="16sp"/>
+				    
+			    <Button android:id="@+id/shanghuleixing_btn"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:background="@drawable/btn_spinner"
+			        android:gravity="left|center_vertical"
+		            android:paddingLeft="8dp"
+			        android:singleLine="true"
+			        android:ellipsize="end" />
+		    </LinearLayout>
+		    
+			<LinearLayout 
+			    android:layout_width="fill_parent" 
+			    android:layout_height="wrap_content"
+			    android:orientation="horizontal"
+		        android:paddingTop="2dp"
+		        android:paddingBottom="2dp"
+		        android:gravity="left|center_vertical">
+			    <TextView
+			        android:layout_width="72dp"
+			        android:layout_height="wrap_content"
+			        android:layout_marginRight="4dp"
+			        android:gravity="left|center_vertical"
+			        android:text="@string/shanghudizhi"
+			        android:textSize="16sp"/>
+			    <EditText android:id="@+id/shanghudizhi_edt"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:maxLength="80"
+			        android:textSize="14sp"
+				    android:layout_marginTop="2dp"
+				    android:layout_marginBottom="6dp"
+				    android:singleLine="true"
+				    android:ellipsize="end"
+			        android:hint="@string/bitian" />
+		    </LinearLayout>
+		    
+			<LinearLayout 
+			    android:layout_width="fill_parent" 
+			    android:layout_height="wrap_content"
+			    android:orientation="horizontal"
+		        android:paddingTop="2dp"
+		        android:paddingBottom="2dp"
+		        android:gravity="left|center_vertical">
+			    <TextView
+			        android:layout_width="72dp"
+			        android:layout_height="wrap_content"
+			        android:layout_marginRight="4dp"
+			        android:gravity="left|center_vertical"
+			        android:text="@string/shanghudianhua"
+			        android:textSize="16sp"/>
+			    <EditText android:id="@+id/shanghudianhua_edt"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:maxLength="80"
+			        android:textSize="14sp"
+				    android:layout_marginTop="2dp"
+				    android:layout_marginBottom="6dp"
+				    android:singleLine="true"
+				    android:ellipsize="end"
+			        android:hint="@string/xuantian" />
+		    </LinearLayout>
+		    
+			<LinearLayout 
+			    android:layout_width="fill_parent" 
+			    android:layout_height="wrap_content"
+			    android:orientation="horizontal"
+		        android:paddingTop="2dp"
+		        android:paddingBottom="2dp"
+		        android:gravity="left|center_vertical">
+			    <TextView
+			        android:layout_width="72dp"
+			        android:layout_height="wrap_content"
+			        android:layout_marginRight="4dp"
+			        android:gravity="left|center_vertical"
+			        android:text="@string/yingyeshijian"
+			        android:textSize="16sp"/>
+			    <EditText android:id="@+id/yingyeshijian_edt"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:maxLength="80"
+			        android:textSize="14sp"
+				    android:layout_marginTop="2dp"
+				    android:layout_marginBottom="6dp"
+				    android:singleLine="true"
+				    android:ellipsize="end"
+			        android:hint="@string/xuantian" />
+		    </LinearLayout>
+		    
+			<LinearLayout 
+			    android:layout_width="fill_parent" 
+			    android:layout_height="wrap_content"
+			    android:orientation="horizontal"
+		        android:paddingTop="2dp"
+		        android:paddingBottom="2dp"
+		        android:gravity="left|center_vertical">
+			    <TextView
+			        android:layout_width="72dp"
+			        android:layout_height="wrap_content"
+			        android:layout_marginRight="4dp"
+			        android:gravity="left|center_vertical"
+			        android:text="@string/ningdedianhua"
+			        android:textSize="16sp"/>
+			    <EditText android:id="@+id/ningdedianhua_edt"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:maxLength="80"
+			        android:textSize="14sp"
+				    android:layout_marginTop="2dp"
+				    android:layout_marginBottom="6dp"
+				    android:singleLine="true"
+				    android:ellipsize="end"
+			        android:hint="@string/xuantian" />
+		    </LinearLayout>
+		</LinearLayout>
+	</ScrollView>
+</LinearLayout>
+

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/background" >
+    <include android:id="@+id/title_view"
+        layout="@layout/title" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+	<ScrollView
+	    android:id="@+id/body_scv"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:padding="0dp"
+	    android:orientation="vertical"
+	    android:fillViewport="true"
+	    android:fadingEdge="none"
+	    android:background="@color/gray_dark">
+        <LinearLayout
+            android:orientation="vertical" 
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent" 
+            android:padding="8dp"
+            android:gravity="left|top">                    
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:text="@string/feedback_text1">
+            </TextView>
+                        
+            <EditText
+                android:id="@+id/feedback_edt"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:isScrollContainer="true"
+                android:gravity="top"
+                android:maxLength="200"
+                android:maxLines="8"
+                android:lines="5"
+                android:hint="@string/your_feedback"
+                android:textColorHint="#ffacacac"
+                android:background="@drawable/textfield"
+                android:imeOptions="actionNext">
+            </EditText>
+                    
+            <EditText
+                android:id="@+id/telephone_edt"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="left|center_vertical"
+                android:maxLength="20"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:inputType="phone"
+                android:lines="1"
+                android:hint="@string/your_mobile_number"
+                android:textColorHint="#ffacacac"
+                android:background="@drawable/textfield"
+                android:imeOptions="actionSend">
+            </EditText>          
+            <TextView
+                android:id="@+id/weibo_txv"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="top"
+                android:autoLink="web"
+                android:clickable="true"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:enabled="true"
+                android:linksClickable="true"
+                android:textColor="@android:color/black"
+                android:textSize="16sp"
+                android:text="@string/feedback_text2">
+            </TextView>
+        </LinearLayout>   
+	</ScrollView>
+</LinearLayout>

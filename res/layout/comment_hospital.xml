@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+    
+	<LinearLayout 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:paddingRight="24dp"
+        android:gravity="left|center_vertical">
+	    <TextView
+	        android:layout_width="70dp"
+	        android:layout_height="wrap_content"
+	        android:layout_marginRight="6dp"
+	        android:gravity="left|center_vertical"
+	        android:text="@string/comment_qos"/>
+		<LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical">
+			<SeekBar android:id="@+id/qos_skb"
+		        style="?android:attr/progressBarStyleHorizontal"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:focusable="true"
+		        android:focusableInTouchMode="true"
+		        android:max="4"
+		        android:progress="2" />
+		    <ImageView
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:background="@drawable/ic_progress_comment"
+		        android:visibility="invisible" />
+		</LinearLayout>    
+    </LinearLayout>
+    
+	<LinearLayout 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:paddingRight="24dp"
+        android:gravity="left|center_vertical">
+	    <TextView
+	        android:layout_width="70dp"
+	        android:layout_height="wrap_content"
+	        android:layout_marginRight="6dp"
+	        android:gravity="left|center_vertical"
+	        android:text="@string/comment_hospital_level"/>
+		<LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical">
+			<SeekBar android:id="@+id/level_skb"
+		        style="?android:attr/progressBarStyleHorizontal"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:focusable="true"
+		        android:focusableInTouchMode="true"
+		        android:max="4"
+		        android:progress="2" />
+		    <ImageView
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:background="@drawable/ic_progress_comment"
+		        android:visibility="invisible" />
+		</LinearLayout>    
+    </LinearLayout>
+    
+    <LinearLayout 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:gravity="left|center_vertical">
+	    <TextView
+	        android:layout_width="70dp"
+	        android:layout_height="wrap_content"
+	        android:layout_marginRight="4dp"
+	        android:gravity="left|center_vertical"
+	        android:text="@string/comment_avg"/>
+		<RelativeLayout
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:gravity="left|center_vertical" >
+		    <EditText android:id="@+id/avg_edt"
+		        android:layout_width="100dp"
+		        android:layout_height="wrap_content"
+		        android:paddingLeft="20dp"
+		        android:maxLength="9"
+		        android:inputType="number" />
+		    <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_centerVertical="true"
+		        android:paddingLeft="4dp"
+		        android:hint="@string/rmb"/>
+	    </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>
+

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <style name="Theme" parent="android:Theme.NoTitleBar.Fullscreen">        
+        <item name="android:windowContentOverlay">@android:color/transparent</item>
+        <item name="android:editTextStyle">@style/Widget.EditText</item>
+        <item name="android:textViewStyle">@style/Widget.TextView</item>
+        <item name="android:windowBackground">@drawable/startup</item>
+    </style>
+    
+    <style name="Theme.NoTitleBar" parent="android:Theme.NoTitleBar">       
+    
+        <item name="android:colorForeground">@android:color/transparent</item>
+        <item name="android:colorForegroundInverse">@android:color/transparent</item>
+        <item name="android:colorBackground">@android:color/white</item>
+        <item name="android:disabledAlpha">0.5</item>
+        <item name="android:backgroundDimAmount">0.6</item> 
+        
+        <item name="android:windowContentOverlay">@android:color/transparent</item>
+        <item name="android:editTextStyle">@style/Widget.EditText</item>
+        <item name="android:textViewStyle">@style/Widget.TextView</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+    </style>
+    
+    <style name="HitTheme.NoTitleBar" parent="Theme.NoTitleBar">       
+        <item name="android:colorBackground">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+</resources>

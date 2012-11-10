@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2007 The Android Open Source Project
+
+     Licensed under the Apache License, Version 2.0 (the "License");
+     you may not use this file except in compliance with the License.
+     You may obtain a copy of the License at
+  
+          http://www.apache.org/licenses/LICENSE-2.0
+  
+     Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+-->
+
+<resources>
+    <string-array name="share">
+        <item>分享到新浪微博</item>
+        <item>分享到QQ空间</item>
+        <item>发送短信</item>
+        <item>发送彩信</item>
+        <item>更多</item>
+    </string-array>
+    
+    <string-array name="select_location_option">
+        <item>我的当前位置</item>
+        <item>在地图上选点</item>
+        <item>我收藏的地点</item>
+    </string-array>
+    
+    <string-array name="home_category">
+        <item>美食</item>
+        <item>娱乐</item>
+        <item>购物</item>
+        <item>酒店</item>
+        <item>旅游</item>
+        <item>丽人</item>
+        <item>运动</item>
+        <item>银行</item>
+        <item>交通</item>
+        <item>医疗</item>
+    </string-array>
+    
+    <string-array name="discover_categroy_type">
+        <item>1</item><!-- 美食 -->
+        <item>8</item><!-- 酒店 -->
+        <item>9</item><!-- 休闲 -->
+        <item>11</item><!-- 景点 -->
+    </string-array>
+    
+    <string-array name="discover_categroy_keyword">
+        <item>美食</item><!-- 1 -->
+        <item>酒店</item><!-- 8 -->
+        <item>休闲</item><!-- 9 -->
+        <item>景点</item><!-- 11 -->
+    </string-array>
+    
+    <string-array name = "poi_xdescription_name">
+        <item>评分:</item>
+        <item>包间大小:</item>
+        <item>包间数:</item>
+        <item>产品:</item>
+        <item>菜系:</item>
+        <item>房价:</item>
+        <item>服务:</item>
+        <item>环境:</item>
+        <item>简介:</item>
+        <item>客容量:</item>
+        <item>口味:</item>
+        <item>类别:</item>
+        <item>人均:</item>
+        <item>人气:</item>
+        <item>氛围:</item>
+        <item>推荐:</item>
+        <item>推荐菜:</item>
+        <item>星级:</item>
+        <item>线路:</item>
+        <item>营业面积:</item>
+        <item>有停车场:</item>
+        <item>折扣:</item>
+        <item>交通描述:</item>
+        <item>观影评价:</item>
+        <item>医疗水平:</item>
+        <item>服务:</item>
+        <item>价格:</item>
+        <item>医院性质:</item>
+        <item>医院等级:</item>
+        <item>医院类型:</item>
+        <item>科室数量:</item>
+        <item>医护人数:</item>
+        <item>是否医保:</item>
+        <item>先进设备:</item>
+        <item>所获荣誉:</item>
+        <item>景点点评:</item>
+        <item>国家认证:</item>
+        <item>最佳旅游时间:</item>
+        <item>旅游喜好:</item>
+        <item>人文景观:</item>
+        <item>自然风光:</item>
+        <item>官方网站:</item>
+        <item>详情:</item>
+        <item>营业时间:</item>
+        <item>影院特色:</item>
+        <item>优惠信息:</item>
+        <item>会员政策:</item>
+        <item>观影效果:</item>
+        <item>服务:</item>
+        <item>推荐景点:</item>
+        <item>辖内景点:</item>
+        <item>周边信息:</item>
+        <item>公司主页:</item>
+        <item>公司类型:</item>
+        <item>公司规模:</item>
+        <item>产业简介:</item>
+        <item>特色专科:</item>
+        <item>产品:</item>
+    </string-array>
+        
+    <string-array name="poi_description_name">
+        <item>包间大小:</item><!-- bd(包间大小): x_string -->
+        <item>包间数:</item><!-- bs(包间数): x_string -->
+        <item>产品:</item><!-- cp(产品): x_string -->
+        <item>菜系:</item><!-- cx(菜系): x_array -->
+        <item>房价:</item><!-- fj(房价): x_string -->
+        <item>服务:</item><!-- fw(服务): x_string -->
+        <item>环境:</item><!-- hj(环境): x_string -->
+        <item>简介:</item><!-- jj(简介): x_string -->
+        <item>客容量:</item><!-- kr(客容量): x_string -->
+        <item>口味:</item><!-- kw(口味): x_string -->
+        <item>类别:</item><!-- lx(类别): x_array -->
+        <item>人均:</item><!-- rj(人均): x_uint -->
+        <item>人气:</item><!-- rq(人气): x_string -->
+        <item>特点:</item><!-- td(特点): x_array -->
+        <item>推荐:</item><!-- tj(推荐): x_array -->
+        <item>推荐菜:</item><!-- tc(推荐菜): x_array -->
+        <item>星级:</item><!-- xj(星级): x_string -->
+        <item>线路:</item><!-- xl(线路): x_array -->
+        <item>营业面积:</item><!-- ym(营业面积): x_string -->
+        <item>有停车场:</item><!-- yt(有停车场): x_string -->
+        <item>折扣:</item><!-- zk(折扣): x_string -->
+        <item>评分:</item><!-- pf(评分)：x_uint (0 - 10) -->
+    </string-array>
+    
+    <string-array name="favorite_traffic_type">
+        <item>公交线路</item>
+        <item>自驾</item>
+        <item>公交换乘</item>
+        <item>步行</item>
+    </string-array>
+    <!-- 
+    <string-array name="traffic_option">
+        <item>公交换乘</item>
+        <item>驾车</item>
+        <item>步行</item>
+        <item>线路</item>
+    </string-array>
+     -->
+    <string-array name="error_recovery_type">
+        <item>501</item><!-- 地名/地址错误 -->
+        <item>502</item><!-- 地图标记有误 -->
+        <item>503</item><!-- 电话错误 -->
+        <item>404</item><!-- 商户不存在/已停业 -->
+    </string-array>
+    
+    <integer-array name="walk_public_nudity_type">
+        <item>1</item><!-- 直梯 -->
+        <item>2</item><!-- 扶梯 -->
+        <item>3</item><!-- 阶梯 -->
+        <item>4</item><!-- 斜坡 -->
+        <item>11</item><!-- 人行横道 -->
+        <item>12</item><!-- 人行横道 -->
+        <item>13</item><!-- 地下通道 -->
+        <item>14</item><!-- 过街天桥 -->
+    </integer-array>
+    
+    <string-array name="walk_public_nudity_value">
+        <item>直梯</item><!-- 直梯 -->
+        <item>扶梯</item><!-- 扶梯 -->
+        <item>阶梯</item><!-- 阶梯 -->
+        <item>斜坡</item><!-- 斜坡 -->
+        <item>人行横道</item><!-- 人行横道 -->
+        <item>人行横道</item><!-- 人行横道 -->
+        <item>地下通道</item><!-- 地下通道 -->
+        <item>过街天桥</item><!-- 过街天桥 -->
+    </string-array>
+    
+    <string-array name="share_map_to">
+        <item>分享到新浪微博</item>
+        <item>发送短信</item>
+        <item>发送彩信</item>
+        <item>分享更多</item>
+    </string-array>
+    
+    <string-array name="comment_restair">
+        <item>随便吃点</item>
+        <item>朋友聚会</item>
+        <item>休闲小吃</item>
+        <item>情侣约会</item>
+        <item>家庭团聚</item>
+        <item>商务宴请</item>
+        <item>婚庆宴会</item>
+    </string-array>
+    
+    <string-array name="add_merchant_type">
+        <item>美食</item>
+        <item>娱乐</item>
+        <item>购物</item>
+        <item>酒店</item>
+        <item>旅游</item>
+        <item>丽人</item>
+        <item>运动</item>
+        <item>其他分类</item>
+    </string-array>
+    
+</resources>

@@ -1,0 +1,84 @@
+package com.tigerknows.model;
+
+import com.decarta.android.exception.APIException;
+import com.tigerknows.TKConfig;
+import com.tigerknows.model.test.BaseQueryTest;
+
+import org.apache.http.message.BasicNameValuePair;
+
+import android.content.Context;
+
+public class FeedbackUpload extends BaseQuery {
+    
+    // fe string true 反馈内容
+    public static final String SERVER_PARAMETER_FEEDBACK = "fe";
+
+    // tr String false 用户行为日志，格式见用户行为跟踪
+    public static final String SERVER_PARAMETER_ACTION_LOG = "tr";
+
+    // lu String false 定位上传, 格式
+    public static final String SERVER_PARAMETER_LOCATION = "lu";
+
+    // lau String false android平台定位数据上传,格式同上
+    public static final String SERVER_PARAMETER_LOCATION_IN_ANDROID = "lau";
+
+    // md String false POI纠错日志，格式见POI纠错功能说明
+    public static final String SERVER_PARAMETER_ERROR_RECOVERY = "md";
+
+    // am String false 添加商户
+    public static final String SERVER_PARAMETER_ADD_MERCHANT = "am";
+
+    
+    public FeedbackUpload(Context context) {
+        super(context, API_TYPE_FEEDBACK_UPLOAD, VERSION, false);
+    }
+
+    @Override
+    protected void makeRequestParameters() throws APIException {
+        super.makeRequestParameters();
+        addCommonParameters(requestParameters);
+        
+        if (criteria == null) {
+            throw new APIException(APIException.CRITERIA_IS_NULL);
+        }
+        if (criteria.containsKey(SERVER_PARAMETER_FEEDBACK)) {
+            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_FEEDBACK, criteria.get(SERVER_PARAMETER_FEEDBACK)));
+        } else {
+            // TODO 这个参数必须要，那怕是空？！
+            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_FEEDBACK, ""));
+        }
+        if (criteria.containsKey(SERVER_PARAMETER_ACTION_LOG)) {
+            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_ACTION_LOG, criteria.get(SERVER_PARAMETER_ACTION_LOG)));
+        }
+        if (criteria.containsKey(SERVER_PARAMETER_LOCATION)) {
+            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION, criteria.get(SERVER_PARAMETER_LOCATION)));
+        }
+        if (criteria.containsKey(SERVER_PARAMETER_LOCATION_IN_ANDROID)) {
+            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_IN_ANDROID, criteria.get(SERVER_PARAMETER_LOCATION_IN_ANDROID)));
+        }
+        if (criteria.containsKey(SERVER_PARAMETER_ERROR_RECOVERY)) {
+            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_ERROR_RECOVERY, criteria.get(SERVER_PARAMETER_ERROR_RECOVERY)));
+        }
+        if (criteria.containsKey(SERVER_PARAMETER_ADD_MERCHANT)) {
+            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_ADD_MERCHANT, criteria.get(SERVER_PARAMETER_ADD_MERCHANT)));
+        }
+    }
+
+    @Override
+    protected void createHttpClient() {
+        super.createHttpClient();
+        String url = String.format(TKConfig.getQueryUrl(), TKConfig.getQueryHost());
+        httpClient.setURL(url);
+    }
+
+    @Override
+    protected void translateResponse(byte[] data) throws APIException {
+        super.translateResponse(data);
+        this.response = new Response(responseXMap);
+    }
+    
+    protected void launchTest() {
+        super.launchTest();
+        responseXMap = BaseQueryTest.launchResponse();
+    }
+}

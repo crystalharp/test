@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   
+    <item type="id" name="dialog_traffic_alternatives" />
+    <item type="id" name="dialog_change_to_my_location_city" />
+    <item type="id" name="dialog_prompt_setting_location" />
+    <item type="id" name="dialog_fetch_favorite_poi" />
+    
+    <item type="id" name="activity_user_login" />
+    <item type="id" name="activity_user_regist" />
+    <item type="id" name="activity_user_reset_password" />
+    <item type="id" name="activity_user_update_nickname" />
+    <item type="id" name="activity_user_update_password" />
+    <item type="id" name="activity_user_update_phone" />
+    <item type="id" name="activity_user_comment_after" />
+    
+    <item type="id" name="activity_help" />
+    <item type="id" name="activity_poi_comment_list" />
+    <item type="id" name="activity_poi_comment" />
+    <item type="id" name="activity_change_city" />
+    <item type="id" name="activity_map_download" />
+    <item type="id" name="activity_about_us" />
+    <item type="id" name="activity_feedback" />
+    <item type="id" name="activity_setting" />
+    <item type="id" name="activity_traffic_error_recovery" />
+    <item type="id" name="activity_poi_error_recovery" />
+    <item type="id" name="activity_app_recommend" />
+    <item type="id" name="activity_setting_location" />
+    <item type="id" name="activity_tuangou_shangjia_list" />
+    <item type="id" name="activity_browser" />
+    <item type="id" name="activity_add_merchant" />
+    
+    <item type="id" name="view_invalid" />
+    <item type="id" name="view_home" />
+    <item type="id" name="view_traffic_query" />
+    <item type="id" name="view_more" />
+    <item type="id" name="view_result_map" />
+    <item type="id" name="view_user_home" />
+    <item type="id" name="view_history" />
+    <item type="id" name="view_poi_detail" />
+    <item type="id" name="view_poi_nearby" />
+    <item type="id" name="view_my_comment_list" />
+    <item type="id" name="view_go_comment" />
+    <item type="id" name="view_traffic_result_detail" />
+    <item type="id" name="view_traffic_result_transfer" />
+    <item type="id" name="view_busline_line_result" />
+    <item type="id" name="view_busline_station_result" />
+    <item type="id" name="view_busline_result_detail" />
+    <item type="id" name="view_poi_query" />
+    <item type="id" name="view_poi_result" />
+    <item type="id" name="view_poi_result2" />
+    <item type="id" name="view_favorite" />
+    
+    <item type="id" name="view_discover" />
+    <item type="id" name="view_discover_list" />
+    <item type="id" name="view_tuangou_detail" />
+    <item type="id" name="view_discover_child_list" />
+    <item type="id" name="view_dianying_detail" />
+    <item type="id" name="view_yanchu_detail" />
+    <item type="id" name="view_zhanlan_detail" />
+  
+</resources>

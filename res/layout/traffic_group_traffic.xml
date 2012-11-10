@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/content_rll"
+ 	android:layout_width="fill_parent"
+  	android:layout_height="wrap_content"
+  	android:layout_alignParentTop="true"
+  	android:padding="8dp"
+	android:gravity="center_vertical|left" >
+
+    <TextView android:id="@+id/index"
+    	android:layout_width="wrap_content"
+      	android:layout_height="wrap_content"
+      	android:layout_centerVertical="true"
+      	android:layout_alignParentLeft="true"
+      	android:gravity="center"
+  		android:textColor="@android:color/white"
+  		android:textSize="18dp"
+  		android:focusable="false"
+      	android:focusableInTouchMode="false"
+        android:background="@drawable/btn_index" />
+
+  	<ImageView 		
+      	android:id="@+id/indicator"
+      	android:layout_width="wrap_content"
+      	android:layout_height="wrap_content" 
+      	android:layout_centerVertical="true" 
+      	android:layout_alignParentRight="true"
+      	android:focusable="false"
+      	android:background="@drawable/icon_arrow_right" />        
+      	
+  	<TextView android:id="@+id/text2"
+      	android:layout_width="wrap_content"
+      	android:layout_height="wrap_content"
+      	android:layout_alignParentTop="true"
+      	android:layout_marginLeft="8dp"
+      	android:layout_marginRight="8dp"
+      	android:layout_toRightOf="@id/index"
+      	android:layout_toLeftOf="@id/indicator"
+      	android:textColor="@android:color/black"
+      	android:textSize="16sp"
+      	android:singleLine="true"
+      	android:ellipsize="end"
+		android:gravity="center_vertical|left"/>
+
+  	<TextView android:id="@+id/text1"
+      	android:layout_width="wrap_content"
+      	android:layout_height="wrap_content"
+      	android:layout_below="@id/text2"
+      	android:layout_marginLeft="8dp"
+      	android:layout_marginRight="8dp"
+      	android:layout_toRightOf="@id/index"
+      	android:layout_toLeftOf="@id/indicator"
+      	android:singleLine="true"
+      	android:ellipsize="end"
+      	android:textColor="@color/text_hint_gray"
+      	android:textSize="14sp"/>
+</RelativeLayout>
+

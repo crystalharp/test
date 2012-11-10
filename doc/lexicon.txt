@@ -1,0 +1,38 @@
+
+一、联想词库文件命名规范
+
+1、客户端
+1）公共联想词库存放在“全国”文件夹内，包含三个文件为：
+sw_9999_index, sw_9999_s, sw_9999_l
+sw_9999_index文件的开始4个字节为全国公共词库版本号revision.
+2）城市专有的联想词库存放在以省命名的文件夹内，具体包含三个文件，命名方式为：
+    sw_citycode_index, sw_citycode_s, sw_citycode_l
+sw_citycode_index文件的开始4个字节为词库版本号revision.
+
+2、服务器端
+存储所有版本的公共联想词库和各城市所有版本的联想词库：
+1）公共词库
+sw_9999_revision_index
+sw_9999_revision_s
+sw_9999_revision_l
+
+2）每个城市具体包括以下三个文件：
+sw_citycode_revision_index
+sw_citycode_revision_s
+sw_citycode_revision_l
+
+3、客户端词库下载和更新步骤
+1）根据用户选取的当前城市，客户端从该城市的联想词库中获取版本信息revision（若没有联想词库文件，则revision = 0），并向服务器发送请求；
+2）服务器端根据城市ID和词库版本号，或直接下发zip打包后的最新版本的整个词库（revision = 0时），或通过调用diff工具生成diff文件zip打包后下发；
+    diff文件命名格式：diff_citycode_s, diff_citycode_l, sw_citycode_index
+3）客户端下载完数据后解压，并在后台执行词库修订，此功能在TKMergeSuggestLexicon.c中实现。
+具体如下：
+	前置条件：整个文件已经成功下载并解压缩，此时有新版本的两个diff文件及全新的index文件：
+	diff_citycode_revision_s；
+	diff_citycode_revision_l；
+	sw_citycode_revision_index；
+	
+	合并后，得到以下三个文件：
+	sw_citycode_revision_s；
+	sw_citycode_revision_l；
+	sw_citycode_revision_index；

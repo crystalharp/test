@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg_discover">
+    <TextView 
+        android:id="@+id/result_txv"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-2dp"
+        android:textSize="13sp"
+        android:paddingLeft="12dp"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:text="@string/app_name"
+        android:drawableLeft="@drawable/ic_mylocation_poi_result"
+        android:drawablePadding="6dp"
+        android:textColor="#ff6c6c6c"
+        android:background="#ffeaeaea">
+    </TextView>
+    <com.tigerknows.view.SpringbackListView android:id="@+id/result_lsv"
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent"
+        android:layout_below="@id/result_txv"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="0dp"
+        android:listSelector="@android:color/transparent"
+        android:drawSelectorOnTop="false"
+        android:scrollingCache="false"
+        android:fadingEdge="none" />
+	    
+    <include layout="@layout/poi_result_empty"
+        android:id="@+id/empty_view"
+        android:layout_below="@id/result_txv"
+        android:visibility="invisible"
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent" />
+</RelativeLayout>
+

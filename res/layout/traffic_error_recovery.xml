@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@color/gray_dark">
+    
+	<include android:id="@+id/title_view"
+	    layout="@layout/title" 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"  />
+	<ScrollView
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:scrollbars="vertical"
+	    android:gravity="top"
+	    android:fillViewport="true"
+	    android:fadingEdge="none"
+        android:scrollingCache="false" >
+	    <LinearLayout 
+		    android:layout_width="fill_parent" 
+		    android:layout_height="wrap_content"
+		    android:orientation="vertical"
+	    	android:padding="8dp"
+	        android:focusable="true"
+	        android:focusableInTouchMode="true" >
+		    <LinearLayout android:id="@+id/station_error_lnl"
+		        android:layout_width="fill_parent" 
+		        android:layout_height="wrap_content"
+		    	android:orientation="vertical">
+		         <TextView
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content" 
+			        android:textColor="@android:color/black"
+			        android:textSize="18sp"
+			        android:focusable="false"
+			        android:focusableInTouchMode="false"
+			        android:gravity="left|center_vertical"
+			        android:lineSpacingExtra="0dp"
+			        android:includeFontPadding="false"
+			        android:text="@string/station_position_error"/>
+			</LinearLayout>
+	
+			<LinearLayout android:id="@+id/line_error_lnl"
+		        android:layout_width="fill_parent" 
+		        android:layout_height="wrap_content"
+		    	android:orientation="vertical" >
+		         <TextView
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content" 
+			        android:textColor="@android:color/black"
+			        android:textSize="18sp"
+			        android:focusable="false"
+			        android:focusableInTouchMode="false"
+			        android:gravity="left|center_vertical"
+			        android:lineSpacingExtra="0dp"
+			        android:includeFontPadding="false"
+			        android:text="@string/station_line_error"/>
+			</LinearLayout>
+			
+			<EditText
+			    android:id="@+id/content_edt"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_marginTop="8dp"
+                android:imeOptions="actionNext"
+			    android:singleLine="false"
+			    android:minLines="4"
+			    android:gravity="top|left"
+			    android:isScrollContainer="true"
+			    android:hint="@string/errorrecovery_description"
+                android:textColorHint="#ffacacac"
+                android:background="@drawable/textfield" />
+		    
+		    <EditText
+			    android:id="@+id/mobile_phone_edt"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_marginTop="8dp"
+			    android:imeOptions="actionDone"
+			    android:singleLine="true"
+			    android:gravity="top|left"
+			    android:isScrollContainer="true"
+			    android:inputType="phone"
+			    android:maxLength="11"
+			    android:hint="@string/errorrecovery_user_phone"
+                android:textColorHint="#ffacacac"
+                android:background="@drawable/textfield" />
+		</LinearLayout>
+	</ScrollView>
+	
+</LinearLayout>

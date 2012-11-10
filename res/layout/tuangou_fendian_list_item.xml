@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal|top"
+    android:padding="8dp">
+	<RelativeLayout
+        android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+	    >			        
+	    <Button 
+	        android:id="@+id/distance_btn" 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+	        android:layout_alignParentRight="true"
+	        android:textColor="@color/bright_foreground_light"
+	        android:textSize="14sp"
+	        android:text="@string/distance"
+	        android:singleLine="true"
+	        android:focusable="false"
+	        android:background="@drawable/btn_distance" /> 
+	    <TextView 
+	        android:id="@+id/name_txv" 
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content" 
+	        android:layout_toLeftOf="@id/distance_btn"
+	        android:layout_centerVertical="true"
+	        android:textColor="@android:color/black"
+	        android:textSize="18sp"
+	        android:text="@string/distance"
+	        android:singleLine="true"
+	        android:focusable="false" /> 
+    </RelativeLayout>
+           
+    <LinearLayout
+    	android:id="@+id/address_phone_view"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:layout_marginTop="6dp"
+        android:orientation="vertical">
+        
+        <LinearLayout android:id="@+id/address_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" 
+            android:gravity="center_vertical"
+            android:background="@drawable/list_header"
+            android:orientation="horizontal"
+            android:paddingTop="8dp"
+            android:paddingRight="8dp"
+            android:paddingLeft="8dp"
+            android:paddingBottom="8dp"
+            >
+	        <TextView 
+	            android:id="@+id/address_title_txv"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content" 
+	            android:gravity="left|center_vertical"
+	            android:text="@string/address" 
+	            android:textColor="@android:color/black"
+	            android:textSize="16sp"
+	            />
+	        <TextView android:id="@+id/address_txv"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content" 
+	            android:gravity="left|center_vertical"
+	            android:drawableRight="@drawable/ic_address"
+	            android:text="@string/app_name" 
+	            android:textColor="@android:color/black"
+	            android:textSize="16sp"
+	            />
+        </LinearLayout>
+        
+        <ImageView android:id="@+id/divider_imv" 
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" 
+            android:background="@drawable/divider" />
+            
+        <LinearLayout android:id="@+id/telephone_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" 
+            android:gravity="center_vertical"
+            android:background="@drawable/list_footer"
+            android:orientation="horizontal"
+	        android:paddingTop="8dp"
+	        android:paddingRight="8dp"
+	        android:paddingLeft="8dp"
+	        android:paddingBottom="8dp"
+            >
+         <TextView
+             android:id="@+id/telephone_title_txv"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content" 
+             android:gravity="left|center_vertical"
+             android:text="@string/phonenumber" 
+             android:textColor="@android:color/black"
+             android:textSize="16sp"
+             />
+         <TextView android:id="@+id/telephone_txv"
+             android:layout_width="fill_parent"
+             android:layout_height="wrap_content" 
+             android:gravity="left|center_vertical"
+             android:drawableRight="@drawable/ic_telephone"
+             android:text="@string/app_name" 
+             android:textColor="@android:color/black"
+             android:textSize="16sp"
+             android:autoLink="phone"
+             />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

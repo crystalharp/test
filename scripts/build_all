@@ -1,0 +1,9 @@
+#!/usr/bin/expect 
+spawn /home/zhouwentao/tk/tigerknows-sphinx/tags/v3.20/scripts/release_all
+set timeout 1
+set done 1
+while { $done } {
+	expect "*Please enter keystore password (store:android-release.keystore):"
+	send "123456\r123456\r\r"
+}
+

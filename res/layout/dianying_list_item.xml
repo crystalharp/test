@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="@drawable/list_selector_background_gray_light">
+     
+    <ImageView 
+        android:id="@+id/picture_imv" 
+        android:layout_width="80dp"
+        android:layout_height="100dp" 
+        android:layout_marginRight="8dp"
+        android:padding="4dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:scaleType="fitXY"
+        android:background="@drawable/bg_picture_dianying" />   
+    
+    <TextView 
+        android:id="@+id/name_txv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_toRightOf="@id/picture_imv" 
+        android:layout_marginTop="2dip" 
+        android:layout_alignParentTop="true"
+        android:paddingBottom="5dp"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:text="@string/app_name"
+        android:singleLine="true"
+        android:lineSpacingExtra="0dp"
+        android:includeFontPadding="false"
+        android:focusable="false" />    
+        
+    <RatingBar android:id="@+id/stars_rtb"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:layout_marginBottom="8dp"
+        android:padding="0dp"
+        android:layout_toRightOf="@id/picture_imv"
+        android:layout_below="@id/name_txv" 
+        android:progressDrawable="@drawable/ratingbar_small"
+        style="?android:attr/ratingBarStyleSmall"
+        android:numStars="5"
+        android:focusable="false"
+        android:focusableInTouchMode="false" /> 
+    
+    <TextView 
+        android:id="@+id/distance_txv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/name_txv" 
+        android:layout_marginBottom="4dp"
+        android:textColor="@color/bright_green"
+        android:textSize="14sp"
+        android:text="@string/dianying_detail_nearest"
+        android:singleLine="true"
+        android:focusable="false" />  
+    
+    <TextView 
+        android:id="@+id/category_txv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_toRightOf="@id/picture_imv"
+        android:layout_below="@id/stars_rtb" 
+        android:drawableLeft="@drawable/ic_discover_category"
+        android:textColor="@color/bright_foreground_light"
+        android:textSize="14sp"
+        android:text="@string/distance"
+        android:singleLine="true"
+        android:focusable="false" />   
+    
+    <TextView 
+        android:id="@+id/date_txv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_toRightOf="@id/picture_imv"
+        android:layout_below="@id/category_txv" 
+        android:drawableLeft="@drawable/ic_discover_clock"
+        android:textColor="@color/bright_foreground_light"
+        android:textSize="14sp"
+        android:text="@string/distance"
+        android:singleLine="true"
+        android:focusable="false" />   
+</RelativeLayout>

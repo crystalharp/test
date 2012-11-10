@@ -1,0 +1,164 @@
+package com.tigerknows.util;
+
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.net.Uri;
+import android.widget.ArrayAdapter;
+import android.widget.Toast;
+
+import com.decarta.android.location.Position;
+import com.decarta.android.map.MapView.SnapMap;
+import com.tigerknows.ActionLog;
+import com.tigerknows.R;
+import com.tigerknows.Sphinx;
+import com.tigerknows.share.ShareEntrance;
+import com.tigerknows.share.ShareMessageCenter;
+import com.tigerknows.view.StringArrayAdapter;
+import com.tigerknows.share.impl.SinaWeiboShare;
+import com.tigerknows.share.impl.TencentOpenShare;
+
+/**
+ * 一些关于为Widget附加的常用操作
+ * ===== 是否要转化为自定义VIEW, 有待考量????? =====
+ * 
+ * @author linqingzu
+ *
+ */
+public class WidgetUtils {
+
+        
+    /**
+     * 生成分享对话框, 并传入数据
+     * 
+     * @param activity
+     * @param data
+     * @param smsContent
+     * @param weiboContent
+     * @param layerType
+     * @return
+     */
+    public static void share(final Activity activity, final String smsContent, final String weiboContent, final String qzoneContent, final Position position) {
+        
+        final Sphinx sphinx = (Sphinx)activity;
+        String[] list = activity.getResources().getStringArray(R.array.share);
+        final ResolveInfo resolveInfo = sphinx.getSmsResolveInfo();
+        int[] leftCompoundResIdList;
+        if (resolveInfo != null) {
+            leftCompoundResIdList = new int[] {R.drawable.ic_share_sina, R.drawable.ic_share_qzone, R.drawable.ic_share_sms, R.drawable.ic_share_mms, R.drawable.ic_share_more};
+        } else {
+            leftCompoundResIdList = new int[] {R.drawable.ic_share_sina, R.drawable.ic_share_qzone, R.drawable.ic_share_sms, R.drawable.ic_share_more};
+            String[] newlist = new String[4];
+            newlist[0] = list[0];
+            newlist[1] = list[1];
+            newlist[2] = list[2];
+            newlist[3] = list[4];
+            list = newlist;
+        }
+        final ArrayAdapter<String> adapter = new StringArrayAdapter(activity, list, leftCompoundResIdList);
+
+        AlertDialog.Builder b = new AlertDialog.Builder(activity);
+
+        DialogInterface.OnClickListener click = new DialogInterface.OnClickListener() {
+            public final void onClick(DialogInterface dialog, int which) {
+
+                ActionLog actionLog = ActionLog.getInstance(activity);
+                Intent intent;
+                switch (which) {
+                    case 0:
+                        actionLog.addAction(ActionLog.ShareWeibo);
+                        
+                        sphinx.snapMapView(new SnapMap() {
+                            
+                            @Override
+                            public void finish(Uri uri) {
+                                if(uri != null) {
+                                	sphinx.clearMap();
+                                	
+                                	Intent intent = new Intent();
+                                    intent.putExtra(ShareMessageCenter.EXTRA_SHARE_PIC_URI, uri.toString());
+                                    intent.putExtra(ShareMessageCenter.EXTRA_SHARE_CONTENT, weiboContent);
+                                    
+                                    ShareEntrance.getInstance().dealWithShare(activity, ShareEntrance.SINAWEIBO_ENTRANCE, intent);
+                                }
+                            }
+                        }, position);
+                        break;
+                    case 1:
+                    	actionLog.addAction(ActionLog.ShareQzone);
+                        intent = new Intent();
+                        intent.putExtra(ShareMessageCenter.EXTRA_SHARE_CONTENT, qzoneContent);
+                        ShareEntrance.getInstance().dealWithShare(activity, ShareEntrance.TENCENT_ENTRANCE, intent);
+                        break;
+                    case 2:
+                        actionLog.addAction(ActionLog.ShareSms);
+                        intent = new Intent(Intent.ACTION_VIEW);    
+                        intent.putExtra(Intent.EXTRA_TEXT, smsContent);
+                        intent.putExtra("sms_body", smsContent);
+                        intent.setType("vnd.android-dir/mms-sms");  
+                        
+                        try {
+                            activity.startActivity(intent);
+                        } catch (android.content.ActivityNotFoundException ex) {
+                            Toast.makeText(activity, R.string.no_way_to_share_message, Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                        
+                    case 3:
+                        if (resolveInfo != null) {
+                            actionLog.addAction(ActionLog.ShareMms);
+
+                            sphinx.snapMapView(new SnapMap() {
+                                
+                                @Override
+                                public void finish(Uri uri) {
+                                    if(uri != null) {
+                                    	sphinx.clearMap();
+                                    	
+                                        Intent intent = new Intent();
+                                        intent = new Intent();
+                                        intent.setAction(Intent.ACTION_SEND);
+                                        intent.setType("image/png");
+                                        intent.putExtra(Intent.EXTRA_TEXT, smsContent);
+                                        intent.putExtra(Intent.EXTRA_STREAM, uri);
+                                        intent.putExtra("sms_body", smsContent);
+                                        intent.putExtra("file_name", uri.toString());
+                                        intent.putExtra("exit_on_sent", true);
+                                        intent.setClassName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name);
+                                        try {
+                                            activity.startActivity(intent);
+                                        } catch (android.content.ActivityNotFoundException ex) {
+                                            Toast.makeText(activity, R.string.no_way_to_share_message, Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+                            }, position);
+                            break;
+                        }  
+                        
+                    case 4:
+                        actionLog.addAction(ActionLog.ShareMore);
+                        sphinx.snapMapView(new SnapMap() {
+                            
+                            @Override
+                            public void finish(Uri uri) {
+                                if(uri != null) {
+                                	sphinx.clearMap();
+                                	
+                                    CommonUtils.share(sphinx, activity.getString(R.string.share), smsContent, uri);
+                                }}
+                        }, position);
+                        break;
+                }
+            }
+        };
+
+        b.setTitle(R.string.share);
+        b.setCancelable(true);
+        b.setAdapter(adapter, click);
+
+        b.show();
+    }
+}

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="MenuView">
+        <!-- Default appearance of menu item text. -->
+        <attr name="itemTextAppearance" format="reference" />
+        <!-- Default horizontal divider between rows of menu items. -->
+        <attr name="horizontalDivider" format="reference" />
+        <!-- Default vertical divider between menu items. -->
+        <attr name="verticalDivider" format="reference" />
+        <!-- Default background for the menu header. -->
+        <attr name="headerBackground" format="color|reference" />
+        <!-- Default background for each menu item. -->
+        <attr name="itemBackground" format="color|reference" />
+        <!-- Default animations for the menu -->
+        <attr name="windowAnimationStyle" format="reference" />
+        <!-- Default disabled icon alpha for each menu item that shows an icon. -->
+        <attr name="itemIconDisabledAlpha" format="float" />
+    </declare-styleable>
+    <declare-styleable name="IconMenuView">
+        <!-- Defines the height of each row. -->
+        <attr name="rowHeight" format="dimension" />
+        <!-- Defines the maximum number of rows displayed. -->
+        <attr name="maxRows" format="integer" />
+        <!-- Defines the maximum number of items per row. -->
+        <attr name="maxItemsPerRow" format="integer" />
+        <!-- Defines the maximum number of items to show. -->
+        <attr name="maxItems" format="integer" />
+        <!-- 'More' icon -->
+        <attr name="moreIcon" format="reference" />
+    </declare-styleable>
+    
+    <!-- screen -->
+    <declare-styleable name="ScrollScreen">
+        <attr name="default_screen" format="integer" />
+    </declare-styleable>
+    
+    <declare-styleable name="CollapseTextView">
+        <attr name="maxLines" format="integer" />
+        <attr name="textSize" format="dimension" />
+    </declare-styleable>
+    
+</resources>

@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+ 	    android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+	    android:orientation="vertical" 
+	    >
+	
+        <RelativeLayout android:id="@+id/traffic_rll"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:padding="4dp"
+	        android:background="@drawable/bg_gradient">
+	        <Button android:id="@+id/exchange_btn"
+	            android:background="@drawable/btn_exchange"
+	            android:layout_alignParentLeft="true"
+	            android:layout_width="wrap_content" 
+	            android:layout_height="wrap_content"
+	            android:layout_centerVertical="true" />
+	        <LinearLayout android:id="@+id/traffic_lsv"
+	            android:layout_width="fill_parent" 
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:layout_toRightOf="@id/exchange_btn"
+	            android:layout_alignParentTop="true"
+	            android:layout_marginLeft="4dp">
+	            <FrameLayout 
+			        android:layout_width="fill_parent" 
+			        android:layout_height="wrap_content" >
+			        <include android:id="@+id/start_line" layout="@layout/traffic_query_input_line" />
+        		</FrameLayout>
+	            <FrameLayout 
+			        android:layout_width="fill_parent" 
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="2dp">
+			        <include android:id="@+id/end_line" layout="@layout/traffic_query_input_line" />
+        		</FrameLayout>
+	        </LinearLayout>
+	    </RelativeLayout>
+
+	    <RelativeLayout android:id="@+id/busline_rll"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:padding="10dp"
+	        android:background="@drawable/bg_gradient"
+	        android:visibility="gone">     
+	        <include android:id="@+id/busline_edt"
+				layout="@layout/traffic_query_input_line" />  
+	    </RelativeLayout>
+		
+	    <LinearLayout 
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical" >
+	        <ImageView 
+		        android:id="@+id/shadow1"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:background="@android:color/white"
+		        android:scaleType="fitXY"
+		        android:src="@drawable/bg_shadow" />
+		    <TextView 
+		        android:id="@+id/cur_city_txt" 
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:paddingLeft="10dp"
+		        android:paddingTop="2dp"
+		        android:paddingBottom="2dp"
+		        android:textColor="@android:color/black"
+		        android:textSize="13sp"
+		        android:singleLine="true" 
+		        android:background="@color/traffic_current_city_bg"/>
+	    </LinearLayout>
+	
+    </LinearLayout>

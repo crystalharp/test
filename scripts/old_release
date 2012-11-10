@@ -1,0 +1,5 @@
+#!/bin/sh 
+ndk-build -b
+/home/zhouwentao/tk/android-ndk-r4/build/prebuilt/linux-x86/arm-eabi-4.4.0/bin/arm-eabi-strip -g  --strip-unneeded libs/armeabi/libmapengine.so
+ant clean
+ant release

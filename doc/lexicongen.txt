@@ -1,0 +1,48 @@
+联想词库文件格式：
+
+联想词库包括公共联想词库和各城市专有联想词库，公共联想词库和各城市专有联想词库的格式相同(公共联想词库的citycode设为9999)。具体如下：
+
+1）一个城市的联想词库文件包含三个文件：sw_citycode_reversion_index, sw_citycode_reversion_s, sw_citycode_reversion_l
+
+2）sw_citycode_reversion_index
+该文件为二进制文件，用于存储联想词的索引数组，索引根据联想词的第一个字建立。数组元素按升序(ASCII码值)排列，方便二分查找。
+文件头4个字节为词库版本号（int类型），随后每10个字节为一个索引，直至文件结束。
+
+数组元素定义：
+typedef struct Index {
+	char key[2];
+	short start_s;
+	short end_s;
+	short start_l;
+	short end_l;
+} Index;
+
+3）我们采用定长的方式存储联想词，分为24字节（6个字，12+12）和36（12个字，24+12）字节，其中12个字节用于存储类别和是否有经纬度等标志位（2字节）、经纬度（8字节）、rank值（2字节）
+
+sw_citycode_reversion_s文件格式：每24个字节为一个联想词：
+
+typedef struct SWord {
+	char key[12];     //联想词名称
+	short wordInfo;   //类型、是否有经纬度
+	short rank;       //rank值
+	float lon;        //经纬度
+	float lat; 
+} SWord;
+
+sw_citycode_reversion_l文件格式：每32个字节为一个联想词：
+
+typedef struct LWord {
+	char key[24];     //联想词名称
+	short wordInfo;   //类型、是否有经纬度
+	short rank;       //rank值
+	float lon;        //经纬度
+	float lat; 
+} LWord;
+
+服务器发给客戶端的数据格式是：旧版本号（4字节二进制表示，全新下载时为0）+
+新版本号（4字节二进制表示）+ 索引文件长度（4字节二进制表示）+
+sw_citycode_reversion_s或者sw_citycode_diff_s文件长度（4字节二进制表示）+
+sw_citycode_reversion_l或者sw_citycode_diff_l文件长度（4字节二进制表示）+
+TZ格式压缩的这三个文件（三个文件依次拼接，然后用TZ压缩）
+
+

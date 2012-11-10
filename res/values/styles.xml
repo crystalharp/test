@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) pengwenyue@tigerknows.com
+-->
+
+<resources>
+    
+    <style name="Theme_Dialog" parent="android:Theme">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@color/dim_foreground_dark</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowSoftInputMode">adjustPan|stateAlwaysHidden</item>
+    </style>    
+    
+    <style name="Theme_Dialog_Menu" parent="android:Theme">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style> 
+    
+    <!-- Default theme for alert dialog windows, which is used by the
+         {@link android.app.AlertDialog} class.  This is basically a dialog
+         but sets the background to empty so it can do two-tone backgrounds. -->
+    <!--
+        <item name="android:windowTitleStyle">@android:style/DialogWindowTitle</item> -->
+    <style name="Theme_Dialog_Alert" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+    
+    <style name="Widget_ProgressBar_Tip" parent="android:Widget.ProgressBar">
+        <item name="android:indeterminateOnly">true</item>
+        <item name="android:indeterminateDrawable">@drawable/progress_medium</item>
+        <item name="android:indeterminateBehavior">repeat</item>
+        <item name="android:indeterminateDuration">3500</item>
+        <item name="android:minWidth">32dip</item>
+        <item name="android:maxWidth">32dip</item>
+        <item name="android:minHeight">32dip</item>
+        <item name="android:maxHeight">32dip</item>
+    </style>
+
+    <style name="Animation_UpAndDown">
+        <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_down</item>
+    </style>
+	
+	<style name="ContentOverlay" parent="android:style/Theme.Dialog">
+		<item name="android:windowNoTitle">true</item>
+		<item name="android:windowIsTranslucent">true</item>
+		<item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+        <item name="android:windowContentOverlay">@null</item> 
+        <item name="android:backgroundDimEnabled">false</item>
+	</style>
+    
+	<!-- Tencent Share -->
+	<style name="AnimationActivity" parent="@android:style/Animation.Activity">
+		<item name="android:activityOpenEnterAnimation">@anim/zoom_enter</item>
+		<item name="android:activityOpenExitAnimation">@null</item>
+		<item name="android:activityCloseEnterAnimation">@null</item>
+		<item name="android:activityCloseExitAnimation">@anim/zoom_exit</item>
+	</style>
+	<style name="ThemeActivity">
+		<item name="android:windowAnimationStyle">@style/AnimationActivity</item>
+	</style>
+
+    <style name="TextAppearance" parent="@android:style/TextAppearance">
+        <item name="android:textColor">#ff000000</item>
+        <item name="android:textColorHighlight">#FFFF9200</item>
+        <item name="android:textColorHint">#ff888888</item>
+        <item name="android:textColorLink">#5C5CFF</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
+    <style name="Widget.EditText" parent="@android:style/Widget.EditText">
+        <item name="android:textAppearance">@style/TextAppearance</item>
+        <item name="android:background">@drawable/textfield</item>
+        <item name="android:textColor">#ff000000</item>
+        <item name="android:textColorHighlight">#FFFF9200</item>
+        <item name="android:textColorHint">#ff888888</item>
+        <item name="android:textColorLink">#5C5CFF</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingRight">8dp</item>
+        <item name="android:paddingLeft">8dp</item>
+    </style>
+
+    <style name="Widget.TextView" parent="@android:style/Widget.TextView">
+        <item name="android:textAppearance">@style/TextAppearance</item>
+        <item name="android:textColor">#ff000000</item>
+        <item name="android:textColorHighlight">#FFFF9200</item>
+        <item name="android:textColorHint">#ff888888</item>
+        <item name="android:textColorLink">#5C5CFF</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+</resources>

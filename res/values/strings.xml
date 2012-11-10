@@ -1,0 +1,872 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>    
+    <string name="ok">OK</string>
+    <string name="default_conf">Default</string>
+    <string name="snap_to_cloest_level">snap to closest zoom level</string>
+    <string name="draw_by_opengl">draw by opengl</string>
+    <string name="fading_time">fading time</string>
+    <string name="border">border</string>
+    <string name="tile_thread_count">tile loading thread num</string>
+    <string name="input_valid_fading_time">Please input valid integer fading time</string>
+    <string name="input_valid_border">Please input valid integer border</string>
+    <string name="input_valid_tile_thread_count">Please input valid integer tile thread num</string>
+	
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="gray">#333333</color>
+    <color name="bright_green">#ff199bde</color>
+    <color name="bright_foreground_light">#99000000</color>
+    <string name="app_name">老虎宝典</string>
+    <string name="send_sms">发短信</string>
+    <string name="send_mms">发彩信</string>
+    <string name="send_weibo">发微博</string>
+    <string name="quit">退出</string>
+    <string name="clean_history_message">您要清除所有记录？</string>
+    <string name="location_failed_and_jump_settings">定位失败，请确认是否开启了‘设置>位置’中的GPS功能。</string>
+    <string name="location_failed_and_change_city">定位失败，无法找到所在城市，是否直接选择城市？</string>
+    <string name="location_failed_cause">定位失败，请参见下面建议：</string>
+    <string name="location_failed_gps">%1$s、启用GPS，并到户外开阔的地方。</string>
+    <string name="location_failed_network">%1$s、启用Wifi或移动网络。</string>
+    <string name="location_doing">正在定位…</string>
+
+    <string name="yuan">￥%1$d元</string>
+    <string name="brackets">【%1$s】</string>
+    <string name="map">地图</string>
+    <string name="back">返回</string>
+    <string name="back_home">返回首页</string>
+    <string name="view_list">查看列表</string>
+    <string name="view_map">查看地图</string>
+    <string name="result_list">结果列表</string>
+    <string name="result_map">结果地图</string>
+    <string name="clear">清空</string>
+    <string name="poi_result_tip">点击地图按钮可查看地图</string>
+    <string name="distance">距</string>
+    <string name="me">我</string>
+    <string name="distanceA">距地标</string>
+    
+    <string name="start">起点</string>
+    <string name="end">终点</string>
+    <string name="start_">请输入起点</string>
+    <string name="end_">请输入终点</string>
+    <string name="busline_">线路：%1$s</string>
+    <string name="favorite_empty_poi">记录为空。快去收藏常用的地点吧！</string>
+    <string name="favorite_empty_traffic">记录为空。快去收藏常用的交通路线吧！</string>
+    <string name="history_empty">记录为空。</string>
+    <string name="rename">重命名</string>
+    
+    <string name="map_center">地图中心</string>
+    <string name="map_select_point">地图选点</string>
+    
+    <string name="category_search">分类搜索</string>
+    <string name="precision_search">精确搜索</string>
+    <string name="nearby_search">周边搜索</string>
+    
+    <string name="select_action">选择操作</string>
+    <string name="delete_map">删除地图</string>
+    <string name="pause_download">暂停下载</string>
+    <string name="upgrade_map">升级地图</string>
+    
+    <string name="at_where_search">在“%1$s”附近搜索</string>    
+    <string name="select_where_as_start">选择\u0020%1$s\u0020作为起点</string>  
+    <string name="select_where_as_end">选择\u0020%1$s\u0020作为终点</string>
+    <string name="click_map_as_start">点击地图选择起点</string>  
+    <string name="click_map_as_end">点击地图选择终点</string>
+    
+    <string name="at_where_discover">发现：在%1$s进行发现 </string>
+    <string name="at_where_discover_how">在"%1$s"发现%2$s个</string>   
+    <string name="discover_exist_tip">已经更新发现结果</string>   
+    
+    <string name="init_map_dir_title">初始化地图数据</string>
+    <string name="init_map_dir_message">程序异常退出可能是因为使用过程中地图数据文件损坏，建议您删除损坏的地图数据文件?</string>
+    
+    <string name="correct_to_how">精确到%1$s</string> 
+    <string name="are_your_change_to_location_city">上次设置为%1$s市，是否切换到您当前定位城市%2$s市？</string> 
+    <string name="are_your_change_to_map_center_city">您的地图已经切换到%1$s，是否切换？</string> 
+    <string name="current_location">当前位置：%1$s附近</string> 
+    <string name="find_poi">查找地点、商户名</string> 
+    <string name="no_comment">目前暂无评论</string> 
+    
+    <string name="hotspot">热点</string>    
+    <string name="home">首页</string>
+    <string name="search_nearby">搜索周边</string>
+    <string name="detail_info">详情信息</string>
+    <string name="edit">编辑</string>
+    <string name="all_select">全选</string>
+    <string name="cancel_all_select">取消全选</string>
+    <string name="feature">特点：</string>
+
+    <string name="doing_and_wait">处理中，请稍候...</string>
+    <string name="network_failed">网络异常，请稍后重试。</string>
+    <string name="no_network">无网络可用，请检查网络后重试！</string>
+    
+    <string name="map_download_input_hit">请输入省市名称或拼音</string>
+    <string name="download">下载</string>
+    <string name="stop">停止</string>
+    <string name="completed">完成</string>
+    <string name="upgrade">升级</string>
+    <string name="may_upgrade">可更新</string>
+    <string name="exist_download_list">已添加到下载列表</string>
+    <string name="add">添加</string>
+    <string name="all_province">全省</string>
+    <string name="added">已加</string>
+    <string name="map_static_waiting_tip">地图信息统计中...</string>
+    <string name="city">市</string>
+    <string name="province">省</string>
+    <string name="please_add_city">请先添加城市...</string>
+    <string name="off_line_">想提高速度节省流量？去官网下载离线地图包！>></string>
+    
+    <string name="map_download_tip">地图下载中...</string>
+    <string name="map_download_collect_info_tip">%1$s地图下载信息收集中...</string>
+    <string name="map_download_progress_tip">%1$s市地图 %2$s%%</string>
+    <string name="_m">%1$sM</string>
+    <string name="downloading_">正在下载\u0020\u0020%1s%%</string>
+    <string name="downloaded_">已暂停\u0020\u0020%1$s%%</string>
+    <string name="map_download_mutile_thread_tip">同时下载过多，可能影响查询速度...</string>
+    
+    <string name="download_software_title">新版本软件下载</string>
+    <string name="downloading_software_message">正在下载新版本老虎宝典软件...</string>
+
+    <string name="tip_longpress_select_traffic">长按可选择交通查询起终点</string>
+    
+    <string name="current_city">当前城市: %1$s</string>
+    <string name="query">查找</string>
+    <string name="bus_transfer">公交驾车</string>
+    <string name="drive">驾车</string>
+    <string name="walk">步行</string>
+    <string name="transfer_drive">公交驾车</string>
+    <string name="busline">交通线路</string>
+    <string name="from">从</string>
+    <string name="to">到</string>
+    <string name="transfer_non_support_city_tip">目前找不到你要的跨市公交换乘！</string>
+    <string name="drive_non_support_city_tip">目前找不到你要的跨市自驾信息！</string>
+    <string name="walk_non_support_city_tip">目前找不到你要的跨市步行信息！</string>
+    <string name="transfer_non_tip">目前找不到你要的公交换乘！</string>
+    <string name="drive_non_tip">目前找不到你要的自驾信息！</string>
+    <string name="walk_non_tip">目前找不到你要的步行信息！</string>
+    <string name="busline_non_tip">目前找不到你要的公交线路信息！</string>
+    <string name="busline_not_support">本城市暂不支持公交线路查询！</string>
+    <string name="forget_all_tip">你忘记输入起点和终点啦！</string>
+    <string name="forget_start_tip">你忘记输入起点啦！</string>
+    <string name="forget_end_tip">你忘记输入终点啦！</string>
+    <string name="input_valid_tip">没有找到起点或终点，你可以换一个词或在地图上选点试试！</string>
+    <string name="start_equal_to_end">起点与终点相同, 请重新输入!</string>
+    <string name="start_equal_to_end_select">起点与终点相同, 请重新选择!</string>
+    <string name="busline_name_">请输入线路名或站点名</string>
+    <string name="input_busline_name_tip">请输入线路名称！</string>
+    <string name="transfer_operation_time">运营时间:\u0020\u0020%1$s</string>
+    <string name="bus_index_station">%1$d. %2$s</string>
+	<string name="favorite_poi_empty">您还没有任何收藏</string>
+	<string name="mylocation_failed">对不起, 定位失败, 请重试...</string>
+
+	<string name="title_transfer_plan_list">公交方案</string>
+	<string name="title_transfer_plan">公交详情</string>
+	<string name="title_walk_plan">步行详情</string>
+	<string name="title_drive_plan">驾车详情</string>
+	<string name="title_busline_result">线路列表</string>
+	<string name="title_busline_line">线路详情</string>
+	<string name="title_station_result">站点列表</string>
+	<string name="title_traffic_result_map">交通地图</string>
+	<string name="title_busline_result_map">线路地图</string>
+    <string name="title_click_map">地图选点</string>
+	
+    <string name="poi_detail_not_next_tip">已经是最后一个了</string>
+    <string name="poi_detail_not_previous_tip">已经是最前一个了</string>
+    <string name="back_what_city">回%1$s市</string>
+    <string name="favorite_yet">取消收藏</string>
+    <string name="favorite_toast">已收藏到“更多-收藏夹”</string>
+    <string name="delete">删除</string>
+    <string name="view">查看</string>
+    <string name="delete_all">全部删除</string>
+    <string name="share_to_friend">发送给好友</string>
+    
+    <string name="map_download">地图下载</string>
+    <string name="change_city">切换城市</string>
+    <string name="check_update">检查更新</string>
+    <string name="favorite">收藏</string>
+    <string name="favoriten">收藏夹</string>
+    <string name="clean_history">清空记录</string>
+    <string name="settings">设置</string>
+    <string name="select_point">选择该点</string>
+    
+    <string name="more">更多</string>
+    <string name="upgrade_tip_software">软件有新版本了, 点击下载!</string>
+    <string name="upgrade_tip_comment">没见解？不可能！来发表个点评吧！</string>
+    <string name="upgrade_tip_map">地图有更新数据了，点击升级!</string>
+    <string name="not_tip_week">一周之内不提醒</string>
+    <string name="upgrade_all">全部升级</string>
+    <string name="upgrade_manual">手动更新</string>
+    <string name="download_map">下载地图</string>
+    <string name="app_recommend">应用推荐</string>
+    <string name="feedback">意见反馈</string>
+    <string name="help">帮助</string>
+    <string name="about_us">关于我们</string>
+    <string name="recommend_snda">盛大推荐</string>
+    <string name="recommend_tencent">腾讯应用中心</string>
+    <string name="login_or_regist">登录/注册</string>
+    <string name="user_home">个人中心</string>
+    
+    <string name="settings_openg_gps">打开GPS</string>
+    <string name="settings_close_gps">关闭GPS</string>
+    <string name="settings_gps_description">可以设置手机GPS开启/关闭</string>
+    <string name="settings_acquire_wakelock">保持屏幕常亮</string>
+    <string name="settings_acquire_wakelock_description">使用本软件时屏幕常亮，耗电量稍大</string>
+    <string name="settings_map_home">设置地图为首页</string>
+    <string name="settings_map_home_description">在本软件打开时直接显示地图</string>
+    
+    <string name="delete_city_map_tip">确认删除该城市地图包？</string>
+    <string name="cancel_favorite_tip">确认取消收藏？</string>
+    
+    <string name="off_line_download_dialog_title">下载离线地图包</string>
+    <string name="off_line_download_dialog_message">1.通过电脑访问网址http://www.tigerknows.com/software下载离线地图包，并解压。\n2.找到解压出的map文件夹，把它装入手机  存储卡的根目录。\n3.断开电脑连接，打开老虎宝典即可查看地图。\n4.浏览已经下载地图包的地图将更快速且不再消耗流量！</string>
+    <string name="i_know">我知道了</string>
+
+    <string name="are_you_sure_download_this_software">确定下载此软件？</string>
+    <string name="my_location">当前位置</string>
+    <string name="my_location_with_accuracy">当前位置\n精确到%1$s</string>
+    <string name="pop_categories">热门搜索</string>
+    <string name="pop_location">热门地点</string>
+    <string name="search_location_me_failure_and_select">暂时无法获取当前位置，请选择具体位置或在地图上指定位置！</string>
+    <string name="search_input_keyword">你忘记输入搜索词啦</string>
+    <string name="search_input_valid_tip">没有找到相关的结果，你可以换个词或换个城市试试！</string>
+    <string name="my_location_failure">无法获取当前位置</string>
+    <string name="select_has_point">选定的位置</string>
+
+    <string name="no_result">暂无结果.</string>
+
+    <string name="confirm_start_station">您要找的起点是</string>
+    <string name="confirm_end_station">您要找的终点是</string>
+    
+    <string name="share">分享</string>
+    <string name="error_recovery">纠错</string>
+    <string name="come_here">到这里去</string>
+    <string name="detail">详情</string>
+    <string name="comment">点评</string>
+    <string name="address">地址：</string>   
+    <string name="name_">名称：</string>   
+    <string name="source_">来源：%1$s</string> 
+    <string name="reserve_tel">预定电话：</string> 
+    <string name="phonenumber">电话：</string> 
+    <string name="recommend_cooking">推荐菜:\u0020</string>
+    <string name="look_all_comment">查看全部</string> 
+    <string name="current_city_">当前所在城市：%1$s</string> 
+    <string name="add_city">添加城市</string> 
+
+    <string name="low_memory">手机SD卡空间已用完！请删除一些文件来腾出空间。</string>
+    <string name="not_memory">手机上没有SD卡，或没有可读写的空间，程序将不能正常运行！</string>
+    <string name="prompt">提示</string>
+    <string name="exit_app">您确定要退出应用程序?</string>
+    <string name="delete_confirm">删除确认</string>
+    <string name="nubmer_more">*</string>
+
+    <string name="skip">跳过</string>
+    <string name="do_not_show_this_message">以后不再提醒</string>
+    <string name="location_waiting">正在等待定位</string>
+    <string name="location_failed">暂时无法获得你的位置，正在重试</string>
+    <string name="location_success">当前位置-精确到%1$s</string>
+    <string name="mapview_start_click">点击即可选择该点</string>
+    
+    <string name="traffic_transfer_title">换乘%1$s次，%2$s</string>
+    <string name="traffic_nonstop_title">直达，%1$s</string>
+    <!-- <string name="traffic_at_where_walk_how">%1$s. 从%2$s步行约%3$s米</string> -->
+    <string name="traffic_at_where_walk_how">从%1$s步行约%2$s米</string>
+<!--    <string name="traffic_at_where_walk_to_where">%1$s: 从%2$s步行到%3$s</string>-->
+    <string name="traffic_at_where_walk_to_where">从%1$s步行到%2$s</string>
+<!--    <string name="traffic_at_where_walk_how_to_where">%1$s. 从%2$s步行约%3$s米到%4$s</string>-->
+    <string name="traffic_at_where_walk_how_to_where">从%1$s步行约%2$s米到%3$s</string>
+<!--    <string name="traffic_walk_how_to_where">%1$s. 步行约%2$s米到%3$s</string>-->
+    <string name="traffic_walk_how_to_where">步行约%1$s米到%2$s</string>
+<!--    <string name="traffic_walk_how">%1$s. 步行约%2$s米</string>-->
+    <string name="traffic_walk_how">步行约%1$s米</string>
+<!--    <string name="traffic_walk_to_where">%1$s. 步行到%2$s</string>-->
+    <string name="traffic_walk_to_where">步行到%1$s</string>
+<!--    <string name="traffic_by_what_to_where">%1$s. 乘%2$s到%3$s</string>-->
+    <string name="traffic_by_what_to_where">乘%1$s到%2$s</string>
+<!--    <string name="traffic_at_where_by_what_to_where">%1$s. 在%2$s乘%3$s到%4$s</string>-->
+    <string name="traffic_at_where_by_what_to_where">在%1$s乘%2$s，经过%3$d站，到%4$s</string>
+    <string name="traffic_at_where_by_what_to_where_previous">在%1$s乘%2$s，经过%3$d站，到%4$s(前一站%5$s)</string>
+<!--    <string name="traffic_goto_end_station">%1$s. 到达终点</string>-->
+	<string name="set_off_from_start">从起点出发</string>
+    <string name="traffic_goto_end_station">到达终点</string>
+    <string name="traffic_goto_end_point">到达终点</string>
+    <string name="traffic_result_length_m">全程%1$s米</string>
+    <string name="traffic_result_length_km">全程%1$s公里</string>
+    <string name="traffic_noneed_transfer">无需换乘, 步行可达</string>
+    <string name="or">或</string>
+    <string name="accross">经过%1$s</string>
+    
+    <string name="traffic_forward">前</string>
+    <string name="traffic_back">后</string>
+    <string name="traffic_left">左</string>
+    <string name="traffic_right">右</string>
+    
+    <string name="begin_trun_to">从起点向%1$s方向出发，</string>
+    
+    <string name="drive_along">沿%1$s行驶%2$s，</string>
+    <string name="drive_along_roundabout">沿环岛行驶%1$s，</string>
+    <string name="drive_run">行驶%1$s，</string>
+    <string name="drive_forward">直行</string>
+    <string name="drive_back">后转</string>
+    <string name="drive_left">左转</string>
+    <string name="drive_right">右转</string>
+    
+    <string name="enter">进入%s</string>
+    <string name="enter_roundabout">进入环岛</string>
+    
+    <string name="walk_along">沿%1$s步行%2$s，</string>
+    <string name="walk_along_roundabout">沿环岛步行%1$s，</string>
+    <string name="walk_run">步行%1$s，</string>
+    <string name="walk_forward">前行</string>
+    <string name="walk_back">向后</string>
+    <string name="walk_left">向左</string>
+    <string name="walk_right">向右</string>
+    
+
+    <string name="busline_result_title">搜索“%1$s”共有%2$d个结果</string>
+    <string name="busline_line_listitem_title">全程%1$s公里，途经%2$d个站</string>
+    <string name="busline_station_listitem_title">共有%1$d条线路经过</string>
+    
+    <string name="about_version">版本号：%1$s</string>
+    <string name="about_release_date">发布日期：%1$s</string>
+    <string name="about_nation_sw_version">全国公共联想词版本：%1$s</string>
+    <string name="about_current_city_sw_version">当前城市联想词版本：%1$s</string>
+    <string name="about_me">本软件由北京老虎宝典科技有限责任公司开发。老虎宝典是老虎地图的全面升级版，致力于让大众的生活更加丰富多彩。</string>
+    <string name="about_name">Beijing TigerKnows Technology Co.Ltd</string>
+    <string name="about_web">官网：http://www.tigerknows.com</string>
+    <string name="about_weibo">官方微博：http://weibo.com/tigermap</string>
+    <string name="about_wap">Wap网址：http://wap.tigerknows.com</string>
+    <string name="about_bbs">论坛：http://bbs.tigerknows.com</string>
+    <string name="about_email">邮件：support@tigerknows.com</string>
+    <string name="about_msn">MSN：tigerknows@live.com</string>
+    <string name="about_qq">QQ群：63930376、88839837、\n\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u002035416996、88722138、\n\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u002086492534、44190592</string>
+    <string name="about_telephone">客服电话：010-58874009</string>
+    <string name="about_copyright">北京老虎宝典科技有限责任公司版权所有\n</string>
+    
+    <string name="searching">正在搜索...</string>
+    <string name="search_result">在我的当前位置搜索%1$s-%2$s个结果</string>
+    <string name="at_city_searching">正在%1$s市搜索...</string>
+    <string name="at_city_search_result">在%1$s市搜索%2$s-%3$s个结果</string>
+    <string name="at_location_searching">正在所选位置搜索...</string>
+    <string name="at_location_search_result">在所选位置搜索%1$s-%2$s个结果</string>
+    
+    <string name="search">搜索</string>
+    <string name="discover">发现</string>
+    <string name="nearby">附近</string>
+    <string name="result">结果</string>
+    <string name="center_map">地图中心</string>
+    <string name="discover_location">位置:%1$s</string>
+    <string name="select_start_station">选择起点</string>
+    <string name="select_end_station">选择终点</string>
+    <string name="set_search_scope">设定搜索范围</string>
+    <string name="search_poi_tip">正在搜索：%1$s</string>
+    <string name="location">%1$s，%2$s</string>
+    <string name="discover_not_result">没有热点发现结果！</string>
+    
+    <string name="no_storage">"使用老虎宝典前请先插入 SD 卡，否则本应用程序将不能正常运行，且可能会自动退出。"</string>
+    <string name="not_enough_space">"SD 卡已满，请清理出空间后再启动老虎宝典。"</string>
+    <string name="preparing_sd">"正在准备 SD 卡，请稍后再启动老虎宝典..."</string>
+    
+    <string name="delete_all_favorite_poi">"确定删除选定的收藏地点？"</string>
+    <string name="delete_all_favorite_traffic">"确定删除选定的收藏交通？"</string>
+    <string name="delete_all_history_poi">"确定删除选定的地点记录？"</string>
+    <string name="delete_all_history_traffic">"确定删除选定的交通记录？"</string>
+    
+    <string name="feedback_submiting">正在发送中...</string>
+    <string name="feedback_success">我们已经收到您的建议，感谢您的支持！</string>
+    <string name="feedback_failure">提交失败！</string>
+    <string name="your_feedback">请输入您的意见和建议</string>
+    <string name="your_mobile_number">请输入您的手机号码</string>
+    <string name="mobile_number_">手机号码：</string>
+
+    <string name="this_is_fresh_version">本软件已经是最新版本了！</string>
+    <string name="submit">提交</string>
+    <string name="feedback_no_content_tip">请先填写意见或建议！</string>
+    
+    <string name="place">地点</string>
+    <string name="traffic">交通</string>
+    <string name="loading">正在加载...</string>
+    <string name="pull_to_refresh">加载更多</string>
+    <string name="bus_transfer_">公交换乘方案：%1$d</string>
+    <string name="drive_">自驾方案：</string>    
+    <string name="tiger_search">老虎搜索</string>
+    <string name="history_browse">历史浏览</string>
+    
+    <string name="all_anyone">全部%1$s</string>
+
+    <string name="no_way_to_share_message">"没有可用于发送信息的应用程序。"</string>
+    <string name="input_city_name_or_first_char">请输入城市名或首字母查询</string>
+
+    <!-- Error Recovery Error -->
+    <string name="address_error_recovery">地名/地址错误</string>
+    <string name="map_flag_error_recovery">地图标记有误</string>
+    <string name="phone_error_recovery">电话错误</string>
+    <string name="not_exit_error_recovery">商户不存在/已停业</string>
+    <string name="comment_hint_error_recovery">您有什么想补充的吗?</string>
+    <string name="mark_error_need_error_recovery">请选择错误类型</string>
+    <string name="thanks_error_recovery">老虎宝典感谢您的提醒与帮助, 我们将会及时处理</string>
+   
+    <string name="locate_time">定位时间 %1$s:%2$s</string>
+    
+    <string name="alert_delete_favorite">您确定要删除此收藏吗?</string>
+    
+    <string name="hongkong">香港</string>
+    <string name="macao">澳门</string>
+    <string name="quanguo">全国</string>
+    
+    <string name="feedback_text1">感谢您使用老虎宝典，您的建议会帮助我们做得更好！</string>
+    <string name="feedback_text2">欢迎关注@老虎宝典官方微博，获得产品最新动态！</string>
+    
+    <string name="download_manage">下载管理</string>
+    <string name="city_list">添加城市</string>
+    <string name="not_find_city">未找到匹配城市</string>
+    <string name="favorite_long_click_tip">长按可以删除或重命名</string>
+
+    <string name="snap_current_map">截屏当前地图?</string>
+    <string name="are_you_view_url">你确认要查看网页%1$s?</string>
+
+<!--  =======================    Share Part    =========================== -->
+<!-- Share Module SinaWeibo Start -->
+    <string name="weibo_same_content">您已经发过相同内容的微博啦。</string>
+    <string name="weibo_publish_failed_unknow">发布微博失败，请稍后再试。</string>
+    <string name="weibo_max_char">微博文本内容限制在1至%1$s字数之间。</string>
+    <string name="weibo_token_expire">微博访问口令已过期, 请重新登录</string>
+    <string name="weibo_getprofile_failed">获取用户信息失败</string>
+    <string name="weibo_network_error">网络错误，请稍后再试。</string>
+    <string name="weibo_loading">正在加载, 请稍候...</string>
+<!-- Share Module SinaWeibo End -->
+
+<!-- Share Module Tencent Start -->
+	<string name="tencent_auth_fail">获取QQ访问授权失败</string>
+    <string name="tencent_getprofile_loading">正在获取用户信息, 请稍候...</string>
+    <string name="tencent_getprofile_failed">获取QQ用户信息失败</string>
+    <string name="tencent_share_title">来自老虎宝典的分享</string>
+    <string name="tencent_share_content_empty">您的输入为空!</string>
+<!-- Share Module Tencent End -->
+
+<!-- Share Module Common Start -->
+    <string name="operation_failed">操作失败，请稍后再试。</string>
+    <string name="logout">注销</string>
+    <string name="send">发送</string>
+    <string name="attention">注意</string>
+    <string name="are_you_delete_all">是否要删除全部文本内容？</string>
+    <string name="send_sucess">分享成功！</string>
+    <string name="send_failed">分享失败！</string>
+    <string name="logout_sucess">注销成功！</string>
+    <string name="logout_failed">注销失败！</string>
+    <string name="del_pic">是否删除图片？</string>
+    <string name="share_tiger_user">老虎用户</string>
+<!-- Share Module Common End -->
+
+<!-- Share Module Text Start -->
+    <!-- Transfer Weibo Share Start -->
+    <string name="share_huancheng">, 换乘</string>
+    <string name="share_transfer_title">换乘%1$s次, %2$s</string>
+    <string name="share_nonstop_title">直达, %1$s</string>
+    <string name="share_transfer_weibo_body">: (乘坐%1$s) </string>
+    <string name="share_transfer_weibo">%1$s乘公交从"%2$s"到"%3$s", %4$s%5$s. %6$s</string>
+    <!-- Transfer Weibo Share End -->
+    
+    <!-- Transfer Qzone Share Start -->
+    <string name="share_transfer_qzone">乘公交从"%1$s"到"%2$s", %3$s%4$s. %5$s</string>
+    <!-- Transfer Qzone Share Start -->
+    
+    <!-- Transfer Sms Share Start -->
+    <string name="share_transfer_sms">乘公交从"%1$s"到"%2$s", %3$s.\n%4$s\n%5$s</string>
+    <!-- Transfer Sms Share End -->
+    
+    <!-- Drive Share Start -->
+    <string name="share_drive_weibo">%1$s驾车从"%2$s"到"%3$s", %4$s. %5$s</string>
+    <string name="share_drive_qzone">驾车从"%1$s"到"%2$s", %3$s. %4$s</string>
+    <string name="share_drive_sms">驾车从"%1$s"到"%2$s", %3$s.\n%4$s\n%5$s</string>
+    <!-- Drive Share End -->
+    
+    <!-- Walk Share Start -->
+    <string name="share_walk_weibo">%1$s步行从"%2$s"到"%3$s", %4$s. %5$s</string>
+    <string name="share_walk_qzone">步行从"%1$s"到"%2$s", %3$s. %4$s</string>
+    <string name="share_walk_sms">步行从"%1$s"到"%2$s", %3$s.\n%4$s\n%5$s</string>
+    <!-- Walk Share End -->
+    
+    <!-- Busline Share Start -->
+    <string name="share_busline_weibo">%1$s%2$s, %3$s, 途经%4$d个站点. %5$s</string>
+    <string name="share_busline_qzone">%1$s, %2$s, 途经%3$d个站点. %4$s</string>
+    <string name="share_busline_sms">%1$s, %2$s, 途经%3$d个站点.\n%4$s\n%5$s</string>
+    <!-- Busline Share End -->
+    
+    <!-- POI Weibo Share Start -->
+    <string name="share_weibo_poi_topic">#老虎宝典分享#</string>
+    <string name="share_poi_pingfen">评分:\u0020%1$s分</string>
+    <string name="share_poi_caixi">菜系:\u0020%1$s</string>
+    <string name="share_poi_junjia">均价:\u0020%1$s元</string>
+    <string name="share_poi_kouwei">口味:\u0020%1$s</string>
+    <string name="share_poi_fuwu">服务:\u0020%1$s</string>
+    <string name="share_poi_huanjing">环境:\u0020%1$s</string>
+    <!-- POI Weibo Share Start -->
+    
+    <!-- Share Common Start -->
+    <!--  
+    <string name="share_weibo_text_tail">来自@老虎宝典 http://www.tigerknows.com/</string>
+    <string name="share_sms_text_tail">来自老虎宝典</string>
+    -->
+    <string name="share_from_at_tigerknows">来自@老虎宝典</string>
+    <string name="share_from_tigerknows">来自老虎宝典</string>
+    <string name="share_tiger_official_website">http://www.tigerknows.com/</string>
+    <string name="share_text_hint">您想说点什么?</string>
+    <!--  Share Common End -->
+<!-- Share Module Text Start -->
+
+<!-- User Manage Start -->
+	<!-- User Page Title Start -->
+	<string name="title_user_login">登录</string>
+	<string name="title_user_regist">注册</string>
+	<string name="title_user_home">个人中心</string>
+	<string name="title_reset_password">重置密码</string>
+	<string name="title_update_nickname">输入昵称</string>
+	<string name="title_update_phone">更换手机号</string>
+	<string name="title_update_password">修改密码</string>
+	<string name="title_update_comment_after">点评成功</string>
+	<!-- User Page Title Start -->
+
+	<!-- User Login Start -->
+	<string name="please_input_phone">请输入手机号</string>
+	<string name="login">登录</string>
+	<string name="phone_format_wrong_reinput">手机号格式不正确, 请重新输入</string>
+	<string name="login_tip_after_comment">想用专有昵称发表点评, 请登录或注册</string>
+	<!-- User Login End -->
+	
+	<!-- User Regist Start -->
+	<!-- User Regist End -->
+	
+	<!-- User UpdateNickName Start -->
+	<string name="pick_personal_nickname">起一个您专属的老虎昵称吧~</string>
+	<string name="nickname_compose_format">2-10个汉字或4-20个字符</string>
+	<string name="nicknam_format_wrong">昵称格式有误, 请重新输入</string>
+	<string name="nickname_no_modify">您还未作任何修改.</string>
+	<string name="update_nicknam_success1">昵称设置成功, 快开始您的老虎之旅吧!</string>
+	<string name="update_nicknam_success2">昵称修改成功!</string>
+	<!-- User UpdateNickName End -->
+	
+	<!-- User Account Start -->
+	<string name="change_phone">更换手机号</string>
+	<string name="change_nickname">修改昵称</string>
+	<string name="change_password">修改密码</string>
+	<string name="logout_account">退出帐户</string>
+	<string name="logout_account_tip">您确定要退出帐户吗?</string>
+	<!-- User Account end -->
+	
+	<!-- User ChangePassword Start -->
+	<string name="please_input_old_password">请输入旧密码</string>
+	<string name="please_input_new_password">请输入您要修改的新密码</string>
+	<string name="please_input_new_password_again">请再次输入您要修改的新密码</string>
+	<!-- 
+	<string name="please_input_616_newpassword">请输入6-16位字母或数字密码</string>
+	<string name="please_input_616_newpassword_again">请再次输入6-16位字母或数字密码</string>
+	-->
+	<string name="update_password_success">密码修改成功!</string>
+	<!-- User ChangePassword end -->
+	
+	<!-- User UpdatePhone Start -->
+	<string name="update_phone_success">手机号更换成功!</string>
+	<!-- User UpdatePhone end -->
+	
+	<!-- User ResetPassword Start -->
+	<string name="reset_password_success">密码重置成功!</string>
+	<!-- User ResetPassword End -->
+	
+	<!-- User Account Start -->
+	<string name="logout_success">退出成功!</string>
+	<!-- User Account End -->
+	
+	<!-- User Common Start -->
+	<string name="regist">注册</string>
+	<string name="default_nick_name">老虎注册用户</string>
+	<string name="please_input_11_phone">请输入手机号</string>
+	<string name="please_input_11_new_phone">请输入新手机号</string>
+	<!-- <string name="please_input_4_validate_num">请输入4位数字验证码</string> -->
+	<string name="please_input_4_validate_num">请输入验证码</string>
+	<string name="please_input_616_password">请输入密码</string>
+	<string name="please_input_616_password_again">请再次输入密码</string>
+	<string name="reqest_validate_num">点击获取验证码</string>
+	<string name="request_validcode_retry">重新发送</string>
+	<string name="please_input_password">请输入密码</string>
+	<string name="forget_password"><u>忘记密码?</u></string>
+	<string name="title_error_tip">提示</string>
+	<string name="query_loading_tip">请求中, 请稍候</string>
+	<string name="coundown_valinum">%1$s秒后重新获取</string>
+	<!-- User Common End -->
+	
+	<!-- User InputError Tip Start -->
+	<string name="phone_empty_tip">请输入手机号</string>
+	<string name="code_empty_tip">请输入验证码</string>
+	<string name="password_empty_tip">请输入密码</string>
+	<string name="re_password_empty_tip">请再次输入密码</string>
+	<string name="old_password_empty_tip">请输入原密码</string>
+	<string name="new_password_empty_tip">请输入新密码</string>
+	<string name="name_empty_tip">请输入昵称</string>
+	<string name="phone_format_error_tip">手机号格式不正确, 请重新输入11位手机号</string>
+	<string name="password_format_error_tip">密码必须由6-16位数字或字母组成, 区分大小写</string>
+	<string name="password_union_error_tip">密码输入不一致, 请重新输入</string>
+	<string name="name_format_error_tip">昵称格式错误, 请重新输入</string>
+	<!-- User InputError Tip End -->
+	
+	<!-- User Response Tip Start -->
+	<string name="request_validcode_success">验证码将以短信形式发送给您, 请查收</string>
+	<string name="regist_success">恭喜您注册成功</string>
+	<string name="request_server_failed">请求失败, 请重新尝试</string>
+	<string name="request_server_error">服务器正忙, 请稍候再试</string>
+	<!-- User Response Tip End -->
+<!-- User Manage End -->
+
+<!-- Error Recover Start -->
+	<string name="station_position_error">站点位置错误</string>
+	<string name="station_line_error">路线错误</string>
+	<string name="staion_no_line">%1$s无%2$s</string>
+	<string name="errorrecovery_description">请输入问题详述或其他信息(选填)</string>
+	<string name="errorrecovery_user_phone">请输入您的手机号码(选填)</string>
+	<string name="errorrecovery_empty">您尚未输入任何纠错信息</string>
+	<string name="poi_base_info_error">基本信息错误</string>
+	<string name="poi_name_error">名称错误</string>
+	<string name="poi_address_error">地址错误</string>
+	<string name="poi_phone_error">电话错误</string>
+	<string name="poi_mark_error">地图标注错误</string>
+	<string name="poi_address_noexist_error">地点不存在</string>
+	<string name="poi_address_duplicate_error">地点重复</string>
+	<string name="poi_ohter_error">其他</string>
+	<string name="error_recovery_success">我们将尽快处理, 谢谢您的反馈</string>
+<!-- Error Recover End -->
+
+<!--  =======================    Common Part    =========================== -->
+
+<!-- Punctuation Start -->
+    <string name="comma">,\u0020</string>
+    <string name="period">.\u0020</string>
+    <string name="space">\u0020</string>
+    <string name="colon">:\u0020</string>
+    <string name="semicolon">;\u0020</string>
+    <string name="nextline">\n</string>
+    <string name="omission">&#8230;</string> <!-- ... -->
+<!-- Punctuation End -->
+
+<!-- Common Start -->
+	<string name="confirm">确定</string>
+    <string name="cancel">取消</string>  
+    <string name="yes">是</string>
+    <string name="no">否</string>
+<!-- Common End -->    
+
+
+<!--  =======================    Discarded Part    =========================== -->
+<!-- Discarded Start (No Use)-->
+    <string name="weibo_authorize_dialog_title">老虎宝典需要通过你的授权</string>
+    <string name="weibo_authorize_dialog_text">点击[确定]登录获得授权，老虎宝典不会记录你的用户名和密码，只需操作一次，从此分享变简单。</string>
+    <string name="weibo_no_username">没有新浪微博账号？注册</string>
+    <string name="register">注册</string>
+    <string name="woibo_introduction">分享地图或我的位置，给微博好友，可以获得评论哦！</string>
+    <string name="weibo_username">新浪微博账号</string>	
+    <string name="password">密码</string>
+    <string name="please_input_">请输入%1$s</string>
+    <string name="authorize">授权</string>  
+    <string name="weibo_friendships">关注老虎宝典官方新浪微博</string>    
+    <string name="weibo_register_text">我正在使用完全免费的#老虎宝典#，帮助您快速找到城市内吃喝玩乐的地方，出门在外时浏览地图、定位、规划路线，使用速度快，省流量，是出行时必备的手机生活宝典。官网地址：http://www.tigerknows.com</string>
+    <string name="weibo_poi_text_head">向大家推荐：%1$s%2$s %3$s</string>
+    <string name="weibo_poi_text_type">【%1$s】</string>
+    <string name="weibo_text_tail">来自@老虎宝典 http://www.tigerknows.com/</string>
+    <string name="weibo_omission">...</string>
+    
+    <string name="please_login">请登录！</string>
+    <string name="logon_sucess">登录成功！</string>
+    <string name="logon_failed">登录失败！</string>
+    
+    <string name="weibo_logon_failed">登录失败</string>
+    <string name="weibo_username_password_incorrect">用户名或密码不正确。</string>
+    <string name="weibo_logon_failed_unknow">登录微博失败，请稍后再试。</string>
+<!-- Discarded End -->    
+
+    <string name="new_added_function">老虎宝典新增功能</string>
+    <string name="get_app_recommend_failed">获取应用推荐列表失败！</string>
+    <string name="no_select_tip">请选择要删除的项！</string>
+    
+    <string name="all_comment">全部点评</string>
+    <string name="go_comment">我要点评</string>
+    <string name="my_comment">我的点评</string>
+    <string name="logon">登录</string>
+    <string name="comment_food_title_text">口味、服务、环境、人均等（选填）</string>
+    <string name="comment_hotel_title_text">服务、环境、人均（选填）</string>
+    <string name="comment_cinema_title_text">观影效果、服务、人均（选填）</string>
+    <string name="comment_hospital_title_text">服务、医疗水平、人均（选填）</string>
+    <string name="comment_buy_title_text">人均价格（选填）</string>
+    <string name="comment_avg">人均</string>
+    <string name="comment_food_taste">口味</string>
+    <string name="comment_environment">环境</string>
+    <string name="comment_qos">服务</string>
+    <string name="comment_food_restair">氛围</string>
+    <string name="comment_food_caipin">推荐菜品</string>
+    <string name="comment_hospital_level">医疗水平</string>
+    <string name="comment_cinema_effect">观影效果</string>
+    <string name="comment_food_restair_hit">您觉得适合......（可多选）</string>
+    <string name="comment_food_recommed_hit">哪些是您的最爱？菜品用空格隔开</string>
+    <string name="comment_tip_hit0">留下您的点评吧!</string>
+    <string name="comment_tip_hit1">有新的感受吗？再来点评一下吧~</string>
+    <string name="rmb">￥</string>
+    <string name="comment_discard_tip_new">您确定要放弃辛苦写的点评？</string>
+    <string name="comment_discard_tip_modify">您确定要放弃修改点评？</string>
+    <string name="comment_content_hit1">太差啦！印象为啥这么糟？（30字以上）</string>
+    <string name="comment_content_hit2">不咋地！有什么不满意的？（30字以上）</string>
+    <string name="comment_content_hit3">一般吧！没有特别之处吗？（30字以上）</string>
+    <string name="comment_content_hit4">还不错！满意这里什么呢？（30字以上）</string>
+    <string name="comment_content_hit5">太赞啦！什么打动了您呢？（30字以上）</string>
+    <string name="comment_poi_invalid_hit">该地址已失效，您无法对其进行点评。</string>
+    <string name="comment_empty">暂无点评</string>
+    <string name="comment_share_to">分享到：</string>
+    <string name="comment_grade">满意度</string>
+    <string name="comment_publishing_and_wait">发表中，请稍候...</string>
+    <string name="go_comment_hit">搜索您去过的商家发表点评...</string>
+    <string name="poi_comment_override_tip">确定覆盖您之前的点评？</string>
+    <string name="poi_comment_poi_invalid_not_create">该地点已失效，您无法对其进行点评。</string>
+    <string name="poi_comment_poi_invalid_not_update">该地点已失效，您无法修改点评内容。</string>
+    <string name="poi_invalid">该地点已失效。</string>
+    <string name="poi_comment_publish_success">点评发表成功！</string>
+    <string name="poi_comment_update_success">点评修改成功！</string>
+    <!-- 文字：#老虎宝典分享#我来过：XXXX（poi名称）+空格+我觉得XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+www.tigerknows.com（网址之前的内容如果超出120字，截断成119个字+“…”（半个省略号“……”） -->
+    <string name="poi_comment_share_sina">#老虎宝典分享#我来过：%1$s 我觉得%2$s%3$s %4$s</string>
+    <string name="poi_comment_share_grade1">太差啦！</string>
+    <string name="poi_comment_share_grade2">不咋地！</string>
+    <string name="poi_comment_share_grade3">一般般！</string>
+    <string name="poi_comment_share_grade4">还不错！</string>
+    <string name="poi_comment_share_grade5">太赞啦！</string>
+    <!-- 文字：我来过：XXXX（poi名称）+空格+我觉得XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+空格+来自@老虎宝典+空格+#老虎宝典分享#（“来自@老虎宝典”之前的内容如果超出123字，截断成122个字+“…”（半个省略号“……”）） -->
+    <string name="poi_comment_share_qzone">我来过：%1$s 我觉得%2$s%3$s %4$s </string>
+    <string name="poi_comment_share_qzone_source">来自@老虎宝典 #老虎宝典分享# </string>
+    <string name="publish">发表</string>
+    <string name="publish_comment">发表点评</string>
+    <string name="publish_comment_failed">发表点评失败！</string>
+    <string name="modify_comment">修改点评</string>
+    <string name="poi_comment_go_tip">快去写你的第一条点评吧！</string>
+    <string name="poi_comment_must">还需%1$s字</string>
+    <string name="poi_comment_sum">共%1$s字</string>
+    
+    <string name="nearby_">附近%1$s个</string>
+    <string name="entire_city_">全市%1$s个</string>
+    
+    <string name="tuangou">团购</string>
+    <string name="dianying">电影</string>
+    <string name="yanchu">演出</string>
+    <string name="zhanlan">展览</string>
+    
+    <string name="tuangou_list">团购列表</string>
+    <string name="people">人</string>
+    
+    <string name="tuangou_detail">团购详情</string>
+    <string name="tuangou_detail_nearby">%1$s家分店</string>
+    <string name="tuangou_detail_noticed">购买须知</string>
+    <string name="tuangou_detail_buyer_num">%1$s人购买</string>
+    <string name="tuangou_taocanxiangqing">套餐详情</string>
+    
+    <string name="tuangou_fendian_list">团购商户</string>
+    
+    <string name="tuangou_no_refund">不支持退款</string>
+    <string name="service_hotline">客服电话：</string>
+    
+    <string name="fendian_list">团购商户</string>
+    
+    <string name="buy">购买</string>
+    
+    <string name="tuangou_shop_list">订单查询</string>
+    
+    <string name="dianying_list">电影列表</string>
+    <string name="dianying_detail_nearest">最近影院%1$s</string>
+    <string name="dianying_detail_distance_to_me">距我%1$s</string>
+    <string name="dianying_detail">电影详情</string>
+    <string name="dianying_detail_nearby">%1$s %2$s家影院</string>
+    <string name="dianying_detail_nearby_btn">查看全部</string>
+    <string name="dianying_detail_introduce">剧情介绍</string>
+    <string name="dianying_detail_director">导演:%1$s</string>
+    <string name="dianying_detail_main_actor">主演:%1$s</string>
+    <string name="dianying_detail_tag">类型:%1$s</string>
+    <string name="dianying_detail_country">国家:%1$s</string>
+    <string name="dianying_detail_length">时长:%1$s</string>
+    <string name="dianying_detail_start_time">上映:%1$s</string>
+    <string name="dianying_detail_no_changci">暂无场次信息...</string>
+    <string name="dianying_1200">12:00</string>
+    
+    <string name="dianyingyuan_list">影院列表</string>
+    <string name="show_date">放映时间</string>
+    <string name="today">今天</string>
+    <string name="tomorrow">明天</string>
+    <string name="after_tomorrow">后天</string>
+    <string name="tomorrow_char">明</string>
+    <string name="after_tomorrow_char">后</string>
+    
+    
+    <string name="yanchu_list">演出列表</string>
+    
+    <string name="yanchu_detail">演出详情</string>
+    <string name="yanchu_detail_introduce">演出简介</string>
+    <string name="yanchu_didian">演出地点</string>
+    
+    <string name="zhanlan_list">展览列表</string>
+    <string name="zhanlan_detail">展览详情</string>
+    <string name="zhanlan_detail_introduce">展览简介</string>
+    <string name="zhanlan_didian">展览地点</string>
+    
+    <string name="discover_no_support_tip">亲爱的用户：\n\n%1$s市的发现工程尚未竣工，敬请期待！</string>
+    
+    <string name="add_merchant">添加商户</string>
+    
+    <string name="shanghumingcheng">商户名称</string>
+    <string name="shanghuleixing">商户类型</string>
+    <string name="suozaichengshi">所在城市</string>
+    <string name="shanghudizhi">商户地址</string>
+    <string name="shanghudianhua">商户电话</string>
+    <string name="yingyeshijian">营业时间</string>
+    <string name="renjunjiawei">人均价位</string>
+    <string name="ningdedianhua">您的电话</string>
+    
+    <string name="bitian">必填</string>
+    <string name="xuantian">选填</string>
+    <string name="please_input">请输入</string>
+    <string name="please_select">请选择</string>
+    <string name="add_merchant_success">感谢您提交商户信息！</string>
+    
+    <string name="wodedingdan">我的订单</string>
+    
+    <string name="relogin">重新登录</string>
+    <string name="nologin">暂不登录</string>
+    
+    <string name="tuangou_ditu">团购地图</string>
+    <string name="shanghu_ditu">商户地图</string>
+    <string name="dianying_ditu">影院地图</string>
+    <string name="yanchu_ditu">演出地图</string>
+    <string name="yanchu_didian_ditu">演出地点地图</string>
+    <string name="zhanlan_ditu">展览地图</string>
+    <string name="zhanlan_didian_ditu">展览地点地图</string>
+    
+    <string name="wowotuan_name">窝窝团</string>
+    <string name="nuomi_name">糯米</string>
+    
+    <string name="xiangxidizhi">详细地址：</string>
+    <string name="lianxidianhua">联系电话：</string>
+    <string name="dingpiaozixun">订票咨询：</string>
+    <string name="dunhao">、</string>
+    
+    <string name="going_to_">正在跳转到%1$s...</string>
+    
+    <string name="response_code_200">成功。</string>
+    <string name="response_code_201">该地址已失效,您无法对其进行点评。</string>
+    <string name="response_code_202">点评发表失败，请重新尝试。</string>
+    <string name="response_code_300">您的登录已超时，请重新登录。</string>
+    <string name="response_code_301">该账号已在其他客户端登录，您将登出。</string>
+    <string name="response_code_400">该手机号已注册，请直接登录。</string>
+    <string name="response_code_401">昵称已存在，请重新设置。</string>
+    <string name="response_code_402">验证码输入有误，请重新输入。</string>
+    <string name="response_code_403_login">该手机号尚未注册，请注册后再登录。</string>
+    <string name="response_code_403_resetpassword">该手机号尚未注册，请更换手机号。</string>
+    <string name="response_code_404">密码输入有误，请重新输入。</string>
+    <string name="response_code_405">原始密码有误，请重新输入。</string>
+    <string name="response_code_406">手机号格式有误，请重新输入。</string>
+    <string name="response_code_407">数据异常，请稍后重试。</string>
+    <string name="response_code_410">抱歉，该信息已过期。</string>
+    <string name="response_code_503">短信传输失败,请稍后重试。</string>
+    <string name="response_code_601">您确定覆盖之前的点评吗？</string>
+    <string name="response_code_602">抱歉，该点评不存在。</string>
+    <string name="response_code_603">抱歉，该地址不存在或已失效。</string>
+    <string name="response_code_801">创建订单失败，请重试。</string>
+</resources>

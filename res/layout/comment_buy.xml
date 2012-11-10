@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <LinearLayout 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:gravity="left|center_vertical">
+	    <TextView
+	        android:layout_width="70dp"
+	        android:layout_height="wrap_content"
+	        android:layout_marginRight="4dp"
+	        android:gravity="left|center_vertical"
+	        android:text="@string/comment_avg"/>
+		<RelativeLayout
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:gravity="left|center_vertical" >
+		    <EditText android:id="@+id/avg_edt"
+		        android:layout_width="100dp"
+		        android:layout_height="wrap_content"
+		        android:paddingLeft="20dp"
+		        android:maxLength="9"
+		        android:inputType="number" />
+		    <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_centerVertical="true"
+		        android:paddingLeft="4dp"
+		        android:hint="@string/rmb"/>
+	    </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>
+

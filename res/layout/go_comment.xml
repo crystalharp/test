@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>    
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:id="@+id/input_view"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_view"
+        android:paddingLeft="5dp"
+        android:paddingTop="6dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="6dp"
+        android:gravity="left|center_vertical"
+        android:background="@color/bg_bar">
+        <EditText
+            android:id="@+id/input_edt"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:paddingLeft="32dp"
+            android:background="@drawable/textfield"
+            android:hint="@string/go_comment_hit"
+            android:textSize="15sp"
+            android:textColorHint="#ffacacac"
+            android:gravity="left|center_vertical"
+            android:singleLine="true"
+            android:imeOptions="actionDone">
+         </EditText>
+        <ImageView
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:src="@drawable/icon_search"
+            android:layout_centerVertical="true"
+            android:editable="false">
+         </ImageView>
+    </RelativeLayout>
+	            
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        >
+	    <com.tigerknows.view.SpringbackListView android:id="@+id/poi_lsv"
+	        android:layout_width="fill_parent" 
+	        android:layout_height="wrap_content"   
+	        android:padding="0dp"
+	        android:dividerHeight="0dp"
+	        android:divider="@drawable/divider"
+	        android:drawSelectorOnTop="false"
+	        android:scrollingCache="false"
+	        android:footerDividersEnabled="false"
+	        android:fadingEdge="none"/> 
+	    <TextView android:id="@+id/empty_txv"
+	        android:layout_width="fill_parent" 
+	        android:layout_height="fill_parent"  
+	        android:paddingBottom="60dp" 
+	        android:gravity="center"
+	        android:textColor="@android:color/black"
+	        android:textSize="16sp"
+	        android:text="@string/no_result"
+	        android:visibility="gone"/>
+    </FrameLayout>
+</LinearLayout>

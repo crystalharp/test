@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:padding="8dp"
+    android:background="@drawable/list_selector_background_gray_light">
+    
+    <RelativeLayout
+        android:id="@+id/number_view" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="7dp">
+	    <TextView 
+	        android:id="@+id/number_txv" 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+	        android:layout_centerInParent="true"
+	        android:textColor="@android:color/black"
+	        android:textSize="18sp"
+	        android:text="@string/colon"
+	        android:singleLine="true"
+	        android:focusable="false"
+	        android:gravity="center"
+	        android:lineSpacingExtra="0dp"
+	        android:includeFontPadding="false"
+	        android:paddingBottom="5dp" />    
+	    <ImageView 
+	        android:id="@+id/number_imv" 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content" 
+	        android:layout_centerInParent="true"
+	        android:paddingTop="-6dp"
+	        android:src="@drawable/ic_a_poi" />    
+    </RelativeLayout>
+    
+    <TextView 
+        android:id="@+id/distance_txv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:text="@string/app_name"
+        android:singleLine="true"
+        android:focusable="false" />   
+    
+    <TextView 
+        android:id="@+id/distance_from_txv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_toLeftOf="@id/distance_txv" 
+        android:layout_alignParentTop="true"
+        android:drawableRight="@drawable/ic_a_poi"
+        android:textColor="@android:color/black"
+        android:textSize="14sp"
+        android:text="@string/distance"
+        android:singleLine="true"
+        android:focusable="false" />   
+    <LinearLayout
+        android:id="@+id/name_view" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_toRightOf="@id/number_view" 
+        android:layout_toLeftOf="@id/distance_from_txv"
+        android:paddingBottom="5dp"  >
+    <TextView 
+        android:id="@+id/name_txv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_alignParentTop="true"
+        android:gravity="left"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:text="@string/app_name"
+        android:singleLine="true"
+        android:lineSpacingExtra="0dp"
+        android:includeFontPadding="false"
+        android:focusable="false" />   
+    <LinearLayout android:id="@+id/dynamic_poi_list_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="left|center_vertical"
+        ></LinearLayout> 
+    </LinearLayout>   
+    <RatingBar android:id="@+id/stars_rtb"
+        android:layout_width="wrap_content"
+        android:layout_height="18dp"
+        android:padding="0dp"
+        android:layout_toRightOf="@id/number_view"
+        android:layout_below="@id/name_view" 
+        android:progressDrawable="@drawable/ratingbar_small"
+        style="?android:attr/ratingBarStyleSmall"
+        android:numStars="5"
+        android:focusable="false"
+        android:focusableInTouchMode="false" /> 
+    
+    <TextView 
+        android:id="@+id/money_txv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_alignParentRight="true" 
+        android:layout_below="@id/name_view" 
+        android:textColor="#ffa97036"
+        android:textSize="16sp"
+        android:text="@string/app_name"
+        android:singleLine="true"
+        android:includeFontPadding="false"
+        android:focusable="false" /> 
+    <TextView 
+        android:id="@+id/category_txv" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:layout_toRightOf="@id/stars_rtb" 
+        android:layout_toLeftOf="@id/money_txv" 
+        android:layout_below="@id/name_view" 
+        android:textSize="14sp"
+        android:paddingLeft="5dp"
+        android:paddingTop="2dp"
+        android:textColor="#ffa2a2a2"
+        android:text="@string/app_name"
+        android:includeFontPadding="false"
+        android:singleLine="true"
+        android:focusable="false" 
+        android:gravity="left|top"/>   
+    
+    <TextView 
+        android:id="@+id/comment_txv" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:layout_toRightOf="@id/number_view"
+        android:layout_below="@id/stars_rtb" 
+        android:layout_marginTop="7dp"
+        android:paddingBottom="2dp"
+        android:textColor="#ffa2a2a2"
+        android:textSize="14sp"
+        android:text="@string/app_name"
+        android:singleLine="true"
+        android:lineSpacingExtra="0dp"
+        android:includeFontPadding="false"
+        android:focusable="false" /> 
+    
+    <ImageView 
+        android:id="@+id/stamp_imv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="64dp"
+        android:src="@drawable/ic_stamp_silver" />   
+</RelativeLayout>

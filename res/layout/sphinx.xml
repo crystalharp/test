@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:id="@+id/root_view" 
+    android:gravity="top|left" 
+    android:orientation="vertical">
+
+	<com.decarta.android.map.MapView
+		android:id="@+id/mapview" android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:visibility="gone" />
+    
+    <FrameLayout
+        android:id="@+id/title_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+		android:visibility="invisible"
+       />
+    
+    <FrameLayout
+        android:id="@+id/menu_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+		android:visibility="invisible"
+       />
+
+	<TextView android:id="@+id/download_txv"
+		android:layout_width="wrap_content" android:textSize="14sp"
+		android:layout_height="wrap_content" android:text="@string/map_download_tip"
+		android:layout_below="@id/title_view" android:layout_alignParentRight="true"
+		android:textColor="@android:color/black" android:visibility="invisible" android:paddingTop="70dp" />
+
+	<RelativeLayout android:id="@+id/control_view"
+		android:layout_width="fill_parent" android:layout_height="wrap_content"
+		android:layout_alignParentBottom="true" android:gravity="left"
+		android:visibility="invisible"
+		android:padding="6dp" >
+        <com.tigerknows.view.ScaleView
+            android:id="@+id/scale_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="6dp" />
+
+		<ImageButton android:id="@+id/location_btn"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content" android:background="@drawable/btn_location_location"
+			android:layout_centerHorizontal="true" 
+			android:visibility="visible"
+            android:layout_below="@id/scale_view" />
+
+		<LinearLayout android:id="@+id/previous_next_view"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:orientation="horizontal" android:layout_alignParentLeft="true"
+			android:visibility="invisible" android:layout_below="@id/scale_view" >
+
+			<Button android:id="@+id/previous_btn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:background="@drawable/btn_up" />
+
+			<Button android:id="@+id/next_btn"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content" android:background="@drawable/btn_down" />
+		</LinearLayout>
+		<LinearLayout android:id="@+id/zoomview"
+			android:layout_width="wrap_content" android:layout_height="wrap_content"
+			android:layout_alignParentRight="true" android:layout_below="@id/scale_view" />
+
+	</RelativeLayout>
+   
+    <FrameLayout
+        android:id="@+id/body_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/menu_view"
+        android:layout_below="@id/title_view"
+		android:visibility="invisible"
+        ></FrameLayout>
+</RelativeLayout>

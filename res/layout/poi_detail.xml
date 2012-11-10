@@ -1,0 +1,376 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:background="@color/gray_dark">
+        	
+    <ScrollView
+        android:id="@+id/body_scv"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_above="@id/tip_view"
+        android:scrollbars="vertical"
+        android:gravity="top"
+        android:fillViewport="true"
+        android:fadingEdge="none">
+    
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:paddingLeft="6dp"
+            android:paddingTop="6dp"
+            android:paddingRight="6dp"
+            android:paddingBottom="60dp">
+            <RelativeLayout
+             android:layout_width="fill_parent" 
+             android:layout_height="fill_parent"
+             android:gravity="left|top">
+            <LinearLayout
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+            
+            <LinearLayout
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:orientation="vertical"
+                android:gravity="left|top"
+                android:background="@drawable/list_single_normal">
+                <RelativeLayout
+	                android:layout_width="fill_parent" 
+	                android:layout_height="wrap_content"
+	                android:gravity="left|top">
+	                
+	                <com.tigerknows.view.AlwaysMarqueeTextView android:id="@+id/name_txv"
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content"
+	                    android:layout_alignParentLeft="true"
+	                    android:layout_alignParentTop="true" 
+	                    android:paddingBottom="6dp"
+	                    android:gravity="left"
+	                    android:text="@string/app_name"
+	                    android:textColor="@android:color/black"
+	                    android:textSize="18sp"
+	                    android:scrollHorizontally="true" 
+	                    android:singleLine="true"
+	                    android:ellipsize="marquee"
+	                    android:focusable="true"
+	                    android:focusableInTouchMode="true"></com.tigerknows.view.AlwaysMarqueeTextView>
+	    
+	               <RatingBar android:id="@+id/stars_rtb"
+	                   android:layout_width="wrap_content"
+	                   android:layout_height="18dp"
+	                   android:layout_alignParentLeft="true"
+	                   android:layout_below="@id/name_txv" 
+	                   android:progressDrawable="@drawable/ratingbar_small"
+	                   style="?android:attr/ratingBarStyleSmall"
+	                   android:numStars="5"
+				       android:focusable="false"
+				       android:focusableInTouchMode="false" />
+	               
+	               <TextView 
+	                   android:id="@+id/money_txv" 
+	                   android:layout_width="wrap_content"
+	                   android:layout_height="wrap_content" 
+	                   android:layout_below="@id/name_txv" 
+	                   android:layout_alignParentRight="true"
+	                   android:textColor="#ffa97036"
+	                   android:textSize="16sp"
+	                   android:text="@string/app_name"
+	                   android:singleLine="true"
+	                   android:focusable="false" 
+	                   android:includeFontPadding="false" />  
+	        
+	               <TextView 
+	                   android:id="@+id/category_txv" 
+	                   android:layout_width="fill_parent"
+	                   android:layout_height="wrap_content" 
+	                   android:paddingLeft="5dp"
+	                   android:layout_toRightOf="@id/stars_rtb" 
+	                   android:layout_toLeftOf="@id/money_txv" 
+	                   android:layout_below="@id/name_txv" 
+	                   android:textColor="#ffa2a2a2"
+	                   android:textSize="16sp"
+	                   android:text="@string/app_name"
+	                   android:singleLine="true"
+	                   android:focusable="false" 
+	                   android:includeFontPadding="false" />    
+	            </RelativeLayout>
+	            <TextView 
+	                android:id="@+id/description_txv" 
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content" 
+	                android:paddingTop="4dp"
+	                android:textColor="@android:color/black"
+	                android:textSize="15sp"
+	                android:text="@string/app_name"
+	                android:focusable="false" /> 
+	            
+	           <LinearLayout 
+	               android:layout_width="fill_parent"
+	               android:layout_height="wrap_content" 
+	               android:paddingTop="6dp"
+	               android:orientation="horizontal"
+	               android:gravity="center"
+	               android:weightSum="5">
+	                   
+	               <Button android:id="@+id/traffic_btn" 
+	                   android:layout_width="wrap_content" 
+	                   android:layout_height="wrap_content"
+	                   android:layout_weight="1"
+	                   android:paddingBottom="8dp"
+	                   android:drawableTop="@drawable/ic_goto_here"
+	                   android:background="@drawable/btn_default"
+	                   android:textSize="10sp"
+	                   android:textColor="@android:color/black"
+	                   android:text="@string/come_here"
+	                   android:gravity="center"/>
+	               
+	               <Button android:id="@+id/poi_btn" 
+	                   android:layout_width="wrap_content" 
+	                   android:layout_height="wrap_content"
+	                   android:layout_weight="1"
+	                   android:layout_marginLeft="2dp"
+	                   android:paddingBottom="8dp"
+	                   android:drawableTop="@drawable/ic_search_nearby"
+	                   android:background="@drawable/btn_default"
+	                   android:textSize="10sp"
+	                   android:textColor="@android:color/black"
+	                   android:text="@string/search_nearby"
+	                   android:gravity="center"/>
+	                   
+	               <Button android:id="@+id/favorite_btn" 
+	                   android:layout_width="wrap_content" 
+	                   android:layout_height="wrap_content"
+	                   android:layout_weight="1"
+	                   android:layout_marginLeft="2dp"
+	                   android:paddingBottom="8dp"
+	                   android:drawableTop="@drawable/ic_favorite"
+	                   android:background="@drawable/btn_default"
+	                   android:textSize="10sp"
+	                   android:textColor="@android:color/black"
+	                   android:text="@string/favorite"
+	                   android:gravity="center"/>
+	               
+	               <Button android:id="@+id/share_btn" 
+	                   android:layout_width="wrap_content" 
+	                   android:layout_height="wrap_content"
+	                   android:layout_weight="1"
+	                   android:layout_marginLeft="2dp"
+	                   android:paddingBottom="8dp"
+	                   android:drawableTop="@drawable/ic_share"
+	                   android:background="@drawable/btn_default"
+	                   android:textSize="10sp"
+	                   android:textColor="@android:color/black"
+	                   android:text="@string/share"
+	                   android:gravity="center"/>
+	                   
+	               <Button android:id="@+id/error_recovery_btn" 
+	                   android:layout_width="wrap_content" 
+	                   android:layout_height="wrap_content"
+	                   android:layout_weight="1"
+	                   android:layout_marginLeft="2dp"
+	                   android:paddingBottom="8dp"
+	                   android:drawableTop="@drawable/ic_recovery_error"
+	                   android:background="@drawable/btn_default"
+	                   android:textSize="10sp"
+	                   android:textColor="@android:color/black"
+	                   android:text="@string/error_recovery"
+	                   android:gravity="center"/>
+	                   
+	           </LinearLayout>
+            </LinearLayout>
+                
+            <LinearLayout
+            	android:id="@+id/address_phone_view"
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="vertical">
+                <LinearLayout android:id="@+id/telephone_view"
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content" 
+		            android:gravity="center_vertical"
+		            android:background="@drawable/list_footer"
+		            android:orientation="horizontal"
+			        android:paddingTop="8dp"
+			        android:paddingRight="8dp"
+			        android:paddingLeft="8dp"
+			        android:paddingBottom="8dp"
+		            >
+		         <TextView
+		             android:layout_width="wrap_content"
+		             android:layout_height="wrap_content" 
+		             android:gravity="left|center_vertical"
+		             android:text="@string/phonenumber" 
+		             android:textColor="@android:color/black"
+		             android:textSize="16sp"
+		             />
+		         <TextView android:id="@+id/telephone_txv"
+		             android:layout_width="fill_parent"
+		             android:layout_height="wrap_content" 
+		             android:gravity="left|center_vertical"
+		             android:drawableRight="@drawable/ic_telephone"
+		             android:text="@string/app_name" 
+		             android:textColor="@android:color/black"
+		             android:textSize="16sp"
+		             android:autoLink="phone"
+		             />
+		        </LinearLayout>
+                
+                <ImageView android:id="@+id/address_telephome_divider_imv" 
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" 
+                    android:background="@drawable/divider" />
+                
+                <LinearLayout android:id="@+id/address_view"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content" 
+	                android:gravity="center_vertical"
+                    android:background="@drawable/list_footer"
+                    android:orientation="horizontal"
+	                android:paddingTop="8dp"
+	                android:paddingRight="8dp"
+	                android:paddingLeft="8dp"
+	                android:paddingBottom="8dp"
+                    >
+	                <TextView
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content" 
+		                android:gravity="left|center_vertical"
+	                    android:text="@string/address" 
+	                    android:textColor="@android:color/black"
+	                    android:textSize="16sp"
+	                    />
+	                <TextView android:id="@+id/address_txv"
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content" 
+		                android:gravity="left|center_vertical"
+	                    android:drawableRight="@drawable/ic_address"
+	                    android:text="@string/app_name" 
+	                    android:textColor="@android:color/black"
+	                    android:textSize="16sp"
+	                    />
+                </LinearLayout>
+
+            </LinearLayout>             
+                
+           <LinearLayout 
+               android:id="@+id/feature_txv" 
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content" 
+               android:layout_marginTop="8dp"
+               android:paddingLeft="6dp"
+               android:orientation="vertical"
+               android:gravity="left"
+               android:textColor="@android:color/black"
+               android:textSize="15sp"
+               android:text="@string/app_name"
+               android:focusable="false" />
+                
+            <LinearLayout android:id="@+id/dynamic_poi_list_view"
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="vertical"
+                >
+            </LinearLayout>
+                
+            <LinearLayout android:id="@+id/comment_list_view"
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:orientation="vertical"
+                >
+                <RelativeLayout
+                    android:id="@+id/comment_sum_total_view" 
+                    android:layout_width="fill_parent" 
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/list_header_normal"
+                    android:clickable="true">
+                    <TextView
+                        android:id="@+id/comment_sum_total_txv" 
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" 
+                        android:layout_alignParentLeft="true"
+                        android:layout_centerVertical="true"
+                        android:textColor="@android:color/black"
+                        android:textSize="16sp"
+                        android:gravity="left|center_vertical"
+                        android:text="@string/comment"
+	                    android:clickable="false"
+	                    android:focusable="false"
+	                    android:focusableInTouchMode="false"/>
+                    <TextView
+                        android:id="@+id/look_all_txv" 
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" 
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginRight="8dp"
+                        android:gravity="right|center_vertical"
+                        android:drawableRight="@drawable/icon_arrow_right"
+                        android:textColor="@color/text_gray"
+                        android:text="@string/look_all_comment"
+                        android:textSize="14sp"
+                        android:visibility="invisible"
+	                    android:clickable="false"
+	                    android:focusable="false"
+	                    android:focusableInTouchMode="false"/>
+                </RelativeLayout>
+            </LinearLayout> 
+			</LinearLayout>	    
+		    <ImageView 
+		        android:id="@+id/stamp_imv" 
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content" 
+		        android:layout_alignParentRight="true"
+		        android:layout_alignParentTop="true"
+		        android:layout_marginTop="8dp"
+		        android:layout_marginRight="64dp"
+		        android:background="@drawable/ic_stamp_gold" />  
+            </RelativeLayout>
+         </LinearLayout>
+    </ScrollView>
+    
+    <include 
+        android:id="@+id/comment_tip_view"
+        layout="@layout/comment_tip"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true" />
+    <ImageView 
+        android:id="@+id/stamp_big_imv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_centerInParent="true"
+        android:background="@drawable/ic_stamp_gold_big" />  
+        
+    <LinearLayout
+        android:id="@+id/loading_view"
+	    android:layout_width="wrap_content" 
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:orientation="horizontal"
+        android:layout_above="@id/comment_tip_view"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp">
+	
+	    <ProgressBar
+	        style="@style/Widget_ProgressBar_Tip"
+	        android:layout_width="24dp"
+	        android:layout_height="24dp" />      
+	    <TextView
+	        android:id="@+id/loading_txv" 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:textSize="12sp"
+	        android:text="@string/loading"
+	        android:gravity="top|center_horizontal"
+	        android:singleLine="true"
+	        android:textColor="@android:color/black"/>
+	</LinearLayout> 
+</RelativeLayout>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="dim_foreground_dark">#80323232</color>
+    <color name="map_bus_line_color">#fffa7814</color>
+    <color name="map_empty_background">#FFEFE7DE</color>
+    <color name="map_download_text">#ff777777</color>
+    <color name="map_download_progress">#ff4da64f</color>
+    <color name="map_download_complete">#ffc4c4c4</color>
+    <color name="expandable_child_background">#fff3f3f3</color>
+    <color name="description_background">#ff404040</color>
+    <color name="text_num_gray">#333</color>
+    <color name="text_bg_gray">#9b9b9b</color>
+    <color name="text_forground_blue">#ff235fac</color>
+    <color name="text_hint_gray">#6c6c6c</color>
+    <color name="text_forground_white">#ffffff</color>
+    <color name="traffic_expand_child_gray">#F3F3F3</color>
+    <color name="map_traffic_color_blue">#FF047EFB</color>
+    <color name="map_traffic_color_red">#AA0000</color>
+    <color name="text_gray">#ff6c6c6c</color>
+    <color name="text_yellow">#ffffdd00</color>
+    <color name="list_item_background_gray">#F3F3F3</color>
+    
+    <color name="edittext_hint_color">#acacac</color>
+    
+    <color name="gray_dark">#fff1f1f1</color>
+    <color name="gray_light">#fff9f9f9</color>
+    <color name="bg_bar">#ffe87e00</color>
+    
+    <color name="translucent_color">#50170445</color>
+    <color name="traffic_query_bg">#E87E00</color>
+    <color name="traffic_current_city_bg">#AAFFFFFF</color>
+    <color name="text_click_map_content_blue">#ff008aff</color>
+</resources>

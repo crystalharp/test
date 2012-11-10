@@ -1,0 +1,105 @@
+/*
+ * @(#)BusTransfer1.java  上午10:27:54 2007-11-19 2007
+ *
+ * Copyright (C) 2007 Beijing TigerKnows Science and Technology Ltd.
+ * All rights reserved.
+ *
+ */
+
+package com.tigerknows.model;
+
+import org.apache.http.message.BasicNameValuePair;
+
+import android.content.Context;
+
+import com.decarta.android.exception.APIException;
+import com.decarta.android.util.LogWrapper;
+import com.tigerknows.TKConfig;
+import com.tigerknows.maps.MapEngine;
+
+public final class BuslineQuery extends BaseQuery {
+
+    private int startPos = 0;
+    
+    private boolean isTurnPage;
+    
+    private String keyword;
+ 
+    private boolean isReturnTotal = true;
+    
+    private BuslineModel buslineModel;
+    
+    public String getKeyword() {
+		return keyword;
+	}
+
+
+	public void setKeyword(String keyword) {
+		this.keyword = keyword;
+	}
+	
+	public boolean isTurnPage() {
+		return isTurnPage;
+	}
+
+	public void setTurnPage(boolean isTurnPage) {
+		this.isTurnPage = isTurnPage;
+	}
+
+
+	public BuslineModel getBuslineModel() {
+        return buslineModel;
+    }
+    
+    public void setBuslineModel(BuslineModel buslineModel) {
+        this.buslineModel = buslineModel;
+    }
+
+    public BuslineQuery(Context context) {
+        super(context, API_TYPE_BUSLINE_QUERY);
+    }
+    
+    public void setup(int cityId, String keyword, int startPos, boolean isReturnTotal, int targetViewId, String tipText) {
+
+    	this.keyword = keyword;
+    	this.cityId = cityId;
+        this.startPos = startPos;
+        this.isTurnPage = (this.startPos > 0);
+        this.needReconntection = this.isTurnPage;
+        this.isReturnTotal = isReturnTotal;        
+        this.targetViewId = targetViewId;
+        this.tipText = tipText;
+    }
+    
+    @Override
+    protected void makeRequestParameters() throws APIException {
+        super.makeRequestParameters();
+        if (cityId < MapEngine.CITY_ID_BEIJING) {
+            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CITY);
+        }
+        addCommonParameters(requestParameters, cityId);
+        
+        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_KEYWORD, keyword));
+        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_INDEX, String.valueOf(startPos)));
+        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize())));
+
+        if (isReturnTotal) {
+            requestParameters.add(new BasicNameValuePair("w", "1"));
+        }
+    }
+
+    @Override
+    protected void createHttpClient() {
+        super.createHttpClient();
+        String url = String.format(TKConfig.getQueryUrl(), TKConfig.getQueryHost());
+        httpClient.setURL(url);
+    }
+
+    @Override
+    protected void translateResponse(byte[] data) throws APIException {
+        super.translateResponse(data);
+        buslineModel = new BuslineModel(responseXMap);
+    	
+        LogWrapper.d("eric", "BuslineQuery query response:" + buslineModel);
+    }
+}

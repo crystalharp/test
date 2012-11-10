@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:gravity="left|top"	
+    android:background="@color/gray_light"
+    >
+
+    <RelativeLayout
+        android:layout_below="@id/title_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        >
+        
+        <TextView android:id="@+id/comment_txv"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content" 
+	        android:layout_alignParentTop="true"
+	        android:padding="4dp"
+	        android:textSize="16sp"
+	        android:textColor="@android:color/white"
+	        android:singleLine="false"
+	        android:maxLines="2"
+	        android:background="#00AEFF"/>
+        
+        <com.tigerknows.view.SpringbackListView android:id="@+id/result_lsv"
+            android:layout_below="@id/comment_txv"
+            android:layout_width="fill_parent" 
+            android:layout_height="fill_parent"
+            android:divider="@drawable/divider"
+            android:scrollingCache="false"
+            android:fadingEdge="none"
+            android:drawSelectorOnTop="false"
+            android:background="@color/gray_dark" />
+             
+    </RelativeLayout>
+</RelativeLayout>

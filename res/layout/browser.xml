@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:background="#c0000000">
+    <include android:id="@+id/title_view"
+        layout="@layout/title" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />     
+        
+    <LinearLayout
+        android:id="@+id/button_view"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_alignParentBottom="true"
+	    android:orientation="horizontal"
+	    android:padding="4dp" >
+	    <Button 
+	        android:id="@+id/back_btn"
+	        android:layout_width="wrap_content" 
+	        android:layout_height="wrap_content"
+	        android:layout_centerVertical="true"
+	        android:layout_marginLeft="16dp"
+	        android:layout_marginRight="16dp"
+	        android:gravity="center"
+	        android:background="@drawable/btn_back_web"
+	        android:textColor="@android:color/black">
+	     </Button>
+	    <Button 
+	        android:id="@+id/forward_btn"
+	        android:layout_width="wrap_content" 
+	        android:layout_height="wrap_content"
+	        android:layout_centerVertical="true"
+	        android:layout_marginLeft="16dp"
+	        android:layout_marginRight="16dp"
+	        android:gravity="center"
+	        android:background="@drawable/btn_forward"
+	        android:textColor="@android:color/black">
+	     </Button>
+	    <Button 
+	        android:id="@+id/refresh_btn"
+	        android:layout_width="wrap_content" 
+	        android:layout_height="wrap_content"
+	        android:layout_centerVertical="true"
+	        android:layout_marginLeft="16dp"
+	        android:layout_marginRight="16dp"
+	        android:gravity="center"
+	        android:background="@drawable/btn_refresh"
+	        android:textColor="@android:color/black">
+	     </Button>
+	    <Button 
+	        android:id="@+id/stop_btn"
+	        android:layout_width="wrap_content" 
+	        android:layout_height="wrap_content"
+	        android:layout_centerVertical="true"
+	        android:gravity="center"
+	        android:text="stop"
+	        android:textColor="@android:color/black"
+	        android:visibility="gone">
+	     </Button>
+	</LinearLayout>
+        
+    <WebView
+        android:id="@+id/web_wbv"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent"
+	    android:layout_below="@id/title_view"
+	    android:layout_above="@id/button_view" />
+
+    <ProgressBar android:id="@+id/progress_prb"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="4dp"
+	    android:layout_alignBottom="@id/web_wbv"
+        android:max="100"
+        android:progress="1" />
+</RelativeLayout>
+

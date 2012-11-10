@@ -1,0 +1,21 @@
+1.退出地图，保存lastLatlon，lastZoom；
+2.启动地图：读取保存的lastLatlon，lastZoom;
+	if(如果lastLatlon为空)
+		显示城市选择列表；
+		if(用户取消选择列表)
+			if(没有定位信息)
+				显示全国地图，中心北京250km级别；
+			else(有定位)
+				显示定位城市25km级别；
+		else(用户选择一个城市)
+			进入该城市25km级别；
+	else(lastLatlon不为空）
+		根据lastLatlon得到lastCityId；
+		if（有定位信息）
+			根据定位信息的locationLatlon得到locationCityId；
+			if（locationCityId != lastCityId)
+				显示定位cityID的25km级别
+			else(locationCityId == lastCityId)
+				以lastZoom缩放级别到locationLatlon
+		else（无定位信息）
+			以lastZoom缩放级别到lastLatlon

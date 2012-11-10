@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:background="@drawable/background">
+    
+    <RelativeLayout
+        android:id="@+id/title_view"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" 
+	    android:background="@drawable/bg_title"
+	    android:gravity="center">
+	    
+        <com.tigerknows.view.discover.DiscoverTopIndicator
+            android:id="@+id/discover_top_indicator"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"/>
+         
+    
+	    <TextView 
+	        android:id="@+id/no_support_title_txv"
+	        android:layout_width="wrap_content" 
+	        android:layout_height="wrap_content"
+	        android:layout_centerHorizontal="true"
+	        android:text="@string/discover"
+	        android:textSize="22sp"
+	        android:textColor="@android:color/white"
+	        android:ellipsize="end"
+	        android:gravity="center"
+	        android:shadowDx="0"
+	        android:shadowDy="-1"
+	        android:shadowColor="#ff4e280c"
+	        android:shadowRadius="1">
+	     </TextView>
+	</RelativeLayout>
+    <com.tigerknows.view.discover.TKGallery
+        android:id="@+id/scroll_screen"
+        android:layout_below="@id/title_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center_vertical"
+        android:fadingEdgeLength="0dp"></com.tigerknows.view.discover.TKGallery>
+    
+    <RelativeLayout
+        android:id="@+id/over_view"
+        android:layout_below="@id/title_view"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent" />
+	
+	<TextView 
+        android:id="@+id/no_support_message_txv"
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="32dp"
+        android:layout_below="@id/title_view"
+        android:gravity="left|bottom"
+        android:paddingLeft="48dp"
+        android:paddingRight="48dp"
+        android:paddingBottom="60dp"
+        android:textSize="16sp"
+        android:text="@string/discover_no_support_tip"
+        android:background="@drawable/bg_discover_no_support"
+        />
+	
+	<ImageView 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_view"
+        android:background="@drawable/ic_discover_home_light"
+        />
+    <com.tigerknows.view.AlwaysMarqueeTextView android:id="@+id/my_location_txv"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:drawableLeft="@drawable/ic_mylocation_home"
+        android:drawablePadding="4dp"
+        android:textSize="13sp"
+        android:paddingLeft="6dp"
+        android:text="@string/location_doing"
+        android:textColor="@android:color/white"
+        android:background="#88000000"
+        android:gravity="left"
+        android:scrollHorizontally="true" 
+        android:singleLine="true"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true" 
+        android:marqueeRepeatLimit="marquee_forever"></com.tigerknows.view.AlwaysMarqueeTextView>
+</RelativeLayout>
+
