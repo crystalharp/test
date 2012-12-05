@@ -400,6 +400,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                             });
                     return true;
                 case MENU_RENAME:
+                    mActionLog.addAction(ActionLog.FavoriteRename);
                     showRenameDialog(mSelectIndex);
                     return true;
             }

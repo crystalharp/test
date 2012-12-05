@@ -267,6 +267,7 @@ public class ActionLog {
     // 编辑状态下点击全选按钮 AIAG-%s
     public static final String FavoriteAllSelect = Favorite + "AS-%s";
     // 重命名页点击文本输入框 AIAH
+    public static final String FavoriteRename = Favorite + "AH";
     // 点击右上角删除按钮 AIAI
     public static final String FavoriteRightDelete = Favorite + "AI-%s";
     // 往上拉加载更多 AIAJ
