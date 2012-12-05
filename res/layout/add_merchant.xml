@@ -30,7 +30,7 @@
 		        android:paddingBottom="2dp"
 		        android:gravity="left|center_vertical">
 			    <TextView
-			        android:layout_width="72dp"
+			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:layout_marginRight="4dp"
 			        android:gravity="left|center_vertical"
@@ -57,7 +57,7 @@
 		        android:paddingBottom="2dp"
 		        android:gravity="left|center_vertical">
 			    <TextView
-			        android:layout_width="72dp"
+			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:layout_marginRight="4dp"
 			        android:gravity="left|center_vertical"
@@ -82,7 +82,7 @@
 		        android:paddingBottom="2dp"
 		        android:gravity="left|center_vertical">
 			    <TextView
-			        android:layout_width="72dp"
+			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:layout_marginRight="4dp"
 			        android:gravity="left|center_vertical"
@@ -108,7 +108,7 @@
 		        android:paddingBottom="2dp"
 		        android:gravity="left|center_vertical">
 			    <TextView
-			        android:layout_width="72dp"
+			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:layout_marginRight="4dp"
 			        android:gravity="left|center_vertical"
@@ -134,7 +134,7 @@
 		        android:paddingBottom="2dp"
 		        android:gravity="left|center_vertical">
 			    <TextView
-			        android:layout_width="72dp"
+			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:layout_marginRight="4dp"
 			        android:gravity="left|center_vertical"
@@ -160,7 +160,7 @@
 		        android:paddingBottom="2dp"
 		        android:gravity="left|center_vertical">
 			    <TextView
-			        android:layout_width="72dp"
+			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
 			        android:layout_marginRight="4dp"
 			        android:gravity="left|center_vertical"
