@@ -1163,6 +1163,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             return;
         }
 
+        save();
         if (response instanceof CommentCreateResponse) {
             CommentCreateResponse commentCreateResponse = (CommentCreateResponse)response;
             mComment.setUid(commentCreateResponse.getUid());
@@ -1178,9 +1179,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             userId = user.getUserId();
             mComment.setUserId(userId);
             mComment.getPOI().setAttribute(POI.ATTRIBUTE_COMMENT_USER);
+            mComment.setUser(user.getNickName());
         } else {
             mComment.getPOI().setAttribute(POI.ATTRIBUTE_COMMENT_ANONYMOUS);
             mComment.setUserId(-1);
+            mComment.setUser(mThis.getString(R.string.default_guest_name));
         }
         mComment.setClientUid(Globals.g_ClientUID);
         
@@ -1235,6 +1238,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             }
         }
         mPOI.updateAttribute();
+        mComment.setData(null);
         mPOI.updateComment(mThis);
         
         if (userId != Long.MIN_VALUE) {
@@ -1243,7 +1247,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_ANONYMOUS);
         }
         
-        save();
+        mPOI.update(mThis, mPOI.getStoreType());
         Intent intent = new Intent(POIComment.this, Sphinx.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID, mId);

@@ -519,6 +519,8 @@ public class POI extends BaseData {
                 Response response = commentQuery.getResponse();
                 if (response != null) {
                     CommentResponse commentResponse = (CommentResponse) response;
+                    commentResponse.data = null;
+                    commentResponse.getList().data = null;
                     XMap xmap = commentResponse.getData();
                     try {
                         ContentValues values = new ContentValues();
@@ -1067,60 +1069,70 @@ public class POI extends BaseData {
     public Uri writeToDatabases(Context context, long parentId, int storeType) {
         this.storeType = storeType;
         this.parentId = parentId;
-        boolean isFailed = false;
         ContentValues values = new ContentValues();
-        values.put(Tigerknows.POI.STORE_TYPE, storeType);
-        values.put(Tigerknows.POI.PARENT_ID, parentId);
-        if (!TextUtils.isEmpty(name)) {
-            values.put(Tigerknows.POI.POI_NAME, name);
-        } else {
-            return null;
-        }
-        if (TextUtils.isEmpty(uuid) && (storeType == Tigerknows.STORE_TYPE_FAVORITE || storeType == Tigerknows.STORE_TYPE_HISTORY)) {
-            return null;
-        }
-        if (!TextUtils.isEmpty(alise)) {
-            values.put(Tigerknows.POI.ALIAS, alise);
-        }
-        
-        if (position != null) {
-            values.put(Tigerknows.POI.POI_X, position.getLon());
-            values.put(Tigerknows.POI.POI_Y, position.getLat());
-        } else {
-            return null;
-        }
-        XMap xmap = getData();
-        if (xmap != null) {
-            try {
-                values.put(Tigerknows.POI.DATA, ByteUtil.xobjectToByte(xmap));
-            } catch (IOException e) {
-                e.printStackTrace();
-                isFailed = true;
-            }
-        }
-        if (commentQuery != null) {
-            Response response = commentQuery.getResponse();
-            if (response != null) {
-                CommentResponse commentResponse = (CommentResponse) response;
-                xmap = commentResponse.getData();
-                try {
-                    values.put(Tigerknows.POI.COMMENT_DATA, ByteUtil.xobjectToByte(xmap));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    isFailed = true;
-                }
-            }
-        }
-        values.put(Tigerknows.POI.DATETIME, System.currentTimeMillis());
-        values.put(Tigerknows.POI.POI_VERSION, DataQuery.VERSION);
+        boolean availably = initContetValues(this, values);
 
         Uri uri = null;
-        if (!isFailed) {
+        if (availably) {
             uri = SqliteWrapper.insert(context, context.getContentResolver(),
                     Tigerknows.POI.CONTENT_URI, values);
             id = Long.parseLong(uri.getPathSegments().get(1));
         }
         return uri;
+    }
+    
+    private static boolean initContetValues(POI poi, ContentValues values) {
+        if (poi == null || values == null) {
+            return false;
+        }
+        values.put(Tigerknows.POI.STORE_TYPE, poi.storeType);
+        values.put(Tigerknows.POI.PARENT_ID, poi.parentId);
+        if (!TextUtils.isEmpty(poi.name)) {
+            values.put(Tigerknows.POI.POI_NAME, poi.name);
+        } else {
+            return false;
+        }
+        if (TextUtils.isEmpty(poi.uuid) && (poi.storeType == Tigerknows.STORE_TYPE_FAVORITE || poi.storeType == Tigerknows.STORE_TYPE_HISTORY)) {
+            return false;
+        }
+        if (!TextUtils.isEmpty(poi.alise)) {
+            values.put(Tigerknows.POI.ALIAS, poi.alise);
+        }
+        
+        if (poi.position != null) {
+            values.put(Tigerknows.POI.POI_X, poi.position.getLon());
+            values.put(Tigerknows.POI.POI_Y, poi.position.getLat());
+        } else {
+            return false;
+        }
+        XMap xmap = poi.getData();
+        if (xmap != null) {
+            try {
+                values.put(Tigerknows.POI.DATA, ByteUtil.xobjectToByte(xmap));
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+        }
+        values.put(Tigerknows.POI.COMMENT_DATA, new byte[0]);
+        if (poi.commentQuery != null) {
+            Response response = poi.commentQuery.getResponse();
+            if (response != null) {
+                CommentResponse commentResponse = (CommentResponse) response;
+                commentResponse.data = null;
+                commentResponse.getList().data = null;
+                xmap = commentResponse.getData();
+                try {
+                    values.put(Tigerknows.POI.COMMENT_DATA, ByteUtil.xobjectToByte(xmap));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+        }
+        values.put(Tigerknows.POI.DATETIME, System.currentTimeMillis());
+        values.put(Tigerknows.POI.POI_VERSION, DataQuery.VERSION);
+        return true;
     }
     
     /**
@@ -1268,6 +1280,21 @@ public class POI extends BaseData {
                 e.printStackTrace();
             }
             writeToDatabases(context, -1, Tigerknows.STORE_TYPE_HISTORY);
+        }
+        return count;
+    }
+    
+    public int update(Context context, int storyType) {
+        int count = -1;
+        BaseData baseData = checkStore(context, storyType, -1, false);
+        if (baseData != null) {
+            ContentValues values = new ContentValues();
+            boolean availably = initContetValues((POI) baseData, values);
+            if (availably) {
+                count = SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
+            }
+        } else {
+            writeToDatabases(context, -1, storyType);
         }
         return count;
     }

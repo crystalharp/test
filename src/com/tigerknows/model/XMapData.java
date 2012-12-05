@@ -25,4 +25,8 @@ public class XMapData {
     public XMap getData() {
         return data;
     }
+    
+    public void setData(XMap data) {
+        this.data = data;
+    }
 }

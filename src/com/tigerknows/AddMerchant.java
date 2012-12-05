@@ -23,7 +23,6 @@ import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.FeedbackUpload;
-import com.tigerknows.model.Response;
 import com.tigerknows.util.TKAsyncTask;
 
 public class AddMerchant extends BaseActivity implements View.OnClickListener {

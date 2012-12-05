@@ -413,8 +413,8 @@ public final class DataQuery extends BaseQuery {
             } else if (DATA_TYPE_TUANGOU.equals(dataType)) { 
                 requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, Tuangou.NEED_FILELD));
                 requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PICTURE, 
-                        Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[1000000000000000000000000000000000000000]" + ";" +
-                        Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[0000000000000000000000000000000000000000]"));
+                        Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[10000000000000000000]" + ";" +
+                        Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[00000000000000000000]"));
                 addDiscoverCategoryParameters(requestParameters);
                 String cfv = null;
                 if (Filter_Area != null && Filter_Area.cityId == cityId) {
@@ -450,8 +450,8 @@ public final class DataQuery extends BaseQuery {
                 }
                 requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, Dianying.NEED_FILELD));
                 requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PICTURE, 
-                        Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[1000000000000000000000000000000000000000]" + ";" +
-                        Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0000000000000000000000000000000000000000]"));
+                        Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
+                        Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]"));
                 addDiscoverCategoryParameters(requestParameters);
                 String cfv = null;
                 if (Filter_Area != null && Filter_Area.cityId == cityId) {
@@ -484,8 +484,8 @@ public final class DataQuery extends BaseQuery {
             } else if (DATA_TYPE_YANCHU.equals(dataType)) { 
                 requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, Yanchu.NEED_FILELD));
                 requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PICTURE, 
-                        Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[1000000000000000000000000000000000000000]" + ";" +
-                        Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0000000000000000000000000000000000000000]"));
+                        Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
+                        Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]"));
                 addDiscoverCategoryParameters(requestParameters);
                 String cfv = null;
                 if (Filter_Area != null && Filter_Area.cityId == cityId) {
@@ -502,8 +502,8 @@ public final class DataQuery extends BaseQuery {
             } else if (DATA_TYPE_ZHANLAN.equals(dataType)) { 
                 requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, Zhanlan.NEED_FILELD));
                 requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PICTURE, 
-                        Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[1000000000000000000000000000000000000000]" + ";" +
-                        Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0000000000000000000000000000000000000000]"));
+                        Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
+                        Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]"));
                 addDiscoverCategoryParameters(requestParameters);
                 String cfv = null;
                 if (Filter_Area != null && Filter_Area.cityId == cityId) {

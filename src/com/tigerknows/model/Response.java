@@ -139,10 +139,4 @@ public class Response extends XMapData {
     public String getDescription() {
         return description;
     }
-
-    @Override
-	public String toString() {
-		// TODO Auto-generated method stub
-    	return "code: " + responseCode + " description: " + description;
-	}
 }

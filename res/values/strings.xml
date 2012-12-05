@@ -217,7 +217,7 @@
     <string name="cancel_favorite_tip">确认取消收藏？</string>
     
     <string name="off_line_download_dialog_title">下载离线地图包</string>
-    <string name="off_line_download_dialog_message">1.通过电脑访问网址http://www.tigerknows.com/software下载离线地图包，并解压。\n2.找到解压出的map文件夹，把它装入手机  存储卡的根目录。\n3.断开电脑连接，打开老虎宝典即可查看地图。\n4.浏览已经下载地图包的地图将更快速且不再消耗流量！</string>
+    <string name="off_line_download_dialog_message">1.通过电脑访问网址http://www.tigerknows.com/android.html下载离线地图包，并解压。\n2.找到解压出的map文件夹，把它装入手机  存储卡的根目录。\n3.断开电脑连接，打开老虎宝典即可查看地图。\n4.浏览已经下载地图包的地图将更快速且不再消耗流量！</string>
     <string name="i_know">我知道了</string>
 
     <string name="are_you_sure_download_this_software">确定下载此软件？</string>
@@ -577,6 +577,7 @@
 	
 	<!-- User Common Start -->
 	<string name="regist">注册</string>
+	<string name="default_guest_name">老虎用户</string>
 	<string name="default_nick_name">老虎注册用户</string>
 	<string name="please_input_11_phone">请输入手机号</string>
 	<string name="please_input_11_new_phone">请输入新手机号</string>
