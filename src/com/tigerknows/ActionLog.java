@@ -388,6 +388,7 @@ public class ActionLog {
     public static final String LifecyclePause = Lifecycle + "AD";
     // Stop AE
     public static final String LifecycleStop = Lifecycle + "AE";
+    public static final String LifecycleSelectCity = Lifecycle + "AF-%s";
         
     // 交通频道页显示    TH
     public static final String TrafficHome = "BO";

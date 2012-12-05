@@ -272,6 +272,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         mInputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);  
         mActionLog = ActionLog.getInstance(mContext);
         mActionLog.onCreate();
+        mActionLog.addAction(ActionLog.LifecycleSelectCity, cityInfo.getCName());
         if (Globals.g_User != null) {
             mActionLog.addAction(ActionLog.UserReadSuccess);
         }
@@ -1577,6 +1578,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             } else {
                 mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
                 updateCityInfo();
+                mActionLog.addAction(ActionLog.LifecycleSelectCity, Globals.g_Current_City_Info.getCName());
             }
         }    
     }
@@ -1950,6 +1952,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                         showView(R.id.view_home);
                         mMapView.centerOnPosition(myLocation, TKConfig.ZOOM_LEVEL_LOCATION, true);
                         updateCityInfo();
+                        mActionLog.addAction(ActionLog.LifecycleSelectCity, Globals.g_Current_City_Info.getCName());
                         dialog.dismiss();
                         break;          
 
