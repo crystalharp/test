@@ -760,14 +760,8 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         }
         
         mMapEngine.statsMapEnd(new ArrayList<DownloadCity>(), false);
-        mHandler.postDelayed(new Runnable() {
-            
-            @Override
-            public void run() {
-                Intent service = new Intent(Sphinx.this, MapStatsService.class);
-                startService(service);
-            }
-        }, 30*1000);
+        Intent service = new Intent(Sphinx.this, MapStatsService.class);
+        startService(service);
 
         UserLogon userLogon = new UserLogon(mContext);
         queryStart(userLogon, false);
@@ -884,12 +878,12 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 		LogWrapper.d(TAG, "onActivityResult() requestCode="+requestCode+" resultCode="+resultCode+ "data="+data); 
 		mOnActivityResultLoginBack = false;
 		if (R.id.activity_help == requestCode) {
-		    if (data.getBooleanExtra(Help.APP_FIRST_START, false)) {
+		    if (data != null && data.getBooleanExtra(Help.APP_FIRST_START, false)) {
 		        initMapCenterForOnSetup();
 		    }
 		} else if (R.id.activity_app_recommend == requestCode) {
         } else if (R.id.activity_change_city == requestCode) {
-            if (RESULT_OK == resultCode) {
+            if (data != null && RESULT_OK == resultCode) {
                 changeCity(data.getIntExtra("cityId", Globals.g_Current_City_Info.getId()));
             }
         } else if (R.id.activity_setting == requestCode) {
@@ -1074,6 +1068,38 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         }
         mActionLog.onDestroy();
         sendBroadcast(new Intent(ShareMessageCenter.EXTRA_SHARE_FINISH));
+        mMenuFragment = null;
+        mTitleFragment = null;
+        mHomeFragment = null;
+        mMoreFragment = null;
+        mGoCommentFragment = null;
+        mResultMapFragment = null;
+        mFavoriteFragment = null;
+        mHistoryFragment = null;
+        mPOIDetailFragment = null;
+        mPOIResultFragment = null;
+        mPOIResultFragment2 = null;
+        mPOIQueryFragment = null;
+        mPOINearbyFragment = null;
+        mTrafficDetailFragment = null;
+        mTrafficResultFragment = null;
+        mBuslineResultLineFragment = null;
+        mBuslineResultStationFragment = null;
+        mBuslineDetailFragment = null;
+        mTrafficQueryFragment = null;
+        mMyCommentListFragment = null;
+        mUserHomeFragment = null;
+
+        mDiscoverListFragment = null;
+        mTuangouDetailFragment = null;
+        mYanchuDetailFragment = null;
+        mZhanlanDetailFragment = null;
+        mDianyingDetailFragment = null;
+        mDiscoverChildListFragment = null;
+        mDiscoverFragment = null;
+        Intent service = new Intent(Sphinx.this, MapStatsService.class);
+        stopService(service);
+        dalvik.system.VMRuntime.getRuntime().gcSoftReferences();
         super.onDestroy();
 	}
 	/**
@@ -1175,10 +1201,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                     return true;
                 }
                 
-                if (uiStackSize() <= 0) {
-                    return true;
-                }
-                
                 mActionLog.addAction(ActionLog.KeyCodeBack);
                 if (!uiStackBack()) {
                     if (mFromIntent || mSnapMap) {
@@ -1193,6 +1215,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                             public void onClick(DialogInterface dialog, int id) {
                                 switch (id) {
                                     case DialogInterface.BUTTON_POSITIVE:
+                                        getFragment(uiStackPeek()).dismiss();
                                         Sphinx.this.finish();
                                         break;
                                     default:
@@ -3029,22 +3052,27 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 Position myLocationPosition = new Position(location.getLatitude(), location.getLongitude());
                 MapEngine mapEngine = MapEngine.getInstance();
                 myLocationPosition = mapEngine.latlonTransform(myLocationPosition);
-                myLocationPosition.setAccuracy(location.getAccuracy());
-                myLocationPosition.setProvider(location.getProvider());
-                int cityId = mapEngine.getCityId(myLocationPosition);
-                CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
-                if (myLocationCityInfo != null && myLocationCityInfo.getId() == cityId) {
-                    myLocationCityInfo.setPosition(myLocationPosition);
-                    Globals.g_My_Location = location;
+                if (myLocationPosition == null) {
+                    Globals.g_My_Location = null;
+                    Globals.g_My_Location_City_Info = null;
                 } else {
-                    CityInfo cityInfo = mapEngine.getCityInfo(cityId);
-                    cityInfo.setPosition(myLocationPosition);
-                    if (cityInfo.isAvailably()) {
+                    myLocationPosition.setAccuracy(location.getAccuracy());
+                    myLocationPosition.setProvider(location.getProvider());
+                    int cityId = mapEngine.getCityId(myLocationPosition);
+                    CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
+                    if (myLocationCityInfo != null && myLocationCityInfo.getId() == cityId) {
+                        myLocationCityInfo.setPosition(myLocationPosition);
                         Globals.g_My_Location = location;
-                        Globals.g_My_Location_City_Info = cityInfo;
                     } else {
-                        Globals.g_My_Location = null;
-                        Globals.g_My_Location_City_Info = null;
+                        CityInfo cityInfo = mapEngine.getCityInfo(cityId);
+                        cityInfo.setPosition(myLocationPosition);
+                        if (cityInfo.isAvailably()) {
+                            Globals.g_My_Location = location;
+                            Globals.g_My_Location_City_Info = cityInfo;
+                        } else {
+                            Globals.g_My_Location = null;
+                            Globals.g_My_Location_City_Info = null;
+                        }
                     }
                 }
             } else {
