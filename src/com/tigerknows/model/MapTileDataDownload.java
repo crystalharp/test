@@ -15,7 +15,6 @@ import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.TileDownload;
-import com.tigerknows.maps.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.response.Appendix;
 import com.tigerknows.model.response.DataPackage;
 import com.tigerknows.model.response.ResponseCode;
@@ -31,29 +30,28 @@ public class MapTileDataDownload extends BaseQuery {
     
     protected static final String VERSION = "1";
 
-    public interface FillMapTile {
-        public void fillMapTile(List<TileDownload> tileInfos, int rid, byte[] data, boolean downloadRegionMeta);
+    public interface ITileDownload {
+        public int fillMapTile(List<TileDownload> tileInfos, int rid, byte[] data, int start);
+        public void upgradeRegion(int rid);
     }
     
     private List<TileDownload> tileDownloads;
     private int rid;
 
-    private FillMapTile fillMapTile;
+    private ITileDownload iTileDownload;
     
-    private boolean isTranslated;
-    
-    private MapEngine mapEngine;
-    
-    private HttpUtils.TKHttpClient.RealTimeRecive mRealTimeRecive = new RealTimeRecive() {
+    private HttpUtils.TKHttpClient.RealTimeRecive realTimeRecive = new RealTimeRecive() {
         
         @Override
         public void reciveData(byte[] data) {
-            if (appendice.isEmpty() || appendice.size() <= 0) {
+            if (isStop) {
+                return;
+            }
+            if (appendice.isEmpty()) {
                translate(data);
-               isTranslated = true;
             } else {
-                if (data != null && data.length > 0 && fillMapTile != null) {
-                    fillMapTile.fillMapTile(tileDownloads, rid, data, false);
+                if (data != null && data.length > 0 && iTileDownload != null) {
+                    iTileDownload.fillMapTile(tileDownloads, rid, data, 0);
                 }
             }
         }
@@ -61,16 +59,15 @@ public class MapTileDataDownload extends BaseQuery {
     
     public MapTileDataDownload(Context context, MapEngine mapEngine) {
         super(context, API_TYPE_MAP_TILE_DOWNLOAD, VERSION);
-        this.mapEngine = mapEngine;
         this.isTranslatePart = true;
     }
     
-    public void setFillMapTile(FillMapTile fillMapTile) {
-        this.fillMapTile = fillMapTile;
+    public void setFillMapTile(ITileDownload iTileDownload) {
+        this.iTileDownload = iTileDownload;
     }
     
-    public void setup(List<TileDownload> tileDownloads, int rid) {
-        this.tileDownloads = tileDownloads;
+    public void setup(List<TileDownload> tileDownloadList, int rid) {
+        this.tileDownloads = tileDownloadList;
         this.rid = rid;
     }
 
@@ -89,13 +86,12 @@ public class MapTileDataDownload extends BaseQuery {
     @Override
     public synchronized void query() {
         isStop = false;
-        isTranslated = false;
         super.query();
         long currentTime = System.currentTimeMillis();
-        if (statusCode != STATUS_CODE_DATA_EMPTY && statusCode > STATUS_CODE_NONE && statusCode < STATUS_CODE_DATA_EMPTY) {
+        if (statusCode != STATUS_CODE_NETWORK_OK && statusCode > STATUS_CODE_NONE) {
             httpClient = null;
             if (lastTime > 0 && currentTime - lastTime > KEEP_ALIVE_TIME) {
-                statusCode = STATUS_CODE_DATA_EMPTY;
+                statusCode = STATUS_CODE_NETWORK_OK;
             }
         }
         lastTime = currentTime;
@@ -111,22 +107,29 @@ public class MapTileDataDownload extends BaseQuery {
         super.makeRequestParameters();
         requestParameters.add(new BasicNameValuePair("rid", String.valueOf(rid)));
         requestParameters.add(new BasicNameValuePair("vs", TKConfig.getClientSoftVersion()));
-        String version = "";
-        RegionMetaVersion dataVersion = mapEngine.getRegionVersion(rid);
-        if (null != dataVersion) {
-            version= dataVersion.toString();
-        }
-        requestParameters.add(new BasicNameValuePair("vd", version));
+        String version = null;
         int count = 0;
+        
         for(TileDownload tileDownload:tileDownloads) {
             if (tileDownload.getRid() == rid && tileDownload.getLength() > 0) {
-                count++;
-                requestParameters.add(new BasicNameValuePair("off", String.valueOf(tileDownload.getOffset())));
-                requestParameters.add(new BasicNameValuePair("len", String.valueOf(tileDownload.getLength())));
+                if (count == 0) {
+                    version = tileDownload.getVersion();
+                }
+                String currentVersion = tileDownload.getVersion();
+                if ((version != null && version.equals(currentVersion)) || (version == null && currentVersion == null)) {
+                    count++;
+                    requestParameters.add(new BasicNameValuePair("off", String.valueOf(tileDownload.getOffset())));
+                    requestParameters.add(new BasicNameValuePair("len", String.valueOf(tileDownload.getLength())));
+                }
             }
         }
         if (count <= 0) {
             throw APIException.wrapToMissingRequestParameterException("off,len");
+        }
+        if (version != null) {
+            requestParameters.add(new BasicNameValuePair("vd", version));
+        } else {
+            throw APIException.wrapToMissingRequestParameterException("vd");
         }
     }
 
@@ -141,16 +144,13 @@ public class MapTileDataDownload extends BaseQuery {
         httpClient.setURL(url);
         httpClient.setParameters(requestParameters);
         
-        httpClient.setRealTimeRecive(mRealTimeRecive);
+        httpClient.setRealTimeRecive(realTimeRecive);
         httpClient.setProgressUpdate(progressUpdate);
     }
 
     @Override
     protected void translateResponseV12(ParserUtil util) throws IOException {
         super.translateResponseV12(util);
-        if (isTranslated) {
-            return;
-        }
         DataPackage dataPackage = null;
         ResponseCode responseCode = null;
         for(Appendix appendix:appendice) {
@@ -165,15 +165,19 @@ public class MapTileDataDownload extends BaseQuery {
             if (responseCode.getResponseCode() == ResponseCode.MAP_TILE_OK && dataPackage != null) {
                 
                 ParserUtil parseUtil = dataPackage.getData();
-//                datas = parseUtil.getLeaveData(parseUtil.getStart());
-                int length = parseUtil.availableDataleng();
-                byte[] datas = new byte[length];
-                System.arraycopy(parseUtil.getData(), parseUtil.getStart(), datas, 0, length);
-                if (datas != null && datas.length > 0 && fillMapTile != null) {
-                    fillMapTile.fillMapTile(tileDownloads, rid, datas, false);
+                byte[] data = parseUtil.getData();
+                if (data != null && data.length > 0 && iTileDownload != null) {
+                    int ret = iTileDownload.fillMapTile(tileDownloads, rid, data, parseUtil.getStart());
+                    if (ret != 0) {
+                        stop();
+                    }
+                } else {
+                    stop();
                 }
             } else if (responseCode.getResponseCode() == ResponseCode.MAP_TILE_NEW_REVISION) {
-                fillMapTile.fillMapTile(tileDownloads, rid, null, true);
+                iTileDownload.upgradeRegion(rid);
+            } else {
+                stop();
             }
         }
     }    

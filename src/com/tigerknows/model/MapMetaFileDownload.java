@@ -61,10 +61,10 @@ public class MapMetaFileDownload extends BaseQuery {
         super.query();
         
         long currentTime = System.currentTimeMillis();
-        if (statusCode != (STATUS_CODE_RESPONSE_EMPTY + Response.RESPONSE_CODE_OK) && statusCode > STATUS_CODE_NONE && statusCode < STATUS_CODE_DATA_EMPTY) {
+        if (statusCode != STATUS_CODE_NETWORK_OK && statusCode > STATUS_CODE_NONE) {
             httpClient = null;
             if (lastTime > 0 && currentTime - lastTime > KEEP_ALIVE_TIME) {
-                statusCode = (STATUS_CODE_RESPONSE_EMPTY + Response.RESPONSE_CODE_OK);
+                statusCode = STATUS_CODE_NETWORK_OK;
             }
         }
         lastTime = currentTime;
@@ -127,7 +127,7 @@ public class MapMetaFileDownload extends BaseQuery {
             }
         }
         if (responseCode != null) {
-            String mapPath = TKConfig.getDataPath(true);
+            String mapPath = mapEngine.getMapPath();
             if (TextUtils.isEmpty(mapPath)) {
                 return;
             }
@@ -136,19 +136,15 @@ public class MapMetaFileDownload extends BaseQuery {
                 ParserUtil parseUtil = dataPackage.getData();
                 int length = parseUtil.availableDataleng();
 
-                if (length != 0) {
+                if (length > 0) {
                     FileOutputStream fout = new FileOutputStream(regionMetaFile, true);
                     fout.write(parseUtil.getData(), parseUtil.getStart(), length);
                     fout.close();
-                }
-                if (httpClient.isReceivedAllData()) {
-                    mapEngine.initRegion(mRegionId);
+                    if (httpClient.isReceivedAllData()) {
+                        mapEngine.initRegion(mRegionId);
+                    }
                 }
             } else if (responseCode.getResponseCode() == ResponseCode.MAP_META_NEW_REVISION) {
-                if (regionMetaFile.exists()) {
-                    regionMetaFile.delete();
-                }
-            } else {
                 if (regionMetaFile.exists()) {
                     regionMetaFile.delete();
                 }

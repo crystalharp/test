@@ -43,11 +43,13 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.TextView.OnEditorActionListener;
 
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.RegionMapInfo;
 import com.tigerknows.maps.TileDownload;
 import com.tigerknows.maps.MapEngine.CityInfo;
+import com.tigerknows.maps.MapEngine.RegionInfo;
 import com.tigerknows.maps.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.MapMetaFileDownload;
@@ -200,42 +202,29 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 public void run() {
                     while (mMapEngine.isStatsFinish() == false) {
                     }
+
+                    List<DownloadCity> downloadCityList = mMapEngine.getDownloadCityList();
+                    List<Integer> list = new ArrayList<Integer>();
+                    for(DownloadCity downloadCity : downloadCityList) {
+                        list.addAll(downloadCity.getRegionIdList());
+                    }
+                    MapVersionQuery mapVersionQuery = new MapVersionQuery(getBaseContext());
+                    mapVersionQuery.setup(list);
+                    mapVersionQuery.query();
+                    mRegionVersionMap = mapVersionQuery.getRegionVersion();
+                    for(DownloadCity downloadCity : downloadCityList) {
+                        MapStatsService.countDownloadCity(downloadCity, mRegionVersionMap);
+                    }
                     
                     mHandler.post(new Runnable() {
                         
                         @Override
                         public void run() {
                             loadData();
-                            new Thread(new Runnable() {
-                                
-                                @Override
-                                public void run() {
-
-                                    List<Integer> list = new ArrayList<Integer>();
-                                    for(DownloadCity downloadCity : mDownloadCityList) {
-                                        list.addAll(downloadCity.getRegionIdList());
-                                    }
-                                    MapVersionQuery mapVersionQuery = new MapVersionQuery(getBaseContext());
-                                    mapVersionQuery.setup(list);
-                                    mapVersionQuery.query();
-                                    mRegionVersionMap = mapVersionQuery.getRegionVersion();
-                                    
-                                    mHandler.post(new Runnable() {
-                                        
-                                        @Override
-                                        public void run() {
-                                            if (mTipProgressDialog != null && mTipProgressDialog.isShowing()) {
-                                                mTipProgressDialog.dismiss();
-                                                mTipProgressDialog = null;
-                                                for(DownloadCity downloadCity : mDownloadCityList) {
-                                                    MapStatsService.countDownloadCity(downloadCity, mRegionVersionMap);
-                                                }
-                                                notifyDataSetChanged();
-                                            }
-                                        }
-                                    });
-                                }
-                            }).start();
+                            if (mTipProgressDialog != null && mTipProgressDialog.isShowing()) {
+                                mTipProgressDialog.dismiss();
+                                mTipProgressDialog = null;
+                            }
                         }
                     });
                 }
@@ -246,6 +235,14 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     private void loadData() {
         refreshDownloadAdapter(mMapEngine.getDownloadCityList());
         initIntent();
+        if (mMapEngine.isExternalStorage() == false) {
+            for(int i = mDownloadCityList.size()-1; i >= 0; i--) {
+                DownloadCity downloadCity = mDownloadCityList.get(i);
+                if (downloadCity.getState() == DownloadCity.WAITING || downloadCity.getState() == DownloadCity.DOWNLOADING) {
+                    downloadCity.setState(DownloadCity.STOPPED);
+                }
+            }
+        }
         if (mDownloadCityList.isEmpty()) {
             Toast.makeText(mThis, R.string.please_add_city, Toast.LENGTH_LONG).show();
             refreshTab(false);
@@ -393,10 +390,14 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                     public final void onClick(DialogInterface dialog, int which) {
                         String str = list.get(which);
                         if (str.equals(mThis.getString(R.string.download_map))) {
-                            mActionLog.addAction(ActionLog.DownloadMapDownload, cityName);
-                            downloadCity.setState(DownloadCity.WAITING);
-                            notifyDataSetChanged();
-                            download();
+                            if (mMapEngine.isExternalStorage()) {
+                                mActionLog.addAction(ActionLog.DownloadMapDownload, cityName);
+                                downloadCity.setState(DownloadCity.WAITING);
+                                notifyDataSetChanged();
+                                download();
+                            } else {
+                                Toast.makeText(mThis, R.string.not_enough_space, Toast.LENGTH_LONG).show();
+                            }
                         } else if (str.equals(mThis.getString(R.string.upgrade_map))) {
                             mActionLog.addAction(ActionLog.DownloadMapUpgrade, cityName);
                             mMapEngine.removeCityData(cityName);
@@ -431,6 +432,10 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                                                 downloadCity.setState(DownloadCity.STOPPED);
                                                 
                                                 mMapEngine.removeCityData(cityName);
+                                                List <CityInfo> cityInfoList = downloadCity.getCityInfo().getCityList();
+                                                for(int i = 0, size = cityInfoList.size(); i < size; i++) {
+                                                    mMapEngine.removeLastRegionId(cityInfoList.get(i).getId());
+                                                }
                                                 mDownloadCityList.remove(downloadCity);
                                                 boolean existOtherCity = false;
                                                 for(DownloadCity downloadCity1 : mDownloadCityList) {
@@ -636,6 +641,10 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     private void addDownloadCity(CityInfo addCityInfo, int state) {
         DownloadCity addDownloadCity = getDownloadCity(addCityInfo);
         if (addDownloadCity == null) {
+            if (mMapEngine.isExternalStorage() == false && state == DownloadCity.WAITING) {
+                Toast.makeText(mThis, R.string.not_enough_space, Toast.LENGTH_LONG).show();
+                return;
+            }
             List<DownloadCity> downloadCityList = new ArrayList<DownloadCity>();
             for(DownloadCity downloadCity1 : mDownloadCityList) {
                 if (downloadCity1.getCityInfo().getType() == CityInfo.TYPE_CITY) {
@@ -656,7 +665,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         download();
     }
     
-    private void addDownloadCityList(List<CityInfo> addCityInfo, int state, boolean showTip) {        
+    private void addDownloadCityList(List<CityInfo> addCityInfo, int state, boolean showTip) {   
         List<DownloadCity> downloadCityList = new ArrayList<DownloadCity>();
         for(DownloadCity downloadCity1 : mDownloadCityList) {
             if (downloadCity1.getCityInfo().getType() == CityInfo.TYPE_CITY) {
@@ -669,6 +678,13 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             if (addDownloadCity != null) {
                 MapStatsService.countDownloadCity(addDownloadCity, mRegionVersionMap);
                 continue;
+            } else {
+                if (mMapEngine.isExternalStorage() == false && state == DownloadCity.WAITING) {
+                    if (showTip) {
+                        Toast.makeText(mThis, R.string.not_enough_space, Toast.LENGTH_LONG).show();
+                    }
+                    return;
+                }
             }
             addDownloadCity = new DownloadCity(cityInfo, state);
             MapStatsService.countDownloadCity(addDownloadCity, mRegionVersionMap);
@@ -693,31 +709,33 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     private void refreshDownloadAdapter(List<DownloadCity> downloadCityList) {
         mDownloadCityList.clear();
         for(CityInfo cityInfo : sAllAddCityInfoList) {
-            List<CityInfo> list = cityInfo.getCityList();
-            if (list.size() == 1) {
+            List<CityInfo> childCityInfoList = cityInfo.getCityList();
+            String provinceName = cityInfo.getCName();
+            if (childCityInfoList.size() == 1) {
                 for(DownloadCity downloadCity : downloadCityList) {
-                    if (cityInfo.getCName().equals(downloadCity.getCityInfo().getCName())) {
+                    if (provinceName.equals(downloadCity.getCityInfo().getCName())) {
                         mDownloadCityList.add(downloadCity);
                     }
                 }
             } else {
-                for(CityInfo cityInfo1 : list) {
+                for(CityInfo childCityInfo : childCityInfoList) {
                     for(DownloadCity downloadCity : downloadCityList) {
-                        if (cityInfo1.getCName().equals(downloadCity.getCityInfo().getCName())) {
+                        if (childCityInfo.getCName().equals(downloadCity.getCityInfo().getCName())) {
                             boolean isExist = false;
-                            for(DownloadCity downloadCity1 : mDownloadCityList) {
-                                if (downloadCity1.getCityInfo().getCName().equals(cityInfo1.getCProvinceName())) {
+                            for(DownloadCity existDownloadCity : mDownloadCityList) {
+                                String existProvinceName = existDownloadCity.getCityInfo().getCProvinceName();
+                                if (existProvinceName != null && existProvinceName.equals(provinceName)) {
                                     isExist = true;
                                     break;
                                 }
                             }
                             
                             if (!isExist) {
-                                CityInfo cityInfo2 = new CityInfo();
-                                cityInfo2.setCName(cityInfo1.getCProvinceName());
-                                cityInfo2.setType(CityInfo.TYPE_PROVINCE);
-                                DownloadCity downloadCity2 = new DownloadCity(cityInfo2);
-                                mDownloadCityList.add(downloadCity2);
+                                CityInfo provinceCityInfo = new CityInfo();
+                                provinceCityInfo.setCName(childCityInfo.getCProvinceName());
+                                provinceCityInfo.setType(CityInfo.TYPE_PROVINCE);
+                                DownloadCity provinceDownloadCity = new DownloadCity(provinceCityInfo);
+                                mDownloadCityList.add(provinceDownloadCity);
                             }
                             mDownloadCityList.add(downloadCity);
                         }
@@ -884,13 +902,13 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     }
 
     private class DownloadAsyncTask extends AsyncTask<Void, Integer, Void> implements
-            HttpUtils.TKHttpClient.ProgressUpdate, MapTileDataDownload.FillMapTile {
+            HttpUtils.TKHttpClient.ProgressUpdate, MapTileDataDownload.ITileDownload {
 
         private DownloadCity mDownloadCity;
         private MapMetaFileDownload mMapMetaFileDownload;
         private MapTileDataDownload mMapTileDataDownload;
         boolean mIsStop = false;
-        private int statusCode = BaseQuery.STATUS_CODE_DATA_EMPTY;
+        private int statusCode = BaseQuery.STATUS_CODE_NETWORK_OK;
         private Runnable toast = new Runnable() {
             
             @Override
@@ -927,7 +945,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             List<Integer> regionIdList = mDownloadCity.getRegionIdList();
             //检查更新
             while (mDownloadCity.mState != DownloadCity.COMPLETED && mIsStop == false) {
-                statusCode = BaseQuery.STATUS_CODE_DATA_EMPTY;
+                statusCode = BaseQuery.STATUS_CODE_NETWORK_OK;
                 MapVersionQuery mapVersionQuery = new MapVersionQuery(mThis);
                 mapVersionQuery.setup(regionIdList);
                 mapVersionQuery.query();
@@ -990,8 +1008,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 
                 if (mIsStop == false
                         && mapVersionQuery.isStop() == false 
-                        && statusCode != (BaseQuery.STATUS_CODE_RESPONSE_EMPTY + Response.RESPONSE_CODE_OK) 
-                        && statusCode != BaseQuery.STATUS_CODE_DATA_EMPTY) {
+                        && statusCode != BaseQuery.STATUS_CODE_NETWORK_OK) {
                     mHandler.post(toast);
                 }
             }
@@ -1024,42 +1041,56 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         }
         
         @Override
-        public void fillMapTile(List<TileDownload> tileInfos, int rid, byte[] data, boolean downloadRegionMeta) {
-            if (downloadRegionMeta && tileInfos != null && tileInfos.size() > 0) { 
-                mMapMetaFileDownload.setup(tileInfos.get(0).getRid());
-                mMapMetaFileDownload.query();
-                if (mMapMetaFileDownload.isStop() == false) {
-                    statusCode = mMapTileDataDownload.getStatusCode();
-                }
-                return;
+        public int fillMapTile(List<TileDownload> tileDownloadList, int rid, byte[] data, int start) {
+            if (tileDownloadList == null || tileDownloadList.isEmpty() || data == null) {
+                return -1;
             }
-            int start = 0;
+            
             int remainDataLenth = data.length - start;
-            while (remainDataLenth > 0) {
-                for(TileDownload tileInfo:tileInfos) {
-                    int tileLen = tileInfo.getLength();
-                    if (tileLen < 1 || rid != tileInfo.getRid()) {
-                        continue;
-                    }
-                    if (tileLen <= remainDataLenth) {
-                        byte[] dest = new byte[tileLen];
-                        System.arraycopy(data, start, dest, 0, tileLen);
-                        mMapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest);
-                        //let the tile be empty
-                        tileInfo.setLength(-1);
-                        start += tileLen;
-                        remainDataLenth -= tileLen;
-                    } else {
-                        byte[] dest = new byte[remainDataLenth];
-                        System.arraycopy(data, start, dest, 0, remainDataLenth);
-                        mMapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest);
-                        tileInfo.setOffset(tileInfo.getOffset() + remainDataLenth);
-                        tileInfo.setLength(tileLen - remainDataLenth); 
-                        remainDataLenth = 0;
-                    }
+            for(TileDownload tileInfo:tileDownloadList) {
+                if (remainDataLenth <= 0) {
+                    break;
+                } 
+                int tileLen = tileInfo.getLength();
+                if (tileLen < 1 || rid != tileInfo.getRid()) {
+                    continue;
                 }
+                if (tileLen <= remainDataLenth) {
+                    byte[] dest = new byte[tileLen];
+                    System.arraycopy(data, start, dest, 0, tileLen);
+                    int ret = mMapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
+                    if (ret != 0) {
+                        return -1;
+                    }
+                    //let the tile be empty
+                    tileInfo.setLength(-1);
+                    start += tileLen;
+                    remainDataLenth -= tileLen;
+                } else {
+                    byte[] dest = new byte[remainDataLenth];
+                    System.arraycopy(data, start, dest, 0, remainDataLenth);
+                    int ret = mMapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
+                    if (ret != 0) {
+                        return -1;
+                    }
+                    tileInfo.setOffset(tileInfo.getOffset() + remainDataLenth);
+                    tileInfo.setLength(tileLen - remainDataLenth); 
+                    remainDataLenth = 0;
+                }
+            }
+            return 0;
+        }
+        
+        @Override
+        public void upgradeRegion(int rid) {
+            mMapEngine.removeRegion(rid);
+            mMapMetaFileDownload.setup(rid);
+            mMapMetaFileDownload.query();
+            if (mMapMetaFileDownload.isStop() == false) {
+                statusCode = mMapTileDataDownload.getStatusCode();
             }
         }
+        
         private void downloadTileData(List<TileDownload> lostDatas) {
             if (lostDatas == null) {
                 return;

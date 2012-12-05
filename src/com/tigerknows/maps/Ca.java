@@ -154,4 +154,6 @@ public class Ca {
     private static native int yu(int icon_id, int w, int h);
     // tk_set_icon
     protected static int tk_set_icon(int icon_id, int w, int h) { return yu(icon_id, w, h); }
+    protected static native int yv(double lat, double lon);
+    protected static int tk_get_rid_by_point(double lat, double lon) { return yv(lat, lon); }
 }

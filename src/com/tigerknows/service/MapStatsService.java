@@ -123,9 +123,9 @@ public class MapStatsService extends Service {
     private List<DownloadCity> countMapCityList() {
         MapEngine mapEngine = MapEngine.getInstance();
         List<DownloadCity> addedMapCityList = countDownloadCityList();
-        String dataRoot = MapEngine.getInstance().getDataRoot();
-        if (!TextUtils.isEmpty(dataRoot)) {
-            File dataRootDir = new File(dataRoot);
+        String mapPath = MapEngine.getInstance().getMapPath();
+        if (!TextUtils.isEmpty(mapPath)) {
+            File dataRootDir = new File(mapPath);
             File[] mapFiles = dataRootDir.listFiles(new FileFilter() {
                 @Override
                 public boolean accept(File pathname) {
@@ -149,6 +149,7 @@ public class MapStatsService extends Service {
                     int regionId = mapEngine.getRegionId(regionName);
                     RegionInfo regionInfo = mapEngine.getRegionInfo(regionId);
                     if (null != regionInfo) {
+                        mapEngine.addLastRegionId(regionId, true);
                         String cName = regionInfo.getCCityName();
                         DownloadCity downloadCity = null;
                         for (DownloadCity downloadCity1 : addedMapCityList) {
@@ -208,7 +209,6 @@ public class MapStatsService extends Service {
                 if (phoneDataVersion != null && !phoneDataVersion.equalsIgnoreCase(serverDataVersion) && !phoneDataVersion.equalsIgnoreCase(RegionMetaVersion.INVALD_VERSION)) {
                     String[] phoneVersion = phoneDataVersion.replace(".", ",").split(",");
                     String[] serverVersion = serverDataVersion.replace(".", ",").split(",");
-//                    LogWrapper.d("MapDownloadDialog", "countExistMapCityList() cityName="+downloadCity.getCityInfo().getCName()+", phoneDataVersion="+phoneDataVersion+", serverDataVersion="+serverDataVersion);
                     try {
                         for(int i = 0; i < phoneVersion.length; i++) {                                    
                             if (Integer.parseInt(phoneVersion[i]) < Integer.parseInt(serverVersion[i])) {

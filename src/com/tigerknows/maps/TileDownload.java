@@ -5,23 +5,18 @@ public class TileDownload {
     private int rid;
     private int offset;
     private int length;
-    
-    public TileDownload() {
-    }
-    
-    public TileDownload(int rid, int offset, int length) {
+    private String version;
+        
+    public TileDownload(int rid, int offset, int length, String version) {
         super();
         this.rid = rid;
         this.offset = offset;
         this.length = length;
+        this.version = version;
     }
 
     public int getRid() {
         return rid;
-    }
-
-    public void setRid(int rid) {
-        this.rid = rid;
     }
 
     public int getOffset() {
@@ -39,7 +34,11 @@ public class TileDownload {
     public void setLength(int length) {
         this.length = length;
     }
-    
+
+    public String getVersion() {
+        return version;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (object == null) {
@@ -48,7 +47,8 @@ public class TileDownload {
         
         if (object instanceof TileDownload) {
             TileDownload other = (TileDownload)object;
-            if (length == other.length && offset == other.offset && rid == other.rid) {
+            if (length == other.length && offset == other.offset && rid == other.rid && 
+                    ((version != null && version.equals(other.version)) || (version == null && other.version == null))) {
                 return true;
             }
         }
@@ -57,7 +57,7 @@ public class TileDownload {
     }
     
     public TileDownload clone() {
-        return new TileDownload(rid, offset, length);
+        return new TileDownload(rid, offset, length, version);
     }
 
     @Override

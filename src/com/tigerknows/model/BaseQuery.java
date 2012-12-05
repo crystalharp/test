@@ -378,6 +378,10 @@ public abstract class BaseQuery {
     public Response getResponse() {
         return response;
     }
+    
+    public XMap getResponseXMap() {
+        return responseXMap;
+    }
 
     public void stop() {
         isStop = true;
@@ -511,7 +515,7 @@ public abstract class BaseQuery {
                     if (TKConfig.sDYNAMIC_DOWNLOAD_HOST != null) {
                         TKConfig.sDYNAMIC_DOWNLOAD_HOST = null;
                         createHttpClient();
-                        continue;
+//                        continue;
                     }
                 } else if (API_TYPE_BUSLINE_QUERY.equals(apiType) ||
                         API_TYPE_TRAFFIC_QUERY.equals(apiType) ||
@@ -563,7 +567,6 @@ public abstract class BaseQuery {
 
     protected void translate(byte[] data) {
         if (data == null || data.length == 0) {
-            statusCode = STATUS_CODE_DATA_EMPTY;
             return;
         }
         if ((isStop == false || isTranslatePart)) {
@@ -575,26 +578,15 @@ public abstract class BaseQuery {
                         API_TYPE_LOCATION_QUERY.equals(apiType))  {
                     ParserUtil util = new ParserUtil(data, TKConfig.getEncoding());
                     translateResponseV12(util);
-                    statusCode = STATUS_CODE_RESPONSE_EMPTY + Response.RESPONSE_CODE_OK;
                 } else {
                     translateResponse(data);
                     LogWrapper.d("BaseQuery", "translate():at="+apiType+", response="+response);
-                    if (response != null) {
-                        statusCode += response.getResponseCode();
-                    }
                 }
             } catch (APIException e) {
                 e.printStackTrace();
-                int statusCode = e.getStatusCode();
-                if (statusCode > 0) {
-                    this.statusCode = statusCode;
-                }
             } catch (Exception e) {
                 e.printStackTrace();
-                statusCode = STATUS_CODE_TRANSLATE_ERROR;
             }
-        } else {
-            statusCode = STATUS_CODE_CANCEL;
         }
     }
 
@@ -686,54 +678,20 @@ public abstract class BaseQuery {
                 try {
                     data = TKLZDecode.decode(data, 0);
                 } catch (Exception cause) {
-                    throw new APIException("decode data error", STATUS_CODE_DECODE_ERROR);
+                    throw new APIException("decode data error");
                 }
             }
             }
             try {
                 responseXMap = (XMap) ByteUtil.byteToXObject(data);
             } catch (Exception cause) {
-                throw new APIException("byte to xmap error", STATUS_CODE_BYTE_TO_XMAP_ERROR);
+                throw new APIException("byte to xmap error");
             }
             LogWrapper.d("BaseQuery", "translateResponse():at="+apiType+", responseXMap="+responseXMap);
-            statusCode = STATUS_CODE_RESPONSE_EMPTY;
         } catch (APIException cause) {
             throw cause;
         } catch (Exception cause) {
             throw new APIException(cause);
-        }
-    }
-
-    public static boolean checkStatus(Activity activity, BaseQuery baseQuery) {
-        int statusCode = baseQuery.getStatusCode();
-        if (statusCode < BaseQuery.STATUS_CODE_NONE) {
-            // 缺少参数
-            if (activity != null)
-                Toast.makeText(activity, "缺少参数", Toast.LENGTH_LONG).show();
-            return false;
-        } else if (statusCode != BaseQuery.STATUS_CODE_NETWORK_OK && statusCode < BaseQuery.STATUS_CODE_DATA_EMPTY) {
-            // 网络出错
-            if (activity != null)
-                Toast.makeText(activity, "网络出错", Toast.LENGTH_LONG).show();
-            return false;
-        } else if (statusCode == BaseQuery.STATUS_CODE_DATA_EMPTY) {
-            // 服务器返回的0个字节的数据
-            if (activity != null)
-                Toast.makeText(activity, "服务器返回的0个字节的数据", Toast.LENGTH_LONG).show();
-            return false;
-        } else if (statusCode > BaseQuery.STATUS_CODE_DATA_EMPTY && statusCode < BaseQuery.STATUS_CODE_RESPONSE_EMPTY) {
-            // 解压解密服务器返回的数据时出错
-            if (activity != null)
-                Toast.makeText(activity, "解压解密服务器返回的数据时出错", Toast.LENGTH_LONG).show();
-            return false;
-        } else if (statusCode == BaseQuery.STATUS_CODE_RESPONSE_EMPTY) {
-            // 解释服务器返回的数据时出错
-            if (activity != null)
-                Toast.makeText(activity, "解释服务器返回的数据时出错", Toast.LENGTH_LONG).show();
-            return false;
-        } else {
-            // 解释完服务器返回的数据
-            return true;
         }
     }
     

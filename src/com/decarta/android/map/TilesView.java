@@ -2683,6 +2683,14 @@ public class TilesView extends GLSurfaceView {
     public LinkedList<TileDownload> getTilesWaitForDownloading() {
         return tilesWaitForDownloading;
     }
+    
+    public EasingRecord getEasingRecord() {
+        return easingRecord;
+    }
+    
+    public ZoomingRecord getZoomingRecord() {
+        return zoomingRecord;
+    }
 
 	public List<ItemizedOverlay> getOverlays(){
 		return overlays;

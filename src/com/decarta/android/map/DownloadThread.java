@@ -22,7 +22,7 @@ import com.tigerknows.model.Response;
 /**
  * Thread class for loading tiles
  */
-public class DownloadThread extends Thread implements MapTileDataDownload.FillMapTile {
+public class DownloadThread extends Thread implements MapTileDataDownload.ITileDownload {
 	//private final static int FAST_LOAD_THREAD_MAX=5;
 	
     private static final int NETWORK_ERROR_WAIT_TIME = 20*1000;
@@ -154,7 +154,7 @@ public class DownloadThread extends Thread implements MapTileDataDownload.FillMa
                                     } else if (downloadingTiles.get(0).getLength() > 0) {
                                         statusCode = downloadTiles(downloadingTiles);
                                     }
-                                    if (statusCode != (BaseQuery.STATUS_CODE_RESPONSE_EMPTY + Response.RESPONSE_CODE_OK) && statusCode != BaseQuery.STATUS_CODE_DATA_EMPTY) {
+                                    if (statusCode != BaseQuery.STATUS_CODE_NETWORK_OK) {
                                         tilesView.noticeDownload(DownloadEventListener.STATE_DOWNLOAD_ERROR);
                                         try {
                                             Thread.sleep(NETWORK_ERROR_WAIT_TIME);
@@ -213,44 +213,49 @@ public class DownloadThread extends Thread implements MapTileDataDownload.FillMa
     }
     
     @Override
-    public void fillMapTile(List<TileDownload> tileDownloads, int rid, byte[] data, boolean upgrade) {
-//        LogWrapper.d("DownloadThread", "fillMapTile() tileInfos=" + tileDownloads[0].getRid()+", size="+data.length);
-        if (tileDownloads == null) {
-            return;
+    public int fillMapTile(List<TileDownload> tileDownloadList, int rid, byte[] data, int start) {
+        if (tileDownloadList == null || tileDownloadList.isEmpty() || data == null) {
+            return -1;
         }
         
-        if (data == null) {
-            if (upgrade) {
-                downloadMetaData(tileDownloads.get(0).getRid());
-            }
-            return;
-        }
-
-        int start = 0;
         int remainDataLenth = data.length - start;
-        while (remainDataLenth > 0) {
-            for (TileDownload tileInfo : tileDownloads) {
-                int tileLen = tileInfo.getLength();
-                if (tileLen < 1 || rid != tileInfo.getRid()) {
-                    continue;
-                }
-                if (tileLen <= remainDataLenth) {
-                    byte[] dest = new byte[tileLen];
-                    System.arraycopy(data, start, dest, 0, tileLen);
-                    mapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest);
+        for (TileDownload tileInfo : tileDownloadList) {
+            if (remainDataLenth <= 0) {
+                break;
+            } 
+            int tileLen = tileInfo.getLength();
+            if (tileLen < 1 || rid != tileInfo.getRid()) {
+                continue;
+            }
+            if (tileLen <= remainDataLenth) {
+                byte[] dest = new byte[tileLen];
+                System.arraycopy(data, start, dest, 0, tileLen);
+                int ret = mapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
                     // let the tile be empty
-                    tileInfo.setLength(-1);
-                    start += tileLen;
-                    remainDataLenth -= tileLen;
-                } else {
-                    byte[] dest = new byte[remainDataLenth];
-                    System.arraycopy(data, start, dest, 0, remainDataLenth);
-                    mapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest);
-                    tileInfo.setOffset(tileInfo.getOffset() + remainDataLenth);
-                    tileInfo.setLength(tileLen - remainDataLenth);
-                    remainDataLenth = 0;
+                if (ret != 0) {
+                    return -1;
                 }
+                tileInfo.setLength(-1);
+                start += tileLen;
+                remainDataLenth -= tileLen;
+            } else {
+                byte[] dest = new byte[remainDataLenth];
+                System.arraycopy(data, start, dest, 0, remainDataLenth);
+                int ret = mapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
+                if (ret != 0) {
+                    return -1;
+                }
+                tileInfo.setOffset(tileInfo.getOffset() + remainDataLenth);
+                tileInfo.setLength(tileLen - remainDataLenth);
+                remainDataLenth = 0;
             }
         }
+        return 0;
+    }
+    
+    @Override
+    public void upgradeRegion(int rid) {
+        mapEngine.removeRegion(rid);
+        downloadMetaData(rid);
     }
 }

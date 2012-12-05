@@ -214,6 +214,8 @@ public class TKConfig {
     public static final String PREFS_HISTORY_WORD_POI = "history_word_poi_%d";
     public static final String PREFS_HISTORY_WORD_TRAFFIC = "history_word_traffic_%d";
     public static final String PREFS_HISTORY_WORD_BUSLINE = "history_word_busline_%d";
+    
+    public static final String PREFS_LAST_REGION_ID_LIST = "last_region_id_list";
 
     public static final int HISTORY_WORD_SIZE = 50;
     public static final int HISTORY_WORD_LIST_SIZE = 3;
@@ -438,12 +440,11 @@ public class TKConfig {
     
     public static String getDataPath(boolean isMapData) {
         String path = null;
-        String status = Environment.getExternalStorageState();
         if (isMapData) {
-            if (status.equals(Environment.MEDIA_MOUNTED_READ_ONLY) ||
-                    status.equals(Environment.MEDIA_MOUNTED)) {
+            String status = Environment.getExternalStorageState();
+            if (status.equals(Environment.MEDIA_MOUNTED)) {
                 File externalStorageDirectory = Environment.getExternalStorageDirectory();
-                path = externalStorageDirectory.getPath() + "/tigermap/" +sMAP_DATA_FOLDER_NAME + "/";
+                path = externalStorageDirectory.getAbsolutePath() + "/tigermap/" +sMAP_DATA_FOLDER_NAME + "/";
                 File file = new File(path);
                 if (!file.exists()) {
                     if (!file.mkdirs()) {
@@ -452,117 +453,20 @@ public class TKConfig {
                     }
                 }
             }
+            
+            if (path == null) {
+                path = TKApplication.getInstance().getCacheDir().getAbsolutePath()+"/"+sMAP_DATA_FOLDER_NAME+ "/";
+                File file = new File(path);
+                if (!file.exists()) {
+                    if (!file.mkdirs()) {
+                        LogWrapper.e(TAG, "getDataPath() Unable to create new folder: " + path);
+                    }
+                }
+            }
         } else {
             path = TKApplication.getInstance().getDir(sRESOURCES_DATA_FOLDER_NAME, Context.MODE_PRIVATE).toString()+"/";
         }
         return path;
-    }
-    
-    public static boolean hasStorage() {
-        return hasStorage(true);
-    }
-
-    public static boolean hasStorage(boolean requireWriteAccess) {
-        String state = Environment.getExternalStorageState();
-
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            if (requireWriteAccess) {
-                boolean writable = checkFsWritable();
-                return writable;
-            } else {
-                return true;
-            }
-        } else if (!requireWriteAccess
-                && Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            return true;
-        }
-        return false;
-    }
-
-    private static synchronized boolean checkFsWritable() {
-        // Create a temporary file to see whether a volume is really writeable.
-        // It's important not to put it in the root directory which may have a
-        // limit on the number of files.
-        String directoryName =
-                Environment.getExternalStorageDirectory().toString() + "/tigermap";
-        File directory = new File(directoryName);
-        if (!directory.isDirectory()) {
-            if (!directory.mkdirs()) {
-                return false;
-            }
-        }
-        File f = new File(directoryName, ".probe");
-        try {
-            // Remove stale file if any
-            if (f.exists()) {
-                f.delete();
-            }
-            if (!f.createNewFile()) {
-                return false;
-            }
-            f.delete();
-            return true;
-        } catch (IOException ex) {
-            return false;
-        }
-    }
-
-    public static void showStorageToast(Activity activity, int remaining) {
-        String noStorageText = null;
-
-        if (remaining == NO_STORAGE_ERROR) {
-            String state = Environment.getExternalStorageState();
-            if (state == Environment.MEDIA_CHECKING) {
-                noStorageText = activity.getString(R.string.preparing_sd);
-            } else {
-                noStorageText = activity.getString(R.string.no_storage);
-            }
-        } else if (remaining < 1) {
-            noStorageText = activity.getString(R.string.not_enough_space);
-        }
-
-        if (noStorageText != null) {
-            Toast.makeText(activity, noStorageText, 10*1000).show();
-        }
-    }
-    
-    public static int calculateRemaining() {
-        try {
-            if (!hasStorage()) {
-                return NO_STORAGE_ERROR;
-            } else {
-                String storageDirectory =
-                        Environment.getExternalStorageDirectory().toString();
-                StatFs stat = new StatFs(storageDirectory);
-                final int MIN_BYTES = 2 * 1024 * 1024;
-                float remaining = ((float) stat.getAvailableBlocks()
-                        * (float) stat.getBlockSize()) / MIN_BYTES;
-                return (int) remaining;
-            }
-        } catch (Exception ex) {
-            // if we can't stat the filesystem then we don't know how many
-            // pictures are remaining.  it might be zero but just leave it
-            // blank since we really don't know.
-            return CANNOT_STAT_ERROR;
-        }
-    }
-
-    public static int checkStorageSize(final Activity activity, boolean finish) {
-        final int remaining = calculateRemaining();
-        if (activity != null) {
-            activity.runOnUiThread(new Runnable() {
-    
-                @Override
-                public void run() {
-                    showStorageToast(activity, remaining);
-                }
-            });
-            if (finish && remaining <= 8) {
-                MapEngine.getInstance().destroyEngine();
-                activity.finish();
-            }
-        }
-        return remaining;
     }
     
     public static String getDownloadMapUrl() {

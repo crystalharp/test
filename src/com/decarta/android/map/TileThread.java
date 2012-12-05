@@ -154,23 +154,30 @@ public class TileThread extends Thread {
                         Profile.tilesNetworkInc(loadTime);
 					    
 						if (tileResponse != null) {				
-							if (tileResponse.lostTileInfos != null) {
-						        LinkedList<TileDownload> tilesWaitForDownLoading=tilesView.getTilesWaitForDownloading();
-						        synchronized (tilesWaitForDownLoading) {
-						            int total = 0;
-						            for(TileDownload tileDownload : tileResponse.lostTileInfos) {
-						                tilesWaitForDownLoading.remove(tileDownload);
-                                        if (!DownloadThread.DownloadingTiles.contains(tileDownload)) {
-                                            tilesWaitForDownLoading.addLast(tileDownload);
-                                            total++;
-                                        }
-						            }
-						            if (total > 0) {
-						                tilesView.noticeDownload(DownloadEventListener.STATE_DOWNLOADING);
-                                        tilesWaitForDownLoading.notifyAll();
-						            }
-                                }
-							} else if (tileResponse.bitmap != null){
+							if (tileResponse.bitmap == null) {
+	                            if (tileResponse.lostTileInfos == null) {
+	                                tilesView.refreshMap();
+	                            } else {
+	                                if (tilesView.getZoomingRecord().zoomCenterXY.x == 0 && tilesView.getZoomingRecord().zoomCenterXY.y == 0
+	                                        && tilesView.getEasingRecord().direction.x == 0 && tilesView.getEasingRecord().direction.y == 0) {
+	                                    LinkedList<TileDownload> tilesWaitForDownLoading=tilesView.getTilesWaitForDownloading();
+	                                    synchronized (tilesWaitForDownLoading) {
+	                                        int total = 0;
+	                                        for(TileDownload tileDownload : tileResponse.lostTileInfos) {
+	                                            tilesWaitForDownLoading.remove(tileDownload);
+	                                            if (!DownloadThread.DownloadingTiles.contains(tileDownload)) {
+	                                                tilesWaitForDownLoading.addLast(tileDownload);
+	                                                total++;
+	                                            }
+	                                        }
+	                                        if (total > 0) {
+	                                            tilesView.noticeDownload(DownloadEventListener.STATE_DOWNLOADING);
+	                                            tilesWaitForDownLoading.notifyAll();
+	                                        }
+	                                    }
+	                                }
+	                            }
+							} else {
 	                            addToTileImages(requestTile,tileResponse,false);
 	                            tilesView.refreshMap();
 							}
@@ -182,7 +189,6 @@ public class TileThread extends Thread {
 					
 				} catch (Exception e) {
 					e.printStackTrace();
-					
 				}finally{
 					requestTiles[sequence]=null;
 				}

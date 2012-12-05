@@ -241,8 +241,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogWrapper.i(TAG,"onCreate()"+this);
-        TKConfig.checkStorageSize(this, true);
+        LogWrapper.i(TAG,"onCreate()");
 		TKConfig.configure();
         TKConfig.readConfig();
         Globals.setConnectionFast(Util.isConnectionFast(this));        
@@ -254,7 +253,13 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 		mContext = getBaseContext();
         mLayoutInflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mMapEngine = MapEngine.getInstance();
-        mMapEngine.initEngine();
+        try {
+            mMapEngine.initMapDataPath(mContext);
+        } catch (APIException exception) {
+            exception.printStackTrace();
+            Toast.makeText(this, R.string.not_enough_space, Toast.LENGTH_LONG).show();
+            finish();
+        }
         mMapEngine.resetFontSize(1.5f+(Globals.g_metrics.scaledDensity > 1.0f ? Globals.g_metrics.scaledDensity-1.0f : 0));
         mMapEngine.resetIconSize(Globals.g_metrics.densityDpi >= DisplayMetrics.DENSITY_HIGH ? 3 : 2);
         CityInfo cityInfo = mMapEngine.getCityInfo(MapEngine.CITY_ID_BEIJING);
@@ -976,9 +981,10 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 		Log.i(TAG,"onResume()");
 		mActionLog.onResume();
 		try {
-		    mMapEngine.setupMapDataPath(this);
+		    mMapEngine.initMapDataPath(this);
 		} catch (Exception exception){
-		    TKConfig.showStorageToast(this, TKConfig.NO_STORAGE_ERROR);
+		    exception.printStackTrace();
+		    Toast.makeText(this, R.string.not_enough_space, Toast.LENGTH_LONG).show();
 		    finish();
 		}
 
@@ -1010,10 +1016,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         // install an intent filter to receive SD card related events.
         intentFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
-        intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_STARTED);
-        intentFilter.addAction(Intent.ACTION_MEDIA_SCANNER_FINISHED);
-        intentFilter.addAction(Intent.ACTION_MEDIA_CHECKING);
-        intentFilter.addDataScheme("file");
         registerReceiver(mSDCardEventReceiver, intentFilter);
         
         intentFilter = new IntentFilter("android.intent.action.SERVICE_STATE"); // "android.intent.action.SERVICE_STATE" Intent.ACTION_AIRPLANE_MODE_CHANGED Intent.ACTION_SERVICE_STATE_CHANGED
@@ -1052,6 +1054,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 	protected void onDestroy() {
         Globals.getAsyncImageLoader().onDestory();
         mTKLocationManager.onDestroy();
+        mMapEngine.writeLastRegionIdList(mContext);
         if (mMapView != null) {
             MapText mapText = mMapView.getMapText();
             if (mapText != null) {
@@ -1129,11 +1132,14 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(Intent.ACTION_MEDIA_MOUNTED)
-                    || action.equals(Intent.ACTION_MEDIA_UNMOUNTED)
-                    || action.equals(Intent.ACTION_MEDIA_CHECKING)
-                    || action.equals(Intent.ACTION_MEDIA_SCANNER_STARTED)
-                    || action.equals(Intent.ACTION_MEDIA_SCANNER_FINISHED)) {
-                TKConfig.checkStorageSize(Sphinx.this, true);
+                    || action.equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
+                try {
+                    mMapEngine.initMapDataPath(mContext);
+                } catch (APIException e) {
+                    e.printStackTrace();
+                    Toast.makeText(mContext, R.string.not_enough_space, Toast.LENGTH_LONG).show();
+                    finish();
+                }
             }
         }
     };
@@ -1622,8 +1628,11 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     
     public void onMapCenterChanged() {
         CityInfo cityInfo = mMapEngine.getCityInfo(mMapView.getCenterCityId());
-        if (cityInfo != null && !mViewedCityInfoList.contains(cityInfo)) {
-            mViewedCityInfoList.add(cityInfo);
+        if (cityInfo != null) {
+            mMapEngine.setLastCityId(cityInfo.getId());
+            if (!mViewedCityInfoList.contains(cityInfo)) {
+                mViewedCityInfoList.add(cityInfo);
+            }
         }
         if (uiStackPeek() != R.id.view_traffic_query) {
             return;

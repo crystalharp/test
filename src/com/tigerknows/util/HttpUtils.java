@@ -42,7 +42,6 @@ public class HttpUtils {
     
     public static class TKHttpClient {
         private static int BUFFER_SIZE = 1024;
-        private static int REAL_TIME_BUFFER_SIZE = 1024;
     
         public interface RealTimeRecive {
             public void reciveData(byte[] data);    
@@ -56,9 +55,9 @@ public class HttpUtils {
         
         private RealTimeRecive realTimeRecive;
         
-        private byte[] data;
+        private byte[] data = null;
         
-        private boolean receivedAllData;
+        private boolean receivedAllData = false;
                 
         private AndroidHttpClient client = null;
         
@@ -141,6 +140,7 @@ public class HttpUtils {
         }
         
         public void execute(Context context) throws IOException {
+            receivedAllData = false;
             statusCode = 0;
             if (url == null) {
                 throw new IllegalArgumentException("URL must not be null.");
@@ -190,7 +190,7 @@ public class HttpUtils {
                     
                     post.setEntity(reqEntity);
                     LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", url="+url);
-                    LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", parameters="+parameters);
+                    LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", parameters="+parameters+", TKConfig.getEncoding()="+TKConfig.getEncoding());
                 }
 
                 if (client == null) {
@@ -230,47 +230,51 @@ public class HttpUtils {
                 if (entity != null) {
                     try {
                         // 从联想词汇服务器返回来的数据其长度总是-1，尽管其实是有实际数据内容的
-//                        if (entity.getContentLength() > 0) {
+                        long size = entity.getContentLength();
+                        if (size > 0) {
                             DataInputStream dis = new DataInputStream(entity.getContent());
 
                             try {
                                 ByteArrayOutputStream baos = new ByteArrayOutputStream(BUFFER_SIZE);
                                 byte[] buffer = new byte[BUFFER_SIZE];
                                 int len = 0;
-                                long receivedSize = 1;
-                                long size = entity.getContentLength();
-                                if (null != progressUpdate && size > 0) {
+                                long receivedSize = 0;
+                                if (null != progressUpdate) {
                                     progressUpdate.onProgressUpdate((int)-size);
                                 }
                                 while (isStop == false && (len = dis.read(buffer, 0, BUFFER_SIZE)) > 0) {
                                     receivedSize += len;
                                     baos.write(buffer, 0, len);
-                                    if (realTimeRecive != null) {
-                                        if (receivedSize >= REAL_TIME_BUFFER_SIZE) {
-                                            receivedSize = 0;
-                                            realTimeRecive.reciveData(baos.toByteArray());
-                                            baos.reset();
-                                        }
-                                    } 
-                                    if (null != progressUpdate  && size > 0) {
+                                    // 边看边下载，首先返回的数据是通用响应码和通用原始数据包，此两个cake估计其数据之和最大为256字节
+                                    // 通用响应码 
+                                    // 类型码   信息长度   响应码   描述
+                                    // 0x00 0x15   uint2   uint2   string
+                                    // 通用原始数据包
+                                    // 类型码   信息长度   数据
+                                    // 0x20 0x01   uint4   字节流 
+                                    if (realTimeRecive != null && baos.size() > 256) {
+                                        realTimeRecive.reciveData(baos.toByteArray());
+                                        baos.reset();
+                                    }
+                                    if (null != progressUpdate) {
                                       progressUpdate.onProgressUpdate(len);
                                     }
                                 }
                                 if (isStop) {
                                     LogWrapper.d(TAG, "TKHttpClient->sendAndRecive():apiType="+apiType+", stop http connection!");
-                                }
-                                if (realTimeRecive != null) {
+                                } else {
                                     if (baos.size() > 0) {
-                                        realTimeRecive.reciveData(baos.toByteArray());
+                                        if (realTimeRecive == null) {
+                                            data = baos.toByteArray();
+                                            if (receivedSize == size) {
+                                                receivedAllData = true;
+                                            } else {
+                                                receivedAllData = false;
+                                            }
+                                        } else {
+                                            realTimeRecive.reciveData(baos.toByteArray());
+                                        }
                                     }
-                                } else {
-                                    progressUpdate = null;
-                                    data = baos.toByteArray();
-                                }
-                                if (receivedSize >= size) {
-                                    receivedAllData = true;
-                                } else {
-                                    receivedAllData = false;
                                 }
                             } finally {
                                 try {
@@ -279,7 +283,7 @@ public class HttpUtils {
                                     LogWrapper.e(TAG, "TKHttpClient->sendAndRecive():apiType="+apiType+", Error closing input stream: " + e.getMessage());
                                 }
                             }
-//                        }
+                        }
                     } finally {
                         if (entity != null) {
                             entity.consumeContent();
@@ -287,6 +291,7 @@ public class HttpUtils {
                     }
                 }
                 resTime = System.currentTimeMillis();
+                progressUpdate = null;
             } catch (IOException e) {
                 fail = e.toString();
                 if (keepAlive) {

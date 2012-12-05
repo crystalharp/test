@@ -11,12 +11,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.tigerknows.TKConfig;
+import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.MapWord;
 import com.tigerknows.maps.RegionMapInfo;
 import com.tigerknows.maps.TileDownload;
+import com.tigerknows.maps.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.xobject.ByteReader;
 import com.tigerknows.model.xobject.ByteWriter;
-import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.model.xobject.XObject;
 
 /**
@@ -173,18 +174,21 @@ public final class ByteUtil {
         if (num < 1) {
             return list;
         }
+        MapEngine mapEngine = MapEngine.getInstance();
         for (int i=0; i<num; i++) {
-            TileDownload tileInfo = new TileDownload();
             int rid = arr2int(byteTileInfo, start + 12*i);
-            tileInfo.setRid(rid);
             
             int offset = arr2int(byteTileInfo, start + 12*i + 4);
-            tileInfo.setOffset(offset);
             
             int len = arr2int(byteTileInfo, start + 12*i + 8);
-            tileInfo.setLength(len);
             
-            list.add(tileInfo);
+            RegionMetaVersion regionMetaVersion = mapEngine.getRegionVersion(rid);
+            if (regionMetaVersion != null) {
+                String version = regionMetaVersion.toString();
+                TileDownload tileInfo = new TileDownload(rid, offset, len, version);
+                
+                list.add(tileInfo);
+            }
         }
         return list;
     }

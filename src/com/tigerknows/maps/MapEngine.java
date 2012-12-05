@@ -7,7 +7,6 @@ package com.tigerknows.maps;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -54,8 +53,122 @@ public class MapEngine {
     
     private List<DownloadCity> downloadCityList = new ArrayList<DownloadCity>();
     private boolean statsFinish = false;
+    private String mapPath = null;
+    private boolean isExternalStorage = false;
+    public boolean isExternalStorage() {
+        return isExternalStorage;
+    }
     
-    public void initEngine() {
+    public static final int MAX_REGION_TOTAL_IN_ROM = 30;
+    private int lastCityId;
+    private List<Integer> lastRegionIdList = new ArrayList<Integer>();
+    
+    private void readLastRegionIdList(Context context) {
+        synchronized (this) {
+        if (isExternalStorage || isClosed) {
+            return;
+        }
+        lastCityId = CITY_ID_INVALID;
+        lastRegionIdList.clear();
+        String str = TKConfig.getPref(context, TKConfig.PREFS_LAST_REGION_ID_LIST, null);
+        if (str == null || TextUtils.isEmpty(str)) {
+            return;
+        }
+        String strArr[] = str.split(",");
+
+        for(int i = 0, length = strArr.length; i < length; i++) {
+            try {
+                int rid = Integer.parseInt(strArr[i]);
+                addLastRegionId(rid, false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        }
+    }
+    
+    public void writeLastRegionIdList(Context context) {
+        synchronized (this) {
+        if (isExternalStorage || isClosed) {
+            return;
+        }
+        StringBuilder s = new StringBuilder();
+        for(int i = 0, length = lastRegionIdList.size(); i < length; i++) {
+            if (i > 0) {
+                s.append(",");
+            }
+            s.append(lastRegionIdList.get(i));
+        }
+        TKConfig.setPref(context, TKConfig.PREFS_LAST_REGION_ID_LIST, s.toString());
+        }
+    }
+    
+    public void setLastCityId(int cityId) {
+        synchronized (this) {
+        if (isExternalStorage || isClosed) {
+            return;
+        }
+        if (cityId == CITY_ID_INVALID || cityId == CITY_ID_QUANGUO || lastCityId == cityId) {
+            return;
+        }
+        lastCityId = cityId;
+        String[] regionIdStrArr = getRegionlist(lastCityId);
+        if (regionIdStrArr != null && regionIdStrArr.length > 0) {
+            for(int i = 0, length = regionIdStrArr.length; i < length; i++) {
+                try {
+                    addLastRegionId(getRegionId(regionIdStrArr[i]), false);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        }
+    }
+    
+    public void addLastRegionId(int rid, boolean isBackground) {
+        synchronized (this) {
+        if (isExternalStorage || isClosed) {
+            return;
+        }
+        if (rid == CITY_ID_INVALID || rid == CITY_ID_QUANGUO) {
+            return;
+        }
+        Integer regionId = new Integer(rid);
+        if (isBackground == false) {
+            if (lastRegionIdList.contains(regionId)) {
+                lastRegionIdList.remove(regionId);
+            }
+            lastRegionIdList.add(regionId);
+            if (lastRegionIdList.size() > MAX_REGION_TOTAL_IN_ROM) {
+                removeRegion(lastRegionIdList.remove(0));
+            }
+        } else {
+            if (lastRegionIdList.contains(regionId) == false) {
+                if (lastRegionIdList.size() >= MAX_REGION_TOTAL_IN_ROM) {
+                    removeRegion(lastRegionIdList.remove(0));
+                }
+                lastRegionIdList.add(0, regionId);
+            }
+        }
+        }
+    }
+    
+    public void removeLastRegionId(int rid) {
+        synchronized (this) {
+        if (isExternalStorage || isClosed) {
+            return;
+        }
+        if (rid == CITY_ID_INVALID || rid == CITY_ID_QUANGUO) {
+            return;
+        }
+        Integer regionId = new Integer(rid);
+        if (lastRegionIdList.contains(regionId)) {
+            lastRegionIdList.remove(regionId);
+        }
+        }
+    }
+    
+    private void initEngine(Context context, String mapPath) {
         synchronized (this) {
         if (this.isClosed) {
         if (bitmapBuffer == null) {
@@ -65,24 +178,32 @@ public class MapEngine {
             pngBuffer = new byte[matrixSize];
         }
         }
-        String mapPath = TKConfig.getDataPath(true);
-        int status = -1;
-        if (!TextUtils.isEmpty(mapPath)) {
-            status = Ca.tk_init_engine(TKConfig.getDataPath(false), mapPath, CONFIG.TILE_SIZE, CONFIG.TILE_SIZE, bitmapBuffer, 1);
-            
-            if (status == 0) {
-                this.isClosed = false;
+        isExternalStorage = false;
+        this.mapPath = mapPath;
+        String externalStorageState = Environment.getExternalStorageState();
+        if (externalStorageState.equals(Environment.MEDIA_MOUNTED)) {
+            File externalStorageDirectory = Environment.getExternalStorageDirectory();
+            String externalStoragePath = externalStorageDirectory.getAbsolutePath();
+            if (this.mapPath.startsWith(externalStoragePath)) {
+                isExternalStorage = true;
             }
+        }
+        readLastRegionIdList(context);
+        int status = Ca.tk_init_engine(TKConfig.getDataPath(false), this.mapPath, CONFIG.TILE_SIZE, CONFIG.TILE_SIZE, bitmapBuffer, 1);
+        if (status == 0) {
+            this.isClosed = false;
+            int icon_num = MapWord.Icon.RESOURCE_ID.length;
+            Ca.tk_init_icon_num(icon_num);
+            for(int i=0; i < icon_num; i++) {
+                Bitmap bm = MapWord.Icon.getBitmap(i);
+                if (bm != null) {
+                    Ca.tk_set_icon(i, bm.getWidth(), bm.getHeight());
+                }
+            }
+        } else {
+            destroyEngine();
         }
         LogWrapper.d(TAG, "initEngine() status="+status);
-        int icon_num = MapWord.Icon.RESOURCE_ID.length;
-        Ca.tk_init_icon_num(icon_num);
-        for(int i=0; i < icon_num; i++) {
-            Bitmap bm = MapWord.Icon.getBitmap(i);
-            if (bm != null) {
-                Ca.tk_set_icon(i, bm.getWidth(), bm.getHeight());
-            }
-        }
         }
         }
     }
@@ -94,6 +215,7 @@ public class MapEngine {
         suggestwordDestroy();
         Ca.tk_destroy_engine();
         isClosed = true;
+        mapPath = null;
         LogWrapper.d(TAG, "destroyEngine()");
         }
         }
@@ -107,6 +229,17 @@ public class MapEngine {
         }
         cityId = Ca.tk_get_city_id(position.getLat(), position.getLon());
         return cityId;
+        }
+    }
+
+    public int getRegionId(Position position) {
+        synchronized (this) {
+        int rid = CITY_ID_INVALID;
+        if (isClosed || position == null) {
+            return rid;
+        }
+        rid = Ca.tk_get_rid_by_point(position.getLat(), position.getLon());
+        return rid;
         }
     }
 
@@ -200,17 +333,21 @@ public class MapEngine {
         }
     }
 
+    public void removeRegion(int rid) {
+        synchronized (this) {
+        if (isClosed) {
+            return;
+        }
+        Ca.tk_remove_region_data(rid); 
+        }
+    }
+
     public boolean initRegion(int rid) {
         synchronized (this) {
         if (isClosed) {
             return false;
         }
 
-//        Ca.removeRegionData(rid); 
-        String mapPath = TKConfig.getDataPath(true);
-        if (TextUtils.isEmpty(mapPath)) {
-            return false;
-        }
         String path = mapPath + String.format(TKConfig.MAP_REGION_METAFILE, rid);
         int ret = Ca.tk_init_region(path, rid);
         
@@ -218,13 +355,25 @@ public class MapEngine {
         if (metaFile.exists()) {
             metaFile.delete();
         }
+        addLastRegionId(rid, false);
         return ret == 0 ? true : false;
         }
     }
     
-    public int writeRegion(int rid, int offset, byte[] buf) {
+    public int writeRegion(int rid, int offset, byte[] buf, String version) {
         synchronized (this) {
         if (isClosed) {
+            return -1;
+        }
+        if (buf == null || TextUtils.isEmpty(version)) {
+            return -1;
+        }
+        RegionMetaVersion regionMetaVersion = getRegionVersion(rid);
+        if (regionMetaVersion != null) {
+            if (version.equals(regionMetaVersion.toString()) == false) {
+                return -1;
+            }
+        } else {
             return -1;
         }
         return Ca.tk_write_region(rid, offset, buf.length, buf);
@@ -244,18 +393,8 @@ public class MapEngine {
         }
     }
     
-    public String getDataRoot() {
-        synchronized (this) {
-        if (isClosed) {
-            return null;
-        }
-        byte[] data = Ca.tk_get_data_root();
-        if (data == null || data.length < 1) {
-            return null;
-        }
-        String dataRoot = new String(data, 0, data.length);
-        return dataRoot;
-        }
+    public String getMapPath() {
+        return mapPath;
     }
 
     public int getRegionId(String regionName) {
@@ -553,40 +692,30 @@ public class MapEngine {
         return instance;
     }
 
-    public void setupMapDataPath (Context context) throws APIException{
-        boolean externalStorage=true;
-        String appPath = null;
-        if (!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            externalStorage=false;
-            LogWrapper.i(TAG,"external storage is not mounted");
-            throw new APIException("Can't write/read cache. Please Grand permission");
-        }
-        if (externalStorage) {
+    public void initMapDataPath(Context context) throws APIException{
+        String appPath = TKConfig.getDataPath(true);
+        if (!appPath.equals(mapPath)) {
             try {
-//                appPath = Environment.getExternalStorageDirectory()+ "/Android/data/" + context.getPackageName() + "/files";
-                appPath = Environment.getExternalStorageDirectory()+ "/tigermap/map";
                 File appFile = new File(appPath);
                 if (!appFile.exists() || !appFile.isDirectory()) {
                     appFile.mkdirs();
                 }
                 new File(appPath, "try.txt").createNewFile();
                 new File(appPath, "try.txt").delete();
+                destroyEngine();
+                initEngine(context, appPath);
+                LogWrapper.i(TAG, "setupDataPath() app path:"+ appPath + " map path:"+ mapPath + ",exist:" + new File(appPath).exists());
             } catch (Exception e) {
                 throw new APIException("Can't write/read cache. Please Grand permission");
             }
-
         }
 
-        LogWrapper.i(TAG, "setupDataPath() app path:"+ appPath + ",exist:" + new File(appPath).exists());
     }
     
     public void setup(Context context) throws Exception {
         String versionName = TKConfig.getPref(context, TKConfig.PREFS_VERSION_NAME, null);
         if (TextUtils.isEmpty(versionName) || !TKConfig.getClientSoftVersion().equals(versionName)) {
             String mapPath = TKConfig.getDataPath(true);
-            if (TextUtils.isEmpty(mapPath)) {
-                throw new Exception("Not External Storage Directory");
-            }
             AssetManager am = context.getAssets();
             CommonUtils.deleteAllFile(TKConfig.getDataPath(false));
             
@@ -599,6 +728,7 @@ public class MapEngine {
     
     public MapWord[] getScreenLabel(Position position, int width, int height, int zoomLevel) {
         synchronized (this) {
+            LogWrapper.d(TAG, "getScreenLabel() position="+position+", zoomLevel="+zoomLevel);
             MapWord[] mapWords = null;
             int ret = Ca.tk_get_screen_label(position.getLon(), position.getLat(), width, height, zoomLevel);
             if (ret == 0) {
@@ -621,7 +751,8 @@ public class MapEngine {
                 long loadTime=System.nanoTime()-start;    
                 Profile.getTileBufferInc(loadTime);
                 byte[] data;
-                if (ret >= 0) {
+                LogWrapper.d(TAG, "getTileBuffer() ret="+ret+ ", xyz="+x+","+y+","+z);
+                if (ret == 0) {
                     start=System.nanoTime();
                     Bitmap bm;
                     if (BMP2PNG) {
@@ -635,9 +766,11 @@ public class MapEngine {
 
                     tileResponse.bitmap = bm;
                 } else {
-                    data = Ca.tk_get_lost_tile_info();
-                    if (data != null) {
-                        tileResponse.lostTileInfos = ByteUtil.parseTileInfo(data);
+                    if (ret < 0) {
+                        data = Ca.tk_get_lost_tile_info();
+                        if (data != null) {
+                            tileResponse.lostTileInfos = ByteUtil.parseTileInfo(data);
+                        }
                     }
                 }
             } catch (OutOfMemoryError e) {
@@ -651,8 +784,7 @@ public class MapEngine {
     public RegionMetaVersion getRegionMetaVersion(int rid) {
         synchronized (this) {
         RegionMetaVersion version = null;
-        String mapPath = TKConfig.getDataPath(true);
-        if (TextUtils.isEmpty(mapPath)) {
+        if (isClosed) {
             return version;
         }
         String path = mapPath + String.format(TKConfig.MAP_REGION_METAFILE, rid);
@@ -668,6 +800,7 @@ public class MapEngine {
                 }
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
         return version;
         }
@@ -1135,31 +1268,24 @@ public class MapEngine {
             cityId = MapEngine.CITY_ID_QUANGUO;
         }
         StringBuilder filePath = new StringBuilder();
-        String mapPath = TKConfig.getDataPath(true);
-        if (TextUtils.isEmpty(mapPath)) {
+        MapEngine mapEngine = MapEngine.getInstance();
+        String mapPath = mapEngine.getMapPath();
+        if (mapPath == null) {
             return null;
         }
         filePath.append(mapPath);
-        MapEngine mapEngine = MapEngine.getInstance();
-        if (mapEngine == null) {
-            return null;
-        }
-        if (mapEngine != null) {
-            CityInfo cityInfo = mapEngine.getCityInfo(cityId);
-            if (null != cityInfo) {
-                filePath.append(cityInfo.getEProvinceName());
-                // 创建文件夹
-                File mapFile = new File(filePath.toString());
-                if (!mapFile.exists()) {
-                    if (!mapFile.mkdirs()) {
-                        LogWrapper.e(TAG, "Unable to create new folder: " + filePath.toString());
-                        return null;
-                    }
+        CityInfo cityInfo = mapEngine.getCityInfo(cityId);
+        if (null != cityInfo) {
+            filePath.append(cityInfo.getEProvinceName());
+            // 创建文件夹
+            File mapFile = new File(filePath.toString());
+            if (!mapFile.exists()) {
+                if (!mapFile.mkdirs()) {
+                    LogWrapper.e(TAG, "Unable to create new folder: " + filePath.toString());
+                    return null;
                 }
-                filePath.append("/");
-            } else {
-                return null;
             }
+            filePath.append("/");
         } else {
             return null;
         }

@@ -5,6 +5,7 @@
 package com.tigerknows;
 
 import com.decarta.Globals;
+import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
@@ -25,9 +26,11 @@ import com.tigerknows.view.user.UserLoginActivity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.os.Handler;
@@ -42,6 +45,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * @author Peng Wenyue
@@ -95,6 +99,23 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
     protected BaseQuery mBaseQuerying;
     
     protected TKAsyncTask mTkAsyncTasking;
+    
+    private final BroadcastReceiver mSDCardEventReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(Intent.ACTION_MEDIA_MOUNTED)
+                    || action.equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
+                try {
+                    mMapEngine.initMapDataPath(mThis);
+                } catch (APIException e) {
+                    e.printStackTrace();
+                    Toast.makeText(mThis, R.string.not_enough_space, Toast.LENGTH_LONG).show();
+                    finish();
+                }
+            }
+        }
+    };
     
     protected DialogInterface.OnClickListener mCancelLoginListener = new DialogInterface.OnClickListener() {
         
@@ -160,6 +181,13 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
     @Override
     protected void onResume() {
         super.onResume();
+        try {
+            mMapEngine.initMapDataPath(this);
+        } catch (Exception exception){
+            exception.printStackTrace();
+            Toast.makeText(this, R.string.not_enough_space, Toast.LENGTH_LONG).show();
+            finish();
+        }
         LogWrapper.d(TAG, "onResume()");
         if (!TextUtils.isEmpty(mActionTag)) {
             mActionLog.addAction(mActionTag);
@@ -170,6 +198,10 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
         
         mTKLocationManager.addLocationListener(mLocationListener);
         mTKLocationManager.prepareLocation();
+        
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
+        intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
+        registerReceiver(mSDCardEventReceiver, intentFilter);
     }
 
     @Override
@@ -180,7 +212,8 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
         }
         
         mTKLocationManager.removeUpdates();
-        
+
+        unregisterReceiver(mSDCardEventReceiver);
         super.onPause();
     }
     
