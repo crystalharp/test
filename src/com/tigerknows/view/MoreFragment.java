@@ -231,7 +231,6 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                     showDownloadSoftwareDialog();
                 } else if (mUpgradeType == UPGRADE_TYPE_COMMENT) {
                     mActionLog.addAction(ActionLog.MoreUpdateComment);
-                    mSphinx.getGoCommentFragment().reset();
                     mSphinx.showView(R.id.view_go_comment);
                 } else if (mUpgradeType == UPGRADE_TYPE_MAP) {
                     mActionLog.addAction(ActionLog.MoreUpdateMap);

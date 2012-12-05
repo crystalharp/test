@@ -920,7 +920,7 @@ public class TrafficQueryFragment extends BaseFragment {
                 } else if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_WALK) {
                 	mSphinx.showTip(R.string.walk_non_support_city_tip, Toast.LENGTH_SHORT);
                 }
-            } else if (trafficQuery.getStatusCode() == BaseQuery.STATUS_CODE_DATA_EMPTY) {
+            } else if (trafficQuery.getResponseXMap() == null) {
             	mSphinx.showTip(R.string.no_result, Toast.LENGTH_SHORT);
             } else {
                 if (trafficQuery.getQueryType() == TrafficQuery.QUERY_TYPE_TRANSFER) {

@@ -231,8 +231,13 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void dismiss() {
+        super.dismiss();
+        mPOIList.clear();
+        mTrafficList.clear();
+        mPOIAdapter.notifyDataSetChanged();
+        mTrafficAdapter.notifyDataSetChanged();
+        mLayerType = ItemizedOverlay.POI_OVERLAY;
     }
 
     protected void findViews() {

@@ -175,6 +175,21 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         return mRootView;
     }
     
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        List list = getList();
+        if (list != null) {
+            list.clear();
+            ArrayAdapter adapter = getAdapter();
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
+            }
+        }
+        mDataQuery = null;
+        mBaseList = null;
+    }
+    
     protected void findViews() {
         mResultTxv = (TextView) mRootView.findViewById(R.id.result_txv);
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
@@ -232,10 +247,12 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
     
     private void turnPage(){
         synchronized (this) {
-        if (mResultLsv.isFooterSpringback() == false) {
+        DataQuery lastDataQuery = mDataQuery;
+        BaseList lastBaseList = mBaseList;
+        if (lastBaseList == null || mResultLsv.isFooterSpringback() == false || lastDataQuery == null) {
             return;
         }
-        if (mBaseList.getTotal() <= getList().size()) {
+        if (lastBaseList.getTotal() <= getList().size()) {
             mResultLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
             return;
         }
@@ -243,8 +260,8 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         mActionLog.addAction(ActionLog.SearchResultNextPage);
 
         DataQuery dataQuery = new DataQuery(mContext);
-        int cityId = mDataQuery.getCityId();
-        Hashtable<String, String> criteria = mDataQuery.getCriteria();
+        int cityId = lastDataQuery.getCityId();
+        Hashtable<String, String> criteria = lastDataQuery.getCriteria();
         criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(getList().size()));
         dataQuery.setup(criteria, cityId, getId(), getId(), null, true, true, dataQuery.getPOI());
         mSphinx.queryStart(dataQuery);
@@ -742,7 +759,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         Response response = dataQuery.getResponse();
         mDataQuery = dataQuery;
 
-        if (mDataQuery.isTurnPage() == false) {
+        if (dataQuery.isTurnPage() == false) {
             getList().clear();
             mSphinx.getHandler().post(new Runnable() {
                 
@@ -764,9 +781,9 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                 mFendianList.addAll(list);
                 
                 DataQuery fendianQuery = mTuangou.getFendianQuery();
-                if (fendianQuery == null && mDataQuery.isTurnPage() == false) {
-                    mTuangou.setFendianQuery(mDataQuery);
-                } else if (mDataQuery.isTurnPage() && setup == false){
+                if (fendianQuery == null && dataQuery.isTurnPage() == false) {
+                    mTuangou.setFendianQuery(dataQuery);
+                } else if (dataQuery.isTurnPage() && setup == false){
                     fendianResponse = (FendianResponse) fendianQuery.getResponse();
                     fendianResponse.getList().getList().addAll(list);
                 }
@@ -785,9 +802,9 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                 }
                 
                 DataQuery yingxunQuery = mDianying.getYingxunQuery();
-                if (yingxunQuery == null && mDataQuery.isTurnPage() == false) {
-                    mDianying.setYingxunQuery(mDataQuery);
-                } else if (mDataQuery.isTurnPage() && setup == false){
+                if (yingxunQuery == null && dataQuery.isTurnPage() == false) {
+                    mDianying.setYingxunQuery(dataQuery);
+                } else if (dataQuery.isTurnPage() && setup == false){
                     yingxunResponse = (YingxunResponse) yingxunQuery.getResponse();
                     yingxunResponse.getList().getList().addAll(list);
                 }
@@ -795,8 +812,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         }
         
         getAdapter().notifyDataSetChanged();
-        
-        if (getList().size() < mBaseList.getTotal()) {
+        if (mBaseList != null && getList().size() < mBaseList.getTotal()) {
             mResultLsv.setFooterSpringback(true);
         }
         

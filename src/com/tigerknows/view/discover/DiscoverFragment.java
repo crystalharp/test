@@ -144,6 +144,15 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         }
     }
     
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        int count = mViewPager.getChildCount();
+        for(int i =0; i < count; i ++) {
+            ((DiscoverCategoryView) (mViewPager.getChildAt(i))).dismiss();
+        }
+    }
+    
     protected void findViews() {
         mViewPager = (TKGallery)mRootView.findViewById(R.id.scroll_screen);
         mOverView = (ViewGroup) mRootView.findViewById(R.id.over_view);
@@ -370,9 +379,12 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         }
 
         try {
-            for(int i = 0, size = mDiscoverCategoryAdapter.getList().size(); i < size; i++) {
+            for(int i = mDiscoverCategoryList.size()-1; i >= 0; i--) {
                 mDiscoverCategoryList.get(i).init(new XMap());
-                mDiscoverCategoryAdapter.getListView().get(i).setData(mDiscoverCategoryList.get(i));
+            }
+            for(int i = mDiscoverCategoryAdapter.getList().size()-1; i >= 0; i--) {
+                DiscoverCategory discoverCategory = getDiscoverCategoryByType(mDiscoverCategoryList, mDiscoverCategoryAdapter.getList().get(i).getType());
+                mDiscoverCategoryAdapter.getListView().get(i).setData(discoverCategory);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -399,16 +411,11 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         if (discoverCategoryList != null && discoverCategoryList.getList() != null && discoverCategoryList.getList().size() > 0) {
             List<DiscoverCategory> list = discoverCategoryList.getList();
             try {
-                for(int i = 0, size = mDiscoverCategoryAdapter.getList().size(); i < size; i++) {
-                    for(int j = 0; j < list.size(); j++) {
-                        if (list.get(j).getType().equals(mDiscoverCategoryAdapter.getList().get(i).getType())) {
-                            mDiscoverCategoryList.get(i).init(list.get(j).getData());
-                            DiscoverCategory discoverCategory = mDiscoverCategoryAdapter.getList().get(i);
-                            DiscoverCategory discoverCategoryNow = list.get(j);
-                            discoverCategory.init(discoverCategoryNow.getData());
-                            mDiscoverCategoryAdapter.getListView().get(i).setData(discoverCategory);
-                        }
-                    }
+                for(int i = mDiscoverCategoryAdapter.getList().size()-1; i >= 0; i--) {
+                    DiscoverCategory discoverCategory = mDiscoverCategoryAdapter.getList().get(i);
+                    DiscoverCategory discoverCategoryNow = getDiscoverCategoryByType(list, discoverCategory.getType());
+                    discoverCategory.init(discoverCategoryNow.getData());
+                    mDiscoverCategoryAdapter.getListView().get(i).setData(discoverCategory);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -569,5 +576,17 @@ public class DiscoverFragment extends DiscoverBaseFragment {
     
     public void setCurrentItem(int position) {
         mViewPager.setSelection(position+(128*mDiscoverCategoryList.size()));
+    }
+    
+    private static DiscoverCategory getDiscoverCategoryByType(List<DiscoverCategory> list, String type) {
+        if (list == null || TextUtils.isEmpty(type)) {
+            return null;
+        }
+        for(int i = list.size()-1; i >= 0; i--) {
+            if (type.equals(list.get(i).getType())) {
+                return list.get(i);
+            }
+        }
+        return null;
     }
 }

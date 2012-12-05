@@ -159,7 +159,6 @@ public class UserHomeFragment extends UserBaseFragment {
             @Override
             public void onClick(View v) {
 				mActionLog.addAction(ActionLog.UserHomeToMyComment);
-                mSphinx.getMyCommentListFragment().reset();
                 mSphinx.showView(R.id.view_my_comment_list);
             }
         });

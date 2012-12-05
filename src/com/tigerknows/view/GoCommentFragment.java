@@ -89,7 +89,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         }
     };
     
-    private DataQuery mPOIQuery;
+    private DataQuery mDataQuery;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -128,6 +128,16 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         } else if (mPOILsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
         }
+    }
+
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        mPOIList.clear();
+        mPOIAdapter.notifyDataSetChanged();
+        request = REQUEST_FAVORITE;
+        mDataQuery = null;
+        mEmptyView.setVisibility(View.GONE);
     }
 
     protected void findViews() {
@@ -257,7 +267,8 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
             loadThread.request = request;
             loadThread.start();
         } else if (REQUEST_OTHER == request) {
-            if (mPOIQuery == null) {
+            DataQuery dataQuery = mDataQuery;
+            if (dataQuery == null) {
                 DataQuery poiQuery = new DataQuery(mContext);
                 POI requestPOI = mSphinx.getPOI();
                 int cityId = Globals.g_Current_City_Info.getId();
@@ -273,16 +284,16 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                 poiQuery.setup(criteria, cityId, getId(), getId(), null, false, true, requestPOI);
                 mSphinx.queryStart(poiQuery); 
             } else {
-                POIList poiList = ((POIResponse)mPOIQuery.getResponse()).getBPOIList(); 
-                Hashtable<String, String> criteria = mPOIQuery.getCriteria();
+                POIList poiList = ((POIResponse)dataQuery.getResponse()).getBPOIList(); 
+                Hashtable<String, String> criteria = dataQuery.getCriteria();
                 long total = poiList.getTotal();
                 int index = Integer.parseInt(criteria.get(BaseQuery.SERVER_PARAMETER_INDEX));
                 if (index + poiList.getList().size() < total) {
                     DataQuery poiQuery = new DataQuery(mContext);
-                    POI requestPOI = mPOIQuery.getPOI();
-                    int cityId = mPOIQuery.getCityId();
+                    POI requestPOI = dataQuery.getPOI();
+                    int cityId = dataQuery.getCityId();
                     criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(poiList.getList().size()));
-                    BaseQuery.passLocationToCriteria(mPOIQuery.getCriteria(), criteria);
+                    BaseQuery.passLocationToCriteria(dataQuery.getCriteria(), criteria);
                     poiQuery.setup(criteria, cityId, getId(), getId(), null, true, true, requestPOI);
                     mSphinx.queryStart(poiQuery); 
                 }
@@ -378,12 +389,10 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
             int cityId = Globals.g_Current_City_Info.getId();
             DataQuery poiQuery = new DataQuery(mContext);
             criteria.put(DataQuery.SERVER_PARAMETER_ID_LIST, idList.toString());
-            poiQuery.setup(criteria, cityId, GoCommentFragment.this.getId(), GoCommentFragment.this.getId(), null, false, true, null);
+            poiQuery.setup(criteria, cityId, GoCommentFragment.this.getId(), GoCommentFragment.this.getId(), null, false, false, null);
             poiQuery.query();
-            if (BaseActivity.checkReLogin(poiQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
-                isReLogin = true;
-                return list;
-            } else if (BaseActivity.checkResponseCode(poiQuery, mSphinx, null, false, this, false)) {
+            Response response = poiQuery.getResponse();
+            if (response == null || response.getResponseCode() != Response.RESPONSE_CODE_OK) {
                 return list;
             }
             POIResponse poiResponse = (POIResponse) poiQuery.getResponse();
@@ -431,7 +440,11 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         mPOILsv.setFooterSpringback(false);
 
         if (dataQuery.isTurnPage() == false) {
-            mPOIQuery = dataQuery;
+            mDataQuery = dataQuery;
+        }
+        DataQuery lastDataQuery = mDataQuery;
+        if (lastDataQuery == null) {
+            return;
         }
         POIResponse poiResponse = (POIResponse)dataQuery.getResponse();
         if (poiResponse.getBPOIList() != null && 
@@ -439,7 +452,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                       poiResponse.getBPOIList().getList().size() > 0) {
             List<POI> poiList = poiResponse.getBPOIList().getList();
             if (dataQuery.isTurnPage()) {
-                ((POIResponse)mPOIQuery.getResponse()).getBPOIList().getList().addAll(poiList);
+                ((POIResponse)lastDataQuery.getResponse()).getBPOIList().getList().addAll(poiList);
             }
             for(POI poi : poiList) {
                 if (!mPOIList.contains(poi)) {
@@ -448,7 +461,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
             }
             mPOIAdapter.notifyDataSetChanged();
             
-            if (((POIResponse)mPOIQuery.getResponse()).getBPOIList().getList().size() < ((POIResponse)mPOIQuery.getResponse()).getBPOIList().getTotal()) {
+            if (((POIResponse)lastDataQuery.getResponse()).getBPOIList().getList().size() < ((POIResponse)lastDataQuery.getResponse()).getBPOIList().getTotal()) {
             	mPOILsv.setFooterSpringback(true);
             }
         }
@@ -460,12 +473,5 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         if (mPOILsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
         }
-    }
-    
-    public void reset() {
-        mPOIQuery = null;
-        mPOIList.clear();
-        mPOIAdapter.notifyDataSetChanged();
-        mEmptyView.setVisibility(View.GONE);
     }
 }

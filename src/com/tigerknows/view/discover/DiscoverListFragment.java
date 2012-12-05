@@ -159,51 +159,52 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         this.mList = null;
         this.mResultLsv.setFooterSpringback(false);
 
-        if (mDataQuerying != null) {
+        DataQuery lastDataQuerying = mDataQuerying;
+        if (lastDataQuerying != null) {
             String str = mContext.getString(R.string.loading);
     
-            if (this.mDataQuerying.getSourceViewId() != getId()) {
+            if (lastDataQuerying.getSourceViewId() != getId()) {
                 mDataQuery = null;
                 mFilterLnl.setVisibility(View.GONE);
             }
             
-            if (mDataQuerying.isTurnPage() == false) {
+            if (lastDataQuerying.isTurnPage() == false) {
                 mResultTxv.setText(str);
                 mQueryingTxv.setText(str);
                 updateView();
             }
+            mDataType = lastDataQuerying.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+            if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
+                if (mTuangouAdapter == null) {
+                    mTuangouAdapter = new TuangouAdapter(mSphinx, mTuangouList);
+                }
+                mResultLsv.setAdapter(mTuangouAdapter);
+                mDingdanBtn.setVisibility(View.VISIBLE);
+                mActionTag = ActionLog.TuangouList;
+            } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
+                if (mDianyingAdapter == null) {
+                    mDianyingAdapter = new DianyingAdapter(mSphinx, mDianyingList);
+                }
+                mResultLsv.setAdapter(mDianyingAdapter);
+                mDingdanBtn.setVisibility(View.INVISIBLE);
+                mActionTag = ActionLog.DianyingList;
+            } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
+                if (mYanchuAdapter == null) {
+                    mYanchuAdapter = new YanchuAdapter(mSphinx, mYanchuList);
+                }
+                mResultLsv.setAdapter(mYanchuAdapter);
+                mDingdanBtn.setVisibility(View.INVISIBLE);
+                mActionTag = ActionLog.YanchuList;
+            } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
+                if (mZhanlanAdapter == null) {
+                    mZhanlanAdapter = new ZhanlanAdapter(mSphinx, mZhanlanList);
+                }
+                mResultLsv.setAdapter(mZhanlanAdapter);
+                mDingdanBtn.setVisibility(View.INVISIBLE);
+                mActionTag = ActionLog.ZhanlanList;
+            }
         }
         
-        mDataType = mDataQuerying.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
-        if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
-            if (mTuangouAdapter == null) {
-                mTuangouAdapter = new TuangouAdapter(mSphinx, mTuangouList);
-            }
-            mResultLsv.setAdapter(mTuangouAdapter);
-            mDingdanBtn.setVisibility(View.VISIBLE);
-            mActionTag = ActionLog.TuangouList;
-        } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
-            if (mDianyingAdapter == null) {
-                mDianyingAdapter = new DianyingAdapter(mSphinx, mDianyingList);
-            }
-            mResultLsv.setAdapter(mDianyingAdapter);
-            mDingdanBtn.setVisibility(View.INVISIBLE);
-            mActionTag = ActionLog.DianyingList;
-        } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
-            if (mYanchuAdapter == null) {
-                mYanchuAdapter = new YanchuAdapter(mSphinx, mYanchuList);
-            }
-            mResultLsv.setAdapter(mYanchuAdapter);
-            mDingdanBtn.setVisibility(View.INVISIBLE);
-            mActionTag = ActionLog.YanchuList;
-        } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
-            if (mZhanlanAdapter == null) {
-                mZhanlanAdapter = new ZhanlanAdapter(mSphinx, mZhanlanList);
-            }
-            mResultLsv.setAdapter(mZhanlanAdapter);
-            mDingdanBtn.setVisibility(View.INVISIBLE);
-            mActionTag = ActionLog.ZhanlanList;
-        }
     }
     
     @Override
@@ -221,6 +222,21 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         setListener();
         
         return mRootView;
+    }
+    
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        List list = getList();
+        if (list != null) {
+            list.clear();
+            ArrayAdapter adapter = getAdapter();
+            if (adapter != null) {
+                adapter.notifyDataSetChanged();
+            }
+        }
+        mDataQuery = null;
+        mDataQuerying = null;
     }
     
     protected void findViews() {
@@ -332,18 +348,19 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mDataQuerying == null && mDataQuery != null && mEmptyView.getVisibility() == View.VISIBLE) {
+            DataQuery lastDataQuery = mDataQuery;
+            if (mDataQuerying == null && lastDataQuery != null && mEmptyView.getVisibility() == View.VISIBLE) {
                 mActionLog.addAction(ActionLog.KeyCodeBack);
-                setDataQuery(mDataQuery);
+                setDataQuery(lastDataQuery);
                 return true;
             }
         }
         return false;
     }
     
-    private void refreshResultTitleText(DataQuery poiQuery) {
+    private void refreshResultTitleText(DataQuery dataQuery) {
         String str = null;
-        if (mDataQuery != null && mList != null) {
+        if (dataQuery != null && mList != null) {
             str = mList.getMessage();
         }
 
@@ -426,7 +443,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private void turnPage(){
         synchronized (this) {
-        if (mList == null || mDataQuerying != null || mResultLsv.isFooterSpringback() == false) {
+        DataQuery lastDataQuery = mDataQuery;
+        if (mList == null || mDataQuerying != null || mResultLsv.isFooterSpringback() == false || lastDataQuery == null) {
             return;
         }
         if (mList.getTotal() <= getList().size()) {
@@ -436,13 +454,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
 
         DataQuery dataQuery = new DataQuery(mContext);
-        Hashtable<String, String> criteria = mDataQuery.getCriteria();
+        Hashtable<String, String> criteria = lastDataQuery.getCriteria();
         criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(getList().size()));
         int dianyingSize = mDianyingList.size();
         if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType) && dianyingSize > 0) {
             criteria.put(DataQuery.SERVER_PARAMETER_DIANYING_UUID, mDianyingList.get(dianyingSize-1).getUid());
         }
-        dataQuery.setup(criteria, mDataQuery.getCityId(), getId(), getId(), null, true, true, mDataQuery.getPOI());
+        dataQuery.setup(criteria, lastDataQuery.getCityId(), getId(), getId(), null, true, true, lastDataQuery.getPOI());
         mSphinx.queryStart(dataQuery);
         }
     }
@@ -470,12 +488,16 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     }
     
     private void filter() {
-        
+
+        DataQuery lastDataQuery = mDataQuery;
+        if (lastDataQuery == null) {
+            return;
+        }
         DataQuery dataQuery = new DataQuery(mContext);
 
-        POI requestPOI = mDataQuery.getPOI();
-        int cityId = mDataQuery.getCityId();
-        Hashtable<String, String> criteria = mDataQuery.getCriteria();
+        POI requestPOI = lastDataQuery.getPOI();
+        int cityId = lastDataQuery.getCityId();
+        Hashtable<String, String> criteria = lastDataQuery.getCriteria();
         criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
         criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
         dataQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
@@ -608,7 +630,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     
                     @Override
                     public void onCancel(DialogInterface arg0) {
-                        mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
+                        if (mResultLsv.isFooterSpringback()) {
+                            mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
+                        }
                     }
                 })
                 .create();
@@ -897,7 +921,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 mDataQuery = dataQuery;
                 mList = tuangouResponse.getList();
 
-                if (mDataQuery.isTurnPage() == false) {
+                if (dataQuery.isTurnPage() == false) {
                     getList().clear();
                     mSphinx.getHandler().post(new Runnable() {
                         
@@ -927,7 +951,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 mDataQuery = dataQuery;
                 mList = dianyingResponse.getList();
 
-                if (mDataQuery.isTurnPage() == false) {
+                if (dataQuery.isTurnPage() == false) {
                     getList().clear();
                     mSphinx.getHandler().post(new Runnable() {
                         
@@ -957,7 +981,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 mDataQuery = dataQuery;
                 mList = yanchuResponse.getList();
 
-                if (mDataQuery.isTurnPage() == false) {
+                if (dataQuery.isTurnPage() == false) {
                     getList().clear();
                     mSphinx.getHandler().post(new Runnable() {
                         
@@ -983,7 +1007,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 mDataQuery = dataQuery;
                 mList = zhanlanResponse.getList();
 
-                if (mDataQuery.isTurnPage() == false) {
+                if (dataQuery.isTurnPage() == false) {
                     getList().clear();
                     mSphinx.getHandler().post(new Runnable() {
                         
@@ -1073,9 +1097,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     }    
     
     public Hashtable<String, String> getCriteria() {
-        if (mDataQuery != null) {
-            return mDataQuery.getCriteria();
+        DataQuery lastDataQuery = mDataQuery;
+        if (lastDataQuery == null) {
+            return null;
         }
-        return null;
+        return lastDataQuery.getCriteria();
     }
 }

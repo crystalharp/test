@@ -98,6 +98,10 @@ public class DiscoverCategoryView extends LinearLayout {
     public void onPause() {
         
     }
+    
+    public void dismiss() {
+        mPictureImv.setImageDrawable(null);
+    }
 
     public void setup(String dataType) {
         mDataType = dataType;

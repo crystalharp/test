@@ -60,7 +60,7 @@ public class MyCommentListFragment extends BaseFragment {
     
     private SpringbackListView mCommentLsv = null;
     private TextView mEmptyTxv;
-    private DataQuery mCommentQuery;
+    private DataQuery mDataQuery;
     private List<Comment> mCommentArrayList = new ArrayList<Comment>();
     private CommentAdapter mCommentAdapter;
     
@@ -161,7 +161,8 @@ public class MyCommentListFragment extends BaseFragment {
     public void turnPage(boolean isHeader){
         synchronized (this) {
         mCommentLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
-        if (mCommentQuery == null) {
+        DataQuery lastDataQuery = mDataQuery;
+        if (lastDataQuery == null) {
             DataQuery dataQuery = new DataQuery(mSphinx);
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
@@ -172,10 +173,10 @@ public class MyCommentListFragment extends BaseFragment {
         }
 
         DataQuery dataQuery = new DataQuery(mSphinx);
-        int cityId = mCommentQuery.getCityId();
+        int cityId = lastDataQuery.getCityId();
         Hashtable<String, String> criteria;
         if (mCommentArrayList.size() > 0) {
-            criteria = mCommentQuery.getCriteria();
+            criteria = lastDataQuery.getCriteria();
             if (isHeader) {
                 criteria.put(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(0).getTime());
                 criteria.put(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_AFTER);
@@ -315,6 +316,15 @@ public class MyCommentListFragment extends BaseFragment {
     }
 
     @Override
+    public void dismiss() {
+        super.dismiss();
+        mCommentArrayList.clear();
+        mCommentAdapter.notifyDataSetChanged();
+        mDataQuery = null;
+        mEmptyTxv.setVisibility(View.GONE);
+    }
+
+    @Override
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
         mCommentLsv.onRefreshComplete(false);
@@ -363,12 +373,12 @@ public class MyCommentListFragment extends BaseFragment {
             if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, exit)) {
                 return;
             }
-            DataQuery commentQuery = (DataQuery)baseQuery;
+            DataQuery dataQuery = (DataQuery)baseQuery;
             boolean isHeader = false;
-            if (commentQuery.isTurnPage() == false) {
+            if (dataQuery.isTurnPage() == false) {
                 mCommentLsv.onRefreshComplete(false);
             } else {
-                Hashtable<String, String> criteria = commentQuery.getCriteria();
+                Hashtable<String, String> criteria = dataQuery.getCriteria();
                 if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {
                     String direction = criteria.get(DataQuery.SERVER_PARAMETER_DIRECTION);
                     if (DataQuery.DIRECTION_AFTER.equals(direction)) {
@@ -381,14 +391,14 @@ public class MyCommentListFragment extends BaseFragment {
             }
             mCommentLsv.setFooterSpringback(false);
     
-            if (commentQuery.isTurnPage() == false) {
-                mCommentQuery = commentQuery;
+            if (dataQuery.isTurnPage() == false) {
+                mDataQuery = dataQuery;
             }
             
-            CommentResponse commentResponse = (CommentResponse)commentQuery.getResponse();
+            CommentResponse commentResponse = (CommentResponse)dataQuery.getResponse();
             CommentList commentList = commentResponse.getList();
             
-            if (commentQuery.isTurnPage()) {
+            if (dataQuery.isTurnPage()) {
                 List<Comment> list = commentList.getList();
                 if (isHeader) {
                     if (list != null) {
@@ -435,12 +445,5 @@ public class MyCommentListFragment extends BaseFragment {
             Collections.sort(mCommentArrayList, COMPARATOR);
             mCommentAdapter.notifyDataSetChanged();
         }
-    }
-    
-    public void reset() {
-        mCommentQuery = null;
-        mCommentArrayList.clear();
-        mCommentAdapter.notifyDataSetChanged();
-        mEmptyTxv.setVisibility(View.GONE);
     }
 }

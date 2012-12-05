@@ -133,6 +133,7 @@ public class AsyncImageLoader {
             executorService.shutdown();
         }
         executorService = null;
+        imageCache.clear();
     }
     
     public void setViewToken(String viewToken) {

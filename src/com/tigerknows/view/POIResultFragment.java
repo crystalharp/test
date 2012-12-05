@@ -79,9 +79,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     private POIAdapter mResultAdapter = null;
     
-    private DataQuery mPOIQuery;
+    private DataQuery mDataQuery;
     
-    private DataQuery mPOIQuerying;
+    private DataQuery mDataQuerying;
     
     private List<POI> mPOIList = new ArrayList<POI>();
     
@@ -105,26 +105,27 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     };
     
     public void setup() {
-        this.mPOIQuerying = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
+        this.mDataQuerying = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
         this.mNotResult = true;
 
-        if (mPOIQuerying != null) {
-            POI poi = mPOIQuerying.getPOI();
+        DataQuery lastDataQuerying = mDataQuerying;
+        if (lastDataQuerying != null) {
+            POI poi = lastDataQuerying.getPOI();
             String str;
             if (poi.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
                 str = mContext.getString(R.string.searching);
             } else if (poi.getSourceType() == POI.SOURCE_TYPE_CITY_CENTER) {
-                str = mContext.getString(R.string.at_city_searching, mSphinx.getMapEngine().getCityInfo(mPOIQuerying.getCityId()).getCName());
+                str = mContext.getString(R.string.at_city_searching, mSphinx.getMapEngine().getCityInfo(lastDataQuerying.getCityId()).getCName());
             } else {
                 str = mContext.getString(R.string.at_location_searching);
             }
     
-            if (this.mPOIQuerying.getSourceViewId() != getId()) {
-                mPOIQuery = null;
+            if (lastDataQuerying.getSourceViewId() != getId()) {
+                mDataQuery = null;
                 mFilterLnl.setVisibility(View.GONE);
             }
             
-            if (mPOIQuerying.isTurnPage() == false) {
+            if (lastDataQuerying.isTurnPage() == false) {
                 mResultTxv.setText(str);
                 mQueryingTxv.setText(str);
                 updateView();
@@ -154,6 +155,17 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         return mRootView;
     }
     
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        if (mPOIList != null) {
+            mPOIList.clear();
+            mResultAdapter.notifyDataSetChanged();
+        }
+        mDataQuery = null;
+        mDataQuerying = null;
+    }
+    
     protected void findViews() {
         mResultTxv = (TextView) mRootView.findViewById(R.id.result_txv);
         mFilterLnl = (LinearLayout)mRootView.findViewById(R.id.filter_lnl);
@@ -175,7 +187,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     POI poi = (POI) adapterView.getAdapter().getItem(position);
                     if (poi != null) {
                         mActionLog.addAction(ActionLog.SearchResultSelect, poi.getUUID(), poi.getName(), position+1-mATotal);
-                        poi.setOnlyAPOI((position == 0 && mATotal == 1 && mBTotal > 0));
+                        poi.setOnlyAPOI((position == 0 && mATotal == 1));
                         mSphinx.getPOIDetailFragment().setData(poi);
                         mSphinx.showView(R.id.view_poi_detail);
                     }
@@ -198,12 +210,13 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mPOIQuerying == null && mPOIQuery != null && mEmptyView.getVisibility() == View.VISIBLE) {
+            DataQuery lastDataQuery = mDataQuery;
+            if (mDataQuerying == null && lastDataQuery != null && mEmptyView.getVisibility() == View.VISIBLE) {
                 mActionLog.addAction(ActionLog.KeyCodeBack);
                 mNotResult = false;
                 updateView();
                 refreshFilter();
-                refreshResultTitleText(mPOIQuery);
+                refreshResultTitleText(lastDataQuery);
                 return true;
             }
         }
@@ -211,7 +224,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     private List<POI> getPagePOIList(int index) {
-        boolean isShowAPOI = (mATotal == 1 && mBTotal > 0);
+        boolean isShowAPOI = (mATotal == 1);
         List<POI> poiList = new ArrayList<POI>();
         if (isShowAPOI) {
             mPOIList.get(0).setOnlyAPOI(true);
@@ -229,9 +242,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         return poiList;
     }
     
-    private void refreshResultTitleText(DataQuery poiQuery) {
+    private void refreshResultTitleText(DataQuery dataQuery) {
+        if (dataQuery == null) {
+            return;
+        }
         String str = "";
-        POIResponse poiModel = (POIResponse)poiQuery.getResponse();
+        POIResponse poiModel = (POIResponse)dataQuery.getResponse();
             if (poiModel != null) {
             POIList poiList = poiModel.getAPOIList();
             if (poiList != null) {
@@ -254,11 +270,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     private void refreshFilter() {
         mFilterList.clear();
-        if (mPOIQuery != null) {
-            List<Filter> filterList = mPOIQuery.getFilterList();
-            for(Filter filter : filterList) {
-                mFilterList.add(filter.clone());
-            }
+
+        DataQuery lastDataQuery = mDataQuery;
+        if (lastDataQuery == null) {
+            return;
+        }
+        List<Filter> filterList = lastDataQuery.getFilterList();
+        for(Filter filter : filterList) {
+            mFilterList.add(filter.clone());
         }
         LogWrapper.d("POIResultFragment", "refreshFilter() mFilterList="+mFilterList.size());
         FilterExpandableListAdapter.refreshFilterButton(mFilterLnl, mFilterList, mSphinx, this);
@@ -296,7 +315,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     private void updateView() {
-        if (mPOIQuerying != null) {
+        if (mDataQuerying != null) {
             mQueryingView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
@@ -313,7 +332,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     private void turnPage(){
         synchronized (this) {
-        if (mPOIQuerying != null || mATotal+mBTotal <= mPOIList.size()) {
+        DataQuery lastDataQuery = mDataQuery;
+        if (mDataQuerying != null || mATotal+mBTotal <= mPOIList.size() || lastDataQuery == null) {
             mResultLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
             return;
         }
@@ -321,9 +341,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mActionLog.addAction(ActionLog.SearchResultNextPage);
 
         DataQuery poiQuery = new DataQuery(mContext);
-        POI requestPOI = mPOIQuery.getPOI();
-        int cityId = mPOIQuery.getCityId();
-        Hashtable<String, String> criteria = mPOIQuery.getCriteria();
+        POI requestPOI = lastDataQuery.getPOI();
+        int cityId = lastDataQuery.getCityId();
+        Hashtable<String, String> criteria = lastDataQuery.getCriteria();
         criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mPOIList.size() - mATotal));
         poiQuery.setup(criteria, cityId, getId(), getId(), null, true, true, requestPOI);
         mSphinx.queryStart(poiQuery);
@@ -340,12 +360,16 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     private void filter() {
-        
+
+        DataQuery lastDataQuery = mDataQuery;
+        if (lastDataQuery == null) {
+            return;
+        }
         DataQuery poiQuery = new DataQuery(mContext);
 
-        POI requestPOI = mPOIQuery.getPOI();
-        int cityId = mPOIQuery.getCityId();
-        Hashtable<String, String> criteria = mPOIQuery.getCriteria();
+        POI requestPOI = lastDataQuery.getPOI();
+        int cityId = lastDataQuery.getCityId();
+        Hashtable<String, String> criteria = lastDataQuery.getCriteria();
         criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
         criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
         poiQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
@@ -357,7 +381,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.right_txv:
-                if (mPOIQuery == null || mPOIList.isEmpty() || mResultLsv.getVisibility() != View.VISIBLE || mNotResult == true || mPOIQuerying != null) {
+                if (mDataQuery == null || mPOIList.isEmpty() || mResultLsv.getVisibility() != View.VISIBLE || mNotResult == true || mDataQuerying != null) {
                     return;
                 }
                 mActionLog.addAction(ActionLog.SearchResultMap);
@@ -369,7 +393,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 break;
                 
             default:
-                if (mPOIQuerying != null) {
+                if (mDataQuerying != null) {
                     return;
                 }
                 
@@ -696,15 +720,15 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
-        DataQuery poiQuery = (DataQuery) tkAsyncTask.getBaseQuery();
+        DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
         
-        if (mPOIQuerying != null && poiQuery != mPOIQuerying) {
+        if (mDataQuerying != null && dataQuery != mDataQuerying) {
             return;
         }
 
         boolean exit = true;
-        if (poiQuery.getCriteria().containsKey(BaseQuery.SERVER_PARAMETER_INDEX)) {
-            int index = Integer.parseInt(poiQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_INDEX));
+        if (dataQuery.getCriteria().containsKey(BaseQuery.SERVER_PARAMETER_INDEX)) {
+            int index = Integer.parseInt(dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_INDEX));
             if (index > 0) {
                 mResultLsv.onRefreshComplete(false);
                 mResultLsv.setFooterSpringback(true);
@@ -713,21 +737,21 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
 
         boolean filter = false;
-        if (poiQuery.getCriteria().containsKey(DataQuery.SERVER_PARAMETER_FILTER) && exit) {
+        if (dataQuery.getCriteria().containsKey(DataQuery.SERVER_PARAMETER_FILTER) && exit) {
             filter = true;
             exit = false;
         }
-        if (BaseActivity.checkReLogin(poiQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.checkResponseCode(poiQuery, mSphinx, null, !filter, this, exit)) {
+        } else if (BaseActivity.checkResponseCode(dataQuery, mSphinx, null, !filter, this, exit)) {
             if (filter) {
-                mPOIQuerying = null;
+                mDataQuerying = null;
                 mNotResult = true;
 //                updateView();
                 final AlertDialog alertDialog = CommonUtils.getAlertDialog(mSphinx);
                 alertDialog.setCancelable(false);
-                alertDialog.setMessage(mSphinx.getString(BaseActivity.getResponseResId(poiQuery)));
+                alertDialog.setMessage(mSphinx.getString(BaseActivity.getResponseResId(dataQuery)));
                 alertDialog.setButton(mSphinx.getString(R.string.confirm), new DialogInterface.OnClickListener() {
                     
                     @Override
@@ -736,7 +760,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         mNotResult = false;
                         updateView();
                         refreshFilter();
-                        refreshResultTitleText(mPOIQuery);
+                        refreshResultTitleText(mDataQuery);
                     }
                 });
                 alertDialog.show();
@@ -747,8 +771,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mResultLsv.onRefreshComplete(false);
         mResultLsv.setFooterSpringback(false);
         
-        mPOIQuerying = null;
-        POIResponse poiResponse = (POIResponse)poiQuery.getResponse();
+        mDataQuerying = null;
+        POIResponse poiResponse = (POIResponse)dataQuery.getResponse();
         if ((poiResponse.getAPOIList() != null && 
                 poiResponse.getAPOIList().getList() != null && 
                 poiResponse.getAPOIList().getList().size() > 0) || 
@@ -756,14 +780,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 poiResponse.getBPOIList().getList() != null && 
                 poiResponse.getBPOIList().getList().size() > 0)) {
       
-            mPOIQuery = poiQuery;
+            mDataQuery = dataQuery;
             mNotResult = false;
 
             updateView();
 
             POIList poiList = poiResponse.getAPOIList();
             List<POI> aPOIList = null;
-            if (!mPOIQuery.isTurnPage()) {
+            if (!dataQuery.isTurnPage()) {
                 mATotal = 0;
                 mBTotal = 0;
                 mPOIList.clear();
@@ -788,7 +812,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
 
             if (mATotal == 1 && mBTotal > 0) {
-                if (!mPOIQuery.isTurnPage()) {
+                if (!dataQuery.isTurnPage()) {
                     mPOIList.addAll(aPOIList);
                 }
             } else if (aPOIList != null) {
@@ -801,9 +825,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
             mResultAdapter.notifyDataSetChanged();
 
-            refreshResultTitleText(mPOIQuery);
+            refreshResultTitleText(dataQuery);
 
-            if (this.mPOIQuery.getSourceViewId() == R.id.view_poi_nearby) {
+            if (dataQuery.getSourceViewId() == R.id.view_poi_nearby) {
                 if (this.mSphinx.uiStackContains(R.id.view_favorite)) {
                     mSphinx.uiStackClear();
                     mSphinx.uiStackPush(R.id.view_more);
@@ -824,18 +848,18 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             if (mBTotal > 0 && (mFilterDialog == null || !mFilterDialog.isShowing())) {
                 refreshFilter();
             }
-            if (mPOIQuery.isTurnPage() == false) {
-                mPOIQuery.getCriteria().put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
+            if (dataQuery.isTurnPage() == false) {
+                dataQuery.getCriteria().put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
             }
 
             if (mPOIList.size() < mATotal + mBTotal) {
                 mResultLsv.setFooterSpringback(true);
             }
         } else {
-            if (!poiQuery.isStop()) {
-                refreshResultTitleText(poiQuery);
+            if (!dataQuery.isStop()) {
+                refreshResultTitleText(dataQuery);
 
-                if (!poiQuery.isTurnPage()) {
+                if (!dataQuery.isTurnPage()) {
                     updateView();
                 }
             }

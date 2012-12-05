@@ -27,8 +27,8 @@ public class TKLocationManager {
     
     static final String TAG = "TKLocationManager";
     public static final int GPS_TIME_OUT = 60000;
-    public static final int REQUEST_MIN_TIME = 0;
-    public static final int REQUEST_MIN_DISTANCE = 0;
+    public static final int REQUEST_MIN_TIME = 10;
+    public static final int REQUEST_MIN_DISTANCE = 10;
     
     private static final int LOCATION_GPS = 0;
     private static final int LOCATION_NETWORK = 1;
