@@ -281,7 +281,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                     criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
                     criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
                 }
-                poiQuery.setup(criteria, cityId, getId(), getId(), null, false, true, requestPOI);
+                poiQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
                 mSphinx.queryStart(poiQuery); 
             } else {
                 POIList poiList = ((POIResponse)dataQuery.getResponse()).getBPOIList(); 
@@ -315,7 +315,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         }
         int cityId = Globals.g_Current_City_Info.getId();
         DataQuery poiQuery = new DataQuery(mContext);
-        poiQuery.setup(criteria, cityId, getId(), getId(), null, false, true, requestPOI);
+        poiQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(poiQuery); 
     }
     
