@@ -260,30 +260,42 @@ public class TKConfig {
         // 手机上没有插入SIM卡，则不能读取到IMSI
         sMCC = -1;
         sMNC = -1;
-        try {
-            /** 获取SIM卡的IMSI码   
-             * SIM卡唯一标识：IMSI 国际移动用户识别码（IMSI：International Mobile Subscriber Identification Number）是区别移动用户的标志，   
-             * 储存在SIM卡中，可用于区别移动用户的有效信息。IMSI由MCC、MNC、MSIN组成，其中MCC为移动国家号码，由3位数字组成，   
-             * 唯一地识别移动客户所属的国家，我国为460；MNC为网络id，由2位数字组成，   
-             * 用于识别移动客户所归属的移动网络，中国移动为00，中国联通为01,中国电信为03；MSIN为移动客户识别码，采用等长11位数字构成。   
-             * 唯一地识别国内GSM移动通信网中移动客户。所以要区分是移动还是联通，只需取得SIM卡中的MNC字段即可   
-            */   
-            String networkOperator = sTelephonyManager.getNetworkOperator();
-            
-            if (!TextUtils.isEmpty(networkOperator)) {
-                sMCC = Integer.parseInt(networkOperator.substring(0, 3));
-                sMNC = Integer.parseInt(networkOperator.substring(3, 5));
+        /** 获取SIM卡的IMSI码   
+         * SIM卡唯一标识：IMSI 国际移动用户识别码（IMSI：International Mobile Subscriber Identification Number）是区别移动用户的标志，   
+         * 储存在SIM卡中，可用于区别移动用户的有效信息。IMSI由MCC、MNC、MSIN组成，其中MCC为移动国家号码，由3位数字组成，   
+         * 唯一地识别移动客户所属的国家，我国为460；MNC为网络id，由2位数字组成，   
+         * 用于识别移动客户所归属的移动网络，中国移动为00，中国联通为01,中国电信为03；MSIN为移动客户识别码，采用等长11位数字构成。   
+         * 唯一地识别国内GSM移动通信网中移动客户。所以要区分是移动还是联通，只需取得SIM卡中的MNC字段即可   
+        */   
+        if (!TextUtils.isEmpty(sIMSI)){
+            try {
+                sMCC = Integer.parseInt(sIMSI.substring(0, 3));
+                sMNC = Integer.parseInt(sIMSI.substring(3, 5));
+            } catch (Exception e) {
+                LogWrapper.e(TAG, "init() Can't get MCC and MNC from SIM card");
             }
-        } catch (Exception e) {
-            LogWrapper.e(TAG, "init() Can't get MCC and MNC from SIM card");
         }
-
+        if (sMCC == -1 || sMNC == -1) {
+            String networkOperator = sTelephonyManager.getNetworkOperator();
+            if (!TextUtils.isEmpty(networkOperator)) {
+                try {
+                    sMCC = Integer.parseInt(networkOperator.substring(0, 3));
+                    sMNC = Integer.parseInt(networkOperator.substring(3, 5));
+                } catch (Exception e) {
+                    LogWrapper.e(TAG, "init() Can't get MCC and MNC from SIM card");
+                }
+            }
+        }
         
         if (sIMEI == null) {
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-            String macAddress = wifiInfo == null ? sSPREADER : wifiInfo.getMacAddress();
-            sIMEI = macAddress;
+            if (wifiManager != null) {
+                WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+                String macAddress = wifiInfo == null ? sSPREADER : wifiInfo.getMacAddress();
+                sIMEI = macAddress;
+            } else {
+                sIMEI = "null";
+            }
         }
         
         if (sIMSI == null) {
