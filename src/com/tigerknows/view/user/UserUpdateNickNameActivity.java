@@ -81,11 +81,6 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 					return;
 				}
 				
-				if (mThis.getString(R.string.default_nick_name).equals(nickNameEdt.getText().toString())) {
-				    Toast.makeText(mThis, R.string.response_code_401, Toast.LENGTH_LONG).show();
-				    return;
-				}
-				
 				if (!UserRegistActivity.class.getName().equals(getCallingActivity().getClassName())
 						&& TextUtils.equals(Globals.g_User.getNickName(), nickNameEdt.getText().toString())) {
 					CommonUtils.showNormalDialog(UserUpdateNickNameActivity.this, getString(R.string.title_error_tip), getString(R.string.nickname_no_modify), 
