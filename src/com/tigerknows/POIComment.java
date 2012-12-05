@@ -1037,27 +1037,24 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         DataOperation dataOperation = new DataOperation(mThis);
         dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), -1, mFromViewId, mThis.getString(R.string.comment_publishing_and_wait));
 
-        if (mStatus == STATUS_NEW || (mStatus == STATUS_MODIFY && isModify())) {
-            if (mSyncSinaChb.isChecked()) {
-                String shareSina = "";
-                shareSina = mThis.getString(R.string.poi_comment_share_sina, mPOI.getName(), shareGrade, content, TextUtils.isEmpty(recommendCook) ? "" : mThis.getString(R.string.recommend_cooking, recommendCook));
-                if (shareSina.length() > 120) {
-                    shareSina = shareSina.subSequence(0, 117) + "...";
-                }
-                shareSina = shareSina + "http://www.tigerknows.com";
-                criteria.put(DataOperation.SERVER_PARAMETER_SHARE_SINA, shareSina);
+        if (mSyncSinaChb.isChecked()) {
+            String shareSina = "";
+            shareSina = mThis.getString(R.string.poi_comment_share_sina, mPOI.getName(), shareGrade, content, TextUtils.isEmpty(recommendCook) ? "" : mThis.getString(R.string.recommend_cooking, recommendCook));
+            if (shareSina.length() > 120) {
+                shareSina = shareSina.subSequence(0, 117) + "...";
             }
-            
-            if (mSyncQZoneChb.isChecked()) {
-                String shareQzone = "";
-                shareQzone = mThis.getString(R.string.poi_comment_share_qzone, mPOI.getName(), shareGrade, content, TextUtils.isEmpty(recommendCook) ? "" : mThis.getString(R.string.recommend_cooking, recommendCook));
-                if (shareQzone.length() > 123) {
-                    shareQzone = shareQzone.subSequence(0, 120) + "...";
-                }
-                shareQzone = shareQzone + mThis.getString(R.string.poi_comment_share_qzone_source);
-                criteria.put(DataOperation.SERVER_PARAMETER_SHARE_QZONE, shareQzone);
+            shareSina = shareSina + "http://www.tigerknows.com";
+            criteria.put(DataOperation.SERVER_PARAMETER_SHARE_SINA, shareSina);
+        }
+        
+        if (mSyncQZoneChb.isChecked()) {
+            String shareQzone = "";
+            shareQzone = mThis.getString(R.string.poi_comment_share_qzone, mPOI.getName(), shareGrade, content, TextUtils.isEmpty(recommendCook) ? "" : mThis.getString(R.string.recommend_cooking, recommendCook));
+            if (shareQzone.length() > 123) {
+                shareQzone = shareQzone.subSequence(0, 120) + "...";
             }
-            
+            shareQzone = shareQzone + mThis.getString(R.string.poi_comment_share_qzone_source);
+            criteria.put(DataOperation.SERVER_PARAMETER_SHARE_QZONE, shareQzone);
         }
         queryStart(dataOperation, false);
     }
