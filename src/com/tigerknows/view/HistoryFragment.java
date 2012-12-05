@@ -376,11 +376,11 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                                 public void onClick(DialogInterface arg0, int id) {
                                     if (id == DialogInterface.BUTTON_POSITIVE) {
                                         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-                                            SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.POI.CONTENT_URI, "_id="+mPOIList.get(mSelectIndex).getId(), null);
-                                            mPOILsv.setFooterSpringback(true);
+                                            mPOIList.get(mSelectIndex).deleteHistory(mSphinx);
+                                            mPOILsv.setFooterSpringback(mPOIList.size() == Tigerknows.HISTORY_MAX_SIZE);
                                         } else {
                                             SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.History.CONTENT_URI, "_id="+mTrafficList.get(mSelectIndex).getId(), null);
-                                            mTrafficLsv.setFooterSpringback(true);
+                                            mTrafficLsv.setFooterSpringback(mTrafficList.size() == Tigerknows.HISTORY_MAX_SIZE);
                                         }
                                         refresh(mLayerType);
                                         setState(mState, false);
@@ -471,7 +471,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                                         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
                                             for(POI poi : mPOIList) {
                                                 if (poi.isSelected()) {
-                                                    SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.POI.CONTENT_URI, "_id="+poi.getId(), null);
+                                                    poi.deleteHistory(mSphinx);
                                                 }
                                             }
                                         } else {

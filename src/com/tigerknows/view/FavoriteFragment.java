@@ -385,7 +385,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                                 public void onClick(DialogInterface arg0, int id) {
                                     if (id == DialogInterface.BUTTON_POSITIVE) {
                                         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-                                            SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.POI.CONTENT_URI, "_id="+mPOIList.get(mSelectIndex).getId(), null);
+                                            mPOIList.get(mSelectIndex).deleteFavorite(mSphinx);
                                         } else {
                                             SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.Favorite.CONTENT_URI, "_id="+mTrafficList.get(mSelectIndex).getId(), null);
                                         }
@@ -482,7 +482,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                                         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
                                             for(POI poi : mPOIList) {
                                                 if (poi.isSelected()) {
-                                                    SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.POI.CONTENT_URI, "_id="+poi.getId(), null);
+                                                    poi.deleteFavorite(mSphinx);
                                                 }
                                             }
                                         } else {
