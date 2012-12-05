@@ -283,6 +283,21 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             findViews();
             setListener();
             
+            final double lastLon = Double.parseDouble(TKConfig.getPref(mContext, TKConfig.PREFS_LAST_LON, "361"));
+            final double lastLat = Double.parseDouble(TKConfig.getPref(mContext, TKConfig.PREFS_LAST_LAT, "361"));
+            final int lastZoomLevel = Integer.parseInt(TKConfig.getPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(TKConfig.ZOOM_LEVEL_DEFAULT)));
+
+            final Position lastPosition = new Position(lastLat, lastLon);
+            Log.i(TAG,"onCreate positon,zoomLevel:"+lastPosition+","+lastZoomLevel);
+            if(Util.inChina(lastPosition)){
+                Log.i(TAG,"onCreate using existing position and zoomLevel");
+                mMapView.centerOnPosition(lastPosition, lastZoomLevel);
+            }else{
+                Log.i(TAG,"onCreate use default position and zoomLevel");
+                mMapView.centerOnPosition(TKConfig.DEFAULT_POSITION, TKConfig.ZOOM_LEVEL_DEFAULT);
+            }
+            updateCityInfo();
+            
             mHandler=new Handler(){
                 @Override
                 public void handleMessage(Message msg) {
@@ -465,7 +480,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             EventRegistry.addEventListener(mMapView, MapView.EventType.MOVEEND, new MapView.MoveEndEventListener(){
                 @Override
                 public void onMoveEndEvent(MapView mapView, Position position) {
-                    Log.i(TAG,"MapView.MoveEndEventListener position:"+position.toString());
                     mActionLog.addAction(ActionLog.MapMove);
                     mHandler.sendEmptyMessage(MAP_MOVE);
                     int zoomLevel = Math.round(mapView.getZoomLevel());
@@ -723,23 +737,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 }
             });
 
-            // get the preferences out of the database
-            
-            final double lastLon = Double.parseDouble(TKConfig.getPref(mContext, TKConfig.PREFS_LAST_LON, "361"));
-            final double lastLat = Double.parseDouble(TKConfig.getPref(mContext, TKConfig.PREFS_LAST_LAT, "361"));
-            final int lastZoomLevel = Integer.parseInt(TKConfig.getPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(TKConfig.ZOOM_LEVEL_DEFAULT)));
-
-            final Position lastPosition = new Position(lastLat, lastLon);
-            Log.i(TAG,"onCreate positon,zoomLevel:"+lastPosition+","+lastZoomLevel);
-            if(Util.inChina(lastPosition)){
-                Log.i(TAG,"onCreate using existing position and zoomLevel");
-                mMapView.centerOnPosition(lastPosition, lastZoomLevel);
-            }else{
-                Log.i(TAG,"onCreate use default position and zoomLevel");
-                mMapView.centerOnPosition(TKConfig.DEFAULT_POSITION, TKConfig.ZOOM_LEVEL_DEFAULT);
-            }
-            updateCityInfo();
-            
             if(mMapView.getCompass()!=null){
                 mMapView.getCompass().setVisible(mSensorOrientation);
                 mMapView.getCompass().addEventListener(EventType.TOUCH, new Compass.TouchEventListener() {
@@ -833,8 +830,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         mMenuView.setVisibility(View.VISIBLE);
         mControlView.setVisibility(View.VISIBLE);
         Sphinx.this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        int zoomLevel = Math.round(mMapView.getZoomLevel());
-        mScaleView.setMetersPerPixelAtZoom((float)Util.metersPerPixelAtZoom(CONFIG.TILE_SIZE, zoomLevel, mMapView.getCenterPosition().getLat()), zoomLevel);
     }
 
     @Override

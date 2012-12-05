@@ -194,7 +194,8 @@ public class LocationUpload {
                     feedbackUpload.setup(criteria);
                 }
                 feedbackUpload.query();
-                if (feedbackUpload.getStatusCode() == BaseQuery.STATUS_CODE_NETWORK_OK) {
+                Response response = feedbackUpload.getResponse();
+                if (response != null && response.getResponseCode() == Response.RESPONSE_CODE_OK) {
                     synchronized (writeLock) {
                         if (dataGps == null || dataNetwork == null) {
                             return;
