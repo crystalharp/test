@@ -5,6 +5,7 @@
 package com.tigerknows.view.discover;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
@@ -178,6 +179,23 @@ public class TuangouDetailFragment extends DiscoverBaseFragment implements View.
             } else {
                 mShangjiaMarkerImv.setImageDrawable(null);
             }
+        }
+    };
+    
+    protected DialogInterface.OnClickListener mCancelLoginListener = new DialogInterface.OnClickListener() {
+        
+        @Override
+        public void onClick(DialogInterface arg0, int arg1) {
+            if (mBaseQuerying != null && BaseQuery.API_TYPE_DATA_OPERATION.equals(mBaseQuerying.getAPIType())) {
+                Hashtable<String, String> criteria = mBaseQuerying.getCriteria();
+                if (criteria != null && criteria.containsKey(BaseQuery.SERVER_PARAMETER_DATA_TYPE)) {
+                    String dataType = criteria.get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+                    if (DataOperation.DATA_TYPE_DINGDAN.equals(dataType)) {
+                        mBaseQuerying = null;
+                    }
+                }
+            }
+            isReLogin();
         }
     };
     
