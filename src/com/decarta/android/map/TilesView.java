@@ -189,7 +189,7 @@ public class TilesView extends GLSurfaceView {
 	 */
 	private InfoWindow infoWindow = new InfoWindow();
 	
-	public static boolean OneBitmapMapText = true;
+	public static boolean FullScreenDrawMapText = false;
 	private MapText mapText = new MapText();
     private long refreshMyLocationTime=0;
     boolean isMyLocation = false;
@@ -3331,18 +3331,19 @@ public class TilesView extends GLSurfaceView {
                                     mapText.canvasSize.x=displaySize.x;
                                     mapText.canvasSize.y=displaySize.y;
                                     XYFloat offset = new XYFloat(0, 0);
-                                    float x = findPower2(mapText.canvasSize.x)-mapText.canvasSize.x;
-                                    float y =findPower2(mapText.canvasSize.y)-mapText.canvasSize.y;
-                                    offset.x = x/2;
-                                    offset.y = y/2;
-                                    mapText.canvasSize.x += x;
-                                    mapText.canvasSize.y += y;
-                                    mapText.setOffset(offset, new RotationTilt());
-                                    LogWrapper.d("TilesView", "tileTextCanvasSize="+mapText.canvasSize+",offset="+offset);
-                                    if (OneBitmapMapText && (mapText.bitmap == null || mapText.bitmap.isRecycled())) {
-                                        Bitmap.Config config = Bitmap.Config.ARGB_4444;
-                                        mapText.bitmap = Bitmap.createBitmap(mapText.canvasSize.x, mapText.canvasSize.y, config);
+                                    if (FullScreenDrawMapText) {
+                                        float x = findPower2(mapText.canvasSize.x)-mapText.canvasSize.x;
+                                        float y =findPower2(mapText.canvasSize.y)-mapText.canvasSize.y;
+                                        offset.x = x/2;
+                                        offset.y = y/2;
+                                        mapText.canvasSize.x += x;
+                                        mapText.canvasSize.y += y;
+                                        if (mapText.bitmap == null || mapText.bitmap.isRecycled()) {
+                                            Bitmap.Config config = Bitmap.Config.ARGB_4444;
+                                            mapText.bitmap = Bitmap.createBitmap(mapText.canvasSize.x, mapText.canvasSize.y, config);
+                                        }
                                     }
+                                    mapText.setOffset(offset, new RotationTilt());
                                 }
 	                            for (int i = topDist; i <= bottomDist; i++) {
 	                                int yi = centerXYZ.y - i;
@@ -3433,10 +3434,10 @@ public class TilesView extends GLSurfaceView {
                                 long time = System.nanoTime();
                                 if (!(zoomingL || fading || movingL || rotatingX || rotatingZ) &&
                                         time - mapText.lastTime >= 1000000000*1.5 && 
-                                        (drawFullTile || time - mapText.lastTime >= 1000000000*6)) {
+                                        (drawFullTile || time - mapText.lastTime >= 1000000000*2)) {
                                     XYFloat mapTextScreenXY = mercXYToScreenXYConv(mapTextMercXY, mapTextZoomLevel);
-                                    if (Math.abs(mapTextScreenXY.x - displaySize.x / 2) > (mapText.canvasSize.x - displaySize.x) / 2
-                                            || Math.abs(mapTextScreenXY.y - displaySize.y / 2) > (mapText.canvasSize.y - displaySize.y) / 2
+                                    if (Math.abs(mapTextScreenXY.x - displaySize.x / 2) > (FullScreenDrawMapText ? (mapText.canvasSize.x - displaySize.x) / 2 : 8)
+                                            || Math.abs(mapTextScreenXY.y - displaySize.y / 2) > (FullScreenDrawMapText ? (mapText.canvasSize.y - displaySize.y) / 2 : 8)
                                             || mapTextZoomLevel != zoomLevel
                                             || (mapText.drawNum != drawNum)) {
                                         same = false;
@@ -3463,7 +3464,7 @@ public class TilesView extends GLSurfaceView {
                     //draw the tile text
                     if(mapText.isVisible() && Math.abs(zoomLevel-mapText.getZoomLevel()) < 1) {
                         double scaleF1=Math.pow(2,zoomLevel-mapText.getZoomLevel());
-                        if (OneBitmapMapText) {
+                        if (FullScreenDrawMapText) {
                             if (zoomLevel-mapText.getZoomLevel() == 0) {
                                 double topLeftXf1 = centerXY.x * scaleF1 - displaySize.x / 2;
                                 double topLeftYf1 = centerXY.y * scaleF1 + displaySize.y / 2;
@@ -4028,9 +4029,12 @@ public class TilesView extends GLSurfaceView {
         private Bitmap drawMapWordItemToBitmap(MapWord mapWord) {
             int fontSize = mapWord.getFontSize();
             tilePText.setTextSize(fontSize);
-
+            String name = mapWord.getName();
+            
             float width=tilePText.measureText(mapWord.getName());
+            int orgWidth = (int)width;
             float height=(-tilePText.ascent()+tilePText.descent());
+            int orgHeight = (int)height;
 //            int iconWidth = 0;
             
 //            MapWord.Icon icon = mapWord.icon;
@@ -4072,10 +4076,32 @@ public class TilesView extends GLSurfaceView {
 //            if (iconBm != null) {
 //                canvas.drawBitmap(iconBm, 0, 0, tilePText);
 //            }
+            MapWord.Icon icon = mapWord.icon;
+            if (icon != null) {
+                if (MapWord.Icon.TYPE_EXPEND == icon.type) {
+                    float padding = Globals.g_metrics.scaledDensity*2;
+                    NinePatchDrawable drawable = MapWord.Icon.getNinePatchDrawable(icon.index);
+                    if (drawable != null) {
+                        
+                        drawable.setBounds((int)(x), 
+                                (int)(y-orgHeight), 
+                                (int)(x+orgWidth), 
+                                (int)(y+2*padding));
+                        drawable.draw(canvas);
+//                        if (name.length()%2 != 0) {
+//                            x+=padding;
+//                        }
+//                        y+=padding;
+                    }
+                }
+            }
             
-            tilePText.setColor(mapWord.getOutlineColor() | 0xff000000); //ɫ ͸RGB
+            if (MapWord.Icon.TYPE_EXPEND == icon.type) {
+                tilePText.setColor(0x00000000);
+            } else {
+                tilePText.setColor(mapWord.getOutlineColor() | 0xff000000); //? ?RGB
+            }
             tilePText.setStyle(Style.STROKE); //ֻ
-            String name = mapWord.getName();
             if (Math.abs(slope) > 10) {
                 canvas.save();
                 canvas.rotate(slope, width/2, height/2);
@@ -4395,7 +4421,7 @@ public class TilesView extends GLSurfaceView {
 				infoWindow.textureRef=0;
 				infoWindow.texImageChanged=true;
 			}
-			if(OneBitmapMapText && mapText.textureRef!=0){
+			if(FullScreenDrawMapText && mapText.textureRef!=0){
                 deleteTextureRef(gl,mapText.textureRef);
                 mapText.textureRef=0;
 			}
