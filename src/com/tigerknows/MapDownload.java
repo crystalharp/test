@@ -1114,6 +1114,9 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     }
 
     private synchronized void download() {
+        if (mMapEngine.isExternalStorage() == false) {
+            return;
+        }
         if (mDownloadCityTaskMap.size() < 1) {
             DownloadCity downloadCity = getFirstWaitingDownloadCity();
             if (downloadCity != null) {
