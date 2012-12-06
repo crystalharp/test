@@ -305,6 +305,23 @@ JNIEXPORT jbyteArray JNICALL Java_com_tigerknows_maps_Ca_k(JNIEnv *env, jobject 
     return barray;
 }
 
+JNIEXPORT jint JNICALL Java_com_tigerknows_maps_Ca_yv(JNIEnv *env, jobject thiz,
+		jdouble lat, jdouble lon) {
+    #ifdef DEBUG
+    sprintf(message, "............Java_com_tigerknows_maps_Ca_yv...tk_get_rid_by_point...lat,%lf...lon:%lf", lat, lon);
+    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
+    #endif
+    struct tk_latlon latlon = {lon, lat};
+    struct tk_point point;
+    tk_latlon2scr(&latlon, &point);
+    int ret = tk_get_rid_by_point(&point);
+    #ifdef DEBUG
+    sprintf(message, "............Java_com_tigerknows_maps_Ca_yv...end...ret:%d", ret);
+    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
+    #endif
+    return ret;
+}
+
 //latlon to src
 JNIEXPORT jbyteArray JNICALL Java_com_tigerknows_maps_Ca_l(JNIEnv *env, jobject thiz,
         jdouble lat, jdouble lon) {
@@ -418,7 +435,7 @@ JNIEXPORT jint JNICALL Java_com_tigerknows_maps_Ca_q(JNIEnv *env, jobject thiz, 
     return ret;
 }
 
-//引擎声明的默认返回的联想词个数#define SWCOUNT 15
+//引擎声明的默认返回的联想词个�?define SWCOUNT 15
 JNIEXPORT jint JNICALL Java_com_tigerknows_maps_Ca_r(JNIEnv *env, jobject thiz) {
     #ifdef DEBUG
     sprintf(message, "...........Java_com_tigerknows_maps_Ca_r...SWCOUNT....");
@@ -901,7 +918,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_tigerknows_maps_Ca_yk(JNIEnv *env, jobject
     return barray;
 }
 
-//remove city data（.dat文件）
+//remove city data�?dat文件�?
 JNIEXPORT void JNICALL Java_com_tigerknows_maps_Ca_yl(JNIEnv *env, jobject thiz, jstring jcityname) {
    const char *cityname = (*env)->GetStringUTFChars(env, jcityname, 0);
     #ifdef DEBUG
@@ -937,7 +954,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_tigerknows_maps_Ca_ym(JNIEnv *env, jobject
     return versionByte;
 }
 
-//remove region data（.dat文件 .chk文件）
+//remove region data�?dat文件 .chk文件�?
 JNIEXPORT void JNICALL Java_com_tigerknows_maps_Ca_yn(JNIEnv *env, jobject thiz, jint regionId) {
     #ifdef DEBUG
     sprintf(message, "...........Java_com_tigerknows_maps_Ca_yn...tk_remove_region_data...regionId:%d..", regionId);

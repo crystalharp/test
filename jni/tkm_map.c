@@ -960,6 +960,7 @@ int  tk_get_screen_label(double lon, double lat, int w, int h, int zoom) {
 int tk_get_tile_buffer(int tile_x, int tile_y, int zoom) {
     struct envelope el;
     int level_24 = 0;
+    int flag = 0;
     //int diff_lv = tk_engine.bl - tk_engine.current_z;
     //
     //if (zoom <= LEVEL_SKIP)
@@ -997,7 +998,9 @@ int tk_get_tile_buffer(int tile_x, int tile_y, int zoom) {
     memset(lostdata, 0, sizeof(struct tk_map_lostdata) * TK_LOST_DATA_PIECE);
 
     get_tile_box(tile_x, tile_y, tk_engine.bl_dif, &el, TILE_SIZE, TILE_SIZE);
-    draw_tile(tile_x,tile_y,&el);
+    flag = draw_tile(tile_x,tile_y,&el);
+    //if (flag > 0)
+    //    return flag;
     if (l_opt == 1) {
         memcpy(out_buf, inner_buf, inner_buf_size);
     }
@@ -1010,7 +1013,10 @@ int tk_get_tile_buffer(int tile_x, int tile_y, int zoom) {
         tk_gdi.pd = (tk_pixel *)inner_buf;
     }
 
-    if( lostdata_idx > 0)
+    if (flag > 0)
+        return flag;
+
+    if (lostdata_idx > 0)
         return -1;
 
     return 0;

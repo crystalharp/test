@@ -273,4 +273,5 @@ char *tk_get_poi_name(int x, int y, int flag);
 int tk_init_icon_num( int icon_num);
 void tk_set_icon(int icon_id, int w, int h);
 extern void tk_bmp2png();
+extern int tk_get_rid_by_point(struct tk_point *pt);
 #endif

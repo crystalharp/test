@@ -274,6 +274,7 @@ static void release_reg(int idx)
     free(reg[idx].code_read_con);
     if (reg[idx].verifycode != NULL) {
         free(reg[idx].verifycode);
+        reg[idx].verifycode = NULL;
     }
     free(reg[idx].cached_polygon);
 }
@@ -1169,6 +1170,12 @@ enum EN_TKREADSTATE {
 	TK_READ_TILE_OUT_BORDER,
 	TK_READ_TILE_MISS,
 	TK_READ_MAX,
+    TK_READ_TILE_LENGTH_ERR,
+    TK_READ_TILE_FTNUM_ERR,
+    TK_READ_TILE_NAMENUM_ERR,
+    TK_READ_TILE_POINTNUM_ERR,
+    TK_READ_FT_POINTNUM_ERR,
+    TK_READ_FT_NAMELEN_ERR
 };
 
 static struct tk_pool *cur_mem_pool;
@@ -1431,6 +1438,11 @@ static void  morton_read(int index, int *code, int *level)
     *level = (int)pointer[0] >> 4;
     *code = (int)(((pointer[0] & 0xf) << 16) | (pointer[1] << 8) | (pointer[2]));
     return;
+}
+static int update_tile(int x, int y, int region_id) 
+{
+    tk_remove_region_data(region_id);
+        return 0;
 }
 
 
@@ -1744,9 +1756,8 @@ static int read_point(struct tk_point *res, int must)
     }
 }
 
-static int read_feature(int rid, int* size, struct feature *this)
+static int read_feature(int rid, int* size, struct feature *this, int point_tile, int namelen_tile)
 {
-    //printf("########## this %p\n", this);
     int i;
     int need_read;
     int point_num = 0;
@@ -1770,6 +1781,9 @@ static int read_feature(int rid, int* size, struct feature *this)
         }
         if (read_tile_databuf(1) == 1) {
             this->name_length = (short)read_tile_databuf(8);
+            if (this->name_length < 0 || this->name_length > namelen_tile) {
+                return TK_READ_FT_NAMELEN_ERR;
+            }
             this->name = cur_mem_pool->tk_map_names + cur_mem_pool->cur_name;
             bit_read_string(this->name_length, this->name);
             cur_mem_pool->cur_name += this->name_length;
@@ -1805,6 +1819,9 @@ static int read_feature(int rid, int* size, struct feature *this)
         }
         else {
             this->point_nums = 1;
+        }
+        if (this->point_nums > point_tile || this->point_nums < 0) {
+            return TK_READ_FT_POINTNUM_ERR;
         }
         this->points = cur_mem_pool->tk_points + cur_mem_pool->cur_point;
         /* this->type is layer number 0-40 */
@@ -1844,8 +1861,9 @@ static int read_feature(int rid, int* size, struct feature *this)
         // , this->right_bottom.x, this->right_bottom.y));
         cur_mem_pool->cur_point += this->point_nums;
         //   TK_TRACE_DEBUG(("The type %d and point number %d", this->type,this->point_nums ));
-    } else {
         need_read = 0;
+    } else {
+        need_read = 1;
     }
     *size = (*size) + 1;
     return need_read;
@@ -1865,7 +1883,8 @@ static struct tile* get_tile_data_struct(int fnum, int point_num, int name_num)
     return res;
 }
 
-static struct tile *read_tile(int x, int y, short *state, int region_id) 
+#define DATA_ERROR_NUMBER 100000
+static int read_tile(int x, int y, short *state, int region_id, struct tile **tl_res) 
 {
     struct tile *res;
     int size;
@@ -1877,7 +1896,8 @@ static struct tile *read_tile(int x, int y, short *state, int region_id)
     struct feature *ftail_clipped = NULL;
     int lvl_dif = tk_engine.bl - tk_engine.current_z;
     if (seek_tile(x, y, state, region_id, &tile_length) != TK_READ_OK) {
-        return NULL;
+        *tl_res = NULL;
+        return TK_READ_OK;//TK_READ_TILE_MISS;
     }
     if (lvl_dif == 2) {
         len = (tk_tile_databuf[buf_pos] << 8) + tk_tile_databuf[buf_pos + 1];
@@ -1903,15 +1923,48 @@ static struct tile *read_tile(int x, int y, short *state, int region_id)
             free(tk_tile_databuf);
             tk_tile_databuf = NULL;
         }
-        return NULL;
+        *tl_res = NULL;
+        return TK_READ_OK;// TK_READ_TILE_LENGTH_ERR;
     }
     res = get_tile_data_struct(len + 1, point_num + 1, name_num + 1);
+    if (res->fnum <= 0 && len > DATA_ERROR_NUMBER) {
+        if (tk_tile_databuf != NULL) {
+            free(tk_tile_databuf);
+            tk_tile_databuf = NULL;
+        }
+        return TK_READ_TILE_FTNUM_ERR;
+    }
+    if (name_num < 0 || name_num > DATA_ERROR_NUMBER) {
+        if (tk_tile_databuf != NULL) {
+            free(tk_tile_databuf);
+            tk_tile_databuf = NULL;
+        }
+        return TK_READ_TILE_NAMENUM_ERR;
+    }
+
+    if (point_num < 0 || point_num > DATA_ERROR_NUMBER) {
+        if (tk_tile_databuf != NULL) {
+            free(tk_tile_databuf);
+            tk_tile_databuf = NULL;
+        }
+        return TK_READ_TILE_POINTNUM_ERR;
+    }
     res->region_id = region_id;
     res->length = tile_length;
     cur_mem_pool = &res->mem_pool;
     size = 0;
     while (size < len) {
-        if (read_feature(region_id, &size, res->features + (res->fnum))) {
+        int ft_flag = read_feature(region_id, &size, res->features + (res->fnum), point_num, name_num);
+        //printf("flag == %d\n", ft_flag);
+        if (ft_flag > 0) {
+            if (tk_tile_databuf != NULL) {
+                free(tk_tile_databuf);
+                tk_tile_databuf = NULL;
+            }
+            return ft_flag;
+
+        }
+        if (ft_flag == 0) {
             struct feature *cur_ft = res->features + (res->fnum);
             struct feature *pre_ft = res->features + (res->fnum - 1);
             if(pre_ft->name_index != -1 && cur_ft->name_index == -1 && res->fnum != 0){
@@ -1974,7 +2027,8 @@ static struct tile *read_tile(int x, int y, short *state, int region_id)
         tk_tile_databuf = NULL;
     }
     cur_mem_pool = NULL;
-    return res;
+    *tl_res = res;
+    return TK_READ_OK;
 }
 
 static void tile_delete_connect(struct tile* temp)
@@ -2185,7 +2239,7 @@ static int set_cur_region(int rid)
 }
 
 /* el : tile's envelope */
-void increase_tile(struct envelope *bbox, int add_tile_bound)
+int  increase_tile(struct envelope *bbox, int add_tile_bound)
 {
     int cir_id = 0;
     int x, y;
@@ -2204,10 +2258,8 @@ void increase_tile(struct envelope *bbox, int add_tile_bound)
         add_tile_bound = 1 << tk_engine.bl_dif;
     else
         add_tile_bound = 1 << 0;*/
-    //printf("regnum_in_bound %d\n", regnum_in_bound);
     for (cir_id = 0; cir_id < regnum_in_bound; cir_id++) {
         if ((set_cur_region(reg_in_bound[cir_id])) == 0) { /* data file exist */
-            //printf("data file eixts\n");
             update_tile_ref(cir_id);
             memset(ver, 0, 6 + 1);
             if (tk_get_region_version(reg_in_bound[cir_id],ver) != -1) {
@@ -2220,20 +2272,28 @@ void increase_tile(struct envelope *bbox, int add_tile_bound)
                     if (index < 0) {
                         short state = 0;
                         struct tile *tempt;
-                        tempt = read_tile(x, y, &state, reg_in_bound[cir_id]);
-                        if (tempt != NULL) {
-                            tempt->is_active = 1;
-                            tempt->flag = tk_engine.tile_flag;
-                            add_tile(tempt);
+                        int flag;
+                        flag = read_tile(x, y, &state, reg_in_bound[cir_id], &tempt);
+                        if (flag == TK_READ_OK) {
+                            if (tempt != NULL) {
+                                tempt->is_active = 1;
+                                tempt->flag = tk_engine.tile_flag;
+                                add_tile(tempt);
 #ifdef LOG_LEVEL_DEBUG
-                            read_tile_num++;
+                                read_tile_num++;
 #endif
+                            }
+                        } else {
+                            update_tile(x, y, reg_in_bound[cir_id]);
+                            return  flag;
                         }
+
                     }
                 }
             }
         }
     }
+    return 0;
 #ifdef LOG_LEVEL_DEBUG
     struct tk_point pos;
     struct tk_latlon posT;
@@ -2283,14 +2343,14 @@ void get_tile_base_level_bound(int x, int y, int bl_dif, struct envelope *box) {
     }
 }
 
-void get_tile_by_xy(int x, int y, int add_tile_bound) {
+int get_tile_by_xy(int x, int y, int add_tile_bound) {
     struct envelope tile_bbox;
     get_tile_base_level_bound(x, y, tk_engine.bl_dif, &tile_bbox);
     //if (tk_engine.bl_dif > 0)
       //  add_tile_bound = 1 << tk_engine.bl_dif;
     //else
       //  add_tile_bound = 1 << 0;
-    increase_tile(&tile_bbox, add_tile_bound);
+    return increase_tile(&tile_bbox, add_tile_bound);
 }
 
 static void update_cur_buffer()
@@ -2588,6 +2648,7 @@ int load_tile(int x, int y, struct envelope *tile_box) {
     /* add 2012-03-12 */
     int add_tile_x,add_tile_y;
     int add_tile_bound;
+    int flag = 0;
     /*draw one tile ,add four other tile for drawing the line better
      * ...... ...... ......
      * ...1.. ...2.. ...3..
@@ -2616,7 +2677,9 @@ int load_tile(int x, int y, struct envelope *tile_box) {
         add_tile_bound = 1 << tk_engine.bl_dif;
     else
         add_tile_bound = 1 << 0;
-    get_tile_by_xy(x, y, add_tile_bound);
+    flag = get_tile_by_xy(x, y, add_tile_bound);
+    if (flag > 0) 
+        return flag;
     /* get outher four tile info */
     /*get_tile_by_xy(x, y + 1);
     get_tile_by_xy(x, y - 1);
@@ -2944,14 +3007,17 @@ static void set_tile_screen(struct envelope *env) {
 int current_rid = 0;
 int can_resuse_buffer = 0;
 
-void draw_tile(int x, int y, struct envelope *el) {
+int draw_tile(int x, int y, struct envelope *el) {
     struct envelope filter;
-    load_tile(x, y, el);
+    int flag = load_tile(x, y, el);
+    if (flag > 0)
+       return flag;
 
     current_rid = tk_get_current_city_id();
 
     set_tile_screen(&filter);
     draw_map(filter, 0);
+    return 0;
 }
 
 void draw_whole_map()
