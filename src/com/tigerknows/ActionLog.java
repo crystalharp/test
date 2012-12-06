@@ -3,7 +3,10 @@
  */
 package com.tigerknows;
 
+import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.maps.MapEngine;
+import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.util.CommonUtils;
 
@@ -1057,7 +1060,12 @@ public class ActionLog {
                         FeedbackUpload feedbackUpload = new FeedbackUpload(mContext);
                         Hashtable<String, String> criteria = new Hashtable<String, String>();
                         criteria.put(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG, str);
-                        feedbackUpload.setup(criteria);
+                        CityInfo cityInfo = Globals.g_Current_City_Info;
+                        int cityId = MapEngine.CITY_ID_BEIJING;
+                        if (cityInfo != null) {
+                            cityId = cityInfo.getId();
+                        }
+                        feedbackUpload.setup(criteria, cityId);
                         feedbackUpload.query();
                     }
                 }).start();

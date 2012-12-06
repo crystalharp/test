@@ -271,11 +271,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         
         mInputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);  
         mActionLog = ActionLog.getInstance(mContext);
-        mActionLog.onCreate();
-        mActionLog.addAction(ActionLog.LifecycleSelectCity, cityInfo.getCName());
-        if (Globals.g_User != null) {
-            mActionLog.addAction(ActionLog.UserReadSuccess);
-        }
         
         mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
         mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
@@ -298,11 +293,21 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             if(Util.inChina(lastPosition)){
                 Log.i(TAG,"onCreate using existing position and zoomLevel");
                 mMapView.centerOnPosition(lastPosition, lastZoomLevel);
+                Globals.g_Current_City_Info = mMapEngine.getCityInfo(mMapEngine.getCityId(lastPosition));
             }else{
                 Log.i(TAG,"onCreate use default position and zoomLevel");
                 mMapView.centerOnPosition(TKConfig.DEFAULT_POSITION, TKConfig.ZOOM_LEVEL_DEFAULT);
+                Globals.g_Current_City_Info = cityInfo;
             }
             updateCityInfo();
+            mActionLog.onCreate();
+            if (Globals.g_User != null) {
+                mActionLog.addAction(ActionLog.UserReadSuccess);
+            }
+            CityInfo currentCityInfo = Globals.g_Current_City_Info;
+            if (currentCityInfo != null && currentCityInfo.isAvailably()) {
+                mActionLog.addAction(ActionLog.LifecycleSelectCity, currentCityInfo.getCName());
+            }
             
             mHandler=new Handler(){
                 @Override
@@ -1208,6 +1213,10 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                     return true;
                 }
                 
+                if (mMenuView == null || mMenuView.getVisibility() != View.VISIBLE) {
+                    return true;
+                }
+                
                 mActionLog.addAction(ActionLog.KeyCodeBack);
                 if (!uiStackBack()) {
                     if (mFromIntent || mSnapMap) {
@@ -1222,7 +1231,10 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                             public void onClick(DialogInterface dialog, int id) {
                                 switch (id) {
                                     case DialogInterface.BUTTON_POSITIVE:
-                                        getFragment(uiStackPeek()).dismiss();
+                                        BaseFragment baseFragment = getFragment(uiStackPeek());
+                                        if (baseFragment != null) {
+                                            baseFragment.dismiss();
+                                        }
                                         Sphinx.this.finish();
                                         break;
                                     default:

@@ -36,7 +36,7 @@ public class FeedbackUpload extends BaseQuery {
     @Override
     protected void makeRequestParameters() throws APIException {
         super.makeRequestParameters();
-        addCommonParameters(requestParameters);
+        addCommonParameters(requestParameters, cityId);
         
         if (criteria == null) {
             throw new APIException(APIException.CRITERIA_IS_NULL);
