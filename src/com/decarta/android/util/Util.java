@@ -308,10 +308,29 @@ public class Util {
 		
 		return fitZoom;
 	}
+	
+    private static void correctToTKXY(XYDouble centerXY, int gxZoom) throws APIException {
+        long pixX = Math.round(centerXY.x);
+        long pixY = Math.round(centerXY.y);
+        if (pixY > Integer.MAX_VALUE || pixY < Integer.MIN_VALUE) {
+            throw APIException.INVALID_MERCATOR_Y_INFINITY;
+        }
+        float offsetPixX = (CONFIG.TILE_SIZE + ((int)pixX % CONFIG.TILE_SIZE)) % CONFIG.TILE_SIZE - CONFIG.TILE_SIZE / 2;
+        Position pos = mercPixToPos(centerXY, gxZoom);
+        double tkpixY = TKlat2pix(pos.getLat(), gxZoom);
+        float offsetPixY = (CONFIG.TILE_SIZE - ((int)tkpixY % CONFIG.TILE_SIZE)) % CONFIG.TILE_SIZE - CONFIG.TILE_SIZE / 2;
+        if (Math.abs(Math.abs(offsetPixX) - (CONFIG.TILE_SIZE / 2)) < 2) {
+            centerXY.x = centerXY.x + 2;
+            correctToTKXY(centerXY, gxZoom);
+        } else if (Math.abs(Math.abs(offsetPixY) - (CONFIG.TILE_SIZE / 2)) < 2) {
+            centerXY.y = centerXY.y - 2;
+            correctToTKXY(centerXY, gxZoom);
+        }
+    }
 
 	public static TileGridResponse handlePortrayMapRequest(XYDouble centerXY, int gxZoom) throws APIException{
 		TileGridResponse resp = new TileGridResponse();
-		
+		correctToTKXY(centerXY, gxZoom);
 		long pixX = Math.round(centerXY.x);
 		long pixY = Math.round(centerXY.y);
 		if(pixY>Integer.MAX_VALUE || pixY<Integer.MIN_VALUE){
@@ -327,16 +346,6 @@ public class Util {
         LogWrapper.d("TilesView", "handlePortrayMapRequest() fixedSeedRowIdx="+centerXY+","+fixedSeedRowIdx+","+(int) Math.floor((double) TKlat2pix(pos.getLat(), gxZoom) / CONFIG.TILE_SIZE));
         resp.centerXYZTK = mercPixToTKXYZ(centerXY, gxZoom);
 		resp.setFixedGridPixelOffset(new XYFloat(-offsetPixX, offsetPixY));
-		if (-offsetPixX == CONFIG.TILE_SIZE/2) {
-		    resp.centerXYZTK.x += 1;
-		} else if (offsetPixX == CONFIG.TILE_SIZE/2) {
-            resp.centerXYZTK.x -= 1;
-		}
-		if (offsetPixY == CONFIG.TILE_SIZE/2) {
-            resp.centerXYZTK.y += 1;
-        } else if (-offsetPixY == CONFIG.TILE_SIZE/2) {
-            resp.centerXYZTK.y -= 1;
-        }
         LogWrapper.d("TilesView", "handlePortrayMapRequest() getFixedGridPixelOffset="+resp.getFixedGridPixelOffset());
 		resp.centerXYZ = new XYZ(fixedSeedColumnIdx, fixedSeedRowIdx, gxZoom);
 		resp.centerXY=new XYDouble(centerXY.x,centerXY.y);
@@ -361,7 +370,6 @@ public class Util {
     
     public static XYZ mercPixToTKXYZ(XYDouble mercPix, int zoomLevel) {   
         Position pos = mercPixToPos(mercPix, zoomLevel);
-//        Position pos = TigerknowsConfig.DEFAULT_POSITION;
         double pixX = TKlon2pix(pos.getLon(), zoomLevel);
         double pixY = TKlat2pix(pos.getLat(), zoomLevel);
         int fixedSeedColumnIdx = (int) Math.floor((double) pixX / CONFIG.TILE_SIZE);
