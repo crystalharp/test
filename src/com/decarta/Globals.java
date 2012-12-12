@@ -44,21 +44,7 @@ public class Globals {
     
     public static int g_ApiVersion = android.os.Build.VERSION.SDK_INT;
     
-    static {
-        synchronized (userLock) {
-            g_Session_Id = null;
-            g_User = null;
-            Session session = Session.loadDefault(TKApplication.getInstance());
-            if (session != null && session.isValid()) {
-                g_Session_Id = session.getSessionId();
-            }
-            g_User = User.loadDefault(TKApplication.getInstance());
-            if (TextUtils.isEmpty(g_Session_Id) || g_User == null) {
-                g_Session_Id = null;
-                g_User = null;
-            }    	
-        }
-    	
+    static {    	
     	HashMap<Integer, XYInteger> pic = new HashMap<Integer, XYInteger>();
     	pic.put(TKConfig.PICTURE_DISCOVER_HOME, new XYInteger(538, 478));
         pic.put(TKConfig.PICTURE_TUANGOU_LIST, new XYInteger(312, 180));
@@ -123,6 +109,22 @@ public class Globals {
     public static String getPicWidthHeight(int key) {
         XYInteger xyInteger = sOptimalAdaptive.get(key);
         return xyInteger.x+"_"+xyInteger.y;
+    }
+    
+    public static void readSessionAndUser(Context context) {
+        synchronized (userLock) {
+            g_Session_Id = null;
+            g_User = null;
+            Session session = Session.loadDefault(context);
+            if (session != null && session.isValid()) {
+                g_Session_Id = session.getSessionId();
+            }
+            g_User = User.loadDefault(context);
+            if (TextUtils.isEmpty(g_Session_Id) || g_User == null) {
+                g_Session_Id = null;
+                g_User = null;
+            }       
+        }
     }
     
     public static void storeSessionAndUser(Context context, UserRespnose userResponse) {
