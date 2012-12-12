@@ -128,6 +128,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         } else if (mPOILsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
         }
+        mPOIAdapter.notifyDataSetChanged();
     }
 
     @Override

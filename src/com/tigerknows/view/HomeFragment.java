@@ -335,9 +335,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
                             }
                             criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD_TYPE, DataQuery.KEYWORD_TYPE_TAG);
                             poiQuery.setup(criteria, cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
-                            mSphinx.queryStart(poiQuery);
-                            ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup();
-                            mSphinx.showView(poiQuery.getTargetViewId());
+                            BaseFragment baseFragment = mSphinx.getFragment(poiQuery.getTargetViewId());
+                            if (baseFragment != null && baseFragment instanceof POIResultFragment) {
+                                mSphinx.queryStart(poiQuery);
+                                ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup();
+                                mSphinx.showView(poiQuery.getTargetViewId());
+                            }
                         }
                     });
                 } else {
