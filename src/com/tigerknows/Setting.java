@@ -58,8 +58,10 @@ public class Setting extends BaseActivity {
         mRightTxv.setVisibility(View.GONE);
 
         mBeans = new ArrayList<DataBean>();
-        DataBean dataBean = new DataBean(mThis.getString(R.string.settings_openg_gps), mThis.getString(R.string.settings_gps_description));
+        DataBean dataBean = null;
+        dataBean = new DataBean(mThis.getString(R.string.settings_openg_gps), mThis.getString(R.string.settings_gps_description));
         dataBean.showIcon = true;
+        dataBean.type = DataBean.TYPE_GPS;
         mBeans.add(dataBean);
         
         dataBean = new DataBean(mThis.getString(R.string.settings_acquire_wakelock), mThis.getString(R.string.settings_acquire_wakelock_description));
@@ -76,14 +78,7 @@ public class Setting extends BaseActivity {
             }
         };
         dataBean.showIcon = false;
-        mBeans.add(dataBean);
-        
-        dataBean = new DataBean("Config", "View or Modify config.txt");
-        dataBean.showIcon = false;
-        mBeans.add(dataBean);
-        
-        dataBean = new DataBean("Clear data", "clear user data");
-        dataBean.showIcon = false;
+        dataBean.type = DataBean.TYPE_WAKELOCK;
         mBeans.add(dataBean);
         
         mSettingAdatpter = new SimpleAdapter(mThis, mBeans);
@@ -111,67 +106,23 @@ public class Setting extends BaseActivity {
         mListView.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-                switch (arg2) {
-                    case 0:
+            public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
+                DataBean dataBean = mBeans.get(index);
+                if (dataBean == null) {
+                    return;
+                }
+                int type = dataBean.type;
+                switch (type) {
+                    case DataBean.TYPE_GPS:
                         mActionLog.addAction(ActionLog.SettingGPS, checkGPS() ? "0" : "1");
                         Intent intent = new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
                         startActivityForResult(intent, R.id.activity_setting_location);
                         break;
-                    case 1:
-                        mBeans.get(1).checked = !mBeans.get(1).checked;
-                        mActionLog.addAction(mBeans.get(1).checked ? ActionLog.SettingAcquireWakeLockYes : ActionLog.SettingAcquireWakeLockNo);
+                    case DataBean.TYPE_WAKELOCK:
+                        dataBean.checked = !dataBean.checked;
+                        mActionLog.addAction(dataBean.checked ? ActionLog.SettingAcquireWakeLockYes : ActionLog.SettingAcquireWakeLockNo);
                         mSettingAdatpter.notifyDataSetChanged();
                         switchWakeLock();
-                        break;
-                    case 2:
-                        Intent intent2 = new Intent(Intent.ACTION_VIEW);
-                        File file = new File(TKConfig.getDataPath(true)+"config.txt");
-                        if (file.exists()) {
-                            Uri uri = Uri.fromFile(file);
-                            intent2.setDataAndType(uri, "text/plain");
-                            startActivity(intent2);
-                        } else {
-                            Toast.makeText(mThis, "config.ini not exists!", Toast.LENGTH_LONG).show();
-                        }
-                        break;
-                    case 3:
-                        Class<?> iPackageDataObserverClass = null;
-                        try {
-                            iPackageDataObserverClass = Class.forName("android.content.pm.IPackageDataObserver");
-                        } catch (ClassNotFoundException e1) {
-                            // TODO Auto-generated catch block
-                            e1.printStackTrace();
-                        }
-
-                        Class<ActivityManager> activityManagerClass=ActivityManager.class;
-                        ActivityManager activityManager=(ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-
-                        Method clearDataMethod=activityManagerClass.getMethods()[0];
-
-                        Object iPackageDataObserverObject = Proxy.newProxyInstance(
-                            Settings.class.getClassLoader(), new Class[]{iPackageDataObserverClass},
-                                                new InvocationHandler() {
-
-                                    public Object invoke(Object proxy, Method method, Object[] args)
-                                            throws Throwable {
-                                        return null;
-                                    }
-                                });
-
-                        try {
-                            clearDataMethod.invoke(activityManager, mThis.getApplicationInfo().packageName, iPackageDataObserverObject);
-                        } catch (IllegalArgumentException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (IllegalAccessException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (InvocationTargetException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-
                         break;
                     default:
                         break;
@@ -183,13 +134,19 @@ public class Setting extends BaseActivity {
     protected void onResume() {
         super.onResume();
         boolean enableGps = checkGPS();
-        if (enableGps) {
-            mBeans.get(0).title = mThis.getString(R.string.settings_close_gps);
-        } else {
-            mBeans.get(0).title = mThis.getString(R.string.settings_openg_gps);
+        DataBean dataBean = null;
+        dataBean = getDataBeanByType(DataBean.TYPE_GPS);
+        if (dataBean != null) {
+            if (enableGps) {
+                dataBean.title = mThis.getString(R.string.settings_close_gps);
+            } else {
+                dataBean.title = mThis.getString(R.string.settings_openg_gps);
+            }
         }
-        mBeans.get(1).checked = TextUtils.isEmpty(TKConfig.getPref(mThis, TKConfig.PREFS_ACQUIRE_WAKELOCK));
-        mBeans.get(2).checked = BaseQuery.Test;
+        dataBean = getDataBeanByType(DataBean.TYPE_WAKELOCK);
+        if (dataBean != null) {
+            dataBean.checked = TextUtils.isEmpty(TKConfig.getPref(mThis, TKConfig.PREFS_ACQUIRE_WAKELOCK));
+        }
         mSettingAdatpter.notifyDataSetChanged();
     }
     
@@ -245,8 +202,24 @@ public class Setting extends BaseActivity {
         }
         return enableGps;        
     }
+    
+    public DataBean getDataBeanByType(int type) {
+        for(int i = mBeans.size()-1; i >= 0; i--) {
+            DataBean dataBean = mBeans.get(i);
+            if (dataBean.type == type) {
+                return dataBean;
+            }
+        }
+        return null;
+    }
 
     private class DataBean {
+        
+        static final int TYPE_GPS = 1;
+        static final int TYPE_WAKELOCK = 2;
+        
+        protected int type;
+        
         protected String title;
 
         protected String description;
