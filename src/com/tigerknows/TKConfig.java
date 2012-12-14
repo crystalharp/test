@@ -39,6 +39,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.os.StatFs;
+import android.telephony.CellLocation;
 import android.telephony.NeighboringCellInfo;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -369,18 +370,17 @@ public class TKConfig {
     public static int[] getCellLocation() {
         int lac = -1;
         int cid = -1;
-        if (sTelephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_GSM) {
-            GsmCellLocation cellLocation = (GsmCellLocation)sTelephonyManager.getCellLocation();
-            if (cellLocation != null) {
-                lac = cellLocation.getLac();
-                cid = cellLocation.getCid();
-            }
-        } else if (sTelephonyManager.getPhoneType() == TelephonyManager.PHONE_TYPE_CDMA) {
-            CdmaCellLocation cellLocation = (CdmaCellLocation)sTelephonyManager.getCellLocation();
-            if (cellLocation != null) {
-                int sid = cellLocation.getSystemId();
-                lac = (sid << 16) + cellLocation.getNetworkId();
-                cid = cellLocation.getBaseStationId();
+        CellLocation cellLocation = sTelephonyManager.getCellLocation();
+        if (cellLocation != null) {
+            if (cellLocation instanceof GsmCellLocation) {
+                GsmCellLocation gsmCellLocation = (GsmCellLocation)cellLocation;
+                lac = gsmCellLocation.getLac();
+                cid = gsmCellLocation.getCid();
+            } else if (cellLocation instanceof CdmaCellLocation) {
+                CdmaCellLocation cdmaCellLocation = (CdmaCellLocation)cellLocation;
+                int sid = cdmaCellLocation.getSystemId();
+                lac = (sid << 16) + cdmaCellLocation.getNetworkId();
+                cid = cdmaCellLocation.getBaseStationId();
             }
         }
         
@@ -765,123 +765,121 @@ public class TKConfig {
     }
     
     public static void readConfig() {
-        if (CONFIG.LOG_LEVEL >= 4) {
-            String mapPath = TKConfig.getDataPath(true);
-            if (TextUtils.isEmpty(mapPath)) {
-                return;
-            }
-            File file = new File(mapPath+"config.txt");
-            if (file.exists()) {
-                try {
-                    FileInputStream fis = new FileInputStream(file);
-                    String text = CommonUtils.readFile(fis);
-                    fis.close();
-                    int start = text.indexOf("downloadHost=");
-                    int end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "downloadHost=".length();
-                        TKConfig.sDYNAMIC_DOWNLOAD_HOST = text.substring(start, end);
-                    }
-                    start = text.indexOf("queryHost=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "queryHost=".length();
-                        TKConfig.sDYNAMIC_QUERY_HOST = text.substring(start, end);
-                    }
-                    start = text.indexOf("locationHost=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "locationHost=".length();
-                        TKConfig.sDYNAMIC_LOCATION_HOST = text.substring(start, end);
-                    }
-                    start = text.indexOf("accountManageHost=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "accountManageHost=".length();
-                        TKConfig.sDYNAMIC_ACCOUNT_MANAGE_HOST = text.substring(start, end);
-                    }
-                    start = text.indexOf("mapDownloadUrl=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "mapDownloadUrl=".length();
-                        TKConfig.sDOWNLOAD_MAP_URL = text.substring(start, end);
-                    }
-                    start = text.indexOf("suggestDownloadUrl=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "suggestDownloadUrl=".length();
-                        TKConfig.sDOWNLOAD_SUGGEST_URL = text.substring(start, end);
-                    }
-                    start = text.indexOf("queryUrl=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "queryUrl=".length();
-                        TKConfig.sQUERY_URL = text.substring(start, end);
-                    }
-                    start = text.indexOf("locationUrl=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "locationUrl=".length();
-                        TKConfig.sLOCATION_URL = text.substring(start, end);
-                    }
-                    start = text.indexOf("accountManageUrl=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "accountManageUrl=".length();
-                        TKConfig.sACCOUNT_MANAGE_URL = text.substring(start, end);
-                    }
-                    start = text.indexOf("loadBalance=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "loadBalance=".length();
-                        TKConfig.sLoadBalance = text.substring(start, end).equals("true");
-                    }
-                    start = text.indexOf("spreader=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "spreader=".length();
-                        TKConfig.sSPREADER = text.substring(start, end);
-                    }
-                    start = text.indexOf("clientSoftVersion=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "clientSoftVersion=".length();
-                        TKConfig.sCLIENT_SOFT_VERSION = text.substring(start, end);
-                    }
-                    start = text.indexOf("commentSource=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "commentSource=".length();
-                        TKConfig.sCommentSource = text.substring(start, end);
-                    }
-                    start = text.indexOf("logLevel=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "logLevel=".length();
-                        CONFIG.LOG_LEVEL = Integer.parseInt(text.substring(start, end));
-                    }
-                    start = text.indexOf("loginUrl=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "loginUrl=".length();
-                        LOGIN_URL = text.substring(start, end);
-                    }
-                    start = text.indexOf("loginHost=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "loginHost=".length();
-                        LOGIN_HOST = text.substring(start, end).split(",");
-                    }
-                    start = text.indexOf("pageSize=");
-                    end = text.indexOf(";", start);
-                    if (start > -1 && end > -1) {
-                        start += "pageSize=".length();
-                        sPage_Size = Integer.parseInt(text.substring(start, end));
-                    }
-                    BaseQuery.initCommonParameters();
-                } catch (Exception e) {
-                    e.printStackTrace();
+        String mapPath = TKConfig.getDataPath(true);
+        if (TextUtils.isEmpty(mapPath)) {
+            return;
+        }
+        File file = new File(mapPath+"config.txt");
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                String text = CommonUtils.readFile(fis);
+                fis.close();
+                int start = text.indexOf("downloadHost=");
+                int end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "downloadHost=".length();
+                    TKConfig.sDYNAMIC_DOWNLOAD_HOST = text.substring(start, end);
                 }
+                start = text.indexOf("queryHost=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "queryHost=".length();
+                    TKConfig.sDYNAMIC_QUERY_HOST = text.substring(start, end);
+                }
+                start = text.indexOf("locationHost=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "locationHost=".length();
+                    TKConfig.sDYNAMIC_LOCATION_HOST = text.substring(start, end);
+                }
+                start = text.indexOf("accountManageHost=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "accountManageHost=".length();
+                    TKConfig.sDYNAMIC_ACCOUNT_MANAGE_HOST = text.substring(start, end);
+                }
+                start = text.indexOf("mapDownloadUrl=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "mapDownloadUrl=".length();
+                    TKConfig.sDOWNLOAD_MAP_URL = text.substring(start, end);
+                }
+                start = text.indexOf("suggestDownloadUrl=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "suggestDownloadUrl=".length();
+                    TKConfig.sDOWNLOAD_SUGGEST_URL = text.substring(start, end);
+                }
+                start = text.indexOf("queryUrl=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "queryUrl=".length();
+                    TKConfig.sQUERY_URL = text.substring(start, end);
+                }
+                start = text.indexOf("locationUrl=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "locationUrl=".length();
+                    TKConfig.sLOCATION_URL = text.substring(start, end);
+                }
+                start = text.indexOf("accountManageUrl=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "accountManageUrl=".length();
+                    TKConfig.sACCOUNT_MANAGE_URL = text.substring(start, end);
+                }
+                start = text.indexOf("loadBalance=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "loadBalance=".length();
+                    TKConfig.sLoadBalance = text.substring(start, end).equals("true");
+                }
+                start = text.indexOf("spreader=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "spreader=".length();
+                    TKConfig.sSPREADER = text.substring(start, end);
+                }
+                start = text.indexOf("clientSoftVersion=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "clientSoftVersion=".length();
+                    TKConfig.sCLIENT_SOFT_VERSION = text.substring(start, end);
+                }
+                start = text.indexOf("commentSource=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "commentSource=".length();
+                    TKConfig.sCommentSource = text.substring(start, end);
+                }
+                start = text.indexOf("logLevel=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "logLevel=".length();
+                    CONFIG.LOG_LEVEL = Integer.parseInt(text.substring(start, end));
+                }
+                start = text.indexOf("loginUrl=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "loginUrl=".length();
+                    LOGIN_URL = text.substring(start, end);
+                }
+                start = text.indexOf("loginHost=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "loginHost=".length();
+                    LOGIN_HOST = text.substring(start, end).split(",");
+                }
+                start = text.indexOf("pageSize=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "pageSize=".length();
+                    sPage_Size = Integer.parseInt(text.substring(start, end));
+                }
+                BaseQuery.initCommonParameters();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
     }

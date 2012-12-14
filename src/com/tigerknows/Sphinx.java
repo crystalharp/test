@@ -244,6 +244,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         LogWrapper.i(TAG,"onCreate()");
 		TKConfig.configure();
         TKConfig.readConfig();
+        Globals.readSessionAndUser(this);
         Globals.setConnectionFast(Util.isConnectionFast(this));        
 
         Globals.g_My_Location_City_Info = null;

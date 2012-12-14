@@ -928,35 +928,34 @@ public class ActionLog {
     
     private Context mContext;
     private long mStartMillis = 0;
-    private FileOutputStream mFileOutputStream;
     private int mFileLength = 0;
     private String mPath;
     private Object mLock = new Object();
-    private StringBuilder mStringBuilder = new StringBuilder();
+    private StringBuilder mStringBuilder = null;
+    private String lastAction = null;
     
     private ActionLog(Context context) {
         synchronized (mLock) {
-        mContext = context;
-        mPath = TKConfig.getDataPath(false) + "action.log";
-        mFileOutputStream = null;
-        mFileLength = 0;
-        
-        try {
-            File file = new File(mPath);
-            if (!file.exists()) {
-                if (!file.createNewFile()) {
-                    LogWrapper.e("ActionLog", "ActionLog() Unable to create new file: " + mPath);
-                    return;
-                }
-            }
-            FileInputStream fis = new FileInputStream(file);
-            mFileLength = fis.available();
-            fis.close();
+            mContext = context;
+            mPath = TKConfig.getDataPath(false) + "action.log";
+            mFileLength = 0;
             
-            mFileOutputStream = new FileOutputStream(file, true);
-        } catch (Exception e) {
-            LogWrapper.e("ActionLog", "ActionLog() "+e.getMessage());
-        }
+            try {
+                File file = new File(mPath);
+                if (!file.exists()) {
+                    if (!file.createNewFile()) {
+                        LogWrapper.e("ActionLog", "ActionLog() Unable to create new file: " + mPath);
+                        return;
+                    }
+                }
+                FileInputStream fis = new FileInputStream(file);
+                mFileLength = fis.available();
+                fis.close();
+    
+                mStringBuilder = new StringBuilder();
+            } catch (Exception e) {
+                LogWrapper.e("ActionLog", "ActionLog() "+e.getMessage());
+            }
         }
     }
     
@@ -993,86 +992,84 @@ public class ActionLog {
     
     private void addAction(String actionLog, boolean addTime) {
         synchronized (mLock) {
-        try {
-            LogWrapper.d("ActionLog", "addAction() ActionLog="+actionLog);
-            if (mFileOutputStream == null || TextUtils.isEmpty(actionLog)) {
-                return;
-            }
-
-            if (addTime) {
-                long current = System.currentTimeMillis();
-                mStringBuilder.append(SEPARATOR_STAET);
-                mStringBuilder.append((current-mStartMillis)/1000);
-                mStringBuilder.append(SEPARATOR_MIDDLE);
+            try {
+                if (mStringBuilder == null) {
+                    return;
+                }
+                if (TextUtils.isEmpty(actionLog) || actionLog.equals(lastAction)) {
+                    return;
+                }
+    
+                if (addTime) {
+                    long current = System.currentTimeMillis();
+                    mStringBuilder.append(SEPARATOR_STAET);
+                    mStringBuilder.append((current-mStartMillis)/1000);
+                    mStringBuilder.append(SEPARATOR_MIDDLE);
+                    lastAction = actionLog;
+                }
                 mStringBuilder.append(actionLog);
-            }
-
-            // 判断是否要写入文件
-            if (mStringBuilder.length() > WRITE_FILE_SIZE) {
-                String str = mStringBuilder.toString();
-                byte[] data = str.getBytes();
-                mFileOutputStream.write(data);
-                mFileLength += data.length;
+    
+                // 判断是否要写入文件
+                if (mStringBuilder.length() > WRITE_FILE_SIZE) {
+                    write();
+                    
+                    // 判断是否要上传
+                    if (mFileLength > UPLOAD_LENGTH) {
+                        upload();
+                    }
+                }
                 
-                mStringBuilder = new StringBuilder();
+            } catch (Exception e) {
+                LogWrapper.e("ActionLog", "addAction() e="+e.getMessage());
             }
-            
-            // 判断是否要上传
-            if (mFileLength > UPLOAD_LENGTH) {
-                upload();
-            }
-        } catch (Exception e) {
-            LogWrapper.e("ActionLog", "addAction() e="+e.getMessage());
-        }
         }
     }
     
     private void upload() {
-        try {
-        mFileOutputStream.flush();
-        mFileOutputStream.close();
-        
-        mFileOutputStream = null;
-        mFileLength = 0;
-        
-        File file = new File(mPath);
-        FileInputStream fis = new FileInputStream(file);
-        final String str = CommonUtils.readFile(fis)+SEPARATOR_STAET+(simpleDateFormat.format(Calendar.getInstance().getTime()))+SEPARATOR_MIDDLE+"EXCP";
-        fis.close();
-        
-        if (file.delete()) {
-            if (!file.createNewFile()) {
-                LogWrapper.e("ActionLog", "ActionLog() Unable to create new file: " + mPath);
-                return;
-            }
-            mFileOutputStream = new FileOutputStream(file, true);
-
-            mStringBuilder.append(SEPARATOR_STAET);
-            mStringBuilder.append(simpleDateFormat.format(Calendar.getInstance().getTime()));
-            mStringBuilder.append(SEPARATOR_MIDDLE);
-            mStringBuilder.append("EXCP");
-            
-            if (TKConfig.getUserActionTrack().equals("on")) {
-                new Thread(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        FeedbackUpload feedbackUpload = new FeedbackUpload(mContext);
-                        Hashtable<String, String> criteria = new Hashtable<String, String>();
-                        criteria.put(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG, str);
-                        CityInfo cityInfo = Globals.g_Current_City_Info;
-                        int cityId = MapEngine.CITY_ID_BEIJING;
-                        if (cityInfo != null) {
-                            cityId = cityInfo.getId();
-                        }
-                        feedbackUpload.setup(criteria, cityId);
-                        feedbackUpload.query();
+        synchronized (mLock) {
+            try {
+                if (mStringBuilder == null) {
+                    return;
+                }
+                File file = new File(mPath);
+                FileInputStream fis = new FileInputStream(file);
+                final String str = CommonUtils.readFile(fis)+SEPARATOR_STAET+(simpleDateFormat.format(Calendar.getInstance().getTime()))+SEPARATOR_MIDDLE+"EXCP";
+                fis.close();
+                
+                if (file.delete()) {
+                    if (!file.createNewFile()) {
+                        LogWrapper.e("ActionLog", "ActionLog() Unable to create new file: " + mPath);
+                        return;
                     }
-                }).start();
+                    mFileLength = 0;
+                    mStringBuilder = new StringBuilder();
+                    mStringBuilder.append(SEPARATOR_STAET);
+                    mStringBuilder.append(simpleDateFormat.format(Calendar.getInstance().getTime()));
+                    mStringBuilder.append(SEPARATOR_MIDDLE);
+                    mStringBuilder.append("EXCP");
+                    
+                    if (TKConfig.getUserActionTrack().equals("on")) {
+                        new Thread(new Runnable() {
+                            
+                            @Override
+                            public void run() {
+                                FeedbackUpload feedbackUpload = new FeedbackUpload(mContext);
+                                Hashtable<String, String> criteria = new Hashtable<String, String>();
+                                criteria.put(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG, str);
+                                CityInfo cityInfo = Globals.g_Current_City_Info;
+                                int cityId = MapEngine.CITY_ID_BEIJING;
+                                if (cityInfo != null) {
+                                    cityId = cityInfo.getId();
+                                }
+                                feedbackUpload.setup(criteria, cityId);
+                                feedbackUpload.query();
+                            }
+                        }).start();
+                    }
+                }
+            } catch (Exception e) {
+                LogWrapper.e("ActionLog", "addAction() e="+e.getMessage());
             }
-        }
-        } catch (Exception e) {
-            LogWrapper.e("ActionLog", "addAction() e="+e.getMessage());
         }
     }
     
@@ -1086,21 +1083,15 @@ public class ActionLog {
     
     public void onCreate() {
         synchronized (mLock) {
-            if (mFileOutputStream == null) {
+            if (mStringBuilder == null) {
                 return;
             }
-
             if (mFileLength > WRITE_FILE_SIZE) {
                 upload();
             }
 
-            LogWrapper.d("ActionLog", "addAction() ActionLog="+LifecycleCreate);
             mStartMillis = System.currentTimeMillis();
-
-            mStringBuilder.append(SEPARATOR_STAET);
-            mStringBuilder.append(simpleDateFormat.format(Calendar.getInstance().getTime()));
-            mStringBuilder.append(SEPARATOR_MIDDLE);
-            mStringBuilder.append(LifecycleCreate);
+            addAction(SEPARATOR_STAET+simpleDateFormat.format(Calendar.getInstance().getTime())+SEPARATOR_MIDDLE+LifecycleCreate, false);
         }
     }
     
@@ -1118,23 +1109,38 @@ public class ActionLog {
     
     public void onDestroy() {
         synchronized (mLock) {
-            LogWrapper.d("ActionLog", "addAction() ActionLog="+LifecycleDestroy);
-            mStringBuilder.append(SEPARATOR_STAET);
-            mStringBuilder.append(simpleDateFormat.format(Calendar.getInstance().getTime()));
-            mStringBuilder.append(SEPARATOR_MIDDLE);
-            mStringBuilder.append(LifecycleDestroy);
+            addAction(SEPARATOR_STAET+simpleDateFormat.format(Calendar.getInstance().getTime())+SEPARATOR_MIDDLE+LifecycleDestroy, false);
+            write();
         }
     }
     
     public void onTerminate() {
         synchronized (mLock) {
-            try {
-                mFileOutputStream.flush();
-                mFileOutputStream.close();
-                
-                mFileOutputStream = null;
-                mFileLength = 0;
-            } catch (Exception e) {
+            write();
+            mFileLength = 0;
+            lastAction = null;
+        }
+    }
+    
+    private void write() {
+        synchronized (mLock) {
+            if (mStringBuilder == null) {
+                return;
+            }
+            if (mStringBuilder.length() > 0) {
+                try {
+                    File file = new File(mPath); 
+                    FileOutputStream fileOutputStream = new FileOutputStream(file, true);
+                    byte[] data = mStringBuilder.toString().getBytes();
+                    fileOutputStream.write(data);
+                    fileOutputStream.flush();
+                    fileOutputStream.close();
+                    mStringBuilder = new StringBuilder();
+                    mFileLength += data.length;
+                } catch (Exception e) {
+                    mStringBuilder = null;
+                    e.printStackTrace();
+                }
             }
         }
     }

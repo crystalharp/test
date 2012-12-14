@@ -212,8 +212,10 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                     mapVersionQuery.setup(list);
                     mapVersionQuery.query();
                     mRegionVersionMap = mapVersionQuery.getRegionVersion();
-                    for(DownloadCity downloadCity : downloadCityList) {
-                        MapStatsService.countDownloadCity(downloadCity, mRegionVersionMap);
+                    synchronized (mMapEngine) {
+                        for(DownloadCity downloadCity : downloadCityList) {
+                            MapStatsService.countDownloadCity(downloadCity, mRegionVersionMap);
+                        }
                     }
                     
                     mHandler.post(new Runnable() {

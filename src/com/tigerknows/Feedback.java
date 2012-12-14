@@ -4,12 +4,9 @@
 
 package com.tigerknows;
 
-import com.decarta.Globals;
 import com.tigerknows.R;
-import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.FeedbackUpload;
-import com.tigerknows.model.Response;
 import com.tigerknows.util.TKAsyncTask;
 
 import android.content.Intent;
@@ -163,20 +160,7 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.right_txv:
                 mActionLog.addAction(ActionLog.FeedbackSubmit);
-
-                if (BaseQuery.Test) {
-                BaseQuery.Test = false;
-                AccountManage accountManage = new AccountManage(this);
-                String phone = mTelephoneEdt.getText().toString().trim();
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, "du");
-                criteria.put(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
-                accountManage.setup(criteria, Globals.g_Current_City_Info.getId());
-                accountManage.setTipText(getString(R.string.query_loading_tip));
-                queryStart(accountManage, false);
-                } else {
                 send();
-                }
                 break;
             case R.id.weibo_txv:
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://weibo.com/tigermap"));

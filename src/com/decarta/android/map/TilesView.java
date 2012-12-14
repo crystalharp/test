@@ -2595,41 +2595,28 @@ public class TilesView extends GLSurfaceView {
 		moveXY.y+=moveY;
 		
 		if(Math.abs(centerDelta.x)>CONFIG.TILE_SIZE || Math.abs(centerDelta.y)>CONFIG.TILE_SIZE){
-			
 			//refreshTileRequests(numX>=0?1:-1, numY>=0?1:-1);
-            if (Math.abs(moveXY.x) > 1024 || Math.abs(moveXY.y) > 1024) {
-                try {
-                    int roundLevel=Math.round(zoomLevel);
-                    if(roundLevel>CONFIG.ZOOM_UPPER_BOUND || roundLevel<CONFIG.ZOOM_LOWER_BOUND) return;
-                    TileGridResponse resp= Util.handlePortrayMapRequest(new XYDouble(centerXY.x*mapScale,centerXY.y*mapScale), roundLevel);
-                    
-                    centerXYZ.x=resp.centerXYZ.x;
-                    centerXYZ.y=resp.centerXYZ.y;
-                    centerXYZ.z=resp.centerXYZ.z;
-                    centerXYZTK.x=resp.centerXYZTK.x;
-                    centerXYZTK.y=resp.centerXYZTK.y;
-                    centerXYZTK.z=resp.centerXYZTK.z;           
-                    centerDelta.x=resp.getFixedGridPixelOffset().x;
-                    centerDelta.y=resp.getFixedGridPixelOffset().y;
-                    moveXY.x = 0;
-                    moveXY.y = 0;
-                } catch (APIException e) {
-                    e.printStackTrace();
+            int numX=Math.round(centerDelta.x/CONFIG.TILE_SIZE);
+            int numY=Math.round(centerDelta.y/CONFIG.TILE_SIZE);
+            centerXYZ.x-=numX;
+            centerXYZ.x=Util.indexXMod(centerXYZ.x, centerXYZ.z);
+            centerXYZ.y+=numY;
+            centerXYZTK.x-=numX;
+            centerXYZTK.y-=numY;
+            centerDelta.x-=(numX*CONFIG.TILE_SIZE);
+            centerDelta.y-=(numY*CONFIG.TILE_SIZE);
+            try {
+                TileGridResponse resp= Util.handlePortrayMapRequest(new XYDouble(centerXY.x,centerXY.y), (int)zoomLevel);
+                if (resp.centerXY.equals(centerXY)) {
+                    centerDelta.y-=(centerDelta.y-resp.getFixedGridPixelOffset().y);
                 }
-            } else {
-                int numX=Math.round(centerDelta.x/CONFIG.TILE_SIZE);
-                int numY=Math.round(centerDelta.y/CONFIG.TILE_SIZE);
-                centerXYZ.x-=numX;
-                centerXYZ.x=Util.indexXMod(centerXYZ.x, centerXYZ.z);
-                centerXYZ.y+=numY;
-                centerXYZTK.x-=numX;
-                centerXYZTK.y-=numY;
-                centerDelta.x-=(numX*CONFIG.TILE_SIZE);
-                centerDelta.y-=(numY*CONFIG.TILE_SIZE);
-                
-                panDirection.x=numX>=0?1:-1;
-                panDirection.y=numY>=0?1:-1;
+            } catch (APIException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
+            
+            panDirection.x=numX>=0?1:-1;
+            panDirection.y=numY>=0?1:-1;
 		}
 		
 		
