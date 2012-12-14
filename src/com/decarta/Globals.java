@@ -113,8 +113,9 @@ public class Globals {
     
     public static void readSessionAndUser(Context context) {
         synchronized (userLock) {
-            g_Session_Id = null;
-            g_User = null;
+            if (g_Session_Id != null && g_User != null) {
+                return;
+            }
             Session session = Session.loadDefault(context);
             if (session != null && session.isValid()) {
                 g_Session_Id = session.getSessionId();
