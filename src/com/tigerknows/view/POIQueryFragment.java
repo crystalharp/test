@@ -39,6 +39,7 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.TKWord;
+import com.tigerknows.view.SuggestArrayAdapter.CallBack;
 
 /**
  * @author Peng Wenyue
@@ -105,6 +106,13 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         setListener();
         
         mSuggestAdapter = new SuggestArrayAdapter(mContext, SuggestArrayAdapter.TEXTVIEW_RESOURCE_ID, mSuggestWordList);
+        mSuggestAdapter.setCallBack(new CallBack() {
+            
+            @Override
+            public void onItemClicked(String text) {
+                mKeywordEdt.setText(text);
+            }
+        });
         mSuggestLsv.setAdapter(mSuggestAdapter);
         return mRootView;
     }
