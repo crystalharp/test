@@ -367,10 +367,11 @@
     <string name="not_enough_space">"存储空间不够，请插入SD卡。"</string>
     <string name="preparing_sd">"正在准备 SD 卡，请稍后再启动老虎宝典..."</string>
     
-    <string name="delete_all_favorite_poi">"确定删除选定的收藏地点？"</string>
-    <string name="delete_all_favorite_traffic">"确定删除选定的收藏交通？"</string>
-    <string name="delete_all_history_poi">"确定删除选定的地点记录？"</string>
-    <string name="delete_all_history_traffic">"确定删除选定的交通记录？"</string>
+    <string name="clear_all">"一键清空"</string>
+    <string name="delete_all_favorite_poi">"确定删除所有的收藏地点？"</string>
+    <string name="delete_all_favorite_traffic">"确定删除所有的收藏交通？"</string>
+    <string name="delete_all_history_poi">"确定删除所有的地点记录？"</string>
+    <string name="delete_all_history_traffic">"确定删除所有的交通记录？"</string>
     
     <string name="feedback_submiting">正在发送中...</string>
     <string name="feedback_success">我们已经收到你的建议，感谢你的支持！</string>

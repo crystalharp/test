@@ -28,7 +28,6 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -44,7 +43,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -69,14 +67,9 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         // TODO Auto-generated constructor stub
     }
 
-    private static final int STATE_NORMAL = 0;
-    private static final int STATE_DELETE = 1;
-    
     public static final int MENU_DELETE             = 0;
     public static final int MENU_RENAME             = 1;
     
-    private int mState = STATE_NORMAL;
-
     private POIAdapter mPOIAdapter = null;
 
     private TrafficAdapter mTrafficAdapter = null;
@@ -88,12 +81,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     private Button mPOIBtn;
     
     private Button mTrafficBtn;
-    
-    private View mBottomView;
-    
-    private Button mDeleteBtn;
-    
-    private Button mAllSelectBtn;
     
     private SpringbackListView mPOILsv = null;
     
@@ -110,9 +97,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     private String mLayerType = ItemizedOverlay.POI_OVERLAY;
     
     private String mPOIWhere;
-    
-    private Drawable mAllSelectDrawable;    
-    private Drawable mCancelAllSelectDrawable;
     
     private Runnable mTurnPageRunPOI = new Runnable() {
         
@@ -153,13 +137,11 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         @Override
         public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
 
-            if (mState == STATE_NORMAL) {
-                AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-                if (info.position > -1 && info.position < (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? mPOIAdapter.getCount() : mTrafficAdapter.getCount())) {
-                    mSelectIndex = info.position;
-                    menu.add(0, MENU_DELETE, 0, R.string.delete);
-                    menu.add(0, MENU_RENAME, 0, R.string.rename);
-                }
+            AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
+            if (info.position > -1 && info.position < (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? mPOIAdapter.getCount() : mTrafficAdapter.getCount())) {
+                mSelectIndex = info.position;
+                menu.add(0, MENU_DELETE, 0, R.string.delete);
+                menu.add(0, MENU_RENAME, 0, R.string.rename);
             }
         }
     };
@@ -168,10 +150,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.Favorite;
-        mAllSelectDrawable = getResources().getDrawable(R.drawable.ic_all_select);
-        mCancelAllSelectDrawable = getResources().getDrawable(R.drawable.ic_cancel_all_select);
-        mAllSelectDrawable.setBounds(0, 0, mAllSelectDrawable.getIntrinsicWidth(), mAllSelectDrawable.getIntrinsicHeight());
-        mCancelAllSelectDrawable.setBounds(0, 0, mCancelAllSelectDrawable.getIntrinsicWidth(), mCancelAllSelectDrawable.getIntrinsicHeight());
     }
 
     @Override
@@ -204,9 +182,8 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
-        mLeftTxv.setOnClickListener(this);
         mRightTxv.setOnClickListener(this);
-        mRightTxv.setText(R.string.delete);
+        mRightTxv.setText(R.string.clear_all);
         
         refresh(ItemizedOverlay.POI_OVERLAY);
         refresh(ItemizedOverlay.TRAFFIC_OVERLAY);
@@ -232,7 +209,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mTrafficAdapter.notifyDataSetChanged();
         
         refreshTab(mLayerType);
-        setState(STATE_NORMAL, false);
+        refreshContent();
         
         Toast.makeText(mContext, R.string.favorite_long_click_tip, 3000).show();
     }
@@ -256,9 +233,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mTrafficLsv = (SpringbackListView) mRootView.findViewById(R.id.traffic_lsv);
         v = mLayoutInflater.inflate(R.layout.loading, null);
         mTrafficLsv.addFooterView(v);
-        mBottomView = (View) mRootView.findViewById(R.id.bottom_view);
-        mDeleteBtn = (Button) mRootView.findViewById(R.id.delete_btn);
-        mAllSelectBtn = (Button) mRootView.findViewById(R.id.all_select_btn);
         mPOIEmptyView = (TextView)mRootView.findViewById(R.id.poi_empty_txv);
         mTrafficEmptyView = (TextView)mRootView.findViewById(R.id.traffic_empty_txv);
         mPOIView = mRootView.findViewById(R.id.poi_view);
@@ -268,8 +242,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     protected void setListener() {
         mPOIBtn.setOnClickListener(this);
         mTrafficBtn.setOnClickListener(this);
-        mDeleteBtn.setOnClickListener(this);
-        mAllSelectBtn.setOnClickListener(this);
         
         mTrafficLsv.setOnCreateContextMenuListener(mContextMenuListener);
         mTrafficLsv.setOnItemClickListener(new OnItemClickListener() {
@@ -280,13 +252,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                     Favorite traffic = (Favorite) adapterView.getAdapter().getItem(position);
                     if (traffic != null) {
                         mActionLog.addAction(ActionLog.FavoriteSelectTraffic, position);
-                        if (mState == STATE_DELETE) {
-                            traffic.setSelected(!traffic.isSelected());
-                            mTrafficAdapter.notifyDataSetChanged();
-                            refreshAllSelectBtn();
-                        } else {
-                            showTrafficDetail(traffic);
-                        }
+                        showTrafficDetail(traffic);
                     }
                 }
             }
@@ -297,19 +263,12 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-
                 if (position < adapterView.getCount()) {
                     POI poi = (POI) adapterView.getAdapter().getItem(position);
                     if (poi != null) {
                         mActionLog.addAction(ActionLog.FavoriteSelectPOI, position);
-                        if (mState == STATE_DELETE) {
-                            poi.setSelected(!poi.isSelected());
-                            mPOIAdapter.notifyDataSetChanged();
-                            refreshAllSelectBtn();
-                        } else {
-                            mSphinx.getPOIDetailFragment().setData(poi);
-                            mSphinx.showView(R.id.view_poi_detail);
-                        }
+                        mSphinx.getPOIDetailFragment().setData(poi);
+                        mSphinx.showView(R.id.view_poi_detail);
                     }
                 }
             }
@@ -336,7 +295,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 turnPageTraffic();
             }
         });
-
     }
     
     private void turnPagePOI() {
@@ -348,29 +306,29 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             maxId = mPOIList.get(size-1).getId();
         }
         LoadThread loadThread = new LoadThread();
-            loadThread.layerType = ItemizedOverlay.POI_OVERLAY;
+        loadThread.layerType = ItemizedOverlay.POI_OVERLAY;
         loadThread.maxId = maxId;
         loadThread.start();
         mActionLog.addAction(ActionLog.FavoriteMore, 0);
         }
     }
-    
+
     private void turnPageTraffic() {
         synchronized (this) {
-        mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
-        long maxId = Long.MAX_VALUE;
-        int size = mTrafficList.size();
-        if (size > 0) {
+            mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
+            long maxId = Long.MAX_VALUE;
+            int size = mTrafficList.size();
+            if (size > 0) {
             maxId = mTrafficList.get(size-1).getId();
-        }
-        LoadThread loadThread = new LoadThread();
+            }
+            LoadThread loadThread = new LoadThread();
             loadThread.layerType = ItemizedOverlay.TRAFFIC_OVERLAY;
-        loadThread.maxId = maxId;
-        loadThread.start();
+            loadThread.maxId = maxId;
+            loadThread.start();
         mActionLog.addAction(ActionLog.FavoriteMore, 1);
         }
     }
-
+    
     @Override
     public boolean onMenuItemSelected(int featureId, MenuItem item) {
         if (mSelectIndex > -1) {
@@ -390,7 +348,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                                             SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.Favorite.CONTENT_URI, "_id="+mTrafficList.get(mSelectIndex).getId(), null);
                                         }
                                         refresh(mLayerType);
-                                        setState(mState, false);
+                                        refreshContent();
                                         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
                                             if (mPOIList.isEmpty()) {
                                                 turnPagePOI();
@@ -415,26 +373,45 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
 
     @Override
     public void onClick(View view) {
-        boolean allSelcet = true;
-        switch (view.getId()) {
-            case R.id.left_txv:
-                if (mState == STATE_NORMAL) {
-                    mSphinx.uiStackBack();
-                } else {
-                    setState(STATE_NORMAL, true);
-                }
-                break;
-                
+        switch (view.getId()) {                
             case R.id.right_txv:
-                if (mState == STATE_NORMAL) {
-                    mActionLog.addAction(ActionLog.FavoriteRightDelete, (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? "0" : "1"));
-                    setState(STATE_DELETE, false);
+                mActionLog.addAction(ActionLog.FavoriteRightDelete, (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? "0" : "1"));
+
+                int count = 0;
+                if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
+                    count = mPOIList.size();
+                } else {
+                    count = mTrafficList.size();
+                }
+                if (count > 0) {
+                    CommonUtils.showNormalDialog(mSphinx,
+                            mContext.getString(R.string.prompt),
+                            mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_all_favorite_poi : R.string.delete_all_favorite_traffic),
+                            new DialogInterface.OnClickListener() {
+                                
+                                @Override
+                                public void onClick(DialogInterface arg0, int id) {
+                                    if (id == DialogInterface.BUTTON_POSITIVE) {
+                                        if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
+                                            SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.POI.CONTENT_URI, Tigerknows.POI.STORE_TYPE + "="+Tigerknows.STORE_TYPE_FAVORITE, null);
+                                            mPOIList.clear();
+                                            mPOIAdapter.notifyDataSetChanged();
+                                        } else {
+                                            SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.Favorite.CONTENT_URI, null, null);
+                                            mTrafficList.clear();
+                                            mTrafficAdapter.notifyDataSetChanged();
+                                        }
+                                        refresh(mLayerType);
+                                        refreshContent();
+                                    }
+                                }
+                            });
                 }
                 break;
             case R.id.poi_btn:
                 mActionLog.addAction(ActionLog.FavoritePOI);
                 refreshTab(ItemizedOverlay.POI_OVERLAY);
-                setState(STATE_NORMAL, true);
+                refreshContent();
                 if (mPOILsv.isFooterSpringback()) {
                     mHandler.postDelayed(mTurnPageRunPOI, 1000);
                 } else {
@@ -445,103 +422,12 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             case R.id.traffic_btn:
                 mActionLog.addAction(ActionLog.FavoriteTraffic);
                 refreshTab(ItemizedOverlay.TRAFFIC_OVERLAY);
-                setState(STATE_NORMAL, true);
+                refreshContent();
                 if (mTrafficLsv.isFooterSpringback()) {
                     mHandler.postDelayed(mTurnPageRunTraffic, 1000);
                 } else {
                     mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
                 }
-                break;
-                
-            case R.id.delete_btn:
-                mActionLog.addAction(ActionLog.FavoriteDelete, (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? "0" : "1"));
-                int selectCount = 0;
-                if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-                    for(POI poi : mPOIList) {
-                        if (poi.isSelected()) {
-                            selectCount++;
-                        }
-                    }
-                } else {
-                    for(Favorite traffic : mTrafficList) {
-                        if (traffic.isSelected()) {
-                            selectCount++;
-                        }
-                    }
-                }
-                
-                if (selectCount > 0) {
-                    CommonUtils.showNormalDialog(mSphinx,
-                            mContext.getString(R.string.prompt),
-                            mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_all_favorite_poi : R.string.delete_all_favorite_traffic),
-                            new DialogInterface.OnClickListener() {
-                                
-                                @Override
-                                public void onClick(DialogInterface arg0, int id) {
-                                    if (id == DialogInterface.BUTTON_POSITIVE) {
-                                        if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-                                            for(POI poi : mPOIList) {
-                                                if (poi.isSelected()) {
-                                                    poi.deleteFavorite(mSphinx);
-                                                }
-                                            }
-                                        } else {
-                                            for(Favorite traffic : mTrafficList) {
-                                                if (traffic.isSelected()) {
-                                                    SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.Favorite.CONTENT_URI, "_id="+traffic.getId(), null);
-                                                }
-                                            }
-                                        }
-                                        refresh(mLayerType);
-                                        setState(mState, false);
-                                        if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-                                            if (mPOIList.isEmpty()) {
-                                                turnPagePOI();
-                                            }
-                                        } else {
-                                            if (mTrafficList.isEmpty()) {
-                                                turnPageTraffic();
-                                            }
-                                        }
-                                    }
-                                }
-                            });
-                } else {
-                    Toast.makeText(mSphinx, R.string.no_select_tip, Toast.LENGTH_SHORT).show();
-                }
-                break;
-                
-            case R.id.all_select_btn:
-                mActionLog.addAction(ActionLog.FavoriteAllSelect, (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? "0" : "1"));
-                if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-
-                    for(POI poi1 : mPOIList) {
-                        if (!poi1.isSelected()) {
-                            allSelcet = false;
-                            break;
-                        }
-                    }
-                    
-                    for(POI poi : mPOIList) {
-                        poi.setSelected(!allSelcet);
-                    }
-                    mPOIAdapter.notifyDataSetChanged();
-                    refreshAllSelectBtn();
-                } else {
-
-                    for(Favorite traffic : mTrafficList) {
-                        if (!traffic.isSelected()) {
-                            allSelcet = false;
-                            break;
-                        }
-                    }
-                    
-                    for(Favorite traffic : mTrafficList) {
-                        traffic.setSelected(!allSelcet);
-                    }
-                    mTrafficAdapter.notifyDataSetChanged();
-                    refreshAllSelectBtn();
-                }  
                 break;
                 
             default:
@@ -550,9 +436,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     }
     
     private void showTrafficDetail(Favorite traffic) {
-        if (mBottomView.getVisibility() == View.VISIBLE) {
-            return;
-        }
         int type = traffic.getFavoriteType();
         switch (type) {
             case Tigerknows.Favorite.FAVORITE_BUSLINE:
@@ -627,7 +510,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     public class TrafficAdapter extends ArrayAdapter<Favorite>{
         private static final int sResource = R.layout.favorite_list_item;
         private String[] typeNames;
-        
+
         public TrafficAdapter(Context context, List<Favorite> apps) {
             super(context, sResource, apps);
             typeNames = context.getResources().getStringArray(R.array.favorite_traffic_type);
@@ -645,33 +528,25 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             final Favorite traffic = this.getItem(position);
             
             TextView textView = (TextView) view.findViewById(R.id.text_txv);
-            final CheckBox selectChb = (CheckBox) view.findViewById(R.id.select_chb);
-            ImageView renameImv = (ImageView) view.findViewById(R.id.rename_imv);
-            
-            StringBuilder s = new StringBuilder();
+            ImageView iconImv = (ImageView) view.findViewById(R.id.icon_imv);
+            iconImv.setVisibility(View.VISIBLE);
+            if (traffic.getFavoriteType() == Tigerknows.Favorite.FAVORITE_BUSLINE) {
+                
+            } else if (traffic.getFavoriteType() == Tigerknows.Favorite.FAVORITE_TRANSFER) {
+                
+            } else if (traffic.getFavoriteType() == Tigerknows.Favorite.FAVORITE_DRIVE) {
+                
+            } else if (traffic.getFavoriteType() == Tigerknows.Favorite.FAVORITE_WALK) {
+                
+            }
+
+            String s;
             if (TextUtils.isEmpty(traffic.getAlise())) {
-                s.append(getTrafficName(traffic));
+                s = getTrafficName(traffic);
             } else {
-                s.append(traffic.getAlise());
+                s = traffic.getAlise();
             }
             textView.setText((position+1)+". "+typeNames[traffic.getFavoriteType()-2]+": "+s.toString());
-            
-            if (mState == STATE_DELETE) {
-                renameImv.setVisibility(View.INVISIBLE);
-                selectChb.setVisibility(View.VISIBLE);
-                selectChb.setChecked(traffic.isSelected());
-                selectChb.setOnClickListener(new View.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(View arg0) {
-                        traffic.setSelected(selectChb.isChecked());
-                        refreshAllSelectBtn();
-                    }
-                });
-            } else {
-                renameImv.setVisibility(View.INVISIBLE);
-                selectChb.setVisibility(View.INVISIBLE);
-            }
             
             return view;
         }
@@ -755,8 +630,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             final POI poi = getItem(position);
             
             TextView textView = (TextView) view.findViewById(R.id.text_txv);
-            final CheckBox selectChb = (CheckBox) view.findViewById(R.id.select_chb);
-            ImageView renameImv = (ImageView) view.findViewById(R.id.rename_imv);
 
             poi.setOrderNumber(position+1);
             String name = poi.getAlise();
@@ -764,57 +637,16 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 name = poi.getName();
             }
             textView.setText(poi.getOrderNumber()+". "+name);
-            
-            if (mState == STATE_DELETE) {
-                renameImv.setVisibility(View.INVISIBLE);
-                selectChb.setVisibility(View.VISIBLE);
-                selectChb.setChecked(poi.isSelected());
-                selectChb.setOnClickListener(new View.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(View arg0) {
-                        poi.setSelected(selectChb.isChecked());
-                        refreshAllSelectBtn();
-                    }
-                });
-            } else {
-                renameImv.setVisibility(View.INVISIBLE);
-                selectChb.setVisibility(View.INVISIBLE);
-            }
 
             return view;
         }
-    }
-    
-    private void refreshAllSelectBtn() {
-        boolean allSelcet = true;
-        boolean enabled = true;
-        if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-            for(POI poi1 : mPOIList) {
-                if (!poi1.isSelected()) {
-                    allSelcet = false;
-                    break;
-                }
-            }
-            enabled = !mPOIList.isEmpty();
-        } else {
-            for(Favorite traffic : mTrafficList) {
-                if (!traffic.isSelected()) {
-                    allSelcet = false;
-                    break;
-                }
-            }
-            enabled = !mTrafficList.isEmpty();
-        }
-        mAllSelectBtn.setEnabled(enabled);
-        mAllSelectBtn.setText(allSelcet ? R.string.cancel_all_select : R.string.all_select);
-        mAllSelectBtn.setCompoundDrawables(allSelcet ? mCancelAllSelectDrawable : mAllSelectDrawable, null, null, null);
     }
     
     Handler mHandler = new Handler(){
         @SuppressWarnings("unchecked")
         public void handleMessage(Message msg) {
             if (0 == msg.what) {
+                mPOILsv.onRefreshComplete(false);
                 List<POI> poiList = (List<POI>)msg.obj;
                 if (poiList.size() > 0) {
                     mRightTxv.setEnabled(true);
@@ -827,15 +659,15 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                     Collections.sort(mPOIList, mComparator);
                     mPOIAdapter.notifyDataSetChanged();
                     mPOILsv.setFooterSpringback(true);
+                    if (mPOILsv.isFooterSpringback()) {
+                        mSphinx.getHandler().postDelayed(mTurnPageRunPOI, 1000);
+                    }
                 } else {
                     mPOILsv.setFooterSpringback(false);
                 }
-                mPOILsv.onRefreshComplete(false);
-                setState(mState, false);
-                if (mPOILsv.isFooterSpringback()) {
-                    mSphinx.getHandler().postDelayed(mTurnPageRunPOI, 1000);
-                }
+                refreshContent();
             } else if (1 == msg.what) {
+                mTrafficLsv.onRefreshComplete(false);
                 List<Favorite> trafficList = (List<Favorite>)msg.obj;
                 if (trafficList.size() > 0) {
                     mRightTxv.setEnabled(true);
@@ -848,14 +680,13 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                     Collections.sort(mTrafficList, mComparator);
                     mTrafficAdapter.notifyDataSetChanged();
                     mTrafficLsv.setFooterSpringback(true);
+                    if (mTrafficLsv.isFooterSpringback()) {
+                        mSphinx.getHandler().postDelayed(mTurnPageRunTraffic, 1000);
+                    }
                 } else {
                     mTrafficLsv.setFooterSpringback(false);
                 }
-                mTrafficLsv.onRefreshComplete(false);
-                setState(mState, false);
-                if (mTrafficLsv.isFooterSpringback()) {
-                    mSphinx.getHandler().postDelayed(mTurnPageRunTraffic, 1000);
-                }
+                refreshContent();
             }
         }
     };
@@ -906,38 +737,11 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             mTrafficAdapter.notifyDataSetChanged();
         }
     }
-
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (mState == STATE_DELETE) { 
-                mActionLog.addAction(ActionLog.KeyCodeBack);
-                setState(STATE_NORMAL, true);
-                return true;
-            }
-        }
-        return false;
-    }  
     
-    private void setState(int state, boolean cancelSelected) {        
-        mState = state;
-        if (mState == STATE_NORMAL) {
-            mBottomView.setVisibility(View.GONE);
-            mTitleTxv.setText(R.string.favoriten);
-            mRightTxv.setVisibility(View.VISIBLE);
-        } else if (mState == STATE_DELETE) {            
-            mBottomView.setVisibility(View.VISIBLE);
-            mTitleTxv.setText(R.string.delete);
-            mRightTxv.setVisibility(View.INVISIBLE);
-        }
+    private void refreshContent() {
 
         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-            if (cancelSelected) {
-                for(POI poi1 : mPOIList) {
-                    poi1.setSelected(false);
-                }
-            }
             mRightTxv.setEnabled(!mPOIList.isEmpty());
-            mDeleteBtn.setEnabled(!mPOIList.isEmpty());
             
             if (mPOIList.isEmpty() && mPOILsv.isFooterSpringback() == false) {
                 mPOIEmptyView.setText(R.string.favorite_empty_poi);
@@ -946,13 +750,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 mPOIEmptyView.setVisibility(View.GONE);
             }
         } else {
-            if (cancelSelected) {
-                for(Favorite traffic : mTrafficList) {
-                    traffic.setSelected(false);
-                }
-            }
             mRightTxv.setEnabled(!mTrafficList.isEmpty());
-            mDeleteBtn.setEnabled(!mTrafficList.isEmpty());
 
             if (mTrafficList.isEmpty() && mTrafficLsv.isFooterSpringback() == false) {
                 mTrafficEmptyView.setText(R.string.favorite_empty_traffic);
@@ -964,7 +762,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
 
         mPOIAdapter.notifyDataSetChanged();
         mTrafficAdapter.notifyDataSetChanged();
-        refreshAllSelectBtn();
     }
     
     private void refreshTab(String layerType) {
