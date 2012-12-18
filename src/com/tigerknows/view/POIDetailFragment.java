@@ -451,11 +451,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             resId = R.drawable.ic_stamp_silver_big;
         }
         if (resId != Integer.MIN_VALUE) {
-            try {
-            mStampAnimation.cancel();
-            } catch (Exception e) {
-                // TODO: 摩托罗拉 XT701 android 2.1-update1 会抛出异常: java.lang.NoSuchMethodError: android.view.animation.Animation.cancel
-            }
+            mStampAnimation.reset();
             mStampBigImv.setAnimation(null);
             mStampBigImv.setBackgroundResource(resId);
             mStampBigImv.setVisibility(View.VISIBLE);
@@ -741,7 +737,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     public void setData(POI poi) {
         if (mStampAnimation != null) {
             mStampBigImv.setVisibility(View.INVISIBLE);
-            mStampAnimation.cancel();
+            mStampAnimation.reset();
             mStampBigImv.setAnimation(null);
         }
         mPOI = poi;
