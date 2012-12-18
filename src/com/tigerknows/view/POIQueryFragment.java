@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -34,7 +33,6 @@ import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
@@ -53,7 +51,7 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
 
     private ImageButton mQueryBtn = null;
 
-    private EditText mKeywordEdt = null;
+    private TKEditText mKeywordEdt = null;
 
     private String mKeyword;
     
@@ -146,7 +144,7 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
 
     protected void findViews() {
         mQueryBtn = (ImageButton)mRootView.findViewById(R.id.query_btn);
-        mKeywordEdt = (EditText)mRootView.findViewById(R.id.keyword_edt);
+        mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);
         mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
         mKeywordEdt.setOnEditorActionListener(new OnEditorActionListener() {
             

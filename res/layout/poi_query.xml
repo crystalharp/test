@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows" 
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent"
     android:orientation="vertical"
@@ -26,16 +27,13 @@
             android:scaleType="center"
             android:src="@drawable/btn_search" />
             
-        <EditText android:id="@+id/keyword_edt"
+        <com.tigerknows.view.TKEditText android:id="@+id/keyword_edt"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@id/query_btn"
-            android:background="@drawable/textfield"
-            android:hint="@string/find_poi"
-            android:maxLength="50"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:imeOptions="actionSearch" />
+            tkandroid:hint="@string/find_poi"
+            tkandroid:maxLength="50"
+            tkandroid:imeOptions="actionSearch" ></com.tigerknows.view.TKEditText>
     </RelativeLayout>
         
     <ListView android:id="@+id/suggest_lsv"

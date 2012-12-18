@@ -38,5 +38,90 @@
         <attr name="maxLines" format="integer" />
         <attr name="textSize" format="dimension" />
     </declare-styleable>
+
+    <!-- Additional features you can enable in an IME associated with an editor,
+         to improve the integration with your application.  The constants
+         here correspond to those defined by
+         {@link android.view.inputmethod.EditorInfo#imeOptions}. -->
+    <attr name="imeOptions">
+        <!-- There are no special semantics associated with this editor. -->
+        <flag name="normal" value="0x00000000" />
+        <!-- There is no specific action associated with this editor, let the
+             editor come up with its own if it can.
+             Corresponds to
+             {@link android.view.inputmethod.EditorInfo#IME_NULL}. -->
+        <flag name="actionUnspecified" value="0x00000000" />
+        <!-- This editor has no action associated with it.
+             Corresponds to
+             {@link android.view.inputmethod.EditorInfo#IME_ACTION_NONE}. -->
+        <flag name="actionNone" value="0x00000001" />
+        <!-- The action key performs a "go"
+             operation to take the user to the target of the text they typed.
+             Typically used, for example, when entering a URL.
+             Corresponds to
+             {@link android.view.inputmethod.EditorInfo#IME_ACTION_GO}. -->
+        <flag name="actionGo" value="0x00000002" />
+        <!-- The action key performs a "search"
+             operation, taking the user to the results of searching for the text
+             the have typed (in whatever context is appropriate).
+             Corresponds to
+             {@link android.view.inputmethod.EditorInfo#IME_ACTION_SEARCH}. -->
+        <flag name="actionSearch" value="0x00000003" />
+        <!-- The action key performs a "send"
+             operation, delivering the text to its target.  This is typically used
+             when composing a message.
+             Corresponds to
+             {@link android.view.inputmethod.EditorInfo#IME_ACTION_SEND}. -->
+        <flag name="actionSend" value="0x00000004" />
+        <!-- The action key performs a "next"
+             operation, taking the user to the next field that will accept text.
+             Corresponds to
+             {@link android.view.inputmethod.EditorInfo#IME_ACTION_NEXT}. -->
+        <flag name="actionNext" value="0x00000005" />
+        <!-- The action key performs a "done"
+             operation, closing the soft input method.
+             Corresponds to
+             {@link android.view.inputmethod.EditorInfo#IME_ACTION_DONE}. -->
+        <flag name="actionDone" value="0x00000006" />
+        <!-- Used to specify that the IME does not need
+             to show its extracted text UI.  For input methods that may be fullscreen,
+             often when in landscape mode, this allows them to be smaller and let part
+             of the application be shown behind.  Though there will likely be limited
+             access to the application available from the user, it can make the
+             experience of a (mostly) fullscreen IME less jarring.  Note that when
+             this flag is specified the IME may <em>not</em> be set up to be able
+             to display text, so it should only be used in situations where this is
+             not needed.
+             <p>Corresponds to
+             {@link android.view.inputmethod.EditorInfo#IME_FLAG_NO_EXTRACT_UI}. -->
+        <flag name="flagNoExtractUi" value="0x10000000" />
+        <!-- Used in conjunction with a custom action, this indicates that the
+             action should not be available as an accessory button when the
+             input method is full-screen.
+             Note that by setting this flag, there can be cases where the action
+             is simply never available to the user.  Setting this generally means
+             that you think showing text being edited is more important than the
+             action you have supplied.
+             <p>Corresponds to
+             {@link android.view.inputmethod.EditorInfo#IME_FLAG_NO_ACCESSORY_ACTION}. -->
+        <flag name="flagNoAccessoryAction" value="0x20000000" />
+        <!-- Used in conjunction with a custom action,
+             this indicates that the action should not be available in-line as
+             a replacement for the "enter" key.  Typically this is
+             because the action has such a significant impact or is not recoverable
+             enough that accidentally hitting it should be avoided, such as sending
+             a message.    Note that {@link android.widget.TextView} will
+             automatically set this flag for you on multi-line text views.
+             <p>Corresponds to
+             {@link android.view.inputmethod.EditorInfo#IME_FLAG_NO_ENTER_ACTION}. -->
+        <flag name="flagNoEnterAction" value="0x40000000" />
+    </attr>
+    
+    <declare-styleable name="tkEditText">
+        <attr name="maxLength" format="integer" min="0" />
+        <attr name="paddingLeft" format="dimension" />
+        <attr name="hint" format="string" />
+        <attr name="imeOptions" />
+    </declare-styleable>
     
 </resources>
