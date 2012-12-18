@@ -223,25 +223,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         return false;
     }
     
-    private List<POI> getPagePOIList(int index) {
-        boolean isShowAPOI = (mATotal == 1);
-        List<POI> poiList = new ArrayList<POI>();
-        if (isShowAPOI) {
-            mPOIList.get(0).setOnlyAPOI(true);
-            poiList.add(mPOIList.get(0));
-            if (index >= mPOIList.size()-1) {
-                index--;
-            }
-         }
-        int minIndex = index - (index % TKConfig.getPageSize()) + (isShowAPOI ? 1 : 0);
-        int maxIndex = minIndex + TKConfig.getPageSize();
-        for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mPOIList.size(); minIndex++) {
-            mPOIList.get(minIndex).setOrderNumber(minIndex+ (isShowAPOI ? 0 : 1));
-            poiList.add(mPOIList.get(minIndex));
-        }
-        return poiList;
-    }
-    
     private void refreshResultTitleText(DataQuery dataQuery) {
         if (dataQuery == null) {
             return;
@@ -350,11 +331,29 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
     }
 
-    public void viewMap(int position) {
-        if (position < 0 || mPOIList.size() < position) {
+    public void viewMap(int firstVisiblePosition, int lastVisiblePosition) {
+        if (firstVisiblePosition < 0 || mPOIList.size() < firstVisiblePosition || lastVisiblePosition < 0 || mPOIList.size() < lastVisiblePosition || mPOIList.isEmpty()) {
             return;            
         }
-        mSphinx.showPOI(getPagePOIList(position), position % TKConfig.getPageSize());
+        int size = mPOIList.size();
+        List<POI> poiList = new ArrayList<POI>();
+        boolean isShowAPOI = (mATotal == 1);
+        int[] page = CommonUtils.makePage(mResultLsv, size, firstVisiblePosition, lastVisiblePosition, isShowAPOI);
+        POI poi;
+        if (isShowAPOI) {
+            poi = mPOIList.get(0);
+            poi.setOnlyAPOI(true);
+            poiList.add(poi);
+        }
+        
+        int minIndex = page[0];
+        int maxIndex = page[1];
+        for(;minIndex <= maxIndex && minIndex < size; minIndex++) {
+            poi = mPOIList.get(minIndex);
+            poi.setOrderNumber(minIndex+ (isShowAPOI ? 0 : 1));
+            poiList.add(poi);
+        }
+        mSphinx.showPOI(poiList, page[2]);
         mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), ActionLog.MapPOI);
         mSphinx.showView(R.id.view_result_map);   
     }
@@ -385,11 +384,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     return;
                 }
                 mActionLog.addAction(ActionLog.SearchResultMap);
-                if (mResultLsv.getLastVisiblePosition() >= mPOIList.size()-1) {
-                    viewMap(mPOIList.size()-1); 
-                } else {
-                    viewMap(mResultLsv.getFirstVisiblePosition());
-                }
+                viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 
             default:

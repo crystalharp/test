@@ -465,12 +465,45 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
     }
 
-    public void viewMap(int position) {
+    public void viewMap(int firstVisiblePosition, int lastVisiblePosition) {
         if (mList == null) {
             return;            
         }
-        List<POI> list = getPOIList(position);
-        if (list.isEmpty()) {
+        int size = getList().size();
+        int[] page = CommonUtils.makePage(mResultLsv, size, firstVisiblePosition, lastVisiblePosition);
+        
+        int minIndex = page[0];
+        int maxIndex = page[1];
+        List<POI> poiList = new ArrayList<POI>();
+        if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
+            for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mTuangouList.size(); minIndex++) {
+                POI poi = mTuangouList.get(minIndex).getPOI();
+                poi.setName(mTuangouList.get(minIndex).getShortDesc());
+//                poi.setOrderNumber(minIndex+1);
+                poiList.add(poi);
+            }
+        } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
+            
+        } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
+            for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mYanchuList.size(); minIndex++) {
+                Yanchu yanchu = mYanchuList.get(minIndex);
+                yanchu.setOrderNumber(minIndex+1);
+                POI poi = yanchu.getPOI();
+                poi.setName(yanchu.getName());
+                poi.setAddress(null);
+                poiList.add(poi);
+            }
+        } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
+            for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mZhanlanList.size(); minIndex++) {
+                Zhanlan zhanlan = mZhanlanList.get(minIndex);
+                zhanlan.setOrderNumber(minIndex+1);
+                POI poi = zhanlan.getPOI();
+                poi.setName(zhanlan.getName());
+                poi.setAddress(null);
+                poiList.add(poi);
+            }
+        }
+        if (poiList.isEmpty()) {
             return;
         }
         int name = R.string.tuangou_ditu;
@@ -482,7 +515,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             name = R.string.zhanlan_ditu;
             actionTag = ActionLog.MapZhanlanList;
         }
-        mSphinx.showPOI(list, position % (TKConfig.getPageSize()), TextAlign.LEFT);
+        mSphinx.showPOI(poiList, page[2], TextAlign.LEFT);
         mSphinx.getResultMapFragment().setData(mContext.getString(name), actionTag);
         mSphinx.showView(R.id.view_result_map);   
     }
@@ -513,11 +546,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     return;
                 }
                 mActionLog.addAction(ActionLog.Title_Right_Button, mActionTag);
-                if (mResultLsv.getLastVisiblePosition() >= getList().size()-1) {
-                    viewMap(getList().size()-1); 
-                } else {
-                    viewMap(mResultLsv.getFirstVisiblePosition());
-                }
+                viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 
             case R.id.dingdan_btn:
@@ -1033,41 +1062,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
         }
-    }
-    
-    private List<POI> getPOIList(int index) {
-        int minIndex = index - (index % (TKConfig.getPageSize()));
-        int maxIndex = minIndex + (TKConfig.getPageSize());
-        List<POI> poiList = new ArrayList<POI>();
-        if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
-            for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mTuangouList.size(); minIndex++) {
-                POI poi = mTuangouList.get(minIndex).getPOI();
-                poi.setName(mTuangouList.get(minIndex).getShortDesc());
-//                poi.setOrderNumber(minIndex+1);
-                poiList.add(poi);
-            }
-        } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
-            
-        } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
-            for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mYanchuList.size(); minIndex++) {
-                Yanchu yanchu = mYanchuList.get(minIndex);
-                yanchu.setOrderNumber(minIndex+1);
-                POI poi = yanchu.getPOI();
-                poi.setName(yanchu.getName());
-                poi.setAddress(null);
-                poiList.add(poi);
-            }
-        } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
-            for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mZhanlanList.size(); minIndex++) {
-                Zhanlan zhanlan = mZhanlanList.get(minIndex);
-                zhanlan.setOrderNumber(minIndex+1);
-                POI poi = zhanlan.getPOI();
-                poi.setName(zhanlan.getName());
-                poi.setAddress(null);
-                poiList.add(poi);
-            }
-        }
-        return poiList;
     }
     
     private List getList() {

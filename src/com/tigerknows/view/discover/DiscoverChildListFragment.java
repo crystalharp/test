@@ -24,6 +24,7 @@ import com.tigerknows.model.DataQuery.BaseList;
 import com.tigerknows.model.DataQuery.FendianResponse;
 import com.tigerknows.model.DataQuery.YingxunResponse;
 import com.tigerknows.model.Yingxun.Changci;
+import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.SpringbackListView;
 import com.tigerknows.view.SpringbackListView.OnRefreshListener;
@@ -268,12 +269,34 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         }
     }
 
-    public void viewMap(List<POI> list, int index) {
-        if (list.isEmpty()) {
+    private void viewMap(int firstVisiblePosition, int lastVisiblePosition) {
+        int size = getList().size();
+        int[] page = CommonUtils.makePage(mResultLsv, size, firstVisiblePosition, lastVisiblePosition);        
+        int minIndex = page[0];
+        int maxIndex = page[1];
+        List<POI> poiList = new ArrayList<POI>();
+        if (BaseQuery.DATA_TYPE_FENDIAN.equals(mDataType)) {
+            for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mFendianList.size(); minIndex++) {
+                Fendian fendian = mFendianList.get(minIndex);
+                fendian.setOrderNumber(minIndex+1);
+                poiList.add(fendian.getPOI(POI.SOURCE_TYPE_FENDIAN, null));
+            }
+        } else if (BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType)) {
+            for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mYingxunList.size(); minIndex++) {
+                Yingxun yingxun = mYingxunList.get(minIndex); 
+                yingxun.setOrderNumber(minIndex+1);
+                poiList.add(yingxun.getPOI(POI.SOURCE_TYPE_YINGXUN, null));
+            }
+        }
+        if (poiList.isEmpty()) {
             return;
         }
 
-        mSphinx.showPOI(list, index);
+        viewMap(poiList, page[2]);
+    }
+    
+    private void viewMap(List<POI> poiList, int index) {
+        mSphinx.showPOI(poiList, index);
         boolean yingxun = BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType);
         mSphinx.getResultMapFragment().setData(mContext.getString(yingxun ? R.string.dianying_ditu : R.string.shanghu_ditu), yingxun ? ActionLog.MapDianyingBranchList : ActionLog.MapTuangouBranchList);
         mSphinx.showView(R.id.view_result_map);   
@@ -287,11 +310,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                     return;
                 }
                 mActionLog.addAction(ActionLog.Title_Right_Button, mActionTag);
-                if (mResultLsv.getLastVisiblePosition() >= getList().size()-1) {
-                    viewMap(getPOIList(getList().size()-1), mResultLsv.getFirstVisiblePosition() % TKConfig.getPageSize()); 
-                } else {
-                    viewMap(getPOIList(mResultLsv.getFirstVisiblePosition()), mResultLsv.getFirstVisiblePosition() % TKConfig.getPageSize());
-                }
+                viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 
             default:
@@ -826,26 +845,6 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
         }
-    }
-    
-    private List<POI> getPOIList(int index) {
-        int minIndex = index - (index % (TKConfig.getPageSize()));
-        int maxIndex = minIndex + (TKConfig.getPageSize());
-        List<POI> poiList = new ArrayList<POI>();
-        if (BaseQuery.DATA_TYPE_FENDIAN.equals(mDataType)) {
-            for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mFendianList.size(); minIndex++) {
-                Fendian fendian = mFendianList.get(minIndex);
-                fendian.setOrderNumber(minIndex+1);
-                poiList.add(fendian.getPOI(POI.SOURCE_TYPE_FENDIAN, null));
-            }
-        } else if (BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType)) {
-            for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mYingxunList.size(); minIndex++) {
-                Yingxun yingxun = mYingxunList.get(minIndex); 
-                yingxun.setOrderNumber(minIndex+1);
-                poiList.add(yingxun.getPOI(POI.SOURCE_TYPE_YINGXUN, null));
-            }
-        }
-        return poiList;
     }
     
     private List getList() {

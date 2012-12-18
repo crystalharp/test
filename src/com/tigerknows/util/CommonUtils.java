@@ -53,6 +53,8 @@ import android.widget.Toast;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
+import com.tigerknows.TKConfig;
+import com.tigerknows.view.SpringbackListView;
 
 /**
  * 
@@ -747,5 +749,37 @@ public class CommonUtils {
             formatter.format("%02x", b);
         }
         return formatter.toString();
+    }
+    
+    public static int[] makePage(SpringbackListView listView, int size, int firstVisiblePosition, int lastVisiblePosition) {
+        return makePage(listView, size, firstVisiblePosition, lastVisiblePosition, false);
+    }
+    
+    public static int[] makePage(SpringbackListView listView, int size, int firstVisiblePosition, int lastVisiblePosition, boolean isShowAPOI) {
+        if (listView.isFooterSpringback() && lastVisiblePosition > size-1) {
+            lastVisiblePosition -= 1;
+        }
+        if (isShowAPOI) {
+            firstVisiblePosition += 1;
+        }
+        int pageSize = TKConfig.getPageSize()/2;
+        int startPage = firstVisiblePosition/(pageSize);
+        int endPage = lastVisiblePosition/(pageSize)+1;
+        int diff = endPage - startPage; 
+        if (diff < 2) {
+            if (lastVisiblePosition >= size-1) {
+                startPage-=(2-diff);
+            } else if (lastVisiblePosition < size-1) {
+                endPage+=(2-diff);
+            }
+        }
+        
+        if (startPage < 0) {
+            startPage = 0;
+        }
+        
+        int minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
+        int maxIndex = endPage * pageSize + (isShowAPOI ? 1 : 0);
+        return new int[]{minIndex, maxIndex, (firstVisiblePosition-(isShowAPOI ? 1 : 0)+(startPage%2 != 0 ? pageSize : 0)) % TKConfig.getPageSize()};
     }
 }
