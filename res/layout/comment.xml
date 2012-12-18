@@ -106,7 +106,6 @@
 						    android:layout_width="48dp"
 						    android:layout_height="wrap_content"
 						    android:button="@drawable/btn_check_grade3"
-						    android:checked="true"
 						    />
 					    <RadioButton
 					        android:id="@+id/grade_4_rbt"
