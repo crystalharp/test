@@ -21,7 +21,7 @@
     <string name="send_mms">发彩信</string>
     <string name="send_weibo">发微博</string>
     <string name="quit">退出</string>
-    <string name="clean_history_message">您要清除所有记录？</string>
+    <string name="clean_history_message">你要清除所有记录？</string>
     <string name="location_failed_and_jump_settings">定位失败，请确认是否开启了‘设置>位置’中的GPS功能。</string>
     <string name="location_failed_and_change_city">定位失败，无法找到所在城市，是否直接选择城市？</string>
     <string name="location_failed_cause">定位失败，请参见下面建议：</string>
@@ -77,11 +77,11 @@
     <string name="discover_exist_tip">已经更新发现结果</string>   
     
     <string name="init_map_dir_title">初始化地图数据</string>
-    <string name="init_map_dir_message">程序异常退出可能是因为使用过程中地图数据文件损坏，建议您删除损坏的地图数据文件?</string>
+    <string name="init_map_dir_message">程序异常退出可能是因为使用过程中地图数据文件损坏，建议你删除损坏的地图数据文件?</string>
     
     <string name="correct_to_how">精确到%1$s</string> 
-    <string name="are_your_change_to_location_city">上次设置为%1$s市，是否切换到您当前定位城市%2$s市？</string> 
-    <string name="are_your_change_to_map_center_city">您的地图已经切换到%1$s，是否切换？</string> 
+    <string name="are_your_change_to_location_city">上次设置为%1$s市，是否切换到你当前定位城市%2$s市？</string> 
+    <string name="are_your_change_to_map_center_city">你的地图已经切换到%1$s，是否切换？</string> 
     <string name="current_location">当前位置：%1$s附近</string> 
     <string name="find_poi">查找地点、商户名</string> 
     <string name="no_comment">目前暂无评论</string> 
@@ -155,7 +155,7 @@
     <string name="input_busline_name_tip">请输入线路名称！</string>
     <string name="transfer_operation_time">运营时间:\u0020\u0020%1$s</string>
     <string name="bus_index_station">%1$d. %2$s</string>
-	<string name="favorite_poi_empty">您还没有任何收藏</string>
+	<string name="favorite_poi_empty">你还没有任何收藏</string>
 	<string name="mylocation_failed">对不起, 定位失败, 请重试...</string>
 
 	<string name="title_transfer_plan_list">公交方案</string>
@@ -205,9 +205,10 @@
     <string name="login_or_regist">登录/注册</string>
     <string name="user_home">个人中心</string>
     
-    <string name="settings_openg_gps">打开GPS</string>
-    <string name="settings_close_gps">关闭GPS</string>
-    <string name="settings_gps_description">可以设置手机GPS开启/关闭</string>
+    <string name="settings_open_gps">开启GPS（卫星定位）</string>
+    <string name="settings_close_gps">关闭GPS（卫星定位）</string>
+    <string name="settings_gps_description_open">开启GPS可以提高定位精度</string>
+    <string name="settings_gps_description_close">关闭GPS可能会降低定位精度</string>
     <string name="settings_acquire_wakelock">保持屏幕常亮</string>
     <string name="settings_acquire_wakelock_description">使用本软件时屏幕常亮，耗电量稍大</string>
     <string name="settings_map_home">设置地图为首页</string>
@@ -233,8 +234,8 @@
 
     <string name="no_result">暂无结果.</string>
 
-    <string name="confirm_start_station">您要找的起点是</string>
-    <string name="confirm_end_station">您要找的终点是</string>
+    <string name="confirm_start_station">你要找的起点是</string>
+    <string name="confirm_end_station">你要找的终点是</string>
     
     <string name="share">分享</string>
     <string name="error_recovery">纠错</string>
@@ -254,7 +255,7 @@
     <string name="low_memory">手机SD卡空间已用完！请删除一些文件来腾出空间。</string>
     <string name="not_memory">手机上没有SD卡，或没有可读写的空间，程序将不能正常运行！</string>
     <string name="prompt">提示</string>
-    <string name="exit_app">您确定要退出应用程序?</string>
+    <string name="exit_app">你确定要退出应用程序?</string>
     <string name="delete_confirm">删除确认</string>
     <string name="nubmer_more">*</string>
 
@@ -371,10 +372,10 @@
     <string name="delete_all_history_traffic">"确定删除选定的交通记录？"</string>
     
     <string name="feedback_submiting">正在发送中...</string>
-    <string name="feedback_success">我们已经收到您的建议，感谢您的支持！</string>
+    <string name="feedback_success">我们已经收到你的建议，感谢你的支持！</string>
     <string name="feedback_failure">提交失败！</string>
-    <string name="your_feedback">请输入您的意见和建议</string>
-    <string name="your_mobile_number">请输入您的手机号码</string>
+    <string name="your_feedback">请输入你的意见和建议</string>
+    <string name="your_mobile_number">请输入你的手机号码</string>
     <string name="mobile_number_">手机号码：</string>
 
     <string name="this_is_fresh_version">本软件已经是最新版本了！</string>
@@ -400,19 +401,19 @@
     <string name="map_flag_error_recovery">地图标记有误</string>
     <string name="phone_error_recovery">电话错误</string>
     <string name="not_exit_error_recovery">商户不存在/已停业</string>
-    <string name="comment_hint_error_recovery">您有什么想补充的吗?</string>
+    <string name="comment_hint_error_recovery">你有什么想补充的吗?</string>
     <string name="mark_error_need_error_recovery">请选择错误类型</string>
-    <string name="thanks_error_recovery">老虎宝典感谢您的提醒与帮助, 我们将会及时处理</string>
+    <string name="thanks_error_recovery">老虎宝典感谢你的提醒与帮助, 我们将会及时处理</string>
    
     <string name="locate_time">定位时间 %1$s:%2$s</string>
     
-    <string name="alert_delete_favorite">您确定要删除此收藏吗?</string>
+    <string name="alert_delete_favorite">你确定要删除此收藏吗?</string>
     
     <string name="hongkong">香港</string>
     <string name="macao">澳门</string>
     <string name="quanguo">全国</string>
     
-    <string name="feedback_text1">感谢您使用老虎宝典，您的建议会帮助我们做得更好！</string>
+    <string name="feedback_text1">感谢你使用老虎宝典，你的建议会帮助我们做得更好！</string>
     <string name="feedback_text2">欢迎关注@老虎宝典官方微博，获得产品最新动态！</string>
     
     <string name="download_manage">下载管理</string>
@@ -425,7 +426,7 @@
 
 <!--  =======================    Share Part    =========================== -->
 <!-- Share Module SinaWeibo Start -->
-    <string name="weibo_same_content">您已经发过相同内容的微博啦。</string>
+    <string name="weibo_same_content">你已经发过相同内容的微博啦。</string>
     <string name="weibo_publish_failed_unknow">发布微博失败，请稍后再试。</string>
     <string name="weibo_max_char">微博文本内容限制在1至%1$s字数之间。</string>
     <string name="weibo_token_expire">微博访问口令已过期, 请重新登录</string>
@@ -439,7 +440,7 @@
     <string name="tencent_getprofile_loading">正在获取用户信息, 请稍候...</string>
     <string name="tencent_getprofile_failed">获取QQ用户信息失败</string>
     <string name="tencent_share_title">来自老虎宝典的分享</string>
-    <string name="tencent_share_content_empty">您的输入为空!</string>
+    <string name="tencent_share_content_empty">你的输入为空!</string>
 <!-- Share Module Tencent End -->
 
 <!-- Share Module Common Start -->
@@ -509,7 +510,7 @@
     <string name="share_from_at_tigerknows">来自@老虎宝典</string>
     <string name="share_from_tigerknows">来自老虎宝典</string>
     <string name="share_tiger_official_website">http://www.tigerknows.com/</string>
-    <string name="share_text_hint">您想说点什么?</string>
+    <string name="share_text_hint">你想说点什么?</string>
     <!--  Share Common End -->
 <!-- Share Module Text Start -->
 
@@ -536,11 +537,11 @@
 	<!-- User Regist End -->
 	
 	<!-- User UpdateNickName Start -->
-	<string name="pick_personal_nickname">起一个您专属的老虎昵称吧~</string>
+	<string name="pick_personal_nickname">起一个你专属的老虎昵称吧~</string>
 	<string name="nickname_compose_format">2-10个汉字或4-20个字符</string>
 	<string name="nicknam_format_wrong">昵称格式有误, 请重新输入</string>
-	<string name="nickname_no_modify">您还未作任何修改.</string>
-	<string name="update_nicknam_success1">昵称设置成功, 快开始您的老虎之旅吧!</string>
+	<string name="nickname_no_modify">你还未作任何修改.</string>
+	<string name="update_nicknam_success1">昵称设置成功, 快开始你的老虎之旅吧!</string>
 	<string name="update_nicknam_success2">昵称修改成功!</string>
 	<!-- User UpdateNickName End -->
 	
@@ -549,13 +550,13 @@
 	<string name="change_nickname">修改昵称</string>
 	<string name="change_password">修改密码</string>
 	<string name="logout_account">退出帐户</string>
-	<string name="logout_account_tip">您确定要退出帐户吗?</string>
+	<string name="logout_account_tip">你确定要退出帐户吗?</string>
 	<!-- User Account end -->
 	
 	<!-- User ChangePassword Start -->
 	<string name="please_input_old_password">请输入旧密码</string>
-	<string name="please_input_new_password">请输入您要修改的新密码</string>
-	<string name="please_input_new_password_again">请再次输入您要修改的新密码</string>
+	<string name="please_input_new_password">请输入你要修改的新密码</string>
+	<string name="please_input_new_password_again">请再次输入你要修改的新密码</string>
 	<!-- 
 	<string name="please_input_616_newpassword">请输入6-16位字母或数字密码</string>
 	<string name="please_input_616_newpassword_again">请再次输入6-16位字母或数字密码</string>
@@ -609,8 +610,8 @@
 	<!-- User InputError Tip End -->
 	
 	<!-- User Response Tip Start -->
-	<string name="request_validcode_success">验证码将以短信形式发送给您, 请查收</string>
-	<string name="regist_success">恭喜您注册成功</string>
+	<string name="request_validcode_success">验证码将以短信形式发送给你, 请查收</string>
+	<string name="regist_success">恭喜你注册成功</string>
 	<string name="request_server_failed">请求失败, 请重新尝试</string>
 	<string name="request_server_error">服务器正忙, 请稍候再试</string>
 	<!-- User Response Tip End -->
@@ -621,8 +622,8 @@
 	<string name="station_line_error">路线错误</string>
 	<string name="staion_no_line">%1$s无%2$s</string>
 	<string name="errorrecovery_description">请输入问题详述或其他信息(选填)</string>
-	<string name="errorrecovery_user_phone">请输入您的手机号码(选填)</string>
-	<string name="errorrecovery_empty">您尚未输入任何纠错信息</string>
+	<string name="errorrecovery_user_phone">请输入你的手机号码(选填)</string>
+	<string name="errorrecovery_empty">你尚未输入任何纠错信息</string>
 	<string name="poi_base_info_error">基本信息错误</string>
 	<string name="poi_name_error">名称错误</string>
 	<string name="poi_address_error">地址错误</string>
@@ -631,7 +632,7 @@
 	<string name="poi_address_noexist_error">地点不存在</string>
 	<string name="poi_address_duplicate_error">地点重复</string>
 	<string name="poi_ohter_error">其他</string>
-	<string name="error_recovery_success">我们将尽快处理, 谢谢您的反馈</string>
+	<string name="error_recovery_success">我们将尽快处理, 谢谢你的反馈</string>
 <!-- Error Recover End -->
 
 <!--  =======================    Common Part    =========================== -->
@@ -666,7 +667,7 @@
     <string name="please_input_">请输入%1$s</string>
     <string name="authorize">授权</string>  
     <string name="weibo_friendships">关注老虎宝典官方新浪微博</string>    
-    <string name="weibo_register_text">我正在使用完全免费的#老虎宝典#，帮助您快速找到城市内吃喝玩乐的地方，出门在外时浏览地图、定位、规划路线，使用速度快，省流量，是出行时必备的手机生活宝典。官网地址：http://www.tigerknows.com</string>
+    <string name="weibo_register_text">我正在使用完全免费的#老虎宝典#，帮助你快速找到城市内吃喝玩乐的地方，出门在外时浏览地图、定位、规划路线，使用速度快，省流量，是出行时必备的手机生活宝典。官网地址：http://www.tigerknows.com</string>
     <string name="weibo_poi_text_head">向大家推荐：%1$s%2$s %3$s</string>
     <string name="weibo_poi_text_type">【%1$s】</string>
     <string name="weibo_text_tail">来自@老虎宝典 http://www.tigerknows.com/</string>
@@ -702,27 +703,27 @@
     <string name="comment_food_caipin">推荐菜品</string>
     <string name="comment_hospital_level">医疗水平</string>
     <string name="comment_cinema_effect">观影效果</string>
-    <string name="comment_food_restair_hit">您觉得适合......（可多选）</string>
-    <string name="comment_food_recommed_hit">哪些是您的最爱？菜品用空格隔开</string>
-    <string name="comment_tip_hit0">留下您的点评吧!</string>
+    <string name="comment_food_restair_hit">你觉得适合......（可多选）</string>
+    <string name="comment_food_recommed_hit">哪些是你的最爱？菜品用空格隔开</string>
+    <string name="comment_tip_hit0">留下你的点评吧!</string>
     <string name="comment_tip_hit1">有新的感受吗？再来点评一下吧~</string>
     <string name="rmb">￥</string>
-    <string name="comment_discard_tip_new">您确定要放弃辛苦写的点评？</string>
-    <string name="comment_discard_tip_modify">您确定要放弃修改点评？</string>
+    <string name="comment_discard_tip_new">你确定要放弃辛苦写的点评？</string>
+    <string name="comment_discard_tip_modify">你确定要放弃修改点评？</string>
     <string name="comment_content_hit1">太差啦！印象为啥这么糟？（30字以上）</string>
     <string name="comment_content_hit2">不咋地！有什么不满意的？（30字以上）</string>
     <string name="comment_content_hit3">一般吧！没有特别之处吗？（30字以上）</string>
     <string name="comment_content_hit4">还不错！满意这里什么呢？（30字以上）</string>
-    <string name="comment_content_hit5">太赞啦！什么打动了您呢？（30字以上）</string>
-    <string name="comment_poi_invalid_hit">该地址已失效，您无法对其进行点评。</string>
+    <string name="comment_content_hit5">太赞啦！什么打动了你呢？（30字以上）</string>
+    <string name="comment_poi_invalid_hit">该地址已失效，你无法对其进行点评。</string>
     <string name="comment_empty">暂无点评</string>
     <string name="comment_share_to">分享到：</string>
     <string name="comment_grade">满意度</string>
     <string name="comment_publishing_and_wait">发表中，请稍候...</string>
-    <string name="go_comment_hit">搜索您去过的商家发表点评...</string>
-    <string name="poi_comment_override_tip">确定覆盖您之前的点评？</string>
-    <string name="poi_comment_poi_invalid_not_create">该地点已失效，您无法对其进行点评。</string>
-    <string name="poi_comment_poi_invalid_not_update">该地点已失效，您无法修改点评内容。</string>
+    <string name="go_comment_hit">搜索你去过的商家发表点评...</string>
+    <string name="poi_comment_override_tip">确定覆盖你之前的点评？</string>
+    <string name="poi_comment_poi_invalid_not_create">该地点已失效，你无法对其进行点评。</string>
+    <string name="poi_comment_poi_invalid_not_update">该地点已失效，你无法修改点评内容。</string>
     <string name="poi_invalid">该地点已失效。</string>
     <string name="poi_comment_publish_success">点评发表成功！</string>
     <string name="poi_comment_update_success">点评修改成功！</string>
@@ -819,13 +820,13 @@
     <string name="shanghudianhua">商户电话</string>
     <string name="yingyeshijian">营业时间</string>
     <string name="renjunjiawei">人均价位</string>
-    <string name="ningdedianhua">您的电话</string>
+    <string name="ningdedianhua">你的电话</string>
     
     <string name="bitian">必填</string>
     <string name="xuantian">选填</string>
     <string name="please_input">请输入</string>
     <string name="please_select">请选择</string>
-    <string name="add_merchant_success">感谢您提交商户信息！</string>
+    <string name="add_merchant_success">感谢你提交商户信息！</string>
     
     <string name="wodedingdan">我的订单</string>
     
@@ -851,10 +852,10 @@
     <string name="going_to_">正在跳转到%1$s...</string>
     
     <string name="response_code_200">成功。</string>
-    <string name="response_code_201">该地址已失效,您无法对其进行点评。</string>
+    <string name="response_code_201">该地址已失效,你无法对其进行点评。</string>
     <string name="response_code_202">点评发表失败，请重新尝试。</string>
-    <string name="response_code_300">您的登录已超时，请重新登录。</string>
-    <string name="response_code_301">该账号已在其他客户端登录，您将登出。</string>
+    <string name="response_code_300">你的登录已超时，请重新登录。</string>
+    <string name="response_code_301">该账号已在其他客户端登录，你将登出。</string>
     <string name="response_code_400">该手机号已注册，请直接登录。</string>
     <string name="response_code_401">昵称已存在，请重新设置。</string>
     <string name="response_code_402">验证码输入有误，请重新输入。</string>
@@ -866,7 +867,7 @@
     <string name="response_code_407">数据异常，请稍后重试。</string>
     <string name="response_code_410">抱歉，该信息已过期。</string>
     <string name="response_code_503">短信传输失败,请稍后重试。</string>
-    <string name="response_code_601">您确定覆盖之前的点评吗？</string>
+    <string name="response_code_601">你确定覆盖之前的点评吗？</string>
     <string name="response_code_602">抱歉，该点评不存在。</string>
     <string name="response_code_603">抱歉，该地址不存在或已失效。</string>
     <string name="response_code_801">创建订单失败，请重试。</string>

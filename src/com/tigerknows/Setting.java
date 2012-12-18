@@ -59,7 +59,7 @@ public class Setting extends BaseActivity {
 
         mBeans = new ArrayList<DataBean>();
         DataBean dataBean = null;
-        dataBean = new DataBean(mThis.getString(R.string.settings_openg_gps), mThis.getString(R.string.settings_gps_description));
+        dataBean = new DataBean(mThis.getString(R.string.settings_open_gps), mThis.getString(R.string.settings_gps_description_open));
         dataBean.showIcon = true;
         dataBean.type = DataBean.TYPE_GPS;
         mBeans.add(dataBean);
@@ -139,8 +139,10 @@ public class Setting extends BaseActivity {
         if (dataBean != null) {
             if (enableGps) {
                 dataBean.title = mThis.getString(R.string.settings_close_gps);
+                dataBean.description = mThis.getString(R.string.settings_gps_description_close);
             } else {
-                dataBean.title = mThis.getString(R.string.settings_openg_gps);
+                dataBean.title = mThis.getString(R.string.settings_open_gps);
+                dataBean.description = mThis.getString(R.string.settings_gps_description_open);
             }
         }
         dataBean = getDataBeanByType(DataBean.TYPE_WAKELOCK);
@@ -167,7 +169,6 @@ public class Setting extends BaseActivity {
             }
 
             DataBean data = getItem(position);
-            view.setTag(data);
             
             TextView titleTxv = (TextView)view.findViewById(R.id.title_txv);
             TextView descriptionTxv = (TextView)view.findViewById(R.id.description_txv);
