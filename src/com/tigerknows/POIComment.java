@@ -104,6 +104,8 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     
     private RadioGroup mGradeRgp;
     
+    private boolean mClickGradeRgp = false;
+    
     private EditText mFoodAvgEdt;
     
     private SeekBar mTasteSkb;
@@ -254,7 +256,6 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 break;
 
             default:
-                mGradeRgp.check(R.id.grade_3_rbt);
                 break;
         }
         
@@ -264,17 +265,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         }
         if (!TextUtils.isEmpty(content)) {
             mContentEdt.setText(content);
-            if (mContentEdt.getEditableText().toString().trim().length() >= MIN_CHAR) {
-                mRightTxv.setEnabled(true);
-            } else {
-                mRightTxv.setEnabled(false);
-            }
             if (mStatus == STATUS_MODIFY) {
                 mContentEdt.setSelection(content.length());
             }
         } else {
             mContentEdt.setText(null);
-            mRightTxv.setEnabled(false);
         }
         
     	IBaseShare iBaseShare = ShareEntrance.getShareObject(mThis, ShareEntrance.TENCENT_ENTRANCE);
@@ -607,13 +602,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 if (len >= MIN_CHAR) {
                     String lenStr = String.valueOf(len);
                     mTextNumTxv.setText(mThis.getString(R.string.poi_comment_sum, lenStr));
-                    mRightTxv.setEnabled(true);
                 } else {
                     String lenStr = String.valueOf(30-len);
                     SpannableStringBuilder style = new SpannableStringBuilder(mThis.getString(R.string.poi_comment_must, lenStr));
                     style.setSpan(new ForegroundColorSpan(0xffff0000),2,2+lenStr.length(),Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     mTextNumTxv.setText(style);
-                    mRightTxv.setEnabled(false);
                 }
             }
         });
@@ -623,6 +616,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int viewId) {
+                mClickGradeRgp = true;
                 switch (radioGroup.getCheckedRadioButtonId()) {
                     case R.id.grade_1_rbt:
                         if (onResume)
@@ -651,6 +645,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                         break;
 
                     default:
+                        mClickGradeRgp = false;
                         break;
                 }
             }
@@ -699,6 +694,31 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         int viewId = view.getId();
         if (R.id.right_txv == viewId) {
             mActionLog.addAction(ActionLog.POICommentClickSubmit);
+            if (mContentEdt.getEditableText().toString().trim().length() < MIN_CHAR) {
+                AlertDialog alertDialog = CommonUtils.getAlertDialog(mThis);
+                alertDialog.setMessage(mThis.getString(R.string.comment_prompt_input_content));
+                alertDialog.setButton(mThis.getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        mContentEdt.requestFocus();
+                    }
+                });
+                alertDialog.show();
+                return;
+            } else if (mClickGradeRgp == false) {
+                AlertDialog alertDialog = CommonUtils.getAlertDialog(mThis);
+                alertDialog.setMessage(mThis.getString(R.string.comment_prompt_input_grade));
+                alertDialog.setButton(mThis.getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(DialogInterface arg0, int arg1) {
+                        mGradeRgp.requestFocus();
+                    }
+                });
+                alertDialog.show();
+                return;
+            }
             if (mStatus == STATUS_MODIFY) {
                 AlertDialog alertDialog = CommonUtils.getAlertDialog(mThis);
                 alertDialog.setMessage(mThis.getString(R.string.poi_comment_override_tip));
@@ -1279,7 +1299,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     }
     
     private boolean isModify() {
-        int grade;
+        int grade = -1;
         switch (mGradeRgp.getCheckedRadioButtonId()) {
             case R.id.grade_1_rbt:
                 grade = 2;
@@ -1298,7 +1318,6 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 break;
 
             default:
-                grade = 6;
                 break;
         }
         if (grade != mComment.getGrade()) {
