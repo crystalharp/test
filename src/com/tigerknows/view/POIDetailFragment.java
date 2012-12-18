@@ -948,10 +948,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             
             float grade = comment.getGrade()/2;
             gradeRtb.setRating(grade);
-            
+
+            authorTxv.setText(comment.getUser());
             if (comment.getAttribute() > 0) {
                 view.setBackgroundResource(R.drawable.list_middle);
-                authorTxv.setText(R.string.me);
                 authorTxv.setTextColor(0xff009CFF);
                 poi.setMyComment(comment);
                 view.setOnClickListener(new OnClickListener() {
@@ -981,7 +981,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             } else {
                 view.setBackgroundResource(R.drawable.list_middle_normal);
                 authorTxv.setTextColor(0xff000000);
-                authorTxv.setText(comment.getUser());
                 view.setOnClickListener(null);
             }
             

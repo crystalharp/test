@@ -382,9 +382,9 @@ public class POICommentList extends BaseActivity {
                 gradeRtb.setRating(grade);
                 
                 final POI poi = mCommentQuery.getPOI();
+                authorTxv.setText(comment.getUser());
                 if (comment.getAttribute() > 0) {
                     view.setBackgroundResource(R.drawable.list_middle);
-                    authorTxv.setText(R.string.me);
                     authorTxv.setTextColor(0xff009CFF);
                     poi.setMyComment(comment);
                     view.setOnClickListener(new OnClickListener() {
@@ -414,7 +414,6 @@ public class POICommentList extends BaseActivity {
                 } else {
                     view.setBackgroundResource(R.drawable.list_middle_normal);
                     authorTxv.setTextColor(0xff000000);
-                    authorTxv.setText(comment.getUser());
                     view.setOnClickListener(null);
                 }
                 
