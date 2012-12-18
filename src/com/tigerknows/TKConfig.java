@@ -13,6 +13,7 @@ import com.tigerknows.R;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.TKWord;
+import com.tigerknows.model.LocationQuery.TKCellLocation;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.view.user.Session;
 import com.tigerknows.view.user.User;
@@ -211,6 +212,7 @@ public class TKConfig {
     public static final String PREFS_MAP_DOWNLOAD_CITYS = "map_download_citys_v2";
     public static final String PREFS_ACQUIRE_WAKELOCK = "acquire_wakelock";
     public static final String PREFS_CLIENT_UID = "prefs_client_uid";
+    public static final String PREFS_DISCOVER = "prefs_discover";
     
     public static final String PREFS_HISTORY_WORD_POI = "history_word_poi_%d";
     public static final String PREFS_HISTORY_WORD_TRAFFIC = "history_word_traffic_%d";
@@ -367,24 +369,27 @@ public class TKConfig {
         context.sendBroadcast(shortcutIntent);//发送广播
     }
     
-    public static int[] getCellLocation() {
+    public static TKCellLocation getCellLocation() {
+        int phoneType = TelephonyManager.PHONE_TYPE_NONE;
         int lac = -1;
         int cid = -1;
         CellLocation cellLocation = sTelephonyManager.getCellLocation();
         if (cellLocation != null) {
             if (cellLocation instanceof GsmCellLocation) {
                 GsmCellLocation gsmCellLocation = (GsmCellLocation)cellLocation;
+                phoneType = TelephonyManager.PHONE_TYPE_GSM;
                 lac = gsmCellLocation.getLac();
                 cid = gsmCellLocation.getCid();
             } else if (cellLocation instanceof CdmaCellLocation) {
                 CdmaCellLocation cdmaCellLocation = (CdmaCellLocation)cellLocation;
+                phoneType = TelephonyManager.PHONE_TYPE_CDMA;
                 int sid = cdmaCellLocation.getSystemId();
                 lac = (sid << 16) + cdmaCellLocation.getNetworkId();
                 cid = cdmaCellLocation.getBaseStationId();
             }
         }
         
-        return new int[]{lac, cid};
+        return new TKCellLocation(phoneType, lac, cid);
     }
     
     public static List<NeighboringCellInfo> getNeighboringCellList() {

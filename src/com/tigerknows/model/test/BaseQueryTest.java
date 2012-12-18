@@ -48,6 +48,8 @@ import java.util.Hashtable;
 
 public class BaseQueryTest {
     
+    static boolean Test = false;
+    
     static int RESPONSE_CODE = BaseQuery.STATUS_CODE_NETWORK_OK;
 
     public static XMap launchResponse() {
@@ -61,6 +63,9 @@ public class BaseQueryTest {
     }
     
     public static void showSetResponseCode(LayoutInflater layoutInflater, final Activity activity) {
+        if (Test == false) {
+            return;
+        }
         LinearLayout layout = new LinearLayout(activity);
         layout.setOrientation(LinearLayout.VERTICAL);
         final Button editConfigBtn = new Button(activity);
@@ -200,7 +205,7 @@ public class BaseQueryTest {
             
             @Override
             public void onClick(View arg0) {
-                LocationQuery.getInstance(activity).getLocationCache().clear();
+                LocationQuery.getInstance(activity).clearCache();
                 Globals.g_My_Location = null;
                 Globals.g_My_Location_City_Info = null;
                 if (activity instanceof Sphinx) {

@@ -6,7 +6,9 @@ package com.tigerknows.service;
 
 
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.LocationUpload;
+import com.tigerknows.model.LocationQuery.TKCellLocation;
 
 import android.content.Context;
 import android.location.Location;
@@ -43,11 +45,13 @@ public class TKLocationManager {
     private TKLocation lastNetworkTKLocation = null;
     private TKLocation lastTigerknowsTKLocation = null;
     private LocationUpload locationUpload;
+    private LocationQuery locationQuery;
     private ArrayList<TKLocationListener> locationListenerList = new ArrayList<TKLocationListener>();
     private Object locationChangeLock = new Object();
     
     public TKLocationManager(Context context) {
         locationUpload = LocationUpload.getInstance(context);
+        locationQuery = LocationQuery.getInstance(context);
         
         networkLocationManager = new TigerknowsLocationManager(context); 
         networkLocationManager.addLocationListener(new TigerknowsLocationListener());
@@ -94,10 +98,12 @@ public class TKLocationManager {
     
     public void onCreate() {
         locationUpload.onCreate();
+        locationQuery.onCreate();
     }
     
     public void onDestroy() {
         locationUpload.onDestroy();
+        locationQuery.onDestory();
     }
     
     private void locationChanged(int locationType) {
@@ -115,9 +121,9 @@ public class TKLocationManager {
                 }
             } else if (locationType == LOCATION_TIGERKNOWS || locationType == LOCATION_NETWORK) {
                 
-                int[] cellInfo = TKConfig.getCellLocation();
-                int lac = cellInfo[0];
-                int cid = cellInfo[1];
+                TKCellLocation tkCellLocation = TKConfig.getCellLocation();
+                int lac = tkCellLocation.lac;
+                int cid = tkCellLocation.cid;
                 if (lastGpsTKLocation != null 
                             && ((lac > 0 
                                     && cid > 0
@@ -164,9 +170,9 @@ public class TKLocationManager {
                 return;
             }
 
-            int[] cellInfo = TKConfig.getCellLocation();
-            int lac = cellInfo[0];
-            int cid = cellInfo[1];
+            TKCellLocation tkCellLocation = TKConfig.getCellLocation();
+            int lac = tkCellLocation.lac;
+            int cid = tkCellLocation.cid;
             if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) { 
                 lastGpsTKLocation = new TKLocation(location, lac, cid, System.currentTimeMillis());   
                 locationChanged(LOCATION_GPS);

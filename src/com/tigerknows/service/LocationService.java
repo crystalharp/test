@@ -21,6 +21,8 @@ import android.os.RemoteException;
  */
 public class LocationService extends TKNetworkService {
     
+    public static final long RETRY_INTERVAL = 6 * 1000;
+    
     static final String TAG = "LocationService";
     
     private LocationQuery locationQuery;
@@ -123,31 +125,22 @@ public class LocationService extends TKNetworkService {
 
     @Override
     public void doWork() {
-        if (isNetworkAvailable) {
-            if (locationQuery == null) {
-                onStatusChanged(TigerknowsLocationManager.TIGERKNOWS_PROVIDER, LocationProvider.OUT_OF_SERVICE, null);
-                return;
-            }
-            Location location = locationQuery.getLocation();
-            
-            if (location != null) {
-                onLocationChanged(location);
-            } else {
-                onStatusChanged(TigerknowsLocationManager.TIGERKNOWS_PROVIDER, LocationProvider.TEMPORARILY_UNAVAILABLE, null);
-            }
-            
-            try {
-                Thread.sleep(RETRY_INTERVAL);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        } else {
+        if (locationQuery == null) {
             onStatusChanged(TigerknowsLocationManager.TIGERKNOWS_PROVIDER, LocationProvider.OUT_OF_SERVICE, null);
-            try {
-                Thread.sleep(NOT_NETWORK_INTERVAL);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            return;
+        }
+        Location location = locationQuery.getLocation();
+        
+        if (location != null) {
+            onLocationChanged(location);
+        } else {
+            onStatusChanged(TigerknowsLocationManager.TIGERKNOWS_PROVIDER, LocationProvider.TEMPORARILY_UNAVAILABLE, null);
+        }
+        
+        try {
+            Thread.sleep(RETRY_INTERVAL);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }

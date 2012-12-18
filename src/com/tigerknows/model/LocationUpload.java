@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.LocationQuery.TKCellLocation;
 import com.tigerknows.util.CommonUtils;
 
 import android.content.Context;
@@ -113,9 +114,9 @@ public class LocationUpload {
         if (!overflow) {
             StringBuilder address = new StringBuilder();
 
-            int[] cellLocation = TKConfig.getCellLocation();
-            int lac = cellLocation[0];
-            int cid = cellLocation[1];
+            TKCellLocation tkCellLocation = TKConfig.getCellLocation();
+            int lac = tkCellLocation.lac;
+            int cid = tkCellLocation.cid;
             
             // 记录当前基站
             if (CommonUtils.mccMncLacCidValid(mcc, mnc, lac, cid)) {

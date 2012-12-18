@@ -28,6 +28,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.MapEngine.CityInfo;
+import com.tigerknows.model.LocationQuery.TKCellLocation;
 import com.tigerknows.model.response.Appendix;
 import com.tigerknows.model.response.DataPackage;
 import com.tigerknows.model.response.DownloadDomainCake;
@@ -254,11 +255,11 @@ public abstract class BaseQuery {
         
         parameters.add(new BasicNameValuePair("d", TKConfig.getIMSI()));
         boolean simAvailably = true;
-        int[] cellInfo = TKConfig.getCellLocation();
+        TKCellLocation tkCellLocation = TKConfig.getCellLocation();
         int mcc = TKConfig.getMCC();
         int mnc = TKConfig.getMNC();
-        int lac = cellInfo[0];
-        int cid = cellInfo[1];
+        int lac = tkCellLocation.lac;
+        int cid = tkCellLocation.cid;
         if (isLocateMe && !CommonUtils.mccMncLacCidValid(mcc, mnc, lac, cid)) {
             simAvailably = false;
         }
