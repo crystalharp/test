@@ -207,6 +207,49 @@ public final class DataQuery extends BaseQuery {
         initStaticField(this.criteria.get(SERVER_PARAMETER_DATA_TYPE), this.cityId);
     }
     
+    public static boolean checkDiscoveryCity(int cityId) {
+        boolean exist = false;
+        initDiscoverConfigList();
+        if (Discover_Config_List != null) {
+            List<DiscoverConfig> list = Discover_Config_List.getList();
+            for(int i = list.size()-1; i >= 0; i--) {
+                if (list.get(i).seqId == cityId) {
+                    exist = true;
+                    break;
+                }
+            }
+        }
+        return exist;
+    }
+    
+    private static void initDiscoverConfigList() {
+        synchronized (Filter_Lock) {
+            try {
+                if (Discover_Config_List == null) {
+                    String path = TKConfig.getDataPath(false) + "discoverConfigList.xml";
+                    File file = new File(path);
+                    if (file.exists()) {
+                        FileInputStream fis = new FileInputStream(file);
+                        try {
+                            Discover_Config_List = DiscoverResponse.parseDiscoverConfigList(fis);
+                        } finally {
+                            if (null != fis) {
+                                try {
+                                    fis.close();
+                                } catch (IOException e) {
+                                    // Ignore
+                                    LogWrapper.e("POIQuery", "setup() IOException caught while closing stream");
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // TODO: handle exception
+            }
+        }
+    }
+    
     public static void initStaticField(String dataType, int cityId) {
         try {
             synchronized (Filter_Lock) {
@@ -228,25 +271,7 @@ public final class DataQuery extends BaseQuery {
                     filterDataArea = Filter_Area;
                     filterDataCategoryOrder = Filter_Category_Order_Zhanlan;
                 } else if (DATA_TYPE_DISCOVER.equals(dataType)) {
-                    if (Discover_Config_List == null) {
-                        String path = TKConfig.getDataPath(false) + "discoverConfigList.xml";
-                        File file = new File(path);
-                        if (file.exists()) {
-                            FileInputStream fis = new FileInputStream(file);
-                            try {
-                                Discover_Config_List = DiscoverResponse.parseDiscoverConfigList(fis);
-                            } finally {
-                                if (null != fis) {
-                                    try {
-                                        fis.close();
-                                    } catch (IOException e) {
-                                        // Ignore
-                                        LogWrapper.e("POIQuery", "setup() IOException caught while closing stream");
-                                    }
-                                }
-                            }
-                        }
-                    }
+                    initDiscoverConfigList();
                     
                     if (TextUtils.isEmpty(Discover_Database_Version)) {
                         Discover_Database_Version = CommonUtils.readFile(new FileInputStream(TKConfig.getDataPath(true) + "discoverDatabaseVersion"));

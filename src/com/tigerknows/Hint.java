@@ -8,14 +8,15 @@ import com.tigerknows.R;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 
 /**
  * @author Peng Wenyue
  */
 public class Hint extends BaseActivity implements View.OnClickListener {
 
-    private View mRootView;
     private int mLayoutResID;
+    private Button mIknowBtn;
     
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,18 +40,20 @@ public class Hint extends BaseActivity implements View.OnClickListener {
 
     protected void findViews() {
         super.findViews();
-        mRootView = findViewById(R.id.root_view);
+        mIknowBtn = (Button) findViewById(R.id.iknow_btn);
     }
     
     protected void setListener() {
         super.setListener();
-        mRootView.setOnClickListener(this);
+        if (mIknowBtn != null) {
+            mIknowBtn.setOnClickListener(this);
+        }
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.root_view:
+            case R.id.iknow_btn:
                 finish();
                 break;
 

@@ -14,6 +14,7 @@
     <item type="id" name="activity_user_update_phone" />
     <item type="id" name="activity_user_comment_after" />
     
+    <item type="id" name="activity_hint" />
     <item type="id" name="activity_help" />
     <item type="id" name="activity_poi_comment_list" />
     <item type="id" name="activity_poi_comment" />

@@ -7,7 +7,9 @@ package com.tigerknows.view;
 import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,6 +49,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     private ImageButton mTrafficBtn;
     private ImageButton mMoreBtn;
     private ImageView mUpgradeImv;
+    private ImageView mDiscvoerImv;
     
     private int mMenuIdSelected;
     private ImageButton[] mMenuBtnList = new ImageButton[4]; 
@@ -78,6 +81,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     protected void findViews() {
         mPOIBtn = (ImageButton)mRootView.findViewById(R.id.poi_btn);
         mDiscoverBtn = (ImageButton)mRootView.findViewById(R.id.discover_btn);
+        mDiscvoerImv = (ImageView)mRootView.findViewById(R.id.discover_imv);
         mTrafficBtn = (ImageButton)mRootView.findViewById(R.id.traffic_btn);
         mMoreBtn = (ImageButton)mRootView.findViewById(R.id.more_btn);
         mUpgradeImv = (ImageView)mRootView.findViewById(R.id.upgrade_imv);
@@ -105,6 +109,13 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             case R.id.discover_btn:
                 mSphinx.showView(R.id.view_discover);
                 mSphinx.getDiscoverFragment().setCurrentItem(0);
+                if (mDiscvoerImv.getVisibility() == View.VISIBLE) {
+                    mDiscvoerImv.setVisibility(View.GONE);
+                    Intent intent = new Intent();
+                    intent.putExtra("layoutResID", R.layout.hint_discover);
+                    mSphinx.showView(R.id.activity_hint, intent);
+                    TKConfig.setPref(mSphinx, TKConfig.PREFS_DISCOVER, "1");
+                }
                 break;
             case R.id.traffic_btn:
             	mActionLog.addAction(ActionLog.MenuTraffic);
@@ -138,5 +149,9 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     
     public void setUpgrade(int visibility) {
         mUpgradeImv.setVisibility(visibility);
+    }
+    
+    public void setDiscover(int visibility) {
+        mDiscvoerImv.setVisibility(visibility);
     }
 }

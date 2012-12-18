@@ -34,6 +34,15 @@
         android:layout_centerInParent="true"
         android:scaleType="fitEnd"
         android:gravity="center"/>
+        
+        <ImageView android:id="@+id/discover_imv" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_new"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:visibility="gone"/>
     </RelativeLayout>
            
     <RelativeLayout

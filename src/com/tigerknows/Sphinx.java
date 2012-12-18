@@ -777,6 +777,21 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 
         UserLogon userLogon = new UserLogon(mContext);
         queryStart(userLogon, false);
+        
+        checkDiscoveryCity(Globals.g_Current_City_Info.getId());
+	}
+	
+	private void checkDiscoveryCity(int cityId) {
+        if (DataQuery.checkDiscoveryCity(cityId)) {
+            String show = TKConfig.getPref(this, TKConfig.PREFS_DISCOVER);
+            if (TextUtils.isEmpty(show)) {
+                getMenuFragment().setDiscover(View.VISIBLE);
+            } else {
+                getMenuFragment().setDiscover(View.GONE);
+            }
+        } else {
+            getMenuFragment().setDiscover(View.GONE);
+        }
 	}
 
     @Override
@@ -1591,6 +1606,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             } else {
                 mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
                 updateCityInfo();
+                checkDiscoveryCity((int)cityId);
                 mActionLog.addAction(ActionLog.LifecycleSelectCity, Globals.g_Current_City_Info.getCName());
             }
         }    
@@ -2274,7 +2290,11 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 intent = new Intent();
             }
             intent.putExtra(BaseActivity.SOURCE_USER_HOME, uiStackContains(R.id.view_user_home));
-            if (R.id.activity_help == viewId) {
+            if (R.id.activity_hint == viewId) {
+                intent.setClass(this, Hint.class);
+                startActivityForResult(intent, R.id.activity_hint);
+                return true;
+            } else if (R.id.activity_help == viewId) {
                 intent.setClass(this, Help.class);
                 startActivityForResult(intent, R.id.activity_help);
                 return true;
