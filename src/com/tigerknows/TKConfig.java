@@ -182,7 +182,7 @@ public class TKConfig {
 
     private static TelephonyManager sTelephonyManager;
     
-    private static int sPage_Size = 10;
+    private static int sPage_Size = 20;
     
     public static int LON_LAT_DIVISOR = 100000;
     

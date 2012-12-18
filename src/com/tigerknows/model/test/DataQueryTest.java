@@ -147,7 +147,7 @@ public class DataQueryTest {
     public static XMap launchTuangouResponse(Context context, int total, String message) {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
-        data.put(TuangouResponse.FIELD_LIST, launchTuangouList(context, total, message, TKConfig.getPageSize()*2));
+        data.put(TuangouResponse.FIELD_LIST, launchTuangouList(context, total, message, TKConfig.getPageSize()));
         data.put(TuangouResponse.FIELD_DATABASE_VERSION, "1.0");
         data.put(TuangouResponse.FIELD_FILTER_AREA_INDEX, launchFilterIndex(1, 168));
         data.put(TuangouResponse.FIELD_FILTER_CATEGORY_INDEX, launchFilterIndex(2, 168));
@@ -160,7 +160,7 @@ public class DataQueryTest {
     public static XMap launchFendianResponse(int total, String message) {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
-        data.put(FendianResponse.FIELD_LIST, launchFendianList(total, message, TKConfig.getPageSize()*2));
+        data.put(FendianResponse.FIELD_LIST, launchFendianList(total, message, TKConfig.getPageSize()));
         return data;
     }
 
@@ -354,7 +354,7 @@ public class DataQueryTest {
     public static XMap launchDianyingResponse(Context context, int total, String message) {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
-        data.put(DianyingResponse.FIELD_LIST, launchDianyingList(context, total, message, TKConfig.getPageSize()*2));
+        data.put(DianyingResponse.FIELD_LIST, launchDianyingList(context, total, message, TKConfig.getPageSize()));
         data.put(DianyingResponse.FIELD_DATABASE_VERSION, "1.0");
         data.put(DianyingResponse.FIELD_FILTER_AREA_INDEX, launchFilterIndex(1, 168));
         data.put(DianyingResponse.FIELD_FILTER_CATEGORY_INDEX, launchFilterIndex(2, 168));
@@ -440,7 +440,7 @@ public class DataQueryTest {
     public static XMap launchYingxunResponse(int total, String message) {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
-        data.put(YingxunResponse.FIELD_LIST, launchYingxunList(total, message, TKConfig.getPageSize()*2));
+        data.put(YingxunResponse.FIELD_LIST, launchYingxunList(total, message, TKConfig.getPageSize()));
         return data;
     }
 
@@ -515,7 +515,7 @@ public class DataQueryTest {
     public static XMap launchYanchuResponse(Context context, int total, String message) {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
-        data.put(YanchuResponse.FIELD_LIST, launchYanchuList(context, total, message, TKConfig.getPageSize()*2));
+        data.put(YanchuResponse.FIELD_LIST, launchYanchuList(context, total, message, TKConfig.getPageSize()));
         data.put(YanchuResponse.FIELD_DATABASE_VERSION, "1.0");
         data.put(YanchuResponse.FIELD_FILTER_AREA_INDEX, launchFilterIndex(1, 168));
         data.put(YanchuResponse.FIELD_FILTER_CATEGORY_INDEX, launchFilterIndex(2, 168));
@@ -539,7 +539,7 @@ public class DataQueryTest {
     public static XMap launchZhanlanResponse(Context context, int total, String message) {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
-        data.put(ZhanlanResponse.FIELD_LIST, launchZhanlanList(context, total, message, TKConfig.getPageSize()*2));
+        data.put(ZhanlanResponse.FIELD_LIST, launchZhanlanList(context, total, message, TKConfig.getPageSize()));
         data.put(ZhanlanResponse.FIELD_DATABASE_VERSION, "1.0");
         data.put(ZhanlanResponse.FIELD_FILTER_AREA_INDEX, launchFilterIndex(1, 168));
         data.put(ZhanlanResponse.FIELD_FILTER_CATEGORY_INDEX, launchFilterIndex(2, 168));

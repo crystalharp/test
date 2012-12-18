@@ -450,7 +450,6 @@ public final class DataQuery extends BaseQuery {
                     nfv = Filter_Category_Order_Tuangou.version;
                 }
                 addFilterParameters(criteria, requestParameters, cfv, nfv);
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize()*2)));
             } else if (DATA_TYPE_FENDIAN.equals(dataType)) { 
                 requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, Fendian.NEED_FILELD));
                 addDiscoverCategoryParameters(requestParameters);
@@ -468,7 +467,6 @@ public final class DataQuery extends BaseQuery {
                     nfv = Filter_Category_Order_Tuangou.version;
                 }
                 addFilterParameters(criteria, requestParameters, cfv, nfv);
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize()*2)));
             } else if (DATA_TYPE_DIANYING.equals(dataType)) { 
                 if (criteria.containsKey(SERVER_PARAMETER_DIANYING_UUID)) {
                     requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DIANYING_UUID, criteria.get(SERVER_PARAMETER_DIANYING_UUID)));
@@ -487,7 +485,6 @@ public final class DataQuery extends BaseQuery {
                     nfv = Filter_Category_Order_Dianying.version;
                 }
                 addFilterParameters(criteria, requestParameters, cfv, nfv);
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize()*2)));
             } else if (DATA_TYPE_YINGXUN.equals(dataType)) { 
                 requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, Yingxun.NEED_FILELD));
                 addDiscoverCategoryParameters(requestParameters);
@@ -505,7 +502,6 @@ public final class DataQuery extends BaseQuery {
                     nfv = Filter_Category_Order_Dianying.version;
                 }
                 addFilterParameters(criteria, requestParameters, cfv, nfv);
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize()*2)));
             } else if (DATA_TYPE_YANCHU.equals(dataType)) { 
                 requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, Yanchu.NEED_FILELD));
                 requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PICTURE, 
@@ -521,7 +517,6 @@ public final class DataQuery extends BaseQuery {
                     nfv = Filter_Category_Order_Yanchu.version;
                 }
                 addFilterParameters(criteria, requestParameters, cfv, nfv);
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize()*2)));
             } else if (DATA_TYPE_SHANGJIA.equals(dataType)) { 
                 requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, TextUtils.isEmpty(Globals.g_Session_Id) ? Shangjia.NEED_FILELD_NO_LOGON : Shangjia.NEED_FILELD));
             } else if (DATA_TYPE_ZHANLAN.equals(dataType)) { 
@@ -539,7 +534,6 @@ public final class DataQuery extends BaseQuery {
                     nfv = Filter_Category_Order_Zhanlan.version;
                 }
                 addFilterParameters(criteria, requestParameters, cfv, nfv);
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize()*2)));
             } else if (DATA_TYPE_DIANPING.equals(dataType)) {
                 requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, Comment.NEED_FILELD));
                 requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION));
