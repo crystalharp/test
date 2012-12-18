@@ -524,11 +524,11 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 @Override
                 public void onZoomEndEvent(MapView mapView, final int newZoomLevel) {
                     mHandler.sendEmptyMessage(MAP_ZOOMEND);
-                    mScaleView.setMetersPerPixelAtZoom((float)Util.metersPerPixelAtZoom(CONFIG.TILE_SIZE, newZoomLevel, mapView.getCenterPosition().getLat()), newZoomLevel);
                     runOnUiThread(new Runnable() {
                         
                         @Override
                         public void run() {
+                            mScaleView.setMetersPerPixelAtZoom((float)Util.metersPerPixelAtZoom(CONFIG.TILE_SIZE, newZoomLevel, mMapView.getCenterPosition().getLat()), newZoomLevel);
                             if (newZoomLevel >= CONFIG.ZOOM_UPPER_BOUND) {
                                 mMapView.getZoomControls().setIsZoomInEnabled(false);
                             } else if (newZoomLevel <= CONFIG.ZOOM_LOWER_BOUND) {
@@ -579,7 +579,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             EventRegistry.addEventListener(mMapView, EventType.TOUCH, new MapView.TouchEventListener(){
                 @Override
                 public void onTouchEvent(EventSource eventSource, Position position) {
-                    Log.i(TAG,"MapView onTouch position"+position.toString());
 //                  viewHandler.sendEmptyMessage(MAP_TOUCH);
                     resetLoactionButtonState();
                     
@@ -711,7 +710,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             EventRegistry.addEventListener(mMapView, MapView.EventType.DOUBLECLICK, new MapView.DoubleClickEventListener(){
                 @Override
                 public void onDoubleClickEvent(MapView mapView, Position position) {
-                    Log.i(TAG,"MapView.onDoubleClickEvent position:"+position.toString());
                     mapView.zoomIn(position);
                     mActionLog.addAction(ActionLog.MapDoubleClick);
                 }
@@ -778,10 +776,10 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         UserLogon userLogon = new UserLogon(mContext);
         queryStart(userLogon, false);
         
-        checkDiscoveryCity(Globals.g_Current_City_Info.getId());
+        checkDiscoverCity(Globals.g_Current_City_Info.getId());
 	}
 	
-	private void checkDiscoveryCity(int cityId) {
+	private void checkDiscoverCity(int cityId) {
         if (DataQuery.checkDiscoveryCity(cityId)) {
             String show = TKConfig.getPref(this, TKConfig.PREFS_DISCOVER);
             if (TextUtils.isEmpty(show)) {
@@ -1606,7 +1604,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             } else {
                 mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
                 updateCityInfo();
-                checkDiscoveryCity((int)cityId);
+                checkDiscoverCity((int)cityId);
                 mActionLog.addAction(ActionLog.LifecycleSelectCity, Globals.g_Current_City_Info.getCName());
             }
         }    
@@ -1736,8 +1734,11 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         Icon iconA=new Icon(bm, 
                 new XYInteger(bm.getWidth(),bm.getHeight()),
                 new XYInteger(bm.getWidth()/2,bm.getHeight()));
+        List<Position> positions = new ArrayList<Position>();
+        Position srcreenPosition = null;
         for(int i=0;i<pois.size();i++){
             POI poi=pois.get(i);
+            positions.add(poi.getPosition());
             RotationTilt rt=new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
             //RotationTilt rt=new RotationTilt(RotateReference.MAP,TiltReference.MAP);
             //rt.setRotation(30);
@@ -1747,9 +1748,10 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             OverlayItem overlayItem=new OverlayItem(poi.getPosition(),poi.getOrderNumber() == 0 ? iconA : icon,poi.getName()+(TextUtils.isEmpty(poi.getAddress()) ? "" : "\n"+poi.getAddress()),rt);
             overlayItem.setInfoWindowType(InfoWindow.TYPE_SIMPLE);
             overlayItem.setTextAlign(textAlign);
+            overlayItem.setPreferZoomLevel(TKConfig.ZOMM_LEVEL_POI);
             if (index == i) {
                 overlayItem.isFoucsed = true;
-                mMapView.panToPosition(poi.getPosition());
+                srcreenPosition = poi.getPosition();
                 showInfoWindow(overlayItem);
             } else {
                 overlayItem.isFoucsed = false;
@@ -1765,11 +1767,16 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             overlay.addOverlayItem(overlayItem);
         }
         mMapView.addOverlay(overlay);
-        mMapView.refreshMap();
         if (pois.size() > 1) {
+            overlay.isShowInPreferZoom = true;
+            int screenX = Globals.g_metrics.widthPixels;
+            int screenY = Globals.g_metrics.heightPixels;
+            int fitZoomLevle = Util.getZoomLevelToFitPositions(screenX, screenY, bm.getWidth()/2 , mMapView.getPadding().top, positions, srcreenPosition);
+            mMapView.zoomTo(fitZoomLevle, srcreenPosition, -1, null);
             mPreviousNextView.setVisibility(View.VISIBLE);
         } else {
             mPreviousNextView.setVisibility(View.INVISIBLE);
+            mMapView.zoomTo(TKConfig.ZOMM_LEVEL_POI, srcreenPosition, -1, null);
         }
         } catch (APIException e) {
             e.printStackTrace();

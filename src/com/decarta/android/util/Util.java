@@ -168,22 +168,22 @@ public class Util {
 	 * 
 	 */
 	public static BoundingBox getBoundingBoxToFitPositions(int screenX,
-			int screenY, Vector<Position> positions) {
+			int screenY, List<Position> positions) {
 		Position position1;
-		double minLat = ((Position) positions.elementAt(0)).getLat();
-		double maxLat = ((Position) positions.elementAt(0)).getLat();
-		double minLon = ((Position) positions.elementAt(0)).getLon();
-		double maxLon = ((Position) positions.elementAt(0)).getLon();
+		double minLat = ((Position) positions.get(0)).getLat();
+		double maxLat = ((Position) positions.get(0)).getLat();
+		double minLon = ((Position) positions.get(0)).getLon();
+		double maxLon = ((Position) positions.get(0)).getLon();
 		for (int i = 1; i < positions.size(); i++) {
-			position1 = (Position) positions.elementAt(i);
+			position1 = (Position) positions.get(i);
 			if (position1.getLon() > maxLon) {
 				maxLon = position1.getLon();
-			} else {
+			} else if (position1.getLon() < minLon) {
 				minLon = position1.getLon();
 			}
 			if (position1.getLat() > maxLat) {
 				maxLat = position1.getLat();
-			} else {
+			} else if (position1.getLat() < minLat) {
 				minLat = position1.getLat();
 			}
 		}
@@ -201,7 +201,7 @@ public class Util {
 	 * 
 	 */
 	public static int getZoomLevelToFitPositions(int screenX, int screenY,
-			ArrayList<Position> positions) throws APIException{
+			List<Position> positions) throws APIException{
 		Position position1;
 		double minLat = (positions.get(0)).getLat();
 		double maxLat = (positions.get(0)).getLat();
@@ -223,6 +223,52 @@ public class Util {
 		return getZoomLevelToFitBoundingBox(screenX, screenY, new BoundingBox(
 				new Position(minLat, minLon), new Position(maxLat, maxLon)));
 	}
+
+    public static int getZoomLevelToFitPositions(int screenX, int screenY, int paddingLeftRight, int paddingTop, List<Position> positions, Position screenCenter) throws APIException {
+        if (positions == null || positions.isEmpty()) {
+            throw new APIException("positions is null");
+        }
+        BoundingBox boundingBox = getBoundingBoxToFitPositions(screenX, screenY, positions);
+        if (screenCenter != null) {
+            Position centerPosition = boundingBox.getCenterPosition();
+            Position min = boundingBox.getMinPosition();
+            Position max = boundingBox.getMaxPosition();
+            double latOffset = 0;
+            double lonOffset = 0;
+            if (screenCenter.getLat()>centerPosition.getLat()) {
+                latOffset = (max.getLat()-centerPosition.getLat())+(screenCenter.getLat()-centerPosition.getLat());
+            } else {
+                latOffset = -((max.getLat()-centerPosition.getLat())+(centerPosition.getLat()-screenCenter.getLat()));
+            }
+            if (screenCenter.getLon()>centerPosition.getLon()) {
+                lonOffset = (max.getLon()-centerPosition.getLon())+(screenCenter.getLon()-centerPosition.getLon());
+            } else {
+                lonOffset = -((max.getLon()-centerPosition.getLon())+(centerPosition.getLon()-screenCenter.getLon()));
+            }
+            
+            if (latOffset > 0) {
+                if (lonOffset > 0) {
+                    positions.add(new Position(max.getLat()+latOffset, max.getLon()+lonOffset));
+                } else {
+                    positions.add(new Position(max.getLat()+latOffset, min.getLon()+lonOffset));
+                }
+            } else {
+                if (lonOffset > 0) {
+                    positions.add(new Position(min.getLat()+latOffset, max.getLon()+lonOffset));
+                } else {
+                    positions.add(new Position(min.getLat()+latOffset, min.getLon()+lonOffset));
+                }
+            }
+            
+            boundingBox = Util.getBoundingBoxToFitPositions(screenX, screenY, positions);
+        }
+        
+        if (boundingBox != null) {
+            return Util.getZoomLevelToFitBoundingBox(screenX, screenY, paddingLeftRight, paddingTop, boundingBox);
+        } else {
+            throw new APIException("boundingBox is null");
+        }
+    }
 
 	/**
 	 * 

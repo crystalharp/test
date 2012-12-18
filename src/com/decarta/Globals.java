@@ -11,7 +11,6 @@ import java.util.HashMap;
 import com.decarta.android.util.XYInteger;
 import com.tigerknows.ImageCache;
 import com.tigerknows.R;
-import com.tigerknows.TKApplication;
 import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.UserLogonModel;
