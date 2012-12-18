@@ -204,6 +204,7 @@
     <string name="recommend_tencent">腾讯应用中心</string>
     <string name="login_or_regist">登录/注册</string>
     <string name="user_home">个人中心</string>
+    <string name="give_favourable_comment">给个好评鼓励我们</string>
     
     <string name="settings_open_gps">开启GPS（卫星定位）</string>
     <string name="settings_close_gps">关闭GPS（卫星定位）</string>

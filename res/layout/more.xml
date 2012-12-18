@@ -213,6 +213,23 @@
                    android:layout_width="fill_parent"
                    android:layout_height="wrap_content"
                    android:background="@drawable/divider" />
+               <Button
+                   android:id="@+id/give_favourable_comment_btn" 
+                   android:layout_width="fill_parent"
+                   android:layout_height="wrap_content" 
+                   android:background="@drawable/list_middle"
+                   android:padding="8dp"
+                   android:drawablePadding="8dp"
+                   android:drawableLeft="@drawable/ic_about_us"
+                   android:drawableRight="@drawable/icon_arrow_right"
+                   android:textColor="@android:color/black"
+                   android:textSize="16sp"
+                   android:text="@string/give_favourable_comment"
+                   android:gravity="left|center_vertical"/>
+               <ImageView
+                   android:layout_width="fill_parent"
+                   android:layout_height="wrap_content"
+                   android:background="@drawable/divider" />
                 <Button
                     android:id="@+id/feedback_btn" 
                     android:layout_width="fill_parent"

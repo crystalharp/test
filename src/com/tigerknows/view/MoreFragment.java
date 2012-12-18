@@ -26,7 +26,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
@@ -69,6 +68,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     private Button mAddMerchantBtn;
     private Button mHelpBtn;
     private Button mAboutBtn;
+    private Button mGiveFavourableCommentBtn;
     
     private String mCityName;
     
@@ -205,6 +205,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         mAddMerchantBtn = (Button)mRootView.findViewById(R.id.add_merchant_btn);
         mHelpBtn = (Button)mRootView.findViewById(R.id.help_btn);
         mAboutBtn = (Button)mRootView.findViewById(R.id.about_btn);
+        mGiveFavourableCommentBtn = (Button)mRootView.findViewById(R.id.give_favourable_comment_btn);
     }
     
     protected void setListener() {
@@ -220,6 +221,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         mAddMerchantBtn.setOnClickListener(this);
         mHelpBtn.setOnClickListener(this);
         mAboutBtn.setOnClickListener(this);
+        mGiveFavourableCommentBtn.setOnClickListener(this);
     }
 
     @Override
@@ -294,10 +296,21 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                 mActionLog.addAction(ActionLog.MoreAboutUs);
                 mSphinx.showView(R.id.activity_about_us);
                 break;
+                
+            case R.id.give_favourable_comment_btn:
+                giveFavourableComment();
+                break;
 
             default:
                 break;
         }
+    }
+    
+    private void giveFavourableComment() {
+        String str = "market://details?id=" + mSphinx.getPackageName();  
+        Intent localIntent = new Intent("android.intent.action.VIEW");  
+        localIntent.setData(Uri.parse(str));  
+        mSphinx.startActivity(localIntent);  
     }
     
     public void refreshCity(String cityName) {
