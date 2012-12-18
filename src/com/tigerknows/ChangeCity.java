@@ -45,16 +45,16 @@ import com.tigerknows.maps.MapEngine.CityInfo;
  */
 public class ChangeCity extends BaseActivity implements View.OnClickListener {
 
-    private TextView mCurrentCityTxv;
     private EditText mKeywordEdt;
     private ExpandableListView mCityElv;
     private ListView mSuggestCityLsv;
     private CityExpandableListAdapter mCityExpandableListAdapter;
     private SuggestCityAdapter mSuggestCityAdapter;    
     private List<CityInfo> mSuggestCityList = new ArrayList<CityInfo>();
+    private CityInfo mLocationCity;
+    private static CityInfo sLocationCityTitle = null;
+    private static CityInfo sAllCityTitle = null;
     private static List<CityInfo> sAllCityInfoList = null;
-    
-    private String mCurrentCityCName;
     
     private MapEngine mMapEngine;
     
@@ -83,6 +83,7 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
         mSuggestCityAdapter = new SuggestCityAdapter(mThis, mSuggestCityList);
         mSuggestCityLsv.setAdapter(mSuggestCityAdapter);
 
+        
         mMapEngine = MapEngine.getInstance();
         if (sAllCityInfoList ==  null) {
            sAllCityInfoList = mMapEngine.getAllProvinceCityList(mThis);
@@ -91,14 +92,19 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
                List<CityInfo> cityInfoList = cityInfo.getCityList();
                Collections.sort(cityInfoList, mCityComparator);
            }
+           sLocationCityTitle = new CityInfo();
+           sLocationCityTitle.setCName(mThis.getString(R.string.location_city));
+           sLocationCityTitle.setId(-5);
+           sAllCityTitle = new CityInfo();
+           sAllCityTitle.setCName(mThis.getString(R.string.all_city));
+           sAllCityTitle.setId(-6);
+           sAllCityInfoList.add(0, sAllCityTitle);
         }
         
         mSuggestCityLsv.setVisibility(View.GONE);
         mCityElv.setVisibility(View.VISIBLE);
+
         
-        CityInfo cityInfo = Globals.g_Current_City_Info;
-        mCurrentCityCName = (cityInfo != null ? cityInfo.getCName() : "");
-        mCurrentCityTxv.setText(mThis.getString(R.string.current_city_, mCurrentCityCName));
         mCityExpandableListAdapter = new CityExpandableListAdapter(mThis);
         mCityElv.setAdapter(mCityExpandableListAdapter);
     }
@@ -106,7 +112,6 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
     protected void findViews() {
         super.findViews();
         mKeywordEdt = (EditText) findViewById(R.id.input_edt);
-        mCurrentCityTxv = (TextView) findViewById(R.id.current_city_txv);
         mCityElv = (ExpandableListView)findViewById(R.id.city_elv);
         mSuggestCityLsv = (ListView)findViewById(R.id.suggest_city_lsv);
     }
@@ -208,7 +213,42 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
         });
     }
     
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mLocationCity = Globals.g_My_Location_City_Info;
+        if (mLocationCity != null) {
+            if (mLocationCity.getCityList().size() == 0) {
+                mLocationCity.getCityList().add(mLocationCity.clone());
+            }
+            if (checkLocationTitle()) {
+                sAllCityInfoList.remove(1);
+                sAllCityInfoList.add(1, mLocationCity);
+            } else {
+                sAllCityInfoList.add(0, sLocationCityTitle);
+                sAllCityInfoList.add(1, mLocationCity);
+            }
+        } else {
+            if (checkLocationTitle()) {
+                sAllCityInfoList.remove(0);
+                sAllCityInfoList.remove(1);
+            }
+        }
+        mCityExpandableListAdapter.notifyDataSetChanged();
+    }
+    
+    private boolean checkLocationTitle() {
+        CityInfo cityInfo = sAllCityInfoList.get(0);
+        if (cityInfo.getId() == sLocationCityTitle.getId()) {
+            return true;
+        }
+        return false;
+    }
+    
     private void changeCity(CityInfo cityInfo) {
+        if (cityInfo.isAvailably() == false || cityInfo.getId() == -5 || cityInfo.getId() == -6) {
+            return;
+        }
         if (cityInfo.getId() == Globals.g_Current_City_Info.getId()) {
             mActionLog.addAction(ActionLog.ChangeCityCurrent, cityInfo.getCName());
         } else {
@@ -292,11 +332,7 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
             TextView textView = (TextView)view.findViewById(R.id.text_txv);
             textView.setText(cname);
             ImageView imageView = (ImageView)view.findViewById(R.id.icon_imv);
-            if (cname.equals(mCurrentCityCName)) {
-                imageView.setBackgroundResource(R.drawable.icon_right);
-            } else {
-                imageView.setBackgroundDrawable(null);
-            }
+            imageView.setBackgroundDrawable(null);
             
             return view;
         }
@@ -336,11 +372,7 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
             TextView textView = (TextView)view.findViewById(R.id.text_txv);
             textView.setText("    " + cname);
             ImageView imageView = (ImageView)view.findViewById(R.id.icon_imv);
-            if (cname.equals(mCurrentCityCName)) {
-                imageView.setBackgroundResource(R.drawable.icon_right);
-            } else {
-                imageView.setBackgroundDrawable(null);
-            }            
+            imageView.setBackgroundDrawable(null);
             return view;
         }
 
@@ -372,17 +404,23 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
             textView.setText(cname);
             
             ImageView imageView = (ImageView)view.findViewById(R.id.icon_imv);
-            if (getChildrenCount(groupPosition) > 1) {
-                if (isExpanded) {            
-                    imageView.setBackgroundResource(R.drawable.icon_arrow_up);
-                } else {
-                    imageView.setBackgroundResource(R.drawable.icon_arrow_down);
-                }
+            if (cityInfo.getId() == -5) {
+                view.setBackgroundColor(0xff00aeff);
+                imageView.setVisibility(View.INVISIBLE);
+            } else if (cityInfo.getId() == -6) {
+                view.setBackgroundColor(0xff00aeff);
+                imageView.setVisibility(View.INVISIBLE);
             } else {
-                if (cname.equals(mCurrentCityCName)) {
-                    imageView.setBackgroundResource(R.drawable.icon_right);
+                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+                if (getChildrenCount(groupPosition) > 1) {
+                    imageView.setVisibility(View.VISIBLE);
+                    if (isExpanded) {            
+                        imageView.setBackgroundResource(R.drawable.icon_arrow_up);
+                    } else {
+                        imageView.setBackgroundResource(R.drawable.icon_arrow_down);
+                    }
                 } else {
-                    imageView.setBackgroundDrawable(null);
+                    imageView.setVisibility(View.INVISIBLE);
                 }
             }
             

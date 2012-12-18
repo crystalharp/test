@@ -42,33 +42,12 @@
             android:layout_centerVertical="true"
             android:editable="false">
          </ImageView>
-    </RelativeLayout>
-     
-    <TextView
-        android:id="@+id/current_city_txv"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/input_view"
-        android:gravity="left"
-        android:text="@string/current_city_"
-        android:textColor="@android:color/white"
-        android:textSize="14sp"
-        android:background="#ff00aeff"
-        android:padding="5dp"/> 
-
-    <ImageView
-        android:id="@+id/shadow_imv"
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content"
-        android:layout_below="@id/input_view"
-        android:src="@drawable/bg_shadow"
-        android:editable="false">
-     </ImageView>      
+    </RelativeLayout>  
              
     <ExpandableListView android:id="@+id/city_elv"
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
-        android:layout_below="@id/current_city_txv"
+        android:layout_below="@id/input_view"
         android:dividerHeight="0dp"
         android:childDivider="@drawable/divider"
         android:divider="@drawable/divider"
@@ -81,7 +60,7 @@
     <ListView android:id="@+id/suggest_city_lsv"
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
-        android:layout_below="@id/current_city_txv"
+        android:layout_below="@id/input_view"
         android:padding="0dp"
         android:dividerHeight="0dp"
         android:divider="@drawable/divider"
@@ -91,5 +70,14 @@
         android:fadingEdge="none"
         android:visibility="gone"
          />
+
+    <ImageView
+        android:id="@+id/shadow_imv"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:layout_below="@id/input_view"
+        android:src="@drawable/bg_shadow"
+        android:editable="false">
+     </ImageView>    
         
 </RelativeLayout>
