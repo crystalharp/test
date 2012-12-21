@@ -751,7 +751,6 @@ public class MapEngine {
                 long loadTime=System.nanoTime()-start;    
                 Profile.getTileBufferInc(loadTime);
                 byte[] data;
-                LogWrapper.d(TAG, "getTileBuffer() ret="+ret+ ", xyz="+x+","+y+","+z);
                 if (ret == 0) {
                     start=System.nanoTime();
                     Bitmap bm;
@@ -821,9 +820,12 @@ public class MapEngine {
             province.setType(CityInfo.TYPE_PROVINCE);
             
             List<String> cityNameList = getCitylist(provinceCName);
-            for (String cityName : cityNameList) {
+            for (int i = cityNameList.size()-1; i >= 0; i--) {
+                String cityName = cityNameList.get(i);
                 CityInfo cityInfo = getCityInfo(getCityid(cityName));
-                province.setId(cityInfo.getId());
+                if (i == cityNameList.size()-1) {
+                    province.setId(cityInfo.getId());
+                }
                 province.getCityList().add(cityInfo);
             }
             allCityInfoList.add(province);
@@ -1197,33 +1199,33 @@ public class MapEngine {
             }
             if (object instanceof CityInfo) {
                 CityInfo other = (CityInfo) object;
-                if (id != other.id) {
+                if (this.id != other.id) {
                     return false;
-                } else if((null != other.cName && !other.cName.equals(this.cName)) || (null == other.cName && other.cName != this.cName)) {
+                } else if((null != this.cName && !this.cName.equals(other.cName)) || (null == this.cName && this.cName != other.cName)) {
                     return false;
-                } else if((null != other.cProvinceName && !other.cProvinceName.equals(this.cProvinceName)) || (null == other.cProvinceName && other.cProvinceName != this.cProvinceName)) {
-                    return false;
-                } else if((null != other.eName && !other.eName.equals(this.eName)) || (null == other.eName && other.eName != this.eName)) {
-                    return false;
-                } else if((null != other.eProvinceName && !other.eProvinceName.equals(this.eProvinceName)) || (null == other.eProvinceName && other.eProvinceName != this.eProvinceName)) {
-                    return false;
-                } else if (type != other.type) {
-                    return false;
-                } else if((null != other.position && !other.position.equals(this.position)) || (null == other.position && other.position != this.position)) {
-                    return false;
-                } else if (level != other.level) {
-                    return false;
-                } else {
-                    if (cityInfoList.size() != other.cityInfoList.size()) {
-                        return false;
-                    } else {
-                        int i = 0;
-                        for(CityInfo cityInfo : cityInfoList) {
-                            if (!cityInfo.equals(other.cityInfoList.get(i++))) {
-                                return false;
-                            }
-                        }
-                    }
+//                } else if((null != this.cProvinceName && !this.cProvinceName.equals(other.cProvinceName)) || (null == this.cProvinceName && this.cProvinceName != other.cProvinceName)) {
+//                    return false;
+//                } else if((null != this.eName && !this.eName.equals(other)) || (null == this.eName && this.eName != other.eName)) {
+//                    return false;
+//                } else if((null != this.eProvinceName && !this.eProvinceName.equals(other.eProvinceName)) || (null == this.eProvinceName && this.eProvinceName != other.eProvinceName)) {
+//                    return false;
+//                } else if (this.type != other.type) {
+//                    return false;
+//                } else if((null != this.position && !this.position.equals(other.position)) || (null == this.position && this.position != other.position)) {
+//                    return false;
+//                } else if (this.level != other.level) {
+//                    return false;
+//                } else {
+//                    if (cityInfoList.size() != other.cityInfoList.size()) {
+//                        return false;
+//                    } else {
+//                        int i = 0;
+//                        for(CityInfo cityInfo : cityInfoList) {
+//                            if (!cityInfo.equals(other.cityInfoList.get(i++))) {
+//                                return false;
+//                            }
+//                        }
+//                    }
                 }
             } else {
                 return false;
@@ -1232,28 +1234,32 @@ public class MapEngine {
             return true;
         }
         
+        private int hashCode=0;
         @Override
         public int hashCode() {
-            int hash = 29 * id;
-            if (cName != null) {
-                hash += cName.hashCode();
+            if (hashCode == 0) {
+                hashCode = 29 * id;
+                if (cName != null) {
+                    hashCode += cName.hashCode();
+                }
+//                if (cProvinceName != null) {
+//                    hashCode += cProvinceName.hashCode();
+//                }
+//                if (eName != null) {
+//                    hashCode += eName.hashCode();
+//                }
+//                if (eProvinceName != null) {
+//                    hashCode += eProvinceName.hashCode();
+//                }
+//                hashCode += type * id;
+//                hashCode += level * id;
+//                hashCode += position.hashCode();
+//                for(int i = cityInfoList.size()-1; i >= 0; i--) {
+//                    CityInfo cityInfo = cityInfoList.get(i);
+//                    hashCode += cityInfo.hashCode();
+//                }
             }
-            if (cProvinceName != null) {
-                hash += cProvinceName.hashCode();
-            }
-            if (eName != null) {
-                hash += eName.hashCode();
-            }
-            if (eProvinceName != null) {
-                hash += eProvinceName.hashCode();
-            }
-            hash += type * id;
-            hash += level * id;
-            hash += position.hashCode();
-            for(CityInfo cityInfo : cityInfoList) {
-                hash += cityInfo.hashCode();
-            }
-            return hash;
+            return hashCode;
         }
     }
     
@@ -1316,5 +1322,12 @@ public class MapEngine {
             hasCorrect = false;
         }
         return hasCorrect;
+    }
+    
+    public static boolean hasCity(int cityId) {
+        if (cityId == -3 || cityId == 1 || cityId == 2 || cityId == 6 || cityId == 8) {
+            return true;
+        }
+        return false;
     }
 }

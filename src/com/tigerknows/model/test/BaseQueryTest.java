@@ -2,7 +2,6 @@ package com.tigerknows.model.test;
 
 import com.decarta.Globals;
 import com.tigerknows.BaseActivity;
-import com.tigerknows.MapDownloadLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -94,11 +93,6 @@ public class BaseQueryTest {
         responseCodeEdt.setThreshold(0);
         responseCodeEdt.setHint(String.valueOf(RESPONSE_CODE));
         layout.addView(lunchTestLayout);
-        
-        final Button clearMapDownloadLogBtn = new Button(activity);
-        if (MapDownloadLog.LOG) {
-        layout.addView(clearMapDownloadLogBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        }
         
         final Button clearLocationCacheBtn = new Button(activity);
         layout.addView(clearLocationCacheBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -192,14 +186,6 @@ public class BaseQueryTest {
             }
         });
         
-        clearMapDownloadLogBtn.setText("Clear Map Download Log");
-        clearMapDownloadLogBtn.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View arg0) {
-                MapDownloadLog.getInstance().reset();
-            }
-        });
         clearLocationCacheBtn.setText("Clear Location Cache");
         clearLocationCacheBtn.setOnClickListener(new View.OnClickListener() {
             

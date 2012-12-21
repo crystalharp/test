@@ -4,6 +4,7 @@
 
 package com.tigerknows.service;
 
+import com.tigerknows.MapDownload;
 import com.tigerknows.TKConfig;
 import com.tigerknows.MapDownload.DownloadCity;
 import com.tigerknows.maps.MapEngine;
@@ -33,7 +34,6 @@ import java.util.List;
 public class MapStatsService extends Service {
     
     public static final String ACTION_MAP_STATS_COMPLATE = "action_map_stats_complate";
-
     
     @Override
     public void onCreate() {
@@ -54,7 +54,7 @@ public class MapStatsService extends Service {
                 }
                 MapEngine mapEngine = MapEngine.getInstance();
                 if (mapEngine.statsMapStart()) {
-                    List<DownloadCity> downloadCityList = countMapCityList();
+                    List<DownloadCity> downloadCityList = countDownloadCityList();
                     mapEngine.statsMapEnd(downloadCityList, true);
                 }
                 Intent intent = new Intent(ACTION_MAP_STATS_COMPLATE);
@@ -74,55 +74,62 @@ public class MapStatsService extends Service {
     }
 
     // 统计以前有下载操作的城市
-    private List<DownloadCity> countDownloadCityList() {
+    private List<DownloadCity> countSavedDownloadCityList() {
         MapEngine mapEngine = MapEngine.getInstance();
-        List<DownloadCity> addedCityList = new ArrayList<DownloadCity>();
+        List<DownloadCity> list = new ArrayList<DownloadCity>();
         
         String downloadCityStr = TKConfig.getPref(getBaseContext(), TKConfig.PREFS_MAP_DOWNLOAD_CITYS, "");
         if (!TextUtils.isEmpty(downloadCityStr)) {
             try {
-            String[] downloadCitysStrArr = downloadCityStr.split(";");
-            
-            for (String str : downloadCitysStrArr) {
-                String[] downloadCityStrArr = str.split(",");
-                String cName = downloadCityStrArr[0];
-                DownloadCity downloadCity = null;
-                for(DownloadCity downloadCity1 : addedCityList) {
-                    if (downloadCity1.getCityInfo().getCName().equals(cName)) {
-                        downloadCity = downloadCity1;
-                        break;
+                String[] downloadCitysStrArr = downloadCityStr.split(";");
+                
+                for (int i = 0, size = downloadCitysStrArr.length; i < size; i++) {
+                    String str = downloadCitysStrArr[i];
+                    String[] downloadCityStrArr = str.split(",");
+                    String cName = downloadCityStrArr[0];
+                    DownloadCity downloadCity = null;
+                    for(int j = list.size()-1; j >= 0; j--) {
+                        DownloadCity downloadCity1 = list.get(j);
+                        if (downloadCity1.getCityInfo().getCName().equals(cName)) {
+                            downloadCity = downloadCity1;
+                            break;
+                        }
+                    }
+                    if (downloadCity == null) {
+                        CityInfo cityInfo = mapEngine.getCityInfo(mapEngine.getCityid(cName));
+                        if (cityInfo.isAvailably() && cityInfo.getId() > 0) {   // && cityInfo.getId() > 0 是排除全国概要
+                            downloadCity = new DownloadCity(cityInfo);
+                        }
+                    }
+                    
+                    if (downloadCity != null) {
+                        list.add(downloadCity);
+                        downloadCity.isManual = 1;
+                        downloadCity.setTotalSize(0);
+                        downloadCity.setDownloadedSize(0);
+                        
+                        int state = Integer.parseInt(downloadCityStrArr[3]);
+                        // 如果以前是正在下载，那么需要将它设为等待下载状态
+                        if (state == DownloadCity.DOWNLOADING) {
+                            state = DownloadCity.WAITING;
+                        }
+                        
+                        if (state == DownloadCity.WAITING || state == DownloadCity.STOPPED) {
+                            downloadCity.setState(state);
+                        }
                     }
                 }
-                if (downloadCity == null) {
-                    CityInfo cityInfo = mapEngine.getCityInfo(mapEngine.getCityid(cName));
-                    downloadCity = new DownloadCity(cityInfo);
-                    
-                    addedCityList.add(downloadCity);
-                }
-                
-                downloadCity.setTotalSize(0);
-                downloadCity.setDownloadedSize(0);
-
-                int state = Integer.parseInt(downloadCityStrArr[3]);
-                // 如果以前是正在下载，那么需要将它设为等待下载状态
-                if (state == DownloadCity.DOWNLOADING) {
-                    state = DownloadCity.WAITING;
-                }
-                
-                if (state == DownloadCity.WAITING || state == DownloadCity.STOPPED) {
-                    downloadCity.setState(state);
-                }
-            }
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-        return addedCityList;
+        return list;
     }
 
     // 统计手机上存在地图数据的城市名称列表
-    private List<DownloadCity> countMapCityList() {
+    private List<DownloadCity> countDownloadCityList() {
         MapEngine mapEngine = MapEngine.getInstance();
-        List<DownloadCity> addedMapCityList = countDownloadCityList();
+        List<DownloadCity> savedList = countSavedDownloadCityList();
         String mapPath = MapEngine.getInstance().getMapPath();
         if (!TextUtils.isEmpty(mapPath)) {
             File dataRootDir = new File(mapPath);
@@ -132,46 +139,50 @@ public class MapStatsService extends Service {
                     return true;
                 }
             });
-            if (mapFiles == null) {
-                return addedMapCityList;
-            }
-            for (File mapFile : mapFiles) {
-                File[] regionFiles = mapFile.listFiles();
-                if (regionFiles == null) {
-                    continue;
-                }
-                for (File regionFile : regionFiles) {
-                    String regionFileName = regionFile.getName();
-                    if (!regionFileName.endsWith(".dat")) {
+            if (mapFiles != null) {
+                for (int i = mapFiles.length-1; i >= 0; i--) {
+                    File mapFile = mapFiles[i];
+                    File[] regionFiles = mapFile.listFiles();
+                    if (regionFiles == null) {
                         continue;
                     }
-                    String regionName = regionFileName.replace(".dat", "");
-                    int regionId = mapEngine.getRegionId(regionName);
-                    RegionInfo regionInfo = mapEngine.getRegionInfo(regionId);
-                    if (null != regionInfo) {
-                        mapEngine.addLastRegionId(regionId, true);
-                        String cName = regionInfo.getCCityName();
-                        DownloadCity downloadCity = null;
-                        for (DownloadCity downloadCity1 : addedMapCityList) {
-                            if (downloadCity1.getCityInfo().getCName().equals(cName)) {
-                                downloadCity = downloadCity1;
-                                break;
-                            }
+                    for (int j = regionFiles.length-1; j >= 0; j--) {
+                        File regionFile = regionFiles[j];
+                        String regionFileName = regionFile.getName();
+                        if (!regionFileName.endsWith(".dat")) {
+                            continue;
                         }
-                        
-                        if (downloadCity == null) {
-                            CityInfo cityInfo = mapEngine.getCityInfo(mapEngine.getCityid(cName));
-                            downloadCity = new DownloadCity(cityInfo);
-                                                    
-                            addedMapCityList.add(downloadCity);
-                        }                        
+                        String regionName = regionFileName.replace(".dat", "");
+                        int regionId = mapEngine.getRegionId(regionName);
+                        RegionInfo regionInfo = mapEngine.getRegionInfo(regionId);
+                        if (null != regionInfo) {
+                            mapEngine.addLastRegionId(regionId, true);
+                            String cName = regionInfo.getCCityName();
+                            DownloadCity exist = null;
+                            for (int x = savedList.size()-1; x >= 0; x--) {
+                                DownloadCity downloadCity = savedList.get(x);
+                                if (downloadCity.getCityInfo().getCName().equals(cName)) {
+                                    exist = downloadCity;
+                                    break;
+                                }
+                            }
+                            
+                            if (exist == null) {
+                                CityInfo cityInfo = mapEngine.getCityInfo(mapEngine.getCityid(cName));
+                                if (cityInfo.isAvailably() && cityInfo.getId() > 0) {   // && cityInfo.getId() > 0 是排除全国概要
+                                    exist = new DownloadCity(cityInfo);
+                                    savedList.add(exist);
+                                }
+                            }                        
+                        }
                     }
                 }
             }
         }
         
         List<Integer> list = new ArrayList<Integer>();
-        for(DownloadCity downloadCity : addedMapCityList) {
+        for(int i = savedList.size()-1; i >= 0; i--) {
+            DownloadCity downloadCity = savedList.get(i);
             list.addAll(downloadCity.getRegionIdList());
         }
         MapVersionQuery mapVersionQuery = new MapVersionQuery(getBaseContext());
@@ -179,11 +190,18 @@ public class MapStatsService extends Service {
         mapVersionQuery.query();
         HashMap<Integer, RegionDataInfo> regionVersionMap = mapVersionQuery.getRegionVersion();
         
-        for(DownloadCity downloadCity : addedMapCityList) {
+        for(int i = savedList.size()-1; i >= 0; i--) {
+            DownloadCity downloadCity = savedList.get(i);
             countDownloadCity(downloadCity, regionVersionMap);
         }
-
-        return addedMapCityList;
+        
+        List<DownloadCity> expandList = new ArrayList<DownloadCity>();
+        for(int i = savedList.size()-1; i >= 0; i--) {
+            DownloadCity downloadCity = savedList.get(i);
+            MapDownload.addDownloadCity(getApplicationContext(), expandList, downloadCity, downloadCity.isManual == 1);
+        }
+        
+        return expandList;
     }
     
     public static void countDownloadCity(DownloadCity downloadCity, HashMap<Integer, RegionDataInfo> regionVersionMap) {
@@ -192,7 +210,8 @@ public class MapStatsService extends Service {
         int totalSize = 0;
         int downloadedSize = 0;
         boolean maybeUpdate = false;
-        for (int id : list) {
+        for (int j = list.size()-1; j >= 0; j--) {
+            int id = list.get(j);
             RegionMapInfo regionMapInfo = mapEngine.getRegionStat(id);
             if (regionMapInfo != null) {
                 totalSize += regionMapInfo.getTotalSize();
@@ -219,6 +238,7 @@ public class MapStatsService extends Service {
                             }
                         }
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
                 }
@@ -229,7 +249,7 @@ public class MapStatsService extends Service {
         downloadCity.setDownloadedSize(downloadedSize);
         if (maybeUpdate) {
             downloadCity.setState(DownloadCity.MAYUPDATE);
-        } else if (downloadCity.getDownloadedSize() >= downloadCity.getTotalSize()-1024 && downloadCity.getDownloadedSize() > 1024) {
+        } else if (downloadCity.getPercent() >= MapDownload.PERCENT_COMPLETE) {
             downloadCity.setState(DownloadCity.COMPLETED);
         } else if (downloadCity.getState() == DownloadCity.MAYUPDATE) {
             downloadCity.setState(DownloadCity.STOPPED);
