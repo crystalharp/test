@@ -142,20 +142,6 @@
         <item>评分:</item><!-- pf(评分)：x_uint (0 - 10) -->
     </string-array>
     
-    <string-array name="favorite_traffic_type">
-        <item>公交线路</item>
-        <item>自驾</item>
-        <item>公交换乘</item>
-        <item>步行</item>
-    </string-array>
-    <!-- 
-    <string-array name="traffic_option">
-        <item>公交换乘</item>
-        <item>驾车</item>
-        <item>步行</item>
-        <item>线路</item>
-    </string-array>
-     -->
     <string-array name="error_recovery_type">
         <item>501</item><!-- 地名/地址错误 -->
         <item>502</item><!-- 地图标记有误 -->

@@ -13,11 +13,8 @@ import com.tigerknows.model.BaseData;
 import com.tigerknows.model.History;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.BuslineQuery;
-import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.BuslineModel.Line;
-import com.tigerknows.model.TrafficModel.Plan;
-import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.SqliteWrapper;
@@ -29,7 +26,6 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -41,7 +37,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import java.util.ArrayList;
@@ -90,6 +85,8 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     private String mLayerType = ItemizedOverlay.POI_OVERLAY;
     
     private String mPOIWhere;
+    
+    private boolean mDismiss = true;
     
     private Runnable mTurnPageRunPOI = new Runnable() {
         
@@ -176,31 +173,40 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         super.onResume();
         mRightTxv.setOnClickListener(this);
         mRightTxv.setText(R.string.clear_all);
-        
-        refresh(ItemizedOverlay.POI_OVERLAY);
-        refresh(ItemizedOverlay.TRAFFIC_OVERLAY);
-        
-        if (mPOIList.size() > 0) {
-            readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getDateTime(), true);
+
+        if (mDismiss) {
+            mDismiss = false;
+            readPOI(mPOIList, Long.MAX_VALUE, 0, false);
+            readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
+            if (mPOIList.isEmpty() && mTrafficList.isEmpty() == false) {
+                mLayerType = ItemizedOverlay.TRAFFIC_OVERLAY;
+            }
         } else {
-//            readPOI(mPOIList, Long.MAX_VALUE, 0, false);
-            mPOILsv.setFooterSpringback(true);
-            turnPagePOI();
+            refresh(ItemizedOverlay.POI_OVERLAY);
+            refresh(ItemizedOverlay.TRAFFIC_OVERLAY);
+            
+            if (mPOIList.size() > 0) {
+                readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getDateTime(), true);
+            } else {
+    //            readPOI(mPOIList, Long.MAX_VALUE, 0, false);
+                mPOILsv.setFooterSpringback(true);
+                turnPagePOI();
+            }
+            Collections.sort(mPOIList, mComparator);
+            CommonUtils.keepListSize(mPOIList, Tigerknows.HISTORY_MAX_SIZE);
+            mPOIAdapter.notifyDataSetChanged();
+            
+            if (mTrafficList.size() > 0) {
+                readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getDateTime(), true);
+            } else {
+    //            readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
+                mTrafficLsv.setFooterSpringback(true);
+                turnPageTraffic();
+            }
+            Collections.sort(mTrafficList, mComparator);
+            CommonUtils.keepListSize(mTrafficList, Tigerknows.HISTORY_MAX_SIZE);
+            mTrafficAdapter.notifyDataSetChanged();
         }
-        Collections.sort(mPOIList, mComparator);
-        CommonUtils.keepListSize(mPOIList, Tigerknows.HISTORY_MAX_SIZE);
-        mPOIAdapter.notifyDataSetChanged();
-        
-        if (mTrafficList.size() > 0) {
-            readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getDateTime(), true);
-        } else {
-//            readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
-            mTrafficLsv.setFooterSpringback(true);
-            turnPageTraffic();
-        }
-        Collections.sort(mTrafficList, mComparator);
-        CommonUtils.keepListSize(mTrafficList, Tigerknows.HISTORY_MAX_SIZE);
-        mTrafficAdapter.notifyDataSetChanged();
         
         refreshTab(mLayerType);
         refreshContent();
@@ -214,6 +220,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         mPOIAdapter.notifyDataSetChanged();
         mTrafficAdapter.notifyDataSetChanged();
         mLayerType = ItemizedOverlay.POI_OVERLAY;
+        mDismiss = true;
     }
 
     protected void findViews() {
@@ -499,11 +506,9 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     
     public class TrafficAdapter extends ArrayAdapter<History>{
         private static final int sResource = R.layout.favorite_list_item;
-        private String[] typeNames;
 
         public TrafficAdapter(Context context, List<History> apps) {
             super(context, sResource, apps);
-            typeNames = context.getResources().getStringArray(R.array.favorite_traffic_type);
         }
      
         @Override
@@ -521,17 +526,17 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             ImageView iconImv = (ImageView) view.findViewById(R.id.icon_imv);
             iconImv.setVisibility(View.VISIBLE);
             if (traffic.getHistoryType() == Tigerknows.History.HISTORY_BUSLINE) {
-                
+                iconImv.setBackgroundResource(R.drawable.rdb_busline_default);
             } else if (traffic.getHistoryType() == Tigerknows.History.HISTORY_TRANSFER) {
-                
+                iconImv.setBackgroundResource(R.drawable.rdb_bus_default);
             } else if (traffic.getHistoryType() == Tigerknows.History.HISTORY_DRIVE) {
-                
+                iconImv.setBackgroundResource(R.drawable.rdb_drive_default);
             } else if (traffic.getHistoryType() == Tigerknows.History.HISTORY_WALK) {
-                
+                iconImv.setBackgroundResource(R.drawable.rdb_walk_default);
             }
             
             String s = getTrafficName(traffic);
-            textView.setText((position+1)+". "+typeNames[traffic.getHistoryType()-2]+": "+s);
+            textView.setText(s);
             
             return view;
         }
@@ -544,8 +549,6 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             if (buslineQuery != null) {
                 Line line = buslineQuery.getBuslineModel().getLineList().get(0);
                 s.append(line.getName());
-                s.append(",");
-                s.append(mContext.getString(R.string.busline_line_listitem_title, CommonUtils.meter2kilometre(line.getLength()), line.getStationList().size()));
             }
         } else {
             TrafficQuery trafficQuery = traffic.getTrafficQuery();
@@ -554,43 +557,6 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 s.append(trafficQuery.getTrafficModel().getStartName());
                 s.append(">");
                 s.append(trafficQuery.getTrafficModel().getEndName());
-                s.append(",");
-                
-                TrafficModel trafficModel = trafficQuery.getTrafficModel();
-                int type = trafficModel.getType();
-                Plan plan = trafficModel.getPlanList().get(0);
-                if (type == Step.TYPE_TRANSFER) {
-                    String busName = "";
-                    int transferTimes = -1;
-
-                    List<Step> stepList = plan.getStepList();
-                    for(Step step : stepList) {
-                        if (Step.TYPE_TRANSFER == step.getType()) {
-                            if (!TextUtils.isEmpty(busName)) {
-                                busName = busName + ">" + step.getTransferLineName();
-                            } else {
-                                busName = step.getTransferLineName();
-                            }
-                            transferTimes++;
-                        }
-                    }
-
-                    s.append(busName);
-                    s.append(",");
-                    if (transferTimes > 0) { 
-                        s.append(mContext.getString(R.string.traffic_transfer_title, transferTimes, CommonUtils.meter2kilometre(plan.getLength())));
-                    } else {
-                        s.append(mContext.getString(R.string.traffic_nonstop_title, CommonUtils.meter2kilometre(plan.getLength())));
-                    }
-                } else {
-//                        s.append(mContext.getString(R.string.traffic_drive_title, CommonUtils.meter2kilometre(plan.getLength())));
-                    
-                    if (plan.getLength() > 1000) {
-                        s.append(mContext.getString(R.string.traffic_result_length_km, CommonUtils.meter2kilometre(plan.getLength())));
-                    } else {
-                        s.append(mContext.getString(R.string.traffic_result_length_m, plan.getLength()));
-                    }
-                }
             }
         }
         return s.toString();

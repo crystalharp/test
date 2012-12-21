@@ -13,11 +13,8 @@ import com.tigerknows.model.BaseData;
 import com.tigerknows.model.Favorite;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.BuslineQuery;
-import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.BuslineModel.Line;
-import com.tigerknows.model.TrafficModel.Plan;
-import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.SqliteWrapper;
@@ -97,6 +94,8 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     private String mLayerType = ItemizedOverlay.POI_OVERLAY;
     
     private String mPOIWhere;
+    
+    private boolean mDismiss = true;
     
     private Runnable mTurnPageRunPOI = new Runnable() {
         
@@ -184,34 +183,43 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         super.onResume();
         mRightTxv.setOnClickListener(this);
         mRightTxv.setText(R.string.clear_all);
-        
-        refresh(ItemizedOverlay.POI_OVERLAY);
-        refresh(ItemizedOverlay.TRAFFIC_OVERLAY);
-        
-        if (mPOIList.size() > 0) {
-            readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getId(), true);
+
+        if (mDismiss) {
+            mDismiss = false;
+            readPOI(mPOIList, Long.MAX_VALUE, 0, false);
+            readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
+            if (mPOIList.isEmpty() && mTrafficList.isEmpty() == false) {
+                mLayerType = ItemizedOverlay.TRAFFIC_OVERLAY;
+            }
         } else {
-//            readPOI(mPOIList, Long.MAX_VALUE, 0, false);
-            mPOILsv.setFooterSpringback(true);
-            turnPagePOI();
+            refresh(ItemizedOverlay.POI_OVERLAY);
+            refresh(ItemizedOverlay.TRAFFIC_OVERLAY);
+            
+            if (mPOIList.size() > 0) {
+                readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getId(), true);
+            } else {
+    //            readPOI(mPOIList, Long.MAX_VALUE, 0, false);
+                mPOILsv.setFooterSpringback(true);
+                turnPagePOI();
+            }
+            Collections.sort(mPOIList, mComparator);
+            mPOIAdapter.notifyDataSetChanged();
+            
+            if (mTrafficList.size() > 0) {
+                readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getId(), true);
+            } else {
+    //            readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
+                mTrafficLsv.setFooterSpringback(true);
+                turnPageTraffic();
+            }
+            Collections.sort(mTrafficList, mComparator);
+            mTrafficAdapter.notifyDataSetChanged();
+            
+            Toast.makeText(mContext, R.string.favorite_long_click_tip, 3000).show();
         }
-        Collections.sort(mPOIList, mComparator);
-        mPOIAdapter.notifyDataSetChanged();
-        
-        if (mTrafficList.size() > 0) {
-            readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getId(), true);
-        } else {
-//            readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
-            mTrafficLsv.setFooterSpringback(true);
-            turnPageTraffic();
-        }
-        Collections.sort(mTrafficList, mComparator);
-        mTrafficAdapter.notifyDataSetChanged();
         
         refreshTab(mLayerType);
         refreshContent();
-        
-        Toast.makeText(mContext, R.string.favorite_long_click_tip, 3000).show();
     }
 
     @Override
@@ -222,6 +230,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mPOIAdapter.notifyDataSetChanged();
         mTrafficAdapter.notifyDataSetChanged();
         mLayerType = ItemizedOverlay.POI_OVERLAY;
+        mDismiss = true;
     }
 
     protected void findViews() {
@@ -509,11 +518,9 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     
     public class TrafficAdapter extends ArrayAdapter<Favorite>{
         private static final int sResource = R.layout.favorite_list_item;
-        private String[] typeNames;
 
         public TrafficAdapter(Context context, List<Favorite> apps) {
             super(context, sResource, apps);
-            typeNames = context.getResources().getStringArray(R.array.favorite_traffic_type);
         }
      
         @Override
@@ -531,13 +538,13 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             ImageView iconImv = (ImageView) view.findViewById(R.id.icon_imv);
             iconImv.setVisibility(View.VISIBLE);
             if (traffic.getFavoriteType() == Tigerknows.Favorite.FAVORITE_BUSLINE) {
-                
+                iconImv.setBackgroundResource(R.drawable.rdb_busline_default);
             } else if (traffic.getFavoriteType() == Tigerknows.Favorite.FAVORITE_TRANSFER) {
-                
+                iconImv.setBackgroundResource(R.drawable.rdb_bus_default);
             } else if (traffic.getFavoriteType() == Tigerknows.Favorite.FAVORITE_DRIVE) {
-                
+                iconImv.setBackgroundResource(R.drawable.rdb_drive_default);
             } else if (traffic.getFavoriteType() == Tigerknows.Favorite.FAVORITE_WALK) {
-                
+                iconImv.setBackgroundResource(R.drawable.rdb_walk_default);
             }
 
             String s;
@@ -546,7 +553,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             } else {
                 s = traffic.getAlise();
             }
-            textView.setText((position+1)+". "+typeNames[traffic.getFavoriteType()-2]+": "+s.toString());
+            textView.setText(s);
             
             return view;
         }
@@ -559,8 +566,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             if (buslineQuery != null) {
                 Line line = buslineQuery.getBuslineModel().getLineList().get(0);
                 s.append(line.getName());
-                s.append(",");
-                s.append(mContext.getString(R.string.busline_line_listitem_title, CommonUtils.meter2kilometre(line.getLength()), line.getStationList().size()));
             }
         } else {
             TrafficQuery trafficQuery = traffic.getTrafficQuery();
@@ -569,43 +574,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 s.append(trafficQuery.getTrafficModel().getStartName());
                 s.append(">");
                 s.append(trafficQuery.getTrafficModel().getEndName());
-                s.append(",");
-                
-                TrafficModel trafficModel = trafficQuery.getTrafficModel();
-                int type = trafficModel.getType();
-                Plan plan = trafficModel.getPlanList().get(0);
-                if (type == Step.TYPE_TRANSFER) {
-                    String busName = "";
-                    int transferTimes = -1;
-
-                    List<Step> stepList = plan.getStepList();
-                    for(Step step : stepList) {
-                        if (Step.TYPE_TRANSFER == step.getType()) {
-                            if (!TextUtils.isEmpty(busName)) {
-                                busName = busName + ">" + step.getTransferLineName();
-                            } else {
-                                busName = step.getTransferLineName();
-                            }
-                            transferTimes++;
-                        }
-                    }
-
-                    s.append(busName);
-                    s.append(",");
-                    if (transferTimes > 0) { 
-                        s.append(mContext.getString(R.string.traffic_transfer_title, transferTimes, CommonUtils.meter2kilometre(plan.getLength())));
-                    } else {
-                        s.append(mContext.getString(R.string.traffic_nonstop_title, CommonUtils.meter2kilometre(plan.getLength())));
-                    }
-                } else {
-//                        s.append(mContext.getString(R.string.traffic_drive_title, CommonUtils.meter2kilometre(plan.getLength())));
-                    
-                    if (plan.getLength() > 1000) {
-                        s.append(mContext.getString(R.string.traffic_result_length_km, CommonUtils.meter2kilometre(plan.getLength())));
-                    } else {
-                        s.append(mContext.getString(R.string.traffic_result_length_m, plan.getLength()));
-                    }
-                }
             }
         }
         return s.toString();
