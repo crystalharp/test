@@ -1,109 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows" 
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/gray_dark" >
         
     <RelativeLayout
-        android:layout_width="fill_parent"
+        android:id="@+id/input_view"
+        android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="left|top">
-        
-        <LinearLayout
-            android:id="@+id/tab_view"
-            android:orientation="horizontal"
-            android:gravity="center"
+        android:paddingLeft="5dp"
+        android:paddingTop="6dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="6dp"
+        android:gravity="center"
+        android:background="@color/gray_dark">
+            
+        <ImageButton android:id="@+id/query_btn" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/btn_title"
+            android:scaleType="center"
+            android:src="@drawable/btn_search" />
+            
+        <com.tigerknows.view.TKEditText android:id="@+id/keyword_edt"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:weightSum="2" >
-            <Button
-                android:id="@+id/category_search_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"  
-                android:text="@string/category_search"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:background="@drawable/btn_tab" />
-            <Button
-                android:id="@+id/precision_search_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"  
-                android:text="@string/precision_search"
-                android:textColor="@android:color/white"
-                android:textSize="16sp"
-                android:background="@drawable/btn_tab"  />
-        </LinearLayout>   
-         
-        <FrameLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:layout_below="@id/tab_view"
-            android:paddingBottom="4dp"
-            >              
-            <ListView android:id="@+id/category_lsv"
-	            android:layout_width="fill_parent" 
-	            android:layout_height="wrap_content"   
-	            android:divider="@drawable/divider"
-	            android:drawSelectorOnTop="false"
-	            android:scrollingCache="false"
-                android:footerDividersEnabled="false"
-	            android:fadingEdge="none"/>
-                
-            <LinearLayout
-                android:id="@+id/precision_view"
-			    android:layout_width="fill_parent" 
-			    android:layout_height="fill_parent"
-			    android:orientation="vertical">
-    
-			    <RelativeLayout
-			        android:id="@+id/input_view"
-			        android:layout_width="fill_parent" 
-			        android:layout_height="wrap_content"
-			        android:paddingLeft="5dp"
-			        android:paddingTop="6dp"
-			        android:paddingRight="5dp"
-			        android:paddingBottom="6dp"
-			        android:gravity="center"
-			        android:background="@color/gray_dark">
-			            
-			        <ImageButton android:id="@+id/query_btn" 
-			            android:layout_width="wrap_content" 
-			            android:layout_height="wrap_content"
-			            android:layout_alignParentRight="true"
-			            android:layout_marginLeft="3dp"
-			            android:layout_marginRight="3dp"
-			            android:layout_centerVertical="true"
-			            android:background="@drawable/btn_title"
-			            android:scaleType="center"
-			            android:src="@drawable/btn_search" />
-			            
-			        <EditText android:id="@+id/keyword_edt"
-			            android:layout_width="fill_parent"
-			            android:layout_height="wrap_content"
-			            android:layout_toLeftOf="@id/query_btn"
-			            android:background="@drawable/textfield"
-			            android:hint="@string/find_poi"
-			            android:maxLength="50"
-			            android:ellipsize="end"
-			            android:singleLine="true"
-                        android:imeOptions="actionSearch" />
-			    </RelativeLayout>
-			        
-			    <ListView android:id="@+id/suggest_lsv"
-			        android:layout_width="fill_parent" 
-			        android:layout_height="fill_parent"
-			        android:layout_below="@id/input_view"
-			        android:layout_alignParentLeft="true"
-			        android:layout_alignParentBottom="true"
-			        android:scrollingCache="false"
-			        android:fadingEdge="none"
-			        android:divider="@drawable/divider"
-			        android:visibility="gone" />
-			</LinearLayout>
-        </FrameLayout>
+            android:layout_toLeftOf="@id/query_btn"
+            tkandroid:hint="@string/find_poi"
+            tkandroid:maxLength="50"
+            tkandroid:imeOptions="actionSearch" >
+        </com.tigerknows.view.TKEditText>
     </RelativeLayout>
+  
+    <android.support.v4.view.ViewPager  
+        android:id="@+id/view_pager"  
+        android:layout_width="fill_parent"  
+        android:layout_height="fill_parent" />
 </LinearLayout>

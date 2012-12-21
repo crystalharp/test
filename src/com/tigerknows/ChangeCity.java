@@ -24,7 +24,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
-import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -39,13 +38,14 @@ import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.MapEngine.CityInfo;
+import com.tigerknows.view.TKEditText;
 
 /**
  * @author Peng Wenyue
  */
 public class ChangeCity extends BaseActivity implements View.OnClickListener {
 
-    private EditText mKeywordEdt;
+    private TKEditText mKeywordEdt;
     private ExpandableListView mCityElv;
     private ListView mSuggestCityLsv;
     private CityExpandableListAdapter mCityExpandableListAdapter;
@@ -111,7 +111,7 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
 
     protected void findViews() {
         super.findViews();
-        mKeywordEdt = (EditText) findViewById(R.id.input_edt);
+        mKeywordEdt = (TKEditText) findViewById(R.id.input_edt);
         mCityElv = (ExpandableListView)findViewById(R.id.city_elv);
         mSuggestCityLsv = (ListView)findViewById(R.id.suggest_city_lsv);
     }

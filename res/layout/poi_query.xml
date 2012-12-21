@@ -44,6 +44,5 @@
         android:layout_alignParentBottom="true"
         android:scrollingCache="false"
         android:fadingEdge="none"
-        android:divider="@drawable/list_selector_background_gray_light"
-        android:visibility="gone" />
+        android:divider="@drawable/list_selector_background_gray_light" />
 </LinearLayout>

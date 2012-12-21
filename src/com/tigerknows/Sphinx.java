@@ -780,9 +780,13 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 	}
 	
 	private void checkDiscoverCity(int cityId) {
+	    String discover = TKConfig.getPref(this, TKConfig.PREFS_DISCOVER);
+	    boolean show = TextUtils.isEmpty(discover);
+	    if (show == false) {
+	        return;
+	    }
         if (DataQuery.checkDiscoveryCity(cityId)) {
-            String show = TKConfig.getPref(this, TKConfig.PREFS_DISCOVER);
-            if (TextUtils.isEmpty(show)) {
+            if (show) {
                 getMenuFragment().setDiscover(View.VISIBLE);
             } else {
                 getMenuFragment().setDiscover(View.GONE);

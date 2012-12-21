@@ -5,7 +5,11 @@
 package com.tigerknows.view;
 
 import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -16,8 +20,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -36,11 +38,11 @@ import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.TKWord;
+import com.tigerknows.view.SuggestArrayAdapter.CallBack;
 
 /**
  * @author Peng Wenyue
@@ -52,21 +54,19 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         // TODO Auto-generated constructor stub
     }
 
-    private Button mCategorySearchBtn; 
-    
-    private Button mPrecisionSearchBtn;
-    
-    private View mPrecisionView;
-    
     private POI mPOI = new POI();
     
     private String[] mCategoryName;
+    
+    private ViewPager mViewPager;
+    
+    private List<View> mViewList = new ArrayList<View>();
     
     private ListView mCategoryLsv = null;
     
     private ImageButton mQueryBtn = null;
 
-    private EditText mKeywordEdt = null;
+    private TKEditText mKeywordEdt = null;
 
     private SuggestArrayAdapter mSuggestAdapter = null;
 
@@ -86,7 +86,8 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            showHistoryAndSuggestWord();
+            POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
+            notifyDataSetChanged();
         }
 
         public void afterTextChanged(Editable s) {
@@ -118,6 +119,13 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         mCategoryLsv.setAdapter(new StringArrayAdapter(mContext, mCategoryName));
         
         mSuggestAdapter = new SuggestArrayAdapter(mContext, SuggestArrayAdapter.TEXTVIEW_RESOURCE_ID, mSuggestWordList);
+        mSuggestAdapter.setCallBack(new CallBack() {
+            
+            @Override
+            public void onItemClicked(String text) {
+                mKeywordEdt.setText(text);
+            }
+        });
         mSuggestLsv.setAdapter(mSuggestAdapter);
         return mRootView;
     }
@@ -127,11 +135,8 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         super.onResume();
         mTitleTxv.setText(R.string.nearby_search);
         mRightTxv.setVisibility(View.INVISIBLE);
-
-        setState(R.id.category_search_btn);
         
-        clearState();
-        mQueryBtn.setEnabled(false);
+        reset();
     }
 
     @Override
@@ -141,18 +146,21 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     }
 
     protected void findViews() {
-        mCategorySearchBtn = (Button) mRootView.findViewById(R.id.category_search_btn);
-        mPrecisionSearchBtn = (Button) mRootView.findViewById(R.id.precision_search_btn);
-        mPrecisionView = mRootView.findViewById(R.id.precision_view);
-        mCategoryLsv = (ListView)mRootView.findViewById(R.id.category_lsv);
+        mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
         mQueryBtn = (ImageButton)mRootView.findViewById(R.id.query_btn);
-        mKeywordEdt = (EditText)mRootView.findViewById(R.id.keyword_edt);
-        mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
+        mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);
+        
+        Drawable divider = mSphinx.getResources().getDrawable(R.drawable.divider);
+        mCategoryLsv = new ListView(mSphinx);
+        mCategoryLsv.setDivider(divider);
+        mViewList.add(mCategoryLsv);
+        mSuggestLsv = new ListView(mSphinx);
+        mSuggestLsv.setDivider(divider);
+        mViewList.add(mSuggestLsv);
+        mViewPager.setAdapter(new MyAdapter());
     }
 
     protected void setListener() {
-        mCategorySearchBtn.setOnClickListener(this);
-        mPrecisionSearchBtn.setOnClickListener(this);
         mCategoryLsv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
@@ -168,7 +176,8 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    showHistoryAndSuggestWord();
+                    POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
+                    notifyDataSetChanged();
                 }
                 return false;
             }
@@ -194,7 +203,8 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
                 if (tkWord.type == TKWord.TYPE_CLEANUP) {
                     mActionLog.addAction(ActionLog.SearchNearbyCleanHistory);
                     TKConfig.clearHistoryWord(mContext, TKConfig.History_Word_POI, String.format(TKConfig.PREFS_HISTORY_WORD_POI, Globals.g_Current_City_Info.getId()));
-                    showHistoryAndSuggestWord();
+                    POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
+                    notifyDataSetChanged();
                 } else {
                     if (tkWord.type == TKWord.TYPE_HISTORY) {
                         mActionLog.addAction(ActionLog.SearchNearHistoryWord, tkWord.word, position);
@@ -222,10 +232,6 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.category_search_btn:
-            case R.id.precision_search_btn:
-                setState(view.getId());
-                break;
                 
             case R.id.query_btn:
                 mActionLog.addAction(ActionLog.SearchNearbySubimt, mKeywordEdt.getText().toString().trim());
@@ -270,49 +276,77 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         mPOI = poi;
     }
     
-    private void showHistoryAndSuggestWord() {
-        mSphinx.getMapEngine().suggestwordCheck(mSphinx, Globals.g_Current_City_Info.getId());
-        String searchWord = mKeywordEdt.getText().toString();
-        mSuggestWordList.clear();
-        List<String> list = mSphinx.getMapEngine().getwordslistString(searchWord, 2);
-        
-        if (list != null && list.size() > 0) {
-            mSuggestWordList.addAll(TKConfig.mergeHistoryAndSuggestWord(list, searchWord, TKConfig.History_Word_POI));
-        } else {
-            mSuggestWordList.addAll(TKConfig.getHistoryWordList(TKConfig.History_Word_POI, searchWord));
-            if (mSuggestWordList != null && mSuggestWordList.size() > 0) {
-                mSuggestWordList.add(new TKWord(TKWord.TYPE_CLEANUP, mContext.getString(R.string.clean_history)));
-            }
-        }
+    private void notifyDataSetChanged() {
         mSuggestAdapter.notifyDataSetChanged();
-        mSuggestLsv.setVisibility(View.VISIBLE);
+        if (mSuggestWordList.isEmpty()) {
+            mViewPager.setCurrentItem(0);
+        } else {
+            mViewPager.setCurrentItem(1);
+        }
     }
     
     //还原为第一次进入的状态
-    public void clearState() {
-        mKeywordEdt.setText("");
+    public void reset() {
+        mKeywordEdt.setText(null);
         mKeywordEdt.clearFocus();
+        mViewPager.setCurrentItem(0);
+        mSuggestWordList.clear();
+        mSuggestAdapter.notifyDataSetChanged();
+        mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
+        mQueryBtn.setEnabled(false);
     }
     
-    private void setState(int id) {
-        if (id == R.id.category_search_btn) {
-            mActionLog.addAction(ActionLog.SearchNearbyCategory);
-            mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
-            mCategorySearchBtn.setBackgroundResource(R.drawable.btn_tab_focused);
-            mPrecisionSearchBtn.setBackgroundResource(R.drawable.btn_tab);
-            mCategoryLsv.setVisibility(View.VISIBLE);
-            mPrecisionView.setVisibility(View.GONE);
-            
-        } else if (id == R.id.precision_search_btn) {
-            mActionLog.addAction(ActionLog.SearchNearbyJingQue);
-            mCategorySearchBtn.setBackgroundResource(R.drawable.btn_tab);
-            mPrecisionSearchBtn.setBackgroundResource(R.drawable.btn_tab_focused);
-            mCategoryLsv.setVisibility(View.GONE);
-            mPrecisionView.setVisibility(View.VISIBLE);
-
-            mKeywordEdt.requestFocus();
-            mSphinx.showSoftInput(mKeywordEdt);
-            showHistoryAndSuggestWord();
+    class MyAdapter extends PagerAdapter {
+        
+        @Override
+        public int getCount() {
+            if (mSuggestWordList.isEmpty() && mKeywordEdt.getText().length() < 1) {
+                return 1;
+            }
+            return mViewList.size();
         }
+
+        @Override
+        public boolean isViewFromObject(View arg0, Object arg1) {
+            return arg0 == arg1;
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return super.getItemPosition(object);
+        }
+
+        @Override
+        public void destroyItem(View contain, int position, Object arg2) {
+             ((ViewPager) contain).removeView(mViewList.get(position));
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup contain, int position) {
+            contain.addView(mViewList.get(position));
+            return mViewList.get(position);
+        }
+
+        @Override
+        public void restoreState(Parcelable arg0, ClassLoader arg1) {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public Parcelable saveState() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public void startUpdate(View arg0) {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public void finishUpdate(View arg0) {
+            // TODO Auto-generated method stub
+        }
+
     }
 }

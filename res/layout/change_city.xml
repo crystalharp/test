@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows" 
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -21,19 +22,14 @@
         android:paddingBottom="6dp"
         android:gravity="left|center_vertical"
         android:background="@color/bg_bar">
-        <EditText
+        <com.tigerknows.view.TKEditText
             android:id="@+id/input_edt"
             android:layout_width="fill_parent" 
             android:layout_height="wrap_content"
-            android:paddingLeft="32dp"
-            android:background="@drawable/textfield"
-            android:hint="@string/input_city_name_or_first_char"
-            android:textSize="15sp"
-            android:textColorHint="#ffacacac"
-            android:gravity="left|center_vertical"
-            android:singleLine="true"
-            android:imeOptions="actionDone">
-         </EditText>
+            tkandroid:paddingLeft="32dp"
+            tkandroid:hint="@string/input_city_name_or_first_char"
+            tkandroid:imeOptions="actionDone">
+         </com.tigerknows.view.TKEditText>
         <ImageView
             android:layout_width="wrap_content" 
             android:layout_height="wrap_content"

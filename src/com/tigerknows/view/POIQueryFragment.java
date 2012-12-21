@@ -33,6 +33,7 @@ import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
@@ -53,8 +54,6 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
 
     private TKEditText mKeywordEdt = null;
 
-    private String mKeyword;
-    
     private SuggestArrayAdapter mSuggestAdapter;
 
     private ListView mSuggestLsv = null;
@@ -75,7 +74,8 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            showHistoryAndSuggestWord();
+            makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
+            mSuggestAdapter.notifyDataSetChanged();
         }
 
         public void afterTextChanged(Editable s) {
@@ -128,17 +128,13 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
             }
             mSphinx.mIntoSnap++;
         }
-        
-        mKeywordEdt.clearFocus();
-        mSphinx.getHandler().post(mShowSoftInput);
-        showHistoryAndSuggestWord();
-        mQueryBtn.setEnabled(false);
+
+        reset();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        clearState();
         mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
     }
 
@@ -168,7 +164,6 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     mSphinx.showSoftInput(mKeywordEdt);
-                    showHistoryAndSuggestWord();
                 }
                 return false;
             }
@@ -182,7 +177,8 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
                 if (tkWord.type == TKWord.TYPE_CLEANUP) {
                     mActionLog.addAction(ActionLog.SearchInputCleanHistory);
                     TKConfig.clearHistoryWord(mContext, TKConfig.History_Word_POI, String.format(TKConfig.PREFS_HISTORY_WORD_POI, Globals.g_Current_City_Info.getId()));
-                    showHistoryAndSuggestWord();
+                    makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
+                    mSuggestAdapter.notifyDataSetChanged();
                 } else {
                     if (tkWord.type == TKWord.TYPE_HISTORY) {
                         mActionLog.addAction(ActionLog.SearchInputHistoryWord, tkWord.word, position);
@@ -200,7 +196,6 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
-                    mQueryBtn.requestFocus();
                 }
                 return false;
             }
@@ -217,39 +212,20 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         }
     }
     
-    //called by onTouch and onTextChanged event
-    private void showHistoryAndSuggestWord() {
-        mSphinx.getMapEngine().suggestwordCheck(mSphinx, Globals.g_Current_City_Info.getId());
-        String searchWord = mKeywordEdt.getText().toString();
-        mSuggestWordList.clear();
-        List<String> list = mSphinx.getMapEngine().getwordslistString(searchWord, 2);
-        
-        if (list != null && list.size() > 0) {
-            mSuggestWordList.addAll(TKConfig.mergeHistoryAndSuggestWord(list, searchWord, TKConfig.History_Word_POI));
-        } else {
-            mSuggestWordList.addAll(TKConfig.getHistoryWordList(TKConfig.History_Word_POI, searchWord));
-            if (mSuggestWordList.size() > 0) {
-                mSuggestWordList.add(new TKWord(TKWord.TYPE_CLEANUP, mContext.getString(R.string.clean_history)));
-            }
-        }
-        mSuggestAdapter.notifyDataSetChanged();
-        mSuggestLsv.setVisibility(View.VISIBLE);
-    }
-    
     private void submitQuery() {
-        mKeyword = mKeywordEdt.getText().toString().trim();
-        if (!TextUtils.isEmpty(mKeyword)) {
+        String keyword = mKeywordEdt.getText().toString().trim();
+        if (!TextUtils.isEmpty(keyword)) {
             int cityId = Globals.g_Current_City_Info.getId();
-            TKConfig.addHistoryWord(mContext, TKConfig.History_Word_POI, String.format(TKConfig.PREFS_HISTORY_WORD_POI, cityId), mKeyword);
+            TKConfig.addHistoryWord(mContext, TKConfig.History_Word_POI, String.format(TKConfig.PREFS_HISTORY_WORD_POI, cityId), keyword);
             mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
-            mActionLog.addAction(ActionLog.SearchInputSubmit, mKeyword);
+            mActionLog.addAction(ActionLog.SearchInputSubmit, keyword);
 
             DataQuery poiQuery = new DataQuery(mContext);
             POI requestPOI = mSphinx.getPOI();
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
             criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, mKeyword);
+            criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
             Position position = requestPOI.getPosition();
             if (position != null) {
                 criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
@@ -266,7 +242,30 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
     }
     
     //还原为第一次进入的状态
-    public void clearState() {
-        mKeywordEdt.setText("");
+    public void reset() {
+        mKeywordEdt.setText(null);
+        mKeywordEdt.clearFocus();
+        mSphinx.getHandler().post(mShowSoftInput);
+        
+        makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
+        mSuggestAdapter.notifyDataSetChanged();
+        mQueryBtn.setEnabled(false);
+    }
+    
+    public static void makeSuggestWord(Sphinx sphinx, List<TKWord> tkWordList, String searchWord) {
+        tkWordList.clear();
+        MapEngine mapEngine = MapEngine.getInstance();
+        mapEngine.suggestwordCheck(sphinx, Globals.g_Current_City_Info.getId());
+        tkWordList.clear();
+        List<String> list = mapEngine.getwordslistString(searchWord, 2);
+        
+        if (list != null && list.size() > 0) {
+            tkWordList.addAll(TKConfig.mergeHistoryAndSuggestWord(list, searchWord, TKConfig.History_Word_POI));
+        } else {
+            tkWordList.addAll(TKConfig.getHistoryWordList(TKConfig.History_Word_POI, searchWord));
+            if (tkWordList.size() > 0) {
+                tkWordList.add(new TKWord(TKWord.TYPE_CLEANUP, sphinx.getString(R.string.clean_history)));
+            }
+        }
     }
 }
