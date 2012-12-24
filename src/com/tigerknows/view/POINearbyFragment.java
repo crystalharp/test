@@ -152,9 +152,13 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         
         Drawable divider = mSphinx.getResources().getDrawable(R.drawable.divider);
         mCategoryLsv = new ListView(mSphinx);
+        mCategoryLsv.setFadingEdgeLength(0);
+        mCategoryLsv.setScrollingCacheEnabled(false);
         mCategoryLsv.setDivider(divider);
         mViewList.add(mCategoryLsv);
         mSuggestLsv = new ListView(mSphinx);
+        mSuggestLsv.setFadingEdgeLength(0);
+        mSuggestLsv.setScrollingCacheEnabled(false);
         mSuggestLsv.setDivider(divider);
         mViewList.add(mSuggestLsv);
         mViewPager.setAdapter(new MyAdapter());
@@ -300,9 +304,9 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         
         @Override
         public int getCount() {
-            if (mSuggestWordList.isEmpty() && mKeywordEdt.getText().length() < 1) {
-                return 1;
-            }
+//            if (mSuggestWordList.isEmpty() && mKeywordEdt.getText().length() < 1) {
+//                return 1;
+//            }
             return mViewList.size();
         }
 

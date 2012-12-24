@@ -23,9 +23,12 @@ import com.tigerknows.view.SpringbackListView.OnRefreshListener;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -70,16 +73,12 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     
     private Button mTrafficBtn;
     
+    private ViewPager mViewPager;
+    
     private SpringbackListView mPOILsv = null;
     
-    private TextView mPOIEmptyView;
+    private TextView mEmptyView;
     
-    private TextView mTrafficEmptyView;
-    
-    private View mPOIView;
-    
-    private View mTrafficView;
-
     private SpringbackListView mTrafficLsv = null;
     
     private String mLayerType = ItemizedOverlay.POI_OVERLAY;
@@ -208,8 +207,11 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             mTrafficAdapter.notifyDataSetChanged();
         }
         
-        refreshTab(mLayerType);
-        refreshContent();
+        if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
+            mViewPager.setCurrentItem(0);
+        } else {
+            mViewPager.setCurrentItem(1);
+        }
     }
 
     @Override
@@ -226,16 +228,28 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     protected void findViews() {
         mPOIBtn = (Button) mRootView.findViewById(R.id.poi_btn);
         mTrafficBtn = (Button) mRootView.findViewById(R.id.traffic_btn);
-        mPOILsv = (SpringbackListView) mRootView.findViewById(R.id.poi_lsv);
+        mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
+        
+        List<View> viewList = new ArrayList<View>();
+        Drawable divider = mSphinx.getResources().getDrawable(R.drawable.divider);
+        mPOILsv = new SpringbackListView(mSphinx, null);
+        mPOILsv.setFadingEdgeLength(0);
+        mPOILsv.setScrollingCacheEnabled(false);
+        mPOILsv.setDivider(divider);
+        viewList.add(mPOILsv);
+        mTrafficLsv = new SpringbackListView(mSphinx, null);
+        mTrafficLsv.setFadingEdgeLength(0);
+        mTrafficLsv.setScrollingCacheEnabled(false);
+        mTrafficLsv.setDivider(divider);
+        viewList.add(mTrafficLsv);
+        mViewPager.setOnPageChangeListener(new MyPageChangeListener());
+        mViewPager.setAdapter(new FavoriteFragment.MyAdapter(viewList));
+        
         View v = mLayoutInflater.inflate(R.layout.loading, null);
         mPOILsv.addFooterView(v);
-        mTrafficLsv = (SpringbackListView) mRootView.findViewById(R.id.traffic_lsv);
         v = mLayoutInflater.inflate(R.layout.loading, null);
         mTrafficLsv.addFooterView(v);
-        mPOIEmptyView = (TextView)mRootView.findViewById(R.id.poi_empty_txv);
-        mTrafficEmptyView = (TextView)mRootView.findViewById(R.id.traffic_empty_txv);
-        mPOIView = mRootView.findViewById(R.id.poi_view);
-        mTrafficView = mRootView.findViewById(R.id.traffic_view);
+        mEmptyView = (TextView)mRootView.findViewById(R.id.empty_txv);
     }
 
     protected void setListener() {
@@ -407,24 +421,12 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 break;
             case R.id.poi_btn:
                 mActionLog.addAction(ActionLog.HistoryPOI);
-                refreshTab(ItemizedOverlay.POI_OVERLAY);
-                refreshContent();
-                if (mPOILsv.isFooterSpringback()) {
-                    mHandler.postDelayed(mTurnPageRunPOI, 1000);
-                } else {
-                    mPOILsv.changeHeaderViewByState(false, SpringbackListView.DONE);
-                }
+                mViewPager.setCurrentItem(0);
                 break;
                 
             case R.id.traffic_btn:
                 mActionLog.addAction(ActionLog.HistoryTraffic);
-                refreshTab(ItemizedOverlay.TRAFFIC_OVERLAY);
-                refreshContent();
-                if (mTrafficLsv.isFooterSpringback()) {
-                    mHandler.postDelayed(mTurnPageRunTraffic, 1000);
-                } else {
-                    mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
-                }
+                mViewPager.setCurrentItem(1);
                 break;
                 
             default:
@@ -693,17 +695,17 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             mRightTxv.setEnabled(!mPOIList.isEmpty());
             
             if (mPOIList.isEmpty() && mPOILsv.isFooterSpringback() == false) {
-                mPOIEmptyView.setVisibility(View.VISIBLE);
+                mEmptyView.setVisibility(View.VISIBLE);
             } else {
-                mPOIEmptyView.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.GONE);
             }
         } else {
             mRightTxv.setEnabled(!mTrafficList.isEmpty());
 
             if (mTrafficList.isEmpty() && mTrafficLsv.isFooterSpringback() == false) {
-                mTrafficEmptyView.setVisibility(View.VISIBLE);
+                mEmptyView.setVisibility(View.VISIBLE);
             } else {
-                mTrafficEmptyView.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.GONE);
             }
         }
 
@@ -714,16 +716,60 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     private void refreshTab(String layerType) {
 
         mLayerType = layerType;
+        refreshContent();
         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
             mPOIBtn.setBackgroundResource(R.drawable.btn_tab_focused);
             mTrafficBtn.setBackgroundResource(R.drawable.btn_tab);
-            mPOIView.setVisibility(View.VISIBLE);
-            mTrafficView.setVisibility(View.GONE);
+            if (mPOILsv.isFooterSpringback()) {
+                mHandler.postDelayed(mTurnPageRunPOI, 1000);
+            } else {
+                mPOILsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+            }
         } else {
             mPOIBtn.setBackgroundResource(R.drawable.btn_tab);
             mTrafficBtn.setBackgroundResource(R.drawable.btn_tab_focused);
-            mPOIView.setVisibility(View.GONE);
-            mTrafficView.setVisibility(View.VISIBLE);
+            if (mTrafficLsv.isFooterSpringback()) {
+                mHandler.postDelayed(mTurnPageRunTraffic, 1000);
+            } else {
+                mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+            }
         }
-    }    
+    }
+
+    @Override
+    public boolean canTurnPage() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public void turnPageStart() {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    class MyPageChangeListener implements OnPageChangeListener {
+
+        @Override
+        public void onPageScrollStateChanged(int arg0) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onPageScrolled(int arg0, float arg1, int arg2) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            if (position == 0) {
+                refreshTab(ItemizedOverlay.POI_OVERLAY);
+            } else {
+                refreshTab(ItemizedOverlay.TRAFFIC_OVERLAY);
+            }
+        }
+        
+    }
 }

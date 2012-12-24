@@ -25,9 +25,14 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.view.ContextMenu;
 import android.view.KeyEvent;
@@ -79,16 +84,12 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     
     private Button mTrafficBtn;
     
+    private ViewPager mViewPager;
+    
     private SpringbackListView mPOILsv = null;
     
-    private TextView mPOIEmptyView;
+    private TextView mEmptyView;
     
-    private TextView mTrafficEmptyView;
-    
-    private View mPOIView;
-    
-    private View mTrafficView;
-
     private SpringbackListView mTrafficLsv = null;
     
     private String mLayerType = ItemizedOverlay.POI_OVERLAY;
@@ -218,8 +219,11 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             Toast.makeText(mContext, R.string.favorite_long_click_tip, 3000).show();
         }
         
-        refreshTab(mLayerType);
-        refreshContent();
+        if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
+            mViewPager.setCurrentItem(0);
+        } else {
+            mViewPager.setCurrentItem(1);
+        }
     }
 
     @Override
@@ -236,16 +240,28 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     protected void findViews() {
         mPOIBtn = (Button) mRootView.findViewById(R.id.poi_btn);
         mTrafficBtn = (Button) mRootView.findViewById(R.id.traffic_btn);
-        mPOILsv = (SpringbackListView) mRootView.findViewById(R.id.poi_lsv);
+        mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
+        
+        List<View> viewList = new ArrayList<View>();
+        Drawable divider = mSphinx.getResources().getDrawable(R.drawable.divider);
+        mPOILsv = new SpringbackListView(mSphinx, null);
+        mPOILsv.setFadingEdgeLength(0);
+        mPOILsv.setScrollingCacheEnabled(false);
+        mPOILsv.setDivider(divider);
+        viewList.add(mPOILsv);
+        mTrafficLsv = new SpringbackListView(mSphinx, null);
+        mTrafficLsv.setFadingEdgeLength(0);
+        mTrafficLsv.setScrollingCacheEnabled(false);
+        mTrafficLsv.setDivider(divider);
+        viewList.add(mTrafficLsv);
+        mViewPager.setOnPageChangeListener(new MyPageChangeListener());
+        mViewPager.setAdapter(new MyAdapter(viewList));
+        
         View v = mLayoutInflater.inflate(R.layout.loading, null);
         mPOILsv.addFooterView(v);
-        mTrafficLsv = (SpringbackListView) mRootView.findViewById(R.id.traffic_lsv);
         v = mLayoutInflater.inflate(R.layout.loading, null);
         mTrafficLsv.addFooterView(v);
-        mPOIEmptyView = (TextView)mRootView.findViewById(R.id.poi_empty_txv);
-        mTrafficEmptyView = (TextView)mRootView.findViewById(R.id.traffic_empty_txv);
-        mPOIView = mRootView.findViewById(R.id.poi_view);
-        mTrafficView = mRootView.findViewById(R.id.traffic_view);
+        mEmptyView = (TextView)mRootView.findViewById(R.id.empty_txv);
     }
 
     protected void setListener() {
@@ -419,24 +435,12 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 break;
             case R.id.poi_btn:
                 mActionLog.addAction(ActionLog.FavoritePOI);
-                refreshTab(ItemizedOverlay.POI_OVERLAY);
-                refreshContent();
-                if (mPOILsv.isFooterSpringback()) {
-                    mHandler.postDelayed(mTurnPageRunPOI, 1000);
-                } else {
-                    mPOILsv.changeHeaderViewByState(false, SpringbackListView.DONE);
-                }
+                mViewPager.setCurrentItem(0);
                 break;
                 
             case R.id.traffic_btn:
                 mActionLog.addAction(ActionLog.FavoriteTraffic);
-                refreshTab(ItemizedOverlay.TRAFFIC_OVERLAY);
-                refreshContent();
-                if (mTrafficLsv.isFooterSpringback()) {
-                    mHandler.postDelayed(mTurnPageRunTraffic, 1000);
-                } else {
-                    mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
-                }
+                mViewPager.setCurrentItem(1);
                 break;
                 
             default:
@@ -712,19 +716,19 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             mRightTxv.setEnabled(!mPOIList.isEmpty());
             
             if (mPOIList.isEmpty() && mPOILsv.isFooterSpringback() == false) {
-                mPOIEmptyView.setText(R.string.favorite_empty_poi);
-                mPOIEmptyView.setVisibility(View.VISIBLE);
+                mEmptyView.setText(R.string.favorite_empty_poi);
+                mEmptyView.setVisibility(View.VISIBLE);
             } else {
-                mPOIEmptyView.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.GONE);
             }
         } else {
             mRightTxv.setEnabled(!mTrafficList.isEmpty());
 
             if (mTrafficList.isEmpty() && mTrafficLsv.isFooterSpringback() == false) {
-                mTrafficEmptyView.setText(R.string.favorite_empty_traffic);
-                mTrafficEmptyView.setVisibility(View.VISIBLE);
+                mEmptyView.setText(R.string.favorite_empty_traffic);
+                mEmptyView.setVisibility(View.VISIBLE);
             } else {
-                mTrafficEmptyView.setVisibility(View.GONE);
+                mEmptyView.setVisibility(View.GONE);
             }
         }
 
@@ -735,16 +739,23 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     private void refreshTab(String layerType) {
 
         mLayerType = layerType;
+        refreshContent();
         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
             mPOIBtn.setBackgroundResource(R.drawable.btn_tab_focused);
             mTrafficBtn.setBackgroundResource(R.drawable.btn_tab);
-            mPOIView.setVisibility(View.VISIBLE);
-            mTrafficView.setVisibility(View.GONE);
+            if (mPOILsv.isFooterSpringback()) {
+                mHandler.postDelayed(mTurnPageRunPOI, 1000);
+            } else {
+                mPOILsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+            }
         } else {
             mPOIBtn.setBackgroundResource(R.drawable.btn_tab);
             mTrafficBtn.setBackgroundResource(R.drawable.btn_tab_focused);
-            mPOIView.setVisibility(View.GONE);
-            mTrafficView.setVisibility(View.VISIBLE);
+            if (mTrafficLsv.isFooterSpringback()) {
+                mHandler.postDelayed(mTurnPageRunTraffic, 1000);
+            } else {
+                mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+            }
         }
     }
     
@@ -808,5 +819,87 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             .create();
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
+    }
+    
+    class MyPageChangeListener implements OnPageChangeListener {
+
+        @Override
+        public void onPageScrollStateChanged(int arg0) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onPageScrolled(int arg0, float arg1, int arg2) {
+            // TODO Auto-generated method stub
+            
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            if (position == 0) {
+                refreshTab(ItemizedOverlay.POI_OVERLAY);
+            } else {
+                refreshTab(ItemizedOverlay.TRAFFIC_OVERLAY);
+            }
+        }
+        
+    }
+    
+    public static class MyAdapter extends PagerAdapter {
+        
+        List<View> mViewList;
+        
+        public MyAdapter(List<View> viewList) {
+            mViewList = viewList;
+        }
+        
+        @Override
+        public int getCount() {
+            return mViewList.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(View arg0, Object arg1) {
+            return arg0 == arg1;
+        }
+
+        @Override
+        public int getItemPosition(Object object) {
+            return super.getItemPosition(object);
+        }
+
+        @Override
+        public void destroyItem(View contain, int position, Object arg2) {
+             ((ViewPager) contain).removeView(mViewList.get(position));
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup contain, int position) {
+            contain.addView(mViewList.get(position));
+            return mViewList.get(position);
+        }
+
+        @Override
+        public void restoreState(Parcelable arg0, ClassLoader arg1) {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public Parcelable saveState() {
+            // TODO Auto-generated method stub
+            return null;
+        }
+
+        @Override
+        public void startUpdate(View arg0) {
+            // TODO Auto-generated method stub
+        }
+
+        @Override
+        public void finishUpdate(View arg0) {
+            // TODO Auto-generated method stub
+        }
+
     }
 }
