@@ -29,11 +29,6 @@
         <attr name="moreIcon" format="reference" />
     </declare-styleable>
     
-    <!-- screen -->
-    <declare-styleable name="ScrollScreen">
-        <attr name="default_screen" format="integer" />
-    </declare-styleable>
-    
     <declare-styleable name="CollapseTextView">
         <attr name="maxLines" format="integer" />
         <attr name="textSize" format="dimension" />

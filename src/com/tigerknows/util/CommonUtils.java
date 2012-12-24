@@ -49,8 +49,12 @@ import android.text.format.Time;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
@@ -781,5 +785,39 @@ public class CommonUtils {
         int minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
         int maxIndex = endPage * pageSize + (isShowAPOI ? 1 : 0);
         return new int[]{minIndex, maxIndex, (firstVisiblePosition-(isShowAPOI ? 1 : 0)+(startPage%2 != 0 ? pageSize : 0)) % TKConfig.getPageSize()};
+    }
+    
+    public static void pageIndicatorInit(Context context, ViewGroup viewPoints, int size) {
+        int margin = (int)(Globals.g_metrics.density * 2);
+        for(int i=0;i<size;i++){
+            ImageView imageView = new ImageView(context);            
+            //默认选中的是第一张图片，此时第一个小圆点是选中状态，其他不是
+            if(i==0){
+                imageView.setBackgroundResource(R.drawable.ic_learn_dot_selected);
+            }else{
+                imageView.setBackgroundResource(R.drawable.ic_learn_dot_normal);
+            }
+            
+            //将imageviews添加到小圆点视图组
+            LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            layoutParams.leftMargin = margin;
+            layoutParams.rightMargin = margin;
+            viewPoints.addView(imageView, layoutParams);
+        }
+
+    }
+    
+    public static void pageIndicatorChanged(Context context, ViewGroup viewPoints, int index) {
+        for(int i=0, size = viewPoints.getChildCount();i<size;i++){
+            ImageView imageView = (ImageView) viewPoints.getChildAt(i);
+            
+            //默认选中的是第一张图片，此时第一个小圆点是选中状态，其他不是
+            if(i==index){
+                imageView.setBackgroundResource(R.drawable.ic_learn_dot_selected);
+            }else{
+                imageView.setBackgroundResource(R.drawable.ic_learn_dot_normal);
+            }
+        }
+
     }
 }

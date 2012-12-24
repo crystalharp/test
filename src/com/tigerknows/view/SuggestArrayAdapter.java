@@ -4,6 +4,7 @@ import com.tigerknows.R;
 import com.tigerknows.model.TKWord;
 
 import android.content.Context;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,8 +48,16 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
         final TKWord tkWord = getItem(position);
         if (tkWord.type == TKWord.TYPE_HISTORY) {
             iconImv.setVisibility(View.VISIBLE);
+            inputBtn.setVisibility(View.VISIBLE);
+            textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+        } else if (tkWord.type == TKWord.TYPE_HISTORY) {
+            iconImv.setVisibility(View.INVISIBLE);
+            inputBtn.setVisibility(View.VISIBLE);
+            textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
         } else {
             iconImv.setVisibility(View.INVISIBLE);
+            inputBtn.setVisibility(View.INVISIBLE);
+            textTxv.setGravity(Gravity.CENTER);
         }
         textTxv.setText(tkWord.word);
         if (callBack != null) {

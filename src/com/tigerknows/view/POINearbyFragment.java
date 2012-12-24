@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -42,6 +43,7 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.TKWord;
+import com.tigerknows.util.CommonUtils;
 import com.tigerknows.view.SuggestArrayAdapter.CallBack;
 
 /**
@@ -73,6 +75,8 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     private ListView mSuggestLsv = null;
     
     private List<TKWord> mSuggestWordList = new ArrayList<TKWord>();
+    
+    private ViewGroup mPageIndicatorView;
 
     private final String[] mCategoryActionTag = {
             ActionLog.SearchNearbyFood, ActionLog.SearchNearbyYuLe, ActionLog.SearchNearbyBuy,
@@ -162,9 +166,32 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         mSuggestLsv.setDivider(divider);
         mViewList.add(mSuggestLsv);
         mViewPager.setAdapter(new MyAdapter());
+        
+        mPageIndicatorView = (ViewGroup) mRootView.findViewById(R.id.page_indicator_view);
+        CommonUtils.pageIndicatorInit(mSphinx, mPageIndicatorView, mViewList.size());
     }
 
     protected void setListener() {
+        mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+            
+            @Override
+            public void onPageSelected(int index) {
+                CommonUtils.pageIndicatorChanged(mSphinx, mPageIndicatorView, index);
+            }
+            
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+                // TODO Auto-generated method stub
+                
+            }
+        });
+        
         mCategoryLsv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
@@ -304,9 +331,6 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         
         @Override
         public int getCount() {
-//            if (mSuggestWordList.isEmpty() && mKeywordEdt.getText().length() < 1) {
-//                return 1;
-//            }
             return mViewList.size();
         }
 
