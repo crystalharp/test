@@ -181,7 +181,6 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
     @Override
     protected void onResume() {
         super.onResume();
-        mTitleBtn.setBackgroundDrawable(null);
         try {
             mMapEngine.initMapDataPath(this);
         } catch (Exception exception){

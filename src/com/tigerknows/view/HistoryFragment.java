@@ -9,6 +9,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.History;
 import com.tigerknows.model.POI;
@@ -178,40 +179,43 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             mDismiss = false;
             readPOI(mPOIList, Long.MAX_VALUE, 0, false);
             readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
+            mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
+            mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize());
             if (mPOIList.isEmpty() && mTrafficList.isEmpty() == false) {
                 mLayerType = ItemizedOverlay.TRAFFIC_OVERLAY;
             }
         } else {
-            refresh(ItemizedOverlay.POI_OVERLAY);
-            refresh(ItemizedOverlay.TRAFFIC_OVERLAY);
-            
-            if (mPOIList.size() > 0) {
-                readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getDateTime(), true);
-            } else {
-    //            readPOI(mPOIList, Long.MAX_VALUE, 0, false);
-                mPOILsv.setFooterSpringback(true);
-                turnPagePOI();
+            checkData(ItemizedOverlay.POI_OVERLAY);
+            checkData(ItemizedOverlay.TRAFFIC_OVERLAY);
+            if (mPOILsv.isFooterSpringback() == false) {
+                long min = 0;
+                if (mPOIList.size() > 0) {
+                    min = mPOIList.get(0).getDateTime();
+                }
+                readPOI(mPOIList, Long.MAX_VALUE, min, true);
             }
-            Collections.sort(mPOIList, mComparator);
-            CommonUtils.keepListSize(mPOIList, Tigerknows.HISTORY_MAX_SIZE);
-            mPOIAdapter.notifyDataSetChanged();
             
-            if (mTrafficList.size() > 0) {
-                readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getDateTime(), true);
-            } else {
-    //            readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
-                mTrafficLsv.setFooterSpringback(true);
-                turnPageTraffic();
+            if (mTrafficLsv.isFooterSpringback() == false) {
+                long min = 0;
+                if (mTrafficList.size() > 0) {
+                    min = mTrafficList.get(0).getDateTime();
+                }
+                readTraffic(mTrafficList, Long.MAX_VALUE, min, true);
             }
-            Collections.sort(mTrafficList, mComparator);
-            CommonUtils.keepListSize(mTrafficList, Tigerknows.HISTORY_MAX_SIZE);
-            mTrafficAdapter.notifyDataSetChanged();
         }
         
         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-            mViewPager.setCurrentItem(0);
+            if (mViewPager.getCurrentItem() != 0) {
+                mViewPager.setCurrentItem(0);
+            } else {
+                changeTab(ItemizedOverlay.POI_OVERLAY);
+            }
         } else {
-            mViewPager.setCurrentItem(1);
+            if (mViewPager.getCurrentItem() != 1) {
+                mViewPager.setCurrentItem(1);
+            } else {
+                changeTab(ItemizedOverlay.TRAFFIC_OVERLAY);
+            }
         }
     }
 
@@ -236,12 +240,16 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         mPOILsv = new SpringbackListView(mSphinx, null);
         mPOILsv.setFadingEdgeLength(0);
         mPOILsv.setScrollingCacheEnabled(false);
+        mPOILsv.setFooterSpringback(false);
         mPOILsv.setDivider(divider);
+        mPOILsv.setFooterDividersEnabled(false);
         viewList.add(mPOILsv);
         mTrafficLsv = new SpringbackListView(mSphinx, null);
         mTrafficLsv.setFadingEdgeLength(0);
         mTrafficLsv.setScrollingCacheEnabled(false);
+        mTrafficLsv.setFooterSpringback(false);
         mTrafficLsv.setDivider(divider);
+        mTrafficLsv.setFooterDividersEnabled(false);
         viewList.add(mTrafficLsv);
         mViewPager.setOnPageChangeListener(new MyPageChangeListener());
         mViewPager.setAdapter(new FavoriteFragment.MyAdapter(viewList));
@@ -363,7 +371,6 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                                             SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.History.CONTENT_URI, "_id="+mTrafficList.get(mSelectIndex).getId(), null);
                                             mTrafficLsv.setFooterSpringback(mTrafficList.size() == Tigerknows.HISTORY_MAX_SIZE);
                                         }
-                                        refresh(mLayerType);
                                         refreshContent();
                                         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
                                             if (mPOIList.isEmpty()) {
@@ -413,7 +420,6 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                                             mTrafficList.clear();
                                             mTrafficAdapter.notifyDataSetChanged();
                                         }
-                                        refresh(mLayerType);
                                         refreshContent();
                                     }
                                 }
@@ -609,7 +615,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                     Collections.sort(mPOIList, mComparator);
                     CommonUtils.keepListSize(mPOIList, Tigerknows.HISTORY_MAX_SIZE);
                     mPOIAdapter.notifyDataSetChanged();
-                    mPOILsv.setFooterSpringback(mPOIList.size() < Tigerknows.HISTORY_MAX_SIZE);
+                    mPOILsv.setFooterSpringback(poiList.size() >= TKConfig.getPageSize() && mPOIList.size() < Tigerknows.HISTORY_MAX_SIZE);
                     if (mPOILsv.isFooterSpringback()) {
                         mSphinx.getHandler().postDelayed(mTurnPageRunPOI, 1000);
                     }
@@ -631,7 +637,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                     Collections.sort(mTrafficList, mComparator);
                     CommonUtils.keepListSize(mTrafficList, Tigerknows.HISTORY_MAX_SIZE);
                     mTrafficAdapter.notifyDataSetChanged();
-                    mTrafficLsv.setFooterSpringback(mTrafficList.size() < Tigerknows.HISTORY_MAX_SIZE);
+                    mTrafficLsv.setFooterSpringback(trafficList.size() >= TKConfig.getPageSize() && mTrafficList.size() < Tigerknows.HISTORY_MAX_SIZE);
                     if (mTrafficLsv.isFooterSpringback()) {
                         mSphinx.getHandler().postDelayed(mTurnPageRunTraffic, 1000);
                     }
@@ -669,7 +675,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     }
     
     @SuppressWarnings("unchecked")
-    public synchronized void refresh(String trafficType) {
+    public synchronized void checkData(String trafficType) {
 
         if (trafficType.equals(ItemizedOverlay.POI_OVERLAY)) {
             for(int i = mPOIList.size() - 1; i >= 0; i--) {
@@ -714,26 +720,40 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         mTrafficAdapter.notifyDataSetChanged();
     }
     
-    private void refreshTab(String layerType) {
+    private void changeTab(String layerType) {
 
         mLayerType = layerType;
-        refreshContent();
         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
             mPOIBtn.setBackgroundResource(R.drawable.btn_tab_focused);
             mTrafficBtn.setBackgroundResource(R.drawable.btn_tab);
-            if (mPOILsv.isFooterSpringback()) {
-                mHandler.postDelayed(mTurnPageRunPOI, 1000);
+
+            if (mPOIList.size() > 0) {
+                readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getDateTime(), true);
             } else {
-                mPOILsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+                readPOI(mPOIList, Long.MAX_VALUE, 0, false);
+                mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
             }
+            Collections.sort(mPOIList, mComparator);
+            CommonUtils.keepListSize(mPOIList, Tigerknows.HISTORY_MAX_SIZE);
+            mPOIAdapter.notifyDataSetChanged();
         } else {
             mPOIBtn.setBackgroundResource(R.drawable.btn_tab);
             mTrafficBtn.setBackgroundResource(R.drawable.btn_tab_focused);
-            if (mTrafficLsv.isFooterSpringback()) {
-                mHandler.postDelayed(mTurnPageRunTraffic, 1000);
+            
+            if (mTrafficList.size() > 0) {
+                readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getDateTime(), true);
             } else {
-                mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+                readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
+                mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize());
             }
+            Collections.sort(mTrafficList, mComparator);
+            CommonUtils.keepListSize(mTrafficList, Tigerknows.HISTORY_MAX_SIZE);
+            mTrafficAdapter.notifyDataSetChanged();
+        }
+        refreshContent();
+        mPOILsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+        mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+    }
         }
     }
     
@@ -754,9 +774,9 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         @Override
         public void onPageSelected(int position) {
             if (position == 0) {
-                refreshTab(ItemizedOverlay.POI_OVERLAY);
+                changeTab(ItemizedOverlay.POI_OVERLAY);
             } else {
-                refreshTab(ItemizedOverlay.TRAFFIC_OVERLAY);
+                changeTab(ItemizedOverlay.TRAFFIC_OVERLAY);
             }
         }
         

@@ -197,96 +197,6 @@ JNIEXPORT jbyteArray JNICALL Java_com_tigerknows_maps_Ca_ac(JNIEnv *env, jobject
     return map_text_info;
 }
 
-//map move to latlon
-JNIEXPORT void JNICALL Java_com_tigerknows_maps_Ca_f(JNIEnv *env, jobject thiz,
-        jdouble lat, jdouble lon, jint zoom) {
-    #ifdef DEBUG
-    sprintf(message, "...........Java_com_tigerknows_maps_Ca_f...tk_move_latlonzoom....lat:%lf...lon:%lf...zoom:%d", lat, lon, zoom);
-    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-    #endif
-    if (zoom == -1) {
-        tk_move_latlon(lat, lon);
-    } else {
-        tk_move_latlonzoom(lat, lon, zoom);
-    }
-    #ifdef DEBUG
-    sprintf(message, "...........Java_com_tigerknows_maps_Ca_f...end....");
-    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-    #endif
-}
-
-//map move dx,dy
-JNIEXPORT void JNICALL Java_com_tigerknows_maps_Ca_g(JNIEnv *env, jobject thiz, jint dx, jint dy) {
-    #ifdef DEBUG
-    sprintf(message, "...........Java_com_tigerknows_maps_Ca_g...tk_move_delta....dx:%d...dy:%d", dx, dy);
-    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-    #endif
-    tk_move_delta(dx, dy);
-    #ifdef DEBUG
-    sprintf(message, "...........Java_com_tigerknows_maps_Ca_g...end....");
-    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-    #endif
-}
-
-//zoom in
-JNIEXPORT jint JNICALL Java_com_tigerknows_maps_Ca_h(JNIEnv *env, jobject thiz) {
-    #ifdef DEBUG
-    sprintf(message, "...........Java_com_tigerknows_maps_Ca_d...tk_zoom_in...");
-    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-    #endif
-    int ret = tk_zoom_in();
-    #ifdef DEBUG
-    sprintf(message, "...........Java_com_tigerknows_maps_Ca_h...end....ret:%d", ret);
-    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-    #endif
-    return ret;
-}
-
-//zoom out
-JNIEXPORT jint JNICALL Java_com_tigerknows_maps_Ca_i(JNIEnv *env, jobject thiz) {
-    #ifdef DEBUG
-    sprintf(message,
-            "...........Java_com_tigerknows_maps_Ca_e...tk_zoom_out...");
-    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-    #endif
-    int ret = tk_zoom_out();
-    #ifdef DEBUG
-    sprintf(message, "...........Java_com_tigerknows_maps_Ca_i...end....ret:%d", ret);
-    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-    #endif
-    return ret;
-}
-
-//get current zoom
-JNIEXPORT jint JNICALL Java_com_tigerknows_maps_Ca_j(JNIEnv *env, jobject thiz) {
-    #ifdef DEBUG
-    sprintf(message,
-            "...........Java_com_tigerknows_maps_Ca_j...tk_get_zoom...");
-    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-    #endif
-    int ret = tk_get_zoom();
-    #ifdef DEBUG
-    sprintf(message, "...........Java_com_tigerknows_maps_Ca_j...end....ret:%d", ret);
-    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-    #endif
-    return ret;
-}
-
-//set zoom
-JNIEXPORT jint JNICALL Java_com_tigerknows_maps_Ca_ja(JNIEnv *env, jobject thiz, jint zoomLevel) {
-    #ifdef DEBUG
-    sprintf(message,
-            "...........Java_com_tigerknows_maps_Ca_ja...tk_set_zoom...");
-    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-    #endif
-    int ret = tk_set_zoom(zoomLevel);
-    #ifdef DEBUG
-    sprintf(message, "...........Java_com_tigerknows_maps_Ca_ja...end....ret:%d", ret);
-    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-    #endif
-    return ret;
-}
-
 //src point x,y to latlon
 JNIEXPORT jbyteArray JNICALL Java_com_tigerknows_maps_Ca_k(JNIEnv *env, jobject thiz, jint x, jint y) {
     #ifdef DEBUG
@@ -1061,22 +971,6 @@ JNIEXPORT void JNICALL Java_com_tigerknows_maps_Ca_yt(JNIEnv *env, jobject thiz,
     __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
     #endif
     return;
-}
-
-JNIEXPORT jint JNICALL Java_com_tigerknows_maps_Ca_za(JNIEnv *env, jobject thiz, jdouble lat0, jdouble lon0, jdouble lat1, jdouble lon1,
-		jint icWidth, jint icHeight) {
-    #ifdef DEBUG
-    sprintf(message, "...........Java_com_tigerknows_maps_Ca_za...tk_set_scope...lat0:%lf...lon0:%lf...lat1:%lf...lon1:%lf...icWidth:%d...icHeight:%d", lat0, lon0, lat1, lon1, icWidth, icHeight);
-    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-    #endif
-
-    int ret = tk_set_scope(lat0, lon0, lat1, lon1, icWidth, icHeight);
-
-    #ifdef DEBUG
-    sprintf(message, "...........Java_com_tigerknows_maps_Ca_za...end....");
-    __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-    #endif
-    return ret;
 }
 
 JNIEXPORT void JNICALL Java_com_tigerknows_maps_Ca_zb(JNIEnv *env, jobject thiz, jint offset) {

@@ -30,23 +30,6 @@ public class Ca {
     private static native int ae(int x, int y, int z);
     protected static int tk_get_tile_buffer(int x, int y, int z) { return ae(x, y, z); }
     
-    /**地图移动*/
-    private static native void f(double lat, double lon, int zoom);
-    protected static void tk_move_latlonzoom(double lat, double lon, int zoom) { f(lat, lon, zoom); }
-    private static native void g(int dx, int dy);
-    protected static void tk_move_delta(int dx, int dy) { g(dx, dy); }
-    
-    /**地图缩放*/
-    private static native int h();
-    protected static int tk_zoom_in() { return h(); }
-    private static native int i();
-    protected static int tk_zoom_out() { return i(); }
-    private static native int j();
-    protected static int tk_get_zoom() { return j(); }
-    private static native int ja(int zoomLevel);
-    protected static int tk_set_zoom(int zoomLevel) { return ja(zoomLevel); }
-
-    
     /**经纬度与当前屏幕坐标之间的转换*/
     private static native byte[] k(int x, int y);
     protected static byte[] tk_scr2latlon(int x, int y) { return k(x, y); }
