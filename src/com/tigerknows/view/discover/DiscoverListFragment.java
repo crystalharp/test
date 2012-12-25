@@ -29,6 +29,7 @@ import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.model.DataQuery.TuangouResponse;
 import com.tigerknows.model.DataQuery.YanchuResponse;
 import com.tigerknows.model.DataQuery.ZhanlanResponse;
+import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList.DiscoverCategory;
 import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
@@ -61,6 +62,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 
@@ -123,6 +125,30 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     private BaseList mList;
     
     private String mDataType;
+    
+    private List<DiscoverCategory> mDiscoverCategoryList = new ArrayList<DiscoverCategory>();
+    
+    private TitlePopupArrayAdapter mTitlePopupArrayAdapter;
+    
+    private OnItemClickListener mTitlePopupOnItemClickListener = new OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
+            mTitleFragment.dismissPopupWindow();
+            TitlePopupArrayAdapter titlePopupArrayAdapter = (TitlePopupArrayAdapter) adapterView.getAdapter();
+            DiscoverCategory discoverCategory = titlePopupArrayAdapter.getItem(position);
+            DataQuery dataQuery = new DataQuery(mSphinx);
+            Hashtable<String, String> criteria = new Hashtable<String, String>();
+            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, discoverCategory.getType());
+            criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
+            dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(),
+                    R.id.view_discover, R.id.view_discover_list, null, false, false,
+                    mSphinx.getPOI());
+            mSphinx.queryStart(dataQuery);
+            setup();
+            onResume();
+        }
+    };
     
     private Runnable mTurnPageRun = new Runnable() {
         
@@ -220,6 +246,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 
         findViews();
         setListener();
+        
+        mTitlePopupArrayAdapter = new TitlePopupArrayAdapter(mSphinx, mDiscoverCategoryList);
         
         return mRootView;
     }
@@ -407,6 +435,19 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
         mRightBtn.setOnClickListener(this);
         
+        List<DiscoverCategory> list = mSphinx.getDiscoverFragment().getDiscoverCategoryList();
+        mDiscoverCategoryList.clear();
+        for(int i = list.size()-1; i >= 0; i--) {
+            DiscoverCategory discoverCategory = list.get(i);
+            if (discoverCategory.getNumCity() > 0 || discoverCategory.getNumNearby() > 0) {
+                if (mDiscoverCategoryList.contains(discoverCategory) == false) {
+                    mDiscoverCategoryList.add(discoverCategory);
+                }
+            }
+        }
+        mTitleBtn.setBackgroundResource(R.drawable.btn_default);
+        mTitleBtn.setOnClickListener(this);
+        
         if (isReLogin()) {
             return;
         }
@@ -541,6 +582,17 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     @Override
     public void onClick(final View view) {
         switch (view.getId()) {
+            case R.id.title_btn:
+                if (mDataQuery == null || getList().isEmpty() || mResultLsv.getVisibility() != View.VISIBLE || mDataQuerying != null || mList == null) {
+                    return;
+                }
+                if (mDiscoverCategoryList.size() > 0) {
+                    mTitlePopupArrayAdapter.mSelectDataType = mDataType;
+                    mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+                    mTitlePopupArrayAdapter.notifyDataSetChanged();
+                }
+                break;
+                
             case R.id.right_btn:
                 if (mDataQuery == null || getList().isEmpty() || mResultLsv.getVisibility() != View.VISIBLE || mDataQuerying != null || mList == null) {
                     return;
@@ -1097,4 +1149,55 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
         return lastDataQuery.getCriteria();
     }
+    
+    public class TitlePopupArrayAdapter extends ArrayAdapter<DiscoverCategory> {
+        
+        private static final int TEXTVIEW_RESOURCE_ID = R.layout.discover_title_popup_list_item;
+        
+        private LayoutInflater mLayoutInflater;
+        
+        public String mSelectDataType;
+
+        public TitlePopupArrayAdapter(Context context, List<DiscoverCategory> list) {
+            super(context, TEXTVIEW_RESOURCE_ID, list);
+            mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view;
+            if (convertView == null) {
+                view = mLayoutInflater.inflate(TEXTVIEW_RESOURCE_ID, parent, false);
+            } else {
+                view = convertView;
+            }
+            
+            DiscoverCategory discoverCategory = getItem(position);
+            if (discoverCategory.getType().equals(mSelectDataType)) {
+                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+            } else {
+                view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+            }
+            
+            TextView textTxv = (TextView)view.findViewById(R.id.name_txv);
+            TextView numTxv = (TextView)view.findViewById(R.id.num_txv);
+            
+            String name = null;
+            String dataType = discoverCategory.getType();
+            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+                name = mSphinx.getString(R.string.tuangou);
+            } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {
+                name = mSphinx.getString(R.string.dianying);
+            } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
+                name = mSphinx.getString(R.string.yanchu);
+            } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+                name = mSphinx.getString(R.string.zhanlan);
+            }
+            
+            textTxv.setText(name);
+            numTxv.setText(String.valueOf(discoverCategory.getNumCity()));
+
+            return view;
+        }
+    } 
 }

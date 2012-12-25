@@ -589,4 +589,8 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         }
         return null;
     }
+    
+    public List<DiscoverCategory> getDiscoverCategoryList() {
+        return mDiscoverCategoryList;
+    }
 }

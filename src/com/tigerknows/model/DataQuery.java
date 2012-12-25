@@ -1929,6 +1929,7 @@ public final class DataQuery extends BaseQuery {
                 private long numCity;
                 private long numNearby;
                 private TKDrawable tkDrawable;
+                private volatile int hashCode = 0;
 
                 public DiscoverCategory(long type) {
                     this.type = type;
@@ -2017,6 +2018,25 @@ public final class DataQuery extends BaseQuery {
                         out.writeParcelable(null, flags);
                 }
                 
+                @Override
+                public boolean equals(Object object) {
+                    if (object == null) {
+                        return false;
+                    }
+                    if (object instanceof DiscoverCategory) {
+                        DiscoverCategory other = (DiscoverCategory) object;
+                        return (this.type == other.type);
+                    }
+                    return false;
+                }
+                
+                public int hashCode() {
+                    if(hashCode == 0) {
+                        int result = 17;
+                        result = 37*result + ((int)(type ^ (type >>> 32)));
+                    }
+                    return hashCode;
+                }
             }
         }
         
