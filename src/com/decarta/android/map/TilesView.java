@@ -3420,12 +3420,11 @@ public class TilesView extends GLSurfaceView {
                                 boolean same = true;
                                 long time = System.nanoTime();
                                 if (!(zoomingL || fading || movingL || rotatingX || rotatingZ) &&
-                                        time - mapText.lastTime >= 1000000000*1.5 && 
-                                        (drawFullTile || time - mapText.lastTime >= 1000000000*2)) {
+                                        time - mapText.lastTime >= 1000000000*0.5) {
                                     XYFloat mapTextScreenXY = mercXYToScreenXYConv(mapTextMercXY, mapTextZoomLevel);
                                     if (Math.abs(mapTextScreenXY.x - displaySize.x / 2) > (FullScreenDrawMapText ? (mapText.canvasSize.x - displaySize.x) / 2 : 8)
                                             || Math.abs(mapTextScreenXY.y - displaySize.y / 2) > (FullScreenDrawMapText ? (mapText.canvasSize.y - displaySize.y) / 2 : 8)
-                                            || mapTextZoomLevel != zoomLevel
+                                            || mapTextZoomLevel != (int)zoomLevel
                                             || (mapText.drawNum != drawNum)) {
                                         same = false;
                                     }

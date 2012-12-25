@@ -116,29 +116,28 @@ public class SpringbackListView extends ListView {
   
         case MotionEvent.ACTION_UP:  
   
-            if (isRecoredHeader) {
-            if (stateHeader != REFRESHING) {  
-                if (stateHeader == DONE) {  
-                    LogWrapper.d(TAG, "什么都不做");  
+            if (headerSpringback && isRecoredHeader) {
+                if (stateHeader != REFRESHING) {  
+                    if (stateHeader == DONE) {  
+                        LogWrapper.d(TAG, "什么都不做");  
+                    }  
+                    if (stateHeader == PULL_TO_REFRESH) {  
+    //                    stateHeader = DONE;  
+                        changeHeaderViewByState();  
+      
+                        LogWrapper.d(TAG, "由下拉刷新状态到刷新完成状态");  
+                    }  
+                    if (stateHeader == RELEASE_TO_REFRESH) {  
+                        stateHeader = REFRESHING;  
+                        changeHeaderViewByState();  
+                        onRefresh(true);  
+      
+                        LogWrapper.d(TAG, "由松开刷新状态，到刷新完成状态");  
+                    }  
                 }  
-                if (stateHeader == PULL_TO_REFRESH) {  
-//                    stateHeader = DONE;  
-                    changeHeaderViewByState();  
-  
-                    LogWrapper.d(TAG, "由下拉刷新状态到刷新完成状态");  
-                }  
-                if (stateHeader == RELEASE_TO_REFRESH) {  
-                    stateHeader = REFRESHING;  
-                    changeHeaderViewByState();  
-                    onRefresh(true);  
-  
-                    LogWrapper.d(TAG, "由松开刷新状态，到刷新完成状态");  
-                }  
-            }  
-  
-            isRecoredHeader = false;  
-            } else 
-            if (isRecoredFooter) {
+      
+                isRecoredHeader = false;  
+            } else if (footerSpringback && isRecoredFooter) {
                 if (stateFooter != REFRESHING) {  
                     if (stateFooter == DONE) {  
                         LogWrapper.d(TAG, "什么都不做");  
@@ -173,7 +172,7 @@ public class SpringbackListView extends ListView {
                 startY = tempY;  
                 isRecoredFooter = true;  
             }  
-            if (stateHeader != REFRESHING && isRecoredHeader && tempY > 0 && tempY - startY > 0 && headerView != null) {
+            if (headerSpringback && stateHeader != REFRESHING && isRecoredHeader && tempY > 0 && tempY - startY > 0 && headerView != null) {
                 // 可以松开刷新了   
                 if (stateHeader == RELEASE_TO_REFRESH) {  
                     // 往上推，推到屏幕足够掩盖head的程度，但还没有全部掩盖   
@@ -236,7 +235,7 @@ public class SpringbackListView extends ListView {
                     headerView.setPadding(0, temp > 0 ? temp : 0, 0, 0);  
                     headerView.invalidate();  
                 }  
-            } else if (stateFooter != REFRESHING && isRecoredFooter && tempY > 0 && tempY - startY < 0 && footerView != null){
+            } else if (footerSpringback && stateFooter != REFRESHING && isRecoredFooter && tempY > 0 && tempY - startY < 0 && footerView != null){
                 
                 // 可以松开刷新了   
                 if (stateFooter == RELEASE_TO_REFRESH) {  
@@ -319,69 +318,75 @@ public class SpringbackListView extends ListView {
     private void changeHeaderViewByState() {  
         
         if (headerView != null) {
-        switch (stateHeader) {  
-        case RELEASE_TO_REFRESH:  
-  
-//            LogWrapper.d(TAG, "当前状态，松开刷新");  
-            break;  
-        case PULL_TO_REFRESH:  
-//            LogWrapper.d(TAG, "当前状态，下拉刷新");  
-            break;  
-  
-        case REFRESHING:  
-  
-            headerView.setPadding(0, 0, 0, 0);  
-            headerView.invalidate();  
-  
-//            LogWrapper.d(TAG, "当前状态,正在刷新...");  
-            break;  
-        case DONE:  
-            headerView.setPadding(0, -1 * headerContentHeight, 0, 0);  
-            headerView.invalidate();  
-  
-//            LogWrapper.d(TAG, "当前状态，done");  
-            break;  
-        }  
+            switch (stateHeader) {  
+                case RELEASE_TO_REFRESH:  
+                    break;  
+                    
+                case PULL_TO_REFRESH:  
+                    break;  
+                    
+                case REFRESHING:  
+                    headerView.setPadding(0, 0, 0, 0);  
+                    headerView.invalidate();  
+                    break;  
+                    
+                case DONE:  
+                    headerView.setPadding(0, -1 * headerContentHeight, 0, 0);  
+                    headerView.invalidate();  
+                    break;  
+                    
+                default:
+                    headerView.setPadding(0, -1 * footerContentHeight, 0, 0);  
+                    headerView.invalidate();  
+                    break;
+            }  
         }
         if (footerView != null) {
-        switch (stateFooter) {  
-            case RELEASE_TO_REFRESH:  
-                if (footerLoadintTxv != null && footerProgressBar != null) {
-                    footerLoadintTxv.setText(R.string.pull_to_refresh);
-                    footerProgressBar.setVisibility(View.INVISIBLE);
-                }
-                footerView.setPadding(0, 0, 0, 0);  
-                footerView.invalidate();  
-//                LogWrapper.d(TAG, "当前状态，松开刷新");  
-                break;  
-            case PULL_TO_REFRESH:  
-                if (footerLoadintTxv != null && footerProgressBar != null) {
-                    footerLoadintTxv.setText(R.string.pull_to_refresh);
-                    footerProgressBar.setVisibility(View.INVISIBLE);
-                }
-                footerView.setPadding(0, 0, 0, 0);  
-                footerView.invalidate();  
-//                LogWrapper.d(TAG, "当前状态，下拉刷新");  
-                break;  
-      
-            case REFRESHING:  
-                if (footerLoadintTxv != null && footerProgressBar != null) {
-                    footerLoadintTxv.setText(R.string.loading);
-                    footerProgressBar.setVisibility(View.VISIBLE);
-                }
-                footerView.setPadding(0, 0, 0, 0);  
-                footerView.invalidate();  
-      
-//                LogWrapper.d(TAG, "当前状态,正在刷新...");  
-                break;  
-            case DONE:  
-                footerView.setPadding(0, -1 * footerContentHeight, 0, 0);  
-                footerView.invalidate();  
-      
-//                LogWrapper.d(TAG, "当前状态，done");  
-                break;  
-            }  
-            }  
+            switch (stateFooter) {  
+                case RELEASE_TO_REFRESH:  
+                    if (footerLoadintTxv != null && footerProgressBar != null) {
+                        footerLoadintTxv.setText(R.string.pull_to_refresh);
+                        footerProgressBar.setVisibility(View.INVISIBLE);
+                    }
+                    footerView.setPadding(0, 0, 0, 0);  
+                    footerView.invalidate();  
+                    LogWrapper.d(TAG, "当前状态，松开刷新");  
+                    break;  
+                    
+                case PULL_TO_REFRESH:  
+                    if (footerLoadintTxv != null && footerProgressBar != null) {
+                        footerLoadintTxv.setText(R.string.pull_to_refresh);
+                        footerProgressBar.setVisibility(View.INVISIBLE);
+                    }
+                    footerView.setPadding(0, 0, 0, 0);  
+                    footerView.invalidate();  
+                    LogWrapper.d(TAG, "当前状态，下拉刷新");  
+                    break;  
+                    
+                case REFRESHING:  
+                    if (footerLoadintTxv != null && footerProgressBar != null) {
+                        footerLoadintTxv.setText(R.string.loading);
+                        footerProgressBar.setVisibility(View.VISIBLE);
+                    }
+                    footerView.setPadding(0, 0, 0, 0);  
+                    footerView.invalidate();  
+                    
+                    LogWrapper.d(TAG, "当前状态,正在刷新...");  
+                    break;  
+                    
+                case DONE:  
+                    footerView.setPadding(0, -1 * footerContentHeight, 0, 0);  
+                    footerView.invalidate();  
+                    
+                    LogWrapper.d(TAG, "当前状态，done");  
+                    break;  
+                    
+                default:
+                    footerView.setPadding(0, -1 * footerContentHeight, 0, 0);  
+                    footerView.invalidate();  
+                    break;
+            }
+        }  
     }  
   
     public void setOnRefreshListener(OnRefreshListener refreshListener) {  
