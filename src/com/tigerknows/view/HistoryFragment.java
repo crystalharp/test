@@ -736,18 +736,6 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             }
         }
     }
-
-    @Override
-    public boolean canTurnPage() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
-    @Override
-    public void turnPageStart() {
-        // TODO Auto-generated method stub
-        
-    }
     
     class MyPageChangeListener implements OnPageChangeListener {
 

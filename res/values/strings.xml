@@ -875,4 +875,6 @@
     <string name="response_code_602">抱歉，该点评不存在。</string>
     <string name="response_code_603">抱歉，该地址不存在或已失效。</string>
     <string name="response_code_801">创建订单失败，请重试。</string>
+    <string name="location_city">定位城市</string>
+    <string name="all_city">全部城市</string>
 </resources>

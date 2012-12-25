@@ -1264,7 +1264,6 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                     byte[] dest = new byte[tileLen];
                     System.arraycopy(data, start, dest, 0, tileLen);
                     int ret = mMapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
-                    MapDownloadLog.getInstance().write(tileInfo.getRid(), tileInfo.getOffset(), tileLen, ret, dest);
                     if (ret != 0) {
                         return -1;
                     }
@@ -1276,7 +1275,6 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                     byte[] dest = new byte[remainDataLenth];
                     System.arraycopy(data, start, dest, 0, remainDataLenth);
                     int ret = mMapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
-                    MapDownloadLog.getInstance().write(tileInfo.getRid(), tileInfo.getOffset(), remainDataLenth, ret, dest);
                     if (ret != 0) {
                         return -1;
                     }
