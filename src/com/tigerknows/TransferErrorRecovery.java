@@ -62,8 +62,8 @@ public class TransferErrorRecovery extends BaseActivity {
 		findViews();
 		setListener();
 		
-		mRightTxv.setText(R.string.submit);
-        mTitleTxv.setText(getString(R.string.error_recovery));
+		mRightBtn.setText(R.string.submit);
+        mTitleBtn.setText(getString(R.string.error_recovery));
 		
 		synchronized (sTargetList) {
             int size = sTargetList.size();
@@ -94,7 +94,7 @@ public class TransferErrorRecovery extends BaseActivity {
 		// TODO Auto-generated method stub
 		super.setListener();
 		
-		mRightTxv.setOnClickListener(new OnClickListener() {
+		mRightBtn.setOnClickListener(new OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {

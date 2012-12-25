@@ -45,8 +45,8 @@ public class UserResetPasswordActivity extends UserBaseActivity {
         findViews();
         setListener();
         
-        mRightTxv.setVisibility(View.GONE);
-        mTitleTxv.setText(getString(R.string.title_reset_password));
+        mRightBtn.setVisibility(View.GONE);
+        mTitleBtn.setText(getString(R.string.title_reset_password));
 	}
 
 	protected void findViews() {

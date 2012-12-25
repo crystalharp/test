@@ -107,9 +107,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     @Override
     public void onResume() {
         super.onResume();
-        mRightBtn.setImageResource(R.drawable.ic_view_map);
-        mRightTxv.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
-        mRightTxv.setOnClickListener(this);
+        mRightImv.setImageResource(R.drawable.ic_view_map);
+        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setOnClickListener(this);
         
         mResultAdapter = new StringListAdapter(mContext);
         mResultLsv.setAdapter(mResultAdapter);
@@ -119,13 +119,13 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         
         switch(mShowType) {
         case SHOW_TYPE_TRANSFER:
-            mTitleTxv.setText(mContext.getString(R.string.title_transfer_plan));
+            mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan));
             break;
         case SHOW_TYPE_DRVIE:
-            mTitleTxv.setText(mContext.getString(R.string.title_drive_plan));
+            mTitleBtn.setText(mContext.getString(R.string.title_drive_plan));
             break;
         case SHOW_TYPE_WALK:
-            mTitleTxv.setText(mContext.getString(R.string.title_walk_plan));
+            mTitleBtn.setText(mContext.getString(R.string.title_walk_plan));
             break;
         default:
         }
@@ -184,7 +184,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 	public void onClick(View v) {
 		// TODO Auto-generated method stub
 		int viewId = v.getId();
-		if (viewId == R.id.right_txv) {
+		if (viewId == R.id.right_btn) {
 		    mActionLog.addAction(ActionLog.TrafficDetailMapBtn);
 			// 绘制交通图层
 			viewMap();

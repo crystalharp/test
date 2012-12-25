@@ -197,9 +197,9 @@ public class MyCommentListFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         
-        mTitleTxv.setText(R.string.my_comment);
+        mTitleBtn.setText(R.string.my_comment);
+        mRightImv.setVisibility(View.INVISIBLE);
         mRightBtn.setVisibility(View.INVISIBLE);
-        mRightTxv.setVisibility(View.INVISIBLE);
         
         mEmptyTxv.setVisibility(View.GONE);
         if (mCommentArrayList.isEmpty()) {    

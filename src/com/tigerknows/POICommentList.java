@@ -99,8 +99,8 @@ public class POICommentList extends BaseActivity {
         mCommentAdapter = new CommentAdapter(mThis, mCommentArrayList);
         mCommentLsv.setAdapter(mCommentAdapter);
         
-        mTitleTxv.setText(R.string.all_comment);
-        mRightTxv.setVisibility(View.GONE);
+        mTitleBtn.setText(R.string.all_comment);
+        mRightBtn.setVisibility(View.GONE);
         
         synchronized (sCommentQuery) {
             int size = sCommentQuery.size();

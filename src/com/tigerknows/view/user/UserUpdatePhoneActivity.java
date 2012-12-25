@@ -46,8 +46,8 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
         findViews();
         setListener();
         
-        mRightTxv.setVisibility(View.GONE);
-        mTitleTxv.setText(getString(R.string.title_update_phone));
+        mRightBtn.setVisibility(View.GONE);
+        mTitleBtn.setText(getString(R.string.title_update_phone));
 	}
 
 	protected void findViews() {

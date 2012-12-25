@@ -52,8 +52,8 @@ public class UserLoginActivity extends UserBaseActivity {
         findViews();
         setListener();
 
-        mRightTxv.setText(R.string.regist);
-		mTitleTxv.setText(getString(R.string.title_user_login));
+        mRightBtn.setText(R.string.regist);
+		mTitleBtn.setText(getString(R.string.title_user_login));
 		
 		String prefsPhoneNum = TKConfig.getPref(UserLoginActivity.this, TKConfig.PREFS_PHONENUM, "");
 		setPrefsPhoneNum(prefsPhoneNum);
@@ -78,8 +78,8 @@ public class UserLoginActivity extends UserBaseActivity {
 	protected void setListener() {
 		super.setListener();
 		
-		if (mLeftTxv != null) {
-            mLeftTxv.setOnClickListener(new View.OnClickListener() {
+		if (mLeftBtn != null) {
+            mLeftBtn.setOnClickListener(new View.OnClickListener() {
                 
                 @Override
                 public void onClick(View arg0) {
@@ -113,7 +113,7 @@ public class UserLoginActivity extends UserBaseActivity {
 			}
 		});
 		
-		mRightTxv.setOnClickListener(new android.view.View.OnClickListener(){
+		mRightBtn.setOnClickListener(new android.view.View.OnClickListener(){
 
 			@Override
 			public void onClick(View v) {

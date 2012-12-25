@@ -137,8 +137,8 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
-        mTitleTxv.setText(R.string.nearby_search);
-        mRightTxv.setVisibility(View.INVISIBLE);
+        mTitleBtn.setText(R.string.nearby_search);
+        mRightBtn.setVisibility(View.INVISIBLE);
         
         reset();
     }

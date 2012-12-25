@@ -218,8 +218,8 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         
         mContentView.setPadding(Util.dip2px(Globals.g_metrics.density, 2), gredeHeight, Util.dip2px(Globals.g_metrics.density, 2), 0);
         
-        mTitleTxv.setText(mStatus == STATUS_NEW ? R.string.publish_comment : R.string.modify_comment);
-        mRightTxv.setText(R.string.publish);
+        mTitleBtn.setText(mStatus == STATUS_NEW ? R.string.publish_comment : R.string.modify_comment);
+        mRightBtn.setText(R.string.publish);
         Comment comment = mPOI.getMyComment();
         long userId = Long.MIN_VALUE;
         User user = Globals.g_User;            
@@ -527,8 +527,8 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
 
     protected void setListener() {
         super.setListener();
-        mLeftTxv.setOnClickListener(this);
-        mRightTxv.setOnClickListener(this);
+        mLeftBtn.setOnClickListener(this);
+        mRightBtn.setOnClickListener(this);
         mExpandTxv.setOnClickListener(this);
         mRestairBtn.setOnClickListener(this);
         OnTouchListener onTouchListener = new OnTouchListener() {
@@ -692,7 +692,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         int viewId = view.getId();
-        if (R.id.right_txv == viewId) {
+        if (R.id.right_btn == viewId) {
             mActionLog.addAction(ActionLog.POICommentClickSubmit);
             if (mContentEdt.getEditableText().toString().trim().length() < MIN_CHAR) {
                 AlertDialog alertDialog = CommonUtils.getAlertDialog(mThis);
@@ -850,7 +850,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
 //                mExpandFoodView.setAnimation(animation);
 //                animation.startNow();
             }
-        } else if (viewId == R.id.left_txv) {
+        } else if (viewId == R.id.left_btn) {
             mActionLog.addAction(ActionLog.Title_Left_Back, mActionTag);
             if (showDiscardDialog() == false) {
                 finish();
@@ -1141,7 +1141,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         final Response response = commentOperation.getResponse();
         if (BaseActivity.checkReLogin(commentOperation, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
             mStatus = STATUS_NEW;
-            mTitleTxv.setText(R.string.publish_comment);
+            mTitleBtn.setText(R.string.publish_comment);
             isReLogin = true;
             return;
         } else if (BaseActivity.checkResponseCode(commentOperation, mThis, new int[] {201, 601, 602, 603}, true, mThis, false)) {
@@ -1157,7 +1157,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                         public void onClick(DialogInterface arg0, int arg1) {
                             alertDialog.dismiss();
                             mStatus = STATUS_MODIFY;
-                            mTitleTxv.setText(R.string.modify_comment);
+                            mTitleBtn.setText(R.string.modify_comment);
                             Hashtable<String, String> criteria = commentOperation.getCriteria();
                             criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_UPDATE);
                             mComment.setUid(((CommentCreateResponse)response).getUid());
@@ -1170,7 +1170,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                     alertDialog.show();
                 } else if (response.getResponseCode() == 602) {
                     mStatus = STATUS_NEW;
-                    mTitleTxv.setText(R.string.publish_comment);
+                    mTitleBtn.setText(R.string.publish_comment);
                     Hashtable<String, String> criteria = commentOperation.getCriteria();
                     criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
                     DataOperation dataOperation = new DataOperation(mThis);

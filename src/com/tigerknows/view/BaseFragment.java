@@ -58,15 +58,15 @@ public class BaseFragment extends LinearLayout {
     
     protected MenuFragment mMenuFragment;
     
-    protected TextView mTitleTxv;
+    protected TextView mTitleBtn;
     
-    protected ImageView mLeftBtn;
+    protected ImageView mLeftImv;
     
-    protected ImageView mRightBtn;
+    protected ImageView mRightImv;
     
-    protected Button mLeftTxv;
+    protected Button mLeftBtn;
     
-    protected Button mRightTxv;
+    protected Button mRightBtn;
     
     protected boolean isReLogin = false;
     
@@ -263,26 +263,26 @@ public class BaseFragment extends LinearLayout {
             mTitleFragment = mSphinx.getTitleFragment();
             mMenuFragment = mSphinx.getMenuFragment();
 
-            mTitleTxv = mTitleFragment.getTitleTxv();
-            mLeftBtn = mTitleFragment.getLeftBtn();
-            mLeftTxv = mTitleFragment.getLeftTxv();
-            mRightBtn = mTitleFragment.getRightBtn();
-            mRightTxv = mTitleFragment.getRightTxv();
+            mTitleBtn = mTitleFragment.getTitleTxv();
+            mLeftImv = mTitleFragment.getLeftBtn();
+            mLeftBtn = mTitleFragment.getLeftTxv();
+            mRightImv = mTitleFragment.getRightBtn();
+            mRightBtn = mTitleFragment.getRightTxv();
 
-            mTitleTxv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
-            mTitleTxv.setText(null);
-            mTitleTxv.setBackgroundDrawable(null);
+            mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
+            mTitleBtn.setText(null);
+            mTitleBtn.setBackgroundDrawable(null);
+            mLeftImv.setVisibility(View.VISIBLE);
+            mLeftImv.setImageResource(R.drawable.ic_back);
             mLeftBtn.setVisibility(View.VISIBLE);
-            mLeftBtn.setImageResource(R.drawable.ic_back);
-            mLeftTxv.setVisibility(View.VISIBLE);
-            mLeftTxv.setText(null);
-            mLeftTxv.setOnClickListener(mLeftTxvOnClickListener);
+            mLeftBtn.setText(null);
+            mLeftBtn.setOnClickListener(mLeftTxvOnClickListener);
+            mRightImv.setVisibility(View.VISIBLE);
+            mRightImv.setImageBitmap(null);
             mRightBtn.setVisibility(View.VISIBLE);
-            mRightBtn.setImageBitmap(null);
-            mRightTxv.setVisibility(View.VISIBLE);
-            mRightTxv.getLayoutParams().width = LayoutParams.WRAP_CONTENT;
-            mRightTxv.setText(null);
-            mRightTxv.setEnabled(true);
+            mRightBtn.getLayoutParams().width = LayoutParams.WRAP_CONTENT;
+            mRightBtn.setText(null);
+            mRightBtn.setEnabled(true);
             
             mMenuFragment.hide();
         	mTitleFragment.display();

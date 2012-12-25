@@ -57,7 +57,7 @@ public class TrafficAlternativesDialog extends BaseDialog {
         findViews();
         setListener();
 
-        mRightTxv.setVisibility(View.GONE);
+        mRightBtn.setVisibility(View.GONE);
     }
 
     protected void findViews() {
@@ -221,12 +221,12 @@ public class TrafficAlternativesDialog extends BaseDialog {
         if(R.id.start_lsv == view.getId()){
             mStardLsv.setVisibility(View.VISIBLE);
             mEndLsv.setVisibility(View.GONE);
-            mTitleTxv.setText(mContext.getString(R.string.confirm_start_station));
+            mTitleBtn.setText(mContext.getString(R.string.confirm_start_station));
             
         }else if(R.id.end_lsv == view.getId()){
             mStardLsv.setVisibility(View.GONE);
             mEndLsv.setVisibility(View.VISIBLE);
-            mTitleTxv.setText(mContext.getString(R.string.confirm_end_station));
+            mTitleBtn.setText(mContext.getString(R.string.confirm_end_station));
         }
     }
     

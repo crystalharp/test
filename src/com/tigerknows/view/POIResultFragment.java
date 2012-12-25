@@ -267,10 +267,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
-        mTitleTxv.setText(R.string.result_list);
-        mRightBtn.setImageResource(R.drawable.ic_view_map);
-        mRightTxv.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
-        mRightTxv.setOnClickListener(this);
+        mTitleBtn.setText(R.string.result_list);
+        mRightImv.setImageResource(R.drawable.ic_view_map);
+        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setOnClickListener(this);
         
         if (isReLogin()) {
             return;
@@ -278,8 +278,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         
         if (mSphinx.mSnapMap) {
             if (mSphinx.mIntoSnap == 0) {
-                mLeftBtn.setVisibility(View.INVISIBLE);
-                mLeftTxv.setText(R.string.home);
+                mLeftImv.setVisibility(View.INVISIBLE);
+                mLeftBtn.setText(R.string.home);
             }
             mSphinx.mIntoSnap++;
         }
@@ -379,7 +379,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onClick(final View view) {
         switch (view.getId()) {
-            case R.id.right_txv:
+            case R.id.right_btn:
                 if (mDataQuery == null || mPOIList.isEmpty() || mResultLsv.getVisibility() != View.VISIBLE || mNotResult == true || mDataQuerying != null) {
                     return;
                 }

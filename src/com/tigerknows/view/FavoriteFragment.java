@@ -182,8 +182,9 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
-        mRightTxv.setOnClickListener(this);
-        mRightTxv.setText(R.string.clear_all);
+        mTitleBtn.setText(R.string.favorite);
+        mRightBtn.setOnClickListener(this);
+        mRightBtn.setText(R.string.clear_all);
 
         if (mDismiss) {
             mDismiss = false;
@@ -399,7 +400,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onClick(View view) {
         switch (view.getId()) {                
-            case R.id.right_txv:
+            case R.id.right_btn:
                 mActionLog.addAction(ActionLog.FavoriteRightDelete, (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? "0" : "1"));
 
                 int count = 0;
@@ -621,7 +622,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 mPOILsv.onRefreshComplete(false);
                 List<POI> poiList = (List<POI>)msg.obj;
                 if (poiList.size() > 0) {
-                    mRightTxv.setEnabled(true);
+                    mRightBtn.setEnabled(true);
                     for(POI poi : poiList) {
                         if (mPOIList.contains(poi)) {
                             mPOIList.remove(poi);
@@ -642,7 +643,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 mTrafficLsv.onRefreshComplete(false);
                 List<Favorite> trafficList = (List<Favorite>)msg.obj;
                 if (trafficList.size() > 0) {
-                    mRightTxv.setEnabled(true);
+                    mRightBtn.setEnabled(true);
                     for(Favorite traffic : trafficList) {
                         if (mTrafficList.contains(traffic)) {
                             mTrafficList.remove(traffic);
@@ -713,7 +714,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     private void refreshContent() {
 
         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-            mRightTxv.setEnabled(!mPOIList.isEmpty());
+            mRightBtn.setEnabled(!mPOIList.isEmpty());
             
             if (mPOIList.isEmpty() && mPOILsv.isFooterSpringback() == false) {
                 mEmptyView.setText(R.string.favorite_empty_poi);
@@ -722,7 +723,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 mEmptyView.setVisibility(View.GONE);
             }
         } else {
-            mRightTxv.setEnabled(!mTrafficList.isEmpty());
+            mRightBtn.setEnabled(!mTrafficList.isEmpty());
 
             if (mTrafficList.isEmpty() && mTrafficLsv.isFooterSpringback() == false) {
                 mEmptyView.setText(R.string.favorite_empty_traffic);

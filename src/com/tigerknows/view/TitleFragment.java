@@ -26,15 +26,15 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
         // TODO Auto-generated constructor stub
     }
 
-    protected TextView titleTxv;
+    protected Button titleBtn;
     
-    protected ImageView leftBtn;
+    protected ImageView leftImv;
     
-    protected ImageView rightBtn;
+    protected ImageView rightImv;
     
-    protected Button leftTxv;
+    protected Button leftBtn;
     
-    protected Button rightTxv;
+    protected Button rightBtn;
     
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,21 +48,21 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
     }
     
     protected void findViews() {
-        titleTxv = (TextView) mRootView.findViewById(R.id.title_txv);
-        leftBtn = (ImageView) mRootView.findViewById(R.id.left_btn);
-        rightBtn = (ImageView) mRootView.findViewById(R.id.right_btn);
-        leftTxv = (Button) mRootView.findViewById(R.id.left_txv);
-        rightTxv = (Button) mRootView.findViewById(R.id.right_txv);
+        titleBtn = (Button) mRootView.findViewById(R.id.title_btn);
+        leftImv = (ImageView) mRootView.findViewById(R.id.left_imv);
+        rightImv = (ImageView) mRootView.findViewById(R.id.right_imv);
+        leftBtn = (Button) mRootView.findViewById(R.id.left_btn);
+        rightBtn = (Button) mRootView.findViewById(R.id.right_btn);
     }
 
     protected void setListener() {
-        leftTxv.setOnClickListener(this);
+        leftBtn.setOnClickListener(this);
     }
     
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.left_txv:
+            case R.id.left_btn:
                 // 关闭顶部的Fragment，显示第二个Fragment
                 break;
 
@@ -72,22 +72,22 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
     }
 
     public TextView getTitleTxv() {
-        return titleTxv;
+        return titleBtn;
     }
 
     public ImageView getLeftBtn() {
-        return leftBtn;
+        return leftImv;
     }
 
     public ImageView getRightBtn() {
-        return rightBtn;
+        return rightImv;
     }
 
     public Button getLeftTxv() {
-        return leftTxv;
+        return leftBtn;
     }
 
     public Button getRightTxv() {
-        return rightTxv;
+        return rightBtn;
     }
 }

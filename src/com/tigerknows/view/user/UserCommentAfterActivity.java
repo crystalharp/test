@@ -28,8 +28,8 @@ public class UserCommentAfterActivity extends UserBaseActivity {
         findViews();
         setListener();
 
-        mRightTxv.setVisibility(View.GONE);
-		mTitleTxv.setText(getString(R.string.title_update_comment_after));
+        mRightBtn.setVisibility(View.GONE);
+		mTitleBtn.setText(getString(R.string.title_update_comment_after));
 	}
 
 	protected void findViews() {

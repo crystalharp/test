@@ -86,12 +86,12 @@ public class TrafficResultFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mRightTxv.setVisibility(View.INVISIBLE);
+        mRightBtn.setVisibility(View.INVISIBLE);
         
         mStartTxv.setText(mTrafficModel.getStart().getName());
         mEndTxv.setText(mTrafficModel.getEnd().getName());
 
-        mTitleTxv.setText(mContext.getString(R.string.title_transfer_plan_list));
+        mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan_list));
         mLengthTxv.setVisibility(View.GONE);
         
         mResultAdapter = new TransferProjectListAdapter(mTrafficQuery.getTrafficModel().getPlanList());

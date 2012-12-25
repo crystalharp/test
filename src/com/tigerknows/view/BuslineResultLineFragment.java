@@ -98,11 +98,11 @@ public class BuslineResultLineFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
 
-        mRightTxv.setVisibility(View.GONE);
+        mRightBtn.setVisibility(View.GONE);
 
         mCommentTxv.setText(mContext.getString(R.string.busline_result_title, mBuslineQuery.getKeyword(), 
         		mBuslineModel.getTotal()));
-    	mTitleTxv.setText(mContext.getString(R.string.title_busline_result));
+    	mTitleBtn.setText(mContext.getString(R.string.title_busline_result));
     	
         mLineAdapter.notifyDataSetChanged();
         if (mResultLsv.isFooterSpringback()) {

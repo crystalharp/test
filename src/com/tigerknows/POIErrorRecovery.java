@@ -52,8 +52,8 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
         findViews();
         setListener();
 
-        mTitleTxv.setText(R.string.error_recovery);
-        mRightTxv.setText(R.string.submit);
+        mTitleBtn.setText(R.string.error_recovery);
+        mRightBtn.setText(R.string.submit);
         
         synchronized (sTargetList) {
             int size = sTargetList.size();
@@ -91,7 +91,7 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
      */
     protected void setListener() {
         super.setListener();
-        mRightTxv.setOnClickListener(this);
+        mRightBtn.setOnClickListener(this);
         
         mBaseInfomationErrorRbt.setOnClickListener(this);
         mPlaceDuplicationErrorRbt.setOnClickListener(this);
@@ -113,7 +113,7 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
     public void onClick(View v) {
         // TODO Auto-generated method stub
         switch(v.getId()){
-            case R.id.right_txv:
+            case R.id.right_btn:
                 // md=$uid-$errcode[-$detail]_$uid-$errcode[-$detail]_$uid-$errcode[-$detail]_ 
                 // md=edc1e4c9-5081-428a-935d-1d31fd3848f5-502_8d5cc821-c130-4f9e-acfa-d4906e82c016-404
                 StringBuilder s = new StringBuilder();

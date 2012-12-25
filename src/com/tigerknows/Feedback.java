@@ -54,8 +54,8 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
         findViews();
         setListener();
 
-        mTitleTxv.setText(R.string.feedback);
-        mRightTxv.setText(R.string.submit);
+        mTitleBtn.setText(R.string.feedback);
+        mRightBtn.setText(R.string.submit);
         SpannableString ss = new SpannableString(mThis.getString(R.string.feedback_text2));
         ss.setSpan(new ClickableSpan() {
             @Override
@@ -88,7 +88,7 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
 
     protected void setListener() {
         super.setListener();
-        mRightTxv.setOnClickListener(this);
+        mRightBtn.setOnClickListener(this);
         mBodyScv.setOnTouchListener(new OnTouchListener() {
             
             @Override
@@ -147,9 +147,9 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
             @Override
             public void afterTextChanged(Editable arg0) {
                 if (TextUtils.isEmpty(mFeedbackEdt.getEditableText().toString())) {
-                    mRightTxv.setEnabled(false);
+                    mRightBtn.setEnabled(false);
                 } else {
-                    mRightTxv.setEnabled(true);
+                    mRightBtn.setEnabled(true);
                 }
             }
         });
@@ -158,7 +158,7 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.right_txv:
+            case R.id.right_btn:
                 mActionLog.addAction(ActionLog.FeedbackSubmit);
                 send();
                 break;

@@ -175,9 +175,9 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         findViews();
         setListener();
         
-        mTitleTxv.setText(R.string.download_map);
-        mRightTxv.setVisibility(View.GONE);
-        mLeftTxv.setOnClickListener(this);
+        mTitleBtn.setText(R.string.download_map);
+        mRightBtn.setVisibility(View.GONE);
+        mLeftBtn.setOnClickListener(this);
         
         mDownloadAdapter = new DownloadCityAdapter();
         mDownloadCityLsv.setAdapter(mDownloadAdapter);
@@ -1556,7 +1556,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.left_txv:
+            case R.id.left_btn:
                 mActionLog.addAction(ActionLog.Title_Left_Back, mActionTag);
                 onBack();
                 break;

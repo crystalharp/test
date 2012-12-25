@@ -387,25 +387,25 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     public void onResume() {
         super.onResume();
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
-            mTitleTxv.setText(R.string.tuangou_list);
+            mTitleBtn.setText(R.string.tuangou_list);
+            mRightImv.setVisibility(View.VISIBLE);
             mRightBtn.setVisibility(View.VISIBLE);
-            mRightTxv.setVisibility(View.VISIBLE);
         } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
-            mTitleTxv.setText(R.string.dianying_list);
+            mTitleBtn.setText(R.string.dianying_list);
+            mRightImv.setVisibility(View.GONE);
             mRightBtn.setVisibility(View.GONE);
-            mRightTxv.setVisibility(View.GONE);
         } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
-            mTitleTxv.setText(R.string.yanchu_list);
+            mTitleBtn.setText(R.string.yanchu_list);
+            mRightImv.setVisibility(View.VISIBLE);
             mRightBtn.setVisibility(View.VISIBLE);
-            mRightTxv.setVisibility(View.VISIBLE);
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
-            mTitleTxv.setText(R.string.zhanlan_list);
+            mTitleBtn.setText(R.string.zhanlan_list);
+            mRightImv.setVisibility(View.VISIBLE);
             mRightBtn.setVisibility(View.VISIBLE);
-            mRightTxv.setVisibility(View.VISIBLE);
         }
-        mRightBtn.setImageResource(R.drawable.ic_view_map);
-        mRightTxv.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
-        mRightTxv.setOnClickListener(this);
+        mRightImv.setImageResource(R.drawable.ic_view_map);
+        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setOnClickListener(this);
         
         if (isReLogin()) {
             return;
@@ -541,7 +541,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     @Override
     public void onClick(final View view) {
         switch (view.getId()) {
-            case R.id.right_txv:
+            case R.id.right_btn:
                 if (mDataQuery == null || getList().isEmpty() || mResultLsv.getVisibility() != View.VISIBLE || mDataQuerying != null || mList == null) {
                     return;
                 }

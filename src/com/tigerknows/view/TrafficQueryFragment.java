@@ -800,14 +800,14 @@ public class TrafficQueryFragment extends BaseFragment {
 		 * 在BaseFragment中加了对只有左上角返回按钮可见时才响应点击事件, 
 		 * 避开了这个问题.
 		 */
-		mLeftBtn.setVisibility(View.INVISIBLE);
-        mLeftTxv.setVisibility(View.INVISIBLE);
+		mLeftImv.setVisibility(View.INVISIBLE);
+        mLeftBtn.setVisibility(View.INVISIBLE);
 		mTitleFragment.hide();
 	}
 	
 	public void displayCommonTitle() {
-		mLeftBtn.setVisibility(View.VISIBLE);
-        mLeftTxv.setVisibility(View.VISIBLE);
+		mLeftImv.setVisibility(View.VISIBLE);
+        mLeftBtn.setVisibility(View.VISIBLE);
 		mTitleFragment.display();
 	}
 	

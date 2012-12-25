@@ -43,15 +43,15 @@ public class BaseDialog extends Dialog {
     
     protected String mActionTag;
     
-    protected TextView mTitleTxv;
+    protected Button mTitleBtn;
     
-    protected ImageView mLeftBtn;
+    protected ImageView mLeftImv;
     
-    protected ImageView mRightBtn;
+    protected ImageView mRightImv;
     
-    protected Button mLeftTxv;
+    protected Button mLeftBtn;
     
-    protected Button mRightTxv;
+    protected Button mRightBtn;
     
     public BaseDialog(Context context) {
         this(context, R.style.Theme_Dialog);
@@ -76,16 +76,16 @@ public class BaseDialog extends Dialog {
     }
     
     protected void findViews() {
-        mTitleTxv = (TextView) findViewById(R.id.title_txv);
-        mLeftBtn = (ImageView) findViewById(R.id.left_btn);
-        mRightBtn = (ImageView) findViewById(R.id.right_btn);
-        mLeftTxv = (Button) findViewById(R.id.left_txv);
-        mRightTxv = (Button) findViewById(R.id.right_txv);
+        mTitleBtn = (Button) findViewById(R.id.title_btn);
+        mLeftImv = (ImageView) findViewById(R.id.left_imv);
+        mRightImv = (ImageView) findViewById(R.id.right_imv);
+        mLeftBtn = (Button) findViewById(R.id.left_btn);
+        mRightBtn = (Button) findViewById(R.id.right_btn);
     }
     
     protected void setListener() {
-        if (mLeftTxv != null) {
-            mLeftTxv.setOnClickListener(new View.OnClickListener() {
+        if (mLeftBtn != null) {
+            mLeftBtn.setOnClickListener(new View.OnClickListener() {
                 
                 @Override
                 public void onClick(View arg0) {
@@ -144,7 +144,7 @@ public class BaseDialog extends Dialog {
     }
     
     public void onResume() {
-        
+        mTitleBtn.setBackgroundDrawable(null);
     }
     
     public void onPause() {

@@ -81,8 +81,8 @@ public class UserHomeFragment extends UserBaseFragment {
 	
 	protected void setListener() {
 		
-		if (mLeftTxv != null) {
-            mLeftTxv.setOnClickListener(new View.OnClickListener() {
+		if (mLeftBtn != null) {
+            mLeftBtn.setOnClickListener(new View.OnClickListener() {
                 
                 @Override
                 public void onClick(View arg0) {
@@ -181,8 +181,8 @@ public class UserHomeFragment extends UserBaseFragment {
 		super.onResume();
 		LogWrapper.d(TAG, "onResume()");
 		
-        mRightTxv.setVisibility(View.GONE);
-        mTitleTxv.setText(mContext.getString(R.string.title_user_home));
+        mRightBtn.setVisibility(View.GONE);
+        mTitleBtn.setText(mContext.getString(R.string.title_user_home));
         
 		if (Globals.g_User != null) {
 			nickNameTxv.setText(Globals.g_User.getNickName());
@@ -191,8 +191,8 @@ public class UserHomeFragment extends UserBaseFragment {
 		    dismiss();
 		}
         
-        if (mLeftTxv != null) {
-            mLeftTxv.setOnClickListener(new View.OnClickListener() {
+        if (mLeftBtn != null) {
+            mLeftBtn.setOnClickListener(new View.OnClickListener() {
                 
                 @Override
                 public void onClick(View arg0) {

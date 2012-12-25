@@ -75,8 +75,8 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
         findViews();
         setListener();
         
-        mTitleTxv.setText(R.string.change_city);
-        mRightTxv.setVisibility(View.GONE);
+        mTitleBtn.setText(R.string.change_city);
+        mRightBtn.setVisibility(View.GONE);
 
         mCityElv.setGroupIndicator(null);
         

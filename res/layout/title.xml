@@ -13,7 +13,7 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true">
         
-        <Button android:id="@+id/left_txv" 
+        <Button android:id="@+id/left_btn" 
             android:layout_width="wrap_content" 
             android:layout_height="wrap_content"
 	        android:layout_centerInParent="true"
@@ -23,7 +23,7 @@
             android:gravity="center"/>
     
 	    <ImageView 
-	        android:id="@+id/left_btn"
+	        android:id="@+id/left_imv"
 	        android:layout_width="wrap_content" 
 	        android:layout_height="wrap_content"
 	        android:layout_centerInParent="true"
@@ -39,7 +39,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true">
         
-        <Button android:id="@+id/right_txv" 
+        <Button android:id="@+id/right_btn" 
             android:layout_width="wrap_content" 
             android:layout_height="wrap_content"
 	        android:layout_centerInParent="true"
@@ -49,7 +49,7 @@
             android:gravity="center"/>
     
 	    <ImageView 
-	        android:id="@+id/right_btn"
+	        android:id="@+id/right_imv"
 	        android:layout_width="wrap_content" 
 	        android:layout_height="wrap_content"
 	        android:layout_centerInParent="true"
@@ -57,11 +57,11 @@
 	     </ImageView>
     </RelativeLayout>
     
-    <TextView 
-        android:id="@+id/title_txv"
+    <Button 
+        android:id="@+id/title_btn"
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
+        android:layout_toRightOf="@id/left_view"
         android:layout_centerVertical="true"
         android:text="@string/app_name"
         android:textSize="22sp"
@@ -73,5 +73,5 @@
         android:shadowDy="-1"
         android:shadowColor="#ff4e280c"
         android:shadowRadius="1">
-     </TextView>
+     </Button>
 </RelativeLayout>

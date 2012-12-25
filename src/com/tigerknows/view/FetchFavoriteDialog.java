@@ -72,12 +72,12 @@ public class FetchFavoriteDialog extends BaseDialog {
         findViews();
         setListener();
         
-        mRightTxv.setVisibility(View.GONE);
+        mRightBtn.setVisibility(View.GONE);
         
         mFavoriteAdapter = new FavoriteAdapter(mContext, mFavoriteList);
         mFavoriteLsv.setAdapter(mFavoriteAdapter);
 
-        mTitleTxv.setText(mContext.getString(R.string.favoriten));
+        mTitleBtn.setText(mContext.getString(R.string.favoriten));
 	}
 	
 	protected void findViews() {
@@ -150,7 +150,7 @@ public class FetchFavoriteDialog extends BaseDialog {
         @SuppressWarnings("unchecked")
         public void handleMessage(Message msg) {
                 if (mTempFavoriteList.size() > 0) {
-                    mRightTxv.setEnabled(true);
+                    mRightBtn.setEnabled(true);
                     mFavoriteList.addAll(mTempFavoriteList);
                     Collections.sort(mFavoriteList, mComparator);
                     mFavoriteAdapter.notifyDataSetChanged();
@@ -258,8 +258,6 @@ public class FetchFavoriteDialog extends BaseDialog {
             TextView textView = (TextView) view.findViewById(R.id.text_txv);
             textView.setText((position+1)+". " + poi.getName());
             textView.setPadding(10, 10, 10, 10);
-            view.findViewById(R.id.select_chb).setVisibility(View.GONE);
-            view.findViewById(R.id.rename_imv).setVisibility(View.GONE);
             return view;
         }
 

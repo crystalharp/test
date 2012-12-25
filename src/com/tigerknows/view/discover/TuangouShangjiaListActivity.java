@@ -77,8 +77,8 @@ public class TuangouShangjiaListActivity extends BaseActivity {
         mResultAdapter = new ResultAdapter(mThis, mResultList);
         mResultLsv.setAdapter(mResultAdapter);
         
-        mTitleTxv.setText(R.string.tuangou_shop_list);
-        mRightTxv.setVisibility(View.GONE);
+        mTitleBtn.setText(R.string.tuangou_shop_list);
+        mRightBtn.setVisibility(View.GONE);
     }
 
     protected void findViews() {

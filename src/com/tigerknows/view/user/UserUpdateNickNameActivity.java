@@ -45,8 +45,8 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
         findViews();
         setListener();
         
-        mRightTxv.setVisibility(View.GONE);
-        mTitleTxv.setText(getString(R.string.title_update_nickname));
+        mRightBtn.setVisibility(View.GONE);
+        mTitleBtn.setText(getString(R.string.title_update_nickname));
 	}
 
 	protected void findViews() {
@@ -60,8 +60,8 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 	protected void setListener() {
 		super.setListener();
 
-		if (mLeftTxv != null) {
-            mLeftTxv.setOnClickListener(new View.OnClickListener() {
+		if (mLeftBtn != null) {
+            mLeftBtn.setOnClickListener(new View.OnClickListener() {
                 
                 @Override
                 public void onClick(View arg0) {

@@ -45,8 +45,8 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
         findViews();
         setListener();
         
-        mRightTxv.setVisibility(View.GONE);
-        mTitleTxv.setText(getString(R.string.title_update_password));
+        mRightBtn.setVisibility(View.GONE);
+        mTitleBtn.setText(getString(R.string.title_update_password));
 	}
 
 	protected void findViews() {

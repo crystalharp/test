@@ -162,10 +162,10 @@ public class DianyingDetailFragment extends DiscoverBaseFragment implements View
     @Override
     public void onResume() {
         super.onResume();
-        mTitleTxv.setText(R.string.dianying_detail);
-        mRightBtn.setImageResource(R.drawable.ic_view_map);
-        mRightTxv.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
-        mRightTxv.setOnClickListener(this);   
+        mTitleBtn.setText(R.string.dianying_detail);
+        mRightImv.setImageResource(R.drawable.ic_view_map);
+        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setOnClickListener(this);   
         mBodyScv.scrollTo(0, 0);
         
         refreshDrawable();
@@ -381,7 +381,7 @@ public class DianyingDetailFragment extends DiscoverBaseFragment implements View
 
     public void onClick(View view) {
         switch (view.getId()) {                
-            case R.id.right_txv:
+            case R.id.right_btn:
                 mActionLog.addAction(ActionLog.Title_Right_Button, mActionTag);
                 viewMap();
                 break;

@@ -118,13 +118,13 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onResume() {
         super.onResume();
-        mTitleTxv.setText(R.string.search);
-        mRightTxv.setVisibility(View.INVISIBLE);
+        mTitleBtn.setText(R.string.search);
+        mRightBtn.setVisibility(View.INVISIBLE);
         
         if (mSphinx.mSnapMap) {
             if (mSphinx.mIntoSnap == 0) {
-                mLeftBtn.setVisibility(View.INVISIBLE);
-                mLeftTxv.setText(R.string.home);
+                mLeftImv.setVisibility(View.INVISIBLE);
+                mLeftBtn.setText(R.string.home);
             }
             mSphinx.mIntoSnap++;
         }

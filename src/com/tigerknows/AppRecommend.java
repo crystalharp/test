@@ -54,8 +54,8 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
         findViews();
         setListener();
         
-        mTitleTxv.setText(R.string.app_recommend);
-        mRightTxv.setVisibility(View.GONE);
+        mTitleBtn.setText(R.string.app_recommend);
+        mRightBtn.setVisibility(View.GONE);
 
         mRecommdAppAdapter = new RecommdAppAdapter(mThis, mRecommendAppList);
         mAppRecommendLsv.setAdapter(mRecommdAppAdapter);

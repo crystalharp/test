@@ -46,8 +46,8 @@ public class UserRegistActivity extends UserBaseActivity {
         findViews();
         setListener();
         
-        mRightTxv.setVisibility(View.GONE);
-        mTitleTxv.setText(getString(R.string.title_user_regist));
+        mRightBtn.setVisibility(View.GONE);
+        mTitleBtn.setText(getString(R.string.title_user_regist));
 	}
 
 	protected void findViews() {

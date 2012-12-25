@@ -50,8 +50,8 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
 
         mShanghuleixingBtn.setTextColor(0xff888888);
         mShanghuleixingBtn.setText(R.string.bitian);
-        mTitleTxv.setText(R.string.add_merchant);
-        mRightTxv.setText(R.string.submit);
+        mTitleBtn.setText(R.string.add_merchant);
+        mRightBtn.setText(R.string.submit);
         
         mAddMerchantTypes = mThis.getResources().getStringArray(R.array.add_merchant_type);
         mShanghuleixingBtn.setFocusable(true);
@@ -84,7 +84,7 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
      */
     protected void setListener() {
         super.setListener();
-        mRightTxv.setOnClickListener(this);
+        mRightBtn.setOnClickListener(this);
         
         mShanghuleixingBtn.setOnTouchListener(new OnTouchListener() {
             
@@ -157,7 +157,7 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
     public void onClick(View v) {
         // TODO Auto-generated method stub
         switch(v.getId()){
-            case R.id.right_txv:
+            case R.id.right_btn:
                 mActionLog.addAction(ActionLog.Title_Right_Button, mActionTag);
                 StringBuilder s = new StringBuilder();
                 try {

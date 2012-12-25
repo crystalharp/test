@@ -40,8 +40,8 @@ public class AboutUs extends BaseActivity implements View.OnClickListener {
         findViews();
         setListener();
         
-        mTitleTxv.setText(R.string.about_us);
-        mRightTxv.setVisibility(View.GONE);
+        mTitleBtn.setText(R.string.about_us);
+        mRightBtn.setVisibility(View.GONE);
         
         mAppVersionTxv.setText(mThis.getString(R.string.about_version, TKConfig.CLIENT_SOFT_VERSION));
         mReleaseDateTxv.setText(mThis.getString(R.string.about_release_date, TKConfig.CLIENT_SOFT_RELEASE_DATE));

@@ -143,13 +143,13 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
+        mLeftImv.setVisibility(View.INVISIBLE);
         mLeftBtn.setVisibility(View.INVISIBLE);
-        mLeftTxv.setVisibility(View.INVISIBLE);
-        mTitleTxv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 2);
-        mTitleTxv.setText(" ");
-        mTitleTxv.setBackgroundResource(R.drawable.txt_app_name);
-        mRightTxv.setText(Globals.g_Current_City_Info.getCName());
-        mRightTxv.setOnClickListener(this);
+        mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 2);
+        mTitleBtn.setText(" ");
+        mTitleBtn.setBackgroundResource(R.drawable.txt_app_name);
+        mRightBtn.setText(Globals.g_Current_City_Info.getCName());
+        mRightBtn.setOnClickListener(this);
         
         mMenuFragment.updateMenuStatus(R.id.poi_btn);
         mMenuFragment.display();
@@ -194,7 +194,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        if (id == R.id.right_txv) {
+        if (id == R.id.right_btn) {
             mActionLog.addAction(ActionLog.SearchHomeChangeCity);
             mSphinx.showView(R.id.activity_change_city);
         }
@@ -204,7 +204,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         if (mTitleFragment == null) {
             return;
         }
-        mRightTxv.setText(cityName);
+        mRightBtn.setText(cityName);
     }
     
     public void refreshLocationView() {

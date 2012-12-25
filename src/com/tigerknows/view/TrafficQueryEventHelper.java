@@ -138,7 +138,7 @@ public class TrafficQueryEventHelper {
 	}
 	
 	public void applyListenersInSelectPointState() {
-		mQueryFragment.mLeftTxv.setOnClickListener(new SelectPointLeftBtnOnClickListener());
+		mQueryFragment.mLeftBtn.setOnClickListener(new SelectPointLeftBtnOnClickListener());
 	}
 	
 	public void addSuggestWatcherInInputState() {

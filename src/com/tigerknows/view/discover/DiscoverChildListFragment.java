@@ -229,13 +229,13 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
     public void onResume() {
         super.onResume();
         if (BaseQuery.DATA_TYPE_FENDIAN.equals(mDataType)) {
-            mTitleTxv.setText(R.string.fendian_list);
+            mTitleBtn.setText(R.string.fendian_list);
         } else if (BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType)) {
-            mTitleTxv.setText(R.string.dianyingyuan_list);
+            mTitleBtn.setText(R.string.dianyingyuan_list);
         }
-        mRightBtn.setImageResource(R.drawable.ic_view_map);
-        mRightTxv.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
-        mRightTxv.setOnClickListener(this);
+        mRightImv.setImageResource(R.drawable.ic_view_map);
+        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setOnClickListener(this);
         
         if (isReLogin()) {
             return;
@@ -305,7 +305,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
     @Override
     public void onClick(final View view) {
         switch (view.getId()) {
-            case R.id.right_txv:
+            case R.id.right_btn:
                 if (getList().isEmpty()) {
                     return;
                 }

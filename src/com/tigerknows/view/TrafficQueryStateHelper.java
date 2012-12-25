@@ -176,8 +176,8 @@ public class TrafficQueryStateHelper {
 			// TODO Auto-generated method stub
 			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficHome);
 			mQueryFragment.displayCommonTitle();
-			mQueryFragment.mRightTxv.setVisibility(View.GONE);
-			mQueryFragment.mTitleTxv.setText(R.string.title_click_map);
+			mQueryFragment.mRightBtn.setVisibility(View.GONE);
+			mQueryFragment.mTitleBtn.setText(R.string.title_click_map);
 			mQueryFragment.mTitle.setVisibility(View.GONE);
 			mQueryFragment.mMenuFragment.hide();
 			
@@ -215,8 +215,8 @@ public class TrafficQueryStateHelper {
 			// TODO Auto-generated method stub
 			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficInput);
 			mQueryFragment.displayCommonTitle();
-			mQueryFragment.mRightTxv.setVisibility(View.GONE);
-			mQueryFragment.mTitleTxv.setText(R.string.title_click_map);
+			mQueryFragment.mRightBtn.setVisibility(View.GONE);
+			mQueryFragment.mTitleBtn.setText(R.string.title_click_map);
 			mQueryFragment.mTitle.setVisibility(View.GONE);
 			applyInnateProperty(TrafficViewSTT.State.SelectPoint);
 		}
@@ -261,8 +261,8 @@ public class TrafficQueryStateHelper {
 		public void uiRollback() {
 			// TODO Auto-generated method stub
 			mQueryFragment.displayCommonTitle();
-			mQueryFragment.mRightTxv.setVisibility(View.GONE);
-			mQueryFragment.mTitleTxv.setText(R.string.title_click_map);
+			mQueryFragment.mRightBtn.setVisibility(View.GONE);
+			mQueryFragment.mTitleBtn.setText(R.string.title_click_map);
 			mQueryFragment.mTitle.setVisibility(View.GONE);
 			applyInnateProperty(TrafficViewSTT.State.SelectPoint);
 		}

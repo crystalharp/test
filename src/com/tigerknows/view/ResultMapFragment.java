@@ -61,15 +61,15 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
-        mTitleTxv.setText(mTitle);
-        mRightTxv.setVisibility(View.INVISIBLE);
+        mTitleBtn.setText(mTitle);
+        mRightBtn.setVisibility(View.INVISIBLE);
         mRootView.setOnTouchListener(null);
-        mTitleTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        mTitleBtn.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         if (mSphinx.mSnapMap) {
             mSnapView.setVisibility(View.VISIBLE);
             if (mSphinx.mIntoSnap == 0) {
-                mLeftBtn.setVisibility(View.INVISIBLE);
-                mLeftTxv.setText(R.string.home);
+                mLeftImv.setVisibility(View.INVISIBLE);
+                mLeftBtn.setText(R.string.home);
             }
             mSphinx.mIntoSnap++;
         } else {

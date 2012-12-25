@@ -129,10 +129,10 @@ public class YanchuDetailFragment extends DiscoverBaseFragment implements View.O
     @Override
     public void onResume() {
         super.onResume();
-        mTitleTxv.setText(R.string.yanchu_detail);
-        mRightBtn.setImageResource(R.drawable.ic_view_map);
-        mRightTxv.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
-        mRightTxv.setOnClickListener(this);   
+        mTitleBtn.setText(R.string.yanchu_detail);
+        mRightImv.setImageResource(R.drawable.ic_view_map);
+        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setOnClickListener(this);   
         mBodyScv.scrollTo(0, 0);
         
         refreshDrawable();
@@ -265,7 +265,7 @@ public class YanchuDetailFragment extends DiscoverBaseFragment implements View.O
 
     public void onClick(View view) {
         switch (view.getId()) {                
-            case R.id.right_txv:
+            case R.id.right_btn:
                 mActionLog.addAction(ActionLog.Title_Right_Button, mActionTag);
                 viewMap();
                 break;

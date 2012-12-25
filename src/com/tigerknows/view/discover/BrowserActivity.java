@@ -73,16 +73,16 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
 
         String title = mIntent.getStringExtra(TITLE);
         if (TextUtils.isEmpty(title)) {
-            mTitleTxv.setText(mThis.getString(R.string.buy));
+            mTitleBtn.setText(mThis.getString(R.string.buy));
         } else {
-            mTitleTxv.setText(title);
+            mTitleBtn.setText(title);
         }
         String left = mIntent.getStringExtra(LEFT);
         if (TextUtils.isEmpty(title) == false) {
-            mLeftTxv.setText(left);
-            mLeftBtn.setVisibility(View.GONE);
+            mLeftBtn.setText(left);
+            mLeftImv.setVisibility(View.GONE);
         }
-        mRightTxv.setVisibility(View.GONE);
+        mRightBtn.setVisibility(View.GONE);
         
         String tip = mIntent.getStringExtra(TIP);
         if (TextUtils.isEmpty(tip) == false) {

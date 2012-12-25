@@ -85,9 +85,9 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     public void onResume() {
         super.onResume();
 
-        mRightBtn.setImageResource(R.drawable.ic_view_map);
-        mRightTxv.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
-        mRightTxv.setOnClickListener(this);
+        mRightImv.setImageResource(R.drawable.ic_view_map);
+        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setOnClickListener(this);
 
         mResultAdapter = new StringListAdapter(mContext);
         mResultLsv.setAdapter(mResultAdapter);
@@ -98,7 +98,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     		mLengthTxv.setText(mContext.getString(R.string.traffic_result_length_m, line.getLength()));
     	}
         mNameTxv.setText(line.getName());
-        mTitleTxv.setText(mContext.getString(R.string.title_busline_line));
+        mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
         if (!TextUtils.isEmpty(line.getTime())) {
         	mTimeTxv.setText(mContext.getString(R.string.transfer_operation_time, line.getTime()));
         	mTimeTxv.setVisibility(View.VISIBLE);
@@ -378,7 +378,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        if (id == R.id.right_txv) {
+        if (id == R.id.right_btn) {
         	mActionLog.addAction(ActionLog.TrafficLineDetailMapBtn);
         	// 绘制交通图层
 			viewMap();
