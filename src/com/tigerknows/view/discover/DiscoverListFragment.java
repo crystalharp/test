@@ -11,7 +11,6 @@ import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.TKConfig;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.POI;
@@ -33,19 +32,18 @@ import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList.Disc
 import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
-import com.tigerknows.view.FilterExpandableListAdapter;
+import com.tigerknows.view.FilterListView;
 import com.tigerknows.view.SpringbackListView;
 import com.tigerknows.view.SpringbackListView.OnRefreshListener;
 import com.tigerknows.view.user.User;
 import com.tigerknows.view.user.UserBaseActivity;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Paint;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -55,16 +53,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ExpandableListView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupClickListener;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -73,7 +67,7 @@ import java.util.List;
 /**
  * @author Peng Wenyue
  */
-public class DiscoverListFragment extends DiscoverBaseFragment implements View.OnClickListener {
+public class DiscoverListFragment extends DiscoverBaseFragment implements View.OnClickListener, FilterListView.CallBack {
 
     public DiscoverListFragment(Sphinx sphinx) {
         super(sphinx);
@@ -82,9 +76,11 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private ImageButton mDingdanBtn;
     
-    private Dialog mFilterDialog = null;
+    private FilterListView mFilterListView = null;
+    
+    private PopupWindow mPopupWindow;
 
-    private LinearLayout mFilterLnl = null;
+    private ViewGroup mFilterControlView = null;
     
     private TextView mResultTxv;
 
@@ -191,7 +187,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
             if (lastDataQuerying.getSourceViewId() != getId()) {
                 mDataQuery = null;
-                mFilterLnl.setVisibility(View.GONE);
+                mFilterControlView.setVisibility(View.GONE);
             }
             
             if (lastDataQuerying.isTurnPage() == false) {
@@ -271,7 +267,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mDingdanBtn = (ImageButton) mRootView.findViewById(R.id.dingdan_btn);
         mResultTxv = (TextView) mRootView.findViewById(R.id.result_txv);
         mResultTxv.setVisibility(View.GONE);
-        mFilterLnl = (LinearLayout)mRootView.findViewById(R.id.filter_lnl);
+        mFilterControlView = (ViewGroup)mRootView.findViewById(R.id.filter_control_view);
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(v);
@@ -408,7 +404,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 mFilterList.add(filter.clone());
             }
         }
-        FilterExpandableListAdapter.refreshFilterButton(mFilterLnl, mFilterList, mSphinx, this);
+        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this, false);
     }
 
     @Override
@@ -485,10 +481,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     private void turnPage(){
         synchronized (this) {
         DataQuery lastDataQuery = mDataQuery;
-        if (mList == null || mDataQuerying != null || mResultLsv.isFooterSpringback() == false || lastDataQuery == null) {
-            return;
-        }
-        if (mList.getTotal() <= getList().size()) {
+        if (mList == null || mDataQuerying != null || mResultLsv.isFooterSpringback() == false || lastDataQuery == null || mList.getTotal() <= getList().size()) {
             mResultLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
             return;
         }
@@ -561,12 +554,20 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mSphinx.showView(R.id.view_result_map);   
     }
     
-    private void filter() {
-
+    public void doFilter(String name) {
+        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this, false);
+        
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
+        }
+        
         DataQuery lastDataQuery = mDataQuery;
         if (lastDataQuery == null) {
             return;
         }
+
+        mActionLog.addAction(mActionTag+ActionLog.DiscoverListFilterSelect, name, DataQuery.makeFilterRequest(this.mFilterList));
+        
         DataQuery dataQuery = new DataQuery(mContext);
 
         POI requestPOI = lastDataQuery.getPOI();
@@ -578,14 +579,20 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mSphinx.queryStart(dataQuery);
         setup();
     }
+    
+    public void cancelFilter() {
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
+        }
+        if (mResultLsv.isFooterSpringback() && mFilterListView.isTurnPaging()) {
+            mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
+        }
+    }
 
     @Override
     public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.title_btn:
-                if (mDataQuery == null || getList().isEmpty() || mResultLsv.getVisibility() != View.VISIBLE || mDataQuerying != null || mList == null) {
-                    return;
-                }
                 if (mDiscoverCategoryList.size() > 0) {
                     mTitlePopupArrayAdapter.mSelectDataType = mDataType;
                     mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
@@ -618,11 +625,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 break;
                 
             default:
-                if (mDataQuerying != null) {
-                    return;
-                }
-                
-                if (mFilterDialog != null && mFilterDialog.isShowing()) {
+                if (mDataQuerying != null || mDataQuery == null) {
                     return;
                 }
                 
@@ -630,9 +633,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     mTkAsyncTasking.stop();
                 }
                 mResultLsv.onRefreshComplete(false);
+                
+                showFilterListView(mTitleFragment);
 
-                final Filter filter = (Filter)view.getTag();
-                final int key = filter.getKey();
+                byte key = (Byte)view.getTag();
                 if (key == FilterResponse.FIELD_FILTER_AREA_INDEX) {
                     mActionLog.addAction(mActionTag+ActionLog.DiscoverListFilterArea);
                 } else if (key == FilterResponse.FIELD_FILTER_CATEGORY_INDEX) {
@@ -640,92 +644,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 } else if (key == FilterResponse.FIELD_FILTER_ORDER_INDEX) {
                     mActionLog.addAction(mActionTag+ActionLog.DiscoverListFilterOrder);
                 }
-                
-                final ExpandableListView filterElv = new ExpandableListView(mContext);
-                filterElv.setScrollingCacheEnabled(false);
-                filterElv.setFadingEdgeLength(0);
-                filterElv.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-                
-                final FilterExpandableListAdapter filterExpandableListAdapter = new FilterExpandableListAdapter(mSphinx, filter);
-                filterElv.setAdapter(filterExpandableListAdapter);
-                filterElv.setGroupIndicator(null);
-                Drawable drawable = mContext.getResources().getDrawable(R.drawable.divider);
-                filterElv.setDivider(drawable);
-                filterElv.setChildDivider(drawable);
-                filterElv.setPadding(0, 0, 0, 0);
-                filterElv.setFadingEdgeLength(0);
-                filterElv.setOnGroupClickListener(new OnGroupClickListener() {
-                    
-                    @Override
-                    public boolean onGroupClick(ExpandableListView arg0, View arg1, final int position, long arg3) {
-                        List<Filter> list = filter.getChidrenFilterList();
-                        if (list.get(position).getChidrenFilterList().size() == 0) {
-                            mFilterDialog.dismiss();
-                            if (!list.get(position).isSelected() || mList == null) {
-                                
-                                for(Filter filter : list) {
-                                    filter.setSelected(false);
-                                    List<Filter> chidrenFilterList1 = filter.getChidrenFilterList();
-                                    for(Filter childrenFilter1 : chidrenFilterList1) {
-                                        childrenFilter1.setSelected(false);
-                                    }
-                                }
-                                list.get(position).setSelected(true);
-                                
-                                ((Button)view).setText(FilterExpandableListAdapter.getFilterTitle(mSphinx, filter));
-                                mActionLog.addAction(mActionTag+ActionLog.DiscoverListFilterSelect, key, DataQuery.makeFilterRequest(mFilterList));
-                                filter();
-                            }
-                        }
-                        return false;
-                    }
-                });
-                filterElv.setOnChildClickListener(new OnChildClickListener() {
-                    
-                    @Override
-                    public boolean onChildClick(ExpandableListView arg0, View arg1, int arg2, int arg3, long arg4) {
-                        mFilterDialog.dismiss();
-                        List<Filter> list = filter.getChidrenFilterList();
-                        if (!list.get(arg2).getChidrenFilterList().get(arg3).isSelected() || mList == null) {
-                            for(Filter filter : list) {
-                                filter.setSelected(false);
-                                List<Filter> childrenList1 = filter.getChidrenFilterList();
-                                for(Filter childrenFilter1 : childrenList1) {
-                                    childrenFilter1.setSelected(false);
-                                }
-                            }
-                            list.get(arg2).getChidrenFilterList().get(arg3).setSelected(true);
-                            
-                            ((Button)view).setText(FilterExpandableListAdapter.getFilterTitle(mSphinx, filter));
-                            mActionLog.addAction(mActionTag+ActionLog.DiscoverListFilterSelect, key, DataQuery.makeFilterRequest(mFilterList));
-                            filter();
-                        }
-                        return false;
-                    }
-                });
-                
-                mFilterDialog = new AlertDialog.Builder(mSphinx).setTitle(FilterExpandableListAdapter.getFilterTitle(mSphinx, filter))
-                .setView(filterElv)
-                .setCancelable(true)
-                .setOnCancelListener(new OnCancelListener() {
-                    
-                    @Override
-                    public void onCancel(DialogInterface arg0) {
-                        if (mResultLsv.isFooterSpringback()) {
-                            mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
-                        }
-                    }
-                })
-                .create();
-                
-                mFilterDialog.setCanceledOnTouchOutside(false);
-                mFilterDialog.show();
-
-                int position = FilterExpandableListAdapter.getFilterSelectParentPosition(filter);
-                if (position < filter.getChidrenFilterList().size()) {
-                    filterElv.expandGroup(position);
-                    filterElv.setSelectionFromTop(position, 0);
-                }
+                mFilterListView.setData(mFilterList, key, DiscoverListFragment.this, mResultLsv.getState(false) == SpringbackListView.REFRESHING);
         }
     }
     
@@ -927,6 +846,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
+        
+        if (dataQuery.isStop()) {
+            return;
+        }
 
         boolean turnpage = false;
         boolean exit = true;
@@ -991,7 +914,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         
         if (dataQuery.isTurnPage() == false) {
             dataQuery.getCriteria().put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
-            mFilterArea = FilterExpandableListAdapter.getFilterTitle(mSphinx, mFilterList.get(0));
+            mFilterArea = FilterListView.getFilterTitle(mSphinx, mFilterList.get(0));
         }
         if (response instanceof TuangouResponse) {
             TuangouResponse tuangouResponse = (TuangouResponse)dataQuery.getResponse();
@@ -1148,6 +1071,24 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             return null;
         }
         return lastDataQuery.getCriteria();
+    }
+    
+    private void showFilterListView(View parent) {
+        if (mPopupWindow == null) {
+            mFilterListView = new FilterListView(mSphinx);
+            
+            mPopupWindow = new PopupWindow(mFilterListView);
+            mPopupWindow.setWindowLayoutMode(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            mPopupWindow.setFocusable(true);
+            // 设置允许在外点击消失
+            mPopupWindow.setOutsideTouchable(true);
+
+            // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            
+        }
+        mPopupWindow.showAsDropDown(parent, 0, 0);
+
     }
     
     public class TitlePopupArrayAdapter extends ArrayAdapter<DiscoverCategory> {

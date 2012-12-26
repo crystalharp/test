@@ -11,7 +11,6 @@ import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.TKConfig;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
@@ -25,10 +24,9 @@ import com.tigerknows.view.SpringbackListView.OnRefreshListener;
 import com.tigerknows.view.user.User;
 
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -38,14 +36,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupClickListener;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -54,16 +49,18 @@ import java.util.List;
 /**
  * @author Peng Wenyue
  */
-public class POIResultFragment extends BaseFragment implements View.OnClickListener {
+public class POIResultFragment extends BaseFragment implements View.OnClickListener, FilterListView.CallBack {
 
     public POIResultFragment(Sphinx sphinx) {
         super(sphinx);
         // TODO Auto-generated constructor stub
     }
     
-    private Dialog mFilterDialog = null;
+    private FilterListView mFilterListView = null;
+    
+    private PopupWindow mPopupWindow;
 
-    private LinearLayout mFilterLnl = null;
+    private ViewGroup mFilterControlView = null;
     
     private TextView mResultTxv;
 
@@ -88,6 +85,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     private long mATotal;
     
     private long mBTotal;
+    
+    private boolean mShowAPOI = false;
     
     private List<Filter> mFilterList = new ArrayList<Filter>();
     
@@ -122,7 +121,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
             if (lastDataQuerying.getSourceViewId() != getId()) {
                 mDataQuery = null;
-                mFilterLnl.setVisibility(View.GONE);
+                mFilterControlView.setVisibility(View.GONE);
             }
             
             if (lastDataQuerying.isTurnPage() == false) {
@@ -168,7 +167,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     protected void findViews() {
         mResultTxv = (TextView) mRootView.findViewById(R.id.result_txv);
-        mFilterLnl = (LinearLayout)mRootView.findViewById(R.id.filter_lnl);
+        mFilterControlView = (ViewGroup)mRootView.findViewById(R.id.filter_control_view);
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(v);
@@ -186,8 +185,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (position < adapterView.getCount()) {
                     POI poi = (POI) adapterView.getAdapter().getItem(position);
                     if (poi != null) {
-                        mActionLog.addAction(ActionLog.SearchResultSelect, poi.getUUID(), poi.getName(), position+1-mATotal);
-                        poi.setOnlyAPOI((position == 0 && mATotal == 1));
+                        mActionLog.addAction(ActionLog.SearchResultSelect, poi.getUUID(), poi.getName(), position+1);
                         mSphinx.getPOIDetailFragment().setData(poi);
                         mSphinx.showView(R.id.view_poi_detail);
                     }
@@ -260,8 +258,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         for(Filter filter : filterList) {
             mFilterList.add(filter.clone());
         }
-        LogWrapper.d("POIResultFragment", "refreshFilter() mFilterList="+mFilterList.size());
-        FilterExpandableListAdapter.refreshFilterButton(mFilterLnl, mFilterList, mSphinx, this);
+        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this, false);
     }
 
     @Override
@@ -314,7 +311,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     private void turnPage(){
         synchronized (this) {
         DataQuery lastDataQuery = mDataQuery;
-        if (mDataQuerying != null || mATotal+mBTotal <= mPOIList.size() || lastDataQuery == null) {
+        if (mDataQuerying != null || canTurnPage() == false || lastDataQuery == null || mResultLsv.isFooterSpringback() == false) {
             mResultLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
             return;
         }
@@ -325,7 +322,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         POI requestPOI = lastDataQuery.getPOI();
         int cityId = lastDataQuery.getCityId();
         Hashtable<String, String> criteria = lastDataQuery.getCriteria();
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mPOIList.size() - mATotal));
+        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mPOIList.size() - (mShowAPOI ? 1 : 0)));
         poiQuery.setup(criteria, cityId, getId(), getId(), null, true, true, requestPOI);
         mSphinx.queryStart(poiQuery);
         }
@@ -337,12 +334,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
         int size = mPOIList.size();
         List<POI> poiList = new ArrayList<POI>();
-        boolean isShowAPOI = (mATotal == 1);
-        int[] page = CommonUtils.makePage(mResultLsv, size, firstVisiblePosition, lastVisiblePosition, isShowAPOI);
+        int[] page = CommonUtils.makePage(mResultLsv, size, firstVisiblePosition, lastVisiblePosition, mShowAPOI);
         POI poi;
-        if (isShowAPOI) {
+        if (mShowAPOI) {
             poi = mPOIList.get(0);
-            poi.setOnlyAPOI(true);
             poiList.add(poi);
         }
         
@@ -350,7 +345,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         int maxIndex = page[1];
         for(;minIndex <= maxIndex && minIndex < size; minIndex++) {
             poi = mPOIList.get(minIndex);
-            poi.setOrderNumber(minIndex+ (isShowAPOI ? 0 : 1));
+            poi.setOrderNumber(minIndex+ (mShowAPOI ? 0 : 1));
             poiList.add(poi);
         }
         mSphinx.showPOI(poiList, page[2]);
@@ -358,12 +353,19 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mSphinx.showView(R.id.view_result_map);   
     }
     
-    private void filter() {
-
+    public void doFilter(String name) {
+        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this, false);
+        
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
+        }
         DataQuery lastDataQuery = mDataQuery;
         if (lastDataQuery == null) {
             return;
         }
+
+        mActionLog.addAction(mActionTag+ActionLog.SearchResultFilter, name, DataQuery.makeFilterRequest(this.mFilterList));
+        
         DataQuery poiQuery = new DataQuery(mContext);
 
         POI requestPOI = lastDataQuery.getPOI();
@@ -374,6 +376,15 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         poiQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(poiQuery);
         setup();
+    }
+    
+    public void cancelFilter() {
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
+        }
+        if (mResultLsv.isFooterSpringback() && mFilterListView.isTurnPaging()) {
+            mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
+        }
     }
 
     @Override
@@ -388,11 +399,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 break;
                 
             default:
-                if (mDataQuerying != null) {
-                    return;
-                }
-                
-                if (mFilterDialog != null && mFilterDialog.isShowing()) {
+                if (mDataQuerying != null || mDataQuery == null) {
                     return;
                 }
                 
@@ -400,9 +407,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     mTkAsyncTasking.stop();
                 }
                 mResultLsv.onRefreshComplete(false);
+                
+                showFilterListView(mTitleFragment);
 
-                final Filter filter = (Filter)view.getTag();
-                final int key = filter.getKey();
+                byte key = (Byte)view.getTag();
                 if (key == POIResponse.FIELD_FILTER_AREA_INDEX) {
                     mActionLog.addAction(ActionLog.SearchResultFilterArea);
                 } else if (key == POIResponse.FIELD_FILTER_CATEGORY_INDEX) {
@@ -410,91 +418,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 } else if (key == POIResponse.FIELD_FILTER_ORDER_INDEX) {
                     mActionLog.addAction(ActionLog.SearchResultFilterOrder);
                 }
-                
-                
-                final ExpandableListView filterElv = new ExpandableListView(mContext);
-                filterElv.setScrollingCacheEnabled(false);
-                filterElv.setFadingEdgeLength(0);
-                filterElv.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-                
-                final FilterExpandableListAdapter filterExpandableListAdapter = new FilterExpandableListAdapter(mSphinx, filter);
-                filterElv.setAdapter(filterExpandableListAdapter);
-                filterElv.setGroupIndicator(null);
-                Drawable drawable = mContext.getResources().getDrawable(R.drawable.divider);
-                filterElv.setDivider(drawable);
-                filterElv.setChildDivider(drawable);
-                filterElv.setPadding(0, 0, 0, 0);
-                filterElv.setFadingEdgeLength(0);
-                filterElv.setOnGroupClickListener(new OnGroupClickListener() {
-                    
-                    @Override
-                    public boolean onGroupClick(ExpandableListView arg0, View arg1, final int position, long arg3) {
-                        List<Filter> list = filter.getChidrenFilterList();
-                        if (list.get(position).getChidrenFilterList().size() == 0) {
-                            mFilterDialog.dismiss();
-                            if (!list.get(position).isSelected() || mNotResult) {
-                                
-                                for(Filter filter : list) {
-                                    filter.setSelected(false);
-                                    List<Filter> chidrenFilterList1 = filter.getChidrenFilterList();
-                                    for(Filter childrenFilter1 : chidrenFilterList1) {
-                                        childrenFilter1.setSelected(false);
-                                    }
-                                }
-                                list.get(position).setSelected(true);
-                                
-                                ((Button)view).setText(FilterExpandableListAdapter.getFilterTitle(mSphinx, filter));
-                                mActionLog.addAction(ActionLog.SearchResultFilter, key, ((Button)view).getText());
-                                filter();
-                            }
-                        }
-                        return false;
-                    }
-                });
-                filterElv.setOnChildClickListener(new OnChildClickListener() {
-                    
-                    @Override
-                    public boolean onChildClick(ExpandableListView arg0, View arg1, int arg2, int arg3, long arg4) {
-                        mFilterDialog.dismiss();
-                        List<Filter> list = filter.getChidrenFilterList();
-                        if (!list.get(arg2).getChidrenFilterList().get(arg3).isSelected() || mNotResult) {
-                            for(Filter filter : list) {
-                                filter.setSelected(false);
-                                List<Filter> childrenList1 = filter.getChidrenFilterList();
-                                for(Filter childrenFilter1 : childrenList1) {
-                                    childrenFilter1.setSelected(false);
-                                }
-                            }
-                            list.get(arg2).getChidrenFilterList().get(arg3).setSelected(true);
-                            
-                            ((Button)view).setText(FilterExpandableListAdapter.getFilterTitle(mSphinx, (filter)));
-                            mActionLog.addAction(ActionLog.SearchResultFilter, key, ((Button)view).getText());
-                            filter();
-                        }
-                        return false;
-                    }
-                });
-                
-                mFilterDialog = new AlertDialog.Builder(mSphinx).setTitle(FilterExpandableListAdapter.getFilterTitle(mSphinx, (filter)))
-                .setView(filterElv)
-                .setCancelable(true)
-                .setOnCancelListener(new OnCancelListener() {
-                    
-                    @Override
-                    public void onCancel(DialogInterface arg0) {
-                        mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
-                    }
-                })
-                .create();
-                
-                mFilterDialog.setCanceledOnTouchOutside(false);
-                mFilterDialog.show();
-
-                int position = FilterExpandableListAdapter.getFilterSelectParentPosition(filter);
-                if (position < filter.getChidrenFilterList().size()) {
-                    filterElv.expandGroup(position);
-                    filterElv.setSelectionFromTop(position, 0);
-                }
+                mFilterListView.setData(mFilterList, key, POIResultFragment.this, mResultLsv.getState(false) == SpringbackListView.REFRESHING);
         }
     }
     
@@ -543,7 +467,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
             POI poi = getItem(position);
             int aTotal = 0;
-            for(int i = 0, count = getCount(); i < count; i++) {
+            for(int i = 0, count = getCount(); i < count && i < 2; i++) {
                 if (getItem(i).getResultType() == POIResponse.FIELD_A_POI_LIST) {
                     aTotal++;
                     if (aTotal > 1) {
@@ -717,7 +641,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         super.onPostExecute(tkAsyncTask);
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
         
-        if (mDataQuerying != null && dataQuery != mDataQuerying) {
+        if (mDataQuerying != null && dataQuery != mDataQuerying || dataQuery.isStop()) {
             return;
         }
 
@@ -780,11 +704,20 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
             updateView();
 
-            POIList poiList = poiResponse.getAPOIList();
+            POIList poiList = poiResponse.getBPOIList();
+            List<POI> bPOIList = null;
+            if (poiList != null) {
+                mBTotal = poiList.getTotal();
+                bPOIList = poiList.getList();
+            } else {
+                mBTotal = 0;
+            }
+            
+            poiList = poiResponse.getAPOIList();
             List<POI> aPOIList = null;
             if (!dataQuery.isTurnPage()) {
-                mATotal = 0;
-                mBTotal = 0;
+                this.mATotal = 0;
+                this.mShowAPOI = false;
                 mPOIList.clear();
                 mSphinx.getHandler().post(new Runnable() {
 
@@ -797,21 +730,23 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     mATotal = poiList.getTotal();
                     aPOIList = poiList.getList();
                 }
-            }
-
-            poiList = poiResponse.getBPOIList();
-            List<POI> bPOIList = null;
-            if (poiList != null) {
-                mBTotal = poiList.getTotal();
-                bPOIList = poiList.getList();
-            }
-
-            if (mATotal == 1 && mBTotal > 0) {
-                if (!dataQuery.isTurnPage()) {
+                
+                POI poi = dataQuery.getPOI();
+                if (mATotal == 0 && TextUtils.isEmpty(poi.getAddress()) == false) { // 来自周边搜索界面
+                    mATotal = 1;
+                    poi.setResultType(POIResponse.FIELD_A_POI_LIST);
+                    poi.setOrderNumber(0);
+                    aPOIList = new ArrayList<POI>();
+                    aPOIList.add(poi);
+                }
+                
+                if (mATotal == 1 && mBTotal > 0) {
+                    mShowAPOI = true;
+                    aPOIList.get(0).setOnlyAPOI(true);
+                    mPOIList.addAll(aPOIList);
+                } else if (aPOIList != null){
                     mPOIList.addAll(aPOIList);
                 }
-            } else if (aPOIList != null) {
-                mPOIList.addAll(aPOIList);
             }
 
             if (bPOIList != null) {
@@ -840,16 +775,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
             }
 
-            if (mBTotal > 0 && (mFilterDialog == null || !mFilterDialog.isShowing())) {
-                refreshFilter();
-            }
-            if (dataQuery.isTurnPage() == false) {
-                dataQuery.getCriteria().put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
-            }
-
-            if (mPOIList.size() < mATotal + mBTotal) {
-                mResultLsv.setFooterSpringback(true);
-            }
+            refreshFilter();
+            mResultLsv.setFooterSpringback(canTurnPage());
         } else {
             if (!dataQuery.isStop()) {
                 refreshResultTitleText(dataQuery);
@@ -865,10 +792,38 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
         
     }
+    
+    private boolean canTurnPage() {
+        if (mShowAPOI) {
+            return mPOIList.size()-1 < mBTotal;
+        } else if (mATotal > 1) {
+            return mPOIList.size() < mATotal;
+        } else {
+            return mPOIList.size() < mBTotal;
+        }
+    }
 
     public void refreshStamp() {
         if (mResultAdapter != null) {
             mResultAdapter.notifyDataSetChanged();
         }
+    }
+    
+    private void showFilterListView(View parent) {
+        if (mPopupWindow == null) {
+            mFilterListView = new FilterListView(mSphinx);
+            
+            mPopupWindow = new PopupWindow(mFilterListView);
+            mPopupWindow.setWindowLayoutMode(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            mPopupWindow.setFocusable(true);
+            // 设置允许在外点击消失
+            mPopupWindow.setOutsideTouchable(true);
+
+            // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            
+        }
+        mPopupWindow.showAsDropDown(parent, 0, 0);
+
     }
 }
