@@ -199,7 +199,8 @@ public class TrafficResultFragment extends BaseFragment {
             for(Step step : plan.getStepList()) {
                 if (Step.TYPE_TRANSFER == step.getType()) {
                     if (!TextUtils.isEmpty(busName)) {
-                        busName = busName + " --> " + step.getTransferLineName();
+                        //busName = busName + " --> " + step.getTransferLineName();
+                    	busName = busName + mContext.getString(R.string.traffic_transfer_arrow) + step.getTransferLineName();
                     } else {
                         busName = step.getTransferLineName();
                     }
@@ -215,7 +216,8 @@ public class TrafficResultFragment extends BaseFragment {
             }
             
             if (transferTimes > 0) {
-                mGroups.add(busName + "\n" + mContext.getString(R.string.traffic_transfer_title, transferTimes, length));
+                //mGroups.add(busName + "\n" + mContext.getString(R.string.traffic_transfer_title, transferTimes, length));
+            	mGroups.add(busName + "\n" + mContext.getString(R.string.traffic_transfer_title, length));
             } else {
             	if(busName.equals(""))
             		busName = mContext.getString(R.string.traffic_noneed_transfer);

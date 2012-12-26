@@ -3830,13 +3830,14 @@ public class TilesView extends GLSurfaceView {
                         gl.glBlendFunc(GL10.GL_ONE, GL10.GL_ONE_MINUS_SRC_ALPHA);
 	                	
 	                	gl.glLoadIdentity();
-						gl.glTranslatef(-displaySize.x/2f,displaySize.y/2f+padding.top, -mapMode.middleZ);
+						gl.glTranslatef(-displaySize.x/2f,displaySize.y/2f, -mapMode.middleZ);
 						gl.glRotatef(180,1,0,0);
 						
-						gl.glTranslatef(displaySize.x/2f,displaySize.y/2f+padding.top,0);
+						gl.glTranslatef(displaySize.x/2f,displaySize.y/2f,0);
 						float scale=mapMode.middleZ/mapMode.nearZ;
 						gl.glScalef(scale, scale, scale);
-						gl.glTranslatef(screenXY.x-displaySize.x/2f, screenXY.y-displaySize.y/2f+padding.top, 0);
+						//gl.glTranslatef(screenXY.x-displaySize.x/2f, screenXY.y-displaySize.y/2f+padding.top, 0);
+						gl.glTranslatef(screenXY.x-displaySize.x/2f, screenXY.y-displaySize.y/2f, 0);
 						gl.glRotatef(mapMode.getxRotation(), 1, 0, 0);
                         float zRot=locationZRotation;
 						gl.glRotatef(zRot,0,0,1);

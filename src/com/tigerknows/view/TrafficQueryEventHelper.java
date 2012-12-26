@@ -256,16 +256,19 @@ public class TrafficQueryEventHelper {
             	if (mQueryFragment.mLogHelper.logForTabChange)
             		mQueryFragment.mActionLog.addAction(ActionLog.TrafficBusTab);
             	mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
+            	mQueryFragment.showStart();
                 break;
             case R.id.traffic_drive_rbt:
             	if (mQueryFragment.mLogHelper.logForTabChange)
             		mQueryFragment.mActionLog.addAction(ActionLog.TrafficDriveTab);
             	mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
+            	mQueryFragment.showStart();
                 break;
             case R.id.traffic_walk_rbt:
             	if (mQueryFragment.mLogHelper.logForTabChange)
             		mQueryFragment.mActionLog.addAction(ActionLog.TrafficWalkTab);
             	mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
+            	mQueryFragment.showStart();
                 break;
             case R.id.traffic_busline_rbt:
             	if (mQueryFragment.mLogHelper.logForTabChange)
@@ -323,6 +326,7 @@ public class TrafficQueryEventHelper {
 	protected class NormalExchangeClickListener implements OnClickListener {
 
 		@Override
+		//xupeng:这是交换按钮的处理函数。
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			mQueryFragment.mActionLog.addAction(ActionLog.TrafficExchangeBtn);

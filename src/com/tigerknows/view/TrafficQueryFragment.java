@@ -463,9 +463,13 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	public void showStart() {
 
-		if (mMapLocationHelper.isMyLocationLocateCurrentCity()) {
+		//定位为设定城市，或者自驾模式下定位城市与设定城市不同，均在起点框填写上当前位置。
+		if (mMapLocationHelper.isMyLocationLocateCurrentCity() || 
+				(getQueryType() == TrafficQuery.QUERY_TYPE_DRIVE && Globals.g_My_Location_City_Info != null)) {
 			POI location = mMapLocationHelper.getMyLocation();
 			setPOI(location, START);
+		} else {
+			mStart.clear();
 		}
     }
 	
@@ -777,6 +781,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
+		// FIXME 这里进行键盘功能变更
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (mStateTransitionTable.rollback()) {
 			    mActionLog.addAction(ActionLog.KeyCodeBack);

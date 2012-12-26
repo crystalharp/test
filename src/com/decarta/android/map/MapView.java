@@ -138,7 +138,7 @@ public class MapView extends RelativeLayout implements
 			}
 		});
 		
-		if(CONFIG.COMPASS_PLACE_LOCATION>-1 && CONFIG.COMPASS_PLACE_LOCATION<=3){
+		if(CONFIG.COMPASS_PLACE_LOCATION>-1 && CONFIG.COMPASS_PLACE_LOCATION<=4){
 		    Options ops=new Options();
 	        ops.inScaled=false;
 	        
@@ -148,6 +148,8 @@ public class MapView extends RelativeLayout implements
 	                new XYInteger(bm.getWidth()/2,bm.getHeight()/2));
     		Compass compass=new Compass(icon);
     		compass.setPlaceLocation(PlaceLocation.values()[CONFIG.COMPASS_PLACE_LOCATION]);
+    		compass.setVisible(false);
+    		this.refreshMap();
     		try{
     			compass.addEventListener(EventType.TOUCH, new Compass.TouchEventListener() {
     				

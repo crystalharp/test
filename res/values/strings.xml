@@ -267,8 +267,13 @@
     <string name="location_success">当前位置-精确到%1$s</string>
     <string name="mapview_start_click">点击即可选择该点</string>
     
-    <string name="traffic_transfer_title">换乘%1$s次，%2$s</string>
-    <string name="traffic_nonstop_title">直达，%1$s</string>
+    <!-- 328路 \u2192 239路 -->
+    <string name="traffic_transfer_arrow">\u0020\u2192\u0020</string>
+    <!-- by xupeng 去掉直达和换乘次数 -->
+    <!-- <string name="traffic_transfer_title">换乘%1$s次，%2$s</string>
+    <string name="traffic_nonstop_title">直达，%1$s</string>  -->
+    <string name="traffic_transfer_title">%1$s</string>
+    <string name="traffic_nonstop_title">%1$s</string>
     <!-- <string name="traffic_at_where_walk_how">%1$s. 从%2$s步行约%3$s米</string> -->
     <string name="traffic_at_where_walk_how">从%1$s步行约%2$s米</string>
 <!--    <string name="traffic_at_where_walk_to_where">%1$s: 从%2$s步行到%3$s</string>-->
@@ -290,8 +295,11 @@
 	<string name="set_off_from_start">从起点出发</string>
     <string name="traffic_goto_end_station">到达终点</string>
     <string name="traffic_goto_end_point">到达终点</string>
-    <string name="traffic_result_length_m">全程%1$s米</string>
-    <string name="traffic_result_length_km">全程%1$s公里</string>
+    <!-- by xupeng 去掉全程二字 -->
+    <!-- <string name="traffic_result_length_m">全程%1$s米</string>
+    <string name="traffic_result_length_km">全程%1$s公里</string> -->
+    <string name="traffic_result_length_m">%1$s米</string>
+    <string name="traffic_result_length_km">%1$s公里</string>
     <string name="traffic_noneed_transfer">无需换乘, 步行可达</string>
     <string name="or">或</string>
     <string name="accross">经过%1$s</string>
@@ -324,7 +332,9 @@
     
 
     <string name="busline_result_title">搜索“%1$s”共有%2$d个结果</string>
-    <string name="busline_line_listitem_title">全程%1$s公里，途经%2$d个站</string>
+    <!-- by xupeng -->
+    <string name="busline_line_listitem_title">全程%1$s公里，途经%2$d个站</string> 
+	<!-- <string name="busline_line_listitem_title">全程%1$s公里，运营时间：%2$d</string> -->
     <string name="busline_station_listitem_title">共有%1$d条线路经过</string>
     
     <string name="about_version">版本号：%1$s</string>

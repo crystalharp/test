@@ -24,9 +24,9 @@
     </string-array>
     
     <string-array name="select_location_option">
-        <item>我的当前位置</item>
-        <item>在地图上选点</item>
-        <item>我收藏的地点</item>
+        <item>当前位置</item>
+        <item>地图选点</item>
+        <item>我的收藏</item>
     </string-array>
     
     <string-array name="home_category">
