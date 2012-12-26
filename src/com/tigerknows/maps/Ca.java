@@ -120,13 +120,9 @@ public class Ca {
     private static native int ys(double lon, double lat, int w, int h, int zoom);
     protected static int tk_get_screen_label(double lon, double lat, int w, int h, int zoom) { return ys(lon, lat, w, h, zoom); }
     
-    //整体增减地图上的字体大小；
+    //整体增减地图上的图标大小；
     private static native void zb(int offset);
     protected static void tk_reset_icon_size(int offset) { zb(offset); }
-    
-    //移动地图到指定的区域 左上角经纬度: lat0, lon0  右下角经纬度: lat1, lon1 标识该点的图片(大头针等图片)的宽及高 icWidth, icHeight
-    private static native int za(double lat0, double lon0, double lat1, double lon1, int icWidth, int icHeight);
-    protected static int tk_set_scope(double lat0, double lon0, double lat1, double lon1, int icWidth, int icHeight) { return za(lat0, lon0, lat1, lon1, icWidth, icHeight); }
     
     private static native int zc(byte[] bmpbuf, byte[] pngbuf);
     protected static int bmp2Png(byte[] bmpbuf, byte[] pngbuf) { return zc(bmpbuf, pngbuf); }

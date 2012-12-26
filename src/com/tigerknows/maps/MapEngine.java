@@ -1234,7 +1234,7 @@ public class MapEngine {
             return true;
         }
         
-        private int hashCode=0;
+        private volatile int hashCode = 0;
         @Override
         public int hashCode() {
             if (hashCode == 0) {
