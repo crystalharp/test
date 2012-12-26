@@ -776,21 +776,17 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         UserLogon userLogon = new UserLogon(mContext);
         queryStart(userLogon, false);
         
-        checkDiscoverCity(Globals.g_Current_City_Info.getId());
+        checkCitySupportDiscover(Globals.g_Current_City_Info.getId());
 	}
 	
-	private void checkDiscoverCity(int cityId) {
+	private void checkCitySupportDiscover(int cityId) {
 	    String discover = TKConfig.getPref(this, TKConfig.PREFS_DISCOVER);
 	    boolean show = TextUtils.isEmpty(discover);
 	    if (show == false) {
 	        return;
 	    }
         if (DataQuery.checkDiscoveryCity(cityId)) {
-            if (show) {
-                getMenuFragment().setDiscover(View.VISIBLE);
-            } else {
-                getMenuFragment().setDiscover(View.GONE);
-            }
+            getMenuFragment().setDiscover(View.VISIBLE);
         } else {
             getMenuFragment().setDiscover(View.GONE);
         }
@@ -1608,7 +1604,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             } else {
                 mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
                 updateCityInfo();
-                checkDiscoverCity((int)cityId);
+                checkCitySupportDiscover((int)cityId);
                 mActionLog.addAction(ActionLog.LifecycleSelectCity, Globals.g_Current_City_Info.getCName());
             }
         }    

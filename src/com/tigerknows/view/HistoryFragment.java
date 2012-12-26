@@ -54,7 +54,7 @@ import java.util.List;
 public class HistoryFragment extends BaseFragment implements View.OnClickListener {
     
     static final String TAG = "HistoryFragment";
-    
+
     public HistoryFragment(Sphinx sphinx) {
         super(sphinx);
         // TODO Auto-generated constructor stub
@@ -185,23 +185,18 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 mLayerType = ItemizedOverlay.TRAFFIC_OVERLAY;
             }
         } else {
+            long min = 0;
+            if (mPOIList.size() > 0) {
+                min = mPOIList.get(0).getDateTime();
+            }
+            readPOI(mPOIList, Long.MAX_VALUE, min, true);
+            
+            if (mTrafficList.size() > 0) {
+                min = mTrafficList.get(0).getDateTime();
+            }
+            readTraffic(mTrafficList, Long.MAX_VALUE, min, true);
             checkData(ItemizedOverlay.POI_OVERLAY);
             checkData(ItemizedOverlay.TRAFFIC_OVERLAY);
-            if (mPOILsv.isFooterSpringback() == false) {
-                long min = 0;
-                if (mPOIList.size() > 0) {
-                    min = mPOIList.get(0).getDateTime();
-                }
-                readPOI(mPOIList, Long.MAX_VALUE, min, true);
-            }
-            
-            if (mTrafficLsv.isFooterSpringback() == false) {
-                long min = 0;
-                if (mTrafficList.size() > 0) {
-                    min = mTrafficList.get(0).getDateTime();
-                }
-                readTraffic(mTrafficList, Long.MAX_VALUE, min, true);
-            }
         }
         
         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
@@ -321,6 +316,10 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     
     private void turnPagePOI() {
         synchronized (this) {
+        if (mPOILsv.isFooterSpringback() == false) {
+            mPOILsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+            return;
+        }
         mPOILsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
         long maxId = Long.MAX_VALUE;
         int size = mPOIList.size();
@@ -337,6 +336,10 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
 
     private void turnPageTraffic() {
         synchronized (this) {
+            if (mTrafficLsv.isFooterSpringback() == false) {
+                mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+                return;
+            }
             mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
             long maxId = Long.MAX_VALUE;
             int size = mTrafficList.size();
@@ -365,11 +368,23 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                                 public void onClick(DialogInterface arg0, int id) {
                                     if (id == DialogInterface.BUTTON_POSITIVE) {
                                         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-                                            mPOIList.get(mSelectIndex).deleteHistory(mSphinx);
-                                            mPOILsv.setFooterSpringback(mPOIList.size() == Tigerknows.HISTORY_MAX_SIZE);
+                                            POI poi = mPOIList.remove(mSelectIndex);
+                                            poi.deleteHistory(mSphinx);
+                                            long max = 0;
+                                            if (mPOIList.size() == Tigerknows.HISTORY_MAX_SIZE-1) {
+                                                max = mPOIList.get(mPOIList.size()-1).getDateTime();
+                                            }
+                                            readPOI(mPOIList, max, 0, true);
+                                            CommonUtils.keepListSize(mPOIList, Tigerknows.HISTORY_MAX_SIZE);
                                         } else {
-                                            SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.History.CONTENT_URI, "_id="+mTrafficList.get(mSelectIndex).getId(), null);
-                                            mTrafficLsv.setFooterSpringback(mTrafficList.size() == Tigerknows.HISTORY_MAX_SIZE);
+                                            History traffic = mTrafficList.remove(mSelectIndex);
+                                            SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.History.CONTENT_URI, "_id="+traffic.getId(), null);
+                                            long max = 0;
+                                            if (mTrafficList.size() == Tigerknows.HISTORY_MAX_SIZE-1) {
+                                                max = mTrafficList.get(mTrafficList.size()-1).getDateTime();
+                                            }
+                                            readTraffic(mTrafficList, max, 0, true);
+                                            CommonUtils.keepListSize(mTrafficList, Tigerknows.HISTORY_MAX_SIZE);
                                         }
                                         refreshContent();
                                         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
@@ -753,8 +768,6 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         refreshContent();
         mPOILsv.changeHeaderViewByState(false, SpringbackListView.DONE);
         mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
-    }
-        }
     }
     
     class MyPageChangeListener implements OnPageChangeListener {

@@ -272,6 +272,7 @@ public class BaseFragment extends LinearLayout {
             mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
             mTitleBtn.setText(null);
             mTitleBtn.setBackgroundDrawable(null);
+            mTitleBtn.setOnClickListener(null);
             mLeftImv.setVisibility(View.VISIBLE);
             mLeftImv.setImageResource(R.drawable.ic_back);
             mLeftBtn.setVisibility(View.VISIBLE);

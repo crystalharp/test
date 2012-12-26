@@ -198,23 +198,18 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             }
             Toast.makeText(mContext, R.string.favorite_long_click_tip, 3000).show();
         } else {
+            long min = 0;
+            if (mPOIList.size() > 0) {
+                min = mPOIList.get(0).getId();
+            }
+            readPOI(mPOIList, Long.MAX_VALUE, min, true);
+            
+            if (mTrafficList.size() > 0) {
+                min = mTrafficList.get(0).getId();
+            }
+            readTraffic(mTrafficList, Long.MAX_VALUE, min, true);
             checkData(ItemizedOverlay.POI_OVERLAY);
             checkData(ItemizedOverlay.TRAFFIC_OVERLAY);
-            if (mPOILsv.isFooterSpringback() == false) {
-                long min = 0;
-                if (mPOIList.size() > 0) {
-                    min = mPOIList.get(0).getId();
-                }
-                readPOI(mPOIList, Long.MAX_VALUE, min, true);
-            }
-            
-            if (mTrafficLsv.isFooterSpringback() == false) {
-                long min = 0;
-                if (mTrafficList.size() > 0) {
-                    min = mTrafficList.get(0).getId();
-                }
-                readTraffic(mTrafficList, Long.MAX_VALUE, min, true);
-            }
         }
         
         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
@@ -334,6 +329,10 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     
     private void turnPagePOI() {
         synchronized (this) {
+        if (mPOILsv.isFooterSpringback() == false) {
+            mPOILsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+            return;
+        }
         mPOILsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
         long maxId = Long.MAX_VALUE;
         int size = mPOIList.size();
@@ -350,6 +349,10 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
 
     private void turnPageTraffic() {
         synchronized (this) {
+            if (mTrafficLsv.isFooterSpringback() == false) {
+                mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+                return;
+            }
             mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
             long maxId = Long.MAX_VALUE;
             int size = mTrafficList.size();
@@ -378,9 +381,11 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                                 public void onClick(DialogInterface arg0, int id) {
                                     if (id == DialogInterface.BUTTON_POSITIVE) {
                                         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-                                            mPOIList.get(mSelectIndex).deleteFavorite(mSphinx);
+                                            POI poi = mPOIList.remove(mSelectIndex);
+                                            poi.deleteFavorite(mSphinx);
                                         } else {
-                                            SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.Favorite.CONTENT_URI, "_id="+mTrafficList.get(mSelectIndex).getId(), null);
+                                            Favorite traffic = mTrafficList.remove(mSelectIndex);
+                                            SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.Favorite.CONTENT_URI, "_id="+traffic.getId(), null);
                                         }
                                         refreshContent();
                                         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
