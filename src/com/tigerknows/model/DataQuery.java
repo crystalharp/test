@@ -900,6 +900,31 @@ public final class DataQuery extends BaseQuery {
             }
             return filter;
         }
+        
+        public boolean equals(Object object) {
+            if (object == null) {
+                return false;
+            }
+            if (object instanceof Filter) {
+                Filter other = (Filter) object;
+                if (this.key == other.key 
+//                        && this.selected == other.selected
+                        && ((this.version != null && this.version.equals(other.version))
+                                || (this.version == null && other.version == null))
+                        && ((this.filterOption != null && this.filterOption.equals(other.filterOption))
+                                || (this.filterOption == null && other.filterOption == null))) {
+                    if (this.chidrenFilterList.size() == other.chidrenFilterList.size()) {
+                        for(int i = this.chidrenFilterList.size()-1; i >= 0; i--) {
+                            if (this.chidrenFilterList.get(i).equals(other.chidrenFilterList.get(i)) == false) {
+                                return false;   
+                            }
+                        }
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
     }
 
     public static class FilterOption extends XMapData {
@@ -960,6 +985,23 @@ public final class DataQuery extends BaseQuery {
             filterOption.name = name;
             filterOption.parent = parent;
             return filterOption;
+        }
+        
+        public boolean equals(Object object) {
+            if (object == null) {
+                return false;
+            }
+            
+            if (object instanceof FilterOption) {
+                FilterOption other = (FilterOption) object;
+                if (this.id == other.id 
+                        && this.parent == other.parent 
+                        && ((this.name != null && this.name.equals(other.name)) 
+                                || (this.name == null && other.name == null))) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public String toString() {

@@ -261,7 +261,7 @@ public class MyCommentListFragment extends BaseFragment {
                         if (comment.getPOIStatus() >= 0) {
                             POI poi = comment.getPOI();
                             if (poi.getPosition() != null) {
-                                mSphinx.getPOIDetailFragment().setData(comment.getPOI());
+                                mSphinx.getPOIDetailFragment().setData(poi);
                                 mSphinx.showView(R.id.view_poi_detail);
                             } else {
                                 Hashtable<String, String> criteria = new Hashtable<String, String>();
