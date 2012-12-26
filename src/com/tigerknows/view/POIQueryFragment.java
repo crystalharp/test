@@ -145,6 +145,7 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         mKeywordEdt.setOnEditorActionListener(new OnEditorActionListener() {
             
             @Override
+            //xupeng:参考来修改输入法的键位
             public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     submitQuery();

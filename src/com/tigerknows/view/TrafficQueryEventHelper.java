@@ -409,12 +409,17 @@ public class TrafficQueryEventHelper {
 			
 			POI poi = new POI();
 			poi.setName(word);
-			if (((SuggestAndHistoryAdapter)parent.getAdapter()).getItemType(position) == SuggestAndHistoryAdapter.SUGGEST_ENTRY) {
+			
+			if (((SuggestAndHistoryAdapter)parent.getAdapter()).getItemType(position) == SuggestAndHistoryAdapter.SUGGEST_ENTRY ||
+					((SuggestAndHistoryAdapter)parent.getAdapter()).getItemType(position) == SuggestAndHistoryAdapter.HISTORY_ENTRY) {
 				Position wordLonLat = mQueryFragment.mSphinx.getMapEngine().getwordslistStringWithPosition(word, 0);
 				if (null != wordLonLat && Util.inChina(wordLonLat)) {
 					poi.setPosition(wordLonLat);
 				}
-			} 
+			//} else if (((SuggestAndHistoryAdapter)parent.getAdapter()).getItemType(position) == SuggestAndHistoryAdapter.HISTORY_ENTRY) {
+				//xupeng:添加历史词position
+				//直接在上面取position的话对于服务器上有坐标但是建议词里面没有的还是不能存点。
+			}
 			mQueryFragment.mSuggestHistoryHelper.suggestSelect(poi, position);
 		}
 		

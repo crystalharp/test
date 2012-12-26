@@ -404,6 +404,11 @@ public class TrafficQueryFragment extends BaseFragment {
 				}
 			} 
 			
+//			Position position;
+//			position = new Position(1,1);
+//			mPOI.setPosition(position);
+			//xupeng：想在这里添加个如果有查找过的poi信息则统一填上坐标点
+			
 			return mPOI;
 		}
 
@@ -579,6 +584,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	public void submitTrafficQuery() {
 		
+		//xupeng:预计在这里修改没有坐标点的问题。
 		POI start = mStart.getPOI();
 		POI end = mEnd.getPOI();
 		

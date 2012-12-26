@@ -299,7 +299,7 @@
     <!-- <string name="traffic_result_length_m">全程%1$s米</string>
     <string name="traffic_result_length_km">全程%1$s公里</string> -->
     <string name="traffic_result_length_m">%1$s米</string>
-    <string name="traffic_result_length_km">%1$s公里</string>
+    <string name="traffic_result_length_km">%1$.1f公里</string>
     <string name="traffic_noneed_transfer">无需换乘, 步行可达</string>
     <string name="or">或</string>
     <string name="accross">经过%1$s</string>
