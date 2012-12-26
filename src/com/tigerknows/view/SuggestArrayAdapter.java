@@ -50,7 +50,7 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
             iconImv.setVisibility(View.VISIBLE);
             inputBtn.setVisibility(View.VISIBLE);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-        } else if (tkWord.type == TKWord.TYPE_HISTORY) {
+        } else if (tkWord.type == TKWord.TYPE_SUGGEST) {
             iconImv.setVisibility(View.INVISIBLE);
             inputBtn.setVisibility(View.VISIBLE);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);

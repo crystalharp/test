@@ -1,0 +1,385 @@
+/*
+ * Copyright (C) 2008 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.tigerknows.view;
+
+import com.decarta.Globals;
+import com.decarta.android.util.Util;
+import com.tigerknows.R;
+import com.tigerknows.model.DataQuery.Filter;
+
+import android.content.Context;
+import android.text.TextUtils;
+import android.util.AttributeSet;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+/**
+ * Custom Filter listview. */
+public class FilterListView extends LinearLayout implements View.OnClickListener {
+    
+    public interface CallBack {
+        public void doFilter(String name);
+        public void cancelFilter();
+    }
+    
+    private ViewGroup controlView;
+    
+    private ListView parentLsv;
+    private ListView childLsv;
+    
+    private CallBack callBack;
+    private Filter selectedParentFilter;
+    private Filter selectedChildFilter;
+    private int selectedParentPosition = -1;
+    
+    private List<Filter> filterList;
+    private Filter filter = null;
+    private List<Filter> parentFilterList = new ArrayList<Filter>();
+    private List<Filter> childFilterList = new ArrayList<Filter>();
+    
+    private MyAdapter parentAdapter;
+    private MyAdapter childAdapter;
+    
+    private boolean isTurnPaging = false;
+    
+    public boolean isTurnPaging() {
+        return isTurnPaging;
+    }
+
+    public void setData(List<Filter> filterList, byte key, CallBack callBack, boolean isTurnPaging) {
+        if (filterList == null) {
+            return;
+        }
+        refreshFilterButton(controlView, filterList, getContext(), this, true);
+        this.filterList = filterList;
+        this.callBack = callBack;
+        this.isTurnPaging = isTurnPaging;
+        this.selectedParentFilter = null;
+        this.selectedChildFilter = null;
+        this.selectedParentPosition = -1;
+        this.parentFilterList.clear();
+        this.childFilterList.clear();
+
+        for(int i = this.filterList.size()-1; i >= 0; i--) {
+            Filter filter1 = this.filterList.get(i);
+            if (filter1.getKey() == key) {
+                this.filter = filter1;
+            }
+        }
+        
+        List<Filter> filterList1 = this.filter.getChidrenFilterList();
+        this.parentFilterList.addAll(filterList1);
+        
+        for(int i = filterList1.size()-1; i >= 0; i--) {
+            Filter filter1 = filterList1.get(i);
+            List<Filter> filterList2 = filter1.getChidrenFilterList();
+            if (filter1.isSelected()) {
+                selectedParentFilter = filter1;
+                selectedParentPosition = i;
+                this.childFilterList.addAll(filterList2);
+            } else {
+                for(int j = filterList2.size()-1; j >= 0; j--) {
+                    Filter filter2 = filterList2.get(j);
+                    if (filter2.isSelected()) {
+                        selectedParentPosition = i;
+                        selectedParentFilter = filter1;
+                        selectedChildFilter = filter2;
+                        this.childFilterList.addAll(filterList2);
+                    }
+                }
+                if (selectedChildFilter != null && selectedParentFilter != null) {
+                    break;
+                }
+            }
+        }
+        parentAdapter.notifyDataSetChanged();
+        childAdapter.notifyDataSetChanged();
+    }
+        
+    public FilterListView(Context context) {
+        this(context, null);
+    }
+
+    public FilterListView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        setFocusable(false);
+        
+        LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(R.layout.filter_list, this, // we are the parent
+                true);
+        
+        findViews();
+        setListener();
+        
+        parentAdapter = new MyAdapter(context, parentFilterList);
+        parentAdapter.isParent = true;
+        childAdapter = new MyAdapter(context, childFilterList);
+        childAdapter.isParent = false;
+        
+        parentLsv.setAdapter(parentAdapter);
+        childLsv.setAdapter(childAdapter);
+        
+        setBackgroundColor(0x00000000);
+    }
+
+    protected void findViews() {
+        controlView = (ViewGroup) findViewById(R.id.control_view);
+        parentLsv = (ListView) findViewById(R.id.parent_lsv);
+        parentLsv.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 160);
+        childLsv = (ListView) findViewById(R.id.child_lsv);
+    }
+    
+    protected void setListener() {
+        parentLsv.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
+                if (position >= parentFilterList.size()) {
+                    return;
+                }
+                Filter filter = parentFilterList.get(position);
+                List<Filter> filterList = filter.getChidrenFilterList();
+                if (filterList.size() == 0) {
+                    childLsv.setVisibility(View.INVISIBLE);
+                    doFilter(filter);
+                } else {
+                    selectedParentPosition = position;
+                    parentAdapter.notifyDataSetChanged();
+                    childLsv.setVisibility(View.VISIBLE);
+                    childFilterList.clear();
+                    childFilterList.addAll(filterList);
+                    childAdapter.notifyDataSetChanged();
+                }
+            }
+        });
+        childLsv.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                if (position >= childFilterList.size()) {
+                    return;
+                }
+                Filter filter = childFilterList.get(position);
+                doFilter(filter);
+            }
+        });
+    }
+    
+    private void doFilter(Filter filter) {
+        if (selectedChildFilter != null) {
+            selectedChildFilter.setSelected(false);
+        }
+        if (selectedParentFilter != null) {
+            selectedParentFilter.setSelected(false);
+        }
+        filter.setSelected(true);
+        
+        if (callBack != null) {
+            callBack.doFilter(filter.getFilterOption().getName());
+        }
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        
+        /* Consume all touch events so they don't get dispatched to the view
+         * beneath this view.
+         */
+        return true;
+    }
+    
+    @Override
+    public boolean hasFocus() {
+        if (parentLsv == null || childLsv == null) {
+            return false;
+        }
+        return parentLsv.hasFocus() || childLsv.hasFocus();
+    }
+    
+    public void cancel() {
+        if (callBack != null) {
+            callBack.cancelFilter();
+        }
+    }
+    
+    class MyAdapter extends ArrayAdapter<Filter> {
+        
+        private static final int TEXTVIEW_RESOURCE_ID = R.layout.filter_list_item;
+        
+        private LayoutInflater mLayoutInflater;
+        
+        boolean isParent = false;
+
+        public MyAdapter(Context context, List<Filter> list) {
+            super(context, TEXTVIEW_RESOURCE_ID, list);
+            mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view;
+            if (convertView == null) {
+                view = mLayoutInflater.inflate(TEXTVIEW_RESOURCE_ID, parent, false);
+            } else {
+                view = convertView;
+            }
+            
+            ImageView iconImv = (ImageView)view.findViewById(R.id.icon_imv);
+            TextView textTxv = (TextView)view.findViewById(R.id.text_txv);
+            
+            Filter filter = getItem(position);
+            
+            if (isParent) {
+                if (position == selectedParentPosition) {
+                    view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+                } else {
+                    view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+                }
+            } else {
+                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+            }
+            
+            if (filter.isSelected()) {
+                iconImv.setBackgroundResource(R.drawable.icon_right);
+                iconImv.setVisibility(View.VISIBLE);
+            } else if (filter.getChidrenFilterList().size() > 0) {
+                iconImv.setBackgroundResource(R.drawable.icon_arrow_right);
+                iconImv.setVisibility(View.VISIBLE);
+            } else {
+                iconImv.setVisibility(View.INVISIBLE);
+            }
+            
+            textTxv.setText(filter.getFilterOption().getName());
+            
+            return view;
+        }
+    }
+
+    
+    public static void refreshFilterButton(ViewGroup filterViewGroup, List<Filter> filterList, Context context, View.OnClickListener onClickListener, boolean isTransparent) {
+        if (filterList.isEmpty()) {
+            filterViewGroup.setVisibility(View.GONE);
+            return;
+        }
+        filterViewGroup.setVisibility(View.VISIBLE);
+        
+        Button button;
+        int count = filterViewGroup.getChildCount();
+        int size = filterList.size();
+        for(int i = 0; i < size; i++) {
+            Filter filter = filterList.get(i);
+            if (i < count) {
+                button = (Button) filterViewGroup.getChildAt(i);
+                button.setVisibility(View.VISIBLE);
+            } else {
+                button = makeFitlerButton(context, isTransparent);
+                filterViewGroup.addView(button);
+            }
+            button.setTag(filter.getKey());
+            button.setText(FilterListView.getFilterTitle(context, filter));
+            button.setOnClickListener(onClickListener);            
+        }
+        
+        for(int i = size; i < count; i++) {
+            filterViewGroup.getChildAt(i).setVisibility(View.GONE);
+        }
+    }
+
+    public static Button makeFitlerButton(Context context, boolean isTransparent) {
+        
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        layoutParams.leftMargin = Util.dip2px(Globals.g_metrics.density, 4);
+        layoutParams.topMargin = Util.dip2px(Globals.g_metrics.density, 4);
+        layoutParams.rightMargin = Util.dip2px(Globals.g_metrics.density, 2);
+        layoutParams.bottomMargin = Util.dip2px(Globals.g_metrics.density, 4);        
+        layoutParams.weight = 1;
+        
+        Button button = new Button(context);
+        button.setLayoutParams(layoutParams);
+        if (isTransparent) {
+            button.setBackgroundResource(R.drawable.btn_spinner);
+            button.setTextColor(0xff000000);
+        } else {
+            button.setBackgroundResource(R.drawable.btn_spinner);
+            button.setTextColor(0xff000000);
+        }
+        button.setPadding(Util.dip2px(Globals.g_metrics.density, 6), 0, Util.dip2px(Globals.g_metrics.density, 24), 0);
+        button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
+        button.setSingleLine(true);
+        button.setGravity(Gravity.CENTER);
+        return button;
+    }
+    
+    public static String getFilterTitle(Context context, Filter filter) {
+        String title = null;
+        if (filter != null) {
+            List<Filter> chidrenFilterList = filter.getChidrenFilterList();
+            for(Filter chidrenFilter : chidrenFilterList) {
+                if (chidrenFilter.isSelected()) {
+                    title = chidrenFilter.getFilterOption().getName();
+                    break;
+                } else {
+                    
+                    List<Filter> chidrenFilterList1 = chidrenFilter.getChidrenFilterList();
+                    for(Filter chidrenFilter1 : chidrenFilterList1) {
+                        if (chidrenFilter1.isSelected()) {
+                            title = chidrenFilter1.getFilterOption().getName();
+                            break;
+                        }
+                    }
+                    
+                    if (!TextUtils.isEmpty(title)) {
+                        String allAnyone = context.getString(R.string.all_anyone, "");
+                        if (title.contains(allAnyone)) {
+                            title = chidrenFilter.getFilterOption().getName();
+                        }
+                        break;
+                    }
+                }
+            }   
+            
+            if (title == null && chidrenFilterList.size() > 0) {
+                title = chidrenFilterList.get(0).getFilterOption().getName();
+            }
+
+        }
+        return title;
+    }
+
+    @Override
+    public void onClick(View view) {
+        byte key = (Byte)view.getTag();
+        setData(filterList, key, callBack, isTurnPaging);
+    }
+}
