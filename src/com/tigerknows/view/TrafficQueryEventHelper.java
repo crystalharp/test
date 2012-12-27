@@ -71,7 +71,9 @@ public class TrafficQueryEventHelper {
 		clearSuggestWatcherInInputState();
 		
 		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(null);
-		mQueryFragment.mExchangeBtn.setOnClickListener(null);
+		//mQueryFragment.mExchangeBtn.setOnClickListener(null);
+		mQueryFragment.mSelectStartBtn.setOnClickListener(null);
+		mQueryFragment.mSelectEndBtn.setOnClickListener(null);
 		mQueryFragment.mBackBtn.setOnClickListener(null);
 		mQueryFragment.mQueryBtn.setOnClickListener(null);
 		mQueryFragment.mSuggestLsv.setOnItemClickListener(null);
@@ -106,7 +108,9 @@ public class TrafficQueryEventHelper {
 		applyCommonListeners();
 		
 		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new NormalOnCheckedChangeListener());
-		mQueryFragment.mExchangeBtn.setOnClickListener(new NormalExchangeClickListener());
+		//mQueryFragment.mExchangeBtn.setOnClickListener(new NormalExchangeClickListener());
+		mQueryFragment.mSelectStartBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mStart));
+		mQueryFragment.mSelectEndBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mEnd));
 	}
 	
 	public void applyListenersInInputState() {
@@ -117,7 +121,9 @@ public class TrafficQueryEventHelper {
 		
 		mQueryFragment.mBackBtn.setOnClickListener(new InputBackClickListener());
 		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new InputOnCheckedChangeListener());
-		mQueryFragment.mExchangeBtn.setOnClickListener(new InputExchangeClickListener());
+		//mQueryFragment.mExchangeBtn.setOnClickListener(new InputExchangeClickListener());
+		mQueryFragment.mSelectStartBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mStart));
+		mQueryFragment.mSelectEndBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mEnd));
 		mQueryFragment.mQueryBtn.setOnClickListener(new InputQueryClickListener());
 		mQueryFragment.mSuggestLsv.setOnItemClickListener(new InputSuggestOnItemClickListener());
 		mQueryFragment.mSuggestLsv.setOnTouchListener(new InputSuggestOnTouchListener());
@@ -153,6 +159,34 @@ public class TrafficQueryEventHelper {
 		mQueryFragment.mBusline.getEdt().removeTextChangedListener(buslineSuggestWatcher);
 	}
 
+	protected class SelectStartEndBtnClickListener implements OnClickListener {
+
+		private QueryEditText mQueryEdt;
+		
+		public SelectStartEndBtnClickListener(QueryEditText queryEdt) {
+			mQueryEdt = queryEdt;
+		}
+		
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			mQueryFragment.mSelectedEdt = mQueryEdt;
+			
+        		/*
+        		 * 显示选择对话框
+        		 */
+        		String title = (mQueryEdt.getPosition() == TrafficQueryFragment.START) ? mQueryFragment.mContext.getString(R.string.select_start_station) : mQueryFragment.mContext.getString(R.string.select_end_station);
+        		boolean hasMyLocation = (Globals.g_My_Location_City_Info != null);
+        		
+        		SelectionDialogBuilder dialog = new SelectionDialogBuilder(mQueryFragment.mSphinx, mQueryEdt, title, hasMyLocation);
+        		dialog.show();
+        		
+        		mQueryFragment.mSphinx.hideSoftInput(mQueryEdt.getEdt().getWindowToken());
+        		mQueryFragment.mLogHelper.logForClickBookmarkOnEditText(mQueryEdt);
+        	}
+		
+	}
+	
 	protected class BookmarkClickListener implements OnClickListener {
 
 		private QueryEditText mQueryEdt;
@@ -579,9 +613,9 @@ public class TrafficQueryEventHelper {
 		public ArrayAdapter<String> getArrayAdapter() {
             int[] resIdList;
             if (hasMyLocation) {
-                resIdList = new int[] {R.drawable.ic_mylocation, R.drawable.ic_select_point, R.drawable.ic_favorite};
+                resIdList = new int[] {R.drawable.ic_mylocation, R.drawable.ic_select_point, R.drawable.ic_favorite, R.drawable.ic_swap_start_end};
             } else {
-                resIdList = new int[] {R.drawable.ic_select_point, R.drawable.ic_favorite};
+                resIdList = new int[] {R.drawable.ic_select_point, R.drawable.ic_favorite, R.drawable.ic_swap_start_end};
             }
 			ArrayAdapter<String> adapter = new StringArrayAdapter(mQueryFragment.mContext, selectOptionList, resIdList);
 		    return adapter;
@@ -616,6 +650,19 @@ public class TrafficQueryEventHelper {
                 	break;
                 case 2:
                 	performSelectFavorite();
+                	break;
+                case 3:
+                	//交换起点终点。
+                	if (mQueryFragment.mSuggestLsv.isShown()) {
+                		mQueryFragment.mSuggestLsv.setVisibility(View.GONE);
+                	}
+                	clearSuggestWatcherInInputState();
+                	mQueryFragment.mActionLog.addAction(ActionLog.TrafficExchangeBtn);
+        			POI temp = mQueryFragment.mStart.getPOI();
+        			mQueryFragment.mStart.setPOI(mQueryFragment.mEnd.getPOI());
+        			mQueryFragment.mEnd.setPOI(temp);
+        			addSuggestWatcherInInputState();
+        			mQueryFragment.mBlock.requestFocus();
                 	break;
                 default:
                 }

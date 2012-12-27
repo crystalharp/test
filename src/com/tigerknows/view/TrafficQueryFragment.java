@@ -83,7 +83,11 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	LinearLayout mBlock;
 	
-	Button mExchangeBtn = null;
+	//Button mExchangeBtn = null;
+	
+	Button mSelectStartBtn = null;
+	
+	Button mSelectEndBtn = null;
     
 	QueryEditText mBusline;
 
@@ -208,7 +212,9 @@ public class TrafficQueryFragment extends BaseFragment {
     	mQueryBtn = (Button)mRootView.findViewById(R.id.query_btn);
     	mRadioGroup = (RadioGroup)mRootView.findViewById(R.id.traffic_rgp);
     	
-    	mExchangeBtn = (Button)mRootView.findViewById(R.id.exchange_btn);
+    	//mExchangeBtn = (Button)mRootView.findViewById(R.id.exchange_btn);
+    	mSelectStartBtn = (Button)mRootView.findViewById(R.id.select_start_btn);
+    	mSelectEndBtn = (Button)mRootView.findViewById(R.id.select_end_btn);
     	mBusline = new QueryEditText((RelativeLayout)mRootView.findViewById(R.id.busline_edt));
 		mBusline.setOnlyInput();
 		mEnd     = new QueryEditText((RelativeLayout)mRootView.findViewById(R.id.end_line));
