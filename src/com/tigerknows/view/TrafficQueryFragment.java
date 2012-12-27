@@ -609,6 +609,7 @@ public class TrafficQueryFragment extends BaseFragment {
         
         int cityId = mMapLocationHelper.getQueryCityInfo().getId();
         
+        //xupeng:怎么算是history word？搜索北大，实际用北京大学搜索，哪个是？
         if (!isKeyword(mStart.getEdt().getText().toString())) {
         	TKConfig.addHistoryWord(mContext, TKConfig.History_Word_Traffic, String.format(TKConfig.PREFS_HISTORY_WORD_TRAFFIC, cityId), mStart.getEdt().getText().toString());
         }
