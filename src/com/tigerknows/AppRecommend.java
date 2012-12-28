@@ -8,6 +8,7 @@ import com.decarta.Globals;
 import com.snda.recommend.api.RecommendAPI;
 import com.tigerknows.R;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.UserLogon;
 import com.tigerknows.model.UserLogonModel;
 import com.tigerknows.model.UserLogonModel.Recommend;
@@ -18,6 +19,7 @@ import com.tigerknows.util.TKAsyncTask;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -26,6 +28,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,6 +47,25 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
 
     private RecommdAppAdapter mRecommdAppAdapter;
     private List<RecommendApp> mRecommendAppList = new ArrayList<RecommendApp>();
+    
+    private Runnable mLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            mHandler.removeCallbacks(mActualLoadedDrawableRun);
+            mHandler.post(mActualLoadedDrawableRun);
+        }
+    };
+    
+    private Runnable mActualLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            if (isFinishing() == false) {
+                mRecommdAppAdapter.notifyDataSetChanged();
+            }
+        }
+    };
     
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,6 +164,18 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
             nameTxv.setText(recommdApp.getName());
             TextView descriptionTxv = (TextView) view.findViewById(R.id.description_txv);
             descriptionTxv.setText(recommdApp.getBody());
+            ImageView iconImv = (ImageView) view.findViewById(R.id.icon_imv);
+            TKDrawable tkDrawable = recommdApp.getIcon();
+            if (tkDrawable != null) {
+                Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, mThis.toString());
+                if (drawable != null) {
+                    iconImv.setBackgroundDrawable(drawable);
+                } else {
+                    iconImv.setBackgroundResource(R.drawable.icon);
+                }
+            } else {
+                iconImv.setBackgroundResource(R.drawable.icon);
+            }
             return view;
         }
     }

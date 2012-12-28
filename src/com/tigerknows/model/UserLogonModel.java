@@ -207,11 +207,13 @@ public class UserLogonModel extends XMapData {
             private static final byte FIELD_URL = 0x03;
             // 0x04 String  ID，指不同平台上软件版本的唯一ID 
             private static final byte FIELD_ID = 0x04;
+            private static final byte FIELD_ICON = 0x05;
             
             private String name;
             private String body;
             private String url;
             private String id;
+            private TKDrawable icon;
             
             public String getName() {
                 return name;
@@ -228,6 +230,10 @@ public class UserLogonModel extends XMapData {
             public String getId() {
                 return id;
             }
+            
+            public TKDrawable getIcon() {
+                return icon;
+            }
 
             public RecommendApp(XMap data) throws APIException {
                 super(data);
@@ -242,6 +248,9 @@ public class UserLogonModel extends XMapData {
                 }
                 if (this.data.containsKey(FIELD_ID)) {
                     id = this.data.getString(FIELD_ID);
+                }
+                if (this.data.containsKey(FIELD_ICON)) {
+                    icon = new TKDrawable(this.data.getXMap(FIELD_ICON));
                 }
             }
         }

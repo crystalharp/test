@@ -45,6 +45,7 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -242,6 +243,11 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LogWrapper.i(TAG,"onCreate()");
+        
+        WindowManager winMan=(WindowManager)getSystemService(Context.WINDOW_SERVICE);
+        Display display=winMan.getDefaultDisplay();
+        display.getMetrics(Globals.g_metrics);
+        
 		TKConfig.configure();
         TKConfig.readConfig();
         Globals.readSessionAndUser(this);
