@@ -68,7 +68,7 @@ public class TrafficQuerySuggestHistoryHelper {
 			mQueryFragment.mSelectedEdt.setPOI(poi);
 		}
 		
-		if (mQueryFragment.mQueryBtn.isEnabled()) {
+		if (mQueryFragment.mTrafficQueryBtn.isEnabled() || mQueryFragment.mBuslineQueryBtn.isEnabled()) {
 			mQueryFragment.query();
 		}
 	}

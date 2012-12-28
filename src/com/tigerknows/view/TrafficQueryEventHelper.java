@@ -75,7 +75,8 @@ public class TrafficQueryEventHelper {
 		mQueryFragment.mSelectStartBtn.setOnClickListener(null);
 		mQueryFragment.mSelectEndBtn.setOnClickListener(null);
 		mQueryFragment.mBackBtn.setOnClickListener(null);
-		mQueryFragment.mQueryBtn.setOnClickListener(null);
+		mQueryFragment.mTrafficQueryBtn.setOnClickListener(null);
+		mQueryFragment.mBuslineQueryBtn.setOnClickListener(null);
 		mQueryFragment.mSuggestLsv.setOnItemClickListener(null);
 		mQueryFragment.mSuggestLsv.setOnTouchListener(null);
 		mQueryFragment.mSuggestLnl.setOnTouchListener(null);
@@ -124,7 +125,8 @@ public class TrafficQueryEventHelper {
 		//mQueryFragment.mExchangeBtn.setOnClickListener(new InputExchangeClickListener());
 		mQueryFragment.mSelectStartBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mStart));
 		mQueryFragment.mSelectEndBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mEnd));
-		mQueryFragment.mQueryBtn.setOnClickListener(new InputQueryClickListener());
+		mQueryFragment.mTrafficQueryBtn.setOnClickListener(new InputQueryClickListener());
+		mQueryFragment.mBuslineQueryBtn.setOnClickListener(new InputQueryClickListener());
 		mQueryFragment.mSuggestLsv.setOnItemClickListener(new InputSuggestOnItemClickListener());
 		mQueryFragment.mSuggestLsv.setOnTouchListener(new InputSuggestOnTouchListener());
 		mQueryFragment.mSuggestLnl.setOnTouchListener(new InputSuggestOnTouchListener());

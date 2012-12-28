@@ -77,7 +77,9 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	ImageButton mBackBtn;
 	
-	Button mQueryBtn;
+	Button mTrafficQueryBtn;
+	
+	Button mBuslineQueryBtn;
 	
 	RadioGroup mRadioGroup = null;
 	
@@ -209,7 +211,8 @@ public class TrafficQueryFragment extends BaseFragment {
 		mBuslineLayout = (RelativeLayout)mRootView.findViewById(R.id.busline_rll);
         
     	mBackBtn = (ImageButton)mRootView.findViewById(R.id.back_btn);
-    	mQueryBtn = (Button)mRootView.findViewById(R.id.query_btn);
+    	mTrafficQueryBtn = (Button)mRootView.findViewById(R.id.traffic_query_btn);
+    	mBuslineQueryBtn = (Button)mRootView.findViewById(R.id.busline_query_btn);
     	mRadioGroup = (RadioGroup)mRootView.findViewById(R.id.traffic_rgp);
     	
     	//mExchangeBtn = (Button)mRootView.findViewById(R.id.exchange_btn);
@@ -534,31 +537,31 @@ public class TrafficQueryFragment extends BaseFragment {
 		
 		if (mode == TRAFFIC_MODE) {
 			if(!isEditTextEmpty(mStart.getEdt()) && !isEditTextEmpty(mEnd.getEdt())) {
-				enableQueryBtn(true);
+				enableQueryBtn(mTrafficQueryBtn, true);
 	        }else{
-	        	enableQueryBtn(false);
+	        	enableQueryBtn(mTrafficQueryBtn, false);
 	        }
 		} else {
 			if(!isEditTextEmpty(mBusline.getEdt())){
-				enableQueryBtn(true);
+				enableQueryBtn(mBuslineQueryBtn, true);
 	        }else{
-	        	enableQueryBtn(false);
+	        	enableQueryBtn(mBuslineQueryBtn, false);
 	        }
 		}
     }
 	
-	public void enableQueryBtn(boolean enable) {
+	public void enableQueryBtn(Button mButton, boolean enable) {
 		if (enable) {
-			mQueryBtn.setTextColor(0xFFFFFFFF);
-            mQueryBtn.setEnabled(true);
+			mButton.setTextColor(0xFFFFFFFF);
+			mButton.setEnabled(true);
 		} else {
-			mQueryBtn.setTextColor(0xFFEFBA82);
-        	mQueryBtn.setEnabled(false);
+			mButton.setTextColor(0xFFEFBA82);
+			mButton.setEnabled(false);
 		}
 	}
 	
 	public void query() {
-		mSphinx.hideSoftInput(mQueryBtn.getWindowToken());
+		mSphinx.hideSoftInput(mTrafficQueryBtn.getWindowToken());
 		mBlock.requestFocus();
 		
 		if (mode == TRAFFIC_MODE) {

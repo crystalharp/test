@@ -365,7 +365,8 @@ public class TrafficQueryStateHelper {
 		mQueryFragment.mRadioGroup.clearCheck();
 		mQueryFragment.mSuggestLnl.setVisibility(View.GONE);
 		mQueryFragment.mBackBtn.setVisibility(View.VISIBLE);
-		mQueryFragment.enableQueryBtn(false);
+		mQueryFragment.enableQueryBtn(mQueryFragment.mTrafficQueryBtn, false);
+		mQueryFragment.enableQueryBtn(mQueryFragment.mBuslineQueryBtn, false);
 		mQueryFragment.mSphinx.getDownloadView().setPadding(0, Util.dip2px(Globals.g_metrics.density, 70), 0, 0);
 	}
 	
