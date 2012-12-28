@@ -68,13 +68,13 @@ public class BaseFragment extends LinearLayout {
     
     protected Button mRightBtn;
     
-    protected boolean isReLogin = false;
+    public boolean isReLogin = false;
     
     public BaseQuery mBaseQuerying;
     
     public TKAsyncTask mTkAsyncTasking;
     
-    protected DialogInterface.OnClickListener mCancelLoginListener = new DialogInterface.OnClickListener() {
+    public DialogInterface.OnClickListener mCancelLoginListener = new DialogInterface.OnClickListener() {
         
         @Override
         public void onClick(DialogInterface arg0, int arg1) {
@@ -82,7 +82,7 @@ public class BaseFragment extends LinearLayout {
         }
     };
     
-    protected boolean isReLogin() {
+    public boolean isReLogin() {
         boolean isRelogin = this.isReLogin;
         this.isReLogin = false;
         if (isRelogin) {
