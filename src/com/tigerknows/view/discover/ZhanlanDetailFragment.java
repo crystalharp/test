@@ -5,107 +5,36 @@
 package com.tigerknows.view.discover;
 
 
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RatingBar;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
-import com.decarta.Globals;
-import com.decarta.android.exception.APIException;
-import com.decarta.android.util.LogWrapper;
-import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
-import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.POI;
-import com.tigerknows.model.Response;
-import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Zhanlan;
-import com.tigerknows.model.DataOperation.ZhanlanQueryResponse;
-import com.tigerknows.util.TKAsyncTask;
-import com.tigerknows.view.BaseFragment;
+import com.tigerknows.view.SpringbackListView.IPagerList;
+import com.tigerknows.view.discover.CycleViewPager.CyclePagerAdapter;
 
 /**
  * @author Peng Wenyue
  * </ul>
  * 
  */
-public class ZhanlanDetailFragment extends DiscoverBaseFragment implements View.OnClickListener {
+public class ZhanlanDetailFragment extends BaseDetailFragment
+                                   implements CycleViewPager.CycleOnPageChangeListener.IRefreshViews {
     
     public ZhanlanDetailFragment(Sphinx sphinx) {
         super(sphinx);
         // TODO Auto-generated constructor stub
     }
     
-    private ScrollView mBodyScv;
-    
-    private ImageView mPictureImv = null;
-
-    private TextView mNameTxt = null;
-
-    private RatingBar mStartsRtb;
-    
-    private TextView mDateTxv;
-    
-    private TextView mPriceTxv;
-
-    private TextView mFendianNameTxv = null;
-    
-    private Button mDistanceBtn = null;
-    
-    private View mAddressView = null;
-    
-    private View mTelephoneView = null;
-    
-    private TextView mAddressTxv = null;
-    
-    private View mDividerView;
-    
-    private TextView mTelephoneTxv = null;
-    
-    private TextView mDescriptionTitle;
-    
-    private TextView mDescriptionTxv;
-    
-    private ImageView mPriceImv = null;
-    
-    private View mLoadingView;
-    
-    private Zhanlan mYanchu;
-    
-    private Runnable mLoadedDrawableRun = new Runnable() {
-        
-        @Override
-        public void run() {
-            mSphinx.getHandler().removeCallbacks(mActualLoadedDrawableRun);
-            mSphinx.getHandler().post(mActualLoadedDrawableRun);
-        }
-    };
-    
-    private Runnable mActualLoadedDrawableRun = new Runnable() {
-        
-        @Override
-        public void run() {
-            Drawable drawable = mYanchu.getPicturesDetail().loadDrawable(null, null, null);
-            if(drawable != null) {
-                mPictureImv.setImageDrawable(drawable);
-            }
-        }
-    };
+    List<Zhanlan> mDataList;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -116,203 +45,72 @@ public class ZhanlanDetailFragment extends DiscoverBaseFragment implements View.
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        LogWrapper.d(BaseFragment.TAG, "onCreateView()"+mActionTag);
+
+        List<View> viewList = new ArrayList<View>();
+        ZhanlanDetailView view;
+        view = new ZhanlanDetailView(mSphinx, this);
+        viewList.add(view);
+        view = new ZhanlanDetailView(mSphinx, this);
+        viewList.add(view);
+        view = new ZhanlanDetailView(mSphinx, this);
+        viewList.add(view);
+        mCyclePagerAdapter = new CyclePagerAdapter(viewList);
         
-        //mRootView = mLayoutInflater.inflate(R.layout.poi_detail, container, false);
-        mRootView = mLayoutInflater.inflate(R.layout.yanchu_detail, container, false);
-        findViews();
-        setListener();
-        
-        return mRootView;
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.zhanlan_detail);
-        mRightImv.setImageResource(R.drawable.ic_view_map);
-        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
-        mRightBtn.setOnClickListener(this);   
-        mBodyScv.scrollTo(0, 0);
-        
-        refreshDrawable();
-        
-        if (isReLogin()) {
-            return;
-        }
-    }
-
-    @Override
-    public void dismiss() {
-        super.dismiss();
-        mPictureImv.setImageDrawable(null);
     }
     
-    public void setData(Zhanlan yanchu) {
-        mYanchu = yanchu;
-        if (mYanchu == null) {
-            return;
-        }
-        
-        mNameTxt.setText(mYanchu.getName());
-        mStartsRtb.setProgress((int) mYanchu.getHot());
-        mDateTxv.setText(mYanchu.getTimeDesc());
-        mDescriptionTitle.setText(R.string.zhanlan_detail_introduce);
-        if (!TextUtils.isEmpty(mYanchu.getPrice())) {
-        	mPriceImv.setVisibility(View.VISIBLE);
-        	mPriceTxv.setVisibility(View.VISIBLE);
-        	mPriceTxv.setText(String.valueOf(mYanchu.getPrice()));
-        } else {
-        	mPriceImv.setVisibility(View.GONE);
-        	mPriceTxv.setVisibility(View.GONE);
-        }
-       
-        String name = mYanchu.getPlaceName();
-        DiscoverChildListFragment.showPOI(mSphinx, 0, TextUtils.isEmpty(name) ? mContext.getString(R.string.zhanlan_didian) : name, mYanchu.getDistance(), mYanchu.getAddress(), mYanchu.getContactTel(), 
-                mFendianNameTxv, mDistanceBtn, mAddressView, mDividerView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
-                R.drawable.list_header, R.drawable.list_footer, R.drawable.list_single, mSphinx.getString(R.string.xiangxidizhi), mSphinx.getString(R.string.lianxidianhua));
-        
-        refreshDescription(true);
-        refreshDrawable();
-    }
-    
-    private void refreshDrawable() {
-        if (mYanchu == null) {
-            return;
-        }
-        TKDrawable tkDrawable = mYanchu.getPicturesDetail();
-        if (tkDrawable != null) {
-            Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, this.toString());
-            if(drawable != null) {
-                mPictureImv.setImageDrawable(drawable);
-            } else {
-                mPictureImv.setImageDrawable(null);
+    public void setData(Zhanlan data) {
+        int position = 0;
+        for(int i = mDataList.size()-1; i >= 0; i--) {
+            if (data == mDataList.get(i)) {
+                position = i;
+                break;
             }
-        } else {
-            mPictureImv.setImageDrawable(null);
         }
+        setData(null, position, null);
     }
     
-    private void refreshDescription(boolean query) {
-        if (mYanchu == null) {
-            return;
+    public void setData(List<Zhanlan> dataList, int position, IPagerList iPagerList) {
+        if (dataList == null) {
+            dataList = mDataList;
         }
-        String str = mYanchu.getDescription();
-        if (!TextUtils.isEmpty(str)) {
-            mDescriptionTxv.setText(str);
-            mDescriptionTxv.setVisibility(View.VISIBLE);
-            mLoadingView.setVisibility(View.GONE);
-        } else if (query){
-            mDescriptionTxv.setVisibility(View.GONE);
-            mLoadingView.setVisibility(View.VISIBLE);
-            DataOperation dataOperation = new DataOperation(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_ZHANLAN);
-            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mYanchu.getUid());
-            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
-            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null, true);
-            mSphinx.queryStart(dataOperation);
-        }
-    }
-    
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    protected void findViews() {
-        mBodyScv = (ScrollView) mRootView.findViewById(R.id.body_scv);
-        mPictureImv = (ImageView) mRootView.findViewById(R.id.picture_imv);
-        mNameTxt = (TextView)mRootView.findViewById(R.id.name_txv);
-        mStartsRtb = (RatingBar) mRootView.findViewById(R.id.stars_rtb);
-        mDateTxv = (TextView)mRootView.findViewById(R.id.date_txv);
-        mPriceImv = (ImageView)mRootView.findViewById(R.id.price_imv);
-        mPriceTxv = (TextView)mRootView.findViewById(R.id.price_txv);
-        
-        View view =  mRootView.findViewById(R.id.tuangou_fendian_list_item);
-        
-        mFendianNameTxv = (TextView) view.findViewById(R.id.name_txv);
-        mDistanceBtn = (Button)view.findViewById(R.id.distance_btn);
-        mAddressView = view.findViewById(R.id.address_view);
-        mTelephoneView = view.findViewById(R.id.telephone_view);    
-        mDividerView = view.findViewById(R.id.divider_imv);
-        mAddressTxv = (TextView)view.findViewById(R.id.address_txv);
-        mTelephoneTxv = (TextView)view.findViewById(R.id.telephone_txv);
-        
-        mDescriptionTitle = (TextView)mRootView.findViewById(R.id.description_title);
-        mDescriptionTxv = (TextView)mRootView.findViewById(R.id.description_txv);
-        mLoadingView = mRootView.findViewById(R.id.loading_view);
-    }
-
-    protected void setListener() {
-        mDistanceBtn.setOnClickListener(this);
-        //mAddressTxv.setOnClickListener(this);
-       // mTelephoneTxv.setOnClickListener(this);      
-        mAddressView.setOnClickListener(this);
-        mTelephoneTxv.setOnClickListener(this);
-    }
-
-    public void onClick(View view) {
-        switch (view.getId()) {                
-            case R.id.right_btn:
-                mActionLog.addAction(ActionLog.Title_Right_Button, mActionTag);
-                viewMap();
-                break;
-            case R.id.telephone_txv:
-                mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailTelphone);
-                break;
-                
-            case R.id.address_view:
-                mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailAddress);
-                viewMap();
-                break;
-                
-            case R.id.distance_btn:
-                mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailDistance);
-                /* 交通界面的显示 */
-                POI poi = mYanchu.getPOI();
-                poi.setName(mYanchu.getPlaceName());
-                poi.setAddress(mYanchu.getAddress());
-                mSphinx.getTrafficQueryFragment().setData(poi);
-                mSphinx.showView(R.id.view_traffic_query);
-                break;
-        }
+        mDataList = dataList;
+        setData(dataList.size(), position, iPagerList);
+        ZhanlanDetailView view = (ZhanlanDetailView) mCyclePagerAdapter.viewList.get(mViewPager.getCurrentItem()%mCyclePagerAdapter.viewList.size());
+        view.setData(mDataList.get(position));
+        view.onResume();
     }
     
     public void viewMap() {
+        Zhanlan data = mDataList.get(mViewPager.getCurrentItem());
         List<POI> list = new ArrayList<POI>();
-        POI poi = mYanchu.getPOI();
-        poi.setName(mYanchu.getPlaceName());
-        poi.setAddress(mYanchu.getAddress());
+        POI poi = data.getPOI();
+        poi.setName(data.getPlaceName());
+        poi.setAddress(data.getAddress());
         list.add(poi);
         mSphinx.showPOI(list, 0);
         mSphinx.getResultMapFragment().setData(mContext.getString(R.string.zhanlan_didian_ditu), ActionLog.MapZhanlanXiangqing);
-        mSphinx.showView(R.id.view_result_map);
+        super.viewMap();
     }
-
-    @Override
-    public void onPostExecute(TKAsyncTask tkAsyncTask) {
-        super.onPostExecute(tkAsyncTask);
-        final DataOperation dataOperation = (DataOperation)(tkAsyncTask.getBaseQuery());
-        if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
-            isReLogin = true;
-            return;
-        } else if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, false, this, false)) {
-            return;
+    
+    public void refreshViews(int position) {
+        super.refreshViews(position);
+        ZhanlanDetailView view;
+        if (position - 1 >= 0) {
+            view = (ZhanlanDetailView) mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
+            view.setData(mDataList.get(position-1));
+            view.onResume();
         }
-
-        final Response response = dataOperation.getResponse();
-        ZhanlanQueryResponse targetResponse = (ZhanlanQueryResponse) response;
-        Zhanlan target = targetResponse.getZhanlan();
-        if (target != null && dataOperation.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_UID).equals(mYanchu.getUid())) {
-            try {
-                mYanchu.init(target.getData());
-                refreshDescription(false);
-            } catch (APIException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+        if (position + 1 < mDataList.size()) {
+            view = (ZhanlanDetailView) mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
+            view.setData(mDataList.get(position+1));
+            view.onResume();
         }
     }
 }

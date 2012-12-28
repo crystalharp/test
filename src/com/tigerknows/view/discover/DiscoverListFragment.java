@@ -35,6 +35,7 @@ import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.FilterListView;
 import com.tigerknows.view.RetryView;
 import com.tigerknows.view.SpringbackListView;
+import com.tigerknows.view.SpringbackListView.IPagerListCallBack;
 import com.tigerknows.view.SpringbackListView.OnRefreshListener;
 import com.tigerknows.view.user.User;
 import com.tigerknows.view.user.UserBaseActivity;
@@ -66,7 +67,7 @@ import java.util.List;
 /**
  * @author Peng Wenyue
  */
-public class DiscoverListFragment extends DiscoverBaseFragment implements View.OnClickListener, FilterListView.CallBack {
+public class DiscoverListFragment extends DiscoverBaseFragment implements View.OnClickListener, FilterListView.CallBack, SpringbackListView.IPagerList {
 
     public DiscoverListFragment(Sphinx sphinx) {
         super(sphinx);
@@ -180,6 +181,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
     };
     
+    SpringbackListView.IPagerListCallBack mIPagerListCallBack = null;
+    
     public void setup() {
         DataQuery lastDataQuerying = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
         if (lastDataQuerying == null) {
@@ -285,20 +288,19 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     Object object = adapterView.getAdapter().getItem(position);
                     if (object != null) {
                         if (object instanceof Tuangou) {
-                            mSphinx.showView(R.id.view_tuangou_detail);
                             Tuangou tagret = (Tuangou) object;
                             tagret.setOrderNumber(position+1);
 //                            tagret.getFendian().setOrderNumber(position+1);
                             mActionLog.addAction(mActionTag+ActionLog.DiscoverListSelectItem, position+1, tagret.getUid());
-                            mSphinx.getTuangouDetailFragment().setData(tagret);
+                            mSphinx.getTuangouDetailFragment().setData(mTuangouList, position, DiscoverListFragment.this);
+                            mSphinx.showView(R.id.view_tuangou_detail);
                         } else if (object instanceof Yanchu){
-                            mSphinx.showView(R.id.view_yanchu_detail);
                             Yanchu tagret = (Yanchu) object;
                             tagret.setOrderNumber(position+1);
                             mActionLog.addAction(mActionTag+ActionLog.DiscoverListSelectItem, position+1, tagret.getUid());
-                        	mSphinx.getYanchuDetailFragment().setData(tagret);
+                        	mSphinx.getYanchuDetailFragment().setData(mYanchuList, position, DiscoverListFragment.this);
+                        	mSphinx.showView(R.id.view_yanchu_detail);
                         } else if (object instanceof Dianying){
-                            mSphinx.showView(R.id.view_dianying_detail);
                             Dianying tagret = (Dianying) object;
                             tagret.setOrderNumber(position+1);
                             int changciOption = Changci.OPTION_DAY_TODAY;
@@ -315,13 +317,14 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                             tagret.getYingxun().setChangciOption(changciOption);
 //                            tagret.getYingxun().setOrderNumber(position+1);
                             mActionLog.addAction(mActionTag+ActionLog.DiscoverListSelectItem, position+1, tagret.getUid());
-                        	mSphinx.getDianyingDetailFragment().setData(tagret);
+                        	mSphinx.showView(R.id.view_dianying_detail);
+                        	mSphinx.getDianyingDetailFragment().setData(mDianyingList, position, DiscoverListFragment.this);
                         } else if (object instanceof Zhanlan){
-                            mSphinx.showView(R.id.view_zhanlan_detail);
                         	Zhanlan tagret = (Zhanlan) object;
                             tagret.setOrderNumber(position+1);
                             mActionLog.addAction(mActionTag+ActionLog.DiscoverListSelectItem, position+1, tagret.getUid());
-                        	mSphinx.getZhanlanDetailFragment().setData(tagret);
+                        	mSphinx.getZhanlanDetailFragment().setData(mZhanlanList, position, DiscoverListFragment.this);
+                        	mSphinx.showView(R.id.view_zhanlan_detail);
                         }
                     }
                 }
@@ -334,7 +337,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             @Override
             public void onRefresh(boolean isHeader) {
                 mActionLog.addAction(mActionTag+ActionLog.DiscoverListLoading);
-                turnPage();
+                turnPage(null);
             }
         });
         mDingdanBtn.setOnClickListener(this);
@@ -410,6 +413,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     @Override
     public void onResume() {
         super.onResume();
+        mIPagerListCallBack = null;
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             mTitleBtn.setText(R.string.tuangou_list);
             mRightImv.setVisibility(View.VISIBLE);
@@ -486,7 +490,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
     }
     
-    private void turnPage(){
+    private void turnPage(String tip){
         synchronized (this) {
         DataQuery lastDataQuery = mDataQuery;
         if (mState != STATE_LIST || mResultLsv.isFooterSpringback() == false || lastDataQuery == null || mList == null || mList.getTotal() <= getList().size()) {
@@ -502,7 +506,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType) && dianyingSize > 0) {
             criteria.put(DataQuery.SERVER_PARAMETER_DIANYING_UUID, mDianyingList.get(dianyingSize-1).getUid());
         }
-        dataQuery.setup(criteria, lastDataQuery.getCityId(), getId(), getId(), null, true, true, lastDataQuery.getPOI());
+        dataQuery.setup(criteria, lastDataQuery.getCityId(), getId(), getId(), tip, true, true, lastDataQuery.getPOI());
         mSphinx.queryStart(dataQuery);
         }
     }
@@ -524,6 +528,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 //                poi.setOrderNumber(minIndex+1);
                 poiList.add(poi);
             }
+            mSphinx.getTuangouDetailFragment().setData(mTuangouList, page[2], DiscoverListFragment.this);
         } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
             
         } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
@@ -535,6 +540,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 poi.setAddress(null);
                 poiList.add(poi);
             }
+            mSphinx.getYanchuDetailFragment().setData(mYanchuList, page[2], DiscoverListFragment.this);
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
             for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mZhanlanList.size(); minIndex++) {
                 Zhanlan zhanlan = mZhanlanList.get(minIndex);
@@ -544,6 +550,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 poi.setAddress(null);
                 poiList.add(poi);
             }
+            mSphinx.getZhanlanDetailFragment().setData(mZhanlanList, page[2], DiscoverListFragment.this);
         }
         if (poiList.isEmpty()) {
             return;
@@ -865,6 +872,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         
         mResultLsv.onRefreshComplete(false);
         if (dataQuery.isStop()) {
+            invokeIPagerListCallBack();
             return;
         }
 
@@ -879,6 +887,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     if (responsCode == 701) {
                     } else {
                         if (dataQuery.isTurnPage()) {
+                            invokeIPagerListCallBack();
                             return;
                         }
                         int resid = BaseActivity.getResponseResId(dataQuery);
@@ -886,21 +895,26 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                         mState = STATE_ERROR;
                         updateView();
                     }
+
+                    invokeIPagerListCallBack();
                     return;
                 }
             } else {
                 if (dataQuery.isTurnPage()) {
+                    invokeIPagerListCallBack();
                     return;
                 }
                 mRetryView.setText(R.string.network_failed);
                 mState = STATE_ERROR;
                 updateView();
+                invokeIPagerListCallBack();
                 return;
             }
         }
 
         mResultLsv.setFooterSpringback(false);
         setDataQuery(dataQuery);
+        invokeIPagerListCallBack();
     }
     
     private void setDataQuery(DataQuery dataQuery) {
@@ -1058,6 +1072,15 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
     }
     
+    private boolean invokeIPagerListCallBack() {
+        if (mIPagerListCallBack != null) {
+            mIPagerListCallBack.turnPageEnd(false, getList().size());
+            mIPagerListCallBack = null;
+            return true;
+        }
+        return false;
+    }
+    
     @SuppressWarnings("unchecked")
     private List getList() {
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
@@ -1161,5 +1184,21 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 
             return view;
         }
+    }
+
+    @Override
+    public boolean canTurnPage(boolean isHeader) {
+        DataQuery dataQuery = mDataQuery;
+        BaseList list = mList;
+        if (mState != STATE_LIST || mResultLsv.isFooterSpringback() == false || dataQuery == null || list == null || list.getTotal() <= getList().size()) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public void turnPageStart(boolean isHeader, IPagerListCallBack iPagerListCallBack) {
+        mIPagerListCallBack = iPagerListCallBack;
+        turnPage(mSphinx.getString(R.string.doing_and_wait));
     } 
 }
