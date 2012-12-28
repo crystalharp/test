@@ -17,6 +17,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
+import android.location.LocationManager;
 import android.text.TextUtils;
 
 import java.util.HashMap;
@@ -42,6 +43,11 @@ public class LocationTable {
     public static final String NEIGHBORINGCELLINFO_LIST = "neighboringCellInfoList";
     public static final String WIFI_LIST = "wifiList";
     public static final String LOCATION = "location";
+    public static final String PROVIDER = "provider";
+
+    public static final int PROVIDER_TIGERKNOWS = 0;
+    public static final int PROVIDER_GPS = 1;
+    public static final int PROVIDER_NETWORK = 2;
 
 	// DB NAME
 	protected static final String DATABASE_NAME = "locationDB";
@@ -55,6 +61,7 @@ public class LocationTable {
 			+ "( " 
 			+ ID + " INTEGER PRIMARY KEY, "
             + HASHCODE + " INTEGER, "
+            + PROVIDER + " INTEGER, "
             + MNC + " INTEGER, "
             + MCC + " INTEGER, "
             + TKCELLLOCATION + " TEXT not null, "
@@ -121,6 +128,7 @@ public class LocationTable {
 		ContentValues cv = new ContentValues();
 		cv.put(HASHCODE, locationParameter.hashCode());
 		cv.put(MNC, locationParameter.mnc);
+        cv.put(PROVIDER, getProvider(location));
         cv.put(MCC, locationParameter.mcc);
         cv.put(TKCELLLOCATION, locationParameter.tkCellLocation.toString());
         cv.put(NEIGHBORINGCELLINFO_LIST, locationParameter.getNeighboringCellInfoString());
@@ -130,6 +138,20 @@ public class LocationTable {
 			mDb.insert(TABLE_NAME, null, cv);
 		else // overwrite
 			mDb.update(TABLE_NAME, cv, HASHCODE + "=" + locationParameter.hashCode(), null);
+	}
+	
+	public int getProvider(Location location) {
+	    int provider = PROVIDER_TIGERKNOWS;
+	    if (location == null) {
+	        return provider;
+	    }
+	    
+	    if (LocationManager.GPS_PROVIDER.equals(location.getProvider())) {
+	        provider = PROVIDER_GPS;
+	    } else if (LocationManager.NETWORK_PROVIDER.equals(location.getProvider())) {
+	        provider = PROVIDER_NETWORK;
+	    }
+        return provider;
 	}
 
 	public int check(LocationParameter locationParameter) {

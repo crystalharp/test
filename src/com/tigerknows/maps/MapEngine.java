@@ -1238,9 +1238,9 @@ public class MapEngine {
         @Override
         public int hashCode() {
             if (hashCode == 0) {
-                hashCode = 29 * id;
+                int hash = 29 * id;
                 if (cName != null) {
-                    hashCode += cName.hashCode();
+                    hash += cName.hashCode();
                 }
 //                if (cProvinceName != null) {
 //                    hashCode += cProvinceName.hashCode();
@@ -1258,6 +1258,7 @@ public class MapEngine {
 //                    CityInfo cityInfo = cityInfoList.get(i);
 //                    hashCode += cityInfo.hashCode();
 //                }
+                hashCode = hash;
             }
             return hashCode;
         }

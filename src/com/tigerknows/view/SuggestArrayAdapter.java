@@ -46,11 +46,11 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
         Button inputBtn = (Button)convertView.findViewById(R.id.input_btn);
         
         final TKWord tkWord = getItem(position);
-        if (tkWord.type == TKWord.TYPE_HISTORY) {
+        if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
             iconImv.setVisibility(View.VISIBLE);
             inputBtn.setVisibility(View.VISIBLE);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-        } else if (tkWord.type == TKWord.TYPE_SUGGEST) {
+        } else if (tkWord.attribute == TKWord.ATTRIBUTE_SUGGEST) {
             iconImv.setVisibility(View.INVISIBLE);
             inputBtn.setVisibility(View.VISIBLE);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);

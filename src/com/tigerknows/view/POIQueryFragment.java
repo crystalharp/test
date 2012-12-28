@@ -32,12 +32,12 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.TKWord;
+import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.view.SuggestArrayAdapter.CallBack;
 
 /**
@@ -174,13 +174,13 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 TKWord tkWord = (TKWord) arg0.getAdapter().getItem(position);
-                if (tkWord.type == TKWord.TYPE_CLEANUP) {
+                if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
                     mActionLog.addAction(ActionLog.SearchInputCleanHistory);
-                    TKConfig.clearHistoryWord(mContext, TKConfig.History_Word_POI, String.format(TKConfig.PREFS_HISTORY_WORD_POI, Globals.g_Current_City_Info.getId()));
+                    HistoryWordTable.clearHistoryWord(mSphinx, Globals.g_Current_City_Info.getId(), HistoryWordTable.TYPE_POI);
                     makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
                     mSuggestAdapter.notifyDataSetChanged();
                 } else {
-                    if (tkWord.type == TKWord.TYPE_HISTORY) {
+                    if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
                         mActionLog.addAction(ActionLog.SearchInputHistoryWord, tkWord.word, position);
                     } else {
                         mActionLog.addAction(ActionLog.SearchInputSuggestWord, tkWord.word, position);
@@ -216,7 +216,7 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         String keyword = mKeywordEdt.getText().toString().trim();
         if (!TextUtils.isEmpty(keyword)) {
             int cityId = Globals.g_Current_City_Info.getId();
-            TKConfig.addHistoryWord(mContext, TKConfig.History_Word_POI, String.format(TKConfig.PREFS_HISTORY_WORD_POI, cityId), keyword);
+            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), cityId, HistoryWordTable.TYPE_POI);
             mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
             mActionLog.addAction(ActionLog.SearchInputSubmit, keyword);
 
@@ -260,11 +260,11 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         List<String> list = mapEngine.getwordslistString(searchWord, 2);
         
         if (list != null && list.size() > 0) {
-            tkWordList.addAll(TKConfig.mergeHistoryAndSuggestWord(list, searchWord, TKConfig.History_Word_POI));
+            tkWordList.addAll(HistoryWordTable.mergeTKWordList(HistoryWordTable.stringToTKWord(list, TKWord.ATTRIBUTE_SUGGEST), searchWord, HistoryWordTable.TYPE_POI));
         } else {
-            tkWordList.addAll(TKConfig.getHistoryWordList(TKConfig.History_Word_POI, searchWord));
+            tkWordList.addAll(HistoryWordTable.getHistoryWordList(searchWord, HistoryWordTable.TYPE_POI));
             if (tkWordList.size() > 0) {
-                tkWordList.add(new TKWord(TKWord.TYPE_CLEANUP, sphinx.getString(R.string.clean_history)));
+                tkWordList.add(new TKWord(TKWord.ATTRIBUTE_CLEANUP, sphinx.getString(R.string.clean_history)));
             }
         }
     }

@@ -116,6 +116,7 @@ import com.tigerknows.model.UserLogonModel;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
 import com.tigerknows.model.test.BaseQueryTest;
+import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.service.MapStatsService;
 import com.tigerknows.service.SuggestLexiconService;
 import com.tigerknows.service.TKLocationManager;
@@ -418,7 +419,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                         // TODO Auto-generated catch block
                         e1.printStackTrace();
                     }
-                    TKConfig.readHistoryWord(Sphinx.this, TKConfig.History_Word_POI, String.format(TKConfig.PREFS_HISTORY_WORD_POI, MapEngine.CITY_ID_BEIJING));
+                    HistoryWordTable.readHistoryWord(mContext, MapEngine.CITY_ID_BEIJING, HistoryWordTable.TYPE_POI);
                     Globals.initOptimalAdaptiveScreenSize();
                 }
             }).start();
@@ -1863,7 +1864,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             CityInfo cityInfo = mMapEngine.getCityInfo(cityId);
             if (cityInfo.isAvailably()) {
                 if (cityId > 0 && cityId != Globals.g_Current_City_Info.getId()) {
-                    TKConfig.readHistoryWord(mContext, TKConfig.History_Word_POI, String.format(TKConfig.PREFS_HISTORY_WORD_POI, cityId));
+                    HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
                 }
                 
                 cityInfo.setLevel(zoomLevel);

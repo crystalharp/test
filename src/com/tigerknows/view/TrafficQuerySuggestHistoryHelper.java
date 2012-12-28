@@ -17,6 +17,8 @@ import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.TKWord;
+import com.tigerknows.provider.HistoryWordTable;
 
 /**
  * 负责“交通频道首页”TrafficQueryFragment的[[控制历史词及联想词]]
@@ -39,8 +41,8 @@ public class TrafficQuerySuggestHistoryHelper {
 	public void checkSuggestAndHistory() {
     	int cityId = mQueryFragment.mMapLocationHelper.getQueryCityInfo().getId();
     	mQueryFragment.mSphinx.getMapEngine().suggestwordCheck(mQueryFragment.mSphinx, cityId);
-        TKConfig.readHistoryWord(mQueryFragment.mContext, TKConfig.History_Word_Traffic, String.format(TKConfig.PREFS_HISTORY_WORD_TRAFFIC, cityId));
-        TKConfig.readHistoryWord(mQueryFragment.mContext, TKConfig.History_Word_Busline, String.format(TKConfig.PREFS_HISTORY_WORD_BUSLINE, cityId));
+        HistoryWordTable.readHistoryWord(mQueryFragment.mContext, cityId, HistoryWordTable.TYPE_TRAFFIC);
+        HistoryWordTable.readHistoryWord(mQueryFragment.mContext, cityId, HistoryWordTable.TYPE_BUSLINE);
     }
 	
 	public void setAdapterForSuggest(final Context context, final EditText mSuggestSrc, final ListView mSuggestDst, 
@@ -55,11 +57,11 @@ public class TrafficQuerySuggestHistoryHelper {
 		
         if (poi.getName().equals(mQueryFragment.mContext.getString(R.string.clean_history))) {
         	mQueryFragment.mActionLog.addAction(ActionLog.TrafficClearHistory);
-			if (mQueryFragment.mode == TrafficQueryFragment.TRAFFIC_MODE && TKConfig.History_Word_Traffic.size() > 0) {
-				TKConfig.clearHistoryWord(mQueryFragment.mContext, TKConfig.History_Word_Traffic, String.format(TKConfig.PREFS_HISTORY_WORD_TRAFFIC, mQueryFragment.mMapLocationHelper.getQueryCityInfo().getId()));
+			if (mQueryFragment.mode == TrafficQueryFragment.TRAFFIC_MODE) {
+			    HistoryWordTable.clearHistoryWord(mQueryFragment.mSphinx, mQueryFragment.mMapLocationHelper.getQueryCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
 				setAdapterForSuggest(mQueryFragment.mContext, mQueryFragment.mSelectedEdt.getEdt(), mQueryFragment.mSuggestLsv, SuggestAndHistoryAdapter.HISTORY_TRAFFIC_TYPE);
-			} else if (mQueryFragment.mode == TrafficQueryFragment.BUSLINE_MODE && TKConfig.History_Word_Busline.size() > 0){
-				TKConfig.clearHistoryWord(mQueryFragment.mContext, TKConfig.History_Word_Busline, String.format(TKConfig.PREFS_HISTORY_WORD_BUSLINE, mQueryFragment.mMapLocationHelper.getQueryCityInfo().getId()));
+			} else if (mQueryFragment.mode == TrafficQueryFragment.BUSLINE_MODE){
+                HistoryWordTable.clearHistoryWord(mQueryFragment.mSphinx, mQueryFragment.mMapLocationHelper.getQueryCityInfo().getId(), HistoryWordTable.TYPE_BUSLINE);
 				setAdapterForSuggest(mQueryFragment.mContext, mQueryFragment.mSelectedEdt.getEdt(), mQueryFragment.mSuggestLsv, SuggestAndHistoryAdapter.HISTORY_BUSLINE_TYPE);
 			}
 		} else {
@@ -108,10 +110,10 @@ public class TrafficQuerySuggestHistoryHelper {
 			LinkedList<String> tmp = new LinkedList<String>();
 			switch(hisType) {
         	case HISTORY_TRAFFIC_TYPE:
-        		tmp = getHistoryWordList(TKConfig.History_Word_Traffic);
+        		tmp = getHistoryWordList(HistoryWordTable.History_Word_Traffic);
         		break;
         	case HISTORY_BUSLINE_TYPE:
-        		tmp = getHistoryWordList(TKConfig.History_Word_Busline);
+        		tmp = getHistoryWordList(HistoryWordTable.History_Word_Busline);
         		break;
         	default:
         	}
@@ -119,7 +121,7 @@ public class TrafficQuerySuggestHistoryHelper {
 			if (TextUtils.isEmpty(input)) {
 				// 显示历史词
 				if (tmp != null && tmp.size() > 0) {
-	                for (int i=0; i<tmp.size() && i < TKConfig.HISTORY_WORD_FIRST_SIZE; i++) {
+	                for (int i=0; i<tmp.size() && i < HistoryWordTable.HISTORY_WORD_FIRST_SIZE; i++) {
 	                	historyWords.add(tmp.get(i));
 	                }
 	                historyWords.add(mQueryFragment.mContext.getString(R.string.clean_history));
@@ -137,11 +139,12 @@ public class TrafficQuerySuggestHistoryHelper {
 			notifyDataSetChanged();
 		}
 		
-		public LinkedList<String> getHistoryWordList(List<String> historyWordList) {
+		public LinkedList<String> getHistoryWordList(List<TKWord> historyWordList) {
 			LinkedList<String> list = new LinkedList<String>();
-	        for (String str : historyWordList) {
-	            if (!list.contains(str)) {
-	                list.add(str.replaceAll("\n", " "));
+	        for (int i = 0, size = historyWordList.size(); i < size; i++) {
+	            String word = historyWordList.get(i).word;
+	            if (!list.contains(word)) {
+	                list.add(word);
 	            }
 	        }
 	        return list;
@@ -165,7 +168,7 @@ public class TrafficQuerySuggestHistoryHelper {
 	        
 	        int historyIndex = 0;
 	        for (String historyWord : historyWordList) {
-	            if (historyIndex >= TKConfig.HISTORY_WORD_LIST_SIZE) {
+	            if (historyIndex >= HistoryWordTable.HISTORY_WORD_LIST_SIZE) {
 	                 break;
 	            }
 	            if (historyWord.startsWith(searchword) && !historyWord.equals(searchword)) {
