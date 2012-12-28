@@ -349,8 +349,9 @@
         android:layout_centerInParent="true"
         android:background="@drawable/ic_stamp_gold_big" />  
         
-    <LinearLayout
+    <include
         android:id="@+id/loading_view"
+	    layout="@layout/loading_small"
 	    android:layout_width="wrap_content" 
 	    android:layout_height="wrap_content"
 	    android:gravity="center"
@@ -358,19 +359,5 @@
         android:layout_above="@id/comment_tip_view"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="8dp">
-	
-	    <ProgressBar
-	        style="@style/Widget_ProgressBar_Tip"
-	        android:layout_width="24dp"
-	        android:layout_height="24dp" />      
-	    <TextView
-	        android:id="@+id/loading_txv" 
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:textSize="12sp"
-	        android:text="@string/loading"
-	        android:gravity="top|center_horizontal"
-	        android:singleLine="true"
-	        android:textColor="@android:color/black"/>
-	</LinearLayout> 
+	</include> 
 </RelativeLayout>

@@ -47,7 +47,7 @@ import java.util.Hashtable;
 
 public class BaseQueryTest {
     
-    static boolean Test = false;
+    static boolean Test = true;
     
     static int RESPONSE_CODE = BaseQuery.STATUS_CODE_NETWORK_OK;
 
@@ -56,6 +56,12 @@ public class BaseQueryTest {
     }
 
     public static XMap launchResponse(XMap data) {
+        try {
+            Thread.sleep(3000);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         data.put(DiscoverResponse.FIELD_RESPONSE_CODE, RESPONSE_CODE);
         data.put(DiscoverResponse.FIELD_DESCRIPTION, "FIELD_DESCRIPTION");
         return  data;
@@ -273,5 +279,14 @@ public class BaseQueryTest {
             .create();
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
+    }
+    
+    public static void throwNewException() {
+        try {
+            throw new Exception("test1");
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 }

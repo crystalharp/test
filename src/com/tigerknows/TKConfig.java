@@ -74,6 +74,8 @@ public class TKConfig {
         
     }
     
+    public static boolean CACHE_BITMAP_TO_MEMORY = false;
+    
     
     //application level configuration
     

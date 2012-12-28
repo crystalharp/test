@@ -14,6 +14,7 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.Response;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.POIResponse;
 import com.tigerknows.model.DataQuery.POIResponse.POIList;
@@ -23,9 +24,7 @@ import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.SpringbackListView.OnRefreshListener;
 import com.tigerknows.view.user.User;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -62,8 +61,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
     private ViewGroup mFilterControlView = null;
     
-    private TextView mResultTxv;
-
     private SpringbackListView mResultLsv = null;
 
     private View mQueryingView = null;
@@ -74,11 +71,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     private TextView mEmptyTxv = null;
     
+    private RetryView mRetryView;
+    
     private POIAdapter mResultAdapter = null;
     
     private DataQuery mDataQuery;
-    
-    private DataQuery mDataQuerying;
     
     private List<POI> mPOIList = new ArrayList<POI>();
     
@@ -90,7 +87,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     private List<Filter> mFilterList = new ArrayList<Filter>();
     
-    private boolean mNotResult = true;
+    static final int STATE_QUERYING = 0;
+    static final int STATE_ERROR = 1;
+    static final int STATE_EMPTY = 2;
+    static final int STATE_LIST = 3;
+    
+    private int mState = STATE_QUERYING;
     
     private Runnable mTurnPageRun = new Runnable() {
         
@@ -104,32 +106,29 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     };
     
     public void setup() {
-        this.mDataQuerying = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
-        this.mNotResult = true;
-
-        DataQuery lastDataQuerying = mDataQuerying;
-        if (lastDataQuerying != null) {
-            POI poi = lastDataQuerying.getPOI();
-            String str;
-            if (poi.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
-                str = mContext.getString(R.string.searching);
-            } else if (poi.getSourceType() == POI.SOURCE_TYPE_CITY_CENTER) {
-                str = mContext.getString(R.string.at_city_searching, mSphinx.getMapEngine().getCityInfo(lastDataQuerying.getCityId()).getCName());
-            } else {
-                str = mContext.getString(R.string.at_location_searching);
-            }
-    
-            if (lastDataQuerying.getSourceViewId() != getId()) {
-                mDataQuery = null;
-                mFilterControlView.setVisibility(View.GONE);
-            }
-            
-            if (lastDataQuerying.isTurnPage() == false) {
-                mResultTxv.setText(str);
-                mQueryingTxv.setText(str);
-                updateView();
-            }
+        DataQuery lastDataQuerying = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
+        if (lastDataQuerying == null) {
+            return;
         }
+        
+        if (lastDataQuerying.getSourceViewId() != getId()) {
+            mDataQuery = null;
+            mFilterControlView.setVisibility(View.GONE);
+        }
+
+        POI poi = lastDataQuerying.getPOI();
+        String str;
+        if (poi.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
+            str = mContext.getString(R.string.searching);
+        } else if (poi.getSourceType() == POI.SOURCE_TYPE_CITY_CENTER) {
+            str = mContext.getString(R.string.at_city_searching, mSphinx.getMapEngine().getCityInfo(lastDataQuerying.getCityId()).getCName());
+        } else {
+            str = mContext.getString(R.string.at_location_searching);
+        }
+        mQueryingTxv.setText(str);
+        
+        this.mState = STATE_QUERYING;
+        updateView();
     }
     
     @Override
@@ -162,11 +161,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mResultAdapter.notifyDataSetChanged();
         }
         mDataQuery = null;
-        mDataQuerying = null;
     }
     
     protected void findViews() {
-        mResultTxv = (TextView) mRootView.findViewById(R.id.result_txv);
         mFilterControlView = (ViewGroup)mRootView.findViewById(R.id.filter_control_view);
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
@@ -175,9 +172,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
         mQueryingTxv = (TextView) mQueryingView.findViewById(R.id.loading_txv);
+        mRetryView = (RetryView) mRootView.findViewById(R.id.retry_view);
     }
 
     protected void setListener() {
+        mRetryView.setOnClickListener(this);
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -209,11 +208,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             DataQuery lastDataQuery = mDataQuery;
-            if (mDataQuerying == null && lastDataQuery != null && mEmptyView.getVisibility() == View.VISIBLE) {
+            if (mState != STATE_QUERYING && mState != STATE_LIST && lastDataQuery != null) {
                 mActionLog.addAction(ActionLog.KeyCodeBack);
-                mNotResult = false;
+                mState = STATE_LIST;
                 updateView();
-                refreshFilter();
+                refreshFilter(lastDataQuery);
                 refreshResultTitleText(lastDataQuery);
                 return true;
             }
@@ -243,18 +242,17 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             str = mContext.getString(R.string.no_result);
         }
         
-        mResultTxv.setText(str);
+        mTitleBtn.setText(str);
         mEmptyTxv.setText(str);
     }
     
-    private void refreshFilter() {
-        mFilterList.clear();
-
-        DataQuery lastDataQuery = mDataQuery;
-        if (lastDataQuery == null) {
+    private void refreshFilter(DataQuery dataQuery) {
+        if (dataQuery == null) {
             return;
         }
-        List<Filter> filterList = lastDataQuery.getFilterList();
+        mFilterList.clear();
+
+        List<Filter> filterList = dataQuery.getFilterList();
         for(Filter filter : filterList) {
             mFilterList.add(filter.clone());
         }
@@ -293,16 +291,24 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     private void updateView() {
-        if (mDataQuerying != null) {
+        if (mState == STATE_QUERYING) {
             mQueryingView.setVisibility(View.VISIBLE);
+            mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
-        } else if (mNotResult) {
+        } else if (mState == STATE_ERROR) {
             mQueryingView.setVisibility(View.GONE);
+            mRetryView.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.GONE);
+            mResultLsv.setVisibility(View.GONE);
+        } else if (mState == STATE_EMPTY){
+            mQueryingView.setVisibility(View.GONE);
+            mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
             mResultLsv.setVisibility(View.GONE);
         } else {
             mQueryingView.setVisibility(View.GONE);
+            mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.VISIBLE);
         }
@@ -311,7 +317,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     private void turnPage(){
         synchronized (this) {
         DataQuery lastDataQuery = mDataQuery;
-        if (mDataQuerying != null || canTurnPage() == false || lastDataQuery == null || mResultLsv.isFooterSpringback() == false) {
+        if (mState != STATE_LIST || canTurnPage() == false || lastDataQuery == null || mResultLsv.isFooterSpringback() == false) {
             mResultLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
             return;
         }
@@ -391,15 +397,23 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.right_btn:
-                if (mDataQuery == null || mPOIList.isEmpty() || mResultLsv.getVisibility() != View.VISIBLE || mNotResult == true || mDataQuerying != null) {
+                if (mPOIList.isEmpty() || mState != STATE_LIST) {
                     return;
                 }
                 mActionLog.addAction(ActionLog.SearchResultMap);
                 viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 
+            case R.id.retry_btn:
+                if (mBaseQuerying != null) {
+                    mBaseQuerying.setResponse(null);
+                    mSphinx.queryStart(mBaseQuerying);
+                }
+                setup();
+                break;
+                
             default:
-                if (mDataQuerying != null || mDataQuery == null) {
+                if (mState != STATE_LIST || mDataQuery == null) {
                     return;
                 }
                 
@@ -641,56 +655,42 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         super.onPostExecute(tkAsyncTask);
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
         
-        if (mDataQuerying != null && dataQuery != mDataQuerying || dataQuery.isStop()) {
+        mResultLsv.onRefreshComplete(false);
+        if (dataQuery.isStop()) {
             return;
         }
 
-        boolean exit = true;
-        if (dataQuery.getCriteria().containsKey(BaseQuery.SERVER_PARAMETER_INDEX)) {
-            int index = Integer.parseInt(dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_INDEX));
-            if (index > 0) {
-                mResultLsv.onRefreshComplete(false);
-                mResultLsv.setFooterSpringback(true);
-                exit = false;
-            }
-        }
-
-        boolean filter = false;
-        if (dataQuery.getCriteria().containsKey(DataQuery.SERVER_PARAMETER_FILTER) && exit) {
-            filter = true;
-            exit = false;
-        }
+        mResultLsv.setFooterSpringback(false);
         if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.checkResponseCode(dataQuery, mSphinx, null, !filter, this, exit)) {
-            if (filter) {
-                mDataQuerying = null;
-                mNotResult = true;
-//                updateView();
-                final AlertDialog alertDialog = CommonUtils.getAlertDialog(mSphinx);
-                alertDialog.setCancelable(false);
-                alertDialog.setMessage(mSphinx.getString(BaseActivity.getResponseResId(dataQuery)));
-                alertDialog.setButton(mSphinx.getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        alertDialog.dismiss();
-                        mNotResult = false;
-                        updateView();
-                        refreshFilter();
-                        refreshResultTitleText(mDataQuery);
+        } else {
+            Response response = dataQuery.getResponse();
+            if (response != null) {
+                int responsCode = response.getResponseCode();
+                if (responsCode != Response.RESPONSE_CODE_OK) {
+                    if (dataQuery.isTurnPage()) {
+                        return;
                     }
-                });
-                alertDialog.show();
-                
+                    int resid = BaseActivity.getResponseResId(dataQuery);
+                    mRetryView.setText(resid);
+                    mState = STATE_ERROR;
+                    updateView();
+                    return;
+                }
+            } else {
+                if (dataQuery.isTurnPage()) {
+                    mResultLsv.setFooterSpringback(true);
+                    return;
+                }
+                mRetryView.setText(R.string.network_failed);
+                mState = STATE_ERROR;
+                updateView();
+                return;
             }
-            return;
         }
-        mResultLsv.onRefreshComplete(false);
-        mResultLsv.setFooterSpringback(false);
-        
-        mDataQuerying = null;
+
+        refreshFilter(dataQuery);
         POIResponse poiResponse = (POIResponse)dataQuery.getResponse();
         if ((poiResponse.getAPOIList() != null && 
                 poiResponse.getAPOIList().getList() != null && 
@@ -700,9 +700,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 poiResponse.getBPOIList().getList().size() > 0)) {
       
             mDataQuery = dataQuery;
-            mNotResult = false;
-
-            updateView();
+            mState = STATE_LIST;
 
             POIList poiList = poiResponse.getBPOIList();
             List<POI> bPOIList = null;
@@ -753,10 +751,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 mPOIList.addAll(bPOIList);
             }
 
-            mResultAdapter.notifyDataSetChanged();
-
-            refreshResultTitleText(dataQuery);
-
             if (dataQuery.getSourceViewId() == R.id.view_poi_nearby) {
                 if (this.mSphinx.uiStackContains(R.id.view_favorite)) {
                     mSphinx.uiStackClear();
@@ -775,17 +769,17 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
             }
 
-            refreshFilter();
             mResultLsv.setFooterSpringback(canTurnPage());
         } else {
-            if (!dataQuery.isStop()) {
-                refreshResultTitleText(dataQuery);
-
-                if (!dataQuery.isTurnPage()) {
-                    updateView();
-                }
+            if (dataQuery.isTurnPage()) {
+                return;
             }
+            mState = STATE_EMPTY;
         }
+
+        refreshResultTitleText(dataQuery);
+        updateView();
+        mResultAdapter.notifyDataSetChanged();
         
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);

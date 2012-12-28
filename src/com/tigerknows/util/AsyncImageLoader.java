@@ -3,6 +3,7 @@ package com.tigerknows.util;
 
 import com.decarta.Globals;
 import com.tigerknows.ImageCache;
+import com.tigerknows.TKConfig;
 import com.tigerknows.net.TKParameters;
 import com.tigerknows.net.Utility;
 
@@ -41,10 +42,12 @@ public class AsyncImageLoader {
      */
     public BitmapDrawable loadDrawable(final Context context, final TKURL imageUrl, final ImageCallback callback) {
         // 如果缓存过就从缓存中取出数据
-        if (imageCache.containsKey(imageUrl.url)) {
-            SoftReference<BitmapDrawable> softReference = imageCache.get(imageUrl.url);
-            if (softReference.get() != null) {
-                return softReference.get();
+        if (TKConfig.CACHE_BITMAP_TO_MEMORY) {
+            if (imageCache.containsKey(imageUrl.url)) {
+                SoftReference<BitmapDrawable> softReference = imageCache.get(imageUrl.url);
+                if (softReference.get() != null) {
+                    return softReference.get();
+                }
             }
         }
         final ImageCache imageCache1 = Globals.getImageCache();
@@ -57,7 +60,9 @@ public class AsyncImageLoader {
         }
         if (bitmap != null) {
             BitmapDrawable bitmapDrawable = new BitmapDrawable(bitmap);
-            imageCache.put(imageUrl.url, new SoftReference<BitmapDrawable>(bitmapDrawable));
+            if (TKConfig.CACHE_BITMAP_TO_MEMORY) {
+                imageCache.put(imageUrl.url, new SoftReference<BitmapDrawable>(bitmapDrawable));
+            }
             return bitmapDrawable;
         }
 
@@ -72,7 +77,9 @@ public class AsyncImageLoader {
                     final BitmapDrawable bitmapDrawable = loadImageFromUrl(context, imageUrl);
 
                     if (bitmapDrawable != null) {
-                        imageCache.put(imageUrl.url, new SoftReference<BitmapDrawable>(bitmapDrawable));
+                        if (TKConfig.CACHE_BITMAP_TO_MEMORY) {
+                            imageCache.put(imageUrl.url, new SoftReference<BitmapDrawable>(bitmapDrawable));
+                        }
                     }
                     
                     handler.post(new Runnable() {
@@ -160,8 +167,10 @@ public class AsyncImageLoader {
     }
     
     public void put(final String url, BitmapDrawable bitmapDrawable) {
-        if (imageCache.containsKey(url) == false) {
-            imageCache.put(url, new SoftReference<BitmapDrawable>(bitmapDrawable));
+        if (TKConfig.CACHE_BITMAP_TO_MEMORY) {
+            if (imageCache.containsKey(url) == false) {
+                imageCache.put(url, new SoftReference<BitmapDrawable>(bitmapDrawable));
+            }
         }
     }
 }
