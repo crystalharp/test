@@ -108,80 +108,6 @@
 	                android:textSize="15sp"
 	                android:text="@string/app_name"
 	                android:focusable="false" /> 
-	            
-	           <LinearLayout 
-	               android:layout_width="fill_parent"
-	               android:layout_height="wrap_content" 
-	               android:paddingTop="6dp"
-	               android:orientation="horizontal"
-	               android:gravity="center"
-	               android:weightSum="5">
-	                   
-	               <Button android:id="@+id/traffic_btn" 
-	                   android:layout_width="wrap_content" 
-	                   android:layout_height="wrap_content"
-	                   android:layout_weight="1"
-	                   android:paddingBottom="8dp"
-	                   android:drawableTop="@drawable/ic_goto_here"
-	                   android:background="@drawable/btn_default"
-	                   android:textSize="10sp"
-	                   android:textColor="@android:color/black"
-	                   android:text="@string/come_here"
-	                   android:gravity="center"/>
-	               
-	               <Button android:id="@+id/poi_btn" 
-	                   android:layout_width="wrap_content" 
-	                   android:layout_height="wrap_content"
-	                   android:layout_weight="1"
-	                   android:layout_marginLeft="2dp"
-	                   android:paddingBottom="8dp"
-	                   android:drawableTop="@drawable/ic_search_nearby"
-	                   android:background="@drawable/btn_default"
-	                   android:textSize="10sp"
-	                   android:textColor="@android:color/black"
-	                   android:text="@string/search_nearby"
-	                   android:gravity="center"/>
-	                   
-	               <Button android:id="@+id/favorite_btn" 
-	                   android:layout_width="wrap_content" 
-	                   android:layout_height="wrap_content"
-	                   android:layout_weight="1"
-	                   android:layout_marginLeft="2dp"
-	                   android:paddingBottom="8dp"
-	                   android:drawableTop="@drawable/ic_favorite"
-	                   android:background="@drawable/btn_default"
-	                   android:textSize="10sp"
-	                   android:textColor="@android:color/black"
-	                   android:text="@string/favorite"
-	                   android:gravity="center"/>
-	               
-	               <Button android:id="@+id/share_btn" 
-	                   android:layout_width="wrap_content" 
-	                   android:layout_height="wrap_content"
-	                   android:layout_weight="1"
-	                   android:layout_marginLeft="2dp"
-	                   android:paddingBottom="8dp"
-	                   android:drawableTop="@drawable/ic_share"
-	                   android:background="@drawable/btn_default"
-	                   android:textSize="10sp"
-	                   android:textColor="@android:color/black"
-	                   android:text="@string/share"
-	                   android:gravity="center"/>
-	                   
-	               <Button android:id="@+id/error_recovery_btn" 
-	                   android:layout_width="wrap_content" 
-	                   android:layout_height="wrap_content"
-	                   android:layout_weight="1"
-	                   android:layout_marginLeft="2dp"
-	                   android:paddingBottom="8dp"
-	                   android:drawableTop="@drawable/ic_recovery_error"
-	                   android:background="@drawable/btn_default"
-	                   android:textSize="10sp"
-	                   android:textColor="@android:color/black"
-	                   android:text="@string/error_recovery"
-	                   android:gravity="center"/>
-	                   
-	           </LinearLayout>
             </LinearLayout>
                 
             <LinearLayout
@@ -360,4 +286,78 @@
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="8dp">
 	</include> 
+	            
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:weightSum="5">
+            
+        <Button android:id="@+id/traffic_btn" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:paddingBottom="8dp"
+            android:drawableTop="@drawable/ic_goto_here"
+            android:background="@drawable/btn_default"
+            android:textSize="10sp"
+            android:textColor="@android:color/black"
+            android:text="@string/come_here"
+            android:gravity="center"/>
+        
+        <Button android:id="@+id/poi_btn" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="2dp"
+            android:paddingBottom="8dp"
+            android:drawableTop="@drawable/ic_search_nearby"
+            android:background="@drawable/btn_default"
+            android:textSize="10sp"
+            android:textColor="@android:color/black"
+            android:text="@string/search_nearby"
+            android:gravity="center"/>
+            
+        <Button android:id="@+id/favorite_btn" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="2dp"
+            android:paddingBottom="8dp"
+            android:drawableTop="@drawable/ic_favorite"
+            android:background="@drawable/btn_default"
+            android:textSize="10sp"
+            android:textColor="@android:color/black"
+            android:text="@string/favorite"
+            android:gravity="center"/>
+        
+        <Button android:id="@+id/share_btn" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="2dp"
+            android:paddingBottom="8dp"
+            android:drawableTop="@drawable/ic_share"
+            android:background="@drawable/btn_default"
+            android:textSize="10sp"
+            android:textColor="@android:color/black"
+            android:text="@string/share"
+            android:gravity="center"/>
+            
+        <Button android:id="@+id/error_recovery_btn" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginLeft="2dp"
+            android:paddingBottom="8dp"
+            android:drawableTop="@drawable/ic_recovery_error"
+            android:background="@drawable/btn_default"
+            android:textSize="10sp"
+            android:textColor="@android:color/black"
+            android:text="@string/error_recovery"
+            android:gravity="center"/>
+            
+    </LinearLayout>
 </RelativeLayout>

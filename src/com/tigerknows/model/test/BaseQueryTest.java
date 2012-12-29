@@ -1,10 +1,13 @@
 package com.tigerknows.model.test;
 
 import com.decarta.Globals;
+import com.decarta.android.map.MapView;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.maps.MapEngine;
+import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery;
@@ -44,6 +47,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Hashtable;
+import java.util.List;
 
 public class BaseQueryTest {
     
@@ -288,5 +292,103 @@ public class BaseQueryTest {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+    
+    public static void changeCity(final Sphinx sphinx) {
+        
+      //自动切换全国各个城市
+      new Thread(new Runnable() {
+          
+          @Override
+          public void run() {
+              MapEngine mapEngine = MapEngine.getInstance();
+              final MapView mapView = sphinx.getMapView();
+              List<CityInfo>  sAllCityInfoList = mapEngine.getAllProvinceCityList(sphinx);
+              boolean stop = false;
+              for(CityInfo cityInfo : sAllCityInfoList) {
+                  List<CityInfo> cityInfoList = cityInfo.getCityList();
+                  for(final CityInfo c2 : cityInfoList) {
+                      if (TextUtils.isEmpty(TKConfig.getPref(sphinx, TKConfig.PREFS_ACQUIRE_WAKELOCK, "")) == false) {
+                          stop = true;
+                          
+                          sphinx.runOnUiThread(new Runnable() {
+                              
+                              @Override
+                              public void run() {
+                                  Toast.makeText(sphinx, "Stop!!!", 10*1000).show();
+                              }
+                          });
+                          break;
+                      }
+                      
+                      sphinx.runOnUiThread(new Runnable() {
+                          
+                          @Override
+                          public void run() {
+                              sphinx.changeCity(c2.getId());
+                          }
+                      });
+                      try {
+                          Thread.sleep(5*1000);
+                          sphinx.runOnUiThread(new Runnable() {
+                              
+                              @Override
+                              public void run() {
+                                  mapView.zoomTo((int)(mapView.getZoomLevel()+2));
+                              }
+                          });
+                          Thread.sleep(5*1000);
+                      } catch (InterruptedException e2) {
+                          // TODO Auto-generated catch block
+                          e2.printStackTrace();
+                      }
+                      
+                  }
+                  if (stop) {
+                      break;
+                  }
+              }
+          }
+      }).start();
+    }
+    
+    public static void moveView(final Sphinx sphinx, final int offset) {
+        
+      new Thread(new Runnable() {
+          
+          @Override
+          public void run() {
+              final MapView mMapView = sphinx.getMapView();
+              boolean stop = false;
+              while (stop == false) {
+                  if (TextUtils.isEmpty(TKConfig.getPref(sphinx, TKConfig.PREFS_ACQUIRE_WAKELOCK, "")) == false) {
+                      stop = true;
+
+                      sphinx.runOnUiThread(new Runnable() {
+
+                          @Override
+                          public void run() {
+                              Toast.makeText(sphinx, "Stop!!!", 10 * 1000).show();
+                          }
+                      });
+                      break;
+                  }
+                  try {
+                      Thread.sleep(5 * 1000);
+                      sphinx.runOnUiThread(new Runnable() {
+
+                          @Override
+                          public void run() {
+                              mMapView.moveView(0, offset);
+                          }
+                      });
+                      Thread.sleep(5 * 1000);
+                  } catch (InterruptedException e2) {
+                      // TODO Auto-generated catch block
+                      e2.printStackTrace();
+                  }
+              }
+          }
+      }).start();
     }
 }

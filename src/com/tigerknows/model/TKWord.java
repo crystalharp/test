@@ -16,7 +16,7 @@ public class TKWord {
     
     public static final int ATTRIBUTE_SUGGEST = 2;
     
-    public int attribute=0;
+    public int attribute=ATTRIBUTE_HISTORY;
     public String word;
     public Position position;
     
@@ -43,9 +43,9 @@ public class TKWord {
             if (word != null) {
                 hash += word.hashCode();
             }
-            if (position != null) {
-                hash += position.hashCode();
-            }
+//            if (position != null) {
+//                hash += position.hashCode();
+//            }
             hashCode = hash;
         }
         
@@ -61,9 +61,9 @@ public class TKWord {
             TKWord other = (TKWord) object;
             if (attribute == other.attribute || (attribute != ATTRIBUTE_CLEANUP && other.attribute != ATTRIBUTE_CLEANUP)) {
                 if ((word != null && word.equals(other.word)) || (word == null && word == other.word)) {
-                    if ((position != null && position.equals(other.position)) || (position == null && position == other.position)) {
+//                    if ((position != null && position.equals(other.position)) || (position == null && position == other.position)) {
                         return true;
-                    }
+//                    }
                 }
             }
         }

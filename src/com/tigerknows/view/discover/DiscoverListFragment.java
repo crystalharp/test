@@ -11,6 +11,7 @@ import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.model.BaseData;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.POI;
@@ -520,39 +521,32 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         
         int minIndex = page[0];
         int maxIndex = page[1];
-        List<POI> poiList = new ArrayList<POI>();
+        List<BaseData> dataList = new ArrayList<BaseData>();
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mTuangouList.size(); minIndex++) {
-                POI poi = mTuangouList.get(minIndex).getPOI();
-                poi.setName(mTuangouList.get(minIndex).getShortDesc());
-//                poi.setOrderNumber(minIndex+1);
-                poiList.add(poi);
+                Tuangou data = mTuangouList.get(minIndex);
+                data.setOrderNumber(minIndex+1);
+                dataList.add(data);
             }
             mSphinx.getTuangouDetailFragment().setData(mTuangouList, page[2], DiscoverListFragment.this);
         } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
             
         } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
             for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mYanchuList.size(); minIndex++) {
-                Yanchu yanchu = mYanchuList.get(minIndex);
-                yanchu.setOrderNumber(minIndex+1);
-                POI poi = yanchu.getPOI();
-                poi.setName(yanchu.getName());
-                poi.setAddress(null);
-                poiList.add(poi);
+                Yanchu data = mYanchuList.get(minIndex);
+                data.setOrderNumber(minIndex+1);
+                dataList.add(data);
             }
             mSphinx.getYanchuDetailFragment().setData(mYanchuList, page[2], DiscoverListFragment.this);
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
             for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mZhanlanList.size(); minIndex++) {
-                Zhanlan zhanlan = mZhanlanList.get(minIndex);
-                zhanlan.setOrderNumber(minIndex+1);
-                POI poi = zhanlan.getPOI();
-                poi.setName(zhanlan.getName());
-                poi.setAddress(null);
-                poiList.add(poi);
+                Zhanlan data = mZhanlanList.get(minIndex);
+                data.setOrderNumber(minIndex+1);
+                dataList.add(data);
             }
             mSphinx.getZhanlanDetailFragment().setData(mZhanlanList, page[2], DiscoverListFragment.this);
         }
-        if (poiList.isEmpty()) {
+        if (dataList.isEmpty()) {
             return;
         }
         int name = R.string.tuangou_ditu;
@@ -564,7 +558,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             name = R.string.zhanlan_ditu;
             actionTag = ActionLog.MapZhanlanList;
         }
-        mSphinx.showPOI(poiList, page[2], TextAlign.LEFT);
+        mSphinx.drawDataToMap(dataList, page[2]);
         mSphinx.getResultMapFragment().setData(mContext.getString(name), actionTag);
         mSphinx.showView(R.id.view_result_map);   
     }
