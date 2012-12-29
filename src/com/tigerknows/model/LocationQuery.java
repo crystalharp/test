@@ -203,7 +203,7 @@ public class LocationQuery extends BaseQuery {
             if (scanResults != null) {
                 for(int i = scanResults.size() - 1; i >= 0; i--) {
                     ScanResult scanResult = scanResults.get(i);
-                    locationParameter.wifiList.add(scanResult.BSSID);
+                    locationParameter.wifiList.add(new TKScanResult(scanResult.BSSID, scanResult.level));
                 }
             }
         }
@@ -286,7 +286,7 @@ public class LocationQuery extends BaseQuery {
         public int mcc = -1;
         public TKCellLocation tkCellLocation = null;
         public List<TKNeighboringCellInfo> neighboringCellInfoList = new ArrayList<TKNeighboringCellInfo>();
-        public List<String> wifiList = new ArrayList<String>();
+        public List<TKScanResult> wifiList = new ArrayList<TKScanResult>();
         private volatile int hashCode = 0;
         
         public boolean equalsCellInfo(LocationParameter other) {
@@ -339,7 +339,7 @@ public class LocationQuery extends BaseQuery {
             return 0;
         }
         
-        private int matchWifi(List<String> list1, List<String> list2) {
+        private int matchWifi(List<TKScanResult> list1, List<TKScanResult> list2) {
             int match = 0;
             if (list1 == null || list2 == null) {
                 return match;
@@ -347,10 +347,10 @@ public class LocationQuery extends BaseQuery {
             int mySize = list1.size();
             int otherSize = list2.size();
             for(int i = mySize-1; i >= 0; i--) {
-                String scanResult = list1.get(i);
+                String BSSID = list1.get(i).BSSID;
                 for(int j = otherSize-1; j >= 0; j--) {
-                    String otherScanResult = list2.get(j);
-                    if (scanResult.equals(otherScanResult)) {
+                    String otherBSSID = list2.get(j).BSSID;
+                    if (BSSID.equals(otherBSSID)) {
                         match++;
                         break;
                     }
@@ -402,7 +402,7 @@ public class LocationQuery extends BaseQuery {
                     result = neighboringCellInfo.hashCode();
                 }
                 for(int i = wifiList.size()-1; i >= 0; i--) {
-                    String bssid = wifiList.get(i);
+                    String bssid = wifiList.get(i).BSSID;
                     result = result + bssid.hashCode();
                 }
                 hashCode = result;
@@ -427,7 +427,7 @@ public class LocationQuery extends BaseQuery {
         public String getWifiString() {
             StringBuilder s = new StringBuilder();
             for(int i = wifiList.size()-1; i >= 0; i--) {
-                String bssid = wifiList.get(i);
+                String bssid = wifiList.get(i).BSSID;
                 s.append(bssid);
                 if (i > 0) {
                     s.append(",");
@@ -575,4 +575,65 @@ public class LocationQuery extends BaseQuery {
         }
     }
     
+    public static class TKScanResult {
+        public String BSSID;
+        public int level;
+        private volatile int hashCode = 0;
+        
+        public TKScanResult(String BSSID) {
+            this(BSSID, 0);
+        }
+        
+        public TKScanResult(String BSSID, int level) {
+            this.BSSID = BSSID;
+            this.level = level;
+        }
+        
+        @Override
+        public int hashCode() {
+            if (hashCode == 0) {
+                int result = BSSID.hashCode();
+                hashCode = result;
+            }
+            return hashCode;
+        }
+        
+        @Override
+        public boolean equals(Object object) {
+            if (object == null) {
+                return false;
+            }
+            if (object instanceof TKScanResult) {
+                TKScanResult other = (TKScanResult) object;
+                if ((BSSID != null && BSSID.equals(other.BSSID)) ||
+                        (BSSID == null && other.BSSID == null)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        
+        public String toString() {
+            return BSSID+","+level;
+        }
+        
+        public static TKScanResult parse(String str) {
+            TKScanResult tkScanResult = null;
+            if (str != null) {
+                String[] arr = str.split(",");
+                if (arr.length == 1) {
+                    tkScanResult = new TKScanResult(arr[0]);
+                } else if (arr.length == 2) {
+                    String bssid = arr[0];
+                    try {
+                        int level = Integer.parseInt(arr[1]);
+                        tkScanResult = new TKScanResult(bssid, level);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+            return tkScanResult;
+        }
+    }
 }

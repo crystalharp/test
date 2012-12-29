@@ -9,6 +9,7 @@ import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.LocationQuery.LocationParameter;
 import com.tigerknows.model.LocationQuery.TKCellLocation;
 import com.tigerknows.model.LocationQuery.TKNeighboringCellInfo;
+import com.tigerknows.model.LocationQuery.TKScanResult;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -36,14 +37,14 @@ public class LocationTable {
 
 	// COLUMNS
     public static final String ID = "_id";
-	public static final String HASHCODE = "hashCode";
-	public static final String MNC = "mnc";
-	public static final String MCC = "mcc";
-    public static final String TKCELLLOCATION = "TKCellLocation";
-    public static final String NEIGHBORINGCELLINFO_LIST = "neighboringCellInfoList";
-    public static final String WIFI_LIST = "wifiList";
-    public static final String LOCATION = "location";
-    public static final String PROVIDER = "provider";
+	public static final String HASHCODE = "tk_hashCode";
+	public static final String MNC = "tk_mnc";
+	public static final String MCC = "tk_mcc";
+    public static final String TKCELLLOCATION = "tk_TKCellLocation";
+    public static final String NEIGHBORINGCELLINFO_LIST = "tk_neighboringCellInfoList";
+    public static final String WIFI_LIST = "tk_wifiList";
+    public static final String LOCATION = "tk_location";
+    public static final String PROVIDER = "tk_provider";
 
     public static final int PROVIDER_TIGERKNOWS = 0;
     public static final int PROVIDER_GPS = 1;
@@ -198,9 +199,11 @@ public class LocationTable {
                 }
                 str= mCursor.getString(4);
                 if (TextUtils.isEmpty(str) == false) {
-                    String[] arr = str.split(",");
+                    String[] arr = str.split(";");
                     for(int i = arr.length - 1; i >= 0; i--) {
-                        locationParameter.wifiList.add(arr[i]);
+                        TKScanResult tkScanResult = TKScanResult.parse(arr[i]);
+                        if (tkScanResult != null)
+                            locationParameter.wifiList.add(tkScanResult);
                     }
                 }
                 str= mCursor.getString(5);
