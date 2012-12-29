@@ -1,6 +1,8 @@
 package com.tigerknows.view;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -54,6 +56,10 @@ public class TrafficQueryEventHelper {
 		startSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mStart, SuggestAndHistoryAdapter.HISTORY_TRAFFIC_TYPE);
 		endSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mEnd, SuggestAndHistoryAdapter.HISTORY_TRAFFIC_TYPE);
 		buslineSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mBusline, SuggestAndHistoryAdapter.HISTORY_BUSLINE_TYPE);
+		
+		//由于traffic_query_input_line.xml中只能统一设置起终点输入框的imeoption，textwatcher也是统一监测起终点和busline的建议词
+		//这里只好在代码里设置终点输入框的imeoption为actiondone
+		mQueryFragment.mEnd.getEdt().setImeOptions(EditorInfo.IME_ACTION_DONE);
 	}
 	
 	/*
@@ -91,8 +97,10 @@ public class TrafficQueryEventHelper {
 		mQueryFragment.mStart.getRightImg().setOnClickListener(new BookmarkClickListener(mQueryFragment.mStart));
 		mQueryFragment.mEnd.getRightImg().setOnClickListener(new BookmarkClickListener(mQueryFragment.mEnd));
 		
-		mQueryFragment.mStart.getEdt().setOnEditorActionListener(new EditorActionListener(mQueryFragment.mStart));
-		mQueryFragment.mEnd.getEdt().setOnEditorActionListener(new EditorActionListener(mQueryFragment.mEnd));
+//		mQueryFragment.mStart.getEdt().setOnEditorActionListener(new EditorActionListener(mQueryFragment.mStart));
+//		mQueryFragment.mEnd.getEdt().setOnEditorActionListener(new EditorActionListener(mQueryFragment.mEnd));
+		mQueryFragment.mStart.getEdt().setOnEditorActionListener(new StartEndEdtClickListener(mQueryFragment.mStart));
+		mQueryFragment.mEnd.getEdt().setOnEditorActionListener(new StartEndEdtClickListener(mQueryFragment.mEnd));
 		mQueryFragment.mBusline.getEdt().setOnEditorActionListener(new EditorActionListener(mQueryFragment.mBusline));
 
 		mQueryFragment.mRootView.setOnTouchListener(new RootViewTouchListener());
@@ -160,6 +168,31 @@ public class TrafficQueryEventHelper {
 		mQueryFragment.mEnd.getEdt().removeTextChangedListener(endSuggestWatcher);
 		mQueryFragment.mBusline.getEdt().removeTextChangedListener(buslineSuggestWatcher);
 	}
+	
+	protected class StartEndEdtClickListener implements OnEditorActionListener {
+		private QueryEditText mStart, mEnd, mQueryEdit;
+		
+		public StartEndEdtClickListener(QueryEditText queryEdit) {
+			mStart = mQueryFragment.mStart;
+			mEnd = mQueryFragment.mEnd;
+			mQueryEdit = queryEdit;
+			Map<QueryEditText, QueryEditText> NextTable = new HashMap<QueryEditText, QueryEditText>();
+			NextTable.put(mQueryFragment.mStart, mQueryFragment.mEnd);
+			NextTable.put(mQueryFragment.mEnd, mQueryFragment.mStart);
+		}
+		
+		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+			if (actionId == EditorInfo.IME_ACTION_NEXT || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+				if (!mStart.isEmpty() && !mEnd.isEmpty()) {
+					//都有内容，搜索
+					mQueryFragment.query();
+					return true;
+				}
+			}
+			
+			return false;
+		}
+	}
 
 	protected class SelectStartEndBtnClickListener implements OnClickListener {
 
@@ -202,21 +235,22 @@ public class TrafficQueryEventHelper {
 			// TODO Auto-generated method stub
 			mQueryFragment.mSelectedEdt = mQueryEdt;
 			
-        	if (TextUtils.isEmpty(mQueryEdt.getEdt().getText())) {
-        		mQueryFragment.mBlock.requestFocus();
-        		//若文本为空, 右边图片显示为"小词典", 点击后提供三个选项
-        		/*
-        		 * 显示选择对话框
-        		 */
-        		String title = (mQueryEdt.getPosition() == TrafficQueryFragment.START) ? mQueryFragment.mContext.getString(R.string.select_start_station) : mQueryFragment.mContext.getString(R.string.select_end_station);
-        		boolean hasMyLocation = (Globals.g_My_Location_City_Info != null);
-        		
-        		SelectionDialogBuilder dialog = new SelectionDialogBuilder(mQueryFragment.mSphinx, mQueryEdt, title, hasMyLocation);
-        		dialog.show();
-        		
-        		mQueryFragment.mSphinx.hideSoftInput(mQueryEdt.getEdt().getWindowToken());
-        		mQueryFragment.mLogHelper.logForClickBookmarkOnEditText(mQueryEdt);
-        	} else {
+//        	if (TextUtils.isEmpty(mQueryEdt.getEdt().getText())) {
+//        		mQueryFragment.mBlock.requestFocus();
+//        		//若文本为空, 右边图片显示为"小词典", 点击后提供三个选项
+//        		/*
+//        		 * 显示选择对话框
+//        		 */
+//        		String title = (mQueryEdt.getPosition() == TrafficQueryFragment.START) ? mQueryFragment.mContext.getString(R.string.select_start_station) : mQueryFragment.mContext.getString(R.string.select_end_station);
+//        		boolean hasMyLocation = (Globals.g_My_Location_City_Info != null);
+//        		
+//        		SelectionDialogBuilder dialog = new SelectionDialogBuilder(mQueryFragment.mSphinx, mQueryEdt, title, hasMyLocation);
+//        		dialog.show();
+//        		
+//        		mQueryFragment.mSphinx.hideSoftInput(mQueryEdt.getEdt().getWindowToken());
+//        		mQueryFragment.mLogHelper.logForClickBookmarkOnEditText(mQueryEdt);
+//        	} else {
+        	if (!mQueryEdt.isEmpty()) {
         		//若文本不为空, 右边图片显示为"删除", 点击后删除输入框内文字
         		mQueryEdt.clear();
         		mQueryEdt.getEdt().requestFocus();
@@ -561,7 +595,8 @@ public class TrafficQueryEventHelper {
 			if (!TextUtils.isEmpty(mQueryEdt.getEdt().getText())) {
 				mQueryEdt.getRightImg().setBackgroundResource(R.drawable.btn_delete);
 			} else {
-				mQueryEdt.getRightImg().setBackgroundResource(R.drawable.btn_bookmark);
+//				mQueryEdt.getRightImg().setBackgroundResource(R.drawable.btn_bookmark);
+				mQueryEdt.getRightImg().setBackgroundResource(0);
 			}
 
 //			checkQueryState();
