@@ -35,6 +35,7 @@ import com.tigerknows.MapDownload.DownloadCity;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.UserLogonModel;
 import com.tigerknows.model.UserLogonModel.SoftwareUpdate;
+import com.tigerknows.service.DownloadService;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.view.user.UserBaseActivity;
 import com.tigerknows.view.user.UserLoginActivity;
@@ -392,8 +393,9 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                             case DialogInterface.BUTTON_POSITIVE:
                                 String url = finalSoftwareUpdate.getURL();
                                 if (!TextUtils.isEmpty(url)) {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalSoftwareUpdate.getURL()));
-                                    mSphinx.startActivity(intent);
+                                    Intent service = new Intent(mSphinx, DownloadService.class);
+                                    service.putExtra("url", url);
+                                    mSphinx.startService(service);
                                 }
                                 break;
 
