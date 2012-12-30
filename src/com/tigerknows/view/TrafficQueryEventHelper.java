@@ -188,6 +188,7 @@ public class TrafficQueryEventHelper {
 					mQueryFragment.query();
 					return true;
 				}
+				return false;
 			}
 			
 			return false;

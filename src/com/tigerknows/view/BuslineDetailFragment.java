@@ -93,14 +93,14 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         mResultLsv.setAdapter(mResultAdapter);
 
         if (line.getLength() > 1000) {
-    		mLengthTxv.setText(mContext.getString(R.string.traffic_result_length_km, CommonUtils.meter2kilometre(line.getLength())));
+    		mLengthTxv.setText(mContext.getString(R.string.busline_detail_subtitle1_km, CommonUtils.meter2kilometre(line.getLength())));
     	} else {
-    		mLengthTxv.setText(mContext.getString(R.string.traffic_result_length_m, line.getLength()));
+    		mLengthTxv.setText(mContext.getString(R.string.busline_detail_subtitle1_m, line.getLength()));
     	}
         mNameTxv.setText(line.getName());
         mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
         if (!TextUtils.isEmpty(line.getTime())) {
-        	mTimeTxv.setText(mContext.getString(R.string.transfer_operation_time, line.getTime()));
+        	mTimeTxv.setText(mContext.getString(R.string.busline_detail_subtitle2, line.getTime()));
         	mTimeTxv.setVisibility(View.VISIBLE);
         } else {
         	mTimeTxv.setVisibility(View.GONE);
