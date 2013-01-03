@@ -125,7 +125,8 @@
     
     <string name="download_software_title">新版本软件下载</string>
     <string name="downloading_software_message">正在下载新版本老虎宝典软件...</string>
-
+ 	<string name="download_service">老虎宝典下载</string>
+ 	
     <string name="tip_longpress_select_traffic">长按可选择交通查询起终点</string>
     
     <string name="current_city">当前城市: %1$s</string>
