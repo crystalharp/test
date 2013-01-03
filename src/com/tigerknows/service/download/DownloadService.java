@@ -114,7 +114,6 @@ public class DownloadService extends IntentService {
             long length = entity.getContentLength();
             InputStream is = entity.getContent();
             File tempFile = null;
-            int download_precent = 0;
             if (is != null) {
                 String path = MapEngine.getInstance().getMapPath();
                 File rootFile = new File(path);
@@ -136,15 +135,20 @@ public class DownloadService extends IntentService {
 
                 int read;
                 long count = 0;
-                int precent = 0;
+                int percent = 0;
+                int download_percent = 0;
                 byte[] buffer = new byte[1024];
                 while ((read = bis.read(buffer)) != -1 && !cancelUpdate) {
                     bos.write(buffer, 0, read);
                     count += read;
-                    precent = (int)(((double)count / length) * 100);
-                    views.setTextViewText(R.id.process_txv, "已下载" + download_precent + "%");
-                    views.setProgressBar(R.id.process_prb, 100, download_precent, false);
-                    nm.notify(notificationId, notification);
+                    percent = (int)(((double)count / length) * 100);
+                    if(percent - download_percent >= 1) {
+	                    views.setTextViewText(R.id.process_txv, "已下载" + percent + "%");
+	                    views.setProgressBar(R.id.process_prb, 100, percent, false);
+	                    notification.contentView = views;
+	                    nm.notify(notificationId, notification);
+	                    download_percent = percent;
+                    }
                 }
                 bos.flush();
                 bos.close();
