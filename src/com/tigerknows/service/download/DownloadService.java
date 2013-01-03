@@ -74,7 +74,8 @@ public class DownloadService extends IntentService {
 		    File tempFile = downFile(url);
 		    if(tempFile != null) {
 			    DownloadedProcessor processor = processorMap.get(url);
-	        	processor.process(tempFile, this);
+			    if(processor != null)
+			    	processor.process(tempFile, this);
                 nm.cancel(notificationId); // TODO: 如果下载失败，是否需要cancel？
 		    }
 		}
