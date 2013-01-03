@@ -2,6 +2,7 @@
 package com.tigerknows.view;
 
 import com.decarta.CONFIG;
+import com.tigerknows.R;
 import com.tigerknows.util.CommonUtils;
 
 import android.content.Context;
@@ -34,6 +35,10 @@ public class ScaleView extends View {
     private float metersPerPixelAtZoom = -1;
     
     private int zoom = -1;
+    
+    private String meter;
+    
+    private String km;
 
     private static int[] GENERALIZE_ZOOM_LEVEL_METERS={
         100000,  //zoom 0
@@ -61,6 +66,9 @@ public class ScaleView extends View {
 
     public ScaleView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        meter = context.getString(R.string.meter);
+        km = context.getString(R.string.km);
+        
         initView();
     }
 
@@ -110,13 +118,26 @@ public class ScaleView extends View {
         // 直横线
         canvas.drawLine(paddingLeft, mVerticalLineHeight, scale+paddingLeft, mVerticalLineHeight, mLinePaint);
 
+        int distance = GENERALIZE_ZOOM_LEVEL_METERS[zoom];
+        String text;
+        if (distance >= 1000) {
+            if (distance % 1000 > 0) {
+                distance -= (distance%100);
+                text = ((float)distance / 1000 ) + km;
+            } else {
+                text = (distance / 1000 ) + km;
+            }
+        } else {
+            text = distance + meter;
+        }
+        
         mTextPaint.setColor(Color.WHITE);
         mTextPaint.setStyle(Paint.Style.STROKE);
-        canvas.drawText(CommonUtils.distanceToString(GENERALIZE_ZOOM_LEVEL_METERS[zoom]), paddingLeft, - mTextAscent + mVerticalLineHeight + mLineAndTextPadding + paddingTop, mTextPaint);
+        canvas.drawText(text, paddingLeft, - mTextAscent + mVerticalLineHeight + mLineAndTextPadding + paddingTop, mTextPaint);
 
         mTextPaint.setColor(Color.BLACK);
         mTextPaint.setStyle(Paint.Style.FILL);
-        canvas.drawText(CommonUtils.distanceToString(GENERALIZE_ZOOM_LEVEL_METERS[zoom]), paddingLeft, - mTextAscent + mVerticalLineHeight + mLineAndTextPadding + paddingTop, mTextPaint);
+        canvas.drawText(text, paddingLeft, - mTextAscent + mVerticalLineHeight + mLineAndTextPadding + paddingTop, mTextPaint);
     }
     
     /**
