@@ -34,6 +34,7 @@ import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.FilterListView;
+import com.tigerknows.view.QueryingView;
 import com.tigerknows.view.RetryView;
 import com.tigerknows.view.SpringbackListView;
 import com.tigerknows.view.SpringbackListView.IPagerListCallBack;
@@ -85,7 +86,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private SpringbackListView mResultLsv = null;
 
-    private View mQueryingView = null;
+    private QueryingView mQueryingView = null;
     
     private TextView mQueryingTxv = null;
     
@@ -272,7 +273,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(v);
-        mQueryingView = mRootView.findViewById(R.id.querying_view);
+        mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
         mQueryingTxv = (TextView) mQueryingView.findViewById(R.id.loading_txv);
@@ -460,6 +461,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         if (adapter != null) {
             adapter.notifyDataSetChanged();
         }
+        
+        updateView();
     }
 
     @Override

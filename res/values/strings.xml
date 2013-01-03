@@ -880,4 +880,7 @@
     <string name="retry">重试</string>
     <string name="location_city">定位城市</string>
     <string name="all_city">全部城市</string>
+    
+    <string name="meter">米</string>
+    <string name="km">千米</string>
 </resources>

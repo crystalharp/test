@@ -63,7 +63,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     private SpringbackListView mResultLsv = null;
 
-    private View mQueryingView = null;
+    private QueryingView mQueryingView = null;
     
     private TextView mQueryingTxv = null;
     
@@ -168,7 +168,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(v);
-        mQueryingView = mRootView.findViewById(R.id.querying_view);
+        mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
         mQueryingTxv = (TextView) mQueryingView.findViewById(R.id.loading_txv);
@@ -283,6 +283,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
         }
+        
+        updateView();
     }
 
     @Override
