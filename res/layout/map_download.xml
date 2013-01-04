@@ -9,11 +9,20 @@
         layout="@layout/title" 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
+    <Button
+        android:id="@+id/add_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/city_list"
+        android:textColor="@android:color/white"
+        android:textSize="16sp" />
     <RelativeLayout
         android:id="@+id/download_view"
 	    android:layout_width="fill_parent" 
 	    android:layout_height="fill_parent"
         android:layout_below="@id/title_view"
+        android:layout_above="@id/add_btn"
 	    android:gravity="center_horizontal|top">
     
 	    <ExpandableListView android:id="@+id/download_city_lsv"
@@ -31,6 +40,7 @@
 	    android:layout_width="fill_parent" 
 	    android:layout_height="fill_parent"
         android:layout_below="@id/title_view"
+        android:layout_above="@id/add_btn"
 	    android:gravity="center_horizontal|top"
 	    android:visibility="gone">
 	    <RelativeLayout
@@ -90,6 +100,7 @@
 	    android:layout_width="fill_parent" 
 	    android:layout_height="fill_parent"
         android:layout_below="@id/title_view"
+        android:layout_above="@id/add_btn"
 	    android:gravity="center_horizontal|top"
 	    android:visibility="gone">
 	    <TextView 
@@ -97,12 +108,4 @@
 		    android:layout_height="fill_parent"
 		    android:text="@string/app_name" />
     </RelativeLayout>
-    <Button
-        android:id="@+id/add_btn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="@string/city_list"
-        android:textColor="@android:color/white"
-        android:textSize="16sp" />
 </RelativeLayout>

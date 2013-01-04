@@ -452,10 +452,12 @@
     <string name="send">发送</string>
     <string name="attention">注意</string>
     <string name="are_you_delete_all">是否要删除全部文本内容？</string>
-    <string name="send_sucess">分享成功！</string>
-    <string name="send_failed">分享失败！</string>
+    <string name="weibo_send_sucess">新浪微博分享成功！</string>
+    <string name="weibo_send_failed">新浪微博分享失败！</string>
     <string name="logout_sucess">注销成功！</string>
     <string name="logout_failed">注销失败！</string>
+    <string name="tencent_share_sucess">QQ空间分享成功！</string>
+    <string name="tencent_share_failed">QQ空间分享失败！</string>
     <string name="del_pic">是否删除图片？</string>
     <string name="share_tiger_user">老虎用户</string>
 <!-- Share Module Common End -->

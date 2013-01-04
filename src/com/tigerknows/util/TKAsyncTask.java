@@ -7,11 +7,9 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.Response;
-import com.tigerknows.share.IBaseShare;
-import com.tigerknows.share.ShareEntrance;
-import com.tigerknows.share.ShareMediator;
-import com.tigerknows.share.impl.SinaWeiboShare;
-import com.tigerknows.share.impl.TencentOpenShare;
+import com.tigerknows.share.TKWeibo;
+import com.tigerknows.share.TKTencentOpenAPI;
+import com.weibo.net.Weibo;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -114,13 +112,12 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
                     Hashtable<String, String> criteria =  baseQuery.getCriteria();
                     String shareSina = criteria.get(DataOperation.SERVER_PARAMETER_SHARE_SINA);
                     if (!TextUtils.isEmpty(shareSina)) {
-                    	IBaseShare iBaseShare = ShareEntrance.getShareObject(activity, ShareEntrance.SINAWEIBO_ENTRANCE);
-                        iBaseShare.upload("", shareSina);
+                        TKWeibo tkweibo = new TKWeibo(activity, false, false);
+                        TKWeibo.update(tkweibo, Weibo.getInstance(), Weibo.getAppKey(), shareSina, "", "");
                     }
                     String shareQzone = criteria.get(DataOperation.SERVER_PARAMETER_SHARE_QZONE);
                     if (!TextUtils.isEmpty(shareQzone)) {
-                    	IBaseShare iBaseShare = ShareEntrance.getShareObject(activity, ShareEntrance.TENCENT_ENTRANCE);
-                        iBaseShare.upload("", shareQzone);
+                        TKTencentOpenAPI.addShare(activity, shareQzone, false, false);
                     }
                 }
             }

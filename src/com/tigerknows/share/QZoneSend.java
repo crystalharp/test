@@ -15,20 +15,15 @@
  * limitations under the License.
  */
 
-package com.tigerknows.share.impl;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+package com.tigerknows.share;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
@@ -41,13 +36,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.tencent.tauth.TAuthView;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
-import com.tigerknows.TKConfig;
-import com.tigerknows.share.IBaseShare;
-import com.tigerknows.share.ShareEntrance;
-import com.tigerknows.share.ShareMessageCenter;
-import com.decarta.android.util.LogWrapper;
+import com.tigerknows.share.TKTencentOpenAPI.AuthReceiver;
 
 public class QZoneSend extends Activity implements OnClickListener {
 	
@@ -61,37 +53,52 @@ public class QZoneSend extends Activity implements OnClickListener {
 
     private String mContent = "";
     
-    private String mUserName = "";
-    
-    private IBaseShare mShareObject;
-
     private String mActionTag;
     
     private ActionLog mActionLog;
     
-    private ProgressDialog mProgressDialog;
+    private ShareAPI.LoginCallBack mLoginCallBack = new ShareAPI.LoginCallBack() {
+        
+        @Override
+        public void onSuccess() {
+            QZoneSend.this.runOnUiThread(new Runnable() {
+                
+                @Override
+                public void run() {
+                    UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(QZoneSend.this, ShareAPI.TYPE_TENCENT);
+                    if (userAccessIdenty != null) {
+                        mLogoutBtn.setText(R.string.logout);
+                        mTitleTxv.setText(Html.fromHtml(userAccessIdenty.getUserName()));
+                    }
+                }
+            });
+        }
 
-    private final String TAG = "QzoneSend";
+        @Override
+        public void onFailed() {
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
     
-    BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-		
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
-			
-			if (mProgressDialog != null && mProgressDialog.isShowing()) {
-	            mProgressDialog.dismiss();
-	            LogWrapper.d("eric", "mProgressDialog.dismiss()");
-			}
-			
-			String action = intent.getAction();
-			if (ShareMessageCenter.ACTION_SHARE_UPLOAD_SUCCESS.equals(action)
-					|| ShareMessageCenter.ACTION_SHARE_LOGOUT_SUCCESS.equals(action)) {
-				QZoneSend.this.finish();  
-		        LogWrapper.d("eric", "QzoneSend.this.finish()"); 	
-			}
-		}
-	};
+    private AuthReceiver mTencentAuthReceiver;
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        Dialog dialog = null;
+        switch (id) {
+        case R.id.dialog_share_doing:
+            dialog = new ProgressDialog(this);
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait));
+            break;
+        }
+        
+        return dialog;
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,19 +114,20 @@ public class QZoneSend extends Activity implements OnClickListener {
         
         Intent in = this.getIntent();
         
-        mUserName = in.getStringExtra(ShareMessageCenter.EXTRA_SHARE_USER_NAME);
-        LogWrapper.d(TAG, "get user name from intent: " + mUserName);
-        if (!TextUtils.isEmpty(mUserName)) {
-        	mTitleTxv.setText(Html.fromHtml(mUserName));
-        }
-        
-        mContent = in.getStringExtra(ShareMessageCenter.EXTRA_SHARE_CONTENT);
-        mTextEdt.setText(mContent);
+        mContent = in.getStringExtra(ShareAPI.EXTRA_SHARE_CONTENT);
         mTextEdt.setText(mContent);
         mTextEdt.requestFocus();
         
-        mShareObject = ShareEntrance.getInstance().getCurrentShareObject();
-        registRecivers();
+        mTencentAuthReceiver = new AuthReceiver(this, mLoginCallBack);
+        registerIntentReceivers();
+        UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(this, ShareAPI.TYPE_TENCENT);
+        if (userAccessIdenty == null) {
+            TKTencentOpenAPI.login(this);
+            mLogoutBtn.setText(R.string.back);
+        } else {
+            mLogoutBtn.setText(R.string.logout);
+            mTitleTxv.setText(Html.fromHtml(userAccessIdenty.getUserName()));
+        }
     }
 
     private void findViews() {
@@ -153,25 +161,26 @@ public class QZoneSend extends Activity implements OnClickListener {
         switch (viewId) {
             case R.id.logout_btn: {
                 mActionLog.addAction(ActionLog.QzoneSendClickLogoutbBtn);
-                final Context context = this;
-                mProgressDialog = ProgressDialog.show(context, null,
-                        QZoneSend.this.getString(R.string.logout)+"...", true, false);
-
+                UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(this, ShareAPI.TYPE_TENCENT);
+                if (userAccessIdenty == null) {
+                    QZoneSend.this.finish();
+                    return;
+                }
                 hideInputMethodManager();
-                new Thread() {
-					
-					@Override
-					public void run() {
-						mShareObject.logout();
-					}
-                }.start();
-
-                
+                TKTencentOpenAPI.logout(QZoneSend.this);     
+                Toast.makeText(this, R.string.logout_sucess, Toast.LENGTH_LONG).show();
+                finish();
                 break;
             }
             case R.id.send_btn: {
-            	LogWrapper.d("eric", "QzoneSend press send btn");
                 mActionLog.addAction(ActionLog.QzoneSendClickSendBtn, mContent);
+
+                UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(QZoneSend.this, ShareAPI.TYPE_TENCENT);
+                if (userAccessIdenty == null) {
+                    mLogoutBtn.setText(R.string.back);
+                    TKTencentOpenAPI.login(this);
+                    return;
+                }
                 mContent = mTextEdt.getText().toString();
                 hideInputMethodManager();
                 
@@ -179,19 +188,8 @@ public class QZoneSend extends Activity implements OnClickListener {
                     Toast.makeText(this, this.getString(R.string.tencent_share_content_empty), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                
-                final Context context = this;
-                mProgressDialog = ProgressDialog.show(context, null,
-                QZoneSend.this.getString(R.string.send)+"...", true, false);
-                new Thread() {
-					
-					@Override
-					public void run() {
-						// TODO Auto-generated method stub
-						mShareObject.upload("", mContent);
-					}
-				}.start();
 
+                TKTencentOpenAPI.addShare(QZoneSend.this, mContent, true, true);
                 break;
             }
             case R.id.text_limit_unit_lnl: {
@@ -222,30 +220,25 @@ public class QZoneSend extends Activity implements OnClickListener {
     @Override
     protected void onStop() {
         super.onStop();
-//        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-//            mProgressDialog.dismiss();
-//        }
     }
     
     @Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-        unregistReceivers();
-	}
+        if (mTencentAuthReceiver != null) {
+            unregisterIntentReceivers();
+        }
+    }
 
-	private void registRecivers() {
-    	List<String> shareActionList = new ArrayList<String>(Arrays.asList(
-    			ShareMessageCenter.ACTION_SHARE_UPLOAD_SUCCESS,
-    			ShareMessageCenter.ACTION_SHARE_UPLOAD_FAIL,
-    			ShareMessageCenter.ACTION_SHARE_LOGOUT_SUCCESS,
-    			ShareMessageCenter.ACTION_SHARE_LOGOUT_FAIL
-    		));
-        ShareMessageCenter.observeAction(this, mMessageReceiver, shareActionList);
+    private void registerIntentReceivers() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(TAuthView.AUTH_BROADCAST);
+        registerReceiver(mTencentAuthReceiver, filter);
     }
     
-    private void unregistReceivers() {
-        ShareMessageCenter.unObserve(this, mMessageReceiver);
+    private void unregisterIntentReceivers() {
+        unregisterReceiver(mTencentAuthReceiver);
     }
     
     /*

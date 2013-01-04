@@ -30,4 +30,9 @@
     <color name="traffic_query_bg">#E87E00</color>
     <color name="traffic_current_city_bg">#AAFFFFFF</color>
     <color name="text_click_map_content_blue">#ff008aff</color>
+    
+    <color name="black_dark">#323232</color>
+    <color name="black_middle">#4d4d4d</color>
+    <color name="black_light">#969696</color>
+    <color name="orange">#ff6c00</color>
 </resources>

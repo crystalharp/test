@@ -15,28 +15,24 @@
  * limitations under the License.
  */
 
-package com.tigerknows.share.impl;
+package com.tigerknows.share;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
@@ -52,19 +48,15 @@ import android.widget.Toast;
 
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
-import com.tigerknows.Sphinx;
-import com.tigerknows.TKConfig;
-import com.tigerknows.R.color;
-import com.tigerknows.R.id;
-import com.tigerknows.R.layout;
-import com.tigerknows.R.string;
-import com.tigerknows.share.IBaseShare;
-import com.tigerknows.share.ShareEntrance;
-import com.tigerknows.share.ShareMessageCenter;
 import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
+import com.tigerknows.share.ShareAPI.LoginCallBack;
+import com.tigerknows.share.TKWeibo.AuthDialogListener;
 import com.tigerknows.util.ThumbnailUtils;
+import com.weibo.net.DialogError;
+import com.weibo.net.Weibo;
+import com.weibo.net.WeiboException;
+import com.weibo.net.AsyncWeiboRunner.RequestListener;
 
 public class WeiboSend extends Activity implements OnClickListener {
 	
@@ -88,50 +80,83 @@ public class WeiboSend extends Activity implements OnClickListener {
 
     private String mContent = "";
     
-    private String mUserName = "";
-    
-    private IBaseShare mShareObject;
-
     public static final int WEIBO_MAX_LENGTH = 140;
 
     private String mActionTag;
     
     private ActionLog mActionLog;
     
-    private ProgressDialog mProgressDialog;
-
-    private final String TAG = "WeiboSend";
-    
-    BroadcastReceiver mMessageReceiver = new BroadcastReceiver() {
-		
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
-			if (mProgressDialog != null && mProgressDialog.isShowing()) {
-	            mProgressDialog.dismiss();
-	            LogWrapper.d("eric", "mProgressDialog.dismiss()");
-			}
-			
-			String action = intent.getAction();
-			if (ShareMessageCenter.ACTION_SHARE_UPLOAD_SUCCESS.equals(action)
-					|| ShareMessageCenter.ACTION_SHARE_LOGOUT_SUCCESS.equals(action)) {
-				WeiboSend.this.finish();  
-		        LogWrapper.d("eric", "WeiboSend.this.finish()"); 	
-			}
-		}
-	};
+    private TKWeibo mSina;
 	
-	BroadcastReceiver mImageRemoveReceiver = new BroadcastReceiver() {
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			// TODO Auto-generated method stub
-			String aciton = intent.getAction();
-			if (ShareMessageCenter.ACTION_SHARE_IMAGE_REMOVE.equals(aciton)) { 
-				mPic.setVisibility(View.GONE);
-				mPicPath = "";
-			}
-		}
-	};
+	public void removeImage() {
+	    mPic.setVisibility(View.GONE);
+        mPicPath = "";
+	}
+    
+    private ShareAPI.LoginCallBack mLoginCallBack = new ShareAPI.LoginCallBack() {
+        
+        @Override
+        public void onSuccess() {
+            UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(WeiboSend.this, ShareAPI.TYPE_WEIBO);
+            if (userAccessIdenty != null) {
+                mLogoutBtn.setText(R.string.logout);
+                mTitleTxv.setText(Html.fromHtml(userAccessIdenty.getUserName()));
+            }
+        }
+
+        @Override
+        public void onFailed() {
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+    
+    private class MyAuthDialogListener extends AuthDialogListener {
+        
+        public MyAuthDialogListener(Activity activity, LoginCallBack loginCallBack) {
+            super(activity, loginCallBack);
+        }
+
+        @Override
+        public void onComplete(Bundle values) {
+            super.onComplete(values);
+        }
+        
+        @Override
+        public void onError(DialogError e) {
+            super.onError(e);
+        }
+
+        @Override
+        public void onCancel() {
+            super.onCancel();
+        }
+
+        @Override
+        public void onWeiboException(WeiboException e) {
+            super.onWeiboException(e);
+        }
+        
+    };
+    
+    private MyAuthDialogListener mSinaAuthDialogListener;
+
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        Dialog dialog = null;
+        switch (id) {
+        case R.id.dialog_share_doing:
+            dialog = new ProgressDialog(this);
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait));
+            break;
+        }
+        
+        return dialog;
+    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,8 +170,9 @@ public class WeiboSend extends Activity implements OnClickListener {
         findViews();
         setListener();
         
+        mSinaAuthDialogListener = new MyAuthDialogListener(this, mLoginCallBack);
         Intent in = this.getIntent();
-        String str = in.getStringExtra(ShareMessageCenter.EXTRA_SHARE_PIC_URI);
+        String str = in.getStringExtra(ShareAPI.EXTRA_SHARE_PIC_URI);
         if (!TextUtils.isEmpty(str)) {
             mPicPath = Uri.parse(str).getPath();
         }
@@ -162,21 +188,21 @@ public class WeiboSend extends Activity implements OnClickListener {
             } else {
             	mPic.setVisibility(View.GONE);
             }
-        } 
-        
-        mUserName = in.getStringExtra(ShareMessageCenter.EXTRA_SHARE_USER_NAME);
-        LogWrapper.d(TAG, "get user name from intent: " + mUserName);
-        if (!TextUtils.isEmpty(mUserName)) {
-        	mTitleTxv.setText(mUserName);
         }
         
-        mContent = in.getStringExtra(ShareMessageCenter.EXTRA_SHARE_CONTENT);
-        mTextEdt.setText(mContent);
+        mContent = in.getStringExtra(ShareAPI.EXTRA_SHARE_CONTENT);
         mTextEdt.setText(mContent);
         mTextEdt.requestFocus();
         
-        mShareObject = ShareEntrance.getInstance().getCurrentShareObject();
-        registRecivers();
+        mSina = new TKWeibo(this, true, true);
+        UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(this, ShareAPI.TYPE_WEIBO);
+        if (userAccessIdenty == null) {
+            TKWeibo.login(this, mSinaAuthDialogListener);
+            mLogoutBtn.setText(R.string.back);
+        } else {
+            mTitleTxv.setText(Html.fromHtml(userAccessIdenty.getUserName()));
+            mLogoutBtn.setText(R.string.logout);
+        }
     }
 
     private void findViews() {
@@ -238,50 +264,85 @@ public class WeiboSend extends Activity implements OnClickListener {
         switch (viewId) {
             case R.id.logout_btn: {
                 mActionLog.addAction(ActionLog.WeiboSendClickedLogoutBtn);
-//                AccessToken accessToken = (AccessToken)mWeibo.getAccessToken();
-//                if (accessToken == null) {
-//                    return;
-//                }
-                final Context context = this;
-                mProgressDialog = ProgressDialog.show(context, null,
-                        WeiboSend.this.getString(R.string.logout)+"...", true, false);
-
+                UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(this, ShareAPI.TYPE_WEIBO);
+                if (userAccessIdenty == null) {
+                    WeiboSend.this.finish();
+                    return;
+                }
+                showDialog(R.id.dialog_share_doing);
                 hideInputMethodManager();
                 new Thread() {
 					
 					@Override
 					public void run() {
-						mShareObject.logout();
+                        Weibo weibo = Weibo.getInstance();
+					    TKWeibo.logout(mSina, weibo, Weibo.getAppKey(), new RequestListener() {
+                            
+                            @Override
+                            public void onIOException(final IOException e) {
+                            }
+                            
+                            @Override
+                            public void onError(final WeiboException e) {
+                                WeiboSend.this.runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        ShareAPI.clearIdentity(WeiboSend.this, ShareAPI.TYPE_WEIBO);
+                                        WeiboSend.this.dismissDialog(R.id.dialog_share_doing);
+                                        WeiboSend.this.finish();
+                                    }
+                                });
+                            }
+                            
+                            @Override
+                            public void onComplete(String response) {
+                                WeiboSend.this.runOnUiThread(new Runnable() {
+
+                                    @Override
+                                    public void run() {
+                                        ShareAPI.clearIdentity(WeiboSend.this, ShareAPI.TYPE_WEIBO);
+                                        WeiboSend.this.dismissDialog(R.id.dialog_share_doing);
+                                        WeiboSend.this.finish();
+                                    }
+                                });
+                            }
+                        });
 					}
                 }.start();
-
                 
                 break;
             }
             case R.id.send_btn: {
-            	LogWrapper.d("eric", "WeiboSend press send btn");
                 mActionLog.addAction(ActionLog.WeiboSendClickedSendBtn, mContent);
-//                LogWrapper.d("eric", "WeiboSend mWeibo.getAccessToken().getToken(): " + mWeibo.getAccessToken().getToken());
-//                if (!TextUtils.isEmpty((String)(mWeibo.getAccessToken().getToken()))) {
-                    mContent = mTextEdt.getText().toString();
-                    if (TextUtils.isEmpty(mContent) || mContent.length() > MAX_LEN) {
-                        Toast.makeText(this, this.getString(R.string.weibo_max_char, MAX_LEN), Toast.LENGTH_SHORT).show();
-                        return;
+                UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(this, ShareAPI.TYPE_WEIBO);
+                if (userAccessIdenty == null) {
+                    mLogoutBtn.setText(R.string.back);
+                    TKWeibo.login(this, mSinaAuthDialogListener);
+                    return;
+                }
+                mContent = mTextEdt.getText().toString();
+                if (TextUtils.isEmpty(mContent) || mContent.length() > MAX_LEN) {
+                    Toast.makeText(this, this.getString(R.string.weibo_max_char, MAX_LEN), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                hideInputMethodManager();
+                showDialog(R.id.dialog_share_doing);
+                new Thread() {
+                    
+                    @Override
+                    public void run() {
+                        Weibo weibo = Weibo.getInstance();
+                        // TODO Auto-generated method stub
+                        if (!TextUtils.isEmpty(mPicPath)) {
+                            TKWeibo.upload(mSina, weibo, Weibo.getAppKey(), mPicPath, mContent, "", "");
+                            
+                        } else {
+                            // Just update a text weibo!
+                            TKWeibo.update(mSina, weibo, Weibo.getAppKey(), mContent, "", "");
+                        }
                     }
-                    hideInputMethodManager();
-                    final Context context = this;
-                    mProgressDialog = ProgressDialog.show(context, null,
-                    WeiboSend.this.getString(R.string.send)+"...", true, false);
-                    new Thread() {
-						
-						@Override
-						public void run() {
-							// TODO Auto-generated method stub
-							mShareObject.upload(mPicPath, mContent);
-						}
-					}.start();
-//                    mWeibo.upload(WeiboSend.this, mPicPath, mContent, "", "", "");
-//                } 
+                }.start();
                 break;
             }
             case R.id.text_limit_unit_lnl: {
@@ -326,39 +387,13 @@ public class WeiboSend extends Activity implements OnClickListener {
     @Override
     protected void onStop() {
         super.onStop();
-
-//        if (mProgressDialog != null && mProgressDialog.isShowing()) {
-//            mProgressDialog.dismiss();
-//        }
     }
     
     @Override
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-        unregistReceivers();
 	}
-
-    private void registRecivers() {
-    	List<String> shareActionList = new ArrayList<String>(Arrays.asList(
-    			ShareMessageCenter.ACTION_SHARE_UPLOAD_SUCCESS,
-    			ShareMessageCenter.ACTION_SHARE_UPLOAD_FAIL,
-    			ShareMessageCenter.ACTION_SHARE_LOGOUT_SUCCESS,
-    			ShareMessageCenter.ACTION_SHARE_LOGOUT_FAIL,
-    			ShareMessageCenter.ACTION_SHARE_OPERATION_FAILED
-    		));
-        ShareMessageCenter.observeAction(this, mMessageReceiver, shareActionList);
-        
-        List<String> imageActionList = new ArrayList<String>(Arrays.asList(
-    			ShareMessageCenter.ACTION_SHARE_IMAGE_REMOVE
-    		));
-        ShareMessageCenter.observeAction(this, mImageRemoveReceiver, imageActionList);
-    }
-    
-    private void unregistReceivers() {
-      ShareMessageCenter.unObserve(this, mMessageReceiver);
-      ShareMessageCenter.unObserve(this, mImageRemoveReceiver);
-    }
     
     /*
      * Add this method for 魅族 
@@ -368,5 +403,13 @@ public class WeiboSend extends Activity implements OnClickListener {
     private void hideInputMethodManager(){
         InputMethodManager imm = (InputMethodManager)WeiboSend.this.getSystemService(Activity.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(mSendBtn.getWindowToken(), 0);// 隐藏软键盘
+    }
+
+    public MyAuthDialogListener getSinaAuthDialogListener() {
+        return mSinaAuthDialogListener;
+    }
+
+    public Button getLogoutBtn() {
+        return mLogoutBtn;
     }
 }

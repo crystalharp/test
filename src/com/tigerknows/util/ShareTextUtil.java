@@ -12,7 +12,7 @@ import com.tigerknows.model.BuslineModel.Station;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.Step;
-import com.tigerknows.share.impl.WeiboSend;
+import com.tigerknows.share.WeiboSend;
 
 public class ShareTextUtil {
 	

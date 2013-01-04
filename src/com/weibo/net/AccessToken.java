@@ -31,8 +31,4 @@ public class AccessToken extends Token {
 	public AccessToken(String token , String secret){
 		super(token, secret);
 	}
-	
-	public AccessToken(String token , String secret, String expiresIn){
-		super(token, secret, expiresIn);
-	}
 }

@@ -1,8 +1,6 @@
-package com.tigerknows.share.impl;
+package com.tigerknows.share;
 
 import android.app.Dialog;
-import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.View;
 import android.view.Window;
@@ -11,7 +9,6 @@ import android.widget.ImageView;
 
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
-import com.tigerknows.share.ShareMessageCenter;
 
 public class AlterImageDialog extends Dialog {
 
@@ -21,11 +18,11 @@ public class AlterImageDialog extends Dialog {
 	
 	Button mDelete;
 	
-	Context mContext;
+	WeiboSend mContext;
 	
 	ActionLog mActionLog;
 	
-	public AlterImageDialog(Context context, Bitmap bitmap) {
+	public AlterImageDialog(WeiboSend context, Bitmap bitmap) {
 		super(context, R.style.Theme_Dialog);
 		// TODO Auto-generated constructor stub
 		mContext = context;
@@ -63,8 +60,7 @@ public class AlterImageDialog extends Dialog {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				mActionLog.addAction(ActionLog.WeiboImageClickedDelPic);
-				Intent intent = new Intent(ShareMessageCenter.ACTION_SHARE_IMAGE_REMOVE);
-				mContext.sendBroadcast(intent);
+				mContext.removeImage();
 				dismiss();
 			}
 		});

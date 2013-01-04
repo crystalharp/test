@@ -66,14 +66,6 @@ public class TKConfig {
     public static final int BORDER_default=0;
     public static final int TILE_THREAD_COUNT_default=5;
     
-    public static void configure(){        
-        CONFIG.COMPASS_PLACE_LOCATION=0;
-        CONFIG.ENABLE_ROTATE=true;
-        CONFIG.ENABLE_TILT=false;
-        //CONFIG.LOG_LEVEL=4;
-        
-    }
-    
     public static boolean CACHE_BITMAP_TO_MEMORY = false;
     
     

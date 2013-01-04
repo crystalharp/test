@@ -93,12 +93,6 @@ public class Token {
         mToken = token;
         mOauth_Token_Secret = secret;
     }
-    
-    public Token(String token, String secret, String expiresIn) {
-    	mToken = token;
-        mOauth_Token_Secret = secret;
-        this.mExpiresIn = Long.valueOf(expiresIn);
-    }
 
     public String getParameter(String parameter) {
         String value = null;

@@ -48,14 +48,6 @@ public class WeiboParameters {
 		}
 	}
 	
-//	public void add(String key, Long value){
-//		if(this.mKeys.contains(key)){	
-//			this.mParameters.putLong(key, value);
-//		}else{
-//			this.mKeys.add(key);
-//			this.mParameters.putLong(key, value);
-//		}
-//	}
 	
 	public void remove(String key){
 		mKeys.remove(key);
@@ -95,16 +87,6 @@ public class WeiboParameters {
 		return rlt;
 	}
 	
-//	public Long getLongValue(String key){
-//		Long rlt = this.mParameters.getLong(key);
-//		return rlt;
-//	}
-//	
-//	public Long getLongValue(int location){
-//		String key = this.mKeys.get(location);
-//		Long rlt = this.mParameters.getLong(key);
-//		return rlt;
-//	}
 	
 	public int size(){
 		return mKeys.size();
@@ -122,7 +104,4 @@ public class WeiboParameters {
 		this.mParameters.clear();
 	}
 	
-	public String toString() {
-		return "mParameters:" + mParameters.toString() + " " + "mKeys:" + mKeys.toString(); 
-	}
 }

@@ -16,9 +16,9 @@
  */
 package com.weibo.net;
 
-import android.content.Context;
+import java.io.IOException;
 
-import com.weibo.net.Weibo.RequestListener;
+import android.content.Context;
 
 
 /**
@@ -38,13 +38,30 @@ public class AsyncWeiboRunner {
 	public void request(final Context context, 
 			final String url, 
 			final WeiboParameters params, 
-			final String httpMethod) {
+			final String httpMethod, 
+			final RequestListener listener){
 		new Thread(){
 			@Override public void run() {
-                mWeibo.request(context, url, params, httpMethod);
+                try {
+					String resp = mWeibo.request(context, url, params, httpMethod, mWeibo.getAccessToken());
+                    listener.onComplete(resp);
+                } catch (WeiboException e) {
+                    listener.onError(e);
+                }
             }
 		}.run();
 		
 	}
+	
+	
+    public static interface RequestListener {
 
+        public void onComplete(String response);
+
+        public void onIOException(IOException e);
+
+        public void onError(WeiboException e);
+
+    }
+	
 }

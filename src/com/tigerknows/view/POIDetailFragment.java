@@ -12,7 +12,6 @@ import java.util.List;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -43,8 +42,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.decarta.Globals;
-import com.decarta.android.exception.APIException;
-import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;
@@ -102,8 +99,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     private ImageView mStampBigImv = null;
 
-    private Button mTrafficBtn = null;
-
     private Button mShareBtn = null;
     
     private TextView mCategoryTxv;
@@ -122,10 +117,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     private ViewGroup mCommentListView = null;
     
     private ViewGroup mCommentSumTotalView;
-    
-    private TextView mCommentSumTotalTxv;
-    
-    private TextView mViewAllCommentTxv;
     
     private Button mFavoriteBtn;
     
@@ -166,7 +157,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        LogWrapper.d(BaseFragment.TAG, "onCreateView()"+mActionTag);
         
         mRootView = mLayoutInflater.inflate(R.layout.poi_detail, container, false);
         findViews();
@@ -189,7 +179,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             
             @Override
             public void onAnimationEnd(Animation arg0) {
-                mStampBigImv.setVisibility(View.INVISIBLE);
+                mStampBigImv.setVisibility(View.GONE);
                 refreshComment();
             }
         });
@@ -287,10 +277,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             if (!TextUtils.isEmpty(telephone)) {
                 mTelephoneView.setVisibility(View.VISIBLE);
                 mTelephoneTxv.setText(telephone.replace("|", mSphinx.getString(R.string.dunhao)));
-                mTelephoneView.setPadding(Util.dip2px(Globals.g_metrics.density, 8), 
-                        Util.dip2px(Globals.g_metrics.density, 8), 
-                        Util.dip2px(Globals.g_metrics.density, 8), 
-                        Util.dip2px(Globals.g_metrics.density, 8));
             } else {
                 mTelephoneView.setVisibility(View.GONE);
             }
@@ -299,10 +285,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 mAddressView.setVisibility(View.VISIBLE);
                 mAddressTxv.setText(address);
                 mAddressTelephoneDividerImv.setVisibility(View.VISIBLE);
-                mAddressView.setPadding(Util.dip2px(Globals.g_metrics.density, 8), 
-                        Util.dip2px(Globals.g_metrics.density, 8), 
-                        Util.dip2px(Globals.g_metrics.density, 8), 
-                        Util.dip2px(Globals.g_metrics.density, 8));
             } else {
                 mAddressView.setVisibility(View.GONE);
             }
@@ -423,14 +405,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             if (i == 0) {
                 if (viewIndex == 1) {
                     child.setBackgroundResource(R.drawable.list_single);
-                    child.findViewById(R.id.list_separator_imv).setVisibility(View.INVISIBLE);
+                    child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
                 } else {
                     child.setBackgroundResource(R.drawable.list_header);
                     child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
                 }
             } else if (i == (viewIndex-1)) {
                 child.setBackgroundResource(R.drawable.list_footer);
-                child.findViewById(R.id.list_separator_imv).setVisibility(View.INVISIBLE);
+                child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
             } else {
                 child.setBackgroundResource(R.drawable.list_middle);
                 child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
@@ -473,7 +455,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 return null;
             }
         } else {
-            mCommentListView.setVisibility(View.INVISIBLE);
+            mCommentListView.setVisibility(View.GONE);
             refreshDetail();
         }
         return Comment.createPOICommentQuery(mSphinx, poi, getId(), getId());
@@ -495,7 +477,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mDescriptionTxv = (TextView)mRootView.findViewById(R.id.description_txv);
         
         mPOIBtn = (Button) mRootView.findViewById(R.id.poi_btn);
-        mTrafficBtn = (Button)mRootView.findViewById(R.id.traffic_btn);
         mShareBtn = (Button)mRootView.findViewById(R.id.share_btn);
         mFavoriteBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
         // Error Fix
@@ -505,8 +486,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 
         mCommentListView = (ViewGroup)mRootView.findViewById(R.id.comment_list_view);
         mCommentSumTotalView = (ViewGroup) mRootView.findViewById(R.id.comment_sum_total_view);
-        mCommentSumTotalTxv = (TextView) mRootView.findViewById(R.id.comment_sum_total_txv);
-        mViewAllCommentTxv = (TextView) mRootView.findViewById(R.id.look_all_txv);
         
         mAddressAndPhoneView = mRootView.findViewById(R.id.address_phone_view);
         mAddressView = mRootView.findViewById(R.id.address_view);
@@ -523,14 +502,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     }
 
     protected void setListener() {
-        mTrafficBtn.setOnClickListener(this);
         mShareBtn.setOnClickListener(this);
         mFavoriteBtn.setOnClickListener(this);
-        mTelephoneTxv.setOnClickListener(this);
-        mTelephoneTxv.setLongClickable(false);
+        mTelephoneView.setOnClickListener(this);
         mAddressView.setOnClickListener(this);
         mPOIBtn.setOnClickListener(this);
-        // Error Fix
         mErrorFixBtn.setOnClickListener(this);
         mCommentSumTotalView.setOnClickListener(this);
         mCommentTipView.setOnTouchListener(this);
@@ -588,18 +564,13 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 mActionLog.addAction(ActionLog.POIDetailMap);
                 viewMap();
                 break;
-            case R.id.telephone_txv:
+            case R.id.telephone_view:
                 mActionLog.addAction(ActionLog.POIDetailTelephone);
+                CommonUtils.onClickTelephoneTxv(mSphinx, mTelephoneTxv);
                 break;
                 
             case R.id.address_view:
-                mActionLog.addAction(ActionLog.POIDetailAddress);
-                viewMap();
-                break;
-                
-            case R.id.traffic_btn:
-                mActionLog.addAction(ActionLog.POIDetailGoToHere);
-                
+                mActionLog.addAction(ActionLog.POIDetailAddress);                
                 /* 交通界面的显示 */
                 mSphinx.getTrafficQueryFragment().setData(poi);
                 mSphinx.showView(R.id.view_traffic_query);
@@ -686,18 +657,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * @param favoriteYet
      */
     private void setFavoriteState(Button button, boolean favoriteYet) {
-    	Drawable drawable = null;
-    	
     	if (favoriteYet) {
-    	    drawable = mContext.getResources().getDrawable(R.drawable.ic_favorite);
-    		mFavoriteBtn.setText(mContext.getResources().getString(R.string.favorite_yet));
+    		mFavoriteBtn.setBackgroundResource(R.drawable.btn_cancel_favorite);
     	} else {
-    	    drawable = mContext.getResources().getDrawable(R.drawable.ic_favorite_cancel);
-    	    mFavoriteBtn.setText(mContext.getResources().getString(R.string.favorite));
+            mFavoriteBtn.setBackgroundResource(R.drawable.btn_favorite);
     	}
-    	
-    	drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
-        mFavoriteBtn.setCompoundDrawables(null, drawable, null, null);
     }
     
     public void errorRecovery() {
@@ -736,7 +700,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     public void setData(POI poi) {
         if (mStampAnimation != null) {
-            mStampBigImv.setVisibility(View.INVISIBLE);
+            mStampBigImv.setVisibility(View.GONE);
             mStampAnimation.reset();
             mStampBigImv.setAnimation(null);
         }
@@ -763,7 +727,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             DataQuery commentQuery = refreshComment();
             if (commentQuery != null) {
                 baseQueryList.add(commentQuery);
-                mCommentTipView.setVisibility(View.INVISIBLE);
+                mCommentTipView.setVisibility(View.GONE);
             } else {
                 mCommentTipView.setVisibility(View.VISIBLE);
             }
@@ -786,29 +750,65 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
-        viewGroup.removeAllViews();
+        int count = viewGroup.getChildCount();
+        for(int i = 0; i < count; i++) {
+            viewGroup.getChildAt(i).setVisibility(View.GONE);
+        }
         byte[] showKeys = {Description.FIELD_FEATURE, Description.FIELD_RECOMMEND, Description.FIELD_RECOMMEND_COOK, Description.FIELD_GUEST_CAPACITY, Description.FIELD_BUSINESS_HOURS,
                 Description.FIELD_HOUSING_PRICE, Description.FIELD_SYNOPSIS, Description.FIELD_CINEMA_FEATURE, Description.FIELD_MEMBER_POLICY, Description.FIELD_FEATURE_SPECIALTY, 
                 Description.FIELD_TOUR_DATE, Description.FIELD_TOUR_LIKE, Description.FIELD_POPEDOM_SCENERY, Description.FIELD_RECOMMEND_SCENERY,
                 Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
                 Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO};
-        
+
+        int margin = (int)(Globals.g_metrics.density*8);
+        LayoutParams layoutParamsTitle = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+        layoutParamsTitle.topMargin = margin;
+        layoutParamsTitle.bottomMargin = 0;
+        LayoutParams layoutParamsBody = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+        layoutParamsBody.topMargin = 0;
+        layoutParamsBody.bottomMargin = margin;
+        LayoutParams layoutParamsSplit = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+        TextView titleTxv;
+        TextView bodyTxv;
+        ImageView splitImv = null;
         for(int i = 0; i < showKeys.length; i++) {
             
             byte key = showKeys[i];
             String value = poi.getDescriptionValue(key);
             
             if(!TextUtils.isEmpty(value)) {
-                TextView textView = new TextView(mContext);
-                textView.setGravity(Gravity.LEFT);
-                textView.setTextColor(0xff000000);
+                if (i*3 < count) {
+                    titleTxv = (TextView) viewGroup.getChildAt(i*3);
+                    bodyTxv = (TextView) viewGroup.getChildAt(i*3+1);
+                    splitImv = (ImageView) viewGroup.getChildAt(i*3+2);
+                    titleTxv.setVisibility(View.VISIBLE);
+                    bodyTxv.setVisibility(View.VISIBLE);
+                    splitImv.setVisibility(View.VISIBLE);
+                } else {
+                    titleTxv = new TextView(mContext);
+                    titleTxv.setGravity(Gravity.LEFT);
+                    int color = mSphinx.getResources().getColor(R.color.black_middle);
+                    titleTxv.setTextColor(color);
+                    viewGroup.addView(titleTxv, layoutParamsTitle);
+                    bodyTxv = new TextView(mContext);
+                    bodyTxv.setGravity(Gravity.LEFT);
+                    color = mSphinx.getResources().getColor(R.color.black_light);
+                    bodyTxv.setTextColor(color);
+                    viewGroup.addView(bodyTxv, layoutParamsBody);
+                    splitImv = new ImageView(mContext);
+                    splitImv.setBackgroundResource(R.drawable.bg_broken_line);
+                    viewGroup.addView(splitImv, layoutParamsSplit);
+                }
                 String name = poi.getDescriptionName(mContext, key);
-                SpannableStringBuilder style = new SpannableStringBuilder(name+value);
-                style.setSpan(new ForegroundColorSpan(0xffa97036), 0, name.length(),Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-                textView.setText(style);
-                viewGroup.addView(textView);
-                
+                titleTxv.setText(name.substring(0, name.length()-1));
+                bodyTxv.setText(value);
             }
+        }
+        if (splitImv != null) {
+            viewGroup.setVisibility(View.VISIBLE);
+            splitImv.setVisibility(View.GONE);
+        } else {
+            viewGroup.setVisibility(View.GONE);
         }
     }
     
@@ -842,20 +842,22 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 
             	sb.append(value);
                 indexs.add(sb.length());
-            	sb.append(' ');
+            	sb.append("   ");
                 
             	addCount++;
         	}
         }
         
         SpannableStringBuilder style = new SpannableStringBuilder(sb.toString());
+        int orange = mSphinx.getResources().getColor(R.color.orange);
         for(int i = 0 ; i < indexs.size()-1; i+=2){
-            style.setSpan(new ForegroundColorSpan(0xffa97036),indexs.get(i),indexs.get(i+1),Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+            style.setSpan(new ForegroundColorSpan(orange),indexs.get(i),indexs.get(i+1),Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         }
         
         return style;
     }
     
+    @SuppressWarnings("unchecked")
     private void setCommentQuery(DataQuery commentQuery) {
         Response response = commentQuery.getResponse();
         POI poi = commentQuery.getPOI();
@@ -866,14 +868,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 
         mCommentTipView.setVisibility(View.VISIBLE);
         int count = mCommentListView.getChildCount();
-        for(int i = 1; i < count; i++) {
+        for(int i = 2; i < count; i++) {
             mCommentListView.getChildAt(i).setVisibility(View.GONE);
         }
-        mCommentListView.setVisibility(View.INVISIBLE);
-        mCommentSumTotalView.setBackgroundResource(R.drawable.list_single_normal);
-        mCommentSumTotalTxv.setText("  "+mSphinx.getString(R.string.comment));
-        mCommentSumTotalTxv.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
-        mViewAllCommentTxv.setVisibility(View.INVISIBLE);
+        mCommentListView.setVisibility(View.GONE);
 
         if (response != null && response instanceof CommentResponse) {
             CommentList commentList = ((CommentResponse)response).getList();
@@ -881,52 +879,39 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 List<Comment> commentArrayList = commentList.getList();
                 poi.updateAttribute();
                 Collections.sort(commentArrayList, Comment.COMPARATOR);
-                int length = commentArrayList.size();
+                int size = commentArrayList.size();
                 mCommentListView.setVisibility(View.VISIBLE);
-                mCommentSumTotalView.setBackgroundResource(R.drawable.list_header);
-                mViewAllCommentTxv.setVisibility(View.VISIBLE);
-                if (length > 3) {
-                    length = 3;
+                int length = size;
+                if (size > 1) {
+                    length = 1;
                 }
                 LayoutParams layoutParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
                 for (int i = 0; i < length; i++) {
                     View commentView = null;
-                    if (i*2+2 < count) {
+                    if (i*2+3 < count) {
                         View view = null;
-                        view = mCommentListView.getChildAt(i*2+1);
+                        view = mCommentListView.getChildAt(i*2+3);
                         view.setVisibility(View.VISIBLE);
                         view = mCommentListView.getChildAt(i*2+2);
                         view.setVisibility(View.VISIBLE);
                         commentView = getCommentItemView(view, mCommentListView, commentArrayList.get(i), poi);
                     } else {
-                        ImageView imageView = new ImageView(mContext);
-                        imageView.setBackgroundResource(R.drawable.divider);
-                        mCommentListView.addView(imageView, layoutParams);
                         commentView = getCommentItemView(null, mCommentListView, commentArrayList.get(i), poi);
                         mCommentListView.addView(commentView);
+                        ImageView imageView = new ImageView(mContext);
+                        imageView.setBackgroundResource(R.drawable.bg_broken_line);
+                        mCommentListView.addView(imageView, layoutParams);
                     }
-                    long attribute = poi.getAttribute();
-                    if (i == 0 && ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0 || (attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0)) {
-                        if (i < length -1) {
-                            commentView.setBackgroundResource(R.drawable.list_middle);
-                        } else {
-                            commentView.setBackgroundResource(R.drawable.list_footer);
-                        }
-                    } else if (i < length -1) {
-                        commentView.setBackgroundResource(R.drawable.list_middle);
-                        commentView.setOnClickListener(this);
-                    } else {
-                        commentView.setBackgroundResource(R.drawable.list_footer);
-                        commentView.setOnClickListener(this);
-                    }
+                    commentView.setBackgroundResource(R.drawable.list_middle);
+                    commentView.setOnClickListener(this);
                 }
-            } else {
-                mCommentListView.setVisibility(View.INVISIBLE);
-                mCommentSumTotalTxv.setText("  "+mSphinx.getString(R.string.comment_empty));
-                mCommentSumTotalView.setBackgroundResource(R.drawable.list_single);
-                mCommentSumTotalTxv.setGravity(Gravity.CENTER);
-                mViewAllCommentTxv.setVisibility(View.INVISIBLE);
             }
+        }
+        
+        if (mCommentListView.getVisibility() == View.VISIBLE) {
+            mCommentTipView.setBackgroundResource(R.drawable.list_footer);
+        } else {
+            mCommentTipView.setBackgroundResource(R.drawable.list_single);
         }
     }
     
@@ -1131,10 +1116,17 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
+
         DataQuery commentQuery = poi.getCommentQuery();
         if (commentQuery != null) {
-            POICommentList.setCommentQuery(commentQuery);
-            mSphinx.showView(R.id.activity_poi_comment_list);
+            Response response = commentQuery.getResponse();
+            if (response != null && response instanceof CommentResponse) {
+                CommentList commentList = ((CommentResponse)response).getList();
+                if (commentList != null && commentList.getList() != null && commentList.getList().size() > 0) {
+                    POICommentList.setCommentQuery(commentQuery);
+                    mSphinx.showView(R.id.activity_poi_comment_list);
+                }
+            }
         }
     }    
 }

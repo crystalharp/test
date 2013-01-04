@@ -6,6 +6,8 @@
     <item type="id" name="dialog_prompt_setting_location" />
     <item type="id" name="dialog_fetch_favorite_poi" />
     
+    <item type="id" name="dialog_share_doing" />
+    
     <item type="id" name="activity_user_login" />
     <item type="id" name="activity_user_regist" />
     <item type="id" name="activity_user_reset_password" />

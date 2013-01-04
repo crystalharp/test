@@ -7,6 +7,7 @@ package com.tigerknows;
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.Util;
+import com.tencent.tauth.TAuthView;
 import com.tigerknows.R;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
@@ -19,9 +20,13 @@ import com.tigerknows.model.DataOperation.CommentUpdateResponse;
 import com.tigerknows.model.DataQuery.CommentResponse;
 import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
 import com.tigerknows.model.xobject.XMap;
-import com.tigerknows.share.IBaseShare;
-import com.tigerknows.share.ShareEntrance;
-import com.tigerknows.share.ShareMessageCenter;
+import com.tigerknows.share.ShareAPI;
+import com.tigerknows.share.TKTencentOpenAPI;
+import com.tigerknows.share.TKWeibo;
+import com.tigerknows.share.UserAccessIdenty;
+import com.tigerknows.share.ShareAPI.LoginCallBack;
+import com.tigerknows.share.TKTencentOpenAPI.AuthReceiver;
+import com.tigerknows.share.TKWeibo.AuthDialogListener;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.user.User;
@@ -31,8 +36,7 @@ import com.tigerknows.view.user.UserUpdateNickNameActivity;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -160,36 +164,51 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     
     private int mFromViewId;
     
-    private BroadcastReceiver mSinaWeiboReceiver = new BroadcastReceiver() {
-        
-        @Override
-        public void onReceive(Context context, Intent intent) { 
+    private class MyLoginCallBack implements LoginCallBack {
 
-        	IBaseShare iBaseShare = ShareEntrance.getShareObject(mThis, ShareEntrance.SINAWEIBO_ENTRANCE);
-                if (mSyncSinaChb.getTag().equals(Boolean.TRUE)) {
-                    if (iBaseShare.satisfyCondition()) {
-                        mSyncSinaChb.setChecked(true);
-                    }
-                }
-                mSyncSinaChb.setTag(Boolean.FALSE);
-            }
-    };
-    
-    private BroadcastReceiver mTencentReceiver = new BroadcastReceiver(){
+        String type;
         
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-        	IBaseShare iBaseShare = ShareEntrance.getShareObject(mThis, ShareEntrance.TENCENT_ENTRANCE);
-            if (Boolean.TRUE.equals(mSyncQZoneChb.getTag())) {
-                if (iBaseShare.satisfyCondition()) {
-                    mSyncQZoneChb.setChecked(true);
-                }
-            }
-            mSyncQZoneChb.setTag(Boolean.FALSE);
+        public MyLoginCallBack(String type) {
+            this.type = type;
         }
         
-    };
+        @Override
+        public void onSuccess() {
+            POIComment.this.runOnUiThread(new Runnable() {
+                
+                @Override
+                public void run() {
+                    if (ShareAPI.TYPE_WEIBO.equals(type)) {
+                        UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_WEIBO);
+                        if (userAccessIdenty != null) {
+                            mSyncSinaChb.setChecked(true);
+                        } else {
+                            mSyncSinaChb.setChecked(false);
+                        }
+                    } if (ShareAPI.TYPE_TENCENT.equals(type)) {
+                        UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_TENCENT);
+                        if (userAccessIdenty != null) {
+                            mSyncQZoneChb.setChecked(true);
+                        } else {
+                            mSyncQZoneChb.setChecked(false);
+                        }
+                    }
+                }
+            });
+        }
+
+        @Override
+        public void onFailed() {
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    }
+    
+    private AuthDialogListener mSinaAuthDialogListener;
+    
+    private AuthReceiver mTencentAuthReceiver;
     
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -212,6 +231,10 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         
         findViews();
         setListener();
+        
+        mSinaAuthDialogListener = new AuthDialogListener(mThis, new MyLoginCallBack(ShareAPI.TYPE_WEIBO));
+        mTencentAuthReceiver = new AuthReceiver(mThis, new MyLoginCallBack(ShareAPI.TYPE_TENCENT));
+        registerIntentReceivers();
         
         mGradeView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         int gredeHeight = mGradeView.getMeasuredHeight()-Util.dip2px(Globals.g_metrics.density, 8);
@@ -272,21 +295,18 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             mContentEdt.setText(null);
         }
         
-    	IBaseShare iBaseShare = ShareEntrance.getShareObject(mThis, ShareEntrance.TENCENT_ENTRANCE);
-        if (iBaseShare.satisfyCondition()) {
+    	UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_TENCENT);
+        if (userAccessIdenty != null) {
             mSyncQZoneChb.setChecked(true);
         } else {
             mSyncQZoneChb.setChecked(false);
         }
-    	iBaseShare = ShareEntrance.getShareObject(mThis, ShareEntrance.SINAWEIBO_ENTRANCE);
-        if (iBaseShare.satisfyCondition()) {
+        userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_WEIBO);
+        if (userAccessIdenty != null) {
             mSyncSinaChb.setChecked(true);
         } else {
             mSyncSinaChb.setChecked(false);
         }
-        
-        mSyncQZoneChb.setTag(Boolean.FALSE);
-        mSyncSinaChb.setTag(Boolean.FALSE);
 
         mExpandFoodView.setVisibility(View.GONE);
         mExpandHotelView.setVisibility(View.GONE);
@@ -369,18 +389,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     boolean onResume = false;
     @Override
     public void onResume() {
-        super.onResume();
-        IntentFilter intentFilter= new IntentFilter(ShareMessageCenter.ACTION_SHARE_AUTH_SUCCESS);
-        registerReceiver(mSinaWeiboReceiver, intentFilter);
-        intentFilter= new IntentFilter(ShareMessageCenter.ACTION_SHARE_PROFILE_SUCCESS);
-        registerReceiver(mTencentReceiver, intentFilter);
-        
-    	IBaseShare iBaseShare = ShareEntrance.getShareObject(mThis, ShareEntrance.TENCENT_ENTRANCE);
-        if (Boolean.TRUE.equals(mSyncQZoneChb.getTag())) {
-            if (iBaseShare.satisfyCondition()) {
-                mSyncQZoneChb.setChecked(true);
-            }
-        }
+        super.onResume();        
         onResume = true;
         if (isReLogin()) {
             return;
@@ -389,8 +398,6 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void onPause() {
-        unregisterReceiver(mSinaWeiboReceiver);
-        unregisterReceiver(mTencentReceiver);
         onResume = false;
         super.onPause();
     }
@@ -482,8 +489,21 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
 	protected void onDestroy() {
 		// TODO Auto-generated method stub
 		super.onDestroy();
-        sendBroadcast(new Intent(ShareMessageCenter.EXTRA_SHARE_FINISH));
-	}
+		if (mTencentAuthReceiver != null) {
+            unregisterIntentReceivers();
+        }
+    }
+    
+    
+    private void registerIntentReceivers() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(TAuthView.AUTH_BROADCAST);
+        registerReceiver(mTencentAuthReceiver, filter);
+    }
+    
+    private void unregisterIntentReceivers() {
+        unregisterReceiver(mTencentAuthReceiver);
+    }
 
 	protected void findViews() {
         super.findViews();
@@ -690,6 +710,20 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     }
 
     @Override
+    protected Dialog onCreateDialog(int id) {
+        Dialog dialog = null;
+        switch (id) {
+        case R.id.dialog_share_doing:
+            dialog = new ProgressDialog(this);
+            dialog.setCancelable(false);
+            ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait));
+            break;
+        }
+        
+        return dialog;
+    }
+
+    @Override
     public void onClick(View view) {
         int viewId = view.getId();
         if (R.id.right_btn == viewId) {
@@ -858,38 +892,29 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         } else if (viewId == R.id.sync_qzone_chb) { 
             if (mSyncQZoneChb.isChecked() == true) {
                 mActionLog.addAction(ActionLog.POICommentClickQZone, 0);
-                mSyncQZoneChb.setTag(Boolean.TRUE);
-                ShareEntrance shareEntrance = ShareEntrance.getInstance();
-                shareEntrance.injectOrAuth(mThis, ShareEntrance.TENCENT_ENTRANCE);
-                IBaseShare iBaseShare = shareEntrance.getCurrentShareObject();
-                
-                if (iBaseShare.satisfyCondition()) {
-                    mSyncQZoneChb.setTag(Boolean.FALSE);
+                UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_TENCENT);
+                if (userAccessIdenty != null) {
                     mSyncQZoneChb.setChecked(true);
                 } else {
                     mSyncQZoneChb.setChecked(false);
+                    TKTencentOpenAPI.login(mThis);
                 }
             } else {
                 mActionLog.addAction(ActionLog.POICommentClickQZone, 1);
-                mSyncQZoneChb.setTag(Boolean.FALSE);
                 mSyncQZoneChb.setChecked(false);
             }
         } else if (viewId == R.id.sync_sina_chb) {
             if (mSyncSinaChb.isChecked() == true) {
                 mActionLog.addAction(ActionLog.POICommentClickSina, 0);
-                mSyncSinaChb.setTag(Boolean.TRUE);
-                ShareEntrance shareEntrance = ShareEntrance.getInstance();
-                shareEntrance.injectOrAuth(mThis, ShareEntrance.SINAWEIBO_ENTRANCE);
-                IBaseShare iBaseShare = shareEntrance.getCurrentShareObject();
-                if (iBaseShare.satisfyCondition()) {
-                    mSyncSinaChb.setTag(Boolean.FALSE);
+                UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_WEIBO);
+                if (userAccessIdenty != null) {
                     mSyncSinaChb.setChecked(true);
                 } else {
                     mSyncSinaChb.setChecked(false);
+                    TKWeibo.login(mThis, mSinaAuthDialogListener);
                 }
             } else {
                 mActionLog.addAction(ActionLog.POICommentClickSina, 1);
-                mSyncSinaChb.setTag(Boolean.FALSE);
                 mSyncSinaChb.setChecked(false);
             }
         }
