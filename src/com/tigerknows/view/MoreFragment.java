@@ -14,6 +14,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.decarta.Globals;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
@@ -35,7 +37,8 @@ import com.tigerknows.MapDownload.DownloadCity;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.UserLogonModel;
 import com.tigerknows.model.UserLogonModel.SoftwareUpdate;
-import com.tigerknows.service.DownloadService;
+import com.tigerknows.service.download.DownloadService;
+import com.tigerknows.service.download.SoftwareDownloadedProcessor;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.view.user.UserBaseActivity;
 import com.tigerknows.view.user.UserLoginActivity;
@@ -392,13 +395,8 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                         switch (id) {
                             case DialogInterface.BUTTON_POSITIVE:
                                 String url = finalSoftwareUpdate.getURL();
-                                if (!TextUtils.isEmpty(url)) {
-                                    Intent service = new Intent(mSphinx, DownloadService.class);
-                                    service.putExtra("url", url);
-                                    mSphinx.startService(service);
-                                }
+                                DownloadService.download(mSphinx, url, mSphinx.getString(R.string.download_software_showname), new SoftwareDownloadedProcessor());
                                 break;
-
                             default:
                                 break;
                         }
