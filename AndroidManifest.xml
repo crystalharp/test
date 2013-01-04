@@ -215,12 +215,12 @@
         
         <!-- User Module -->
         
-        <activity android:name=".share.impl.WeiboSend" 
+        <activity android:name=".share.WeiboSend" 
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="orientation|keyboardHidden" 
             android:windowSoftInputMode="adjustResize|stateVisible"
             android:screenOrientation="portrait" />
-        <activity android:name=".share.impl.QZoneSend" 
+        <activity android:name=".share.QZoneSend" 
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="orientation|keyboardHidden" 
             android:windowSoftInputMode="adjustPan|stateVisible" />
