@@ -885,4 +885,6 @@
     <string name="km">千米</string>
     
     <string name="download_software_showname">软件更新</string>
+    <string name="file_downloading">正在下载</string>
+    <string name="add_to_download_list">已添加到下载列表</string>
 </resources>

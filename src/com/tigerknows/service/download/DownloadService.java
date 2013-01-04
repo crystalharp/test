@@ -32,21 +32,31 @@ import java.io.InputStream;
 import java.util.*;
 
 public class DownloadService extends IntentService {
-	private NotificationManager nm = null;
-
-    private Notification notification = null;
-
-    private boolean cancelUpdate = false; // 目前不可取消，因此没有设置取消接口
-
-    private RemoteViews views = null;
-
-    private int notificationId = R.string.download_service;
+	
+	private static Toast toast = null;
+	
+	private static Set<String> downloadingUrlSet = new HashSet<String>();
     
-    private static Set<String> downloadingUrlSet = new HashSet<String>();
+	private static Map<String, DownloadedProcessor> processorMap = new HashMap<String, DownloadedProcessor>();
     
-    private static Map<String, DownloadedProcessor> processorMap = new HashMap<String, DownloadedProcessor>();
-
-    public static boolean registerProcessor(String url, DownloadedProcessor processor) {
+	public static void download(Context context, String url, String showName, DownloadedProcessor processor) {
+        if (!TextUtils.isEmpty(url)) {
+            Intent service = new Intent(context, DownloadService.class);
+            service.putExtra("url", url);
+            service.putExtra("showName", showName);
+            service.putExtra("ticket", context.getString(R.string.download_software_title));
+            if(!downloadingUrlSet.contains(url)) {// 若已正在下载，则必然已注册过，否则可新注册一个processor
+            	DownloadService.registerProcessor(url, processor);
+	            context.startService(service);
+	            LogWrapper.d("chen", "to download"+url);
+            }
+            else {
+            	showToast(context, R.string.file_downloading);
+            }
+        }
+    }
+    
+	public static boolean registerProcessor(String url, DownloadedProcessor processor) {
     	if(processorMap.get(url) != null) {
     		return false;
     	}
@@ -60,18 +70,16 @@ public class DownloadService extends IntentService {
     	processorMap.remove(url);
     }
     
-    public static void download(Context context, String url, String showName, DownloadedProcessor processor) {
-        if (!TextUtils.isEmpty(url)) {
-            Intent service = new Intent(context, DownloadService.class);
-            service.putExtra("url", url);
-            service.putExtra("showName", showName);
-            service.putExtra("ticket", context.getString(R.string.download_software_title));
-            if(!downloadingUrlSet.contains(url)) // 若已正在下载，必然已注册过，否则可新注册一个processor
-            	DownloadService.registerProcessor(url, processor);
-            context.startService(service);
-            LogWrapper.d("chen", "ddd="+url);
-        }
-    }
+	private NotificationManager nm = null;
+
+    private Notification notification = null;
+
+    private boolean cancelUpdate = false; // 目前不可取消，因此没有设置取消接口
+
+    private RemoteViews views = null;
+
+    private int notificationId = R.string.download_service;
+    
     
     public DownloadService() {
 		super("DownloadService");
@@ -81,17 +89,29 @@ public class DownloadService extends IntentService {
     public int onStartCommand(Intent intent, int flags, int startId) {
     	String url = intent.getStringExtra("url");
     	LogWrapper.d("chen", "this: " + this + ", 1url=" + url);
+    	// 由于外部可不掉用download静态方法来下载而直接调用startService来启动服务，因此这里仍需判断重复
     	if(downloadingUrlSet.contains(url)) {
     		intent.putExtra("isDownloading", true);
+    		showToast(this, R.string.file_downloading);
     	}
     	else {
         	downloadingUrlSet.add(url);
+        	showToast(this, R.string.add_to_download_list);
     	}
         return super.onStartCommand(intent, flags, startId);
     }
     
+    private static void showToast(Context context, int resId) {
+    	if(toast == null) 
+    		toast = Toast.makeText(context, resId, Toast.LENGTH_SHORT);
+    	else
+    		toast.setText(resId);
+    	toast.show();
+    }
+    
 	@Override
 	protected void onHandleIntent(Intent intent) {
+		// 当时正在下载的，此时已下载完成。
 		boolean isDownloaded = intent.getBooleanExtra("isDownloading", false);
 		if(isDownloaded) {
 			LogWrapper.d("chen", "this: " + this + ", the url has just been downloaded");
@@ -100,7 +120,6 @@ public class DownloadService extends IntentService {
 		String url = intent.getStringExtra("url");
 		String showName = intent.getStringExtra("showName");
 		LogWrapper.d("chen", "this: " + this + ", 2url=" + url);
-    	Toast.makeText(this, "添加到下载列表", Toast.LENGTH_SHORT).show();
 		String ticket = intent.getStringExtra("ticket");
 		if (TextUtils.isEmpty(url) == false) {
 		    LogWrapper.d("chen", "this: " + this + ", 3url=" + url);
@@ -110,7 +129,7 @@ public class DownloadService extends IntentService {
 			    DownloadedProcessor processor = processorMap.get(url);
 			    if(processor != null)
 			    	processor.process(tempFile, this);
-                nm.cancel(notificationId); // TODO: 如果下载失败，是否需要cancel？
+                nm.cancel(notificationId);
 		    }
 		}
 		downloadingUrlSet.remove(url);
@@ -141,74 +160,68 @@ public class DownloadService extends IntentService {
     private File downFile(final String url, String showName) {
         try {
             HttpClient client = Utility.getNewHttpClient(getApplicationContext());
-            // params[0]代表连接的url
-            HttpGet get = new HttpGet(url);
-            HttpResponse response = client.execute(get);
+            HttpResponse response = client.execute(new HttpGet(url));
             HttpEntity entity = response.getEntity();
             long length = entity.getContentLength();
             InputStream is = entity.getContent();
-            File tempFile = null;
-            if (is != null) {
-                String path = MapEngine.getInstance().getMapPath();
-                File rootFile = new File(path);
-                if (!rootFile.exists() && !rootFile.isDirectory())
-                    rootFile.mkdir();
-
-                tempFile = new File(path, url.substring(url.lastIndexOf("/") + 1));
-                if (tempFile.exists())
-                    tempFile.delete();
-                tempFile.createNewFile();
-
-                // 已读出流作为参数创建一个带有缓冲的输出流
-                BufferedInputStream bis = new BufferedInputStream(is);
-
-                // 创建一个新的写入流，讲读取到的图像数据写入到文件中
-                FileOutputStream fos = new FileOutputStream(tempFile);
-                // 已写入流作为参数创建一个带有缓冲的写入流
-                BufferedOutputStream bos = new BufferedOutputStream(fos);
-
-                int read;
-                long count = 0;
-                int percent = 0;
-                int download_percent = 0;
-                byte[] buffer = new byte[1024];
-                while ((read = bis.read(buffer)) != -1 && !cancelUpdate) {
-                    bos.write(buffer, 0, read);
-                    count += read;
-                    percent = (int)(((double)count / length) * 100);
-                    if(percent - download_percent >= 1) {
-	                    views.setTextViewText(R.id.process_txv, "已下载" + showName + percent + "%");
-	                    views.setProgressBar(R.id.process_prb, 100, percent, false);
-	                    notification.contentView = views;
-	                    nm.notify(notificationId, notification);
-	                    download_percent = percent;
-                    }
-                }
-                bos.flush();
-                bos.close();
-                fos.flush();
-                fos.close();
-                is.close();
-                bis.close();
+            if(is != null) {
+	            File tempFile = createFileByUrl(url);
+	            BufferedInputStream bis = new BufferedInputStream(is);
+	            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(tempFile));
+	            int read = 0;
+	            long count = 0;
+	            int percent = 0;
+	            int counted_percent = 0;
+	            byte[] buffer = new byte[1024];
+	            notify(showName, 0);
+	            while ((read = bis.read(buffer)) != -1 && !cancelUpdate) {
+	                bos.write(buffer, 0, read);
+	                count += read;
+	                percent = (int)(((double)count / length) * 100);
+	                if(percent - counted_percent >= 1) {
+	                	notify(showName, percent);
+	                	counted_percent = percent;
+	                }
+	            }
+	            bos.flush();
+	            bos.close();
+	            is.close();
+	            bis.close();
+	            if (!cancelUpdate) {
+	            	LogWrapper.d("chen", "download complete");
+	                return tempFile;
+	            } else {
+	            	LogWrapper.d("chen", "download canceled");
+	                tempFile.delete();
+	                return null;
+	            }
             }
-
-            if (!cancelUpdate) {
-            	LogWrapper.d("chen", "download complete");
-                return tempFile;
-            } else {
-            	LogWrapper.d("chen", "download canceled");
-                tempFile.delete();
-                return null;
-            }
-        } catch (ClientProtocolException e) {
-        	nm.cancel(notificationId);
-        } catch (IOException e) {
-        	nm.cancel(notificationId);
         } catch (Exception e) {
-        	nm.cancel(notificationId);
         }
+    	nm.cancel(notificationId);
+        toast.cancel();
         LogWrapper.d("chen", "download failed");
         return null;
+    }
+    
+    private File createFileByUrl(String url) throws IOException {
+    	File tempFile = null;
+    	String path = MapEngine.getInstance().getMapPath();
+        File rootFile = new File(path);
+        if (!rootFile.exists() && !rootFile.isDirectory())
+            rootFile.mkdir();
+        tempFile = new File(path, url.substring(url.lastIndexOf("/") + 1));
+        if (tempFile.exists())
+            tempFile.delete();
+        tempFile.createNewFile();
+        return tempFile;
+    }
+    
+    private void notify(String showName, int percent) {
+        views.setTextViewText(R.id.process_txv, "已下载" + showName + percent + "%");
+        views.setProgressBar(R.id.process_prb, 100, percent, false);
+        notification.contentView = views;
+        nm.notify(notificationId, notification);
     }
     
     @Override
