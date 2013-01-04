@@ -883,4 +883,6 @@
     
     <string name="meter">米</string>
     <string name="km">千米</string>
+    
+    <string name="download_software_showname">软件更新</string>
 </resources>

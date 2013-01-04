@@ -17,6 +17,7 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
@@ -35,11 +36,13 @@ public class DownloadService extends IntentService {
 
     private Notification notification = null;
 
-    private boolean cancelUpdate = false;
+    private boolean cancelUpdate = false; // 目前不可取消，因此没有设置取消接口
 
     private RemoteViews views = null;
 
     private int notificationId = R.string.download_service;
+    
+    private static Set<String> downloadingUrlSet = new HashSet<String>();
     
     private static Map<String, DownloadedProcessor> processorMap = new HashMap<String, DownloadedProcessor>();
 
@@ -57,21 +60,52 @@ public class DownloadService extends IntentService {
     	processorMap.remove(url);
     }
     
+    public static void download(Context context, String url, String showName, DownloadedProcessor processor) {
+        if (!TextUtils.isEmpty(url)) {
+            Intent service = new Intent(context, DownloadService.class);
+            service.putExtra("url", url);
+            service.putExtra("showName", showName);
+            service.putExtra("ticket", context.getString(R.string.download_software_title));
+            if(!downloadingUrlSet.contains(url)) // 若已正在下载，必然已注册过，否则可新注册一个processor
+            	DownloadService.registerProcessor(url, processor);
+            context.startService(service);
+            LogWrapper.d("chen", "ddd="+url);
+        }
+    }
+    
     public DownloadService() {
 		super("DownloadService");
 	}
-
+    
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+    	String url = intent.getStringExtra("url");
+    	LogWrapper.d("chen", "this: " + this + ", 1url=" + url);
+    	if(downloadingUrlSet.contains(url)) {
+    		intent.putExtra("isDownloading", true);
+    	}
+    	else {
+        	downloadingUrlSet.add(url);
+    	}
+        return super.onStartCommand(intent, flags, startId);
+    }
+    
 	@Override
 	protected void onHandleIntent(Intent intent) {
+		boolean isDownloaded = intent.getBooleanExtra("isDownloading", false);
+		if(isDownloaded) {
+			LogWrapper.d("chen", "this: " + this + ", the url has just been downloaded");
+			return;
+		}
 		String url = intent.getStringExtra("url");
-		String msg = intent.getStringExtra("msg");
+		String showName = intent.getStringExtra("showName");
+		LogWrapper.d("chen", "this: " + this + ", 2url=" + url);
+    	Toast.makeText(this, "添加到下载列表", Toast.LENGTH_SHORT).show();
 		String ticket = intent.getStringExtra("ticket");
-		LogWrapper.d("chen", url + ", " + msg + ", " + ticket);
 		if (TextUtils.isEmpty(url) == false) {
-		    LogWrapper.d("test", "url=" + url);
+		    LogWrapper.d("chen", "this: " + this + ", 3url=" + url);
 		    createProcessView(ticket);
-		    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-		    File tempFile = downFile(url);
+		    File tempFile = downFile(url, showName);
 		    if(tempFile != null) {
 			    DownloadedProcessor processor = processorMap.get(url);
 			    if(processor != null)
@@ -79,6 +113,7 @@ public class DownloadService extends IntentService {
                 nm.cancel(notificationId); // TODO: 如果下载失败，是否需要cancel？
 		    }
 		}
+		downloadingUrlSet.remove(url);
 	}
     
 	// 在状态栏添加下载进度条
@@ -87,7 +122,6 @@ public class DownloadService extends IntentService {
     	nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
 	    notification = new Notification();
 	    notification.icon = android.R.drawable.stat_sys_download;
-	    LogWrapper.d("chen", Integer.toHexString(android.R.drawable.stat_sys_download));
 	    notification.tickerText = ticket;
 	    notification.when = System.currentTimeMillis();
 	    notification.defaults = Notification.DEFAULT_LIGHTS;
@@ -104,7 +138,7 @@ public class DownloadService extends IntentService {
     }
     
     // 下载更新文件，成功返回File对象，否则返回null
-    private File downFile(final String url) {
+    private File downFile(final String url, String showName) {
         try {
             HttpClient client = Utility.getNewHttpClient(getApplicationContext());
             // params[0]代表连接的url
@@ -143,7 +177,7 @@ public class DownloadService extends IntentService {
                     count += read;
                     percent = (int)(((double)count / length) * 100);
                     if(percent - download_percent >= 1) {
-	                    views.setTextViewText(R.id.process_txv, "已下载" + percent + "%");
+	                    views.setTextViewText(R.id.process_txv, "已下载" + showName + percent + "%");
 	                    views.setProgressBar(R.id.process_prb, 100, percent, false);
 	                    notification.contentView = views;
 	                    nm.notify(notificationId, notification);
@@ -175,5 +209,11 @@ public class DownloadService extends IntentService {
         }
         LogWrapper.d("chen", "download failed");
         return null;
+    }
+    
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LogWrapper.d("chen", "this: " + this + ", to destroy");
     }
 }

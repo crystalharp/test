@@ -395,16 +395,8 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                         switch (id) {
                             case DialogInterface.BUTTON_POSITIVE:
                                 String url = finalSoftwareUpdate.getURL();
-                                if (!TextUtils.isEmpty(url)) {
-                                    Intent service = new Intent(mSphinx, DownloadService.class);
-                                    service.putExtra("url", url);
-                                    service.putExtra("ticket", mContext.getString(R.string.download_software_title));
-                                    DownloadService.registerProcessor(url, new SoftwareDownloadedProcessor());
-                                    mSphinx.startService(service);
-                                    LogWrapper.d("chen", "ddd="+url);
-                                }
+                                DownloadService.download(mSphinx, url, mSphinx.getString(R.string.download_software_showname), new SoftwareDownloadedProcessor());
                                 break;
-
                             default:
                                 break;
                         }
