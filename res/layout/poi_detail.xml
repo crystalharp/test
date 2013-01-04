@@ -166,13 +166,13 @@
             <ImageView 
                  android:layout_width="fill_parent"
                  android:layout_height="wrap_content"
+                 android:layout_marginBottom="8dp"
                  android:background="@drawable/bg_sawtooth" /> 
                 
             <LinearLayout
             	android:id="@+id/address_phone_view"
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:orientation="vertical">
@@ -224,9 +224,9 @@
             <LinearLayout android:id="@+id/dynamic_poi_list_view"
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
                 android:orientation="vertical"
                 >
             </LinearLayout>
@@ -234,7 +234,6 @@
             <LinearLayout android:id="@+id/comment_list_view"
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:orientation="vertical"
@@ -287,15 +286,16 @@
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp" />
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp" />
                 
            <LinearLayout 
                android:id="@+id/feature_txv" 
                android:layout_width="fill_parent"
                android:layout_height="wrap_content" 
-               android:layout_marginTop="8dp"
                android:layout_marginLeft="8dp"
                android:layout_marginRight="8dp"
+               android:layout_marginBottom="8dp"
                android:paddingLeft="8dp"
                android:paddingRight="8dp"
                android:orientation="vertical"
