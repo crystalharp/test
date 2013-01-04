@@ -121,7 +121,6 @@ import com.tigerknows.service.MapStatsService;
 import com.tigerknows.service.SuggestLexiconService;
 import com.tigerknows.service.TKLocationManager;
 import com.tigerknows.service.TKLocationManager.TKLocationListener;
-import com.tigerknows.share.ShareMessageCenter;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.BaseDialog;
@@ -1130,7 +1129,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             mSensorManager.unregisterListener(mSensorListener);
         }
         mActionLog.onDestroy();
-        sendBroadcast(new Intent(ShareMessageCenter.EXTRA_SHARE_FINISH));
         mMenuFragment = null;
         mTitleFragment = null;
         mHomeFragment = null;
