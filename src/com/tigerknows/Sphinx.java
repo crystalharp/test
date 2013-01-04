@@ -249,7 +249,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         Display display=winMan.getDefaultDisplay();
         display.getMetrics(Globals.g_metrics);
         
-		TKConfig.configure();
         TKConfig.readConfig();
         Globals.readSessionAndUser(this);
         Globals.setConnectionFast(Util.isConnectionFast(this));        
@@ -716,9 +715,43 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             
             EventRegistry.addEventListener(mMapView, MapView.EventType.DOUBLECLICK, new MapView.DoubleClickEventListener(){
                 @Override
-                public void onDoubleClickEvent(MapView mapView, Position position) {
-                    mapView.zoomIn(position);
-                    mActionLog.addAction(ActionLog.MapDoubleClick);
+                public void onDoubleClickEvent(final MapView mapView, final Position position) {
+            		int zoomLevel = (int) mapView.getZoomLevel();
+            		int newZoomLevel = zoomLevel+1;
+            		if (zoomLevel < CONFIG.ZOOM_UPPER_BOUND) {
+	            		XYFloat xy = mapView.positionToScreenXY(position);
+	            		Position centerPos = mapView.getCenterPosition();
+						XYFloat center = mapView.positionToScreenXY(centerPos);
+						final XYFloat offset = new XYFloat(xy.x-center.x, xy.y-center.y);
+						if (newZoomLevel == CONFIG.ZOOM_JUMP) {
+						    try {
+                                mapView.setZoomLevel(newZoomLevel);
+                                mapView.refreshMap();
+                                XYFloat nowxy = mapView.positionToScreenXY(position);
+                                Position nowcenterPos = mapView.getCenterPosition();
+                                XYFloat nowcenter = mapView.positionToScreenXY(nowcenterPos);
+                                XYFloat nowOffset = new XYFloat(nowxy.x-nowcenter.x, nowxy.y-nowcenter.y);
+                                mapView.moveView(offset.x-nowOffset.x, offset.y-nowOffset.y);
+                            } catch (APIException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            }
+						} else {
+    						mapView.zoomTo(newZoomLevel, centerPos, -1, new ZoomEndEventListener() {
+    							
+    							@Override
+    							public void onZoomEndEvent(MapView mapView, int newZoomLevel) {
+    								XYFloat nowxy = mapView.positionToScreenXY(position);
+    								Position nowcenterPos = mapView.getCenterPosition();
+    								XYFloat nowcenter = mapView.positionToScreenXY(nowcenterPos);
+    								XYFloat nowOffset = new XYFloat(nowxy.x-nowcenter.x, nowxy.y-nowcenter.y);
+    								mapView.moveView(offset.x-nowOffset.x, offset.y-nowOffset.y);
+    							}
+    						});
+						}
+						mActionLog.addAction(ActionLog.MapDoubleClick);
+            		}
+                	
                 }
             });
             

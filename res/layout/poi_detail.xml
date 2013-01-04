@@ -3,13 +3,71 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent"
-    android:background="@color/gray_dark">
-        	
+    android:background="@drawable/bg_discover">
+	            
+    <LinearLayout 
+        android:id="@+id/control_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:background="@drawable/bg_bottom_control"
+        android:weightSum="4"
+        android:gravity="center">
+        <LinearLayout
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+        <Button android:id="@+id/poi_btn" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_search_nearby"
+            android:gravity="center"/>
+        </LinearLayout>
+            
+        <LinearLayout
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+        <Button android:id="@+id/favorite_btn" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_favorite"
+            android:gravity="center"/>
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+        <Button android:id="@+id/share_btn" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_share"
+            android:gravity="center"/>
+        </LinearLayout>
+            
+        <LinearLayout
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+        <Button android:id="@+id/error_recovery_btn" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_recovery_error"
+            android:gravity="center"/>
+        </LinearLayout>
+    </LinearLayout>
+    
     <ScrollView
         android:id="@+id/body_scv"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_above="@id/tip_view"
+        android:layout_above="@id/control_view"
         android:scrollbars="vertical"
         android:gravity="top"
         android:fillViewport="true"
@@ -18,11 +76,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:paddingLeft="6dp"
-            android:paddingTop="6dp"
-            android:paddingRight="6dp"
-            android:paddingBottom="60dp">
+            android:layout_height="fill_parent">
             <RelativeLayout
              android:layout_width="fill_parent" 
              android:layout_height="fill_parent"
@@ -38,7 +92,7 @@
                 android:padding="8dp"
                 android:orientation="vertical"
                 android:gravity="left|top"
-                android:background="@drawable/list_single_normal">
+                android:background="@android:color/white">
                 <RelativeLayout
 	                android:layout_width="fill_parent" 
 	                android:layout_height="wrap_content"
@@ -52,7 +106,7 @@
 	                    android:paddingBottom="6dp"
 	                    android:gravity="left"
 	                    android:text="@string/app_name"
-	                    android:textColor="@android:color/black"
+	                    android:textColor="@color/black_dark"
 	                    android:textSize="18sp"
 	                    android:scrollHorizontally="true" 
 	                    android:singleLine="true"
@@ -77,7 +131,7 @@
 	                   android:layout_height="wrap_content" 
 	                   android:layout_below="@id/name_txv" 
 	                   android:layout_alignParentRight="true"
-	                   android:textColor="#ffa97036"
+	                   android:textColor="@color/orange"
 	                   android:textSize="16sp"
 	                   android:text="@string/app_name"
 	                   android:singleLine="true"
@@ -92,7 +146,7 @@
 	                   android:layout_toRightOf="@id/stars_rtb" 
 	                   android:layout_toLeftOf="@id/money_txv" 
 	                   android:layout_below="@id/name_txv" 
-	                   android:textColor="#ffa2a2a2"
+	                   android:textColor="@color/black_light"
 	                   android:textSize="16sp"
 	                   android:text="@string/app_name"
 	                   android:singleLine="true"
@@ -104,103 +158,75 @@
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content" 
 	                android:paddingTop="4dp"
-	                android:textColor="@android:color/black"
+	                android:textColor="@color/black_light"
 	                android:textSize="15sp"
 	                android:text="@string/app_name"
 	                android:focusable="false" /> 
             </LinearLayout>
+            <ImageView 
+                 android:layout_width="fill_parent"
+                 android:layout_height="wrap_content"
+                 android:background="@drawable/bg_sawtooth" /> 
                 
             <LinearLayout
             	android:id="@+id/address_phone_view"
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 android:orientation="vertical">
                 <LinearLayout android:id="@+id/telephone_view"
 		            android:layout_width="fill_parent"
 		            android:layout_height="wrap_content" 
 		            android:gravity="center_vertical"
-		            android:background="@drawable/list_footer"
 		            android:orientation="horizontal"
-			        android:paddingTop="8dp"
-			        android:paddingRight="8dp"
-			        android:paddingLeft="8dp"
-			        android:paddingBottom="8dp"
 		            >
-		         <TextView
-		             android:layout_width="wrap_content"
-		             android:layout_height="wrap_content" 
-		             android:gravity="left|center_vertical"
-		             android:text="@string/phonenumber" 
-		             android:textColor="@android:color/black"
-		             android:textSize="16sp"
-		             />
 		         <TextView android:id="@+id/telephone_txv"
 		             android:layout_width="fill_parent"
 		             android:layout_height="wrap_content" 
+                     android:layout_margin="8dp"
 		             android:gravity="left|center_vertical"
 		             android:drawableRight="@drawable/ic_telephone"
 		             android:text="@string/app_name" 
 		             android:textColor="@android:color/black"
 		             android:textSize="16sp"
-		             android:autoLink="phone"
-		             />
+		             android:autoLink="none"
+		             ></TextView>
 		        </LinearLayout>
                 
                 <ImageView android:id="@+id/address_telephome_divider_imv" 
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content" 
-                    android:background="@drawable/divider" />
+                    android:background="@drawable/bg_real_line" />
                 
-                <LinearLayout android:id="@+id/address_view"
+                <RelativeLayout android:id="@+id/address_view"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content" 
 	                android:gravity="center_vertical"
-                    android:background="@drawable/list_footer"
                     android:orientation="horizontal"
-	                android:paddingTop="8dp"
-	                android:paddingRight="8dp"
-	                android:paddingLeft="8dp"
-	                android:paddingBottom="8dp"
                     >
-	                <TextView
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content" 
-		                android:gravity="left|center_vertical"
-	                    android:text="@string/address" 
-	                    android:textColor="@android:color/black"
-	                    android:textSize="16sp"
-	                    />
 	                <TextView android:id="@+id/address_txv"
 	                    android:layout_width="fill_parent"
-	                    android:layout_height="wrap_content" 
+	                    android:layout_height="wrap_content"
+	                    android:layout_margin="8dp"
 		                android:gravity="left|center_vertical"
-	                    android:drawableRight="@drawable/ic_address"
 	                    android:text="@string/app_name" 
 	                    android:textColor="@android:color/black"
+		                android:drawableRight="@drawable/ic_goto_here"
 	                    android:textSize="16sp"
+		                android:autoLink="none"
 	                    />
-                </LinearLayout>
+                </RelativeLayout>
 
-            </LinearLayout>             
-                
-           <LinearLayout 
-               android:id="@+id/feature_txv" 
-               android:layout_width="fill_parent"
-               android:layout_height="wrap_content" 
-               android:layout_marginTop="8dp"
-               android:paddingLeft="6dp"
-               android:orientation="vertical"
-               android:gravity="left"
-               android:textColor="@android:color/black"
-               android:textSize="15sp"
-               android:text="@string/app_name"
-               android:focusable="false" />
+            </LinearLayout>
                 
             <LinearLayout android:id="@+id/dynamic_poi_list_view"
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 android:orientation="vertical"
                 >
             </LinearLayout>
@@ -209,13 +235,15 @@
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
                 android:layout_marginTop="6dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 android:orientation="vertical"
                 >
                 <RelativeLayout
                     android:id="@+id/comment_sum_total_view" 
                     android:layout_width="fill_parent" 
                     android:layout_height="wrap_content"
-                    android:background="@drawable/list_header_normal"
+                    android:background="@drawable/list_header"
                     android:clickable="true">
                     <TextView
                         android:id="@+id/comment_sum_total_txv" 
@@ -223,6 +251,7 @@
                         android:layout_height="wrap_content" 
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
+                        android:layout_marginLeft="8dp"
                         android:textColor="@android:color/black"
                         android:textSize="16sp"
                         android:gravity="left|center_vertical"
@@ -238,16 +267,42 @@
                         android:layout_centerVertical="true"
                         android:layout_marginRight="8dp"
                         android:gravity="right|center_vertical"
-                        android:drawableRight="@drawable/icon_arrow_right"
+                        android:drawableRight="@drawable/ic_view_all_comment"
                         android:textColor="@color/text_gray"
                         android:text="@string/look_all_comment"
                         android:textSize="14sp"
-                        android:visibility="invisible"
 	                    android:clickable="false"
 	                    android:focusable="false"
 	                    android:focusableInTouchMode="false"/>
                 </RelativeLayout>
+                <ImageView
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content" 
+                        android:background="@drawable/bg_real_line" />
             </LinearLayout> 
+    
+		    <include 
+		        android:id="@+id/comment_tip_view"
+		        layout="@layout/comment_tip"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp" />
+                
+           <LinearLayout 
+               android:id="@+id/feature_txv" 
+               android:layout_width="fill_parent"
+               android:layout_height="wrap_content" 
+               android:layout_marginTop="8dp"
+               android:layout_marginLeft="8dp"
+               android:layout_marginRight="8dp"
+               android:paddingLeft="8dp"
+               android:paddingRight="8dp"
+               android:orientation="vertical"
+               android:gravity="left"
+               android:background="@drawable/list_single_normal"
+               android:focusable="false" />
+               
 			</LinearLayout>	    
 		    <ImageView 
 		        android:id="@+id/stamp_imv" 
@@ -261,13 +316,6 @@
             </RelativeLayout>
          </LinearLayout>
     </ScrollView>
-    
-    <include 
-        android:id="@+id/comment_tip_view"
-        layout="@layout/comment_tip"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
     <ImageView 
         android:id="@+id/stamp_big_imv" 
         android:layout_width="wrap_content"
@@ -282,82 +330,8 @@
 	    android:layout_height="wrap_content"
 	    android:gravity="center"
 	    android:orientation="horizontal"
-        android:layout_above="@id/comment_tip_view"
+        android:layout_above="@id/control_view"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="8dp">
 	</include> 
-	            
-    <LinearLayout 
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" 
-        android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:weightSum="5">
-            
-        <Button android:id="@+id/traffic_btn" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:paddingBottom="8dp"
-            android:drawableTop="@drawable/ic_goto_here"
-            android:background="@drawable/btn_default"
-            android:textSize="10sp"
-            android:textColor="@android:color/black"
-            android:text="@string/come_here"
-            android:gravity="center"/>
-        
-        <Button android:id="@+id/poi_btn" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="2dp"
-            android:paddingBottom="8dp"
-            android:drawableTop="@drawable/ic_search_nearby"
-            android:background="@drawable/btn_default"
-            android:textSize="10sp"
-            android:textColor="@android:color/black"
-            android:text="@string/search_nearby"
-            android:gravity="center"/>
-            
-        <Button android:id="@+id/favorite_btn" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="2dp"
-            android:paddingBottom="8dp"
-            android:drawableTop="@drawable/ic_favorite"
-            android:background="@drawable/btn_default"
-            android:textSize="10sp"
-            android:textColor="@android:color/black"
-            android:text="@string/favorite"
-            android:gravity="center"/>
-        
-        <Button android:id="@+id/share_btn" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="2dp"
-            android:paddingBottom="8dp"
-            android:drawableTop="@drawable/ic_share"
-            android:background="@drawable/btn_default"
-            android:textSize="10sp"
-            android:textColor="@android:color/black"
-            android:text="@string/share"
-            android:gravity="center"/>
-            
-        <Button android:id="@+id/error_recovery_btn" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginLeft="2dp"
-            android:paddingBottom="8dp"
-            android:drawableTop="@drawable/ic_recovery_error"
-            android:background="@drawable/btn_default"
-            android:textSize="10sp"
-            android:textColor="@android:color/black"
-            android:text="@string/error_recovery"
-            android:gravity="center"/>
-            
-    </LinearLayout>
 </RelativeLayout>
