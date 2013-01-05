@@ -9,7 +9,6 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.util.Util;
 import com.tencent.tauth.TAuthView;
 import com.tigerknows.R;
-import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataQuery;
@@ -53,15 +52,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RadioGroup;
-import android.widget.SeekBar;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.RadioGroup.OnCheckedChangeListener;
+import android.widget.RatingBar.OnRatingBarChangeListener;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -86,10 +86,6 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     
     private int mStatus;
     
-    private ViewGroup mGradeView;
-    
-    private ViewGroup mContentView;
-    
     private EditText mContentEdt;
     
     private CheckBox mSyncQZoneChb;
@@ -98,25 +94,21 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     
     private ViewGroup mExpandView;
     
-    private ViewGroup mCurrentExpendView;
-    
     private ViewGroup mExpandFoodView;
     
-    private TextView mExpandTxv;
+    private TextView mMoreTxv;
     
-    private ImageView mExpandImv;
+    private RatingBar mGradeRtb;
     
-    private RadioGroup mGradeRgp;
-    
-    private boolean mClickGradeRgp = false;
+    private TextView mGradeTipTxv;
     
     private EditText mFoodAvgEdt;
     
-    private SeekBar mTasteSkb;
+    private RatingBar mTasteRtb;
     
-    private SeekBar mFoodEnvironmentSkb;
+    private RatingBar mFoodEnvironmentRtb;
     
-    private SeekBar mFoodQosSkb;
+    private RatingBar mFoodQosRtb;
     
     private Button mRestairBtn;
     
@@ -130,25 +122,25 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     
     private EditText mHotelAvgEdt;
     
-    private SeekBar mHotelQosSkb;
+    private RatingBar mHotelQosRtb;
     
-    private SeekBar mHotelEnvironmentSkb;
+    private RatingBar mHotelEnvironmentRtb;
     
     private ViewGroup mExpandCinemaView;
     
     private EditText mCinemaAvgEdt;
     
-    private SeekBar mEffectSkb;
+    private RatingBar mEffectRtb;
     
-    private SeekBar mCinemaQosSkb;
+    private RatingBar mCinemaQosRtb;
     
     private ViewGroup mExpandHospitalView;
     
     private EditText mHospitalAvgEdt;
     
-    private SeekBar mHospitalQosSkb;
+    private RatingBar mHospitalQosRtb;
     
-    private SeekBar mLevelSkb;
+    private RatingBar mLevelRtb;
     
     private ViewGroup mExpandBuyView;
     
@@ -236,11 +228,6 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         mTencentAuthReceiver = new AuthReceiver(mThis, new MyLoginCallBack(ShareAPI.TYPE_TENCENT));
         registerIntentReceivers();
         
-        mGradeView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int gredeHeight = mGradeView.getMeasuredHeight()-Util.dip2px(Globals.g_metrics.density, 8);
-        
-        mContentView.setPadding(Util.dip2px(Globals.g_metrics.density, 2), gredeHeight, Util.dip2px(Globals.g_metrics.density, 2), 0);
-        
         mTitleBtn.setText(mStatus == STATUS_NEW ? R.string.publish_comment : R.string.modify_comment);
         mRightBtn.setText(R.string.publish);
         Comment comment = mPOI.getMyComment();
@@ -258,34 +245,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         }
         mComment = mPOI.getMyComment();
         long commentPattern = mPOI.getCommentPattern();
-        mExpandView.setVisibility(View.VISIBLE);
 
-        int grade = (int) mComment.getGrade();
-        switch (grade) {
-            case 2:
-                mGradeRgp.check(R.id.grade_1_rbt);
-                break;
-            case 4:
-                mGradeRgp.check(R.id.grade_2_rbt);
-                break;
-            case 6:
-                mGradeRgp.check(R.id.grade_3_rbt);
-                break;
-            case 8:
-                mGradeRgp.check(R.id.grade_4_rbt);
-                break;
-            case 10:
-                mGradeRgp.check(R.id.grade_5_rbt);
-                break;
-
-            default:
-                break;
-        }
+        int grade = (int) (mComment.getGrade()/2);
+        mGradeRtb.setRating(grade);
         
         String content = mComment.getContent();
-        if (BaseQuery.Test) {
-            content = "123456789012345678901234567890";
-        }
         if (!TextUtils.isEmpty(content)) {
             mContentEdt.setText(content);
             if (mStatus == STATUS_MODIFY) {
@@ -313,19 +277,19 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         mExpandCinemaView.setVisibility(View.GONE);
         mExpandHospitalView.setVisibility(View.GONE);
         mExpandBuyView.setVisibility(View.GONE);
-        mExpandImv.setBackgroundResource(R.drawable.icon_arrow_down);
         if (POI.COMMENT_PATTERN_FOOD == commentPattern) {
-            mCurrentExpendView = mExpandFoodView;
-            mExpandTxv.setText(R.string.comment_food_title_text);
+            mExpandView.setVisibility(View.VISIBLE);
+            mExpandFoodView.setVisibility(View.VISIBLE);
+            mMoreTxv.setText(R.string.comment_food_title_text);
             long avg = mComment.getAvg();
             if (avg > 0) {
                 mFoodAvgEdt.setText(String.valueOf(avg));
             } else {
                 mFoodAvgEdt.setText(null);
             }
-            mTasteSkb.setProgress((int)mComment.getTaste()-1);
-            mFoodEnvironmentSkb.setProgress((int)mComment.getEnvironment()-1);
-            mFoodQosSkb.setProgress((int)mComment.getQos()-1);
+            mTasteRtb.setRating((int)mComment.getTaste());
+            mFoodEnvironmentRtb.setRating((int)mComment.getEnvironment());
+            mFoodQosRtb.setRating((int)mComment.getQos());
             String restair = mComment.getRestair();
             if (!TextUtils.isEmpty(restair)) {
                 mRestairBtn.setText(restair);
@@ -340,41 +304,45 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 mRecommendEdt.setText(null);
             }
         } else if (POI.COMMENT_PATTERN_HOTEL == commentPattern) {
-            mCurrentExpendView = mExpandHotelView;
-            mExpandTxv.setText(R.string.comment_hotel_title_text);
+            mExpandView.setVisibility(View.VISIBLE);
+            mExpandHotelView.setVisibility(View.VISIBLE);
+            mMoreTxv.setText(R.string.comment_hotel_title_text);
             long avg = mComment.getAvg();
             if (avg > 0) {
                 mHotelAvgEdt.setText(String.valueOf(avg));
             } else {
                 mHotelAvgEdt.setText(null);
             }
-            mHotelQosSkb.setProgress((int)mComment.getQos()-1);
-            mHotelEnvironmentSkb.setProgress((int)mComment.getEnvironment()-1);
+            mHotelQosRtb.setRating((int)mComment.getQos());
+            mHotelEnvironmentRtb.setRating((int)mComment.getEnvironment());
         } else if (POI.COMMENT_PATTERN_CINEMA == commentPattern) {
-            mCurrentExpendView = mExpandCinemaView;
-            mExpandTxv.setText(R.string.comment_cinema_title_text);
+            mExpandView.setVisibility(View.VISIBLE);
+            mExpandCinemaView.setVisibility(View.VISIBLE);
+            mMoreTxv.setText(R.string.comment_cinema_title_text);
             long avg = mComment.getAvg();
             if (avg > 0) {
                 mCinemaAvgEdt.setText(String.valueOf(avg));
             } else {
                 mCinemaAvgEdt.setText(null);
             }
-            mEffectSkb.setProgress((int)mComment.getEffect()-1);
-            mCinemaQosSkb.setProgress((int)mComment.getQos()-1);
+            mEffectRtb.setRating((int)mComment.getEffect());
+            mCinemaQosRtb.setRating((int)mComment.getQos());
         } else if (POI.COMMENT_PATTERN_HOSPITAL == commentPattern) {
-            mCurrentExpendView = mExpandHospitalView;
-            mExpandTxv.setText(R.string.comment_hospital_title_text);
+            mExpandView.setVisibility(View.VISIBLE);
+            mExpandHospitalView.setVisibility(View.VISIBLE);
+            mMoreTxv.setText(R.string.comment_hospital_title_text);
             long avg = mComment.getAvg();
             if (avg > 0) {
                 mHospitalAvgEdt.setText(String.valueOf(avg));
             } else {
                 mHospitalAvgEdt.setText(null);
             }
-            mLevelSkb.setProgress((int)mComment.getLevel()-1);
-            mHospitalQosSkb.setProgress((int)mComment.getQos()-1);
+            mLevelRtb.setRating((int)mComment.getLevel());
+            mHospitalQosRtb.setRating((int)mComment.getQos());
         } else if (POI.COMMENT_PATTERN_BUY == commentPattern) {
-            mCurrentExpendView = mExpandBuyView;
-            mExpandTxv.setText(R.string.comment_buy_title_text);
+            mExpandView.setVisibility(View.VISIBLE);
+            mExpandBuyView.setVisibility(View.VISIBLE);
+            mMoreTxv.setText(R.string.comment_buy_title_text);
             long avg = mComment.getAvg();
             if (avg > 0) {
                 mBuyAvgEdt.setText(String.valueOf(avg));
@@ -386,11 +354,9 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         }
     }
     
-    boolean onResume = false;
     @Override
     public void onResume() {
         super.onResume();        
-        onResume = true;
         if (isReLogin()) {
             return;
         }
@@ -398,31 +364,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
 
     @Override
     public void onPause() {
-        onResume = false;
         super.onPause();
     }
     
     private void save() {
-        switch (mGradeRgp.getCheckedRadioButtonId()) {
-            case R.id.grade_1_rbt:
-                mComment.setGrade(2);
-                break;
-            case R.id.grade_2_rbt:
-                mComment.setGrade(4);
-                break;
-            case R.id.grade_3_rbt:
-                mComment.setGrade(6);
-                break;
-            case R.id.grade_4_rbt:
-                mComment.setGrade(8);
-                break;
-            case R.id.grade_5_rbt:
-                mComment.setGrade(10);
-                break;
-
-            default:
-                break;
-        }
+        mComment.setGrade((int)(mGradeRtb.getRating()*2));
         String content = mContentEdt.getEditableText().toString();
         if (!TextUtils.isEmpty(content)) {
             mComment.setContent(content);
@@ -433,9 +379,9 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
             }
-            mComment.setTaste(mTasteSkb.getProgress()+1);
-            mComment.setEnvironment(mFoodEnvironmentSkb.getProgress()+1);
-            mComment.setQos(mFoodQosSkb.getProgress()+1);
+            mComment.setTaste((int) mTasteRtb.getRating());
+            mComment.setEnvironment((int)mFoodEnvironmentRtb.getRating());
+            mComment.setQos((int)mFoodQosRtb.getRating());
             
             String restair = mRestairBtn.getText().toString().trim();
             if (!TextUtils.isEmpty(restair)) {
@@ -451,22 +397,22 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
             }
-            mComment.setQos(mHotelQosSkb.getProgress()+1);
-            mComment.setEnvironment(mHotelEnvironmentSkb.getProgress()+1);
+            mComment.setQos((int)mHotelQosRtb.getRating());
+            mComment.setEnvironment((int)mHotelEnvironmentRtb.getRating());
         } else if (POI.COMMENT_PATTERN_CINEMA == commentPattern) {
             String avg = mCinemaAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
             }
-            mComment.setEffect(mEffectSkb.getProgress()+1);
-            mComment.setQos(mCinemaQosSkb.getProgress()+1);
+            mComment.setEffect((int)mEffectRtb.getRating());
+            mComment.setQos((int)mCinemaQosRtb.getRating());
         } else if (POI.COMMENT_PATTERN_HOSPITAL == commentPattern) {
             String avg = mHospitalAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
                 mComment.setAvg(Long.parseLong(avg));
             }
-            mComment.setQos(mHospitalQosSkb.getProgress()+1);
-            mComment.setLevel(mLevelSkb.getProgress()+1);
+            mComment.setQos((int)mHospitalQosRtb.getRating());
+            mComment.setLevel((int)mLevelRtb.getRating());
         } else if (POI.COMMENT_PATTERN_BUY == commentPattern) {
             String avg = mBuyAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
@@ -507,9 +453,8 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
 
 	protected void findViews() {
         super.findViews();
-        mGradeView = (ViewGroup) findViewById(R.id.grade_view);
-        mGradeRgp = (RadioGroup) findViewById(R.id.grade_rgp);
-        mContentView = (ViewGroup) findViewById(R.id.content_view);
+        mGradeRtb = (RatingBar) findViewById(R.id.grade_rtb);
+        mGradeTipTxv = (TextView)this.findViewById(R.id.grade_tip_txv);
         mContentEdt = (EditText) findViewById(R.id.content_edt);
         mTextNumTxv = (TextView)this.findViewById(R.id.text_limit_txv);
         mSyncQZoneChb = (CheckBox) findViewById(R.id.sync_qzone_chb);
@@ -517,29 +462,28 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
 
         mExpandView = (ViewGroup) findViewById(R.id.expand_view);
         mExpandFoodView = (ViewGroup) findViewById(R.id.food_view);
-        mExpandTxv = (TextView) findViewById(R.id.comment_expand_txv);
-        mExpandImv = (ImageView) findViewById(R.id.comment_expand_imv);
+        mMoreTxv = (TextView) findViewById(R.id.more_txv);
         mFoodAvgEdt = (EditText) mExpandFoodView.findViewById(R.id.avg_edt);
-        mTasteSkb = (SeekBar) mExpandFoodView.findViewById(R.id.taste_skb);
-        mFoodEnvironmentSkb = (SeekBar) mExpandFoodView.findViewById(R.id.environment_skb);
-        mFoodQosSkb = (SeekBar)mExpandFoodView.findViewById(R.id.qos_skb);
+        mTasteRtb = (RatingBar) mExpandFoodView.findViewById(R.id.taste_rbt);
+        mFoodEnvironmentRtb = (RatingBar) mExpandFoodView.findViewById(R.id.environment_rbt);
+        mFoodQosRtb = (RatingBar)mExpandFoodView.findViewById(R.id.qos_rbt);
         mRestairBtn = (Button) mExpandFoodView.findViewById(R.id.restair_btn);
         mRecommendEdt = (EditText) mExpandFoodView.findViewById(R.id.recommend_edt);
         
         mExpandHotelView = (ViewGroup) findViewById(R.id.hotel_view);
         mHotelAvgEdt = (EditText) mExpandHotelView.findViewById(R.id.avg_edt);
-        mHotelQosSkb = (SeekBar)mExpandHotelView.findViewById(R.id.qos_skb);
-        mHotelEnvironmentSkb = (SeekBar) mExpandHotelView.findViewById(R.id.environment_skb);
+        mHotelQosRtb = (RatingBar)mExpandHotelView.findViewById(R.id.qos_rbt);
+        mHotelEnvironmentRtb = (RatingBar) mExpandHotelView.findViewById(R.id.environment_rbt);
         
         mExpandCinemaView = (ViewGroup) findViewById(R.id.cinema_view);
         mCinemaAvgEdt = (EditText) mExpandCinemaView.findViewById(R.id.avg_edt);
-        mEffectSkb = (SeekBar) mExpandCinemaView.findViewById(R.id.effect_skb);
-        mCinemaQosSkb = (SeekBar)mExpandCinemaView.findViewById(R.id.qos_skb);
+        mEffectRtb = (RatingBar) mExpandCinemaView.findViewById(R.id.effect_rbt);
+        mCinemaQosRtb = (RatingBar)mExpandCinemaView.findViewById(R.id.qos_rbt);
         
         mExpandHospitalView = (ViewGroup) findViewById(R.id.hospital_view);
         mHospitalAvgEdt = (EditText) mExpandHospitalView.findViewById(R.id.avg_edt);
-        mHospitalQosSkb = (SeekBar)mExpandHospitalView.findViewById(R.id.qos_skb);
-        mLevelSkb = (SeekBar) mExpandHospitalView.findViewById(R.id.level_skb);
+        mHospitalQosRtb = (RatingBar)mExpandHospitalView.findViewById(R.id.qos_rbt);
+        mLevelRtb = (RatingBar) mExpandHospitalView.findViewById(R.id.level_rbt);
         
         mExpandBuyView = (ViewGroup) findViewById(R.id.buy_view);
         mBuyAvgEdt = (EditText) mExpandBuyView.findViewById(R.id.avg_edt);
@@ -549,7 +493,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         super.setListener();
         mLeftBtn.setOnClickListener(this);
         mRightBtn.setOnClickListener(this);
-        mExpandTxv.setOnClickListener(this);
+        mMoreTxv.setOnClickListener(this);
         mRestairBtn.setOnClickListener(this);
         OnTouchListener onTouchListener = new OnTouchListener() {
             
@@ -559,11 +503,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
 
                 switch (action & MotionEvent.ACTION_MASK) {
                     case MotionEvent.ACTION_UP: {
-                        if (R.id.taste_skb == v.getId()) {
+                        if (R.id.taste_rbt == v.getId()) {
                             mActionLog.addAction(ActionLog.POICommentTaste);
-                        } else if (R.id.environment_skb == v.getId()) {
+                        } else if (R.id.environment_rbt == v.getId()) {
                             mActionLog.addAction(ActionLog.POICommentEnvironment);
-                        } else if (R.id.qos_skb == v.getId()) {
+                        } else if (R.id.qos_rbt == v.getId()) {
                             mActionLog.addAction(ActionLog.POICommentQos);
                         }
                         break;
@@ -572,13 +516,13 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 return false;
             }
         };
-        mTasteSkb.setOnTouchListener(onTouchListener);
-        mFoodEnvironmentSkb.setOnTouchListener(onTouchListener);
-        mFoodQosSkb.setOnTouchListener(onTouchListener);
-        mHotelEnvironmentSkb.setOnTouchListener(onTouchListener);
-        mHotelQosSkb.setOnTouchListener(onTouchListener);
-        mCinemaQosSkb.setOnTouchListener(onTouchListener);
-        mHospitalQosSkb.setOnTouchListener(onTouchListener);
+        mTasteRtb.setOnTouchListener(onTouchListener);
+        mFoodEnvironmentRtb.setOnTouchListener(onTouchListener);
+        mFoodQosRtb.setOnTouchListener(onTouchListener);
+        mHotelEnvironmentRtb.setOnTouchListener(onTouchListener);
+        mHotelQosRtb.setOnTouchListener(onTouchListener);
+        mCinemaQosRtb.setOnTouchListener(onTouchListener);
+        mHospitalQosRtb.setOnTouchListener(onTouchListener);
         OnFocusChangeListener onFocusChangeListener = new OnFocusChangeListener() {
             
             @Override
@@ -632,41 +576,44 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         });
         mSyncSinaChb.setOnClickListener(this);
         mSyncQZoneChb.setOnClickListener(this);
-        mGradeRgp.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+        mGradeRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
             
             @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int viewId) {
-                mClickGradeRgp = true;
-                switch (radioGroup.getCheckedRadioButtonId()) {
-                    case R.id.grade_1_rbt:
-                        if (onResume)
-                            mActionLog.addAction(ActionLog.POICommentClickGrade, 1);
-                        mContentEdt.setHint(R.string.comment_content_hit1);
-                        break;
-                    case R.id.grade_2_rbt:
-                        if (onResume)
-                            mActionLog.addAction(ActionLog.POICommentClickGrade, 2);
-                        mContentEdt.setHint(R.string.comment_content_hit2);
-                        break;
-                    case R.id.grade_3_rbt:
-                        if (onResume)
-                            mActionLog.addAction(ActionLog.POICommentClickGrade, 3);
-                        mContentEdt.setHint(R.string.comment_content_hit3);
-                        break;
-                    case R.id.grade_4_rbt:
-                        if (onResume)
-                            mActionLog.addAction(ActionLog.POICommentClickGrade, 4);
-                        mContentEdt.setHint(R.string.comment_content_hit4);
-                        break;
-                    case R.id.grade_5_rbt:
-                        if (onResume)
-                            mActionLog.addAction(ActionLog.POICommentClickGrade, 5);
-                        mContentEdt.setHint(R.string.comment_content_hit5);
-                        break;
-
-                    default:
-                        mClickGradeRgp = false;
-                        break;
+            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromTouch) {
+                if (fromTouch) {
+                    Animation animation = AnimationUtils.loadAnimation(mThis, R.anim.grade_tip);
+                    int resId = R.string.poi_comment_share_grade1;
+                    if (rating == 2) {
+                        resId = R.string.poi_comment_share_grade2;
+                    } else if (rating == 3) {
+                        resId = R.string.poi_comment_share_grade3;
+                    } else if (rating == 4) {
+                        resId = R.string.poi_comment_share_grade4;
+                    } else if (rating == 5) {
+                        resId = R.string.poi_comment_share_grade5;
+                    }
+                    mGradeTipTxv.setText(resId);
+                    mGradeTipTxv.setVisibility(View.VISIBLE);
+                    mGradeTipTxv.startAnimation(animation);
+                    animation.setAnimationListener(new AnimationListener() {
+                        
+                        @Override
+                        public void onAnimationStart(Animation arg0) {
+                            // TODO Auto-generated method stub
+                            
+                        }
+                        
+                        @Override
+                        public void onAnimationRepeat(Animation arg0) {
+                            // TODO Auto-generated method stub
+                            
+                        }
+                        
+                        @Override
+                        public void onAnimationEnd(Animation arg0) {
+                            mGradeTipTxv.setVisibility(View.GONE);
+                        }
+                    });
                 }
             }
         });
@@ -740,18 +687,6 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 });
                 alertDialog.show();
                 return;
-            } else if (mClickGradeRgp == false) {
-                AlertDialog alertDialog = CommonUtils.getAlertDialog(mThis);
-                alertDialog.setMessage(mThis.getString(R.string.comment_prompt_input_grade));
-                alertDialog.setButton(mThis.getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        mGradeRgp.requestFocus();
-                    }
-                });
-                alertDialog.show();
-                return;
             }
             if (mStatus == STATUS_MODIFY) {
                 AlertDialog alertDialog = CommonUtils.getAlertDialog(mThis);
@@ -821,69 +756,6 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
            .create();
             dialog.setCanceledOnTouchOutside(false);
             dialog.show();
-        } else if (R.id.comment_expand_txv == viewId) {
-            if (mCurrentExpendView.getVisibility() == View.GONE) {
-                mActionLog.addAction(ActionLog.POICommentClickExpand);
-                hideSoftInput();
-                mCurrentExpendView.setVisibility(View.VISIBLE);
-                mExpandImv.setBackgroundResource(R.drawable.icon_arrow_up);
-//                Animation animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 1.0f);
-//                animation.setDuration(2*1000);
-//                animation.setInterpolator(new AccelerateInterpolator());
-//                animation.setAnimationListener(new AnimationListener() {
-//                    
-//                    @Override
-//                    public void onAnimationStart(Animation arg0) {
-//                        // TODO Auto-generated method stub
-//                        
-//                    }
-//                    
-//                    @Override
-//                    public void onAnimationRepeat(Animation arg0) {
-//                        // TODO Auto-generated method stub
-//                        
-//                    }
-//                    
-//                    @Override
-//                    public void onAnimationEnd(Animation arg0) {
-////                        ((LinearLayout.LayoutParams)mExpandFoodView.getLayoutParams()).topMargin = 0;
-//                        mExpandFoodView.getLayoutParams().height = mExpandViewHeight;
-//                        mExpand = false;
-//                    }
-//                });
-//                mExpandFoodView.setAnimation(animation);
-//                animation.startNow();
-            } else {
-                mActionLog.addAction(ActionLog.POICommentClickCollapse);
-                mCurrentExpendView.setVisibility(View.GONE);
-                mExpandImv.setBackgroundResource(R.drawable.icon_arrow_down);
-//                Animation animation = new TranslateAnimation(Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, 0f, Animation.RELATIVE_TO_SELF, -1.0f);
-//                animation.setDuration(2*1000);
-//                animation.setInterpolator(new AccelerateInterpolator());
-//                animation.setAnimationListener(new AnimationListener() {
-//                    
-//                    @Override
-//                    public void onAnimationStart(Animation arg0) {
-//                        // TODO Auto-generated method stub
-//                        
-//                    }
-//                    
-//                    @Override
-//                    public void onAnimationRepeat(Animation arg0) {
-//                        // TODO Auto-generated method stub
-//                        
-//                    }
-//                    
-//                    @Override
-//                    public void onAnimationEnd(Animation arg0) {
-////                        ((LinearLayout.LayoutParams)mExpandFoodView.getLayoutParams()).topMargin = -mExpandViewHeight;
-//                        mExpandFoodView.getLayoutParams().height = 0;
-//                        mExpand = true;
-//                    }
-//                });
-//                mExpandFoodView.setAnimation(animation);
-//                animation.startNow();
-            }
         } else if (viewId == R.id.left_btn) {
             mActionLog.addAction(ActionLog.Title_Left_Back, mActionTag);
             if (showDiscardDialog() == false) {
@@ -929,31 +801,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         StringBuilder s = new StringBuilder();
         s.append(Util.byteToHexString(Comment.FIELD_GRADE));
         s.append(':');
-        switch (mGradeRgp.getCheckedRadioButtonId()) {
-            case R.id.grade_1_rbt:
-                s.append("2");
-                shareGrade = mThis.getString(R.string.poi_comment_share_grade1);
-                break;
-            case R.id.grade_2_rbt:
-                s.append("4");
-                shareGrade = mThis.getString(R.string.poi_comment_share_grade2);
-                break;
-            case R.id.grade_3_rbt:
-                s.append("6");
-                shareGrade = mThis.getString(R.string.poi_comment_share_grade3);
-                break;
-            case R.id.grade_4_rbt:
-                s.append("8");
-                shareGrade = mThis.getString(R.string.poi_comment_share_grade4);
-                break;
-            case R.id.grade_5_rbt:
-                s.append("10");
-                shareGrade = mThis.getString(R.string.poi_comment_share_grade5);
-                break;
-
-            default:
-                break;
-        }
+        s.append((int)(mGradeRtb.getRating()*2));
         s.append(',');
         String content = mContentEdt.getEditableText().toString().trim();
         if (!TextUtils.isEmpty(content)) {
@@ -979,15 +827,15 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_TASTE));
             s.append(':');
-            s.append(mTasteSkb.getProgress()+1);
+            s.append(mTasteRtb.getRating());
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_ENVIRONMENT));
             s.append(':');
-            s.append(mFoodEnvironmentSkb.getProgress()+1);
+            s.append(mFoodEnvironmentRtb.getRating());
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_QOS));
             s.append(':');
-            s.append(mFoodQosSkb.getProgress()+1);
+            s.append(mFoodQosRtb.getRating());
             String restair = mRestairBtn.getText().toString();
             if (!TextUtils.isEmpty(restair)) {
                 s.append(',');
@@ -1018,11 +866,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_QOS));
             s.append(':');
-            s.append(mHotelQosSkb.getProgress()+1);
+            s.append(mHotelQosRtb.getRating());
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_ENVIRONMENT));
             s.append(':');
-            s.append(mHotelEnvironmentSkb.getProgress()+1);
+            s.append(mHotelEnvironmentRtb.getRating());
         } else if (POI.COMMENT_PATTERN_CINEMA == commentPattern) {
             String avg = mCinemaAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
@@ -1034,11 +882,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_EFFECT));
             s.append(':');
-            s.append(mEffectSkb.getProgress()+1);
+            s.append(mEffectRtb.getRating());
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_QOS));
             s.append(':');
-            s.append(mCinemaQosSkb.getProgress()+1);
+            s.append(mCinemaQosRtb.getRating());
         } else if (POI.COMMENT_PATTERN_HOSPITAL == commentPattern) {
             String avg = mHospitalAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
@@ -1050,11 +898,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_QOS));
             s.append(':');
-            s.append(mHospitalQosSkb.getProgress()+1);
+            s.append(mHospitalQosRtb.getRating());
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_LEVEL));
             s.append(':');
-            s.append(mLevelSkb.getProgress()+1);
+            s.append(mLevelRtb.getRating());
         } else if (POI.COMMENT_PATTERN_BUY == commentPattern) {
             String avg = mBuyAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
@@ -1324,28 +1172,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     }
     
     private boolean isModify() {
-        int grade = -1;
-        switch (mGradeRgp.getCheckedRadioButtonId()) {
-            case R.id.grade_1_rbt:
-                grade = 2;
-                break;
-            case R.id.grade_2_rbt:
-                grade = 4;
-                break;
-            case R.id.grade_3_rbt:
-                grade = 6;
-                break;
-            case R.id.grade_4_rbt:
-                grade = 8;
-                break;
-            case R.id.grade_5_rbt:
-                grade = 10;
-                break;
-
-            default:
-                break;
-        }
-        if (grade != mComment.getGrade()) {
+        if (mGradeRtb.getRating()*2 != mComment.getGrade()) {
             return true;
         }
         String content = mContentEdt.getEditableText().toString();
@@ -1367,13 +1194,13 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             if (avgLong != mComment.getAvg()) {
                 return true;
             }
-            if (mTasteSkb.getProgress()+1 != mComment.getTaste()) {
+            if (mTasteRtb.getRating() != mComment.getTaste()) {
                 return true;
             }
-            if (mFoodEnvironmentSkb.getProgress()+1 != mComment.getEnvironment()) {
+            if (mFoodEnvironmentRtb.getRating() != mComment.getEnvironment()) {
                 return true;
             }
-            if (mFoodQosSkb.getProgress()+1 != mComment.getQos()) {
+            if (mFoodQosRtb.getRating() != mComment.getQos()) {
                 return true;
             }
             
@@ -1403,10 +1230,10 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             if (avgLong != mComment.getAvg()) {
                 return true;
             }
-            if (mHotelQosSkb.getProgress()+1 != mComment.getQos()) {
+            if (mHotelQosRtb.getRating() != mComment.getQos()) {
                 return true;
             }
-            if (mHotelEnvironmentSkb.getProgress()+1 != mComment.getEnvironment()) {
+            if (mHotelEnvironmentRtb.getRating() != mComment.getEnvironment()) {
                 return true;
             }
         } else if (POI.COMMENT_PATTERN_CINEMA == commentPattern) {
@@ -1418,10 +1245,10 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             if (avgLong != mComment.getAvg()) {
                 return true;
             }
-            if (mEffectSkb.getProgress()+1 != mComment.getEffect()) {
+            if (mEffectRtb.getRating() != mComment.getEffect()) {
                 return true;
             }
-            if (mCinemaQosSkb.getProgress()+1 != mComment.getQos()) {
+            if (mCinemaQosRtb.getRating() != mComment.getQos()) {
                 return true;
             }
         } else if (POI.COMMENT_PATTERN_HOSPITAL == commentPattern) {
@@ -1433,10 +1260,10 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             if (avgLong != mComment.getAvg()) {
                 return true;
             }
-            if (mHospitalQosSkb.getProgress()+1 != mComment.getQos()) {
+            if (mHospitalQosRtb.getRating() != mComment.getQos()) {
                 return true;
             }
-            if (mLevelSkb.getProgress()+1 != mComment.getLevel()) {
+            if (mLevelRtb.getRating() != mComment.getLevel()) {
                 return true;
             }
         } else if (POI.COMMENT_PATTERN_BUY == commentPattern) {

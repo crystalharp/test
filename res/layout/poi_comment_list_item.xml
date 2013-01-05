@@ -27,7 +27,7 @@
 	        android:layout_below="@id/author_txv"
 	        android:padding="0dp"
 	        android:progressDrawable="@drawable/ratingbar_small"
-	        style="?android:attr/ratingBarStyleSmall"
+	        style="@style/RatingBar.Small"
 	        android:numStars="5" />
 	    <TextView
 	        android:id="@+id/date_txv" 
