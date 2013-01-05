@@ -49,8 +49,8 @@
     <string name="start_">请输入起点</string>
     <string name="end_">请输入终点</string>
     <string name="busline_">线路：%1$s</string>
-    <string name="favorite_empty_poi">记录为空。快去收藏常用的地点吧！</string>
-    <string name="favorite_empty_traffic">记录为空。快去收藏常用的交通路线吧！</string>
+    <string name="favorite_empty_poi">记录为空。\n快去收藏常用的地点吧！</string>
+    <string name="favorite_empty_traffic">记录为空。\n快去收藏常用的交通路线吧！</string>
     <string name="history_empty">记录为空。</string>
     <string name="rename">重命名</string>
     

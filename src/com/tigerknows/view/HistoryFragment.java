@@ -23,6 +23,7 @@ import com.tigerknows.view.SpringbackListView.OnRefreshListener;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -87,6 +88,14 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     private String mPOIWhere;
     
     private boolean mDismiss = true;
+    
+    protected Drawable mPOIEmpty;
+    
+    protected Drawable mTrafficEmpty;
+    
+    protected int mColorNormal;
+
+    protected int mColorSelect;
     
     private Runnable mTurnPageRunPOI = new Runnable() {
         
@@ -158,6 +167,16 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         s.append(Tigerknows.STORE_TYPE_HISTORY);
         s.append(")");
         mPOIWhere = s.toString();
+        
+        Resources resources = mSphinx.getResources();
+        mPOIEmpty = resources.getDrawable(R.drawable.ic_poi_empty);
+        mTrafficEmpty = resources.getDrawable(R.drawable.ic_traffic_empty);
+        
+        mColorNormal = resources.getColor(R.color.black_dark);
+        mColorSelect = resources.getColor(R.color.orange);
+        
+        mPOIEmpty.setBounds(0, 0, mPOIEmpty.getIntrinsicWidth(), mPOIEmpty.getIntrinsicHeight());
+        mTrafficEmpty.setBounds(0, 0, mTrafficEmpty.getIntrinsicWidth(), mTrafficEmpty.getIntrinsicHeight());
         
         mPOIAdapter = new POIAdapter(mContext, mPOIList);
         mPOILsv.setAdapter(mPOIAdapter);
@@ -550,13 +569,13 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             ImageView iconImv = (ImageView) view.findViewById(R.id.icon_imv);
             iconImv.setVisibility(View.VISIBLE);
             if (traffic.getHistoryType() == Tigerknows.History.HISTORY_BUSLINE) {
-                iconImv.setBackgroundResource(R.drawable.rdb_busline_default);
+                iconImv.setImageResource(R.drawable.ic_busline);
             } else if (traffic.getHistoryType() == Tigerknows.History.HISTORY_TRANSFER) {
-                iconImv.setBackgroundResource(R.drawable.rdb_bus_default);
+                iconImv.setImageResource(R.drawable.ic_bus);
             } else if (traffic.getHistoryType() == Tigerknows.History.HISTORY_DRIVE) {
-                iconImv.setBackgroundResource(R.drawable.rdb_drive_default);
+                iconImv.setImageResource(R.drawable.ic_drive);
             } else if (traffic.getHistoryType() == Tigerknows.History.HISTORY_WALK) {
-                iconImv.setBackgroundResource(R.drawable.rdb_walk_default);
+                iconImv.setImageResource(R.drawable.ic_walk);
             }
             
             String s = getTrafficName(traffic);
@@ -607,7 +626,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             TextView textView = (TextView) view.findViewById(R.id.text_txv);
 
             poi.setOrderNumber(position+1);
-            textView.setText(poi.getOrderNumber()+". "+poi.getName());
+            textView.setText(poi.getName());
 
             return view;
         }
@@ -739,8 +758,10 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
 
         mLayerType = layerType;
         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-            mPOIBtn.setBackgroundResource(R.drawable.btn_tab_focused);
+            mPOIBtn.setBackgroundResource(R.drawable.btn_tab_selected);
+            mPOIBtn.setTextColor(mColorSelect);
             mTrafficBtn.setBackgroundResource(R.drawable.btn_tab);
+            mTrafficBtn.setTextColor(mColorNormal);
 
             if (mPOIList.size() > 0) {
                 readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getDateTime(), true);
@@ -753,7 +774,9 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             mPOIAdapter.notifyDataSetChanged();
         } else {
             mPOIBtn.setBackgroundResource(R.drawable.btn_tab);
-            mTrafficBtn.setBackgroundResource(R.drawable.btn_tab_focused);
+            mPOIBtn.setTextColor(mColorNormal);
+            mTrafficBtn.setBackgroundResource(R.drawable.btn_tab_selected);
+            mTrafficBtn.setTextColor(mColorSelect);
             
             if (mTrafficList.size() > 0) {
                 readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getDateTime(), true);

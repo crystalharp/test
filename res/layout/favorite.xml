@@ -25,7 +25,7 @@
                 android:text="@string/place"
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
-                android:background="@drawable/btn_tab_select" />
+                android:background="@drawable/btn_tab_selected" />
             <ImageView 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -54,10 +54,10 @@
 		        android:layout_height="fill_parent" />    
 		        
             <TextView android:id="@+id/empty_txv"
-	            android:layout_width="fill_parent" 
-	            android:layout_height="fill_parent"  
+	            android:layout_width="wrap_content" 
+	            android:layout_height="wrap_content"  
 	            android:gravity="center"
-	            android:textColor="@android:color/black"
+	            android:textColor="@color/black_light"
 	            android:textSize="16sp"
 	            android:text="@string/history_empty"
 	            android:background="@color/gray_light"
