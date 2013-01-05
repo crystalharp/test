@@ -92,7 +92,7 @@ public class Comment extends BaseData {
     private String content; // 0x01    x_string    content 点评内容    是
     private String user; //0x02    x_string    user    点评人 否
     private String time; // 0x03    x_string    time    点评日期    否
-    private long grade = -1; // 0x04    x_int   grade   点评星级    是
+    private long grade = 6; // 0x04    x_int   grade   点评星级    是
     private String puid; // 0x06    x_string    puid    对应poi的uid   是
     private long avg = -1; // 0x07    x_int   avg 人均价格    否
     private long taste = 3; // 0x08    x_int   taste   口味  否

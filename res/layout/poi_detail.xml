@@ -120,7 +120,7 @@
 	                   android:layout_alignParentLeft="true"
 	                   android:layout_below="@id/name_txv" 
 	                   android:progressDrawable="@drawable/ratingbar_small"
-	                   style="?android:attr/ratingBarStyleSmall"
+	                   style="@style/RatingBar.Small"
 	                   android:numStars="5"
 				       android:focusable="false"
 				       android:focusableInTouchMode="false" />
@@ -175,6 +175,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
                 android:orientation="vertical">
                 <LinearLayout android:id="@+id/telephone_view"
 		            android:layout_width="fill_parent"

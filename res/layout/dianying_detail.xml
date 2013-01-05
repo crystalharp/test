@@ -57,7 +57,7 @@
 			       android:layout_marginLeft="10dp"
 			       android:layout_marginTop="5dip"
                    android:progressDrawable="@drawable/ratingbar_small"
-                   style="?android:attr/ratingBarStyleSmall"
+                   style="@style/RatingBar.Small"
                    android:numStars="5"
 			       android:focusable="false"
 			       android:focusableInTouchMode="false" />

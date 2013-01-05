@@ -25,7 +25,11 @@
                 android:text="@string/place"
                 android:textColor="@android:color/white"
                 android:textSize="16sp"
-                android:background="@drawable/btn_tab_focused" />
+                android:background="@drawable/btn_tab_select" />
+            <ImageView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_split" />
             <Button
                 android:id="@+id/traffic_btn"
                 android:layout_width="wrap_content"

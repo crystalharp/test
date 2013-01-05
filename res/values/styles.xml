@@ -65,7 +65,7 @@
 	</style>
 
     <style name="TextAppearance" parent="@android:style/TextAppearance">
-        <item name="android:textColor">#ff000000</item>
+        <item name="android:textColor">@color/black_dark</item>
         <item name="android:textColorHighlight">#FFFF9200</item>
         <item name="android:textColorHint">#ff888888</item>
         <item name="android:textColorLink">#5C5CFF</item>
@@ -75,7 +75,7 @@
     <style name="Widget.EditText" parent="@android:style/Widget.EditText">
         <item name="android:textAppearance">@style/TextAppearance</item>
         <item name="android:background">@drawable/textfield</item>
-        <item name="android:textColor">#ff000000</item>
+        <item name="android:textColor">@color/black_dark</item>
         <item name="android:textColorHighlight">#FFFF9200</item>
         <item name="android:textColorHint">#ff888888</item>
         <item name="android:textColorLink">#5C5CFF</item>
@@ -88,10 +88,24 @@
 
     <style name="Widget.TextView" parent="@android:style/Widget.TextView">
         <item name="android:textAppearance">@style/TextAppearance</item>
-        <item name="android:textColor">#ff000000</item>
+        <item name="android:textColor">@color/black_dark</item>
         <item name="android:textColorHighlight">#FFFF9200</item>
         <item name="android:textColorHint">#ff888888</item>
         <item name="android:textColorLink">#5C5CFF</item>
         <item name="android:textSize">14sp</item>
     </style>
+    
+    <style name="RatingBar.Middle" parent="@android:style/Widget.RatingBar">   
+        <item name="android:progressDrawable">@drawable/ratingbar_middle</item>
+        <item name="android:indeterminateDrawable">@drawable/ratingbar_middle</item>
+        <item name="android:minHeight">30dip</item>
+        <item name="android:maxHeight">30dip</item>
+    </style>  
+    
+    <style name="RatingBar.Small" parent="@android:style/Widget.RatingBar.Small">   
+        <item name="android:progressDrawable">@drawable/ratingbar_small</item>
+        <item name="android:indeterminateDrawable">@drawable/ratingbar_small</item>
+        <item name="android:minHeight">14dip</item>
+        <item name="android:maxHeight">14dip</item>
+    </style>  
 </resources>
