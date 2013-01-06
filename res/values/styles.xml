@@ -102,10 +102,15 @@
         <item name="android:maxHeight">30dip</item>
     </style>  
     
-    <style name="RatingBar.Small" parent="@android:style/Widget.RatingBar.Small">   
+    <style name="RatingBar.Small" parent="@android:style/Widget.RatingBar">   
         <item name="android:progressDrawable">@drawable/ratingbar_small</item>
         <item name="android:indeterminateDrawable">@drawable/ratingbar_small</item>
         <item name="android:minHeight">14dip</item>
         <item name="android:maxHeight">14dip</item>
+        <item name="android:isIndicator">true</item>
     </style>  
+
+    <style name="Widget.CompoundButton.CheckBox" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/btn_check</item>
+    </style>
 </resources>

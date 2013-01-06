@@ -25,6 +25,7 @@ import com.tigerknows.view.SpringbackListView.OnRefreshListener;
 import com.tigerknows.view.user.User;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -444,6 +445,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         private Drawable icAPOI;
         private String distanceA;
         private Drawable icComment;
+        private int aColor;
+        private int bColor;
         private Context context;
         private LayoutInflater layoutInflater;
         private boolean showStamp = true;
@@ -456,9 +459,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             super(context, RESOURCE_ID, list);
             this.context = context;
             layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            icAPOI = context.getResources().getDrawable(R.drawable.ic_a_poi);
+            Resources resources = context.getResources();
+            icAPOI = resources.getDrawable(R.drawable.ic_a_poi);
+            icComment = resources.getDrawable(R.drawable.ic_comment);
+            aColor = resources.getColor(R.color.blue);
+            bColor = resources.getColor(R.color.black_dark);
             distanceA = context.getString(R.string.distanceA);
-            icComment = context.getResources().getDrawable(R.drawable.ic_comment);
         }
         
         @Override
@@ -493,8 +499,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             
             if (position == 0 && poi.getResultType() == POIResponse.FIELD_A_POI_LIST && aTotal == 1) {
                 bubbleImv.setVisibility(View.VISIBLE);
+                nameTxv.setTextColor(aColor);
             } else {
                 bubbleImv.setVisibility(View.GONE);
+                nameTxv.setTextColor(bColor);
             }
             
             nameTxv.setText(poi.getName());

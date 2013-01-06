@@ -889,4 +889,14 @@
     <string name="download_software_showname">软件更新</string>
     <string name="file_downloading">正在下载</string>
     <string name="add_to_download_list">已添加到下载列表</string>
+    
+    <string name="municipality">直辖市</string>
+    <string name="search_by_province">按省份查找</string>
+    <string name="current_city_text">当前城市</string>
+    
+    <string name="map_upgrade">地图更新</string>
+    <string name="download_complete">下载完成</string>
+    <string name="click_here_download_map">点击这里下载地图</string>
+    <string name="wifi_enabled">wifi已开启</string>
+    <string name="wifi_disabled">wifi已关闭</string>
 </resources>

@@ -79,7 +79,9 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     
     private SpringbackListView mPOILsv = null;
     
-    private TextView mEmptyView;
+    private View mEmptyView;
+    
+    private TextView mEmptyTxv;
     
     private SpringbackListView mTrafficLsv = null;
     
@@ -272,7 +274,8 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         mPOILsv.addFooterView(v);
         v = mLayoutInflater.inflate(R.layout.loading, null);
         mTrafficLsv.addFooterView(v);
-        mEmptyView = (TextView)mRootView.findViewById(R.id.empty_txv);
+        mEmptyView = mRootView.findViewById(R.id.empty_view);
+        mEmptyTxv = (TextView)mRootView.findViewById(R.id.empty_txv);
     }
 
     protected void setListener() {
@@ -736,6 +739,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             mRightBtn.setEnabled(!mPOIList.isEmpty());
             
             if (mPOIList.isEmpty() && mPOILsv.isFooterSpringback() == false) {
+                mEmptyTxv.setCompoundDrawables(null, mPOIEmpty, null, null);
                 mEmptyView.setVisibility(View.VISIBLE);
             } else {
                 mEmptyView.setVisibility(View.GONE);
@@ -744,6 +748,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             mRightBtn.setEnabled(!mTrafficList.isEmpty());
 
             if (mTrafficList.isEmpty() && mTrafficLsv.isFooterSpringback() == false) {
+                mEmptyTxv.setCompoundDrawables(null, mTrafficEmpty, null, null);
                 mEmptyView.setVisibility(View.VISIBLE);
             } else {
                 mEmptyView.setVisibility(View.GONE);

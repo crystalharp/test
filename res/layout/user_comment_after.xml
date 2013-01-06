@@ -32,7 +32,7 @@
 		        android:padding="8dp"
 		        android:gravity="center"
 		        android:text="@string/title_update_comment_after"
-		        android:textColor="@android:color/black"
+		        android:textColor="@color/blue"
 		        android:background="@android:color/white"
 			    android:textSize="16sp" />
 	        <ImageView 

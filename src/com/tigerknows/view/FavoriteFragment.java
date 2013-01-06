@@ -90,7 +90,9 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     
     private SpringbackListView mPOILsv = null;
     
-    private TextView mEmptyView;
+    private View mEmptyView;
+    
+    private TextView mEmptyTxv;
     
     private SpringbackListView mTrafficLsv = null;
     
@@ -285,7 +287,8 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mPOILsv.addFooterView(v);
         v = mLayoutInflater.inflate(R.layout.loading, null);
         mTrafficLsv.addFooterView(v);
-        mEmptyView = (TextView)mRootView.findViewById(R.id.empty_txv);
+        mEmptyView = mRootView.findViewById(R.id.empty_view);
+        mEmptyTxv = (TextView)mRootView.findViewById(R.id.empty_txv);
     }
 
     protected void setListener() {
@@ -748,8 +751,8 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             mRightBtn.setEnabled(!mPOIList.isEmpty());
             
             if (mPOIList.isEmpty() && mPOILsv.isFooterSpringback() == false) {
-                mEmptyView.setText(R.string.favorite_empty_poi);
-                mEmptyView.setCompoundDrawables(null, mPOIEmpty, null, null);
+                mEmptyTxv.setText(R.string.favorite_empty_poi);
+                mEmptyTxv.setCompoundDrawables(null, mPOIEmpty, null, null);
                 mEmptyView.setVisibility(View.VISIBLE);
             } else {
                 mEmptyView.setVisibility(View.GONE);
@@ -758,8 +761,8 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             mRightBtn.setEnabled(!mTrafficList.isEmpty());
 
             if (mTrafficList.isEmpty() && mTrafficLsv.isFooterSpringback() == false) {
-                mEmptyView.setText(R.string.favorite_empty_traffic);
-                mEmptyView.setCompoundDrawables(null, mTrafficEmpty, null, null);
+                mEmptyTxv.setText(R.string.favorite_empty_traffic);
+                mEmptyTxv.setCompoundDrawables(null, mTrafficEmpty, null, null);
                 mEmptyView.setVisibility(View.VISIBLE);
             } else {
                 mEmptyView.setVisibility(View.GONE);
