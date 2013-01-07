@@ -179,8 +179,8 @@ public class TKTencentOpenAPI {
         bundle = new Bundle();
         bundle.putString("title", activity.getString(R.string.tencent_share_title));//必须。feeds的标题，最长36个中文字，超出部分会被截断。
         bundle.putString("url", "http://www.tigerknows.com/");//必须。分享所在网页资源的链接，点击后跳转至第三方网页， 请以http://开头。
-        bundle.putString("comment", comment);//用户评论内容，也叫发表分享时的分享理由。禁止使用系统生产的语句进行代替。最长40个中文字，超出部分会被截断。
-//        bundle.putString("summary", comment);//所分享的网页资源的摘要内容，或者是网页的概要描述。 最长80个中文字，超出部分会被截断。
+//        bundle.putString("comment", comment);//用户评论内容，也叫发表分享时的分享理由。禁止使用系统生产的语句进行代替。最长40个中文字，超出部分会被截断。
+        bundle.putString("summary", comment);//所分享的网页资源的摘要内容，或者是网页的概要描述。 最长80个中文字，超出部分会被截断。
         bundle.putString("images", "http://www.tigerknows.com/wp-content/themes/tiger/images/logo.gif");//所分享的网页资源的代表性图片链接"，请以http://开头，长度限制255字符。多张图片以竖线（|）分隔，目前只有第一张图片有效，图片规格100*100为佳。
         bundle.putString("type", "4");//分享内容的类型。4表示网页；5表示视频（type=5时，必须传入playurl）。 
 //        bundle.putString("playurl", "http://player.youku.com/player.php/Type/Folder/Fid/15442464/Ob/1/Pt/0/sid/XMzA0NDM2NTUy/v.swf");//长度限制为256字节。仅在type=5的时候有效。

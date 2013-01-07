@@ -8,7 +8,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
@@ -407,37 +406,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         final String oldUpgradeMapTip = TKConfig.getPref(mSphinx, TKConfig.PREFS_SHOW_UPGRADE_MAP_TIP);
         View view = mLayoutInflater.inflate(R.layout.alert_upgrade_map, null, false);
         
-        AlertDialog.Builder b = new AlertDialog.Builder(mSphinx);
-
-        b.setTitle(R.string.prompt);
-        b.setCancelable(true);
-        b.setView(view);
-
-        final AlertDialog alertDialog = b.create();
-        alertDialog.setCanceledOnTouchOutside(false);
-        
         final CheckBox checkChb = (CheckBox) view.findViewById(R.id.check_chb);
-        Button positiveBtn = (Button) view.findViewById(R.id.positive_btn);
-        Button negativeBtn = (Button) view.findViewById(R.id.negative_btn);
-        
-        View.OnClickListener onClickListener = new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                if (view.getId() == R.id.positive_btn) {
-                    mActionLog.addAction(ActionLog.MoreUpdateMapAll);
-                    intent.putExtra("upgradeAll", true);
-                } else {
-                    mActionLog.addAction(ActionLog.MoreUpdateMapManual);
-                }
-                mSphinx.showView(R.id.activity_map_download, intent);
-                alertDialog.dismiss();
-            }
-        };
-
-        positiveBtn.setOnClickListener(onClickListener);
-        negativeBtn.setOnClickListener(onClickListener);
         checkChb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             
             @Override
@@ -446,6 +415,25 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
             }
         });
         
-        alertDialog.show();
+        CommonUtils.showNormalDialog(mSphinx,
+                mSphinx.getString(R.string.prompt),
+                null,
+                view,
+                mSphinx.getString(R.string.upgrade_all),
+                mSphinx.getString(R.string.upgrade_manual),
+                new DialogInterface.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(DialogInterface arg0, int id) {
+                        Intent intent = new Intent();
+                        if (id == DialogInterface.BUTTON_POSITIVE) {
+                            mActionLog.addAction(ActionLog.MoreUpdateMapAll);
+                            intent.putExtra("upgradeAll", true);
+                        } else {
+                            mActionLog.addAction(ActionLog.MoreUpdateMapManual);
+                        }
+                        mSphinx.showView(R.id.activity_map_download, intent);
+                    }
+                });
     }
 }

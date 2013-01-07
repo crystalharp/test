@@ -18,6 +18,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -2010,32 +2011,46 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     
     private boolean showChangeToMyLocationCityDialog(CityInfo currentCity, final CityInfo locationCity, final Position myLocation) {
         Globals.g_My_Location_Exist = 2;
-        AlertDialog dialog = getChangeToMyLocationCityDailog();
-        if (dialog.isShowing()) {
-            dialog.dismiss();
+        if (mChangeToMyLocationCityDialogShowing) {
+            return true;
         }
-        dialog.setMessage(mContext.getString(R.string.are_your_change_to_location_city, currentCity.getCName(), locationCity.getCName()));
-        dialog.setButton(DialogInterface.BUTTON_POSITIVE, mContext.getString(R.string.yes), new DialogInterface.OnClickListener() {
+
+        AlertDialog alertDialog = CommonUtils.showNormalDialog(this, getString(R.string.prompt),
+                getString(R.string.are_your_change_to_location_city, currentCity.getCName(), locationCity.getCName()),
+                getString(R.string.yes),
+                getString(R.string.no),
+                new DialogInterface.OnClickListener() {
+                            
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                switch (id) {                                            
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        mActionLog.addAction(ActionLog.ChangeToMyLocationCityDialogYes, locationCity.getCName());
+                                        uiStackEmpty();
+                                        showView(R.id.view_home);
+                                        mMapView.centerOnPosition(myLocation, TKConfig.ZOOM_LEVEL_LOCATION, true);
+                                        updateCityInfo();
+                                        mActionLog.addAction(ActionLog.LifecycleSelectCity, Globals.g_Current_City_Info.getCName());
+                                        break;          
+                                        
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        mActionLog.addAction(ActionLog.ChangeToMyLocationCityDialogNo);
+                                        break;    
+                                        
+                                    default:
+                                        break;
+                                }
+                            }
+                        });
+        alertDialog.setOnDismissListener(new OnDismissListener() {
             
             @Override
-            public void onClick(DialogInterface dialog, int id) {
-                switch (id) {                                            
-                    case DialogInterface.BUTTON_POSITIVE:
-                        mActionLog.addAction(ActionLog.ChangeToMyLocationCityDialogYes, locationCity.getCName());
-                        uiStackEmpty();
-                        showView(R.id.view_home);
-                        mMapView.centerOnPosition(myLocation, TKConfig.ZOOM_LEVEL_LOCATION, true);
-                        updateCityInfo();
-                        mActionLog.addAction(ActionLog.LifecycleSelectCity, Globals.g_Current_City_Info.getCName());
-                        dialog.dismiss();
-                        break;          
-
-                    default:
-                        break;
-                }
+            public void onDismiss(DialogInterface arg0) {
+                mChangeToMyLocationCityDialogShowing = false;
             }
         });
-        dialog.show();
+        mChangeToMyLocationCityDialogShowing = true;
+        
         mActionLog.addAction(ActionLog.ChangeToMyLocationCityDialog);
         return true;
     }
@@ -2071,13 +2086,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             
             @Override
             public void run() {
-                AlertDialog dialog = getPromptSettingLocationDailog();
-                if (Globals.g_My_Location_City_Info != null) {
-                    if (dialog != null && dialog.isShowing()) {
-                        dialog.dismiss();
-                    }
-                    return;
-                } else if (Sphinx.this.isFinishing()) {
+                if (Sphinx.this.isFinishing()) {
                     return;
                 } else if (uiStackPeek() != R.id.view_home) {
                     return;
@@ -2091,7 +2100,47 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                     return;
                 }
                 
-                dialog.show();
+                View settingLocationView = mLayoutInflater.inflate(R.layout.alert_setting_location, null, false);
+                
+                AlertDialog.Builder bulider = new AlertDialog.Builder(Sphinx.this);
+        
+                bulider.setTitle(R.string.prompt);
+                bulider.setCancelable(true);
+                bulider.setView(settingLocationView);
+        
+                
+                final CheckBox checkChb = (CheckBox) settingLocationView.findViewById(R.id.check_chb);
+                checkChb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                    
+                    @Override
+                    public void onCheckedChanged(CompoundButton arg0, boolean checked) {
+                        TKConfig.setPref(Sphinx.this, TKConfig.PREFS_SHOW_LOCATION_SETTINGS_TIP, checked ? "1" : "");
+                    }
+                });
+
+                
+                AlertDialog alertDialog = CommonUtils.showNormalDialog(Sphinx.this,
+                        getString(R.string.prompt),
+                        null,
+                        settingLocationView,
+                        Sphinx.this.getString(R.string.i_know),
+                        Sphinx.this.getString(R.string.settings),
+                        new DialogInterface.OnClickListener() {
+                            
+                            @Override
+                            public void onClick(DialogInterface arg0, int id) {
+                                if (id == DialogInterface.BUTTON_NEGATIVE) {
+                                    startLocationSettings();
+                                }
+                            }
+                        });
+                alertDialog.setOnDismissListener(new OnDismissListener() {
+                    
+                    @Override
+                    public void onDismiss(DialogInterface arg0) {
+                        mShowSettingLocationTipDialog = false;
+                    }
+                });
                 mShowSettingLocationTipDialog = true;
             }
         }, 10*1000);
@@ -2495,8 +2544,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     // TODO: get dialog begin
     private TrafficAlternativesDialog mTrafficAlternativesDialog = null;
     private FetchFavoriteDialog mFetchFavoriteDialog = null;
-    private AlertDialog mChangeToMyLocationCityDailog = null;
-    private AlertDialog mPromptSettingLocationDailog = null;
     
     public Dialog getDialog(int id) {
         Dialog dialog = null;
@@ -2508,13 +2555,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             case R.id.dialog_fetch_favorite_poi:
                 dialog = getFetchFavoriteDialog();
                 break;
-
-            case R.id.dialog_change_to_my_location_city:
-				dialog = getChangeToMyLocationCityDailog();
-				break;
-            
-            case R.id.dialog_prompt_setting_location:
-                dialog = getPromptSettingLocationDailog();
                 
             default:
                 break;
@@ -2539,75 +2579,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         return mTrafficAlternativesDialog;
     }
     
-    private AlertDialog getChangeToMyLocationCityDailog() {
-        if (mChangeToMyLocationCityDailog == null) {
-            mChangeToMyLocationCityDailog = new AlertDialog.Builder(Sphinx.this).setTitle(R.string.prompt)
-            .setCancelable(true)
-            .setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
-                
-                @Override
-                public void onClick(DialogInterface dialog, int id) {
-                    switch (id) {                                            
-                        case DialogInterface.BUTTON_NEGATIVE:
-                            mActionLog.addAction(ActionLog.ChangeToMyLocationCityDialogNo);
-                            dialog.dismiss();
-                            break;          
-
-                        default:
-                            break;
-                    }
-                }
-            })
-            .create();
-            mChangeToMyLocationCityDailog.setCanceledOnTouchOutside(false);
-        }
-        return mChangeToMyLocationCityDailog;
-    
-    }	
-    
-    private AlertDialog getPromptSettingLocationDailog() {
-        if (mPromptSettingLocationDailog == null) {
-            View settingLocationView = mLayoutInflater.inflate(R.layout.alert_setting_location, null, false);
-            
-            AlertDialog.Builder bulider = new AlertDialog.Builder(Sphinx.this);
-    
-            bulider.setTitle(R.string.prompt);
-            bulider.setCancelable(true);
-            bulider.setView(settingLocationView);
-    
-            mPromptSettingLocationDailog = bulider.create();
-            mPromptSettingLocationDailog.setCanceledOnTouchOutside(false);
-            
-            final CheckBox checkChb = (CheckBox) settingLocationView.findViewById(R.id.check_chb);
-            Button positiveBtn = (Button) settingLocationView.findViewById(R.id.positive_btn);
-            Button negativeBtn = (Button) settingLocationView.findViewById(R.id.negative_btn);
-            
-            View.OnClickListener onClickListener = new View.OnClickListener() {
-                
-                @Override
-                public void onClick(View view) {
-                    if (view.getId() == R.id.positive_btn) {
-                        mPromptSettingLocationDailog.dismiss();
-                    } else if (view.getId() == R.id.negative_btn) {
-                        mPromptSettingLocationDailog.dismiss();
-                        startLocationSettings();
-                    }
-                }
-            };
-    
-            positiveBtn.setOnClickListener(onClickListener);
-            negativeBtn.setOnClickListener(onClickListener);
-            checkChb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-                
-                @Override
-                public void onCheckedChanged(CompoundButton arg0, boolean checked) {
-                    TKConfig.setPref(Sphinx.this, TKConfig.PREFS_SHOW_LOCATION_SETTINGS_TIP, checked ? "1" : "");
-                }
-            });
-        }
-        
-        return mPromptSettingLocationDailog;
-    }
     // TODO: get dialog end
     
     // TODO: get fragment start
@@ -3091,6 +3062,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     // TODO: get fragment end
 
     // TODO: my location begin    
+    private boolean mChangeToMyLocationCityDialogShowing = false;
     private Runnable mLocationChangedRun = new Runnable() {
         
         @Override

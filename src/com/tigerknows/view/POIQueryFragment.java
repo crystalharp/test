@@ -19,7 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,7 +50,7 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         // TODO Auto-generated constructor stub
     }
 
-    private ImageButton mQueryBtn = null;
+    private Button mQueryBtn = null;
 
     private TKEditText mKeywordEdt = null;
 
@@ -139,7 +139,7 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
     }
 
     protected void findViews() {
-        mQueryBtn = (ImageButton)mRootView.findViewById(R.id.query_btn);
+        mQueryBtn = (Button)mRootView.findViewById(R.id.query_btn);
         mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);
         mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
         mKeywordEdt.setOnEditorActionListener(new OnEditorActionListener() {

@@ -14,7 +14,7 @@
       <uses-permission android:name="android.permission.READ_CONTACTS" />
       
     <application android:name="TKApplication" android:icon="@drawable/icon" android:label="@string/app_name"
-        android:theme="@style/Theme" android:debuggable="false">
+        android:theme="@style/Theme.NoTitleBar.Fullscreen" android:debuggable="false">
         <provider android:name=".provider.TigerknowsProvider"
             android:authorities="com.tigerknows.provider.Tigerknows" />
             
@@ -190,7 +190,7 @@
             android:screenOrientation="portrait" />
          
         <activity android:name=".Hint"
-            android:theme="@style/HitTheme.NoTitleBar" 
+            android:theme="@style/Hit" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
             android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
@@ -226,7 +226,7 @@
             android:windowSoftInputMode="adjustPan|stateVisible" />
             android:screenOrientation="portrait"
         <activity android:name="com.tencent.tauth.TAuthView" 
-            android:theme="@style/ThemeActivity" 
+            android:theme="@style/TAuthView" 
             android:configChanges="keyboardHidden|navigation|orientation"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait" >

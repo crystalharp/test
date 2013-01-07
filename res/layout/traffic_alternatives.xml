@@ -17,7 +17,7 @@
             android:layout_width="fill_parent" 
             android:layout_height="fill_parent"
             android:visibility="visible"
-            android:divider="@drawable/divider"
+            android:divider="@drawable/bg_real_line"
         	android:background="@color/gray_dark" />
         
         <ListView android:id="@+id/end_lsv"
@@ -27,7 +27,7 @@
             android:layout_width="fill_parent" 
             android:layout_height="fill_parent"
             android:visibility="gone"
-            android:divider="@drawable/divider"
+            android:divider="@drawable/bg_real_line"
         	android:background="@color/gray_dark" />
         
     </LinearLayout>

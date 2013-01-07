@@ -2,12 +2,15 @@ package com.tigerknows.util;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.android.location.Position;
 import com.decarta.android.map.MapView.SnapMap;
@@ -57,15 +60,21 @@ public class WidgetUtils {
             list = newlist;
         }
         final ArrayAdapter<String> adapter = new StringArrayAdapter(activity, list, leftCompoundResIdList);
+        
+        ListView listView = CommonUtils.makeListView(activity);
+        listView.setAdapter(adapter);
+        
+        final AlertDialog alertDialog = CommonUtils.showNormalDialog(activity, 
+                activity.getString(R.string.share), 
+                listView);
+        
+        listView.setOnItemClickListener(new OnItemClickListener() {
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
-
-        DialogInterface.OnClickListener click = new DialogInterface.OnClickListener() {
-            public final void onClick(DialogInterface dialog, int which) {
-
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
                 ActionLog actionLog = ActionLog.getInstance(activity);
                 Intent intent;
-                switch (which) {
+                switch (index) {
                     case 0:
                         actionLog.addAction(ActionLog.ShareWeibo);
                         
@@ -74,9 +83,9 @@ public class WidgetUtils {
                             @Override
                             public void finish(Uri uri) {
                                 if(uri != null) {
-                                	sphinx.clearMap();
-                                	
-                                	Intent intent = new Intent();
+                                    sphinx.clearMap();
+                                    
+                                    Intent intent = new Intent();
                                     intent.putExtra(ShareAPI.EXTRA_SHARE_PIC_URI, uri.toString());
                                     intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, weiboContent);
                                     intent.setClass(activity, WeiboSend.class);
@@ -86,7 +95,7 @@ public class WidgetUtils {
                         }, position);
                         break;
                     case 1:
-                    	actionLog.addAction(ActionLog.ShareQzone);
+                        actionLog.addAction(ActionLog.ShareQzone);
                         intent = new Intent();
                         intent.setClass(activity, QZoneSend.class);
                         intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, qzoneContent);
@@ -115,8 +124,8 @@ public class WidgetUtils {
                                 @Override
                                 public void finish(Uri uri) {
                                     if(uri != null) {
-                                    	sphinx.clearMap();
-                                    	
+                                        sphinx.clearMap();
+                                        
                                         Intent intent = new Intent();
                                         intent = new Intent();
                                         intent.setAction(Intent.ACTION_SEND);
@@ -145,20 +154,15 @@ public class WidgetUtils {
                             @Override
                             public void finish(Uri uri) {
                                 if(uri != null) {
-                                	sphinx.clearMap();
-                                	
+                                    sphinx.clearMap();
+                                    
                                     CommonUtils.share(sphinx, activity.getString(R.string.share), smsContent, uri);
                                 }}
                         }, position);
                         break;
                 }
+                alertDialog.dismiss();
             }
-        };
-
-        alertDialogBuilder.setTitle(R.string.share);
-        alertDialogBuilder.setCancelable(true);
-        alertDialogBuilder.setAdapter(adapter, click);
-
-        alertDialogBuilder.show();
+        });
     }
 }

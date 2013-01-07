@@ -44,7 +44,6 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -346,39 +345,44 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
             
             if (resId != R.id.app_name && activity.isFinishing() == false) {
                 Globals.clearSessionAndUser(activity);
-                final AlertDialog alertDialog = CommonUtils.getAlertDialog(activity);
-                alertDialog.setCancelable(false);
-                alertDialog.setMessage(activity.getString(resId));
                 if (sourceUserHome == false) {
-                    alertDialog.setButton(DialogInterface.BUTTON_POSITIVE, activity.getString(R.string.relogin), new DialogInterface.OnClickListener() {
-                        
-                        @Override
-                        public void onClick(DialogInterface arg0, int arg1) {
-                            alertDialog.dismiss();
-                            Intent intent = new Intent(activity, UserLoginActivity.class);
-                            intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, sourceViewIdLogin);
-                            intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, targetViewIdLoginSuccess);
-                            intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, targetViewIdLoginFailed);
-                            activity.startActivityForResult(intent, R.id.activity_user_login);
-                        }
-                    });
-                    alertDialog.setButton(DialogInterface.BUTTON_NEGATIVE, activity.getString(R.string.nologin), cancelOnClickListener);
+                    CommonUtils.showNormalDialog(activity, 
+                            activity.getString(R.string.prompt), 
+                            activity.getString(resId),
+                            activity.getString(R.string.relogin),
+                            activity.getString(R.string.nologin),
+                            new DialogInterface.OnClickListener() {
+                                                    
+                                @Override
+                                public void onClick(DialogInterface arg0, int id) {
+                                    if (id == DialogInterface.BUTTON_POSITIVE) {
+                                        Intent intent = new Intent(activity, UserLoginActivity.class);
+                                        intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, sourceViewIdLogin);
+                                        intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, targetViewIdLoginSuccess);
+                                        intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, targetViewIdLoginFailed);
+                                        activity.startActivityForResult(intent, R.id.activity_user_login);
+                                    }
+                                }
+                            });
                 } else {
-                    alertDialog.setButton(activity.getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                        
-                        @Override
-                        public void onClick(DialogInterface arg0, int arg1) {
-                            alertDialog.dismiss();
-                            Intent intent = new Intent(activity, UserLoginActivity.class);
-                            intent.putExtra(BaseActivity.SOURCE_USER_HOME, true);
-                            intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, sourceViewIdLogin);
-                            intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.view_user_home);
-                            intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, R.id.view_more);
-                            activity.startActivityForResult(intent, R.id.activity_user_login);
-                        }
-                    });
+                    CommonUtils.showNormalDialog(activity, 
+                            activity.getString(R.string.prompt), 
+                            activity.getString(resId),
+                            activity.getString(R.string.confirm),
+                            null,
+                            new DialogInterface.OnClickListener() {
+                                                    
+                                @Override
+                                public void onClick(DialogInterface arg0, int arg1) {
+                                    Intent intent = new Intent(activity, UserLoginActivity.class);
+                                    intent.putExtra(BaseActivity.SOURCE_USER_HOME, true);
+                                    intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, sourceViewIdLogin);
+                                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.view_user_home);
+                                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, R.id.view_more);
+                                    activity.startActivityForResult(intent, R.id.activity_user_login);
+                                }
+                            });
                 }
-                alertDialog.show();
                 return true;
             }
         }
@@ -505,15 +509,7 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
         } else if (sourceView instanceof Dialog && ((Dialog) sourceView).isShowing() == false) {
             return;
         }
-        final AlertDialog alertDialog = CommonUtils.getAlertDialog(activity);
-        alertDialog.setMessage(message);
-        alertDialog.setButton(activity.getString(R.string.confirm), new DialogInterface.OnClickListener() {
-            
-            @Override
-            public void onClick(DialogInterface arg0, int arg1) {
-                alertDialog.dismiss();
-            }
-        });
+        final AlertDialog alertDialog = CommonUtils.showNormalDialog(activity, message);
         alertDialog.setOnDismissListener(new OnDismissListener() {
             
             @Override

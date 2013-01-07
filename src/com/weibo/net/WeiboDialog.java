@@ -57,7 +57,7 @@ public class WeiboDialog extends Dialog {
     private final static String TAG = "Weibo-WebView";
 
     public WeiboDialog(final Weibo weibo, Context context, String url, WeiboDialogListener listener) {
-        super(context, R.style.ContentOverlay);
+        super(context, R.style.WeiboDialog);
         mWeibo = weibo;
         mUrl = url;
         mListener = listener;

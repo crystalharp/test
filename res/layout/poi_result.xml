@@ -17,15 +17,11 @@
 	        android:padding="0dp"
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content"
-	        android:background="@color/bg_bar"
+	        android:background="@android:color/white"
 	        android:gravity="center"
 	        android:orientation="horizontal"
 	        android:weightSum="3">
 	    </LinearLayout>
-        <ImageView 
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_shadow" />
 	    <FrameLayout
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"
@@ -44,7 +40,7 @@
 	        <com.tigerknows.view.SpringbackListView android:id="@+id/result_lsv"
 	            android:layout_width="fill_parent" 
 	            android:layout_height="fill_parent"
-	            android:divider="@drawable/divider"
+	            android:divider="@drawable/bg_real_line"
 	            android:footerDividersEnabled="false"
 	            android:fadingEdge="none"
 	            android:scrollingCache="false"/>
@@ -61,5 +57,5 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:visibility="invisible"
-        android:background="@drawable/btn_dingdan_normal" />
+        android:background="@drawable/btn_dingdan" />
 </RelativeLayout>

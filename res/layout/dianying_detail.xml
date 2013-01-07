@@ -204,7 +204,7 @@
              <ImageView
             	android:layout_width="fill_parent"
             	android:layout_height="wrap_content" 
-            	android:background="@drawable/divider"
+            	android:background="@drawable/bg_real_line"
             	android:layout_marginTop="8dp"
             	android:layout_marginBottom="8dp"
             	android:layout_marginLeft="12dp"

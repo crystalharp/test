@@ -6,27 +6,19 @@ package com.tigerknows;
 
 import com.decarta.CONFIG;
 import com.decarta.Globals;
-import com.decarta.android.db.PrefTable;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.TKWord;
 import com.tigerknows.model.LocationQuery.TKCellLocation;
 import com.tigerknows.util.CommonUtils;
-import com.tigerknows.view.user.Session;
-import com.tigerknows.view.user.User;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -39,7 +31,6 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Parcelable;
-import android.os.StatFs;
 import android.telephony.CellLocation;
 import android.telephony.NeighboringCellInfo;
 import android.telephony.PhoneStateListener;
@@ -47,7 +38,6 @@ import android.telephony.TelephonyManager;
 import android.telephony.cdma.CdmaCellLocation;
 import android.telephony.gsm.GsmCellLocation;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 /**
  * @author Peng Wenyue
@@ -221,6 +211,10 @@ public class TKConfig {
     public static final int PICTURE_TUANGOU_DETAIL = 4;
     public static final int PICTURE_TUANGOU_TAOCAN = 5;
     public static final int PICTURE_DIANYING_DETAIL = 6;
+
+    public static final int COLOR_BLACK_DARK = 0xff323232;
+    public static final int COLOR_BLACK_LIGHT = 0xff969696;
+    public static final int COLOR_ORANGE = 0xffff6c00;
     
     public static int getPageSize() {
         return sPage_Size;

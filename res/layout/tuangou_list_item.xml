@@ -39,9 +39,9 @@
         android:layout_height="wrap_content" 
         android:layout_toRightOf="@id/picture_view" 
         android:layout_alignParentTop="true"
-        android:textColor="@android:color/black"
+        android:textColor="@color/black_dark"
         android:textSize="16sp"
-        android:text="`1234567890-=  qwertyuiop[]asdfghjkl;'zxcvbnm,."
+        android:text="@string/app_name"
         android:singleLine="false"
         android:lines="2"
         android:maxLines="2"
@@ -56,12 +56,24 @@
         android:layout_height="wrap_content" 
         android:layout_toRightOf="@id/picture_view" 
         android:layout_below="@id/name_txv" 
-        android:textColor="#fffd9215"
+        android:textColor="@color/orange"
         android:textSize="18sp"
         android:text="@string/distance"
         android:singleLine="true"
         android:includeFontPadding="false"
         android:focusable="false" />     
+    
+    <TextView 
+        android:id="@+id/rmb_text_txv" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:layout_toRightOf="@id/price_txv"
+        android:layout_above="@id/buyer_num_txv" 
+        android:textColor="@color/black_light"
+        android:textSize="14sp"
+        android:text="@string/rmb_text"
+        android:singleLine="true"
+        android:focusable="false" /> 
     
     <TextView 
         android:id="@+id/buyer_num_txv" 
@@ -71,9 +83,9 @@
         android:layout_below="@id/price_txv" 
         android:layout_marginTop="4dp"
         android:drawableLeft="@drawable/ic_numberofpeople"
-        android:textColor="#99000000"
+        android:textColor="@color/black_light"
         android:textSize="14sp"
-        android:text="@string/distance"
+        android:text="@string/app_name"
         android:singleLine="true"
         android:focusable="false" />   
     
@@ -81,12 +93,12 @@
         android:id="@+id/org_price_txv" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
-        android:layout_toRightOf="@id/price_txv"
+        android:layout_toRightOf="@id/rmb_text_txv"
         android:layout_above="@id/buyer_num_txv" 
         android:layout_marginLeft="8dp"
-        android:textColor="#99000000"
+        android:textColor="@color/black_light"
         android:textSize="14sp"
-        android:text="@string/distance"
+        android:text="@string/app_name"
         android:singleLine="true"
         android:focusable="false" /> 
     
@@ -97,9 +109,9 @@
         android:layout_alignParentRight="true"
         android:layout_below="@id/price_txv" 
         android:layout_marginTop="4dp"
-        android:textColor="#ff199dbe"
+        android:textColor="@color/black_light"
         android:textSize="14sp"
-        android:text="@string/distance"
+        android:text="@string/app_name"
         android:singleLine="true"
         android:focusable="false" />  
 </RelativeLayout>

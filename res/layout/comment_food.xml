@@ -131,7 +131,9 @@
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:hint="@string/comment_food_restair_hit"
-	        android:background="@drawable/btn_spinner"
+	        android:background="@drawable/textfield"
+	        android:padding="8dp"
+	        android:drawableRight="@drawable/ic_small_triangle_down"
 	        android:gravity="left|center_vertical"
 	        android:singleLine="true"
 	        android:ellipsize="end" />

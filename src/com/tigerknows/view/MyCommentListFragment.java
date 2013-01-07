@@ -138,16 +138,8 @@ public class MyCommentListFragment extends BaseFragment {
                     if (comment != null) {
                         long status = comment.getPOIStatus();
                         if (status < 0) {
-                            final AlertDialog alertDialog = CommonUtils.getAlertDialog(mSphinx);
-                            alertDialog.setMessage(mSphinx.getString(R.string.poi_comment_poi_invalid_not_update));
-                            alertDialog.setButton(mSphinx.getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                                
-                                @Override
-                                public void onClick(DialogInterface arg0, int arg1) {
-                                    alertDialog.dismiss();
-                                }
-                            });
-                            alertDialog.show();
+                            CommonUtils.showNormalDialog(mSphinx, 
+                                    mSphinx.getString(R.string.poi_comment_poi_invalid_not_update));
                         } else {
                             POIComment.setPOI(comment.getPOI(), getId(), POIComment.STATUS_MODIFY);
                             mSphinx.showView(R.id.activity_poi_comment);
@@ -274,23 +266,8 @@ public class MyCommentListFragment extends BaseFragment {
                                 mSphinx.queryStart(poiQuery);
                             }
                         } else {
-                            final AlertDialog dialog = CommonUtils.getAlertDialog(mSphinx);
-                            dialog.setMessage(mSphinx.getString(R.string.poi_invalid));
-                            dialog.setButton(mSphinx.getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                                
-                                @Override
-                                public void onClick(DialogInterface arg0, int arg1) {
-                                    dialog.dismiss();
-                                }
-                            });
-                            dialog.setOnDismissListener(new OnDismissListener() {
-                                
-                                @Override
-                                public void onDismiss(DialogInterface arg0) {
-                                    dialog.dismiss();
-                                }
-                            });
-                            dialog.show();
+                            CommonUtils.showNormalDialog(mSphinx, 
+                                    mSphinx.getString(R.string.poi_invalid));
                         }
                     }
                 });

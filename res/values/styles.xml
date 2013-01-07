@@ -3,32 +3,12 @@
 -->
 
 <resources>
-    
-    <style name="Theme_Dialog" parent="android:Theme">
-        <item name="android:windowFrame">@null</item>
-        <item name="android:windowBackground">@color/dim_foreground_dark</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowSoftInputMode">adjustPan|stateAlwaysHidden</item>
-    </style>    
-    
-    <style name="Theme_Dialog_Menu" parent="android:Theme">
-        <item name="android:windowFrame">@null</item>
+    <style name="Theme.Dialog.Alert" parent="@android:style/Theme.Dialog.Alert">
         <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowContentOverlay">@null</item>
-    </style> 
-    
-    <!-- Default theme for alert dialog windows, which is used by the
-         {@link android.app.AlertDialog} class.  This is basically a dialog
-         but sets the background to empty so it can do two-tone backgrounds. -->
-    <!--
-        <item name="android:windowTitleStyle">@android:style/DialogWindowTitle</item> -->
-    <style name="Theme_Dialog_Alert" parent="android:Theme.Dialog">
-        <item name="android:windowBackground">@android:color/transparent</item>
-        <item name="android:windowIsFloating">true</item>
-        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTitleStyle">@style/DialogWindowTitle</item>
     </style>
     
-    <style name="Widget_ProgressBar_Tip" parent="android:Widget.ProgressBar">
+    <style name="Widget.ProgressBar" parent="android:Widget.ProgressBar">
         <item name="android:indeterminateOnly">true</item>
         <item name="android:indeterminateDrawable">@drawable/progress_medium</item>
         <item name="android:indeterminateBehavior">repeat</item>
@@ -39,12 +19,26 @@
         <item name="android:maxHeight">32dip</item>
     </style>
 
-    <style name="Animation_UpAndDown">
+
+    <style name="AlertDialog" parent="android:AlertDialog">
+        <item name="android:fullDark">@drawable/popup_full_dark</item>
+        <item name="android:topDark">@drawable/popup_top_dark</item>
+        <item name="android:centerDark">@drawable/popup_center_dark</item>
+        <item name="android:bottomDark">@drawable/popup_bottom_dark</item>
+        <item name="android:fullBright">@drawable/popup_full_bright</item>
+        <item name="android:topBright">@drawable/popup_top_bright</item>
+        <item name="android:centerBright">@drawable/popup_center_bright</item>
+        <item name="android:bottomBright">@drawable/popup_bottom_bright</item>
+        <item name="android:bottomMedium">@drawable/popup_bottom_medium</item>
+        <item name="android:centerMedium">@drawable/popup_center_medium</item>
+    </style>
+    
+    <style name="AlterImageDialog">
         <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
         <item name="android:windowExitAnimation">@anim/slide_out_down</item>
     </style>
 	
-	<style name="ContentOverlay" parent="android:style/Theme.Dialog">
+	<style name="WeiboDialog" parent="android:style/Theme.Dialog">
 		<item name="android:windowNoTitle">true</item>
 		<item name="android:windowIsTranslucent">true</item>
 		<item name="android:windowBackground">@android:color/transparent</item>
@@ -54,14 +48,14 @@
 	</style>
     
 	<!-- Tencent Share -->
-	<style name="AnimationActivity" parent="@android:style/Animation.Activity">
+	<style name="Animation.Activity" parent="@android:style/Animation.Activity">
 		<item name="android:activityOpenEnterAnimation">@anim/zoom_enter</item>
 		<item name="android:activityOpenExitAnimation">@null</item>
 		<item name="android:activityCloseEnterAnimation">@null</item>
 		<item name="android:activityCloseExitAnimation">@anim/zoom_exit</item>
 	</style>
-	<style name="ThemeActivity">
-		<item name="android:windowAnimationStyle">@style/AnimationActivity</item>
+	<style name="TAuthView">
+		<item name="android:windowAnimationStyle">@style/Animation.Activity</item>
 	</style>
 
     <style name="TextAppearance" parent="@android:style/TextAppearance">
@@ -94,6 +88,24 @@
         <item name="android:textColorLink">#5C5CFF</item>
         <item name="android:textSize">14sp</item>
     </style>
+    
+    <style name="TextAppearance.DialogWindowTitle" parent="@android:style/TextAppearance.DialogWindowTitle">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/orange</item>
+    </style>
+
+    <style name="DialogWindowTitle" parent="@android:style/DialogWindowTitle">
+        <item name="android:maxLines">1</item>
+        <item name="android:scrollHorizontally">true</item>
+        <item name="android:textAppearance">@style/TextAppearance.DialogWindowTitle</item>
+    </style>
+    
+    <style name="Theme.Dialog" parent="@android:style/Theme.Dialog">   
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowTitleStyle">@style/DialogWindowTitle</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>  
     
     <style name="RatingBar.Middle" parent="@android:style/Widget.RatingBar">   
         <item name="android:progressDrawable">@drawable/ratingbar_middle</item>

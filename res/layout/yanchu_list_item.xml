@@ -78,8 +78,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/picture_imv"
         android:layout_below="@id/address_txv"
-        
-        android:drawableLeft="@drawable/ic_discover_clock"
+        android:drawableLeft="@drawable/ic_discover_date"
         android:focusable="false"
         android:singleLine="true"
         android:text="@string/distance"

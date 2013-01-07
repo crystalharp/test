@@ -33,9 +33,9 @@ import com.tigerknows.view.user.UserBaseActivity;
 import com.tigerknows.view.user.UserCommentAfterActivity;
 import com.tigerknows.view.user.UserUpdateNickNameActivity;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -55,12 +55,17 @@ import android.view.View.OnTouchListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Animation.AnimationListener;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 
 import java.io.UnsupportedEncodingException;
@@ -676,29 +681,33 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         if (R.id.right_btn == viewId) {
             mActionLog.addAction(ActionLog.POICommentClickSubmit);
             if (mContentEdt.getEditableText().toString().trim().length() < MIN_CHAR) {
-                AlertDialog alertDialog = CommonUtils.getAlertDialog(mThis);
-                alertDialog.setMessage(mThis.getString(R.string.comment_prompt_input_content));
-                alertDialog.setButton(mThis.getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                CommonUtils.showNormalDialog(mThis, 
+                        mThis.getString(R.string.prompt), 
+                        mThis.getString(R.string.comment_prompt_input_content), 
+                        mThis.getString(R.string.confirm),
+                        null,
+                        new DialogInterface.OnClickListener() {
                     
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
                         mContentEdt.requestFocus();
                     }
                 });
-                alertDialog.show();
                 return;
             }
             if (mStatus == STATUS_MODIFY) {
-                AlertDialog alertDialog = CommonUtils.getAlertDialog(mThis);
-                alertDialog.setMessage(mThis.getString(R.string.poi_comment_override_tip));
-                alertDialog.setButton(mThis.getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                CommonUtils.showNormalDialog(mThis, 
+                        mThis.getString(R.string.prompt), 
+                        mThis.getString(R.string.poi_comment_override_tip), 
+                        mThis.getString(R.string.confirm),
+                        null,
+                        new DialogInterface.OnClickListener() {
                     
                     @Override
                     public void onClick(DialogInterface arg0, int arg1) {
                         readySubmit();
                     }
                 });
-                alertDialog.show();
             } else {
                 readySubmit();
             }
@@ -723,39 +732,43 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 }
             }
             
-            Dialog dialog = new AlertDialog.Builder(mThis)
-            .setTitle(R.string.comment_food_restair)
-            .setMultiChoiceItems(R.array.comment_restair,
-                    mRestairChecked,
-                    new DialogInterface.OnMultiChoiceClickListener() {
-                        public void onClick(DialogInterface dialog, int whichButton,
-                                boolean isChecked) {
-                            mRestairChecked[whichButton] = isChecked;
-                        }
-                    })
-            .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    StringBuilder s = new StringBuilder();
-                    for(int i = 0, length = mRestairChecked.length; i < length; i++) {
-                        if (mRestairChecked[i]) {
-                            if (s.length() > 0) {
-                                s.append(',');
+            final MultichoiceArrayAdapter multichoiceArrayAdapter = new MultichoiceArrayAdapter(mThis, mRestairArray);
+            ListView listView = CommonUtils.makeListView(mThis);
+            listView.setAdapter(multichoiceArrayAdapter);
+            listView.setOnItemClickListener(new OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                    mRestairChecked[position] = !mRestairChecked[position];
+                    multichoiceArrayAdapter.notifyDataSetChanged();
+                }
+            });
+            
+            CommonUtils.showNormalDialog(mThis, 
+                    mThis.getString(R.string.comment_food_restair), 
+                    listView,
+                    new DialogInterface.OnClickListener() {
+                        
+                        @Override
+                        public void onClick(DialogInterface arg0, int id) {
+
+                            if (id == DialogInterface.BUTTON_POSITIVE) {
+                                StringBuilder s = new StringBuilder();
+                                for(int i = 0, length = mRestairChecked.length; i < length; i++) {
+                                    if (mRestairChecked[i]) {
+                                        if (s.length() > 0) {
+                                            s.append(',');
+                                        }
+                                        s.append(mRestairArray[i]);
+                                    }
+                                }
+                                mRestairBtn.setText(s.toString());
+                                mActionLog.addAction(ActionLog.POICommentClickRestairOK);
+                            } else {
+                                mActionLog.addAction(ActionLog.POICommentClickRestairCancel);
                             }
-                            s.append(mRestairArray[i]);
                         }
-                    }
-                    mRestairBtn.setText(s.toString());
-                    mActionLog.addAction(ActionLog.POICommentClickRestairOK);
-                }
-            })
-            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    mActionLog.addAction(ActionLog.POICommentClickRestairCancel);
-                }
-            })
-           .create();
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.show();
+                    });
         } else if (viewId == R.id.left_btn) {
             mActionLog.addAction(ActionLog.Title_Left_Back, mActionTag);
             if (showDiscardDialog() == false) {
@@ -963,23 +976,18 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         }
         
         if (show == true) {
-            Dialog dialog = new AlertDialog.Builder(mThis)
-            .setTitle(R.string.prompt)
-            .setMessage(mStatus == STATUS_NEW ? R.string.comment_discard_tip_new : R.string.comment_discard_tip_modify)
-            .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    mActionLog.addAction(ActionLog.POICommentClickExitOK);
-                    finish();
-                }
-            })
-            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    mActionLog.addAction(ActionLog.POICommentClickExitCancel);
-                }
-            })
-           .create();
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.show();
+            CommonUtils.showNormalDialog(mThis,
+                    getString(mStatus == STATUS_NEW ? R.string.comment_discard_tip_new : R.string.comment_discard_tip_modify),
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            if (whichButton == DialogInterface.BUTTON_POSITIVE) {
+                                mActionLog.addAction(ActionLog.POICommentClickExitOK);
+                                finish();
+                            } else {
+                                mActionLog.addAction(ActionLog.POICommentClickExitCancel);
+                            }
+                        }
+                    });
         }
         return show;
     }
@@ -1022,13 +1030,15 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 if (response.getResponseCode() == 201) {
                     BaseActivity.showErrorDialog(mThis, mThis.getString(R.string.response_code_201), mThis, true);
                 } else if (response.getResponseCode() == 601 && response instanceof CommentCreateResponse) {
-                    final AlertDialog alertDialog = CommonUtils.getAlertDialog(mThis);
-                    alertDialog.setMessage(mThis.getString(R.string.response_code_601));
-                    alertDialog.setButton(mThis.getString(R.string.confirm), new DialogInterface.OnClickListener() {
+                    CommonUtils.showNormalDialog(mThis, 
+                            mThis.getString(R.string.prompt), 
+                            mThis.getString(R.string.response_code_601), 
+                            mThis.getString(R.string.confirm),
+                            null,
+                            new DialogInterface.OnClickListener() {
                         
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
-                            alertDialog.dismiss();
                             mStatus = STATUS_MODIFY;
                             mTitleBtn.setText(R.string.modify_comment);
                             Hashtable<String, String> criteria = commentOperation.getCriteria();
@@ -1040,7 +1050,6 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                             queryStart(dataOperation);
                         }
                     });
-                    alertDialog.show();
                 } else if (response.getResponseCode() == 602) {
                     mStatus = STATUS_NEW;
                     mTitleBtn.setText(R.string.publish_comment);
@@ -1277,5 +1286,30 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             }
         }
         return false;
+    }
+    
+    class MultichoiceArrayAdapter extends ArrayAdapter<String> {
+        
+        static final int RESOURCE_ID = R.layout.select_dialog_multichoice;
+        
+        public MultichoiceArrayAdapter(Context context, String[] list) {
+            super(context, RESOURCE_ID, list);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view;
+            if (convertView == null) {
+                view = mLayoutInflater.inflate(RESOURCE_ID, parent, false);
+            } else {
+                view = convertView;
+            }
+            
+            CheckedTextView textView = (CheckedTextView)view.findViewById(R.id.text1);
+            textView.setText(mRestairArray[position]);
+            textView.setChecked(mRestairChecked[position]);
+
+            return view;
+        }
     }
 }

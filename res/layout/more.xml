@@ -66,7 +66,7 @@
                 <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/divider" />
+                    android:background="@drawable/bg_real_line" />
 		        <RelativeLayout
 		            android:layout_width="wrap_content" 
 		            android:layout_height="wrap_content"
@@ -100,7 +100,7 @@
                 <ImageView
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/divider" />
+                    android:background="@drawable/bg_real_line" />
                 <Button
                     android:id="@+id/settings_btn" 
                     android:layout_width="fill_parent"
@@ -138,7 +138,7 @@
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/divider" />
+                android:background="@drawable/bg_real_line" />
             <Button
                android:id="@+id/favorite_btn" 
                 android:layout_width="fill_parent"
@@ -155,7 +155,7 @@
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/divider" />
+                android:background="@drawable/bg_real_line" />
             <Button
                 android:id="@+id/history_browse_btn" 
                 android:layout_width="fill_parent"
@@ -172,7 +172,7 @@
                <ImageView
                    android:layout_width="fill_parent"
                    android:layout_height="wrap_content"
-                   android:background="@drawable/divider" />
+                   android:background="@drawable/bg_real_line" />
                 <Button
                     android:id="@+id/add_merchant_btn" 
                     android:layout_width="fill_parent"
@@ -212,7 +212,7 @@
                <ImageView
                    android:layout_width="fill_parent"
                    android:layout_height="wrap_content"
-                   android:background="@drawable/divider" />
+                   android:background="@drawable/bg_real_line" />
                <Button
                    android:id="@+id/give_favourable_comment_btn" 
                    android:layout_width="fill_parent"
@@ -229,7 +229,7 @@
                <ImageView
                    android:layout_width="fill_parent"
                    android:layout_height="wrap_content"
-                   android:background="@drawable/divider" />
+                   android:background="@drawable/bg_real_line" />
                 <Button
                     android:id="@+id/feedback_btn" 
                     android:layout_width="fill_parent"
@@ -246,7 +246,7 @@
                <ImageView
                    android:layout_width="fill_parent"
                    android:layout_height="wrap_content"
-                   android:background="@drawable/divider" />
+                   android:background="@drawable/bg_real_line" />
                <Button
                    android:id="@+id/app_recommend_btn" 
                    android:layout_width="fill_parent"
@@ -263,7 +263,7 @@
                <ImageView
                    android:layout_width="fill_parent"
                    android:layout_height="wrap_content"
-                   android:background="@drawable/divider" />
+                   android:background="@drawable/bg_real_line" />
                <Button
                    android:id="@+id/help_btn" 
                    android:layout_width="fill_parent"

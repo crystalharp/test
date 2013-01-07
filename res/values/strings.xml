@@ -30,6 +30,7 @@
     <string name="location_doing">正在定位…</string>
 
     <string name="yuan">￥%1$d元</string>
+    <string name="rmb_text">元</string>
     <string name="brackets">【%1$s】</string>
     <string name="map">地图</string>
     <string name="back">返回</string>

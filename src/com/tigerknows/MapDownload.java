@@ -677,11 +677,17 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         list.add(mThis.getString(R.string.delete_map));
         
         final ArrayAdapter<String> adapter = new StringArrayAdapter(mThis, list);
+        ListView listView = CommonUtils.makeListView(mThis);
+        listView.setAdapter(adapter);
+        
+        final AlertDialog alertDialog = CommonUtils.showNormalDialog(this,
+                getString(R.string.select_action),
+                listView);
+        
+        listView.setOnItemClickListener(new OnItemClickListener() {
 
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mThis);
-
-        DialogInterface.OnClickListener click = new DialogInterface.OnClickListener() {
-            public final void onClick(DialogInterface dialog, int which) {
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
                 String str = list.get(which);
                 if (str.equals(mThis.getString(R.string.download_map))) {
                     if (mMapEngine.isExternalStorage()) {
@@ -745,15 +751,10 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                                 }
                             });
                 }
-                
+                alertDialog.dismiss();
             }
-        };
-
-        alertDialog.setTitle(R.string.select_action);
-        alertDialog.setCancelable(true);
-        alertDialog.setAdapter(adapter, click);
-
-        alertDialog.show();
+            
+        });
     }
     
     private boolean properCity(CityInfo cityInfo, String userInput) {
@@ -935,6 +936,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             Button startBtn = (Button)provinceView.findViewById(R.id.start_btn);
             Button pauseBtn = (Button)provinceView.findViewById(R.id.pause_btn);
             if (cityInfo.getId() == CITY_ID_TITLE_ONE) {
+                provinceView.setBackgroundResource(R.drawable.bg_expandablelistview_group);
                 provinceView.setVisibility(View.VISIBLE);
                 cityView.setVisibility(View.GONE);
                 TextView textTxv = (TextView) provinceView.findViewById(R.id.text_txv);
@@ -947,6 +949,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 pauseBtn.setBackgroundResource(R.drawable.ic_map_upgrade);
                 pauseBtn.setOnClickListener(mUpdateBtnOnClickListener);
             } else if (cityInfo.getId() == CITY_ID_TITLE_TWO) {
+                provinceView.setBackgroundResource(R.drawable.bg_expandablelistview_group);
                 provinceView.setVisibility(View.VISIBLE);
                 cityView.setVisibility(View.GONE);
                 TextView textTxv = (TextView) provinceView.findViewById(R.id.text_txv);
@@ -988,6 +991,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                     pauseBtn.setOnClickListener(null);
                 }
             } else if (cityInfo.getId() == CITY_ID_TITLE_THREE) {
+                provinceView.setBackgroundResource(R.drawable.bg_expandablelistview_group);
                 provinceView.setVisibility(View.VISIBLE);
                 cityView.setVisibility(View.GONE);
                 TextView textTxv = (TextView) provinceView.findViewById(R.id.text_txv);
@@ -998,6 +1002,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 startBtn.setVisibility(View.GONE);
                 pauseBtn.setVisibility(View.GONE);
             } else if (cityInfo.getType() == CityInfo.TYPE_PROVINCE) {
+                provinceView.setBackgroundResource(R.drawable.list_selector_background_gray_light);
                 provinceView.setVisibility(View.VISIBLE);
                 cityView.setVisibility(View.GONE);
                 TextView textTxv = (TextView) provinceView.findViewById(R.id.text_txv);

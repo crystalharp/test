@@ -252,7 +252,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
         
         List<View> viewList = new ArrayList<View>();
-        Drawable divider = mSphinx.getResources().getDrawable(R.drawable.divider);
+        Drawable divider = mSphinx.getResources().getDrawable(R.drawable.bg_real_line);
         mPOILsv = new SpringbackListView(mSphinx, null);
         mPOILsv.setFadingEdgeLength(0);
         mPOILsv.setScrollingCacheEnabled(false);

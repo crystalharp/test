@@ -3,8 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:gravity="left|top"
-    android:background="#ffdddddd" >
+    android:gravity="left|top" >
 
 	<RelativeLayout
 	    android:layout_width="fill_parent"

@@ -19,9 +19,12 @@ package com.tigerknows.view;
 import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.DataQuery.Filter;
 
 import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -97,6 +100,18 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             }
         }
         
+        for(int i = 0, size = controlView.getChildCount(); i < size; i++) {
+            View view = controlView.getChildAt(i);
+            if (view instanceof Button) {
+                Button button = (Button) view;
+                if (key == (Byte)button.getTag()) {
+                    button.setBackgroundResource(R.drawable.btn_tab_selected);
+                } else {
+                    button.setBackgroundResource(R.drawable.btn_tab);
+                }
+            }
+        }
+        
         List<Filter> filterList1 = this.filter.getChidrenFilterList();
         this.parentFilterList.addAll(filterList1);
         
@@ -124,6 +139,16 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         }
         parentAdapter.notifyDataSetChanged();
         childAdapter.notifyDataSetChanged();
+        
+        refreshBackground();
+    }
+    
+    private void refreshBackground() {
+        if (selectedChildFilter == null || selectedChildFilter.getChidrenFilterList().size() < selectedParentFilter.getChidrenFilterList().size()) {
+            setBackgroundResource(R.drawable.list_selector_background_gray_light);
+        } else {
+            setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+        }
     }
         
     public FilterListView(Context context) {
@@ -150,7 +175,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         parentLsv.setAdapter(parentAdapter);
         childLsv.setAdapter(childAdapter);
         
-        setBackgroundColor(0x00000000);
+        parentLsv.getLayoutParams().width = Globals.g_metrics.widthPixels/5*2;
     }
 
     protected void findViews() {
@@ -161,6 +186,16 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     }
     
     protected void setListener() {
+        setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+                if (callBack != null) {
+                    callBack.cancelFilter();
+                }
+                return false;
+            }
+        });
         parentLsv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
@@ -171,9 +206,11 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                 Filter filter = parentFilterList.get(position);
                 List<Filter> filterList = filter.getChidrenFilterList();
                 if (filterList.size() == 0) {
+                    refreshBackground();
                     childLsv.setVisibility(View.INVISIBLE);
                     doFilter(filter);
                 } else {
+                    refreshBackground();
                     selectedParentPosition = position;
                     parentAdapter.notifyDataSetChanged();
                     childLsv.setVisibility(View.VISIBLE);
@@ -271,9 +308,16 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             }
             
             if (filter.isSelected()) {
-                iconImv.setBackgroundResource(R.drawable.icon_right);
-                iconImv.setVisibility(View.VISIBLE);
-            } else if (filter.getChidrenFilterList().size() > 0) {
+                textTxv.setTextColor(TKConfig.COLOR_ORANGE);
+            } else {
+                if (isParent) {
+                    textTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
+                } else {
+                    textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+                }
+            }
+            
+            if (filter.getChidrenFilterList().size() > 0) {
                 iconImv.setBackgroundResource(R.drawable.icon_arrow_right);
                 iconImv.setVisibility(View.VISIBLE);
             } else {
@@ -297,12 +341,21 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         Button button;
         int count = filterViewGroup.getChildCount();
         int size = filterList.size();
+        int j = 0;
         for(int i = 0; i < size; i++) {
             Filter filter = filterList.get(i);
-            if (i < count) {
-                button = (Button) filterViewGroup.getChildAt(i);
+            if (j < count) {
+                button = (Button) filterViewGroup.getChildAt(j++);
                 button.setVisibility(View.VISIBLE);
+                if (j < count) {
+                    filterViewGroup.getChildAt(j++).setVisibility(View.VISIBLE);
+                }
             } else {
+                if (i > 0) {
+                    ImageView imageView = new ImageView(context);
+                    imageView.setImageResource(R.drawable.ic_split);
+                    filterViewGroup.addView(imageView);
+                }
                 button = makeFitlerButton(context, isTransparent);
                 filterViewGroup.addView(button);
             }
@@ -311,8 +364,8 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             button.setOnClickListener(onClickListener);            
         }
         
-        for(int i = size; i < count; i++) {
-            filterViewGroup.getChildAt(i).setVisibility(View.GONE);
+        for(; j < count;) {
+            filterViewGroup.getChildAt(j).setVisibility(View.GONE);
         }
     }
 
@@ -325,16 +378,21 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         layoutParams.bottomMargin = Util.dip2px(Globals.g_metrics.density, 4);        
         layoutParams.weight = 1;
         
+        Resources resources = context.getResources();
         Button button = new Button(context);
         button.setLayoutParams(layoutParams);
         if (isTransparent) {
-            button.setBackgroundResource(R.drawable.btn_spinner);
-            button.setTextColor(0xff000000);
+            button.setBackgroundResource(R.drawable.btn_tab);
+            button.setTextColor(resources.getColor(R.color.black_dark));
         } else {
-            button.setBackgroundResource(R.drawable.btn_spinner);
-            button.setTextColor(0xff000000);
+            button.setBackgroundResource(R.drawable.btn_tab);
+            button.setTextColor(resources.getColor(R.color.black_dark));
         }
-        button.setPadding(Util.dip2px(Globals.g_metrics.density, 6), 0, Util.dip2px(Globals.g_metrics.density, 24), 0);
+        Drawable right = resources.getDrawable(R.drawable.ic_small_triangle_down);
+        right.setBounds(0, 0, right.getIntrinsicWidth(), right.getIntrinsicWidth());
+        button.setCompoundDrawablesWithIntrinsicBounds(null, null, right, null);
+//        button.setPadding(Util.dip2px(Globals.g_metrics.density, 6), 0, Util.dip2px(Globals.g_metrics.density, 24), 0);
+        button.setGravity(Gravity.CENTER);
         button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         button.setSingleLine(true);
         button.setGravity(Gravity.CENTER);

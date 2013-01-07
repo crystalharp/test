@@ -22,7 +22,6 @@ import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.FeedbackUpload;
-import com.tigerknows.model.Response;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.model.TrafficModel.Station;

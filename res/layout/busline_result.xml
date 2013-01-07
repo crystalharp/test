@@ -28,7 +28,7 @@
             android:layout_below="@id/comment_txv"
             android:layout_width="fill_parent" 
             android:layout_height="fill_parent"
-            android:divider="@drawable/divider"
+            android:divider="@drawable/bg_real_line"
             android:scrollingCache="false"
             android:fadingEdge="none"
             android:drawSelectorOnTop="false"

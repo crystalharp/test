@@ -23,27 +23,4 @@
         android:text="@string/do_not_show_this_message"
         android:textSize="14sp"
         android:textColor="@android:color/white"/>
-    <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingTop="0dp"
-        android:gravity="center"
-        android:weightSum="2">
-        <Button android:id="@+id/positive_btn"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:textSize="16sp"
-            android:layout_weight="1"
-            android:text="@string/i_know"/>
-        <Button android:id="@+id/negative_btn"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:padding="10dp"
-            android:textSize="16sp"
-            android:layout_weight="1"
-            android:text="@string/settings"/>
-    </LinearLayout>
 </LinearLayout>

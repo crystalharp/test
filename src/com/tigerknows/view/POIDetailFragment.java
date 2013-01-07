@@ -534,16 +534,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         } else {
                             resId = R.string.poi_comment_poi_invalid_not_create;
                         }
-                        final AlertDialog alertDialog = CommonUtils.getAlertDialog(mSphinx);
-                        alertDialog.setMessage(mSphinx.getString(resId));
-                        alertDialog.setButton(mSphinx.getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                            
-                            @Override
-                            public void onClick(DialogInterface arg0, int arg1) {
-                                alertDialog.dismiss();
-                            }
-                        });
-                        alertDialog.show();
+
+
+                        CommonUtils.showNormalDialog(mSphinx, 
+                                mSphinx.getString(resId));
                     } else {
                         POIComment.setPOI(poi, getId(), isMe ? POIComment.STATUS_MODIFY : POIComment.STATUS_NEW);
                         mSphinx.showView(R.id.activity_poi_comment);
@@ -629,7 +623,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mActionLog.addAction(ActionLog.POIDetailFavorite, isFavorite ? "0" : "1");
         if (isFavorite) {
             CommonUtils.showNormalDialog(mSphinx, 
-                    mContext.getString(R.string.prompt),
+                    mContext.getString(R.string.favorite_yet), 
                     mContext.getString(R.string.cancel_favorite_tip),
                     new DialogInterface.OnClickListener() {
                         
@@ -950,16 +944,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             POIComment.setPOI(poi, getId(), POIComment.STATUS_MODIFY);
                             mSphinx.startActivityForResult(intent, R.id.activity_poi_comment);
                         } else {
-                            final AlertDialog alertDialog = CommonUtils.getAlertDialog(mSphinx);
-                            alertDialog.setMessage(mSphinx.getString(R.string.comment_poi_invalid_hit));
-                            alertDialog.setButton(mSphinx.getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                                
-                                @Override
-                                public void onClick(DialogInterface arg0, int arg1) {
-                                    alertDialog.dismiss();
-                                }
-                            });
-                            alertDialog.show();
+                            CommonUtils.showNormalDialog(mSphinx, 
+                                    mSphinx.getString(R.string.comment_poi_invalid_hit));
                         }
                     }
                 });

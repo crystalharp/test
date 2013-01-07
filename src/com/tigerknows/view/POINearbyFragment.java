@@ -154,7 +154,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         mQueryBtn = (ImageButton)mRootView.findViewById(R.id.query_btn);
         mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);
         
-        Drawable divider = mSphinx.getResources().getDrawable(R.drawable.divider);
+        Drawable divider = mSphinx.getResources().getDrawable(R.drawable.bg_real_line);
         mCategoryLsv = new ListView(mSphinx);
         mCategoryLsv.setFadingEdgeLength(0);
         mCategoryLsv.setScrollingCacheEnabled(false);

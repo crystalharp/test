@@ -48,11 +48,11 @@
         <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/divider" />
+                android:background="@drawable/bg_real_line" />
         <ListView android:id="@+id/app_recommend_lsv"
             android:layout_width="fill_parent" 
             android:layout_height="wrap_content"
-            android:divider="@drawable/divider"
+            android:divider="@drawable/bg_real_line"
             android:drawSelectorOnTop="false"
             android:scrollingCache="false"
             android:fadingEdge="none" />

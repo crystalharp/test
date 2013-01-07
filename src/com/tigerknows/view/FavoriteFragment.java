@@ -265,7 +265,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
         
         List<View> viewList = new ArrayList<View>();
-        Drawable divider = mSphinx.getResources().getDrawable(R.drawable.divider);
+        Drawable divider = mSphinx.getResources().getDrawable(R.drawable.bg_real_line);
         mPOILsv = new SpringbackListView(mSphinx, null);
         mPOILsv.setFadingEdgeLength(0);
         mPOILsv.setScrollingCacheEnabled(false);
@@ -843,33 +843,27 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 return false;
             }
         });
-        Dialog dialog = new AlertDialog.Builder(mSphinx)
-            .setTitle(R.string.rename)
-            .setView(textEntryView)
-            .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    mSphinx.hideSoftInput(nameEdt.getWindowToken());
-                    if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-                        POI poi = mPOIList.get(position);
-                        poi.setAlise(nameEdt.getEditableText().toString());
-                        poi.updateAlias(mContext);
-                        mPOIAdapter.notifyDataSetChanged();
-                    } else {
-                        Favorite traffic = mTrafficList.get(position);
-                        traffic.setAlise(nameEdt.getEditableText().toString());
-                        traffic.updateAlias(mContext);
-                        mTrafficAdapter.notifyDataSetChanged();
+        CommonUtils.showNormalDialog(mSphinx,
+                mSphinx.getString(R.string.rename),
+                textEntryView,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        mSphinx.hideSoftInput(nameEdt.getWindowToken());
+                        if (whichButton == DialogInterface.BUTTON_POSITIVE) {
+                            if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
+                                POI poi = mPOIList.get(position);
+                                poi.setAlise(nameEdt.getEditableText().toString());
+                                poi.updateAlias(mContext);
+                                mPOIAdapter.notifyDataSetChanged();
+                            } else {
+                                Favorite traffic = mTrafficList.get(position);
+                                traffic.setAlise(nameEdt.getEditableText().toString());
+                                traffic.updateAlias(mContext);
+                                mTrafficAdapter.notifyDataSetChanged();
+                            }
+                        }
                     }
-                }
-            })
-            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    mSphinx.hideSoftInput(nameEdt.getWindowToken());
-                }
-            })
-            .create();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
+                });
     }
     
     class MyPageChangeListener implements OnPageChangeListener {

@@ -36,7 +36,7 @@ public class AlterImageDialog extends Dialog {
 		setListeners();
 		mPic.setImageBitmap(bitmap);
 		
-		getWindow().getAttributes().windowAnimations = R.style.Animation_UpAndDown;
+		getWindow().getAttributes().windowAnimations = R.style.AlterImageDialog;
 	}
 
 	protected void findViews() {

@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -31,7 +30,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tigerknows.R;
 import com.tigerknows.model.BaseQuery;
@@ -170,16 +168,9 @@ public class POICommentList extends BaseActivity {
                                 } else {
                                     resId = R.string.poi_comment_poi_invalid_not_create;
                                 }
-                                final AlertDialog alertDialog = CommonUtils.getAlertDialog(mThis);
-                                alertDialog.setMessage(mThis.getString(resId));
-                                alertDialog.setButton(mThis.getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                                    
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
-                                        alertDialog.dismiss();
-                                    }
-                                });
-                                alertDialog.show();
+
+                                CommonUtils.showNormalDialog(mThis, 
+                                        mThis.getString(resId));
                             } else {
                                 POIComment.setPOI(mCommentQuery.getPOI(), R.id.activity_poi_comment_list, isMe ? POIComment.STATUS_MODIFY : POIComment.STATUS_NEW);
                                 Intent intent = new Intent();
@@ -398,16 +389,8 @@ public class POICommentList extends BaseActivity {
                                 POIComment.setPOI(poi, mId, POIComment.STATUS_MODIFY);
                                 mThis.startActivityForResult(intent, R.id.activity_poi_comment);
                             } else {
-                                final AlertDialog alertDialog = CommonUtils.getAlertDialog(mThis);
-                                alertDialog.setMessage(mThis.getString(R.string.comment_poi_invalid_hit));
-                                alertDialog.setButton(mThis.getString(R.string.confirm), new DialogInterface.OnClickListener() {
-                                    
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int arg1) {
-                                        alertDialog.dismiss();
-                                    }
-                                });
-                                alertDialog.show();
+                                CommonUtils.showNormalDialog(mThis, 
+                                        mThis.getString(R.string.comment_poi_invalid_hit));
                             }
                         }
                     });

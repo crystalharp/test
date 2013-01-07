@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
+import com.tigerknows.util.CommonUtils;
 
 /**
  * @author Peng Wenyue
@@ -40,7 +41,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     
     class MyHandler {
         public void show(String data) {
-        new AlertDialog.Builder(BrowserActivity.this).setMessage(data).create().show();
+            CommonUtils.showNormalDialog(BrowserActivity.this, data);
         }
     }
     

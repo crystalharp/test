@@ -53,28 +53,28 @@
 					    android:layout_height="wrap_content"
         				android:textColor="#FF5D5D5D"
 					    android:text="@string/poi_name_error"
-        				android:button="@drawable/btn_check_green" />
+        				android:button="@drawable/btn_check" />
 				    <CheckBox 
 				        android:id="@+id/address_error_chb"
 					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"
         				android:textColor="#FF5D5D5D"
 					    android:text="@string/poi_address_error"
-        				android:button="@drawable/btn_check_green" />
+        				android:button="@drawable/btn_check" />
 				    <CheckBox 
 				        android:id="@+id/telephone_error_chb"
 					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"
         				android:textColor="#FF5D5D5D"
 					    android:text="@string/poi_phone_error"
-        				android:button="@drawable/btn_check_green" />
+        				android:button="@drawable/btn_check" />
 				    <CheckBox 
 				        android:id="@+id/coordinate_error_chb"
 					    android:layout_width="wrap_content"
 					    android:layout_height="wrap_content"
         				android:textColor="#FF5D5D5D"
 					    android:text="@string/poi_mark_error"
-        				android:button="@drawable/btn_check_green" />
+        				android:button="@drawable/btn_check" />
 			    </LinearLayout>
 			    <RadioButton
 			        android:id="@+id/place_absent_error_rbt"

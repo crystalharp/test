@@ -9,7 +9,7 @@
     <com.tigerknows.view.SpringbackListView android:id="@+id/comment_lsv"
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
-        android:divider="@drawable/divider"
+        android:divider="@drawable/bg_real_line"
         android:footerDividersEnabled="false"
         android:fadingEdge="none"
         android:scrollingCache="false"/>

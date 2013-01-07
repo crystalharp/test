@@ -105,9 +105,6 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
         if (popupWindow == null) {
             View view  = mLayoutInflater.inflate(R.layout.title_popup_list, this, false);
             popupLsv = (ListView) view.findViewById(R.id.listview);
-            popupLsv.setFadingEdgeLength(0);
-            popupLsv.setScrollingCacheEnabled(false);
-            popupLsv.setFooterDividersEnabled(false);
             
             popupWindow = new PopupWindow(view);
             popupWindow.setWindowLayoutMode(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
@@ -122,7 +119,7 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
         popupLsv.setAdapter(adapter);
         
         leftBtn.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        popupWindow.showAsDropDown(titleBtn, ((int)(leftBtn.getMeasuredWidth()*Globals.g_metrics.density)), 0);
+        popupWindow.showAsDropDown(titleBtn, 0, 0);
     }
     
     public void dismissPopupWindow() {

@@ -25,7 +25,6 @@ import java.util.zip.ZipFile;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -48,11 +47,14 @@ import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -601,29 +603,119 @@ public class CommonUtils {
         return false;
     }
     
-    public static void showNormalDialog(Activity activity, String title, String message, DialogInterface.OnClickListener onClickListener) {
-        showNormalDialog(activity, title, message, activity.getString(R.string.confirm), activity.getString(R.string.cancel), onClickListener);
+    public static AlertDialog showNormalDialog(Activity activity, String title, View custom) {
+        return showNormalDialog(activity, title, null, custom, activity.getString(R.string.confirm), activity.getString(R.string.cancel), null);
     }
     
-    public static Dialog showNormalDialog(Activity activity, String title, String message, String positiveText, String negativeText, DialogInterface.OnClickListener onClickListener) {
-        Dialog dialog = new AlertDialog.Builder(activity).setTitle(title)
-        .setMessage(message)
-        .setPositiveButton(positiveText, onClickListener)
-        .setNegativeButton(negativeText, onClickListener)
-        .setCancelable(true)
-        .create();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
-        return dialog;
+    public static AlertDialog showNormalDialog(Activity activity, String title, View custom, DialogInterface.OnClickListener onClickListener) {
+        return showNormalDialog(activity, title, null, custom, activity.getString(R.string.confirm), activity.getString(R.string.cancel), onClickListener);
     }
     
-    public static AlertDialog getAlertDialog(Activity activity) {
-        AlertDialog dialog = new AlertDialog.Builder(activity)
-        .setTitle(R.string.prompt)
+    public static AlertDialog showNormalDialog(Activity activity, String message) {
+        return showNormalDialog(activity, activity.getString(R.string.prompt), message, activity.getString(R.string.confirm), null, null);
+    }
+    
+    public static AlertDialog showNormalDialog(Activity activity, String message, DialogInterface.OnClickListener onClickListener) {
+        return showNormalDialog(activity, activity.getString(R.string.prompt), message, activity.getString(R.string.confirm), activity.getString(R.string.cancel), onClickListener);
+    }
+    
+    public static AlertDialog showNormalDialog(Activity activity, String title, String message, DialogInterface.OnClickListener onClickListener) {
+        return showNormalDialog(activity, title, message, activity.getString(R.string.confirm), activity.getString(R.string.cancel), onClickListener);
+    }
+    
+    public static AlertDialog showNormalDialog(Activity activity, String title, String message, String leftButtonText, String rightButtonText, DialogInterface.OnClickListener onClickListener) {
+        return showNormalDialog(activity, title, message, null, leftButtonText, rightButtonText, onClickListener);
+    }
+    
+    public static AlertDialog showNormalDialog(Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener) {
+        
+        LayoutInflater layoutInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        
+        final AlertDialog alertDialog = new AlertDialog.Builder(activity)
         .setCancelable(true)
         .create();
-        dialog.setCanceledOnTouchOutside(false);
-        return dialog;
+        alertDialog.setCanceledOnTouchOutside(false);
+        
+        View view  = layoutInflater.inflate(R.layout.alert_dialog, null);
+        alertDialog.setView(view);
+        
+        View titleView = view.findViewById(R.id.titlePanel);
+        View contentPanel = view.findViewById(R.id.contentPanel);
+        ViewGroup customPanel = (ViewGroup) view.findViewById(R.id.customPanel);
+        View bottonView = view.findViewById(R.id.buttonPanel);
+        
+        if (title != null) {
+            titleView.setVisibility(View.VISIBLE);
+            ((TextView) titleView.findViewById(R.id.title_txv)).setText(title);
+        } else {
+            titleView.setVisibility(View.GONE);
+        }
+        
+        if (message != null) {
+            contentPanel.setVisibility(View.VISIBLE);
+            ((TextView) contentPanel.findViewById(R.id.message)).setText(message);
+        } else {
+            contentPanel.setVisibility(View.GONE);
+        }
+        
+        if (custom != null) {
+            customPanel.setVisibility(View.VISIBLE);
+            customPanel.addView(custom);
+        } else {
+            customPanel.setVisibility(View.GONE);
+        }
+        
+        if (leftButtonText != null || rightButtonText != null) {
+            bottonView.setVisibility(View.VISIBLE);
+            View split = bottonView.findViewById(R.id.split_imv);
+            Button leftBtn = (Button) bottonView.findViewById(R.id.button1);
+            Button rightBtn = (Button) bottonView.findViewById(R.id.button2);
+            View.OnClickListener listener = new View.OnClickListener() {
+                
+                @Override
+                public void onClick(View view) {
+                    alertDialog.dismiss();
+                    if (onClickListener != null)
+                        onClickListener.onClick(alertDialog, view.getId() == R.id.button1 ? DialogInterface.BUTTON_POSITIVE : DialogInterface.BUTTON_NEGATIVE);
+                }
+            };
+            if (leftButtonText == null) {
+                split.setVisibility(View.GONE);
+                leftBtn.setVisibility(View.GONE);
+                rightBtn.setVisibility(View.VISIBLE);
+                rightBtn.setText(rightButtonText);
+                rightBtn.setOnClickListener(listener);
+            } else if (rightButtonText == null) {
+                split.setVisibility(View.GONE);
+                leftBtn.setVisibility(View.VISIBLE);
+                rightBtn.setVisibility(View.GONE);
+                leftBtn.setText(leftButtonText);
+                leftBtn.setOnClickListener(listener);
+            } else {
+                split.setVisibility(View.VISIBLE);
+                leftBtn.setVisibility(View.VISIBLE);
+                rightBtn.setVisibility(View.VISIBLE);
+                leftBtn.setText(leftButtonText);
+                leftBtn.setOnClickListener(listener);
+                rightBtn.setText(rightButtonText);
+                rightBtn.setOnClickListener(listener);
+            }
+        } else {
+            bottonView.setVisibility(View.GONE);
+        }
+        
+        alertDialog.show();
+        
+        return alertDialog;
+    }
+    
+    public static ListView makeListView(Context context) {
+        ListView listView = new ListView(context);
+        listView.setFadingEdgeLength(0);
+        listView.setScrollingCacheEnabled(false);
+        listView.setFooterDividersEnabled(false);
+        listView.setDivider(context.getResources().getDrawable(R.drawable.bg_real_line));
+        return listView;
     }
     
     public static byte[] getDrawableResource(Context context, int resId) {

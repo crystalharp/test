@@ -5,12 +5,12 @@
 package com.tigerknows.view.discover;
 
 import com.decarta.Globals;
-import com.decarta.android.map.InfoWindow.TextAlign;
 import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Dianying;
@@ -247,6 +247,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         findViews();
         setListener();
         
+        mResultLsv.setDivider(mSphinx.getResources().getDrawable(R.drawable.bg_broken_line));
         mTitlePopupArrayAdapter = new TitlePopupArrayAdapter(mSphinx, mDiscoverCategoryList);
         
         return mRootView;
@@ -561,6 +562,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             name = R.string.zhanlan_ditu;
             actionTag = ActionLog.MapZhanlanList;
         }
+        mSphinx.showPOI(dataList, page[2]);
         mSphinx.getResultMapFragment().setData(mContext.getString(name), actionTag);
         mSphinx.showView(R.id.view_result_map);   
     }
@@ -669,9 +671,11 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     public class TuangouAdapter extends ArrayAdapter<Tuangou>{
         private static final int RESOURCE_ID = R.layout.tuangou_list_item;
+        String rmb;
         
         public TuangouAdapter(Context context, List<Tuangou> list) {
             super(context, RESOURCE_ID, list);
+            rmb = context.getString(R.string.rmb_text);
         }
         
         @Override
@@ -706,8 +710,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 shangjiaMarkerImv.setImageDrawable(null);
             }
             nameTxv.setText(tuangou.getShortDesc());
-            priceTxv.setText(mSphinx.getString(R.string.rmb) + tuangou.getPrice());
-            orgPriceTxv.setText(mSphinx.getString(R.string.rmb)+tuangou.getOrgPrice());
+            priceTxv.setText(tuangou.getPrice());
+            orgPriceTxv.setText(tuangou.getOrgPrice()+rmb);
             orgPriceTxv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
             String distance = tuangou.getFendian().getDistance();
             if (TextUtils.isEmpty(distance)) {
@@ -1153,15 +1157,22 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 view = convertView;
             }
             
+            ImageView iconTxv = (ImageView)view.findViewById(R.id.icon_imv);
+            TextView textTxv = (TextView)view.findViewById(R.id.name_txv);
+            TextView numTxv = (TextView)view.findViewById(R.id.num_txv);
+            
             DiscoverCategory discoverCategory = getItem(position);
             if (discoverCategory.getType().equals(mSelectDataType)) {
                 view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+                iconTxv.setVisibility(View.VISIBLE);
+                textTxv.setTextColor(TKConfig.COLOR_ORANGE);
+                numTxv.setTextColor(TKConfig.COLOR_ORANGE);
             } else {
                 view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+                iconTxv.setVisibility(View.INVISIBLE);
+                textTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
+                numTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
             }
-            
-            TextView textTxv = (TextView)view.findViewById(R.id.name_txv);
-            TextView numTxv = (TextView)view.findViewById(R.id.num_txv);
             
             String name = null;
             String dataType = discoverCategory.getType();

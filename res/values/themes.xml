@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     
-    <style name="Theme" parent="android:Theme.NoTitleBar.Fullscreen">        
+    <style name="Theme.NoTitleBar.Fullscreen" parent="android:Theme.NoTitleBar.Fullscreen">        
         <item name="android:windowContentOverlay">@android:color/transparent</item>
         <item name="android:editTextStyle">@style/Widget.EditText</item>
         <item name="android:textViewStyle">@style/Widget.TextView</item>
         <item name="android:windowBackground">@drawable/startup</item>
+        <item name="android:alertDialogStyle">@style/AlertDialog</item>  
         <item name="android:checkboxStyle">@style/Widget.CompoundButton.CheckBox</item>
     </style>
     
@@ -23,10 +24,11 @@
         <item name="android:windowBackground">@android:color/white</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowAnimationStyle">@android:style/Animation.Translucent</item>
+        <item name="android:alertDialogStyle">@style/AlertDialog</item>  
         <item name="android:checkboxStyle">@style/Widget.CompoundButton.CheckBox</item>
     </style>
     
-    <style name="HitTheme.NoTitleBar" parent="Theme.NoTitleBar">       
+    <style name="Hit" parent="Theme.NoTitleBar">       
         <item name="android:colorBackground">@android:color/transparent</item>
         <item name="android:windowBackground">@android:color/transparent</item>
     </style>

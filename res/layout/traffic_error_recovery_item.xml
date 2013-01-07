@@ -9,5 +9,5 @@
         android:textSize="18sp"
         android:text="@string/app_name"
         android:textColor="#FF5D5D5D"
-        android:button="@drawable/btn_check_green" />
+        android:button="@drawable/btn_check" />
 </RelativeLayout>
