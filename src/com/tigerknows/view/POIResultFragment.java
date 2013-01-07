@@ -25,6 +25,7 @@ import com.tigerknows.view.SpringbackListView.OnRefreshListener;
 import com.tigerknows.view.user.User;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -444,6 +445,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         private Drawable icAPOI;
         private String distanceA;
         private Drawable icComment;
+        private int aColor;
+        private int bColor;
         private Context context;
         private LayoutInflater layoutInflater;
         private boolean showStamp = true;
@@ -456,9 +459,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             super(context, RESOURCE_ID, list);
             this.context = context;
             layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            icAPOI = context.getResources().getDrawable(R.drawable.ic_a_poi);
+            Resources resources = context.getResources();
+            icAPOI = resources.getDrawable(R.drawable.ic_a_poi);
+            icComment = resources.getDrawable(R.drawable.ic_comment);
+            aColor = resources.getColor(R.color.blue);
+            bColor = resources.getColor(R.color.black_dark);
             distanceA = context.getString(R.string.distanceA);
-            icComment = context.getResources().getDrawable(R.drawable.ic_comment);
         }
         
         @Override
@@ -471,8 +477,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 view = convertView;
             }
             
-            TextView numberTxv = (TextView) view.findViewById(R.id.number_txv);
-            ImageView numberImv = (ImageView) view.findViewById(R.id.number_imv);
+            ImageView bubbleImv = (ImageView) view.findViewById(R.id.bubble_imv);
             TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
             TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
             TextView distanceFromTxv = (TextView) view.findViewById(R.id.distance_from_txv);
@@ -493,20 +498,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
             
             if (position == 0 && poi.getResultType() == POIResponse.FIELD_A_POI_LIST && aTotal == 1) {
-                numberTxv.setText("99");
-                numberTxv.setVisibility(View.INVISIBLE);
-                numberImv.setVisibility(View.VISIBLE);
+                bubbleImv.setVisibility(View.VISIBLE);
+                nameTxv.setTextColor(aColor);
             } else {
-                numberTxv.setVisibility(View.VISIBLE);
-                numberImv.setVisibility(View.GONE);
-                int orderNumber = position+(aTotal == 1 ? 0 : 1);
-                poi.setOrderNumber(orderNumber);
-                if (orderNumber < 10) {
-                    numberTxv.setText("  "+orderNumber); 
-                } else {
-                    numberTxv.setText(String.valueOf(orderNumber)); 
-                }
-                numberTxv.setBackgroundDrawable(null);
+                bubbleImv.setVisibility(View.GONE);
+                nameTxv.setTextColor(bColor);
             }
             
             nameTxv.setText(poi.getName());
@@ -624,15 +620,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 dynamicPOIListView.getChildAt(i).setVisibility(View.GONE);
             }
             if (dynamicPOIWidth > 0) {
-                numberTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-                int numberTxvWidth = numberTxv.getMeasuredWidth();
+                int bubbleImvWidth = 0;
+                if (bubbleImv.getVisibility() == View.VISIBLE) {
+                    bubbleImv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+                    bubbleImvWidth = bubbleImv.getMeasuredWidth();
+                }
                 nameTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 int nameTxvWidth = nameTxv.getMeasuredWidth();
-                distanceTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-                int distanceTxvWidth = distanceTxv.getMeasuredWidth();
-                distanceFromTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-                int distanceFromTxvWidth = distanceFromTxv.getMeasuredWidth();
-                int width = Globals.g_metrics.widthPixels-distanceTxvWidth-distanceFromTxvWidth-numberTxvWidth-(5*Util.dip2px(Globals.g_metrics.density, 8));
+                int width = Globals.g_metrics.widthPixels-bubbleImvWidth-(4*Util.dip2px(Globals.g_metrics.density, 8));
                 if (nameTxvWidth > width-dynamicPOIWidth) {
                     nameTxv.getLayoutParams().width = (width-dynamicPOIWidth);
                 } else {

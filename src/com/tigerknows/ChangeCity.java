@@ -45,6 +45,10 @@ import com.tigerknows.view.TKEditText;
  */
 public class ChangeCity extends BaseActivity implements View.OnClickListener {
 
+    static final int ORDER_LOCATION_TITLE = 1;
+    static final int ORDER_CITY_TITLE = 10;
+    static final int ORDER_PROVINCE_TITLE =  100;
+    
     private TKEditText mKeywordEdt;
     private ExpandableListView mCityElv;
     private ListView mSuggestCityLsv;
@@ -52,8 +56,9 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
     private SuggestCityAdapter mSuggestCityAdapter;    
     private List<CityInfo> mSuggestCityList = new ArrayList<CityInfo>();
     private CityInfo mLocationCity;
-    private static CityInfo sLocationCityTitle = null;
-    private static CityInfo sAllCityTitle = null;
+    private static CityInfo sLocationTitle = null;
+    private static CityInfo sCityTitle = null;
+    private static CityInfo sProvinceTitle = null;
     private static List<CityInfo> sAllCityInfoList = null;
     
     private MapEngine mMapEngine;
@@ -62,7 +67,7 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
 
         @Override
         public int compare(CityInfo cityInfo1, CityInfo cityInfo2) {
-            return cityInfo1.getId() - cityInfo2.getId();
+            return cityInfo1.order - cityInfo2.order;
         };
     };
 
@@ -83,22 +88,30 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
         mSuggestCityAdapter = new SuggestCityAdapter(mThis, mSuggestCityList);
         mSuggestCityLsv.setAdapter(mSuggestCityAdapter);
 
-        
         mMapEngine = MapEngine.getInstance();
         if (sAllCityInfoList ==  null) {
            sAllCityInfoList = mMapEngine.getAllProvinceCityList(mThis);
-           Collections.sort(sAllCityInfoList, mCityComparator);
            for(CityInfo cityInfo : sAllCityInfoList) {
                List<CityInfo> cityInfoList = cityInfo.getCityList();
+               if (cityInfoList.size() <= 1) {
+                   cityInfo.order = cityInfo.getId()+ORDER_CITY_TITLE;
+               } else {
+                   cityInfo.order = cityInfo.getId()+ORDER_PROVINCE_TITLE;
+               }
                Collections.sort(cityInfoList, mCityComparator);
            }
-           sLocationCityTitle = new CityInfo();
-           sLocationCityTitle.setCName(mThis.getString(R.string.location_city));
-           sLocationCityTitle.setId(-5);
-           sAllCityTitle = new CityInfo();
-           sAllCityTitle.setCName(mThis.getString(R.string.all_city));
-           sAllCityTitle.setId(-6);
-           sAllCityInfoList.add(0, sAllCityTitle);
+           sLocationTitle = new CityInfo();
+           sLocationTitle.setCName(mThis.getString(R.string.location_city));
+           sLocationTitle.order = ORDER_LOCATION_TITLE;
+           sCityTitle = new CityInfo();
+           sCityTitle.setCName(mThis.getString(R.string.municipality));
+           sCityTitle.order = ORDER_CITY_TITLE;
+           sAllCityInfoList.add(0, sCityTitle);
+           sProvinceTitle = new CityInfo();
+           sProvinceTitle.setCName(mThis.getString(R.string.search_by_province));
+           sProvinceTitle.order = ORDER_PROVINCE_TITLE;
+           sAllCityInfoList.add(0, sProvinceTitle);
+           Collections.sort(sAllCityInfoList, mCityComparator);
         }
         
         mSuggestCityLsv.setVisibility(View.GONE);
@@ -221,11 +234,12 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
             if (mLocationCity.getCityList().size() == 0) {
                 mLocationCity.getCityList().add(mLocationCity.clone());
             }
+            mLocationCity.order = ORDER_LOCATION_TITLE+1;
             if (checkLocationTitle()) {
                 sAllCityInfoList.remove(1);
                 sAllCityInfoList.add(1, mLocationCity);
             } else {
-                sAllCityInfoList.add(0, sLocationCityTitle);
+                sAllCityInfoList.add(0, sLocationTitle);
                 sAllCityInfoList.add(1, mLocationCity);
             }
         } else {
@@ -239,7 +253,7 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
     
     private boolean checkLocationTitle() {
         CityInfo cityInfo = sAllCityInfoList.get(0);
-        if (cityInfo.getId() == sLocationCityTitle.getId()) {
+        if (cityInfo.order == sLocationTitle.order) {
             return true;
         }
         return false;
@@ -400,18 +414,22 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
             
             CityInfo cityInfo = (CityInfo) getGroup(groupPosition);
             String cname = cityInfo.getCName();
-            TextView textView = (TextView)view.findViewById(R.id.text_txv);
-            textView.setText(cname);
+            TextView textTxv = (TextView)view.findViewById(R.id.text_txv);
+            TextView titleTxv = (TextView)view.findViewById(R.id.title_txv);
             
             ImageView imageView = (ImageView)view.findViewById(R.id.icon_imv);
-            if (cityInfo.getId() == -5) {
-                view.setBackgroundColor(0xff00aeff);
-                imageView.setVisibility(View.INVISIBLE);
-            } else if (cityInfo.getId() == -6) {
-                view.setBackgroundColor(0xff00aeff);
+            int order = cityInfo.order;
+            if (order == ORDER_LOCATION_TITLE || order == ORDER_CITY_TITLE || order == ORDER_PROVINCE_TITLE) {
+                view.setBackgroundResource(R.drawable.bg_expandablelistview_group);
+                titleTxv.setText(cname);
+                textTxv.setVisibility(View.GONE);
+                titleTxv.setVisibility(View.VISIBLE);
                 imageView.setVisibility(View.INVISIBLE);
             } else {
                 view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+                textTxv.setText(cname);
+                textTxv.setVisibility(View.VISIBLE);
+                titleTxv.setVisibility(View.GONE);
                 if (getChildrenCount(groupPosition) > 1) {
                     imageView.setVisibility(View.VISIBLE);
                     if (isExpanded) {            
