@@ -1100,6 +1100,7 @@ public class MapEngine {
         private int level;
         private String cProvinceName;
         private String eProvinceName;
+        public int order;
         
         public CityInfo() {
         }
