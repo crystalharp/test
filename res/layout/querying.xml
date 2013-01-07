@@ -5,10 +5,12 @@
     android:gravity="center"
     android:orientation="horizontal">
 
-    <ProgressBar
-        style="@style/Widget_ProgressBar_Tip"
+    <ImageView
+        android:id="@+id/icon_imv"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />      
+        android:layout_height="wrap_content"
+        android:src="@drawable/progress_querying"
+        android:background="@android:color/transparent" />      
     <TextView
         android:id="@+id/loading_txv" 
         android:layout_width="wrap_content"

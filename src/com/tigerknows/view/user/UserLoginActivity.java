@@ -39,6 +39,8 @@ public class UserLoginActivity extends UserBaseActivity {
 	
 	private Button loginBtn;
 	
+	private Button registerBtn;
+	
 	static final String TAG = "UserLoginActivity";
 	
 	@Override
@@ -51,8 +53,8 @@ public class UserLoginActivity extends UserBaseActivity {
 		setContentView(R.layout.user_login);
         findViews();
         setListener();
-
-        mRightBtn.setText(R.string.regist);
+        mRightBtn.setWillNotDraw(true);
+//        mRightBtn.setText(R.string.regist);
 		mTitleBtn.setText(getString(R.string.title_user_login));
 		
 		String prefsPhoneNum = TKConfig.getPref(UserLoginActivity.this, TKConfig.PREFS_PHONENUM, "");
@@ -72,6 +74,7 @@ public class UserLoginActivity extends UserBaseActivity {
 		phoneEdt = (ExtValidationEditText)findViewById(R.id.phone_edt);
 		passwordEdt = (ExtValidationEditText)findViewById(R.id.password_edt);
 		forgetPasswordTxt = (TextView)findViewById(R.id.forget_password_txt);
+		registerBtn = (Button)findViewById(R.id.register_btn);
 		loginBtn = (Button)findViewById(R.id.login_btn);
 	}
 	
@@ -113,7 +116,7 @@ public class UserLoginActivity extends UserBaseActivity {
 			}
 		});
 		
-		mRightBtn.setOnClickListener(new android.view.View.OnClickListener(){
+		registerBtn.setOnClickListener(new android.view.View.OnClickListener(){
 
 			@Override
 			public void onClick(View v) {

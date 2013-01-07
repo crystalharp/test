@@ -45,6 +45,7 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -115,11 +116,11 @@ import com.tigerknows.model.UserLogonModel;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
 import com.tigerknows.model.test.BaseQueryTest;
+import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.service.MapStatsService;
 import com.tigerknows.service.SuggestLexiconService;
 import com.tigerknows.service.TKLocationManager;
 import com.tigerknows.service.TKLocationManager.TKLocationListener;
-import com.tigerknows.share.ShareMessageCenter;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.BaseDialog;
@@ -242,7 +243,11 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         LogWrapper.i(TAG,"onCreate()");
-		TKConfig.configure();
+        
+        WindowManager winMan=(WindowManager)getSystemService(Context.WINDOW_SERVICE);
+        Display display=winMan.getDefaultDisplay();
+        display.getMetrics(Globals.g_metrics);
+        
         TKConfig.readConfig();
         Globals.readSessionAndUser(this);
         Globals.setConnectionFast(Util.isConnectionFast(this));        
@@ -412,7 +417,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                         // TODO Auto-generated catch block
                         e1.printStackTrace();
                     }
-                    TKConfig.readHistoryWord(Sphinx.this, TKConfig.History_Word_POI, String.format(TKConfig.PREFS_HISTORY_WORD_POI, MapEngine.CITY_ID_BEIJING));
+                    HistoryWordTable.readHistoryWord(mContext, MapEngine.CITY_ID_BEIJING, HistoryWordTable.TYPE_POI);
                     Globals.initOptimalAdaptiveScreenSize();
                 }
             }).start();
@@ -709,9 +714,43 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             
             EventRegistry.addEventListener(mMapView, MapView.EventType.DOUBLECLICK, new MapView.DoubleClickEventListener(){
                 @Override
-                public void onDoubleClickEvent(MapView mapView, Position position) {
-                    mapView.zoomIn(position);
-                    mActionLog.addAction(ActionLog.MapDoubleClick);
+                public void onDoubleClickEvent(final MapView mapView, final Position position) {
+            		int zoomLevel = (int) mapView.getZoomLevel();
+            		int newZoomLevel = zoomLevel+1;
+            		if (zoomLevel < CONFIG.ZOOM_UPPER_BOUND) {
+	            		XYFloat xy = mapView.positionToScreenXY(position);
+	            		Position centerPos = mapView.getCenterPosition();
+						XYFloat center = mapView.positionToScreenXY(centerPos);
+						final XYFloat offset = new XYFloat(xy.x-center.x, xy.y-center.y);
+						if (newZoomLevel == CONFIG.ZOOM_JUMP) {
+						    try {
+                                mapView.setZoomLevel(newZoomLevel);
+                                mapView.refreshMap();
+                                XYFloat nowxy = mapView.positionToScreenXY(position);
+                                Position nowcenterPos = mapView.getCenterPosition();
+                                XYFloat nowcenter = mapView.positionToScreenXY(nowcenterPos);
+                                XYFloat nowOffset = new XYFloat(nowxy.x-nowcenter.x, nowxy.y-nowcenter.y);
+                                mapView.moveView(offset.x-nowOffset.x, offset.y-nowOffset.y);
+                            } catch (APIException e) {
+                                // TODO Auto-generated catch block
+                                e.printStackTrace();
+                            }
+						} else {
+    						mapView.zoomTo(newZoomLevel, centerPos, -1, new ZoomEndEventListener() {
+    							
+    							@Override
+    							public void onZoomEndEvent(MapView mapView, int newZoomLevel) {
+    								XYFloat nowxy = mapView.positionToScreenXY(position);
+    								Position nowcenterPos = mapView.getCenterPosition();
+    								XYFloat nowcenter = mapView.positionToScreenXY(nowcenterPos);
+    								XYFloat nowOffset = new XYFloat(nowxy.x-nowcenter.x, nowxy.y-nowcenter.y);
+    								mapView.moveView(offset.x-nowOffset.x, offset.y-nowOffset.y);
+    							}
+    						});
+						}
+						mActionLog.addAction(ActionLog.MapDoubleClick);
+            		}
+                	
                 }
             });
             
@@ -1090,7 +1129,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             mSensorManager.unregisterListener(mSensorListener);
         }
         mActionLog.onDestroy();
-        sendBroadcast(new Intent(ShareMessageCenter.EXTRA_SHARE_FINISH));
         mMenuFragment = null;
         mTitleFragment = null;
         mHomeFragment = null;
@@ -1857,7 +1895,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             CityInfo cityInfo = mMapEngine.getCityInfo(cityId);
             if (cityInfo.isAvailably()) {
                 if (cityId > 0 && cityId != Globals.g_Current_City_Info.getId()) {
-                    TKConfig.readHistoryWord(mContext, TKConfig.History_Word_POI, String.format(TKConfig.PREFS_HISTORY_WORD_POI, cityId));
+                    HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
                 }
                 
                 cityInfo.setLevel(zoomLevel);

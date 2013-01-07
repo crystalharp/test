@@ -14,11 +14,10 @@ import com.decarta.android.map.MapView.SnapMap;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.share.ShareEntrance;
-import com.tigerknows.share.ShareMessageCenter;
+import com.tigerknows.share.QZoneSend;
+import com.tigerknows.share.ShareAPI;
+import com.tigerknows.share.WeiboSend;
 import com.tigerknows.view.StringArrayAdapter;
-import com.tigerknows.share.impl.SinaWeiboShare;
-import com.tigerknows.share.impl.TencentOpenShare;
 
 /**
  * 一些关于为Widget附加的常用操作
@@ -59,7 +58,7 @@ public class WidgetUtils {
         }
         final ArrayAdapter<String> adapter = new StringArrayAdapter(activity, list, leftCompoundResIdList);
 
-        AlertDialog.Builder b = new AlertDialog.Builder(activity);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
 
         DialogInterface.OnClickListener click = new DialogInterface.OnClickListener() {
             public final void onClick(DialogInterface dialog, int which) {
@@ -78,10 +77,10 @@ public class WidgetUtils {
                                 	sphinx.clearMap();
                                 	
                                 	Intent intent = new Intent();
-                                    intent.putExtra(ShareMessageCenter.EXTRA_SHARE_PIC_URI, uri.toString());
-                                    intent.putExtra(ShareMessageCenter.EXTRA_SHARE_CONTENT, weiboContent);
-                                    
-                                    ShareEntrance.getInstance().dealWithShare(activity, ShareEntrance.SINAWEIBO_ENTRANCE, intent);
+                                    intent.putExtra(ShareAPI.EXTRA_SHARE_PIC_URI, uri.toString());
+                                    intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, weiboContent);
+                                    intent.setClass(activity, WeiboSend.class);
+                                    activity.startActivity(intent);
                                 }
                             }
                         }, position);
@@ -89,8 +88,9 @@ public class WidgetUtils {
                     case 1:
                     	actionLog.addAction(ActionLog.ShareQzone);
                         intent = new Intent();
-                        intent.putExtra(ShareMessageCenter.EXTRA_SHARE_CONTENT, qzoneContent);
-                        ShareEntrance.getInstance().dealWithShare(activity, ShareEntrance.TENCENT_ENTRANCE, intent);
+                        intent.setClass(activity, QZoneSend.class);
+                        intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, qzoneContent);
+                        activity.startActivity(intent);
                         break;
                     case 2:
                         actionLog.addAction(ActionLog.ShareSms);
@@ -155,10 +155,10 @@ public class WidgetUtils {
             }
         };
 
-        b.setTitle(R.string.share);
-        b.setCancelable(true);
-        b.setAdapter(adapter, click);
+        alertDialogBuilder.setTitle(R.string.share);
+        alertDialogBuilder.setCancelable(true);
+        alertDialogBuilder.setAdapter(adapter, click);
 
-        b.show();
+        alertDialogBuilder.show();
     }
 }

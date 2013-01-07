@@ -9,12 +9,29 @@
         layout="@layout/title" 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />
+    <LinearLayout android:id="@+id/add_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/btn_bottom"
+        android:gravity="center">
+	    <TextView
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:drawableLeft="@drawable/ic_add_city"
+	        android:gravity="center_vertical"
+	        android:text="@string/city_list"
+	        android:textColor="@color/black_dark"
+	        android:textSize="16sp" />
+    </LinearLayout>
     <RelativeLayout
         android:id="@+id/download_view"
 	    android:layout_width="fill_parent" 
 	    android:layout_height="fill_parent"
         android:layout_below="@id/title_view"
-	    android:gravity="center_horizontal|top">
+        android:layout_above="@id/add_btn"
+	    android:gravity="center_horizontal|top"
+	    android:visibility="visible">
     
 	    <ExpandableListView android:id="@+id/download_city_lsv"
 	        android:layout_width="fill_parent" 
@@ -31,6 +48,7 @@
 	    android:layout_width="fill_parent" 
 	    android:layout_height="fill_parent"
         android:layout_below="@id/title_view"
+        android:layout_above="@id/add_btn"
 	    android:gravity="center_horizontal|top"
 	    android:visibility="gone">
 	    <RelativeLayout
@@ -43,23 +61,14 @@
 	        android:paddingRight="5dp"
 	        android:paddingBottom="6dp"
 	        android:gravity="left|center_vertical"
-	        android:background="@color/bg_bar">
+	        android:background="@android:color/white">
 	        <com.tigerknows.view.TKEditText
 	            android:id="@+id/input_edt"
 	            android:layout_width="fill_parent" 
 	            android:layout_height="wrap_content"
-	            tkandroid:paddingLeft="32dp"
 	            tkandroid:hint="@string/input_city_name_or_first_char"
 	            tkandroid:imeOptions="actionDone">
 	         </com.tigerknows.view.TKEditText>
-	        <ImageView
-	            android:layout_width="wrap_content" 
-	            android:layout_height="wrap_content"
-	            android:layout_marginLeft="8dp"
-	            android:src="@drawable/icon_search"
-	            android:layout_centerVertical="true"
-	            android:editable="false">
-	         </ImageView>
 	    </RelativeLayout>
 	    
 	    <ExpandableListView android:id="@+id/add_city_elv"
@@ -90,19 +99,60 @@
 	    android:layout_width="fill_parent" 
 	    android:layout_height="fill_parent"
         android:layout_below="@id/title_view"
+        android:layout_above="@id/add_btn"
 	    android:gravity="center_horizontal|top"
 	    android:visibility="gone">
-	    <TextView 
+	    <RelativeLayout 
+       		android:id="@+id/wifi_view"
 		    android:layout_width="fill_parent" 
-		    android:layout_height="fill_parent"
-		    android:text="@string/app_name" />
+		    android:layout_height="wrap_content"
+		    android:background="@drawable/bg_expandablelistview_group">
+		    <TextView 
+        		android:id="@+id/wifi_txv"
+			    android:layout_width="wrap_content" 
+			    android:layout_height="wrap_content"
+			    android:padding="8dp"
+			    android:text="@string/app_name"
+			    android:layout_centerInParent="true" />
+		    <Button 
+        		android:id="@+id/close_btn"
+			    android:layout_width="wrap_content" 
+			    android:layout_height="wrap_content"
+			    android:layout_alignParentRight="true"
+			    android:layout_marginRight="20dp"
+			    android:background="@drawable/btn_delete" />
+		</RelativeLayout>
+	    <TextView 
+       		android:id="@+id/off_line_title_txv"
+		    android:layout_width="wrap_content" 
+		    android:layout_height="wrap_content"
+	        android:padding="8dp"
+		    android:layout_centerHorizontal="true"
+		    android:layout_below="@id/wifi_view"
+		    android:text="@string/off_line_download_dialog_title"
+		    android:textColor="@color/blue" />
+	    <TextView 
+       		android:id="@+id/off_line_message_txv"
+		    android:layout_width="wrap_content" 
+		    android:layout_height="wrap_content"
+	        android:paddingLeft="8dp"
+	        android:paddingRight="8dp"
+		    android:layout_centerHorizontal="true"
+		    android:layout_below="@id/off_line_title_txv"
+		    android:text="@string/off_line_download_dialog_message" />
+	    <ImageView 
+       		android:id="@+id/icon_imv"
+		    android:layout_width="wrap_content" 
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentBottom="true"
+		    android:layout_centerHorizontal="true"
+		    android:background="@drawable/ic_download_map" />
+	    <TextView 
+		    android:layout_width="wrap_content" 
+		    android:layout_height="wrap_content"
+		    android:layout_above="@id/icon_imv"
+		    android:layout_centerHorizontal="true"
+		    android:text="@string/click_here_download_map"
+		    android:textColor="@color/black_light" />
     </RelativeLayout>
-    <Button
-        android:id="@+id/add_btn"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="@string/city_list"
-        android:textColor="@android:color/white"
-        android:textSize="16sp" />
 </RelativeLayout>

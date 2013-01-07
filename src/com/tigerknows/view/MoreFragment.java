@@ -391,12 +391,11 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                         switch (id) {
                             case DialogInterface.BUTTON_POSITIVE:
                                 String url = finalSoftwareUpdate.getURL();
-                                if (!TextUtils.isEmpty(url)) {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalSoftwareUpdate.getURL()));
+                                if (url != null) {
+                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                                     mSphinx.startActivity(intent);
                                 }
                                 break;
-
                             default:
                                 break;
                         }

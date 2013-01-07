@@ -26,18 +26,9 @@
             android:id="@+id/input_edt"
             android:layout_width="fill_parent" 
             android:layout_height="wrap_content"
-            tkandroid:paddingLeft="32dp"
             tkandroid:hint="@string/input_city_name_or_first_char"
             tkandroid:imeOptions="actionDone">
          </com.tigerknows.view.TKEditText>
-        <ImageView
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:src="@drawable/icon_search"
-            android:layout_centerVertical="true"
-            android:editable="false">
-         </ImageView>
     </RelativeLayout>  
              
     <ExpandableListView android:id="@+id/city_elv"

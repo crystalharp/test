@@ -71,6 +71,8 @@
         
         <service android:name=".service.MapStatsService" android:enabled="true"></service>
         
+        <service android:name=".service.download.DownloadService" android:enabled="true"></service>
+        
         <activity android:name=".Help"
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
@@ -213,12 +215,12 @@
         
         <!-- User Module -->
         
-        <activity android:name=".share.impl.WeiboSend" 
+        <activity android:name=".share.WeiboSend" 
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="orientation|keyboardHidden" 
             android:windowSoftInputMode="adjustResize|stateVisible"
             android:screenOrientation="portrait" />
-        <activity android:name=".share.impl.QZoneSend" 
+        <activity android:name=".share.QZoneSend" 
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="orientation|keyboardHidden" 
             android:windowSoftInputMode="adjustPan|stateVisible" />

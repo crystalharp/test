@@ -49,8 +49,8 @@
     <string name="start_">请输入起点</string>
     <string name="end_">请输入终点</string>
     <string name="busline_">线路：%1$s</string>
-    <string name="favorite_empty_poi">记录为空。快去收藏常用的地点吧！</string>
-    <string name="favorite_empty_traffic">记录为空。快去收藏常用的交通路线吧！</string>
+    <string name="favorite_empty_poi">记录为空。\n快去收藏常用的地点吧！</string>
+    <string name="favorite_empty_traffic">记录为空。\n快去收藏常用的交通路线吧！</string>
     <string name="history_empty">记录为空。</string>
     <string name="rename">重命名</string>
     
@@ -125,7 +125,8 @@
     
     <string name="download_software_title">新版本软件下载</string>
     <string name="downloading_software_message">正在下载新版本老虎宝典软件...</string>
-
+ 	<string name="download_service">老虎宝典下载</string>
+ 	
     <string name="tip_longpress_select_traffic">长按可选择交通查询起终点</string>
     
     <string name="current_city">当前城市: %1$s</string>
@@ -340,20 +341,22 @@
 	<string name="busline_detail_subtitle1_m">全程\u0020:\u0020%1$dm</string>
 	<string name="busline_detail_subtitle2">时间\u0020:\u0020%1$s</string>
     
-    <string name="about_version">版本号：%1$s</string>
-    <string name="about_release_date">发布日期：%1$s</string>
+    <string name="about_version">%1$s</string>
+    <string name="about_release_date">%1$s</string>
     <string name="about_nation_sw_version">全国公共联想词版本：%1$s</string>
     <string name="about_current_city_sw_version">当前城市联想词版本：%1$s</string>
-    <string name="about_me">本软件由北京老虎宝典科技有限责任公司开发。老虎宝典是老虎地图的全面升级版，致力于让大众的生活更加丰富多彩。</string>
+    <string name="about_me">老虎宝典是老虎地图的全面升级版，致力于让大众的生活更加丰富多彩。</string>
     <string name="about_name">Beijing TigerKnows Technology Co.Ltd</string>
-    <string name="about_web">官网：http://www.tigerknows.com</string>
-    <string name="about_weibo">官方微博：http://weibo.com/tigermap</string>
-    <string name="about_wap">Wap网址：http://wap.tigerknows.com</string>
-    <string name="about_bbs">论坛：http://bbs.tigerknows.com</string>
-    <string name="about_email">邮件：support@tigerknows.com</string>
-    <string name="about_msn">MSN：tigerknows@live.com</string>
-    <string name="about_qq">QQ群：63930376、88839837、\n\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u002035416996、88722138、\n\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u002086492534、44190592</string>
-    <string name="about_telephone">客服电话：010-58874009</string>
+    <string name="about_right">© 2012 TigerKnows. All Rights reserved</string>
+    <string name="about_web">官网 \u0020 http://www.tigerknows.com</string>
+    <string name="about_weibo">官方 \u0020 http://weibo.com/tigermap</string>
+    <string name="about_wap">Wap网址 \u0020 http://wap.tigerknows.com</string>
+    <string name="about_bbs">论坛 \u0020 http://bbs.tigerknows.com</string>
+    <string name="about_email">邮件 \u0020 support@tigerknows.com</string>
+    <string name="about_msn">MSN \u0020 tigerknows@live.com</string>
+    <string name="about_qq">Q 群 \u0020 63930376 \u0020 88839837 \n\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u002035416996 \u0020 88722138 \n\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u002086492534 \u0020 44190592</string>
+    <string name="about_telephone">电话 \u0020 010-58874009</string>
+    <string name="telephone_num">010-58874009</string>
     <string name="about_copyright">北京老虎宝典科技有限责任公司版权所有\n</string>
     
     <string name="searching">正在搜索...</string>
@@ -389,8 +392,8 @@
     <string name="feedback_submiting">正在发送中...</string>
     <string name="feedback_success">我们已经收到你的建议，感谢你的支持！</string>
     <string name="feedback_failure">提交失败！</string>
-    <string name="your_feedback">请输入你的意见和建议</string>
-    <string name="your_mobile_number">请输入你的手机号码</string>
+    <string name="your_feedback">感谢你使用老虎宝典，请输入你的意见</string>
+    <string name="your_mobile_number">请输入你的手机号码(选填)</string>
     <string name="mobile_number_">手机号码：</string>
 
     <string name="this_is_fresh_version">本软件已经是最新版本了！</string>
@@ -464,10 +467,12 @@
     <string name="send">发送</string>
     <string name="attention">注意</string>
     <string name="are_you_delete_all">是否要删除全部文本内容？</string>
-    <string name="send_sucess">分享成功！</string>
-    <string name="send_failed">分享失败！</string>
+    <string name="weibo_send_sucess">新浪微博分享成功！</string>
+    <string name="weibo_send_failed">新浪微博分享失败！</string>
     <string name="logout_sucess">注销成功！</string>
     <string name="logout_failed">注销失败！</string>
+    <string name="tencent_share_sucess">QQ空间分享成功！</string>
+    <string name="tencent_share_failed">QQ空间分享失败！</string>
     <string name="del_pic">是否删除图片？</string>
     <string name="share_tiger_user">老虎用户</string>
 <!-- Share Module Common End -->
@@ -570,8 +575,8 @@
 	
 	<!-- User ChangePassword Start -->
 	<string name="please_input_old_password">请输入旧密码</string>
-	<string name="please_input_new_password">请输入你要修改的新密码</string>
-	<string name="please_input_new_password_again">请再次输入你要修改的新密码</string>
+	<string name="please_input_new_password">请输入新密码</string>
+	<string name="please_input_new_password_again">请再次输入新密码</string>
 	<!-- 
 	<string name="please_input_616_newpassword">请输入6-16位字母或数字密码</string>
 	<string name="please_input_616_newpassword_again">请再次输入6-16位字母或数字密码</string>
@@ -699,6 +704,7 @@
 
     <string name="new_added_function">老虎宝典新增功能</string>
     <string name="get_app_recommend_failed">获取应用推荐列表失败！</string>
+    <string name="free_download">免费下载</string>
     <string name="no_select_tip">请选择要删除的项！</string>
     
     <string name="all_comment">全部点评</string>
@@ -829,12 +835,12 @@
     <string name="discover_no_support_tip">亲爱的用户：\n\n%1$s市的发现工程尚未竣工，敬请期待！</string>
     
     <string name="add_merchant">添加商户</string>
-    
-    <string name="shanghumingcheng">商户名称</string>
-    <string name="shanghuleixing">商户类型</string>
+    <string name="need_star">*</string>
+    <string name="shanghumingcheng">名称</string>
+    <string name="shanghuleixing">类型</string>
     <string name="suozaichengshi">所在城市</string>
-    <string name="shanghudizhi">商户地址</string>
-    <string name="shanghudianhua">商户电话</string>
+    <string name="shanghudizhi">地址</string>
+    <string name="shanghudianhua">电话号码</string>
     <string name="yingyeshijian">营业时间</string>
     <string name="renjunjiawei">人均价位</string>
     <string name="ningdedianhua">你的电话</string>
@@ -888,6 +894,25 @@
     <string name="response_code_602">抱歉，该点评不存在。</string>
     <string name="response_code_603">抱歉，该地址不存在或已失效。</string>
     <string name="response_code_801">创建订单失败，请重试。</string>
+    
+    <string name="retry">重试</string>
     <string name="location_city">定位城市</string>
     <string name="all_city">全部城市</string>
+    
+    <string name="meter">米</string>
+    <string name="km">千米</string>
+    
+    <string name="download_software_showname">软件更新</string>
+    <string name="file_downloading">正在下载</string>
+    <string name="add_to_download_list">已添加到下载列表</string>
+    
+    <string name="municipality">直辖市</string>
+    <string name="search_by_province">按省份查找</string>
+    <string name="current_city_text">当前城市</string>
+    
+    <string name="map_upgrade">地图更新</string>
+    <string name="download_complete">下载完成</string>
+    <string name="click_here_download_map">点击这里下载地图</string>
+    <string name="wifi_enabled">wifi已开启</string>
+    <string name="wifi_disabled">wifi已关闭</string>
 </resources>

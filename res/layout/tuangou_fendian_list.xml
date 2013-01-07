@@ -30,7 +30,7 @@
         android:scrollingCache="false"
         android:fadingEdge="none" />
 	    
-    <include layout="@layout/poi_result_empty"
+    <include layout="@layout/empty_view"
         android:id="@+id/empty_view"
         android:layout_below="@id/result_txv"
         android:visibility="invisible"

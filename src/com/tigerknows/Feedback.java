@@ -27,6 +27,7 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.EditorInfo;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -43,8 +44,8 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
     private ScrollView mBodyScv;
     private EditText mFeedbackEdt = null;
     private EditText mTelephoneEdt = null;    
-    private TextView mWeibtoTxv;
-
+//    private TextView mWeibtoTxv;
+    private Button feedback_send;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -55,27 +56,26 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
         setListener();
 
         mTitleBtn.setText(R.string.feedback);
-        mRightBtn.setText(R.string.submit);
-        SpannableString ss = new SpannableString(mThis.getString(R.string.feedback_text2));
-        ss.setSpan(new ClickableSpan() {
-            @Override
-            public void updateDrawState(TextPaint ds) {
-                ds.setColor(Color.BLUE);// 链接文字蓝色
-                ds.setUnderlineText(false);// 去掉链接的下划线
-            }
-
-            @Override
-            public void onClick(final View widget) {
-                mActionLog.addAction(ActionLog.FeedbackWeibo);
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri
-                        .parse("http://weibo.com/tigermap"));
-                mThis.startActivity(intent);
-            }
-        }, 4, 9, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        mWeibtoTxv.setText(ss);
-
-        //这条语句不可少，否则点击链接不会打开Activity窗口
-        mWeibtoTxv.setMovementMethod(LinkMovementMethod.getInstance()); 
+//        SpannableString ss = new SpannableString(mThis.getString(R.string.feedback_text2));
+//        ss.setSpan(new ClickableSpan() {
+//            @Override
+//            public void updateDrawState(TextPaint ds) {
+//                ds.setColor(Color.BLUE);// 链接文字蓝色
+//                ds.setUnderlineText(false);// 去掉链接的下划线
+//            }
+//
+//            @Override
+//            public void onClick(final View widget) {
+//                mActionLog.addAction(ActionLog.FeedbackWeibo);
+//                Intent intent = new Intent(Intent.ACTION_VIEW, Uri
+//                        .parse("http://weibo.com/tigermap"));
+//                mThis.startActivity(intent);
+//            }
+//        }, 4, 9, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+//        mWeibtoTxv.setText(ss);
+//
+//        //这条语句不可少，否则点击链接不会打开Activity窗口
+//        mWeibtoTxv.setMovementMethod(LinkMovementMethod.getInstance()); 
     }
 
     protected void findViews() {
@@ -83,12 +83,13 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
         mBodyScv = (ScrollView) findViewById(R.id.body_scv);
         mFeedbackEdt = (EditText)findViewById(R.id.feedback_edt);
         mTelephoneEdt = (EditText)findViewById(R.id.telephone_edt);
-        mWeibtoTxv = (TextView)findViewById(R.id.weibo_txv);
+//        mWeibtoTxv = (TextView)findViewById(R.id.weibo_txv);
+        feedback_send = (Button)findViewById(R.id.feedback_send);
     }
 
     protected void setListener() {
         super.setListener();
-        mRightBtn.setOnClickListener(this);
+        feedback_send.setOnClickListener(this);
         mBodyScv.setOnTouchListener(new OnTouchListener() {
             
             @Override
@@ -147,9 +148,9 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
             @Override
             public void afterTextChanged(Editable arg0) {
                 if (TextUtils.isEmpty(mFeedbackEdt.getEditableText().toString())) {
-                    mRightBtn.setEnabled(false);
+                	feedback_send.setEnabled(false);
                 } else {
-                    mRightBtn.setEnabled(true);
+                	feedback_send.setEnabled(true);
                 }
             }
         });

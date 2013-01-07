@@ -35,9 +35,11 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.TKWord;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.TrafficModel.Plan;
+import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.util.TKAsyncTask;
 
 /**
@@ -582,7 +584,7 @@ public class TrafficQueryFragment extends BaseFragment {
 
 		int cityId = mMapLocationHelper.getQueryCityInfo().getId();
 		if (!isKeyword(searchword)) {
-			TKConfig.addHistoryWord(mContext, TKConfig.History_Word_Busline, String.format(TKConfig.PREFS_HISTORY_WORD_BUSLINE, cityId), searchword);
+		    HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, searchword), cityId, HistoryWordTable.TYPE_BUSLINE);
 		}
         BuslineQuery buslineQuery = new BuslineQuery(mContext);
         buslineQuery.setup(cityId, searchword, 0, false, getId(), mContext.getString(R.string.doing_and_wait));
@@ -620,11 +622,11 @@ public class TrafficQueryFragment extends BaseFragment {
         
         //xupeng:怎么算是history word？搜索北大，实际用北京大学搜索，哪个是？
         if (!isKeyword(mStart.getEdt().getText().toString())) {
-        	TKConfig.addHistoryWord(mContext, TKConfig.History_Word_Traffic, String.format(TKConfig.PREFS_HISTORY_WORD_TRAFFIC, cityId), mStart.getEdt().getText().toString());
+            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, mStart.getEdt().getText().toString()), cityId, HistoryWordTable.TYPE_TRAFFIC);
         }
 
         if (!isKeyword(mEnd.getEdt().getText().toString())) {
-    		TKConfig.addHistoryWord(mContext, TKConfig.History_Word_Traffic, String.format(TKConfig.PREFS_HISTORY_WORD_TRAFFIC, cityId), mEnd.getEdt().getText().toString());
+            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, mEnd.getEdt().getText().toString()), cityId, HistoryWordTable.TYPE_TRAFFIC);
         }
     		
         mActionLog.addAction(ActionLog.TrafficQueryBtnT, mStart.getEdt().getText().toString(), mEnd.getEdt().getText().toString());

@@ -13,6 +13,15 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 public class SpringbackListView extends ListView {  
+    
+    public interface IPagerList {
+        public boolean canTurnPage(boolean isHeader);
+        public void turnPageStart(boolean isHeader, IPagerListCallBack iPagerListCallBack);
+    }
+    
+    public interface IPagerListCallBack {
+        public void turnPageEnd(boolean isHeader, int size);
+    }
 
     public final static int NONE = -1;  
     // 松开刷新标志   

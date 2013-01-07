@@ -50,8 +50,10 @@ import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.decarta.Globals;
@@ -59,6 +61,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.view.SpringbackListView;
+import com.tigerknows.view.StringArrayAdapter;
 
 /**
  * 
@@ -819,5 +822,32 @@ public class CommonUtils {
             }
         }
 
+    }
+    
+    public static void onClickTelephoneTxv(final Context context, TextView textView) {
+        String split = context.getString(R.string.dunhao);
+        final String[] list = textView.getText().toString().split(split);
+        if (list.length == 1) {
+            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+list[0]));
+            context.startActivity(intent);
+        } else {
+            final ArrayAdapter<String> adapter = new StringArrayAdapter(context, list, null);
+
+            AlertDialog.Builder b = new AlertDialog.Builder(context);
+
+            DialogInterface.OnClickListener click = new DialogInterface.OnClickListener() {
+                public final void onClick(DialogInterface dialog, int which) {
+
+                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+list[which]));
+                    context.startActivity(intent);
+                }
+            };
+
+            b.setTitle(R.string.phonenumber);
+            b.setCancelable(true);
+            b.setAdapter(adapter, click);
+
+            b.show();
+        }
     }
 }

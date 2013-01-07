@@ -9,6 +9,7 @@ import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.LocationQuery.LocationParameter;
 import com.tigerknows.model.LocationQuery.TKCellLocation;
 import com.tigerknows.model.LocationQuery.TKNeighboringCellInfo;
+import com.tigerknows.model.LocationQuery.TKScanResult;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -17,6 +18,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
+import android.location.LocationManager;
 import android.text.TextUtils;
 
 import java.util.HashMap;
@@ -35,13 +37,18 @@ public class LocationTable {
 
 	// COLUMNS
     public static final String ID = "_id";
-	public static final String HASHCODE = "hashCode";
-	public static final String MNC = "mnc";
-	public static final String MCC = "mcc";
-    public static final String TKCELLLOCATION = "TKCellLocation";
-    public static final String NEIGHBORINGCELLINFO_LIST = "neighboringCellInfoList";
-    public static final String WIFI_LIST = "wifiList";
-    public static final String LOCATION = "location";
+	public static final String HASHCODE = "tk_hashCode";
+	public static final String MNC = "tk_mnc";
+	public static final String MCC = "tk_mcc";
+    public static final String TKCELLLOCATION = "tk_TKCellLocation";
+    public static final String NEIGHBORINGCELLINFO_LIST = "tk_neighboringCellInfoList";
+    public static final String WIFI_LIST = "tk_wifiList";
+    public static final String LOCATION = "tk_location";
+    public static final String PROVIDER = "tk_provider";
+
+    public static final int PROVIDER_TIGERKNOWS = 0;
+    public static final int PROVIDER_GPS = 1;
+    public static final int PROVIDER_NETWORK = 2;
 
 	// DB NAME
 	protected static final String DATABASE_NAME = "locationDB";
@@ -55,6 +62,7 @@ public class LocationTable {
 			+ "( " 
 			+ ID + " INTEGER PRIMARY KEY, "
             + HASHCODE + " INTEGER, "
+            + PROVIDER + " INTEGER, "
             + MNC + " INTEGER, "
             + MCC + " INTEGER, "
             + TKCELLLOCATION + " TEXT not null, "
@@ -121,6 +129,7 @@ public class LocationTable {
 		ContentValues cv = new ContentValues();
 		cv.put(HASHCODE, locationParameter.hashCode());
 		cv.put(MNC, locationParameter.mnc);
+        cv.put(PROVIDER, getProvider(location));
         cv.put(MCC, locationParameter.mcc);
         cv.put(TKCELLLOCATION, locationParameter.tkCellLocation.toString());
         cv.put(NEIGHBORINGCELLINFO_LIST, locationParameter.getNeighboringCellInfoString());
@@ -130,6 +139,20 @@ public class LocationTable {
 			mDb.insert(TABLE_NAME, null, cv);
 		else // overwrite
 			mDb.update(TABLE_NAME, cv, HASHCODE + "=" + locationParameter.hashCode(), null);
+	}
+	
+	public int getProvider(Location location) {
+	    int provider = PROVIDER_TIGERKNOWS;
+	    if (location == null) {
+	        return provider;
+	    }
+	    
+	    if (LocationManager.GPS_PROVIDER.equals(location.getProvider())) {
+	        provider = PROVIDER_GPS;
+	    } else if (LocationManager.NETWORK_PROVIDER.equals(location.getProvider())) {
+	        provider = PROVIDER_NETWORK;
+	    }
+        return provider;
 	}
 
 	public int check(LocationParameter locationParameter) {
@@ -176,9 +199,11 @@ public class LocationTable {
                 }
                 str= mCursor.getString(4);
                 if (TextUtils.isEmpty(str) == false) {
-                    String[] arr = str.split(",");
+                    String[] arr = str.split(";");
                     for(int i = arr.length - 1; i >= 0; i--) {
-                        locationParameter.wifiList.add(arr[i]);
+                        TKScanResult tkScanResult = TKScanResult.parse(arr[i]);
+                        if (tkScanResult != null)
+                            locationParameter.wifiList.add(tkScanResult);
                     }
                 }
                 str= mCursor.getString(5);

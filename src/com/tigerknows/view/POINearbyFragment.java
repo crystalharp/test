@@ -38,11 +38,11 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.TKConfig;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.TKWord;
+import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.view.SuggestArrayAdapter.CallBack;
 
@@ -231,13 +231,13 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 TKWord tkWord = (TKWord) arg0.getAdapter().getItem(position);
-                if (tkWord.type == TKWord.TYPE_CLEANUP) {
+                if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
                     mActionLog.addAction(ActionLog.SearchNearbyCleanHistory);
-                    TKConfig.clearHistoryWord(mContext, TKConfig.History_Word_POI, String.format(TKConfig.PREFS_HISTORY_WORD_POI, Globals.g_Current_City_Info.getId()));
+                    HistoryWordTable.clearHistoryWord(mSphinx, Globals.g_Current_City_Info.getId(), HistoryWordTable.TYPE_POI);
                     POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
                     notifyDataSetChanged();
                 } else {
-                    if (tkWord.type == TKWord.TYPE_HISTORY) {
+                    if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
                         mActionLog.addAction(ActionLog.SearchNearHistoryWord, tkWord.word, position);
                     } else {
                         mActionLog.addAction(ActionLog.SearchNearSuggestWord, tkWord.word, position);
@@ -290,7 +290,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             }
             if (isInput) {
                 criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD_TYPE, DataQuery.KEYWORD_TYPE_INPUT);
-                TKConfig.addHistoryWord(mContext, TKConfig.History_Word_POI, String.format(TKConfig.PREFS_HISTORY_WORD_POI, cityId), keyword);
+                HistoryWordTable.addHistoryWord(mContext, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), cityId, HistoryWordTable.TYPE_POI);
             } else {
                 criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD_TYPE, DataQuery.KEYWORD_TYPE_TAG);
             }

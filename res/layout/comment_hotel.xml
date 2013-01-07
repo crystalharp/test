@@ -24,14 +24,15 @@
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="vertical">
-			<SeekBar android:id="@+id/qos_skb"
-		        style="?android:attr/progressBarStyleHorizontal"
-		        android:layout_width="fill_parent"
+			<RatingBar android:id="@+id/qos_rbt"
+		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:focusable="true"
 		        android:focusableInTouchMode="true"
-		        android:max="4"
-		        android:progress="2" />
+                style="@style/RatingBar.Middle"
+		        android:numStars="5"
+		        android:rating="3" 
+		        android:stepSize="1" />
 		    <ImageView
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
@@ -58,14 +59,15 @@
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="vertical">
-			<SeekBar android:id="@+id/environment_skb"
-		        style="?android:attr/progressBarStyleHorizontal"
-		        android:layout_width="fill_parent"
+			<RatingBar android:id="@+id/environment_rbt"
+		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:focusable="true"
 		        android:focusableInTouchMode="true"
-		        android:max="4"
-		        android:progress="2" />
+                style="@style/RatingBar.Middle"
+		        android:numStars="5"
+		        android:rating="3" 
+		        android:stepSize="1" />
 		    <ImageView
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"

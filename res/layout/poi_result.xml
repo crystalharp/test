@@ -26,35 +26,20 @@
             android:layout_width="fill_parent" 
             android:layout_height="wrap_content"
             android:background="@drawable/bg_shadow" />
-        <TextView 
-            android:id="@+id/result_txv"
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-2dp"
-            android:textSize="13sp"
-            android:paddingLeft="12dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:text="@string/app_name"
-            android:drawableLeft="@drawable/ic_mylocation_poi_result"
-            android:drawablePadding="6dp"
-            android:textColor="#ff6c6c6c"
-            android:background="#ffeaeaea">
-        </TextView>
 	    <FrameLayout
 	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"
 	        >
 	    
-		    <include layout="@layout/poi_result_empty"
+		    <include layout="@layout/empty_view"
 		            android:id="@+id/empty_view"
 		            android:layout_width="fill_parent" 
 		            android:layout_height="fill_parent" />
 		    
-		    <include layout="@layout/querying"
-		            android:id="@+id/querying_view"
-		            android:layout_width="fill_parent" 
-		            android:layout_height="fill_parent" />
+	        <com.tigerknows.view.QueryingView android:id="@+id/querying_view"
+	            android:layout_width="fill_parent" 
+	            android:layout_height="fill_parent"
+	            android:visibility="gone"></com.tigerknows.view.QueryingView>
 	            
 	        <com.tigerknows.view.SpringbackListView android:id="@+id/result_lsv"
 	            android:layout_width="fill_parent" 
@@ -63,6 +48,10 @@
 	            android:footerDividersEnabled="false"
 	            android:fadingEdge="none"
 	            android:scrollingCache="false"/>
+	        <com.tigerknows.view.RetryView android:id="@+id/retry_view"
+	            android:layout_width="fill_parent" 
+	            android:layout_height="fill_parent"
+	            android:visibility="gone"></com.tigerknows.view.RetryView>
 	    </FrameLayout>
     </LinearLayout>
     <ImageButton 

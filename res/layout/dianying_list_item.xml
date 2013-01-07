@@ -41,7 +41,7 @@
         android:layout_toRightOf="@id/picture_imv"
         android:layout_below="@id/name_txv" 
         android:progressDrawable="@drawable/ratingbar_small"
-        style="?android:attr/ratingBarStyleSmall"
+        style="@style/RatingBar.Small"
         android:numStars="5"
         android:focusable="false"
         android:focusableInTouchMode="false" /> 

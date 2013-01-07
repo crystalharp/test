@@ -66,13 +66,7 @@ public class TKConfig {
     public static final int BORDER_default=0;
     public static final int TILE_THREAD_COUNT_default=5;
     
-    public static void configure(){        
-        CONFIG.COMPASS_PLACE_LOCATION=4;
-        CONFIG.ENABLE_ROTATE=true;
-        CONFIG.ENABLE_TILT=false;
-        //CONFIG.LOG_LEVEL=4;
-        
-    }
+    public static boolean CACHE_BITMAP_TO_MEMORY = false;
     
     
     //application level configuration
@@ -220,14 +214,6 @@ public class TKConfig {
     public static final String PREFS_HISTORY_WORD_BUSLINE = "history_word_busline_%d";
     
     public static final String PREFS_LAST_REGION_ID_LIST = "last_region_id_list";
-
-    public static final int HISTORY_WORD_SIZE = 50;
-    public static final int HISTORY_WORD_LIST_SIZE = 3;
-    public static final int HISTORY_WORD_FIRST_SIZE = 10;
-    
-    public static final LinkedList<String> History_Word_POI = new LinkedList<String>();
-    public static final LinkedList<String> History_Word_Traffic = new LinkedList<String>();
-    public static final LinkedList<String> History_Word_Busline = new LinkedList<String>();
 
     public static final int PICTURE_DISCOVER_HOME = 1;
     public static final int PICTURE_TUANGOU_LIST = 2;
@@ -666,108 +652,6 @@ public class TKConfig {
         }
         SharedPreferences sharedPreferences = context.getSharedPreferences(TKConfig.TIGERKNOWS_PREFS, Context.MODE_WORLD_READABLE);
         return sharedPreferences.getString(name, defaultValue);
-    }
-    
-    public static void readHistoryWord(Context context, List<String> list, String key) {
-        if (context == null || list == null || TextUtils.isEmpty(key)) {
-            return;
-        }
-        
-        PrefTable prefTable = new PrefTable(context);
-        String historyWord = prefTable.getPref(key);
-        prefTable.close();
-        list.clear();
-        
-        if (!TextUtils.isEmpty(historyWord)) {
-            String[] strs = historyWord.split(" ");
-            for (String str : strs) {
-                if (str.length() > 0) {
-                    list.add(str);
-                }
-            }
-        }
-    }
-    
-    public static void addHistoryWord(Context context, List<String> historyWordList, String key, String word) {
-        if (context == null || historyWordList == null || TextUtils.isEmpty(key) || TextUtils.isEmpty(word)) {
-            return;
-        }
-        
-        //去掉空格
-        String perfectWord = word.trim().replaceAll(" ", "\n");
-        if (word.equals("")) {
-            return;
-        }
-
-        historyWordList.remove(perfectWord);
-        // TODO: sony close history word
-        historyWordList.add(0, perfectWord);
-        
-        if (historyWordList.size() > HISTORY_WORD_SIZE) {
-            historyWordList.remove(HISTORY_WORD_SIZE);
-        }
-        
-        PrefTable prefTable = new PrefTable(context);
-        StringBuilder s = new StringBuilder();
-        if (historyWordList != null) {
-            for(String str : historyWordList) {
-                s.append(str);
-                s.append(' ');
-            }
-        }
-        prefTable.setPref(key, s.toString());
-        prefTable.close();
-    }
-    
-    public static void clearHistoryWord(Context context, List<String> historyWordList, String key) {
-        if (context == null || TextUtils.isEmpty(key)) {
-            return;
-        }
-        historyWordList.clear();
-        PrefTable prefTable = new PrefTable(context);
-        prefTable.setPref(key, "");
-        prefTable.close();
-    }
-    
-    public static List<TKWord> mergeHistoryAndSuggestWord(List<String> suggestWordList, String searchword, List<String> historyWordList) {
-        List<TKWord> list = new ArrayList<TKWord>();
-        if (suggestWordList == null || historyWordList == null || TextUtils.isEmpty(searchword)) {
-            return list;
-        }
-        // TODO: sony close history word
-        int historyIndex = 0;
-        for (String historyWord : historyWordList) {
-            if (historyIndex >= TKConfig.HISTORY_WORD_LIST_SIZE) {
-                 break;
-            }
-            historyWord = historyWord.replaceAll("\n", " ");
-            if (historyWord.startsWith(searchword) && !historyWord.equals(searchword)) {
-                suggestWordList.remove(historyWord);
-                list.add(new TKWord(TKWord.TYPE_HISTORY, historyWord));
-                historyIndex++;
-            }
-        }
-        suggestWordList.remove(searchword);
-        
-        for(String word : suggestWordList) {
-            list.add(new TKWord(TKWord.TYPE_SUGGEST, word));
-        }
-        return list;
-    }
-    
-    public static List<TKWord> getHistoryWordList(List<String> historyWordList, String searchword) {
-        List<TKWord> list = new ArrayList<TKWord>();
-        int i = 0;
-        for (String str : historyWordList) {
-            if (i >= HISTORY_WORD_FIRST_SIZE) {
-                break;
-            }
-            if (!str.equals(searchword) && !list.contains(str)) {
-                list.add(new TKWord(TKWord.TYPE_HISTORY, str.replaceAll("\n", " ")));
-                i++;
-            }
-        }
-        return list;
     }
     
     public static void readConfig() {

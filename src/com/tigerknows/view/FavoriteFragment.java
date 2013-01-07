@@ -25,6 +25,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -89,7 +90,9 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     
     private SpringbackListView mPOILsv = null;
     
-    private TextView mEmptyView;
+    private View mEmptyView;
+    
+    private TextView mEmptyTxv;
     
     private SpringbackListView mTrafficLsv = null;
     
@@ -98,6 +101,14 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     private String mPOIWhere;
     
     private boolean mDismiss = true;
+    
+    protected Drawable mPOIEmpty;
+    
+    protected Drawable mTrafficEmpty;
+    
+    protected int mColorNormal;
+
+    protected int mColorSelect;
     
     private Runnable mTurnPageRunPOI = new Runnable() {
         
@@ -170,6 +181,16 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         s.append(Tigerknows.STORE_TYPE_FAVORITE);
         s.append(")");
         mPOIWhere = s.toString();
+        
+        Resources resources = mSphinx.getResources();
+        mPOIEmpty = resources.getDrawable(R.drawable.ic_poi_empty);
+        mTrafficEmpty = resources.getDrawable(R.drawable.ic_traffic_empty);
+        
+        mColorNormal = resources.getColor(R.color.black_dark);
+        mColorSelect = resources.getColor(R.color.orange);
+        
+        mPOIEmpty.setBounds(0, 0, mPOIEmpty.getIntrinsicWidth(), mPOIEmpty.getIntrinsicHeight());
+        mTrafficEmpty.setBounds(0, 0, mTrafficEmpty.getIntrinsicWidth(), mTrafficEmpty.getIntrinsicHeight());
         
         mPOIAdapter = new POIAdapter(mContext, mPOIList);
         mPOILsv.setAdapter(mPOIAdapter);
@@ -266,7 +287,8 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mPOILsv.addFooterView(v);
         v = mLayoutInflater.inflate(R.layout.loading, null);
         mTrafficLsv.addFooterView(v);
-        mEmptyView = (TextView)mRootView.findViewById(R.id.empty_txv);
+        mEmptyView = mRootView.findViewById(R.id.empty_view);
+        mEmptyTxv = (TextView)mRootView.findViewById(R.id.empty_txv);
     }
 
     protected void setListener() {
@@ -555,13 +577,13 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             ImageView iconImv = (ImageView) view.findViewById(R.id.icon_imv);
             iconImv.setVisibility(View.VISIBLE);
             if (traffic.getFavoriteType() == Tigerknows.Favorite.FAVORITE_BUSLINE) {
-                iconImv.setBackgroundResource(R.drawable.rdb_busline_default);
+                iconImv.setImageResource(R.drawable.ic_busline);
             } else if (traffic.getFavoriteType() == Tigerknows.Favorite.FAVORITE_TRANSFER) {
-                iconImv.setBackgroundResource(R.drawable.rdb_bus_default);
+                iconImv.setImageResource(R.drawable.ic_bus);
             } else if (traffic.getFavoriteType() == Tigerknows.Favorite.FAVORITE_DRIVE) {
-                iconImv.setBackgroundResource(R.drawable.rdb_drive_default);
+                iconImv.setImageResource(R.drawable.ic_drive);
             } else if (traffic.getFavoriteType() == Tigerknows.Favorite.FAVORITE_WALK) {
-                iconImv.setBackgroundResource(R.drawable.rdb_walk_default);
+                iconImv.setImageResource(R.drawable.ic_walk);
             }
 
             String s;
@@ -621,7 +643,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             if (TextUtils.isEmpty(name)) {
                 name = poi.getName();
             }
-            textView.setText(poi.getOrderNumber()+". "+name);
+            textView.setText(name);
 
             return view;
         }
@@ -729,7 +751,8 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             mRightBtn.setEnabled(!mPOIList.isEmpty());
             
             if (mPOIList.isEmpty() && mPOILsv.isFooterSpringback() == false) {
-                mEmptyView.setText(R.string.favorite_empty_poi);
+                mEmptyTxv.setText(R.string.favorite_empty_poi);
+                mEmptyTxv.setCompoundDrawables(null, mPOIEmpty, null, null);
                 mEmptyView.setVisibility(View.VISIBLE);
             } else {
                 mEmptyView.setVisibility(View.GONE);
@@ -738,7 +761,8 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             mRightBtn.setEnabled(!mTrafficList.isEmpty());
 
             if (mTrafficList.isEmpty() && mTrafficLsv.isFooterSpringback() == false) {
-                mEmptyView.setText(R.string.favorite_empty_traffic);
+                mEmptyTxv.setText(R.string.favorite_empty_traffic);
+                mEmptyTxv.setCompoundDrawables(null, mTrafficEmpty, null, null);
                 mEmptyView.setVisibility(View.VISIBLE);
             } else {
                 mEmptyView.setVisibility(View.GONE);
@@ -753,8 +777,10 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
 
         mLayerType = layerType;
         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-            mPOIBtn.setBackgroundResource(R.drawable.btn_tab_focused);
+            mPOIBtn.setBackgroundResource(R.drawable.btn_tab_selected);
+            mPOIBtn.setTextColor(mColorSelect);
             mTrafficBtn.setBackgroundResource(R.drawable.btn_tab);
+            mTrafficBtn.setTextColor(mColorNormal);
 
             if (mPOIList.size() > 0) {
                 readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getDateTime(), true);
@@ -766,7 +792,9 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             mPOIAdapter.notifyDataSetChanged();
         } else {
             mPOIBtn.setBackgroundResource(R.drawable.btn_tab);
-            mTrafficBtn.setBackgroundResource(R.drawable.btn_tab_focused);
+            mPOIBtn.setTextColor(mColorNormal);
+            mTrafficBtn.setBackgroundResource(R.drawable.btn_tab_selected);
+            mTrafficBtn.setTextColor(mColorSelect);
             
             if (mTrafficList.size() > 0) {
                 readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getDateTime(), true);

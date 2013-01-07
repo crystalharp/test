@@ -19,15 +19,16 @@ package com.weibo.net;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
-import com.decarta.android.util.LogWrapper;
+import android.webkit.CookieSyncManager;
+
 /**
  * Encapsulation main Weibo APIs, Include: 1. getRquestToken , 2.
  * getAccessToken, 3. url request. Used as a single instance class. Implements a
@@ -37,53 +38,41 @@ import com.decarta.android.util.LogWrapper;
  */
 public class Weibo {
 
-	public enum RequestType {AUTHORIZE, GET_UID, GET_PROFILE, UPLOAD, END_SESSION, UNDEFINED};
-	
-    public static final String SERVER = "https://api.weibo.com/2/";
+    // public static String SERVER = "http://api.t.sina.com.cn/";
+    public static String SERVER = "https://api.weibo.com/2/";
+    public static String URL_OAUTH_TOKEN = "http://api.t.sina.com.cn/oauth/request_token";
+    public static String URL_AUTHORIZE = "http://api.t.sina.com.cn/oauth/authorize";
+    public static String URL_ACCESS_TOKEN = "http://api.t.sina.com.cn/oauth/access_token";
+    public static String URL_AUTHENTICATION = "http://api.t.sina.com.cn/oauth/authenticate";
 
-//    public static String URL_OAUTH2_ACCESS_TOKEN = "https://api.weibo.com/oauth2/access_token";
+    public static String URL_OAUTH2_ACCESS_TOKEN = "https://api.weibo.com/oauth2/access_token";
 
-    public static final String URL_OAUTH2_ACCESS_AUTHORIZE = "https://api.weibo.com/oauth2/authorize";
-    
-    public static final String URL_DEFAULT_REDIRECT = "http://www.sina.com";
-    
-    public static final String URL_GET_UID = "account/get_uid.json";
-    
-    public static final String URL_GET_PROFILE = "users/show.json";
-    
-    public static final String URL_UPLOAD = "statuses/upload.json";
-    
-    public static final String URL_UPDATE = "statuses/update.json";
-    
-    public static final String URL_END_SESSION = "account/end_session.json";
+    // public static String URL_OAUTH2_ACCESS_AUTHORIZE =
+    // "http://t.weibo.com:8093/oauth2/authorize";
+    public static String URL_OAUTH2_ACCESS_AUTHORIZE = "https://api.weibo.com/oauth2/authorize";
 
-    private static final int DEFAULT_AUTH_ACTIVITY_CODE = 32973;
-    
-    public static final String ACCESSTOKEN = "access_token";
-    
-    public static final String EXPIRES = "expires_in";
-    
-    public static String APP_KEY = "725632899"; //725632899
-    
-    public static String APP_SECRET = "10d7ad791693508c0f201e543faa2488"; //10d7ad791693508c0f201e543faa2488 94098772160b6f8ffc1315374d8861f9
-    
-    private Token mAccessToken = null;
-    
+    private static String APP_KEY = "725632899";
+    private static String APP_SECRET = "10d7ad791693508c0f201e543faa2488";
+
     private static Weibo mWeiboInstance = null;
+    private Token mAccessToken = null;
+    private RequestToken mRequestToken = null;
 
     private WeiboDialogListener mAuthDialogListener;
-    
-    private RequestListener mRequestListener;
+
+    private static final int DEFAULT_AUTH_ACTIVITY_CODE = 32973;
+
+    public static final String TOKEN = "access_token";
+    public static final String EXPIRES = "expires_in";
+    public static final String DEFAULT_REDIRECT_URI = "http://www.sina.com";// 暂不支持
+    public static final String DEFAULT_CANCEL_URI = "wbconnect://cancel";// 暂不支持
 
     private String mRedirectUrl;
 
-    private User mUser;
-    
-    private RequestType mRequestType = RequestType.UNDEFINED;
-    
     private Weibo() {
         Utility.setRequestHeader("Accept-Encoding", "gzip");
-        mRedirectUrl = URL_DEFAULT_REDIRECT;
+        Utility.setTokenObject(this.mRequestToken);
+        mRedirectUrl = DEFAULT_REDIRECT_URI;
     }
 
     public synchronized static Weibo getInstance() {
@@ -115,6 +104,23 @@ public class Weibo {
         return Weibo.APP_SECRET;
     }
 
+    public void setRequestToken(RequestToken token) {
+        this.mRequestToken = token;
+    }
+
+    public static String getSERVER() {
+        return SERVER;
+    }
+
+    public static void setSERVER(String sERVER) {
+        SERVER = sERVER;
+    }
+
+    // 设置oauth_verifier
+    public void addOauthverifier(String verifier) {
+        mRequestToken.setVerifier(verifier);
+    }
+
     public String getRedirectUrl() {
         return mRedirectUrl;
     }
@@ -123,36 +129,7 @@ public class Weibo {
         this.mRedirectUrl = mRedirectUrl;
     }
 
-    public User getUser() {
-		return mUser;
-	}
-
-	public void setUser(User user) {
-		this.mUser = user;
-	}
-
-	public RequestListener getRequestListener() {
-		return mRequestListener;
-	}
-	
-	public void setRequestListener(RequestListener listener) {
-		mRequestListener = listener;
-	}
-	
-	public RequestType getRequestType() {
-		return mRequestType;
-	}
-	
-	public boolean isTokenValid() {
-		LogWrapper.d("eric", "mAccessToken != null" + (mAccessToken != null));
-		LogWrapper.d("eric", "mAccessToken.getExpiresIn() > System.currentTimeMillis()" + (mAccessToken.getExpiresIn() > System.currentTimeMillis()));
-		if (mAccessToken != null && mAccessToken.getExpiresIn() > System.currentTimeMillis()) {
-			return true;
-		}
-		return false;
-	}
-	
-	/**
+    /**
      * Requst sina weibo open api by get or post
      * 
      * @param url
@@ -168,25 +145,106 @@ public class Weibo {
      * @throws WeiboException
      */
     public String request(Context context, String url, WeiboParameters params, String httpMethod,
-            Token token) throws WeiboException, IOException {
-//        String rlt = Utility.openUrl(context, url, httpMethod, params, this.mAccessToken);
-    	String rlt = Utility.openUrl(context, url, httpMethod, params, null);
+            Token token) throws WeiboException {
+        String rlt = Utility.openUrl(context, url, httpMethod, params, this.mAccessToken);
         return rlt;
     }
-    
-    public String request(Context context, String url, WeiboParameters params, String httpMethod) {
-    	String rlt = "";
-    	try {
-    		rlt = Utility.openUrl(context, url, httpMethod, params, null);
-    		mRequestListener.onComplete(rlt);
-		} catch (WeiboException e) {
-			// TODO Auto-generated catch block
-			mRequestListener.onError(e);
-		} catch (IOException e) {
-			mRequestListener.onIOException(e);
-		}
-        return rlt;
+
+    /**/
+    public RequestToken getRequestToken(Context context, String key, String secret,
+            String callback_url) throws WeiboException {
+        Utility.setAuthorization(new RequestTokenHeader());
+        WeiboParameters postParams = new WeiboParameters();
+        postParams.add("oauth_callback", callback_url);
+        String rlt;
+        rlt = Utility.openUrl(context, Weibo.URL_OAUTH_TOKEN, "POST", postParams, null);
+        RequestToken request = new RequestToken(rlt);
+        this.mRequestToken = request;
+        return request;
     }
+
+    public AccessToken generateAccessToken(Context context, RequestToken requestToken)
+            throws WeiboException {
+        Utility.setAuthorization(new AccessTokenHeader());
+        WeiboParameters authParam = new WeiboParameters();
+        authParam.add("oauth_verifier", this.mRequestToken.getVerifier()/* "605835" */);
+        authParam.add("source", APP_KEY);
+        String rlt = Utility.openUrl(context, Weibo.URL_ACCESS_TOKEN, "POST", authParam,
+                this.mRequestToken);
+        AccessToken accessToken = new AccessToken(rlt);
+        this.mAccessToken = accessToken;
+        return accessToken;
+    }
+
+    public AccessToken getXauthAccessToken(Context context, String app_key, String app_secret,
+            String usrname, String password) throws WeiboException {
+        Utility.setAuthorization(new XAuthHeader());
+        WeiboParameters postParams = new WeiboParameters();
+        postParams.add("x_auth_username", usrname);
+        postParams.add("x_auth_password", password);
+        postParams.add("oauth_consumer_key", APP_KEY);
+        String rlt = Utility.openUrl(context, Weibo.URL_ACCESS_TOKEN, "POST", postParams, null);
+        AccessToken accessToken = new AccessToken(rlt);
+        this.mAccessToken = accessToken;
+        return accessToken;
+    }
+
+    /**
+     * 获取Oauth2.0的accesstoken
+     * 
+     * https://api.weibo.com/oauth2/access_token?client_id=YOUR_CLIENT_ID&
+     * client_secret=YOUR_CLIENT_SECRET&grant_type=password&redirect_uri=
+     * YOUR_REGISTERED_REDIRECT_URI&username=USER_NAME&pasword=PASSWORD
+     * 
+     * @param context
+     * @param app_key
+     * @param app_secret
+     * @param usrname
+     * @param password
+     * @return
+     * @throws WeiboException
+     */
+    public Oauth2AccessToken getOauth2AccessToken(Context context, String app_key,
+            String app_secret, String usrname, String password) throws WeiboException {
+        Utility.setAuthorization(new Oauth2AccessTokenHeader());
+        WeiboParameters postParams = new WeiboParameters();
+        postParams.add("username", usrname);
+        postParams.add("password", password);
+        postParams.add("client_id", app_key);
+        postParams.add("client_secret", app_secret);
+        postParams.add("grant_type", "password");
+        String rlt = Utility.openUrl(context, Weibo.URL_OAUTH2_ACCESS_TOKEN, "POST", postParams,
+                null);
+        Oauth2AccessToken accessToken = new Oauth2AccessToken(rlt);
+        this.mAccessToken = accessToken;
+        return accessToken;
+    }
+
+//    /**
+//     * Share text content or image to weibo .
+//     * 
+//     */
+//    public boolean share2weibo(Activity activity, String accessToken, String tokenSecret,
+//            String content, String picPath) throws WeiboException {
+//        if (TextUtils.isEmpty(accessToken)) {
+//            throw new WeiboException("token can not be null!");
+//        }
+//        // else if (TextUtils.isEmpty(tokenSecret)) {
+//        // throw new WeiboException("secret can not be null!");
+//        // }
+//
+//        if (TextUtils.isEmpty(content) && TextUtils.isEmpty(picPath)) {
+//            throw new WeiboException("weibo content can not be null!");
+//        }
+//        Intent i = new Intent(activity, ShareActivity.class);
+//        i.putExtra(ShareActivity.EXTRA_ACCESS_TOKEN, accessToken);
+//        i.putExtra(ShareActivity.EXTRA_TOKEN_SECRET, tokenSecret);
+//        i.putExtra(ShareActivity.EXTRA_WEIBO_CONTENT, content);
+//        i.putExtra(ShareActivity.EXTRA_PIC_URI, picPath);
+//        activity.startActivity(i);
+//
+//        return true;
+//    }
 
     private boolean startSingleSignOn(Activity activity, String applicationId,
             String[] permissions, int activityCode) {
@@ -194,21 +252,20 @@ public class Weibo {
     }
 
     private void startDialogAuth(Activity activity, String[] permissions) {
-    	Log.d("eric", "startDialogAuth invoked");
         WeiboParameters params = new WeiboParameters();
         if (permissions.length > 0) {
             params.add("scope", TextUtils.join(",", permissions));
         }
-//        CookieSyncManager.createInstance(activity);
+        CookieSyncManager.createInstance(activity);
         dialog(activity, params, new WeiboDialogListener() {
 
             public void onComplete(Bundle values) {
                 // ensure any cookies set by the dialog are saved
-//                CookieSyncManager.getInstance().sync();
+                CookieSyncManager.getInstance().sync();
                 if (null == mAccessToken) {
                     mAccessToken = new Token();
                 }
-                mAccessToken.setToken(values.getString(ACCESSTOKEN));
+                mAccessToken.setToken(values.getString(TOKEN));
                 mAccessToken.setExpiresIn(values.getString(EXPIRES));
                 if (isSessionValid()) {
                     Log.d("Weibo-authorize",
@@ -251,10 +308,10 @@ public class Weibo {
         authorize(activity, new String[] {}, DEFAULT_AUTH_ACTIVITY_CODE, listener);
     }
 
-//    private void authorize(Activity activity, String[] permissions,
-//            final WeiboDialogListener listener) {
-//        authorize(activity, permissions, DEFAULT_AUTH_ACTIVITY_CODE, listener);
-//    }
+    private void authorize(Activity activity, String[] permissions,
+            final WeiboDialogListener listener) {
+        authorize(activity, permissions, DEFAULT_AUTH_ACTIVITY_CODE, listener);
+    }
 
     private void authorize(Activity activity, String[] permissions, int activityCode,
             final WeiboDialogListener listener) {
@@ -268,10 +325,13 @@ public class Weibo {
             singleSignOnStarted = startSingleSignOn(activity, APP_KEY, permissions, activityCode);
         }
         // Otherwise fall back to traditional dialog.
-        
-        if (!singleSignOnStarted && activity != null && !activity.isFinishing()) {
+        if (!singleSignOnStarted) {
             startDialogAuth(activity, permissions);
         }
+
+    }
+
+    private void authorizeCallBack(int requestCode, int resultCode, Intent data) {
 
     }
 
@@ -283,17 +343,15 @@ public class Weibo {
         parameters.add("display", "mobile");
 
         if (isSessionValid()) {
-            parameters.add(ACCESSTOKEN, mAccessToken.getToken());
+            parameters.add(TOKEN, mAccessToken.getToken());
         }
         String url = URL_OAUTH2_ACCESS_AUTHORIZE + "?" + Utility.encodeUrl(parameters);
-        Log.d("eric", "request url:" + url);
-//        if (context.checkCallingOrSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
-//            Utility.showAlert(context, "Error",
-//                    "Application requires permission to access the Internet");
-//        } else {
-        mRequestType = RequestType.AUTHORIZE;
-        new WeiboDialog(this, context, url, listener).show();
-//        }
+        if (context.checkCallingOrSelfPermission(Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            Utility.showAlert(context, "Error",
+                    "Application requires permission to access the Internet");
+        } else {
+            new WeiboDialog(this, context, url, listener).show();
+        }
     }
 
     public boolean isSessionValid() {
@@ -302,121 +360,5 @@ public class Weibo {
                     .currentTimeMillis() < mAccessToken.getExpiresIn())));
         }
         return false;
-    }
-
-    public Long getUserUID(Context context) {
-    	String url = SERVER + URL_GET_UID;
-    	
-    	WeiboParameters bundle = new WeiboParameters();
-        bundle.add(ACCESSTOKEN, mAccessToken.getToken());
-        
-        mRequestType = RequestType.GET_UID;
-        
-        String rlt = request(context, url, bundle, Utility.HTTPMETHOD_GET);
-
-    	if (mUser == null) {
-    		mUser = new User();
-    	}
-    	
-        if (!TextUtils.isEmpty(rlt)) {
-        	try {
-				JSONObject json = new JSONObject(rlt);
-				mUser.setUid(Long.valueOf(json.getString("uid")));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-        }
-		
-        LogWrapper.d("eric", "Weibo.getuserID: " + mUser.getUid());
-        return mUser.getUid();
-    }
-    
-    public void getUserProfile(Context context){
-    	if (!User.isUidValid(getUserUID(context))) {
-    		return ;
-    	}
-    	
-    	String url = SERVER + URL_GET_PROFILE;
-    	
-    	WeiboParameters bundle = new WeiboParameters();
-        bundle.add(ACCESSTOKEN, mAccessToken.getToken());
-        bundle.add("uid", String.valueOf(mUser.getUid()));
-        
-        mRequestType = RequestType.GET_PROFILE;
-        
-		String rlt = request(context, url, bundle, Utility.HTTPMETHOD_GET);
-		LogWrapper.d("eric", "getUserProfile result: " + rlt);
-
-		if (!TextUtils.isEmpty(rlt)) {
-        	if (mUser == null) {
-        		mUser = new User();
-        	}
-        	try {
-				JSONObject json = new JSONObject(rlt);
-				mUser.setId(Long.valueOf(json.getString("id")));
-				mUser.setScreenName(json.getString("screen_name"));
-			} catch (JSONException e) {
-				e.printStackTrace();
-			}
-        }
-		
-        LogWrapper.d("eric", "Weibo.getUserProfile: " + mUser);
-    }
-    
-    public void upload(Context context, String file, String status, String lon, String lat, String annotations) {
-    	
-    	String url = SERVER + URL_UPLOAD;
-    	
-        WeiboParameters bundle = new WeiboParameters();
-        bundle.add(ACCESSTOKEN, mAccessToken.getToken());
-        bundle.add("status", status);
-        if (!TextUtils.isEmpty(file)) {
-        	bundle.add("pic", file);
-        	url = SERVER + URL_UPLOAD;
-        } else {
-        	url = SERVER + URL_UPDATE;
-        }
-        	
-        if(!TextUtils.isEmpty(lon)){
-            bundle.add("long", lon);
-        }
-        if(!TextUtils.isEmpty(lat)){
-            bundle.add("lat", lat);
-        }
-        if(!TextUtils.isEmpty(annotations)){
-            bundle.add("annotations", annotations);
-        }
-        
-        mRequestType = RequestType.UPLOAD;
-        
-//        AsyncWeiboRunner weiboRunner = new AsyncWeiboRunner(this);
-//        weiboRunner.request(context, url, bundle, Utility.HTTPMETHOD_POST);
-        request(context, url, bundle, Utility.HTTPMETHOD_POST);
-    }
-
-    public void endSession(Context context) {
-    	String url = SERVER + URL_END_SESSION;
-    	
-        WeiboParameters bundle = new WeiboParameters();
-        bundle.add(ACCESSTOKEN, mAccessToken.getToken());
-        
-        mRequestType = RequestType.END_SESSION;
-        
-//        AsyncWeiboRunner weiboRunner = new AsyncWeiboRunner(this);
-//        weiboRunner.request(context, url, bundle, Utility.HTTPMETHOD_GET);
-        String endSessionResult = request(context, url, bundle, Utility.HTTPMETHOD_GET);
-        LogWrapper.d("eric", "endSessionResult: " + endSessionResult);
-        mAccessToken = null;
-        mUser = null;
-    }
-    
-    public static interface RequestListener {
-
-        public void onComplete(String response);
-
-        public void onIOException(IOException e);
-
-        public void onError(WeiboException e);
-
     }
 }

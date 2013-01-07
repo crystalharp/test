@@ -61,6 +61,13 @@ public class WeiboDialog extends Dialog {
         mWeibo = weibo;
         mUrl = url;
         mListener = listener;
+        setOnCancelListener(new OnCancelListener() {
+            
+            @Override
+            public void onCancel(DialogInterface arg0) {
+                mListener.onCancel();
+            }
+        });
     }
 
     @Override
