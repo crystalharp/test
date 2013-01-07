@@ -17,21 +17,38 @@
         android:layout_height="fill_parent"
         android:gravity="left|top" 
         android:orientation="vertical">
-        
-        <Button android:id="@+id/snda_btn"
-            android:layout_width="fill_parent" 
-            android:layout_height="49dp"
-            android:text="@string/recommend_snda"
-            android:padding="10dp"
-            android:layout_margin="8dp"
-            android:drawablePadding="10dp"
-            android:drawableRight="@drawable/icon_arrow_right"
-            android:textColor="#ffff8022"
-            android:textSize="16sp"
-            android:gravity="left|center_vertical"
-            android:background="@drawable/list_single"
-            android:visibility="visible"/>
-    
+        <RelativeLayout
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:padding="6dp">
+	        <Button android:id="@+id/snda_btn"
+	            android:layout_width="fill_parent" 
+	            android:layout_height="49dp"
+	            android:text="@string/recommend_snda"
+	            android:padding="10dp"
+	            android:drawablePadding="10dp"
+	            android:drawableRight="@drawable/icon_arrow_right"
+	            android:textColor="#ffff8022"
+	            android:textSize="16sp"
+	            android:gravity="left|center_vertical"
+	            android:background="@color/transparent"
+	            android:visibility="visible"/>
+    		 <TextView 
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:paddingRight="40dp"
+                android:singleLine="true"
+                android:ellipsize="end"
+                android:text="@string/free_download"
+                android:textColor="@color/black_light"
+                android:gravity="right|center_vertical" />
+		</RelativeLayout>
+        <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/divider" />
         <ListView android:id="@+id/app_recommend_lsv"
             android:layout_width="fill_parent" 
             android:layout_height="wrap_content"
