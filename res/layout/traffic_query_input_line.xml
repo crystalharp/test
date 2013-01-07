@@ -11,7 +11,7 @@
             android:gravity="center_vertical|left"
             android:paddingRight="40dp"
             android:singleLine="true"
-            android:imeOptions="actionDone"
+            android:imeOptions="actionNext"
             android:textColorHint="@color/edittext_hint_color"
             android:textSize="14sp"
             android:background="@drawable/textfield" />

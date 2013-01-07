@@ -79,13 +79,19 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	ImageButton mBackBtn;
 	
-	Button mQueryBtn;
+	Button mTrafficQueryBtn;
+	
+	Button mBuslineQueryBtn;
 	
 	RadioGroup mRadioGroup = null;
 	
 	LinearLayout mBlock;
 	
-	Button mExchangeBtn = null;
+	//Button mExchangeBtn = null;
+	
+	Button mSelectStartBtn = null;
+	
+	Button mSelectEndBtn = null;
     
 	QueryEditText mBusline;
 
@@ -207,10 +213,13 @@ public class TrafficQueryFragment extends BaseFragment {
 		mBuslineLayout = (RelativeLayout)mRootView.findViewById(R.id.busline_rll);
         
     	mBackBtn = (ImageButton)mRootView.findViewById(R.id.back_btn);
-    	mQueryBtn = (Button)mRootView.findViewById(R.id.query_btn);
+    	mTrafficQueryBtn = (Button)mRootView.findViewById(R.id.traffic_query_btn);
+    	mBuslineQueryBtn = (Button)mRootView.findViewById(R.id.busline_query_btn);
     	mRadioGroup = (RadioGroup)mRootView.findViewById(R.id.traffic_rgp);
     	
-    	mExchangeBtn = (Button)mRootView.findViewById(R.id.exchange_btn);
+    	//mExchangeBtn = (Button)mRootView.findViewById(R.id.exchange_btn);
+    	mSelectStartBtn = (Button)mRootView.findViewById(R.id.select_start_btn);
+    	mSelectEndBtn = (Button)mRootView.findViewById(R.id.select_end_btn);
     	mBusline = new QueryEditText((RelativeLayout)mRootView.findViewById(R.id.busline_edt));
 		mBusline.setOnlyInput();
 		mEnd     = new QueryEditText((RelativeLayout)mRootView.findViewById(R.id.end_line));
@@ -406,6 +415,11 @@ public class TrafficQueryFragment extends BaseFragment {
 				}
 			} 
 			
+//			Position position;
+//			position = new Position(1,1);
+//			mPOI.setPosition(position);
+			//xupeng：想在这里添加个如果有查找过的poi信息则统一填上坐标点
+			
 			return mPOI;
 		}
 
@@ -465,9 +479,13 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	public void showStart() {
 
-		if (mMapLocationHelper.isMyLocationLocateCurrentCity()) {
+		//定位为设定城市，或者自驾模式下定位城市与设定城市不同，均在起点框填写上当前位置。
+		if (mMapLocationHelper.isMyLocationLocateCurrentCity() || 
+				(getQueryType() == TrafficQuery.QUERY_TYPE_DRIVE && Globals.g_My_Location_City_Info != null)) {
 			POI location = mMapLocationHelper.getMyLocation();
 			setPOI(location, START);
+		} else {
+			mStart.clear();
 		}
     }
 	
@@ -521,31 +539,31 @@ public class TrafficQueryFragment extends BaseFragment {
 		
 		if (mode == TRAFFIC_MODE) {
 			if(!isEditTextEmpty(mStart.getEdt()) && !isEditTextEmpty(mEnd.getEdt())) {
-				enableQueryBtn(true);
+				enableQueryBtn(mTrafficQueryBtn, true);
 	        }else{
-	        	enableQueryBtn(false);
+	        	enableQueryBtn(mTrafficQueryBtn, false);
 	        }
 		} else {
 			if(!isEditTextEmpty(mBusline.getEdt())){
-				enableQueryBtn(true);
+				enableQueryBtn(mBuslineQueryBtn, true);
 	        }else{
-	        	enableQueryBtn(false);
+	        	enableQueryBtn(mBuslineQueryBtn, false);
 	        }
 		}
     }
 	
-	public void enableQueryBtn(boolean enable) {
+	public void enableQueryBtn(Button mButton, boolean enable) {
 		if (enable) {
-			mQueryBtn.setTextColor(0xFFFFFFFF);
-            mQueryBtn.setEnabled(true);
+			mButton.setTextColor(0xFFFFFFFF);
+			mButton.setEnabled(true);
 		} else {
-			mQueryBtn.setTextColor(0xFFEFBA82);
-        	mQueryBtn.setEnabled(false);
+			mButton.setTextColor(0xFFEFBA82);
+			mButton.setEnabled(false);
 		}
 	}
 	
 	public void query() {
-		mSphinx.hideSoftInput(mQueryBtn.getWindowToken());
+		mSphinx.hideSoftInput(mTrafficQueryBtn.getWindowToken());
 		mBlock.requestFocus();
 		
 		if (mode == TRAFFIC_MODE) {
@@ -577,6 +595,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	public void submitTrafficQuery() {
 		
+		//xupeng:预计在这里修改没有坐标点的问题。
 		POI start = mStart.getPOI();
 		POI end = mEnd.getPOI();
 		
@@ -601,6 +620,7 @@ public class TrafficQueryFragment extends BaseFragment {
         
         int cityId = mMapLocationHelper.getQueryCityInfo().getId();
         
+        //xupeng:怎么算是history word？搜索北大，实际用北京大学搜索，哪个是？
         if (!isKeyword(mStart.getEdt().getText().toString())) {
             HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, mStart.getEdt().getText().toString()), cityId, HistoryWordTable.TYPE_TRAFFIC);
         }
@@ -779,6 +799,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
+		// FIXME 这里进行键盘功能变更
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (mStateTransitionTable.rollback()) {
 			    mActionLog.addAction(ActionLog.KeyCodeBack);

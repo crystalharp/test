@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import android.graphics.Rect;
+import android.util.Log;
 
 import com.decarta.Globals;
 import com.decarta.android.event.EventListener;
@@ -14,7 +15,7 @@ import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
 
 public class Compass implements EventSource{
-	public enum PlaceLocation{TOP_LEFT,TOP_RIGHT,BOTTOM_LEFT,BOTTOM_RIGHT};
+	public enum PlaceLocation{TOP_LEFT,TOP_RIGHT,BOTTOM_LEFT,BOTTOM_RIGHT,CENTER};
 	public static PlaceLocation DEF_PLACE_LOCATION=PlaceLocation.TOP_LEFT;
 	
 	private PlaceLocation placeLocation=null;
@@ -62,6 +63,9 @@ public class Compass implements EventSource{
 	        }else if(placeLocation.equals(PlaceLocation.BOTTOM_RIGHT)){
 	            x=displaySize.x-icon.getOffset().x*density;
 	            y=displaySize.y-icon.getOffset().y;
+	        }else if(placeLocation.equals(PlaceLocation.CENTER)) {
+	        	x=(displaySize.x) / 2;
+	        	y=(displaySize.y) / 2;
 		}
 		return new XYInteger((int)x,(int)y);
 	}

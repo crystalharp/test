@@ -11,31 +11,55 @@
 	        android:layout_height="wrap_content"
 	        android:padding="4dp"
 	        android:background="@drawable/bg_gradient">
-	        <Button android:id="@+id/exchange_btn"
-	            android:background="@drawable/btn_exchange"
-	            android:layout_alignParentLeft="true"
-	            android:layout_width="wrap_content" 
-	            android:layout_height="wrap_content"
-	            android:layout_centerVertical="true" />
 	        <LinearLayout android:id="@+id/traffic_lsv"
 	            android:layout_width="fill_parent" 
 	            android:layout_height="wrap_content"
 	            android:orientation="vertical"
-	            android:layout_toRightOf="@id/exchange_btn"
+	            android:layout_toLeftOf="@+id/traffic_query_btn"
 	            android:layout_alignParentTop="true"
 	            android:layout_marginLeft="4dp">
-	            <FrameLayout 
+	            <LinearLayout 
 			        android:layout_width="fill_parent" 
-			        android:layout_height="wrap_content" >
-			        <include android:id="@+id/start_line" layout="@layout/traffic_query_input_line" />
-        		</FrameLayout>
-	            <FrameLayout 
+			        android:layout_height="wrap_content"
+			        android:orientation="horizontal" >
+			        <Button
+			            android:id="@+id/select_start_btn"
+			            style="?android:attr/buttonStyleSmall"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:text="@string/start" />
+
+			        <include
+			            android:id="@+id/start_line"
+			            layout="@layout/traffic_query_input_line" />
+
+        		</LinearLayout>
+	            <LinearLayout 
 			        android:layout_width="fill_parent" 
 			        android:layout_height="wrap_content"
 			        android:layout_marginTop="2dp">
+			        <Button
+			            android:id="@+id/select_end_btn"
+			            style="?android:attr/buttonStyleSmall"
+			            android:layout_width="wrap_content"
+			            android:layout_height="wrap_content"
+			            android:text="@string/end" />
 			        <include android:id="@+id/end_line" layout="@layout/traffic_query_input_line" />
-        		</FrameLayout>
+        		</LinearLayout>
 	        </LinearLayout>
+	        <Button android:id="@+id/traffic_query_btn"
+	            android:text="@string/query"
+	            android:layout_alignParentRight="true"
+	            android:layout_width="wrap_content" 
+	            android:layout_height="wrap_content"
+	            android:layout_centerVertical="true" />
+<!-- 	        <Button android:id="@+id/exchange_btn" -->
+<!-- 	            android:background="@drawable/btn_exchange" -->
+<!-- 	            android:layout_alignParentLeft="true" -->
+<!-- 	            android:layout_width="wrap_content"  -->
+<!-- 	            android:layout_height="wrap_content" -->
+<!-- 	            android:layout_centerVertical="true" /> -->
+
 	    </RelativeLayout>
 
 	    <RelativeLayout android:id="@+id/busline_rll"
@@ -46,6 +70,12 @@
 	        android:visibility="gone">     
 	        <include android:id="@+id/busline_edt"
 				layout="@layout/traffic_query_input_line" />  
+			<Button android:id="@+id/busline_query_btn"
+	            android:text="@string/query"
+	            android:layout_alignParentRight="true"
+	            android:layout_width="wrap_content" 
+	            android:layout_height="wrap_content"
+	            android:layout_centerVertical="true" />
 	    </RelativeLayout>
 		
 	    <LinearLayout 

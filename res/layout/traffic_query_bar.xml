@@ -40,10 +40,11 @@
 	        android:button="@drawable/rdb_busline"
 	        android:layout_width="50dp" 
 	        android:layout_height="wrap_content"
+	        android:layout_marginLeft="3dp"
 	        android:id="@+id/traffic_busline_rbt"/>
    	</RadioGroup>
 
-	<Button android:id="@+id/query_btn"
+	<!-- <Button android:id="@+id/query_btn"
     	android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="right|center_vertical"
@@ -51,6 +52,6 @@
        	android:textSize="14sp"
 	    android:textColor="@android:color/white"
        	android:gravity="center"
-	    android:background="@drawable/btn_title" />
+	    android:background="@drawable/btn_title" /> -->
 
 </FrameLayout>

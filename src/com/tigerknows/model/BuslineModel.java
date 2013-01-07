@@ -368,7 +368,7 @@ public class BuslineModel extends XMapData {
         public String getSMSString(Context context) {
             StringBuilder body = new StringBuilder();
             body.append(context.getString(R.string.busline_, name));
-            body.append(context.getString(R.string.busline_line_listitem_title, CommonUtils.meter2kilometre(length), stationList.size()));
+            body.append(context.getString(R.string.busline_line_listitem_title, time, CommonUtils.meter2kilometre(length)));//, stationList.size()));
             body.append("\n");
             int i = 0;
             for(Station station : stationList) {

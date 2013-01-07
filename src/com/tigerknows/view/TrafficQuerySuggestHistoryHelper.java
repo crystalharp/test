@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -69,7 +70,7 @@ public class TrafficQuerySuggestHistoryHelper {
 			mQueryFragment.mSelectedEdt.setPOI(poi);
 		}
 		
-		if (mQueryFragment.mQueryBtn.isEnabled()) {
+		if (mQueryFragment.mTrafficQueryBtn.isEnabled() || mQueryFragment.mBuslineQueryBtn.isEnabled()) {
 			mQueryFragment.query();
 		}
 	}

@@ -10,6 +10,7 @@
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content" />
 
+<!-- xupeng：选择候选站点 -->
         <ListView android:id="@+id/start_lsv"
             android:scrollingCache="false"
         	android:drawSelectorOnTop="false"
