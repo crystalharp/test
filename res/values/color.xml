@@ -35,4 +35,5 @@
     <color name="black_middle">#4d4d4d</color>
     <color name="black_light">#969696</color>
     <color name="orange">#ff6c00</color>
+    <color name="transparent">#00000000</color>
 </resources>

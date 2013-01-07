@@ -8,120 +8,136 @@
     android:gravity="top"
     android:fillViewport="true"
     android:fadingEdge="none"
-    android:background="@color/gray_dark" > 
+    android:background="@color/white" > 
 	<LinearLayout 
     	android:id="@+id/root_view"
 	    android:layout_width="fill_parent" 
 	    android:layout_height="wrap_content"
-	    android:orientation="vertical"
-    	android:padding="8dp" >
-        <TextView android:id="@+id/nikename_txv" 
+	    android:orientation="vertical">
+        <Button android:id="@+id/nikename_txv" 
+            android:layout_marginTop="12dp"
             android:layout_width="wrap_content" 
             android:layout_height="wrap_content"
-            android:paddingLeft="4dp"
-            android:layout_gravity="left|center_vertical"
+            android:background="@android:color/transparent"
+            android:layout_gravity="center|center_vertical"
+            android:drawableRight="@drawable/user_center_pen"
             android:text="@string/app_name"
             android:textColor="#009CFF"
 		    android:textSize="18sp" />
-        
         <LinearLayout 
             android:layout_width="fill_parent" 
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp">
-            <Button
-	            android:id="@+id/my_comment_btn" 
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content" 
-	            android:padding="8dp"
-	            android:background="@drawable/list_header"
-	            android:drawableLeft="@drawable/ic_my_comment"
-	            android:drawableRight="@drawable/icon_arrow_right"
-	            android:drawablePadding="8dp"
-	            android:textColor="@android:color/black"
-	            android:textSize="16sp"
-	            android:text="@string/my_comment"
-	            android:gravity="left|center_vertical"/>
-	        <ImageView
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:background="@drawable/divider" />
-	        <Button
-	            android:id="@+id/dingdan_btn" 
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content" 
-	            android:padding="8dp"
-	            android:background="@drawable/list_footer"
-	            android:drawableLeft="@drawable/ic_wodedingdan"
-	            android:drawableRight="@drawable/icon_arrow_right"
-	            android:drawablePadding="8dp"
-	            android:textColor="@android:color/black"
-	            android:textSize="16sp"
-	            android:text="@string/wodedingdan"
-	            android:gravity="left|center_vertical"/>
+            android:padding="8dp" >
+           	<ImageView
+	           	android:layout_marginTop="4dp"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:background="@drawable/divider" />
         </LinearLayout>
-        
         <LinearLayout 
+            android:padding="8dp"
             android:layout_width="fill_parent" 
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginTop="16dp">
-            <Button
-	            android:id="@+id/update_mobile_phone_btn" 
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content" 
-	            android:padding="8dp"
-	            android:background="@drawable/list_header"
-	            android:drawableRight="@drawable/icon_arrow_right"
-	            android:drawablePadding="8dp"
-	            android:textColor="@android:color/black"
-	            android:textSize="16sp"
-	            android:text="@string/change_phone"
-	            android:gravity="left|center_vertical"/>
-	        <ImageView
-	            android:layout_width="fill_parent"
+            android:background="@android:color/transparent"
+	        android:gravity="center_vertical"
+            android:orientation="horizontal">
+            <LinearLayout 
+	            android:layout_width="0dp" 
+	            android:layout_weight="1"
 	            android:layout_height="wrap_content"
-	            android:background="@drawable/divider" />
-	        <Button
-	            android:id="@+id/update_nickname_btn" 
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content" 
-	            android:padding="8dp"
-	            android:background="@drawable/list_middle"
-	            android:drawableRight="@drawable/icon_arrow_right"
-	            android:drawablePadding="8dp"
-	            android:textColor="@android:color/black"
-	            android:textSize="16sp"
-	            android:text="@string/change_nickname"
-	            android:gravity="left|center_vertical"/>
+	            android:background="@android:color/transparent"
+	            android:gravity="center"
+	            android:orientation="horizontal">
+	            <Button
+		            android:id="@+id/my_comment_btn" 
+		            android:layout_width="wrap_content"
+		            android:layout_height="fill_parent" 
+		            android:background="@drawable/user_center_my_comm_btn"
+		            android:gravity="center"/>
+            </LinearLayout>
 	        <ImageView
-	            android:layout_width="fill_parent"
+	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:background="@drawable/divider" />
-	        <Button
-	            android:id="@+id/update_password_btn" 
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content" 
-	            android:padding="8dp"
-	            android:background="@drawable/list_footer"
-	            android:drawableRight="@drawable/icon_arrow_right"
-	            android:drawablePadding="8dp"
-	            android:textColor="@android:color/black"
-	            android:textSize="16sp"
-	            android:text="@string/change_password"
-	            android:gravity="left|center_vertical"/>
+	            android:background="@drawable/user_center_divider_v" />
+	        <LinearLayout 
+	            android:layout_width="0dp" 
+	            android:layout_weight="1"
+	            android:layout_height="wrap_content"
+	            android:background="@android:color/transparent"
+	            android:gravity="center|center_vertical"
+	            android:orientation="horizontal">
+		        <Button
+		            android:id="@+id/dingdan_btn" 
+		            android:layout_width="wrap_content"
+		            android:layout_height="fill_parent" 
+		            android:background="@drawable/user_center_my_order_btn"
+		            android:gravity="center"/>
+	        </LinearLayout>
         </LinearLayout>
-        
-        <Button
-	        android:id="@+id/logout_btn"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:padding="8dp"
-	        android:layout_marginTop="16dp"
-	        android:text="@string/logout_account"
-	        android:textSize="18sp"
-	        android:textColor="@android:color/white"
-	        android:background="@drawable/btn_blue_green" />
-        
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical"
+	        android:background="@drawable/bg_discover">
+	        <ImageView
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:background="@drawable/bg_sawtooth" />
+	        <LinearLayout 
+	            android:padding="8dp"
+	            android:layout_width="fill_parent" 
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:layout_marginTop="12dp">
+	            <Button
+		            android:id="@+id/update_mobile_phone_btn"
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:padding="8dp"
+		            android:background="@drawable/list_header"
+		            android:drawablePadding="8dp"
+		            android:textColor="@android:color/black"
+		            android:textSize="16sp"
+		            android:text="@string/change_phone"
+		            android:gravity="left|center_vertical"/>
+		        <ImageView
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:background="@drawable/divider" />
+		        <Button
+		            android:id="@+id/update_password_btn" 
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content" 
+		            android:padding="8dp"
+		            android:background="@drawable/list_footer"
+		            android:drawablePadding="8dp"
+		            android:textColor="@android:color/black"
+		            android:textSize="16sp"
+		            android:text="@string/change_password"
+		            android:gravity="left|center_vertical"/>
+	        </LinearLayout>
+	        <RelativeLayout 
+	            android:padding="8dp"
+	            android:layout_width="match_parent" 
+	            android:layout_height="wrap_content"
+	            android:layout_marginTop="-2dp">
+		        <Button
+		            android:id="@+id/logout_btn" 
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content" 
+		            android:background="@drawable/list_single"/>
+	            <TextView
+	            	android:layout_centerHorizontal="true"
+	            	android:layout_centerVertical="true"  
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content" 
+		            android:drawableLeft="@drawable/user_center_logout"
+		            android:textColor="@android:color/black"
+		            android:textSize="18sp"
+		            android:text="@string/logout_account"
+		            android:background="@color/transparent"
+		            android:gravity="center|center_vertical"/>
+            </RelativeLayout>
+        </LinearLayout>
      </LinearLayout>
 </ScrollView>

@@ -31,7 +31,7 @@ public class UserHomeFragment extends UserBaseFragment {
         // TODO Auto-generated constructor stub
     }
 	
-	private TextView nickNameTxv;
+	private Button nickNameTxv;
 	
 	private Button myCommentBtn;
     
@@ -39,7 +39,7 @@ public class UserHomeFragment extends UserBaseFragment {
 	
 	private Button updatePhoneBtn;
 	
-	private Button updateNicknameBtn;
+//	private Button updateNicknameBtn;
 	
 	private Button updatePasswordBtn;
 	
@@ -70,11 +70,11 @@ public class UserHomeFragment extends UserBaseFragment {
 	protected void findViews() {
 		super.findViews();
 
-		nickNameTxv = (TextView)mRootView.findViewById(R.id.nikename_txv);
+		nickNameTxv = (Button)mRootView.findViewById(R.id.nikename_txv);
 		myCommentBtn = (Button)mRootView.findViewById(R.id.my_comment_btn);
         dingdanBtn = (Button)mRootView.findViewById(R.id.dingdan_btn);
 		updatePhoneBtn = (Button)mRootView.findViewById(R.id.update_mobile_phone_btn);
-		updateNicknameBtn = (Button)mRootView.findViewById(R.id.update_nickname_btn);
+//		updateNicknameBtn = nickNameTxv;
 		updatePasswordBtn = (Button)mRootView.findViewById(R.id.update_password_btn);
 		logoutBtn = (Button)mRootView.findViewById(R.id.logout_btn);
 	}
@@ -106,7 +106,7 @@ public class UserHomeFragment extends UserBaseFragment {
 			}
 		});
 		
-		updateNicknameBtn.setOnClickListener(new android.view.View.OnClickListener(){
+		nickNameTxv.setOnClickListener(new android.view.View.OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
