@@ -235,7 +235,7 @@ public class WeiboSend extends Activity implements OnClickListener {
                 int len = mText.length();
                 if (len <= WEIBO_MAX_LENGTH) {
                     len = WEIBO_MAX_LENGTH - len;
-                    mTextNumTxv.setTextColor(R.color.text_num_gray);
+//                    mTextNumTxv.setTextColor(R.color.text_num_gray);
                 } else {
                     len = len - WEIBO_MAX_LENGTH;
 
@@ -264,15 +264,14 @@ public class WeiboSend extends Activity implements OnClickListener {
         switch (viewId) {
             case R.id.logout_btn: {
                 mActionLog.addAction(ActionLog.WeiboSendClickedLogoutBtn);
+                hideInputMethodManager();
                 UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(this, ShareAPI.TYPE_WEIBO);
                 if (userAccessIdenty == null) {
                     WeiboSend.this.finish();
                     return;
                 }
-                showDialog(R.id.dialog_share_doing);
-                hideInputMethodManager();
+//                showDialog(R.id.dialog_share_doing);
                 new Thread() {
-					
 					@Override
 					public void run() {
                         Weibo weibo = Weibo.getInstance();
@@ -280,6 +279,9 @@ public class WeiboSend extends Activity implements OnClickListener {
                             
                             @Override
                             public void onIOException(final IOException e) {
+                                ShareAPI.clearIdentity(WeiboSend.this, ShareAPI.TYPE_WEIBO);
+//                              WeiboSend.this.dismissDialog(R.id.dialog_share_doing);
+                                WeiboSend.this.finish();
                             }
                             
                             @Override
@@ -289,7 +291,7 @@ public class WeiboSend extends Activity implements OnClickListener {
                                     @Override
                                     public void run() {
                                         ShareAPI.clearIdentity(WeiboSend.this, ShareAPI.TYPE_WEIBO);
-                                        WeiboSend.this.dismissDialog(R.id.dialog_share_doing);
+//                                        WeiboSend.this.dismissDialog(R.id.dialog_share_doing);
                                         WeiboSend.this.finish();
                                     }
                                 });
@@ -302,7 +304,7 @@ public class WeiboSend extends Activity implements OnClickListener {
                                     @Override
                                     public void run() {
                                         ShareAPI.clearIdentity(WeiboSend.this, ShareAPI.TYPE_WEIBO);
-                                        WeiboSend.this.dismissDialog(R.id.dialog_share_doing);
+//                                        WeiboSend.this.dismissDialog(R.id.dialog_share_doing);
                                         WeiboSend.this.finish();
                                     }
                                 });
