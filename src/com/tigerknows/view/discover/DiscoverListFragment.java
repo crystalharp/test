@@ -562,7 +562,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             name = R.string.zhanlan_ditu;
             actionTag = ActionLog.MapZhanlanList;
         }
-        mSphinx.showPOI(dataList, page[2]);
         mSphinx.getResultMapFragment().setData(mContext.getString(name), actionTag);
         mSphinx.showView(R.id.view_result_map);   
     }
