@@ -58,7 +58,7 @@ public class WidgetUtils {
         }
         final ArrayAdapter<String> adapter = new StringArrayAdapter(activity, list, leftCompoundResIdList);
 
-        AlertDialog.Builder b = new AlertDialog.Builder(activity);
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(activity);
 
         DialogInterface.OnClickListener click = new DialogInterface.OnClickListener() {
             public final void onClick(DialogInterface dialog, int which) {
@@ -155,10 +155,10 @@ public class WidgetUtils {
             }
         };
 
-        b.setTitle(R.string.share);
-        b.setCancelable(true);
-        b.setAdapter(adapter, click);
+        alertDialogBuilder.setTitle(R.string.share);
+        alertDialogBuilder.setCancelable(true);
+        alertDialogBuilder.setAdapter(adapter, click);
 
-        b.show();
+        alertDialogBuilder.show();
     }
 }
