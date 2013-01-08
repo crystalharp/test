@@ -21,7 +21,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -66,7 +66,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     
     private ListView mCategoryLsv = null;
     
-    private ImageButton mQueryBtn = null;
+    private Button mQueryBtn = null;
 
     private TKEditText mKeywordEdt = null;
 
@@ -78,6 +78,18 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     
     private ViewGroup mPageIndicatorView;
 
+    private final int[] mResIdList = {R.drawable.ic_food_search_near,
+        R.drawable.ic_amusement_search_near,
+        R.drawable.ic_buy_search_near,
+        R.drawable.ic_hotel_search_near,
+        R.drawable.ic_tour_search_near,
+        R.drawable.ic_beautiful_search_near,
+        R.drawable.ic_sport_search_near,
+        R.drawable.ic_bandk_search_near,
+        R.drawable.ic_traffic_search_near,
+        R.drawable.ic_hospital_search_near
+        };
+    
     private final String[] mCategoryActionTag = {
             ActionLog.SearchNearbyFood, ActionLog.SearchNearbyYuLe, ActionLog.SearchNearbyBuy,
             ActionLog.SearchNearbyHotel, ActionLog.SearchNearbyLuYou, ActionLog.SearchNearbyLiRen,
@@ -120,7 +132,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
                 
         Resources resources = mContext.getResources();
         mCategoryName = resources.getStringArray(R.array.home_category);
-        mCategoryLsv.setAdapter(new StringArrayAdapter(mContext, mCategoryName));
+        mCategoryLsv.setAdapter(new StringArrayAdapter(mContext, mCategoryName, mResIdList));
         
         mSuggestAdapter = new SuggestArrayAdapter(mContext, SuggestArrayAdapter.TEXTVIEW_RESOURCE_ID, mSuggestWordList);
         mSuggestAdapter.setCallBack(new CallBack() {
@@ -151,7 +163,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
 
     protected void findViews() {
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
-        mQueryBtn = (ImageButton)mRootView.findViewById(R.id.query_btn);
+        mQueryBtn = (Button)mRootView.findViewById(R.id.query_btn);
         mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);
         
         Drawable divider = mSphinx.getResources().getDrawable(R.drawable.bg_real_line);

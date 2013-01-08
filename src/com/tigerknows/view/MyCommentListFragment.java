@@ -190,7 +190,6 @@ public class MyCommentListFragment extends BaseFragment {
         super.onResume();
         
         mTitleBtn.setText(R.string.my_comment);
-        mRightImv.setVisibility(View.INVISIBLE);
         mRightBtn.setVisibility(View.INVISIBLE);
         
         mEmptyTxv.setVisibility(View.GONE);

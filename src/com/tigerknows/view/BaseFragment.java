@@ -60,10 +60,6 @@ public class BaseFragment extends LinearLayout {
     
     protected TextView mTitleBtn;
     
-    protected ImageView mLeftImv;
-    
-    protected ImageView mRightImv;
-    
     protected Button mLeftBtn;
     
     protected Button mRightBtn;
@@ -263,25 +259,21 @@ public class BaseFragment extends LinearLayout {
             mTitleFragment = mSphinx.getTitleFragment();
             mMenuFragment = mSphinx.getMenuFragment();
 
+            mTitleFragment.getChildAt(0).setBackgroundResource(R.drawable.bg_title);
             mTitleBtn = mTitleFragment.getTitleTxv();
-            mLeftImv = mTitleFragment.getLeftBtn();
             mLeftBtn = mTitleFragment.getLeftTxv();
-            mRightImv = mTitleFragment.getRightBtn();
             mRightBtn = mTitleFragment.getRightTxv();
 
             mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
             mTitleBtn.setText(null);
             mTitleBtn.setBackgroundDrawable(null);
             mTitleBtn.setOnClickListener(null);
-            mLeftImv.setVisibility(View.VISIBLE);
-            mLeftImv.setImageResource(R.drawable.ic_back);
             mLeftBtn.setVisibility(View.VISIBLE);
             mLeftBtn.setText(null);
+            mLeftBtn.setBackgroundResource(R.drawable.ic_back);
             mLeftBtn.setOnClickListener(mLeftTxvOnClickListener);
-            mRightImv.setVisibility(View.VISIBLE);
-            mRightImv.setImageBitmap(null);
             mRightBtn.setVisibility(View.VISIBLE);
-            mRightBtn.getLayoutParams().width = LayoutParams.WRAP_CONTENT;
+            mRightBtn.setBackgroundDrawable(null);
             mRightBtn.setText(null);
             mRightBtn.setEnabled(true);
             

@@ -11,7 +11,6 @@ import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.TKConfig;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
@@ -176,6 +175,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         return mRootView;
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public void dismiss() {
         super.dismiss();
@@ -233,8 +233,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         } else if (BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType)) {
             mTitleBtn.setText(R.string.dianyingyuan_list);
         }
-        mRightImv.setImageResource(R.drawable.ic_view_map);
-        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
         mRightBtn.setOnClickListener(this);
         
         if (isReLogin()) {
@@ -334,12 +333,12 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             } else {
                 view = convertView;
             }
-            
+
             TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
-            Button distanceBtn = (Button) view.findViewById(R.id.distance_btn);
+            TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
             View addressView = view.findViewById(R.id.address_view);
             TextView addressTxv = (TextView) view.findViewById(R.id.address_txv);
-            TextView telephoneTxv = (TextView) view.findViewById(R.id.telephone_txv);
+            final TextView telephoneTxv = (TextView) view.findViewById(R.id.telephone_txv);
             View telephoneView = view.findViewById(R.id.telephone_view);
             View dividerView = view.findViewById(R.id.divider_imv);
 
@@ -348,36 +347,28 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             String address = fendian.getAddress();
             String phone = fendian.getPlacePhone();
             showPOI(mSphinx, position+1, fendian.getPlaceName(), distance, address, phone, 
-                    nameTxv, distanceBtn, addressView, dividerView, telephoneView, addressTxv, telephoneTxv, 
-                    R.drawable.list_header, R.drawable.list_footer, R.drawable.list_single, null, null);
+                    nameTxv, distanceTxv, addressView, dividerView, telephoneView, addressTxv, telephoneTxv, 
+                    R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer, null, null);
             
             View.OnClickListener onClickListener = new OnClickListener() {
                 
                 @Override
                 public void onClick(View view) {
                     int id = view.getId();
-                    if (id == R.id.distance_btn) {
-                        mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailDistance);
-                        POI poi = fendian.getPOI(POI.SOURCE_TYPE_FENDIAN, null);
-                        poi.setOrderNumber(position+1);
-                        mSphinx.getTrafficQueryFragment().setData(poi);
-                        mSphinx.showView(R.id.view_traffic_query);
-                    } else if (id == R.id.address_view) {
+                    if (id == R.id.address_view) {
                         mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailAddress);
                         POI poi = fendian.getPOI(POI.SOURCE_TYPE_FENDIAN, null);
                         poi.setOrderNumber(position+1);
-                        List<POI> list = new ArrayList<POI>();
-                        list.add(poi);
-                        viewMap(list, 0); 
-                    } else if (id == R.id.telephone_txv) {
+                        CommonUtils.queryTraffic(mSphinx, poi);
+                    } else if (id == R.id.telephone_view) {
                         mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailTelphone);
+                        CommonUtils.telephone(mSphinx, telephoneTxv);
                     }
                 }
             };
             
-            distanceBtn.setOnClickListener(onClickListener);
             addressView.setOnClickListener(onClickListener);
-            telephoneTxv.setOnClickListener(onClickListener);
+            telephoneView.setOnClickListener(onClickListener);
             
             return view;
         }
@@ -392,17 +383,17 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         nameTxv.setText(order > 0 ? order+". "+name : name);
         
         if (TextUtils.isEmpty(distance)) {
-            distanceTxv.setText(R.string.come_here);
+            distanceTxv.setText(null);
         } else {
             distanceTxv.setText(distance);
         }
         
         addressTxv.setText(address);
         if (addressTitle != null) {
-            ((TextView) addressView.findViewById(R.id.address_title_txv)).setText(addressTitle);
+//            ((TextView) addressView.findViewById(R.id.address_title_txv)).setText(addressTitle);
         }
         if (telephoneTitle != null) {
-            ((TextView) telephoneView.findViewById(R.id.telephone_title_txv)).setText(telephoneTitle);
+//            ((TextView) telephoneView.findViewById(R.id.telephone_title_txv)).setText(telephoneTitle);
         }
         
         boolean addressEmpty = TextUtils.isEmpty(address);
@@ -417,8 +408,6 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             addressView.setVisibility(View.VISIBLE);
             telephoneView.setVisibility(View.VISIBLE);
             dividerView.setVisibility(View.VISIBLE);
-            addressView.setPadding(Util.dip2px(Globals.g_metrics.density, 8), 0, Util.dip2px(Globals.g_metrics.density, 8), 0);
-            telephoneView.setPadding(Util.dip2px(Globals.g_metrics.density, 8), 0, Util.dip2px(Globals.g_metrics.density, 8), 0);
         } else if (addressEmpty && phoneEmpty) {
             addressView.setVisibility(View.GONE);
             telephoneView.setVisibility(View.GONE);
@@ -428,13 +417,11 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             addressView.setVisibility(View.VISIBLE);
             telephoneView.setVisibility(View.GONE);
             dividerView.setVisibility(View.GONE);
-            addressView.setPadding(Util.dip2px(Globals.g_metrics.density, 8), 0, Util.dip2px(Globals.g_metrics.density, 8), 0);
         } else if (phoneEmpty == false) {
             telephoneView.setBackgroundResource(singleResId);
             addressView.setVisibility(View.GONE);
             telephoneView.setVisibility(View.VISIBLE);
             dividerView.setVisibility(View.GONE);
-            telephoneView.setPadding(Util.dip2px(Globals.g_metrics.density, 8), 0, Util.dip2px(Globals.g_metrics.density, 8), 0);
         }
     }
     
@@ -454,11 +441,13 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             } else {
                 view = convertView;
             }
+
+            view.findViewById(R.id.tuangou_fendian_list_item).setPadding(0, 0, 0, 0);
             
-            TextView nameTxv = (TextView) view.findViewById(R.id.fendian_name_txv);
-            Button distanceBtn = (Button) view.findViewById(R.id.distance_btn);
+            TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
+            TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
             TextView addressTxv = (TextView) view.findViewById(R.id.address_txv);
-            TextView telephoneTxv = (TextView) view.findViewById(R.id.telephone_txv);
+            final TextView telephoneTxv = (TextView) view.findViewById(R.id.telephone_txv);
             final Button todayBtn = (Button) view.findViewById(R.id.today_btn);
             final Button tomorrowBtn = (Button) view.findViewById(R.id.tomorrow_btn);
             final Button afterTomorrowBtn = (Button) view.findViewById(R.id.after_tomorrow_btn);
@@ -477,8 +466,8 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             String address = yingxun.getAddress();
             String phone = yingxun.getPhone();
             showPOI(mSphinx, position+1, yingxun.getName(), distance, address, phone, 
-                    nameTxv, distanceBtn, addressView, dividerView, telephoneView, addressTxv, telephoneTxv, 
-                    R.drawable.list_header, R.drawable.list_middle, R.drawable.list_header, null, null);
+                    nameTxv, distanceTxv, addressView, dividerView, telephoneView, addressTxv, telephoneTxv, 
+                    R.drawable.list_middle, R.drawable.list_middle, R.drawable.list_middle, null, null);
             
             makeChangciView(yingxun, mSphinx, mLayoutInflater, changciListView);
             refreshDayView(yingxun, todayBtn, tomorrowBtn, afterTomorrowBtn, showTimeDividerImv, notimeView);
@@ -509,22 +498,15 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                         } else {
                             yingxun.setChangciOption(Changci.OPTION_DAY_AFTER_TOMORROW);
                         }
-                    } else if (id  == R.id.distance_btn) {
-                        mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailDistance);
+                    } else if (id == R.id.telephone_view) {
+                        mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailTelphone);
+                        CommonUtils.telephone(mSphinx, telephoneTxv);
+                    } else if (id == R.id.address_view) {
+                        mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailAddress);
                         /* 交通界面的显示 */
                         POI poi = yingxun.getPOI(POI.SOURCE_TYPE_YINGXUN, null);
                         poi.setOrderNumber(position+1);
-                        mSphinx.getTrafficQueryFragment().setData(poi);
-                        mSphinx.showView(R.id.view_traffic_query);
-                    } else if (id == R.id.telephone_txv) {
-                        mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailTelphone);
-                    } else if (id == R.id.address_view) {
-                        mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailAddress);
-                		POI poi = yingxun.getPOI(POI.SOURCE_TYPE_YINGXUN, null);
-                        poi.setOrderNumber(position+1);
-                        List<POI> list = new ArrayList<POI>();
-                        list.add(poi);
-                        viewMap(list, 0);
+                        CommonUtils.queryTraffic(mSphinx, poi);
                     }
                     getAdapter().notifyDataSetChanged();
                 }
@@ -533,10 +515,8 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             tomorrowBtn.setOnClickListener(onClickListener);
             afterTomorrowBtn.setOnClickListener(onClickListener);
             
-            distanceBtn.setOnClickListener(onClickListener);
-            
             addressView.setOnClickListener(onClickListener);
-            telephoneTxv.setOnClickListener(onClickListener);
+            telephoneView.setOnClickListener(onClickListener);
             
             return view;
         }
@@ -847,6 +827,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         }
     }
     
+    @SuppressWarnings("unchecked")
     private List getList() {
         if (BaseQuery.DATA_TYPE_FENDIAN.equals(mDataType)) {
             return mFendianList;
@@ -856,6 +837,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         return null;
     }
     
+    @SuppressWarnings("unchecked")
     private ArrayAdapter getAdapter() {
         if (BaseQuery.DATA_TYPE_FENDIAN.equals(mDataType)) {
             return mFendianAdapter;

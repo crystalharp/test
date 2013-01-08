@@ -111,10 +111,8 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        mLeftImv.setVisibility(View.INVISIBLE);
         mLeftBtn.setVisibility(View.INVISIBLE);
         mTitleBtn.setText(R.string.more);
-        mRightImv.setVisibility(View.INVISIBLE);
         mRightBtn.setVisibility(View.INVISIBLE);
 
         mMenuFragment.updateMenuStatus(R.id.more_btn);

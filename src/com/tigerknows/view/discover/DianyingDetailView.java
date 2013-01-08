@@ -10,6 +10,7 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -27,6 +28,7 @@ import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.Dianying;
@@ -36,6 +38,7 @@ import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Yingxun;
 import com.tigerknows.model.DataOperation.DianyingQueryResponse;
 import com.tigerknows.model.Yingxun.Changci;
+import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 
 /**
@@ -69,7 +72,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
     
     private TextView mFendianNameTxv = null;
     
-    private Button mDistanceBtn = null;
+    private TextView mDistanceTxv = null;
     
     private TextView mAddressTxv = null;
     
@@ -146,7 +149,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         	mDirectorTxv.setVisibility(View.VISIBLE);
         	String colortxt = mSphinx.getString(R.string.dianying_detail_director,mData.getDirector());
         	SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
-            style.setSpan(new ForegroundColorSpan(0x99000000),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);  
+            style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_BLACK_DARK),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);  
             mDirectorTxv.setText(style);
         }
         else
@@ -157,7 +160,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         	mMainActorTxv.setVisibility(View.VISIBLE);
         	String colortxt = mSphinx.getString(R.string.dianying_detail_main_actor,mData.getMainActor());
         	SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
-            style.setSpan(new ForegroundColorSpan(0x99000000),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_BLACK_DARK),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             mMainActorTxv.setText(style);
         }
         else
@@ -168,7 +171,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         	mTagTxv.setVisibility(View.VISIBLE);
         	String colortxt = mSphinx.getString(R.string.dianying_detail_tag,mData.getTag());
         	SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
-            style.setSpan(new ForegroundColorSpan(0x99000000),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_BLACK_DARK),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             mTagTxv.setText(style);
         }
         else
@@ -179,7 +182,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         	mCountryTxv.setVisibility(View.VISIBLE);
         	String colortxt = mSphinx.getString(R.string.dianying_detail_country,mData.getCountry());
         	SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
-            style.setSpan(new ForegroundColorSpan(0x99000000),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_BLACK_DARK),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             mCountryTxv.setText(style);
         }
         else
@@ -190,7 +193,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         	mLengthTxv.setVisibility(View.VISIBLE);
         	String colortxt = mSphinx.getString(R.string.dianying_detail_length,mData.getLength());
         	SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
-            style.setSpan(new ForegroundColorSpan(0x99000000),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_BLACK_DARK),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             mLengthTxv.setText(style);
         }
         else
@@ -201,7 +204,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         	mStartTimeTxv.setVisibility(View.VISIBLE);
         	String colortxt = mSphinx.getString(R.string.dianying_detail_start_time,mData.getStartTime());
         	SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
-            style.setSpan(new ForegroundColorSpan(0x99000000),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_BLACK_DARK),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             mStartTimeTxv.setText(style);
         }
         else
@@ -218,8 +221,8 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         
         mYingxun = mData.getYingxun();
         DiscoverChildListFragment.showPOI(mSphinx, mYingxun.getName(), mYingxun.getDistance(), mYingxun.getAddress(), mYingxun.getPhone(), 
-                mFendianNameTxv, mDistanceBtn, mAddressView, mDividerView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
-                R.drawable.list_header, R.drawable.list_middle, R.drawable.list_header);
+                mFendianNameTxv, mDistanceTxv, mAddressView, mDividerView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
+                R.drawable.list_middle, R.drawable.list_middle, R.drawable.list_middle);
         
         mNotimeView.setVisibility(View.GONE);
         refreshShowTime();
@@ -306,8 +309,11 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         mAddressView = view.findViewById(R.id.address_view);
         mDividerView = view.findViewById(R.id.divider_imv);
         mTelephoneView = view.findViewById(R.id.telephone_view);
-        mFendianNameTxv = (TextView) view.findViewById(R.id.fendian_name_txv);
-        mDistanceBtn = (Button)view.findViewById(R.id.distance_btn);
+        view.findViewById(R.id.name_view).setBackgroundResource(R.drawable.list_middle);
+        view.setPadding(0, 0, 0, 0);
+        view.findViewById(R.id.tuangou_fendian_list_item).setPadding(0, 0, 0, 0);
+        mFendianNameTxv = (TextView) view.findViewById(R.id.name_txv);
+        mDistanceTxv = (TextView)view.findViewById(R.id.distance_txv);
         mAddressTxv = (TextView)view.findViewById(R.id.address_txv);
         mTelephoneTxv = (TextView)view.findViewById(R.id.telephone_txv);
         
@@ -324,22 +330,33 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         mTodayBtn.setOnClickListener(this);
         mTomorrowBtn.setOnClickListener(this);
         mAfterTomorrowBtn.setOnClickListener(this);
-        mDistanceBtn.setOnClickListener(this);
         
         mAddressView.setOnClickListener(this);
-        mTelephoneTxv.setOnClickListener(this);
+        mTelephoneView.setOnClickListener(this);
+        mBodyScv.setOnTouchListener(new OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    mParentFragment.updateNextPrevControls();
+                    mParentFragment.scheduleDismissOnScreenControls();
+                }
+                return false;
+            }
+        });
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.telephone_txv:
+            case R.id.telephone_view:
                 mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailTelphone);
+                CommonUtils.telephone(mSphinx, mTelephoneTxv);
                 break;
                 
             case R.id.address_view:
                 mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailAddress);
-                viewMap();
+                CommonUtils.queryTraffic(mSphinx, mYingxun.getPOI(POI.SOURCE_TYPE_DIANYING,mData));
                 break;
                 
             case R.id.after_tomorrow_btn:
@@ -375,12 +392,6 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
             	mSphinx.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.YingxunList);
                 mSphinx.showView(R.id.view_discover_child_list);
                 break;
-            case R.id.distance_btn:
-                mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailDistance);
-                /* 交通界面的显示 */
-                mSphinx.getTrafficQueryFragment().setData(mYingxun.getPOI(POI.SOURCE_TYPE_DIANYING,mData));
-                mSphinx.showView(R.id.view_traffic_query);
-                break;    
 
         }
     }

@@ -123,7 +123,6 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         
         if (mSphinx.mSnapMap) {
             if (mSphinx.mIntoSnap == 0) {
-                mLeftImv.setVisibility(View.INVISIBLE);
                 mLeftBtn.setText(R.string.home);
             }
             mSphinx.mIntoSnap++;

@@ -50,6 +50,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -57,11 +58,15 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.ActionLog;
 import com.tigerknows.R;
+import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.POI;
 import com.tigerknows.view.SpringbackListView;
 import com.tigerknows.view.StringArrayAdapter;
 
@@ -916,30 +921,79 @@ public class CommonUtils {
 
     }
     
-    public static void onClickTelephoneTxv(final Context context, TextView textView) {
-        String split = context.getString(R.string.dunhao);
+    public static void telephone(final Activity activity, TextView textView) {
+        String split = activity.getString(R.string.dunhao);
         final String[] list = textView.getText().toString().split(split);
         if (list.length == 1) {
             Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+list[0]));
-            context.startActivity(intent);
+            activity.startActivity(intent);
         } else {
-            final ArrayAdapter<String> adapter = new StringArrayAdapter(context, list, null);
+            final ArrayAdapter<String> adapter = new StringArrayAdapter(activity, list, null);
+            ListView listView = CommonUtils.makeListView(activity);
+            listView.setAdapter(adapter);
+            
+            final AlertDialog alertDialog = showNormalDialog(activity,
+                    activity.getString(R.string.app_name),
+                    null,
+                    listView,
+                    null,
+                    null,
+                    null);
+            
+            listView.setOnItemClickListener(new OnItemClickListener() {
 
-            AlertDialog.Builder b = new AlertDialog.Builder(context);
-
-            DialogInterface.OnClickListener click = new DialogInterface.OnClickListener() {
-                public final void onClick(DialogInterface dialog, int which) {
-
+                @Override
+                public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
                     Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:"+list[which]));
-                    context.startActivity(intent);
+                    activity.startActivity(intent);
+                    alertDialog.dismiss();
                 }
-            };
-
-            b.setTitle(R.string.phonenumber);
-            b.setCancelable(true);
-            b.setAdapter(adapter, click);
-
-            b.show();
+            });
         }
+    }
+
+    public static void queryTraffic(final Sphinx sphinx, final POI poi) {
+        
+        String[] list = sphinx.getResources().getStringArray(R.array.goto_here);
+        int[] leftCompoundResIdList = new int[] {R.drawable.ic_bus, R.drawable.ic_drive, R.drawable.ic_walk, R.drawable.ic_start};
+        final ArrayAdapter<String> adapter = new StringArrayAdapter(sphinx, list, leftCompoundResIdList);
+        
+        ListView listView = CommonUtils.makeListView(sphinx);
+        listView.setAdapter(adapter);
+        
+        final AlertDialog alertDialog = CommonUtils.showNormalDialog(sphinx, 
+                sphinx.getString(R.string.come_here), 
+                null,
+                listView,
+                null,
+                null,
+                null);
+        
+        listView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
+                ActionLog actionLog = ActionLog.getInstance(sphinx);
+                switch (index) {
+                    case 0:
+                        sphinx.getTrafficQueryFragment().setData(poi, index);
+                        break;
+                        
+                    case 1:
+                        sphinx.getTrafficQueryFragment().setData(poi, index);
+                        break;
+                        
+                    case 2:
+                        sphinx.getTrafficQueryFragment().setData(poi, index);
+                        break;
+                        
+                    case 3:
+                        sphinx.getTrafficQueryFragment().setData(poi, index);
+                        break;
+                }
+                sphinx.showView(R.id.view_traffic_query);
+                alertDialog.dismiss();
+            }
+        });
     }
 }

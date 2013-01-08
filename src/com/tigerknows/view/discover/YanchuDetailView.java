@@ -7,8 +7,8 @@ package com.tigerknows.view.discover;
 
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -29,6 +29,7 @@ import com.tigerknows.model.Response;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.DataOperation.YanchuQueryResponse;
+import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 
 /**
@@ -50,7 +51,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
 
     private TextView mFendianNameTxv = null;
     
-    private Button mDistanceBtn = null;
+    private TextView mDistanceTxv = null;
     
     private View mAddressView = null;
     
@@ -127,8 +128,8 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
         }
         String name = mData.getPlaceName();
         DiscoverChildListFragment.showPOI(mSphinx, 0, TextUtils.isEmpty(name) ? mSphinx.getString(R.string.yanchu_didian) : name, mData.getDistance(), mData.getAddress(), telephone, 
-                mFendianNameTxv, mDistanceBtn, mAddressView, mDividerView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
-                R.drawable.list_header, R.drawable.list_footer, R.drawable.list_single, mSphinx.getString(R.string.xiangxidizhi), telephoneTitle);
+                mFendianNameTxv, mDistanceTxv, mAddressView, mDividerView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
+                R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer, mSphinx.getString(R.string.xiangxidizhi), telephoneTitle);
         
         refreshDescription(true);
         refreshDrawable();
@@ -192,7 +193,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
         View view =  findViewById(R.id.tuangou_fendian_list_item);
         
         mFendianNameTxv = (TextView) view.findViewById(R.id.name_txv);
-        mDistanceBtn = (Button)view.findViewById(R.id.distance_btn);
+        mDistanceTxv = (TextView)view.findViewById(R.id.distance_txv);
         mAddressView = view.findViewById(R.id.address_view);
         mTelephoneView = view.findViewById(R.id.telephone_view);    
         mDividerView = view.findViewById(R.id.divider_imv);
@@ -206,34 +207,39 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
     @Override
     protected void setListener() {
         super.setListener();
-        mDistanceBtn.setOnClickListener(this);
         //mAddressTxv.setOnClickListener(this);
        // mTelephoneTxv.setOnClickListener(this);      
         mAddressView.setOnClickListener(this);
-        mTelephoneTxv.setOnClickListener(this);
+        mTelephoneView.setOnClickListener(this);
+        mBodyScv.setOnTouchListener(new OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    mParentFragment.updateNextPrevControls();
+                    mParentFragment.scheduleDismissOnScreenControls();
+                }
+                return false;
+            }
+        });
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.telephone_txv:
+            case R.id.telephone_view:
                 mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailTelphone);
+                CommonUtils.telephone(mSphinx, mTelephoneTxv);
                 break;
                 
             case R.id.address_view:
                 mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailAddress);
-                viewMap();
-                break;
-                
-            case R.id.distance_btn:
-                mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailDistance);
-                /* 交通界面的显示 */
                 POI poi = mData.getPOI();
                 poi.setName(mData.getPlaceName());
                 poi.setAddress(mData.getAddress());
-                mSphinx.getTrafficQueryFragment().setData(poi);
-                mSphinx.showView(R.id.view_traffic_query);
+                CommonUtils.queryTraffic(mSphinx, poi);
                 break;
+                
         }
     }
 

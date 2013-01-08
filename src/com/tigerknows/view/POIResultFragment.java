@@ -264,8 +264,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.result_list);
-        mRightImv.setImageResource(R.drawable.ic_view_map);
-        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
         mRightBtn.setOnClickListener(this);
         
         if (isReLogin()) {
@@ -274,7 +273,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         
         if (mSphinx.mSnapMap) {
             if (mSphinx.mIntoSnap == 0) {
-                mLeftImv.setVisibility(View.INVISIBLE);
                 mLeftBtn.setText(R.string.home);
             }
             mSphinx.mIntoSnap++;

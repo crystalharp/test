@@ -66,7 +66,11 @@ public class WidgetUtils {
         
         final AlertDialog alertDialog = CommonUtils.showNormalDialog(activity, 
                 activity.getString(R.string.share), 
-                listView);
+                null,
+                listView,
+                null,
+                null,
+                null);
         
         listView.setOnItemClickListener(new OnItemClickListener() {
 

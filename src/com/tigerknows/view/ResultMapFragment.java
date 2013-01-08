@@ -68,7 +68,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         if (mSphinx.mSnapMap) {
             mSnapView.setVisibility(View.VISIBLE);
             if (mSphinx.mIntoSnap == 0) {
-                mLeftImv.setVisibility(View.INVISIBLE);
                 mLeftBtn.setText(R.string.home);
             }
             mSphinx.mIntoSnap++;
