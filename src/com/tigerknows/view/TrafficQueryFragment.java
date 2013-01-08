@@ -41,6 +41,7 @@ import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.util.TKAsyncTask;
+import com.tigerknows.view.TrafficQueryEventHelper.TrafficAlternativeDialog;
 
 /**
  * 此类包含 交通首页、交通输入页、交通全屏页、交通选点页，合称“交通频道首页”
@@ -857,7 +858,18 @@ public class TrafficQueryFragment extends BaseFragment {
         } else if (trafficModel.getType() == TrafficModel.TYPE_ALTERNATIVES 
         		|| trafficModel.getType() == TrafficModel.TYPE_PROJECT){
             if (trafficModel.getType() == TrafficModel.TYPE_ALTERNATIVES) {
-                mSphinx.getTrafficAlternativesDialog().setData(trafficQuery, this);
+            	//xupeng:不再需要alternativeDialog，改为弹出对话框。
+            	//FIXME:没有处理对话框过长的滚动条，没有block机制，全部执行了下去。
+            	if (trafficQuery.getTrafficModel().getStartAlternativesList() != null) {
+            		TrafficAlternativeDialog dialog = mEventHelper.new TrafficAlternativeDialog(trafficQuery, mStart);
+            		dialog.show();
+            	} 
+            	if (trafficQuery.getTrafficModel().getEndAlternativesList() != null) {
+            		TrafficAlternativeDialog dialog = mEventHelper.new TrafficAlternativeDialog(trafficQuery, mEnd);
+            		dialog.show();
+            	}
+//            	submitTrafficQuery();
+//                mSphinx.getTrafficAlternativesDialog().setData(trafficQuery, this);
             } else if (trafficModel.getPlanList() == null || trafficModel.getPlanList().size() <= 0){
             	mActionLog.addAction(ActionLog.TrafficQueryNoResultT);
             	showTrafficErrorTip(trafficQuery);
