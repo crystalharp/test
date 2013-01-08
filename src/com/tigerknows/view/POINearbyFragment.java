@@ -102,7 +102,9 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
+            String key = mKeywordEdt.getText().toString();
+            POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, key);
+            mSuggestAdapter.key = key;
             notifyDataSetChanged();
         }
 
@@ -219,7 +221,9 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
+                    String key = mKeywordEdt.getText().toString();
+                    POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, key);
+                    mSuggestAdapter.key = key;
                     notifyDataSetChanged();
                 }
                 return false;
@@ -246,7 +250,9 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
                 if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
                     mActionLog.addAction(ActionLog.SearchNearbyCleanHistory);
                     HistoryWordTable.clearHistoryWord(mSphinx, Globals.g_Current_City_Info.getId(), HistoryWordTable.TYPE_POI);
-                    POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
+                    String key = mKeywordEdt.getText().toString();
+                    POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, key);
+                    mSuggestAdapter.key = key;
                     notifyDataSetChanged();
                 } else {
                     if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
@@ -330,6 +336,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     
     //还原为第一次进入的状态
     public void reset() {
+        mSuggestAdapter.key = null;
         mKeywordEdt.setText(null);
         mKeywordEdt.clearFocus();
         mViewPager.setCurrentItem(0);

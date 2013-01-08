@@ -234,7 +234,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         registerIntentReceivers();
         
         mTitleBtn.setText(mStatus == STATUS_NEW ? R.string.publish_comment : R.string.modify_comment);
-        mRightBtn.setText(R.string.publish);
+        mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
         Comment comment = mPOI.getMyComment();
         long userId = Long.MIN_VALUE;
         User user = Globals.g_User;            
@@ -1015,6 +1015,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         }
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);

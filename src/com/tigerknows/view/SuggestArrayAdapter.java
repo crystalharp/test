@@ -1,9 +1,14 @@
 package com.tigerknows.view;
 
 import com.tigerknows.R;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.TKWord;
 
 import android.content.Context;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.TextUtils;
+import android.text.style.ForegroundColorSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +30,7 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
     
     private Context context;
     private CallBack callBack;
+    public String key;
     
     public void setCallBack(CallBack callBack) {
         this.callBack = callBack;
@@ -50,16 +56,18 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
             iconImv.setVisibility(View.VISIBLE);
             inputBtn.setVisibility(View.VISIBLE);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+            formatText(textTxv, tkWord.word, key);
         } else if (tkWord.attribute == TKWord.ATTRIBUTE_SUGGEST) {
             iconImv.setVisibility(View.INVISIBLE);
             inputBtn.setVisibility(View.VISIBLE);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
+            formatText(textTxv, tkWord.word, key);
         } else {
             iconImv.setVisibility(View.INVISIBLE);
             inputBtn.setVisibility(View.INVISIBLE);
             textTxv.setGravity(Gravity.CENTER);
+            textTxv.setText(tkWord.word);
         }
-        textTxv.setText(tkWord.word);
         if (callBack != null) {
             inputBtn.setOnClickListener(new OnClickListener() {
                 
@@ -71,5 +79,15 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
         }
         
         return convertView;
+    }
+    
+    private void formatText(TextView textView, String word, String key) {
+        if (TextUtils.isEmpty(key)) {
+            textView.setText(word);
+        } else {
+            SpannableStringBuilder style=new SpannableStringBuilder(word);  
+            style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_ORANGE),0,key.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textView.setText(style);
+        }
     }
 }

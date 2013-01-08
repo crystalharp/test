@@ -74,7 +74,9 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
+            String key = mKeywordEdt.getText().toString();
+            makeSuggestWord(mSphinx, mSuggestWordList, key);
+            mSuggestAdapter.key = key;
             mSuggestAdapter.notifyDataSetChanged();
         }
 
@@ -177,7 +179,9 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
                 if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
                     mActionLog.addAction(ActionLog.SearchInputCleanHistory);
                     HistoryWordTable.clearHistoryWord(mSphinx, Globals.g_Current_City_Info.getId(), HistoryWordTable.TYPE_POI);
-                    makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
+                    String key = mKeywordEdt.getText().toString();
+                    makeSuggestWord(mSphinx, mSuggestWordList, key);
+                    mSuggestAdapter.key = key;
                     mSuggestAdapter.notifyDataSetChanged();
                 } else {
                     if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
@@ -243,6 +247,7 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
     
     //还原为第一次进入的状态
     public void reset() {
+        mSuggestAdapter.key = null;
         mKeywordEdt.setText(null);
         mKeywordEdt.clearFocus();
         mSphinx.getHandler().post(mShowSoftInput);

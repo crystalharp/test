@@ -251,7 +251,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         
         TKConfig.readConfig();
         Globals.readSessionAndUser(this);
-        Globals.setConnectionFast(Util.isConnectionFast(this));        
+        Globals.setConnectionFast(CommonUtils.isConnectionFast(this));        
 
         Globals.g_My_Location_City_Info = null;
         Globals.g_My_Location = null;
@@ -1048,7 +1048,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 		    finish();
 		}
 
-        Globals.setConnectionFast(Util.isConnectionFast(this));
+        Globals.setConnectionFast(CommonUtils.isConnectionFast(this));
         Globals.getAsyncImageLoader().onResume();
 		mTimer = new Timer();
         TimerTask timerTask = new TimerTask() {
