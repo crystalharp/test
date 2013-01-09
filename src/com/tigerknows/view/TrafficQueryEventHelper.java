@@ -173,55 +173,6 @@ public class TrafficQueryEventHelper {
 		mQueryFragment.mBusline.getEdt().removeTextChangedListener(buslineSuggestWatcher);
 	}
 	
-	public class TrafficAlternativeDialog extends AlertDialog.Builder {
-
-		private QueryEditText mQueryEdt;
-		
-		private List<Station> mStationList;
-		
-		public TrafficAlternativeDialog(TrafficQuery trafficQuery, QueryEditText queryEdt) {
-			super(mQueryFragment.mSphinx);
-			mQueryEdt = queryEdt;
-			
-			if (queryEdt.equals(mQueryFragment.mStart)){
-				setTitle(mQueryFragment.mSphinx.getString(R.string.select_start_station));
-				mStationList = trafficQuery.getTrafficModel().getStartAlternativesList();
-			} else if (queryEdt.equals(mQueryFragment.mEnd)) {
-				setTitle(mQueryFragment.mSphinx.getString(R.string.select_end_station));
-				mStationList = trafficQuery.getTrafficModel().getEndAlternativesList();
-			}
-			//FIXME:可能会出错
-//			ArrayAdapter<Station> adapter = new ArrayAdapter<Station>(mQueryFragment.mSphinx, 0, mStationList);
-			setCancelable(true);
-//			setAdapter(adapter, new DialogOnClickListener(mQueryEdt));
-			if(mStationList != null && mStationList.size() != 0){
-	            int len = mStationList.size();
-	            int i = 0;
-
-	            String names[] = new String[len];
-	            for(Station station:mStationList) {
-	                names[i++] =  station.getName();
-	            }
-				setItems(names, new DialogOnClickListener(mQueryEdt));
-			}
-		}
-		
-		private class DialogOnClickListener implements DialogInterface.OnClickListener {
-
-			private QueryEditText mQueryEdt;
-			
-			public DialogOnClickListener(QueryEditText queryEdt) {
-				mQueryEdt = queryEdt;
-			}
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
-				mQueryEdt.setPOI(mStationList.get(which).toPOI());
-			}
-			
-		}
-	}
 	protected class StartEndEdtClickListener implements OnEditorActionListener {
 		private QueryEditText mStart, mEnd, mQueryEdit;
 		
