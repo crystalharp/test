@@ -55,6 +55,10 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     private static final int SHOW_TYPE_DRVIE = Plan.Step.TYPE_DRIVE;
     
     private static final int SHOW_TYPE_WALK = Plan.Step.TYPE_WALK;
+    
+	private static final int TYPE_RESULT_LIST_START = 6;
+
+	private static final int TYPE_RESULT_LIST_END = 7;
         
     private ListAdapter mResultAdapter;
 
@@ -127,7 +131,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         default:
         }
         
-        //TODO:修改titlebtn的内容
         if (mPlanList != null) {
         	//有内容，需要弹出顶部切换菜单
 //	        mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan));
@@ -199,8 +202,19 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 				// 绘制交通图层
                 viewMap();
                 // 将地图平移到某一坐标点, 并缩放至某一级别
-                TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), plan.getStepList().get(position).getPositionList().get(0), 
+                if (position == 0) {
+                	//Listview中起点项的处理
+                	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), plan.getStepList().get(position).getPositionList().get(0), 
                 		mSphinx.getMapView());
+                } else if (position >= plan.getLength()) {
+                	//Listview中终点项的处理
+                	//FIXME:终点项判断有问题，过不来。
+                	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), plan.getStepList().get(position - 2).getPositionList().get(0), 
+                    		mSphinx.getMapView());
+                } else {
+                	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), plan.getStepList().get(position - 1).getPositionList().get(0), 
+                		mSphinx.getMapView());
+                }
                 // 比例尺恢复到默认的200m
                 mSphinx.getMapView().zoomTo(14);
             }
@@ -266,6 +280,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         	super();
             strList = NavigationSplitJointRule.splitJoint(context, mShowType, plan);
             types = (ArrayList<Integer>)plan.getStepTypeList(mContext);
+
+            //列表前面显示起点，后面显示终点
+            strList.add(0, plan.getStart().getName());
+            strList.add(plan.getEnd().getName());
+            types.add(0, TYPE_RESULT_LIST_START);
+            types.add(TYPE_RESULT_LIST_END);
         }
 
         @Override
@@ -364,6 +384,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             case TrafficModel.Plan.Step.TYPE_WALK:
                 res = R.drawable.icon_marker_walk;
                 break;
+			case TYPE_RESULT_LIST_START:
+				res = R.drawable.icon_marker_start;
+				break;
+            case TYPE_RESULT_LIST_END:
+            	res = R.drawable.icon_marker_end;
+            	break;
             default:
                 
             }
