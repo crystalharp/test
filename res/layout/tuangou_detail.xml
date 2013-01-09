@@ -71,13 +71,71 @@
                     android:focusable="false"
                     />
             </RelativeLayout>
+            
             <RelativeLayout 
-                android:layout_width="fill_parent"
-                android:layout_height="42dp"
-                android:background="@android:color/white"
-                android:visibility="visible"
-                >
-            </RelativeLayout>
+            android:id="@+id/bar_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/white"
+            android:padding="6dp"
+            >
+            <Button 
+                android:id="@+id/buy_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:textColor="@android:color/black"
+                android:textSize="14sp"
+                android:singleLine="true"
+                android:focusable="false"
+                android:background="@drawable/btn_buy"
+                />
+                
+            <TextView 
+                android:id="@+id/price_txv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_alignBottom="@id/buy_btn"
+                android:layout_marginLeft="8dp"
+                android:textColor="#fffd9215"
+                android:textSize="32sp"
+                android:text="@string/distance"
+                android:singleLine="true"
+                android:includeFontPadding="false"
+                android:focusable="false"
+                />
+            <TextView 
+                android:id="@+id/org_price_txv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/price_txv"
+                android:layout_alignBottom="@id/buy_btn"
+                android:layout_marginLeft="8dp"
+                android:layout_marginBottom="4dp"
+                android:textColor="#99000000"
+                android:textSize="14sp"
+                android:text="@string/distance"
+                android:singleLine="true"
+                android:includeFontPadding="false"
+                android:focusable="false"
+                />
+            <TextView 
+                android:id="@+id/discount_txv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/price_txv"
+                android:layout_above="@id/org_price_txv"
+                android:layout_marginLeft="8dp"
+                android:textColor="#99000000"
+                android:textSize="14sp"
+                android:text="@string/distance"
+                android:singleLine="true"
+                android:includeFontPadding="false"
+                android:focusable="false"
+                />
+        </RelativeLayout>
                 
             <RelativeLayout
                 android:layout_width="fill_parent"
@@ -263,28 +321,17 @@
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
+    
     <RelativeLayout 
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        >
-        <TextView 
-            android:id="@+id/padding_txv"
-            android:text="@string/app_name"
-            android:textColor="@android:color/transparent"
-            android:background="@android:color/transparent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            />
-        <RelativeLayout 
-            android:id="@+id/bar_view"
+            android:id="@+id/bar_view_2"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
             android:background="@android:color/white"
-            android:layout_below="@id/padding_txv"
             android:padding="6dp"
             >
             <Button 
-                android:id="@+id/buy_btn"
+                android:id="@+id/buy_btn_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -297,11 +344,11 @@
                 />
                 
             <TextView 
-                android:id="@+id/price_txv"
+                android:id="@+id/price_txv_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentLeft="true"
-                android:layout_alignBottom="@id/buy_btn"
+                android:layout_alignBottom="@id/buy_btn_2"
                 android:layout_marginLeft="8dp"
                 android:textColor="#fffd9215"
                 android:textSize="32sp"
@@ -311,11 +358,11 @@
                 android:focusable="false"
                 />
             <TextView 
-                android:id="@+id/org_price_txv"
+                android:id="@+id/org_price_txv_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/price_txv"
-                android:layout_alignBottom="@id/buy_btn"
+                android:layout_toRightOf="@id/price_txv_2"
+                android:layout_alignBottom="@id/buy_btn_2"
                 android:layout_marginLeft="8dp"
                 android:layout_marginBottom="4dp"
                 android:textColor="#99000000"
@@ -326,11 +373,11 @@
                 android:focusable="false"
                 />
             <TextView 
-                android:id="@+id/discount_txv"
+                android:id="@+id/discount_txv_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/price_txv"
-                android:layout_above="@id/org_price_txv"
+                android:layout_toRightOf="@id/price_txv_2"
+                android:layout_above="@id/org_price_txv_2"
                 android:layout_marginLeft="8dp"
                 android:textColor="#99000000"
                 android:textSize="14sp"
@@ -340,7 +387,7 @@
                 android:focusable="false"
                 />
         </RelativeLayout>
-    </RelativeLayout>
+                
 
     <include
         android:id="@+id/loading_view"

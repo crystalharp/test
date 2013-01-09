@@ -60,15 +60,28 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     
     private ImageView mShangjiaMarkerImv;
     
+    
+    private View mBarView = null;
+    
     private TextView mPriceTxv;
     
     private TextView mOrgPriceTxv;
     
     private TextView mDiscountTxv;
 
-    private View mBarView = null;
-
     private Button mBuyBtn = null;
+
+    
+    private View mBarView_2 = null;
+    
+    private TextView mPriceTxv_2;
+    
+    private TextView mOrgPriceTxv_2;
+    
+    private TextView mDiscountTxv_2;
+
+    private Button mBuyBtn_2 = null;
+    
     
     private TextView mNameTxt = null;
     
@@ -120,10 +133,11 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     
     private int mPictureDetailWidth;
     
-    private TextView mPaddingTxv;
-    
     private int mPaddingHeight;
-    
+
+	  int[] locationScv = new int[]{0, 1};
+	  int[] locationBar = new int[]{0, 2};
+	  
     protected Runnable mActualLoadedDrawableRun = new Runnable() {
         
         @Override
@@ -171,6 +185,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     
     public TuangouDetailView(Sphinx sphinx, TuangouDetailFragment parentFragment) {
         super(sphinx, parentFragment, R.layout.tuangou_detail);
+        
         findViews();
         mActionTag = ActionLog.TuangouXiangqing;
         
@@ -189,10 +204,12 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mPictureDetailWidth = (int)(Globals.g_metrics.widthPixels-(Globals.g_metrics.density*48));
     }
 
+    private final int FLOATING_BAR_MSG_DELAY = 100; 
+    
     @Override
     public void onResume() {
         super.onResume();
-        mPaddingTxv.setPadding(0, (mPictureHeight-mPaddingHeight), 0, 0);
+        handler.sendMessageDelayed(handler.obtainMessage(), FLOATING_BAR_MSG_DELAY);
     }
 
     @Override
@@ -223,6 +240,11 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mOrgPriceTxv.setText(mSphinx.getString(R.string.rmb)+mData.getOrgPrice());
         mOrgPriceTxv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
         mDiscountTxv.setText(mData.getDiscount());
+
+        mPriceTxv_2.setText(mSphinx.getString(R.string.rmb) + mData.getPrice());
+        mOrgPriceTxv_2.setText(mSphinx.getString(R.string.rmb)+mData.getOrgPrice());
+        mOrgPriceTxv_2.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
+        mDiscountTxv_2.setText(mData.getDiscount());
         
         mBuyerNumTxv.setText(mSphinx.getString(R.string.tuangou_detail_buyer_num, mData.getBuyerNum()));
         
@@ -376,20 +398,27 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             mLoadingView.setVisibility(View.GONE);
         }
     }
-    
+
+	  
     @Override
     protected void findViews() {
         super.findViews();
         mPictureImv = (ImageView) findViewById(R.id.picture_imv);
         mShangjiaMarkerImv = (ImageView)findViewById(R.id.shangjia_marker_imv);
+
         mPriceTxv = (TextView)findViewById(R.id.price_txv);
         mBarView = findViewById(R.id.bar_view);
         mBuyBtn = (Button) findViewById(R.id.buy_btn);
         mOrgPriceTxv = (TextView)findViewById(R.id.org_price_txv);
         mDiscountTxv = (TextView) findViewById(R.id.discount_txv);
-        mPaddingTxv = (TextView) findViewById(R.id.padding_txv);
-        mPaddingTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        mPaddingHeight = mPaddingTxv.getMeasuredHeight();
+        
+        mPriceTxv_2 = (TextView)findViewById(R.id.price_txv_2);
+        mBarView_2 = findViewById(R.id.bar_view_2);
+        mBuyBtn_2 = (Button) findViewById(R.id.buy_btn_2);
+        mOrgPriceTxv_2 = (TextView)findViewById(R.id.org_price_txv_2);
+        mDiscountTxv_2 = (TextView) findViewById(R.id.discount_txv_2);
+
+        
         mNameTxt = (TextView)findViewById(R.id.name_txv);
         mRefundImv = (ImageView) findViewById(R.id.refund_imv);
         mRefundTxv = (TextView) findViewById(R.id.refund_txv);
@@ -419,50 +448,55 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mServiceHotlineTitleTxv = (TextView) findViewById(R.id.service_hotline_title_txv);
     }
 
+    private int lastY = 0;
+
+    private int touchEventId = R.id.view_invalid;
+
+  	  
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+        		super.handleMessage(msg);
+        		if( !updateBarViewVisibility(true)){
+        			
+                	if (lastY != locationBar[1]) {
+                		handler.sendMessageDelayed(handler.obtainMessage(touchEventId, null), FLOATING_BAR_MSG_DELAY);
+                		lastY = locationBar[1];
+                	}//end if
+                	
+        		}
+             
+        }
+    };
+	  
     @Override
     protected void setListener() {
         super.setListener();
         mBuyBtn.setOnClickListener(this);
+        mBuyBtn_2.setOnClickListener(this);
         mAddressView.setOnClickListener(this);
         mTelephoneView.setOnClickListener(this);
         mNearbyFendianView.setOnClickListener(this);
         mServiceHotlineView.setOnClickListener(this);
+        
         mBodyScv.setOnTouchListener(new OnTouchListener() {
-            private int lastY = 0;
-
-            private int touchEventId = R.id.view_invalid;
-
-            Handler handler = new Handler() {
-                @Override
-                public void handleMessage(Message msg) {
-                    super.handleMessage(msg);
-                    View scroller = (View)msg.obj;
-                    mPaddingTxv.setPadding(0, (mPictureHeight-scroller.getScrollY()-mPaddingHeight), 0, 0);
-                    if (msg.what == touchEventId) {
-                        int y = scroller.getScrollY();
-                        if (lastY != y) {
-                            handler.sendMessageDelayed(handler.obtainMessage(touchEventId, scroller), 128);
-                            lastY = y;
-                        } else {
-                            handler.sendMessageDelayed(handler.obtainMessage(R.id.view_discover, scroller), 1024);
-                        }
-                    } else if (msg.what == R.id.view_discover) {
-                        int y = scroller.getScrollY();
-                        if (lastY != y) {
-                            handler.sendMessageDelayed(handler.obtainMessage(R.id.view_discover, scroller), 128);
-                            lastY = y;
-                        }
-                    }
-                }
-            };
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                handler.sendMessageDelayed(handler.obtainMessage(touchEventId, v), 128);
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    mParentFragment.updateNextPrevControls();
+            	 
+            	//Deal with floating bar
+	          	  if(event.getAction() == MotionEvent.ACTION_UP){
+	          		  //user finger up, deal with possible animation
+	          		  handler.sendMessageDelayed(handler.obtainMessage(touchEventId, null), FLOATING_BAR_MSG_DELAY);
+	          	  }else{//Scroll moved
+	          		  updateBarViewVisibility(true);
+	          	  }
+	          	  
+	          	  //
+	          	  if (event.getAction() == MotionEvent.ACTION_DOWN) {
+	          		  mParentFragment.updateNextPrevControls();
                     mParentFragment.scheduleDismissOnScreenControls();
-                }
+	          	  }
                 return false;
             }
         });
@@ -475,10 +509,40 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         });
     }
 
+    private boolean updateBarViewVisibility(boolean renew){
+
+    	if(renew){
+    		//Get view position
+	      	mBodyScv.getLocationInWindow(locationScv);
+	      	mBarView.getLocationInWindow(locationBar);
+    	}
+    	
+      	//System.out.println(locationScv[1] + ":" + locationBar[1]);
+      	
+      	if(locationBar[1]<=locationScv[1]){
+      		
+      		//Judge original visibility to avoid unnecessary message loops
+      		if(mBarView_2.getVisibility()==View.INVISIBLE){
+            		mBarView_2.setVisibility(View.VISIBLE);
+            		return true;
+      		}
+      		
+      	}else{
+      		if(mBarView_2.getVisibility()==View.VISIBLE){
+            		mBarView_2.setVisibility(View.INVISIBLE);
+            		return true;
+      		}
+      	}
+      	
+      	return false;
+    	
+    }
+    
     @Override
     public void onClick(View view) {
         switch (view.getId()) {                     
-            case R.id.buy_btn:
+	        case R.id.buy_btn:                  
+	        case R.id.buy_btn_2:
                 mActionLog.addAction(ActionLog.TuangouXiangqingBuy);
                 String sessionId = Globals.g_Session_Id;
                 if (TextUtils.isEmpty(sessionId)) {
