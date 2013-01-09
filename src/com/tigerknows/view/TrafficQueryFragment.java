@@ -557,10 +557,12 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	public void enableQueryBtn(Button mButton, boolean enable) {
 		if (enable) {
-			mButton.setTextColor(0xFFFFFFFF);
+//			mButton.setTextColor(0xFF63BCE5);
+			mButton.setBackgroundResource(R.drawable.btn_search_normal);
 			mButton.setEnabled(true);
 		} else {
-			mButton.setTextColor(0xFFEFBA82);
+//			mButton.setTextColor(0xFFD9D9D9);
+			mButton.setBackgroundResource(R.drawable.btn_search_disabled);
 			mButton.setEnabled(false);
 		}
 	}

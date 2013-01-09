@@ -203,12 +203,11 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 viewMap();
                 // 将地图平移到某一坐标点, 并缩放至某一级别
                 if (position == 0) {
-                	//Listview中起点项的处理
+                	//mResultAdapter中起点项的处理
                 	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), plan.getStepList().get(position).getPositionList().get(0), 
                 		mSphinx.getMapView());
-                } else if (position >= plan.getLength()) {
-                	//Listview中终点项的处理
-                	//FIXME:终点项判断有问题，过不来。
+                } else if (position > plan.getStepList().size()) {
+                	//mResultAdapter中终点项的处理
                 	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), plan.getStepList().get(position - 2).getPositionList().get(0), 
                     		mSphinx.getMapView());
                 } else {

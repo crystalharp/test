@@ -48,11 +48,14 @@
         		</LinearLayout>
 	        </LinearLayout>
 	        <Button android:id="@+id/traffic_query_btn"
-	            android:text="@string/query"
 	            android:layout_alignParentRight="true"
-	            android:layout_width="wrap_content" 
+	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
+	            android:background="@drawable/btn_search_disabled"
 	            android:layout_centerVertical="true" />
+<!-- 	            android:layout_alignBottom="@+id/traffic_lsv" -->
+<!-- 	            android:layout_alignTop="@+id/traffic_lsv" -->
+
 <!-- 	        <Button android:id="@+id/exchange_btn" -->
 <!-- 	            android:background="@drawable/btn_exchange" -->
 <!-- 	            android:layout_alignParentLeft="true" -->
