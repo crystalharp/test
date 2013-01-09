@@ -165,17 +165,18 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
             TextView descriptionTxv = (TextView) view.findViewById(R.id.description_txv);
             descriptionTxv.setText(recommdApp.getBody());
             ImageView iconImv = (ImageView) view.findViewById(R.id.icon_imv);
-            TKDrawable tkDrawable = recommdApp.getIcon();
-            if (tkDrawable != null) {
-                Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, mThis.toString());
-                if (drawable != null) {
-                    iconImv.setBackgroundDrawable(drawable);
-                } else {
-                    iconImv.setBackgroundResource(R.drawable.icon);
-                }
-            } else {
-                iconImv.setBackgroundResource(R.drawable.icon);
-            }
+//            TKDrawable tkDrawable = recommdApp.getIcon();
+//            if (tkDrawable != null) {
+//                Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, mThis.toString());
+//                if (drawable != null) {
+//                    iconImv.setBackgroundDrawable(drawable);
+//                } else {
+//                    iconImv.setBackgroundResource(R.drawable.icon);
+//                }
+//            } else {
+//                iconImv.setBackgroundResource(R.drawable.icon);
+//            }
+            iconImv.setVisibility(View.GONE);
             return view;
         }
     }

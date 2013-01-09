@@ -48,7 +48,7 @@ public class ZoomControls extends LinearLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.zoom_controls, this, // we are the parent
                 true);
-        
+        this.setOrientation(LinearLayout.VERTICAL);
         mZoomIn = (ZoomButton) findViewById(R.id.zoomin_zbt);
         mZoomOut = (ZoomButton) findViewById(R.id.zoomout_zbt);
     }
