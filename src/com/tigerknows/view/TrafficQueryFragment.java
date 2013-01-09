@@ -178,7 +178,6 @@ public class TrafficQueryFragment extends BaseFragment {
     	KEYWORDS = new String[]{
     		mContext.getString(R.string.my_location),
     		mContext.getString(R.string.select_has_point),
-    		mContext.getString(R.string.clean_history)
     	};
     	
     	keywordList = Arrays.asList(KEYWORDS);
@@ -189,7 +188,7 @@ public class TrafficQueryFragment extends BaseFragment {
         mStateHelper = new TrafficQueryStateHelper(this);
         mStateTransitionTable = new TrafficViewSTT(mStateHelper);
         mLogHelper = new TrafficQueryLogHelper(this);
-        mSuggestHistoryHelper = new TrafficQuerySuggestHistoryHelper(mContext, this);
+        mSuggestHistoryHelper = new TrafficQuerySuggestHistoryHelper(mContext, this, mSuggestLsv);
         
         mStart.init(START, mContext.getString(R.string.start_));
         mEnd.init(END, mContext.getString(R.string.end_));

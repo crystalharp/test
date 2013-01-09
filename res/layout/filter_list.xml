@@ -9,7 +9,7 @@
         android:padding="0dp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@android:color/white"
+        android:background="@color/white"
         android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="3"

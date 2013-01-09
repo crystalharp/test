@@ -140,8 +140,8 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         mSuggestAdapter.setCallBack(new CallBack() {
             
             @Override
-            public void onItemClicked(String text) {
-                mKeywordEdt.setText(text);
+            public void onItemClicked(TKWord tkWord, int position) {
+                mKeywordEdt.setText(tkWord.word);
             }
         });
         mSuggestLsv.setAdapter(mSuggestAdapter);

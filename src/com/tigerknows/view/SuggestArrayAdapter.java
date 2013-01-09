@@ -25,7 +25,7 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
     public static final int TEXTVIEW_RESOURCE_ID = R.layout.suggest_list_item;
     
     public interface CallBack {
-        public void onItemClicked(String text);
+        public void onItemClicked(TKWord tkWord, int position);
     }
     
     private Context context;
@@ -42,7 +42,7 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
     }        
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         if (convertView == null) {
             convertView = ((LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)).inflate(TEXTVIEW_RESOURCE_ID, parent, false);
         }
@@ -73,7 +73,7 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
                 
                 @Override
                 public void onClick(View view) {
-                    callBack.onItemClicked(tkWord.word);
+                    callBack.onItemClicked(tkWord, position);
                 }
             });
         }
@@ -86,7 +86,7 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
             textView.setText(word);
         } else {
             SpannableStringBuilder style=new SpannableStringBuilder(word);  
-            style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_ORANGE),0,key.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_BLACK_LIGHT),0,key.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             textView.setText(style);
         }
     }

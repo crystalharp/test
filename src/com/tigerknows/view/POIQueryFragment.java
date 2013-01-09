@@ -109,8 +109,8 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         mSuggestAdapter.setCallBack(new CallBack() {
             
             @Override
-            public void onItemClicked(String text) {
-                mKeywordEdt.setText(text);
+            public void onItemClicked(TKWord tkWord, int position) {
+                mKeywordEdt.setText(tkWord.word);
             }
         });
         mSuggestLsv.setAdapter(mSuggestAdapter);
@@ -269,7 +269,7 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         } else {
             tkWordList.addAll(HistoryWordTable.getHistoryWordList(searchWord, HistoryWordTable.TYPE_POI));
             if (tkWordList.size() > 0) {
-                tkWordList.add(new TKWord(TKWord.ATTRIBUTE_CLEANUP, sphinx.getString(R.string.clean_history)));
+                tkWordList.add(TKWord.getCleanupTKWord(sphinx));
             }
         }
     }
