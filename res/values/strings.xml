@@ -160,7 +160,9 @@
 	<string name="favorite_poi_empty">你还没有任何收藏</string>
 	<string name="mylocation_failed">对不起, 定位失败, 请重试...</string>
 
-	<string name="title_transfer_plan_list">公交方案</string>
+	<string name="title_type_transfer">公交方案</string>
+	<string name="title_type_drive">驾车方案</string>
+	<string name="title_type_walk">步行方案</string>
 	<string name="title_transfer_plan">公交详情</string>
 	<string name="title_walk_plan">步行详情</string>
 	<string name="title_drive_plan">驾车详情</string>

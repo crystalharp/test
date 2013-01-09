@@ -87,8 +87,6 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	LinearLayout mBlock;
 	
-	//Button mExchangeBtn = null;
-	
 	Button mSelectStartBtn = null;
 	
 	Button mSelectEndBtn = null;
@@ -870,8 +868,9 @@ public class TrafficQueryFragment extends BaseFragment {
             		mSphinx.getTrafficResultFragment().setData(trafficQuery);
             		mSphinx.showView(R.id.view_traffic_result_transfer);
             	} else {
+            		//xupeng:如果不是换乘，这里判断了查询类型，切换到了detail页面
             		mSphinx.getTrafficDetailFragment().setData(trafficModel.getPlanList().get(0));
-            		mSphinx.showView(R.id.view_traffic_result_detail);
+            		mSphinx.getTrafficDetailFragment().viewMap();
             	}
             }
         } 

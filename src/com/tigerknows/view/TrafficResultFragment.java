@@ -91,7 +91,7 @@ public class TrafficResultFragment extends BaseFragment {
         mStartTxv.setText(mTrafficModel.getStart().getName());
         mEndTxv.setText(mTrafficModel.getEnd().getName());
 
-        mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan_list));
+        mTitleBtn.setText(mContext.getString(R.string.title_type_transfer));
         mLengthTxv.setVisibility(View.GONE);
         
         mResultAdapter = new TransferProjectListAdapter(mTrafficQuery.getTrafficModel().getPlanList());
@@ -283,6 +283,18 @@ public class TrafficResultFragment extends BaseFragment {
 		
     }
     
+    public void submitTrafficQueryWithPosition(TrafficQuery mTrafficQuery){
+    	if (mTrafficQuery.getQueryType() != Step.TYPE_TRANSFER) {
+    		return;
+    	}
+    	if (mTrafficQuery.getStart().getPosition() != null && mTrafficQuery.getEnd().getPosition() != null) {
+    		mSphinx.queryStart(mTrafficQuery);
+    	} else {
+    		//mPreQueryView.submitTrafficQuery();
+            dismiss();
+    	}
+	}
+
     public List<Plan> getData() {
         return mTrafficModel.getPlanList();
     }
