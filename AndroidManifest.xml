@@ -14,7 +14,7 @@
       <uses-permission android:name="android.permission.READ_CONTACTS" />
       
     <application android:name="TKApplication" android:icon="@drawable/icon" android:label="@string/app_name"
-        android:theme="@style/Theme.NoTitleBar.Fullscreen" android:debuggable="false">
+        android:theme="@style/Theme.NoTitleBar.Fullscreen" android:debuggable="true">
         <provider android:name=".provider.TigerknowsProvider"
             android:authorities="com.tigerknows.provider.Tigerknows" />
             

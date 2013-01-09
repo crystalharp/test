@@ -43,6 +43,7 @@ import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.DataOperation.DingdanCreateResponse;
 import com.tigerknows.model.DataOperation.TuangouQueryResponse;
+import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.CollapseTextView;
 import com.tigerknows.view.user.User;
@@ -79,7 +80,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     
     private TextView mFendianNameTxv = null;
     
-    private Button mDistanceBtn = null;
+    private TextView mDistanceTxv = null;
     
     private TextView mAddressTxv = null;
     
@@ -234,11 +235,10 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mRefundTxv.setText(refund);
         
         if (TextUtils.isEmpty(mFilterArea) || mData.getBranchNum() < 2) {
-            mNearbyFendianView.setVisibility(View.GONE);
+            mNearbyFendianTxv.setVisibility(View.GONE);
         } else {
             mNearbyFendianTxv.setText(mFilterArea + mSphinx.getString(R.string.tuangou_detail_nearby, mData.getBranchNum()));
-            mNearbyFendianView.setVisibility(View.VISIBLE);
-            mNearbyFendianView.setBackgroundResource(R.drawable.list_single);
+            mNearbyFendianTxv.setVisibility(View.VISIBLE);
         }
 
         String description = mData.getDescription();
@@ -303,8 +303,8 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     private void refreshFendian() {
         Fendian fendian = mData.getFendian();
         DiscoverChildListFragment.showPOI(mSphinx, fendian.getPlaceName(), fendian.getDistance(), fendian.getAddress(), fendian.getPlacePhone(), 
-                mFendianNameTxv, mDistanceBtn, mAddressView, mDividerView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
-                R.drawable.list_header, R.drawable.list_footer, R.drawable.list_single);
+                mFendianNameTxv, mDistanceTxv, mAddressView, mDividerView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
+                R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer);
     }
     
     @Override
@@ -396,8 +396,10 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mBuyerNumTxv = (TextView) findViewById(R.id.buyer_num_txv);
 
         View view = findViewById(R.id.tuangou_fendian_list_item);
+        view.findViewById(R.id.name_view).setBackgroundResource(R.drawable.list_middle);
+        view.findViewById(R.id.tuangou_fendian_list_item).setPadding(0, 0, 0, 0);
         mFendianNameTxv = (TextView) view.findViewById(R.id.name_txv);
-        mDistanceBtn = (Button)view.findViewById(R.id.distance_btn);
+        mDistanceTxv = (TextView)view.findViewById(R.id.distance_txv);
         mAddressView = view.findViewById(R.id.address_view);
         mDividerView = view.findViewById(R.id.divider_imv);
         mTelephoneView = view.findViewById(R.id.telephone_view);
@@ -421,11 +423,10 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     protected void setListener() {
         super.setListener();
         mBuyBtn.setOnClickListener(this);
-        mDistanceBtn.setOnClickListener(this);
         mAddressView.setOnClickListener(this);
-        mTelephoneTxv.setOnClickListener(this);
+        mTelephoneView.setOnClickListener(this);
         mNearbyFendianView.setOnClickListener(this);
-        mServiceHotlineTxv.setOnClickListener(this);
+        mServiceHotlineView.setOnClickListener(this);
         mBodyScv.setOnTouchListener(new OnTouchListener() {
             private int lastY = 0;
 
@@ -458,6 +459,10 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 handler.sendMessageDelayed(handler.obtainMessage(touchEventId, v), 128);
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    mParentFragment.updateNextPrevControls();
+                    mParentFragment.scheduleDismissOnScreenControls();
+                }
                 return false;
             }
         });
@@ -489,33 +494,30 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 }
                 break;
                 
-            case R.id.telephone_txv:
+            case R.id.telephone_view:
                 mActionLog.addAction(ActionLog.TuangouXiangqing+ActionLog.DiscoverDetailTelphone);
+                CommonUtils.telephone(mSphinx, mTelephoneTxv);
                 break;
                 
             case R.id.address_view:
                 mActionLog.addAction(ActionLog.TuangouXiangqing+ActionLog.DiscoverDetailAddress);
-                viewMap();
-                break;
-                
-            case R.id.distance_btn:
-                mActionLog.addAction(ActionLog.TuangouXiangqing+ActionLog.DiscoverDetailDistance);
                 Fendian fendian = mData.getFendian();
                 if (fendian == null) {
                     return;
                 }
-                /* 交通界面的显示 */
-                mSphinx.getTrafficQueryFragment().setData(fendian.getPOI(POI.SOURCE_TYPE_TUANGOU, mData));
-                mSphinx.showView(R.id.view_traffic_query);
+                CommonUtils.queryTraffic(mSphinx, fendian.getPOI(POI.SOURCE_TYPE_TUANGOU, mData));
                 break;
                 
             case R.id.nearby_fendian_view:
-                mActionLog.addAction(ActionLog.TuangouXiangqing+ActionLog.DiscoverDetailBranch);
-                mSphinx.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.FendianList);
-                mSphinx.showView(R.id.view_discover_child_list);
+                if (mNearbyFendianTxv.getVisibility() == View.VISIBLE) {
+                    mActionLog.addAction(ActionLog.TuangouXiangqing+ActionLog.DiscoverDetailBranch);
+                    mSphinx.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.FendianList);
+                    mSphinx.showView(R.id.view_discover_child_list);
+                }
                 break;
-            case R.id.service_hotline_txv:
+            case R.id.service_hotline_view:
                 mActionLog.addAction(ActionLog.TuangouXiangqingCustomService);
+                CommonUtils.telephone(mSphinx, mServiceHotlineTxv);
                 break;
         }
     }

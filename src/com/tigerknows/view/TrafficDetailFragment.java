@@ -107,8 +107,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     @Override
     public void onResume() {
         super.onResume();
-        mRightImv.setImageResource(R.drawable.ic_view_map);
-        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
         mRightBtn.setOnClickListener(this);
         
         mResultAdapter = new StringListAdapter(mContext);
@@ -139,12 +138,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             mLengthTxv.setVisibility(View.VISIBLE);
             mShadowImv.setVisibility(View.GONE);
             mFootLayoutId = R.layout.traffic_fav_share;
-            if (plan.getLength() > 1000) {
-                mLengthTxv.setText(mContext.getString(R.string.traffic_result_length_km, CommonUtils.meter2kilometre(plan.getLength())));
-            } else {
-                mLengthTxv.setText(mContext.getString(R.string.traffic_result_length_m, plan.getLength()));
-            }
-            
+            mLengthTxv.setText(plan.getLengthStr(mSphinx));
         }
         
         history();
@@ -527,4 +521,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         return false;
     }
 
+    public Plan getData() {
+        return plan;
+    }
 }

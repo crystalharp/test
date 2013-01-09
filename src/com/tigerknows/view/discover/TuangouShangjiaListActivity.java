@@ -35,7 +35,6 @@ import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.DataQuery.ShangjiaResponse;
 import com.tigerknows.model.DataQuery.ShangjiaResponse.ShangjiaList;
 import com.tigerknows.util.TKAsyncTask;
-import com.tigerknows.view.user.UserBaseActivity;
 
 /**
  * @author Peng Wenyue

@@ -45,10 +45,6 @@ public class BaseDialog extends Dialog {
     
     protected Button mTitleBtn;
     
-    protected ImageView mLeftImv;
-    
-    protected ImageView mRightImv;
-    
     protected Button mLeftBtn;
     
     protected Button mRightBtn;
@@ -77,8 +73,6 @@ public class BaseDialog extends Dialog {
     
     protected void findViews() {
         mTitleBtn = (Button) findViewById(R.id.title_btn);
-        mLeftImv = (ImageView) findViewById(R.id.left_imv);
-        mRightImv = (ImageView) findViewById(R.id.right_imv);
         mLeftBtn = (Button) findViewById(R.id.left_btn);
         mRightBtn = (Button) findViewById(R.id.right_btn);
     }

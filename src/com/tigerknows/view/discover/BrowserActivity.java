@@ -4,7 +4,6 @@
 
 package com.tigerknows.view.discover;
 
-import android.app.AlertDialog;
 import android.graphics.Bitmap;
 import android.net.http.SslError;
 import android.os.Bundle;
@@ -81,7 +80,6 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         String left = mIntent.getStringExtra(LEFT);
         if (TextUtils.isEmpty(title) == false) {
             mLeftBtn.setText(left);
-            mLeftImv.setVisibility(View.GONE);
         }
         mRightBtn.setVisibility(View.GONE);
         

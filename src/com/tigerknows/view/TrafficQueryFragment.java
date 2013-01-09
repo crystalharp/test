@@ -178,7 +178,6 @@ public class TrafficQueryFragment extends BaseFragment {
     	KEYWORDS = new String[]{
     		mContext.getString(R.string.my_location),
     		mContext.getString(R.string.select_has_point),
-    		mContext.getString(R.string.clean_history)
     	};
     	
     	keywordList = Arrays.asList(KEYWORDS);
@@ -189,7 +188,7 @@ public class TrafficQueryFragment extends BaseFragment {
         mStateHelper = new TrafficQueryStateHelper(this);
         mStateTransitionTable = new TrafficViewSTT(mStateHelper);
         mLogHelper = new TrafficQueryLogHelper(this);
-        mSuggestHistoryHelper = new TrafficQuerySuggestHistoryHelper(mContext, this);
+        mSuggestHistoryHelper = new TrafficQuerySuggestHistoryHelper(mContext, this, mSuggestLsv);
         
         mStart.init(START, mContext.getString(R.string.start_));
         mEnd.init(END, mContext.getString(R.string.end_));
@@ -823,13 +822,11 @@ public class TrafficQueryFragment extends BaseFragment {
 		 * 在BaseFragment中加了对只有左上角返回按钮可见时才响应点击事件, 
 		 * 避开了这个问题.
 		 */
-		mLeftImv.setVisibility(View.INVISIBLE);
         mLeftBtn.setVisibility(View.INVISIBLE);
 		mTitleFragment.hide();
 	}
 	
 	public void displayCommonTitle() {
-		mLeftImv.setVisibility(View.VISIBLE);
         mLeftBtn.setVisibility(View.VISIBLE);
 		mTitleFragment.display();
 	}

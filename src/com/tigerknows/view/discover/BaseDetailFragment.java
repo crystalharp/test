@@ -10,9 +10,9 @@ import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 
-import com.decarta.Globals;
-import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -42,6 +42,24 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     
     protected CycleViewPager.CycleOnPageChangeListener mCycleOnPageChangeListener;
 
+    private View mNextImageView;
+    private View mPrevImageView;
+    
+    private final Animation mHideNextImageViewAnimation =
+        new AlphaAnimation(1F, 0F);
+    private final Animation mHidePrevImageViewAnimation =
+            new AlphaAnimation(1F, 0F);
+    private final Animation mShowNextImageViewAnimation =
+            new AlphaAnimation(0F, 1F);
+    private final Animation mShowPrevImageViewAnimation =
+            new AlphaAnimation(0F, 1F);
+
+    private final Runnable mDismissOnScreenControlRunner = new Runnable() {
+        public void run() {
+            hideOnScreenControls();
+        }
+    };
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -56,13 +74,15 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     @Override
     public void onResume() {
         super.onResume();
-        mRightImv.setImageResource(R.drawable.ic_view_map);
-        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
         mRightBtn.setOnClickListener(this);   
 
         if (isReLogin()) {
             return;
         }
+        
+        mPrevImageView.setVisibility(View.GONE);
+        mPrevImageView.setVisibility(View.GONE);
     }
 
     @Override
@@ -94,6 +114,8 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     protected void findViews() {
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
         mViewPager.setAdapter(mCyclePagerAdapter);
+        mNextImageView = mRootView.findViewById(R.id.next_imv);
+        mPrevImageView = mRootView.findViewById(R.id.prev_imv);
     }
 
     protected void setListener() {
@@ -141,5 +163,60 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
             mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1, true);
         }
         mCycleOnPageChangeListener.isPageTurning = false;        
+    }
+
+    public void hideOnScreenControls() {
+        if (mNextImageView.getVisibility() == View.VISIBLE) {
+            Animation a = mHideNextImageViewAnimation;
+            a.setDuration(500);
+            mNextImageView.startAnimation(a);
+            mNextImageView.setVisibility(View.INVISIBLE);
+        }
+
+        if (mPrevImageView.getVisibility() == View.VISIBLE) {
+            Animation a = mHidePrevImageViewAnimation;
+            a.setDuration(500);
+            mPrevImageView.startAnimation(a);
+            mPrevImageView.setVisibility(View.INVISIBLE);
+        }
+
+    }
+    
+    public void updateNextPrevControls() {
+        int currentPosition = mViewPager.getCurrentItem();
+        boolean showPrev = currentPosition > 0;
+        boolean showNext = currentPosition < mCyclePagerAdapter.count - 1;
+
+        boolean prevIsVisible = mPrevImageView.getVisibility() == View.VISIBLE;
+        boolean nextIsVisible = mNextImageView.getVisibility() == View.VISIBLE;
+
+        if (showPrev && !prevIsVisible) {
+            Animation a = mShowPrevImageViewAnimation;
+            a.setDuration(500);
+            mPrevImageView.startAnimation(a);
+            mPrevImageView.setVisibility(View.VISIBLE);
+        } else if (!showPrev && prevIsVisible) {
+            Animation a = mHidePrevImageViewAnimation;
+            a.setDuration(500);
+            mPrevImageView.startAnimation(a);
+            mPrevImageView.setVisibility(View.GONE);
+        }
+
+        if (showNext && !nextIsVisible) {
+            Animation a = mShowNextImageViewAnimation;
+            a.setDuration(500);
+            mNextImageView.startAnimation(a);
+            mNextImageView.setVisibility(View.VISIBLE);
+        } else if (!showNext && nextIsVisible) {
+            Animation a = mHideNextImageViewAnimation;
+            a.setDuration(500);
+            mNextImageView.startAnimation(a);
+            mNextImageView.setVisibility(View.GONE);
+        }
+    }
+
+    public void scheduleDismissOnScreenControls() {
+        mSphinx.getHandler().removeCallbacks(mDismissOnScreenControlRunner);
+        mSphinx.getHandler().postDelayed(mDismissOnScreenControlRunner, 2000);
     }
 }

@@ -5,6 +5,9 @@
 package com.tigerknows.model;
 
 import com.decarta.android.location.Position;
+import com.tigerknows.R;
+
+import android.content.Context;
 
 /**
  * @author Peng Wenyue
@@ -68,5 +71,17 @@ public class TKWord {
             }
         }
         return false;
+    }
+    
+    public POI toPOI() {
+        POI poi = new POI();
+        poi.setName(word);
+        poi.setPosition(position);
+        return poi;
+    }
+    
+    public static TKWord getCleanupTKWord(Context context) {
+        TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_CLEANUP, context.getString(R.string.clean_history));
+        return tkWord;
     }
 }

@@ -74,7 +74,9 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
+            String key = mKeywordEdt.getText().toString();
+            makeSuggestWord(mSphinx, mSuggestWordList, key);
+            mSuggestAdapter.key = key;
             mSuggestAdapter.notifyDataSetChanged();
         }
 
@@ -107,8 +109,8 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         mSuggestAdapter.setCallBack(new CallBack() {
             
             @Override
-            public void onItemClicked(String text) {
-                mKeywordEdt.setText(text);
+            public void onItemClicked(TKWord tkWord, int position) {
+                mKeywordEdt.setText(tkWord.word);
             }
         });
         mSuggestLsv.setAdapter(mSuggestAdapter);
@@ -123,7 +125,6 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         
         if (mSphinx.mSnapMap) {
             if (mSphinx.mIntoSnap == 0) {
-                mLeftImv.setVisibility(View.INVISIBLE);
                 mLeftBtn.setText(R.string.home);
             }
             mSphinx.mIntoSnap++;
@@ -178,7 +179,9 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
                 if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
                     mActionLog.addAction(ActionLog.SearchInputCleanHistory);
                     HistoryWordTable.clearHistoryWord(mSphinx, Globals.g_Current_City_Info.getId(), HistoryWordTable.TYPE_POI);
-                    makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
+                    String key = mKeywordEdt.getText().toString();
+                    makeSuggestWord(mSphinx, mSuggestWordList, key);
+                    mSuggestAdapter.key = key;
                     mSuggestAdapter.notifyDataSetChanged();
                 } else {
                     if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
@@ -244,6 +247,7 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
     
     //还原为第一次进入的状态
     public void reset() {
+        mSuggestAdapter.key = null;
         mKeywordEdt.setText(null);
         mKeywordEdt.clearFocus();
         mSphinx.getHandler().post(mShowSoftInput);
@@ -265,7 +269,7 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         } else {
             tkWordList.addAll(HistoryWordTable.getHistoryWordList(searchWord, HistoryWordTable.TYPE_POI));
             if (tkWordList.size() > 0) {
-                tkWordList.add(new TKWord(TKWord.ATTRIBUTE_CLEANUP, sphinx.getString(R.string.clean_history)));
+                tkWordList.add(TKWord.getCleanupTKWord(sphinx));
             }
         }
     }

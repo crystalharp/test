@@ -682,7 +682,11 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         
         final AlertDialog alertDialog = CommonUtils.showNormalDialog(this,
                 getString(R.string.select_action),
-                listView);
+                null,
+                listView,
+                null,
+                null,
+                null);
         
         listView.setOnItemClickListener(new OnItemClickListener() {
 

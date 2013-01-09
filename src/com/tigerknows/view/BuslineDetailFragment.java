@@ -85,8 +85,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     public void onResume() {
         super.onResume();
 
-        mRightImv.setImageResource(R.drawable.ic_view_map);
-        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
         mRightBtn.setOnClickListener(this);
 
         mResultAdapter = new StringListAdapter(mContext);
@@ -385,5 +384,9 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 			// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
 			BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
         }
+    }
+    
+    public Line getData() {
+        return line;
     }
 }

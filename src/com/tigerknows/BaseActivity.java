@@ -43,7 +43,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 /**
@@ -76,10 +75,6 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
     protected String mActionTag;
     
     protected Button mTitleBtn;
-    
-    protected ImageView mLeftImv;
-    
-    protected ImageView mRightImv;
     
     protected Button mLeftBtn;
     
@@ -158,8 +153,6 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
     
     protected void findViews() {
         mTitleBtn = (Button) findViewById(R.id.title_btn);
-        mLeftImv = (ImageView) findViewById(R.id.left_imv);
-        mRightImv = (ImageView) findViewById(R.id.right_imv);
         mLeftBtn = (Button) findViewById(R.id.left_btn);
         mRightBtn = (Button) findViewById(R.id.right_btn);
     }
