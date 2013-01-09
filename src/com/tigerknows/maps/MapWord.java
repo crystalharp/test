@@ -2,7 +2,6 @@ package com.tigerknows.maps;
 
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYDouble;
-import com.decarta.android.util.XYInteger;
 import com.tigerknows.R;
 
 import android.content.Context;

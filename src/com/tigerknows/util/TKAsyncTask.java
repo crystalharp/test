@@ -4,6 +4,7 @@
 package com.tigerknows.util;
 
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.R;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.Response;
@@ -12,11 +13,13 @@ import com.tigerknows.share.TKTencentOpenAPI;
 import com.weibo.net.Weibo;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
 import android.text.TextUtils;
+import android.view.View;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -35,7 +38,7 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
     
     private Runnable cancelTask;
     
-    private ProgressDialog tipProgressDialog;
+    private Dialog tipProgressDialog;
     
     private boolean cancelable = true;
     
@@ -87,10 +90,10 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
             return;
         }
         
-        tipProgressDialog = new ProgressDialog(activity);
-        tipProgressDialog.setCanceledOnTouchOutside(false);
-        tipProgressDialog.setMessage(tipText);
-        tipProgressDialog.setIndeterminate(true);
+        View custom = activity.getLayoutInflater().inflate(R.layout.loading, null);
+        TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
+        loadingTxv.setText(tipText);
+        tipProgressDialog = CommonUtils.showNormalDialog(activity, custom);
         tipProgressDialog.setCancelable(cancelable);
         tipProgressDialog.setOnCancelListener(new OnCancelListener() {
             
@@ -99,7 +102,7 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
                 TKAsyncTask.this.stop();
             }
         });
-        tipProgressDialog.show();
+
     }
 
     @Override

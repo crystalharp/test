@@ -22,15 +22,19 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
 public class RetryView extends LinearLayout {
     
+    public interface CallBack {
+        public void retry();
+    }
+    
     private TextView mTextTxv;
-    private Button mRetryBtn;
+    
+    CallBack mCallBack;
         
     public RetryView(Context context) {
         this(context, null);
@@ -53,7 +57,6 @@ public class RetryView extends LinearLayout {
 
     protected void findViews() {
         mTextTxv = (TextView) findViewById(R.id.text_txv);
-        mRetryBtn = (Button) findViewById(R.id.retry_btn);
     }
     
     protected void setListener() {
@@ -61,23 +64,22 @@ public class RetryView extends LinearLayout {
     
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        
-        /* Consume all touch events so they don't get dispatched to the view
-         * beneath this view.
-         */
+        if (mCallBack != null) {
+            mCallBack.retry();
+        }
         return true;
     }
     
     @Override
     public boolean hasFocus() {
-        if (mRetryBtn == null) {
+        if (mTextTxv == null) {
             return false;
         }
-        return mRetryBtn.hasFocus();
+        return mTextTxv.hasFocus();
     }
     
-    public void setOnClickListener(OnClickListener listener) {
-        mRetryBtn.setOnClickListener(listener);
+    public void setCallBack(CallBack callBack) {
+        mCallBack = callBack;
     }
     
     public void setText(int resid) {
