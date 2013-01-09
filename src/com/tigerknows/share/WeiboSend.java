@@ -52,6 +52,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.share.ShareAPI.LoginCallBack;
 import com.tigerknows.share.TKWeibo.AuthDialogListener;
+import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.ThumbnailUtils;
 import com.weibo.net.DialogError;
 import com.weibo.net.Weibo;
@@ -349,26 +350,24 @@ public class WeiboSend extends Activity implements OnClickListener {
             }
             case R.id.text_limit_unit_lnl: {
                 mActionLog.addAction(ActionLog.WeiboSendClickedDelWord);
-                if (!TextUtils.isEmpty(mTextEdt.getText())) {
-                	Dialog dialog = new AlertDialog.Builder(WeiboSend.this).setTitle(R.string.attention)
-                            .setMessage(R.string.are_you_delete_all).setPositiveButton(R.string.yes,
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            mActionLog.addAction(ActionLog.WeiboSendClickedDelWordYes);
-                                            mTextEdt.setText("");
-                                        }
-                                    }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                        
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            mActionLog.addAction(ActionLog.WeiboSendClickedDelWordNo);
-                                            dialog.dismiss();
-                                        }
-                                    }).create();
-                	dialog.setCanceledOnTouchOutside(false);
-                    dialog.show();
-                }
-                
+                CommonUtils.showNormalDialog(WeiboSend.this,
+                        getString(R.string.attention),
+                        getString(R.string.are_you_delete_all), 
+                        null,
+                        getString(R.string.yes),
+                        getString(R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (DialogInterface.BUTTON_POSITIVE == which) {
+                                    mActionLog.addAction(ActionLog.WeiboSendClickedDelWordYes);
+                                    mTextEdt.setText("");
+                                } else {
+                                    mActionLog.addAction(ActionLog.WeiboSendClickedDelWordNo);
+                                }
+                            }
+                        });                
                 break;
             }
             case R.id.pic_imv: {

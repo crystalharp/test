@@ -258,7 +258,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         Globals.g_My_Location_Exist = 0;
 		
 		mContext = getBaseContext();
-        mLayoutInflater = (LayoutInflater)mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mLayoutInflater = getLayoutInflater();
         mMapEngine = MapEngine.getInstance();
         try {
             mMapEngine.initMapDataPath(mContext);
@@ -2101,14 +2101,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 }
                 
                 View settingLocationView = mLayoutInflater.inflate(R.layout.alert_setting_location, null, false);
-                
-                AlertDialog.Builder bulider = new AlertDialog.Builder(Sphinx.this);
-        
-                bulider.setTitle(R.string.prompt);
-                bulider.setCancelable(true);
-                bulider.setView(settingLocationView);
-        
-                
                 final CheckBox checkChb = (CheckBox) settingLocationView.findViewById(R.id.check_chb);
                 checkChb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
                     

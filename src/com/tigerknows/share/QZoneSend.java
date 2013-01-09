@@ -40,6 +40,7 @@ import com.tencent.tauth.TAuthView;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.share.TKTencentOpenAPI.AuthReceiver;
+import com.tigerknows.util.CommonUtils;
 
 public class QZoneSend extends Activity implements OnClickListener {
 	
@@ -194,23 +195,24 @@ public class QZoneSend extends Activity implements OnClickListener {
             }
             case R.id.text_limit_unit_lnl: {
                 mActionLog.addAction(ActionLog.WeiboSendClickedDelWord);
-                Dialog dialog = new AlertDialog.Builder(QZoneSend.this).setTitle(R.string.attention)
-                        .setMessage(R.string.are_you_delete_all).setPositiveButton(R.string.yes,
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        mActionLog.addAction(ActionLog.WeiboSendClickedDelWordYes);
-                                        mTextEdt.setText("");
-                                    }
-                                }).setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                    
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        mActionLog.addAction(ActionLog.WeiboSendClickedDelWordNo);
-                                        dialog.dismiss();
-                                    }
-                                }).create();
-                dialog.setCanceledOnTouchOutside(false);
-                dialog.show();
+                CommonUtils.showNormalDialog(QZoneSend.this,
+                        getString(R.string.attention),
+                        getString(R.string.are_you_delete_all), 
+                        null,
+                        getString(R.string.yes),
+                        getString(R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (DialogInterface.BUTTON_POSITIVE == which) {
+                                    mActionLog.addAction(ActionLog.WeiboSendClickedDelWordYes);
+                                    mTextEdt.setText("");
+                                } else {
+                                    mActionLog.addAction(ActionLog.WeiboSendClickedDelWordNo);
+                                }
+                            }
+                        });
                 break;
             }
             default:
