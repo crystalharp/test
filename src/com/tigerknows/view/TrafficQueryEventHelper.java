@@ -33,8 +33,9 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.maps.PinOverlayHelper;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.TKWord;
+import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.view.TrafficQueryFragment.QueryEditText;
-import com.tigerknows.view.TrafficQuerySuggestHistoryHelper.SuggestAndHistoryAdapter;
 
 /**
  * 负责“交通频道首页”TrafficQueryFragment的[[控件事件处理]]
@@ -53,9 +54,9 @@ public class TrafficQueryEventHelper {
 	
 	public TrafficQueryEventHelper(TrafficQueryFragment queryFragment) {
 		this.mQueryFragment = queryFragment;
-		startSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mStart, SuggestAndHistoryAdapter.HISTORY_TRAFFIC_TYPE);
-		endSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mEnd, SuggestAndHistoryAdapter.HISTORY_TRAFFIC_TYPE);
-		buslineSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mBusline, SuggestAndHistoryAdapter.HISTORY_BUSLINE_TYPE);
+		startSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mStart, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
+		endSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mEnd, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
+		buslineSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mBusline, TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE);
 		
 		//由于traffic_query_input_line.xml中只能统一设置起终点输入框的imeoption，textwatcher也是统一监测起终点和busline的建议词
 		//这里只好在代码里设置终点输入框的imeoption为actiondone
@@ -105,9 +106,9 @@ public class TrafficQueryEventHelper {
 
 		mQueryFragment.mRootView.setOnTouchListener(new RootViewTouchListener());
 		
-		mQueryFragment.mStart.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mStart, SuggestAndHistoryAdapter.HISTORY_TRAFFIC_TYPE));
-		mQueryFragment.mEnd.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mEnd, SuggestAndHistoryAdapter.HISTORY_TRAFFIC_TYPE));
-		mQueryFragment.mBusline.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mBusline, SuggestAndHistoryAdapter.HISTORY_BUSLINE_TYPE));
+		mQueryFragment.mStart.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mStart, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC));
+		mQueryFragment.mEnd.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mEnd, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC));
+		mQueryFragment.mBusline.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mBusline, TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE));
 	}
 	
 	public void applyListenersInNormalState() {
@@ -382,7 +383,7 @@ public class TrafficQueryEventHelper {
 						@Override
 						public void run() {
 							// TODO Auto-generated method stub
-							mQueryFragment.mSuggestHistoryHelper.setAdapterForSuggest(mQueryFragment.mContext, mQueryEdt.getEdt(), mQueryFragment.mSuggestLsv, suggestWordsType);
+							mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryEdt.getEdt(), suggestWordsType);
 						}
 						
 					});
@@ -476,22 +477,28 @@ public class TrafficQueryEventHelper {
 				int position, long id) {
 			// TODO Auto-generated method stub
 			LogWrapper.d("eric", "SuggestLsv.onItemClick");
-			String word = (String) parent.getAdapter().getItem(position);
+			TKWord tkWord = ((SuggestArrayAdapter) parent.getAdapter()).getItem(position);
 			
-			POI poi = new POI();
-			poi.setName(word);
-			
-			if (((SuggestAndHistoryAdapter)parent.getAdapter()).getItemType(position) == SuggestAndHistoryAdapter.SUGGEST_ENTRY ||
-					((SuggestAndHistoryAdapter)parent.getAdapter()).getItemType(position) == SuggestAndHistoryAdapter.HISTORY_ENTRY) {
-				Position wordLonLat = mQueryFragment.mSphinx.getMapEngine().getwordslistStringWithPosition(word, 0);
+			if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
+			    mQueryFragment.mActionLog.addAction(ActionLog.TrafficClearHistory);
+	            if (mQueryFragment.mode == TrafficQueryFragment.TRAFFIC_MODE) {
+	                HistoryWordTable.clearHistoryWord(mQueryFragment.mSphinx, mQueryFragment.mMapLocationHelper.getQueryCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
+	                mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryFragment.mSelectedEdt.getEdt(), TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
+	            } else if (mQueryFragment.mode == TrafficQueryFragment.BUSLINE_MODE){
+	                HistoryWordTable.clearHistoryWord(mQueryFragment.mSphinx, mQueryFragment.mMapLocationHelper.getQueryCityInfo().getId(), HistoryWordTable.TYPE_BUSLINE);
+	                mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryFragment.mSelectedEdt.getEdt(), TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE);
+	            }
+			} else  if (tkWord.attribute == TKWord.ATTRIBUTE_SUGGEST) {
+			    POI poi = tkWord.toPOI();
+				Position wordLonLat = mQueryFragment.mSphinx.getMapEngine().getwordslistStringWithPosition(tkWord.word, 0);
 				if (null != wordLonLat && Util.inChina(wordLonLat)) {
 					poi.setPosition(wordLonLat);
 				}
-			//} else if (((SuggestAndHistoryAdapter)parent.getAdapter()).getItemType(position) == SuggestAndHistoryAdapter.HISTORY_ENTRY) {
-				//xupeng:添加历史词position
-				//直接在上面取position的话对于服务器上有坐标但是建议词里面没有的还是不能存点。
+				mQueryFragment.mSuggestHistoryHelper.suggestSelect(poi, position);
+				
+			} else  if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
+			    mQueryFragment.mSuggestHistoryHelper.suggestSelect(tkWord.toPOI(), position);
 			}
-			mQueryFragment.mSuggestHistoryHelper.suggestSelect(poi, position);
 		}
 		
 	}	
@@ -529,7 +536,7 @@ public class TrafficQueryEventHelper {
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
-					mQueryFragment.mSuggestHistoryHelper.setAdapterForSuggest(mQueryFragment.mContext, mQueryEdt.getEdt(), mQueryFragment.mSuggestLsv, suggestWordsType);
+					mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryEdt.getEdt(), suggestWordsType);
 				}
 				
 			});

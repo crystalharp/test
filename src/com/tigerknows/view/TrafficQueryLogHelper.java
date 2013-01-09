@@ -3,8 +3,8 @@ package com.tigerknows.view;
 import android.text.TextUtils;
 
 import com.tigerknows.ActionLog;
+import com.tigerknows.model.TKWord;
 import com.tigerknows.view.TrafficQueryFragment.QueryEditText;
-import com.tigerknows.view.TrafficQuerySuggestHistoryHelper.SuggestAndHistoryAdapter;
 
 /**
  * 负责“交通频道首页”TrafficQueryFragment的[[行为日志处理]]
@@ -61,12 +61,20 @@ public class TrafficQueryLogHelper {
 		if (TextUtils.isEmpty(edt.getEdt().getText().toString())) {
 			logForHistoryWordSelected(edt, index);
 		} else {
-			SuggestAndHistoryAdapter adapter = (SuggestAndHistoryAdapter)mQueryFragment.mSuggestLsv.getAdapter();
-			int hisWordCount = adapter.getHistoryWordsList().size();
-			int sugWordCount = adapter.getSuggestWordsList().size();
-			if (index < hisWordCount) {
+			SuggestArrayAdapter adapter = (SuggestArrayAdapter)mQueryFragment.mSuggestLsv.getAdapter();
+			TKWord tkWord =  adapter.getItem(index);
+			if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
 				logForSuggestWordSelected(edt, 0, index);
-			} else if ((index - hisWordCount) < sugWordCount){
+			} else if (tkWord.attribute == TKWord.ATTRIBUTE_SUGGEST){
+			    int hisWordCount = 0;
+			    for(int i = 0, size = adapter.getCount(); i < size; i++) {
+			        TKWord temp =  adapter.getItem(i);
+			        if (temp.attribute == TKWord.ATTRIBUTE_HISTORY) {
+			            hisWordCount++;
+			        } else {
+			            break;
+			        }
+			    }
 				logForSuggestWordSelected(edt, 1, index - hisWordCount);
 			}
 		}

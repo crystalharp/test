@@ -431,7 +431,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             mRightBtn.setVisibility(View.VISIBLE);
         }
         mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
-        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
         mRightBtn.setOnClickListener(this);
         
         List<DiscoverCategory> list = mSphinx.getDiscoverFragment().getDiscoverCategoryList();
