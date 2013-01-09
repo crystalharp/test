@@ -109,8 +109,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     @Override
     public void onResume() {
         super.onResume();
-        mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
-        mRightBtn.setOnClickListener(this);
         
         mResultAdapter = new StringListAdapter(mContext);
         mResultLsv.setAdapter(mResultAdapter);
@@ -120,6 +118,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         
         switch(mShowType) {
         case SHOW_TYPE_TRANSFER:
+        	mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
+        	mRightBtn.setOnClickListener(this);
             mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan));
             break;
         case SHOW_TYPE_DRVIE:

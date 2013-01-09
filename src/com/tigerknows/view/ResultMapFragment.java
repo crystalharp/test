@@ -35,6 +35,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -135,10 +136,22 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         mSphinx.getDownloadView().setPadding(0, Util.dip2px(Globals.g_metrics.density, 10), 0, 0);
         mSphinx.getMapView().getPadding().top = mSphinx.getTitleViewHeight() + Util.dip2px(Globals.g_metrics.density, 10);
         
+        //如果顶端切换list不为空，设置切换列表
         if (mTitlePopupList.size() > 0) {
             mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
             mTitleBtn.setOnClickListener(this);
             mTitleBtn.setText(mTitlePopupArrayAdapter.mSelectedItem);
+        }
+        //如果是驾车和步行，需要在这里可以切换到详情页
+        if (mActionTag == ActionLog.MapTrafficDrive || mActionTag == ActionLog.MapTrafficWalk) {
+        	mRightBtn.setVisibility(View.VISIBLE);
+        	mRightBtn.setBackgroundResource(R.drawable.ic_view_detail);
+        	mRightBtn.setOnClickListener(this);
+        	if (mActionTag == ActionLog.MapTrafficDrive) {
+        		mTitleBtn.setText(mSphinx.getString(R.string.title_type_drive));
+        	} else {
+        		mTitleBtn.setText(mSphinx.getString(R.string.title_type_walk));
+        	}
         }
     }
 
@@ -194,58 +207,66 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        if (id == R.id.title_btn) {
-            if (mTitlePopupList.size() > 0) {
-                mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
-                mTitlePopupArrayAdapter.notifyDataSetChanged();
-            }
-            return;
-        } else if (view.getId() == R.id.confirm_btn) {
-            mSphinx.snapMapView(new SnapMap() {
-                
-                @Override
-                public void finish(Uri uri) {
-                    if(uri != null) {
-                        Intent intent = new Intent();
-                        intent.setData(uri);  // uri 是 地图(包括标注层) 的一个snapshot图片
-                        ItemizedOverlay itemizedOverlay = mSphinx.getMapView().getOverlaysByName(ItemizedOverlay.POI_OVERLAY);
-                        POI poi = null;
-                        if (itemizedOverlay != null) {
-                            OverlayItem overlayItem = itemizedOverlay.getItemByFocused();
-                            if (overlayItem != null && overlayItem.getAssociatedObject() instanceof POI) {
-                                poi = (POI) (overlayItem.getAssociatedObject());
-                            }
-                        }
-            
-                        Position position = null;
-                        String description = null;
-                        if (poi != null) {
-                            position = poi.getPosition();
-                            description = poi.getName().replace('(', ' ').replace(')', ' ');
-                            String address = poi.getAddress();
-                            if (!TextUtils.isEmpty(address)) {
-                                description += "("+address.replace('(', ' ').replace(')', ' ')+")";
-                            }
-                        } else {
-                            position = mSphinx.getMapView().getCenterPosition();
-                            description = mSphinx.getMapEngine().getPositionName(position);
-                            if (TextUtils.isEmpty(description)) {
-                                description = mContext.getString(R.string.select_point);
-                            }
-                            description = description.replace('(', ' ').replace(')', ' ');
-                        }
-                        intent.putExtra("location", "<a href='http://maps.tigerknows.com/?latlon="+
-                                position.getLat()+","+
-                                position.getLon()+"&z="+
-                                mSphinx.getMapView().getZoomLevel()+"&n="+
-                                description.replace('\'', ' ')+"'>" +
-                                description + "</a>"); // address 是选定位置(当前定位的位置或者search后选择的某个地址)的详细地址描述 加上 该地址的 URL link，最终要插入MMS的内容中
-                        mSphinx.setResult(Activity.RESULT_OK, intent);
-                    }
-                }
-            }, mSphinx.getMapView().getCenterPosition());
-            mSphinx.finish();
+        switch (id) {
+        case R.id.title_btn:
+        	if (mTitlePopupList.size() > 0) {
+        		mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+        		mTitlePopupArrayAdapter.notifyDataSetChanged();
+        	}
+        	break;
+        case R.id.confirm_btn:
+	        mSphinx.snapMapView(new SnapMap() {
+	        	
+	        	@Override
+	        	public void finish(Uri uri) {
+	        		if(uri != null) {
+	        			Intent intent = new Intent();
+	        			intent.setData(uri);  // uri 是 地图(包括标注层) 的一个snapshot图片
+	        			ItemizedOverlay itemizedOverlay = mSphinx.getMapView().getOverlaysByName(ItemizedOverlay.POI_OVERLAY);
+	        			POI poi = null;
+	        			if (itemizedOverlay != null) {
+	        				OverlayItem overlayItem = itemizedOverlay.getItemByFocused();
+	        				if (overlayItem != null && overlayItem.getAssociatedObject() instanceof POI) {
+	        					poi = (POI) (overlayItem.getAssociatedObject());
+	        				}
+	        			}
+	        			
+	        			Position position = null;
+	        			String description = null;
+	        			if (poi != null) {
+	        				position = poi.getPosition();
+	        				description = poi.getName().replace('(', ' ').replace(')', ' ');
+	        				String address = poi.getAddress();
+	        				if (!TextUtils.isEmpty(address)) {
+	        					description += "("+address.replace('(', ' ').replace(')', ' ')+")";
+	        				}
+	        			} else {
+	        				position = mSphinx.getMapView().getCenterPosition();
+	        				description = mSphinx.getMapEngine().getPositionName(position);
+	        				if (TextUtils.isEmpty(description)) {
+	        					description = mContext.getString(R.string.select_point);
+	        				}
+	        				description = description.replace('(', ' ').replace(')', ' ');
+	        			}
+	        			intent.putExtra("location", "<a href='http://maps.tigerknows.com/?latlon="+
+	        					position.getLat()+","+
+	        					position.getLon()+"&z="+
+	        					mSphinx.getMapView().getZoomLevel()+"&n="+
+	        					description.replace('\'', ' ')+"'>" +
+	        					description + "</a>"); // address 是选定位置(当前定位的位置或者search后选择的某个地址)的详细地址描述 加上 该地址的 URL link，最终要插入MMS的内容中
+	        			mSphinx.setResult(Activity.RESULT_OK, intent);
+	        		}
+	        	}
+	        }, mSphinx.getMapView().getCenterPosition());
+	        mSphinx.finish();
+	        break;
+        case R.id.right_btn:
+        	mSphinx.showView(R.id.view_traffic_result_detail);
+        	break;
+    	default:
+    		break;
         }
+
     }
     
     @Override
