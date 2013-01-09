@@ -4,7 +4,6 @@
 
 package com.tigerknows.view;
 
-import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -15,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupWindow;
@@ -33,10 +31,6 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
     }
 
     protected Button titleBtn;
-    
-    protected ImageView leftImv;
-    
-    protected ImageView rightImv;
     
     protected Button leftBtn;
     
@@ -59,8 +53,6 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
     
     protected void findViews() {
         titleBtn = (Button) mRootView.findViewById(R.id.title_btn);
-        leftImv = (ImageView) mRootView.findViewById(R.id.left_imv);
-        rightImv = (ImageView) mRootView.findViewById(R.id.right_imv);
         leftBtn = (Button) mRootView.findViewById(R.id.left_btn);
         rightBtn = (Button) mRootView.findViewById(R.id.right_btn);
     }
@@ -83,14 +75,6 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
 
     public TextView getTitleTxv() {
         return titleBtn;
-    }
-
-    public ImageView getLeftBtn() {
-        return leftImv;
-    }
-
-    public ImageView getRightBtn() {
-        return rightImv;
     }
 
     public Button getLeftTxv() {
@@ -118,7 +102,6 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
         popupLsv.setOnItemClickListener(listener);
         popupLsv.setAdapter(adapter);
         
-        leftBtn.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         popupWindow.showAsDropDown(titleBtn, 0, 0);
     }
     

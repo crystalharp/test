@@ -22,6 +22,7 @@ import com.tigerknows.provider.Tigerknows.Favorite;
 import com.tigerknows.provider.Tigerknows.History;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.NavigationSplitJointRule;
+import com.tigerknows.util.ShareTextUtil;
 import com.tigerknows.util.SqliteWrapper;
 
 /**
@@ -839,6 +840,9 @@ public class TrafficModel extends XMapData {
         @SuppressWarnings("unchecked")
         public void init(XMap data) throws APIException {
             super.init(data);
+            title = null;
+            lengthStr = null;
+            
             if (this.data.containsKey(FIELD_DESCRIPTION)) {
                 description = this.data.getString(FIELD_DESCRIPTION);
             }
@@ -1165,6 +1169,37 @@ public class TrafficModel extends XMapData {
                     e.printStackTrace();
                 }
             }
+        }
+        
+        private String title = null;
+        private String lengthStr = null;
+        
+        public String getTitle(Context context) {
+            if (title == null) {
+                String title = null;
+                if (stepList != null) {
+                    for(int i = 0, size = stepList.size(); i < size; i++) {
+                        Step step = stepList.get(i);
+                        if (Step.TYPE_TRANSFER == step.getType()) {
+                            if (title != null) {
+                                title = title + context.getString(R.string.traffic_transfer_arrow) + step.getTransferLineName();
+                            } else {
+                                title = step.getTransferLineName();
+                            }
+                        }
+                    }
+                }
+                this.title = title;
+            }
+            return title;
+        }
+        
+        public String getLengthStr(Context context) {
+            if (lengthStr == null) {
+                this.lengthStr = ShareTextUtil.getPlanLength(context, length);
+            }
+            
+            return lengthStr;
         }
     }
     

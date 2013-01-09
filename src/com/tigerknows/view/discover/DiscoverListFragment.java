@@ -419,23 +419,18 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mIPagerListCallBack = null;
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             mTitleBtn.setText(R.string.tuangou_list);
-            mRightImv.setVisibility(View.VISIBLE);
             mRightBtn.setVisibility(View.VISIBLE);
         } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
             mTitleBtn.setText(R.string.dianying_list);
-            mRightImv.setVisibility(View.GONE);
             mRightBtn.setVisibility(View.GONE);
         } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
             mTitleBtn.setText(R.string.yanchu_list);
-            mRightImv.setVisibility(View.VISIBLE);
             mRightBtn.setVisibility(View.VISIBLE);
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
             mTitleBtn.setText(R.string.zhanlan_list);
-            mRightImv.setVisibility(View.VISIBLE);
             mRightBtn.setVisibility(View.VISIBLE);
         }
-        mRightImv.setImageResource(R.drawable.ic_view_map);
-        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
         mRightBtn.setOnClickListener(this);
         
         List<DiscoverCategory> list = mSphinx.getDiscoverFragment().getDiscoverCategoryList();
@@ -448,7 +443,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 }
             }
         }
-        mTitleBtn.setBackgroundResource(R.drawable.btn_default);
+        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
         mTitleBtn.setOnClickListener(this);
         
         if (isReLogin()) {

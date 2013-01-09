@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -191,8 +190,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.detail_info);
-        mRightImv.setImageResource(R.drawable.ic_view_map);
-        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
         mRightBtn.setOnClickListener(this); 
         
         if (isReLogin == true) {
@@ -560,14 +558,12 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 break;
             case R.id.telephone_view:
                 mActionLog.addAction(ActionLog.POIDetailTelephone);
-                CommonUtils.onClickTelephoneTxv(mSphinx, mTelephoneTxv);
+                CommonUtils.telephone(mSphinx, mTelephoneTxv);
                 break;
                 
             case R.id.address_view:
                 mActionLog.addAction(ActionLog.POIDetailAddress);                
-                /* 交通界面的显示 */
-                mSphinx.getTrafficQueryFragment().setData(poi);
-                mSphinx.showView(R.id.view_traffic_query);
+                CommonUtils.queryTraffic(mSphinx, poi);
                 break;
                 
             case R.id.poi_btn:

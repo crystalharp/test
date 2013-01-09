@@ -19,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
@@ -26,6 +27,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.Globals;
 import com.decarta.android.location.Position;
@@ -36,6 +38,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.maps.BuslineOverlayHelper;
 import com.tigerknows.model.BaseData;
+import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.model.BuslineModel.Station;
 import com.tigerknows.model.POI;
@@ -43,6 +46,7 @@ import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.ShareTextUtil;
 import com.tigerknows.util.WidgetUtils;
+import com.tigerknows.view.ResultMapFragment.TitlePopupArrayAdapter;
 
 public class BuslineDetailFragment extends BaseFragment implements View.OnClickListener {
 
@@ -63,6 +67,28 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     
     private Line line = null;
 
+	private List<Line> mLineList = new ArrayList<Line>();
+	
+	private List<String> mTitlePopupList = new ArrayList<String>();
+    
+    private TitlePopupArrayAdapter mTitlePopupArrayAdapter;
+    
+    private OnItemClickListener mTitlePopupOnItemClickListener = new OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
+            mTitleFragment.dismissPopupWindow();
+            Line clickedLine = mLineList.get(position);
+            if (clickedLine.equals(line)) {
+            	return;
+            } else {
+            	setData(clickedLine);
+            	onResume();            	
+            }
+
+        }
+    };
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +104,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         findViews();
         setListener();
         
+        mTitlePopupArrayAdapter = new TitlePopupArrayAdapter(mSphinx, mTitlePopupList);
+
         return mRootView;
     }
 
@@ -85,8 +113,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     public void onResume() {
         super.onResume();
 
-        mRightImv.setImageResource(R.drawable.ic_view_map);
-        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
         mRightBtn.setOnClickListener(this);
 
         mResultAdapter = new StringListAdapter(mContext);
@@ -98,12 +125,27 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     		mLengthTxv.setText(mContext.getString(R.string.busline_detail_subtitle1_m, line.getLength()));
     	}
         mNameTxv.setText(line.getName());
-        mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
         if (!TextUtils.isEmpty(line.getTime())) {
         	mTimeTxv.setText(mContext.getString(R.string.busline_detail_subtitle2, line.getTime()));
         	mTimeTxv.setVisibility(View.VISIBLE);
         } else {
         	mTimeTxv.setVisibility(View.GONE);
+        }
+        
+        //TODO:修改titlebtn的内容
+        if (mLineList != null) {
+        	mTitleBtn.setText(line.getName());
+	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
+	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
+				@Override
+				public void onClick(View v) {
+			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+			        mTitlePopupArrayAdapter.notifyDataSetChanged();
+				}
+	        });
+        } else {
+        	//不用顶部弹出切换
+        	mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
         }
 
         history();
@@ -143,6 +185,13 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     		return;
 
         this.line = line;
+        this.mLineList = mSphinx.getBuslineResultLineFragment().getData();
+        
+        mTitlePopupList.clear();
+        for(int i = 0, size = mLineList.size(); i < size; i++) {
+            mTitlePopupList.add(mLineList.get(i).getName());
+        }
+        
     }
 
     public static class StationViewHolder {
@@ -177,13 +226,11 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
         @Override
         public int getCount() {
-            // TODO Auto-generated method stub
             return strList.size() + 1;
         }
 
         @Override
 		public int getItemViewType(int position) {
-			// TODO Auto-generated method stub
         	if(position == getCount() - 1) {
         		return TYPE_ACTION;
         	}
@@ -192,7 +239,6 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
 		@Override
 		public int getViewTypeCount() {
-			// TODO Auto-generated method stub
 			return TYPE_COUNT;
 		}
 
@@ -254,19 +300,16 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
 			return strList.get(position);
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 		
 		@Override
 		public boolean isEnabled(int position) {
-			// TODO Auto-generated method stub
 			if(position == this.getCount()-1)
               return false;
           return true;
@@ -277,8 +320,6 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
         @Override
         public void onClick(View v) {
-            // TODO Auto-generated method stub
-
             if(v.getId() == R.id.share_rll){
             	mActionLog.addAction(ActionLog.TrafficLineDetailShareBtn);
             	share(line);
@@ -385,5 +426,9 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 			// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
 			BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
         }
+    }
+    
+    public Line getData() {
+        return line;
     }
 }

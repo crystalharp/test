@@ -160,7 +160,9 @@
 	<string name="favorite_poi_empty">你还没有任何收藏</string>
 	<string name="mylocation_failed">对不起, 定位失败, 请重试...</string>
 
-	<string name="title_transfer_plan_list">公交方案</string>
+	<string name="title_type_transfer">公交方案</string>
+	<string name="title_type_drive">驾车方案</string>
+	<string name="title_type_walk">步行方案</string>
 	<string name="title_transfer_plan">公交详情</string>
 	<string name="title_walk_plan">步行详情</string>
 	<string name="title_drive_plan">驾车详情</string>
@@ -274,8 +276,6 @@
     <!-- by xupeng 去掉直达和换乘次数 -->
     <!-- <string name="traffic_transfer_title">换乘%1$s次，%2$s</string>
     <string name="traffic_nonstop_title">直达，%1$s</string>  -->
-    <string name="traffic_transfer_title">%1$s</string>
-    <string name="traffic_nonstop_title">%1$s</string>
     <!-- <string name="traffic_at_where_walk_how">%1$s. 从%2$s步行约%3$s米</string> -->
     <string name="traffic_at_where_walk_how">从%1$s步行约%2$s米</string>
 <!--    <string name="traffic_at_where_walk_to_where">%1$s: 从%2$s步行到%3$s</string>-->

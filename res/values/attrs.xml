@@ -115,6 +115,8 @@
     <declare-styleable name="tkEditText">
         <attr name="maxLength" format="integer" min="0" />
         <attr name="paddingLeft" format="dimension" />
+        <attr name="paddingRight" format="dimension" />
+        <attr name="background" format="reference|color" />
         <attr name="hint" format="string" />
         <attr name="imeOptions" />
     </declare-styleable>

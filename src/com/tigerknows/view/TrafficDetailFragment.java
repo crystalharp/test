@@ -6,17 +6,13 @@ package com.tigerknows.view;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.DialogInterface.OnClickListener;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,35 +25,29 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
-import com.decarta.Globals;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
-import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TransferErrorRecovery;
 import com.tigerknows.maps.TrafficOverlayHelper;
 import com.tigerknows.model.BaseData;
-import com.tigerknows.model.POI;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;
-import com.tigerknows.model.TrafficModel.Plan.Step;
-import com.tigerknows.model.TrafficModel.Station;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.NavigationSplitJointRule;
 import com.tigerknows.util.ShareTextUtil;
 import com.tigerknows.util.WidgetUtils;
-import com.tigerknows.view.user.UserBaseActivity;
-import com.tigerknows.view.user.UserLoginActivity;
+import com.tigerknows.view.ResultMapFragment.TitlePopupArrayAdapter;
 
 public class TrafficDetailFragment extends BaseFragment implements View.OnClickListener{
     
     public TrafficDetailFragment(Sphinx sphinx) {
         super(sphinx);
-        // TODO Auto-generated constructor stub
     }
 
     private static final int SHOW_TYPE_TRANSFER = Plan.Step.TYPE_TRANSFER;
@@ -86,6 +76,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private int mChildLayoutId = R.layout.traffic_child_traffic;
     
+    private List<Plan> mPlanList = null;
+    
+    private List<String> mTitlePopupList = new ArrayList<String>();
+    
+    private TitlePopupArrayAdapter mTitlePopupArrayAdapter;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,14 +97,15 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         findViews();
         setListener();
         
+        mTitlePopupArrayAdapter = new TitlePopupArrayAdapter(mSphinx, mTitlePopupList);
+        
         return mRootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mRightImv.setImageResource(R.drawable.ic_view_map);
-        mRightBtn.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 72);
+        mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
         mRightBtn.setOnClickListener(this);
         
         mResultAdapter = new StringListAdapter(mContext);
@@ -130,6 +127,23 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         default:
         }
         
+        //TODO:修改titlebtn的内容
+        if (mPlanList != null) {
+        	//有内容，需要弹出顶部切换菜单
+//	        mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan));
+        	mTitleBtn.setText(mTitlePopupArrayAdapter.mSelectedItem);
+	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
+	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
+				@Override
+				public void onClick(View v) {
+			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+			        mTitlePopupArrayAdapter.notifyDataSetChanged();
+				}
+	        });
+        } else {
+        	//不用顶部弹出切换
+        	mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
+        }
         
         if (mShowType == SHOW_TYPE_TRANSFER) {
             mLengthTxv.setVisibility(View.GONE);
@@ -139,16 +153,27 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             mLengthTxv.setVisibility(View.VISIBLE);
             mShadowImv.setVisibility(View.GONE);
             mFootLayoutId = R.layout.traffic_fav_share;
-            if (plan.getLength() > 1000) {
-                mLengthTxv.setText(mContext.getString(R.string.traffic_result_length_km, CommonUtils.meter2kilometre(plan.getLength())));
-            } else {
-                mLengthTxv.setText(mContext.getString(R.string.traffic_result_length_m, plan.getLength()));
-            }
-            
+            mLengthTxv.setText(plan.getLengthStr(mSphinx));
         }
         
         history();
     }
+    
+    private OnItemClickListener mTitlePopupOnItemClickListener = new OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
+            mTitleFragment.dismissPopupWindow();
+            Plan clickedPlan = mPlanList.get(position);
+            if (clickedPlan.equals(plan)) {
+            	return;
+            } else {
+            	setData(clickedPlan);
+            	onResume();            	
+            }
+
+        }
+    };
 
     @Override
     public void onPause() {
@@ -184,7 +209,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
 		int viewId = v.getId();
 		if (viewId == R.id.right_btn) {
 		    mActionLog.addAction(ActionLog.TrafficDetailMapBtn);
@@ -202,6 +226,15 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
         this.plan = plan;
         mShowType = plan.getType();
+
+        mTitlePopupList.clear();
+        mTitlePopupArrayAdapter.mSelectedItem = mSphinx.getTrafficDetailFragment().getData().getTitle(mSphinx);
+        List<Plan> list = mSphinx.getTrafficResultFragment().getData();
+        for(int i = 0, size = list.size(); i < size; i++) {
+            mTitlePopupList.add(list.get(i).getTitle(mSphinx));
+        }
+        this.mPlanList = mSphinx.getTrafficResultFragment().getData();
+        
     }
 
     public static class StepViewHolder {
@@ -235,7 +268,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
         @Override
         public int getCount() {
-            // TODO Auto-generated method stub
             return strList.size() + 1;
         }
 
@@ -245,7 +277,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 
         @Override
 		public int getItemViewType(int position) {
-			// TODO Auto-generated method stub
         	if(position == getCount() - 1) {
         		return TYPE_ACTION;
         	}
@@ -254,7 +285,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
 		@Override
 		public int getViewTypeCount() {
-			// TODO Auto-generated method stub
 			return TYPE_COUNT;
 		}
 
@@ -369,19 +399,16 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
 			return 0;
 		}
 		
 		@Override
 		public boolean isEnabled(int position) {
-			// TODO Auto-generated method stub
 			if(position == this.getCount()-1)
               return false;
           return true;
@@ -393,7 +420,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     	
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
 
             if (v.getId() == R.id.share_rll) {
                 //弹出分享对话框
@@ -482,7 +508,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     	
     }
     
-    private void viewMap() {
+    public void viewMap() {
 
         if (plan != null) {
             String actionTag = "";
@@ -527,4 +553,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         return false;
     }
 
+    public Plan getData() {
+        return plan;
+    }
 }

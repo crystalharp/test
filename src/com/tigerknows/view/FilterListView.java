@@ -174,14 +174,11 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         
         parentLsv.setAdapter(parentAdapter);
         childLsv.setAdapter(childAdapter);
-        
-        parentLsv.getLayoutParams().width = Globals.g_metrics.widthPixels/5*2;
     }
 
     protected void findViews() {
         controlView = (ViewGroup) findViewById(R.id.control_view);
         parentLsv = (ListView) findViewById(R.id.parent_lsv);
-        parentLsv.getLayoutParams().width = Util.dip2px(Globals.g_metrics.density, 160);
         childLsv = (ListView) findViewById(R.id.child_lsv);
     }
     

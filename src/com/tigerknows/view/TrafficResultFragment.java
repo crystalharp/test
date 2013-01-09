@@ -91,7 +91,7 @@ public class TrafficResultFragment extends BaseFragment {
         mStartTxv.setText(mTrafficModel.getStart().getName());
         mEndTxv.setText(mTrafficModel.getEnd().getName());
 
-        mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan_list));
+        mTitleBtn.setText(mContext.getString(R.string.title_type_transfer));
         mLengthTxv.setVisibility(View.GONE);
         
         mResultAdapter = new TransferProjectListAdapter(mTrafficQuery.getTrafficModel().getPlanList());
@@ -181,60 +181,23 @@ public class TrafficResultFragment extends BaseFragment {
 
     	private static final int mResource = R.layout.traffic_group_traffic;
     	
-    	private ArrayList<String> mGroups = new ArrayList<String>();
+    	List<Plan> planList;
     	
 		public TransferProjectListAdapter(List<Plan> planList) {
 			super();
-			// TODO Auto-generated constructor stub
-			
-			for(Plan plan : planList)
-				genGroupTitle(plan);
+			this.planList = planList;
 		}
-
-		private void genGroupTitle(Plan plan) {
-            
-            String busName = "";
-            int transferTimes = -1;
-
-            for(Step step : plan.getStepList()) {
-                if (Step.TYPE_TRANSFER == step.getType()) {
-                    if (!TextUtils.isEmpty(busName)) {
-                        //busName = busName + " --> " + step.getTransferLineName();
-                    	busName = busName + mContext.getString(R.string.traffic_transfer_arrow) + step.getTransferLineName();
-                    } else {
-                        busName = step.getTransferLineName();
-                    }
-                    transferTimes++;
-                }
-            }
-            
-            String length = "";
-            if (plan.getLength() > 1000) {
-                length = mContext.getString(R.string.traffic_result_length_km, CommonUtils.meter2kilometre(plan.getLength()));
-            } else {
-            	length = mContext.getString(R.string.traffic_result_length_m, plan.getLength());
-            }
-            
-            if (transferTimes > 0) {
-                //mGroups.add(busName + "\n" + mContext.getString(R.string.traffic_transfer_title, transferTimes, length));
-            	mGroups.add(busName + "\n" + mContext.getString(R.string.traffic_transfer_title, length));
-            } else {
-            	if(busName.equals(""))
-            		busName = mContext.getString(R.string.traffic_noneed_transfer);
-                mGroups.add(busName + "\n" + mContext.getString(R.string.traffic_nonstop_title, length));
-            }
-        }
 
 		@Override
 		public int getCount() {
 			// TODO Auto-generated method stub
-			return mGroups.size();
+			return planList.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
 			// TODO Auto-generated method stub
-			return mGroups.get(position);
+			return planList.get(position);
 		}
 
 		@Override
@@ -261,12 +224,10 @@ public class TrafficResultFragment extends BaseFragment {
         		planHolder = (PlanViewHolder)convertView.getTag();
         	}
         	
-        	String[] temp = mGroups.get(position).split("\n");
-        	planHolder.text.setText(temp[0]);
+        	Plan plan = (Plan) getItem(position);
+        	planHolder.text.setText(plan.getTitle(mSphinx));
 
-        	if (temp.length > 1) {
-        		planHolder.summary.setText(temp[1]);
-        	}
+        	planHolder.summary.setText(plan.getLengthStr(mSphinx));
         	planHolder.index.setText(String.valueOf(position+1));
         	
         	if (focusedIndex == position) {
@@ -320,5 +281,21 @@ public class TrafficResultFragment extends BaseFragment {
 			return super.onTouchEvent(event);
 		}
 		
+    }
+    
+    public void submitTrafficQueryWithPosition(TrafficQuery mTrafficQuery){
+    	if (mTrafficQuery.getQueryType() != Step.TYPE_TRANSFER) {
+    		return;
+    	}
+    	if (mTrafficQuery.getStart().getPosition() != null && mTrafficQuery.getEnd().getPosition() != null) {
+    		mSphinx.queryStart(mTrafficQuery);
+    	} else {
+    		//mPreQueryView.submitTrafficQuery();
+            dismiss();
+    	}
+	}
+
+    public List<Plan> getData() {
+        return mTrafficModel.getPlanList();
     }
 }

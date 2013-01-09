@@ -25,11 +25,10 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -50,8 +49,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     }
 
     static final String TAG = "HomeFragment";
-    
-    private EditText mInputEdt;
+
+    private Button mCityBtn;
+    private Button mInputBtn;
+    private Button mRefreshBtn;
     private TextView mMyLoactionTxv;
     private Position mLastPosition;
     private String mLocationName;
@@ -61,7 +62,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     private int mCategoryTop;
     private int mMyLocationViewHeight;
     private int mCategoryBtnPadding;
-    private int mCategoryPaddingTop = 0;
+    private int mCategoryPadding = 0;
     
     private String[] mCategoryNameList;
     private final int[] mCategoryResIdList = {R.drawable.category_eat,
@@ -102,7 +103,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mCategoryNameList = getResources().getStringArray(R.array.home_category);
 
         int screenWidth = Math.min(Globals.g_metrics.widthPixels, Globals.g_metrics.heightPixels);
-        mCategoryBtnPadding = Util.dip2px(Globals.g_metrics.density, 8);
+        mCategoryBtnPadding = Util.dip2px(Globals.g_metrics.density, 2);
         
         View view = getImageButton();
         view.setBackgroundResource(mCategoryResIdList[0]);
@@ -132,9 +133,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mCategoryLsv.setAdapter(mCategoryAdapter);
         
         mMyLoactionTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        mCategoryPaddingTop = Util.dip2px(Globals.g_metrics.density, 8);
+        mCategoryPadding = Util.dip2px(Globals.g_metrics.density, 8);
         mMyLocationViewHeight = mMyLoactionTxv.getMeasuredHeight();
-        mCategoryTop = mMyLocationViewHeight+mCategoryPaddingTop;
+        mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
         mCategoryAdapter.notifyDataSetChanged();
         
         return mRootView;
@@ -143,13 +144,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        mLeftImv.setVisibility(View.INVISIBLE);
+        mTitleFragment.getChildAt(0).setBackgroundResource(R.drawable.bg_title_home);
         mLeftBtn.setVisibility(View.INVISIBLE);
         mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 2);
         mTitleBtn.setText(" ");
         mTitleBtn.setBackgroundResource(R.drawable.txt_app_name);
-        mRightBtn.setText(Globals.g_Current_City_Info.getCName());
-        mRightBtn.setOnClickListener(this);
+        mCityBtn.setText(Globals.g_Current_City_Info.getCName());
         
         mMenuFragment.updateMenuStatus(R.id.poi_btn);
         mMenuFragment.display();
@@ -166,22 +166,16 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
     protected void findViews() {
         mCategoryLsv = (SpringbackListView) mRootView.findViewById(R.id.category_lsv);
-        mInputEdt = (EditText) mRootView.findViewById(R.id.input_edt);
+        mInputBtn = (Button) mRootView.findViewById(R.id.input_btn);
+        mCityBtn = (Button) mRootView.findViewById(R.id.city_btn);
+        mRefreshBtn = (Button) mRootView.findViewById(R.id.refresh_btn);
         mMyLoactionTxv = (TextView) mRootView.findViewById(R.id.my_location_txv);
     }
 
     protected void setListener() {
-        mInputEdt.setOnTouchListener(new OnTouchListener() {
-            
-            @Override
-            public boolean onTouch(View arg0, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    mActionLog.addAction(ActionLog.SearchHomeSearchInput);
-                    mSphinx.showView(R.id.view_poi_query);
-                }
-                return false;
-            }
-        });
+        mInputBtn.setOnClickListener(this);
+        mCityBtn.setOnClickListener(this);
+        mRefreshBtn.setOnClickListener(this);
         mCategoryLsv.setOnRefreshListener(new OnRefreshListener() {
             
             @Override
@@ -194,9 +188,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         int id = view.getId();
-        if (id == R.id.right_btn) {
+        if (id == R.id.city_btn) {
             mActionLog.addAction(ActionLog.SearchHomeChangeCity);
             mSphinx.showView(R.id.activity_change_city);
+        } else if (id == R.id.input_btn) {
+            mActionLog.addAction(ActionLog.SearchHomeSearchInput);
+            mSphinx.showView(R.id.view_poi_query);
+        } else if (id == R.id.refresh_btn) {
+            
         }
     }
     
@@ -204,7 +203,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         if (mTitleFragment == null) {
             return;
         }
-        mRightBtn.setText(cityName);
+        mCityBtn.setText(cityName);
     }
     
     public void refreshLocationView() {
@@ -215,16 +214,16 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
             if (myLocationCityInfo.getId() == currentCityInfo.getId()) {
                 refreshLoactionTxv();
                 mMyLoactionTxv.setVisibility(View.VISIBLE);
-                mCategoryTop = mMyLocationViewHeight+mCategoryPaddingTop;
+                mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
             } else {
                 mMyLoactionTxv.setVisibility(View.GONE);
-                mCategoryTop = mCategoryPaddingTop;
+                mCategoryTop = mCategoryPadding;
             }
         } else {
             mLastTime = 0;
             mMyLoactionTxv.setText(mContext.getString(R.string.location_doing));
             mMyLoactionTxv.setVisibility(View.VISIBLE);
-            mCategoryTop = mMyLocationViewHeight+mCategoryPaddingTop;
+            mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
         }
         if (categoryTop != mCategoryTop) {
             mCategoryAdapter.notifyDataSetChanged();
@@ -349,9 +348,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
             }
 
             if (position == 0) {
-                view.setPadding(0, mCategoryTop, 0, 0);
+                view.setPadding(0, mCategoryTop/2, 0, 0);
             } else if (position == getCount()-1){
-                view.setPadding(0, 0, 0, mCategoryTop/2);
+                view.setPadding(0, 0, 0, mCategoryTop);
             } else {
                 view.setPadding(0, 0, 0, 0);
             }

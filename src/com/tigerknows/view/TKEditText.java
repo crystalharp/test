@@ -20,6 +20,7 @@ import com.tigerknows.R;
 
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.TextWatcher;
@@ -80,6 +81,10 @@ public class TKEditText extends LinearLayout implements OnClickListener {
             int paddingLeft = a.getDimensionPixelSize(R.styleable.tkEditText_paddingLeft, 0);
             if (paddingLeft != 0) {
                 mInputEdt.setPadding(paddingLeft, 0, 0, 0);
+            }
+            Drawable drawable = a.getDrawable(R.styleable.tkEditText_background);
+            if (drawable != null) {
+                mInputEdt.setBackgroundDrawable(drawable);
             }
             int imeOptions = a.getInt(R.styleable.tkEditText_imeOptions, IMEOPTION_ACTIONUNSPECIFIED);
             int androidImeOption = EditorInfo.IME_NULL;
