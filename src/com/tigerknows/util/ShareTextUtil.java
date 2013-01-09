@@ -636,7 +636,7 @@ public class ShareTextUtil {
 	 * 1. 全程:\u0020\u0020%1$s米
 	 * 2. 全程:\u0020\u0020%1$s公里
 	 */
-	private static String getPlanLength(Context context, int oLength) {
+	public static String getPlanLength(Context context, int oLength) {
 		String length = "";
         if (oLength > 1000) {
             length = context.getString(R.string.traffic_result_length_km, CommonUtils.meter2kilometre(oLength));

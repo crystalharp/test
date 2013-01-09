@@ -364,4 +364,8 @@ public class BuslineResultLineFragment extends BaseFragment {
         	}
         }
     }
+    
+    public List<Line> getData() {
+        return mLineList;
+    }
 }
