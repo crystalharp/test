@@ -69,7 +69,7 @@ public class CONFIG {
 	 * relative to the corner.
 	 * -1: no compass, 0: top-left, 1: top-right, 2: bottom-left, 3: bottom-right
 	 */
-	public static int COMPASS_PLACE_LOCATION=0;
+	public static int COMPASS_PLACE_LOCATION=4;
 	
 	/**
 	 * BORDER set the width of border between tiles. This is only for debug purpose.
