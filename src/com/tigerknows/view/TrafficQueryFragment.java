@@ -1,14 +1,18 @@
 package com.tigerknows.view;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.app.AlertDialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -20,6 +24,7 @@ import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.Globals;
 import com.decarta.android.location.Position;
@@ -29,7 +34,6 @@ import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.Sphinx.TouchMode;
-import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineModel;
@@ -37,9 +41,11 @@ import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TKWord;
 import com.tigerknows.model.TrafficModel;
+import com.tigerknows.model.TrafficModel.Station;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.provider.HistoryWordTable;
+import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 
 /**
@@ -852,7 +858,7 @@ public class TrafficQueryFragment extends BaseFragment {
         } else if (trafficModel.getType() == TrafficModel.TYPE_ALTERNATIVES 
         		|| trafficModel.getType() == TrafficModel.TYPE_PROJECT){
             if (trafficModel.getType() == TrafficModel.TYPE_ALTERNATIVES) {
-                mSphinx.getTrafficAlternativesDialog().setData(trafficQuery, this);
+        		showAlternativeDialog(trafficQuery.getTrafficModel().getStartAlternativesList(), trafficQuery.getTrafficModel().getEndAlternativesList());
             } else if (trafficModel.getPlanList() == null || trafficModel.getPlanList().size() <= 0){
             	mActionLog.addAction(ActionLog.TrafficQueryNoResultT);
             	showTrafficErrorTip(trafficQuery);
@@ -910,6 +916,54 @@ public class TrafficQueryFragment extends BaseFragment {
         		}        		
         	}
         }
+    }
+    
+    private void showAlternativeDialog(final List<Station> startStationList, final List<Station> endStationList) {
+    	List<String> list = new ArrayList<String>();
+    	final boolean start = (startStationList != null);
+    	final boolean end = (endStationList != null);
+    	if (start) {
+			for(int i = 0, size = startStationList.size(); i < size; i++) {
+				list.add(startStationList.get(i).getName());
+			}
+    	} else 	if (end) {
+    		for(int i = 0, size = endStationList.size(); i < size; i++) {
+				list.add(endStationList.get(i).getName());
+			}
+    	}
+		final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
+        ListView listView = CommonUtils.makeListView(mSphinx);
+        listView.setAdapter(adapter);
+        
+        final AlertDialog alertDialog = CommonUtils.showNormalDialog(mSphinx,
+                mSphinx.getString(start ? R.string.select_start_station : R.string.select_end_station),
+                null,
+                listView,
+                null,
+                null,
+                null);
+        
+        listView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
+            	Station station;
+            	if (start) {
+            	    station = startStationList.get(which);
+            	    mStart.setPOI(station.toPOI());
+            	} else if (end) {
+            		station = endStationList.get(which);
+            		mEnd.setPOI(station.toPOI());
+            	}
+                alertDialog.dismiss();
+                if (start == false || end == false) {
+                	submitTrafficQuery();
+                } else {
+                	showAlternativeDialog(null, endStationList);
+                }
+            }
+            
+        });
     }
     
     public void showTrafficErrorTip(TrafficQuery trafficQuery) {
