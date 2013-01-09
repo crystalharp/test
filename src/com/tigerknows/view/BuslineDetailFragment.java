@@ -385,4 +385,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 			BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
         }
     }
+    
+    public Line getData() {
+        return line;
+    }
 }
