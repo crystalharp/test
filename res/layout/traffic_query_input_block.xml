@@ -18,9 +18,11 @@
 	            android:layout_toLeftOf="@+id/traffic_query_btn"
 	            android:layout_alignParentTop="true"
 	            android:layout_marginLeft="4dp">
+	            <!-- android:background="" -->
 	            <LinearLayout 
 			        android:layout_width="fill_parent" 
 			        android:layout_height="wrap_content"
+			        android:paddingTop="6dp"
 			        android:orientation="horizontal" >
 			        <Button
 			            android:id="@+id/select_start_btn"
@@ -34,10 +36,13 @@
 			            layout="@layout/traffic_query_input_line" />
 
         		</LinearLayout>
+        		<ImageView
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:background="@drawable/bg_line_split" />
 	            <LinearLayout 
-			        android:layout_width="fill_parent" 
-			        android:layout_height="wrap_content"
-			        android:layout_marginTop="2dp">
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content">
 			        <Button
 			            android:id="@+id/select_end_btn"
 			            style="?android:attr/buttonStyleSmall"
@@ -51,17 +56,10 @@
 	            android:layout_alignParentRight="true"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            android:background="@drawable/btn_search_disabled"
+	            android:background="@drawable/btn_traffic_query"
 	            android:layout_centerVertical="true" />
 <!-- 	            android:layout_alignBottom="@+id/traffic_lsv" -->
 <!-- 	            android:layout_alignTop="@+id/traffic_lsv" -->
-
-<!-- 	        <Button android:id="@+id/exchange_btn" -->
-<!-- 	            android:background="@drawable/btn_exchange" -->
-<!-- 	            android:layout_alignParentLeft="true" -->
-<!-- 	            android:layout_width="wrap_content"  -->
-<!-- 	            android:layout_height="wrap_content" -->
-<!-- 	            android:layout_centerVertical="true" /> -->
 
 	    </RelativeLayout>
 
@@ -70,13 +68,20 @@
 	        android:layout_height="wrap_content"
 	        android:padding="10dp"
 	        android:background="@drawable/bg_gradient"
-	        android:visibility="gone">     
-	        <include android:id="@+id/busline_edt"
-				layout="@layout/traffic_query_input_line" />  
+	        android:visibility="gone">
+	        <LinearLayout     
+	            android:layout_width="fill_parent" 
+	            android:layout_height="wrap_content"
+	            android:orientation="vertical"
+	            android:layout_toLeftOf="@+id/busline_query_btn">
+		        <include android:id="@+id/busline_edt"
+					layout="@layout/traffic_query_input_line" />  
+			</LinearLayout>
 			<Button android:id="@+id/busline_query_btn"
 	            android:layout_alignParentRight="true"
 	            android:layout_width="wrap_content" 
 	            android:layout_height="wrap_content"
+	            android:background="@drawable/btn_search"
 	            android:layout_centerVertical="true" />
 	    </RelativeLayout>
 		
