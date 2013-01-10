@@ -108,19 +108,20 @@
         
     </LinearLayout>
  	-->
+    
+    <include android:id="@+id/busline_detail_foot"
+        android:layout_alignParentBottom="true"
+        layout="@layout/traffic_fav_share" />
  	
     <ListView android:id="@+id/result_lsv"
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
         android:layout_below="@id/top_view"
+        android:layout_above="@id/busline_detail_foot"
         android:fadingEdge="none"
         android:drawSelectorOnTop="false"
         android:scrollingCache="false"
 		android:divider="@drawable/bg_real_line"
 		android:background="@color/gray_dark" />
-    
-    <include android:id="@+id/busline_detail_foot"
-        android:layout_alignParentBottom="true"
-        layout="@layout/traffic_fav_share" />
 
 </RelativeLayout>
