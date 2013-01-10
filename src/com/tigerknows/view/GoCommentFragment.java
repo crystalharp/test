@@ -6,13 +6,11 @@ package com.tigerknows.view;
 
 import com.decarta.Globals;
 import com.decarta.android.location.Position;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
@@ -24,22 +22,16 @@ import com.tigerknows.util.SqliteWrapper;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.POIResultFragment.POIAdapter;
 import com.tigerknows.view.SpringbackListView.OnRefreshListener;
-import com.tigerknows.view.user.UserBaseFragment;
 
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AbsListView.OnScrollListener;
+import android.widget.Button;
 import android.widget.AdapterView.OnItemClickListener;
 
 import java.util.ArrayList;
@@ -68,9 +60,9 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
     
     private SpringbackListView mPOILsv = null;
     
-    private TextView mEmptyView;
+    private View mEmptyView;
     
-    private EditText mInputEdt;
+    private Button mInputBtn;
     
     private static final String FAVORITE_WHERE = "("+Tigerknows.POI.STORE_TYPE+"="+Tigerknows.STORE_TYPE_FAVORITE+")";
     
@@ -142,25 +134,15 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
     }
 
     protected void findViews() {
-        mInputEdt = (EditText) mRootView.findViewById(R.id.input_edt);
+        mInputBtn = (Button) mRootView.findViewById(R.id.input_btn);
         mPOILsv = (SpringbackListView) mRootView.findViewById(R.id.poi_lsv);
-        mEmptyView = (TextView)mRootView.findViewById(R.id.empty_txv);
+        mEmptyView = mRootView.findViewById(R.id.empty_view);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
         mPOILsv.addFooterView(v);
     }
 
     protected void setListener() {
-        mInputEdt.setOnTouchListener(new OnTouchListener() {
-            
-            @Override
-            public boolean onTouch(View arg0, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    mActionLog.addAction(ActionLog.GoCommentClickInputBox);
-                    mSphinx.showView(R.id.view_poi_query);
-                }
-                return false;
-            }
-        });
+        mInputBtn.setOnClickListener(this);
         
         mPOILsv.setOnItemClickListener(new OnItemClickListener() {
 
@@ -190,6 +172,8 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
+        mActionLog.addAction(ActionLog.GoCommentClickInputBox);
+        mSphinx.showView(R.id.view_poi_query);
     }
     
     private void queryPOIByFavorite(List<POI> list, long maxId, long minId, boolean next){

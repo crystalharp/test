@@ -916,4 +916,6 @@
     <string name="click_here_download_map">点击这里下载地图</string>
     <string name="wifi_enabled">wifi已开启</string>
     <string name="wifi_disabled">wifi已关闭</string>
+    
+    <string name="shanghu_xingxi">商户信息</string>
 </resources>

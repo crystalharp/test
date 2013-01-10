@@ -9,10 +9,10 @@
         <item name="android:indeterminateDrawable">@drawable/progress_medium</item>
         <item name="android:indeterminateBehavior">repeat</item>
         <item name="android:indeterminateDuration">3500</item>
-        <item name="android:minWidth">31dip</item>
-        <item name="android:maxWidth">31dip</item>
-        <item name="android:minHeight">6dip</item>
-        <item name="android:maxHeight">6dip</item>
+        <item name="android:minWidth">32dip</item>
+        <item name="android:maxWidth">32dip</item>
+        <item name="android:minHeight">7dip</item>
+        <item name="android:maxHeight">7dip</item>
     </style>
 
 <!-- 
