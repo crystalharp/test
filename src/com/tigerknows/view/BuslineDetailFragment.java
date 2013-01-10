@@ -215,12 +215,6 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     }
 
     class StringListAdapter extends BaseAdapter{
-
-//    	private static final int TYPE_STATION = 0;
-//        
-//        private static final int TYPE_ACTION = TYPE_STATION + 1;
-//        
-//        private static final int TYPE_COUNT = TYPE_ACTION + 1;
     	        
         private List<CharSequence> strList = new ArrayList<CharSequence>();
 
@@ -239,70 +233,26 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             return strList.size();
         }
 
-//        @Override
-//		public int getItemViewType(int position) {
-//        	if(position == getCount() - 1) {
-//        		return TYPE_ACTION;
-//        	}
-//			return TYPE_STATION;
-//		}
-//
-//		@Override
-//		public int getViewTypeCount() {
-//			return TYPE_COUNT;
-//		}
-
 		@Override
         public View getView(final int position, View convertView, ViewGroup parent) {
 
-//			int type = getItemViewType(position);
             if(convertView == null) {
-//                switch(type){
-//                case TYPE_STATION:
                     convertView = mLayoutInflater.inflate(R.layout.traffic_child_busline, parent, false);
                     StationViewHolder stationHolder = new StationViewHolder();
                     stationHolder.image = (ImageView)convertView.findViewById(R.id.image1);
                     stationHolder.textView = (TextView)convertView.findViewById(R.id.text);
                     convertView.setTag(stationHolder);
-//                    break;
-//                    
-//                case TYPE_ACTION:
-//                    convertView = mLayoutInflater.inflate(R.layout.traffic_fav_share, parent, false);
-//                    ActionViewHolder actionHolder = new ActionViewHolder();
-//                    actionHolder.favorite = (RelativeLayout)convertView.findViewById(R.id.favorite_rll);
-//                    actionHolder.share = (RelativeLayout)convertView.findViewById(R.id.share_rll);
-//                    convertView.setTag(actionHolder);
-//                    break;
-//                default:
-                
-//                }
             }
+
+            StationViewHolder stationHolder = (StationViewHolder)convertView.getTag();
             
-//            switch(type){
-//            case TYPE_STATION:
-                StationViewHolder stationHolder = (StationViewHolder)convertView.getTag();
-                
-                String txt = mContext.getString(R.string.bus_index_station, position+1, (String)getItem(position));
-                int index = txt.indexOf((String)getItem(position))-1; 
+            String txt = mContext.getString(R.string.bus_index_station, position+1, (String)getItem(position));
+            int index = txt.indexOf((String)getItem(position))-1; 
 
-                SpannableStringBuilder style=new SpannableStringBuilder(txt);               
-                style.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.text_forground_blue)),0, index, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-                
-                stationHolder.textView.setText(style);
-
-//                break;
-//
-//            case TYPE_ACTION:
-//                ActionViewHolder actionHolder = (ActionViewHolder)convertView.getTag();
-//                            
-//                actionHolder.favorite.setOnClickListener(new ResultOnClickListener());
-//                actionHolder.share.setOnClickListener(new ResultOnClickListener());
-//                
-//                setFavoriteState(actionHolder.favorite, line.checkFavorite(mContext));
-//
-//                break;
-//            default:
-//            }
+            SpannableStringBuilder style=new SpannableStringBuilder(txt);               
+            style.setSpan(new ForegroundColorSpan(mContext.getResources().getColor(R.color.text_forground_blue)),0, index, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+            
+            stationHolder.textView.setText(style);
 
             return convertView;
 
@@ -390,16 +340,11 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     }
     
     private void setFavoriteState(View v, boolean favoriteYet) {
-    	
-//    	ImageView favorite = (ImageView)v.findViewById(R.id.image);
-//    	TextView text = (TextView)v.findViewById(R.id.favorite);
-    	
+    	    	
     	if (favoriteYet) {
     		mFavorateBtn.setBackgroundResource(R.drawable.btn_cancel_favorite_normal);
-//        	text.setText(mContext.getResources().getString(R.string.favorite_yet));
     	} else {
     		mFavorateBtn.setBackgroundResource(R.drawable.btn_favorite);
-//        	text.setText(mContext.getResources().getString(R.string.favorite));
     	}
     }
     

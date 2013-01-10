@@ -264,6 +264,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mShowType = plan.getType();
 
         mTitlePopupList.clear();
+        mPlanList = null;
         if (mShowType == SHOW_TYPE_TRANSFER) {
         	this.mPlanList = mSphinx.getTrafficResultFragment().getData();
         	if (mPlanList != null) {
@@ -280,21 +281,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     	public ImageView image;
     	public TextView textView;
     }
-    
-//    public static class ActionViewHolder {
-//    	public RelativeLayout favorite;
-//    	public RelativeLayout share;
-//    	public RelativeLayout errorrecovery;
-//    }
 
     class StringListAdapter extends BaseAdapter{
 
-//    	private static final int TYPE_STEP = 0;
-//    	
-//    	private static final int TYPE_ACTION = TYPE_STEP + 1;
-//    	
-//    	private static final int TYPE_COUNT = TYPE_ACTION + 1;
-    	
         private List<Integer> types = new ArrayList<Integer>();
         
         private List<CharSequence> strList = new ArrayList<CharSequence>();
@@ -319,71 +308,24 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         private CharSequence getItemContent(int position) {
             return strList.get(position);
         }
-                
-//        @Override
-//		public int getItemViewType(int position) {
-//        	if(position == getCount() - 1) {
-//        		return TYPE_ACTION;
-//        	}
-//			return TYPE_STEP;
-//		}
-
-//		@Override
-//		public int getViewTypeCount() {
-//			return TYPE_COUNT;
-//		}
 
 		@Override
         public View getView(final int position, View convertView, ViewGroup parent) {
 
-//            int type = getItemViewType(position);
 			if(convertView == null) {
-//				switch(type){
-//				case TYPE_STEP:
-					convertView = mLayoutInflater.inflate(mChildLayoutId, parent, false);
-					StepViewHolder stepHolder = new StepViewHolder();
-					stepHolder.image = (ImageView)convertView.findViewById(R.id.image1);
-					stepHolder.textView = (TextView)convertView.findViewById(R.id.text);
-					convertView.setTag(stepHolder);
-//					break;
-//				case TYPE_ACTION:
-//					convertView = mLayoutInflater.inflate(mFootLayoutId, parent, false);
-//					ActionViewHolder actionHolder = new ActionViewHolder();
-//					actionHolder.favorite = (RelativeLayout)convertView.findViewById(R.id.favorite_rll);
-//					actionHolder.share = (RelativeLayout)convertView.findViewById(R.id.share_rll);
-//					actionHolder.errorrecovery = (RelativeLayout)convertView.findViewById(R.id.errorrecovery_rll);
-//					convertView.setTag(actionHolder);
-//					break;
-//				default:
-//				}
+				convertView = mLayoutInflater.inflate(mChildLayoutId, parent, false);
+				StepViewHolder stepHolder = new StepViewHolder();
+				stepHolder.image = (ImageView)convertView.findViewById(R.id.image1);
+				stepHolder.textView = (TextView)convertView.findViewById(R.id.text);
+				convertView.setTag(stepHolder);
 			}
+
+			StepViewHolder stepHolder = (StepViewHolder)convertView.getTag();
 			
-//			switch(type){
-//			case TYPE_STEP:
-				StepViewHolder stepHolder = (StepViewHolder)convertView.getTag();
-				
-				Integer stepType = types.get(position);
-                stepHolder.image.setBackgroundDrawable(getDrawable(stepType));
-				stepHolder.textView.setText(getItemContent(position));
-				stepHolder.textView.setTextColor(Color.parseColor("#000000"));
-			
-//				break;
-//			case TYPE_ACTION:
-//				ActionViewHolder actionHolder = (ActionViewHolder)convertView.getTag();
-//				
-//				if (mShowType == SHOW_TYPE_TRANSFER) {
-//					actionHolder.errorrecovery.setVisibility(View.VISIBLE);
-//				} else {
-//					actionHolder.errorrecovery.setVisibility(View.GONE);
-//				}
-//				
-//				actionHolder.favorite.setOnClickListener(new ResultOnClickListener());
-//				actionHolder.share.setOnClickListener(new ResultOnClickListener());
-//				actionHolder.errorrecovery.setOnClickListener(new ResultOnClickListener());
-//				setFavoriteState(actionHolder.favorite, plan.checkFavorite(mContext));
-//				break;
-//			default:
-//			}
+			Integer stepType = types.get(position);
+            stepHolder.image.setBackgroundDrawable(getDrawable(stepType));
+			stepHolder.textView.setText(getItemContent(position));
+			stepHolder.textView.setTextColor(Color.parseColor("#000000"));
 				
 			return convertView;
 
@@ -545,16 +487,11 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     }
 
     private void setFavoriteState(View v, boolean favoriteYet) {
-    	
-//    	Button favorite = (Button)v.findViewById(R.id.favorite_btn);
-//    	TextView text = (TextView)v.findViewById(R.id.favorite);
-    	
+    	    	
     	if (favoriteYet) {
     		mFavorateBtn.setBackgroundResource(R.drawable.btn_cancel_favorite_normal);
-//        	text.setText(mContext.getResources().getString(R.string.favorite_yet));	
     	} else {
     		mFavorateBtn.setBackgroundResource(R.drawable.btn_favorite);
-//        	text.setText(mContext.getResources().getString(R.string.favorite));
     	}
     	
     }
