@@ -3,6 +3,7 @@ package com.tigerknows.view;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.TKWord;
+import com.tigerknows.util.CommonUtils;
 
 import android.content.Context;
 import android.text.Spannable;
@@ -56,12 +57,12 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
             iconImv.setVisibility(View.VISIBLE);
             inputBtn.setVisibility(View.VISIBLE);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-            formatText(textTxv, tkWord.word, key);
+            CommonUtils.formatText(textTxv, tkWord.word, key, TKConfig.COLOR_BLACK_LIGHT);
         } else if (tkWord.attribute == TKWord.ATTRIBUTE_SUGGEST) {
             iconImv.setVisibility(View.INVISIBLE);
             inputBtn.setVisibility(View.VISIBLE);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
-            formatText(textTxv, tkWord.word, key);
+            CommonUtils.formatText(textTxv, tkWord.word, key, TKConfig.COLOR_BLACK_LIGHT);
         } else {
             iconImv.setVisibility(View.INVISIBLE);
             inputBtn.setVisibility(View.INVISIBLE);
@@ -79,15 +80,5 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
         }
         
         return convertView;
-    }
-    
-    private void formatText(TextView textView, String word, String key) {
-        if (TextUtils.isEmpty(key)) {
-            textView.setText(word);
-        } else {
-            SpannableStringBuilder style=new SpannableStringBuilder(word);  
-            style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_BLACK_LIGHT),0,key.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            textView.setText(style);
-        }
     }
 }

@@ -749,9 +749,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if (TextUtils.isEmpty(distance)) {
                 distanceTxv.setVisibility(View.GONE);
             } else {
-                distanceTxv.setText(mSphinx.getString(R.string.dianying_detail_nearest, String.valueOf(dianying.getYingxun().getDistance())));
+                //distanceTxv.setText(mSphinx.getString(R.string.dianying_detail_nearest, String.valueOf(dianying.getYingxun().getDistance())));
+            	  String distanceStr = mSphinx.getString(R.string.dianying_detail_nearest, String.valueOf(dianying.getYingxun().getDistance()));
+
+                CommonUtils.formatText(distanceTxv, distanceStr, mSphinx.getString(R.string.dianying_detail_nearest, ""), R.color.black_dark);
                 distanceTxv.setVisibility(View.VISIBLE);
             }
+            
             addressTxv.setText(dianying.getTag());
             if (TextUtils.isEmpty(dianying.getLength())) {
             	dateTxv.setVisibility(View.GONE);

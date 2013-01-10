@@ -10,10 +10,16 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 
 import android.content.Intent;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
+import android.widget.AbsoluteLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -48,8 +54,11 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     private ImageButton mDiscoverBtn;
     private ImageButton mTrafficBtn;
     private ImageButton mMoreBtn;
+    private ImageView mCursorImv;
+    
     private ImageView mUpgradeImv;
     private ImageView mDiscvoerImv;
+
     
     private int mMenuIdSelected;
     private ImageButton[] mMenuBtnList = new ImageButton[4]; 
@@ -61,8 +70,21 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         mRootView = mLayoutInflater.inflate(R.layout.menu, container, false);
         findViews();
         setListener();
-        return mRootView;
+		
+		return mRootView;
     }
+    int[] locationsPOIBtn = new int[2];
+    int[] locationsDiscoverBtn = new int[2];
+    int[] locationsTrafficBtn = new int[2];
+    int[] locationsMoreBtn = new int[2];
+    int[][] locations = new int[][]{
+    		locationsPOIBtn
+    		,locationsDiscoverBtn
+    		,locationsTrafficBtn
+    		,locationsMoreBtn};
+    
+    
+    private boolean resumeFirstCalled = true;
     
     @Override
     public void onResume() {
@@ -70,6 +92,20 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         
         mRootView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         mSphinx.getControlView().setPadding(0, 0, 0, getMeasuredHeight());
+        
+        mPOIBtn.getLocationOnScreen(locationsPOIBtn);
+        mDiscoverBtn.getLocationOnScreen(locationsDiscoverBtn);
+        mTrafficBtn.getLocationOnScreen(locationsTrafficBtn);
+        mMoreBtn.getLocationOnScreen(locationsMoreBtn);
+        
+        if( resumeFirstCalled){
+			Animation animation = new TranslateAnimation(locations[0][0], locations[0][0], 0, 0);
+			animation.setFillAfter(true);
+			animation.setDuration(0);
+			mCursorImv.startAnimation(animation);
+			resumeFirstCalled = false;
+        }
+		
     }
     
     @Override
@@ -83,6 +119,9 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         mDiscoverBtn = (ImageButton)mRootView.findViewById(R.id.discover_btn);
         mDiscvoerImv = (ImageView)mRootView.findViewById(R.id.discover_imv);
         mTrafficBtn = (ImageButton)mRootView.findViewById(R.id.traffic_btn);
+        
+        mCursorImv = (ImageView)mRootView.findViewById(R.id.btn_cursor);
+        
         mMoreBtn = (ImageButton)mRootView.findViewById(R.id.more_btn);
         mUpgradeImv = (ImageView)mRootView.findViewById(R.id.upgrade_imv);
         mMenuBtnList[0] = mPOIBtn;
@@ -101,8 +140,10 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
     	mSphinx.uiStackEmpty();
+    	System.out.println("Pressed");
         switch (view.getId()) {
             case R.id.poi_btn:
+            	System.out.println("Poi Pressed");
             	mActionLog.addAction(ActionLog.MenuSearch);
                 mSphinx.showView(R.id.view_home);
                 break;
@@ -133,11 +174,27 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     }
     
     public void updateMenuStatus(int id) {
+    	int oldIndex = 0;
+    	for(int i =0,size=mMenuBtnList.length; i<size; i++) {
+            if (mMenuBtnList[i].getId() == mMenuIdSelected) {
+            	oldIndex=i;
+            	break;
+            }
+        }
         mMenuIdSelected = id;
+        int nowIndex = 0;
+        for(int i =0,size=mMenuBtnList.length; i<size; i++) {
+            if (mMenuBtnList[i].getId() == mMenuIdSelected) {
+            	nowIndex=i;
+            	break;
+            }
+        }
         
         int i = 0;
+        int indexPressed = 0;
         for(ImageButton imageButton : mMenuBtnList) {
             if (imageButton.getId() == mMenuIdSelected) {
+            		indexPressed=i;
                 imageButton.setBackgroundResource(MENU_BACKGROUD_SELECTED[i]);
             } else {
                 imageButton.setImageBitmap(null);
@@ -145,6 +202,19 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             }
             i++;
         }
+        
+        //mMenuBtnList[i].getBackground().getIntrinsicWidth();
+        int w = Globals.g_metrics.widthPixels/4;
+
+		Animation animation = new TranslateAnimation(locations[oldIndex][0], locations[indexPressed][0], 0, 0);
+		animation.setFillAfter(true);
+		animation.setDuration(200);
+		mCursorImv.startAnimation(animation);
+		mCursorImv.setBackgroundResource(MENU_BACKGROUD_SELECTED[indexPressed]);
+				
+		//System.out.println(locations[oldIndex][0]+ ":"+ locations[indexPressed][0]);
+       //System.out.println(oldIndex + ":" + indexPressed);
+		
     }
     
     public void setUpgrade(int visibility) {
