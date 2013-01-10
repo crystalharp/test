@@ -91,6 +91,8 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
 
     private TextView mBuyerNumTxv = null;
     
+    private View mFendianNameView = null;
+    
     private TextView mFendianNameTxv = null;
     
     private TextView mDistanceTxv = null;
@@ -115,7 +117,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     
     private View mNoticedView;
 
-    private CollapseTextView mNoticedTxv;
+    private TextView mNoticedTxv;
 
     private View mServiceHotlineView;
 
@@ -129,14 +131,10 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     
     private String noRefundStr;
     
-    private int mPictureHeight;
-    
     private int mPictureDetailWidth;
     
-    private int mPaddingHeight;
-
-	  int[] locationScv = new int[]{0, 1};
-	  int[] locationBar = new int[]{0, 2};
+	int[] locationScv = new int[]{0, 1};
+	int[] locationBar = new int[]{0, 2};
 	  
     protected Runnable mActualLoadedDrawableRun = new Runnable() {
         
@@ -199,7 +197,6 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         layoutParams = mPictureImv.getLayoutParams();
         layoutParams.width = width-((int) Globals.g_metrics.density*16);
         layoutParams.height = height-((int) Globals.g_metrics.density*16);
-        mPictureHeight = height+Util.dip2px(Globals.g_metrics.density, 16);
         
         mPictureDetailWidth = (int)(Globals.g_metrics.widthPixels-(Globals.g_metrics.density*48));
     }
@@ -236,13 +233,13 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             mShangjiaMarkerImv.setImageDrawable(null);
         }
         
-        mPriceTxv.setText(mSphinx.getString(R.string.rmb) + mData.getPrice());
-        mOrgPriceTxv.setText(mSphinx.getString(R.string.rmb)+mData.getOrgPrice());
+        mPriceTxv.setText(mData.getPrice()+mSphinx.getString(R.string.rmb_text));
+        mOrgPriceTxv.setText(mData.getOrgPrice()+mSphinx.getString(R.string.rmb_text));
         mOrgPriceTxv.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
         mDiscountTxv.setText(mData.getDiscount());
 
-        mPriceTxv_2.setText(mSphinx.getString(R.string.rmb) + mData.getPrice());
-        mOrgPriceTxv_2.setText(mSphinx.getString(R.string.rmb)+mData.getOrgPrice());
+        mPriceTxv_2.setText(mData.getPrice()+mSphinx.getString(R.string.rmb_text));
+        mOrgPriceTxv_2.setText(mData.getOrgPrice()+mSphinx.getString(R.string.rmb_text));
         mOrgPriceTxv_2.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
         mDiscountTxv_2.setText(mData.getDiscount());
         
@@ -376,7 +373,6 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             mNoticedView.setVisibility(View.GONE);
         } else {
             mNoticedTxv.setText(noticed);
-            mNoticedTxv.reset();
             mNoticedView.setVisibility(View.VISIBLE);
         }
         
@@ -425,7 +421,8 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mBuyerNumTxv = (TextView) findViewById(R.id.buyer_num_txv);
 
         View view = findViewById(R.id.tuangou_fendian_list_item);
-        view.findViewById(R.id.name_view).setBackgroundResource(R.drawable.list_middle);
+        mFendianNameView = view.findViewById(R.id.name_view);
+        mFendianNameView.setBackgroundResource(R.drawable.list_middle);
         view.findViewById(R.id.tuangou_fendian_list_item).setPadding(0, 0, 0, 0);
         mFendianNameTxv = (TextView) view.findViewById(R.id.name_txv);
         mDistanceTxv = (TextView)view.findViewById(R.id.distance_txv);
@@ -440,9 +437,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mContentView =  findViewById(R.id.content_view);
         mContentTxv = (TextView) findViewById(R.id.content_txv);
         mNoticedView = findViewById(R.id.noticed_view);
-        mNoticedTxv = (CollapseTextView)findViewById(R.id.noticed_txv);
-        mNoticedTxv.setTextColor(0x99000000);
-        mNoticedTxv.setActionTag(ActionLog.TuangouXiangqingNotice);
+        mNoticedTxv = (TextView)findViewById(R.id.noticed_txv);
         mServiceHotlineView = findViewById(R.id.service_hotline_view);
         mServiceHotlineTxv = (TextView) findViewById(R.id.service_hotline_txv);
         mServiceHotlineTitleTxv = (TextView) findViewById(R.id.service_hotline_title_txv);

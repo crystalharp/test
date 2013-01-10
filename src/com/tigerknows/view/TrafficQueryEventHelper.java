@@ -2,7 +2,6 @@ package com.tigerknows.view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import android.app.AlertDialog;
@@ -34,8 +33,6 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.maps.PinOverlayHelper;
 import com.tigerknows.model.POI;
-import com.tigerknows.model.TrafficModel.Station;
-import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.TKWord;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.view.TrafficQueryFragment.QueryEditText;

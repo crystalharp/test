@@ -177,7 +177,7 @@
                     android:layout_margin="8dp"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:text="@string/app_name"
+                    android:text="@string/shanghu_xingxi"
                     android:textColor="@color/blue"
                     android:textSize="16sp"
                     />
@@ -194,6 +194,14 @@
                     android:textSize="14sp"
                     />
              </RelativeLayout>
+             
+             <View
+                 android:background="@drawable/bg_line_split"
+                 android:layout_width="fill_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_marginLeft="8dp"
+                 android:layout_marginRight="8dp"
+                 />
 
              <include
                  android:layout_width="match_parent"
@@ -223,6 +231,8 @@
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
                      android:background="@drawable/bg_broken_line"
+                     android:layout_marginLeft="8dp"
+                     android:layout_marginRight="8dp"
                      />
                  <TextView
                      android:id="@+id/description_txv"

@@ -1,4 +1,5 @@
 <animation-list xmlns:android="http://schemas.android.com/apk/res/android" android:oneshot="false">
-    <item android:drawable="@drawable/icon_orientation1" android:duration="500" />
-    <item android:drawable="@drawable/icon" android:duration="500" />
+    <item android:drawable="@drawable/ic_querying1" android:duration="500" />
+    <item android:drawable="@drawable/ic_querying2" android:duration="500" />
+    <item android:drawable="@drawable/ic_querying3" android:duration="500" />
 </animation-list>

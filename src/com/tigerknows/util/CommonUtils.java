@@ -35,6 +35,7 @@ import android.content.pm.ResolveInfo;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.AnimationDrawable;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -607,6 +608,10 @@ public class CommonUtils {
         }
         
         return false;
+    }
+    
+    public static AlertDialog showNormalDialog(Activity activity, View custom) {
+        return showNormalDialog(activity, null, null, custom, null, null, null);
     }
     
     public static AlertDialog showNormalDialog(Activity activity, String title, View custom) {

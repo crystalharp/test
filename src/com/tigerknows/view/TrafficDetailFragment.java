@@ -263,14 +263,13 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         this.plan = plan;
         mShowType = plan.getType();
 
-        if (mShowType == SHOW_TYPE_TRANSFER) {
-	        mTitlePopupList.clear();
-	        mTitlePopupArrayAdapter.mSelectedItem = mSphinx.getTrafficDetailFragment().getData().getTitle(mSphinx);
-	        List<Plan> list = mSphinx.getTrafficResultFragment().getData();
-	        for(int i = 0, size = list.size(); i < size; i++) {
-	            mTitlePopupList.add(list.get(i).getTitle(mSphinx));
+        mTitlePopupList.clear();
+        this.mPlanList = mSphinx.getTrafficResultFragment().getData();
+        if (mShowType == SHOW_TYPE_TRANSFER && mPlanList != null) {
+            mTitlePopupArrayAdapter.mSelectedItem = this.plan.getTitle(mSphinx);
+	        for(int i = 0, size = mPlanList.size(); i < size; i++) {
+	            mTitlePopupList.add(mPlanList.get(i).getTitle(mSphinx));
 	        }
-	        this.mPlanList = mSphinx.getTrafficResultFragment().getData();
         }
         
     }

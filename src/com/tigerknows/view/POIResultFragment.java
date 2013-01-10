@@ -49,7 +49,7 @@ import java.util.List;
 /**
  * @author Peng Wenyue
  */
-public class POIResultFragment extends BaseFragment implements View.OnClickListener, FilterListView.CallBack {
+public class POIResultFragment extends BaseFragment implements View.OnClickListener, FilterListView.CallBack, RetryView.CallBack {
 
     public POIResultFragment(Sphinx sphinx) {
         super(sphinx);
@@ -177,7 +177,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
 
     protected void setListener() {
-        mRetryView.setOnClickListener(this);
+        mRetryView.setCallBack(this);
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -403,14 +403,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
                 mActionLog.addAction(ActionLog.SearchResultMap);
                 viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
-                break;
-                
-            case R.id.retry_btn:
-                if (mBaseQuerying != null) {
-                    mBaseQuerying.setResponse(null);
-                    mSphinx.queryStart(mBaseQuerying);
-                }
-                setup();
                 break;
                 
             default:
@@ -814,5 +806,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
         mPopupWindow.showAsDropDown(parent, 0, 0);
 
+    }
+
+    @Override
+    public void retry() {
+        if (mBaseQuerying != null) {
+            mBaseQuerying.setResponse(null);
+            mSphinx.queryStart(mBaseQuerying);
+        }
+        setup();
     }
 }

@@ -69,7 +69,7 @@ import java.util.List;
 /**
  * @author Peng Wenyue
  */
-public class DiscoverListFragment extends DiscoverBaseFragment implements View.OnClickListener, FilterListView.CallBack, SpringbackListView.IPagerList {
+public class DiscoverListFragment extends DiscoverBaseFragment implements View.OnClickListener, FilterListView.CallBack, SpringbackListView.IPagerList, RetryView.CallBack {
 
     public DiscoverListFragment(Sphinx sphinx) {
         super(sphinx);
@@ -282,7 +282,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     }
 
     protected void setListener() {
-        mRetryView.setOnClickListener(this);
+        mRetryView.setCallBack(this);
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -629,14 +629,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, getId());
                     mSphinx.showView(R.id.activity_user_login, intent);
                 }
-                break;
-                
-            case R.id.retry_btn:
-                if (mBaseQuerying != null) {
-                    mBaseQuerying.setResponse(null);
-                    mSphinx.queryStart(mBaseQuerying);
-                }
-                setup();
                 break;
                 
             default:
@@ -1201,5 +1193,14 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     public void turnPageStart(boolean isHeader, IPagerListCallBack iPagerListCallBack) {
         mIPagerListCallBack = iPagerListCallBack;
         turnPage(mSphinx.getString(R.string.doing_and_wait));
+    }
+
+    @Override
+    public void retry() {
+        if (mBaseQuerying != null) {
+            mBaseQuerying.setResponse(null);
+            mSphinx.queryStart(mBaseQuerying);
+        }
+        setup();
     } 
 }

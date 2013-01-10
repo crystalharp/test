@@ -19,7 +19,6 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             />
-    
         <TextView 
             android:id="@+id/no_support_title_txv"
             android:layout_width="wrap_content"
@@ -37,6 +36,12 @@
             >
          </TextView>
     </RelativeLayout>
+    <ImageView
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/title_view"
+        android:background="@drawable/bg_line_discover_home"
+        />
     <com.tigerknows.view.discover.TKGallery
         android:id="@+id/scroll_screen"
         android:layout_below="@id/title_view"

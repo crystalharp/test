@@ -22,7 +22,6 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -144,11 +143,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        mTitleFragment.getChildAt(0).setBackgroundResource(R.drawable.bg_title_home);
-        mLeftBtn.setVisibility(View.INVISIBLE);
-        mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 2);
-        mTitleBtn.setText(" ");
-        mTitleBtn.setBackgroundResource(R.drawable.txt_app_name);
+        mTitleFragment.hide();
         mCityBtn.setText(Globals.g_Current_City_Info.getCName());
         
         mMenuFragment.updateMenuStatus(R.id.poi_btn);

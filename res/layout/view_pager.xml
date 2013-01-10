@@ -18,7 +18,7 @@
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
         android:visibility="invisible"
-        android:src="@drawable/icon"
+        android:src="@drawable/ic_left_slide"
         />
 
     <ImageView android:id="@+id/next_imv"
@@ -29,6 +29,6 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:visibility="invisible"
-        android:src="@drawable/icon"
+        android:src="@drawable/ic_right_slide"
         />
 </RelativeLayout>

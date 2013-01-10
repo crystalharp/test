@@ -197,10 +197,11 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         this.mLineList = mSphinx.getBuslineResultLineFragment().getData();
         
         mTitlePopupList.clear();
-        for(int i = 0, size = mLineList.size(); i < size; i++) {
-            mTitlePopupList.add(mLineList.get(i).getName());
+        if (this.mLineList != null) {
+            for(int i = 0, size = mLineList.size(); i < size; i++) {
+                mTitlePopupList.add(mLineList.get(i).getName());
+            }
         }
-        
     }
 
     public static class StationViewHolder {

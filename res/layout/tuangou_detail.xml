@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/bg_discover"
@@ -73,76 +72,83 @@
             </RelativeLayout>
             
             <RelativeLayout 
-            android:id="@+id/bar_view"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/white"
-            android:padding="6dp"
-            >
-            <Button 
-                android:id="@+id/buy_btn"
-                android:layout_width="wrap_content"
+                android:id="@+id/bar_view"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_alignParentTop="true"
-                android:textColor="@android:color/black"
-                android:textSize="14sp"
-                android:singleLine="true"
-                android:focusable="false"
-                android:background="@drawable/btn_buy"
-                />
-                
-            <TextView 
-                android:id="@+id/price_txv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignBottom="@id/buy_btn"
-                android:layout_marginLeft="8dp"
-                android:textColor="#fffd9215"
-                android:textSize="32sp"
-                android:text="@string/distance"
-                android:singleLine="true"
-                android:includeFontPadding="false"
-                android:focusable="false"
-                />
-            <TextView 
-                android:id="@+id/org_price_txv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/price_txv"
-                android:layout_alignBottom="@id/buy_btn"
-                android:layout_marginLeft="8dp"
-                android:layout_marginBottom="4dp"
-                android:textColor="#99000000"
-                android:textSize="14sp"
-                android:text="@string/distance"
-                android:singleLine="true"
-                android:includeFontPadding="false"
-                android:focusable="false"
-                />
-            <TextView 
-                android:id="@+id/discount_txv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/price_txv"
-                android:layout_above="@id/org_price_txv"
-                android:layout_marginLeft="8dp"
-                android:textColor="#99000000"
-                android:textSize="14sp"
-                android:text="@string/distance"
-                android:singleLine="true"
-                android:includeFontPadding="false"
-                android:focusable="false"
-                />
-        </RelativeLayout>
+                android:background="@color/white"
+                android:padding="6dp"
+                >
+                <Button 
+                    android:id="@+id/buy_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignParentTop="true"
+                    android:textSize="14sp"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    android:background="@drawable/btn_buy"
+                    />
+                    
+                <TextView 
+                    android:id="@+id/price_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignBottom="@id/buy_btn"
+                    android:layout_marginLeft="8dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/orange"
+                    android:textSize="32sp"
+                    android:text="@string/distance"
+                    android:singleLine="true"
+                    android:includeFontPadding="false"
+                    android:focusable="false"
+                    />
+                <TextView 
+                    android:id="@+id/org_price_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/price_txv"
+                    android:layout_alignBottom="@id/buy_btn"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginBottom="4dp"
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="@string/distance"
+                    android:singleLine="true"
+                    android:includeFontPadding="false"
+                    android:focusable="false"
+                    />
+                <TextView 
+                    android:id="@+id/discount_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/price_txv"
+                    android:layout_above="@id/org_price_txv"
+                    android:layout_marginLeft="8dp"
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="@string/distance"
+                    android:singleLine="true"
+                    android:includeFontPadding="false"
+                    android:focusable="false"
+                    />
+                 <View
+                     android:background="@drawable/bg_broken_line"
+                     android:layout_width="fill_parent"
+                     android:layout_height="wrap_content"
+                     android:layout_below="@id/price_txv"
+                     android:layout_marginTop="2dp"
+                     />
+            </RelativeLayout>
                 
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
                 android:gravity="center"
-                android:background="@android:color/white"
+                android:background="@color/white"
                 >
                 <ImageView
                     android:id="@+id/refund_imv"
@@ -151,6 +157,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_is_refund"
+                    android:layout_marginRight="8dp"
                     />
                 <TextView
                     android:id="@+id/refund_txv"
@@ -193,7 +200,7 @@
                     android:layout_margin="8dp"
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
-                    android:text="@string/app_name"
+                    android:text="@string/shanghu_xingxi"
                     android:textColor="@color/blue"
                     android:textSize="16sp"
                     />
@@ -210,6 +217,13 @@
                     android:textSize="14sp"
                     />
              </RelativeLayout>
+             <View
+                 android:background="@drawable/bg_line_split"
+                 android:layout_width="fill_parent"
+                 android:layout_height="wrap_content"
+                 android:layout_marginLeft="8dp"
+                 android:layout_marginRight="8dp"
+                 />
              <include layout="@layout/tuangou_fendian_list_item"
                  android:id="@+id/tuangou_fendian_list_item"
                  android:layout_width="fill_parent"
@@ -242,6 +256,8 @@
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
                      android:background="@drawable/bg_broken_line"
+                     android:layout_marginLeft="8dp"
+                     android:layout_marginRight="8dp"
                      />
                  <TextView
                      android:id="@+id/content_txv"
@@ -279,14 +295,16 @@
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
                      android:background="@drawable/bg_broken_line"
+                     android:layout_marginLeft="8dp"
+                     android:layout_marginRight="8dp"
                      />
-                 <com.tigerknows.view.CollapseTextView
+                 <TextView
                      android:id="@+id/noticed_txv"
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
                      android:padding="8dp"
-                     tkandroid:textSize="16sp"
-                     tkandroid:maxLines="4"
+                     android:textSize="16sp"
+                     android:textColor="@color/black_dark"
                      />
             </LinearLayout>
 
@@ -327,7 +345,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:background="@android:color/white"
+            android:background="@color/white"
             android:padding="6dp"
             >
             <Button 
@@ -336,7 +354,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:textColor="@android:color/black"
                 android:textSize="14sp"
                 android:singleLine="true"
                 android:focusable="false"
@@ -350,7 +367,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignBottom="@id/buy_btn_2"
                 android:layout_marginLeft="8dp"
-                android:textColor="#fffd9215"
+                android:textStyle="bold"
+                android:textColor="@color/orange"
                 android:textSize="32sp"
                 android:text="@string/distance"
                 android:singleLine="true"
@@ -365,7 +383,7 @@
                 android:layout_alignBottom="@id/buy_btn_2"
                 android:layout_marginLeft="8dp"
                 android:layout_marginBottom="4dp"
-                android:textColor="#99000000"
+                android:textColor="@color/black_light"
                 android:textSize="14sp"
                 android:text="@string/distance"
                 android:singleLine="true"
@@ -379,12 +397,19 @@
                 android:layout_toRightOf="@id/price_txv_2"
                 android:layout_above="@id/org_price_txv_2"
                 android:layout_marginLeft="8dp"
-                android:textColor="#99000000"
+                android:textColor="@color/black_light"
                 android:textSize="14sp"
                 android:text="@string/distance"
                 android:singleLine="true"
                 android:includeFontPadding="false"
                 android:focusable="false"
+                />
+            <ImageView
+                android:background="@drawable/bg_broken_line"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/price_txv_2"
+                android:layout_marginTop="2dp"
                 />
         </RelativeLayout>
                 

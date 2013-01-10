@@ -17,6 +17,7 @@
 package com.tigerknows.view;
 
 import com.tigerknows.R;
+import com.tigerknows.util.CommonUtils;
 
 import android.content.Context;
 import android.graphics.drawable.AnimationDrawable;
@@ -32,8 +33,6 @@ import android.widget.TextView;
 public class QueryingView extends LinearLayout {
     
     private TextView mTextTxv;
-    private ImageView mIconImv;
-    private AnimationDrawable mAnimationDrawable;
         
     public QueryingView(Context context) {
         this(context, null);
@@ -51,14 +50,11 @@ public class QueryingView extends LinearLayout {
         findViews();
         setListener();
         
-        mAnimationDrawable = (AnimationDrawable) mIconImv.getDrawable();
-        
         setBackgroundColor(0x00000000);
     }
 
     protected void findViews() {
         mTextTxv = (TextView) findViewById(R.id.text_txv);
-        mIconImv = (ImageView) findViewById(R.id.icon_imv);
     }
     
     protected void setListener() {
@@ -75,31 +71,13 @@ public class QueryingView extends LinearLayout {
     
     @Override
     public boolean hasFocus() {
-        if (mIconImv == null) {
+        if (mTextTxv == null) {
             return false;
         }
-        return mIconImv.hasFocus();
+        return mTextTxv.hasFocus();
     }
     
     public void setText(int resid) {
         mTextTxv.setText(resid);
-    }
-    
-    public void start() {
-        stop();
-        mAnimationDrawable.start();
-    }
-    
-    public void stop() {
-        mAnimationDrawable.stop();
-    }
-    
-    public void setVisibility(int visibility) {
-        super.setVisibility(visibility);
-        if (visibility == View.VISIBLE) {
-            start();
-        } else {
-            stop();
-        }
     }
 }
