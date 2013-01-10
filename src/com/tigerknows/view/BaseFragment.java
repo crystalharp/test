@@ -259,7 +259,6 @@ public class BaseFragment extends LinearLayout {
             mTitleFragment = mSphinx.getTitleFragment();
             mMenuFragment = mSphinx.getMenuFragment();
 
-            mTitleFragment.getChildAt(0).setBackgroundResource(R.drawable.bg_title);
             mTitleBtn = mTitleFragment.getTitleTxv();
             mLeftBtn = mTitleFragment.getLeftTxv();
             mRightBtn = mTitleFragment.getRightTxv();

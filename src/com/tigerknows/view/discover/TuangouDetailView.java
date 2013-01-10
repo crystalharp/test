@@ -117,7 +117,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     
     private View mNoticedView;
 
-    private CollapseTextView mNoticedTxv;
+    private TextView mNoticedTxv;
 
     private View mServiceHotlineView;
 
@@ -255,11 +255,9 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         
         if (TextUtils.isEmpty(mFilterArea) || mData.getBranchNum() < 2) {
             mNearbyFendianTxv.setVisibility(View.GONE);
-            mFendianNameView.setBackgroundResource(R.drawable.list_header);
         } else {
             mNearbyFendianTxv.setText(mFilterArea + mSphinx.getString(R.string.tuangou_detail_nearby, mData.getBranchNum()));
             mNearbyFendianTxv.setVisibility(View.VISIBLE);
-            mFendianNameView.setBackgroundResource(R.drawable.list_middle);
         }
 
         String description = mData.getDescription();
@@ -375,7 +373,6 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             mNoticedView.setVisibility(View.GONE);
         } else {
             mNoticedTxv.setText(noticed);
-            mNoticedTxv.reset();
             mNoticedView.setVisibility(View.VISIBLE);
         }
         
@@ -425,6 +422,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
 
         View view = findViewById(R.id.tuangou_fendian_list_item);
         mFendianNameView = view.findViewById(R.id.name_view);
+        mFendianNameView.setBackgroundResource(R.drawable.list_middle);
         view.findViewById(R.id.tuangou_fendian_list_item).setPadding(0, 0, 0, 0);
         mFendianNameTxv = (TextView) view.findViewById(R.id.name_txv);
         mDistanceTxv = (TextView)view.findViewById(R.id.distance_txv);
@@ -439,9 +437,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         mContentView =  findViewById(R.id.content_view);
         mContentTxv = (TextView) findViewById(R.id.content_txv);
         mNoticedView = findViewById(R.id.noticed_view);
-        mNoticedTxv = (CollapseTextView)findViewById(R.id.noticed_txv);
-        mNoticedTxv.setTextColor(0x99000000);
-        mNoticedTxv.setActionTag(ActionLog.TuangouXiangqingNotice);
+        mNoticedTxv = (TextView)findViewById(R.id.noticed_txv);
         mServiceHotlineView = findViewById(R.id.service_hotline_view);
         mServiceHotlineTxv = (TextView) findViewById(R.id.service_hotline_txv);
         mServiceHotlineTitleTxv = (TextView) findViewById(R.id.service_hotline_title_txv);

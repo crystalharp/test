@@ -231,6 +231,8 @@
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
                      android:background="@drawable/bg_broken_line"
+                     android:layout_marginLeft="8dp"
+                     android:layout_marginRight="8dp"
                      />
                  <TextView
                      android:id="@+id/description_txv"

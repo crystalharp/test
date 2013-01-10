@@ -63,6 +63,7 @@
         android:layout_toRightOf="@id/picture_view"
         android:layout_below="@id/name_txv"
         android:textColor="@color/orange"
+        android:textStyle="bold"
         android:textSize="18sp"
         android:text="@string/distance"
         android:singleLine="true"

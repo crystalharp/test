@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/bg_discover"
@@ -85,7 +84,6 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:layout_alignParentTop="true"
-                    android:textColor="@android:color/black"
                     android:textSize="14sp"
                     android:singleLine="true"
                     android:focusable="false"
@@ -99,7 +97,8 @@
                     android:layout_alignParentLeft="true"
                     android:layout_alignBottom="@id/buy_btn"
                     android:layout_marginLeft="8dp"
-                    android:textColor="#fffd9215"
+                    android:textStyle="bold"
+                    android:textColor="@color/orange"
                     android:textSize="32sp"
                     android:text="@string/distance"
                     android:singleLine="true"
@@ -114,7 +113,7 @@
                     android:layout_alignBottom="@id/buy_btn"
                     android:layout_marginLeft="8dp"
                     android:layout_marginBottom="4dp"
-                    android:textColor="#99000000"
+                    android:textColor="@color/black_light"
                     android:textSize="14sp"
                     android:text="@string/distance"
                     android:singleLine="true"
@@ -128,7 +127,7 @@
                     android:layout_toRightOf="@id/price_txv"
                     android:layout_above="@id/org_price_txv"
                     android:layout_marginLeft="8dp"
-                    android:textColor="#99000000"
+                    android:textColor="@color/black_light"
                     android:textSize="14sp"
                     android:text="@string/distance"
                     android:singleLine="true"
@@ -158,6 +157,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:src="@drawable/ic_is_refund"
+                    android:layout_marginRight="8dp"
                     />
                 <TextView
                     android:id="@+id/refund_txv"
@@ -256,6 +256,8 @@
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
                      android:background="@drawable/bg_broken_line"
+                     android:layout_marginLeft="8dp"
+                     android:layout_marginRight="8dp"
                      />
                  <TextView
                      android:id="@+id/content_txv"
@@ -293,14 +295,16 @@
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
                      android:background="@drawable/bg_broken_line"
+                     android:layout_marginLeft="8dp"
+                     android:layout_marginRight="8dp"
                      />
-                 <com.tigerknows.view.CollapseTextView
+                 <TextView
                      android:id="@+id/noticed_txv"
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
                      android:padding="8dp"
-                     tkandroid:textSize="16sp"
-                     tkandroid:maxLines="4"
+                     android:textSize="16sp"
+                     android:textColor="@color/black_dark"
                      />
             </LinearLayout>
 
@@ -350,7 +354,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
-                android:textColor="@android:color/black"
                 android:textSize="14sp"
                 android:singleLine="true"
                 android:focusable="false"
@@ -364,7 +367,8 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignBottom="@id/buy_btn_2"
                 android:layout_marginLeft="8dp"
-                android:textColor="#fffd9215"
+                android:textStyle="bold"
+                android:textColor="@color/orange"
                 android:textSize="32sp"
                 android:text="@string/distance"
                 android:singleLine="true"
@@ -379,7 +383,7 @@
                 android:layout_alignBottom="@id/buy_btn_2"
                 android:layout_marginLeft="8dp"
                 android:layout_marginBottom="4dp"
-                android:textColor="#99000000"
+                android:textColor="@color/black_light"
                 android:textSize="14sp"
                 android:text="@string/distance"
                 android:singleLine="true"
@@ -393,7 +397,7 @@
                 android:layout_toRightOf="@id/price_txv_2"
                 android:layout_above="@id/org_price_txv_2"
                 android:layout_marginLeft="8dp"
-                android:textColor="#99000000"
+                android:textColor="@color/black_light"
                 android:textSize="14sp"
                 android:text="@string/distance"
                 android:singleLine="true"
