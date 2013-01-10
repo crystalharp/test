@@ -63,10 +63,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 	private static final int TYPE_RESULT_LIST_END = 7;
         
     private ListAdapter mResultAdapter;
-
-    private TextView mStartTxv = null;
-
-    private TextView mEndTxv = null;
+    
+    private TextView mSubTitleTxv = null;
     
     private TextView mLengthTxv = null;
     
@@ -84,10 +82,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
     private Plan plan = null;
     
-//    private LinearLayout mFootLayout = null;
     private LinearLayout mErrorRecoveryLayout = null;
-    
-//    private int mFootLayoutId = R.layout.traffic_fav_share2;
     
     private int mChildLayoutId = R.layout.traffic_child_traffic;
     
@@ -127,31 +122,28 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         
         mResultAdapter = new StringListAdapter(mContext);
         mResultLsv.setAdapter(mResultAdapter);
-        
-        mStartTxv.setText(plan.getStart().getName());
-        mEndTxv.setText(plan.getEnd().getName());
-                
+                   
         switch(mShowType) {
         case SHOW_TYPE_TRANSFER:
             mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
         	mRightBtn.setOnClickListener(this);
             mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan));
             mErrorRecoveryLayout.setVisibility(View.VISIBLE);
+        	mSubTitleTxv.setText(this.plan.getTitle(mSphinx));
             break;
         case SHOW_TYPE_DRVIE:
             mTitleBtn.setText(mContext.getString(R.string.title_drive_plan));
-            mErrorRecoveryLayout.setVisibility(View.GONE);
+            mSubTitleTxv.setText(mSphinx.getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
             break;
         case SHOW_TYPE_WALK:
             mTitleBtn.setText(mContext.getString(R.string.title_walk_plan));
-            mErrorRecoveryLayout.setVisibility(View.GONE);
+            mSubTitleTxv.setText(mSphinx.getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
             break;
         default:
         }
         
         if (mPlanList != null) {
         	//有内容，需要弹出顶部切换菜单
-//	        mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan));
         	mTitleBtn.setText(mTitlePopupArrayAdapter.mSelectedItem);
 	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
 	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
@@ -165,18 +157,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         	//不用顶部弹出切换
         	mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
         }
-        
-        if (mShowType == SHOW_TYPE_TRANSFER) {
-            mLengthTxv.setVisibility(View.GONE);
-            mShadowImv.setVisibility(View.VISIBLE);
-//            mFootLayoutId = R.layout.traffic_fav_share2;
-        } else {
-            mLengthTxv.setVisibility(View.VISIBLE);
-            mShadowImv.setVisibility(View.GONE);
-//            mFootLayoutId = R.layout.traffic_fav_share;
-            mLengthTxv.setText(plan.getLengthStr(mSphinx));
-        }
-        
+                
         history();
     }
     
@@ -202,12 +183,10 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     }
    
     protected void findViews() {
-        mStartTxv = (TextView)mRootView.findViewById(R.id.start_txv);
-        mEndTxv = (TextView)mRootView.findViewById(R.id.end_txv);
+    	mSubTitleTxv = (TextView)mRootView.findViewById(R.id.start_txv);
         mLengthTxv = (TextView)mRootView.findViewById(R.id.length_txv);
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
         mShadowImv = (ImageView)mRootView.findViewById(R.id.shadow2);
-//        mFootLayout = (LinearLayout)mRootView.findViewById(R.id.traffic_detail_foot);
         mErrorRecoveryLayout = (LinearLayout)mRootView.findViewById(R.id.error_recovery_layout);
         mErrorRecoveryBtn = (Button)mRootView.findViewById(R.id.error_recovery_btn);
         mFavorateBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
@@ -231,6 +210,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 		mSphinx.getMapView());
                 } else if (position > plan.getStepList().size()) {
                 	//mResultAdapter中终点项的处理
+                	//FIXME:尚未处理
                 	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), plan.getStepList().get(position - 2).getPositionList().get(0), 
                     		mSphinx.getMapView());
                 } else {
@@ -384,6 +364,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             case TrafficModel.Plan.Step.TYPE_RIGHT:
                 res = R.drawable.icon_marker_drive_right;
                 break;
+            case TYPE_RESULT_LIST_START:
+				res = R.drawable.icon_marker_start;
+				break;
+            case TYPE_RESULT_LIST_END:
+            	res = R.drawable.icon_marker_end;
+            	break;
             default:
                 
             }
@@ -408,7 +394,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 		}
     }
 
-    // 可以提取出来
     private class ResultOnClickListener implements View.OnClickListener {
     	
 		@Override
@@ -489,7 +474,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     private void setFavoriteState(View v, boolean favoriteYet) {
     	    	
     	if (favoriteYet) {
-    		mFavorateBtn.setBackgroundResource(R.drawable.btn_cancel_favorite_normal);
+    		mFavorateBtn.setBackgroundResource(R.drawable.btn_cancel_favorite);
     	} else {
     		mFavorateBtn.setBackgroundResource(R.drawable.btn_favorite);
     	}

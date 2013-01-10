@@ -24,15 +24,13 @@
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content"
         	android:paddingLeft="8dp"
-        	android:paddingTop="16dp"
+        	android:paddingTop="2dp"
         	android:paddingRight="8dp"
-        	android:paddingBottom="16dp" >
+        	android:paddingBottom="2dp" >
 	
 	        <TextView android:id="@+id/start_txv"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
-	            android:drawableLeft="@drawable/icon_start"
-	            android:drawablePadding="8dp"
 	            android:textColor="@android:color/black"
 	            android:singleLine="true"
 	            android:ellipsize="end"
@@ -40,13 +38,16 @@
 	            android:layout_weight="1"
 	            android:layout_gravity="center_vertical">
 	        </TextView>
+	            <!-- android:drawableLeft="@drawable/icon_start"
+	            android:drawablePadding="8dp"
 	        
+	            android:drawablePadding="8dp"
+	            android:drawableLeft="@drawable/icon_end" -->
 	        <TextView android:id="@+id/end_txv"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
-	            android:drawableLeft="@drawable/icon_end"
-	            android:drawablePadding="8dp"
 	            android:textColor="@android:color/black"
+	            android:visibility="gone"
 	            android:singleLine="true"
 	            android:ellipsize="end"
 	            android:gravity="center_vertical|left"
@@ -67,6 +68,7 @@
     <TextView android:id="@+id/length_txv"
         android:paddingTop="2dp"
         android:paddingBottom="2dp"
+        android:visibility="gone"
         android:paddingLeft="10dp"
         android:textColor="@android:color/white"
         android:layout_below="@id/top_view"

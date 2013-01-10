@@ -639,9 +639,9 @@ public class ShareTextUtil {
 	public static String getPlanLength(Context context, int oLength) {
 		String length = "";
         if (oLength > 1000) {
-            length = context.getString(R.string.traffic_result_length_km, CommonUtils.meter2kilometre(oLength));
+            length = context.getString(R.string.length_str_km, CommonUtils.meter2kilometre(oLength));
         } else {
-        	length = context.getString(R.string.traffic_result_length_m, oLength);
+        	length = context.getString(R.string.length_str_m, oLength);
         }
         return length;
 	}

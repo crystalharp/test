@@ -291,7 +291,7 @@ public class BuslineResultLineFragment extends BaseFragment {
             
             lineHolder.text.setText(line.getName());
             lineHolder.summary.setText(mContext.getString(R.string.busline_line_listitem_title, 
-            		line.getTime(), CommonUtils.meter2kilometre(line.getLength())));//line.getStationList().size()));
+            		line.getTime(), line.getLengthStr(mSphinx)));
             lineHolder.index.setText(String.valueOf(position+1));
             lineHolder.position = position;
             
