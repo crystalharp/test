@@ -3,75 +3,78 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content" 
     android:layout_height="fill_parent"
-	android:padding="20dp">
-	
-	<RelativeLayout
+    android:padding="20dp">
+    
+    <RelativeLayout
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:orientation="vertical">
-        <ImageView 
-            android:id="@+id/picture_imv"
-	        android:layout_width="fill_parent" 
-	        android:layout_height="wrap_content"
-            android:paddingLeft="14dp"
-            android:paddingTop="12dp"
-            android:paddingRight="14dp"
-	        android:background="@drawable/bg_discover_home_picture"
-	        android:src="@drawable/ic_discover_home_tuangou_focused"
-	        android:scaleType="fitXY"
-	        />
-		<LinearLayout
-		    android:id="@+id/text_view"
-	        android:layout_width="fill_parent" 
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/picture_imv"
-	        android:orientation="vertical"
-            android:background="@drawable/bg_discover_home_text">
-			<RelativeLayout
-			    android:id="@+id/nearby_result_view"
-		        android:layout_width="fill_parent" 
-		        android:layout_height="wrap_content"
-		        android:orientation="horizontal"
-		        android:paddingLeft="16dp"
-		        android:paddingTop="8dp"
-		        android:paddingRight="24dp"
-		        android:paddingBottom="16dp">
-			    <TextView
-		            android:id="@+id/nearby_num_txv"
-			        android:layout_width="wrap_content" 
-			        android:layout_height="wrap_content"
-			        android:layout_alignParentLeft="true"
-			        android:text="@string/nearby_"
-		            android:textSize="24sp"/>
-			    <TextView
-			        android:id="@+id/city_num_txv"
-			        android:layout_width="fill_parent" 
-			        android:layout_height="wrap_content"
-			        android:layout_below="@id/nearby_num_txv"
-		            android:paddingTop="8dp"
-			        android:text="@string/entire_city_"
-				    android:textColor="#ff00b4ff"
-			        android:textSize="16sp"/>
-	
-			    <ProgressBar
-			        android:id="@+id/progress_prb"
-			        android:layout_alignParentLeft="true"
-			        style="@style/Widget.ProgressBar"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content" />      
-		    </RelativeLayout>
-	    </LinearLayout>
-	    <ImageView
-	        android:id="@+id/bubble_imv"
-	        android:layout_marginTop="-24dp"
-	        android:layout_marginRight="10dp"
-	        android:layout_marginLeft="40dp"
-	        android:layout_alignParentLeft="true"
-	        android:layout_alignTop="@id/text_view"
-	        android:layout_width="wrap_content" 
-	        android:layout_height="wrap_content" 
-	        android:background="@drawable/ic_discover_tuangou"/>
+        <RelativeLayout
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            android:orientation="vertical"
+            android:background="@drawable/bg_discover_home_picture">
+            <LinearLayout
+                android:id="@+id/text_view"
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <RelativeLayout
+                    android:id="@+id/nearby_result_view"
+                    android:layout_width="fill_parent" 
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="8dp"
+                    android:paddingRight="24dp"
+                    android:paddingBottom="16dp">
+                    <TextView
+                        android:id="@+id/nearby_num_txv"
+                        android:layout_width="wrap_content" 
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:textColor="@color/black_dark"
+                        android:text="@string/nearby_"
+                        android:textSize="24sp"/>
+                    <TextView
+                        android:id="@+id/city_num_txv"
+                        android:layout_width="fill_parent" 
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/nearby_num_txv"
+                        android:paddingTop="8dp"
+                        android:text="@string/entire_city_"
+                        android:textColor="@color/black_light"
+                        android:textSize="16sp"/>
+        
+                    <ProgressBar
+                        android:id="@+id/progress_prb"
+                        style="@style/Widget.ProgressBar"
+                        android:layout_alignParentLeft="true"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />      
+                </RelativeLayout>
+            </LinearLayout>
+            <ImageView 
+                android:id="@+id/picture_imv"
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_below="@id/text_view"
+                android:paddingLeft="14dp"
+                android:paddingTop="12dp"
+                android:paddingRight="14dp"
+                android:background="@drawable/list_single"
+                android:scaleType="fitXY"
+                />
+        </RelativeLayout>
+        <ImageView
+            android:id="@+id/bubble_imv"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content" 
+            android:background="@drawable/ic_discover_tuangou"/>
     </RelativeLayout>
 </RelativeLayout>
 

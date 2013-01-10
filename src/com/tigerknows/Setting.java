@@ -167,7 +167,6 @@ public class Setting extends BaseActivity {
             CheckBox selectChb = (CheckBox)view.findViewById(R.id.select_chb);
             
             titleTxv.setText(data.title);
-            descriptionTxv.setTextColor(mThis.getResources().getColor(R.color.description_background));  
             descriptionTxv.setText(data.description);
             if (data.onClickListener != null) {
                 selectChb.setOnClickListener(data.onClickListener);

@@ -11,8 +11,8 @@
         <item name="android:indeterminateDuration">3500</item>
         <item name="android:minWidth">32dip</item>
         <item name="android:maxWidth">32dip</item>
-        <item name="android:minHeight">8dip</item>
-        <item name="android:maxHeight">8dip</item>
+        <item name="android:minHeight">7dip</item>
+        <item name="android:maxHeight">7dip</item>
     </style>
 
 <!-- 

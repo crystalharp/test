@@ -4,57 +4,64 @@
     android:layout_height="fill_parent"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
-    android:gravity="left|top" 
-    android:background="@color/gray_light"
-    android:orientation="vertical">
+    android:gravity="left|top"
+    android:background="@color/white"
+    android:orientation="vertical"
+    >
     <include android:id="@+id/title_view"
-        layout="@layout/title" 
+        layout="@layout/title"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        />
         
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:gravity="left|top" 
-        android:orientation="vertical">
+        android:gravity="left|top"
+        android:orientation="vertical"
+        >
         <RelativeLayout
-            android:layout_width="wrap_content" 
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="6dp">
-	        <Button android:id="@+id/snda_btn"
-	            android:layout_width="fill_parent" 
-	            android:layout_height="49dp"
-	            android:text="@string/recommend_snda"
-	            android:padding="10dp"
-	            android:drawablePadding="10dp"
-	            android:drawableRight="@drawable/icon_arrow_right"
-	            android:textColor="#ffff8022"
-	            android:textSize="16sp"
-	            android:gravity="left|center_vertical"
-	            android:background="@color/transparent"
-	            android:visibility="visible"/>
-    		 <TextView 
-                android:layout_width="wrap_content" 
+            >
+            <Button android:id="@+id/snda_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/recommend_snda"
+                android:paddingLeft="8dp"
+                android:paddingTop="16dp"
+                android:paddingRight="8dp"
+                android:paddingBottom="16dp"
+                android:textColor="@color/orange"
+                android:textSize="16sp"
+                android:gravity="left|center_vertical"
+                android:background="@drawable/btn_white"
+                android:visibility="visible"
+                />
+             <TextView 
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
-                android:paddingRight="40dp"
+                android:drawableRight="@drawable/ic_view_all_comment"
                 android:singleLine="true"
                 android:ellipsize="end"
                 android:text="@string/free_download"
                 android:textColor="@color/black_light"
-                android:gravity="right|center_vertical" />
-		</RelativeLayout>
+                android:gravity="right|center_vertical"
+                />
+        </RelativeLayout>
         <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_real_line" />
+                android:background="@drawable/bg_orange_line"
+                />
         <ListView android:id="@+id/app_recommend_lsv"
-            android:layout_width="fill_parent" 
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:divider="@drawable/bg_real_line"
             android:drawSelectorOnTop="false"
             android:scrollingCache="false"
-            android:fadingEdge="none" />
+            android:fadingEdge="none"/>
     </LinearLayout>
 </LinearLayout>

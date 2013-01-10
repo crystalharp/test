@@ -70,6 +70,8 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
 
     private TextView mNearbyFendianTxv;
     
+    private View mFendianNameView = null;
+    
     private TextView mFendianNameTxv = null;
     
     private TextView mDistanceTxv = null;
@@ -214,7 +216,6 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         } else {
             mNearbyFendianTxv.setText(mSphinx.getString(R.string.dianying_detail_nearby,mFilterArea,mData.getNum()));
             mNearbyFendianView.setVisibility(View.VISIBLE);
-            mNearbyFendianView.setBackgroundResource(R.drawable.list_single);
         }
         
         refreshDescription(true);
@@ -309,7 +310,8 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         mAddressView = view.findViewById(R.id.address_view);
         mDividerView = view.findViewById(R.id.divider_imv);
         mTelephoneView = view.findViewById(R.id.telephone_view);
-        view.findViewById(R.id.name_view).setBackgroundResource(R.drawable.list_middle);
+        mFendianNameView = view.findViewById(R.id.name_view);
+        mFendianNameView.setBackgroundResource(R.drawable.list_middle);
         view.setPadding(0, 0, 0, 0);
         view.findViewById(R.id.tuangou_fendian_list_item).setPadding(0, 0, 0, 0);
         mFendianNameTxv = (TextView) view.findViewById(R.id.name_txv);

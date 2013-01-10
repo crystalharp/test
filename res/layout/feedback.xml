@@ -3,29 +3,33 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/bg_discover" >
+    android:background="@drawable/bg_discover"
+    >
     <include android:id="@+id/title_view"
-        layout="@layout/title" 
+        layout="@layout/title"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" />
-	<ScrollView
-	    android:id="@+id/body_scv"
-	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
-	    android:orientation="vertical"
-	    android:fillViewport="true"
-	    android:fadingEdge="none"
-	    android:background="@color/gray_dark">
+        android:layout_height="wrap_content"
+        />
+    <ScrollView
+        android:id="@+id/body_scv"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:fillViewport="true"
+        android:fadingEdge="none"
+        >
         <LinearLayout
-            android:orientation="vertical" 
+            android:orientation="vertical"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content" 
-            android:gravity="left|top">
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="left|top"
+            >
             <EditText
                 android:id="@+id/feedback_edt"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
+                android:padding="8dp"
                 android:isScrollContainer="true"
                 android:gravity="top"
                 android:maxLength="240"
@@ -33,67 +37,79 @@
                 android:lines="6"
                 android:hint="@string/your_feedback"
                 android:textColorHint="#ffacacac"
-                android:background="@color/transparent"
-                android:imeOptions="actionNext">
+                android:background="@color/white"
+                android:imeOptions="actionNext"
+                >
             </EditText>
             <LinearLayout 
-	            android:layout_width="fill_parent" 
-	            android:layout_height="wrap_content"
-	            android:padding="8dp" >
-	           	<ImageView
-			        android:layout_width="fill_parent"
-			        android:layout_height="wrap_content"
-			        android:background="@drawable/bg_real_line" />
-        	</LinearLayout>
-        	<LinearLayout 
-	            android:layout_width="fill_parent" 
-	            android:layout_height="wrap_content"
-	        	android:gravity="center_vertical"
-	            android:orientation="horizontal">
-	            <EditText
-	                android:id="@+id/telephone_edt"
-	                android:layout_width="0dp"
-	                android:layout_weight="2"
-	                android:layout_height="wrap_content"
-	                android:gravity="left|center_vertical"
-	                android:maxLength="20"
-	                android:maxLines="1"
-	                android:singleLine="true"
-	                android:inputType="phone"
-	                android:background="@android:color/transparent"
-	                android:lines="1"
-	                android:hint="@string/your_mobile_number"
-	                android:textColorHint="#ffacacac"
-	                android:imeOptions="actionSend">
-	            </EditText>
-	            <ImageView
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:background="@drawable/user_center_divider_v" />
-	            <LinearLayout 
-		            android:layout_width="0dp" 
-		            android:layout_weight="1"
-		            android:layout_height="wrap_content"
-		            android:background="@android:color/transparent"
-		            android:gravity="center"
-		            android:orientation="horizontal">
-		            <Button
-		                android:id="@+id/feedback_send"
-			            android:layout_width="wrap_content"
-			            android:layout_height="wrap_content"
-			            android:background="@drawable/feedback_send_btn"
-			            android:gravity="center|center_vertical"/>
-	            </LinearLayout>
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:padding="8dp">
+                <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_real_line"
+                    />
+            </LinearLayout>
+            <LinearLayout 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                >
+                <EditText
+                    android:id="@+id/telephone_edt"
+                    android:layout_width="0dp"
+                    android:layout_weight="2"
+                    android:layout_height="wrap_content"
+                    android:gravity="left|center_vertical"
+                    android:padding="8dp"
+                    android:maxLength="20"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    android:inputType="phone"
+                    android:background="@color/white"
+                    android:lines="1"
+                    android:hint="@string/your_mobile_number"
+                    android:textColorHint="#ffacacac"
+                    android:imeOptions="actionSend"
+                    >
+                </EditText>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/user_center_divider_v"
+                    />
+                <LinearLayout 
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:gravity="center"
+                    android:orientation="horizontal"
+                    >
+                    <Button
+                        android:id="@+id/feedback_send"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/feedback_send_btn"
+                        android:gravity="center|center_vertical"
+                        />
+                </LinearLayout>
             </LinearLayout>
             <ImageView
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:layout_marginTop="8dp"
-		        android:background="@drawable/bg_real_line" />
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/bg_real_line"
+                />
             <LinearLayout
                 android:layout_width="fill_parent"
-			    android:layout_height="fill_parent" 
-			    android:background="@drawable/bg_discover" />
-        </LinearLayout>   
-	</ScrollView>
+                android:layout_height="fill_parent"
+                android:background="@drawable/bg_discover"
+                />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>
