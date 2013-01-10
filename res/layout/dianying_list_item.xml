@@ -54,7 +54,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignBaseline="@+id/date_txv"
         
-        android:textColor="@color/bright_green"
+        android:textColor="@color/orange"
         android:textSize="14sp"
         android:text="@string/dianying_detail_nearest"
         android:singleLine="true"

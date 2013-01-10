@@ -758,7 +758,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             
             addressTxv.setText(dianying.getTag());
             if (TextUtils.isEmpty(dianying.getLength())) {
-            	dateTxv.setVisibility(View.GONE);
+            	dateTxv.setVisibility(View.INVISIBLE);
             } else {
             	dateTxv.setVisibility(View.VISIBLE);
             	dateTxv.setText(String.valueOf(dianying.getLength()));
