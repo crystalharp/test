@@ -50,9 +50,10 @@
         android:id="@+id/distance_txv" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
+        
         android:layout_alignParentRight="true"
-        android:layout_below="@id/name_txv" 
-        android:layout_marginBottom="4dp"
+        android:layout_alignBaseline="@+id/date_txv"
+        
         android:textColor="@color/bright_green"
         android:textSize="14sp"
         android:text="@string/dianying_detail_nearest"
