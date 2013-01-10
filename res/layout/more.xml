@@ -2,283 +2,299 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root_view"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" 
+    android:layout_height="fill_parent"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
-    android:gravity="center" 
+    android:gravity="center"
     android:orientation="vertical"
-    android:background="@color/gray_dark">
+    android:background="@drawable/bg_discover"
+    >
         
-        <LinearLayout 
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="8dp"
+        >
+        
+        <Button android:id="@+id/upgrade_btn"
             android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:gravity="center"
-            android:orientation="vertical"
+            android:layout_height="wrap_content"
             android:padding="8dp"
+            android:text="@string/app_name"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:background="@drawable/btn_update"
+            android:layout_marginBottom="8dp"
+            android:visibility="gone"
+            />
+                
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="0dp"
+            android:layout_marginBottom="8dp"
             >
-            
-            <Button android:id="@+id/upgrade_btn"
-                android:layout_width="fill_parent"
+            <RelativeLayout
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:text="@string/app_name"
-                android:textColor="@android:color/white"
-                android:textSize="14sp"
-                android:background="@drawable/btn_update"
-                android:layout_marginBottom="8dp"
-                android:visibility="gone"/>
-                    
-            <LinearLayout
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="0dp"
-                android:layout_marginBottom="8dp">
-                <RelativeLayout
-		            android:layout_width="wrap_content" 
-		            android:layout_height="wrap_content">
-		            <Button
-		                android:id="@+id/user_btn" 
-		                android:layout_width="fill_parent"
-		                android:layout_height="wrap_content" 
-		                android:background="@drawable/list_header"
-		                android:padding="8dp"
-		                android:drawablePadding="8dp"
-		                android:drawableLeft="@drawable/ic_change_city"
-		                android:drawableRight="@drawable/icon_arrow_right"
-		                android:textColor="@android:color/black"
-		                android:textSize="16sp"
-		                android:text="@string/login_or_regist"
-		                android:gravity="left|center_vertical"/>
-		            
-		            <TextView android:id="@+id/user_name_txv" 
-		                android:layout_width="wrap_content" 
-		                android:layout_height="wrap_content"
-		                android:layout_alignParentRight="true"
-		                android:layout_centerVertical="true"
-		                android:layout_marginLeft="116dp"
-		                android:paddingRight="26dp"
-		                android:singleLine="true"
-		                android:ellipsize="end"
-		                android:textColor="#009CFF"
-		                android:gravity="center" />
-		        </RelativeLayout>
-                <ImageView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_real_line" />
-		        <RelativeLayout
-		            android:layout_width="wrap_content" 
-		            android:layout_height="wrap_content"
-		            android:layout_toRightOf="@id/traffic_btn"
-		            android:layout_centerInParent="true">
-		            <Button
-		                android:id="@+id/change_city_btn" 
-		                android:layout_width="fill_parent"
-		                android:layout_height="wrap_content" 
-		                android:background="@drawable/list_middle"
-		                android:padding="8dp"
-		                android:drawablePadding="8dp"
-		                android:drawableLeft="@drawable/ic_change_city"
-		                android:drawableRight="@drawable/icon_arrow_right"
-		                android:textColor="@android:color/black"
-		                android:textSize="16sp"
-		                android:text="@string/change_city"
-		                android:gravity="left|center_vertical"/>
-		            
-		            <TextView android:id="@+id/current_city_txv" 
-		                android:layout_width="wrap_content" 
-		                android:layout_height="wrap_content"
-		                android:layout_alignParentRight="true"
-		                android:layout_centerVertical="true"
-		                android:paddingRight="26dp"
-		                android:singleLine="true"
-		                android:ellipsize="end"
-		                android:textColor="#009CFF"
-		                android:gravity="center"/>
-		        </RelativeLayout>
-                <ImageView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/bg_real_line" />
+                >
                 <Button
-                    android:id="@+id/settings_btn" 
+                    android:id="@+id/user_btn"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" 
-                    android:background="@drawable/list_footer"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/list_header"
                     android:padding="8dp"
                     android:drawablePadding="8dp"
-                    android:drawableLeft="@drawable/ic_setting"
-                    android:drawableRight="@drawable/icon_arrow_right"
-                    android:textColor="@android:color/black"
+                    android:drawableLeft="@drawable/ic_about_us"
+                    android:textColor="@color/black_dark"
                     android:textSize="16sp"
-                    android:text="@string/settings"
-                    android:gravity="left|center_vertical"/>
-           </LinearLayout>
-                    
-           <LinearLayout
-               android:layout_width="fill_parent" 
-               android:layout_height="wrap_content"
-               android:orientation="vertical"
-               android:padding="0dp"
-               android:layout_marginBottom="8dp">
-            <Button
-                android:id="@+id/download_map_btn" 
+                    android:text="@string/login_or_regist"
+                    android:gravity="left|center_vertical"
+                    />
+                
+                <TextView android:id="@+id/user_name_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingRight="26dp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textColor="@color/blue"
+                    android:gravity="center"
+                    />
+            </RelativeLayout>
+            <ImageView
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content" 
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                />
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/traffic_btn"
+                android:layout_centerInParent="true"
+                >
+                <Button
+                    android:id="@+id/change_city_btn"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/list_middle"
+                    android:padding="8dp"
+                    android:drawablePadding="8dp"
+                    android:drawableLeft="@drawable/ic_change_city"
+                    android:textColor="@color/black_dark"
+                    android:textSize="16sp"
+                    android:text="@string/change_city"
+                    android:gravity="left|center_vertical"
+                    />
+                
+                <TextView android:id="@+id/current_city_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:paddingRight="26dp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textColor="@color/blue"
+                    android:gravity="center"
+                    />
+            </RelativeLayout>
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                />
+            <Button
+                android:id="@+id/settings_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_footer"
+                android:padding="8dp"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/ic_setting"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/settings"
+                android:gravity="left|center_vertical"
+                />
+        </LinearLayout>
+                
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="0dp"
+            android:layout_marginBottom="8dp"
+            >
+            <Button
+                android:id="@+id/download_map_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
                 android:background="@drawable/list_header"
                 android:drawablePadding="8dp"
                 android:padding="8dp"
-                android:drawableLeft="@drawable/ic_map_download"
-                android:drawableRight="@drawable/icon_arrow_right"
-                android:textColor="@android:color/black"
+                android:drawableLeft="@drawable/ic_download_map"
+                android:textColor="@color/black_dark"
                 android:textSize="16sp"
                 android:text="@string/download_map"
-                android:gravity="left|center_vertical"/>
+                android:gravity="left|center_vertical"
+                />
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_real_line" />
+                android:background="@drawable/bg_line_split"
+                />
             <Button
-               android:id="@+id/favorite_btn" 
+                android:id="@+id/favorite_btn"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content" 
+                android:layout_height="wrap_content"
                 android:background="@drawable/list_middle"
                 android:padding="8dp"
                 android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_more_favorite"
-                android:drawableRight="@drawable/icon_arrow_right"
-                android:textColor="@android:color/black"
+                android:drawableLeft="@drawable/ic_favorite_more"
+                android:textColor="@color/black_dark"
                 android:textSize="16sp"
                 android:text="@string/favoriten"
-                android:gravity="left|center_vertical"/>
+                android:gravity="left|center_vertical"
+                />
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_real_line" />
+                android:background="@drawable/bg_line_split"
+                />
             <Button
-                android:id="@+id/history_browse_btn" 
+                android:id="@+id/history_browse_btn"
                 android:layout_width="fill_parent"
-                android:layout_height="wrap_content" 
+                android:layout_height="wrap_content"
                 android:background="@drawable/list_middle"
                 android:padding="8dp"
                 android:drawablePadding="8dp"
                 android:drawableLeft="@drawable/ic_history"
-                android:drawableRight="@drawable/icon_arrow_right"
-                android:textColor="@android:color/black"
+                android:textColor="@color/black_dark"
                 android:textSize="16sp"
                 android:text="@string/history_browse"
-                android:gravity="left|center_vertical"/>
-               <ImageView
-                   android:layout_width="fill_parent"
-                   android:layout_height="wrap_content"
-                   android:background="@drawable/bg_real_line" />
-                <Button
-                    android:id="@+id/add_merchant_btn" 
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" 
-                    android:layout_marginBottom="4dp"
-                    android:background="@drawable/list_footer"
-                    android:padding="8dp"
-                    android:drawablePadding="8dp"
-                    android:drawableLeft="@drawable/ic_add_merchant"
-                    android:drawableRight="@drawable/icon_arrow_right"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    android:text="@string/add_merchant"
-                    android:gravity="left|center_vertical"/>
-           </LinearLayout>
-                    
-           <LinearLayout
-               android:layout_width="fill_parent"
-               android:layout_height="wrap_content"
-               android:layout_margin="0dp"
-               android:orientation="vertical"
-               android:padding="0dp" >
-
-               <Button
-                   android:id="@+id/about_btn" 
-                   android:layout_width="fill_parent"
-                   android:layout_height="wrap_content" 
-                   android:background="@drawable/list_header"
-                   android:padding="8dp"
-                   android:drawablePadding="8dp"
-                   android:drawableLeft="@drawable/ic_about_us"
-                   android:drawableRight="@drawable/icon_arrow_right"
-                   android:textColor="@android:color/black"
-                   android:textSize="16sp"
-                   android:text="@string/about_us"
-                   android:gravity="left|center_vertical"/>
-               <ImageView
-                   android:layout_width="fill_parent"
-                   android:layout_height="wrap_content"
-                   android:background="@drawable/bg_real_line" />
-               <Button
-                   android:id="@+id/give_favourable_comment_btn" 
-                   android:layout_width="fill_parent"
-                   android:layout_height="wrap_content" 
-                   android:background="@drawable/list_middle"
-                   android:padding="8dp"
-                   android:drawablePadding="8dp"
-                   android:drawableLeft="@drawable/ic_about_us"
-                   android:drawableRight="@drawable/icon_arrow_right"
-                   android:textColor="@android:color/black"
-                   android:textSize="16sp"
-                   android:text="@string/give_favourable_comment"
-                   android:gravity="left|center_vertical"/>
-               <ImageView
-                   android:layout_width="fill_parent"
-                   android:layout_height="wrap_content"
-                   android:background="@drawable/bg_real_line" />
-                <Button
-                    android:id="@+id/feedback_btn" 
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" 
-                    android:background="@drawable/list_middle"
-                    android:padding="8dp"
-                    android:drawablePadding="8dp"
-                    android:drawableLeft="@drawable/ic_feedback"
-                    android:drawableRight="@drawable/icon_arrow_right"
-                    android:textColor="@android:color/black"
-                    android:textSize="16sp"
-                    android:text="@string/feedback"
-                    android:gravity="left|center_vertical"/>
-               <ImageView
-                   android:layout_width="fill_parent"
-                   android:layout_height="wrap_content"
-                   android:background="@drawable/bg_real_line" />
-               <Button
-                   android:id="@+id/app_recommend_btn" 
-                   android:layout_width="fill_parent"
-                   android:layout_height="wrap_content" 
-                   android:background="@drawable/list_middle"
-                   android:padding="8dp"
-                   android:drawablePadding="8dp"
-                   android:drawableLeft="@drawable/ic_app_recommend"
-                   android:drawableRight="@drawable/icon_arrow_right"
-                   android:textColor="@android:color/black"
-                   android:textSize="16sp"
-                   android:text="@string/app_recommend"
-                   android:gravity="left|center_vertical"/>
-               <ImageView
-                   android:layout_width="fill_parent"
-                   android:layout_height="wrap_content"
-                   android:background="@drawable/bg_real_line" />
-               <Button
-                   android:id="@+id/help_btn" 
-                   android:layout_width="fill_parent"
-                   android:layout_height="wrap_content" 
-                   android:background="@drawable/list_footer"
-                   android:padding="8dp"
-                   android:layout_marginBottom="4dp"
-                   android:drawablePadding="8dp"
-                   android:drawableLeft="@drawable/ic_help"
-                   android:drawableRight="@drawable/icon_arrow_right"
-                   android:textColor="@android:color/black"
-                   android:textSize="16sp"
-                   android:text="@string/help"
-                   android:gravity="left|center_vertical"/>
-           </LinearLayout>
-            
+                android:gravity="left|center_vertical"
+                />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                />
+            <Button
+                android:id="@+id/add_merchant_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:background="@drawable/list_footer"
+                android:padding="8dp"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/ic_add_merchant"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/add_merchant"
+                android:gravity="left|center_vertical"
+                />
         </LinearLayout>
+                
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:orientation="vertical"
+            android:padding="0dp"
+            >
+
+            <Button
+                android:id="@+id/about_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_header"
+                android:padding="8dp"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/ic_about_us"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/about_us"
+                android:gravity="left|center_vertical"
+                />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                />
+            <Button
+                android:id="@+id/give_favourable_comment_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_middle"
+                android:padding="8dp"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/ic_give_favourable_comment"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/give_favourable_comment"
+                android:gravity="left|center_vertical"
+                />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                />
+            <Button
+                android:id="@+id/feedback_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_middle"
+                android:padding="8dp"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/ic_feedback"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/feedback"
+                android:gravity="left|center_vertical"/>
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                />
+            <Button
+                android:id="@+id/app_recommend_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_middle"
+                android:padding="8dp"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/ic_app_recommend"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/app_recommend"
+                android:gravity="left|center_vertical"
+                />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                />
+            <Button
+                android:id="@+id/help_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_footer"
+                android:padding="8dp"
+                android:layout_marginBottom="4dp"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/ic_help"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/help"
+                android:gravity="left|center_vertical"
+                />
+        </LinearLayout>
+        
+    </LinearLayout>
 </RelativeLayout>
