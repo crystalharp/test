@@ -1057,4 +1057,14 @@ public class CommonUtils {
             return false;  
         }  
     }  
+    
+    public static void formatText(TextView textView, String word, String key, int colorId) {
+        if (TextUtils.isEmpty(key)) {
+            textView.setText(word);
+        } else {
+            SpannableStringBuilder style=new SpannableStringBuilder(word);  
+            style.setSpan(new ForegroundColorSpan(colorId),0,key.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            textView.setText(style);
+        }
+    }
 }
