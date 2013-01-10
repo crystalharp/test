@@ -430,7 +430,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             mTitleBtn.setText(R.string.zhanlan_list);
             mRightBtn.setVisibility(View.VISIBLE);
         }
-        mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
+        mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
         mRightBtn.setOnClickListener(this);
         
         List<DiscoverCategory> list = mSphinx.getDiscoverFragment().getDiscoverCategoryList();
@@ -749,9 +749,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if (TextUtils.isEmpty(distance)) {
                 distanceTxv.setVisibility(View.GONE);
             } else {
-                distanceTxv.setText(mSphinx.getString(R.string.dianying_detail_nearest, String.valueOf(dianying.getYingxun().getDistance())));
+                //distanceTxv.setText(mSphinx.getString(R.string.dianying_detail_nearest, String.valueOf(dianying.getYingxun().getDistance())));
+            	  String distanceStr = mSphinx.getString(R.string.dianying_detail_nearest, String.valueOf(dianying.getYingxun().getDistance()));
+
+                CommonUtils.formatText(distanceTxv, distanceStr, mSphinx.getString(R.string.dianying_detail_nearest, ""), R.color.black_dark);
                 distanceTxv.setVisibility(View.VISIBLE);
             }
+            
             addressTxv.setText(dianying.getTag());
             if (TextUtils.isEmpty(dianying.getLength())) {
             	dateTxv.setVisibility(View.GONE);

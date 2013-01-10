@@ -233,7 +233,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         } else if (BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType)) {
             mTitleBtn.setText(R.string.dianyingyuan_list);
         }
-        mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
+        mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
         mRightBtn.setOnClickListener(this);
         
         if (isReLogin()) {

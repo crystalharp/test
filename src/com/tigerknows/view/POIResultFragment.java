@@ -264,7 +264,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.result_list);
-        mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
+        mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
         mRightBtn.setOnClickListener(this);
         
         if (isReLogin()) {
