@@ -19,7 +19,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -72,11 +74,20 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private ListView mResultLsv = null;
     
+    private Button mFavorateBtn = null;
+    
+    private Button mShareBtn = null;
+    
+    private Button mErrorRecoveryBtn = null;
+    
     private int mShowType = -1;
 
     private Plan plan = null;
     
-    private int mFootLayoutId = R.layout.traffic_fav_share2;
+//    private LinearLayout mFootLayout = null;
+    private LinearLayout mErrorRecoveryLayout = null;
+    
+//    private int mFootLayoutId = R.layout.traffic_fav_share2;
     
     private int mChildLayoutId = R.layout.traffic_child_traffic;
     
@@ -101,6 +112,10 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         findViews();
         setListener();
         
+        mFavorateBtn.setOnClickListener(new ResultOnClickListener());
+        mShareBtn.setOnClickListener(new ResultOnClickListener());
+        mErrorRecoveryBtn.setOnClickListener(new ResultOnClickListener());
+        
         mTitlePopupArrayAdapter = new TitlePopupArrayAdapter(mSphinx, mTitlePopupList);
         
         return mRootView;
@@ -115,18 +130,21 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         
         mStartTxv.setText(plan.getStart().getName());
         mEndTxv.setText(plan.getEnd().getName());
-        
+                
         switch(mShowType) {
         case SHOW_TYPE_TRANSFER:
         	mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
         	mRightBtn.setOnClickListener(this);
             mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan));
+            mErrorRecoveryLayout.setVisibility(View.VISIBLE);
             break;
         case SHOW_TYPE_DRVIE:
             mTitleBtn.setText(mContext.getString(R.string.title_drive_plan));
+            mErrorRecoveryLayout.setVisibility(View.GONE);
             break;
         case SHOW_TYPE_WALK:
             mTitleBtn.setText(mContext.getString(R.string.title_walk_plan));
+            mErrorRecoveryLayout.setVisibility(View.GONE);
             break;
         default:
         }
@@ -151,11 +169,11 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         if (mShowType == SHOW_TYPE_TRANSFER) {
             mLengthTxv.setVisibility(View.GONE);
             mShadowImv.setVisibility(View.VISIBLE);
-            mFootLayoutId = R.layout.traffic_fav_share2;
+//            mFootLayoutId = R.layout.traffic_fav_share2;
         } else {
             mLengthTxv.setVisibility(View.VISIBLE);
             mShadowImv.setVisibility(View.GONE);
-            mFootLayoutId = R.layout.traffic_fav_share;
+//            mFootLayoutId = R.layout.traffic_fav_share;
             mLengthTxv.setText(plan.getLengthStr(mSphinx));
         }
         
@@ -189,6 +207,11 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mLengthTxv = (TextView)mRootView.findViewById(R.id.length_txv);
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
         mShadowImv = (ImageView)mRootView.findViewById(R.id.shadow2);
+//        mFootLayout = (LinearLayout)mRootView.findViewById(R.id.traffic_detail_foot);
+        mErrorRecoveryLayout = (LinearLayout)mRootView.findViewById(R.id.error_recovery_layout);
+        mErrorRecoveryBtn = (Button)mRootView.findViewById(R.id.error_recovery_btn);
+        mFavorateBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
+        mShareBtn = (Button)mRootView.findViewById(R.id.share_btn);
     }
 
     protected void setListener() {
@@ -257,19 +280,19 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     	public TextView textView;
     }
     
-    public static class ActionViewHolder {
-    	public RelativeLayout favorite;
-    	public RelativeLayout share;
-    	public RelativeLayout errorrecovery;
-    }
+//    public static class ActionViewHolder {
+//    	public RelativeLayout favorite;
+//    	public RelativeLayout share;
+//    	public RelativeLayout errorrecovery;
+//    }
 
     class StringListAdapter extends BaseAdapter{
 
-    	private static final int TYPE_STEP = 0;
-    	
-    	private static final int TYPE_ACTION = TYPE_STEP + 1;
-    	
-    	private static final int TYPE_COUNT = TYPE_ACTION + 1;
+//    	private static final int TYPE_STEP = 0;
+//    	
+//    	private static final int TYPE_ACTION = TYPE_STEP + 1;
+//    	
+//    	private static final int TYPE_COUNT = TYPE_ACTION + 1;
     	
         private List<Integer> types = new ArrayList<Integer>();
         
@@ -282,60 +305,60 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
             //列表前面显示起点，后面显示终点
             strList.add(0, plan.getStart().getName());
-            strList.add(plan.getEnd().getName());
             types.add(0, TYPE_RESULT_LIST_START);
+            strList.add(plan.getEnd().getName());
             types.add(TYPE_RESULT_LIST_END);
         }
 
         @Override
         public int getCount() {
-            return strList.size() + 1;
+            return strList.size();
         }
 
         private CharSequence getItemContent(int position) {
             return strList.get(position);
         }
                 
-        @Override
-		public int getItemViewType(int position) {
-        	if(position == getCount() - 1) {
-        		return TYPE_ACTION;
-        	}
-			return TYPE_STEP;
-		}
+//        @Override
+//		public int getItemViewType(int position) {
+//        	if(position == getCount() - 1) {
+//        		return TYPE_ACTION;
+//        	}
+//			return TYPE_STEP;
+//		}
 
-		@Override
-		public int getViewTypeCount() {
-			return TYPE_COUNT;
-		}
+//		@Override
+//		public int getViewTypeCount() {
+//			return TYPE_COUNT;
+//		}
 
 		@Override
         public View getView(final int position, View convertView, ViewGroup parent) {
 
-            int type = getItemViewType(position);
+//            int type = getItemViewType(position);
 			if(convertView == null) {
-				switch(type){
-				case TYPE_STEP:
+//				switch(type){
+//				case TYPE_STEP:
 					convertView = mLayoutInflater.inflate(mChildLayoutId, parent, false);
 					StepViewHolder stepHolder = new StepViewHolder();
 					stepHolder.image = (ImageView)convertView.findViewById(R.id.image1);
 					stepHolder.textView = (TextView)convertView.findViewById(R.id.text);
 					convertView.setTag(stepHolder);
-					break;
-				case TYPE_ACTION:
-					convertView = mLayoutInflater.inflate(mFootLayoutId, parent, false);
-					ActionViewHolder actionHolder = new ActionViewHolder();
-					actionHolder.favorite = (RelativeLayout)convertView.findViewById(R.id.favorite_rll);
-					actionHolder.share = (RelativeLayout)convertView.findViewById(R.id.share_rll);
-					actionHolder.errorrecovery = (RelativeLayout)convertView.findViewById(R.id.errorrecovery_rll);
-					convertView.setTag(actionHolder);
-					break;
-				default:
-				}
+//					break;
+//				case TYPE_ACTION:
+//					convertView = mLayoutInflater.inflate(mFootLayoutId, parent, false);
+//					ActionViewHolder actionHolder = new ActionViewHolder();
+//					actionHolder.favorite = (RelativeLayout)convertView.findViewById(R.id.favorite_rll);
+//					actionHolder.share = (RelativeLayout)convertView.findViewById(R.id.share_rll);
+//					actionHolder.errorrecovery = (RelativeLayout)convertView.findViewById(R.id.errorrecovery_rll);
+//					convertView.setTag(actionHolder);
+//					break;
+//				default:
+//				}
 			}
 			
-			switch(type){
-			case TYPE_STEP:
+//			switch(type){
+//			case TYPE_STEP:
 				StepViewHolder stepHolder = (StepViewHolder)convertView.getTag();
 				
 				Integer stepType = types.get(position);
@@ -343,23 +366,23 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 				stepHolder.textView.setText(getItemContent(position));
 				stepHolder.textView.setTextColor(Color.parseColor("#000000"));
 			
-				break;
-			case TYPE_ACTION:
-				ActionViewHolder actionHolder = (ActionViewHolder)convertView.getTag();
-				
-				if (mShowType == SHOW_TYPE_TRANSFER) {
-					actionHolder.errorrecovery.setVisibility(View.VISIBLE);
-				} else {
-					actionHolder.errorrecovery.setVisibility(View.GONE);
-				}
-				
-				actionHolder.favorite.setOnClickListener(new ResultOnClickListener());
-				actionHolder.share.setOnClickListener(new ResultOnClickListener());
-				actionHolder.errorrecovery.setOnClickListener(new ResultOnClickListener());
-				setFavoriteState(actionHolder.favorite, plan.checkFavorite(mContext));
-				break;
-			default:
-			}
+//				break;
+//			case TYPE_ACTION:
+//				ActionViewHolder actionHolder = (ActionViewHolder)convertView.getTag();
+//				
+//				if (mShowType == SHOW_TYPE_TRANSFER) {
+//					actionHolder.errorrecovery.setVisibility(View.VISIBLE);
+//				} else {
+//					actionHolder.errorrecovery.setVisibility(View.GONE);
+//				}
+//				
+//				actionHolder.favorite.setOnClickListener(new ResultOnClickListener());
+//				actionHolder.share.setOnClickListener(new ResultOnClickListener());
+//				actionHolder.errorrecovery.setOnClickListener(new ResultOnClickListener());
+//				setFavoriteState(actionHolder.favorite, plan.checkFavorite(mContext));
+//				break;
+//			default:
+//			}
 				
 			return convertView;
 
@@ -448,13 +471,13 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 		@Override
 		public void onClick(View v) {
 
-            if (v.getId() == R.id.share_rll) {
+            if (v.getId() == R.id.share_btn) {
                 //弹出分享对话框
                 mActionLog.addAction(ActionLog.TrafficDetailShare);
                 share(plan);
-            } else if (v.getId() == R.id.favorite_rll) {
+            } else if (v.getId() == R.id.favorite_btn) {
             	favorite(plan, v);
-            } else if (v.getId() == R.id.errorrecovery_rll) {
+            } else if (v.getId() == R.id.error_recovery_btn) {
                 mActionLog.addAction(ActionLog.TrafficDetailErrorRecovery);
             	TransferErrorRecovery.addTarget(plan);
             	mSphinx.showView(R.id.activity_traffic_error_recovery);
@@ -522,15 +545,15 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
     private void setFavoriteState(View v, boolean favoriteYet) {
     	
-    	ImageView favorite = (ImageView)v.findViewById(R.id.image);
-    	TextView text = (TextView)v.findViewById(R.id.favorite);
+//    	Button favorite = (Button)v.findViewById(R.id.favorite_btn);
+//    	TextView text = (TextView)v.findViewById(R.id.favorite);
     	
     	if (favoriteYet) {
-    	    favorite.setBackgroundResource(R.drawable.ic_favorite);
-        	text.setText(mContext.getResources().getString(R.string.favorite_yet));	
+    		mFavorateBtn.setBackgroundResource(R.drawable.btn_cancel_favorite_normal);
+//        	text.setText(mContext.getResources().getString(R.string.favorite_yet));	
     	} else {
-        	favorite.setBackgroundResource(R.drawable.ic_favorite_cancel);
-        	text.setText(mContext.getResources().getString(R.string.favorite));
+    		mFavorateBtn.setBackgroundResource(R.drawable.btn_favorite);
+//        	text.setText(mContext.getResources().getString(R.string.favorite));
     	}
     	
     }

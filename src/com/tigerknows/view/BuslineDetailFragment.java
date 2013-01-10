@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -64,6 +65,10 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     private TextView mTimeTxv = null;
     
     private ListView mResultLsv = null;
+    
+    private Button mFavorateBtn = null;
+    
+    private Button mShareBtn = null;
     
     private Line line = null;
 
@@ -161,6 +166,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         mLengthTxv = (TextView)mRootView.findViewById(R.id.length_txv);
         mTimeTxv = (TextView)mRootView.findViewById(R.id.time_txv);
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
+        mFavorateBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
+        mShareBtn = (Button)mRootView.findViewById(R.id.share_btn);
     }
 
     protected void setListener() {
@@ -176,6 +183,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
                 BuslineOverlayHelper.panToPosition(mSphinx.getHandler(), line.getStationList().get(position).getPosition(), mSphinx.getMapView());
             }
         });
+        mFavorateBtn.setOnClickListener(new ResultOnClickListener());
+        mShareBtn.setOnClickListener(new ResultOnClickListener());
 
     }
     
@@ -206,11 +215,11 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
     class StringListAdapter extends BaseAdapter{
 
-    	private static final int TYPE_STATION = 0;
-        
-        private static final int TYPE_ACTION = TYPE_STATION + 1;
-        
-        private static final int TYPE_COUNT = TYPE_ACTION + 1;
+//    	private static final int TYPE_STATION = 0;
+//        
+//        private static final int TYPE_ACTION = TYPE_STATION + 1;
+//        
+//        private static final int TYPE_COUNT = TYPE_ACTION + 1;
     	        
         private List<CharSequence> strList = new ArrayList<CharSequence>();
 
@@ -226,50 +235,50 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
         @Override
         public int getCount() {
-            return strList.size() + 1;
+            return strList.size();
         }
 
-        @Override
-		public int getItemViewType(int position) {
-        	if(position == getCount() - 1) {
-        		return TYPE_ACTION;
-        	}
-			return TYPE_STATION;
-		}
-
-		@Override
-		public int getViewTypeCount() {
-			return TYPE_COUNT;
-		}
+//        @Override
+//		public int getItemViewType(int position) {
+//        	if(position == getCount() - 1) {
+//        		return TYPE_ACTION;
+//        	}
+//			return TYPE_STATION;
+//		}
+//
+//		@Override
+//		public int getViewTypeCount() {
+//			return TYPE_COUNT;
+//		}
 
 		@Override
         public View getView(final int position, View convertView, ViewGroup parent) {
 
-			int type = getItemViewType(position);
+//			int type = getItemViewType(position);
             if(convertView == null) {
-                switch(type){
-                case TYPE_STATION:
+//                switch(type){
+//                case TYPE_STATION:
                     convertView = mLayoutInflater.inflate(R.layout.traffic_child_busline, parent, false);
                     StationViewHolder stationHolder = new StationViewHolder();
                     stationHolder.image = (ImageView)convertView.findViewById(R.id.image1);
                     stationHolder.textView = (TextView)convertView.findViewById(R.id.text);
                     convertView.setTag(stationHolder);
-                    break;
-                    
-                case TYPE_ACTION:
-                    convertView = mLayoutInflater.inflate(R.layout.traffic_fav_share, parent, false);
-                    ActionViewHolder actionHolder = new ActionViewHolder();
-                    actionHolder.favorite = (RelativeLayout)convertView.findViewById(R.id.favorite_rll);
-                    actionHolder.share = (RelativeLayout)convertView.findViewById(R.id.share_rll);
-                    convertView.setTag(actionHolder);
-                    break;
-                default:
+//                    break;
+//                    
+//                case TYPE_ACTION:
+//                    convertView = mLayoutInflater.inflate(R.layout.traffic_fav_share, parent, false);
+//                    ActionViewHolder actionHolder = new ActionViewHolder();
+//                    actionHolder.favorite = (RelativeLayout)convertView.findViewById(R.id.favorite_rll);
+//                    actionHolder.share = (RelativeLayout)convertView.findViewById(R.id.share_rll);
+//                    convertView.setTag(actionHolder);
+//                    break;
+//                default:
                 
-                }
+//                }
             }
             
-            switch(type){
-            case TYPE_STATION:
+//            switch(type){
+//            case TYPE_STATION:
                 StationViewHolder stationHolder = (StationViewHolder)convertView.getTag();
                 
                 String txt = mContext.getString(R.string.bus_index_station, position+1, (String)getItem(position));
@@ -280,19 +289,19 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
                 
                 stationHolder.textView.setText(style);
 
-                break;
-
-            case TYPE_ACTION:
-                ActionViewHolder actionHolder = (ActionViewHolder)convertView.getTag();
-                            
-                actionHolder.favorite.setOnClickListener(new ResultOnClickListener());
-                actionHolder.share.setOnClickListener(new ResultOnClickListener());
-                
-                setFavoriteState(actionHolder.favorite, line.checkFavorite(mContext));
-
-                break;
-            default:
-            }
+//                break;
+//
+//            case TYPE_ACTION:
+//                ActionViewHolder actionHolder = (ActionViewHolder)convertView.getTag();
+//                            
+//                actionHolder.favorite.setOnClickListener(new ResultOnClickListener());
+//                actionHolder.share.setOnClickListener(new ResultOnClickListener());
+//                
+//                setFavoriteState(actionHolder.favorite, line.checkFavorite(mContext));
+//
+//                break;
+//            default:
+//            }
 
             return convertView;
 
@@ -320,10 +329,10 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
         @Override
         public void onClick(View v) {
-            if(v.getId() == R.id.share_rll){
+            if(v.getId() == R.id.share_btn){
             	mActionLog.addAction(ActionLog.TrafficLineDetailShareBtn);
             	share(line);
-            }else if(v.getId() == R.id.favorite_rll){
+            }else if(v.getId() == R.id.favorite_btn){
                 favorite(line, v);
             }
         }
@@ -381,15 +390,15 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     
     private void setFavoriteState(View v, boolean favoriteYet) {
     	
-    	ImageView favorite = (ImageView)v.findViewById(R.id.image);
-    	TextView text = (TextView)v.findViewById(R.id.favorite);
+//    	ImageView favorite = (ImageView)v.findViewById(R.id.image);
+//    	TextView text = (TextView)v.findViewById(R.id.favorite);
     	
     	if (favoriteYet) {
-    	    favorite.setBackgroundResource(R.drawable.ic_favorite);
-        	text.setText(mContext.getResources().getString(R.string.favorite_yet));
+    		mFavorateBtn.setBackgroundResource(R.drawable.btn_cancel_favorite_normal);
+//        	text.setText(mContext.getResources().getString(R.string.favorite_yet));
     	} else {
-    	    favorite.setBackgroundResource(R.drawable.ic_favorite_cancel);
-        	text.setText(mContext.getResources().getString(R.string.favorite));
+    		mFavorateBtn.setBackgroundResource(R.drawable.btn_favorite);
+//        	text.setText(mContext.getResources().getString(R.string.favorite));
     	}
     }
     

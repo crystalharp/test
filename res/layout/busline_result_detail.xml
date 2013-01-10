@@ -118,5 +118,9 @@
         android:scrollingCache="false"
 		android:divider="@drawable/bg_real_line"
 		android:background="@color/gray_dark" />
+    
+    <include android:id="@+id/busline_detail_foot"
+        android:layout_alignParentBottom="true"
+        layout="@layout/traffic_fav_share" />
 
 </RelativeLayout>

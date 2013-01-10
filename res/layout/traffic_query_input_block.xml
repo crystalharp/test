@@ -74,7 +74,6 @@
 	        <include android:id="@+id/busline_edt"
 				layout="@layout/traffic_query_input_line" />  
 			<Button android:id="@+id/busline_query_btn"
-	            android:text="@string/query"
 	            android:layout_alignParentRight="true"
 	            android:layout_width="wrap_content" 
 	            android:layout_height="wrap_content"

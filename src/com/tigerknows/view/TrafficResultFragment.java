@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -50,6 +51,8 @@ public class TrafficResultFragment extends BaseFragment {
     private TextView mLengthTxv = null;
     
     private ListView mResultLsv = null;
+    
+    private LinearLayout mFootLayout = null;
 
     private TrafficQuery mTrafficQuery;
     
@@ -94,6 +97,8 @@ public class TrafficResultFragment extends BaseFragment {
         mTitleBtn.setText(mContext.getString(R.string.title_type_transfer));
         mLengthTxv.setVisibility(View.GONE);
         
+        mFootLayout.setVisibility(View.INVISIBLE);
+        
         mResultAdapter = new TransferProjectListAdapter(mTrafficQuery.getTrafficModel().getPlanList());
         mResultLsv.setAdapter(mResultAdapter);
     }
@@ -108,6 +113,7 @@ public class TrafficResultFragment extends BaseFragment {
         mEndTxv = (TextView)mRootView.findViewById(R.id.end_txv);
         mLengthTxv = (TextView)mRootView.findViewById(R.id.length_txv);
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
+        mFootLayout = (LinearLayout)mRootView.findViewById(R.id.traffic_detail_foot);
     }
 
     protected void setListener() {

@@ -3,10 +3,57 @@
     android:id="@+id/traffic_result_action"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:layout_alignParentBottom="true"
+    android:orientation="horizontal"
+    android:paddingTop="4dp"
+    android:background="@drawable/bg_bottom_control">
+    
+    	<!-- <LinearLayout 
     android:background="@color/gray_light"
-    android:padding="4dp">
+        android:id="@+id/control_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" 
+        android:weightSum="4"
+        android:gravity="center"> -->
+        <LinearLayout
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+        <Button android:id="@+id/favorite_btn" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_favorite"
+            android:gravity="center"/>
+        </LinearLayout>
+        
+        <LinearLayout
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center">
+        <Button android:id="@+id/share_btn" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_share"
+            android:gravity="center"/>
+        </LinearLayout>
+            
+        <LinearLayout
+            android:id="@+id/error_recovery_layout"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_weight="1"
+            android:gravity="center">
+        <Button android:id="@+id/error_recovery_btn" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_recovery_error"
+            android:gravity="center"/>
+        </LinearLayout>
 
-       <RelativeLayout android:id="@+id/favorite_rll"
+       <!-- <RelativeLayout android:id="@+id/favorite_rll"
            android:layout_width="fill_parent"
            android:layout_height="fill_parent"
 	        android:layout_weight="1"
@@ -89,6 +136,6 @@
             android:layout_toLeftOf="@id/errorrecovery"
             android:layout_marginRight="4dp"
             android:layout_centerVertical="true"/>
-    </RelativeLayout>
+    </RelativeLayout> -->
 </LinearLayout>
 
