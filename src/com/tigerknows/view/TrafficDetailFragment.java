@@ -105,7 +105,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     @Override
     public void onResume() {
         super.onResume();
-        mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
+        mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
         mRightBtn.setOnClickListener(this);
         
         mResultAdapter = new StringListAdapter(mContext);

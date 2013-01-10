@@ -368,4 +368,10 @@ public class BuslineResultLineFragment extends BaseFragment {
     public List<Line> getData() {
         return mLineList;
     }
+    
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        mLineList = null;
+    }
 }

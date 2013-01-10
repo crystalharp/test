@@ -296,6 +296,15 @@ public class TrafficResultFragment extends BaseFragment {
 	}
 
     public List<Plan> getData() {
-        return mTrafficModel.getPlanList();
+        if (mTrafficModel != null) {
+            return mTrafficModel.getPlanList();
+        }
+        return null;
+    }
+    
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        mTrafficModel = null;
     }
 }

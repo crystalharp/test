@@ -190,7 +190,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.detail_info);
-        mRightBtn.setBackgroundResource(R.drawable.ic_view_map);
+        mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
         mRightBtn.setOnClickListener(this); 
         
         if (isReLogin == true) {
@@ -744,7 +744,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         for(int i = 0; i < count; i++) {
             viewGroup.getChildAt(i).setVisibility(View.GONE);
         }
-        byte[] showKeys = {Description.FIELD_FEATURE, Description.FIELD_RECOMMEND, Description.FIELD_RECOMMEND_COOK, Description.FIELD_GUEST_CAPACITY, Description.FIELD_BUSINESS_HOURS,
+        byte[] showKeys = {Description.FIELD_RECOMMEND_COOK, Description.FIELD_FEATURE, Description.FIELD_RECOMMEND, Description.FIELD_GUEST_CAPACITY, Description.FIELD_BUSINESS_HOURS,
                 Description.FIELD_HOUSING_PRICE, Description.FIELD_SYNOPSIS, Description.FIELD_CINEMA_FEATURE, Description.FIELD_MEMBER_POLICY, Description.FIELD_FEATURE_SPECIALTY, 
                 Description.FIELD_TOUR_DATE, Description.FIELD_TOUR_LIKE, Description.FIELD_POPEDOM_SCENERY, Description.FIELD_RECOMMEND_SCENERY,
                 Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
@@ -811,7 +811,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
     	List<Integer> indexs = new ArrayList<Integer>();
     	
-        byte[] showKeys = {Description.FIELD_MOODS, Description.FIELD_PRODUCT_ATTITUDE, Description.FIELD_TASTE, Description.FIELD_SERVICE_ATTITUDE, Description.FIELD_ENVIRONMENT,
+        byte[] showKeys = {Description.FIELD_PRODUCT_ATTITUDE, Description.FIELD_TASTE, Description.FIELD_SERVICE_ATTITUDE, Description.FIELD_ENVIRONMENT,
                 Description.FIELD_FILM_EFFECT, Description.FIELD_SERVICE_QUALITY, Description.FIELD_PRICE_LEVEL, Description.FIELD_MEDICAL_TREATMENT_LEVEL};
         
         int addCount = 1;
@@ -889,7 +889,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         commentView = getCommentItemView(null, mCommentListView, commentArrayList.get(i), poi);
                         mCommentListView.addView(commentView);
                         ImageView imageView = new ImageView(mContext);
-                        imageView.setBackgroundResource(R.drawable.bg_broken_line);
+                        imageView.setBackgroundResource(R.drawable.bg_line_split);
                         mCommentListView.addView(imageView, layoutParams);
                     }
                     commentView.setBackgroundResource(R.drawable.list_middle);
