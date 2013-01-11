@@ -81,6 +81,8 @@ public class TrafficQueryFragment extends BaseFragment {
 
 	boolean modeChange = false;
 	
+	private int mCheckBtn = R.id.traffic_transfer_rbt;;
+	
 	FrameLayout mTitle;
 	
 	ImageButton mBackBtn;
@@ -249,6 +251,10 @@ public class TrafficQueryFragment extends BaseFragment {
     	super.dismiss();
     	mSphinx.hideSoftInput(mBackBtn.getWindowToken());
     	mSphinx.setTouchMode(TouchMode.NORMAL);
+    	mStart.clear();
+    	mEnd.clear();
+    	//TODO:是否需要恢复查询？
+//    	mCheckBtn = R.id.traffic_transfer_rbt;
     	
     	/*
     	 * BUG 187
@@ -305,6 +311,8 @@ public class TrafficQueryFragment extends BaseFragment {
 			mSphinx.setTouchMode(TrafficQueryFragment.START == mSelectedEdt.getPosition() ? 
 					TouchMode.CHOOSE_ROUTING_START_POINT : TouchMode.CHOOSE_ROUTING_END_POINT);
         }
+        
+        mRadioGroup.check(mCheckBtn); 
 	}
 
 	
@@ -443,7 +451,6 @@ public class TrafficQueryFragment extends BaseFragment {
 		
 		public QueryEditText(RelativeLayout queryline) {
 			super();
-			// TODO Auto-generated constructor stub
 			
 			findView(queryline);
 		}
@@ -456,7 +463,7 @@ public class TrafficQueryFragment extends BaseFragment {
 //			} else {
 //				this.mLeftImg.setBackgroundResource(R.drawable.icon_end_point);
 //			}
-			mRightImg.setBackgroundResource(R.drawable.btn_bookmark);
+//			mRightImg.setBackgroundResource(R.drawable.btn_bookmark);
 		}
 		
 		protected void findView(RelativeLayout queryline) {
@@ -740,6 +747,28 @@ public class TrafficQueryFragment extends BaseFragment {
     	mStateTransitionTable.event(TrafficViewSTT.Event.ClickBookmark);
     }
     
+    //TODO:检查有没有错误
+    public void setData(POI poi, int index, int queryType) {
+    	if (index != START && index != END && index != SELECTED) 
+    		return;
+    	
+    	switch (queryType) {
+    	case TrafficQuery.QUERY_TYPE_TRANSFER:
+    		mCheckBtn = R.id.traffic_transfer_rbt;
+    		break;
+    	case TrafficQuery.QUERY_TYPE_DRIVE:
+    		mCheckBtn = R.id.traffic_drive_rbt;
+    		break;
+    	case TrafficQuery.QUERY_TYPE_WALK:
+    		mCheckBtn = R.id.traffic_walk_rbt;
+    		break;
+		default:
+    	}
+    	setPOI(poi.clone(), index);
+    }
+    
+    
+    
     /*
      * 长按地图
      */
@@ -795,8 +824,6 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		// TODO Auto-generated method stub
-		// FIXME 这里进行键盘功能变更
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (mStateTransitionTable.rollback()) {
 			    mActionLog.addAction(ActionLog.KeyCodeBack);
@@ -831,7 +858,6 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	@Override
 	public void onPostExecute(TKAsyncTask tkAsyncTask) {
-		// TODO Auto-generated method stub
 		super.onPostExecute(tkAsyncTask);
 		BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
 		if (BaseQuery.API_TYPE_TRAFFIC_QUERY.equals(baseQuery.getAPIType())) {
@@ -868,7 +894,6 @@ public class TrafficQueryFragment extends BaseFragment {
             		mSphinx.getTrafficResultFragment().setData(trafficQuery);
             		mSphinx.showView(R.id.view_traffic_result_transfer);
             	} else {
-            		//xupeng:如果不是换乘，这里判断了查询类型，切换到了detail页面
             		mSphinx.getTrafficDetailFragment().setData(trafficModel.getPlanList().get(0));
             		mSphinx.getTrafficDetailFragment().viewMap();
             	}
@@ -916,6 +941,7 @@ public class TrafficQueryFragment extends BaseFragment {
     	List<String> list = new ArrayList<String>();
     	final boolean start = (startStationList != null);
     	final boolean end = (endStationList != null);
+    	//如果有start，就先处理start的对话框，处理完后如果还有end则递归，参数传（null，end）
     	if (start) {
 			for(int i = 0, size = startStationList.size(); i < size; i++) {
 				list.add(startStationList.get(i).getName());
