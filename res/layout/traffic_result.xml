@@ -76,17 +76,18 @@
         android:layout_height="wrap_content" 
         android:background="#00AEFF"/>
 
+    <include android:id="@+id/traffic_detail_foot"
+        android:layout_alignParentBottom="true"
+        layout="@layout/traffic_fav_share" />
+
     <ListView android:id="@+id/result_lsv"
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
         android:layout_below="@id/length_txv"
+        android:layout_above="@id/traffic_detail_foot"
         android:fadingEdge="none"
         android:drawSelectorOnTop="false"
         android:scrollingCache="false"
 		android:divider="@drawable/bg_real_line" />
     
-    <include android:id="@+id/traffic_detail_foot"
-        android:layout_alignParentBottom="true"
-        layout="@layout/traffic_fav_share" />
-
 </RelativeLayout>

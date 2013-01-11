@@ -14,8 +14,8 @@
             android:imeOptions="actionNext"
             android:textColorHint="@color/edittext_hint_color"
             android:textSize="14sp"
-            android:background="@drawable/textfield" />
-        
+            android:background="@color/transparent" />
+                    
         <ImageView android:id="@+id/right_img"
             android:layout_width="wrap_content" 
             android:layout_height="wrap_content" 
