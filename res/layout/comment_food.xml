@@ -98,31 +98,6 @@
 		    
     </LinearLayout>
     
-	<LinearLayout 
-	    android:layout_width="fill_parent" 
-	    android:layout_height="wrap_content"
-	    android:orientation="horizontal"
-        android:paddingTop="2dp"
-        android:paddingBottom="2dp"
-        android:gravity="left|center_vertical">
-	    <TextView
-	        android:layout_width="70dp"
-	        android:layout_height="wrap_content"
-	        android:layout_marginRight="3dp"
-	        android:gravity="left|center_vertical"
-	        android:text="@string/comment_food_restair"/>
-		    
-	    <Button android:id="@+id/restair_btn"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:hint="@string/comment_food_restair_hit"
-	        android:background="@drawable/textfield"
-	        android:padding="8dp"
-	        android:drawableRight="@drawable/ic_small_triangle_down"
-	        android:gravity="left|center_vertical"
-	        android:singleLine="true"
-	        android:ellipsize="end" />
-    </LinearLayout>
 		    
 	<LinearLayout 
 	    android:layout_width="fill_parent" 
@@ -151,7 +126,8 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_centerVertical="true"
-		        android:paddingLeft="4dp"
+		        android:layout_alignRight="@id/avg_edt"
+		        android:paddingRight="8dp"
 		        android:hint="@string/rmb"/>
 	    </RelativeLayout>
     </LinearLayout>
@@ -180,5 +156,33 @@
 		    android:ellipsize="end"
 	        android:hint="@string/comment_food_recommed_hit" />
     </LinearLayout>
+    
+	
+	<LinearLayout 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:gravity="left|center_vertical">
+	    <TextView
+	        android:layout_width="70dp"
+	        android:layout_height="wrap_content"
+	        android:layout_marginRight="3dp"
+	        android:gravity="left|center_vertical"
+	        android:text="@string/comment_food_restair"/>
+		    
+	    <Button android:id="@+id/restair_btn"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:hint="@string/comment_food_restair_hit"
+	        android:background="@drawable/textfield"
+	        android:padding="8dp"
+	        android:drawableRight="@drawable/ic_small_triangle_down"
+	        android:gravity="left|center_vertical"
+	        android:singleLine="true"
+	        android:ellipsize="end" />
+    </LinearLayout>
+    
 </LinearLayout>
 

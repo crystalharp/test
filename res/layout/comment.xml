@@ -4,7 +4,8 @@
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:background="@android:color/white">
+    android:background="@drawable/bg_discover">
+    
 	<include android:id="@+id/title_view"
 	    layout="@layout/title" 
 	    android:layout_width="fill_parent"
@@ -16,12 +17,13 @@
 	    android:gravity="top"
 	    android:fillViewport="true"
 	    android:fadingEdge="none">
-		<LinearLayout 
+		<LinearLayout
 		    android:layout_width="fill_parent" 
 		    android:layout_height="fill_parent"
-            android:orientation="vertical">
+           android:orientation="vertical">
 		        
 			<RelativeLayout 
+		    	android:background="@android:color/white"
 			    android:id="@+id/content_view"
 			    android:layout_width="fill_parent" 
 			    android:layout_height="wrap_content"
@@ -115,14 +117,23 @@
 			        android:gravity="center"/>
 			</RelativeLayout>
 
+            <ImageView 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:background="@drawable/bg_sawtooth"
+                />
+            
 		    <LinearLayout
 		        android:id="@+id/expand_view"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 			    android:gravity="right|top"
 	            android:layout_marginTop="8dp"
-	            android:layout_marginLeft="6dp"
-	            android:layout_marginRight="6dp"
+	            android:layout_marginLeft="8dp"
+	            android:layout_marginRight="8dp"
 			    android:padding="8dp"
 	            android:orientation="vertical"
 	            android:background="@drawable/list_single_normal">
