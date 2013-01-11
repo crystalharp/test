@@ -90,9 +90,10 @@ public class TrafficResultFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         mRightBtn.setVisibility(View.INVISIBLE);
+        mEndTxv.setVisibility(View.VISIBLE);
         
-        mStartTxv.setText(mTrafficModel.getStart().getName());
-        mEndTxv.setText(mTrafficModel.getEnd().getName());
+        mStartTxv.setText(mSphinx.getString(R.string.start_text, mTrafficModel.getStart().getName()));
+        mEndTxv.setText(mSphinx.getString(R.string.end_text, mTrafficModel.getEnd().getName()));
 
         mTitleBtn.setText(mContext.getString(R.string.title_type_transfer));
         mLengthTxv.setVisibility(View.GONE);

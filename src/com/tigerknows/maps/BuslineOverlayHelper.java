@@ -87,7 +87,7 @@ public class BuslineOverlayHelper {
 					}
 					i++;
 					
-					OverlayItem overlayItem = new OverlayItem(poi.getPosition(), busIc, poi.getName(), rt);
+					OverlayItem overlayItem = new OverlayItem(poi.getPosition(), busIc, context.getString(R.string.busline_map_bubble_content, i, poi.getName()), rt);
 					
 					overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
 	                overlayItem.setInfoWindowType(InfoWindow.TYPE_SIMPLE);

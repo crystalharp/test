@@ -13,6 +13,7 @@ import com.tigerknows.provider.Tigerknows.Favorite;
 import com.tigerknows.provider.Tigerknows.History;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.ShareTextUtil;
 import com.tigerknows.util.SqliteWrapper;
 
 import android.content.ContentUris;
@@ -127,6 +128,10 @@ public class BuslineModel extends XMapData {
         
         public int getLength() {
             return length;
+        }
+        
+        public String getLengthStr(Context mContext) {
+        	return ShareTextUtil.getPlanLength(mContext, length);
         }
 
         public void setLength(int length) {

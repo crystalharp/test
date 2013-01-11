@@ -124,14 +124,10 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         mResultAdapter = new StringListAdapter(mContext);
         mResultLsv.setAdapter(mResultAdapter);
 
-        if (line.getLength() > 1000) {
-    		mLengthTxv.setText(mContext.getString(R.string.busline_detail_subtitle1_km, CommonUtils.meter2kilometre(line.getLength())));
-    	} else {
-    		mLengthTxv.setText(mContext.getString(R.string.busline_detail_subtitle1_m, line.getLength()));
-    	}
+        mLengthTxv.setText(mSphinx.getString(R.string.length_str_title, line.getLengthStr(mSphinx)));
         mNameTxv.setText(line.getName());
         if (!TextUtils.isEmpty(line.getTime())) {
-        	mTimeTxv.setText(mContext.getString(R.string.busline_detail_subtitle2, line.getTime()));
+        	mTimeTxv.setText(mContext.getString(R.string.time_str_title, line.getTime()));
         	mTimeTxv.setVisibility(View.VISIBLE);
         } else {
         	mTimeTxv.setVisibility(View.GONE);
@@ -342,7 +338,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     private void setFavoriteState(View v, boolean favoriteYet) {
     	    	
     	if (favoriteYet) {
-    		mFavorateBtn.setBackgroundResource(R.drawable.btn_cancel_favorite_normal);
+    		mFavorateBtn.setBackgroundResource(R.drawable.btn_cancel_favorite);
     	} else {
     		mFavorateBtn.setBackgroundResource(R.drawable.btn_favorite);
     	}

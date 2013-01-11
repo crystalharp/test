@@ -145,7 +145,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         //如果是驾车和步行，需要在这里可以切换到详情页
         if (mActionTag == ActionLog.MapTrafficDrive || mActionTag == ActionLog.MapTrafficWalk) {
         	mRightBtn.setVisibility(View.VISIBLE);
-        	mRightBtn.setBackgroundResource(R.drawable.ic_view_detail);
+        	mRightBtn.setBackgroundResource(R.drawable.btn_view_detail);
         	mRightBtn.setOnClickListener(this);
         	if (mActionTag == ActionLog.MapTrafficDrive) {
         		mTitleBtn.setText(mSphinx.getString(R.string.title_type_drive));
