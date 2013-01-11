@@ -323,10 +323,9 @@
     
 
     <string name="busline_result_title">搜索“%1$s”共有%2$d个结果</string>
-    <!-- by xupeng -->
-    <!-- <string name="busline_line_listitem_title">全程%1$s公里，途经%2$d个站</string> --> 
 	<string name="busline_line_listitem_title">时间：%1$s\u0020全程：%2$s</string>
     <string name="busline_station_listitem_title">共有%1$d条线路经过</string>
+	<string name="busline_map_bubble_content">%1$d.%2$s</string>
     
     <string name="about_version">%1$s</string>
     <string name="about_release_date">%1$s</string>
