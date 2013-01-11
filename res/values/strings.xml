@@ -801,15 +801,15 @@
     <string name="dianying_detail_nearest">最近影院：%1$s</string>
     <string name="dianying_detail_distance_to_me">距我%1$s</string>
     <string name="dianying_detail">电影详情</string>
-    <string name="dianying_detail_nearby">%1$s %2$s家影院</string>
+    <string name="dianying_detail_nearby">%1$s%2$s家影院</string>
     <string name="dianying_detail_nearby_btn">查看全部</string>
     <string name="dianying_detail_introduce">剧情介绍</string>
-    <string name="dianying_detail_director">导演:%1$s</string>
-    <string name="dianying_detail_main_actor">主演:%1$s</string>
-    <string name="dianying_detail_tag">类型:%1$s</string>
-    <string name="dianying_detail_country">国家:%1$s</string>
-    <string name="dianying_detail_length">时长:%1$s</string>
-    <string name="dianying_detail_start_time">上映:%1$s</string>
+    <string name="dianying_detail_director">导演 %1$s</string>
+    <string name="dianying_detail_main_actor">主演 %1$s</string>
+    <string name="dianying_detail_tag">类型 %1$s</string>
+    <string name="dianying_detail_country">国家 %1$s</string>
+    <string name="dianying_detail_length">时长 %1$s</string>
+    <string name="dianying_detail_start_time">首映 %1$s</string>
     <string name="dianying_detail_no_changci">暂无场次信息...</string>
     <string name="dianying_1200">12:00</string>
     

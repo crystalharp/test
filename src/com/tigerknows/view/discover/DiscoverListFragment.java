@@ -435,7 +435,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         
         List<DiscoverCategory> list = mSphinx.getDiscoverFragment().getDiscoverCategoryList();
         mDiscoverCategoryList.clear();
-        for(int i = list.size()-1; i >= 0; i--) {
+        for(int i = 0, size=list.size(); i < size; i++) {
             DiscoverCategory discoverCategory = list.get(i);
             if (discoverCategory.getNumCity() > 0 || discoverCategory.getNumNearby() > 0) {
                 if (mDiscoverCategoryList.contains(discoverCategory) == false) {
