@@ -1,88 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/list_selector_background_gray_light"
-    android:padding="8dp" >
+   android:layout_width="fill_parent"
+   android:layout_height="wrap_content"
+   android:background="@drawable/list_selector_background_gray_light"
+   android:padding="8dp" >
 
-    <ImageView
-        android:id="@+id/picture_imv"
-        android:layout_width="80dp"
-        android:layout_height="100dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="8dp"
-        android:padding="4dp"
-        android:scaleType="fitXY"
-        android:background="@drawable/bg_picture_dianying" />
+   <ImageView
+       android:id="@+id/picture_imv"
+       android:layout_width="80dp"
+       android:layout_height="100dp"
+       android:layout_alignParentLeft="true"
+       android:layout_alignParentTop="true"
+       android:layout_marginRight="8dp"
+       android:padding="4dp"
+       android:scaleType="fitXY"
+       android:background="@drawable/bg_picture_dianying" />
 
-    <TextView
-        android:id="@+id/name_txv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_toRightOf="@id/picture_imv"
-        
-        android:layout_marginTop="2dip" 
-        android:focusable="false"
-        android:includeFontPadding="false"
-        android:lineSpacingExtra="2dp"
-        android:paddingBottom="5dp"
-        android:singleLine="true"
-        android:text="@string/app_name"
-        android:textColor="@android:color/black"
-        android:textSize="16sp" />
+   <TextView
+       android:id="@+id/name_txv"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_alignParentTop="true"
+       android:layout_toRightOf="@id/picture_imv"
+       
+       android:layout_marginTop="2dip" 
+       android:focusable="false"
+       android:includeFontPadding="false"
+       android:lineSpacingExtra="2dp"
+       android:paddingBottom="5dp"
+       android:singleLine="true"
+       android:text="@string/app_name"
+       android:textColor="@android:color/black"
+       android:textSize="16sp" />
 
-    <RatingBar android:id="@+id/stars_rtb"
-        android:layout_width="wrap_content"
-        android:layout_height="18dp"     
-        android:padding="0dp"
-        android:layout_toRightOf="@id/picture_imv"
-        
-        android:layout_below="@id/name_txv" 
-        android:progressDrawable="@drawable/ratingbar_small"
-        style="@style/RatingBar.Small"
-        android:numStars="5"
-        android:focusable="false"
-        android:focusableInTouchMode="false" /> 
-    
+   <RatingBar android:id="@+id/stars_rtb"
+       android:layout_width="wrap_content"
+       android:layout_height="18dp"     
+       android:padding="0dp"
+       android:layout_toRightOf="@id/picture_imv"
+       
+       android:layout_below="@id/name_txv" 
+       android:progressDrawable="@drawable/ratingbar_small"
+       style="@style/RatingBar.Small"
+       android:numStars="5"
+       android:focusable="false"
+       android:focusableInTouchMode="false" /> 
+   
 
-    <TextView
-        android:id="@+id/distance_txv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/stars_rtb"
-        android:layout_alignParentRight="true"
-        android:focusable="false"
-        android:singleLine="true"
-        android:text="@string/distance"
-        android:textColor="@color/bright_green"
-        android:textSize="14sp" /> 
-  <TextView
-        android:id="@+id/address_txv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/stars_rtb"
-        android:layout_below="@id/stars_rtb"
-        android:layout_marginTop="10dip"
-        android:drawableLeft="@drawable/ic_discover_address"
-        android:focusable="false"
-        android:singleLine="true"
-        android:text="@string/distance"
-        android:textColor="@color/bright_foreground_light"
-        android:textSize="14sp" />
+   <TextView
+       android:id="@+id/distance_txv"
+       
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_alignBaseline="@id/address_txv"
+       android:layout_alignParentRight="true"
+       
+       android:focusable="false"
+       android:singleLine="true"
+       android:text="@string/distance"
+       android:textColor="@color/orange"
+       android:textSize="14sp" /> 
 
-    <TextView
-        android:id="@+id/date_txv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/picture_imv"
-        android:layout_below="@id/address_txv"
-        android:drawableLeft="@drawable/ic_discover_date"
-        android:focusable="false"
-        android:singleLine="true"
-        android:text="@string/distance"
-        android:textColor="@color/bright_foreground_light"
-        android:textSize="14sp" />       
+   <TextView
+       android:id="@+id/date_txv"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_alignLeft="@id/stars_rtb"
+       android:layout_below="@id/stars_rtb"
+       android:layout_marginTop="10dip"
+       android:layout_toLeftOf="@id/distance_txv"
+       android:paddingRight="10dp"
+       android:drawableLeft="@drawable/ic_discover_date"
+       android:drawablePadding="4dp"   
+       android:focusable="false"
+       android:singleLine="true"
+       android:text="@string/distance"
+       android:textColor="@color/bright_foreground_light"
+       android:textSize="14sp" />       
+       
+ <TextView
+       android:id="@+id/address_txv"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content"
+       android:layout_alignLeft="@id/stars_rtb"
+       android:layout_below="@id/date_txv"
+       android:layout_toLeftOf="@id/distance_txv"
+       android:paddingRight="10dp"
+       android:drawableLeft="@drawable/ic_discover_address"
+       android:drawablePadding="4dp"
+       android:focusable="false"
+       android:singleLine="true"
+       android:text="@string/distance"
+       android:textColor="@color/bright_foreground_light"
+       android:textSize="14sp" />
 
 </RelativeLayout>

@@ -368,11 +368,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
 
     public static Button makeFitlerButton(Context context, boolean isTransparent) {
         
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        layoutParams.leftMargin = Util.dip2px(Globals.g_metrics.density, 4);
-        layoutParams.topMargin = Util.dip2px(Globals.g_metrics.density, 4);
-        layoutParams.rightMargin = Util.dip2px(Globals.g_metrics.density, 2);
-        layoutParams.bottomMargin = Util.dip2px(Globals.g_metrics.density, 4);        
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);        
         layoutParams.weight = 1;
         
         Resources resources = context.getResources();

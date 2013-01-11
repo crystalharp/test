@@ -1110,9 +1110,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     private void showFilterListView(View parent) {
         if (mPopupWindow == null) {
             mFilterListView = new FilterListView(mSphinx);
-            
             mPopupWindow = new PopupWindow(mFilterListView);
-            mPopupWindow.setWindowLayoutMode(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            mPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
             mPopupWindow.setFocusable(true);
             // 设置允许在外点击消失
             mPopupWindow.setOutsideTouchable(true);

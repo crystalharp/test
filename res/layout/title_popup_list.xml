@@ -6,15 +6,26 @@
     android:orientation="horizontal"
     android:background="@android:color/transparent"
     >
-        
-    <Button android:id="@+id/left_btn"
+   <RelativeLayout
+        android:id="@+id/left_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:background="@drawable/btn_back"
-        android:gravity="center"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:paddingRight="8dp"
         android:visibility="invisible"
-        />
+        >
+
+        <Button android:id="@+id/left_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:background="@drawable/btn_back"
+            android:textSize="14sp"
+            android:textColor="@color/btn_title"
+            android:gravity="center"
+            />
+    </RelativeLayout>
     <ListView android:id="@+id/listview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
