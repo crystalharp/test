@@ -148,8 +148,6 @@ public final class DataQuery extends BaseQuery {
     
     // POI Request Begin
     private POI poi;
-    
-    private String keyword;
     // POI Request End
     
     // POI Response Begin
@@ -184,10 +182,6 @@ public final class DataQuery extends BaseQuery {
     
     public POI getPOI() {
         return poi;
-    }
-
-    public String getKeyword() {
-        return this.keyword;
     }
 
     public List<Filter> getFilterList() {
@@ -1985,7 +1979,7 @@ public final class DataQuery extends BaseQuery {
                 public void init(XMap data) throws APIException {
                     this.data = data;
                     if (this.data == null) {
-                        throw new APIException(APIException.RESPONSE_DATA_IS_EMPTY, BaseQuery.STATUS_CODE_RESPONSE_EMPTY);
+                        throw new APIException(APIException.RESPONSE_DATA_IS_EMPTY);
                     }
                     if (this.data.containsKey(FIELD_TYPE)) {
                         this.type = this.data.getInt(FIELD_TYPE);

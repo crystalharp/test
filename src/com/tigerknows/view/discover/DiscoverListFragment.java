@@ -5,7 +5,6 @@
 package com.tigerknows.view.discover;
 
 import com.decarta.Globals;
-import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
@@ -409,7 +408,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 mFilterList.add(filter.clone());
             }
         }
-        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this, false);
+        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
     }
 
     @SuppressWarnings("unchecked")
@@ -472,21 +471,36 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
+            if (mRightBtn != null)
+                mRightBtn.setVisibility(View.GONE);
         } else if (mState == STATE_ERROR) {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
+            if (mRightBtn != null)
+                mRightBtn.setVisibility(View.GONE);
         } else if (mState == STATE_EMPTY){
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
             mResultLsv.setVisibility(View.GONE);
+            if (mRightBtn != null)
+                mRightBtn.setVisibility(View.GONE);
         } else {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.VISIBLE);
+            if (mRightBtn != null) {
+                if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
+                    mRightBtn.setVisibility(View.GONE);
+                } else if (getList().size() > 0) {
+                    mRightBtn.setVisibility(View.VISIBLE);
+                } else {
+                    mRightBtn.setVisibility(View.GONE);
+                }
+            }
         }
     }
     
@@ -562,7 +576,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     }
     
     public void doFilter(String name) {
-        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this, false);
+        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         
         if (mPopupWindow != null && mPopupWindow.isShowing()) {
             mPopupWindow.dismiss();

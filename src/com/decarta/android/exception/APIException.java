@@ -26,21 +26,10 @@ public class APIException extends Exception {
     public static final String CRITERIA_IS_NULL ="criteria is null";
     
     private static final String MISSING_REQUEST_PARAMETER = "missing request parameter: %s";
-    
-    private int statusCode = 0;
 	
-	public int getStatusCode() {
-        return statusCode;
-    }
-
-    public APIException(String msg){
+	public APIException(String msg){
 		super((msg==null)?"":msg);
 	}
-
-    public APIException(String msg, int statusCode) {
-        this(msg);
-        this.statusCode = statusCode;
-    }
 	
 	private APIException(Throwable throwable){
 		super(throwable.getMessage()==null ? throwable.getClass().getName() : throwable.getMessage() ,throwable);

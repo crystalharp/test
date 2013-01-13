@@ -367,7 +367,7 @@ public class TrafficQueryStateHelper {
 		mQueryFragment.mBackBtn.setVisibility(View.VISIBLE);
 		mQueryFragment.enableQueryBtn(mQueryFragment.mTrafficQueryBtn, false);
 		mQueryFragment.enableQueryBtn(mQueryFragment.mBuslineQueryBtn, false);
-		mQueryFragment.mSphinx.getDownloadView().setPadding(0, Util.dip2px(Globals.g_metrics.density, 70), 0, 0);
+		mQueryFragment.mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 78), 0, 0);
 	}
 	
 	public void applySelectPointInnateProperty() {
@@ -378,6 +378,6 @@ public class TrafficQueryStateHelper {
 		mQueryFragment.mSuggestLnl.setVisibility(View.GONE);
 
 		mQueryFragment.mSphinx.getControlView().setPadding(0, 0, 0, 0);
-		mQueryFragment.mSphinx.getDownloadView().setPadding(0, Util.dip2px(Globals.g_metrics.density, 30), 0, 0);
+		mQueryFragment.mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 38), 0, 0);
 	}
 }

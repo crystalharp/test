@@ -82,8 +82,6 @@
         android:layout_alignParentBottom="true"
         android:paddingTop="2dp"
         android:paddingBottom="2dp"
-        android:drawableLeft="@drawable/ic_mylocation_home"
-        android:drawablePadding="4dp"
         android:textSize="13sp"
         android:paddingLeft="6dp"
         android:text="@string/location_doing"
