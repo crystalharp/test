@@ -77,7 +77,7 @@ public class TrafficQuerySuggestHistoryHelper {
         HistoryWordTable.readHistoryWord(mQueryFragment.mContext, cityId, HistoryWordTable.TYPE_BUSLINE);
     }
 	
-	public void refresh(final Context context, final EditText mSuggestSrc, final int type) {
+	public void refresh(final Context context, final TKEditText mSuggestSrc, final int type) {
 		String searchWord = mSuggestSrc.getText().toString();
         suggestWordList.clear();
         

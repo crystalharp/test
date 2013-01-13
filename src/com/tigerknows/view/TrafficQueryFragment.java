@@ -196,13 +196,9 @@ public class TrafficQueryFragment extends BaseFragment {
         mLogHelper = new TrafficQueryLogHelper(this);
         mSuggestHistoryHelper = new TrafficQuerySuggestHistoryHelper(mContext, this, mSuggestLsv);
         
-        mStart.init(START, mContext.getString(R.string.start_));
-        mEnd.init(END, mContext.getString(R.string.end_));
-        mBusline.init(LINE, mContext.getString(R.string.busline_name_, ""));
-        
-        mBlock.setFocusable(true);
-		mBlock.setFocusableInTouchMode(true);
-		mBlock.setDescendantFocusability(ViewGroup.FOCUS_BEFORE_DESCENDANTS);
+        mStart.setHint(mContext.getString(R.string.start_));
+        mEnd.setHint(mContext.getString(R.string.end_));
+        mBusline.setHint(mContext.getString(R.string.busline_name_, ""));
 		
 		mMapLocationHelper.getCurrentMapInfo();
         
@@ -225,10 +221,9 @@ public class TrafficQueryFragment extends BaseFragment {
     	//mExchangeBtn = (Button)mRootView.findViewById(R.id.exchange_btn);
     	mSelectStartBtn = (Button)mRootView.findViewById(R.id.select_start_btn);
     	mSelectEndBtn = (Button)mRootView.findViewById(R.id.select_end_btn);
-    	mBusline = new QueryEditText((RelativeLayout)mRootView.findViewById(R.id.busline_edt));
-		mBusline.setOnlyInput();
-		mEnd     = new QueryEditText((RelativeLayout)mRootView.findViewById(R.id.end_line));
-		mStart   = new QueryEditText((RelativeLayout)mRootView.findViewById(R.id.start_line));
+    	mBusline = new QueryEditText((TKEditText)mRootView.findViewById(R.id.busline_edt));
+		mEnd     = new QueryEditText((TKEditText)mRootView.findViewById(R.id.end_edt));
+		mStart   = new QueryEditText((TKEditText)mRootView.findViewById(R.id.start_edt));
 		mCityTxt = (TextView)mRootView.findViewById(R.id.cur_city_txt);
 		
 		mSuggestLnl = (LinearLayout)mRootView.findViewById(R.id.suggest_lnl);
@@ -308,7 +303,7 @@ public class TrafficQueryFragment extends BaseFragment {
         }
         
         if (mStateTransitionTable.getCurrentState() == TrafficViewSTT.State.SelectPoint) {
-			mSphinx.setTouchMode(TrafficQueryFragment.START == mSelectedEdt.getPosition() ? 
+			mSphinx.setTouchMode(R.id.start_edt == mSelectedEdt.getEdt().getId() ? 
 					TouchMode.CHOOSE_ROUTING_START_POINT : TouchMode.CHOOSE_ROUTING_END_POINT);
         }
         
@@ -376,26 +371,12 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	public class QueryEditText {
 
-//		protected ImageView mLeftImg;
-		
-		protected ImageView mRightImg;
-		
-		protected EditText mEdt;
+		protected TKEditText mEdt;
 
 		protected POI mPOI = new POI();
 		
-		protected int mPosition;		
-		
-		public ImageView getRightImg() {
-			return mRightImg;
-		}
-
-		public EditText getEdt() {
+		public TKEditText getEdt() {
 			return mEdt;
-		}
-
-		public int getPosition() {
-			return mPosition;
 		}
 
 		public boolean isEmpty() {
@@ -449,35 +430,12 @@ public class TrafficQueryFragment extends BaseFragment {
 			mPOI = new POI();
 		}
 		
-		public QueryEditText(RelativeLayout queryline) {
-			super();
-			
-			findView(queryline);
+		public QueryEditText(TKEditText tkEditText) {
+			mEdt = tkEditText;
 		}
 		
-		public void init(int position, String hint) {
-			mPosition = position;
+		public void setHint(String hint) {
 			mEdt.setHint(hint);
-//			if (mPosition == START) {
-//				this.mLeftImg.setBackgroundResource(R.drawable.icon_start_point);
-//			} else {
-//				this.mLeftImg.setBackgroundResource(R.drawable.icon_end_point);
-//			}
-//			mRightImg.setBackgroundResource(R.drawable.btn_bookmark);
-		}
-		
-		protected void findView(RelativeLayout queryline) {
-//			mLeftImg = (ImageView)queryline.findViewById(R.id.left_img);
-			mRightImg = (ImageView)queryline.findViewById(R.id.right_img);
-			mEdt = (EditText)queryline.findViewById(R.id.address_edt);
-		}
-		
-
-		public void setOnlyInput() {
-//			mLeftImg.setVisibility(View.GONE);
-			mRightImg.setVisibility(View.GONE);
-			RelativeLayout.LayoutParams lp = (RelativeLayout.LayoutParams)mEdt.getLayoutParams();
-			lp.setMargins(Util.dip2px(Globals.g_metrics.density, 5), 0, Util.dip2px(Globals.g_metrics.density, 5), 0);
 		}
 	}
 	
@@ -514,7 +472,7 @@ public class TrafficQueryFragment extends BaseFragment {
 		}
 	}
 
-	private boolean isEditTextEmpty(EditText edittext) {
+	public boolean isEditTextEmpty(TKEditText edittext) {
 		return TextUtils.isEmpty(edittext.getText());
 	}
 	
@@ -578,7 +536,7 @@ public class TrafficQueryFragment extends BaseFragment {
 
 	}
 	
-	private void submitBuslineQuery() {
+	public void submitBuslineQuery() {
 		
 		String searchword = mBusline.getEdt().getText().toString().trim();
 		if (TextUtils.isEmpty(searchword)){

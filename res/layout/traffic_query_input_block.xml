@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows" 
  	    android:layout_width="fill_parent"
         android:layout_height="wrap_content"
 	    android:orientation="vertical" 
@@ -31,10 +32,12 @@
 			            android:layout_width="wrap_content"
 			            android:layout_height="wrap_content" />
 
-			        <include
-			            android:id="@+id/start_line"
-			            layout="@layout/traffic_query_input_line" />
-
+			        <com.tigerknows.view.TKEditText
+			            android:id="@+id/start_edt"
+			            android:layout_width="fill_parent" 
+			            android:layout_height="wrap_content"
+			            tkandroid:imeOptions="actionNext">
+			         </com.tigerknows.view.TKEditText>
         		</LinearLayout>
         		<ImageView
 	                android:layout_width="fill_parent"
@@ -49,7 +52,12 @@
 			            android:background="@drawable/ic_traffic_select_end"
 			            android:layout_width="wrap_content"
 			            android:layout_height="wrap_content" />
-			        <include android:id="@+id/end_line" layout="@layout/traffic_query_input_line" />
+			        <com.tigerknows.view.TKEditText
+			            android:id="@+id/end_edt"
+			            android:layout_width="fill_parent" 
+			            android:layout_height="wrap_content"
+			            tkandroid:imeOptions="actionSearch">
+			         </com.tigerknows.view.TKEditText>
         		</LinearLayout>
 	        </LinearLayout>
 	        <Button android:id="@+id/traffic_query_btn"
@@ -74,8 +82,12 @@
 	            android:layout_height="wrap_content"
 	            android:orientation="vertical"
 	            android:layout_toLeftOf="@+id/busline_query_btn">
-		        <include android:id="@+id/busline_edt"
-					layout="@layout/traffic_query_input_line" />  
+			        <com.tigerknows.view.TKEditText
+			            android:id="@+id/busline_edt"
+			            android:layout_width="fill_parent" 
+			            android:layout_height="wrap_content"
+			            tkandroid:imeOptions="actionSearch">
+			         </com.tigerknows.view.TKEditText>
 			</LinearLayout>
 			<Button android:id="@+id/busline_query_btn"
 	            android:layout_alignParentRight="true"

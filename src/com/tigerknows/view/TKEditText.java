@@ -41,16 +41,16 @@ import android.widget.TextView.OnEditorActionListener;
 /**
  * Custom EditText with delete button. */
 public class TKEditText extends LinearLayout implements OnClickListener {
-    static final int IMEOPTION_ACTIONUNSPECIFIED=0x00000000;
-    static final int IMEOPTION_ACTIONNONE=0x00000001;
-    static final int IMEOPTION_ACTIONGO=0x00000002;
-    static final int IMEOPTION_ACTIONSEARCH=0x00000003;
-    static final int IMEOPTION_ACTIONSEND=0x00000004;
-    static final int IMEOPTION_ACTIONNEXT=0x00000005;
-    static final int IMEOPTION_ACTIONDONE=0x00000006;
-    static final int IMEOPTION_FLAGNOEXTRACTUI=0x10000000;
-    static final int IMEOPTION_FLAGNOACCESSORYACTION=0x20000000;
-    static final int IMEOPTION_FLAGNOENTERACTION=0x40000000;
+    private static final int IMEOPTION_ACTIONUNSPECIFIED=0x00000000;
+    private static final int IMEOPTION_ACTIONNONE=0x00000001;
+    private static final int IMEOPTION_ACTIONGO=0x00000002;
+    private static final int IMEOPTION_ACTIONSEARCH=0x00000003;
+    private static final int IMEOPTION_ACTIONSEND=0x00000004;
+    private static final int IMEOPTION_ACTIONNEXT=0x00000005;
+    private static final int IMEOPTION_ACTIONDONE=0x00000006;
+    private static final int IMEOPTION_FLAGNOEXTRACTUI=0x10000000;
+    private static final int IMEOPTION_FLAGNOACCESSORYACTION=0x20000000;
+    private static final int IMEOPTION_FLAGNOENTERACTION=0x40000000;
     
     private EditText mInputEdt;
     private Button mDeleteBtn;
@@ -184,12 +184,13 @@ public class TKEditText extends LinearLayout implements OnClickListener {
     
     @Override
     public boolean hasFocus() {
-        return mInputEdt.hasFocus() || mDeleteBtn.hasFocus();
+        return mInputEdt.hasFocus();
     }
 
     @Override
     public void onClick(View view) {
         setText(null);
+        mInputEdt.requestFocus();
     }
     
     public void setOnEditorActionListener(OnEditorActionListener l) {
@@ -215,6 +216,30 @@ public class TKEditText extends LinearLayout implements OnClickListener {
     
     public void setOnTouchListener(OnTouchListener onTouchListener) {
         mInputEdt.setOnTouchListener(onTouchListener);
+    }
+
+    public void setHint(String hint) {
+        mInputEdt.setHint(hint);
+    }
+
+    public void setImeOptions(int imeOptions) {
+        mInputEdt.setImeOptions(imeOptions);
+    }
+
+    public void setTextColor(int color) {
+        mInputEdt.setTextColor(color);
+    }
+
+    public void removeTextChangedListener(TextWatcher watcher) {
+        mInputEdt.removeTextChangedListener(watcher);
+    }
+    
+    public void clearFocus() {
+        mInputEdt.clearFocus();
+    }
+
+    public void setSelectAllOnFocus(boolean b) {
+        mInputEdt.setSelectAllOnFocus(b);
     }
 }
 

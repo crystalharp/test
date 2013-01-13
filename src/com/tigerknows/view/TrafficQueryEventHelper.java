@@ -2,8 +2,10 @@ package com.tigerknows.view;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -19,6 +21,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -35,6 +38,7 @@ import com.tigerknows.maps.PinOverlayHelper;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TKWord;
 import com.tigerknows.provider.HistoryWordTable;
+import com.tigerknows.util.CommonUtils;
 import com.tigerknows.view.TrafficQueryFragment.QueryEditText;
 
 /**
@@ -58,9 +62,6 @@ public class TrafficQueryEventHelper {
 		endSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mEnd, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
 		buslineSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mBusline, TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE);
 		
-		//由于traffic_query_input_line.xml中只能统一设置起终点输入框的imeoption，textwatcher也是统一监测起终点和busline的建议词
-		//这里只好在代码里设置终点输入框的imeoption为actiondone
-		mQueryFragment.mEnd.getEdt().setImeOptions(EditorInfo.IME_ACTION_DONE);
 	}
 	
 	/*
@@ -95,13 +96,8 @@ public class TrafficQueryEventHelper {
 		mQueryFragment.mEnd.getEdt().addTextChangedListener(new EditTextContentTextWatcher(mQueryFragment.mEnd));
 		mQueryFragment.mBusline.getEdt().addTextChangedListener(new EditTextContentTextWatcher(mQueryFragment.mBusline));
 		
-		mQueryFragment.mStart.getRightImg().setOnClickListener(new BookmarkClickListener(mQueryFragment.mStart));
-		mQueryFragment.mEnd.getRightImg().setOnClickListener(new BookmarkClickListener(mQueryFragment.mEnd));
-		
-//		mQueryFragment.mStart.getEdt().setOnEditorActionListener(new EditorActionListener(mQueryFragment.mStart));
-//		mQueryFragment.mEnd.getEdt().setOnEditorActionListener(new EditorActionListener(mQueryFragment.mEnd));
-		mQueryFragment.mStart.getEdt().setOnEditorActionListener(new StartEndEdtClickListener(mQueryFragment.mStart));
-		mQueryFragment.mEnd.getEdt().setOnEditorActionListener(new StartEndEdtClickListener(mQueryFragment.mEnd));
+		mQueryFragment.mStart.getEdt().setOnEditorActionListener(new StartEndEdtClickListener());
+		mQueryFragment.mEnd.getEdt().setOnEditorActionListener(new StartEndEdtClickListener());
 		mQueryFragment.mBusline.getEdt().setOnEditorActionListener(new EditorActionListener(mQueryFragment.mBusline));
 
 		mQueryFragment.mRootView.setOnTouchListener(new RootViewTouchListener());
@@ -171,25 +167,24 @@ public class TrafficQueryEventHelper {
 	}
 	
 	protected class StartEndEdtClickListener implements OnEditorActionListener {
-		private QueryEditText mStart, mEnd, mQueryEdit;
-		
-		public StartEndEdtClickListener(QueryEditText queryEdit) {
-			mStart = mQueryFragment.mStart;
-			mEnd = mQueryFragment.mEnd;
-			mQueryEdit = queryEdit;
-			Map<QueryEditText, QueryEditText> NextTable = new HashMap<QueryEditText, QueryEditText>();
-			NextTable.put(mQueryFragment.mStart, mQueryFragment.mEnd);
-			NextTable.put(mQueryFragment.mEnd, mQueryFragment.mStart);
-		}
 		
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-			if (actionId == EditorInfo.IME_ACTION_NEXT || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-				if (!mStart.isEmpty() && !mEnd.isEmpty()) {
+			if (actionId == EditorInfo.IME_ACTION_NEXT
+                    || actionId == EditorInfo.IME_ACTION_SEARCH 
+			        || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+				if (!mQueryFragment.mStart.isEmpty() && !mQueryFragment.mEnd.isEmpty()) {
 					//都有内容，搜索
 					mQueryFragment.query();
 					return true;
+				} else if (mQueryFragment.mSelectedEdt == mQueryFragment.mStart) {
+				    mQueryFragment.mSelectedEdt = mQueryFragment.mEnd;
+				    mQueryFragment.mEnd.mEdt.requestFocus();
+                    return true;
+				} else if (mQueryFragment.mSelectedEdt == mQueryFragment.mEnd) {
+				    mQueryFragment.mSelectedEdt = mQueryFragment.mStart;
+                    mQueryFragment.mStart.mEdt.requestFocus();
+                    return true;
 				}
-				return false;
 			}
 			
 			return false;
@@ -212,53 +207,14 @@ public class TrafficQueryEventHelper {
         		/*
         		 * 显示选择对话框
         		 */
-        		String title = (mQueryEdt.getPosition() == TrafficQueryFragment.START) ? mQueryFragment.mContext.getString(R.string.select_start_station) : mQueryFragment.mContext.getString(R.string.select_end_station);
+        		String title = (R.id.start_edt == mQueryEdt.getEdt().getId()) ? mQueryFragment.mContext.getString(R.string.select_start_station) : mQueryFragment.mContext.getString(R.string.select_end_station);
         		boolean hasMyLocation = (Globals.g_My_Location_City_Info != null);
         		
-        		SelectionDialogBuilder dialog = new SelectionDialogBuilder(mQueryFragment.mSphinx, mQueryEdt, title, hasMyLocation);
-        		dialog.show();
+        		showSelectOptionDialog(mQueryFragment.mSphinx, mQueryEdt, title, hasMyLocation);
         		
         		mQueryFragment.mSphinx.hideSoftInput(mQueryEdt.getEdt().getWindowToken());
         		mQueryFragment.mLogHelper.logForClickBookmarkOnEditText(mQueryEdt);
         	}
-		
-	}
-	
-	protected class BookmarkClickListener implements OnClickListener {
-
-		private QueryEditText mQueryEdt;
-		
-		public BookmarkClickListener(QueryEditText queryEdt) {
-			mQueryEdt = queryEdt;
-		}
-		
-		@Override
-		public void onClick(View v) {
-			// TODO Auto-generated method stub
-			mQueryFragment.mSelectedEdt = mQueryEdt;
-			
-//        	if (TextUtils.isEmpty(mQueryEdt.getEdt().getText())) {
-//        		mQueryFragment.mBlock.requestFocus();
-//        		//若文本为空, 右边图片显示为"小词典", 点击后提供三个选项
-//        		/*
-//        		 * 显示选择对话框
-//        		 */
-//        		String title = (mQueryEdt.getPosition() == TrafficQueryFragment.START) ? mQueryFragment.mContext.getString(R.string.select_start_station) : mQueryFragment.mContext.getString(R.string.select_end_station);
-//        		boolean hasMyLocation = (Globals.g_My_Location_City_Info != null);
-//        		
-//        		SelectionDialogBuilder dialog = new SelectionDialogBuilder(mQueryFragment.mSphinx, mQueryEdt, title, hasMyLocation);
-//        		dialog.show();
-//        		
-//        		mQueryFragment.mSphinx.hideSoftInput(mQueryEdt.getEdt().getWindowToken());
-//        		mQueryFragment.mLogHelper.logForClickBookmarkOnEditText(mQueryEdt);
-//        	} else {
-        	if (!mQueryEdt.isEmpty()) {
-        		//若文本不为空, 右边图片显示为"删除", 点击后删除输入框内文字
-        		mQueryEdt.clear();
-        		mQueryEdt.getEdt().requestFocus();
-        		mQueryFragment.mLogHelper.logForClickDeleteOnEditText(mQueryEdt);
-        	}
-		}
 		
 	}
 	
@@ -284,9 +240,29 @@ public class TrafficQueryEventHelper {
 
 		@Override
 		public void afterTextChanged(Editable s) {
-			// TODO Auto-generated method stub
 			mQueryFragment.checkQueryState();
-			mQueryFragment.postTask(new CheckInputStateTask(mQueryEdt));
+			if (mQueryEdt.getEdt().getText().toString().equals(mQueryFragment.mContext.getString(R.string.my_location))) {
+                mQueryEdt.getEdt().setTextColor(0xFF009CFF);
+                mQueryEdt.getEdt().setSelectAllOnFocus(true);
+            } else {
+                mQueryEdt.getEdt().setTextColor(0xFF000000);
+                mQueryEdt.getEdt().setEnabled(true);
+                mQueryEdt.getEdt().setSelectAllOnFocus(false);
+            }
+			
+			if (mQueryFragment.mStart == mQueryEdt) {
+			    if (mQueryFragment.isEditTextEmpty(mQueryFragment.mStart.mEdt) == false) {
+			        mQueryFragment.mEnd.mEdt.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+			    } else {
+			        mQueryFragment.mEnd.mEdt.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+			    }
+			} else {
+			    if (mQueryFragment.isEditTextEmpty(mQueryFragment.mEnd.mEdt) == false) {
+                    mQueryFragment.mStart.mEdt.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
+                } else {
+                    mQueryFragment.mStart.mEdt.setImeOptions(EditorInfo.IME_ACTION_NEXT);
+                }
+			}
 		}
 		
 	}
@@ -300,8 +276,9 @@ public class TrafficQueryEventHelper {
 		}
         @Override
         public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
-            if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
             	mQueryFragment.mSphinx.hideSoftInput(mQueryEdt.getEdt().getWindowToken());
+            	mQueryFragment.submitBuslineQuery();
                 return true;
             }
             return false;
@@ -456,7 +433,6 @@ public class TrafficQueryEventHelper {
 			clearSuggestWatcherInInputState();
 			super.onClick(v);
 			addSuggestWatcherInInputState();
-			mQueryFragment.mBlock.requestFocus();
 		}
 	}
 
@@ -530,7 +506,6 @@ public class TrafficQueryEventHelper {
 
 		@Override
         public void afterTextChanged(Editable s) {
-            // TODO Auto-generated method stub
 			mQueryFragment.mSphinx.getHandler().post(new Runnable() {
 
 				@Override
@@ -589,129 +564,81 @@ public class TrafficQueryEventHelper {
 		}
 	}
 	
-	private class CheckInputStateTask implements Runnable {
-
-		private QueryEditText mQueryEdt;
-		
-		public CheckInputStateTask(QueryEditText queryEdt) {
-			mQueryEdt = queryEdt;
-		}
-		
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			if (!TextUtils.isEmpty(mQueryEdt.getEdt().getText())) {
-				mQueryEdt.getRightImg().setBackgroundResource(R.drawable.btn_delete);
-			} else {
-//				mQueryEdt.getRightImg().setBackgroundResource(R.drawable.btn_bookmark);
-				mQueryEdt.getRightImg().setBackgroundResource(0);
-			}
-
-//			checkQueryState();
-			
-			if (mQueryEdt.getEdt().getText().toString().equals(mQueryFragment.mContext.getString(R.string.my_location))) {
-				mQueryEdt.getEdt().setTextColor(0xFF009CFF);
-				mQueryEdt.getEdt().setSelectAllOnFocus(true);
-			} else {
-				mQueryEdt.getEdt().setTextColor(0xFF000000);
-				mQueryEdt.getEdt().setEnabled(true);
-				mQueryEdt.getEdt().setSelectAllOnFocus(false);
-			}
-			
-		}
-	}
-	
 	/**
 	 * 
 	 * 点击书签弹出选择对话框
 	 * @author linqingzu
 	 *
 	 */
-	public class SelectionDialogBuilder extends AlertDialog.Builder {
-
-		private QueryEditText mQueryEdt;
-
-		private ArrayList<String> selectOptionList;
 		
-		private boolean hasMyLocation;
-		
-		public SelectionDialogBuilder(Context context, QueryEditText queryEdt, String title, boolean hasMyLocation) {
-			super(context);
-			// TODO Auto-generated constructor stub
-			mQueryEdt = queryEdt;
-			
-			String[] strList = mQueryFragment.mContext.getResources().getStringArray(R.array.select_location_option);
-	        this.hasMyLocation = hasMyLocation;       
-	        selectOptionList = new ArrayList<String>();
-	        for(String str : strList) {
-	            selectOptionList.add(str);
-	        }
-	        if (!hasMyLocation) {
-	            selectOptionList.remove(0);
-	        }
-	        
-	        setTitle(title);
-	        setCancelable(true);
-	        setAdapter(getArrayAdapter(), new DialogOnClickListener(mQueryEdt));
-		}
-		
-		public ArrayAdapter<String> getArrayAdapter() {
+		public void showSelectOptionDialog(Activity activity, final QueryEditText queryEdt, String title, final boolean hasMyLocation) {
+		    String[] strList = mQueryFragment.mContext.getResources().getStringArray(R.array.select_location_option);
+            List<String> selectOptionList = new ArrayList<String>();
             int[] resIdList;
-            if (hasMyLocation) {
-                resIdList = new int[] {R.drawable.ic_mylocation, R.drawable.ic_select_point, R.drawable.ic_favorite, R.drawable.ic_swap_start_end};
-            } else {
+            for(String str : strList) {
+                selectOptionList.add(str);
+            }
+            if (!hasMyLocation) {
+                selectOptionList.remove(0);
                 resIdList = new int[] {R.drawable.ic_select_point, R.drawable.ic_favorite, R.drawable.ic_swap_start_end};
+            } else {
+                resIdList = new int[] {R.drawable.ic_mylocation, R.drawable.ic_select_point, R.drawable.ic_favorite, R.drawable.ic_swap_start_end};
             }
-			ArrayAdapter<String> adapter = new StringArrayAdapter(mQueryFragment.mContext, selectOptionList, resIdList);
-		    return adapter;
-		}
-		
-		private class DialogOnClickListener implements DialogInterface.OnClickListener {
+            ArrayAdapter<String> adapter = new StringArrayAdapter(mQueryFragment.mContext, selectOptionList, resIdList);
+            
+		    ListView listView = CommonUtils.makeListView(activity);
+		    listView.setAdapter(adapter);
+            final AlertDialog alertDialog = CommonUtils.showNormalDialog(mQueryFragment.mSphinx,
+                    title,
+                    null,
+                    listView,
+                    null,
+                    null,
+                    null);
+            
+            alertDialog.setCancelable(true);
+            listView.setOnItemClickListener(new OnItemClickListener() {
 
-			private QueryEditText mQueryEdt;
-			
-			public DialogOnClickListener(QueryEditText queryEdt) {
-				mQueryEdt = queryEdt;
-			}
-			
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-                // TODO Auto-generated method stub
-				mQueryFragment.mSelectedEdt = mQueryEdt;
-                switch (which) {
-                case 0:
-                	if (hasMyLocation) {
-                		performSelectMyLocation();
-                	} else {
-                		performMapSelectPoint();
-                	}
-                	break;
-                case 1:
-                	if (hasMyLocation) {
-                		performMapSelectPoint();
-                	} else {
-                		performSelectFavorite();
-                	}
-                	break;
-                case 2:
-                	performSelectFavorite();
-                	break;
-                case 3:
-                	//交换起点终点。
-                	if (mQueryFragment.mSuggestLsv.isShown()) {
-                		mQueryFragment.mSuggestLsv.setVisibility(View.GONE);
-                	}
-                	clearSuggestWatcherInInputState();
-                	mQueryFragment.mActionLog.addAction(ActionLog.TrafficExchangeBtn);
-        			POI temp = mQueryFragment.mStart.getPOI();
-        			mQueryFragment.mStart.setPOI(mQueryFragment.mEnd.getPOI());
-        			mQueryFragment.mEnd.setPOI(temp);
-        			addSuggestWatcherInInputState();
-        			mQueryFragment.mBlock.requestFocus();
-                	break;
-                default:
+                @Override
+                public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
+                    alertDialog.dismiss();
+                    mQueryFragment.mSelectedEdt = queryEdt;
+                    switch (which) {
+                    case 0:
+                        if (hasMyLocation) {
+                            performSelectMyLocation();
+                        } else {
+                            performMapSelectPoint(queryEdt);
+                        }
+                        break;
+                    case 1:
+                        if (hasMyLocation) {
+                            performMapSelectPoint(queryEdt);
+                        } else {
+                            performSelectFavorite();
+                        }
+                        break;
+                    case 2:
+                        performSelectFavorite();
+                        break;
+                    case 3:
+                        //交换起点终点。
+                        if (mQueryFragment.mSuggestLsv.isShown()) {
+                            mQueryFragment.mSuggestLsv.setVisibility(View.GONE);
+                        }
+                        clearSuggestWatcherInInputState();
+                        mQueryFragment.mActionLog.addAction(ActionLog.TrafficExchangeBtn);
+                        POI temp = mQueryFragment.mStart.getPOI();
+                        mQueryFragment.mStart.setPOI(mQueryFragment.mEnd.getPOI());
+                        mQueryFragment.mEnd.setPOI(temp);
+                        addSuggestWatcherInInputState();
+//                        mQueryFragment.mBlock.requestFocus();
+                        break;
+                    default:
+                    }
                 }
-            }
+            });
+        }
 			
 			private void performSelectMyLocation() {
 				LogWrapper.d("eric", "performSelectMyLocation()");
@@ -723,31 +650,26 @@ public class TrafficQueryEventHelper {
 
 			}
 			
-			private void performMapSelectPoint() {
+			private void performMapSelectPoint(QueryEditText queryEditText) {
 				LogWrapper.d("eric", "performMapSelectPoint()");
 
 				mQueryFragment.mActionLog.addAction(ActionLog.TrafficBookmarkSecond);
 				
-				mQueryFragment.mSphinx.setTouchMode(TrafficQueryFragment.START == mQueryEdt.getPosition() ? TouchMode.CHOOSE_ROUTING_START_POINT : TouchMode.CHOOSE_ROUTING_END_POINT);
+				mQueryFragment.mSphinx.setTouchMode(R.id.start_edt == queryEditText.getEdt().getId() ? TouchMode.CHOOSE_ROUTING_START_POINT : TouchMode.CHOOSE_ROUTING_END_POINT);
 				
 				Position center = mQueryFragment.mSphinx.getMapView().getCenterPosition();
 				String positionName = mQueryFragment.mSphinx.getMapEngine().getPositionName(center, (int)mQueryFragment.mSphinx.getMapView().getZoomLevel());
 				if (TextUtils.isEmpty(positionName)) {
 					positionName = mQueryFragment.mContext.getString(R.string.select_has_point);
 				}
-				POI tmp = new POI();
-				tmp.setPosition(center);
-				tmp.setName(positionName);
-				String clickTip = mQueryFragment.mContext.getString(TrafficQueryFragment.START == mQueryEdt.getPosition() 
-						? R.string.select_where_as_start : R.string.select_where_as_end, positionName);
 
 				mQueryFragment.mSphinx.clearMap();
-				PinOverlayHelper.drawSelectPointOverlay(mQueryFragment.mContext, mQueryFragment.mSphinx.getHandler(), mQueryFragment.mSphinx.getMapView(), tmp, clickTip);
+				PinOverlayHelper.drawSelectPointOverlay(mQueryFragment.mContext, mQueryFragment.mSphinx.getHandler(), mQueryFragment.mSphinx.getMapView(), R.id.start_edt == queryEditText.getEdt().getId(), positionName, center);
 				mQueryFragment.mSphinx.getMapView().refreshMap();
 				
 				mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.Point);
 	            
-	            String tip = mQueryFragment.mContext.getString(TrafficQueryFragment.START == mQueryEdt.getPosition() ? R.string.click_map_as_start : R.string.click_map_as_end);
+	            String tip = mQueryFragment.mContext.getString(R.id.start_edt == queryEditText.getEdt().getId() ? R.string.click_map_as_start : R.string.click_map_as_end);
 	            mQueryFragment.mSphinx.showTip(tip, Toast.LENGTH_SHORT);
 			}
 			
@@ -759,7 +681,4 @@ public class TrafficQueryEventHelper {
 				mQueryFragment.mSphinx.getFetchFavoriteDialog().setData(mQueryFragment);
 				mQueryFragment.mSphinx.showView(R.id.dialog_fetch_favorite_poi);
 			}
-		}
-
-	}
 }
