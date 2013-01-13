@@ -1190,6 +1190,10 @@ public class TrafficModel extends XMapData {
                     }
                 }
                 this.title = title;
+                //没有在换乘类型取到title并且有步行的信息，则说明步行可达。
+                if (title == null && stepList.size() != 0 && stepList.get(0).getType() == Step.TYPE_WALK) {
+                	this.title = context.getString(R.string.traffic_noneed_transfer);
+                }
             }
             return title;
         }
