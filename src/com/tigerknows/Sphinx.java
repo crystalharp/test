@@ -173,9 +173,11 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 	
 	public static final int CONFIG_SERVER_CODE = 14;
 
+	Sphinx mThis;
     private Timer mTimer;
 	private MapView mMapView;
     private TextView mDownloadView;
+    private View mCompassView;
 	private LinearLayout mZoomView;
 	private ImageButton mLocationBtn=null;
     private View mPreviousNextView=null;
@@ -243,11 +245,12 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        LogWrapper.i(TAG,"onCreate()");
+        mThis = this;
         
         WindowManager winMan=(WindowManager)getSystemService(Context.WINDOW_SERVICE);
         Display display=winMan.getDefaultDisplay();
         display.getMetrics(Globals.g_metrics);
+        LogWrapper.i(TAG,"onCreate()"+Globals.g_metrics.density);
         
         TKConfig.readConfig();
         Globals.readSessionAndUser(this);
@@ -553,7 +556,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 public void onRotateEndEvent(MapView mapView, float rotation) {
                     Log.i(TAG,"MapView.RotateEndEventListener rotation:"+rotation);
                     if(rotation!=0 && mMapView.getCompass()!=null) {
-                        //mMapView.getCompass().setVisible(true);
                         mMapView.refreshMap();
                     }
                 }
@@ -564,7 +566,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 public void onTiltEndEvent(MapView mapView, float tilt) {
                     Log.i(TAG,"MapView.TiltEndEventListener tilt:"+tilt);
                     if(tilt!=0 && mMapView.getCompass()!=null) {
-//                        mMapView.getCompass().setVisible(true);
                         mMapView.refreshMap();
                     }
                 }
@@ -787,12 +788,12 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 }
             });
 
-            if(mMapView.getCompass()!=null){
-//                mMapView.getCompass().setVisible(mSensorOrientation);
-                mMapView.getCompass().addEventListener(EventType.TOUCH, new Compass.TouchEventListener() {
+            Compass compass = mMapView.getCompass();
+            if(compass!=null){
+                compass.setVisible(false);
+                compass.addEventListener(EventType.TOUCH, new Compass.TouchEventListener() {
                     @Override
                     public void onTouchEvent(EventSource eventSource) {
-//                        ((Compass)eventSource).setVisible(true);
                         mMapView.refreshMap();
                     }
                 });
@@ -875,6 +876,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             showView(R.id.view_home);
         }
         
+        mCompassView.setVisibility(View.VISIBLE);
         mMenuView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         mMenuViewHeiht = mMenuView.getMeasuredHeight();
         mControlView.setPadding(0, 0, 0, mMenuViewHeiht);
@@ -1320,6 +1322,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         mNextBtn=(Button)(findViewById(R.id.next_btn));
         mLocationBtn=(ImageButton)(findViewById(R.id.location_btn));
         mDownloadView = (TextView)findViewById(R.id.download_txv);
+        mCompassView = findViewById(R.id.compass_imv);
     }
 
     private void setListener() {
@@ -1837,8 +1840,9 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         return mControlView;
     }
     
-    public TextView getDownloadView() {
-        return mDownloadView;
+    public void layoutTopViewPadding(int left, int top, int right, int bottom) {
+        mDownloadView.setPadding(left, top, right, bottom);
+        mCompassView.setPadding(left, top, right, bottom);
     }
     
     public int getTitleViewHeight() {
@@ -3175,9 +3179,9 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         public void onSensorChanged(SensorEvent event) {
             if(mMapView!=null && Math.abs(rotateZ-event.values[0]) >= 3){
                 rotateZ = event.values[0];
-                mMapView.rotateLocationZToDegree(-event.values[0]);
+                mMapView.rotateLocationZToDegree(-rotateZ);
                 if (mLocationButtonState == LOCATION_BUTTON_STATUS_ROTATION) {
-                    mMapView.rotateZToDegree(-event.values[0]);
+                    mMapView.rotateZToDegree(-rotateZ);
                 }
                 mMapView.refreshMap();
             }
@@ -3334,9 +3338,10 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     
     private void updateLoactionButtonState(int locationButtonState) {
         mLocationButtonState = locationButtonState;
-        Compass mCompass = mMapView.getCompass();
+        Compass compass = mMapView.getCompass();
         if (mLocationButtonState == LOCATION_BUTTON_STATUS_NONE) {
-            mCompass.setVisible(false);
+            compass.setVisible(false);
+            mCompassView.setVisibility(View.VISIBLE);
             mMapView.refreshMap();
             hideInfoWindow(ItemizedOverlay.MY_LOCATION_OVERLAY);
             mLocationBtn.setImageResource(R.drawable.progress_location);
@@ -3352,13 +3357,15 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             mLocationBtn.setImageDrawable(null);
             
             if (mLocationButtonState == LOCATION_BUTTON_STATUS_NORMAL) {
-                mCompass.setVisible(false);
+                compass.setVisible(false);
+                mCompassView.setVisibility(View.VISIBLE);
                 mMapView.refreshMap();
                 resid = R.drawable.btn_location_location;
                 rotateZ = 365;
                 mMapView.rotateZToDegree(0);
             } else if (mLocationButtonState == LOCATION_BUTTON_STATUS_NAVIGATION) {
-                mCompass.setVisible(false);
+                compass.setVisible(false);
+                mCompassView.setVisibility(View.VISIBLE);
                 mMapView.refreshMap();
                 rotateZ = 365;
                 mMapView.rotateZToDegree(0);
@@ -3366,7 +3373,8 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 showInfoWindow(getMyLocationPin());
             } else {
             	//只有这种情况下要指南针。
-                mCompass.setVisible(true);
+                compass.setVisible(true);
+                mCompassView.setVisibility(View.GONE);
                 mMapView.refreshMap();
                 hideInfoWindow(ItemizedOverlay.MY_LOCATION_OVERLAY);
                 rotateZ = 365;

@@ -74,6 +74,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_below="@id/stars_rtb"
                     android:layout_marginTop="10dip"
+                    android:layout_marginRight="4dp"
                     android:src="@drawable/ic_discover_date"
                     />
                 <TextView 
@@ -98,6 +99,7 @@
                     android:layout_marginLeft="10dp"
                     android:layout_below="@id/date_txv"
                     android:layout_marginTop="10dip"
+                    android:layout_marginRight="4dp"
                     android:src="@drawable/ic_discover_money"
                     />
                 <TextView 

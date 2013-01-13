@@ -638,6 +638,20 @@ public class TrafficQueryFragment extends BaseFragment {
         
         mSphinx.queryStart(trafficQuery);
 	}
+    
+    public static void submitTrafficQuery(Sphinx sphinx, POI start, POI end, int queryType) {
+        
+        //xupeng:预计在这里修改没有坐标点的问题。
+        
+        if (start == null || end == null)
+            return;
+        
+        TrafficQuery trafficQuery = new TrafficQuery(sphinx);
+            
+        trafficQuery.setup(Globals.g_Current_City_Info.getId(), start, end, queryType, R.id.view_traffic_query, sphinx.getString(R.string.doing_and_wait));
+        
+        sphinx.queryStart(trafficQuery);
+    }
 	
 	private String getMyLocationName(Position position) {
 		String mLocationName = mSphinx.getMapEngine().getPositionName(position);

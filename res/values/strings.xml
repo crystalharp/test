@@ -346,11 +346,9 @@
     <string name="about_copyright">北京老虎宝典科技有限责任公司版权所有\n</string>
     
     <string name="searching">正在搜索...</string>
-    <string name="search_result">在我的当前位置搜索%1$s-%2$s个结果</string>
+    <string name="search_result">%1$s(%2$s个）</string>
     <string name="at_city_searching">正在%1$s市搜索...</string>
-    <string name="at_city_search_result">在%1$s市搜索%2$s-%3$s个结果</string>
     <string name="at_location_searching">正在所选位置搜索...</string>
-    <string name="at_location_search_result">在所选位置搜索%1$s-%2$s个结果</string>
     
     <string name="search">搜索</string>
     <string name="discover">发现</string>
@@ -697,7 +695,7 @@
     <string name="go_comment">我要点评</string>
     <string name="my_comment">我的点评</string>
     <string name="logon">登录</string>
-    <string name="comment_food_title_text">口味、服务、环境、人均等（选填）</string>
+    <string name="comment_food_title_text">更多评价（选填）</string>
     <string name="comment_hotel_title_text">服务、环境、人均（选填）</string>
     <string name="comment_cinema_title_text">观影效果、服务、人均（选填）</string>
     <string name="comment_hospital_title_text">服务、医疗水平、人均（选填）</string>
@@ -711,10 +709,10 @@
     <string name="comment_hospital_level">医疗水平</string>
     <string name="comment_cinema_effect">观影效果</string>
     <string name="comment_food_restair_hit">你觉得适合......（可多选）</string>
-    <string name="comment_food_recommed_hit">哪些是你的最爱？菜品用空格隔开</string>
+    <string name="comment_food_recommed_hit">哪些是你的最爱？</string>
     <string name="comment_tip_hit0">留下你的点评吧!</string>
     <string name="comment_tip_hit1">有新的感受吗？再来点评一下吧~</string>
-    <string name="rmb">￥</string>
+    <string name="rmb">元</string>
     <string name="comment_prompt_input_content">30字以上的高见才能发表哦！</string>
     <string name="comment_prompt_input_grade">给个整体满意度评价吧！</string>
     <string name="comment_discard_tip_new">你确定要放弃辛苦写的点评？</string>
@@ -784,17 +782,17 @@
     
     <string name="dianying_list">电影列表</string>
     <string name="dianying_detail_nearest">最近影院：%1$s</string>
-    <string name="dianying_detail_distance_to_me">距我%1$s</string>
+    <string name="dianying_detail_distance_to_me">%1$s</string>
     <string name="dianying_detail">电影详情</string>
-    <string name="dianying_detail_nearby">%1$s %2$s家影院</string>
+    <string name="dianying_detail_nearby">%1$s%2$s家影院</string>
     <string name="dianying_detail_nearby_btn">查看全部</string>
     <string name="dianying_detail_introduce">剧情介绍</string>
-    <string name="dianying_detail_director">导演:%1$s</string>
-    <string name="dianying_detail_main_actor">主演:%1$s</string>
-    <string name="dianying_detail_tag">类型:%1$s</string>
-    <string name="dianying_detail_country">国家:%1$s</string>
-    <string name="dianying_detail_length">时长:%1$s</string>
-    <string name="dianying_detail_start_time">上映:%1$s</string>
+    <string name="dianying_detail_director">导演 %1$s</string>
+    <string name="dianying_detail_main_actor">主演 %1$s</string>
+    <string name="dianying_detail_tag">类型 %1$s</string>
+    <string name="dianying_detail_country">国家 %1$s</string>
+    <string name="dianying_detail_length">时长 %1$s</string>
+    <string name="dianying_detail_start_time">首映 %1$s</string>
     <string name="dianying_detail_no_changci">暂无场次信息...</string>
     <string name="dianying_1200">12:00</string>
     

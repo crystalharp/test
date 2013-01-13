@@ -16,6 +16,7 @@
 
 package com.tigerknows.view;
 
+import com.decarta.Globals;
 import com.tigerknows.R;
 
 import android.content.Context;
@@ -85,6 +86,8 @@ public class TKEditText extends LinearLayout implements OnClickListener {
             Drawable drawable = a.getDrawable(R.styleable.tkEditText_background);
             if (drawable != null) {
                 mInputEdt.setBackgroundDrawable(drawable);
+                int padding = (int) (8 * Globals.g_metrics.density);
+                mInputEdt.setPadding(paddingLeft != 0 ? paddingLeft : padding, padding, padding, padding);
             }
             int imeOptions = a.getInt(R.styleable.tkEditText_imeOptions, IMEOPTION_ACTIONUNSPECIFIED);
             int androidImeOption = EditorInfo.IME_NULL;

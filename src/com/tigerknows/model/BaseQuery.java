@@ -17,9 +17,7 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import android.app.Activity;
 import android.content.Context;
-import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;

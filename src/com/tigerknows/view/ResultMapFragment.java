@@ -133,8 +133,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         } else {
             mSnapView.setVisibility(View.GONE);
         }
-        mSphinx.getDownloadView().setPadding(0, Util.dip2px(Globals.g_metrics.density, 10), 0, 0);
-        mSphinx.getMapView().getPadding().top = mSphinx.getTitleViewHeight() + Util.dip2px(Globals.g_metrics.density, 10);
+        mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 18), 0, 0);
+        mSphinx.getMapView().getPadding().top = mSphinx.getTitleViewHeight() + Util.dip2px(Globals.g_metrics.density, 18);
         
         //如果顶端切换list不为空，设置切换列表
         if (mTitlePopupList.size() > 0) {
@@ -158,8 +158,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onPause() {
         super.onPause();
-        mSphinx.getDownloadView().setPadding(0, Util.dip2px(Globals.g_metrics.density, 70), 0, 0);
-        mSphinx.getMapView().getPadding().top = mSphinx.getTitleViewHeight() + mSphinx.getCityViewHeight() + Util.dip2px(Globals.g_metrics.density, 10);
+        mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 78), 0, 0);
+        mSphinx.getMapView().getPadding().top = mSphinx.getTitleViewHeight() + mSphinx.getCityViewHeight() + Util.dip2px(Globals.g_metrics.density, 18);
     }
     
     public void setData(String title, String actionTag) {

@@ -102,7 +102,7 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
         popupLsv.setOnItemClickListener(listener);
         popupLsv.setAdapter(adapter);
         
-        popupWindow.showAsDropDown(titleBtn, 0, 0);
+        popupWindow.showAsDropDown(this, 0, 0);
     }
     
     public void dismissPopupWindow() {

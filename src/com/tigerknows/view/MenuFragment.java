@@ -9,16 +9,19 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 
+import android.R.anim;
 import android.content.Intent;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.view.animation.Animation.AnimationListener;
 import android.widget.AbsoluteLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -45,6 +48,11 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         R.drawable.menu_traffic, 
         R.drawable.menu_more}; 
     
+    public static final int[] MENU_BACKGROUD_STILL = {R.drawable.menu_poi_still,
+        R.drawable.menu_discover_still,
+        R.drawable.menu_traffic_still, 
+        R.drawable.menu_more_still}; 
+    
     public static final int[] MENU_BACKGROUD_SELECTED = {R.drawable.menu_poi_focused, 
         R.drawable.menu_discover_focused,
         R.drawable.menu_traffic_focused, 
@@ -62,28 +70,41 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     
     private int mMenuIdSelected;
     private ImageButton[] mMenuBtnList = new ImageButton[4]; 
+    
 
+	int[] mLocationsPOIBtn = new int[2];
+    int[] mLocationsDiscoverBtn = new int[2];
+    int[] mLocationsTrafficBtn = new int[2];
+    int[] mLlocationsMoreBtn = new int[2];
+    int[][] mLocations = new int[][]{
+    		mLocationsPOIBtn
+    		,mLocationsDiscoverBtn
+    		,mLocationsTrafficBtn
+    		,mLlocationsMoreBtn};
+    
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         
         mRootView = mLayoutInflater.inflate(R.layout.menu, container, false);
+        
         findViews();
         setListener();
-		
+        initAnimationListeners();
+        
 		return mRootView;
     }
-    int[] locationsPOIBtn = new int[2];
-    int[] locationsDiscoverBtn = new int[2];
-    int[] locationsTrafficBtn = new int[2];
-    int[] locationsMoreBtn = new int[2];
-    int[][] locations = new int[][]{
-    		locationsPOIBtn
-    		,locationsDiscoverBtn
-    		,locationsTrafficBtn
-    		,locationsMoreBtn};
-    
-    
+
+	AnimationListener[] mAnimListeners = new AnimationListener[4];
+	
+    private void initAnimationListeners() {
+
+		for (int i=0, size = mMenuBtnList.length; i<size; i++) {
+			mAnimListeners[i] = new MenuBtnAnimListener(i);
+		}
+		
+	}
+
     private boolean resumeFirstCalled = true;
     
     @Override
@@ -93,17 +114,22 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         mRootView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         mSphinx.getControlView().setPadding(0, 0, 0, getMeasuredHeight());
         
-        mPOIBtn.getLocationOnScreen(locationsPOIBtn);
-        mDiscoverBtn.getLocationOnScreen(locationsDiscoverBtn);
-        mTrafficBtn.getLocationOnScreen(locationsTrafficBtn);
-        mMoreBtn.getLocationOnScreen(locationsMoreBtn);
+        mPOIBtn.getLocationOnScreen(mLocationsPOIBtn);
+        mDiscoverBtn.getLocationOnScreen(mLocationsDiscoverBtn);
+        mTrafficBtn.getLocationOnScreen(mLocationsTrafficBtn);
+        mMoreBtn.getLocationOnScreen(mLlocationsMoreBtn);
         
         if( resumeFirstCalled){
-			Animation animation = new TranslateAnimation(locations[0][0], locations[0][0], 0, 0);
+			Animation animation = new TranslateAnimation(mLocations[0][0], mLocations[0][0], 0, 0);
 			animation.setFillAfter(true);
 			animation.setDuration(0);
 			mCursorImv.startAnimation(animation);
 			resumeFirstCalled = false;
+			
+			mMenuBtnList[0].setBackgroundResource(MENU_BACKGROUD_SELECTED[0]);
+			for (int i=1, size = mMenuBtnList.length; i<size; i++) {
+				mMenuBtnList[i].setBackgroundResource(MENU_BACKGROUD_STILL[i]);
+			}
         }
 		
     }
@@ -130,20 +156,73 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         mMenuBtnList[3] = mMoreBtn;
     }
 
+    public class MenuBtnTouchListener implements OnTouchListener{
+
+    	private int mIndex;
+    	
+    	private boolean mPresesd = false;
+    	
+    	public MenuBtnTouchListener(int index){
+    		this.mIndex = index;
+    	}
+
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			switch (event.getAction()) {
+			
+				case MotionEvent.ACTION_DOWN:
+					mMenuBtnList[mIndex].setBackgroundResource(MENU_BACKGROUD[mIndex]);
+					mPresesd = true;
+					break;
+					
+				case MotionEvent.ACTION_MOVE:
+					if(mPresesd){
+						if( !pointInView(mMenuBtnList[mIndex], event.getX(), event.getY())){
+							mMenuBtnList[mIndex].setBackgroundResource(MENU_BACKGROUD_STILL[mIndex]);
+							mPresesd=false;
+							return false;
+						}
+					}
+					
+					break;
+					
+				case MotionEvent.ACTION_UP:
+					mPresesd = false;
+					break;
+					
+				default:
+					break;
+				}
+			
+			return false;
+		}
+    	
+    }
+    
+    final boolean pointInView(ImageButton btn, float localX, float localY) {
+        return localX >= 0 && localX < (btn.getRight() - btn.getLeft())
+                && localY >= 0 && localY < (btn.getBottom()- btn.getTop());
+    }
+    
     protected void setListener() {
+    	
         mPOIBtn.setOnClickListener(this);
         mDiscoverBtn.setOnClickListener(this);
         mTrafficBtn.setOnClickListener(this);
         mMoreBtn.setOnClickListener(this);
+
+		for (int i=0, size = mMenuBtnList.length; i<size; i++) {
+			mMenuBtnList[i].setOnTouchListener(new MenuBtnTouchListener(i));
+		}
+		
     }
     
     @Override
     public void onClick(View view) {
     	mSphinx.uiStackEmpty();
-    	System.out.println("Pressed");
         switch (view.getId()) {
             case R.id.poi_btn:
-            	System.out.println("Poi Pressed");
             	mActionLog.addAction(ActionLog.MenuSearch);
                 mSphinx.showView(R.id.view_home);
                 break;
@@ -182,39 +261,53 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             }
         }
         mMenuIdSelected = id;
-        int nowIndex = 0;
-        for(int i =0,size=mMenuBtnList.length; i<size; i++) {
-            if (mMenuBtnList[i].getId() == mMenuIdSelected) {
-            	nowIndex=i;
-            	break;
-            }
-        }
         
         int i = 0;
         int indexPressed = 0;
         for(ImageButton imageButton : mMenuBtnList) {
             if (imageButton.getId() == mMenuIdSelected) {
             		indexPressed=i;
-                imageButton.setBackgroundResource(MENU_BACKGROUD_SELECTED[i]);
             } else {
-                imageButton.setImageBitmap(null);
-                imageButton.setBackgroundResource(MENU_BACKGROUD[i]);
             }
             i++;
         }
         
-        //mMenuBtnList[i].getBackground().getIntrinsicWidth();
-        int w = Globals.g_metrics.widthPixels/4;
-
-		Animation animation = new TranslateAnimation(locations[oldIndex][0], locations[indexPressed][0], 0, 0);
+		Animation animation = new TranslateAnimation(mLocations[oldIndex][0], mLocations[indexPressed][0], 0, 0);
 		animation.setFillAfter(true);
-		animation.setDuration(200);
+		animation.setDuration(350);
+		animation.setAnimationListener(mAnimListeners[indexPressed]);
 		mCursorImv.startAnimation(animation);
-		mCursorImv.setBackgroundResource(MENU_BACKGROUD_SELECTED[indexPressed]);
-				
-		//System.out.println(locations[oldIndex][0]+ ":"+ locations[indexPressed][0]);
-       //System.out.println(oldIndex + ":" + indexPressed);
 		
+    }
+    
+    private class MenuBtnAnimListener implements AnimationListener{
+
+    	private int indexPressed;
+    	
+    	public MenuBtnAnimListener(int indexPressed){
+    		this.indexPressed = indexPressed;
+    	}
+    	
+		@Override
+		public void onAnimationEnd(Animation animation) {
+			mMenuBtnList[indexPressed].setBackgroundResource(MENU_BACKGROUD_SELECTED[indexPressed]);
+			for(int i=0,size=mMenuBtnList.length;i<size;i++){
+				if(i!=indexPressed){
+					mMenuBtnList[i].setBackgroundResource(MENU_BACKGROUD_STILL[i]);
+				}
+			}
+		}
+		
+		@Override
+		public void onAnimationStart(Animation animation) {
+			
+		}
+
+		@Override
+		public void onAnimationRepeat(Animation animation) {
+			
+		}
+    	
     }
     
     public void setUpgrade(int visibility) {

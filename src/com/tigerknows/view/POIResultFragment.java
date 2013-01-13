@@ -59,6 +59,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     private FilterListView mFilterListView = null;
     
     private PopupWindow mPopupWindow;
+    
+    private String mTitle;
 
     private ViewGroup mFilterControlView = null;
     
@@ -127,6 +129,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             str = mContext.getString(R.string.at_location_searching);
         }
         mQueryingTxv.setText(str);
+        mTitle = lastDataQuerying.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD);
         
         this.mState = STATE_QUERYING;
         updateView();
@@ -222,28 +225,27 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     private void refreshResultTitleText(DataQuery dataQuery) {
-        if (dataQuery == null) {
-            return;
-        }
-        String str = "";
-        POIResponse poiModel = (POIResponse)dataQuery.getResponse();
+        String str = mContext.getString(R.string.no_result);
+        if (dataQuery != null) {
+            POIResponse poiModel = (POIResponse)dataQuery.getResponse();
             if (poiModel != null) {
-            POIList poiList = poiModel.getAPOIList();
-            if (poiList != null) {
-                str = poiList.getMessage();
+                POIList poiList = poiModel.getAPOIList();
+                if (poiList != null) {
+                    str = poiList.getMessage();
+                }
+        
+                poiList = poiModel.getBPOIList();
+                if (poiList != null) {
+                    str = poiList.getMessage();
+                }
+                
+                mTitle = mSphinx.getString(R.string.search_result, mDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD), mATotal > 1 ? mATotal : mBTotal);
             }
-    
-            poiList = poiModel.getBPOIList();
-            if (TextUtils.isEmpty(str) && poiList != null) {
-                str = poiList.getMessage();
-            }
-        }
-
-        if (TextUtils.isEmpty(str)) {
-            str = mContext.getString(R.string.no_result);
         }
         
-        mTitleBtn.setText(str);
+        if (mTitleBtn != null) {
+            mTitleBtn.setText(mTitle);
+        }
         mEmptyTxv.setText(str);
     }
     
@@ -257,13 +259,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         for(Filter filter : filterList) {
             mFilterList.add(filter.clone());
         }
-        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this, false);
+        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText(R.string.result_list);
         mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
         mRightBtn.setOnClickListener(this);
         
@@ -297,22 +298,31 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
+            if (mRightBtn != null)
+                mRightBtn.setVisibility(View.GONE);
         } else if (mState == STATE_ERROR) {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
+            if (mRightBtn != null)
+                mRightBtn.setVisibility(View.GONE);
         } else if (mState == STATE_EMPTY){
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
             mResultLsv.setVisibility(View.GONE);
+            if (mRightBtn != null)
+                mRightBtn.setVisibility(View.GONE);
         } else {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.VISIBLE);
+            if (mRightBtn != null)
+                mRightBtn.setVisibility(mPOIList.size() > 0 ? View.VISIBLE : View.GONE);
         }
+        refreshResultTitleText(null);
     }
     
     private void turnPage(){
@@ -361,7 +371,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     public void doFilter(String name) {
-        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this, false);
+        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         
         if (mPopupWindow != null && mPopupWindow.isShowing()) {
             mPopupWindow.dismiss();

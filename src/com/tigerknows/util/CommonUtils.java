@@ -35,7 +35,6 @@ import android.content.pm.ResolveInfo;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.AnimationDrawable;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -64,13 +63,14 @@ import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
-import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.view.SpringbackListView;
 import com.tigerknows.view.StringArrayAdapter;
+import com.tigerknows.view.TrafficQueryFragment;
 
 /**
  * 
@@ -959,6 +959,10 @@ public class CommonUtils {
     }
 
     public static void queryTraffic(final Sphinx sphinx, final POI poi) {
+        queryTraffic(sphinx, poi, TrafficQueryFragment.END);
+    }
+    
+    public static void queryTraffic(final Sphinx sphinx, final POI poi, final int location) {
         
         String[] list = sphinx.getResources().getStringArray(R.array.goto_here);
         int[] leftCompoundResIdList = new int[] {R.drawable.ic_bus, R.drawable.ic_drive, R.drawable.ic_walk, R.drawable.ic_start};
@@ -979,26 +983,43 @@ public class CommonUtils {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
-                ActionLog actionLog = ActionLog.getInstance(sphinx);
+                alertDialog.dismiss();
+                int queryType = -1;
                 switch (index) {
                     case 0:
-                        sphinx.getTrafficQueryFragment().setData(poi, index);
+                        queryType = TrafficQuery.QUERY_TYPE_TRANSFER;
                         break;
                         
                     case 1:
-                        sphinx.getTrafficQueryFragment().setData(poi, index);
+                        queryType = TrafficQuery.QUERY_TYPE_DRIVE;
                         break;
                         
                     case 2:
-                        sphinx.getTrafficQueryFragment().setData(poi, index);
+                        queryType = TrafficQuery.QUERY_TYPE_WALK;
                         break;
                         
                     case 3:
-                        sphinx.getTrafficQueryFragment().setData(poi, index);
                         break;
                 }
-                sphinx.showView(R.id.view_traffic_query);
-                alertDialog.dismiss();
+                
+                POI myLocationPOI = sphinx.getPOI();
+                TrafficQueryFragment trafficQueryFragment = sphinx.getTrafficQueryFragment();
+                if (queryType != -1
+                        && myLocationPOI.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
+                    POI start;
+                    POI end;
+                    if (location == TrafficQueryFragment.START) {
+                        start = poi;
+                        end = myLocationPOI;
+                    } else {
+                        start = myLocationPOI;
+                        end = poi;
+                    }
+                    TrafficQueryFragment.submitTrafficQuery(sphinx, start, end, queryType);
+                } else {
+                    trafficQueryFragment.setData(poi, location);
+                    sphinx.showView(R.id.view_traffic_query);
+                }
             }
         });
     }

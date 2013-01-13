@@ -189,16 +189,14 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         
         noRefundStr = mSphinx.getString(R.string.tuangou_no_refund);
 
-        int width = (int)(Globals.g_metrics.widthPixels-(Globals.g_metrics.density*32));
+        int width = (int)(Globals.g_metrics.widthPixels);
         int height = (int) (width*((float)168/276));
-        ViewGroup.LayoutParams layoutParams = findViewById(R.id.bg_imv).getLayoutParams();
+        ViewGroup.LayoutParams layoutParams;
+        layoutParams = mPictureImv.getLayoutParams();
         layoutParams.width = width;
         layoutParams.height = height;
-        layoutParams = mPictureImv.getLayoutParams();
-        layoutParams.width = width-((int) Globals.g_metrics.density*16);
-        layoutParams.height = height-((int) Globals.g_metrics.density*16);
         
-        mPictureDetailWidth = (int)(Globals.g_metrics.widthPixels-(Globals.g_metrics.density*48));
+        mPictureDetailWidth = (int)(Globals.g_metrics.widthPixels);
     }
 
     private final int FLOATING_BAR_MSG_DELAY = 100; 

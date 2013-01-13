@@ -5,7 +5,6 @@
 package com.tigerknows.view.discover;
 
 import com.decarta.Globals;
-import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
@@ -409,7 +408,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 mFilterList.add(filter.clone());
             }
         }
-        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this, false);
+        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
     }
 
     @SuppressWarnings("unchecked")
@@ -435,7 +434,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         
         List<DiscoverCategory> list = mSphinx.getDiscoverFragment().getDiscoverCategoryList();
         mDiscoverCategoryList.clear();
-        for(int i = list.size()-1; i >= 0; i--) {
+        for(int i = 0, size=list.size(); i < size; i++) {
             DiscoverCategory discoverCategory = list.get(i);
             if (discoverCategory.getNumCity() > 0 || discoverCategory.getNumNearby() > 0) {
                 if (mDiscoverCategoryList.contains(discoverCategory) == false) {
@@ -472,21 +471,36 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
+            if (mRightBtn != null)
+                mRightBtn.setVisibility(View.GONE);
         } else if (mState == STATE_ERROR) {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.GONE);
+            if (mRightBtn != null)
+                mRightBtn.setVisibility(View.GONE);
         } else if (mState == STATE_EMPTY){
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.VISIBLE);
             mResultLsv.setVisibility(View.GONE);
+            if (mRightBtn != null)
+                mRightBtn.setVisibility(View.GONE);
         } else {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.VISIBLE);
+            if (mRightBtn != null) {
+                if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
+                    mRightBtn.setVisibility(View.GONE);
+                } else if (getList().size() > 0) {
+                    mRightBtn.setVisibility(View.VISIBLE);
+                } else {
+                    mRightBtn.setVisibility(View.GONE);
+                }
+            }
         }
     }
     
@@ -562,7 +576,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     }
     
     public void doFilter(String name) {
-        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this, false);
+        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         
         if (mPopupWindow != null && mPopupWindow.isShowing()) {
             mPopupWindow.dismiss();
@@ -758,7 +772,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             
             addressTxv.setText(dianying.getTag());
             if (TextUtils.isEmpty(dianying.getLength())) {
-            	dateTxv.setVisibility(View.GONE);
+            	dateTxv.setVisibility(View.INVISIBLE);
             } else {
             	dateTxv.setVisibility(View.VISIBLE);
             	dateTxv.setText(String.valueOf(dianying.getLength()));
@@ -1110,9 +1124,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     private void showFilterListView(View parent) {
         if (mPopupWindow == null) {
             mFilterListView = new FilterListView(mSphinx);
-            
             mPopupWindow = new PopupWindow(mFilterListView);
-            mPopupWindow.setWindowLayoutMode(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            mPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
             mPopupWindow.setFocusable(true);
             // 设置允许在外点击消失
             mPopupWindow.setOutsideTouchable(true);
