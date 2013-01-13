@@ -83,7 +83,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         if (filterList == null) {
             return;
         }
-        refreshFilterButton(controlView, filterList, getContext(), this, true);
+        refreshFilterButton(controlView, filterList, getContext(), this);
         this.filterList = filterList;
         this.callBack = callBack;
         this.isTurnPaging = isTurnPaging;
@@ -328,7 +328,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     }
 
     
-    public static void refreshFilterButton(ViewGroup filterViewGroup, List<Filter> filterList, Context context, View.OnClickListener onClickListener, boolean isTransparent) {
+    public static void refreshFilterButton(ViewGroup filterViewGroup, List<Filter> filterList, Context context, View.OnClickListener onClickListener) {
         if (filterList.isEmpty()) {
             filterViewGroup.setVisibility(View.GONE);
             return;
@@ -338,35 +338,36 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         Button button;
         int count = filterViewGroup.getChildCount();
         int size = filterList.size();
+        
+        for(int i = 0; i < count; i++) {
+            filterViewGroup.getChildAt(i).setVisibility(View.GONE);
+        }
+        
         int j = 0;
         for(int i = 0; i < size; i++) {
             Filter filter = filterList.get(i);
             if (j < count) {
-                button = (Button) filterViewGroup.getChildAt(j++);
-                button.setVisibility(View.VISIBLE);
-                if (j < count) {
+                if (i > 0) {
                     filterViewGroup.getChildAt(j++).setVisibility(View.VISIBLE);
                 }
+                button = (Button) filterViewGroup.getChildAt(j++);
+                button.setVisibility(View.VISIBLE);
             } else {
                 if (i > 0) {
                     ImageView imageView = new ImageView(context);
                     imageView.setImageResource(R.drawable.ic_split);
                     filterViewGroup.addView(imageView);
                 }
-                button = makeFitlerButton(context, isTransparent);
+                button = makeFitlerButton(context);
                 filterViewGroup.addView(button);
             }
             button.setTag(filter.getKey());
             button.setText(FilterListView.getFilterTitle(context, filter));
             button.setOnClickListener(onClickListener);            
         }
-        
-        for(; j < count;) {
-            filterViewGroup.getChildAt(j).setVisibility(View.GONE);
-        }
     }
 
-    public static Button makeFitlerButton(Context context, boolean isTransparent) {
+    public static Button makeFitlerButton(Context context) {
         
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);        
         layoutParams.weight = 1;
@@ -374,13 +375,8 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         Resources resources = context.getResources();
         Button button = new Button(context);
         button.setLayoutParams(layoutParams);
-        if (isTransparent) {
-            button.setBackgroundResource(R.drawable.btn_tab);
-            button.setTextColor(resources.getColor(R.color.black_dark));
-        } else {
-            button.setBackgroundResource(R.drawable.btn_tab);
-            button.setTextColor(resources.getColor(R.color.black_dark));
-        }
+        button.setBackgroundResource(R.drawable.btn_tab);
+        button.setTextColor(resources.getColor(R.color.black_dark));
         Drawable right = resources.getDrawable(R.drawable.ic_small_triangle_down);
         right.setBounds(0, 0, right.getIntrinsicWidth(), right.getIntrinsicWidth());
         button.setCompoundDrawablesWithIntrinsicBounds(null, null, right, null);

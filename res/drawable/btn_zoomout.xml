@@ -18,5 +18,5 @@
     <item android:state_enabled="true" android:state_pressed="true" android:drawable="@drawable/btn_zoomout_focused"/>
     <item android:state_enabled="true" android:state_focused="false" android:drawable="@drawable/btn_zoomout_normal"/>
     <item android:state_enabled="true" android:state_focused="true" android:drawable="@drawable/btn_zoomout_focused"/>
-﻿    <item android:state_enabled="false" android:drawable="@drawable/btn_zoomout_focused" />
+﻿    <item android:state_enabled="false" android:drawable="@drawable/btn_zoomout_disabled" />
 </selector>

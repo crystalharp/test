@@ -103,7 +103,11 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
                         
                         final AlertDialog alertDialog = CommonUtils.showNormalDialog(mThis,
                                 mThis.getString(R.string.shanghuleixing),
-                                listView);
+                                null,
+                                listView,
+                                null,
+                                null,
+                                null);
                         listView.setOnItemClickListener(new OnItemClickListener() {
                             
                             @Override

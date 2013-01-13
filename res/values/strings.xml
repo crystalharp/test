@@ -346,11 +346,9 @@
     <string name="about_copyright">北京老虎宝典科技有限责任公司版权所有\n</string>
     
     <string name="searching">正在搜索...</string>
-    <string name="search_result">在我的当前位置搜索%1$s-%2$s个结果</string>
+    <string name="search_result">%1$s(%2$s个）</string>
     <string name="at_city_searching">正在%1$s市搜索...</string>
-    <string name="at_city_search_result">在%1$s市搜索%2$s-%3$s个结果</string>
     <string name="at_location_searching">正在所选位置搜索...</string>
-    <string name="at_location_search_result">在所选位置搜索%1$s-%2$s个结果</string>
     
     <string name="search">搜索</string>
     <string name="discover">发现</string>

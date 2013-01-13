@@ -51,7 +51,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
     private Button mCityBtn;
     private Button mInputBtn;
-    private Button mRefreshBtn;
     private TextView mMyLoactionTxv;
     private Position mLastPosition;
     private String mLocationName;
@@ -163,14 +162,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mCategoryLsv = (SpringbackListView) mRootView.findViewById(R.id.category_lsv);
         mInputBtn = (Button) mRootView.findViewById(R.id.input_btn);
         mCityBtn = (Button) mRootView.findViewById(R.id.city_btn);
-        mRefreshBtn = (Button) mRootView.findViewById(R.id.refresh_btn);
         mMyLoactionTxv = (TextView) mRootView.findViewById(R.id.my_location_txv);
     }
 
     protected void setListener() {
         mInputBtn.setOnClickListener(this);
         mCityBtn.setOnClickListener(this);
-        mRefreshBtn.setOnClickListener(this);
         mCategoryLsv.setOnRefreshListener(new OnRefreshListener() {
             
             @Override
@@ -189,8 +186,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         } else if (id == R.id.input_btn) {
             mActionLog.addAction(ActionLog.SearchHomeSearchInput);
             mSphinx.showView(R.id.view_poi_query);
-        } else if (id == R.id.refresh_btn) {
-            
         }
     }
     

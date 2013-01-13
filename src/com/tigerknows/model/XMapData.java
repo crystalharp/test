@@ -18,7 +18,7 @@ public class XMapData {
     public XMapData(XMap data) throws APIException {
         this.data = data;
         if (this.data == null) {
-            throw new APIException(APIException.RESPONSE_DATA_IS_EMPTY, BaseQuery.STATUS_CODE_RESPONSE_EMPTY);
+            throw new APIException(APIException.RESPONSE_DATA_IS_EMPTY);
         }
     }
     

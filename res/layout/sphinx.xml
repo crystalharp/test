@@ -32,6 +32,16 @@
         android:visibility="invisible"
        />
 
+    <ImageView
+        android:id="@+id/compass_imv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_view"
+        android:layout_alignParentLeft="true"
+        android:src="@drawable/ic_compass_arrow"
+        android:visibility="invisible"
+        android:paddingTop="70dp"/>
+        
     <TextView
         android:id="@+id/download_txv"
         android:layout_width="wrap_content"

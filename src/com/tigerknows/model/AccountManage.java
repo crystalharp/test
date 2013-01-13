@@ -77,7 +77,7 @@ public class AccountManage extends BaseQuery {
         }
         addCommonParameters(requestParameters, cityId);
         if (criteria == null) {
-            throw new APIException(APIException.CRITERIA_IS_NULL, BaseQuery.STATUS_CODE_MISSING_REQUEST_PARAMETER);
+            throw new APIException(APIException.CRITERIA_IS_NULL);
         }
         String sessionId = Globals.g_Session_Id;
         if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE)) {

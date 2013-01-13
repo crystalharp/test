@@ -263,7 +263,7 @@ public class BaseFragment extends LinearLayout {
             mLeftBtn = mTitleFragment.getLeftTxv();
             mRightBtn = mTitleFragment.getRightTxv();
 
-            mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 22);
+            mTitleBtn.setTextSize(TypedValue.COMPLEX_UNIT_SP, 20);
             mTitleBtn.setText(null);
             mTitleBtn.setBackgroundDrawable(null);
             mTitleBtn.setOnClickListener(null);
