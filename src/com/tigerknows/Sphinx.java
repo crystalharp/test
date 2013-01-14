@@ -1674,12 +1674,17 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     }
     
     public POI getPOI() {
+        return getPOI(false);
+    }
+    
+    public POI getPOI(boolean needPosition) {
         POI poi = new POI();
-        Position myLocationPosition = null;
         CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
         if (myLocationCityInfo != null && myLocationCityInfo.getId() == Globals.g_Current_City_Info.getId()) {
             poi.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
-            poi.setPosition(myLocationPosition);
+            if (needPosition) {
+                poi.setPosition(myLocationCityInfo.getPosition());
+            }
             poi.setName(mContext.getString(R.string.my_location));
         } else {
             CityInfo cityInfo = Globals.g_Current_City_Info;

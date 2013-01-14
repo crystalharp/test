@@ -1002,7 +1002,7 @@ public class CommonUtils {
                         break;
                 }
                 
-                POI myLocationPOI = sphinx.getPOI();
+                POI myLocationPOI = sphinx.getPOI(true);
                 TrafficQueryFragment trafficQueryFragment = sphinx.getTrafficQueryFragment();
                 if (queryType != -1
                         && myLocationPOI.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
@@ -1079,13 +1079,15 @@ public class CommonUtils {
         }  
     }  
     
-    public static void formatText(TextView textView, String word, String key, int colorId) {
-        if (TextUtils.isEmpty(key)) {
-            textView.setText(word);
-        } else {
+    public static void formatText(TextView textView, String word, String key, int color) {
+        if (key != null && word != null && key.length() > 0 && word.length() > 0){
+            int keyLength = key.length();
+            int wordLength = word.length();
             SpannableStringBuilder style=new SpannableStringBuilder(word);  
-            style.setSpan(new ForegroundColorSpan(colorId),0,key.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            style.setSpan(new ForegroundColorSpan(color),0,keyLength > wordLength ? wordLength : keyLength,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             textView.setText(style);
+        } else {
+            textView.setText(word);
         }
     }
 }
