@@ -4,7 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Hashtable;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -13,14 +13,13 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.Globals;
-import com.tigerknows.R;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.util.CommonUtils;
@@ -101,7 +100,7 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
                         ListView listView = CommonUtils.makeListView(mThis);
                         listView.setAdapter(adapter);
                         
-                        final AlertDialog alertDialog = CommonUtils.showNormalDialog(mThis,
+                        final Dialog dialog = CommonUtils.showNormalDialog(mThis,
                                 mThis.getString(R.string.shanghuleixing),
                                 null,
                                 listView,
@@ -115,7 +114,7 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
                                     long arg3) {
                                 mShanghuleixingBtn.setText(mAddMerchantTypes[index]);
                                 mShanghuleixingBtn.setTextColor(0xff000000);
-                                alertDialog.dismiss();
+                                dialog.dismiss();
                             }
                             
                         });

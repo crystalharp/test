@@ -15,20 +15,11 @@
         <item name="android:maxHeight">7dip</item>
     </style>
 
-<!-- 
-    <style name="AlertDialog" parent="@android:AlertDialog">
-        <item name="android:fullDark">@drawable/popup_full_dark</item>
-        <item name="android:topDark">@drawable/popup_top_dark</item>
-        <item name="android:centerDark">@drawable/popup_center_dark</item>
-        <item name="android:bottomDark">@drawable/popup_bottom_dark</item>
-        <item name="android:fullBright">@drawable/popup_full_bright</item>
-        <item name="android:topBright">@drawable/popup_top_bright</item>
-        <item name="android:centerBright">@drawable/popup_center_bright</item>
-        <item name="android:bottomBright">@drawable/popup_bottom_bright</item>
-        <item name="android:bottomMedium">@drawable/popup_bottom_medium</item>
-        <item name="android:centerMedium">@drawable/popup_center_medium</item>
+
+    <style name="AlertDialog" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
     </style>
- -->    
+
     <style name="AlterImageDialog">
         <item name="android:windowEnterAnimation">@anim/slide_in_up</item>
         <item name="android:windowExitAnimation">@anim/slide_out_down</item>

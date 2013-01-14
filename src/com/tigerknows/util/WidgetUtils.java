@@ -1,16 +1,16 @@
 package com.tigerknows.util;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.android.location.Position;
 import com.decarta.android.map.MapView.SnapMap;
@@ -64,7 +64,7 @@ public class WidgetUtils {
         ListView listView = CommonUtils.makeListView(activity);
         listView.setAdapter(adapter);
         
-        final AlertDialog alertDialog = CommonUtils.showNormalDialog(activity, 
+        final Dialog dialog = CommonUtils.showNormalDialog(activity, 
                 activity.getString(R.string.share), 
                 null,
                 listView,
@@ -165,7 +165,7 @@ public class WidgetUtils {
                         }, position);
                         break;
                 }
-                alertDialog.dismiss();
+                dialog.dismiss();
             }
         });
     }

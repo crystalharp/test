@@ -16,9 +16,9 @@ import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -78,11 +78,11 @@ import com.decarta.android.map.Circle;
 import com.decarta.android.map.Compass;
 import com.decarta.android.map.Icon;
 import com.decarta.android.map.InfoWindow;
+import com.decarta.android.map.InfoWindow.TextAlign;
 import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.map.MapActivity;
 import com.decarta.android.map.MapText;
 import com.decarta.android.map.MapView;
-import com.decarta.android.map.InfoWindow.TextAlign;
 import com.decarta.android.map.MapView.DownloadEventListener;
 import com.decarta.android.map.MapView.SnapMap;
 import com.decarta.android.map.MapView.ZoomEndEventListener;
@@ -151,10 +151,10 @@ import com.tigerknows.view.TrafficResultFragment;
 import com.tigerknows.view.ZoomControls;
 import com.tigerknows.view.discover.BrowserActivity;
 import com.tigerknows.view.discover.DianyingDetailFragment;
+import com.tigerknows.view.discover.DiscoverChildListFragment;
 import com.tigerknows.view.discover.DiscoverFragment;
 import com.tigerknows.view.discover.DiscoverListFragment;
 import com.tigerknows.view.discover.TuangouDetailFragment;
-import com.tigerknows.view.discover.DiscoverChildListFragment;
 import com.tigerknows.view.discover.TuangouShangjiaListActivity;
 import com.tigerknows.view.discover.YanchuDetailFragment;
 import com.tigerknows.view.discover.ZhanlanDetailFragment;
@@ -2024,7 +2024,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             return true;
         }
 
-        AlertDialog alertDialog = CommonUtils.showNormalDialog(this, getString(R.string.prompt),
+        Dialog dialog = CommonUtils.showNormalDialog(this, getString(R.string.prompt),
                 getString(R.string.are_your_change_to_location_city, currentCity.getCName(), locationCity.getCName()),
                 getString(R.string.yes),
                 getString(R.string.no),
@@ -2051,7 +2051,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                                 }
                             }
                         });
-        alertDialog.setOnDismissListener(new OnDismissListener() {
+        dialog.setOnDismissListener(new OnDismissListener() {
             
             @Override
             public void onDismiss(DialogInterface arg0) {
@@ -2120,7 +2120,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 });
 
                 
-                AlertDialog alertDialog = CommonUtils.showNormalDialog(Sphinx.this,
+                Dialog dialog = CommonUtils.showNormalDialog(Sphinx.this,
                         getString(R.string.prompt),
                         null,
                         settingLocationView,
@@ -2135,7 +2135,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                                 }
                             }
                         });
-                alertDialog.setOnDismissListener(new OnDismissListener() {
+                dialog.setOnDismissListener(new OnDismissListener() {
                     
                     @Override
                     public void onDismiss(DialogInterface arg0) {

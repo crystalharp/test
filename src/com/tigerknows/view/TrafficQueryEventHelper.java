@@ -1,14 +1,10 @@
 package com.tigerknows.view;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
+import android.app.Dialog;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -588,7 +584,7 @@ public class TrafficQueryEventHelper {
             
 		    ListView listView = CommonUtils.makeListView(activity);
 		    listView.setAdapter(adapter);
-            final AlertDialog alertDialog = CommonUtils.showNormalDialog(mQueryFragment.mSphinx,
+            final Dialog dialog = CommonUtils.showNormalDialog(mQueryFragment.mSphinx,
                     title,
                     null,
                     listView,
@@ -596,12 +592,12 @@ public class TrafficQueryEventHelper {
                     null,
                     null);
             
-            alertDialog.setCancelable(true);
+            dialog.setCancelable(true);
             listView.setOnItemClickListener(new OnItemClickListener() {
 
                 @Override
                 public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
-                    alertDialog.dismiss();
+                    dialog.dismiss();
                     mQueryFragment.mSelectedEdt = queryEdt;
                     switch (which) {
                     case 0:

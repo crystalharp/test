@@ -502,8 +502,8 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
         } else if (sourceView instanceof Dialog && ((Dialog) sourceView).isShowing() == false) {
             return;
         }
-        final AlertDialog alertDialog = CommonUtils.showNormalDialog(activity, message);
-        alertDialog.setOnDismissListener(new OnDismissListener() {
+        final Dialog dialog = CommonUtils.showNormalDialog(activity, message);
+        dialog.setOnDismissListener(new OnDismissListener() {
             
             @Override
             public void onDismiss(DialogInterface arg0) {
@@ -521,7 +521,7 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
                 }
             }
         });
-        alertDialog.show();
+        dialog.show();
     }
 
     @Override
