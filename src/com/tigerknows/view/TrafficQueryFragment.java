@@ -443,8 +443,11 @@ public class TrafficQueryFragment extends BaseFragment {
 		mBusline.clear();
 	}
 	
-	public void showStart() {
+	public void initStartContent() {
 
+		if (!mStart.isEmpty()) {
+		    return;
+		}
 		//定位为设定城市，或者自驾模式下定位城市与设定城市不同，均在起点框填写上当前位置。
 		if (mMapLocationHelper.isMyLocationLocateCurrentCity() || 
 				(getQueryType() == TrafficQuery.QUERY_TYPE_DRIVE && Globals.g_My_Location_City_Info != null)) {
@@ -699,7 +702,7 @@ public class TrafficQueryFragment extends BaseFragment {
     	setState(TrafficViewSTT.State.Input);
     	mEventHelper.clearSuggestWatcherInInputState();
     	clearAllText();
-    	showStart();
+    	initStartContent();
     	setPOI(poi.clone(), END);
     	mSelectedEdt = mEnd;
     	preferTrafficThanBusline();
