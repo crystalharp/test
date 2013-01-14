@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -24,33 +24,32 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
+import android.widget.ExpandableListView.OnChildClickListener;
+import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.TextView.OnEditorActionListener;
+import android.widget.Toast;
 
 import com.decarta.Globals;
-import com.tigerknows.R;
 import com.tigerknows.maps.MapEngine;
-import com.tigerknows.maps.RegionMapInfo;
-import com.tigerknows.maps.TileDownload;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.maps.MapEngine.RegionMetaVersion;
+import com.tigerknows.maps.RegionMapInfo;
+import com.tigerknows.maps.TileDownload;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.MapMetaFileDownload;
 import com.tigerknows.model.MapTileDataDownload;
@@ -680,7 +679,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         ListView listView = CommonUtils.makeListView(mThis);
         listView.setAdapter(adapter);
         
-        final AlertDialog alertDialog = CommonUtils.showNormalDialog(this,
+        final Dialog dialog = CommonUtils.showNormalDialog(this,
                 getString(R.string.select_action),
                 null,
                 listView,
@@ -755,7 +754,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                                 }
                             });
                 }
-                alertDialog.dismiss();
+                dialog.dismiss();
             }
             
         });

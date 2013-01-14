@@ -27,6 +27,7 @@
     android:paddingBottom="3dip"
     android:paddingLeft="3dip"
     android:paddingRight="1dip"
+    android:background="@color/white"
     >
 	<LinearLayout android:id="@+id/titlePanel"
 	    android:layout_width="fill_parent"

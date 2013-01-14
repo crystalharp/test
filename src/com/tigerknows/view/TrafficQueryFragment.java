@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import android.app.AlertDialog;
+import android.app.Dialog;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -12,19 +12,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.Globals;
 import com.decarta.android.location.Position;
@@ -41,9 +39,9 @@ import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TKWord;
 import com.tigerknows.model.TrafficModel;
+import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Station;
 import com.tigerknows.model.TrafficQuery;
-import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
@@ -927,7 +925,7 @@ public class TrafficQueryFragment extends BaseFragment {
         ListView listView = CommonUtils.makeListView(mSphinx);
         listView.setAdapter(adapter);
         
-        final AlertDialog alertDialog = CommonUtils.showNormalDialog(mSphinx,
+        final Dialog dialog = CommonUtils.showNormalDialog(mSphinx,
                 mSphinx.getString(start ? R.string.select_start_station : R.string.select_end_station),
                 null,
                 listView,
@@ -947,7 +945,7 @@ public class TrafficQueryFragment extends BaseFragment {
             		station = endStationList.get(which);
             		mEnd.setPOI(station.toPOI());
             	}
-                alertDialog.dismiss();
+                dialog.dismiss();
                 if (start == false || end == false) {
                 	submitTrafficQuery();
                 } else {
