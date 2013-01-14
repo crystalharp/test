@@ -45,7 +45,6 @@ import com.tigerknows.model.DataOperation.DingdanCreateResponse;
 import com.tigerknows.model.DataOperation.TuangouQueryResponse;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
-import com.tigerknows.view.CollapseTextView;
 import com.tigerknows.view.user.User;
 import com.tigerknows.view.user.UserBaseActivity;
 
@@ -81,7 +80,6 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     private TextView mDiscountTxv_2;
 
     private Button mBuyBtn_2 = null;
-    
     
     private TextView mNameTxt = null;
     
