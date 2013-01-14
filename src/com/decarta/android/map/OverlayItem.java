@@ -14,6 +14,7 @@ import com.decarta.android.event.EventListener;
 import com.decarta.android.event.EventSource;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
+import com.decarta.android.map.InfoWindow.InfoWindowType;
 import com.decarta.android.map.InfoWindow.TextAlign;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
@@ -34,7 +35,7 @@ public class OverlayItem implements com.decarta.android.event.EventSource{
 	/*
 	 * 此Item所在墨卡托坐标点
 	 */
-	protected XYDouble mercXY= null;
+	private XYDouble mercXY= null;
 	/*
 	 * 点击此Item时显示的文本
 	 */
@@ -55,26 +56,22 @@ public class OverlayItem implements com.decarta.android.event.EventSource{
 	 * X, Z轴的旋转
 	 */
 	private RotationTilt rotationTilt=null;//new RotationTilt(RotateReference.MAP,TiltReference.MAP);
-	/*
-	 * 此Item所在经纬度
-	 */
-	private Position position;
-	// position name
-	private String name;
+	
 	/*
 	 * 此Item是否被选中
 	 */
 	public boolean isFoucsed = false;
+	/**
+	 * @deprecated replaced by {@link #associatedObject}
+	 */
+	@Deprecated
+	private POI poi;
 	/*
 	 * 相关联的对象???
 	 */
 	private Object associatedObject=null;
 	
 	private int preferZoomLevel = -1;
-	
-	private int infoWindowType = -1;
-    
-    private TextAlign textAlign=TextAlign.CENTER;
 	
 	private OverlayItem(Position position, Icon icon, String message) throws APIException{
 		this.setPosition(position);
@@ -108,6 +105,20 @@ public class OverlayItem implements com.decarta.android.event.EventSource{
 	public void setMessage(String message) {
 		this.message = message;
 	}
+	/**
+	 * @deprecated, replaced by {@link #getAssociatedObject()}
+	 */
+	@Deprecated
+	public POI getPoi() {
+		return poi;
+	}
+	/**
+	 * @deprecated, replaced by {@link #setAssociatedObject(Object)}
+	 */
+	@Deprecated
+	public void setPoi(POI poi) {
+		this.poi = poi;
+	}
 	
 	/**
 	 * get associatedObject
@@ -125,9 +136,30 @@ public class OverlayItem implements com.decarta.android.event.EventSource{
 		this.associatedObject = associatedObject;
 	}
 
-	public XYDouble getMercXY() {
+	XYDouble getMercXY() {
 		return mercXY;
-		
+	}
+	void setMercXY(XYDouble newMercXY){
+		XYDouble oldMercXY=this.mercXY;
+		if(newMercXY==null){
+			if(oldMercXY!=null){
+				this.mercXY=null;
+				if(ownerOverlay!=null){
+					ownerOverlay.changePinPos(this,oldMercXY);
+				}
+				
+			}
+		}
+		else{
+			if(!newMercXY.equals(oldMercXY)){
+				this.mercXY=newMercXY;
+				if(ownerOverlay!=null) {
+					ownerOverlay.changePinPos(this,oldMercXY);
+				}
+				
+			}
+			
+		}
 	}
 	
 	/**
@@ -148,7 +180,10 @@ public class OverlayItem implements com.decarta.android.event.EventSource{
 	 * Position of pin
 	 */
 	public Position getPosition() {
-		return position;
+	    if (mercXY == null) {
+	        return null;
+	    }
+		return Util.mercPixToPos(mercXY, ItemizedOverlay.ZOOM_LEVEL);
 	}
 	
 	/**
@@ -157,20 +192,13 @@ public class OverlayItem implements com.decarta.android.event.EventSource{
 	public void setPosition(Position position) throws APIException {
 		try{
 			if(position==null){
-				if(this.position!=null){
-					this.position=null;
-					mercXY=null;
-					if(ownerOverlay!=null) ownerOverlay.resetPinIdxs();
-				}
-			}
-			else if(!position.equals(this.position)){
-				mercXY=Util.posToMercPix(position, ItemizedOverlay.ZOOM_LEVEL);
-				this.position=position;
-				if(ownerOverlay!=null) ownerOverlay.resetPinIdxs();
+				setMercXY(null);
+			}else{
+				XYDouble newMercXY=Util.posToMercPix(position, ItemizedOverlay.ZOOM_LEVEL);
+				setMercXY(newMercXY);
 			}
 		}catch(APIException e){
 			mercXY=null;
-			this.position=null;
 			throw e;
 		}
 	}
@@ -187,14 +215,6 @@ public class OverlayItem implements com.decarta.android.event.EventSource{
 		this.preferZoomLevel = preferZoomLevel;
 	}
 
-	public int getInfoWindowType() {
-		return infoWindowType;
-	}
-
-	public void setInfoWindowType(int infoWindowType) {
-		this.infoWindowType = infoWindowType;
-	}
-
 	public boolean hasPreferZoomLevel() {
 		return preferZoomLevel != -1;
 	}
@@ -208,7 +228,7 @@ public class OverlayItem implements com.decarta.android.event.EventSource{
 			return false;
 		}
 		OverlayItem other = (OverlayItem) obj;
-		if (this.position != other.position && (this.position == null || !this.position.equals(other.position))) {
+		if (this.mercXY != other.mercXY && (this.mercXY == null || !this.mercXY.equals(other.mercXY))) {
 			return false;
 		}
 		if (this.icon != other.icon && (this.icon == null || !this.icon.equals(other.icon))) {
@@ -223,7 +243,7 @@ public class OverlayItem implements com.decarta.android.event.EventSource{
 	@Override
 	public int hashCode() {
 		int hash = 7;
-		hash = 89 * hash + (this.position != null ? this.position.hashCode() : 0);
+		hash = 89 * hash + (this.mercXY != null ? this.mercXY.hashCode() : 0);
 		hash = 89 * hash + (this.icon != null ? this.icon.hashCode() : 0);
 		return hash;
 	}
@@ -301,25 +321,4 @@ public class OverlayItem implements com.decarta.android.event.EventSource{
 	public interface TouchEventListener extends EventListener{
 		public void onTouchEvent(EventSource eventSource);
 	}
-	
-	public void setName(String name) {
-		this.name = name;
-	    LogWrapper.d("OverlayItem", "InfoWindow.setName name:" + name);
-	}
-	
-	public POI getPOI() {
-	    POI poi = new POI();
-	    poi.setPosition(position);
-	    LogWrapper.d("OverlayItem", "InfoWindow.getPOI name:" + name);
-	    poi.setName(name);
-	    return poi;
-	}
-    
-    public TextAlign getTextAlign() {
-        return textAlign;
-    }
-
-    public void setTextAlign(TextAlign textAlign) {
-        this.textAlign = textAlign;
-    }
 }

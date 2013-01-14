@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -27,6 +28,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.decarta.CONFIG;
 import com.decarta.android.event.EventListener;
@@ -142,14 +144,12 @@ public class MapView extends RelativeLayout implements
 		    Options ops=new Options();
 	        ops.inScaled=false;
 	        
-	        Bitmap bm=BitmapFactory.decodeResource(getResources(), R.drawable.icon_compass, ops);
+	        Bitmap bm=BitmapFactory.decodeResource(getResources(), R.drawable.ic_compass, ops);
 	        Icon icon=new Icon(bm, 
 	                new XYInteger(bm.getWidth(),bm.getHeight()),
 	                new XYInteger(bm.getWidth()/2,bm.getHeight()/2));
-    		Compass compass=new Compass(icon);
+    		Compass compass=new Compass(icon.getSize(), icon.getOffset(), PlaceLocation.TOP_LEFT, icon);
     		compass.setPlaceLocation(PlaceLocation.values()[CONFIG.COMPASS_PLACE_LOCATION]);
-    		compass.setVisible(false);
-    		this.refreshMap();
     		try{
     			compass.addEventListener(EventType.TOUCH, new Compass.TouchEventListener() {
     				
@@ -480,10 +480,6 @@ public class MapView extends RelativeLayout implements
 	public void refreshMap() {
 		tilesView.refreshMap();
 	}
-
-    public void refreshMapByTime() {
-        tilesView.refreshMapByTime();
-    }
 	
 	/**
 	 * switch map between street map, satellite map and hybrid map
@@ -502,7 +498,7 @@ public class MapView extends RelativeLayout implements
 	}
     
     public void rotateLocationZToDegree(float zRotation){
-        tilesView.rotateLocationZToDegree(zRotation);
+        tilesView.tkRotateZToDegree(zRotation);
     }
 	
 	public void rotateXToDegree(float xRotation){
@@ -549,7 +545,7 @@ public class MapView extends RelativeLayout implements
 	 * @throws APIException
 	 */
 	public void centerOnPosition(Position position) throws APIException {
-		tilesView.centerOnPosition(position);
+//		tilesView.centerOnPosition(position);
 	}
 
 	/**
@@ -967,23 +963,24 @@ public class MapView extends RelativeLayout implements
     }
 	
     public RectF getInfoWindowRecF() {
-    	return tilesView.getInfoWindowRecF(tilesView.getInfoWindow(),new XYFloat(0f,0f));
+    	return tilesView.getInfoWindow().getInfoWindowRecF();
     }
     
     public interface SnapMap {
         public void finish(Uri uri);
     }
     
-    ProgressDialog tipProgressDialog;
+    Dialog tipProgressDialog;
     boolean mapViewSnap;
     public void snapMapView(final Activity activity, final SnapMap snapMap, final Position position) {
         if (activity == null || snapMap == null || position == null) {
             return;
         }
         mapViewSnap = true;
-        tipProgressDialog = new ProgressDialog(activity);
-        tipProgressDialog.setMessage(activity.getString(R.string.doing_and_wait));
-        tipProgressDialog.setIndeterminate(true);
+        View custom = activity.getLayoutInflater().inflate(R.layout.loading, null);
+        TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
+        loadingTxv.setText(R.string.doing_and_wait);
+        tipProgressDialog = CommonUtils.showNormalDialog(activity, custom);
         tipProgressDialog.setCancelable(true);
         tipProgressDialog.setCanceledOnTouchOutside(false);
         tipProgressDialog.setOnDismissListener(new OnDismissListener() {

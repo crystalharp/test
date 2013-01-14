@@ -206,7 +206,6 @@ public class Zhanlan extends BaseData {
             poi.setPosition(position);
 //            poi.setOrderNumber(orderNumber);
             poi.setSourceType(POI.SOURCE_TYPE_ZHANLAN);
-            poi.setAssociatedObject(this);
         }
         return poi;
     }

@@ -213,7 +213,6 @@ public class Yanchu extends BaseData {
             poi.setPosition(position);
 //            poi.setOrderNumber(orderNumber);
             poi.setSourceType(POI.SOURCE_TYPE_YANCHU);
-            poi.setAssociatedObject(this);
         }
         return poi;
     }

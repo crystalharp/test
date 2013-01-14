@@ -63,11 +63,11 @@ public class CONFIG {
 	/**
 	 * enable rotate
 	 */
-	public static boolean ENABLE_ROTATE=false;
+	public static boolean ENABLE_ROTATE=true;
 	/**
 	 * place compass on the corner. The compass's real screen position is decided by the compass's offset
 	 * relative to the corner.
-	 * -1: no compass, 0: top-left, 1: top-right, 2: bottom-left, 3: bottom-right
+	 * -1: no compass, 0: top-left, 1: top-right, 2: bottom-left, 3: bottom-right, 4: center
 	 */
 	public static int COMPASS_PLACE_LOCATION=4;
 	
