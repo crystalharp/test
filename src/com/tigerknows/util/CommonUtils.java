@@ -1096,11 +1096,11 @@ public class CommonUtils {
     }  
     
     public static void formatText(TextView textView, String word, String key, int color) {
-        if (key != null && word != null && key.length() > 0 && word.length() > 0){
+        if (key != null && word != null && key.length() > 0 && word.length() > 0 && word.indexOf(key)!=-1){
             int keyLength = key.length();
             int wordLength = word.length();
             SpannableStringBuilder style=new SpannableStringBuilder(word);  
-            style.setSpan(new ForegroundColorSpan(color),0,keyLength > wordLength ? wordLength : keyLength,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+            style.setSpan(new ForegroundColorSpan(color),word.indexOf(key), keyLength > wordLength ? wordLength : keyLength,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             textView.setText(style);
         } else {
             textView.setText(word);
