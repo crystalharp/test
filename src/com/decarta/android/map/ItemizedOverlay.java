@@ -21,6 +21,14 @@ import com.decarta.android.util.XYInteger;
 import com.decarta.android.util.XYZ;
 
 public class ItemizedOverlay {
+	/**
+	 * 
+	 * define which corner of the text frame is used to calculate the offset.
+	 * e.g., when top left corner of pin is {x,y}, text frame size is {10,20}, offset ={5,4}, relativeTo=BOTTOM_RIGHT, 
+	 * then the left top corner of this text frame is at {x+5-10, y+4-20};
+	 */
+	public enum OffsetReference{TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT};
+	
     public static String MY_LOCATION_OVERLAY = "my_location";
     public static String POI_OVERLAY = "poi";
     public static String TRAFFIC_OVERLAY = "traffic";
@@ -29,50 +37,10 @@ public class ItemizedOverlay {
     
 	public static final int ZOOM_LEVEL=13;
 	private static int GRANULARITY=20;
-	private static int[][] GENERALIZE_ZOOM_LEVEL={
-		{0,0},  //zoom 0
-		{1,1},  //zoom 1
-		{2,2},  //zoom 2
-		{3,3},  //zoom 3
-		{4,4},  //zoom 4
-		{5,5},  //zoom 5
-		{6,6},  //zoom 6
-		{7,7},  //zoom 7
-		{8,8},  //zoom 8
-		{9,9},  //zoom 9
-		{10,10}, //zoom 10
-		{11,11}, //zoom 11
-		{12,12}, //zoom 12
-		{13,13}, //zoom 13
-		{14,14}, //zoom 14
-		{15,15}, //zoom 15
-		{16,16}, //zoom 16
-		{17,17}, //zoom 17
-		{18,18}, //zoom 18
-		{19,19}, //zoom 19
-		{20,20}  //zoom 20
-	};
-	
+		
 	public static int TOUCH_RADIUS=100;
-	//public static int SNAP_BUFFER=6;
 	public static int SNAP_BUFFER=0;
 	
-	/**
-	 * name as ID, should be unique and composed of [a-zA-Z_1-9] and begin with [a-zA-Z_]
-	 */
-	private String name;
-	private ArrayList<OverlayItem> overlayItems = new ArrayList<OverlayItem>();
-	
-	private HashMap<XYZ,ArrayList<ArrayList<OverlayItem>>> pinIdxs[];
-	
-	//variables for clustering
-	private boolean clustering=false;
-	private ClusterTouchEventListener clusterTouchEventListener=null;
-	//cluster size text will be drawn at clusterIcon topleft.x+clusterTextOffset.x, clusterIcon topleft.x.y+clusterTextOffset.y
-	private XYInteger clusterTextOffset=new XYInteger(0,0);
-	private int clusterBackgroundColor=Color.rgb(255, 0, 0);
-	private int clusterTextColor=Color.rgb(255, 255, 255);
-	private int clusterBorderColor=Color.rgb(255, 255, 255);
 	public static int OVERLAY_CLUSTER_BORDER_SIZE=2;
 	public static int OVERLAY_CLUSTER_ROUND_RADIUS=8;
 	public static int OVERLAY_CLUSTER_TEXT_SIZE=12;
@@ -86,7 +54,39 @@ public class ItemizedOverlay {
 	 * 三种操作中将Overlay置于14级别
 	 */
 	public boolean isShowInPreferZoom = false;
-
+	
+	static double MIN_DIST[];
+	static double ZOOM_SCALE[];
+	static{
+		ZOOM_SCALE=new double[21];
+		MIN_DIST=new double[21];
+		for(int i=0;i<21;i++){
+			ZOOM_SCALE[i]=Math.pow(2, i-ZOOM_LEVEL);
+			MIN_DIST[i]=(GRANULARITY*GRANULARITY)/(ZOOM_SCALE[i]*ZOOM_SCALE[i]);
+		}
+		
+	}
+	
+	/**
+	 * name as ID, should be unique and composed of [a-zA-Z_1-9] and begin with [a-zA-Z_]
+	 */
+	private String name;
+	private ArrayList<OverlayItem> overlayItems = new ArrayList<OverlayItem>();
+	
+	private HashMap<XYInteger,ArrayList<Cluster>> pinIdxs[]=null;
+	
+	//variables for clustering
+	private boolean clustering=false;
+	private ClusterTouchEventListener clusterTouchEventListener=null;
+	//cluster size text will be drawn at clusterIcon topleft.x+clusterTextOffset.x, clusterIcon topleft.x.y+clusterTextOffset.y
+	private XYInteger clusterTextOffset=new XYInteger(0,0);
+	private OffsetReference clusterTextOffsetRelativeTo=OffsetReference.TOP_LEFT;
+	private int clusterBackgroundColor=Color.rgb(255, 0, 0);
+	private int clusterTextColor=Color.rgb(255, 255, 255);
+	private int clusterBorderColor=Color.rgb(255, 255, 255);
+	
+	private Object idxLock=new Object();
+	
 	/**
 	 * constructure of ItemizedOverlay
 	 * @param overlayName overlayName should be unique and composed of [a-zA-Z_0-9] and begin with [a-zA-Z_]
@@ -98,194 +98,311 @@ public class ItemizedOverlay {
 		this.name=overlayName;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void generalizePins(){
+	private class ClusterNE{
+		Cluster cluster;
+		XYInteger ne;
+		ClusterNE(Cluster cluster, XYInteger ne){
+			this.cluster=cluster;
+			this.ne=ne;
+		}
+	}
+	
+	private void generalizePins(int zoomLevel){
         //Check the point index
-		if(pinIdxs!=null) return;
-		pinIdxs=new HashMap[21];
-		for(int i=0;i<21;i++){
-			pinIdxs[i]=null;
+		if(pinIdxs!=null && pinIdxs[zoomLevel]!=null) return;
+		if(pinIdxs==null){
+			pinIdxs=new HashMap[21];
+			for(int i=0;i<21;i++){
+				pinIdxs[i]=null;
+			}
 		}
 		
-		ArrayList<ArrayList<OverlayItem>> clustersArray[]=new ArrayList[21];
-		for(int zoomLevel=CONFIG.ZOOM_UPPER_BOUND;zoomLevel>=0;zoomLevel--){
-			if(zoomLevel>CONFIG.ZOOM_UPPER_BOUND || zoomLevel<CONFIG.ZOOM_LOWER_BOUND) continue;
+		//LogWrapper.i("ItemizedOverlay", "generalizePins zoomLevel:"+zoomLevel);
+		
+		double scale=ZOOM_SCALE[zoomLevel];
+		double minDist=MIN_DIST[zoomLevel];
+	    HashMap<XYInteger, ArrayList<Cluster>> pinIdx=new HashMap<XYInteger,ArrayList<Cluster>>();
+		ArrayList<ClusterNE> clusters=new ArrayList<ClusterNE>();
+    	
+    	for (int i = 0; i < overlayItems.size(); i++) {
+			OverlayItem pin = overlayItems.get(i);
+			if (pin.getMercXY() == null) {
+				continue;
+			}
 			
-			int genLevel=GENERALIZE_ZOOM_LEVEL[zoomLevel][0];
-			int idxLevel=GENERALIZE_ZOOM_LEVEL[zoomLevel][1];
-	        if(pinIdxs[idxLevel]!=null) continue;
-	        
-			double zoomScale=Math.pow(2, ZOOM_LEVEL-genLevel);
-			double scale=Math.pow(2, idxLevel-ZOOM_LEVEL);
-		    double minDist=(GRANULARITY*GRANULARITY)*(zoomScale*zoomScale);
-        	
-        	clustersArray[zoomLevel]=new ArrayList<ArrayList<OverlayItem>>();
-            if(zoomLevel==CONFIG.ZOOM_UPPER_BOUND){
-            	for (int i = 0; i < overlayItems.size(); i++) {
-    				OverlayItem pin = overlayItems.get(i);
-    				if (pin.getMercXY() == null) {
-    					continue;
-    				}
-    				
-    				if(clustersArray[zoomLevel].size()==0){
-            			ArrayList<OverlayItem> clusterL=new ArrayList<OverlayItem>();
-    					clusterL.add(pin);
-    					clustersArray[zoomLevel].add(clusterL);
-    					continue;
-            		}
-            		
-//            		boolean included=false;
-//            		for(int j=0;j<clustersArray[zoomLevel].size();j++){
-//    					ArrayList<OverlayItem> clusterL=clustersArray[zoomLevel].get(j);
-//    					if(clusterL.size()==0){
-//    						LogWrapper.e("ItemizedOverlay","generalizePins cluster empty");
-//    						continue;
-//    					}
-//    					OverlayItem pinL=clusterL.get(0);
-//    					double dist = (pin.getMercXY().x - pinL.getMercXY().x)*(pin.getMercXY().x - pinL.getMercXY().x)+(pin.getMercXY().y - pinL.getMercXY().y)*(pin.getMercXY().y - pinL.getMercXY().y);
-//    					if(dist<minDist){
-//    						clusterL.add(pin);
-//    						included=true;
-//    						break;
-//    					}
-//    					
-//    				}
-//    				if(included) continue;
-    				
-    				ArrayList<OverlayItem> clusterL=new ArrayList<OverlayItem>();
-    				clusterL.add(pin);
-    				clustersArray[zoomLevel].add(clusterL);
-    			}
-            }else{
-            	for(int i=0;i<clustersArray[zoomLevel+1].size();i++){
-            		ArrayList<OverlayItem> cluster=clustersArray[zoomLevel+1].get(i);
-//            		OverlayItem pin=cluster.get(0);
-            		if(clustersArray[zoomLevel].size()==0){
-            			ArrayList<OverlayItem> clusterL=new ArrayList<OverlayItem>();
-    					clusterL.addAll(cluster);
-    					clustersArray[zoomLevel].add(clusterL);
-    					continue;
-            		}
-            		
-//            		boolean included=false;
-//            		for(int j=0;j<clustersArray[zoomLevel].size();j++){
-//    					ArrayList<OverlayItem> clusterL=clustersArray[zoomLevel].get(j);
-//    					if(clusterL.size()==0){
-//    						LogWrapper.e("ItemizedOverlay","generalizePins cluster empty");
-//    						continue;
-//    					}
-//    					OverlayItem pinL=clusterL.get(0);
-//    					double dist = (pin.getMercXY().x - pinL.getMercXY().x)*(pin.getMercXY().x - pinL.getMercXY().x)+(pin.getMercXY().y - pinL.getMercXY().y)*(pin.getMercXY().y - pinL.getMercXY().y);
-//    					if(dist<minDist){
-//    						clusterL.addAll(cluster);
-//    						included=true;
-//    						break;
-//    					}
-//    					
-//    				}
-//    				if(included) continue;
-    				
-    				ArrayList<OverlayItem> clusterL=new ArrayList<OverlayItem>();
-    				clusterL.addAll(cluster);
-    				clustersArray[zoomLevel].add(clusterL);
-            	}
-            }
-            
-            HashMap<XYZ, ArrayList<ArrayList<OverlayItem>>> pinIdx=new HashMap<XYZ,ArrayList<ArrayList<OverlayItem>>>();
-        	for(int i=0;i<clustersArray[zoomLevel].size();i++){
-        		ArrayList<OverlayItem> cluster=clustersArray[zoomLevel].get(i);
-				if(cluster.size()==0){
+			XYInteger ne = Util.mercXYToNE(new XYDouble(pin.getMercXY().x*scale,pin.getMercXY().y*scale));
+			boolean included=false;
+			for(int j=0;j<clusters.size();j++){
+				if(clusters.get(j).cluster.clusterPins.size()==0){
 					LogWrapper.e("ItemizedOverlay","generalizePins cluster empty");
+				}
+				
+				if(!ne.equals(clusters.get(j).ne)){
 					continue;
 				}
-				OverlayItem pin=cluster.get(0);
 				
-				XYDouble mercXY=new XYDouble(pin.getMercXY().x*scale,pin.getMercXY().y*scale);
-				XYInteger ne = Util.mercXYToNE(mercXY);
-				XYZ key=new XYZ(ne.x,ne.y,idxLevel);
-				if (!pinIdx.containsKey(key)){
-					pinIdx.put(key, new ArrayList<ArrayList<OverlayItem>>());
+				XYDouble refMercXY=clusters.get(j).cluster.refMercXY;
+				double dist = (pin.getMercXY().x - refMercXY.x)*(pin.getMercXY().x - refMercXY.x)+(pin.getMercXY().y - refMercXY.y)*(pin.getMercXY().y - refMercXY.y);
+				if(dist<minDist){
+					clusters.get(j).cluster.clusterPins.add(pin);
+					included=true;
+					break;
 				}
-				pinIdx.get(key).add(cluster);
-				key = key.clone();
-//				key.y -= 1;
-                if (!pinIdx.containsKey(key)){
-                    pinIdx.put(key, new ArrayList<ArrayList<OverlayItem>>());
-                }
-                pinIdx.get(key).add(cluster);
-        	}
-        				
-            pinIdxs[idxLevel]=pinIdx;
-            //LogWrapper.i("ItemizedOverlay","generalizePins zoomLevel,genLevel,indexLevel:"+zoomLevel+","+genLevel+","+idxLevel);
-		}
+				
+			}
     		
+			if(included) continue;
+			
+			ArrayList<OverlayItem> newClusterPins=new ArrayList<OverlayItem>();
+			newClusterPins.add(pin);
+			XYDouble refMercXY=new XYDouble(pin.getMercXY().x,pin.getMercXY().y);
+			clusters.add(new ClusterNE(new Cluster(refMercXY,newClusterPins),ne));
+		}
+	    		
+	    for(int i=0;i<clusters.size();i++){
+    		if(!pinIdx.containsKey(clusters.get(i).ne)){
+    			pinIdx.put(clusters.get(i).ne, new ArrayList<Cluster>());
+    		}
+    		pinIdx.get(clusters.get(i).ne).add(clusters.get(i).cluster);
+    	}
+    	pinIdxs[zoomLevel]=pinIdx;
+		
+    	//LogWrapper.i("ItemizedOverlay","generalizePins zoomLevel,genLevel,indexLevel:"+zoomLevel+","+genLevel+","+idxLevel);
+			
     }
+	
+	private void removeFromIndex(OverlayItem pin){
+		if(pinIdxs==null) return;
+		if(pin.getMercXY()==null) return;
+		XYInteger ne20 = Util.mercXYToNE(new XYDouble(pin.getMercXY().x*ZOOM_SCALE[20],pin.getMercXY().y*ZOOM_SCALE[20]));
+		for(int z=0;z<21;z++){
+			if(pinIdxs[z]==null) continue;
+			XYInteger ne=new XYInteger(ne20.x>>(20-z),ne20.y>>(20-z));
+			ArrayList<Cluster> clusters=pinIdxs[z].get(ne);
+			if(clusters==null){
+				LogWrapper.e("ItemizedOverlay", "removeFromIndex zoom "+z+" cannot find owner clusters");
+				continue;
+			}
+			Cluster cluster=null;
+			for(int i=0;i<clusters.size();i++){
+				XYDouble refMercXY=clusters.get(i).refMercXY;
+				double dist = (pin.getMercXY().x - refMercXY.x)*(pin.getMercXY().x - refMercXY.x)+(pin.getMercXY().y - refMercXY.y)*(pin.getMercXY().y - refMercXY.y);
+				if(dist<MIN_DIST[z]){
+					cluster=clusters.get(i);
+					break;
+				}
+			}
+			
+			if(cluster==null){
+				LogWrapper.e("ItemizedOverlay", "removeFromIndex zoom "+z+" cannot find owner cluster");
+				continue;
+			}
+			boolean removed=cluster.clusterPins.remove(pin);
+			if(!removed){
+				LogWrapper.e("ItemizedOverlay","removeFromIndex zoom "+z+" owner cluster do not contain pin");
+				continue;
+			}
+			//LogWrapper.i("ItemizedOverlay", "removeFromIndex zoom "+z+" pin:"+pin.getMessage());
+			if(cluster.clusterPins.size()==0){
+				clusters.remove(cluster);
+				if(clusters.size()==0){
+					pinIdxs[z].remove(ne);
+				}
+			}
+		}
+	}
+	
+	private void addToIndex(OverlayItem pin){
+		if(pinIdxs==null) return;
+		if(pin.getMercXY()==null) return;
+		XYInteger ne20 = Util.mercXYToNE(new XYDouble(pin.getMercXY().x*ZOOM_SCALE[20],pin.getMercXY().y*ZOOM_SCALE[20]));
+		for(int z=0;z<21;z++){
+			if(pinIdxs[z]==null) continue;
+			XYInteger ne=new XYInteger(ne20.x>>(20-z),ne20.y>>(20-z));
+			if(!pinIdxs[z].containsKey(ne)){
+				pinIdxs[z].put(ne, new ArrayList<Cluster>());
+			}
+			ArrayList<Cluster> clusters=pinIdxs[z].get(ne);
+			boolean included=false;
+			for(int j=0;j<clusters.size();j++){
+				if(clusters.get(j).clusterPins.size()==0){
+					LogWrapper.e("ItemizedOverlay","addToIndex cluster empty");
+				}
+				XYDouble refMercXY=clusters.get(j).refMercXY;
+				double dist = (pin.getMercXY().x - refMercXY.x)*(pin.getMercXY().x - refMercXY.x)+(pin.getMercXY().y - refMercXY.y)*(pin.getMercXY().y - refMercXY.y);
+				if(dist<MIN_DIST[z]){
+					clusters.get(j).clusterPins.add(pin);
+					included=true;
+					break;
+				}
+				
+			}
+    		
+			if(included) continue;
+			
+			ArrayList<OverlayItem> newClusterPins=new ArrayList<OverlayItem>();
+			newClusterPins.add(pin);
+			XYDouble refMercXY=new XYDouble(pin.getMercXY().x,pin.getMercXY().y);
+			clusters.add(new Cluster(refMercXY,newClusterPins));
+		}
+	}
+	
+	void changePinPos(OverlayItem pin, XYDouble oldMercXY){
+		synchronized(idxLock){
+			if(pinIdxs==null) return;
+			XYInteger ne20 = pin.getMercXY()==null?null:Util.mercXYToNE(new XYDouble(pin.getMercXY().x*ZOOM_SCALE[20],pin.getMercXY().y*ZOOM_SCALE[20]));
+			XYInteger oldne20=oldMercXY==null?null:Util.mercXYToNE(new XYDouble(oldMercXY.x*ZOOM_SCALE[20],oldMercXY.y*ZOOM_SCALE[20]));
+			for(int z=0;z<21;z++){
+				if(pinIdxs[z]==null) continue;
+				
+				ArrayList<Cluster> clusters=null;
+				Cluster cluster=null;
+				XYInteger ne=ne20==null?null:new XYInteger(ne20.x>>(20-z),ne20.y>>(20-z));
+				ArrayList<Cluster> oldClusters=null;
+				Cluster oldCluster=null;
+				XYInteger oldne=oldne20==null?null:new XYInteger(oldne20.x>>(20-z),oldne20.y>>(20-z));
+				
+				if(oldMercXY!=null){
+					oldClusters=pinIdxs[z].get(oldne);
+					if(oldClusters==null){
+						LogWrapper.e("ItemizedOverlay","changePinPos zoom "+z+" cannot find oldClusters");
+					}else{
+						for(int j=0;j<oldClusters.size();j++){
+							if(oldClusters.get(j).clusterPins.size()==0){
+								LogWrapper.e("ItemizedOverlay","changePinPos zoom "+z+" oldClusters cluster empty");
+								continue;
+							}
+							XYDouble refMercXY=oldClusters.get(j).refMercXY;
+							double dist = (oldMercXY.x - refMercXY.x)*(oldMercXY.x - refMercXY.x)+(oldMercXY.y - refMercXY.y)*(oldMercXY.y - refMercXY.y);
+							if(dist<MIN_DIST[z]){
+								oldCluster=oldClusters.get(j);
+								break;
+							}
+							
+						}
+					}
+					if(oldCluster==null){
+						LogWrapper.e("ItemizedOverlay","changePinPos zoom "+z+" cannot find oldCluster");
+					}
+				}
+				
+				if(pin.getMercXY()!=null){
+					if(!pinIdxs[z].containsKey(ne)){
+						pinIdxs[z].put(ne, new ArrayList<Cluster>());
+					}
+					clusters=pinIdxs[z].get(ne);
+					boolean included=false;
+					for(int j=0;j<clusters.size();j++){
+						if(clusters.get(j).clusterPins.size()==0){
+							LogWrapper.e("ItemizedOverlay","changePinPos zoom "+z+" cluster empty");
+						}
+						XYDouble refMercXY=clusters.get(j).refMercXY;
+						double dist = (pin.getMercXY().x - refMercXY.x)*(pin.getMercXY().x - refMercXY.x)+(pin.getMercXY().y - refMercXY.y)*(pin.getMercXY().y - refMercXY.y);
+						if(dist<MIN_DIST[z]){
+							cluster=clusters.get(j);
+							if(cluster!=oldCluster){
+								cluster.clusterPins.add(pin);
+							}
+							included=true;
+							break;
+						}
+						
+					}
+					
+					if(included) continue;
+					ArrayList<OverlayItem> newClusterPins=new ArrayList<OverlayItem>();
+					newClusterPins.add(pin);
+					XYDouble refMercXY=new XYDouble(pin.getMercXY().x,pin.getMercXY().y);
+					cluster=new Cluster(refMercXY,newClusterPins);
+					clusters.add(cluster);
+					
+				}
+				
+				if(oldCluster!=null && oldCluster!=cluster){
+					boolean removed=oldCluster.clusterPins.remove(pin);
+					if(!removed){
+						LogWrapper.e("ItemizedOverlay","changePinPos zoom "+z+" oldCluster do not contain pin");
+						continue;
+					}
+					if(oldCluster.clusterPins.size()==0){
+						oldClusters.remove(oldCluster);
+						if(oldClusters.size()==0){
+							pinIdxs[z].remove(oldne);
+						}
+					}
+					
+				}
+			}
+		}
+	}
 		
 	public ArrayList<ArrayList<OverlayItem>> getVisiblePins(int zoomLevel, ArrayList<Tile> tiles) {
 		ArrayList<ArrayList<OverlayItem>> clusters=new ArrayList<ArrayList<OverlayItem>>();
 		
-		generalizePins();
-		int idxLevel=GENERALIZE_ZOOM_LEVEL[zoomLevel][1];
-		HashMap<XYZ,ArrayList<ArrayList<OverlayItem>>> pinIdx=pinIdxs[idxLevel];
-		
-		List<XYZ> overlapTiles=new ArrayList<XYZ>();
+		ArrayList<XYInteger> overlapXYs=new ArrayList<XYInteger>();
 		for(int i=0;i<tiles.size();i++){
 			Tile tile=tiles.get(i);
-			List<XYZ> xyzs=Util.findOverlapTiles(tile.xyz, idxLevel);
-			if(!overlapTiles.contains(xyzs.get(0))){
-				overlapTiles.addAll(xyzs);
+			List<XYInteger> xys=Util.findOverlapXYs(tile.xyz, zoomLevel);
+			if(!overlapXYs.contains(xys.get(0))){
+				overlapXYs.addAll(xys);
 			}
 			
 		}
 		
-		/*
-		 * 地图上点的坐标系计算仍有问题, 当前暂时绕过
-		 */
-		overlapTiles = Util.getVerticalLargerOverlapTiles(overlapTiles);
-		
-		for(int j=0;j<overlapTiles.size();j++){
-			XYZ xyz=overlapTiles.get(j);
-			//String key=xyz.z+"_"+xyz.x+"_"+xyz.y;
-			XYZ key=xyz;
-			if(pinIdx != null && key != null && pinIdx.containsKey(key)){
-				clusters.addAll(pinIdx.get(key));
+		synchronized(idxLock){
+			generalizePins(zoomLevel);
+			HashMap<XYInteger,ArrayList<Cluster>> pinIdx=pinIdxs[zoomLevel];
+			for(int j=0;j<overlapXYs.size();j++){
+				XYInteger xy=overlapXYs.get(j);
+				if(pinIdx.containsKey(xy)){
+					ArrayList<Cluster> clustersL=pinIdx.get(xy);
+					for(int k=0;k<clustersL.size();k++){
+						clusters.add(clustersL.get(k).clusterPins);
+					}
+				}
 			}
+			
 		}
 		return clusters;
 
     }
 	
 	public int size(){
-		return overlayItems.size();
+		synchronized(idxLock){
+			return overlayItems.size();
+		}
 	}
 	
 	public OverlayItem get(int i){
-		return overlayItems.get(i);
+		synchronized(idxLock){
+			if(i<overlayItems.size() && i>=0)
+				return overlayItems.get(i);
+			else return null;
+		}
+		
 	}
 	
-	public OverlayItem getItemByFocused() {
-        int size = overlayItems.size();
-        for(int i = 0; i < size; i++) {
-            if (overlayItems.get(i).isFoucsed) {
-                return overlayItems.get(i);
-            }
-        }
-        
-        return null;
-	}
 	
-	public void addOverlayItem(OverlayItem overlayItem){
-		overlayItems.add(overlayItem);
-		overlayItem.setOwnerOverlay(this);
-		resetPinIdxs();
+	
+	public boolean addOverlayItem(OverlayItem overlayItem){
+		synchronized(idxLock){
+			if(overlayItems.add(overlayItem)){
+				overlayItem.setOwnerOverlay(this);
+				addToIndex(overlayItem);
+				return true;
+			}
+			else return false;
+		}
 	}
 	
 	/**
 	 * remove all pins of this overlay
 	 */
 	public void clear(){
-		overlayItems.clear();
-		resetPinIdxs();
+		synchronized(idxLock){
+			overlayItems.clear();
+			resetPinIdxs();
+		}
 	}
 	
 	/**
@@ -293,8 +410,16 @@ public class ItemizedOverlay {
 	 * @param location
 	 */
 	public OverlayItem remove(int location){
-		resetPinIdxs();
-		return overlayItems.remove(location);
+		synchronized(idxLock){
+			if(location<overlayItems.size() && location>=0){
+				OverlayItem pin=overlayItems.remove(location);
+				if(pin!=null){
+					removeFromIndex(pin);
+				}
+				return pin;
+			}else return null;
+			
+		}
 	}
 	
 	/**
@@ -302,10 +427,15 @@ public class ItemizedOverlay {
 	 * @param overlayItem
 	 */
 	public boolean remove(OverlayItem overlayItem){
-		resetPinIdxs();
-		return overlayItems.remove(overlayItem);
+		synchronized(idxLock){
+			if(overlayItems.remove(overlayItem)){
+				removeFromIndex(overlayItem);
+				return true;
+			}else return false;
+			
+		}
 	}
-
+	
 	public String getName() {
 		return name;
 	}
@@ -372,6 +502,21 @@ public class ItemizedOverlay {
 	public void setClusterTextOffset(XYInteger clusterTextOffset) {
 		this.clusterTextOffset = clusterTextOffset;
 	}
+	
+	public OffsetReference getClusterTextOffsetRelativeTo() {
+		return clusterTextOffsetRelativeTo;
+	}
+	
+	/**
+	 * 
+	 * define which corner of the text frame is used to calculate the offset.
+	 * e.g., when top left corner of pin is {x,y}, text frame size is {10,20}, offset ={5,4}, relativeTo=BOTTOM_RIGHT, 
+	 * then the left top corner of this text frame is at {x+5-10, y+4-20};
+	 */
+	public void setClusterTextOffsetRelativeTo(
+			OffsetReference clusterTextOffsetRelativeTo) {
+		this.clusterTextOffsetRelativeTo = clusterTextOffsetRelativeTo;
+	}
 
 	public int getClusterBackgroundColor() {
 		return clusterBackgroundColor;
@@ -397,7 +542,22 @@ public class ItemizedOverlay {
 		this.clusterBorderColor = clusterBorderColor;
 	}
 
+
+	public OverlayItem getItemByFocused() {
+        synchronized(idxLock){
+        int size = overlayItems.size();
+        for(int i = 0; i < size; i++) {
+            if (overlayItems.get(i).isFoucsed) {
+                return overlayItems.get(i);
+            }
+        }
+        
+        return null;
+        }
+	}
+
     public OverlayItem switchItem(boolean next) {
+        synchronized(idxLock){
         OverlayItem overlayItem = null;
         int index = -1;
         int size = overlayItems.size();
@@ -428,28 +588,40 @@ public class ItemizedOverlay {
         }
         
         return overlayItem;
+        }
     }
     
-    public void focuseOverlayItemByPosition(Position focusedPosition) {
-    	if (!Util.inChina(focusedPosition)) {
-    		return;
-    	}
-    	
-    	// clear focus status
-    	if (getItemByFocused() != null) {
-    		getItemByFocused().isFoucsed = false;
-    	}
+    public void focuseOverlayItem(int focusedPosition) {
+        synchronized(idxLock){
     	
     	// set focus status to item equals to focusPosition
-    	for (OverlayItem item : overlayItems) {
-    		if (item.getPosition().equals(focusedPosition)) {
-    			item.isFoucsed = true;
-    			break;
+    	for (int i = overlayItems.size()-1; i >= 0; i--) {
+    		OverlayItem overlayItem = overlayItems.get(i);
+    		if (i == focusedPosition) {
+    			overlayItem.isFoucsed = true;
+    		} else {
+    			overlayItem.isFoucsed = false;
     		}
     	}
+        }
+    }
+    
+    public void focuseOverlayItem(OverlayItem focusedOverlayItem) {
+        synchronized(idxLock){
+    	
+        	for (int i = overlayItems.size()-1; i >= 0; i--) {
+        		OverlayItem overlayItem = overlayItems.get(i);
+        		if (overlayItem.equals(focusedOverlayItem)) {
+        			overlayItem.isFoucsed = true;
+        		} else {
+        			overlayItem.isFoucsed = false;
+        		}
+        	}
+        }
     }
     
     public OverlayItem getNextItem(OverlayItem overlayItem) {
+        synchronized(idxLock){
     	
     	int index = overlayItems.indexOf(overlayItem);
     	if (index >= 0 && index < overlayItems.size()-1) {
@@ -457,6 +629,16 @@ public class ItemizedOverlay {
     	}
         
         return null;
+        }
     }
 
+}
+
+class Cluster{
+	XYDouble refMercXY;
+	ArrayList<OverlayItem> clusterPins;
+	Cluster(XYDouble refMercXY, ArrayList<OverlayItem> clusterPins){
+		this.refMercXY=refMercXY;
+		this.clusterPins=clusterPins;
+	}
 }

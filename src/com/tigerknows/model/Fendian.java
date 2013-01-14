@@ -242,7 +242,6 @@ public class Fendian extends BaseData {
             poi.setPosition(position);
             poi.setOrderNumber(orderNumber);
             poi.setSourceType(sourceType);
-            poi.setAssociatedObject(tuangou);
         }
         return poi;
     }

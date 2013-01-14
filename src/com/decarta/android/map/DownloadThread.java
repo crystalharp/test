@@ -17,7 +17,6 @@ import com.tigerknows.maps.TileDownload;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.MapMetaFileDownload;
 import com.tigerknows.model.MapTileDataDownload;
-import com.tigerknows.model.Response;
 
 /**
  * Thread class for loading tiles
@@ -145,7 +144,6 @@ public class DownloadThread extends Thread implements MapTileDataDownload.ITileD
 					//Log.i("DownloadThread" + this.sequence,"loading tile from network:" + Util.formatURL(url));
 					try{
                             int size = downloadingTiles.size();
-                            LogWrapper.d("DownloadThread", "downloadTiles.size()="+downloadingTiles.size());
                             if (size > 0) {
                                 try {
                                     int statusCode = 0;
@@ -172,7 +170,6 @@ public class DownloadThread extends Thread implements MapTileDataDownload.ITileD
                                     for (TileDownload tileDownload : downloadingTiles) {
                                         DownloadingTiles.remove(tileDownload);
                                         tilesWaitForDownLoading.remove(tileDownload);
-                                        LogWrapper.d("DownloadThread", "downloadingTiles.remove(tileDownload)="+tileDownload);
                                     }
                                 }
                                 tilesView.refreshMap();
@@ -193,7 +190,6 @@ public class DownloadThread extends Thread implements MapTileDataDownload.ITileD
 	}
 
     private int downloadMetaData(int regionId) {
-        LogWrapper.d("DownloadThread", "downloadMetaData() regionId=" + regionId);
         mapMetaFileDownload.setup(regionId);
         mapMetaFileDownload.query();
         int statusCode = mapMetaFileDownload.getStatusCode();
@@ -205,7 +201,6 @@ public class DownloadThread extends Thread implements MapTileDataDownload.ITileD
         if (tileDownloads == null || tileDownloads.size() == 0) {
             return statusCode;
         }
-        LogWrapper.d("DownloadThread", "downloadTileData() rid=" + tileDownloads.get(0).getRid());
         mapTileDataDownload.setup(tileDownloads, tileDownloads.get(0).getRid());
         mapTileDataDownload.query();
         statusCode = mapTileDataDownload.getStatusCode();

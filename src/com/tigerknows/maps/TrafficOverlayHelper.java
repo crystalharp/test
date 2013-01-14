@@ -99,7 +99,6 @@ public class TrafficOverlayHelper {
 	                			strings.get(i).toString(), rt);
 	                }
 	                overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
-	                overlayItem.setInfoWindowType(InfoWindow.TYPE_SIMPLE);
 	                
 	                // 设置每一个item的点击事件
 	                addTouchEventListenerToOverlayItem(mainThreadHandler, mapView, overlayItem);
@@ -113,7 +112,6 @@ public class TrafficOverlayHelper {
 	            		context.getString(R.string.traffic_goto_end_station), rt);
 	            addTouchEventListenerToOverlayItem(mainThreadHandler, mapView, overlayItem);
 	            overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
-	            overlayItem.setInfoWindowType(InfoWindow.TYPE_SIMPLE);
                 overlay.addOverlayItem(overlayItem);
                 
                 // 更新地图, 并显示"上下按钮"
@@ -221,8 +219,8 @@ public class TrafficOverlayHelper {
 			    @Override
 			    public void onTouchEvent(EventSource eventSource) {
 			        OverlayItem overlayItem=(OverlayItem) eventSource;  
-			        overlayItem.getOwnerOverlay().focuseOverlayItemByPosition(overlayItem.getPosition());
-			    	panToPosition(mainThreadHandler, overlayItem.getPosition(), mapView);
+			        overlayItem.getOwnerOverlay().focuseOverlayItem(overlayItem);
+			    	panToPosition(mainThreadHandler, overlayItem, mapView);
 			    }
 			});
 		} catch (APIException e) {
@@ -306,13 +304,22 @@ public class TrafficOverlayHelper {
 	 * @param mapview
 	 * @param positon
 	 */
-	public static void panToPosition(final Handler mainThreadHandler, Position position, MapView mapview) {
+	public static void panToPosition(final Handler mainThreadHandler, OverlayItem overlayItem, MapView mapview) {
 //		mapview.zoomTo(DEFAULT_SHOW_STEP_ZOOMLEVEL, position);
 		
 		mapview.getOverlaysByName(ItemizedOverlay.TRAFFIC_OVERLAY).isShowInPreferZoom = true;
 		
 		// 将地图平移到某一坐标点
-		mapview.getCurrentOverlay().focuseOverlayItemByPosition(position);
+		mapview.getCurrentOverlay().focuseOverlayItem(overlayItem);
+		mainThreadHandler.sendEmptyMessage(Sphinx.CENTER_SHOW_FOCUSED_OVERLAYITEM);
+	}
+	public static void panToPosition(final Handler mainThreadHandler, int position, MapView mapview) {
+//		mapview.zoomTo(DEFAULT_SHOW_STEP_ZOOMLEVEL, position);
+		
+		mapview.getOverlaysByName(ItemizedOverlay.TRAFFIC_OVERLAY).isShowInPreferZoom = true;
+		
+		// 将地图平移到某一坐标点
+		mapview.getCurrentOverlay().focuseOverlayItem(position);
 		mainThreadHandler.sendEmptyMessage(Sphinx.CENTER_SHOW_FOCUSED_OVERLAYITEM);
 	}
 	

@@ -68,7 +68,7 @@ public class TKConfig {
     public static final int ZOOM_LEVEL_DEFAULT = 5; // 200km
     public static final int ZOOM_LEVEL_CITY = 11; // 2km
     public static final int ZOOM_LEVEL_LOCATION = 14; // 200m
-    public static final int ZOMM_LEVEL_POI = 15;
+    public static final int ZOOM_LEVEL_POI = 15;
     
     //腾讯首发标签ANDTencent
     public static final String sSPREADER_TENCENT = "ANDqQFUnusual-SF";

@@ -13,7 +13,7 @@ import com.decarta.android.util.XYZ;
 public class Tile implements Comparable<Tile>{
 	
 	private MapLayerProperty mapLayerProperty=null; 
-
+	
     public XYZ xyzTK=new XYZ(0,0,0);
 	public XYZ xyz=new XYZ(0,0,0);
 	public int distanceFromCenter=0;
@@ -37,7 +37,7 @@ public class Tile implements Comparable<Tile>{
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return xyz.x+"_"+xyz.y+"_"+xyz.z+"_"+mapLayerProperty.mapLayerType;
+		return xyz.x+"_"+xyz.y+"_"+xyz.z+"_"+mapLayerProperty.mapLayerType+"_"+xyzTK.x+"_"+xyzTK.y+"_"+xyzTK.z;
 	}
 	
 	@Override
@@ -54,7 +54,7 @@ public class Tile implements Comparable<Tile>{
 	@Override
 	public int hashCode() {
 		// TODO Auto-generated method stub
-		int hash = 29 * xyz.hashCode() + mapLayerProperty.hashCode();
+		int hash = 29 * xyz.hashCode() + mapLayerProperty.hashCode() + 29 * xyzTK.hashCode();
 		return hash;
 	}
 }

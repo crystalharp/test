@@ -390,6 +390,10 @@ public class POI extends BaseData {
 
     public static final int SOURCE_TYPE_ZHANLAN = 11;
 
+    public static final int SOURCE_TYPE_CLICK_SELECT_POINT = 12;
+
+    public static final int SOURCE_TYPE_LONG_CLICK_SELECT_POINT = 13;
+
     public static final int FROM_ONLINE = 0;
 
     public static final int FROM_LOCAL = 1;
@@ -468,19 +472,6 @@ public class POI extends BaseData {
     
     public int ciytId = 0;
     
-    /*
-     * 相关联的对象???
-     */
-    private Object associatedObject=null;
-    
-    public Object getAssociatedObject() {
-        return associatedObject;
-    }
-
-    public void setAssociatedObject(Object associatedObject) {
-        this.associatedObject = associatedObject;
-    }
-
     public boolean isUpdated() {
         return updated;
     }

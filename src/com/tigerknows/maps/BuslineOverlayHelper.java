@@ -90,7 +90,6 @@ public class BuslineOverlayHelper {
 					OverlayItem overlayItem = new OverlayItem(poi.getPosition(), busIc, context.getString(R.string.busline_map_bubble_content, i, poi.getName()), rt);
 					
 					overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
-	                overlayItem.setInfoWindowType(InfoWindow.TYPE_SIMPLE);
 	                
 					addTouchEventListenerToOverlayItem(mainThreadHandler, mapView, overlayItem);
 					overlay.addOverlayItem(overlayItem);
@@ -169,8 +168,8 @@ public class BuslineOverlayHelper {
 			    @Override
 			    public void onTouchEvent(EventSource eventSource) {
 			        OverlayItem overlayItem=(OverlayItem) eventSource; 
-			        overlayItem.getOwnerOverlay().focuseOverlayItemByPosition(overlayItem.getPosition());
-			        panToPosition(mainThreadHandler, overlayItem.getPosition(), mapView);
+			        overlayItem.getOwnerOverlay().focuseOverlayItem(overlayItem);
+			        panToPosition(mainThreadHandler, overlayItem, mapView);
 			    }
 			});
 		} catch (APIException e) {
@@ -256,13 +255,22 @@ public class BuslineOverlayHelper {
 	 * @param mapview
 	 * @param positon
 	 */
-	public static void panToPosition(final Handler mainThreadHandler, Position position, MapView mapview) {
+	public static void panToPosition(final Handler mainThreadHandler, OverlayItem overlayItem, MapView mapview) {
 //		mapview.zoomTo(DEFAULT_SHOW_STEP_ZOOMLEVEL, position);
 		
 		mapview.getOverlaysByName(ItemizedOverlay.LINE_OVERLAY).isShowInPreferZoom = true;
 		
 		// 将地图平移到某一坐标点
-		mapview.getCurrentOverlay().focuseOverlayItemByPosition(position);
+		mapview.getCurrentOverlay().focuseOverlayItem(overlayItem);
+		mainThreadHandler.sendEmptyMessage(Sphinx.CENTER_SHOW_FOCUSED_OVERLAYITEM);
+	}
+	public static void panToPosition(final Handler mainThreadHandler, int position, MapView mapview) {
+//		mapview.zoomTo(DEFAULT_SHOW_STEP_ZOOMLEVEL, position);
+		
+		mapview.getOverlaysByName(ItemizedOverlay.LINE_OVERLAY).isShowInPreferZoom = true;
+		
+		// 将地图平移到某一坐标点
+		mapview.getCurrentOverlay().focuseOverlayItem(position);
 		mainThreadHandler.sendEmptyMessage(Sphinx.CENTER_SHOW_FOCUSED_OVERLAYITEM);
 	}
 }

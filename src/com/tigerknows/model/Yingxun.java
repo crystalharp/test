@@ -180,7 +180,6 @@ public class Yingxun extends BaseData {
             poi.setPosition(position);
             poi.setOrderNumber(orderNumber);
             poi.setSourceType(sourceType);
-            poi.setAssociatedObject(dianying);
         }
         return poi;
     }

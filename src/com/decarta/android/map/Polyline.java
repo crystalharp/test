@@ -40,11 +40,11 @@ public class Polyline extends Shape implements EventSource{
 	private static int GRANULARITY=10;
 	private static int[][] GENERALIZE_ZOOM_LEVEL={
 	// genLevel, idxLevel 这个表格依据什么制定
-		{5,2},  //zoom 0
-		{5,2},  //zoom 1
-		{5,2},  //zoom 2
-		{5,2},  //zoom 3
-		{5,2},  //zoom 4
+		{4,2},  //zoom 0
+		{4,2},  //zoom 1
+		{4,2},  //zoom 2
+		{4,2},  //zoom 3
+		{4,2},  //zoom 4
 		{7,6},  //zoom 5
 		{7,6},  //zoom 6
 		{7,6},  //zoom 7, max 80 points
@@ -54,13 +54,13 @@ public class Polyline extends Shape implements EventSource{
 		{11,11}, //zoom 11, max 100 points
 		{13,13}, //zoom 12, max 170 points
 		{13,13}, //zoom 13, max 90 points
-		{18,14}, //zoom 14, max 150 points
-		{18,15}, //zoom 15
-		{18,15}, //zoom 16
-		{18,15}, //zoom 17
-		{18,15}, //zoom 18
-		{18,15}, //zoom 19
-		{18,15}  //zoom 20
+		{20,15}, //zoom 14, max 150 points
+		{20,15}, //zoom 15
+		{20,15}, //zoom 16
+		{20,15}, //zoom 17
+		{20,15}, //zoom 18
+		{20,15}, //zoom 19
+		{20,15}  //zoom 20
 	};
 	private static FloatBuffer vertexBuffer;
 	
@@ -188,7 +188,7 @@ public class Polyline extends Shape implements EventSource{
 		List<XYZ> overlapTiles=new ArrayList<XYZ>();
 		for(int i=0;i<tiles.size();i++){
 			Tile tile=tiles.get(i);
-			List<XYZ> xyzs=Util.findOverlapTiles(tile.xyz, idxLevel);
+			List<XYZ> xyzs=Util.findOverlapXYZs(tile.xyz, idxLevel);
 			if(!overlapTiles.contains(xyzs.get(0))){
 				overlapTiles.addAll(xyzs);
 			}

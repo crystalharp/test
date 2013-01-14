@@ -30,18 +30,18 @@ public class Icon {
 	}
 
     public Icon(Bitmap image, XYInteger size, XYInteger offset, int order) {
-        setImage(image);
-        this.size=size;
-        this.offset=offset;
+		setImage(image);
+		this.size=size;
+		this.offset=offset;
         this.order = order;
-    }
+	}
 	
 	public Icon clone(){
 	    return new Icon(image,new XYInteger(size.x,size.y),new XYInteger(offset.x,offset.y), this.order);
 	}
 	
 	public Bitmap getImage() {
-        return image;
+		return image;
 	}
 	
 	public void setSize(XYInteger size) {

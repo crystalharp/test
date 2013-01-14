@@ -10,19 +10,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Vector;
-
-import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Bitmap.CompressFormat;
-import android.net.ConnectivityManager;
-import android.net.Uri;
-import android.os.ParcelFileDescriptor;
-import android.telephony.TelephonyManager;
-import android.util.TypedValue;
 
 import com.decarta.CONFIG;
 import com.decarta.android.exception.APIException;
@@ -34,6 +23,17 @@ import com.decarta.android.map.Tile;
 import com.decarta.android.map.TileGridResponse;
 import com.decarta.android.scale.Length;
 import com.decarta.android.scale.Length.UOM;
+
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Bitmap.CompressFormat;
+import android.net.ConnectivityManager;
+import android.net.Uri;
+import android.os.ParcelFileDescriptor;
+import android.telephony.TelephonyManager;
+import android.util.TypedValue;
 
 public class Util {
 
@@ -84,107 +84,30 @@ public class Util {
 		return ((x+mod2)%mod+mod)%mod-mod2;
 	}
 
-	/**
-	 * basic check of network connectivity
-	 * 
-	 * @param ctx reference to the calling Activity
-	 * @return whether connected.
-	 */
-	public static boolean checkNetworkStatus(Context ctx) {
-		boolean resp = false;
-		final ConnectivityManager connMgr = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
-		final android.net.NetworkInfo wifi = connMgr.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-		final android.net.NetworkInfo mobile = connMgr.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-		if ((mobile != null && mobile.isAvailable()) || (wifi != null && wifi.isAvailable())) {
-			resp = true;
-		}
-		return resp;
-	}
-    
-    public static boolean isConnectionFast(Context ctx){  
-        ConnectivityManager connMgr = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
-        android.net.NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
-        int type = 0;
-        int subType = 0;
-        if (networkInfo != null) {
-            type = networkInfo.getType();
-            subType = networkInfo.getSubtype();
-        }
-        if(type==ConnectivityManager.TYPE_WIFI){  
-            return true;  
-        }else if(type==ConnectivityManager.TYPE_MOBILE){  
-            switch(subType){  
-            case TelephonyManager.NETWORK_TYPE_1xRTT:  
-                return false; // ~ 50-100 kbps  
-            case TelephonyManager.NETWORK_TYPE_CDMA:  
-                return false; // ~ 14-64 kbps  
-            case TelephonyManager.NETWORK_TYPE_EDGE:  
-                return false; // ~ 50-100 kbps  
-            case TelephonyManager.NETWORK_TYPE_EVDO_0:  
-                return true; // ~ 400-1000 kbps  
-            case TelephonyManager.NETWORK_TYPE_EVDO_A:  
-                return true; // ~ 600-1400 kbps  
-            case TelephonyManager.NETWORK_TYPE_GPRS:  
-                return false; // ~ 100 kbps  
-            case TelephonyManager.NETWORK_TYPE_HSDPA:  
-                return true; // ~ 2-14 Mbps  
-            case TelephonyManager.NETWORK_TYPE_HSPA:  
-                return true; // ~ 700-1700 kbps  
-            case TelephonyManager.NETWORK_TYPE_HSUPA:  
-                return true; // ~ 1-23 Mbps  
-            case TelephonyManager.NETWORK_TYPE_UMTS:  
-                return true; // ~ 400-7000 kbps  
-            // NOT AVAILABLE YET IN API LEVEL 7  
-//            case Connectivity.NETWORK_TYPE_EHRPD:  
-//                return true; // ~ 1-2 Mbps  
-//            case Connectivity.NETWORK_TYPE_EVDO_B:  
-//                return true; // ~ 5 Mbps  
-//            case Connectivity.NETWORK_TYPE_HSPAP:  
-//                return true; // ~ 10-20 Mbps  
-//            case Connectivity.NETWORK_TYPE_IDEN:  
-//                return false; // ~25 kbps   
-//            case Connectivity.NETWORK_TYPE_LTE:  
-//                return true; // ~ 10+ Mbps  
-            // Unknown  
-            case TelephonyManager.NETWORK_TYPE_UNKNOWN:  
-                return false;   
-            default:  
-                return false;  
-            }  
-        }else{  
-            return false;  
-        }  
-    }  
-
 	public static final double EARTH_RADIUS_METERS = 6371000.000000;
 
 	/**
 	 * 
-	 * @param screenX
-	 *            (screen width)
-	 * @param screenY
-	 *            (screen height)
 	 * @param positions
 	 * 
 	 */
-	public static BoundingBox getBoundingBoxToFitPositions(int screenX,
-			int screenY, List<Position> positions) {
-		Position position1;
-		double minLat = ((Position) positions.get(0)).getLat();
-		double maxLat = ((Position) positions.get(0)).getLat();
-		double minLon = ((Position) positions.get(0)).getLon();
-		double maxLon = ((Position) positions.get(0)).getLon();
+	public static BoundingBox getBoundingBoxToFitPositions(ArrayList<Position> positions) {
+		Position position;
+		double minLat = positions.get(0).getLat();
+		double maxLat = positions.get(0).getLat();
+		double minLon = positions.get(0).getLon();
+		double maxLon = positions.get(0).getLon();
 		for (int i = 1; i < positions.size(); i++) {
-			position1 = (Position) positions.get(i);
-			if (position1.getLon() > maxLon) {
-				maxLon = position1.getLon();
-			} else if (position1.getLon() < minLon) {
-				minLon = position1.getLon();
+			position = positions.get(i);
+			if (position.getLon() > maxLon) {
+				maxLon = position.getLon();
+			} else if(position.getLon()<minLon){
+				minLon = position.getLon();
 			}
-			if (position1.getLat() > maxLat) {
-				maxLat = position1.getLat();
-			} else if (position1.getLat() < minLat) {
-				minLat = position1.getLat();
+			if (position.getLat() > maxLat) {
+				maxLat = position.getLat();
+			} else if(position.getLat()<minLat){
+				minLat = position.getLat();
 			}
 		}
 		return new BoundingBox(new Position(minLat, minLon), new Position(
@@ -201,74 +124,10 @@ public class Util {
 	 * 
 	 */
 	public static int getZoomLevelToFitPositions(int screenX, int screenY,
-			List<Position> positions) throws APIException{
-		Position position1;
-		double minLat = (positions.get(0)).getLat();
-		double maxLat = (positions.get(0)).getLat();
-		double minLon = (positions.get(0)).getLon();
-		double maxLon = (positions.get(0)).getLon();
-		for (int i = 1; i < positions.size(); i++) {
-			position1 = positions.get(i);
-			if (position1.getLon() > maxLon) {
-				maxLon = position1.getLon();
-			} else {
-				minLon = position1.getLon();
-			}
-			if (position1.getLat() > maxLat) {
-				maxLat = position1.getLat();
-			} else {
-				minLat = position1.getLat();
-			}
-		}
-		return getZoomLevelToFitBoundingBox(screenX, screenY, new BoundingBox(
-				new Position(minLat, minLon), new Position(maxLat, maxLon)));
+			ArrayList<Position> positions) throws APIException{
+		
+		return getZoomLevelToFitBoundingBox(screenX, screenY, getBoundingBoxToFitPositions(positions));
 	}
-
-    public static int getZoomLevelToFitPositions(int screenX, int screenY, int paddingLeftRight, int paddingTop, List<Position> positions, Position screenCenter) throws APIException {
-        if (positions == null || positions.isEmpty()) {
-            throw new APIException("positions is null");
-        }
-        BoundingBox boundingBox = getBoundingBoxToFitPositions(screenX, screenY, positions);
-        if (screenCenter != null) {
-            Position centerPosition = boundingBox.getCenterPosition();
-            Position min = boundingBox.getMinPosition();
-            Position max = boundingBox.getMaxPosition();
-            double latOffset = 0;
-            double lonOffset = 0;
-            if (screenCenter.getLat()>centerPosition.getLat()) {
-                latOffset = (max.getLat()-centerPosition.getLat())+(screenCenter.getLat()-centerPosition.getLat());
-            } else {
-                latOffset = -((max.getLat()-centerPosition.getLat())+(centerPosition.getLat()-screenCenter.getLat()));
-            }
-            if (screenCenter.getLon()>centerPosition.getLon()) {
-                lonOffset = (max.getLon()-centerPosition.getLon())+(screenCenter.getLon()-centerPosition.getLon());
-            } else {
-                lonOffset = -((max.getLon()-centerPosition.getLon())+(centerPosition.getLon()-screenCenter.getLon()));
-            }
-            
-            if (latOffset > 0) {
-                if (lonOffset > 0) {
-                    positions.add(new Position(max.getLat()+latOffset, max.getLon()+lonOffset));
-                } else {
-                    positions.add(new Position(max.getLat()+latOffset, min.getLon()+lonOffset));
-                }
-            } else {
-                if (lonOffset > 0) {
-                    positions.add(new Position(min.getLat()+latOffset, max.getLon()+lonOffset));
-                } else {
-                    positions.add(new Position(min.getLat()+latOffset, min.getLon()+lonOffset));
-                }
-            }
-            
-            boundingBox = Util.getBoundingBoxToFitPositions(screenX, screenY, positions);
-        }
-        
-        if (boundingBox != null) {
-            return Util.getZoomLevelToFitBoundingBox(screenX, screenY, paddingLeftRight, paddingTop, boundingBox);
-        } else {
-            throw new APIException("boundingBox is null");
-        }
-    }
 
 	/**
 	 * 
@@ -307,76 +166,11 @@ public class Util {
 		return fitZoom;
 	}
 
-	/**
-	 * 
-	 * 画交通图层时, 需要考虑
-	 * 1. 让图标也全部显示在屏幕内
-	 * 2. 交通图层不会被title盖住
-	 * 
-	 * @param screenX
-	 *            (screen width)
-	 * @param screenY
-	 *            (screen height)
-	 * @param halfIconSize
-	 * 			  (half of icon size)
-	 * @param boundingBox
-	 *            to fit
-	 * 
-	 */
-	public static int getZoomLevelToFitBoundingBox(int screenX, int screenY, int halfIconSize, int titleHeight, BoundingBox boundingBox) throws APIException {
-		screenX = Math.abs(screenX / 2);
-		screenY = Math.abs(screenY / 2);
-		int fitZoom = CONFIG.ZOOM_LOWER_BOUND;
-		for (int gxZoom = CONFIG.ZOOM_UPPER_BOUND; gxZoom >= CONFIG.ZOOM_LOWER_BOUND; --gxZoom) {
-
-			double scale = Util.radsPerPixelAtZoom(CONFIG.TILE_SIZE, gxZoom);
-
-			double pixelsY = Util.lat2pix(boundingBox.getCenterPosition().getLat(), scale);
-			double pixelsX = Util.lon2pix(boundingBox.getCenterPosition().getLon(), scale);
-
-			double maxlat = Util.pix2lat((int) pixelsY + (screenY - halfIconSize), scale);
-			double maxlon = Util.pix2lon((int) pixelsX + (screenX - halfIconSize), scale);
-
-			double minlat = Util.pix2lat((int) pixelsY - (screenY - halfIconSize - titleHeight), scale);
-			double minlon = Util.pix2lon((int) pixelsX - (screenX - halfIconSize), scale);
-
-			BoundingBox gxbbox = new BoundingBox(new Position(minlat, minlon),new Position(maxlat, maxlon));
-
-			if (gxbbox.contains(boundingBox.getMinPosition()) && gxbbox.contains(boundingBox.getMaxPosition())) {
-				fitZoom = gxZoom;
-				break;
-			} 
-		}
-		
-		if (fitZoom == CONFIG.ZOOM_JUMP) {
-			fitZoom = CONFIG.ZOOM_JUMP - 1;
-		}
-		
-		return fitZoom;
-	}
-	
-    private static void correctToTKXY(XYDouble centerXY, int gxZoom) throws APIException {
-        long pixX = Math.round(centerXY.x);
-        long pixY = Math.round(centerXY.y);
-        if (pixY > Integer.MAX_VALUE || pixY < Integer.MIN_VALUE) {
-            throw APIException.INVALID_MERCATOR_Y_INFINITY;
-        }
-        float offsetPixX = (CONFIG.TILE_SIZE + ((int)pixX % CONFIG.TILE_SIZE)) % CONFIG.TILE_SIZE - CONFIG.TILE_SIZE / 2;
-        Position pos = mercPixToPos(centerXY, gxZoom);
-        double tkpixY = TKlat2pix(pos.getLat(), gxZoom);
-        float offsetPixY = (CONFIG.TILE_SIZE - ((int)tkpixY % CONFIG.TILE_SIZE)) % CONFIG.TILE_SIZE - CONFIG.TILE_SIZE / 2;
-        if (Math.abs(Math.abs(offsetPixX) - (CONFIG.TILE_SIZE / 2)) < 2) {
-            centerXY.x = centerXY.x + 2;
-            correctToTKXY(centerXY, gxZoom);
-        } else if (Math.abs(Math.abs(offsetPixY) - (CONFIG.TILE_SIZE / 2)) < 2) {
-            centerXY.y = centerXY.y - 2;
-            correctToTKXY(centerXY, gxZoom);
-        }
-    }
 
 	public static TileGridResponse handlePortrayMapRequest(XYDouble centerXY, int gxZoom) throws APIException{
 		TileGridResponse resp = new TileGridResponse();
-		correctToTKXY(centerXY, gxZoom);
+	    correctToTKXY(centerXY, gxZoom);
+
 		long pixX = Math.round(centerXY.x);
 		long pixY = Math.round(centerXY.y);
 		if(pixY>Integer.MAX_VALUE || pixY<Integer.MIN_VALUE){
@@ -389,10 +183,8 @@ public class Util {
         Position pos = mercPixToPos(centerXY, gxZoom);
         double tkpixY = TKlat2pix(pos.getLat(), gxZoom);
         offsetPixY = (CONFIG.TILE_SIZE - ((int)tkpixY % CONFIG.TILE_SIZE)) % CONFIG.TILE_SIZE - CONFIG.TILE_SIZE / 2;
-        LogWrapper.d("TilesView", "handlePortrayMapRequest() fixedSeedRowIdx="+centerXY+","+fixedSeedRowIdx+","+(int) Math.floor((double) TKlat2pix(pos.getLat(), gxZoom) / CONFIG.TILE_SIZE));
         resp.centerXYZTK = mercPixToTKXYZ(centerXY, gxZoom);
 		resp.setFixedGridPixelOffset(new XYFloat(-offsetPixX, offsetPixY));
-        LogWrapper.d("TilesView", "handlePortrayMapRequest() getFixedGridPixelOffset="+resp.getFixedGridPixelOffset());
 		resp.centerXYZ = new XYZ(fixedSeedColumnIdx, fixedSeedRowIdx, gxZoom);
 		resp.centerXY=new XYDouble(centerXY.x,centerXY.y);
 		
@@ -400,32 +192,8 @@ public class Util {
 		resp.setRadiusY(new Length(radius,UOM.M));
 		return resp;
 	}
-    
-    public static XYZ xyzToTKXYZ(XYZ xyz) {
-        XYDouble mercPix = xyzToMercPix(xyz);
-        xyz = mercPixToTKXYZ(mercPix, xyz.z);
-        return xyz;
-    }
 	
-    public static XYDouble xyzToMercPix(XYZ xyz) {
-        double x = xyz.x * CONFIG.TILE_SIZE;
-        double y =xyz.y * CONFIG.TILE_SIZE;
-        XYDouble mercPix = new XYDouble(x, y);
-        return mercPix;
-    }
-    
-    public static XYZ mercPixToTKXYZ(XYDouble mercPix, int zoomLevel) {   
-        Position pos = mercPixToPos(mercPix, zoomLevel);
-        double pixX = TKlon2pix(pos.getLon(), zoomLevel);
-        double pixY = TKlat2pix(pos.getLat(), zoomLevel);
-        int fixedSeedColumnIdx = (int) Math.floor((double) pixX / CONFIG.TILE_SIZE);
-        int fixedSeedRowIdx = (int) Math.floor((double) (pixY) / CONFIG.TILE_SIZE);
-        XYZ xyz = new XYZ(fixedSeedColumnIdx, fixedSeedRowIdx, zoomLevel);
-        LogWrapper.d("TilesView", "mercPixToTKXYZ(), mercPix="+mercPix+","+xyz);
-        return xyz;
-    }
-	
-	public static double handleRadius(XYDouble centerXY, int gxZoom){
+	public static double handleRadius(XYDouble centerXY,	int gxZoom){
 		double scale = Util.radsPerPixelAtZoom(CONFIG.TILE_SIZE, gxZoom);
 		double radius = CONFIG.TILE_SIZE / 2 * scale * Util.EARTH_RADIUS_METERS;
 		radius *= Math.cos(pix2lat(centerXY.y, scale) * Math.PI / 180);
@@ -536,7 +304,7 @@ public class Util {
 		return (Math.PI / 2) - (2 * Math.atan(t	* Math.pow((1 - eSinPhi) / (1 + eSinPhi), ecc / 2)));
 	}
 	
-	public static List<XYZ> findOverlapTiles(XYZ xyz, int zoomLevel){
+	public static List<XYZ> findOverlapXYZs(XYZ xyz, int zoomLevel){
 		ArrayList<XYZ> xyzs=new ArrayList<XYZ>();
 		if(zoomLevel<xyz.z){
 			float scale=((float)1)/(1<<(xyz.z-zoomLevel));
@@ -552,61 +320,32 @@ public class Util {
 		return xyzs;
 		
 	}
-		
-	/**
-	 * 为当前屏幕可见Tiles加上屏幕上方及屏幕下方的Tile
-	 * (为绕过BUG而写, 后续当解决BUG并去除)
-	 * 
-	 * @param origs 当前屏幕可见Tiles的Tile坐标
-	 * @return
-	 */
-	public static List<XYZ> getVerticalLargerOverlapTiles(List<XYZ> origs) {
-		if (origs == null || origs.size() == 0) {
-			return null;
-		}
-		
-		ArrayList<XYZ> xyzs=new ArrayList<XYZ>();
-		xyzs.addAll(origs);
-		
-		int minY = origs.get(0).y;
-		int maxY = origs.get(0).y;
-		int minX = origs.get(0).x;
-		int maxX = origs.get(0).x;
-		
-		for (XYZ xyz : origs) {
-			if (xyz.y < minY) {
-				minY = xyz.y;
-			}
-			if (xyz.y > maxY) {
-				maxY = xyz.y;
-			}
-			
-			if (xyz.x < minX) {
-				minX = xyz.x;
-			}
-			if (xyz.x > maxX) {
-				maxX = xyz.x;
+	
+	public static List<XYInteger> findOverlapXYs(XYZ xyz, int zoomLevel){
+		ArrayList<XYInteger> xys=new ArrayList<XYInteger>();
+		if(zoomLevel<xyz.z){
+			float scale=((float)1)/(1<<(xyz.z-zoomLevel));
+			xys.add(new XYInteger((int)Math.floor(xyz.x*scale),(int)Math.floor(xyz.y*scale)));
+		}else{
+			int expand=1<<(zoomLevel-xyz.z);
+			for(int x=xyz.x*expand;x<(xyz.x+1)*expand;x++){
+				for(int y=xyz.y*expand;y<(xyz.y+1)*expand;y++){
+					xys.add(new XYInteger(x,y));
+				}
 			}
 		}
+		return xys;
 		
-		for (XYZ xyz : origs) {
-			if (xyz.y == minY) {
-				xyzs.add(new XYZ(xyz.x, xyz.y - 1, xyz.z));
-			}
-			if (xyz.y == maxY) {
-				xyzs.add(new XYZ(xyz.x, xyz.y + 1, xyz.z));
-			}
-			
-			if (xyz.x == minX) {
-				xyzs.add(new XYZ(xyz.x - 1, xyz.y, xyz.z));
-			}
-			if (xyz.x == maxX) {
-				xyzs.add(new XYZ(xyz.x + 1, xyz.y, xyz.z));
-			}
-		}
-		return xyzs;
 	}
 	
+	public static int getPower2(float size){
+		int r=1;
+		while(r<size){
+			r*=2;
+		}
+		return r;
+	}
+		
 	public static ArrayList<Tile> getTouchTiles(XYDouble mercXY,int z, double radius){
 		ArrayList<Tile> tiles=new ArrayList<Tile>();
 		int er=(int)Math.floor((mercXY.x+radius)/CONFIG.TILE_SIZE);
@@ -637,6 +376,236 @@ public class Util {
 		return new BoundingBox(minPos,maxPos);
 	}
 	
+	public static boolean coveredByTiles(XYZ xyz, int blX, int blY, int trX, int trY, int z, HashSet<XYZ> xyzs){
+		boolean covered=true;
+		if(z<=xyz.z){
+			float scale=((float)1)/(1<<(xyz.z-z));
+			xyz.x=Util.indexXMod(xyz.x, xyz.z);
+			XYZ coverXYZ=new XYZ((int)Math.floor(xyz.x*scale),(int)Math.floor(xyz.y*scale),z);
+			covered= xyzs.contains(coverXYZ);
+		}else{
+			int expand=1<<(z-xyz.z);
+			int xmin=xyz.x*expand;
+			int xmax=(xyz.x+1)*expand-1;
+			int ymin=xyz.y*expand;
+			int ymax=(xyz.y+1)*expand-1;
+			if(xmin<blX) xmin=blX;
+			if(xmax>trX) xmax=trX;
+			if(ymin<blY) ymin=blY;
+			if(ymax>trY) ymax=trY;
+			
+			if(xmin>xmax || ymin>ymax){
+				LogWrapper.e("Util", "coveredByTiles xyz invisible,blX,blY,trX,trY,z:"+xyz.toString()+","+blX+","+blY+","+trX+","+trY+","+z);
+				return true;
+			}
+			for(int i=ymin;i<=ymax;i++){
+				for(int j=xmin;j<=xmax;j++){
+					XYZ coverXYZ=new XYZ(j,i,z);
+					coverXYZ.x=Util.indexXMod(coverXYZ.x,coverXYZ.z);
+					if(!xyzs.contains(coverXYZ)){
+						covered= false;
+						break;
+					}
+				}
+				if(!covered) break;
+			}
+			
+		}
+		return covered;
+			
+	}
+
+    public static int getZoomLevelToFitPositions(int screenX, int screenY, int paddingLeftRight, int paddingTop, ArrayList<Position> positions, Position screenCenter) throws APIException {
+        if (positions == null || positions.isEmpty()) {
+            throw new APIException("positions is null");
+        }
+        BoundingBox boundingBox = getBoundingBoxToFitPositions(positions);
+        if (screenCenter != null) {
+            Position centerPosition = boundingBox.getCenterPosition();
+            Position min = boundingBox.getMinPosition();
+            Position max = boundingBox.getMaxPosition();
+            double latOffset = 0;
+            double lonOffset = 0;
+            if (screenCenter.getLat()>centerPosition.getLat()) {
+                latOffset = (max.getLat()-centerPosition.getLat())+(screenCenter.getLat()-centerPosition.getLat());
+            } else {
+                latOffset = -((max.getLat()-centerPosition.getLat())+(centerPosition.getLat()-screenCenter.getLat()));
+            }
+            if (screenCenter.getLon()>centerPosition.getLon()) {
+                lonOffset = (max.getLon()-centerPosition.getLon())+(screenCenter.getLon()-centerPosition.getLon());
+            } else {
+                lonOffset = -((max.getLon()-centerPosition.getLon())+(centerPosition.getLon()-screenCenter.getLon()));
+            }
+            
+            if (latOffset > 0) {
+                if (lonOffset > 0) {
+                    positions.add(new Position(max.getLat()+latOffset, max.getLon()+lonOffset));
+                } else {
+                    positions.add(new Position(max.getLat()+latOffset, min.getLon()+lonOffset));
+                }
+            } else {
+                if (lonOffset > 0) {
+                    positions.add(new Position(min.getLat()+latOffset, max.getLon()+lonOffset));
+                } else {
+                    positions.add(new Position(min.getLat()+latOffset, min.getLon()+lonOffset));
+                }
+            }
+            
+            boundingBox = Util.getBoundingBoxToFitPositions(positions);
+        }
+        
+        if (boundingBox != null) {
+            return Util.getZoomLevelToFitBoundingBox(screenX, screenY, paddingLeftRight, paddingTop, boundingBox);
+        } else {
+            throw new APIException("boundingBox is null");
+        }
+    }
+    /**
+     * 
+     * 画交通图层时, 需要考虑
+     * 1. 让图标也全部显示在屏幕内
+     * 2. 交通图层不会被title盖住
+     * 
+     * @param screenX
+     *            (screen width)
+     * @param screenY
+     *            (screen height)
+     * @param halfIconSize
+     *            (half of icon size)
+     * @param boundingBox
+     *            to fit
+     * 
+     */
+    public static int getZoomLevelToFitBoundingBox(int screenX, int screenY, int halfIconSize, int titleHeight, BoundingBox boundingBox) throws APIException {
+        screenX = Math.abs(screenX / 2);
+        screenY = Math.abs(screenY / 2);
+        int fitZoom = CONFIG.ZOOM_LOWER_BOUND;
+        for (int gxZoom = CONFIG.ZOOM_UPPER_BOUND; gxZoom >= CONFIG.ZOOM_LOWER_BOUND; --gxZoom) {
+
+            double scale = Util.radsPerPixelAtZoom(CONFIG.TILE_SIZE, gxZoom);
+
+            double pixelsY = Util.lat2pix(boundingBox.getCenterPosition().getLat(), scale);
+            double pixelsX = Util.lon2pix(boundingBox.getCenterPosition().getLon(), scale);
+
+            double maxlat = Util.pix2lat((int) pixelsY + (screenY - halfIconSize), scale);
+            double maxlon = Util.pix2lon((int) pixelsX + (screenX - halfIconSize), scale);
+
+            double minlat = Util.pix2lat((int) pixelsY - (screenY - halfIconSize - titleHeight), scale);
+            double minlon = Util.pix2lon((int) pixelsX - (screenX - halfIconSize), scale);
+
+            BoundingBox gxbbox = new BoundingBox(new Position(minlat, minlon),new Position(maxlat, maxlon));
+
+            if (gxbbox.contains(boundingBox.getMinPosition()) && gxbbox.contains(boundingBox.getMaxPosition())) {
+                fitZoom = gxZoom;
+                break;
+            } 
+        }
+        
+        if (fitZoom == CONFIG.ZOOM_JUMP) {
+            fitZoom = CONFIG.ZOOM_JUMP - 1;
+        }
+        
+        return fitZoom;
+    }
+    
+    private static void correctToTKXY(XYDouble centerXY, int gxZoom) throws APIException {
+        long pixX = Math.round(centerXY.x);
+        long pixY = Math.round(centerXY.y);
+        if (pixY > Integer.MAX_VALUE || pixY < Integer.MIN_VALUE) {
+            throw APIException.INVALID_MERCATOR_Y_INFINITY;
+        }
+        float offsetPixX = (CONFIG.TILE_SIZE + ((int)pixX % CONFIG.TILE_SIZE)) % CONFIG.TILE_SIZE - CONFIG.TILE_SIZE / 2;
+        Position pos = mercPixToPos(centerXY, gxZoom);
+        double tkpixY = TKlat2pix(pos.getLat(), gxZoom);
+        float offsetPixY = (CONFIG.TILE_SIZE - ((int)tkpixY % CONFIG.TILE_SIZE)) % CONFIG.TILE_SIZE - CONFIG.TILE_SIZE / 2;
+        if (Math.abs(Math.abs(offsetPixX) - (CONFIG.TILE_SIZE / 2)) < 2) {
+            centerXY.x = centerXY.x + 2;
+            correctToTKXY(centerXY, gxZoom);
+        } else if (Math.abs(Math.abs(offsetPixY) - (CONFIG.TILE_SIZE / 2)) < 2) {
+            centerXY.y = centerXY.y - 2;
+            correctToTKXY(centerXY, gxZoom);
+        }
+    }
+
+    
+    public static XYZ xyzToTKXYZ(XYZ xyz) {
+        XYDouble mercPix = xyzToMercPix(xyz);
+        xyz = mercPixToTKXYZ(mercPix, xyz.z);
+        return xyz;
+    }
+    
+    public static XYDouble xyzToMercPix(XYZ xyz) {
+        double x = xyz.x * CONFIG.TILE_SIZE;
+        double y =xyz.y * CONFIG.TILE_SIZE;
+        XYDouble mercPix = new XYDouble(x, y);
+        return mercPix;
+    }
+    
+    public static XYZ mercPixToTKXYZ(XYDouble mercPix, int zoomLevel) {   
+        Position pos = mercPixToPos(mercPix, zoomLevel);
+        double pixX = TKlon2pix(pos.getLon(), zoomLevel);
+        double pixY = TKlat2pix(pos.getLat(), zoomLevel);
+        int fixedSeedColumnIdx = (int) Math.floor((double) pixX / CONFIG.TILE_SIZE);
+        int fixedSeedRowIdx = (int) Math.floor((double) (pixY) / CONFIG.TILE_SIZE);
+        XYZ xyz = new XYZ(fixedSeedColumnIdx, fixedSeedRowIdx, zoomLevel);
+        LogWrapper.d("TilesView", "mercPixToTKXYZ(), mercPix="+mercPix+","+xyz);
+        return xyz;
+    }
+
+    /**
+     * 为当前屏幕可见Tiles加上屏幕上方及屏幕下方的Tile
+     * (为绕过BUG而写, 后续当解决BUG并去除)
+     * 
+     * @param origs 当前屏幕可见Tiles的Tile坐标
+     * @return
+     */
+    public static List<XYZ> getVerticalLargerOverlapTiles(List<XYZ> origs) {
+        if (origs == null || origs.size() == 0) {
+            return null;
+        }
+        
+        ArrayList<XYZ> xyzs=new ArrayList<XYZ>();
+        xyzs.addAll(origs);
+        
+        int minY = origs.get(0).y;
+        int maxY = origs.get(0).y;
+        int minX = origs.get(0).x;
+        int maxX = origs.get(0).x;
+        
+        for (XYZ xyz : origs) {
+            if (xyz.y < minY) {
+                minY = xyz.y;
+            }
+            if (xyz.y > maxY) {
+                maxY = xyz.y;
+            }
+            
+            if (xyz.x < minX) {
+                minX = xyz.x;
+            }
+            if (xyz.x > maxX) {
+                maxX = xyz.x;
+            }
+        }
+        
+        for (XYZ xyz : origs) {
+            if (xyz.y == minY) {
+                xyzs.add(new XYZ(xyz.x, xyz.y - 1, xyz.z));
+            }
+            if (xyz.y == maxY) {
+                xyzs.add(new XYZ(xyz.x, xyz.y + 1, xyz.z));
+            }
+            
+            if (xyz.x == minX) {
+                xyzs.add(new XYZ(xyz.x - 1, xyz.y, xyz.z));
+            }
+            if (xyz.x == maxX) {
+                xyzs.add(new XYZ(xyz.x + 1, xyz.y, xyz.z));
+            }
+        }
+        return xyzs;
+    }
+    
     /*
     int tk_get_tile_xy(double lat, double lon, int zoom, int *min_tile_x, int *min_tile_y) {
         int temp_x;
@@ -971,4 +940,5 @@ public class Util {
         }
         return hex;
     }  
+
 }
