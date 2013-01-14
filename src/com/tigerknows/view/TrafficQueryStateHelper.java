@@ -330,33 +330,18 @@ public class TrafficQueryStateHelper {
 		mQueryFragment.mCityTxt.setVisibility(View.VISIBLE);
 		mQueryFragment.mBackBtn.setVisibility(View.GONE);
 		mQueryFragment.mSuggestLnl.setVisibility(View.GONE);
-
-		mQueryFragment.mStart.getEdt().setFocusable(false);
-		mQueryFragment.mEnd.getEdt().setFocusable(false);
-		mQueryFragment.mBusline.getEdt().setFocusable(false);
-		mQueryFragment.mStart.getEdt().setFocusableInTouchMode(false);
-		mQueryFragment.mEnd.getEdt().setFocusableInTouchMode(false);
-		mQueryFragment.mBusline.getEdt().setFocusableInTouchMode(false);
 	}
 	
 	public void applyInputInnateProperty() {
 		mQueryFragment.mSphinx.clearMap();
 		mQueryFragment.mSphinx.setTouchMode(TouchMode.NORMAL);
 		
-		mQueryFragment.mSuggestHistoryHelper.checkSuggestAndHistory();
+		mQueryFragment.mSuggestHistoryHelper.check();
 		mQueryFragment.mSuggestLnl.setVisibility(View.VISIBLE);
 		mQueryFragment.mSphinx.getMenuFragment().setVisibility(View.GONE);
 		mQueryFragment.mCityTxt.setVisibility(View.GONE);
-		mQueryFragment.mSuggestLsv.setVisibility(View.GONE);
 		mQueryFragment.mBackBtn.setVisibility(View.VISIBLE);
 		mQueryFragment.getContentView().setVisibility(View.VISIBLE);
-		
-		mQueryFragment.mStart.getEdt().setFocusable(true);
-		mQueryFragment.mEnd.getEdt().setFocusable(true);
-		mQueryFragment.mBusline.getEdt().setFocusable(true);
-		mQueryFragment.mStart.getEdt().setFocusableInTouchMode(true);
-		mQueryFragment.mEnd.getEdt().setFocusableInTouchMode(true);
-		mQueryFragment.mBusline.getEdt().setFocusableInTouchMode(true);
 	}
 	
 	public void applyMapInnateProperty() {

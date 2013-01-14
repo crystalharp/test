@@ -93,6 +93,7 @@
 		        android:layout_width="wrap_content"
 		        android:layout_height="wrap_content"
 		        android:layout_centerVertical="true"
+		        android:layout_alignRight="@id/avg_edt"
 		        android:paddingLeft="4dp"
 		        android:hint="@string/rmb"/>
 	    </RelativeLayout>

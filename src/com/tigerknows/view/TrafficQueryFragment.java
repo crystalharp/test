@@ -77,8 +77,6 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	protected int mode = TRAFFIC_MODE;
 
-	boolean modeChange = false;
-	
 	private int mCheckBtn = R.id.traffic_transfer_rbt;;
 	
 	FrameLayout mTitle;
@@ -305,7 +303,6 @@ public class TrafficQueryFragment extends BaseFragment {
 					TouchMode.CHOOSE_ROUTING_START_POINT : TouchMode.CHOOSE_ROUTING_END_POINT);
         }
         
-        mRadioGroup.check(mCheckBtn); 
 	}
 
 	
@@ -445,16 +442,21 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	public void initStartContent() {
 
-		if (!mStart.isEmpty()) {
-		    return;
-		}
+	    mSelectedEdt = mStart;
+		if (mStart.isEmpty()) {
 		//定位为设定城市，或者自驾模式下定位城市与设定城市不同，均在起点框填写上当前位置。
 		if (mMapLocationHelper.isMyLocationLocateCurrentCity() || 
 				(getQueryType() == TrafficQuery.QUERY_TYPE_DRIVE && Globals.g_My_Location_City_Info != null)) {
-			POI location = mMapLocationHelper.getMyLocation();
-			setPOI(location, START);
+			POI poi = mMapLocationHelper.getMyLocation();
+			setPOI(poi, START);
 		} else {
-			mStart.clear();
+		    mSelectedEdt.clear();
+		}
+        }
+		if (mStateTransitionTable.getCurrentState() == State.Input) {
+		    mSelectedEdt.mEdt.requestFocus();
+		} else {
+		    mSelectedEdt.mEdt.clearFocus();
 		}
     }
 	
@@ -490,17 +492,24 @@ public class TrafficQueryFragment extends BaseFragment {
 	 */
 	public void changeToMode(int newMode) {
 		if (mode == newMode) {
-			modeChange = false;
 			return;
 		}
-		modeChange = true;
 		mode = newMode;
 		if (mode == TRAFFIC_MODE) {
 			mTrafficLayout.setVisibility(View.VISIBLE);
 			mBuslineLayout.setVisibility(View.GONE);
+			mSelectedEdt = mStart;
+			mSuggestHistoryHelper.refresh(mSphinx, mSelectedEdt.mEdt, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
 		} else {
 			mTrafficLayout.setVisibility(View.GONE);
 			mBuslineLayout.setVisibility(View.VISIBLE);
+			mSelectedEdt = mBusline;
+			mSuggestHistoryHelper.refresh(mSphinx, mSelectedEdt.mEdt, TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE);
+		}
+		if (mStateTransitionTable.getCurrentState() == State.Input) {
+		    mSelectedEdt.mEdt.requestFocus();
+		} else {
+		    mSelectedEdt.mEdt.clearFocus();
 		}
 	}
 	

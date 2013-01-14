@@ -15,8 +15,6 @@ public class TrafficViewSTT {
 	
 	public enum State {Normal, Map, Input, SelectPoint};
 	
-//	public enum Event {NormalClickBookmark, NormalClickEditText, NormalTouchMap, MapClickRadioGroup, MapLongClick};
-	
 	public enum Event {ClickBookmark, ClickEditText, TouchMap, ClickRadioGroup, LongClick, Point, SelectPoint};
 
 	private Vector<Transition> transitions = new Vector<Transition>();

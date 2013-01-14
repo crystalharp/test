@@ -348,19 +348,7 @@ public class TrafficQueryEventHelper {
 				mQueryEdt.getEdt().requestFocus();
 				mQueryFragment.mSphinx.showSoftInput(mQueryEdt.getEdt());
 				
-				if (mQueryEdt.getEdt().getText().toString().equals(mQueryFragment.mContext.getString(R.string.my_location))) {
-					mQueryFragment.mSuggestLsv.setVisibility(View.GONE);
-				} else {
-					mQueryFragment.mSphinx.getHandler().post(new Runnable() {
-
-						@Override
-						public void run() {
-							// TODO Auto-generated method stub
-							mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryEdt.getEdt(), suggestWordsType);
-						}
-						
-					});
-				}
+				mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryEdt.getEdt(), suggestWordsType);
 				
 			} 
 			
@@ -404,12 +392,6 @@ public class TrafficQueryEventHelper {
         public void onCheckedChanged(RadioGroup group, int checkedId) {
         	super.onCheckedChanged(group, checkedId);
         	
-        	if (mQueryFragment.modeChange) {
-        		mQueryFragment.mSuggestLsv.setAdapter(null);
-        		LogWrapper.d("eric", "InputOnCheckedChangeListener set SuggestLsv GONE");
-        		mQueryFragment.mSuggestLsv.setVisibility(View.GONE);
-        	}
-        	
 			/*
 			 * 切换TAB时, 若三个输入框都没有获得焦点, 则隐藏输入法
 			 */
@@ -425,7 +407,6 @@ public class TrafficQueryEventHelper {
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
 			mQueryFragment.mSphinx.hideSoftInput(mQueryFragment.mBlock.getWindowToken());
-			mQueryFragment.mSuggestLsv.setVisibility(View.GONE);
 			clearSuggestWatcherInInputState();
 			super.onClick(v);
 			addSuggestWatcherInInputState();
@@ -502,15 +483,7 @@ public class TrafficQueryEventHelper {
 
 		@Override
         public void afterTextChanged(Editable s) {
-			mQueryFragment.mSphinx.getHandler().post(new Runnable() {
-
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryEdt.getEdt(), suggestWordsType);
-				}
-				
-			});
+            mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryEdt.getEdt(), suggestWordsType);
         }
 
         @Override
@@ -619,9 +592,7 @@ public class TrafficQueryEventHelper {
                         break;
                     case 3:
                         //交换起点终点。
-                        if (mQueryFragment.mSuggestLsv.isShown()) {
-                            mQueryFragment.mSuggestLsv.setVisibility(View.GONE);
-                        }
+                        mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mSphinx, null, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
                         clearSuggestWatcherInInputState();
                         mQueryFragment.mActionLog.addAction(ActionLog.TrafficExchangeBtn);
                         POI temp = mQueryFragment.mStart.getPOI();
