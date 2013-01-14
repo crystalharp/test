@@ -325,7 +325,7 @@ public class TrafficQueryStateHelper {
 		
 		mQueryFragment.mBlock.requestFocus();
 		mQueryFragment.clearAllText();
-		mQueryFragment.showStart();
+		mQueryFragment.initStartContent();
 		mQueryFragment.getContentView().setVisibility(View.VISIBLE);
 		mQueryFragment.mCityTxt.setVisibility(View.VISIBLE);
 		mQueryFragment.mBackBtn.setVisibility(View.GONE);
