@@ -176,7 +176,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
                 // 绘制线路图层
                 viewMap();
                 // 将地图平移到某一坐标点, 并缩放至某一级别
-                BuslineOverlayHelper.panToPosition(mSphinx.getHandler(), line.getStationList().get(position).getPosition(), mSphinx.getMapView());
+                BuslineOverlayHelper.panToPosition(mSphinx.getHandler(), position, mSphinx.getMapView());
             }
         });
         mFavorateBtn.setOnClickListener(new ResultOnClickListener());

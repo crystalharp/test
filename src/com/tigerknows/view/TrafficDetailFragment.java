@@ -203,15 +203,14 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 // 将地图平移到某一坐标点, 并缩放至某一级别
                 if (position == 0) {
                 	//mResultAdapter中起点项的处理
-                	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), plan.getStepList().get(position).getPositionList().get(0), 
+                	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), position, 
                 		mSphinx.getMapView());
                 } else if (position > plan.getStepList().size()) {
                 	//mResultAdapter中终点项的处理
-                	//FIXME:尚未处理
-                	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), plan.getStepList().get(position - 2).getPositionList().get(0), 
+                	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), position - 2, 
                     		mSphinx.getMapView());
                 } else {
-                	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), plan.getStepList().get(position - 1).getPositionList().get(0), 
+                	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), position - 1, 
                 		mSphinx.getMapView());
                 }
                 // 比例尺恢复到默认的200m

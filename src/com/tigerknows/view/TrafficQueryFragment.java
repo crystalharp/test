@@ -45,6 +45,7 @@ import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
+import com.tigerknows.view.TrafficViewSTT.State;
 
 /**
  * 此类包含 交通首页、交通输入页、交通全屏页、交通选点页，合称“交通频道首页”

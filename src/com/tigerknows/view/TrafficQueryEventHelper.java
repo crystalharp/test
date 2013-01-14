@@ -629,14 +629,9 @@ public class TrafficQueryEventHelper {
 				if (TextUtils.isEmpty(positionName)) {
 					positionName = mQueryFragment.mContext.getString(R.string.select_has_point);
 				}
-                POI tmp = new POI();
-                tmp.setPosition(center);
-                tmp.setName(positionName);
-                String clickTip = mQueryFragment.mContext.getString(R.id.start_edt == queryEditText.getEdt().getId() 
-                        ? R.string.select_where_as_start : R.string.select_where_as_end, positionName);
-
-                mQueryFragment.mSphinx.clearMap();
-                PinOverlayHelper.drawSelectPointOverlay(mQueryFragment.mContext, mQueryFragment.mSphinx.getHandler(), mQueryFragment.mSphinx.getMapView(), tmp, clickTip);
+				
+				mQueryFragment.mSphinx.clearMap();
+				PinOverlayHelper.drawSelectPointOverlay(mQueryFragment.mContext, mQueryFragment.mSphinx.getHandler(), mQueryFragment.mSphinx.getMapView(), R.id.start_edt == queryEditText.getEdt().getId(), positionName, center);
 				mQueryFragment.mSphinx.getMapView().refreshMap();
 				
 				mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.Point);

@@ -24,7 +24,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -614,6 +613,10 @@ public class CommonUtils {
         return false;
     }
     
+    public static Dialog getDialog(Activity activity, View custom) {
+        return getDialog(activity, null, null, custom, null, null, null);
+    }
+    
     public static Dialog showNormalDialog(Activity activity, View custom) {
         return showNormalDialog(activity, null, null, custom, null, null, null);
     }
@@ -625,24 +628,32 @@ public class CommonUtils {
     public static Dialog showNormalDialog(Activity activity, String title, View custom, DialogInterface.OnClickListener onClickListener) {
         return showNormalDialog(activity, title, null, custom, activity.getString(R.string.confirm), activity.getString(R.string.cancel), onClickListener);
     }
-    //ok
+
     public static Dialog showNormalDialog(Activity activity, String message) {
         return showNormalDialog(activity, activity.getString(R.string.prompt), message, activity.getString(R.string.confirm), null, null);
     }
-    //ok
+
     public static Dialog showNormalDialog(Activity activity, String message, DialogInterface.OnClickListener onClickListener) {
         return showNormalDialog(activity, activity.getString(R.string.prompt), message, activity.getString(R.string.confirm), activity.getString(R.string.cancel), onClickListener);
     }
-    //ok
+
     public static Dialog showNormalDialog(Activity activity, String title, String message, DialogInterface.OnClickListener onClickListener) {
         return showNormalDialog(activity, title, message, activity.getString(R.string.confirm), activity.getString(R.string.cancel), onClickListener);
     }
-    //OK
+
     public static Dialog showNormalDialog(Activity activity, String title, String message, String leftButtonText, String rightButtonText, DialogInterface.OnClickListener onClickListener) {
         return showNormalDialog(activity, title, message, null, leftButtonText, rightButtonText, onClickListener);
     }
-    //OK
+
     public static Dialog showNormalDialog(Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener) {
+        
+        Dialog dialog = getDialog(activity, title, message, custom, leftButtonText, rightButtonText, onClickListener);
+        dialog.show();
+        
+        return dialog;
+    }
+
+    public static Dialog getDialog(Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener) {
         
         LayoutInflater layoutInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         
@@ -655,7 +666,6 @@ public class CommonUtils {
         dialog.setContentView(view);
         
         Window dialogWindow = dialog.getWindow();
-        WindowManager.LayoutParams lp = dialogWindow.getAttributes();
         dialogWindow.setGravity(Gravity.CENTER);
         
         View titleView = view.findViewById(R.id.titlePanel);
@@ -722,8 +732,6 @@ public class CommonUtils {
         } else {
             bottonView.setVisibility(View.GONE);
         }
-        
-        dialog.show();
         
         return dialog;
     }
