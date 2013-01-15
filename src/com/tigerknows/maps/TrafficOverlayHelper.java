@@ -72,8 +72,13 @@ public class TrafficOverlayHelper {
 	    	    Icon driveIc = createIconByResId(context, R.drawable.icon_map_drive);
 	    	    Icon walkIc = createIconByResId(context, R.drawable.icon_map_walk);
 	            
+	    	    // 添加起点item. 包括终点图标, 起点文本:"起点"
+	    	    OverlayItem overlayItem = new OverlayItem(steps.get(0).getPositionList().get(0), start, 
+            			context.getString(R.string.set_off_from_start), rt);
+	            addTouchEventListenerToOverlayItem(mainThreadHandler, mapView, overlayItem);
+                overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
+                overlay.addOverlayItem(overlayItem);
 	            for(int i = 0; i < steps.size(); i++){
-	                OverlayItem overlayItem = null;
 	                
 	                // 起点图标为startIc
 	                if (i == 0) {
@@ -107,7 +112,7 @@ public class TrafficOverlayHelper {
 	            // 添加终点item. 包括终点图标, 终点文本:"到达终点"
 	            Step lastStep = steps.get(steps.size()-1);
 	            Position endPos = lastStep.getPositionList().get(lastStep.getPositionList().size()-1);
-	            OverlayItem overlayItem = new OverlayItem(endPos, end, 
+	            overlayItem = new OverlayItem(endPos, end, 
 	            		context.getString(R.string.traffic_goto_end_station), rt);
 	            addTouchEventListenerToOverlayItem(mainThreadHandler, mapView, overlayItem);
 	            overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
