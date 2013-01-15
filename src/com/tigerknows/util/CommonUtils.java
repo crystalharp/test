@@ -53,7 +53,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -1096,14 +1095,23 @@ public class CommonUtils {
     }  
     
     public static void formatText(TextView textView, String word, String key, int color) {
-        if (key != null && word != null && key.length() > 0 && word.length() > 0 && word.indexOf(key)!=-1){
+        if (key != null && word != null){
             int keyLength = key.length();
             int wordLength = word.length();
-            SpannableStringBuilder style=new SpannableStringBuilder(word);  
-            style.setSpan(new ForegroundColorSpan(color),word.indexOf(key), keyLength > wordLength ? wordLength : keyLength,Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-            textView.setText(style);
-        } else {
-            textView.setText(word);
+            if (keyLength > 0
+                    && wordLength > 0) {
+                int index = word.indexOf(key);
+                if (index != -1) {
+                    SpannableStringBuilder style=new SpannableStringBuilder(word);  
+                    style.setSpan(new ForegroundColorSpan(color),
+                            index, 
+                            index + (keyLength > wordLength ? wordLength : keyLength),
+                            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+                    textView.setText(style);
+                    return;
+                }
+            }
         }
+        textView.setText(word);
     }
 }
