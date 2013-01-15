@@ -849,15 +849,15 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_TASTE));
             s.append(':');
-            s.append(mTasteRtb.getRating());
+            s.append((int)mTasteRtb.getRating());
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_ENVIRONMENT));
             s.append(':');
-            s.append(mFoodEnvironmentRtb.getRating());
+            s.append((int)mFoodEnvironmentRtb.getRating());
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_QOS));
             s.append(':');
-            s.append(mFoodQosRtb.getRating());
+            s.append((int)mFoodQosRtb.getRating());
             String restair = mRestairBtn.getText().toString();
             if (!TextUtils.isEmpty(restair)) {
                 s.append(',');
@@ -888,11 +888,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_QOS));
             s.append(':');
-            s.append(mHotelQosRtb.getRating());
+            s.append((int)mHotelQosRtb.getRating());
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_ENVIRONMENT));
             s.append(':');
-            s.append(mHotelEnvironmentRtb.getRating());
+            s.append((int)mHotelEnvironmentRtb.getRating());
         } else if (POI.COMMENT_PATTERN_CINEMA == commentPattern) {
             String avg = mCinemaAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
@@ -904,11 +904,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_EFFECT));
             s.append(':');
-            s.append(mEffectRtb.getRating());
+            s.append((int)mEffectRtb.getRating());
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_QOS));
             s.append(':');
-            s.append(mCinemaQosRtb.getRating());
+            s.append((int)mCinemaQosRtb.getRating());
         } else if (POI.COMMENT_PATTERN_HOSPITAL == commentPattern) {
             String avg = mHospitalAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
@@ -920,11 +920,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_QOS));
             s.append(':');
-            s.append(mHospitalQosRtb.getRating());
+            s.append((int)mHospitalQosRtb.getRating());
             s.append(',');
             s.append(Util.byteToHexString(Comment.FIELD_LEVEL));
             s.append(':');
-            s.append(mLevelRtb.getRating());
+            s.append((int)mLevelRtb.getRating());
         } else if (POI.COMMENT_PATTERN_BUY == commentPattern) {
             String avg = mBuyAvgEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(avg)) {
@@ -1191,7 +1191,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     }
     
     private boolean isModify() {
-        if (mGradeRtb.getRating()*2 != mComment.getGrade()) {
+        if ((int)mGradeRtb.getRating()*2 != mComment.getGrade()) {
             return true;
         }
         String content = mContentEdt.getEditableText().toString();
@@ -1213,13 +1213,13 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             if (avgLong != mComment.getAvg()) {
                 return true;
             }
-            if (mTasteRtb.getRating() != mComment.getTaste()) {
+            if ((int)mTasteRtb.getRating() != mComment.getTaste()) {
                 return true;
             }
-            if (mFoodEnvironmentRtb.getRating() != mComment.getEnvironment()) {
+            if ((int)mFoodEnvironmentRtb.getRating() != mComment.getEnvironment()) {
                 return true;
             }
-            if (mFoodQosRtb.getRating() != mComment.getQos()) {
+            if ((int)mFoodQosRtb.getRating() != mComment.getQos()) {
                 return true;
             }
             
@@ -1249,10 +1249,10 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             if (avgLong != mComment.getAvg()) {
                 return true;
             }
-            if (mHotelQosRtb.getRating() != mComment.getQos()) {
+            if ((int)mHotelQosRtb.getRating() != mComment.getQos()) {
                 return true;
             }
-            if (mHotelEnvironmentRtb.getRating() != mComment.getEnvironment()) {
+            if ((int)mHotelEnvironmentRtb.getRating() != mComment.getEnvironment()) {
                 return true;
             }
         } else if (POI.COMMENT_PATTERN_CINEMA == commentPattern) {
@@ -1264,10 +1264,10 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             if (avgLong != mComment.getAvg()) {
                 return true;
             }
-            if (mEffectRtb.getRating() != mComment.getEffect()) {
+            if ((int)mEffectRtb.getRating() != mComment.getEffect()) {
                 return true;
             }
-            if (mCinemaQosRtb.getRating() != mComment.getQos()) {
+            if ((int)mCinemaQosRtb.getRating() != mComment.getQos()) {
                 return true;
             }
         } else if (POI.COMMENT_PATTERN_HOSPITAL == commentPattern) {
@@ -1279,10 +1279,10 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             if (avgLong != mComment.getAvg()) {
                 return true;
             }
-            if (mHospitalQosRtb.getRating() != mComment.getQos()) {
+            if ((int)mHospitalQosRtb.getRating() != mComment.getQos()) {
                 return true;
             }
-            if (mLevelRtb.getRating() != mComment.getLevel()) {
+            if ((int)mLevelRtb.getRating() != mComment.getLevel()) {
                 return true;
             }
         } else if (POI.COMMENT_PATTERN_BUY == commentPattern) {
