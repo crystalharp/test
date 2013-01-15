@@ -154,6 +154,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 				}
 	        });
         }
+        
+        setFavoriteState(mRootView, plan.checkFavorite(mContext));
                 
         history();
     }
