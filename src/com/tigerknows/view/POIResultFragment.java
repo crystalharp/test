@@ -60,7 +60,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     private PopupWindow mPopupWindow;
     
-    private String mTitle;
+    private String mTitleText;
 
     private ViewGroup mFilterControlView = null;
     
@@ -129,7 +129,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             str = mContext.getString(R.string.at_location_searching);
         }
         mQueryingTxv.setText(str);
-        mTitle = lastDataQuerying.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD);
+        mTitleText = lastDataQuerying.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD);
         
         this.mState = STATE_QUERYING;
         updateView();
@@ -233,18 +233,22 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (poiList != null) {
                     str = poiList.getMessage();
                 }
+                long aTotal = poiList.getTotal();
         
                 poiList = poiModel.getBPOIList();
                 if (poiList != null) {
                     str = poiList.getMessage();
                 }
+                long bTotal = poiList.getTotal();
                 
-                mTitle = mSphinx.getString(R.string.search_result, mDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD), mATotal > 1 ? mATotal : mBTotal);
+                if (aTotal > 0 || bTotal > 0) {
+                    mTitleText = mSphinx.getString(R.string.search_result, mDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD), aTotal > 1 ? aTotal : bTotal);
+                }
             }
         }
         
         if (mTitleBtn != null) {
-            mTitleBtn.setText(mTitle);
+            mTitleBtn.setText(mTitleText);
         }
         mEmptyTxv.setText(str);
     }

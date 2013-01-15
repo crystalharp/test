@@ -271,7 +271,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         public boolean onTouch(View v,android.view.MotionEvent ev) {
             if(ev.getAction()==MotionEvent.ACTION_UP){
                 mActionLog.addAction(actionLog);
-                getTrafficQueryFragment().setPOI(poi, index);
+                getTrafficQueryFragment().setDataForLongClick(poi, index);
             }
             return true;
         }

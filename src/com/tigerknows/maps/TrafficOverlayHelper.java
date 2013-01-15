@@ -16,11 +16,9 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.location.BoundingBox;
 import com.decarta.android.location.Position;
 import com.decarta.android.map.Icon;
-import com.decarta.android.map.InfoWindow;
 import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.map.MapView;
 import com.decarta.android.map.OverlayItem;
-import com.decarta.android.map.Polygon;
 import com.decarta.android.map.Polyline;
 import com.decarta.android.map.RotationTilt;
 import com.decarta.android.map.RotationTilt.RotateReference;
@@ -28,7 +26,6 @@ import com.decarta.android.map.RotationTilt.TiltReference;
 import com.decarta.android.map.Shape;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
-import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -39,6 +36,8 @@ import com.tigerknows.util.NavigationSplitJointRule;
 public class TrafficOverlayHelper {
 
 	private static final int DEFAULT_SHOW_STEP_ZOOMLEVEL = 14;
+	
+	private static final float HIGHLIGHT_POSITION_ACCURACY = 0.0001f;
 	
 	private static final String TAG = "TrafficOverlayHelper";
 
@@ -332,24 +331,30 @@ public class TrafficOverlayHelper {
 		ItemizedOverlay itemizedOverlay = mapview.getCurrentOverlay();
 		if (itemizedOverlay.getName().equals(ItemizedOverlay.TRAFFIC_OVERLAY)) {
         	// 高亮选中的Step
-        	Position position = itemizedOverlay.getItemByFocused().getPosition();
-    		LogWrapper.d(TAG, "position: " + position);
     		OverlayItem focusedItem = mapview.getCurrentOverlay().getItemByFocused();
     		OverlayItem nextItem = mapview.getCurrentOverlay().getNextItem(focusedItem);
     		
-    		if (nextItem != null) {
+    		if (focusedItem != null
+    		        && nextItem != null) {
+    		    Position focusedStepPosition = focusedItem.getPosition();
 	    		Position nextStepPosition = nextItem.getPosition();
 	    		
 	    		Polyline trafficPolygon = (Polyline)mapview.getShapesByName(Shape.TRAFFIC_SHAPE);
 	    		List<Position> wholeLinePositions = trafficPolygon.getPositions();
-	    		LogWrapper.d(TAG, "wholeLinePositions: " + wholeLinePositions);
-	    		int stepStartIndex = wholeLinePositions.indexOf(position);
-	    		int stepEndIndex = wholeLinePositions.indexOf(nextStepPosition);
-	    		LogWrapper.d(TAG, "stepStartIndex: " + stepStartIndex);
-	    		LogWrapper.d(TAG, "stepEndIndex: " + stepEndIndex);
-	    		if (stepStartIndex >= 0 && stepStartIndex < stepEndIndex && stepEndIndex <= wholeLinePositions.size()) {
+	    		int stepStartIndex = 0;
+	    		int stepEndIndex = 0;
+	    		for(int i = 0, size = wholeLinePositions.size(); i < size; i++) {
+	    		    Position pos = wholeLinePositions.get(i);
+	    		    if (Math.abs(pos.getLat()-focusedStepPosition.getLat()) < HIGHLIGHT_POSITION_ACCURACY
+                            && Math.abs(pos.getLon()-focusedStepPosition.getLon()) < HIGHLIGHT_POSITION_ACCURACY) {
+	    		        stepStartIndex = i;
+	    		    } else if (Math.abs(pos.getLat()-nextStepPosition.getLat()) < HIGHLIGHT_POSITION_ACCURACY
+                            && Math.abs(pos.getLon()-nextStepPosition.getLon()) < HIGHLIGHT_POSITION_ACCURACY) {
+	    		        stepEndIndex = i;
+	    		    }
+	    		}
+	    		if (stepStartIndex < stepEndIndex) {
 	    			List<Position> stepPositions = wholeLinePositions.subList(stepStartIndex, stepEndIndex + 1);
-		    		LogWrapper.d(TAG, "stepPositions: " + stepPositions);
 		    		try {
 		    			Polyline routeLine = new Polyline(stepPositions, Shape.HIGHLIGHT_SHAPE);
 		    			routeLine.setFillColor(0xFFAA0000);

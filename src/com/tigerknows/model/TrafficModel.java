@@ -823,7 +823,8 @@ public class TrafficModel extends XMapData {
          */
         public List<Position> getRouteGeometry() {
             List<Position> positions = new ArrayList<Position>();
-            for (Step step : stepList) {
+            for (int i = 0, size = stepList.size(); i < size; i++) {
+                Step step = stepList.get(i);
                 positions.addAll(step.getPositionList());
             }
             return positions;
