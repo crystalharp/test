@@ -241,9 +241,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
                 long bTotal = poiList.getTotal();
                 
-                if (aTotal > 0 || bTotal > 0) {
-                    mTitleText = mSphinx.getString(R.string.search_result, mDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD), aTotal > 1 ? aTotal : bTotal);
-                }
+                mTitleText = mSphinx.getString(R.string.search_result, mDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD), aTotal > 1 ? aTotal : bTotal);
             }
         }
         
