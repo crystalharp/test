@@ -515,18 +515,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             plan.updateHistory(mContext);
         }
     }
-    
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                plan = null;
-                break;
-                
-            default:
-                break;
-        }
-        return false;
-    }
 
     public Plan getData() {
         return plan;
