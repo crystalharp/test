@@ -24,7 +24,6 @@
             android:textColor="@color/black_dark"
             android:singleLine="true"
             android:ellipsize="end"
-            android:gravity="center"
             >
         </TextView>
         
@@ -39,7 +38,6 @@
             android:textColor="@color/black_light"
             android:singleLine="true"
             android:ellipsize="end"
-            android:gravity="center"
             >
         </TextView>
             

@@ -24,7 +24,6 @@
             android:textColor="@color/black_dark"
             android:singleLine="true"
             android:ellipsize="end"
-            android:gravity="center"
             >
         </TextView>
         
@@ -51,7 +50,6 @@
             android:textColor="@color/orange"
             android:singleLine="true"
             android:textSize="12sp"
-            android:gravity="center"
             >
         </TextView>
             

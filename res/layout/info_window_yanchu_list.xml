@@ -31,7 +31,6 @@
             android:textColor="@color/black_dark"
             android:maxLines="2"
             android:ellipsize="end"
-            android:gravity="center"
             >
         </TextView>
         
