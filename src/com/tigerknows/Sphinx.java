@@ -748,10 +748,10 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             RotationTilt rt=new RotationTilt(RotateReference.MAP,TiltReference.MAP);
             mMyLocation = new MyLocation(null, icon, iconFocused, null, rt);
             
-            ItemizedOverlay myLocationOverlay=new ItemizedOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY);
-            myLocationOverlay.addOverlayItem(mMyLocation);
+            mMyLocationOverlay=new ItemizedOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY);
+            mMyLocationOverlay.addOverlayItem(mMyLocation);
             
-            mMapView.addOverlay(myLocationOverlay);
+            mMapView.addOverlay(mMyLocationOverlay);
             
             Compass compass = mMapView.getCompass();
             if(compass!=null){
@@ -3367,6 +3367,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 
     // TODO: my location begin    
     private MyLocation mMyLocation;
+    private ItemizedOverlay mMyLocationOverlay;
     private boolean mChangeToMyLocationCityDialogShowing = false;
     private Runnable mLocationChangedRun = new Runnable() {
         
@@ -3545,6 +3546,14 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 if (ItemizedOverlay.MY_LOCATION_OVERLAY.equals(overlayItem.getOwnerOverlay().getName())) {
                     showInfoWindow(mMyLocation);
                 }
+            }
+        }
+        if (mMapView.getOverlaysByName(ItemizedOverlay.MY_LOCATION_OVERLAY) == null) {
+            try {
+                mMapView.addOverlay(mMyLocationOverlay);
+            } catch (APIException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         }
         
