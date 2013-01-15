@@ -3529,7 +3529,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             mMapView.refreshMap();
             return false;
         }
-        String msg=getString(R.string.my_location_with_accuracy, CommonUtils.formatMeterString((int)myLocation.getAccuracy()));
         if(!myLocation.equals(mMyLocation.getPosition())){
             try{
 //              RotationTilt rt=myLocationPin.getRotationTilt();
@@ -3538,6 +3537,11 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 mMyLocation.setPosition(myLocation);
             }catch(Exception e){
                 e.printStackTrace();
+            }
+            String msg=getString(R.string.my_location);
+            String positionName = mMapEngine.getPositionName(myLocation);
+            if (positionName != null && positionName.length() > 1) {
+                msg += "\n" + positionName.substring(1);
             }
             mMyLocation.setMessage(msg);
             
