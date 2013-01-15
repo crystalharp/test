@@ -1032,7 +1032,7 @@ public class CommonUtils {
                     }
                     TrafficQueryFragment.submitTrafficQuery(sphinx, start, end, queryType);
                 } else {
-                    trafficQueryFragment.setData(poi, location);
+                    trafficQueryFragment.setDataNoSuggest(poi, location);
                     sphinx.showView(R.id.view_traffic_query);
                 }
             }

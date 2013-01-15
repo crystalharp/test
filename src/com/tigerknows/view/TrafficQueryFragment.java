@@ -78,8 +78,6 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	protected int mode = TRAFFIC_MODE;
 
-	private int mCheckBtn = R.id.traffic_transfer_rbt;;
-	
 	FrameLayout mTitle;
 	
 	ImageButton mBackBtn;
@@ -730,27 +728,12 @@ public class TrafficQueryFragment extends BaseFragment {
     	mStateTransitionTable.event(TrafficViewSTT.Event.ClickBookmark);
     }
     
-    //TODO:检查有没有错误
-    public void setData(POI poi, int index, int queryType) {
-    	if (index != START && index != END && index != SELECTED) 
-    		return;
-    	
-    	switch (queryType) {
-    	case TrafficQuery.QUERY_TYPE_TRANSFER:
-    		mCheckBtn = R.id.traffic_transfer_rbt;
-    		break;
-    	case TrafficQuery.QUERY_TYPE_DRIVE:
-    		mCheckBtn = R.id.traffic_drive_rbt;
-    		break;
-    	case TrafficQuery.QUERY_TYPE_WALK:
-    		mCheckBtn = R.id.traffic_walk_rbt;
-    		break;
-		default:
-    	}
-    	setPOI(poi.clone(), index);
-    }
-    
-    
+    public void setDataNoSuggest(POI poi, int index) {
+        if (index != START && index != END && index != SELECTED) 
+            return;
+        
+        setPOI(poi.clone(), index);
+    }    
     
     /*
      * 长按地图
