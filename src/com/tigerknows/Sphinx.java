@@ -2124,7 +2124,9 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                     if (sourceType == POI.SOURCE_TYPE_FENDIAN
                             || sourceType == POI.SOURCE_TYPE_YINGXUN
                             || sourceType == POI.SOURCE_TYPE_ZHANLAN
-                            || sourceType == POI.SOURCE_TYPE_YANCHU) {
+                            || sourceType == POI.SOURCE_TYPE_YANCHU
+                            || sourceType == POI.SOURCE_TYPE_DIANYING
+                            || sourceType == POI.SOURCE_TYPE_TUANGOU) {
                         dismissView(R.id.view_result_map);
                     } else {
                         getPOIDetailFragment().setData(target);
