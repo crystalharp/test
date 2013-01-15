@@ -39,6 +39,7 @@ import com.tigerknows.maps.TrafficOverlayHelper;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;
+import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.NavigationSplitJointRule;
@@ -61,7 +62,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 	private static final int TYPE_RESULT_LIST_START = 6;
 
 	private static final int TYPE_RESULT_LIST_END = 7;
-        
+	
+	private static final int DEFAULT_SHOW_STEP_ZOOMLEVEL = 14;
+       
     private ListAdapter mResultAdapter;
     
     private TextView mSubTitleTxv = null;
@@ -202,21 +205,10 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
 				// 绘制交通图层
                 viewMap();
-                // 将地图平移到某一坐标点, 并缩放至某一级别
-                if (position == 0) {
-                	//mResultAdapter中起点项的处理
-                	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), position, 
-                		mSphinx.getMapView());
-                } else if (position > plan.getStepList().size()) {
-                	//mResultAdapter中终点项的处理
-                	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), position - 2, 
-                    		mSphinx.getMapView());
-                } else {
-                	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), position - 1, 
-                		mSphinx.getMapView());
-                }
+                // 将地图平移到某一item index, 并缩放至某一级别
+            	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), position, mSphinx.getMapView());
                 // 比例尺恢复到默认的200m
-                mSphinx.getMapView().zoomTo(14);
+                mSphinx.getMapView().zoomTo(DEFAULT_SHOW_STEP_ZOOMLEVEL);
             }
         });
     }
@@ -382,13 +374,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 		@Override
 		public long getItemId(int position) {
 			return 0;
-		}
-		
-		@Override
-		public boolean isEnabled(int position) {
-			if(position == this.getCount()-1)
-              return false;
-          return true;
 		}
     }
 
