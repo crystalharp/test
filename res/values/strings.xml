@@ -225,7 +225,7 @@
     <string name="cancel_favorite_tip">确认取消收藏？</string>
     
     <string name="off_line_download_dialog_title">下载离线地图包</string>
-    <string name="off_line_download_dialog_message">1.通过电脑访问网址http://www.tigerknows.com/android.html下载离线地图包，并解压。\n2.找到解压出的map文件夹，把它装入手机  存储卡的根目录。\n3.断开电脑连接，打开老虎宝典即可查看地图。\n4.浏览已经下载地图包的地图将更快速且不再消耗流量！</string>
+    <string name="off_line_download_dialog_message">1.通过电脑访问网址http://www.tigerknows.com/android.html下载离线地图包，并解压。\n2.找到解压出的map文件夹，把它装入手机的/sdcard/tigermap/map文件夹。\n3.断开电脑连接，打开老虎宝典即可查看地图。\n4.浏览已经下载地图包的地图将更快速且不再消耗流量！</string>
     <string name="i_know">我知道了</string>
 
     <string name="are_you_sure_download_this_software">确定下载此软件？</string>
@@ -386,7 +386,7 @@
     
     <string name="place">地点</string>
     <string name="traffic">交通</string>
-    <string name="loading">正在加载...</string>
+    <string name="loading">正在加载</string>
     <string name="pull_to_refresh">加载更多</string>
     <string name="bus_transfer_">公交换乘方案：%1$d</string>
     <string name="drive_">自驾方案：</string>    
@@ -901,4 +901,5 @@
     <string name="wifi_disabled">wifi已关闭</string>
     
     <string name="shanghu_xingxi">商户信息</string>
+    <string name="call_telephone">拨打电话</string>
 </resources>
