@@ -211,7 +211,6 @@ public class Yanchu extends BaseData {
             poi.setName(placeName);
             poi.setAddress(address);
             poi.setPosition(position);
-//            poi.setOrderNumber(orderNumber);
             poi.setSourceType(POI.SOURCE_TYPE_YANCHU);
         }
         return poi;

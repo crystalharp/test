@@ -212,14 +212,10 @@ public class Tuangou extends BaseData {
     }
     
     public POI getPOI() {
-        if (poi == null) {
-            poi = new POI();
-            poi.setName(shortDesc);
-            poi.setPosition(fendian.getPosition());
-//            poi.setOrderNumber(orderNumber);
-            poi.setSourceType(POI.SOURCE_TYPE_TUANGOU);
-        }
-        return poi;
+    	if(fendian!=null){
+    		return fendian.getPOI(POI.SOURCE_TYPE_TUANGOU);
+    	}
+    	return null;
     }
     
     public String getUid() {

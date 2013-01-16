@@ -15,11 +15,10 @@ public class CycleViewPager {
     
     public static class CyclePagerAdapter extends PagerAdapter {
         
-        public List<View> viewList;
         public int count = 0;
-        
-        public CyclePagerAdapter(List<View> viewList) {
-            this.viewList = viewList;
+        public BaseDetailFragment fragment;
+        public CyclePagerAdapter(BaseDetailFragment fragment) {
+        	this.fragment = fragment;
         }
         
         @Override
@@ -34,46 +33,40 @@ public class CycleViewPager {
 
         @Override
         public int getItemPosition(Object object) {
-            // TODO Auto-generated method stub
             return super.getItemPosition(object);
         }
 
         @Override
         public void destroyItem(View arg0, int arg1, Object arg2) {
-            // TODO Auto-generated method stub
             // ((ViewPager) arg0).removeView(list.get(arg1));
         }
 
         @Override
         public Object instantiateItem(View arg0, int position) {
-            // TODO Auto-generated method stub
+        	System.out.println("instantiateItem: " + position);
             try {
-                ((ViewPager)arg0).addView(viewList.get(position % viewList.size()));
+                ((ViewPager)arg0).addView(fragment.getDetailView(position));
             } catch (Exception e) {
-                // TODO: handle exception
+            	
             }
-            return viewList.get(position % viewList.size());
+            return fragment.getDetailView(position);
         }
 
         @Override
         public void restoreState(Parcelable arg0, ClassLoader arg1) {
-            // TODO Auto-generated method stub
         }
 
         @Override
         public Parcelable saveState() {
-            // TODO Auto-generated method stub
             return null;
         }
 
         @Override
         public void startUpdate(View arg0) {
-            // TODO Auto-generated method stub
         }
 
         @Override
         public void finishUpdate(View arg0) {
-            // TODO Auto-generated method stub
         }
 
     }
@@ -116,6 +109,7 @@ public class CycleViewPager {
         // 当新的页面被选中时调用
         @Override
         public void onPageSelected(int position) {
+        	System.out.println("OnPageSelected: " + position);
             iRefreshViews.refreshViews(position);
             time = 0;
         }

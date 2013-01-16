@@ -234,15 +234,17 @@ public class Fendian extends BaseData {
         this.orderNumber = orderNumber;
     }
     
-    public POI getPOI(int sourceType, Tuangou tuangou) {
+	@Override
+	public POI getPOI() {
         if (poi == null) {
             poi = new POI();
             poi.setName(placeName);
             poi.setAddress(address);
             poi.setPosition(position);
             poi.setOrderNumber(orderNumber);
-            poi.setSourceType(sourceType);
         }
         return poi;
-    }
+	}
+    
+    
 }

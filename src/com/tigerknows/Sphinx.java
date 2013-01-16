@@ -1770,7 +1770,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                     order = target.getOrderNumber();
                 } else {
                     Dianying target = (Dianying) data;
-                    poi = target.getYingxun().getPOI(POI.SOURCE_TYPE_DIANYING, target);
+                    poi = target.getYingxun().getPOI(POI.SOURCE_TYPE_DIANYING);
                     order = target.getOrderNumber();
                 }
                 positions.add(poi.getPosition());
@@ -1797,7 +1797,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 POI poi = target.getPOI();
                 positions.add(poi.getPosition());
                 icon.setOrder(target.getOrderNumber());
-                overlayItem=new OverlayItem(poi.getPosition(), icon, poi.getName(),rt);
+                overlayItem=new OverlayItem(poi.getPosition(), icon, target.getShortDesc(), rt);
                 overlayItem.setAssociatedObject(target);
                 overlayItem.setPreferZoomLevel(TKConfig.ZOOM_LEVEL_POI);
                 if (index == i) {

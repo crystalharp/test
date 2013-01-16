@@ -358,7 +358,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
                 
             case R.id.address_view:
                 mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailAddress);
-                CommonUtils.queryTraffic(mSphinx, mYingxun.getPOI(POI.SOURCE_TYPE_DIANYING,mData));
+                CommonUtils.queryTraffic(mSphinx, mYingxun.getPOI(POI.SOURCE_TYPE_DIANYING));
                 break;
                 
             case R.id.after_tomorrow_btn:

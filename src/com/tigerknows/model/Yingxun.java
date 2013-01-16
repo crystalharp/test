@@ -172,14 +172,13 @@ public class Yingxun extends BaseData {
         return false;
     }
     
-    public POI getPOI(int sourceType, Dianying dianying) {
+    public POI getPOI() {
         if (poi == null) {
             poi = new POI();
             poi.setName(name);
             poi.setAddress(address);
             poi.setPosition(position);
             poi.setOrderNumber(orderNumber);
-            poi.setSourceType(sourceType);
         }
         return poi;
     }

@@ -104,19 +104,19 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private int mState = STATE_QUERYING;
     
-    private List<Tuangou> mTuangouList = new ArrayList<Tuangou>();
+    private List<BaseData> mTuangouList = new ArrayList<BaseData>();
     
     private TuangouAdapter mTuangouAdapter;
     
-    private List<Dianying> mDianyingList = new ArrayList<Dianying>();
+    private List<BaseData> mDianyingList = new ArrayList<BaseData>();
     
     private DianyingAdapter mDianyingAdapter;
     
-    private List<Yanchu> mYanchuList = new ArrayList<Yanchu>();
+    private List<BaseData> mYanchuList = new ArrayList<BaseData>();
     
     private YanchuAdapter mYanchuAdapter;
     
-    private List<Zhanlan> mZhanlanList = new ArrayList<Zhanlan>();
+    private List<BaseData> mZhanlanList = new ArrayList<BaseData>();
     
     private ZhanlanAdapter mZhanlanAdapter;
     
@@ -518,7 +518,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(getList().size()));
         int dianyingSize = mDianyingList.size();
         if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType) && dianyingSize > 0) {
-            criteria.put(DataQuery.SERVER_PARAMETER_DIANYING_UUID, mDianyingList.get(dianyingSize-1).getUid());
+            criteria.put(DataQuery.SERVER_PARAMETER_DIANYING_UUID, ((Dianying) (mDianyingList.get(dianyingSize-1))).getUid());
         }
         dataQuery.setup(criteria, lastDataQuery.getCityId(), getId(), getId(), tip, true, true, lastDataQuery.getPOI());
         mSphinx.queryStart(dataQuery);
@@ -537,7 +537,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         List<BaseData> dataList = new ArrayList<BaseData>();
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mTuangouList.size(); minIndex++) {
-                Tuangou data = mTuangouList.get(minIndex);
+                Tuangou data = (Tuangou)(mTuangouList.get(minIndex));
                 data.setOrderNumber(minIndex+1);
                 dataList.add(data);
             }
@@ -546,14 +546,14 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             
         } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
             for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mYanchuList.size(); minIndex++) {
-                Yanchu data = mYanchuList.get(minIndex);
+                Yanchu data = (Yanchu)mYanchuList.get(minIndex);
                 data.setOrderNumber(minIndex+1);
                 dataList.add(data);
             }
             mSphinx.getYanchuDetailFragment().setData(mYanchuList, page[2], DiscoverListFragment.this);
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
             for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mZhanlanList.size(); minIndex++) {
-                Zhanlan data = mZhanlanList.get(minIndex);
+                Zhanlan data = (Zhanlan)mZhanlanList.get(minIndex);
                 data.setOrderNumber(minIndex+1);
                 dataList.add(data);
             }
@@ -670,11 +670,11 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
     }
     
-    public class TuangouAdapter extends ArrayAdapter<Tuangou>{
+    public class TuangouAdapter extends ArrayAdapter<BaseData>{
         private static final int RESOURCE_ID = R.layout.tuangou_list_item;
         String rmb;
         
-        public TuangouAdapter(Context context, List<Tuangou> list) {
+        public TuangouAdapter(Context context, List<BaseData> list) {
             super(context, RESOURCE_ID, list);
             rmb = context.getString(R.string.rmb_text);
         }
@@ -697,7 +697,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
             TextView buyerNumTxv = (TextView) view.findViewById(R.id.buyer_num_txv);
 
-            Tuangou tuangou = getItem(position);
+            Tuangou tuangou = (Tuangou)getItem(position);
             Drawable drawable = tuangou.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
             if(drawable != null) {
                 pictureImv.setBackgroundDrawable(drawable);
@@ -727,10 +727,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
     }
     
-    public class DianyingAdapter extends ArrayAdapter<Dianying>{
+    public class DianyingAdapter extends ArrayAdapter<BaseData>{
         private static final int RESOURCE_ID = R.layout.dianying_list_item;
         
-        public DianyingAdapter(Context context, List<Dianying> list) {
+        public DianyingAdapter(Context context, List<BaseData> list) {
             super(context, RESOURCE_ID, list);
         }
         
@@ -751,7 +751,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             TextView addressTxv = (TextView) view.findViewById(R.id.category_txv);
             TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
 
-            Dianying dianying = getItem(position);
+            Dianying dianying = (Dianying)getItem(position);
             Drawable drawable = dianying.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
             if(drawable != null) {
                 pictureImv.setImageDrawable(drawable);
@@ -782,10 +782,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
     }
     
-    public class YanchuAdapter extends ArrayAdapter<Yanchu>{
+    public class YanchuAdapter extends ArrayAdapter<BaseData>{
         private static final int RESOURCE_ID = R.layout.yanchu_list_item;
         
-        public YanchuAdapter(Context context, List<Yanchu> list) {
+        public YanchuAdapter(Context context, List<BaseData> list) {
             super(context, RESOURCE_ID, list);
         }
         
@@ -806,7 +806,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             TextView addressTxv = (TextView) view.findViewById(R.id.address_txv);
             TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
 
-            Yanchu yanchu = getItem(position);
+            Yanchu yanchu = (Yanchu)getItem(position);
             Drawable drawable = yanchu.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
             if(drawable != null) {
                 pictureImv.setImageDrawable(drawable);
@@ -823,10 +823,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
     }
     
-    public class ZhanlanAdapter extends ArrayAdapter<Zhanlan>{
+    public class ZhanlanAdapter extends ArrayAdapter<BaseData>{
         private static final int RESOURCE_ID = R.layout.yanchu_list_item;
         
-        public ZhanlanAdapter(Context context, List<Zhanlan> list) {
+        public ZhanlanAdapter(Context context, List<BaseData> list) {
             super(context, RESOURCE_ID, list);
         }
         
@@ -847,7 +847,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             TextView addressTxv = (TextView) view.findViewById(R.id.address_txv);
             TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
 
-            Zhanlan yanchu = getItem(position);
+            Zhanlan yanchu = (Zhanlan)getItem(position);
             Drawable drawable = yanchu.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
             if(drawable != null) {
                 pictureImv.setImageDrawable(drawable);

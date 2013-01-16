@@ -310,4 +310,9 @@ public class Dianying extends BaseData {
     public void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
     }
+
+	@Override
+	public POI getPOI() {
+		return yingxun.getPOI(POI.SOURCE_TYPE_DIANYING);
+	}
 }
