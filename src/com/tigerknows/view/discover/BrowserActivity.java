@@ -81,7 +81,7 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         }
         String left = mIntent.getStringExtra(LEFT);
         if (TextUtils.isEmpty(title) == false) {
-            mLeftBtn.setText(left);
+            //mLeftBtn.setText(left);
         }
         mRightBtn.setVisibility(View.GONE);
         
