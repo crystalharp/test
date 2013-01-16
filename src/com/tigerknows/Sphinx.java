@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -734,19 +735,13 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 }
             });
 
-            Options ops=new Options();
-            ops.inScaled=false;
-            Bitmap bm=BitmapFactory.decodeResource(getResources(), mSensorOrientation ? R.drawable.icon_orientation1 : R.drawable.ic_bubble_my_location, ops);
-            Icon icon=new Icon(bm,
-                    new XYInteger(bm.getWidth(),bm.getHeight()),
-                    new XYInteger(bm.getWidth()/2,bm.getHeight()/2));
-            Bitmap bmFocused=BitmapFactory.decodeResource(getResources(), mSensorOrientation ? R.drawable.icon_orientation2 : R.drawable.ic_bubble_my_location2, ops);
-            Icon iconFocused=new Icon(bmFocused,
-                    new XYInteger(bmFocused.getWidth(),bmFocused.getHeight()),
-                    new XYInteger(bmFocused.getWidth()/2,bmFocused.getHeight()/2));
-            
+            Resources resources = getResources();
+            Icon icon = Icon.getIcon(resources, mSensorOrientation ? R.drawable.icon_orientation1 : R.drawable.ic_bubble_my_location);
+            Icon iconFocused = Icon.getIcon(resources, mSensorOrientation ? R.drawable.icon_orientation2 : R.drawable.ic_bubble_my_location2);
+            Icon icFaceToNormal = Icon.getIcon(resources, R.drawable.ic_face_to_normal);
+            Icon icFaceToFocused = Icon.getIcon(resources, R.drawable.ic_face_to_focused);
             RotationTilt rt=new RotationTilt(RotateReference.MAP,TiltReference.MAP);
-            mMyLocation = new MyLocation(null, icon, iconFocused, null, rt);
+            mMyLocation = new MyLocation(null, icon, iconFocused, icFaceToNormal, icFaceToFocused, null, rt);
             
             mMyLocationOverlay=new ItemizedOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY);
             mMyLocationOverlay.addOverlayItem(mMyLocation);
@@ -786,7 +781,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 	}
 	
 	private void checkCitySupportDiscover(int cityId) {
-	    String discover = TKConfig.getPref(this, TKConfig.PREFS_DISCOVER);
+	    String discover = TKConfig.getPref(this, TKConfig.PREFS_HINT_DISCOVER_HOME);
 	    boolean show = TextUtils.isEmpty(discover);
 	    if (show == false) {
 	        return;
@@ -1716,18 +1711,10 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         }
         ItemizedOverlay overlay=new ItemizedOverlay(ItemizedOverlay.POI_OVERLAY);
         
-        Options ops=new Options();
-        ops.inScaled=false;
+        Resources resources = getResources();
+        Icon icon = Icon.getIcon(resources, R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
+        Icon iconA = Icon.getIcon(resources, R.drawable.btn_bubble_a_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
         
-        Bitmap bm=BitmapFactory.decodeResource(getResources(), R.drawable.btn_bubble_b_normal, ops);
-        Icon icon=new Icon(bm, 
-                new XYInteger(bm.getWidth(),bm.getHeight()),
-                new XYInteger(bm.getWidth()/2,bm.getHeight()));
-        
-        bm=BitmapFactory.decodeResource(getResources(), R.drawable.btn_bubble_a_normal, ops);
-        Icon iconA=new Icon(bm, 
-                new XYInteger(bm.getWidth(),bm.getHeight()),
-                new XYInteger(bm.getWidth()/2,bm.getHeight()));
         ArrayList<Position> positions = new ArrayList<Position>();
         Position srcreenPosition = null;
         OverlayItem focus = null;
@@ -1825,7 +1812,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             overlay.isShowInPreferZoom = true;
             int screenX = Globals.g_metrics.widthPixels;
             int screenY = Globals.g_metrics.heightPixels;
-            int fitZoomLevle = Util.getZoomLevelToFitPositions(screenX, screenY, bm.getWidth()/2 , mMapView.getPadding().top, positions, srcreenPosition);
+            int fitZoomLevle = Util.getZoomLevelToFitPositions(screenX, screenY, icon.getSize().x/2 , mMapView.getPadding().top, positions, srcreenPosition);
             mMapView.zoomTo(fitZoomLevle, srcreenPosition, -1, null);
             mPreviousNextView.setVisibility(View.VISIBLE);
         } else {
@@ -2680,6 +2667,17 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         }
     }
     
+    public boolean showHint(String key, int layoutResId) {
+        boolean showView = false;
+        if (TKConfig.getPref(this, key) == null) {
+            Intent intent = new Intent();
+            intent.putExtra(Hint.LAYOUT_RES_ID, layoutResId);
+            showView = showView(R.id.activity_hint, intent);
+            TKConfig.setPref(mThis, key, "1");
+        }
+        return showView;
+    }
+    
     public boolean showView(int viewId) {
         return showView(viewId, null);
     }
@@ -3529,7 +3527,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             mMapView.refreshMap();
             return false;
         }
-        String msg=getString(R.string.my_location_with_accuracy, CommonUtils.formatMeterString((int)myLocation.getAccuracy()));
         if(!myLocation.equals(mMyLocation.getPosition())){
             try{
 //              RotationTilt rt=myLocationPin.getRotationTilt();
@@ -3538,6 +3535,11 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 mMyLocation.setPosition(myLocation);
             }catch(Exception e){
                 e.printStackTrace();
+            }
+            String msg=getString(R.string.my_location);
+            String positionName = mMapEngine.getPositionName(myLocation);
+            if (positionName != null && positionName.length() > 1) {
+                msg += "\n" + positionName.substring(1);
             }
             mMyLocation.setMessage(msg);
             

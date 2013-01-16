@@ -197,13 +197,20 @@ public class TKConfig {
     public static final String PREFS_MAP_DOWNLOAD_CITYS = "map_download_citys_v2";
     public static final String PREFS_ACQUIRE_WAKELOCK = "acquire_wakelock";
     public static final String PREFS_CLIENT_UID = "prefs_client_uid";
-    public static final String PREFS_DISCOVER = "prefs_discover";
     
     public static final String PREFS_HISTORY_WORD_POI = "history_word_poi_%d";
     public static final String PREFS_HISTORY_WORD_TRAFFIC = "history_word_traffic_%d";
     public static final String PREFS_HISTORY_WORD_BUSLINE = "history_word_busline_%d";
     
     public static final String PREFS_LAST_REGION_ID_LIST = "last_region_id_list";
+    
+    public static final String PREFS_HINT_POI_DETAIL = "prefs_hint_poi_detail";
+    public static final String PREFS_HINT_DISCOVER_HOME = "prefs_discover";
+    public static final String PREFS_HINT_POI_LIST = "prefs_hint_poi_list";
+    public static final String PREFS_HINT_DISCOVER_LIST = "prefs_hint_discover_list";
+    public static final String PREFS_HINT_DISCOVER_TUANGOU_LIST = "prefs_hint_discover_tuangou_list";
+    public static final String PREFS_HINT_DISCOVER_TUANGOU_DINGDAN = "prefs_hint_discover_tuangou_dingdan";
+    public static final String PREFS_HINT_LOCATION = "prefs_hint_location";
 
     public static final int PICTURE_DISCOVER_HOME = 1;
     public static final int PICTURE_TUANGOU_LIST = 2;

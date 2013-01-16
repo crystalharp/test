@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:background="@android:color/transparent"
+    android:background="@color/transparent"
     >
    <RelativeLayout
         android:id="@+id/left_view"
@@ -37,6 +37,6 @@
         android:scrollingCache="false"
         android:footerDividersEnabled="false"
         android:fadingEdge="none"
-        android:background="@android:color/transparent"
+        android:background="@color/transparent"
         />
 </LinearLayout>

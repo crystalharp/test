@@ -271,17 +271,16 @@ public class WeiboSend extends Activity implements OnClickListener {
                     WeiboSend.this.finish();
                     return;
                 }
-//                showDialog(R.id.dialog_share_doing);
                 new Thread() {
 					@Override
 					public void run() {
                         Weibo weibo = Weibo.getInstance();
+                        mSina.showDialog = false;
 					    TKWeibo.logout(mSina, weibo, Weibo.getAppKey(), new RequestListener() {
                             
                             @Override
                             public void onIOException(final IOException e) {
                                 ShareAPI.clearIdentity(WeiboSend.this, ShareAPI.TYPE_WEIBO);
-//                              WeiboSend.this.dismissDialog(R.id.dialog_share_doing);
                                 WeiboSend.this.finish();
                             }
                             
@@ -292,7 +291,6 @@ public class WeiboSend extends Activity implements OnClickListener {
                                     @Override
                                     public void run() {
                                         ShareAPI.clearIdentity(WeiboSend.this, ShareAPI.TYPE_WEIBO);
-//                                        WeiboSend.this.dismissDialog(R.id.dialog_share_doing);
                                         WeiboSend.this.finish();
                                     }
                                 });
@@ -305,7 +303,6 @@ public class WeiboSend extends Activity implements OnClickListener {
                                     @Override
                                     public void run() {
                                         ShareAPI.clearIdentity(WeiboSend.this, ShareAPI.TYPE_WEIBO);
-//                                        WeiboSend.this.dismissDialog(R.id.dialog_share_doing);
                                         WeiboSend.this.finish();
                                     }
                                 });
@@ -313,7 +310,8 @@ public class WeiboSend extends Activity implements OnClickListener {
                         });
 					}
                 }.start();
-                
+
+                Toast.makeText(this, R.string.logout_sucess, Toast.LENGTH_LONG).show();
                 break;
             }
             case R.id.send_btn: {
@@ -335,6 +333,7 @@ public class WeiboSend extends Activity implements OnClickListener {
                     
                     @Override
                     public void run() {
+                        mSina.showDialog = true;
                         Weibo weibo = Weibo.getInstance();
                         // TODO Auto-generated method stub
                         if (!TextUtils.isEmpty(mPicPath)) {

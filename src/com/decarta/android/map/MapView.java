@@ -12,14 +12,10 @@ import java.util.Map;
 
 import android.app.Activity;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapFactory.Options;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.net.Uri;
@@ -141,13 +137,7 @@ public class MapView extends RelativeLayout implements
 		});
 		
 		if(CONFIG.COMPASS_PLACE_LOCATION>-1 && CONFIG.COMPASS_PLACE_LOCATION<=4){
-		    Options ops=new Options();
-	        ops.inScaled=false;
-	        
-	        Bitmap bm=BitmapFactory.decodeResource(getResources(), R.drawable.ic_compass, ops);
-	        Icon icon=new Icon(bm, 
-	                new XYInteger(bm.getWidth(),bm.getHeight()),
-	                new XYInteger(bm.getWidth()/2,bm.getHeight()/2));
+	        Icon icon=Icon.getIcon(getResources(), R.drawable.ic_compass);
     		Compass compass=new Compass(icon.getSize(), icon.getOffset(), PlaceLocation.TOP_LEFT, icon);
     		compass.setPlaceLocation(PlaceLocation.values()[CONFIG.COMPASS_PLACE_LOCATION]);
     		try{
@@ -1017,20 +1007,20 @@ public class MapView extends RelativeLayout implements
                     
                     @Override
                     public void run() {
-                        Bitmap bm = tilesView.getSnapBitmap();
-                        String mapPath = TKConfig.getDataPath(true);
-                        if (bm != null && !TextUtils.isEmpty(mapPath)) {
-                            Uri uri = CommonUtils.bitmap2Png(bm, "mapsnap.png", mapPath);
-                            if (bm.isRecycled() == false) {
-                                bm.recycle();
-                            }
-                            bm = null;
-                            if (snapMap != null) {
-                                snapMap.finish(uri);
-                            }
-                        }
                         if (tipProgressDialog != null && tipProgressDialog.isShowing()) {
                             tipProgressDialog.dismiss();
+                            Bitmap bm = tilesView.getSnapBitmap();
+                            String mapPath = TKConfig.getDataPath(true);
+                            if (bm != null && !TextUtils.isEmpty(mapPath)) {
+                                Uri uri = CommonUtils.bitmap2Png(bm, "mapsnap.png", mapPath);
+                                if (bm.isRecycled() == false) {
+                                    bm.recycle();
+                                }
+                                bm = null;
+                                if (snapMap != null) {
+                                    snapMap.finish(uri);
+                                }
+                            }
                         }                            
                     }
                 });

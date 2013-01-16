@@ -4,17 +4,11 @@
 
 package com.tigerknows.view;
 
-import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 
-import android.R.anim;
-import android.content.Intent;
-import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,16 +16,10 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.view.animation.Animation.AnimationListener;
-import android.widget.AbsoluteLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import java.util.Hashtable;
-
 import com.tigerknows.ActionLog;
-import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.DataQuery;
-import com.tigerknows.util.TKAsyncTask;
 
 /**
  * @author Peng Wenyue
@@ -231,10 +219,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 mSphinx.getDiscoverFragment().setCurrentItem(0);
                 if (mDiscvoerImv.getVisibility() == View.VISIBLE) {
                     mDiscvoerImv.setVisibility(View.GONE);
-                    Intent intent = new Intent();
-                    intent.putExtra("layoutResID", R.layout.hint_discover);
-                    mSphinx.showView(R.id.activity_hint, intent);
-                    TKConfig.setPref(mSphinx, TKConfig.PREFS_DISCOVER, "1");
+                    mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_HOME, R.layout.hint_discover_home);
                 }
                 break;
             case R.id.traffic_btn:

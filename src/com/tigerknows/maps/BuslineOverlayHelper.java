@@ -5,9 +5,6 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapFactory.Options;
 import android.os.Handler;
 
 import com.decarta.Globals;
@@ -17,7 +14,6 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.location.BoundingBox;
 import com.decarta.android.location.Position;
 import com.decarta.android.map.Icon;
-import com.decarta.android.map.InfoWindow;
 import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.map.MapView;
 import com.decarta.android.map.OverlayItem;
@@ -28,7 +24,6 @@ import com.decarta.android.map.RotationTilt.TiltReference;
 import com.decarta.android.map.Shape;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
-import com.decarta.android.util.XYInteger;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.model.BuslineModel.Line;
@@ -70,9 +65,9 @@ public class BuslineOverlayHelper {
 		        RotationTilt rt = new RotationTilt(RotateReference.SCREEN, TiltReference.SCREEN);
 				
 		        // 绘制每一个站点图标及起点终点图标
-		        Icon busStartIc = getStartIcon(context);
-		        Icon busEndIc = getEndIcon(context);
-		        Icon busStationIc = createIconByResId(context, R.drawable.icon_map_bus);
+		        Icon busStartIc = Icon.getIcon(context.getResources(), R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
+                Icon busEndIc = Icon.getIcon(context.getResources(), R.drawable.icon_end_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
+		        Icon busStationIc = Icon.getIcon(context.getResources(), R.drawable.icon_map_bus);
 		        Icon busIc = null;
 		        int i = 0;
 		        final int startIndex = 0;
@@ -104,55 +99,6 @@ public class BuslineOverlayHelper {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	/**
-	 * 将图片资源文件转化为Icon对象
-	 * 
-	 * @param context
-	 * @param resId
-	 * @return
-	 */
-	private static Icon createIconByResId(Context context, int resId) {
-		Options ops=new Options();
-        ops.inScaled=false;
-        
-		Bitmap bmp=BitmapFactory.decodeResource(context.getResources(), resId, ops);
-        Icon icon=new Icon(bmp, new XYInteger(bmp.getWidth(),bmp.getHeight()),
-                new XYInteger(0,bmp.getHeight()));
-        return icon;
-	}
-	
-	/**
-	 * 获取起点Icon
-	 * 
-	 * @param context
-	 * @return
-	 */
-	private static Icon getStartIcon(Context context) {
-		Options ops=new Options();
-        ops.inScaled=false;
-        
-		Bitmap bmp=BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_start_pin, ops);
-        Icon icon=new Icon(bmp, new XYInteger(bmp.getWidth(),bmp.getHeight()),
-                new XYInteger(bmp.getWidth()/2,bmp.getHeight()));
-        return icon;
-	}
-	
-	/**
-	 * 获取终点Icon
-	 * 
-	 * @param context
-	 * @return
-	 */
-	private static Icon getEndIcon(Context context) {
-		Options ops=new Options();
-        ops.inScaled=false;
-        
-		Bitmap bmp=BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_end_pin, ops);
-        Icon icon=new Icon(bmp, new XYInteger(bmp.getWidth(),bmp.getHeight()),
-                new XYInteger(bmp.getWidth()/2,bmp.getHeight()));
-        return icon;
 	}
 	
 	/**
@@ -235,8 +181,9 @@ public class BuslineOverlayHelper {
 		 * 缩放到该zoomlevel, 并平移至中心点
 		 */
 		try {
+		    Icon start = Icon.getIcon(activity.getResources(), R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
 //			int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, getStartIcon(activity).getSize().x/2, boundingBox);
-			int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, getStartIcon(activity).getSize().x/2, 
+			int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, start.getSize().x/2, 
 					mapview.getPadding().top, boundingBox);
 
 			LogWrapper.d(TAG, "get fitZoom: " + fitZoom);

@@ -105,7 +105,7 @@
 		        android:id="@+id/shadow1"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
-		        android:background="@android:color/white"
+		        android:background="@color/white"
 		        android:scaleType="fitXY"
 		        android:src="@drawable/bg_shadow" />
 		    <TextView 
@@ -115,7 +115,7 @@
 		        android:paddingLeft="10dp"
 		        android:paddingTop="2dp"
 		        android:paddingBottom="2dp"
-		        android:textColor="@android:color/black"
+		        android:textColor="@color/black"
 		        android:textSize="13sp"
 		        android:singleLine="true" 
 		        android:background="@color/traffic_current_city_bg"/>

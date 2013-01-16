@@ -185,10 +185,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     }
    
     protected void findViews() {
-    	mSubTitleTxv = (TextView)mRootView.findViewById(R.id.start_txv);
+    	mSubTitleTxv = (TextView)mRootView.findViewById(R.id.subtitle_txv);
         mLengthTxv = (TextView)mRootView.findViewById(R.id.length_txv);
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
         mShadowImv = (ImageView)mRootView.findViewById(R.id.shadow2);
+        mRootView.findViewById(R.id.sub_title_1column_view).setVisibility(View.VISIBLE);
+        mRootView.findViewById(R.id.sub_title_2column_view).setVisibility(View.GONE);
         mErrorRecoveryLayout = (LinearLayout)mRootView.findViewById(R.id.error_recovery_layout);
         mErrorRecoveryBtn = (Button)mRootView.findViewById(R.id.error_recovery_btn);
         mFavorateBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
