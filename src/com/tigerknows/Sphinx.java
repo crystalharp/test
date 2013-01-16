@@ -17,6 +17,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.ResolveInfo;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -734,19 +735,13 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 }
             });
 
-            Options ops=new Options();
-            ops.inScaled=false;
-            Bitmap bm=BitmapFactory.decodeResource(getResources(), mSensorOrientation ? R.drawable.icon_orientation1 : R.drawable.ic_bubble_my_location, ops);
-            Icon icon=new Icon(bm,
-                    new XYInteger(bm.getWidth(),bm.getHeight()),
-                    new XYInteger(bm.getWidth()/2,bm.getHeight()/2));
-            Bitmap bmFocused=BitmapFactory.decodeResource(getResources(), mSensorOrientation ? R.drawable.icon_orientation2 : R.drawable.ic_bubble_my_location2, ops);
-            Icon iconFocused=new Icon(bmFocused,
-                    new XYInteger(bmFocused.getWidth(),bmFocused.getHeight()),
-                    new XYInteger(bmFocused.getWidth()/2,bmFocused.getHeight()/2));
-            
+            Resources resources = getResources();
+            Icon icon = Icon.getIcon(resources, mSensorOrientation ? R.drawable.icon_orientation1 : R.drawable.ic_bubble_my_location);
+            Icon iconFocused = Icon.getIcon(resources, mSensorOrientation ? R.drawable.icon_orientation2 : R.drawable.ic_bubble_my_location2);
+            Icon icFaceToNormal = Icon.getIcon(resources, R.drawable.ic_face_to_normal);
+            Icon icFaceToFocused = Icon.getIcon(resources, R.drawable.ic_face_to_focused);
             RotationTilt rt=new RotationTilt(RotateReference.MAP,TiltReference.MAP);
-            mMyLocation = new MyLocation(null, icon, iconFocused, null, rt);
+            mMyLocation = new MyLocation(null, icon, iconFocused, icFaceToNormal, icFaceToFocused, null, rt);
             
             mMyLocationOverlay=new ItemizedOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY);
             mMyLocationOverlay.addOverlayItem(mMyLocation);

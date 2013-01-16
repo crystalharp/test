@@ -3490,8 +3490,16 @@ public class TilesView extends GLSurfaceView {
 			Icon icon=pin.getIcon();
 	        if (pin instanceof MyLocation) {
 	            MyLocation myLocation = (MyLocation)pin;
-	            if (pin.isFoucsed) {
-	                icon = myLocation.focused;
+	            if (myLocation.mode == MyLocation.MODE_ROTATION) {
+                    if (pin.isFoucsed) {
+                        icon = myLocation.faceToFocused;
+                    } else {
+                        icon = myLocation.faceToNormal;
+                    }
+	            } else {
+    	            if (pin.isFoucsed) {
+    	                icon = myLocation.focused;
+    	            }
 	            }
 	        }
 
