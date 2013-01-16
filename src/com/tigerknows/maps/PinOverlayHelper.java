@@ -1,19 +1,7 @@
 package com.tigerknows.maps;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapFactory.Options;
-import android.net.Uri;
 import android.os.Handler;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 import com.decarta.android.event.EventSource;
 import com.decarta.android.event.EventType;
@@ -26,13 +14,10 @@ import com.decarta.android.map.OverlayItem;
 import com.decarta.android.map.RotationTilt;
 import com.decarta.android.map.RotationTilt.RotateReference;
 import com.decarta.android.map.RotationTilt.TiltReference;
-import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.XYFloat;
-import com.decarta.android.util.XYInteger;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.model.POI;
-import com.tigerknows.view.TrafficQueryFragment;
 
 public class PinOverlayHelper {
 
@@ -55,7 +40,7 @@ public class PinOverlayHelper {
 	            String message = context.getString(isStart ? R.string.select_where_as_start : R.string.select_where_as_end, name);
 	            ItemizedOverlay overlay = new ItemizedOverlay(ItemizedOverlay.PIN_OVERLAY);
 	            RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
-	            OverlayItem overlayItem = new OverlayItem(poi.getPosition(), createIconByResId(context, R.drawable.icon_longclick_bubble), 
+	            OverlayItem overlayItem = new OverlayItem(poi.getPosition(), Icon.getIcon(context.getResources(), R.drawable.icon_longclick_bubble, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
 	            		message, rt);
 	            overlayItem.setAssociatedObject(poi);
 		        
@@ -100,7 +85,7 @@ public class PinOverlayHelper {
                 
 	            ItemizedOverlay overlay = new ItemizedOverlay(ItemizedOverlay.PIN_OVERLAY);
 	            RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
-	            OverlayItem overlayItem = new OverlayItem(position, createIconByResId(context, R.drawable.icon_longclick_bubble), 
+	            OverlayItem overlayItem = new OverlayItem(position, Icon.getIcon(context.getResources(), R.drawable.icon_longclick_bubble, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
 	            		name, rt);
 		        overlayItem.setAssociatedObject(poi);
 		        
@@ -130,22 +115,5 @@ public class PinOverlayHelper {
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	/**
-	 * 将图片资源文件转化为Icon对象
-	 * 
-	 * @param context
-	 * @param resId
-	 * @return
-	 */
-	private static Icon createIconByResId(Context context, int resId) {
-		Options ops=new Options();
-        ops.inScaled=false;
-        
-		Bitmap bmp=BitmapFactory.decodeResource(context.getResources(), resId, ops);
-        Icon icon=new Icon(bmp, new XYInteger(bmp.getWidth(),bmp.getHeight()),
-                new XYInteger(bmp.getWidth()/2,bmp.getHeight()));
-        return icon;
 	}
 }

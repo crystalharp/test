@@ -23,6 +23,7 @@ public class Icon {
     public static final int OFFSET_LOCATION_RIGHT_BOTTOM = 2;
     public static final int OFFSET_LOCATION_LEFT_BOTTOM = 3;
     public static final int OFFSET_LOCATION_CENTER = 4;
+    public static final int OFFSET_LOCATION_CENTER_BOTTOM = 5;
 	private XYInteger size;
 	private Bitmap image;
 	//icon image's top left corner will be placed at position.x-offset.x, position.y-offset.y
@@ -135,6 +136,9 @@ public class Icon {
                 break;
             case OFFSET_LOCATION_CENTER:
                 offset = new XYInteger(w/2, h/2);
+                break;
+            case OFFSET_LOCATION_CENTER_BOTTOM:
+                offset = new XYInteger(w/2, h);
                 break;
         }
         Icon icon=new Icon(bm,

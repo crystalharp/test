@@ -4,9 +4,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.BitmapFactory.Options;
+import android.content.res.Resources;
 import android.os.Handler;
 
 import com.decarta.Globals;
@@ -26,7 +24,6 @@ import com.decarta.android.map.RotationTilt.TiltReference;
 import com.decarta.android.map.Shape;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
-import com.decarta.android.util.XYInteger;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.model.TrafficModel.Plan;
@@ -66,11 +63,12 @@ public class TrafficOverlayHelper {
 	            List<Step> steps = plan.getStepList();
 	            List<CharSequence> strings = NavigationSplitJointRule.splitJoint(context, type, plan);
 	            
-	            Icon start = getStartIcon(context);
-	            Icon end = getEndIcon(context);
-	            Icon busIc = createIconByResId(context, R.drawable.icon_map_bus);
-	    	    Icon driveIc = createIconByResId(context, R.drawable.icon_map_drive);
-	    	    Icon walkIc = createIconByResId(context, R.drawable.icon_map_walk);
+	            Resources resources = context.getResources();
+                Icon start = Icon.getIcon(resources, R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
+                Icon end = Icon.getIcon(resources, R.drawable.icon_end_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
+	            Icon busIc = Icon.getIcon(resources, R.drawable.icon_map_bus);
+	    	    Icon driveIc = Icon.getIcon(resources, R.drawable.icon_map_drive);
+	    	    Icon walkIc = Icon.getIcon(resources, R.drawable.icon_map_walk);
 	            
 	    	    // 添加起点item. 包括终点图标, 起点文本:"起点"
 	    	    OverlayItem overlayItem = new OverlayItem(steps.get(0).getPositionList().get(0), start, 
@@ -128,87 +126,6 @@ public class TrafficOverlayHelper {
 	        e.printStackTrace();
 	    }
 	}
-	
-	/**
-	 * 将图片资源文件转化为Icon对象
-	 * 
-	 * @param context
-	 * @param resId
-	 * @return
-	 */
-	private static Icon createIconByResId(Context context, int resId) {
-		Options ops=new Options();
-        ops.inScaled=false;
-        
-		Bitmap bmp=BitmapFactory.decodeResource(context.getResources(), resId, ops);
-        Icon icon=new Icon(bmp, new XYInteger(bmp.getWidth(),bmp.getHeight()),
-                new XYInteger(0,bmp.getHeight()));
-        return icon;
-	}
-	
-	/**
-	 * 获取起点Icon
-	 * 
-	 * @param context
-	 * @return
-	 */
-	private static Icon getStartIcon(Context context) {
-		Options ops=new Options();
-        ops.inScaled=false;
-        
-		Bitmap bmp=BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_start_pin, ops);
-        Icon icon=new Icon(bmp, new XYInteger(bmp.getWidth(),bmp.getHeight()),
-                new XYInteger(bmp.getWidth()/2,bmp.getHeight()));
-        return icon;
-	}
-	
-	/**
-	 * 获取终点Icon
-	 * 
-	 * @param context
-	 * @return
-	 */
-	private static Icon getEndIcon(Context context) {
-		Options ops=new Options();
-        ops.inScaled=false;
-        
-		Bitmap bmp=BitmapFactory.decodeResource(context.getResources(), R.drawable.icon_end_pin, ops);
-        Icon icon=new Icon(bmp, new XYInteger(bmp.getWidth(),bmp.getHeight()),
-                new XYInteger(bmp.getWidth()/2,bmp.getHeight()));
-        return icon;
-	}
-	
-	/**
-	 * 根据Step类型获取相应Icon
-	 * 步行Icon, 驾车Icon, 公交Icon
-	 * 
-	 * @param context
-	 * @param step
-	 * @return
-	 */
-	private static Icon getIconByType(Context context, Step step) {
-	    Icon busIc = createIconByResId(context, R.drawable.icon_map_bus);
-	    Icon driveIc = createIconByResId(context, R.drawable.icon_map_drive);
-	    Icon walkIc = createIconByResId(context, R.drawable.icon_map_walk);
-	
-	    Icon icon = null;
-        
-        switch(step.getType()){
-        
-        case Step.TYPE_TRANSFER:
-            icon = busIc;
-            break;
-        case Step.TYPE_DRIVE:
-            icon =  driveIc;
-            break;
-        case Step.TYPE_WALK:
-            icon =  walkIc;
-            break;
-        default:
-        }
-
-        return icon;
-    }
 	
 	/**
 	 * 为每个OverlayItem附加点击事件,
@@ -287,8 +204,9 @@ public class TrafficOverlayHelper {
 		 * 缩放到该zoomlevel, 并平移至中心点
 		 */
 		try {
+		    Icon start = Icon.getIcon(activity.getResources(), R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
 //			int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, getStartIcon(activity).getSize().x/2, boundingBox);
-			int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, getStartIcon(activity).getSize().x/2, 
+			int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, start.getSize().x/2, 
 					mapview.getPadding().top, boundingBox);
 
 			LogWrapper.d(TAG, "get fitZoom: " + fitZoom);

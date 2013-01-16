@@ -1711,18 +1711,10 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         }
         ItemizedOverlay overlay=new ItemizedOverlay(ItemizedOverlay.POI_OVERLAY);
         
-        Options ops=new Options();
-        ops.inScaled=false;
+        Resources resources = getResources();
+        Icon icon = Icon.getIcon(resources, R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
+        Icon iconA = Icon.getIcon(resources, R.drawable.btn_bubble_a_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
         
-        Bitmap bm=BitmapFactory.decodeResource(getResources(), R.drawable.btn_bubble_b_normal, ops);
-        Icon icon=new Icon(bm, 
-                new XYInteger(bm.getWidth(),bm.getHeight()),
-                new XYInteger(bm.getWidth()/2,bm.getHeight()));
-        
-        bm=BitmapFactory.decodeResource(getResources(), R.drawable.btn_bubble_a_normal, ops);
-        Icon iconA=new Icon(bm, 
-                new XYInteger(bm.getWidth(),bm.getHeight()),
-                new XYInteger(bm.getWidth()/2,bm.getHeight()));
         ArrayList<Position> positions = new ArrayList<Position>();
         Position srcreenPosition = null;
         OverlayItem focus = null;
@@ -1820,7 +1812,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             overlay.isShowInPreferZoom = true;
             int screenX = Globals.g_metrics.widthPixels;
             int screenY = Globals.g_metrics.heightPixels;
-            int fitZoomLevle = Util.getZoomLevelToFitPositions(screenX, screenY, bm.getWidth()/2 , mMapView.getPadding().top, positions, srcreenPosition);
+            int fitZoomLevle = Util.getZoomLevelToFitPositions(screenX, screenY, icon.getSize().x/2 , mMapView.getPadding().top, positions, srcreenPosition);
             mMapView.zoomTo(fitZoomLevle, srcreenPosition, -1, null);
             mPreviousNextView.setVisibility(View.VISIBLE);
         } else {
