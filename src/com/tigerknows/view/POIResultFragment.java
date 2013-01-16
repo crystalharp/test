@@ -11,6 +11,7 @@ import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
@@ -323,6 +324,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mResultLsv.setVisibility(View.VISIBLE);
             if (mRightBtn != null)
                 mRightBtn.setVisibility(mPOIList.size() > 0 ? View.VISIBLE : View.GONE);
+            
+            mSphinx.showHint(TKConfig.PREFS_HINT_POI_LIST, R.layout.hint_poi_list);
         }
         refreshResultTitleText(null);
     }

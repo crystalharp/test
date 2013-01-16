@@ -38,6 +38,7 @@
     <color name="black_dark">#323232</color>
     <color name="black_middle">#4d4d4d</color>
     <color name="black_light">#969696</color>
+    <color name="black_transparent_half">#88000000</color>
     <color name="orange">#ff6c00</color>
     <color name="transparent">#00000000</color>
     <color name="blue">#3b94d8</color>

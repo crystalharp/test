@@ -31,6 +31,7 @@ import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
@@ -269,6 +270,10 @@ public class TrafficQueryFragment extends BaseFragment {
     
 	@Override
 	public void onResume() {
+	    if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_LOCATION) == null
+	            && mStateTransitionTable.getCurrentState() != TrafficViewSTT.State.Input) {
+	        mSphinx.showHint(TKConfig.PREFS_HINT_LOCATION, R.layout.hint_location);
+	    }
 		if (mStateTransitionTable.getCurrentState() != TrafficViewSTT.State.SelectPoint) { // 选点操作时, 按HOME键, 再进入应用 
 			super.onResume();
 			hideCommonTitle();

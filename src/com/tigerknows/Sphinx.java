@@ -781,7 +781,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 	}
 	
 	private void checkCitySupportDiscover(int cityId) {
-	    String discover = TKConfig.getPref(this, TKConfig.PREFS_DISCOVER);
+	    String discover = TKConfig.getPref(this, TKConfig.PREFS_HINT_DISCOVER_HOME);
 	    boolean show = TextUtils.isEmpty(discover);
 	    if (show == false) {
 	        return;
@@ -2673,6 +2673,17 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         synchronized (mUILock) {
             return mUIStack.size();
         }
+    }
+    
+    public boolean showHint(String key, int layoutResId) {
+        boolean showView = false;
+        if (TKConfig.getPref(this, key) == null) {
+            Intent intent = new Intent();
+            intent.putExtra(Hint.LAYOUT_RES_ID, layoutResId);
+            showView = showView(R.id.activity_hint, intent);
+            TKConfig.setPref(mThis, key, "1");
+        }
+        return showView;
     }
     
     public boolean showView(int viewId) {
