@@ -22,5 +22,5 @@
         android:gravity="left|center_vertical"
         android:text="@string/do_not_show_this_message"
         android:textSize="14sp"
-        android:textColor="@color/white"/>
+        android:textColor="@color/black"/>
 </LinearLayout>
