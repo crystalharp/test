@@ -1017,20 +1017,20 @@ public class MapView extends RelativeLayout implements
                     
                     @Override
                     public void run() {
-                        Bitmap bm = tilesView.getSnapBitmap();
-                        String mapPath = TKConfig.getDataPath(true);
-                        if (bm != null && !TextUtils.isEmpty(mapPath)) {
-                            Uri uri = CommonUtils.bitmap2Png(bm, "mapsnap.png", mapPath);
-                            if (bm.isRecycled() == false) {
-                                bm.recycle();
-                            }
-                            bm = null;
-                            if (snapMap != null) {
-                                snapMap.finish(uri);
-                            }
-                        }
                         if (tipProgressDialog != null && tipProgressDialog.isShowing()) {
                             tipProgressDialog.dismiss();
+                            Bitmap bm = tilesView.getSnapBitmap();
+                            String mapPath = TKConfig.getDataPath(true);
+                            if (bm != null && !TextUtils.isEmpty(mapPath)) {
+                                Uri uri = CommonUtils.bitmap2Png(bm, "mapsnap.png", mapPath);
+                                if (bm.isRecycled() == false) {
+                                    bm.recycle();
+                                }
+                                bm = null;
+                                if (snapMap != null) {
+                                    snapMap.finish(uri);
+                                }
+                            }
                         }                            
                     }
                 });
