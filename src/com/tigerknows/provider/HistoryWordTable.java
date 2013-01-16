@@ -261,7 +261,7 @@ public class HistoryWordTable {
             list = History_Word_Busline;
         }
         list.remove(tkWord);
-        list.add(tkWord);
+        list.add(0, tkWord);
         HistoryWordTable historyWordTable = new HistoryWordTable(context);
         historyWordTable.write(tkWord, cityId, type);
         historyWordTable.optimize(cityId, type);

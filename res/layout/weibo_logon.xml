@@ -30,7 +30,7 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="22dp"
                 android:layout_centerVertical="true"
-                android:textColor="@android:color/white"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:text="@string/weibo_no_username"
                 android:layout_alignParentRight="true" />
@@ -67,7 +67,7 @@
                     android:layout_height="wrap_content"
                     android:textSize="16sp"
                     android:paddingRight="10dp"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/black"
                     android:text="@string/woibo_introduction"
                     android:layout_toLeftOf="@id/arrow_imv" />
             </RelativeLayout>
@@ -148,7 +148,7 @@
                 <TextView
                     android:layout_width="wrap_content" 
                     android:layout_height="wrap_content"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/black"
                     android:text="@string/weibo_friendships"
                     android:layout_toRightOf="@id/friendships_cbx"
                     android:layout_below="@id/logon_btn"

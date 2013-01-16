@@ -11,6 +11,7 @@ import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
@@ -241,9 +242,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
                 long bTotal = poiList.getTotal();
                 
-                if (aTotal > 0 || bTotal > 0) {
-                    mTitleText = mSphinx.getString(R.string.search_result, mDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD), aTotal > 1 ? aTotal : bTotal);
-                }
+                mTitleText = mSphinx.getString(R.string.search_result, mDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD), aTotal > 1 ? aTotal : bTotal);
             }
         }
         
@@ -325,6 +324,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mResultLsv.setVisibility(View.VISIBLE);
             if (mRightBtn != null)
                 mRightBtn.setVisibility(mPOIList.size() > 0 ? View.VISIBLE : View.GONE);
+            
+            mSphinx.showHint(TKConfig.PREFS_HINT_POI_LIST, R.layout.hint_poi_list);
         }
         refreshResultTitleText(null);
     }

@@ -954,7 +954,7 @@ public class CommonUtils {
             listView.setAdapter(adapter);
             
             final Dialog dialog = showNormalDialog(activity,
-                    activity.getString(R.string.app_name),
+                    activity.getString(R.string.call_telephone),
                     null,
                     listView,
                     null,

@@ -36,7 +36,7 @@
 			        android:id="@+id/base_infomation_error_rbt"
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"
-				    android:textColor="@android:color/black"
+				    android:textColor="@color/black"
 				    android:text="@string/poi_base_info_error"
 				    android:checked="true"
 				    android:button="@drawable/rdb_recovery"
@@ -80,7 +80,7 @@
 			        android:id="@+id/place_absent_error_rbt"
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"
-				    android:textColor="@android:color/black"
+				    android:textColor="@color/black"
 				    android:text="@string/poi_address_noexist_error"
 				    android:button="@drawable/rdb_recovery"
 				    />
@@ -88,7 +88,7 @@
 			        android:id="@+id/place_duplication_error_rbt"
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"
-				    android:textColor="@android:color/black"
+				    android:textColor="@color/black"
 				    android:text="@string/poi_address_duplicate_error"
 				    android:button="@drawable/rdb_recovery"
 				    />
@@ -96,7 +96,7 @@
 			        android:id="@+id/other_error_rbt"
 				    android:layout_width="wrap_content"
 				    android:layout_height="wrap_content"
-				    android:textColor="@android:color/black"
+				    android:textColor="@color/black"
 				    android:text="@string/poi_ohter_error"
 				    android:button="@drawable/rdb_recovery"
 				    />

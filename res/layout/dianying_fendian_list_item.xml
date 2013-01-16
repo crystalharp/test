@@ -42,7 +42,7 @@
                 android:layout_marginLeft="4dp"
                 android:gravity="left"
                 android:text="@string/show_date"
-                android:textColor="@android:color/black"
+                android:textColor="@color/black"
                 android:textSize="16sp"
                 />
             <Button

@@ -119,7 +119,7 @@
                 android:drawableLeft="@drawable/ic_setting"
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"
-                android:text="@string/settings"
+                android:text="@string/system_settings"
                 android:gravity="left|center_vertical"
                 />
         </LinearLayout>
@@ -208,36 +208,17 @@
             android:orientation="vertical"
             android:padding="0dp"
             >
-
             <Button
-                android:id="@+id/about_btn"
+                android:id="@+id/app_recommend_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/list_header"
                 android:padding="8dp"
                 android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_about_us"
+                android:drawableLeft="@drawable/ic_app_recommend"
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"
-                android:text="@string/about_us"
-                android:gravity="left|center_vertical"
-                />
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                />
-            <Button
-                android:id="@+id/give_favourable_comment_btn"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_middle"
-                android:padding="8dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_give_favourable_comment"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
-                android:text="@string/give_favourable_comment"
+                android:text="@string/app_recommend"
                 android:gravity="left|center_vertical"
                 />
             <ImageView
@@ -262,17 +243,36 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
                 />
+
             <Button
-                android:id="@+id/app_recommend_btn"
+                android:id="@+id/about_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/list_middle"
                 android:padding="8dp"
                 android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_app_recommend"
+                android:drawableLeft="@drawable/ic_about_us"
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"
-                android:text="@string/app_recommend"
+                android:text="@string/about_us"
+                android:gravity="left|center_vertical"
+                />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                />
+            <Button
+                android:id="@+id/give_favourable_comment_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_middle"
+                android:padding="8dp"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/ic_give_favourable_comment"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/give_favourable_comment"
                 android:gravity="left|center_vertical"
                 />
             <ImageView

@@ -31,6 +31,7 @@ import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.Sphinx.TouchMode;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
@@ -269,6 +270,10 @@ public class TrafficQueryFragment extends BaseFragment {
     
 	@Override
 	public void onResume() {
+	    if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_LOCATION) == null
+	            && mStateTransitionTable.getCurrentState() != TrafficViewSTT.State.Input) {
+	        mSphinx.showHint(TKConfig.PREFS_HINT_LOCATION, R.layout.hint_location);
+	    }
 		if (mStateTransitionTable.getCurrentState() != TrafficViewSTT.State.SelectPoint) { // 选点操作时, 按HOME键, 再进入应用 
 			super.onResume();
 			hideCommonTitle();
@@ -554,9 +559,7 @@ public class TrafficQueryFragment extends BaseFragment {
 		}
 
 		int cityId = mMapLocationHelper.getQueryCityInfo().getId();
-		if (!isKeyword(searchword)) {
-		    HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, searchword), cityId, HistoryWordTable.TYPE_BUSLINE);
-		}
+        addHistoryWord(mBusline, cityId, HistoryWordTable.TYPE_BUSLINE);
         BuslineQuery buslineQuery = new BuslineQuery(mContext);
         buslineQuery.setup(cityId, searchword, 0, false, getId(), mContext.getString(R.string.doing_and_wait));
         
@@ -591,19 +594,22 @@ public class TrafficQueryFragment extends BaseFragment {
         
         int cityId = mMapLocationHelper.getQueryCityInfo().getId();
         
-        //xupeng:怎么算是history word？搜索北大，实际用北京大学搜索，哪个是？
-        if (!isKeyword(mStart.getEdt().getText().toString())) {
-            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, mStart.getEdt().getText().toString()), cityId, HistoryWordTable.TYPE_TRAFFIC);
-        }
-
-        if (!isKeyword(mEnd.getEdt().getText().toString())) {
-            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, mEnd.getEdt().getText().toString()), cityId, HistoryWordTable.TYPE_TRAFFIC);
-        }
+        addHistoryWord(mStart, cityId, HistoryWordTable.TYPE_TRAFFIC);
+        addHistoryWord(mEnd, cityId, HistoryWordTable.TYPE_TRAFFIC);
     		
         mActionLog.addAction(ActionLog.TrafficQueryBtnT, mStart.getEdt().getText().toString(), mEnd.getEdt().getText().toString());
         trafficQuery.setup(cityId, start, end, getQueryType(), getId(), mContext.getString(R.string.doing_and_wait));
         
         mSphinx.queryStart(trafficQuery);
+	}
+	
+	private void addHistoryWord(QueryEditText queryEditText, int cityId, int type) {
+	    if (!isKeyword(queryEditText.getEdt().getText().toString())) {
+            POI poi = queryEditText.getPOI();
+            String name = poi.getName();
+            Position position = poi.getPosition();
+            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, name, position), cityId, type);
+        }
 	}
     
     public static void submitTrafficQuery(Sphinx sphinx, POI start, POI end, int queryType) {

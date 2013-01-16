@@ -14,10 +14,14 @@ public class MyLocation extends OverlayItem {
     public int mode;
     public Icon focused;
     public long refreshTime;
+    public Icon faceToNormal;
+    public Icon faceToFocused;
     
-    public MyLocation(Position position, Icon icon, Icon focused, String message, RotationTilt rotationTilt)
+    public MyLocation(Position position, Icon icon, Icon focused, Icon faceToNormal, Icon faceToFocused, String message, RotationTilt rotationTilt)
             throws APIException {
         super(position, icon, message, rotationTilt);
         this.focused = focused;
+        this.faceToNormal = faceToNormal;
+        this.faceToFocused = faceToFocused;
     }
 }

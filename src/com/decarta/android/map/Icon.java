@@ -6,7 +6,10 @@
 
 package com.decarta.android.map;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.BitmapFactory.Options;
 
 import com.decarta.android.util.XYInteger;
 
@@ -15,6 +18,12 @@ import com.decarta.android.util.XYInteger;
  * on a Map in conjunction with a Pin.
  */
 public class Icon {
+    public static final int OFFSET_LOCATION_LEFT_TOP = 0;
+    public static final int OFFSET_LOCATION_RIGHT_TOP = 1;
+    public static final int OFFSET_LOCATION_RIGHT_BOTTOM = 2;
+    public static final int OFFSET_LOCATION_LEFT_BOTTOM = 3;
+    public static final int OFFSET_LOCATION_CENTER = 4;
+    public static final int OFFSET_LOCATION_CENTER_BOTTOM = 5;
 	private XYInteger size;
 	private Bitmap image;
 	//icon image's top left corner will be placed at position.x-offset.x, position.y-offset.y
@@ -100,5 +109,41 @@ public class Icon {
     public void setOrder(int order) {
         this.order = order;
     }
-	
+
+    public static Icon getIcon(Resources resources, int resId) {
+        return getIcon(resources, resId, OFFSET_LOCATION_CENTER);
+    }
+
+    public static Icon getIcon(Resources resources, int resId, int offsetLocation) {
+        Options ops=new Options();
+        ops.inScaled=false;
+        Bitmap bm=BitmapFactory.decodeResource(resources, resId, ops);
+        int w = bm.getWidth();
+        int h = bm.getHeight();
+        XYInteger offset = null;
+        switch (offsetLocation) {
+            case OFFSET_LOCATION_LEFT_TOP:
+                offset = new XYInteger(0, 0);
+                break;
+            case OFFSET_LOCATION_RIGHT_TOP:
+                offset = new XYInteger(w, 0);
+                break;
+            case OFFSET_LOCATION_RIGHT_BOTTOM:
+                offset = new XYInteger(w, h);
+                break;
+            case OFFSET_LOCATION_LEFT_BOTTOM:
+                offset = new XYInteger(0, h);
+                break;
+            case OFFSET_LOCATION_CENTER:
+                offset = new XYInteger(w/2, h/2);
+                break;
+            case OFFSET_LOCATION_CENTER_BOTTOM:
+                offset = new XYInteger(w/2, h);
+                break;
+        }
+        Icon icon=new Icon(bm,
+                new XYInteger(w,h),
+                offset);
+        return icon;
+    }
 }

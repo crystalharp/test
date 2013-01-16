@@ -21,6 +21,6 @@
         android:layout_toLeftOf="@id/image1"
 		android:layout_centerVertical="true"
         android:gravity="left|center_vertical"
-        android:textColor="@android:color/black"
+        android:textColor="@color/black"
         android:textSize="16sp" />
 </RelativeLayout>

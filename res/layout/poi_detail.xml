@@ -92,7 +92,7 @@
                 android:padding="8dp"
                 android:orientation="vertical"
                 android:gravity="left|top"
-                android:background="@android:color/white">
+                android:background="@color/white">
                 <RelativeLayout
 	                android:layout_width="fill_parent" 
 	                android:layout_height="wrap_content"
@@ -190,7 +190,7 @@
 		             android:gravity="left|center_vertical"
 		             android:drawableRight="@drawable/ic_telephone"
 		             android:text="@string/app_name" 
-		             android:textColor="@android:color/black"
+		             android:textColor="@color/black"
 		             android:textSize="16sp"
 		             android:autoLink="none"
 		             ></TextView>
@@ -213,7 +213,7 @@
 	                    android:layout_margin="8dp"
 		                android:gravity="left|center_vertical"
 	                    android:text="@string/app_name" 
-	                    android:textColor="@android:color/black"
+	                    android:textColor="@color/black"
 		                android:drawableRight="@drawable/ic_goto_here"
 	                    android:textSize="16sp"
 		                android:autoLink="none"
@@ -252,7 +252,7 @@
                         android:layout_alignParentLeft="true"
                         android:layout_centerVertical="true"
                         android:layout_marginLeft="8dp"
-                        android:textColor="@android:color/black"
+                        android:textColor="@color/black"
                         android:textSize="16sp"
                         android:gravity="left|center_vertical"
                         android:text="@string/comment"

@@ -7,16 +7,20 @@ package com.tigerknows;
 import com.tigerknows.R;
 
 import android.os.Bundle;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Button;
+import android.view.View.OnTouchListener;
 
 /**
  * @author Peng Wenyue
  */
 public class Hint extends BaseActivity implements View.OnClickListener {
+    
+    public static final String LAYOUT_RES_ID = "layoutResID";
 
     private int mLayoutResID;
-    private Button mIknowBtn;
+    
+    private View mRootView;
     
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,7 +28,7 @@ public class Hint extends BaseActivity implements View.OnClickListener {
         mActionTag = ActionLog.HitComment;
         
         if (mIntent != null) {
-            mLayoutResID = mIntent.getIntExtra("layoutResID", R.id.view_invalid);
+            mLayoutResID = mIntent.getIntExtra(LAYOUT_RES_ID, R.id.view_invalid);
             if (mLayoutResID == R.id.view_invalid) {
                 finish();
             } else {
@@ -40,25 +44,22 @@ public class Hint extends BaseActivity implements View.OnClickListener {
 
     protected void findViews() {
         super.findViews();
-        mIknowBtn = (Button) findViewById(R.id.iknow_btn);
+        mRootView = findViewById(R.id.root_view);
     }
     
     protected void setListener() {
         super.setListener();
-        if (mIknowBtn != null) {
-            mIknowBtn.setOnClickListener(this);
-        }
+        mRootView.setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View arg0, MotionEvent arg1) {
+                finish();
+                return false;
+            }
+        });
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.iknow_btn:
-                finish();
-                break;
-
-            default:
-                break;
-        }
     }
 }

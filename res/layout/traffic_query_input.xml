@@ -3,7 +3,7 @@
     android:id="@+id/root_view"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@android:color/transparent">
+    android:background="@color/transparent">
 
     <include android:id="@+id/title_lnl" 
         android:layout_width="fill_parent"

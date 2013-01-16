@@ -159,16 +159,20 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 		if(message==null){
 			LogWrapper.e("InfoWindow", "setMessage null");
 		}
-		this.message = null;
-		for(int start=0, length = message.length(); start < length;) {
-		    int remainder = (length-start);
-		    int l = remainder > MAX_CHARS_PER_LINE ? MAX_CHARS_PER_LINE : remainder;
-		    if (this.message == null) {
-		        this.message = message.substring(start, start+l);
-		    } else {
-		        this.message += "\n" + message.substring(start, start+l);
-		    }
-		    start += l;
+		if (message.contains("\n")) {
+		    this.message = message;
+		} else {
+    		this.message = null;
+    		for(int start=0, length = message.length(); start < length;) {
+    		    int remainder = (length-start);
+    		    int l = remainder > MAX_CHARS_PER_LINE ? MAX_CHARS_PER_LINE : remainder;
+    		    if (this.message == null) {
+    		        this.message = message.substring(start, start+l);
+    		    } else {
+    		        this.message += "\n" + message.substring(start, start+l);
+    		    }
+    		    start += l;
+    		}
 		}
 		changed=true;
 		type=InfoWindowType.TEXT;

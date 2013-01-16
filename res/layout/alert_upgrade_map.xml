@@ -12,7 +12,7 @@
         android:paddingBottom="10dp"
         android:gravity="left|center_vertical"
         android:text="@string/upgrade_tip_map"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         android:textSize="16sp"/>
     <CheckBox android:id="@+id/check_chb"
         android:layout_width="fill_parent"
@@ -21,6 +21,6 @@
         android:layout_marginBottom="10dp"
         android:gravity="left|center_vertical"
         android:text="@string/not_tip_week"
-        android:textColor="@android:color/white"
+        android:textColor="@color/white"
         android:textSize="14sp"/>
 </LinearLayout>

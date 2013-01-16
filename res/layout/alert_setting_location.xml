@@ -12,7 +12,7 @@
         android:paddingBottom="10dp"
         android:gravity="left|center_vertical"
         android:text="@string/location_failed_and_jump_settings"
-        android:textColor="@android:color/white"
+        android:textColor="@color/black"
         android:textSize="16sp"/>
     <CheckBox android:id="@+id/check_chb"
         android:layout_width="fill_parent"
@@ -22,5 +22,5 @@
         android:gravity="left|center_vertical"
         android:text="@string/do_not_show_this_message"
         android:textSize="14sp"
-        android:textColor="@android:color/white"/>
+        android:textColor="@color/white"/>
 </LinearLayout>

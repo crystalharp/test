@@ -30,9 +30,15 @@
     <color name="traffic_current_city_bg">#AAFFFFFF</color>
     <color name="text_click_map_content_blue">#ff008aff</color>
     
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="gray">#333333</color>
+    <color name="bright_green">#ff199bde</color>
+    <color name="bright_foreground_light">#99000000</color>
     <color name="black_dark">#323232</color>
     <color name="black_middle">#4d4d4d</color>
     <color name="black_light">#969696</color>
+    <color name="black_transparent_half">#88000000</color>
     <color name="orange">#ff6c00</color>
     <color name="transparent">#00000000</color>
     <color name="blue">#3b94d8</color>

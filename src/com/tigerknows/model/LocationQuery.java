@@ -203,7 +203,7 @@ public class LocationQuery extends BaseQuery {
             if (scanResults != null) {
                 for(int i = scanResults.size() - 1; i >= 0; i--) {
                     ScanResult scanResult = scanResults.get(i);
-                    locationParameter.wifiList.add(new TKScanResult(scanResult.BSSID, scanResult.level));
+                    locationParameter.wifiList.add(new TKScanResult(scanResult));
                 }
             }
         }
@@ -344,9 +344,9 @@ public class LocationQuery extends BaseQuery {
             if (list1 == null || list2 == null) {
                 return match;
             }
-            int mySize = list1.size();
+            int size = list1.size();
             int otherSize = list2.size();
-            for(int i = mySize-1; i >= 0; i--) {
+            for(int i = size-1; i >= 0; i--) {
                 String BSSID = list1.get(i).BSSID;
                 for(int j = otherSize-1; j >= 0; j--) {
                     String otherBSSID = list2.get(j).BSSID;
@@ -579,6 +579,10 @@ public class LocationQuery extends BaseQuery {
         public String BSSID;
         public int level;
         private volatile int hashCode = 0;
+        
+        public TKScanResult(ScanResult scanResult) {
+            this(scanResult.BSSID, scanResult.level);
+        }
         
         public TKScanResult(String BSSID) {
             this(BSSID, 0);

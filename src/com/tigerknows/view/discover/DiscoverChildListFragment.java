@@ -243,6 +243,15 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
         }
+        refreshRightBtn();
+    }
+    
+    private void refreshRightBtn() {
+        if (getList().isEmpty()) {
+            mRightBtn.setVisibility(View.GONE);
+        } else {
+            mRightBtn.setVisibility(View.VISIBLE);
+        }
     }
     
     private void turnPage(){
@@ -820,6 +829,8 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         } else {
             mEmptyView.setVisibility(View.GONE);
         }
+
+        refreshRightBtn();
         refreshResultTxv(dataQuery);
         
         if (mResultLsv.isFooterSpringback()) {

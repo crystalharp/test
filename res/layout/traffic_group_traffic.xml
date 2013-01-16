@@ -14,7 +14,7 @@
       	android:layout_centerVertical="true"
       	android:layout_alignParentLeft="true"
       	android:gravity="center"
-  		android:textColor="@android:color/white"
+  		android:textColor="@color/white"
   		android:textSize="18sp"
   		android:focusable="false"
       	android:focusableInTouchMode="false"
@@ -37,7 +37,7 @@
   	    android:layout_toLeftOf="@id/text1"
   	    android:gravity="center_vertical|left"
   	    android:layout_centerVertical="true"
-  	    android:textColor="@android:color/black"
+  	    android:textColor="@color/black"
   	    android:textSize="16sp" />
 
   	<TextView

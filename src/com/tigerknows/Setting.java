@@ -45,7 +45,7 @@ public class Setting extends BaseActivity {
         findViews();
         setListener();
         
-        mTitleBtn.setText(R.string.settings);
+        mTitleBtn.setText(R.string.system_settings);
         mRightBtn.setVisibility(View.GONE);
 
         mBeans = new ArrayList<DataBean>();

@@ -153,6 +153,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         		mTitleBtn.setText(mSphinx.getString(R.string.title_type_walk));
         	}
         }
+        mSphinx.showHint(TKConfig.PREFS_HINT_LOCATION, R.layout.hint_location);
     }
 
     @Override
