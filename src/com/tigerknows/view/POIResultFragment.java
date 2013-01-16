@@ -810,7 +810,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mFilterListView = new FilterListView(mSphinx);
             
             mPopupWindow = new PopupWindow(mFilterListView);
-            mPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+            mPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
             mPopupWindow.setFocusable(true);
             // 设置允许在外点击消失
             mPopupWindow.setOutsideTouchable(true);
