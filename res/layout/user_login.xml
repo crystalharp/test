@@ -77,7 +77,7 @@
 			        android:layout_height="wrap_content"
 			        android:text="@string/regist"
 			        android:textSize="18sp"
-			        android:textColor="@android:color/black"
+			        android:textColor="@color/black"
 			        android:background="@drawable/list_single" />
 			    <Button
 			        android:id="@+id/login_btn"
@@ -87,7 +87,7 @@
 			        android:layout_marginLeft="8dp"
 			        android:text="@string/login"
 			        android:textSize="18sp"
-			        android:textColor="@android:color/white"
+			        android:textColor="@color/white"
 			        android:background="@drawable/btn_blue_green" />
 		    </LinearLayout>
 		    <TextView

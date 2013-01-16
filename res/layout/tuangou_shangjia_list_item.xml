@@ -4,7 +4,7 @@
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent"
     android:padding="8dp"
-    android:background="@android:color/transparent">
+    android:background="@color/transparent">
     <RelativeLayout
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content" 
@@ -30,7 +30,7 @@
 	        android:drawableRight="@drawable/icon_arrow_right"
 	        android:text="@string/app_name"
 	        android:textSize="18sp"
-	        android:textColor="@android:color/black">
+	        android:textColor="@color/black">
 	     </TextView>
 	</RelativeLayout>
 </RelativeLayout>

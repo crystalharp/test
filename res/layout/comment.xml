@@ -23,7 +23,7 @@
            android:orientation="vertical">
 		        
 			<RelativeLayout 
-		    	android:background="@android:color/white"
+		    	android:background="@color/white"
 			    android:id="@+id/content_view"
 			    android:layout_width="fill_parent" 
 			    android:layout_height="wrap_content"
@@ -41,7 +41,7 @@
 				    android:layout_marginLeft="4dp"
 				    android:layout_marginRight="4dp"
 				    android:hint="@string/comment_content_hit3"
-				    android:background="@android:color/transparent"/>
+				    android:background="@color/transparent"/>
 			        
 		        <TextView
 			        android:id="@+id/text_limit_txv"

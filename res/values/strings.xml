@@ -11,11 +11,6 @@
     <string name="input_valid_border">Please input valid integer border</string>
     <string name="input_valid_tile_thread_count">Please input valid integer tile thread num</string>
 	
-    <color name="white">#ffffff</color>
-    <color name="black">#000000</color>
-    <color name="gray">#333333</color>
-    <color name="bright_green">#ff199bde</color>
-    <color name="bright_foreground_light">#99000000</color>
     <string name="app_name">老虎宝典</string>
     <string name="send_sms">发短信</string>
     <string name="send_mms">发彩信</string>

@@ -50,7 +50,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:background="#99000000"
-                    android:textColor="@android:color/white"
+                    android:textColor="@color/white"
                     android:textSize="16sp"
                     android:text="@string/distance"
                     android:focusable="false"
@@ -312,7 +312,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="left|center_vertical"
                     android:text="@string/service_hotline"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/black"
                     android:textSize="16sp"
                     />
                 <TextView android:id="@+id/service_hotline_txv"
@@ -321,7 +321,7 @@
                     android:gravity="left|center_vertical"
                     android:drawableRight="@drawable/ic_telephone"
                     android:text="@string/app_name"
-                    android:textColor="@android:color/black"
+                    android:textColor="@color/black"
                     android:textSize="16sp"
                     android:autoLink="none"
                     />

@@ -12,6 +12,6 @@
         android:drawSelectorOnTop="false"
         android:scrollingCache="false"
         android:fadingEdge="none"
-        android:listSelector="@android:color/transparent"
-        android:divider="@android:color/transparent"/>
+        android:listSelector="@color/transparent"
+        android:divider="@color/transparent"/>
 </LinearLayout>

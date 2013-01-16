@@ -9,7 +9,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
-        android:background="@android:color/white"
+        android:background="@color/white"
         android:scaleType="fitXY"
         android:src="@drawable/bg_shadow" />
     	
@@ -29,7 +29,7 @@
 	        <TextView android:id="@+id/name_txv"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
-	            android:textColor="@android:color/black"
+	            android:textColor="@color/black"
 	            android:textSize="18sp"
 	            android:gravity="center_vertical|left" >
 	        </TextView>
@@ -58,7 +58,7 @@
 	        android:id="@+id/shadow2"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:background="@android:color/white"
+	        android:background="@color/white"
 	        android:scaleType="fitXY"
 	        android:src="@drawable/bg_real_line" />
     </LinearLayout>
@@ -81,7 +81,7 @@
         <TextView android:id="@+id/name_txv"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:textColor="@android:color/black"
+            android:textColor="@color/black"
             android:textSize="18sp"
             android:gravity="center_vertical|left" >
         </TextView>
@@ -90,7 +90,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingTop="5dp"
-            android:textColor="@android:color/black"
+            android:textColor="@color/black"
             android:textSize="16sp"
             android:singleLine="true"
             android:ellipsize="end"
@@ -101,7 +101,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:paddingTop="5dp"
-            android:textColor="@android:color/black"
+            android:textColor="@color/black"
             android:textSize="16sp"
             android:gravity="center_vertical|left" >
         </TextView>

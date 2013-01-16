@@ -10,7 +10,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true" 
         android:padding="12dp"
-        android:textColor="@android:color/black"
+        android:textColor="@color/black"
         android:textSize="18sp"
         android:focusable="false"
         android:focusableInTouchMode="false"
