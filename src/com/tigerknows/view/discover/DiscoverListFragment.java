@@ -291,20 +291,17 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     if (object != null) {
                         if (object instanceof Tuangou) {
                             Tuangou tagret = (Tuangou) object;
-                            tagret.setOrderNumber(position+1);
 //                            tagret.getFendian().setOrderNumber(position+1);
                             mActionLog.addAction(mActionTag+ActionLog.DiscoverListSelectItem, position+1, tagret.getUid());
                             mSphinx.getTuangouDetailFragment().setData(mTuangouList, position, DiscoverListFragment.this);
                             mSphinx.showView(R.id.view_tuangou_detail);
                         } else if (object instanceof Yanchu){
                             Yanchu tagret = (Yanchu) object;
-                            tagret.setOrderNumber(position+1);
                             mActionLog.addAction(mActionTag+ActionLog.DiscoverListSelectItem, position+1, tagret.getUid());
                         	mSphinx.getYanchuDetailFragment().setData(mYanchuList, position, DiscoverListFragment.this);
                         	mSphinx.showView(R.id.view_yanchu_detail);
                         } else if (object instanceof Dianying){
                             Dianying tagret = (Dianying) object;
-                            tagret.setOrderNumber(position+1);
                             int changciOption = Changci.OPTION_DAY_TODAY;
                             for(Filter filter : mFilterList) {
                                 if (filter.getKey() == FilterCategoryOrder.FIELD_LIST_CATEGORY) {
@@ -323,7 +320,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                         	mSphinx.getDianyingDetailFragment().setData(mDianyingList, position, DiscoverListFragment.this);
                         } else if (object instanceof Zhanlan){
                         	Zhanlan tagret = (Zhanlan) object;
-                            tagret.setOrderNumber(position+1);
                             mActionLog.addAction(mActionTag+ActionLog.DiscoverListSelectItem, position+1, tagret.getUid());
                         	mSphinx.getZhanlanDetailFragment().setData(mZhanlanList, position, DiscoverListFragment.this);
                         	mSphinx.showView(R.id.view_zhanlan_detail);
@@ -549,7 +545,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mTuangouList.size(); minIndex++) {
                 Tuangou data = (Tuangou)(mTuangouList.get(minIndex));
-                data.setOrderNumber(minIndex+1);
                 dataList.add(data);
             }
             mSphinx.getTuangouDetailFragment().setData(mTuangouList, page[2], DiscoverListFragment.this);
@@ -558,14 +553,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
             for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mYanchuList.size(); minIndex++) {
                 Yanchu data = (Yanchu)mYanchuList.get(minIndex);
-                data.setOrderNumber(minIndex+1);
                 dataList.add(data);
             }
             mSphinx.getYanchuDetailFragment().setData(mYanchuList, page[2], DiscoverListFragment.this);
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
             for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mZhanlanList.size(); minIndex++) {
                 Zhanlan data = (Zhanlan)mZhanlanList.get(minIndex);
-                data.setOrderNumber(minIndex+1);
                 dataList.add(data);
             }
             mSphinx.getZhanlanDetailFragment().setData(mZhanlanList, page[2], DiscoverListFragment.this);

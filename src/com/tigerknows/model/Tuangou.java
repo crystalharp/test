@@ -107,8 +107,6 @@ public class Tuangou extends BaseData {
     private Fendian fendian;
     private DataQuery fendianQuery;
     private String filterArea;
-    private int orderNumber;
-    private POI poi;
     
     public Tuangou() {
     }
@@ -400,14 +398,5 @@ public class Tuangou extends BaseData {
 
     public void setFilterArea(String filterArea) {
         this.filterArea = filterArea;
-    }
-    
-    public int getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(int orderNumber) {
-        this.orderNumber = orderNumber;
-    }
-    
+    }    
 }

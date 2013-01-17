@@ -286,13 +286,11 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         if (BaseQuery.DATA_TYPE_FENDIAN.equals(mDataType)) {
             for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mFendianList.size(); minIndex++) {
                 Fendian fendian = mFendianList.get(minIndex);
-                fendian.setOrderNumber(minIndex+1);
                 poiList.add(fendian.getPOI(POI.SOURCE_TYPE_FENDIAN));
             }
         } else if (BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType)) {
             for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mYingxunList.size(); minIndex++) {
                 Yingxun yingxun = mYingxunList.get(minIndex); 
-                yingxun.setOrderNumber(minIndex+1);
                 poiList.add(yingxun.getPOI(POI.SOURCE_TYPE_YINGXUN));
             }
         }
@@ -367,7 +365,6 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                     if (id == R.id.address_view) {
                         mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailAddress);
                         POI poi = fendian.getPOI(POI.SOURCE_TYPE_FENDIAN);
-                        poi.setOrderNumber(position+1);
                         CommonUtils.queryTraffic(mSphinx, poi);
                     } else if (id == R.id.telephone_view) {
                         mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailTelphone);
@@ -514,7 +511,6 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                         mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailAddress);
                         /* 交通界面的显示 */
                         POI poi = yingxun.getPOI(POI.SOURCE_TYPE_YINGXUN);
-                        poi.setOrderNumber(position+1);
                         CommonUtils.queryTraffic(mSphinx, poi);
                     }
                     getAdapter().notifyDataSetChanged();

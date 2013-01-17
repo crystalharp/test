@@ -103,7 +103,6 @@ public class Zhanlan extends BaseData {
     private String distance; // 0x19 x_string 与当前位置的距离 实时生成
     
     private Position position;
-    private int orderNumber;
     private POI poi;
     
     public Zhanlan() {
@@ -355,13 +354,5 @@ public class Zhanlan extends BaseData {
 
     public Position getPosition() {
         return position;
-    }  
-    
-    public int getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(int orderNumber) {
-        this.orderNumber = orderNumber;
     }
 }

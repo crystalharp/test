@@ -628,7 +628,6 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             
             TextView textView = (TextView) view.findViewById(R.id.text_txv);
 
-            poi.setOrderNumber(position+1);
             textView.setText(poi.getName());
 
             return view;

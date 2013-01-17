@@ -1324,7 +1324,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                     e.printStackTrace();
                 }
                 if (Util.inChina(poi.getPosition())) {
-                    poi.setOrderNumber(1);
                     List<POI> list = new ArrayList<POI>();
                     list.add(poi);
                     showPOI(list, 0);
@@ -1380,7 +1379,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                     } else {
                         poi.setName(mContext.getString(R.string.select_point));
                     }
-                    poi.setOrderNumber(1);
                     List<POI> list = new ArrayList<POI>();
                     list.add(poi);
                     showPOI(list, 0);
@@ -1399,7 +1397,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             POI poi = getPOI();
             if (poi.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
                 poi.setName(mMapEngine.getPositionName(poi.getPosition(), (int)mMapView.getZoomLevel()));
-                poi.setOrderNumber(1);
                 List<POI> list = new ArrayList<POI>();
                 list.add(poi);
                 showPOI(list, 0);
@@ -1726,7 +1723,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             if (data instanceof POI) {
                 POI target = (POI) data;
                 positions.add(target.getPosition());
-                icon.setOrder(target.getOrderNumber());
                 overlayItem=new OverlayItem(target.getPosition(),target.getResultType() == POIResponse.FIELD_A_POI_LIST ? iconA : icon, target.getName(),rt);
                 overlayItem.setAssociatedObject(target);
                 overlayItem.setPreferZoomLevel(TKConfig.ZOOM_LEVEL_POI);
@@ -1746,22 +1742,17 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 });
             } else if (data instanceof Dianying || data instanceof Zhanlan || data instanceof Yanchu) {
                 POI poi;
-                int order;
                 if (data instanceof Zhanlan) {
                     Zhanlan target = (Zhanlan) data;
                     poi = target.getPOI();
-                    order = target.getOrderNumber();
                 } else if (data instanceof Yanchu) {
                     Yanchu target = (Yanchu) data;
                     poi = target.getPOI();
-                    order = target.getOrderNumber();
                 } else {
                     Dianying target = (Dianying) data;
                     poi = target.getYingxun().getPOI(POI.SOURCE_TYPE_DIANYING);
-                    order = target.getOrderNumber();
                 }
                 positions.add(poi.getPosition());
-                icon.setOrder(order);
                 overlayItem=new OverlayItem(poi.getPosition(), icon, poi.getName(),rt);
                 overlayItem.setAssociatedObject(data);
                 overlayItem.setPreferZoomLevel(TKConfig.ZOOM_LEVEL_POI);
@@ -1783,7 +1774,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                 Tuangou target = (Tuangou) data;
                 POI poi = target.getPOI();
                 positions.add(poi.getPosition());
-                icon.setOrder(target.getOrderNumber());
                 overlayItem=new OverlayItem(poi.getPosition(), icon, target.getShortDesc(), rt);
                 overlayItem.setAssociatedObject(target);
                 overlayItem.setPreferZoomLevel(TKConfig.ZOOM_LEVEL_POI);
