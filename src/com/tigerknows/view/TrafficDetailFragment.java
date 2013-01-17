@@ -209,8 +209,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                 viewMap();
                 // 将地图平移到某一item index, 并缩放至某一级别
             	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), position, mSphinx.getMapView());
-                // 比例尺恢复到默认的200m
-                mSphinx.getMapView().zoomTo(DEFAULT_SHOW_STEP_ZOOMLEVEL);
             }
         });
     }
