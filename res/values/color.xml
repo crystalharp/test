@@ -19,6 +19,7 @@
     <color name="text_gray">#ff6c6c6c</color>
     <color name="text_yellow">#ffffdd00</color>
     <color name="list_item_background_gray">#F3F3F3</color>
+    <color name="traffic_input_background_gray">#F5F5F5</color>
     
     <color name="edittext_hint_color">#acacac</color>
     
