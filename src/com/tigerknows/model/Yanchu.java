@@ -107,7 +107,6 @@ public class Yanchu extends BaseData {
     private String distance; // 0x20 x_string 与当前位置的距离 实时生成
 
     private Position position;
-    private int orderNumber;
     private POI poi;
     
     public Yanchu() {
@@ -211,7 +210,6 @@ public class Yanchu extends BaseData {
             poi.setName(placeName);
             poi.setAddress(address);
             poi.setPosition(position);
-//            poi.setOrderNumber(orderNumber);
             poi.setSourceType(POI.SOURCE_TYPE_YANCHU);
         }
         return poi;
@@ -371,14 +369,6 @@ public class Yanchu extends BaseData {
 
     public void setDistance(String distance) {
         this.distance = distance;
-    }
-
-    public int getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(int orderNumber) {
-        this.orderNumber = orderNumber;
     }
     
     public Position getPosition() {

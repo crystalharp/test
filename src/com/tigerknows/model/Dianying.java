@@ -79,7 +79,6 @@ public class Dianying extends BaseData {
     
     private DataQuery yingxunQuery;
     private String filterArea;
-    private int orderNumber;
     
     public Dianying() {
     }
@@ -302,12 +301,9 @@ public class Dianying extends BaseData {
     public void setFilterArea(String filterArea) {
         this.filterArea = filterArea;
     }
-    
-    public int getOrderNumber() {
-        return orderNumber;
-    }
 
-    public void setOrderNumber(int orderNumber) {
-        this.orderNumber = orderNumber;
-    }
+	@Override
+	public POI getPOI() {
+		return yingxun.getPOI(POI.SOURCE_TYPE_DIANYING);
+	}
 }

@@ -51,6 +51,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine;
+import com.tigerknows.model.BaseData;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.DataOperation;
@@ -1063,7 +1064,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         return;
                     }
                     tuangou.setFendian(((FendianQueryResponse) response).getFendian());
-                    List<Tuangou> list = new ArrayList<Tuangou>();
+                    List<BaseData> list = new ArrayList<BaseData>();
                     list.add(tuangou);
                     mSphinx.getTuangouDetailFragment().setData(list, 0, null);
                     mSphinx.showView(R.id.view_tuangou_detail);
@@ -1072,7 +1073,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         return;
                     }
                     Yanchu yanchu = ((YanchuQueryResponse) response).getYanchu();
-                    List<Yanchu> list = new ArrayList<Yanchu>();
+                    List<BaseData> list = new ArrayList<BaseData>();
                     list.add(yanchu);
                     mSphinx.getYanchuDetailFragment().setData(list, 0, null);
                     mSphinx.showView(R.id.view_yanchu_detail);
@@ -1081,7 +1082,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         return;
                     }
                     Zhanlan zhanlan = ((ZhanlanQueryResponse) response).getZhanlan();
-                    List<Zhanlan> list = new ArrayList<Zhanlan>();
+                    List<BaseData> list = new ArrayList<BaseData>();
                     list.add(zhanlan);
                     mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
                     mSphinx.showView(R.id.view_zhanlan_detail);

@@ -140,4 +140,16 @@ public class BaseData extends XMapData {
         return count;
     }
     
+    public POI getPOI(int sourceType){
+    	POI poi = getPOI();
+    	if(poi != null){
+    		poi.setSourceType(sourceType);
+    	}
+    	return poi;
+    }
+    
+    public POI getPOI(){
+    	return null;
+    }
+    
 }

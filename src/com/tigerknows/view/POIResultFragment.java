@@ -367,7 +367,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         int maxIndex = page[1];
         for(;minIndex <= maxIndex && minIndex < size; minIndex++) {
             poi = mPOIList.get(minIndex);
-            poi.setOrderNumber(minIndex+ (mShowAPOI ? 0 : 1));
             poiList.add(poi);
         }
         mSphinx.showPOI(poiList, page[2]);
@@ -735,7 +734,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (mATotal == 0 && TextUtils.isEmpty(poi.getAddress()) == false) { // 来自周边搜索界面
                     mATotal = 1;
                     poi.setResultType(POIResponse.FIELD_A_POI_LIST);
-                    poi.setOrderNumber(0);
                     aPOIList = new ArrayList<POI>();
                     aPOIList.add(poi);
                 }

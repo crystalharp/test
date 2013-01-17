@@ -636,7 +636,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             
             TextView textView = (TextView) view.findViewById(R.id.text_txv);
 
-            poi.setOrderNumber(position+1);
             String name = poi.getAlise();
             if (TextUtils.isEmpty(name)) {
                 name = poi.getName();
