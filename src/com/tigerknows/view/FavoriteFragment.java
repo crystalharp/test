@@ -204,7 +204,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         super.onResume();
         mTitleBtn.setText(R.string.favorite);
         mRightBtn.setOnClickListener(this);
-        mRightBtn.setText(R.string.clear_all);
+        mRightBtn.setBackgroundResource(R.drawable.btn_delete_all);
 
         if (mDismiss) {
             mDismiss = false;
