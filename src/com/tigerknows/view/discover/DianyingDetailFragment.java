@@ -20,15 +20,13 @@ import com.tigerknows.model.BaseData;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.POI;
 import com.tigerknows.view.SpringbackListView.IPagerList;
-import com.tigerknows.view.discover.CycleViewPager.CyclePagerAdapter;
 
 /**
  * @author Peng Wenyue
  * </ul>
  * 
  */
-public class DianyingDetailFragment extends BaseDetailFragment
-                                    implements CycleViewPager.CycleOnPageChangeListener.IRefreshViews {
+public class DianyingDetailFragment extends BaseDetailFragment{
     
     public DianyingDetailFragment(Sphinx sphinx) {
         super(sphinx);
@@ -45,7 +43,7 @@ public class DianyingDetailFragment extends BaseDetailFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        mCyclePagerAdapter = new CyclePagerAdapter(this);
+        mCyclePagerAdapter = new DetailViewPagerAdapter(this);
         
         return super.onCreateView(inflater, container, savedInstanceState);
     }

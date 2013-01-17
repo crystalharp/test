@@ -19,7 +19,6 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Zhanlan;
 import com.tigerknows.view.SpringbackListView.IPagerList;
-import com.tigerknows.view.discover.CycleViewPager.CyclePagerAdapter;
 
 /**
  * @author Peng Wenyue
@@ -47,7 +46,7 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        mCyclePagerAdapter = new CyclePagerAdapter(this);
+        mCyclePagerAdapter = new DetailViewPagerAdapter(this);
         
         return super.onCreateView(inflater, container, savedInstanceState);
     }

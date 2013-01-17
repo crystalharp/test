@@ -22,15 +22,13 @@ import com.tigerknows.model.Fendian;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.view.SpringbackListView.IPagerList;
-import com.tigerknows.view.discover.CycleViewPager.CyclePagerAdapter;
 
 /**
  * @author Peng Wenyue
  * </ul>
  * 
  */
-public class TuangouDetailFragment extends BaseDetailFragment 
-                                   implements View.OnClickListener, CycleViewPager.CycleOnPageChangeListener.IRefreshViews {
+public class TuangouDetailFragment extends BaseDetailFragment{
     
     public TuangouDetailFragment(Sphinx sphinx) {
         super(sphinx);
@@ -56,7 +54,7 @@ public class TuangouDetailFragment extends BaseDetailFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        mCyclePagerAdapter = new CyclePagerAdapter(this);
+        mCyclePagerAdapter = new DetailViewPagerAdapter(this);
         
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -66,7 +64,7 @@ public class TuangouDetailFragment extends BaseDetailFragment
         super.onResume();
         mTitleBtn.setText(R.string.tuangou_detail);
         if (isRequsetBuy() && Globals.g_User != null) {
-            ((TuangouDetailView) mCyclePagerAdapter.fragment.getDetailView(mViewPager.getCurrentItem())).buy();
+            ((TuangouDetailView) getDetailViewByPosition(mViewPager.getCurrentItem())).buy();
             return;
         }
     }

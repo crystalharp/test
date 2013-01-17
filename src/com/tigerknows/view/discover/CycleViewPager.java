@@ -13,63 +13,6 @@ import java.util.List;
 
 public class CycleViewPager {
     
-    public static class CyclePagerAdapter extends PagerAdapter {
-        
-        public int count = 0;
-        public BaseDetailFragment fragment;
-        public CyclePagerAdapter(BaseDetailFragment fragment) {
-        	this.fragment = fragment;
-        }
-        
-        @Override
-        public int getCount() {
-            return count;
-        }
-
-        @Override
-        public boolean isViewFromObject(View arg0, Object arg1) {
-            return arg0 == arg1;
-        }
-
-        @Override
-        public int getItemPosition(Object object) {
-            return super.getItemPosition(object);
-        }
-
-        @Override
-        public void destroyItem(View arg0, int arg1, Object arg2) {
-            // ((ViewPager) arg0).removeView(list.get(arg1));
-        }
-
-        @Override
-        public Object instantiateItem(View arg0, int position) {
-        	System.out.println("instantiateItem: " + position);
-            try {
-                ((ViewPager)arg0).addView(fragment.getDetailView(position));
-            } catch (Exception e) {
-            	
-            }
-            return fragment.getDetailView(position);
-        }
-
-        @Override
-        public void restoreState(Parcelable arg0, ClassLoader arg1) {
-        }
-
-        @Override
-        public Parcelable saveState() {
-            return null;
-        }
-
-        @Override
-        public void startUpdate(View arg0) {
-        }
-
-        @Override
-        public void finishUpdate(View arg0) {
-        }
-
-    }
 
     public static class CycleOnPageChangeListener implements OnPageChangeListener {
         
