@@ -1064,7 +1064,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         return;
                     }
                     tuangou.setFendian(((FendianQueryResponse) response).getFendian());
-                    List<BaseData> list = new ArrayList<BaseData>();
+                    List<Tuangou> list = new ArrayList<Tuangou>();
                     list.add(tuangou);
                     mSphinx.getTuangouDetailFragment().setData(list, 0, null);
                     mSphinx.showView(R.id.view_tuangou_detail);
@@ -1073,7 +1073,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         return;
                     }
                     Yanchu yanchu = ((YanchuQueryResponse) response).getYanchu();
-                    List<BaseData> list = new ArrayList<BaseData>();
+                    List<Yanchu> list = new ArrayList<Yanchu>();
                     list.add(yanchu);
                     mSphinx.getYanchuDetailFragment().setData(list, 0, null);
                     mSphinx.showView(R.id.view_yanchu_detail);
@@ -1082,7 +1082,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         return;
                     }
                     Zhanlan zhanlan = ((ZhanlanQueryResponse) response).getZhanlan();
-                    List<BaseData> list = new ArrayList<BaseData>();
+                    List<Zhanlan> list = new ArrayList<Zhanlan>();
                     list.add(zhanlan);
                     mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
                     mSphinx.showView(R.id.view_zhanlan_detail);

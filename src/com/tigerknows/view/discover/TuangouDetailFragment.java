@@ -17,23 +17,26 @@ import com.decarta.Globals;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.model.BaseData;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.view.SpringbackListView.IPagerList;
+import com.tigerknows.view.discover.CycleViewPager.CyclePagerAdapter;
 
 /**
  * @author Peng Wenyue
  * </ul>
  * 
  */
-public class TuangouDetailFragment extends BaseDetailFragment{
+public class TuangouDetailFragment extends BaseDetailFragment 
+                                   implements View.OnClickListener, CycleViewPager.CycleOnPageChangeListener.IRefreshViews {
     
     public TuangouDetailFragment(Sphinx sphinx) {
         super(sphinx);
         // TODO Auto-generated constructor stub
     }
+    
+    private List<Tuangou> mDataList = null;
     
     boolean isRequsetBuy = false;
     
@@ -47,14 +50,21 @@ public class TuangouDetailFragment extends BaseDetailFragment{
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.TuangouXiangqing;
-        mMapFragmentTitle = mContext.getString(R.string.shanghu_ditu);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        mCyclePagerAdapter = new DetailViewPagerAdapter(this);
+        List<View> viewList = new ArrayList<View>();
+        TuangouDetailView view;
+        view = new TuangouDetailView(mSphinx, this);
+        viewList.add(view);
+        view = new TuangouDetailView(mSphinx, this);
+        viewList.add(view);
+        view = new TuangouDetailView(mSphinx, this);
+        viewList.add(view);
+        mCyclePagerAdapter = new CyclePagerAdapter(viewList);
         
         return super.onCreateView(inflater, container, savedInstanceState);
     }
@@ -64,15 +74,60 @@ public class TuangouDetailFragment extends BaseDetailFragment{
         super.onResume();
         mTitleBtn.setText(R.string.tuangou_detail);
         if (isRequsetBuy() && Globals.g_User != null) {
-            ((TuangouDetailView) getDetailViewByPosition(mViewPager.getCurrentItem())).buy();
+            ((TuangouDetailView) mCyclePagerAdapter.viewList.get(mViewPager.getCurrentItem()%mCyclePagerAdapter.viewList.size())).buy();
             return;
         }
     }
-
-	@Override
-	protected BaseDetailView newDetailView() {
-		return new TuangouDetailView(mSphinx, this);
-	}
     
+    public void setData(Tuangou data) {
+        int position = 0;
+        for(int i = mDataList.size()-1; i >= 0; i--) {
+            if (data == mDataList.get(i)) {
+                position = i;
+                break;
+            }
+        }
+        setData(null, position, null);
+    }
     
+    public void setData(List<Tuangou> dataList, int position, IPagerList iPagerList) {
+        if (dataList == null) {
+            dataList = mDataList;
+        }
+        
+        this.mDataList = dataList;
+        setData(dataList.size(), position, iPagerList);
+        TuangouDetailView view = (TuangouDetailView) mCyclePagerAdapter.viewList.get(mViewPager.getCurrentItem()%mCyclePagerAdapter.viewList.size());
+        view.setData(mDataList.get(position));
+        view.onResume();
+    }
+    
+    public void viewMap() {
+        Tuangou data = this.mDataList.get(mViewPager.getCurrentItem());
+        Fendian fendian = data.getFendian();
+        if (fendian == null) {
+            return;
+        }
+        List<POI> list = new ArrayList<POI>();
+        POI poi = fendian.getPOI(POI.SOURCE_TYPE_TUANGOU);
+        list.add(poi);
+        mSphinx.showPOI(list, 0);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.shanghu_ditu), ActionLog.MapTuangouXiangqing);
+        super.viewMap();
+    }
+    
+    public void refreshViews(int position) {
+        super.refreshViews(position);
+        TuangouDetailView view;
+        if (position - 1 >= 0) {
+            view = (TuangouDetailView) mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
+            view.setData(mDataList.get(position-1));
+            view.onResume();
+        }
+        if (position + 1 < mDataList.size()) {
+            view = (TuangouDetailView) mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
+            view.setData(mDataList.get(position+1));
+            view.onResume();
+        }
+    }
 }
