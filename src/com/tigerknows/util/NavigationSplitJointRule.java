@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.TrafficModel.Plan;
@@ -142,7 +143,7 @@ public class NavigationSplitJointRule {
                         , step.getTransferDownStopName());
         } 
 
-        return transferResultRender(context, step, previousStep, nextStep, str);
+        return braceTextRender(context, str);
     }
     
     private static CharSequence splitJointDrive(Plan plan, Context context, Step step, Step nextStep, int flag) {
@@ -219,7 +220,7 @@ public class NavigationSplitJointRule {
             s.append(context.getString(R.string.traffic_goto_end_point));
         }
 
-        return driveResultRender(context, step, nextStep, s.toString());
+        return braceTextRender(context,s.toString());
     }
 
     private static CharSequence splitJointWalk(Plan plan, Context context, Step step, Step nextStep, int flag) {
@@ -311,112 +312,48 @@ public class NavigationSplitJointRule {
           s.append(context.getString(R.string.traffic_goto_end_point));
       }
       
-      return walkResultRender(context, step, nextStep, s.toString());
+      return braceTextRender(context, s.toString());
     }
 
-    private static CharSequence transferResultRender(Context context, Step step, Step previousStep, Step nextStep, String content){
+    /*
+     * 将使用{}标记的文字变成蓝色高亮
+     */
+    private static CharSequence braceTextRender(Context context, String text){
         
-        // 站点名称在字符串的位置
-        ArrayList<Integer> indexList = new ArrayList<Integer>();
-        
-        if(ishightLight){
-            if(previousStep != null){
-                markHightlightInterval(content, previousStep.getTransferDownStopName(), indexList);
-            }
-            if(nextStep != null){
-                markHightlightInterval(content, nextStep.getTransferUpStopName(), indexList);
-            }       
-            if(step != null){
-                markHightlightInterval(content, step.getTransferUpStopName(), indexList);
-                markHightlightInterval(content, step.getTransferDownStopName(), indexList);
-            }
-            if(!TextUtils.isEmpty(content)){
-                markHightlightInterval(content, context.getString(R.string.start), indexList);
-                markHightlightInterval(content, context.getString(R.string.end), indexList);
-            }
-            
-            if(!TextUtils.isEmpty(content)){
-                return hightLight(context, content, indexList);
-            }
+        if (TextUtils.isEmpty(text)) {
+            return text;
         }
+        
+        String hlTagLeft = context.getString(R.string.highlight_tag_left);
+        String hlTagRight = context.getString(R.string.highlight_tag_right);
+        ArrayList<Integer> leftIndexs = new ArrayList<Integer>();
+        ArrayList<Integer> rightIndexs = new ArrayList<Integer>();
+        
+        int i = 0;
+        for (i = 0; (i = text.indexOf(hlTagLeft, i)) >= 0; i++) {
+            leftIndexs.add(i);
+        }
+        for (i = 0; (i = text.indexOf(hlTagRight, i)) >= 0; i++) {
+            rightIndexs.add(i);
+        }
+        
+        if (leftIndexs.size() == 0 || leftIndexs.size() != rightIndexs.size())
+            return text;
 
-        return content;
-    }
-
-    private static CharSequence driveResultRender(Context context, Step step, Step nextStep, String content){
-        
-        // 路线名在字符串的位置
-        ArrayList<Integer> indexList = new ArrayList<Integer>();
-        
-        if(ishightLight){
-            if(step != null){
-                markHightlightInterval(content.toString(), step.getDriveRoadName(), indexList);
-            }
-            if(nextStep != null){
-                markHightlightInterval(content.toString(), nextStep.getDriveRoadName(), indexList);
-            }
-            if(!TextUtils.isEmpty(content)){
-                markHightlightInterval(content.toString(), context.getString(R.string.start), indexList);
-                markHightlightInterval(content.toString(), context.getString(R.string.end), indexList);
-            }
-            
-            if(!TextUtils.isEmpty(content)) {
-                return hightLight(context, content.toString(), indexList);
-            }
-        }
-
-        return content;
-    }
-    
-    private static CharSequence walkResultRender(Context context, Step step, Step nextStep, String content){
-        
-        // 路线名在字符串的位置
-        ArrayList<Integer> indexList = new ArrayList<Integer>();
-        
-        if(ishightLight){
-            if(step != null){
-                markHightlightInterval(content.toString(), step.getWalkRoadName(), indexList);
-            }
-            if(nextStep != null){
-                markHightlightInterval(content.toString(), nextStep.getWalkRoadName(), indexList);
-            }
-            if(!TextUtils.isEmpty(content)){
-                markHightlightInterval(content.toString(), context.getString(R.string.start), indexList);
-                markHightlightInterval(content.toString(), context.getString(R.string.end), indexList);
-            }
-            
-            if(!TextUtils.isEmpty(content)) {
-                return hightLight(context, content.toString(), indexList);
-            }
-        }
-
-        return content;
-    }
-    
-    private static void markHightlightInterval(String str, String subStr, ArrayList<Integer> indexList){
-        if(TextUtils.isEmpty(str) || TextUtils.isEmpty(subStr) || indexList == null)
-            return;
-        
-        int start = str.indexOf(subStr);
-        int end = start + subStr.length();
-        
-        if(start >= 0){
-            indexList.add(start);
-            indexList.add(end);
-        }
-    }
-    
-    private static CharSequence hightLight(Context context, String text, ArrayList<Integer>indexs){
-        if (TextUtils.isEmpty(text) || indexs == null || indexs.size() < 2) {
-        	return text;
-        }
-    	
         SpannableStringBuilder style=new SpannableStringBuilder(text);
         
-        for(int i = 0 ; i < indexs.size()-1; i+=2){
-            style.setSpan(new ForegroundColorSpan(context.getResources().getColor(R.color.text_forground_blue)),indexs.get(i),indexs.get(i+1),Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        int highLightColor = context.getResources().getColor(R.color.text_forground_blue);
+        for(i = leftIndexs.size() - 1 ; i >= 0; i--){
+            int leftIndex = leftIndexs.get(i);
+            int rightIndex = rightIndexs.get(i);
+            if (leftIndex < rightIndex) {
+                style.setSpan(new ForegroundColorSpan(highLightColor),leftIndex,rightIndex,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+            }
+            //设置高亮后从后向前把高亮标记删掉。
+            style.delete(rightIndex, rightIndex + 1);
+            style.delete(leftIndex, leftIndex + 1);
+            
         }
-        
         return style;
     }
     

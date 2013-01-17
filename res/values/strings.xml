@@ -271,15 +271,15 @@
     
     <!-- 328路 \u2192 239路 -->
     <string name="traffic_transfer_arrow">\u0020\u2192\u0020</string>
-    <string name="traffic_at_where_walk_how">从%1$s步行约%2$s米</string>
-    <string name="traffic_at_where_walk_to_where">从%1$s步行到%2$s</string>
-    <string name="traffic_at_where_walk_how_to_where">从%1$s步行约%2$s米到%3$s</string>
-    <string name="traffic_walk_how_to_where">步行约%1$s米到%2$s</string>
+	<string name="traffic_at_where_walk_how">从{%1$s}步行约%2$s米</string>
+	<string name="traffic_at_where_walk_to_where">从{%1$s}步行到{%2$s}</string>
+	<string name="traffic_at_where_walk_how_to_where">从{%1$s}步行约%2$s米到{%3$s}</string>
+	<string name="traffic_walk_how_to_where">步行约%1$s米到{%2$s}</string>
     <string name="traffic_walk_how">步行约%1$s米</string>
-    <string name="traffic_walk_to_where">步行到%1$s</string>
-    <string name="traffic_by_what_to_where">乘%1$s到%2$s</string>
-    <string name="traffic_at_where_by_what_to_where">在%1$s乘%2$s，经过%3$d站，到%4$s</string>
-    <string name="traffic_at_where_by_what_to_where_previous">在%1$s乘%2$s，经过%3$d站，到%4$s(前一站%5$s)</string>
+	<string name="traffic_walk_to_where">步行到{%1$s}</string>
+	<string name="traffic_by_what_to_where">乘%1$s到{%2$s}</string>
+	<string name="traffic_at_where_by_what_to_where">在{%1$s}乘%2$s，经过%3$d站，到{%4$s}</string>
+	<string name="traffic_at_where_by_what_to_where_previous">在{%1$s}乘%2$s，经过%3$d站，到{%4$s}(前一站%5$s)</string>
 	<string name="set_off_from_start">从起点出发</string>
     <string name="traffic_goto_end_station">到达终点</string>
     <string name="traffic_goto_end_point">到达终点</string>
@@ -297,25 +297,28 @@
     <string name="traffic_right">右</string>
     
     <string name="begin_trun_to">从起点向%1$s方向出发，</string>
-    
-    <string name="drive_along">沿%1$s行驶%2$s，</string>
-    <string name="drive_along_roundabout">沿环岛行驶%1$s，</string>
+	<!-- 为了比较简单的完成字体高亮工作，在这里使用大括号{}来对高亮部分进行标记 -->
+	<string name="highlight_tag_left">{</string>
+	<string name="highlight_tag_right">}</string>
+	<string name="highlight_tag">{%1$s}</string>
+    <string name="drive_along">沿{%1$s}行驶%2$s，</string>
+    <string name="drive_along_roundabout">沿{环岛}行驶%1$s，</string>
     <string name="drive_run">行驶%1$s，</string>
-    <string name="drive_forward">直行</string>
-    <string name="drive_back">后转</string>
-    <string name="drive_left">左转</string>
-    <string name="drive_right">右转</string>
+    <string name="drive_forward">{直行}</string>
+    <string name="drive_back">{后转}</string>
+    <string name="drive_left">{左转}</string>
+    <string name="drive_right">{右转}</string>
     
-    <string name="enter">进入%s</string>
-    <string name="enter_roundabout">进入环岛</string>
+    <string name="enter">进入{%s}</string>
+    <string name="enter_roundabout">进入{环岛}</string>
     
-    <string name="walk_along">沿%1$s步行%2$s，</string>
-    <string name="walk_along_roundabout">沿环岛步行%1$s，</string>
+	<string name="walk_along">沿{%1$s}步行%2$s，</string>
+	<string name="walk_along_roundabout">沿{环岛}步行%1$s，</string>
     <string name="walk_run">步行%1$s，</string>
-    <string name="walk_forward">前行</string>
-    <string name="walk_back">向后</string>
-    <string name="walk_left">向左</string>
-    <string name="walk_right">向右</string>
+	<string name="walk_forward">{前行}</string>
+	<string name="walk_back">{向后}</string>
+	<string name="walk_left">{向左}</string>
+	<string name="walk_right">{向右}</string>
     
 
     <string name="busline_result_title">搜索“%1$s”共有%2$d个结果</string>
@@ -898,4 +901,5 @@
     
     <string name="shanghu_xingxi">商户信息</string>
     <string name="call_telephone">拨打电话</string>
+
 </resources>

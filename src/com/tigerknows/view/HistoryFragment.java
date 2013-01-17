@@ -194,7 +194,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         super.onResume();
         mTitleBtn.setText(R.string.history_browse);
         mRightBtn.setOnClickListener(this);
-        mRightBtn.setText(R.string.clear_all);
+        mRightBtn.setBackgroundResource(R.drawable.btn_delete_all);
 
         if (mDismiss) {
             mDismiss = false;

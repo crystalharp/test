@@ -16,8 +16,6 @@
 
 package com.tigerknows.view;
 
-import com.decarta.Globals;
-import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.DataQuery.Filter;
@@ -139,16 +137,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         }
         parentAdapter.notifyDataSetChanged();
         childAdapter.notifyDataSetChanged();
-        
-        refreshBackground();
-    }
-    
-    private void refreshBackground() {
-        if (selectedChildFilter == null || selectedChildFilter.getChidrenFilterList().size() < selectedParentFilter.getChidrenFilterList().size()) {
-            setBackgroundResource(R.drawable.list_selector_background_gray_light);
-        } else {
-            setBackgroundResource(R.drawable.list_selector_background_gray_dark);
-        }
     }
         
     public FilterListView(Context context) {
@@ -203,11 +191,9 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                 Filter filter = parentFilterList.get(position);
                 List<Filter> filterList = filter.getChidrenFilterList();
                 if (filterList.size() == 0) {
-                    refreshBackground();
                     childLsv.setVisibility(View.INVISIBLE);
                     doFilter(filter);
                 } else {
-                    refreshBackground();
                     selectedParentPosition = position;
                     parentAdapter.notifyDataSetChanged();
                     childLsv.setVisibility(View.VISIBLE);

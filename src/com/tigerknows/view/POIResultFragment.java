@@ -242,7 +242,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
                 long bTotal = poiList.getTotal();
                 
-                mTitleText = mSphinx.getString(R.string.search_result, mDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD), aTotal > 1 ? aTotal : bTotal);
+                mTitleText = mSphinx.getString(R.string.search_result, dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD), aTotal > 1 ? aTotal : bTotal);
             }
         }
         
@@ -810,7 +810,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mFilterListView = new FilterListView(mSphinx);
             
             mPopupWindow = new PopupWindow(mFilterListView);
-            mPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+            mPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
             mPopupWindow.setFocusable(true);
             // 设置允许在外点击消失
             mPopupWindow.setOutsideTouchable(true);

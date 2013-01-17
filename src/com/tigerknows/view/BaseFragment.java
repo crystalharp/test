@@ -127,7 +127,6 @@ public class BaseFragment extends LinearLayout {
             mActionLog.addAction(ActionLog.Dismiss, mActionTag);
         }
         onPause();
-        mSphinx.hideSoftInput();
         mSphinx.uiStackDismiss(getId());
         
         if (mTkAsyncTasking != null) {

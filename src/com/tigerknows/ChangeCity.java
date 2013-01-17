@@ -245,10 +245,11 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
         } else {
             if (checkLocationTitle()) {
                 sAllCityInfoList.remove(0);
-                sAllCityInfoList.remove(1);
+                sAllCityInfoList.remove(0);
             }
         }
         mCityExpandableListAdapter.notifyDataSetChanged();
+        mCityElv.requestFocus();
     }
     
     private boolean checkLocationTitle() {

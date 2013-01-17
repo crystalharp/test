@@ -21,10 +21,10 @@ import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.SqliteWrapper;
 import com.tigerknows.view.SpringbackListView.OnRefreshListener;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.drawable.Drawable;
@@ -37,13 +37,12 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.view.ContextMenu;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -52,7 +51,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.TextView.OnEditorActionListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -206,7 +204,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         super.onResume();
         mTitleBtn.setText(R.string.favorite);
         mRightBtn.setOnClickListener(this);
-        mRightBtn.setText(R.string.clear_all);
+        mRightBtn.setBackgroundResource(R.drawable.btn_delete_all);
 
         if (mDismiss) {
             mDismiss = false;
@@ -832,23 +830,11 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             }
         }
         nameEdt.append(name);
-        nameEdt.setOnEditorActionListener(new OnEditorActionListener() {
-            
-            @Override
-            public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-                    mSphinx.hideSoftInput(nameEdt.getWindowToken());
-                    return true;
-                }
-                return false;
-            }
-        });
-        CommonUtils.showNormalDialog(mSphinx,
+        Dialog dialog = CommonUtils.showNormalDialog(mSphinx,
                 mSphinx.getString(R.string.rename),
                 textEntryView,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
-                        mSphinx.hideSoftInput(nameEdt.getWindowToken());
                         if (whichButton == DialogInterface.BUTTON_POSITIVE) {
                             if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
                                 POI poi = mPOIList.get(position);
@@ -864,6 +850,14 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                         }
                     }
                 });
+        dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        dialog.setOnDismissListener(new OnDismissListener() {
+            
+            @Override
+            public void onDismiss(DialogInterface arg0) {
+                mSphinx.hideSoftInput();
+            }
+        });
     }
     
     class MyPageChangeListener implements OnPageChangeListener {

@@ -5,7 +5,6 @@
 package com.tigerknows.view;
 
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
@@ -160,7 +159,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onPause() {
         super.onPause();
-        mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
+        mKeywordEdt.getInput().clearFocus();
     }
 
     protected void findViews() {
@@ -168,16 +167,9 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         mQueryBtn = (Button)mRootView.findViewById(R.id.query_btn);
         mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);
         
-        Drawable divider = mSphinx.getResources().getDrawable(R.drawable.bg_real_line);
-        mCategoryLsv = new ListView(mSphinx);
-        mCategoryLsv.setFadingEdgeLength(0);
-        mCategoryLsv.setScrollingCacheEnabled(false);
-        mCategoryLsv.setDivider(divider);
+        mCategoryLsv = CommonUtils.makeListView(mSphinx);
         mViewList.add(mCategoryLsv);
-        mSuggestLsv = new ListView(mSphinx);
-        mSuggestLsv.setFadingEdgeLength(0);
-        mSuggestLsv.setScrollingCacheEnabled(false);
-        mSuggestLsv.setDivider(divider);
+        mSuggestLsv = CommonUtils.makeListView(mSphinx);
         mViewList.add(mSuggestLsv);
         mViewPager.setAdapter(new MyAdapter());
         
@@ -195,14 +187,10 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             
             @Override
             public void onPageScrolled(int arg0, float arg1, int arg2) {
-                // TODO Auto-generated method stub
-                
             }
             
             @Override
             public void onPageScrollStateChanged(int arg0) {
-                // TODO Auto-generated method stub
-                
             }
         });
         
@@ -270,8 +258,8 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
-                    mQueryBtn.requestFocus();
+                    mSphinx.hideSoftInput();
+                    mViewPager.requestFocus();
                 }
                 return false;
             }
@@ -336,14 +324,15 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     
     //还原为第一次进入的状态
     public void reset() {
-        mSuggestAdapter.key = null;
         mKeywordEdt.setText(null);
         mKeywordEdt.clearFocus();
         mViewPager.setCurrentItem(0);
         mSuggestWordList.clear();
+        POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, null);
+        mSuggestAdapter.key = null;
         mSuggestAdapter.notifyDataSetChanged();
-        mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
         mQueryBtn.setEnabled(false);
+        mViewPager.requestFocus();
     }
     
     class MyAdapter extends PagerAdapter {

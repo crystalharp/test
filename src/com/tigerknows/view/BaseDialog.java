@@ -102,7 +102,6 @@ public class BaseDialog extends Dialog {
         
         if (mSphinx != null) {
             mSphinx.uiStackDismiss(mId);
-            mSphinx.hideSoftInput();
         }
         onPause();
         super.dismiss();
@@ -142,6 +141,6 @@ public class BaseDialog extends Dialog {
     }
     
     public void onPause() {
-        
+        mSphinx.hideSoftInput();
     }
 }

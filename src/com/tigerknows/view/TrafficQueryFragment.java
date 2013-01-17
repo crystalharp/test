@@ -240,7 +240,6 @@ public class TrafficQueryFragment extends BaseFragment {
     @Override
     public void dismiss() {
     	super.dismiss();
-    	mSphinx.hideSoftInput(mBackBtn.getWindowToken());
     	mSphinx.setTouchMode(TouchMode.NORMAL);
     	mStart.clear();
     	mEnd.clear();
@@ -539,7 +538,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	}
 	
 	public void query() {
-		mSphinx.hideSoftInput(mTrafficQueryBtn.getWindowToken());
+		mSphinx.hideSoftInput();
 		mBlock.requestFocus();
 		
 		if (mode == TRAFFIC_MODE) {
@@ -737,7 +736,8 @@ public class TrafficQueryFragment extends BaseFragment {
     public void setDataNoSuggest(POI poi, int index) {
         if (index != START && index != END && index != SELECTED) 
             return;
-        
+        changeToMode(TRAFFIC_MODE);
+        mRadioGroup.check(R.id.traffic_transfer_rbt);
         setPOI(poi.clone(), index);
     }    
     

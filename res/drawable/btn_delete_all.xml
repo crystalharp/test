@@ -15,7 +15,8 @@
 -->
 
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true" android:drawable="@drawable/btn_distance_focused"/>
-    <item android:state_focused="false" android:drawable="@drawable/btn_distance_normal"/>
-    <item android:state_focused="true" android:drawable="@drawable/btn_distance_focused"/>
+    <item android:state_enabled="true" android:state_pressed="true" android:drawable="@drawable/btn_delete_all_focused"/>
+    <item android:state_enabled="true" android:state_focused="false" android:drawable="@drawable/btn_delete_all_normal"/>
+    <item android:state_enabled="true" android:state_focused="true" android:drawable="@drawable/btn_delete_all_focused"/>
+    <item android:state_enabled="false" android:drawable="@drawable/btn_delete_all_disabled"/>
 </selector>

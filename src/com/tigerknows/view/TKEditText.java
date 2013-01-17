@@ -80,14 +80,15 @@ public class TKEditText extends LinearLayout implements OnClickListener {
             CharSequence hint = a.getText(R.styleable.tkEditText_hint);
             mInputEdt.setHint(hint);
             int paddingLeft = a.getDimensionPixelSize(R.styleable.tkEditText_paddingLeft, 0);
+            int paddingRight = (int) (40 * Globals.g_metrics.density);
             if (paddingLeft != 0) {
-                mInputEdt.setPadding(paddingLeft, 0, 0, 0);
+                mInputEdt.setPadding(paddingLeft, 0, paddingRight, 0);
             }
             Drawable drawable = a.getDrawable(R.styleable.tkEditText_background);
             if (drawable != null) {
-                mInputEdt.setBackgroundDrawable(drawable);
                 int padding = (int) (8 * Globals.g_metrics.density);
-                mInputEdt.setPadding(paddingLeft != 0 ? paddingLeft : padding, padding, padding, padding);
+                mInputEdt.setBackgroundDrawable(drawable);
+                mInputEdt.setPadding(paddingLeft != 0 ? paddingLeft : padding, padding, paddingRight, padding);
             }
             int imeOptions = a.getInt(R.styleable.tkEditText_imeOptions, IMEOPTION_ACTIONUNSPECIFIED);
             int androidImeOption = EditorInfo.IME_NULL;
@@ -240,6 +241,10 @@ public class TKEditText extends LinearLayout implements OnClickListener {
 
     public void setSelectAllOnFocus(boolean b) {
         mInputEdt.setSelectAllOnFocus(b);
+    }
+    
+    public EditText getInput() {
+        return mInputEdt;
     }
 }
 

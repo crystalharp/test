@@ -60,15 +60,6 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
     
     private List<TKWord> mSuggestWordList = new ArrayList<TKWord>();
     
-    private Runnable mShowSoftInput = new Runnable() {
-        
-        @Override
-        public void run() {
-            mKeywordEdt.requestFocus();
-            mSphinx.showSoftInput(mKeywordEdt);
-        }
-    };
-    
     private final TextWatcher mFindEdtWatcher = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
@@ -136,7 +127,7 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
     @Override
     public void onPause() {
         super.onPause();
-        mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
+        mKeywordEdt.clearFocus();
     }
 
     protected void findViews() {
@@ -165,7 +156,7 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    mSphinx.showSoftInput(mKeywordEdt);
+                    mSphinx.showSoftInput(mKeywordEdt.getInput());
                 }
                 return false;
             }
@@ -199,7 +190,8 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
+                    mSphinx.hideSoftInput();
+                    mSuggestLsv.requestFocus();
                 }
                 return false;
             }
@@ -221,7 +213,7 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         if (!TextUtils.isEmpty(keyword)) {
             int cityId = Globals.g_Current_City_Info.getId();
             HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), cityId, HistoryWordTable.TYPE_POI);
-            mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
+            mSphinx.hideSoftInput();
             mActionLog.addAction(ActionLog.SearchInputSubmit, keyword);
 
             DataQuery poiQuery = new DataQuery(mContext);
@@ -249,8 +241,8 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
     public void reset() {
         mSuggestAdapter.key = null;
         mKeywordEdt.setText(null);
-        mKeywordEdt.clearFocus();
-        mSphinx.getHandler().post(mShowSoftInput);
+        mSphinx.showSoftInput(mKeywordEdt.getInput());
+        mKeywordEdt.getInput().requestFocus();
         
         makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
         mSuggestAdapter.notifyDataSetChanged();

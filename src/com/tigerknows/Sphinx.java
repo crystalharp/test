@@ -126,6 +126,7 @@ import com.tigerknows.service.SuggestLexiconService;
 import com.tigerknows.service.TKLocationManager;
 import com.tigerknows.service.TKLocationManager.TKLocationListener;
 import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.SoftInputManager;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.BaseDialog;
 import com.tigerknows.view.BaseFragment;
@@ -287,7 +288,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     public boolean mSnapMap = false;
     public int mIntoSnap = 0;
     public ActionLog mActionLog;
-    private InputMethodManager mInputMethodManager;
     
     // 老虎动画时间
     private static final int LOGO_ANIMATION_TIME = 2000;
@@ -333,7 +333,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             finish();
         }
         
-        mInputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);  
+        mSoftInputManager = new SoftInputManager(mThis);
         mActionLog = ActionLog.getInstance(mContext);
         
         mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
@@ -2216,19 +2216,15 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     
     // TODO: cityinfo end
     
-    // TODO: soft input begin
+    // TODO: soft input begin    
+    private SoftInputManager mSoftInputManager;
+    
     public void showSoftInput(View view) {
-        mInputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+        mSoftInputManager.showSoftInput(view);
     }
     
     public void hideSoftInput() {
-        if (this.getCurrentFocus() != null) {
-            hideSoftInput(this.getCurrentFocus().getWindowToken());
-        }
-    }
-    
-    public void hideSoftInput(IBinder token) {
-        mInputMethodManager.hideSoftInputFromWindow(token, InputMethodManager.HIDE_NOT_ALWAYS);//隐藏软键盘  
+        mSoftInputManager.hideSoftInput();
     }
     // TODO: soft input end
     

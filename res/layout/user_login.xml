@@ -78,7 +78,8 @@
 			        android:text="@string/regist"
 			        android:textSize="18sp"
 			        android:textColor="@color/black"
-			        android:background="@drawable/list_single" />
+			        android:padding="8dp"
+			        android:background="@drawable/btn_register" />
 			    <Button
 			        android:id="@+id/login_btn"
 			        android:layout_width="0dp"
