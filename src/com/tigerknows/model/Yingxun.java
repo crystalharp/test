@@ -75,7 +75,6 @@ public class Yingxun extends BaseData {
     private List<Changci> changciList = new ArrayList<Changci>(); // 0x2c x_array 该影讯所对应电影在该影院的播放场次列表 通过关联changci表得到
     
     private Position position;
-    private int orderNumber;
     private POI poi;
     private int changciOption=0;
     private int changciToday=0;
@@ -172,14 +171,12 @@ public class Yingxun extends BaseData {
         return false;
     }
     
-    public POI getPOI(int sourceType, Dianying dianying) {
+    public POI getPOI() {
         if (poi == null) {
             poi = new POI();
             poi.setName(name);
             poi.setAddress(address);
             poi.setPosition(position);
-            poi.setOrderNumber(orderNumber);
-            poi.setSourceType(sourceType);
         }
         return poi;
     }
@@ -388,14 +385,6 @@ public class Yingxun extends BaseData {
 
     public void setChangciList(List<Changci> changciList) {
         this.changciList = changciList;
-    }
-    
-    public int getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(int orderNumber) {
-        this.orderNumber = orderNumber;
     }
     
     public Position getPosition() {

@@ -28,25 +28,19 @@ public class Icon {
 	private Bitmap image;
 	//icon image's top left corner will be placed at position.x-offset.x, position.y-offset.y
 	private XYInteger offset;
-	private int order = -1;
 	
 	public Icon(Bitmap image){
 		this(image, new XYInteger(20,30), new XYInteger(10,15));
 	}
 
 	public Icon(Bitmap image, XYInteger size, XYInteger offset) {
-		this(image, size, offset, -1);
-	}
-
-    public Icon(Bitmap image, XYInteger size, XYInteger offset, int order) {
 		setImage(image);
 		this.size=size;
 		this.offset=offset;
-        this.order = order;
 	}
 	
 	public Icon clone(){
-	    return new Icon(image,new XYInteger(size.x,size.y),new XYInteger(offset.x,offset.y), this.order);
+	    return new Icon(image,new XYInteger(size.x,size.y),new XYInteger(offset.x,offset.y));
 	}
 	
 	public Bitmap getImage() {
@@ -72,7 +66,7 @@ public class Icon {
 			return false;
 		}
 		Icon other = (Icon) obj;
-		if(this.image==other.image && this.size.equals(other.size) && this.offset.equals(other.offset) && this.order == other.order)
+		if(this.image==other.image && this.size.equals(other.size) && this.offset.equals(other.offset))
 			return true;
 		return false;
 	}
@@ -98,17 +92,8 @@ public class Icon {
 		hash = 53 * hash + (this.size != null ? this.size.hashCode() : 0);
 		hash = 53 * hash + (this.offset != null ? this.offset.hashCode() : 0);
 		hash = 53 * hash + (this.image != null ? this.image.hashCode() : 0);
-        hash = 53 * hash + order;
 		return hash;
 	}
-
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(int order) {
-        this.order = order;
-    }
 
     public static Icon getIcon(Resources resources, int resId) {
         return getIcon(resources, resId, OFFSET_LOCATION_CENTER);

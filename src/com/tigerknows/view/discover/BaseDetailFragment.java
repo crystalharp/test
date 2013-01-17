@@ -5,6 +5,11 @@
 package com.tigerknows.view.discover;
 
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -16,6 +21,9 @@ import android.view.animation.Animation;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.model.BaseData;
+import com.tigerknows.model.POI;
+import com.tigerknows.model.Tuangou;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.SpringbackListView;
 import com.tigerknows.view.SpringbackListView.IPagerList;
@@ -28,17 +36,46 @@ import com.tigerknows.view.discover.CycleViewPager.CycleOnPageChangeListener;
  */
 public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnClickListener,
     SpringbackListView.IPagerListCallBack, CycleViewPager.CycleOnPageChangeListener.IRefreshViews {
+
+    List<BaseData> mDataList;
+
+    protected String mMapFragmentTitle="";
+
+    private static final int DETAIL_VIEW_COUNT = 3;
+    
+    protected ArrayList<BaseDetailView> detailViews = new ArrayList<BaseDetailView>(DETAIL_VIEW_COUNT);
+    
+    protected Queue<BaseDetailView> viewBackQueue = new LinkedList<BaseDetailView>();
     
     public BaseDetailFragment(Sphinx sphinx) {
         super(sphinx);
-        // TODO Auto-generated constructor stub
+        
+        for(int i=0;i<DETAIL_VIEW_COUNT;i++){
+            detailViews.add(null);
+         }
+    }
+    
+    public BaseDetailView createDetailViewForAdapter(int position){
+
+       BaseDetailView view = viewBackQueue.poll();
+        
+       if(view == null){
+    	   view = newDetailView();
+        }
+        view.setData(mDataList.get(position));
+        detailViews.set(position%DETAIL_VIEW_COUNT, view);
+		return view;
+    }
+    
+    public void reCycleDetailView(BaseDetailView view){
+    	viewBackQueue.add(view);
     }
     
     protected int position = -1;
     
     protected ViewPager mViewPager = null;
     
-    protected CycleViewPager.CyclePagerAdapter mCyclePagerAdapter;
+    protected DetailViewPagerAdapter mCyclePagerAdapter;
     
     protected CycleViewPager.CycleOnPageChangeListener mCycleOnPageChangeListener;
 
@@ -73,6 +110,7 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
 
     @Override
     public void onResume() {
+    	System.out.println("BaseDetailFragment onResume");
         super.onResume();
         mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
         mRightBtn.setOnClickListener(this);   
@@ -88,27 +126,9 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     @Override
     public void dismiss() {
         super.dismiss();
-        for(int i = mCyclePagerAdapter.viewList.size()-1; i >= 0; i--) {
-            BaseDetailView view = (BaseDetailView) mCyclePagerAdapter.viewList.get(i);
-            view.dismiss();
-        }
-    }
-    
-    protected void setData(int count, int position, IPagerList iPagerList) {
-        if (iPagerList == null) {
-            iPagerList = this.mCycleOnPageChangeListener.iPagerList;
-        }
-        
-        mCyclePagerAdapter.count = count;
-        
-        mCycleOnPageChangeListener.iPagerList = iPagerList;
-        mCycleOnPageChangeListener.isPageTurning = false;
-        mCycleOnPageChangeListener.count = mCyclePagerAdapter.count;
-        mCyclePagerAdapter.notifyDataSetChanged();
-        
-        mViewPager.setCurrentItem(position);
-        this.position = -1;
-        refreshViews(position);
+        for (BaseDetailView view : viewBackQueue) {
+			view.dismiss();
+		}
     }
 
     protected void findViews() {
@@ -133,24 +153,33 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     }
     
     public void viewMap() {
+        BaseData data = mDataList.get(mViewPager.getCurrentItem());
+        POI poi = data.getPOI();
+        if(poi==null){
+        	return;
+         }
+        List<POI> list = new ArrayList<POI>();
+        list.add(poi);
+        mSphinx.showPOI(list, 0);
+        mSphinx.getResultMapFragment().setData(mMapFragmentTitle, mActionTag);
         mSphinx.showView(R.id.view_result_map);
     }
 
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
-        for(int i = mCyclePagerAdapter.viewList.size()-1; i >= 0; i--) {
-            BaseDetailView view = (BaseDetailView) mCyclePagerAdapter.viewList.get(i);
+        
+        for (BaseDetailView view : detailViews) {
             if (view.onPostExecute(tkAsyncTask)) {
                 break;
             }
-        }
+		}
     }
     
     public void refreshViews(int position) {
         if (this.position == position) {
             return;
-        }
+         }
         this.position = position;
     }
 
@@ -218,5 +247,58 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     public void scheduleDismissOnScreenControls() {
         mSphinx.getHandler().removeCallbacks(mDismissOnScreenControlRunner);
         mSphinx.getHandler().postDelayed(mDismissOnScreenControlRunner, 2000);
+    }
+    
+    public void setData(List<BaseData> dataList, int position, IPagerList iPagerList) {
+        if (dataList == null) {
+            dataList = mDataList;
+        }
+        
+        this.mDataList = dataList;
+
+        if (iPagerList == null) {
+            iPagerList = this.mCycleOnPageChangeListener.iPagerList;
+         }
+        
+        mCyclePagerAdapter.count = dataList.size();
+        
+        mCycleOnPageChangeListener.iPagerList = iPagerList;
+        mCycleOnPageChangeListener.isPageTurning = false;
+        mCycleOnPageChangeListener.count = mCyclePagerAdapter.count;
+        
+        mViewPager.setCurrentItem(position);
+        this.position = position;
+    }
+    
+    public void setData(BaseData data) {
+        int position = 0;
+        for(int i = mDataList.size()-1; i >= 0; i--) {
+            if (data == mDataList.get(i)) {
+                position = i;
+                break;
+            }
+        }
+        setData(null, position, null);
+    }
+    
+    /** 
+     * Ensure lazy creation of DetailView
+     * To make tuangou detail come up a bit faster.
+     */
+    public BaseDetailView getDetailViewByPosition(int position){
+    	
+    	int index = position%getViewCount();
+    	if(detailViews.get(index)==null){
+    		detailViews.set(index, newDetailView());
+    	}
+		return detailViews.get(index);
+    }
+
+    protected BaseDetailView newDetailView(){
+		return null;
+    }
+    
+    public int getViewCount(){
+		return DETAIL_VIEW_COUNT;
     }
 }

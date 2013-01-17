@@ -137,7 +137,6 @@ public class TilesView extends GLSurfaceView {
     }
 
     private static Paint tilePText;
-    private static Paint orderP;
     
     private MapText mapText = new MapText();
 
@@ -274,12 +273,6 @@ public class TilesView extends GLSurfaceView {
         tilePText.setTypeface(Typeface.DEFAULT); //设置字体Typeface包含了字体的类型，粗细，还有倾斜、颜色
         tilePText.setStrokeWidth(4f); //设置描边的宽度
         
-        orderP = new Paint();
-        orderP.setColor(0xff0059d1);
-        orderP.setStyle(Paint.Style.FILL_AND_STROKE);
-        orderP.setTextSize(Util.dip2px(Globals.g_metrics.density, 12));
-        orderP.setAntiAlias(true);
-        orderP.setTextAlign(Align.LEFT);
         // Tigerknows end
     }
 	
@@ -3521,13 +3514,13 @@ public class TilesView extends GLSurfaceView {
 					
 					//canvas.drawRect(new RectF(0, 0,size.x,size.y), new Paint());
 					canvas.drawBitmap(icon.getImage(), null, new RectF(0, 0,size.x,size.y), null);
-	                   int order = icon.getOrder();
-	                    if (order > 0) {
-	                        String orderStr = String.valueOf(order);
-	                        int width = Math.round(orderP.measureText(orderStr));
-	                        int height=Math.round(-orderP.ascent()+orderP.descent());
-	                        canvas.drawText(orderStr, size.x/2-width/2, size.y/8+height, orderP);
-	                    }
+//	                   int order = icon.getOrder();
+//	                    if (order > 0) {
+//	                        String orderStr = String.valueOf(order);
+//	                        int width = Math.round(orderP.measureText(orderStr));
+//	                        int height=Math.round(-orderP.ascent()+orderP.descent());
+//	                        canvas.drawText(orderStr, size.x/2-width/2, size.y/8+height, orderP);
+//	                    }
 					
 					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 					gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);

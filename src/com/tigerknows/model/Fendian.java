@@ -63,7 +63,6 @@ public class Fendian extends BaseData {
     private String distance; // 0x5c x_string 分店距当前位置距离 实时计算
     
     private Position position;
-    private int orderNumber;
     private POI poi;
     
     public Fendian() {
@@ -226,23 +225,16 @@ public class Fendian extends BaseData {
         return position;
     }
     
-    public int getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(int orderNumber) {
-        this.orderNumber = orderNumber;
-    }
-    
-    public POI getPOI(int sourceType, Tuangou tuangou) {
+	@Override
+	public POI getPOI() {
         if (poi == null) {
             poi = new POI();
             poi.setName(placeName);
             poi.setAddress(address);
             poi.setPosition(position);
-            poi.setOrderNumber(orderNumber);
-            poi.setSourceType(sourceType);
         }
         return poi;
-    }
+	}
+    
+    
 }

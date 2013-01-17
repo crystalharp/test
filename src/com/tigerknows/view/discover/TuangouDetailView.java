@@ -207,9 +207,9 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
 
     @Override
     public void dismiss() {
-        super.dismiss();
-        mPictureImv.setBackgroundDrawable(null);
-        mContentTxv.setBackgroundDrawable(null);
+        //super.dismiss();
+        //mPictureImv.setBackgroundDrawable(null);
+        //mContentTxv.setBackgroundDrawable(null);
     }
     
     @Override
@@ -560,7 +560,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 if (fendian == null) {
                     return;
                 }
-                CommonUtils.queryTraffic(mSphinx, fendian.getPOI(POI.SOURCE_TYPE_TUANGOU, mData));
+                CommonUtils.queryTraffic(mSphinx, fendian.getPOI(POI.SOURCE_TYPE_TUANGOU));
                 break;
                 
             case R.id.nearby_fendian_view:

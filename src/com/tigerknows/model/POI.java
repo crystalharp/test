@@ -436,8 +436,6 @@ public class POI extends BaseData {
     
     private int resultType = 0;
     
-    private int orderNumber;
-
     private int sourceType = 0;
     
     private int grade;
@@ -561,14 +559,6 @@ public class POI extends BaseData {
     
     public void setSelected(boolean isSelected) {
         this.isSelected = isSelected;
-    }
-    
-    public int getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(int orderNumber) {
-        this.orderNumber = orderNumber;
     }
 
     public void setSourceType(int sourceType) {

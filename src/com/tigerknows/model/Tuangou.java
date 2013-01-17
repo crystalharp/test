@@ -107,8 +107,6 @@ public class Tuangou extends BaseData {
     private Fendian fendian;
     private DataQuery fendianQuery;
     private String filterArea;
-    private int orderNumber;
-    private POI poi;
     
     public Tuangou() {
     }
@@ -212,14 +210,10 @@ public class Tuangou extends BaseData {
     }
     
     public POI getPOI() {
-        if (poi == null) {
-            poi = new POI();
-            poi.setName(shortDesc);
-            poi.setPosition(fendian.getPosition());
-//            poi.setOrderNumber(orderNumber);
-            poi.setSourceType(POI.SOURCE_TYPE_TUANGOU);
-        }
-        return poi;
+    	if(fendian!=null){
+    		return fendian.getPOI(POI.SOURCE_TYPE_TUANGOU);
+    	}
+    	return null;
     }
     
     public String getUid() {
@@ -404,14 +398,5 @@ public class Tuangou extends BaseData {
 
     public void setFilterArea(String filterArea) {
         this.filterArea = filterArea;
-    }
-    
-    public int getOrderNumber() {
-        return orderNumber;
-    }
-
-    public void setOrderNumber(int orderNumber) {
-        this.orderNumber = orderNumber;
-    }
-    
+    }    
 }
