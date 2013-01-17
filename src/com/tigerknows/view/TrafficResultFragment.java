@@ -123,7 +123,6 @@ public class TrafficResultFragment extends BaseFragment {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				// TODO Auto-generated method stub
 
 				mActionLog.addAction(ActionLog.TrafficResultSelect, position);
 				focusedIndex = position;
@@ -148,7 +147,6 @@ public class TrafficResultFragment extends BaseFragment {
 			@Override
 			public void onScroll(AbsListView view, int firstVisibleItem,
 					int visibleItemCount, int totalItemCount) {
-				// TODO Auto-generated method stub
 			}
         });
         
@@ -156,7 +154,6 @@ public class TrafficResultFragment extends BaseFragment {
 			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
 				if ((event.getAction() == MotionEvent.ACTION_UP) && (downView != null)) {
 					if (downView.isSelected() || downView.isFocused() || downView.isPressed()) {
 						LogWrapper.d(TAG, "set index bg: " + "bg_index_focused");
@@ -197,25 +194,21 @@ public class TrafficResultFragment extends BaseFragment {
 
 		@Override
 		public int getCount() {
-			// TODO Auto-generated method stub
 			return planList.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			// TODO Auto-generated method stub
 			return planList.get(position);
 		}
 
 		@Override
 		public long getItemId(int position) {
-			// TODO Auto-generated method stub
 			return position;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			// TODO Auto-generated method stub
 			PlanViewHolder planHolder = null;
         	if(convertView == null) {
         		convertView = new ChildView(mContext);
