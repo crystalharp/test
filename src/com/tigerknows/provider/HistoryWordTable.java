@@ -136,28 +136,9 @@ public class HistoryWordTable {
 		if (position != null) {
             cv.put(POSITION, position.getLat()+","+position.getLon());
 		}
-		if(check(tkWord, cityId, type)<=0) // new
-			mDb.insert(TABLE_NAME, null, cv);
-		else // overwrite
-			mDb.update(TABLE_NAME, cv, "(" + HASHCODE + "=" + hashCode + ") AND (" + CITY_ID + "=" + cityId+ ") AND (" + TYPE + "=" + type+ ")", null);
-	}
 
-	public int check(TKWord tkWord, int cityId, int type) {
-	    int count = -1;
-        if (tkWord == null || TextUtils.isEmpty(tkWord.word)) {
-	        return count;
-	    }
-		if(!mDb.isOpen())
-			return count;
-		int hashCode = tkWord.hashCode();
-		Cursor mCursor = mDb.query(true, TABLE_NAME,
-				null, "(" + HASHCODE + "=" + hashCode + ") AND (" + CITY_ID + "=" + cityId+ ") AND (" + TYPE + "=" + type+ ")",
-				null, null, null, null, null);
-		count = mCursor.getCount();
-		if(mCursor!=null){
-			mCursor.close();
-		}
-		return count;
+		mDb.delete(TABLE_NAME,  "(" + CITY_ID + "=" + cityId+ ") AND (" + TYPE + "=" + type+ ") AND (" + HASHCODE + "=" + hashCode+ ")", null);
+		mDb.insert(TABLE_NAME, null, cv);
 	}
 
     public void read(List<TKWord> list, int cityId, int type) {
@@ -165,7 +146,7 @@ public class HistoryWordTable {
             return;
         Cursor mCursor = mDb.query(true, TABLE_NAME,
                 new String[] { WORD, POSITION}, "(" + CITY_ID + "=" + cityId+ ") AND (" + TYPE + "=" + type+ ")",
-                null, null, null, null, null);
+                null, null, null, ID + " DESC", null);
         if (mCursor != null) {
             mCursor.moveToFirst();
         }

@@ -95,6 +95,7 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
         loadingTxv.setText(tipText);
         tipProgressDialog = CommonUtils.showNormalDialog(activity, custom);
         tipProgressDialog.setCancelable(cancelable);
+        tipProgressDialog.setCanceledOnTouchOutside(false);
         tipProgressDialog.setOnCancelListener(new OnCancelListener() {
             
             @Override
