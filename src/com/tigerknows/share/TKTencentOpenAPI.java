@@ -121,7 +121,7 @@ public class TKTencentOpenAPI {
                             @Override
                             public void run() {
                                 activity.dismissDialog(R.id.dialog_share_doing);
-                                TDebug.msg(msg, activity);
+//                                TDebug.msg(msg, activity);
                                 ShareAPI.clearIdentity(activity, ShareAPI.TYPE_TENCENT);
                                 loginCallBack.onFailed();
                             }
@@ -170,7 +170,7 @@ public class TKTencentOpenAPI {
     
     public static void addShare(final Activity activity, String comment, final boolean showDialog, final boolean finish) {
         if (!satisfyConditions()) {
-            TDebug.msg("请先获取access token和open id", activity);
+//            TDebug.msg("请先获取access token和open id", activity);
             return;
         }
         if (showDialog)
@@ -209,10 +209,16 @@ public class TKTencentOpenAPI {
                     
                     @Override
                     public void run() {
-                        Toast.makeText(activity, R.string.tencent_share_failed, Toast.LENGTH_LONG).show();
-                        if (showDialog)
+                        if (ret >= 1000) {
+                            ShareAPI.clearIdentity(activity, ShareAPI.TYPE_TENCENT);
+                            Toast.makeText(activity, R.string.tencent_share_failed_token_error, Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(activity, R.string.tencent_share_failed, Toast.LENGTH_LONG).show();
+                        }
+                        if (showDialog) {
                             activity.dismissDialog(R.id.dialog_share_doing);
-                        TDebug.msg(ret + ": " + msg, activity);
+                        }
+//                        TDebug.msg(ret + ": " + msg, activity);
                     }
                 });
             }

@@ -337,16 +337,33 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         mActionLog = ActionLog.getInstance(mContext);
         
         mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
-        if (mSensor != null) {
-            mSensorOrientation = true;
-            mSensorManager.registerListener(mSensorListener, mSensor,SensorManager.SENSOR_DELAY_NORMAL);
-        }
+        Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         
-        try{			
-        	setContentView(R.layout.sphinx);
+        try{
+            setContentView(R.layout.sphinx);
             findViews();
             setListener();
+
+            if (sensor != null) {
+                mSensorOrientation = true;
+            }
+            
+            Resources resources = getResources();
+            Icon icon = Icon.getIcon(resources, mSensorOrientation ? R.drawable.icon_orientation1 : R.drawable.ic_bubble_my_location);
+            Icon iconFocused = Icon.getIcon(resources, mSensorOrientation ? R.drawable.icon_orientation2 : R.drawable.ic_bubble_my_location2);
+            Icon icFaceToNormal = Icon.getIcon(resources, R.drawable.ic_face_to_normal);
+            Icon icFaceToFocused = Icon.getIcon(resources, R.drawable.ic_face_to_focused);
+            RotationTilt rt=new RotationTilt(RotateReference.MAP,TiltReference.MAP);
+            mMyLocation = new MyLocation(null, icon, iconFocused, icFaceToNormal, icFaceToFocused, null, rt);
+            
+            mMyLocationOverlay=new ItemizedOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY);
+            mMyLocationOverlay.addOverlayItem(mMyLocation);
+            
+            mMapView.addOverlay(mMyLocationOverlay);
+
+            if (mSensorOrientation) {
+                mSensorManager.registerListener(mSensorListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+            }
             
             final double lastLon = Double.parseDouble(TKConfig.getPref(mContext, TKConfig.PREFS_LAST_LON, "361"));
             final double lastLat = Double.parseDouble(TKConfig.getPref(mContext, TKConfig.PREFS_LAST_LAT, "361"));
@@ -734,19 +751,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                     PinOverlayHelper.drawLongClickOverlay(Sphinx.this, mHandler, mMapView, positionName, position);
                 }
             });
-
-            Resources resources = getResources();
-            Icon icon = Icon.getIcon(resources, mSensorOrientation ? R.drawable.icon_orientation1 : R.drawable.ic_bubble_my_location);
-            Icon iconFocused = Icon.getIcon(resources, mSensorOrientation ? R.drawable.icon_orientation2 : R.drawable.ic_bubble_my_location2);
-            Icon icFaceToNormal = Icon.getIcon(resources, R.drawable.ic_face_to_normal);
-            Icon icFaceToFocused = Icon.getIcon(resources, R.drawable.ic_face_to_focused);
-            RotationTilt rt=new RotationTilt(RotateReference.MAP,TiltReference.MAP);
-            mMyLocation = new MyLocation(null, icon, iconFocused, icFaceToNormal, icFaceToFocused, null, rt);
-            
-            mMyLocationOverlay=new ItemizedOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY);
-            mMyLocationOverlay.addOverlayItem(mMyLocation);
-            
-            mMapView.addOverlay(mMyLocationOverlay);
             
             Compass compass = mMapView.getCompass();
             if(compass!=null){
@@ -3463,7 +3467,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     
     protected boolean mSensorOrientation = false;
     private SensorManager mSensorManager=null;
-    private Sensor mSensor=null;
     private float rotateZ = 365;
     private SensorEventListener mSensorListener=new SensorEventListener() {
         public void onSensorChanged(SensorEvent event) {

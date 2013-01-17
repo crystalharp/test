@@ -456,6 +456,7 @@
     <string name="logout_failed">注销失败！</string>
     <string name="tencent_share_sucess">QQ空间分享成功！</string>
     <string name="tencent_share_failed">QQ空间分享失败！</string>
+    <string name="tencent_share_failed_token_error">QQ空间授权已经过期，请重新绑定！</string>
     <string name="del_pic">是否删除图片？</string>
     <string name="share_tiger_user">老虎用户</string>
 <!-- Share Module Common End -->

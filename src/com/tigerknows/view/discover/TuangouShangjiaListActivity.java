@@ -43,7 +43,7 @@ public class TuangouShangjiaListActivity extends BaseActivity {
     
     static final String TAG = "TuangouShopListActivity";
 
-    private static DataQuery sDataQuery = null;
+    private DataQuery mDataQuery = null;
     
     private ListView mResultLsv = null;
     private List<Shangjia> mResultList = new ArrayList<Shangjia>();
@@ -116,14 +116,14 @@ public class TuangouShangjiaListActivity extends BaseActivity {
             finish();
             return;
         }
-        if (sDataQuery == null || sDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SESSION_ID).equals(sessionId) == false) {
+        if (mDataQuery == null || mDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SESSION_ID).equals(sessionId) == false) {
             DataQuery dataQuery = new DataQuery(mThis);
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_SHANGJIA);
             dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(), mId, mId, mThis.getString(R.string.doing_and_wait));
             queryStart(dataQuery);
         } else {
-            setData(sDataQuery);
+            setData(mDataQuery);
         }
     }
 
@@ -135,8 +135,8 @@ public class TuangouShangjiaListActivity extends BaseActivity {
         if (shangjiaList != null) {
             List<Shangjia> shangjiaArrayList = shangjiaList.getList();
             if (shangjiaArrayList != null && shangjiaArrayList.size() > 0) {
-                sDataQuery = dataQuery;
-                sDataQuery.getCriteria().put(BaseQuery.SERVER_PARAMETER_SESSION_ID, sessionId);
+                mDataQuery = dataQuery;
+                mDataQuery.getCriteria().put(BaseQuery.SERVER_PARAMETER_SESSION_ID, sessionId);
                 mResultList.addAll(shangjiaArrayList);
                 mResultAdapter.notifyDataSetChanged();
             }
