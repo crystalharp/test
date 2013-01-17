@@ -10,52 +10,50 @@
         <RelativeLayout android:id="@+id/traffic_rll"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:padding="4dp"
-	        android:background="@drawable/bg_gradient">
+	        android:padding="8dp"
+	        android:background="@color/traffic_input_background_gray">
 	        <LinearLayout android:id="@+id/traffic_lsv"
 	            android:layout_width="fill_parent" 
 	            android:layout_height="wrap_content"
 	            android:orientation="vertical"
 	            android:layout_toLeftOf="@+id/traffic_query_btn"
-	            android:layout_alignParentTop="true"
-	            android:layout_marginLeft="4dp">
-	            <!-- android:background="" -->
+	            android:layout_alignParentTop="true">
 	            <LinearLayout 
 			        android:layout_width="fill_parent" 
 			        android:layout_height="wrap_content"
-			        android:paddingTop="6dp"
 			        android:orientation="horizontal" >
 			        <Button
 			            android:id="@+id/select_start_btn"
 			            style="?android:attr/buttonStyleSmall"
-			            android:background="@drawable/ic_traffic_select_start"
+			            android:background="@drawable/btn_traffic_select_start"
+			            android:layout_gravity="center_vertical"
 			            android:layout_width="wrap_content"
 			            android:layout_height="wrap_content" />
 
 			        <com.tigerknows.view.TKEditText
 			            android:id="@+id/start_edt"
 			            android:layout_width="fill_parent" 
-			            android:layout_height="wrap_content"
+			            android:layout_height="40dp"
+			            tkandroid:height="40dp"
 			            tkandroid:imeOptions="actionNext">
 			         </com.tigerknows.view.TKEditText>
         		</LinearLayout>
-        		<ImageView
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:background="@drawable/bg_line_split" />
 	            <LinearLayout 
+	                android:layout_marginTop="8dp"
 			        android:layout_width="fill_parent"
 			        android:layout_height="wrap_content">
 			        <Button
 			            android:id="@+id/select_end_btn"
 			            style="?android:attr/buttonStyleSmall"
-			            android:background="@drawable/ic_traffic_select_end"
+			            android:background="@drawable/btn_traffic_select_end"
+			            android:layout_gravity="center_vertical"
 			            android:layout_width="wrap_content"
 			            android:layout_height="wrap_content" />
 			        <com.tigerknows.view.TKEditText
 			            android:id="@+id/end_edt"
 			            android:layout_width="fill_parent" 
-			            android:layout_height="wrap_content"
+			            android:layout_height="40dp"
+			            tkandroid:height="40dp"
 			            tkandroid:imeOptions="actionSearch">
 			         </com.tigerknows.view.TKEditText>
         		</LinearLayout>
@@ -64,10 +62,9 @@
 	            android:layout_alignParentRight="true"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
+	            android:layout_marginLeft="8dp"
 	            android:background="@drawable/btn_traffic_query"
 	            android:layout_centerVertical="true" />
-<!-- 	            android:layout_alignBottom="@+id/traffic_lsv" -->
-<!-- 	            android:layout_alignTop="@+id/traffic_lsv" -->
 
 	    </RelativeLayout>
 

@@ -124,9 +124,15 @@ public class TKEditText extends LinearLayout implements OnClickListener {
                     break;
             }
             mInputEdt.setImeOptions(androidImeOption);
+            int height = a.getDimensionPixelSize(R.styleable.tkEditText_height, 0);
+            if (height > 0) {
+                mInputEdt.getLayoutParams().height = height;
+                mInputEdt.setHeight(height);
+            }
             a.recycle();
         }
         
+//        mInputEdt.setHeight(getHeight());
         mInputEdt.setSingleLine(true);
         mDeleteBtn.setVisibility(View.GONE);
     }
