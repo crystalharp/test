@@ -63,8 +63,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
 	private static final int TYPE_RESULT_LIST_END = 7;
 	
-	private static final int DEFAULT_SHOW_STEP_ZOOMLEVEL = 14;
-       
     private ListAdapter mResultAdapter;
     
     private TextView mSubTitleTxv = null;
