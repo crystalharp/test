@@ -249,6 +249,7 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
             }
         }
         mCityExpandableListAdapter.notifyDataSetChanged();
+        mCityElv.requestFocus();
     }
     
     private boolean checkLocationTitle() {

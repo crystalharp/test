@@ -35,6 +35,7 @@
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
         android:layout_below="@id/input_view"
+        android:focusable="true"
         android:dividerHeight="0dp"
         android:childDivider="@drawable/bg_real_line"
         android:divider="@drawable/bg_real_line"

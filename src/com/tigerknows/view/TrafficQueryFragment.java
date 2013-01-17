@@ -240,7 +240,6 @@ public class TrafficQueryFragment extends BaseFragment {
     @Override
     public void dismiss() {
     	super.dismiss();
-    	mSphinx.hideSoftInput(mBackBtn.getWindowToken());
     	mSphinx.setTouchMode(TouchMode.NORMAL);
     	mStart.clear();
     	mEnd.clear();
@@ -539,7 +538,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	}
 	
 	public void query() {
-		mSphinx.hideSoftInput(mTrafficQueryBtn.getWindowToken());
+		mSphinx.hideSoftInput();
 		mBlock.requestFocus();
 		
 		if (mode == TRAFFIC_MODE) {

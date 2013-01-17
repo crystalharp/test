@@ -208,7 +208,7 @@ public class TrafficQueryEventHelper {
         		
         		showSelectOptionDialog(mQueryFragment.mSphinx, mQueryEdt, title, hasMyLocation);
         		
-        		mQueryFragment.mSphinx.hideSoftInput(mQueryEdt.getEdt().getWindowToken());
+        		mQueryFragment.mSphinx.hideSoftInput();
         		mQueryFragment.mLogHelper.logForClickBookmarkOnEditText(mQueryEdt);
         	}
 		
@@ -273,7 +273,7 @@ public class TrafficQueryEventHelper {
         @Override
         public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-            	mQueryFragment.mSphinx.hideSoftInput(mQueryEdt.getEdt().getWindowToken());
+            	mQueryFragment.mSphinx.hideSoftInput();
             	mQueryFragment.submitBuslineQuery();
                 return true;
             }
@@ -346,7 +346,7 @@ public class TrafficQueryEventHelper {
 				mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.ClickEditText);
 			} else if (event.getAction() == MotionEvent.ACTION_UP) {
 				mQueryEdt.getEdt().requestFocus();
-				mQueryFragment.mSphinx.showSoftInput(mQueryEdt.getEdt());
+				mQueryFragment.mSphinx.showSoftInput(mQueryEdt.getEdt().getInput());
 				
 				mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryEdt.getEdt(), suggestWordsType);
 				
@@ -381,7 +381,7 @@ public class TrafficQueryEventHelper {
                 	mQueryFragment.onBack();
                 }
 			}
-			mQueryFragment.mSphinx.hideSoftInput(mQueryFragment.mBackBtn.getWindowToken());
+			mQueryFragment.mSphinx.hideSoftInput();
 		}
 		
 	}
@@ -397,7 +397,7 @@ public class TrafficQueryEventHelper {
 			 */
 			if (!mQueryFragment.mStart.getEdt().isFocused() && !mQueryFragment.mEnd.getEdt().isFocused() 
 					&& !mQueryFragment.mBusline.getEdt().isFocused()) {
-				mQueryFragment.mSphinx.hideSoftInput(group.getWindowToken());
+				mQueryFragment.mSphinx.hideSoftInput();
 			}
         }
 	}
@@ -406,7 +406,7 @@ public class TrafficQueryEventHelper {
 		@Override
 		public void onClick(View v) {
 			// TODO Auto-generated method stub
-			mQueryFragment.mSphinx.hideSoftInput(mQueryFragment.mBlock.getWindowToken());
+			mQueryFragment.mSphinx.hideSoftInput();
 			clearSuggestWatcherInInputState();
 			super.onClick(v);
 			addSuggestWatcherInInputState();
@@ -463,7 +463,7 @@ public class TrafficQueryEventHelper {
 			// TODO Auto-generated method stub
 //			LogWrapper.d("eric", "SuggestLsv.onTouch");
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
-				mQueryFragment.mSphinx.hideSoftInput(mQueryFragment.mSuggestLsv.getWindowToken());
+				mQueryFragment.mSphinx.hideSoftInput();
             }
             return false;
 		}

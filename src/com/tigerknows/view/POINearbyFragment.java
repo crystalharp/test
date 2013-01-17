@@ -5,7 +5,6 @@
 package com.tigerknows.view;
 
 import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
@@ -160,7 +159,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onPause() {
         super.onPause();
-        mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
+        mKeywordEdt.getInput().clearFocus();
     }
 
     protected void findViews() {
@@ -188,14 +187,10 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             
             @Override
             public void onPageScrolled(int arg0, float arg1, int arg2) {
-                // TODO Auto-generated method stub
-                
             }
             
             @Override
             public void onPageScrollStateChanged(int arg0) {
-                // TODO Auto-generated method stub
-                
             }
         });
         
@@ -263,8 +258,8 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
-                    mQueryBtn.requestFocus();
+                    mSphinx.hideSoftInput();
+                    mViewPager.requestFocus();
                 }
                 return false;
             }
@@ -336,8 +331,8 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, null);
         mSuggestAdapter.key = null;
         mSuggestAdapter.notifyDataSetChanged();
-        mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
         mQueryBtn.setEnabled(false);
+        mViewPager.requestFocus();
     }
     
     class MyAdapter extends PagerAdapter {

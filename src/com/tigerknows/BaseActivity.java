@@ -17,6 +17,7 @@ import com.tigerknows.model.Response;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.service.TKLocationManager;
 import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.SoftInputManager;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.BaseDialog;
 import com.tigerknows.view.BaseFragment;
@@ -24,7 +25,6 @@ import com.tigerknows.view.user.UserBaseActivity;
 import com.tigerknows.view.user.UserLoginActivity;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -34,14 +34,12 @@ import android.content.IntentFilter;
 import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -64,7 +62,7 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
     
     protected LayoutInflater mLayoutInflater;
     
-    protected InputMethodManager mInputMethodManager;
+    protected SoftInputManager mSoftInputManager;
 
     protected PowerManager mPowerManager; //电源控制，比如防锁屏
     
@@ -138,7 +136,7 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
         mIntent = getIntent();
         getViewId(mIntent);
         mLayoutInflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mInputMethodManager = (InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE);  
+        mSoftInputManager = new SoftInputManager(mThis);  
         mMapEngine = MapEngine.getInstance();
 
         mPowerManager = (PowerManager) getSystemService(POWER_SERVICE);
@@ -290,17 +288,11 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
     
     // TODO: soft input begin
     public void showSoftInput(View view) {
-        mInputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT);
+        mSoftInputManager.showSoftInput(view);
     }
     
     public void hideSoftInput() {
-        if (this.getCurrentFocus() != null) {
-            hideSoftInput(this.getCurrentFocus().getWindowToken());
-        }
-    }
-    
-    public void hideSoftInput(IBinder token) {
-        mInputMethodManager.hideSoftInputFromWindow(token, InputMethodManager.HIDE_NOT_ALWAYS);//隐藏软键盘  
+        mSoftInputManager.hideSoftInput();
     }
     // TODO: soft input end
 

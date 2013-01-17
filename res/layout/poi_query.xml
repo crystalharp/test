@@ -47,6 +47,7 @@
         android:layout_below="@id/top_view"
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
+        android:focusable="true"
         android:scrollingCache="false"
         android:fadingEdge="none"
         android:divider="@drawable/list_selector_background_gray_light"
