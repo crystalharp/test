@@ -18,12 +18,12 @@
 package com.tigerknows.share;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
@@ -66,11 +66,7 @@ public class QZoneSend extends Activity implements OnClickListener {
                 
                 @Override
                 public void run() {
-                    UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(QZoneSend.this, ShareAPI.TYPE_TENCENT);
-                    if (userAccessIdenty != null) {
-                        mLogoutBtn.setText(R.string.logout);
-                        mTitleTxv.setText(Html.fromHtml(userAccessIdenty.getUserName()));
-                    }
+                    checkUserAccessIdenty(false);
                 }
             });
         }
@@ -95,10 +91,33 @@ public class QZoneSend extends Activity implements OnClickListener {
             dialog.setCancelable(false);
             dialog.setCanceledOnTouchOutside(false);
             ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait));
+            dialog.setOnDismissListener(new OnDismissListener() {
+                
+                @Override
+                public void onDismiss(DialogInterface arg0) {
+                    checkUserAccessIdenty(false);
+                }
+            });
             break;
         }
         
         return dialog;
+    }
+    
+    private boolean checkUserAccessIdenty(boolean needLogin) {
+        UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(QZoneSend.this, ShareAPI.TYPE_TENCENT);
+        if (userAccessIdenty == null) {
+            if (needLogin) {
+                TKTencentOpenAPI.login(QZoneSend.this);
+            }
+            mLogoutBtn.setText(R.string.back);
+            mTitleTxv.setText(R.string.share_tiger_user);
+        } else {
+            mLogoutBtn.setText(R.string.logout);
+            mTitleTxv.setText(Html.fromHtml(userAccessIdenty.getUserName()));
+        }
+        
+        return userAccessIdenty != null;
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -121,14 +140,7 @@ public class QZoneSend extends Activity implements OnClickListener {
         
         mTencentAuthReceiver = new AuthReceiver(this, mLoginCallBack);
         registerIntentReceivers();
-        UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(this, ShareAPI.TYPE_TENCENT);
-        if (userAccessIdenty == null) {
-            TKTencentOpenAPI.login(this);
-            mLogoutBtn.setText(R.string.back);
-        } else {
-            mLogoutBtn.setText(R.string.logout);
-            mTitleTxv.setText(Html.fromHtml(userAccessIdenty.getUserName()));
-        }
+        checkUserAccessIdenty(true);
     }
 
     private void findViews() {
@@ -162,8 +174,7 @@ public class QZoneSend extends Activity implements OnClickListener {
         switch (viewId) {
             case R.id.logout_btn: {
                 mActionLog.addAction(ActionLog.QzoneSendClickLogoutbBtn);
-                UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(this, ShareAPI.TYPE_TENCENT);
-                if (userAccessIdenty == null) {
+                if (checkUserAccessIdenty(false) == false) {
                     QZoneSend.this.finish();
                     return;
                 }
@@ -175,11 +186,7 @@ public class QZoneSend extends Activity implements OnClickListener {
             }
             case R.id.send_btn: {
                 mActionLog.addAction(ActionLog.QzoneSendClickSendBtn, mContent);
-
-                UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(QZoneSend.this, ShareAPI.TYPE_TENCENT);
-                if (userAccessIdenty == null) {
-                    mLogoutBtn.setText(R.string.back);
-                    TKTencentOpenAPI.login(this);
+                if (checkUserAccessIdenty(true) == false) {
                     return;
                 }
                 mContent = mTextEdt.getText().toString();

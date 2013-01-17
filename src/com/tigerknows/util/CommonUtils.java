@@ -659,7 +659,7 @@ public class CommonUtils {
         final Dialog dialog = new Dialog(activity, R.style.AlertDialog);
         
         dialog.setCancelable(true);
-        dialog.setCanceledOnTouchOutside(false);
+        dialog.setCanceledOnTouchOutside(true);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         View view  = layoutInflater.inflate(R.layout.alert_dialog, null);
         dialog.setContentView(view);

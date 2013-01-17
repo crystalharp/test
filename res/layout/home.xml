@@ -13,13 +13,13 @@
         android:paddingRight="10dp"
         android:background="@drawable/bg_title_home"
         >    
-        <Button 
+        <ImageView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/txt_app_name"
             android:layout_centerInParent="true"
             >
-         </Button>
+         </ImageView>
     </RelativeLayout>
     <LinearLayout
         android:id="@+id/input_view"
@@ -38,7 +38,7 @@
             android:gravity="left|center_vertical"
             android:textColor="@color/white"
             android:editable="false"
-            android:background="@drawable/btn_title_popup"
+            android:background="@drawable/btn_change_city"
             >
         </Button>
         <Button
