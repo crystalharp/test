@@ -328,9 +328,6 @@ public class HistoryWordTable {
     
     public static List<TKWord> getHistoryWordList(String searchword, int type) {
         List<TKWord> list = new ArrayList<TKWord>();
-        if (searchword == null) {
-            return list;
-        }
         List<TKWord> historyWordList;
         if (HistoryWordTable.TYPE_POI == type) {
             historyWordList = History_Word_POI;
@@ -345,7 +342,7 @@ public class HistoryWordTable {
                 break;
             }
             TKWord tkWord = historyWordList.get(i);
-            if (searchword == "" || (!tkWord.word.equals(searchword) && !list.contains(tkWord.word))) {
+            if (searchword == null || (!tkWord.word.equals(searchword) && !list.contains(tkWord.word))) {
                 list.add(tkWord);
                 historyIndex++;
             }

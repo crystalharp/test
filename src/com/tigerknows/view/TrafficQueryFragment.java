@@ -737,7 +737,8 @@ public class TrafficQueryFragment extends BaseFragment {
     public void setDataNoSuggest(POI poi, int index) {
         if (index != START && index != END && index != SELECTED) 
             return;
-        
+        changeToMode(TRAFFIC_MODE);
+        mRadioGroup.check(R.id.traffic_transfer_rbt);
         setPOI(poi.clone(), index);
     }    
     

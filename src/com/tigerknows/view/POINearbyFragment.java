@@ -168,16 +168,9 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         mQueryBtn = (Button)mRootView.findViewById(R.id.query_btn);
         mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);
         
-        Drawable divider = mSphinx.getResources().getDrawable(R.drawable.bg_real_line);
-        mCategoryLsv = new ListView(mSphinx);
-        mCategoryLsv.setFadingEdgeLength(0);
-        mCategoryLsv.setScrollingCacheEnabled(false);
-        mCategoryLsv.setDivider(divider);
+        mCategoryLsv = CommonUtils.makeListView(mSphinx);
         mViewList.add(mCategoryLsv);
-        mSuggestLsv = new ListView(mSphinx);
-        mSuggestLsv.setFadingEdgeLength(0);
-        mSuggestLsv.setScrollingCacheEnabled(false);
-        mSuggestLsv.setDivider(divider);
+        mSuggestLsv = CommonUtils.makeListView(mSphinx);
         mViewList.add(mSuggestLsv);
         mViewPager.setAdapter(new MyAdapter());
         
@@ -336,11 +329,12 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     
     //还原为第一次进入的状态
     public void reset() {
-        mSuggestAdapter.key = null;
         mKeywordEdt.setText(null);
         mKeywordEdt.clearFocus();
         mViewPager.setCurrentItem(0);
         mSuggestWordList.clear();
+        POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, null);
+        mSuggestAdapter.key = null;
         mSuggestAdapter.notifyDataSetChanged();
         mSphinx.hideSoftInput(mKeywordEdt.getWindowToken());
         mQueryBtn.setEnabled(false);
