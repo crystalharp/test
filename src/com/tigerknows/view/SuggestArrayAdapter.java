@@ -56,11 +56,13 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
         if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
             iconImv.setVisibility(View.VISIBLE);
             inputBtn.setVisibility(View.VISIBLE);
+            iconImv.setImageResource(R.drawable.ic_time);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
             CommonUtils.formatText(textTxv, tkWord.word, key, TKConfig.COLOR_BLACK_LIGHT);
         } else if (tkWord.attribute == TKWord.ATTRIBUTE_SUGGEST) {
-            iconImv.setVisibility(View.INVISIBLE);
+            iconImv.setVisibility(View.VISIBLE);
             inputBtn.setVisibility(View.VISIBLE);
+            iconImv.setImageResource(R.drawable.ic_suggest);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
             CommonUtils.formatText(textTxv, tkWord.word, key, TKConfig.COLOR_BLACK_LIGHT);
         } else {

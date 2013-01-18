@@ -49,10 +49,8 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
         findViews();
         setListener();
 
-        mShanghuleixingBtn.setTextColor(0xff888888);
-        mShanghuleixingBtn.setText(R.string.bitian);
         mTitleBtn.setText(R.string.add_merchant);
-        mRightBtn.setText(R.string.submit);
+        mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
         
         mAddMerchantTypes = mThis.getResources().getStringArray(R.array.add_merchant_type);
         mShanghuleixingBtn.setFocusable(true);

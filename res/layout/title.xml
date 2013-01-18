@@ -4,8 +4,8 @@
     android:id="@+id/root_view"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="10dp"
-    android:paddingRight="10dp"
+    android:paddingLeft="4dp"
+    android:paddingRight="8dp"
     android:background="@drawable/bg_title"
     >
     <RelativeLayout
