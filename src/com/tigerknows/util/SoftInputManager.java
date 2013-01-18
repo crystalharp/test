@@ -32,17 +32,28 @@ public class SoftInputManager {
         handler.post(showSoftInput);
     }
     
-    private Runnable hideSoftInput = new Runnable() {
+    private class HideSoftInput implements Runnable {
+
+        View view;
         
         @Override
         public void run() {
-            if (activity.getCurrentFocus() != null) {
-                inputMethodManager.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            if (view != null) {
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
         }
-    };    
+        
+    }
+    
+    private HideSoftInput hideSoftInput = new HideSoftInput();    
     
     public void hideSoftInput() {
+        hideSoftInput.view = activity.getCurrentFocus();
+        handler.post(hideSoftInput);
+    }     
+    
+    public void hideSoftInput(View view) {
+        hideSoftInput.view = view;
         handler.post(hideSoftInput);
     }    
 }

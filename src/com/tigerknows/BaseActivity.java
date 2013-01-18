@@ -294,6 +294,10 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
     public void hideSoftInput() {
         mSoftInputManager.hideSoftInput();
     }
+    
+    public void hideSoftInput(View view) {
+        mSoftInputManager.hideSoftInput(view);
+    }
     // TODO: soft input end
 
     // TODO: query begin
