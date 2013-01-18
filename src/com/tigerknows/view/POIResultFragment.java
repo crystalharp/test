@@ -443,6 +443,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         private Drawable icAPOI;
         private String distanceA;
         private Drawable icComment;
+        private Drawable icAddress;
         private int aColor;
         private int bColor;
         private Context context;
@@ -460,6 +461,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             Resources resources = context.getResources();
             icAPOI = resources.getDrawable(R.drawable.ic_a_poi);
             icComment = resources.getDrawable(R.drawable.ic_comment);
+            icAddress = resources.getDrawable(R.drawable.ic_discover_address);
             aColor = resources.getColor(R.color.blue);
             bColor = resources.getColor(R.color.black_dark);
             distanceA = context.getString(R.string.distanceA);
@@ -548,8 +550,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 str = poi.getAddress();
                 if (!TextUtils.isEmpty(str)) {
                     commentTxv.setText(str);
+                    icAddress.setBounds(0, 0, icAddress.getIntrinsicWidth(), icAddress.getIntrinsicHeight());
                     commentTxv.setCompoundDrawablePadding(Util.dip2px(Globals.g_metrics.density, 4));
-                    commentTxv.setCompoundDrawables(null, null, null, null);
+                    commentTxv.setCompoundDrawables(icAddress, null, null, null);
                     commentTxv.setVisibility(View.VISIBLE);
                 } else {
                     commentTxv.setVisibility(View.INVISIBLE);

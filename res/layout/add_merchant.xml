@@ -49,18 +49,22 @@
 			        android:maxLength="80"
 			        android:textSize="14sp"
 				    android:layout_marginTop="2dp"
-				    android:layout_marginBottom="6dp"
+				    android:layout_marginBottom="2dp"
 				    android:singleLine="true"
 				    android:ellipsize="end"
 				    android:background="@color/transparent"/>
 		    </LinearLayout>
-    
+            <ImageView 
+			    android:layout_width="fill_parent" 
+			    android:layout_height="wrap_content"
+			    android:background="@drawable/bg_line_split"
+			    />
 			<LinearLayout 
 			    android:layout_width="fill_parent" 
 			    android:layout_height="wrap_content"
 			    android:orientation="horizontal"
-		        android:paddingTop="2dp"
-		        android:paddingBottom="2dp"
+		        android:paddingTop="10dp"
+		        android:paddingBottom="10dp"
 		        android:paddingLeft="8dp"
 		        android:gravity="left|center_vertical">
 			    <TextView
@@ -82,7 +86,10 @@
 			        android:layout_width="fill_parent"
 			        android:layout_height="wrap_content"
 			        android:drawableRight="@drawable/ic_select"
+			        android:textColor="@color/black_dark"
 			        android:gravity="left|center_vertical"
+				    android:layout_marginTop="2dp"
+				    android:layout_marginBottom="2dp"
 		            android:paddingLeft="8dp"
 		            android:paddingRight="8dp"
 			        android:singleLine="true"
@@ -90,6 +97,11 @@
 					android:background="@color/transparent"/>
 		    </LinearLayout>
 		    
+            <ImageView 
+			    android:layout_width="fill_parent" 
+			    android:layout_height="wrap_content"
+			    android:background="@drawable/bg_line_split"
+			    />
 			<LinearLayout 
 			    android:layout_width="fill_parent" 
 			    android:layout_height="wrap_content"
@@ -119,12 +131,17 @@
 			        android:maxLength="80"
 			        android:textSize="14sp"
 				    android:layout_marginTop="2dp"
-				    android:layout_marginBottom="6dp"
+				    android:layout_marginBottom="2dp"
 				    android:singleLine="true"
 				    android:ellipsize="end"
 					android:background="@color/transparent"/>
 		    </LinearLayout>
 		    
+            <ImageView 
+			    android:layout_width="fill_parent" 
+			    android:layout_height="wrap_content"
+			    android:background="@drawable/bg_line_split"
+			    />
 			<LinearLayout 
 			    android:layout_width="fill_parent" 
 			    android:layout_height="wrap_content"
@@ -146,12 +163,17 @@
 			        android:maxLength="80"
 			        android:textSize="14sp"
 				    android:layout_marginTop="2dp"
-				    android:layout_marginBottom="6dp"
+				    android:layout_marginBottom="2dp"
 				    android:singleLine="true"
 				    android:ellipsize="end"
 					android:background="@color/transparent"/>
 		    </LinearLayout>
 		    
+            <ImageView 
+			    android:layout_width="fill_parent" 
+			    android:layout_height="wrap_content"
+			    android:background="@drawable/bg_line_split"
+			    />
 			<LinearLayout 
 			    android:layout_width="fill_parent" 
 			    android:layout_height="wrap_content"
@@ -173,12 +195,17 @@
 			        android:maxLength="80"
 			        android:textSize="14sp"
 				    android:layout_marginTop="2dp"
-				    android:layout_marginBottom="6dp"
+				    android:layout_marginBottom="2dp"
 				    android:singleLine="true"
 				    android:ellipsize="end"
 					android:background="@color/transparent"/>
 		    </LinearLayout>
 		    
+            <ImageView 
+			    android:layout_width="fill_parent" 
+			    android:layout_height="wrap_content"
+			    android:background="@drawable/bg_line_split"
+			    />
 			<LinearLayout 
 			    android:layout_width="fill_parent" 
 			    android:layout_height="wrap_content"
@@ -200,7 +227,7 @@
 			        android:maxLength="80"
 			        android:textSize="14sp"
 				    android:layout_marginTop="2dp"
-				    android:layout_marginBottom="6dp"
+				    android:layout_marginBottom="2dp"
 				    android:singleLine="true"
 				    android:ellipsize="end"
 					android:background="@color/transparent"/>
