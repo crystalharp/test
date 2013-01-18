@@ -50,6 +50,8 @@
 			        android:textSize="14sp"
 				    android:layout_marginTop="2dp"
 				    android:layout_marginBottom="2dp"
+				    android:focusable="true"
+				    android:focusableInTouchMode="true"
 				    android:singleLine="true"
 				    android:ellipsize="end"
 				    android:background="@color/transparent"/>
@@ -90,6 +92,8 @@
 			        android:gravity="left|center_vertical"
 				    android:layout_marginTop="2dp"
 				    android:layout_marginBottom="2dp"
+				    android:focusable="true"
+				    android:focusableInTouchMode="true"
 		            android:paddingLeft="8dp"
 		            android:paddingRight="8dp"
 			        android:singleLine="true"
@@ -132,6 +136,8 @@
 			        android:textSize="14sp"
 				    android:layout_marginTop="2dp"
 				    android:layout_marginBottom="2dp"
+				    android:focusable="true"
+				    android:focusableInTouchMode="true"
 				    android:singleLine="true"
 				    android:ellipsize="end"
 					android:background="@color/transparent"/>
@@ -164,6 +170,8 @@
 			        android:textSize="14sp"
 				    android:layout_marginTop="2dp"
 				    android:layout_marginBottom="2dp"
+				    android:focusable="true"
+				    android:focusableInTouchMode="true"
 				    android:singleLine="true"
 				    android:ellipsize="end"
 					android:background="@color/transparent"/>
@@ -196,6 +204,8 @@
 			        android:textSize="14sp"
 				    android:layout_marginTop="2dp"
 				    android:layout_marginBottom="2dp"
+				    android:focusable="true"
+				    android:focusableInTouchMode="true"
 				    android:singleLine="true"
 				    android:ellipsize="end"
 					android:background="@color/transparent"/>
@@ -228,6 +238,8 @@
 			        android:textSize="14sp"
 				    android:layout_marginTop="2dp"
 				    android:layout_marginBottom="2dp"
+				    android:focusable="true"
+				    android:focusableInTouchMode="true"
 				    android:singleLine="true"
 				    android:ellipsize="end"
 					android:background="@color/transparent"/>

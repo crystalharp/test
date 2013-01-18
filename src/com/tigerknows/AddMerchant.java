@@ -5,9 +5,10 @@ import java.net.URLEncoder;
 import java.util.Hashtable;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
@@ -53,16 +54,7 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
         mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
         
         mAddMerchantTypes = mThis.getResources().getStringArray(R.array.add_merchant_type);
-        mShanghuleixingBtn.setFocusable(true);
-        mShanghuleixingBtn.setFocusableInTouchMode(true);
         mShanghumingchengEdt.requestFocus();
-        new Handler().postDelayed(new Runnable() {
-            
-            @Override
-            public void run() {
-                showSoftInput(mShanghumingchengEdt);
-            }
-        }, 512);
     }
     
     /**
@@ -83,6 +75,7 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
      */
     protected void setListener() {
         super.setListener();
+        mLeftBtn.setOnClickListener(this);
         mRightBtn.setOnClickListener(this);
         
         mShanghuleixingBtn.setOnTouchListener(new OnTouchListener() {
@@ -162,9 +155,56 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
     }
     
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK
+                && event.getAction() == KeyEvent.ACTION_DOWN) {
+            exit();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    
+    private void exit() {
+        boolean notEmpty = !TextUtils.isEmpty(mShanghumingchengEdt.getEditableText().toString());
+        if (notEmpty == false) {
+            notEmpty = !TextUtils.isEmpty(mShanghuleixingBtn.getText().toString());
+        }
+        if (notEmpty == false) {
+            notEmpty = !TextUtils.isEmpty(mShanghudizhiEdt.getEditableText().toString());
+        }
+        if (notEmpty == false) {
+            notEmpty = !TextUtils.isEmpty(mShanghudianhuaEdt.getEditableText().toString());
+        }
+        if (notEmpty == false) {
+            notEmpty = !TextUtils.isEmpty(mYingyeshijianEdt.getEditableText().toString());
+        }
+        if (notEmpty == false) {
+            notEmpty = !TextUtils.isEmpty(mNingdedianhuaEdt.getEditableText().toString());
+        }
+        
+        if (notEmpty == false) {
+            finish();
+        }
+        CommonUtils.showNormalDialog(mThis,
+                getString(R.string.are_you_exit_add_merchart),
+                new DialogInterface.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (which == DialogInterface.BUTTON_POSITIVE) {
+                            finish();
+                        }
+                    }
+                });
+    }
+
+    @Override
     public void onClick(View v) {
         // TODO Auto-generated method stub
         switch(v.getId()){
+            case R.id.left_btn:
+                exit();
+                break;
             case R.id.right_btn:
                 mActionLog.addAction(ActionLog.Title_Right_Button, mActionTag);
                 StringBuilder s = new StringBuilder();
