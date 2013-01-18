@@ -180,8 +180,8 @@ public class TKConfig {
     public static final String PREFS_SETTING_LOCATION = "setting_location";
     public static final String PREFS_VERSION_NAME = "prefs_version_name";
     public static final String PREFS_HAS_SHORT_CUT_PREFS = "prefs_has_short_cut";
-    public static final String PREFS_LEARN_NOW = "prefs_learn_4.00";    
-    public static final String PREFS_LEARN_LAST = "prefs_learn_3.10";    
+    public static final String PREFS_UPGRADE = "prefs_learn_4.00";    
+    public static final String PREFS_FIRST_USE = "prefs_learn_3.10";    
     public static final String PREFS_SHOW_LOCATION_SETTINGS_TIP = "show_location_settings_tip";    
     public static final String PREFS_SHOW_UPGRADE_MAP_TIP = "show_upgrade_map_tip";    
     public static final String PREFS_SHOW_UPGRADE_COMMENT_TIP = "show_upgrade_comment_tip";    

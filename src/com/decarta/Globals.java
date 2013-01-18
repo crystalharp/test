@@ -16,15 +16,21 @@ import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.UserLogonModel;
 import com.tigerknows.model.AccountManage.UserRespnose;
 import com.tigerknows.util.AsyncImageLoader;
+import com.tigerknows.util.CommonUtils;
 import com.tigerknows.view.user.Session;
 import com.tigerknows.view.user.User;
 
 public class Globals {
+    
+    public static final int LOCATION_STATE_NONE = 0;
+    public static final int LOCATION_STATE_FIRST_SUCCESS = 1;
+    public static final int LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG = 2;
+    
 	public static DisplayMetrics g_metrics=new DisplayMetrics();
     public static CityInfo g_Current_City_Info = new CityInfo();
     public static Location g_My_Location = null;
     public static CityInfo g_My_Location_City_Info = null;
-    public static int g_My_Location_Exist = 0;
+    public static int g_My_Location_State = 0;
     public static UserLogonModel g_User_Logon_Model = null;
     private static AsyncImageLoader sAsyncImageLoader = new AsyncImageLoader();
     private static ImageCache sImageCache = new ImageCache();
@@ -69,6 +75,16 @@ public class Globals {
         pic.put(TKConfig.PICTURE_TUANGOU_TAOCAN, new XYInteger(276, 0));
         pic.put(TKConfig.PICTURE_DIANYING_DETAIL, new XYInteger(126, 168));
         sScreenAdaptPic.put(new XYInteger(320, 480), pic);
+    }
+    
+    public static void init(Context context) {
+        Globals.g_Current_City_Info = null;
+        Globals.g_My_Location_City_Info = null;
+        Globals.g_My_Location = null;
+        Globals.g_My_Location_State = LOCATION_STATE_NONE;
+        
+        Globals.readSessionAndUser(context);
+        Globals.setConnectionFast(CommonUtils.isConnectionFast(context));
     }
 
     public static AsyncImageLoader getAsyncImageLoader() {

@@ -275,12 +275,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             return;
         }
         
-        if (mSphinx.mSnapMap) {
-            if (mSphinx.mIntoSnap == 0) {
-                mLeftBtn.setText(R.string.home);
-            }
-            mSphinx.mIntoSnap++;
-        }
         refreshStamp();
 
         if (mResultLsv.isFooterSpringback()) {
