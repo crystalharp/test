@@ -118,7 +118,7 @@
         <activity android:name=".POIComment"
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
-            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:windowSoftInputMode="adjustResize|stateVisible"
             android:launchMode="singleTop"
             android:screenOrientation="portrait" />
         
@@ -210,7 +210,7 @@
         <activity android:name=".AddMerchant"
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
-            android:windowSoftInputMode="adjustResize|stateHidden"
+            android:windowSoftInputMode="adjustResize|stateVisible"
             android:screenOrientation="portrait" />
         
         <!-- User Module -->

@@ -40,7 +40,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -358,14 +357,6 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         } else {
             mExpandView.setVisibility(View.GONE);
         }
-
-        new Handler().postDelayed(new Runnable() {
-            
-            @Override
-            public void run() {
-                showSoftInput(mContentEdt);
-            }
-        }, 512);
     }
     
     @Override

@@ -282,6 +282,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     
     private void submitQuery(String keyword, boolean isInput) {
         if (!TextUtils.isEmpty(keyword)) {
+            mSphinx.hideSoftInput(mKeywordEdt.getInput());
             DataQuery poiQuery = new DataQuery(mContext);
             POI requestPOI = mPOI;
             int cityId = mSphinx.getMapEngine().getCityId(requestPOI.getPosition());

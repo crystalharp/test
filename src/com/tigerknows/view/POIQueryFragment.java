@@ -204,9 +204,9 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
     private void submitQuery() {
         String keyword = mKeywordEdt.getText().toString().trim();
         if (!TextUtils.isEmpty(keyword)) {
+            mSphinx.hideSoftInput(mKeywordEdt.getInput());
             int cityId = Globals.g_Current_City_Info.getId();
             HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), cityId, HistoryWordTable.TYPE_POI);
-            mSphinx.hideSoftInput();
             mActionLog.addAction(ActionLog.SearchInputSubmit, keyword);
 
             DataQuery poiQuery = new DataQuery(mContext);

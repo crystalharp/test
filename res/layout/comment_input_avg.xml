@@ -23,7 +23,10 @@
 	        android:layout_height="wrap_content"
 	        android:paddingRight="24dp"
 	        android:maxLength="9"
-	        android:inputType="number" />
+	        android:inputType="number"
+		    android:focusable="true"
+		    android:focusableInTouchMode="true"
+		    />
 	    <TextView
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"

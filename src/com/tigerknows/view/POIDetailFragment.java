@@ -11,6 +11,8 @@ import java.util.List;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -105,6 +107,16 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 
     private TextView mMoneyTxv;
 
+    private TextView mDistanceTxv;
+    
+    private TextView mDistanceFromTxv;
+    
+    private Drawable mIcAPOI;
+    
+    private String mDistance;
+    
+    private String mDistanceA;
+
     private RatingBar mStartsRtb;
 
     private LinearLayout mFeatureTxv;
@@ -183,7 +195,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 refreshComment();
             }
         });
-        
+
+        Resources resources = mSphinx.getResources();
+        mIcAPOI = resources.getDrawable(R.drawable.ic_a_poi);
+        mDistance = mSphinx.getString(R.string.distance);
+        mDistanceA = mSphinx.getString(R.string.distanceA);
         return mRootView;
     }
 
@@ -258,7 +274,25 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         } else {
             mMoneyTxv.setText("");
         }
-
+        
+        String distance = poi.getToCenterDistance();
+        if (!TextUtils.isEmpty(distance)) {
+            if (distance.startsWith(mDistanceA)) {
+                mIcAPOI.setBounds(0, 0, mIcAPOI.getIntrinsicWidth(), mIcAPOI.getIntrinsicHeight());
+                mDistanceFromTxv.setCompoundDrawables(null, null, mIcAPOI, null);
+                mDistanceFromTxv.setText(mDistance);
+                mDistanceTxv.setText(distance.replace(mDistanceA, ""));
+            } else {
+                mDistanceFromTxv.setText("");
+                mDistanceFromTxv.setCompoundDrawables(null, null, null, null);
+                mDistanceTxv.setText(distance);
+            }
+        } else {
+            mDistanceFromTxv.setText("");
+            mDistanceFromTxv.setCompoundDrawables(null, null, null, null);
+            mDistanceTxv.setText("");
+        }
+        
         SpannableStringBuilder description = getDescription();
         if (description.length() > 0) {
             mDescriptionTxv.setText(description);
@@ -293,8 +327,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 mAddressView.setBackgroundResource(R.drawable.list_single);
                 mAddressTelephoneDividerImv.setVisibility(View.GONE);
             } else {
-                mTelephoneView.setBackgroundResource(R.drawable.list_header);
-                mAddressView.setBackgroundResource(R.drawable.list_footer);
+                mTelephoneView.setBackgroundResource(R.drawable.list_footer);
+                mAddressView.setBackgroundResource(R.drawable.list_header);
             }
             mAddressAndPhoneView.setVisibility(View.VISIBLE);
         } else {
@@ -475,6 +509,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mCategoryTxv = (TextView) mRootView.findViewById(R.id.category_txv);
         mMoneyTxv = (TextView) mRootView.findViewById(R.id.money_txv);
         mDescriptionTxv = (TextView)mRootView.findViewById(R.id.description_txv);
+        mDistanceTxv = (TextView)mRootView.findViewById(R.id.distance_txv);
+        mDistanceFromTxv = (TextView) mRootView.findViewById(R.id.distance_from_txv);
         
         mPOIBtn = (Button) mRootView.findViewById(R.id.poi_btn);
         mShareBtn = (Button)mRootView.findViewById(R.id.share_btn);
