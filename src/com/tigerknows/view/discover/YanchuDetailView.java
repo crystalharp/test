@@ -71,21 +71,21 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
     
     private Yanchu mData;
     
-    protected Runnable mActualLoadedDrawableRun = new Runnable() {
-        
-        @Override
-        public void run() {
-            Drawable drawable = mData.getPicturesDetail().loadDrawable(null, null, null);
-            if(drawable != null) {
-                mPictureImv.setImageDrawable(drawable);
-            }
-        }
-    };
-    
     public YanchuDetailView(Sphinx sphinx, YanchuDetailFragment parentFragment) {
         super(sphinx, parentFragment, R.layout.yanchu_detail);
         findViews();
         mActionTag = ActionLog.YanchuXiangqing;
+        
+        mActualLoadedDrawableRun = new Runnable() {
+            
+            @Override
+            public void run() {
+                Drawable drawable = mData.getPicturesDetail().loadDrawable(null, null, null);
+                if(drawable != null) {
+                    mPictureImv.setImageDrawable(drawable);
+                }
+            }
+        };
         
     }
 

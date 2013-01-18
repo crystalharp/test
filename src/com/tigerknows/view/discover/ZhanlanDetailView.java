@@ -71,21 +71,22 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
     
     private Zhanlan mData;
     
-    protected Runnable mActualLoadedDrawableRun = new Runnable() {
-        
-        @Override
-        public void run() {
-            Drawable drawable = mData.getPicturesDetail().loadDrawable(null, null, null);
-            if(drawable != null) {
-                mPictureImv.setImageDrawable(drawable);
-            }
-        }
-    };
-    
     public ZhanlanDetailView(Sphinx sphinx, ZhanlanDetailFragment parentFragment) {
         super(sphinx, parentFragment, R.layout.yanchu_detail);
         findViews();
         mActionTag = ActionLog.ZhanlanXiangqing;
+        
+        mActualLoadedDrawableRun = new Runnable() {
+            
+            @Override
+            public void run() {
+                Drawable drawable = mData.getPicturesDetail().loadDrawable(null, null, null);
+                if(drawable != null) {
+                    mPictureImv.setImageDrawable(drawable);
+                }
+            }
+        };
+        
     }
 
     @Override
