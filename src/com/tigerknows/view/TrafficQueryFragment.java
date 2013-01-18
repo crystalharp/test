@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -33,6 +34,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.Sphinx.TouchMode;
+import com.tigerknows.maps.TrafficOverlayHelper;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineModel;
@@ -863,11 +865,16 @@ public class TrafficQueryFragment extends BaseFragment {
             	} 
             	
             	if (trafficModel.getPlanList().get(0).getType() == Plan.Step.TYPE_TRANSFER) {
+            	    // 换乘方式
             		mSphinx.getTrafficResultFragment().setData(trafficQuery);
             		mSphinx.showView(R.id.view_traffic_result_transfer);
             	} else {
-            		mSphinx.getTrafficDetailFragment().setData(trafficModel.getPlanList().get(0));
+            	    //驾车或步行方式
+            	    Plan plan = trafficModel.getPlanList().get(0);
+            		mSphinx.getTrafficDetailFragment().setData(plan);
             		mSphinx.getTrafficDetailFragment().viewMap();
+            		// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
+                    TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
             	}
             }
         } 

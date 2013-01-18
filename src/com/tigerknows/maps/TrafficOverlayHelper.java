@@ -72,7 +72,7 @@ public class TrafficOverlayHelper {
 	            
 	    	    // 添加起点item. 包括终点图标, 起点文本:"起点"
 	    	    OverlayItem overlayItem = new OverlayItem(steps.get(0).getPositionList().get(0), start, 
-            			context.getString(R.string.set_off_from_start), rt);
+            			context.getString(R.string.start), rt);
 	            addTouchEventListenerToOverlayItem(mainThreadHandler, mapView, overlayItem);
                 overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
                 overlay.addOverlayItem(overlayItem);
