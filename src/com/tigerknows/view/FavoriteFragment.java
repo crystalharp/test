@@ -395,7 +395,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 case MENU_DELETE:
                     CommonUtils.showNormalDialog(mSphinx,
                             mContext.getString(R.string.prompt),
-                            mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_all_favorite_poi : R.string.delete_all_favorite_traffic),
+                            mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_a_favorite_poi : R.string.delete_a_favorite_traffic),
                             new DialogInterface.OnClickListener() {
                                 
                                 @Override
@@ -446,7 +446,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 if (count > 0) {
                     CommonUtils.showNormalDialog(mSphinx,
                             mContext.getString(R.string.prompt),
-                            mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_all_favorite_poi : R.string.delete_all_favorite_traffic),
+                            mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_a_favorite_poi : R.string.delete_a_favorite_traffic),
                             new DialogInterface.OnClickListener() {
                                 
                                 @Override
