@@ -81,7 +81,7 @@
     <string name="are_your_change_to_location_city">上次设置为%1$s市，是否切换到你当前定位城市%2$s市？</string> 
     <string name="are_your_change_to_map_center_city">你的地图已经切换到%1$s，是否切换？</string> 
     <string name="current_location">当前位置：%1$s附近</string> 
-    <string name="find_poi">查找地点、商户名</string> 
+    <string name="find_poi">请输入地点、商户名等</string> 
     <string name="no_comment">目前暂无评论</string> 
     
     <string name="hotspot">热点</string>    
