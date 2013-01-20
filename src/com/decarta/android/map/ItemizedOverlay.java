@@ -131,27 +131,27 @@ public class ItemizedOverlay {
 			}
 			
 			XYInteger ne = Util.mercXYToNE(new XYDouble(pin.getMercXY().x*scale,pin.getMercXY().y*scale));
-			boolean included=false;
-			for(int j=0;j<clusters.size();j++){
-				if(clusters.get(j).cluster.clusterPins.size()==0){
-					LogWrapper.e("ItemizedOverlay","generalizePins cluster empty");
-				}
-				
-				if(!ne.equals(clusters.get(j).ne)){
-					continue;
-				}
-				
-				XYDouble refMercXY=clusters.get(j).cluster.refMercXY;
-				double dist = (pin.getMercXY().x - refMercXY.x)*(pin.getMercXY().x - refMercXY.x)+(pin.getMercXY().y - refMercXY.y)*(pin.getMercXY().y - refMercXY.y);
-				if(dist<minDist){
-					clusters.get(j).cluster.clusterPins.add(pin);
-					included=true;
-					break;
-				}
-				
-			}
-    		
-			if(included) continue;
+//			boolean included=false;
+//			for(int j=0;j<clusters.size();j++){
+//				if(clusters.get(j).cluster.clusterPins.size()==0){
+//					LogWrapper.e("ItemizedOverlay","generalizePins cluster empty");
+//				}
+//				
+//				if(!ne.equals(clusters.get(j).ne)){
+//					continue;
+//				}
+//				
+//				XYDouble refMercXY=clusters.get(j).cluster.refMercXY;
+//				double dist = (pin.getMercXY().x - refMercXY.x)*(pin.getMercXY().x - refMercXY.x)+(pin.getMercXY().y - refMercXY.y)*(pin.getMercXY().y - refMercXY.y);
+//				if(dist<minDist){
+//					clusters.get(j).cluster.clusterPins.add(pin);
+//					included=true;
+//					break;
+//				}
+//				
+//			}
+//    		
+//			if(included) continue;
 			
 			ArrayList<OverlayItem> newClusterPins=new ArrayList<OverlayItem>();
 			newClusterPins.add(pin);
