@@ -38,6 +38,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -271,8 +272,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         int money = poi.getPerCapity();
         if (money > -1) {
             mMoneyTxv.setText(mContext.getString(R.string.yuan, money));
+            mMoneyTxv.setVisibility(View.VISIBLE);
         } else {
-            mMoneyTxv.setText("");
+            mMoneyTxv.setVisibility(View.GONE);
         }
         
         String distance = poi.getToCenterDistance();
@@ -293,12 +295,17 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             mDistanceTxv.setText("");
         }
         
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)mMoneyTxv.getLayoutParams();
         SpannableStringBuilder description = getDescription();
         if (description.length() > 0) {
             mDescriptionTxv.setText(description);
             mDescriptionTxv.setVisibility(View.VISIBLE);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 1);
         } else {
             mDescriptionTxv.setVisibility(View.GONE);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 1);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
         }
         
         /**
