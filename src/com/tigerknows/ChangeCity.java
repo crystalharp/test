@@ -60,6 +60,7 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
     private static CityInfo sCityTitle = null;
     private static CityInfo sProvinceTitle = null;
     private static List<CityInfo> sAllCityInfoList = null;
+    private String mNotFindCity;
     
     private MapEngine mMapEngine;
     
@@ -75,6 +76,7 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         
         mActionTag = ActionLog.ChangeCity;
+        mNotFindCity = mThis.getString(R.string.not_find_city);
 
         setContentView(R.layout.change_city);
         findViews();
@@ -198,7 +200,7 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 CityInfo cityInfo = (CityInfo)(arg1.getTag());
-                if (!cityInfo.getCName().equals(mThis.getString(R.string.not_find_city))) {
+                if (!mNotFindCity.equals(cityInfo.getCName())) {
                     changeCity(cityInfo);
                 }
                 return;
@@ -275,42 +277,56 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
         finish();
     }
     
-    private void showSuggestCity(String userInput) {
+    void showSuggestCity(String userInput) {
+        makeSuggestCityList(sAllCityInfoList, mSuggestCityList, userInput, mNotFindCity, mCityElv, mSuggestCityLsv);
+        mSuggestCityAdapter.notifyDataSetChanged();
+    }
+    
+    public static void makeSuggestCityList(List<CityInfo> allCity, List<CityInfo> suggestList, String userInput
+            , String notFindCity, ListView allCityLsv, ListView suggestLsv) {
         ArrayList<CityInfo> suggestCityList = new ArrayList<CityInfo>();
         if (!userInput.equals("")) {
-            for (CityInfo province : sAllCityInfoList) {
+            for (CityInfo province : allCity) {
                 List<CityInfo> cityInfoList = province.getCityList();
                 for(CityInfo cityInfo : cityInfoList) {
-                    if (properCity(cityInfo, userInput) && cityInfo.getType() == CityInfo.TYPE_CITY) {
+                    if (properCity(cityInfo, userInput)
+                            && cityInfo.getType() == CityInfo.TYPE_CITY
+                            && suggestCityList.contains(cityInfo) == false) {
                         suggestCityList.add(cityInfo);
                     }
                 }
             }
         }
-        mSuggestCityList.clear();
-        mSuggestCityList.addAll(suggestCityList);
-        if (mSuggestCityList.size() == 0 && !TextUtils.isEmpty(userInput)) {
+        suggestList.clear();
+        suggestList.addAll(suggestCityList);
+        if (suggestList.size() == 0 && !TextUtils.isEmpty(userInput)) {
             CityInfo cityInfo = new CityInfo();
-            cityInfo.setCName(mThis.getString(R.string.not_find_city));
-            mSuggestCityList.add(cityInfo);
+            cityInfo.setCName(notFindCity);
+            suggestList.add(cityInfo);
         }
-        mSuggestCityAdapter.notifyDataSetChanged();
-
         
-        if (mSuggestCityList.size() > 0) {
-            mSuggestCityLsv.setVisibility(View.VISIBLE);
-            mCityElv.setVisibility(View.GONE);
+        if (suggestList.size() > 0) {
+            suggestLsv.setVisibility(View.VISIBLE);
+            allCityLsv.setVisibility(View.GONE);
         } else {
-            mSuggestCityLsv.setVisibility(View.GONE);
-            mCityElv.setVisibility(View.VISIBLE);
+            suggestLsv.setVisibility(View.GONE);
+            allCityLsv.setVisibility(View.VISIBLE);
         }
     }
     
-    private boolean properCity(CityInfo cityInfo, String userInput) {
+    public static boolean properCity(CityInfo cityInfo, String userInput) {
         if (userInput == null || userInput.length()<1) {
             return true;
         }
-        String lowerEName = cityInfo.getEName().toLowerCase();
+        if (cityInfo == null
+                || cityInfo.isAvailably() == false) {
+            return false;
+        }
+        String lowerEName = cityInfo.getEName();
+        if (lowerEName == null) {
+            return false;
+        }
+        lowerEName = lowerEName.toLowerCase();
         String lowerInput = userInput.toLowerCase();
         String cName = cityInfo.getCName();
         if (cName.contains(userInput)) {
@@ -348,6 +364,13 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
             textView.setText(cname);
             ImageView imageView = (ImageView)view.findViewById(R.id.icon_imv);
             imageView.setBackgroundDrawable(null);
+            if (mNotFindCity.equals(cname)) {
+                textView.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+                view.setBackgroundResource(R.color.gray_light);
+            } else {
+                textView.setTextColor(TKConfig.COLOR_BLACK_DARK);
+                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+            }
             
             return view;
         }
