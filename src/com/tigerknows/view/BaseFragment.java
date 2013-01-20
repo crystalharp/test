@@ -4,6 +4,7 @@
 
 package com.tigerknows.view;
 
+import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
@@ -277,6 +278,7 @@ public class BaseFragment extends LinearLayout {
             
             mMenuFragment.hide();
         	mTitleFragment.display();
+            Globals.getAsyncImageLoader().setViewToken(toString());
         }
         
         if (mRootView != null) {
