@@ -175,6 +175,7 @@
                         android:layout_height="wrap_content" 
                         android:layout_below="@id/stars_rtb" 
                         android:layout_alignParentRight="true"
+                        android:paddingTop="4dp"
                         android:textColor="@color/orange"
                         android:textSize="16sp"
                         android:text="@string/app_name"

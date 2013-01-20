@@ -148,6 +148,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         	//不用顶部弹出切换
         	mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
         }
+        setFavoriteState(mFavorateBtn, line.checkFavorite(mContext));
 
         history();
     }
