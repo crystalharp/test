@@ -74,13 +74,11 @@ public class AsyncImageLoader {
             public void run() {
                 try {
                     final BitmapDrawable bitmapDrawable = loadImageFromUrl(context, imageUrl);
-
                     if (bitmapDrawable != null) {
                         if (TKConfig.CACHE_BITMAP_TO_MEMORY) {
                             imageCache.put(imageUrl.url, new SoftReference<BitmapDrawable>(bitmapDrawable));
                         }
                     }
-                    
                     handler.post(new Runnable() {
                         public void run() {
                             callback.imageLoaded(bitmapDrawable);

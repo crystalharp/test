@@ -293,13 +293,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                             Tuangou tagret = (Tuangou) object;
 //                            tagret.getFendian().setOrderNumber(position+1);
                             mActionLog.addAction(mActionTag+ActionLog.DiscoverListSelectItem, position+1, tagret.getUid());
-                            mSphinx.getTuangouDetailFragment().setData(mTuangouList, position, DiscoverListFragment.this);
                             mSphinx.showView(R.id.view_tuangou_detail);
+                            mSphinx.getTuangouDetailFragment().setData(mTuangouList, position, DiscoverListFragment.this);
                         } else if (object instanceof Yanchu){
                             Yanchu tagret = (Yanchu) object;
                             mActionLog.addAction(mActionTag+ActionLog.DiscoverListSelectItem, position+1, tagret.getUid());
+                            mSphinx.showView(R.id.view_yanchu_detail);
                         	mSphinx.getYanchuDetailFragment().setData(mYanchuList, position, DiscoverListFragment.this);
-                        	mSphinx.showView(R.id.view_yanchu_detail);
                         } else if (object instanceof Dianying){
                             Dianying tagret = (Dianying) object;
                             int changciOption = Changci.OPTION_DAY_TODAY;
@@ -321,8 +321,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                         } else if (object instanceof Zhanlan){
                         	Zhanlan tagret = (Zhanlan) object;
                             mActionLog.addAction(mActionTag+ActionLog.DiscoverListSelectItem, position+1, tagret.getUid());
+                            mSphinx.showView(R.id.view_zhanlan_detail);
                         	mSphinx.getZhanlanDetailFragment().setData(mZhanlanList, position, DiscoverListFragment.this);
-                        	mSphinx.showView(R.id.view_zhanlan_detail);
                         }
                     }
                 }

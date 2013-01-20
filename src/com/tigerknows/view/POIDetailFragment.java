@@ -1109,8 +1109,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     tuangou.setFendian(((FendianQueryResponse) response).getFendian());
                     List<Tuangou> list = new ArrayList<Tuangou>();
                     list.add(tuangou);
-                    mSphinx.getTuangouDetailFragment().setData(list, 0, null);
                     mSphinx.showView(R.id.view_tuangou_detail);
+                    mSphinx.getTuangouDetailFragment().setData(list, 0, null);
                 } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
                     if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
                         return;
@@ -1118,8 +1118,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     Yanchu yanchu = ((YanchuQueryResponse) response).getYanchu();
                     List<Yanchu> list = new ArrayList<Yanchu>();
                     list.add(yanchu);
-                    mSphinx.getYanchuDetailFragment().setData(list, 0, null);
                     mSphinx.showView(R.id.view_yanchu_detail);
+                    mSphinx.getYanchuDetailFragment().setData(list, 0, null);
                 } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
                     if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
                         return;
@@ -1127,8 +1127,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     Zhanlan zhanlan = ((ZhanlanQueryResponse) response).getZhanlan();
                     List<Zhanlan> list = new ArrayList<Zhanlan>();
                     list.add(zhanlan);
-                    mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
                     mSphinx.showView(R.id.view_zhanlan_detail);
+                    mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
                 }
             }
         }
