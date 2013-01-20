@@ -161,6 +161,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     private Timer mTimer;
     private ProgressDialog mTipProgressDialog = null;
     private boolean mLoadData = false;
+    private String mNotFindCity;
     
     private View.OnClickListener  mUpdateBtnOnClickListener = new View.OnClickListener() {
         
@@ -264,6 +265,8 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         mDownloadAdapter = new DownloadCityAdapter();
         mDownloadCityLsv.setAdapter(mDownloadAdapter);
         mDownloadCityLsv.setGroupIndicator(null);
+
+        mNotFindCity = mThis.getString(R.string.not_find_city);
         
         mSuggestCityAdapter = new SuggestCityAdapter(mThis, mSuggestCityItemList);
         mSuggestCityLsv.setAdapter(mSuggestCityAdapter);
@@ -605,7 +608,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 CityInfo cityInfo = mSuggestCityItemList.get(position);
                 DownloadCity downloadCity = getDownloadCity(mDownloadCityList, cityInfo);
-                if (downloadCity == null && !cityInfo.getCName().equals(mThis.getString(R.string.not_find_city))) {
+                if (downloadCity == null && !mNotFindCity.equals(cityInfo.getCName())) {
                     addDownloadCity(cityInfo, DownloadCity.WAITING);
                 }
             }
@@ -760,56 +763,12 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         });
     }
     
-    private boolean properCity(CityInfo cityInfo, String userInput) {
-        if (cityInfo.getType() != CityInfo.TYPE_CITY) {
-            return false;
-        }
-        String lowerEName = cityInfo.getEName().toLowerCase();
-        String lowerInput = userInput.toLowerCase();
-        String cName = cityInfo.getCName();
-        if (cName.contains(userInput)) {
-            return true;
-        }
-        String firstInputStr = lowerInput.substring(0, 1);
-        String otherUserInput = lowerInput.substring(1, lowerInput.length());
-        String otherENameStr = lowerEName.substring(1, lowerEName.length());
-        if (lowerEName.startsWith(firstInputStr) && otherENameStr.contains(otherUserInput)) {
-            return true;
-        }
-        return false;
-    }
-    
     private void showAddCityOrSuggestCity(String userInput) {
         if (mInputView.getVisibility() != View.VISIBLE) {
             return;
         }
-        ArrayList<CityInfo> suggestCityList = new ArrayList<CityInfo>();
-        if (!TextUtils.isEmpty(userInput)) {
-            for (CityInfo cityInfo : sAllAddCityInfoList) {
-                List<CityInfo> cityInfoList = cityInfo.getCityList();
-                for(CityInfo cityInfo1 : cityInfoList) {
-                    if (properCity(cityInfo1, userInput)) {
-                        suggestCityList.add(cityInfo1);
-                    }
-                }
-            }
-        }
-        mSuggestCityItemList.clear();
-        mSuggestCityItemList.addAll(suggestCityList);
-        if (mSuggestCityItemList.size() == 0 && !TextUtils.isEmpty(userInput)) {
-            CityInfo cityInfo = new CityInfo();
-            cityInfo.setCName(mThis.getString(R.string.not_find_city));
-            mSuggestCityItemList.add(cityInfo);
-        }
+        ChangeCity.makeSuggestCityList(sAllAddCityInfoList, mSuggestCityItemList, userInput, mNotFindCity, mAddCityElv, mSuggestCityLsv);
         mSuggestCityAdapter.notifyDataSetChanged();
-
-        if (mSuggestCityItemList.size() > 0) {
-            mAddCityElv.setVisibility(View.GONE);
-            mSuggestCityLsv.setVisibility(View.VISIBLE);
-        } else {
-            mAddCityElv.setVisibility(View.VISIBLE);
-            mSuggestCityLsv.setVisibility(View.GONE);
-        }
     }
     
     private void addDownloadCity(CityInfo addCityInfo, int state) {
@@ -1573,14 +1532,19 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         if (cityInfo.getType() == CityInfo.TYPE_CITY) {
             textTxv.setText((appendSpace ? "    " : "")+cname);
             DownloadCity downloadCity = getDownloadCity(mDownloadCityList, cityInfo);
-            if (downloadCity != null || cityInfo.getCName().equals(mThis.getString(R.string.not_find_city))) {
+            if (downloadCity != null) {
                 textTxv.setTextColor(mColorBlackLight);
                 view.setBackgroundResource(R.color.gray_light);
-                statusTxv.setVisibility(View.VISIBLE);
                 statusTxv.setText(R.string.added);
+                statusTxv.setVisibility(View.VISIBLE);
             } else {
-                textTxv.setTextColor(mColorBlackDark);
-                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+                if (mNotFindCity.equals(cityInfo.getCName())) {
+                    textTxv.setTextColor(mColorBlackLight);
+                    view.setBackgroundResource(R.color.gray_light);
+                } else {
+                    textTxv.setTextColor(mColorBlackDark);
+                    view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+                }
                 statusTxv.setVisibility(View.GONE);
             }
         } else {
