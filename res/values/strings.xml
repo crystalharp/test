@@ -736,6 +736,7 @@
     <string name="poi_comment_update_success">点评修改成功！</string>
     <!-- 文字：#老虎宝典分享#我来过：XXXX（poi名称）+空格+我觉得XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+www.tigerknows.com（网址之前的内容如果超出120字，截断成119个字+“…”（半个省略号“……”） -->
     <string name="poi_comment_share_sina">#老虎宝典分享#我来过：%1$s 我觉得%2$s%3$s %4$s</string>
+    <string name="poi_comment_intput_hit">请输入你的点评！（30字以上）</string>
     <string name="poi_comment_share_grade1">太差啦！</string>
     <string name="poi_comment_share_grade2">不咋地！</string>
     <string name="poi_comment_share_grade3">一般般！</string>
