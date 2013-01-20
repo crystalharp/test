@@ -2445,6 +2445,16 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     public boolean mUIProcessing = false;
     private ArrayList<Integer> mUIStack = new ArrayList<Integer>();
     
+    public int uiStackPeekBottom(){
+        synchronized (mUILock) {
+        	if(mUIStack.size()>0){
+        		return mUIStack.get(0);
+        	}else{
+        		return R.id.view_home;
+        	}
+        }
+    }
+    
     public void uiStackPush(int id) {
         synchronized (mUILock) {
 

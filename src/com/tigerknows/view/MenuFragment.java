@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.tigerknows.ActionLog;
+import com.tigerknows.R.id;
 
 /**
  * @author Peng Wenyue
@@ -108,16 +109,45 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         mMoreBtn.getLocationOnScreen(mLlocationsMoreBtn);
         
         if( resumeFirstCalled){
-			Animation animation = new TranslateAnimation(mLocations[0][0], mLocations[0][0], 0, 0);
+        	
+        	//Get the current focus of the four channel.
+        	int viewId = mSphinx.uiStackPeekBottom();
+        	
+        	switch (viewId) {
+	
+				case R.id.view_discover:
+					mMenuIdSelected=1;
+					break;
+	
+				case R.id.view_traffic_query:
+					mMenuIdSelected=2;
+					break;
+
+				case R.id.view_more:
+					mMenuIdSelected = 3;
+					break;
+					
+				default :
+					mMenuIdSelected = 0;
+					break;
+			}
+        	
+        	//Setup animation parameters to make the yellow block back to the current selected menu
+			Animation animation = new TranslateAnimation(mLocations[mMenuIdSelected][0], mLocations[mMenuIdSelected][0], 0, 0);
 			animation.setFillAfter(true);
 			animation.setDuration(0);
 			mCursorImv.startAnimation(animation);
 			resumeFirstCalled = false;
 			
-			mMenuBtnList[0].setBackgroundResource(MENU_BACKGROUD_SELECTED[0]);
-			for (int i=1, size = mMenuBtnList.length; i<size; i++) {
-				mMenuBtnList[i].setBackgroundResource(MENU_BACKGROUD_STILL[i]);
+			//Set the selected background to yellow
+			mMenuBtnList[mMenuIdSelected].setBackgroundResource(MENU_BACKGROUD_SELECTED[0]);
+			//set the unselected btn bg to gray
+			for (int i=0, size = mMenuBtnList.length; i<size; i++) {
+				if(i!=mMenuIdSelected){
+					mMenuBtnList[i].setBackgroundResource(MENU_BACKGROUD_STILL[i]);
+				}
 			}
+			
         }
 		
     }
