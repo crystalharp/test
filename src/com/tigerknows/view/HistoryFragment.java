@@ -244,6 +244,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         mTrafficAdapter.notifyDataSetChanged();
         mLayerType = ItemizedOverlay.POI_OVERLAY;
         mDismiss = true;
+        mViewPager.setCurrentItem(0);
     }
 
     protected void findViews() {

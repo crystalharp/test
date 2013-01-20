@@ -255,6 +255,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mTrafficAdapter.notifyDataSetChanged();
         mLayerType = ItemizedOverlay.POI_OVERLAY;
         mDismiss = true;
+        mViewPager.setCurrentItem(0);
     }
 
     protected void findViews() {

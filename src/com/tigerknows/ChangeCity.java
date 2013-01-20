@@ -93,12 +93,16 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
         mMapEngine = MapEngine.getInstance();
         if (sAllCityInfoList ==  null) {
            sAllCityInfoList = mMapEngine.getAllProvinceCityList(mThis);
-           for(CityInfo cityInfo : sAllCityInfoList) {
+           for(int i = sAllCityInfoList.size()-1; i >= 0; i--) {
+               CityInfo cityInfo = sAllCityInfoList.get(i);
                List<CityInfo> cityInfoList = cityInfo.getCityList();
                if (cityInfoList.size() <= 1) {
                    cityInfo.order = cityInfo.getId()+ORDER_CITY_TITLE;
                } else {
                    cityInfo.order = cityInfo.getId()+ORDER_PROVINCE_TITLE;
+               }
+               for(int j = cityInfoList.size()-1; j >= 0; j--) {
+                   cityInfoList.get(j).order = cityInfoList.get(j).getId();
                }
                Collections.sort(cityInfoList, mCityComparator);
            }
