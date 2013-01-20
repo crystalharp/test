@@ -321,7 +321,7 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
     
     public static boolean checkReLogin(BaseQuery baseQuery, final Activity activity, boolean sourceUserHome,
             final int sourceViewIdLogin, final int targetViewIdLoginSuccess, final int targetViewIdLoginFailed,
-            DialogInterface.OnClickListener cancelOnClickListener) {
+            final DialogInterface.OnClickListener cancelOnClickListener) {
         final Response response = baseQuery.getResponse();
         if (response != null) {
             int responseCode = response.getResponseCode();
@@ -350,7 +350,11 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
                                         intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, targetViewIdLoginSuccess);
                                         intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, targetViewIdLoginFailed);
                                         activity.startActivityForResult(intent, R.id.activity_user_login);
-                                    }
+                                    	} else {
+                                		    if (cancelOnClickListener != null) {
+                                		    	cancelOnClickListener.onClick(arg0, id);
+                                    		    }
+                                    	}
                                 }
                             });
                 } else {
