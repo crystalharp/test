@@ -15,7 +15,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.location.Position;

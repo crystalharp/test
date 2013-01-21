@@ -61,7 +61,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 
 import com.decarta.CONFIG;
 import com.decarta.Globals;

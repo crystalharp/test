@@ -112,7 +112,6 @@
 			    android:gravity="top|left"
 			    android:isScrollContainer="true"
 			    android:hint="@string/errorrecovery_description"
-                android:textColorHint="#ffacacac"
                 android:background="@drawable/textfield" />
 		    
 		    <EditText
@@ -127,7 +126,6 @@
 			    android:inputType="phone"
 			    android:maxLength="11"
 			    android:hint="@string/errorrecovery_user_phone"
-                android:textColorHint="#ffacacac"
                 android:background="@drawable/textfield" />
 		</LinearLayout>
 	</ScrollView>

@@ -18,7 +18,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 
 import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;

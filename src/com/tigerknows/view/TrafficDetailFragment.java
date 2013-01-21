@@ -26,7 +26,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.android.location.Position;
