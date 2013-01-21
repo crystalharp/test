@@ -106,7 +106,6 @@ public class DiscoverFragment extends DiscoverBaseFragment {
     public void onResume() {
         super.onResume();
         mTitleFragment.hide();
-        mMenuFragment.updateMenuStatus(R.id.discover_btn);
         mMenuFragment.display();
         mSphinx.getHomeFragment().refreshLocationView();
         if (mCityId != Globals.g_Current_City_Info.getId()) {

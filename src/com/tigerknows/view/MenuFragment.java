@@ -57,7 +57,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     private ImageView mDiscvoerImv;
 
     
-    private int mMenuIdSelected;
+    private int mMenuIndexSelected=0;
     private ImageButton[] mMenuBtnList = new ImageButton[4]; 
     
 
@@ -103,52 +103,60 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         mRootView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         mSphinx.getControlView().setPadding(0, 0, 0, getMeasuredHeight());
         
-        mPOIBtn.getLocationOnScreen(mLocationsPOIBtn);
-        mDiscoverBtn.getLocationOnScreen(mLocationsDiscoverBtn);
-        mTrafficBtn.getLocationOnScreen(mLocationsTrafficBtn);
-        mMoreBtn.getLocationOnScreen(mLlocationsMoreBtn);
-        
-        if( resumeFirstCalled){
-        	
-        	//Get the current focus of the four channel.
-        	int viewId = mSphinx.uiStackPeekBottom();
-        	
-        	switch (viewId) {
-	
-				case R.id.view_discover:
-					mMenuIdSelected=1;
-					break;
-	
-				case R.id.view_traffic_query:
-					mMenuIdSelected=2;
-					break;
+        mPOIBtn.post(new Runnable() {
+			
+			@Override
+			public void run() {
 
-				case R.id.view_more:
-					mMenuIdSelected = 3;
-					break;
+		        mPOIBtn.getLocationOnScreen(mLocationsPOIBtn);
+		        mDiscoverBtn.getLocationOnScreen(mLocationsDiscoverBtn);
+		        mTrafficBtn.getLocationOnScreen(mLocationsTrafficBtn);
+		        mMoreBtn.getLocationOnScreen(mLlocationsMoreBtn);
+		        
+		        if( resumeFirstCalled){
+		        	
+		        	//Get the current focus of the four channel.
+		        	int viewId = mSphinx.uiStackPeekBottom();
+		        	
+		        	switch (viewId) {
+			
+						case R.id.view_discover:
+							mMenuIndexSelected=1;
+							break;
+			
+						case R.id.view_traffic_query:
+							mMenuIndexSelected=2;
+							break;
+
+						case R.id.view_more:
+							mMenuIndexSelected = 3;
+							break;
+							
+						default :
+							mMenuIndexSelected = 0;
+							break;
+					}
+		        	
+		        	//Setup animation parameters to make the yellow block back to the current selected menu
+					Animation animation = new TranslateAnimation(mLocations[mMenuIndexSelected][0], mLocations[mMenuIndexSelected][0], 0, 0);
+					animation.setFillAfter(true);
+					animation.setDuration(0);
+					mCursorImv.startAnimation(animation);
+					resumeFirstCalled = false;
 					
-				default :
-					mMenuIdSelected = 0;
-					break;
+					//Set the selected background to yellow
+					mMenuBtnList[mMenuIndexSelected].setBackgroundResource(MENU_BACKGROUD_SELECTED[mMenuIndexSelected]);
+					//set the unselected btn bg to gray
+					for (int i=0, size = mMenuBtnList.length; i<size; i++) {
+						if(i!=mMenuIndexSelected){
+							mMenuBtnList[i].setBackgroundResource(MENU_BACKGROUD_STILL[i]);
+						}
+					}
+					
+		        }				
 			}
-        	
-        	//Setup animation parameters to make the yellow block back to the current selected menu
-			Animation animation = new TranslateAnimation(mLocations[mMenuIdSelected][0], mLocations[mMenuIdSelected][0], 0, 0);
-			animation.setFillAfter(true);
-			animation.setDuration(0);
-			mCursorImv.startAnimation(animation);
-			resumeFirstCalled = false;
-			
-			//Set the selected background to yellow
-			mMenuBtnList[mMenuIdSelected].setBackgroundResource(MENU_BACKGROUD_SELECTED[0]);
-			//set the unselected btn bg to gray
-			for (int i=0, size = mMenuBtnList.length; i<size; i++) {
-				if(i!=mMenuIdSelected){
-					mMenuBtnList[i].setBackgroundResource(MENU_BACKGROUD_STILL[i]);
-				}
-			}
-			
-        }
+		});
+        
 		
     }
     
@@ -241,10 +249,12 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     	mSphinx.uiStackEmpty();
         switch (view.getId()) {
             case R.id.poi_btn:
+                updateMenuStatus(0);
             	mActionLog.addAction(ActionLog.MenuSearch);
                 mSphinx.showView(R.id.view_home);
                 break;
             case R.id.discover_btn:
+                updateMenuStatus(1);
                 mSphinx.showView(R.id.view_discover);
                 mSphinx.getDiscoverFragment().setCurrentItem(0);
                 if (mDiscvoerImv.getVisibility() == View.VISIBLE) {
@@ -253,11 +263,13 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 }
                 break;
             case R.id.traffic_btn:
+                updateMenuStatus(2);
             	mActionLog.addAction(ActionLog.MenuTraffic);
             	mSphinx.getTrafficQueryFragment().setState(TrafficViewSTT.State.Normal);
                 mSphinx.showView(R.id.view_traffic_query);
                 break;
             case R.id.more_btn:
+                updateMenuStatus(3);
             	mActionLog.addAction(ActionLog.MenuMore);
                 mSphinx.showView(R.id.view_more);
                 break;
@@ -265,28 +277,19 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             default:
                 break;
         }
+        
     }
     
-    public void updateMenuStatus(int id) {
-    	int oldIndex = 0;
-    	for(int i =0,size=mMenuBtnList.length; i<size; i++) {
-            if (mMenuBtnList[i].getId() == mMenuIdSelected) {
-            	oldIndex=i;
-            	break;
-            }
-        }
-        mMenuIdSelected = id;
+    public void updateMenuStatus(int indexPressed) {
+    	
+        mPOIBtn.getLocationOnScreen(mLocationsPOIBtn);
+        mDiscoverBtn.getLocationOnScreen(mLocationsDiscoverBtn);
+        mTrafficBtn.getLocationOnScreen(mLocationsTrafficBtn);
+        mMoreBtn.getLocationOnScreen(mLlocationsMoreBtn);
         
-        int i = 0;
-        int indexPressed = 0;
-        for(ImageButton imageButton : mMenuBtnList) {
-            if (imageButton.getId() == mMenuIdSelected) {
-            		indexPressed=i;
-            } else {
-            }
-            i++;
-        }
-        
+    	int oldIndex = mMenuIndexSelected;
+    	
+    	mMenuIndexSelected = indexPressed;
 		Animation animation = new TranslateAnimation(mLocations[oldIndex][0], mLocations[indexPressed][0], 0, 0);
 		animation.setFillAfter(true);
 		animation.setDuration(350);

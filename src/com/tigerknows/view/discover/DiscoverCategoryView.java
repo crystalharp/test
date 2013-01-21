@@ -195,7 +195,8 @@ public class DiscoverCategoryView extends LinearLayout {
                     mPictureImv.setImageResource(disabledResId);
                 }
             }
-        }
+            
+        };
     }
     
     public String getTitleText() {
