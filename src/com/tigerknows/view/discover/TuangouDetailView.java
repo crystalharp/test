@@ -252,9 +252,11 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         
         if (TextUtils.isEmpty(mFilterArea) || mData.getBranchNum() < 2) {
             mNearbyFendianTxv.setVisibility(View.GONE);
+            mNearbyFendianView.setClickable(false);
         } else {
             mNearbyFendianTxv.setText(mFilterArea + mSphinx.getString(R.string.tuangou_detail_nearby, mData.getBranchNum()));
             mNearbyFendianTxv.setVisibility(View.VISIBLE);
+            mNearbyFendianView.setClickable(true);
         }
 
         String description = mData.getDescription();
