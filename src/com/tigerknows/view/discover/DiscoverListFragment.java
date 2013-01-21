@@ -203,7 +203,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 mTuangouAdapter = new TuangouAdapter(mSphinx, mTuangouList);
             }
             mResultLsv.setAdapter(mTuangouAdapter);
-            mDingdanBtn.setVisibility(View.VISIBLE);
+            mDingdanBtn.setVisibility(View.INVISIBLE);
             mActionTag = ActionLog.TuangouList;
         } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
             if (mDianyingAdapter == null) {
@@ -963,7 +963,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     item.setFilterArea(mFilterArea);
                 }
                 mTuangouList.addAll(list);
-
+                mDingdanBtn.setVisibility(View.VISIBLE);
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
                 }
