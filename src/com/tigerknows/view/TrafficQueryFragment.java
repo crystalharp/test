@@ -80,6 +80,10 @@ public class TrafficQueryFragment extends BaseFragment {
 	public static final int SELECTED = 4;
 	
 	protected int mode = TRAFFIC_MODE;
+	
+	private int mSettedRadioBtn = 0;
+	
+	boolean showStartMyLocation = true;
 
 	FrameLayout mTitle;
 	
@@ -216,7 +220,6 @@ public class TrafficQueryFragment extends BaseFragment {
     	mBuslineQueryBtn = (Button)mRootView.findViewById(R.id.busline_query_btn);
     	mRadioGroup = (RadioGroup)mRootView.findViewById(R.id.traffic_rgp);
     	
-    	//mExchangeBtn = (Button)mRootView.findViewById(R.id.exchange_btn);
     	mSelectStartBtn = (Button)mRootView.findViewById(R.id.select_start_btn);
     	mSelectEndBtn = (Button)mRootView.findViewById(R.id.select_end_btn);
     	mBusline = new QueryEditText((TKEditText)mRootView.findViewById(R.id.busline_edt));
@@ -266,6 +269,8 @@ public class TrafficQueryFragment extends BaseFragment {
     
     public void onPause() {
     	super.onPause();
+    	mSettedRadioBtn = 0;
+    	showStartMyLocation = true;
     	mSphinx.setTouchMode(TouchMode.NORMAL);
     }
     
@@ -307,6 +312,8 @@ public class TrafficQueryFragment extends BaseFragment {
 			mSphinx.setTouchMode(R.id.start_edt == mSelectedEdt.getEdt().getId() ? 
 					TouchMode.CHOOSE_ROUTING_START_POINT : TouchMode.CHOOSE_ROUTING_END_POINT);
         }
+        
+        initStartContent();
         
 	}
 
@@ -407,11 +414,6 @@ public class TrafficQueryFragment extends BaseFragment {
 				}
 			} 
 			
-//			Position position;
-//			position = new Position(1,1);
-//			mPOI.setPosition(position);
-			//xupeng：想在这里添加个如果有查找过的poi信息则统一填上坐标点
-			
 			return mPOI;
 		}
 
@@ -448,16 +450,19 @@ public class TrafficQueryFragment extends BaseFragment {
 	public void initStartContent() {
 
 	    mSelectedEdt = mStart;
-		if (mStart.isEmpty()) {
-		//定位为设定城市，或者自驾模式下定位城市与设定城市不同，均在起点框填写上当前位置。
-		if (mMapLocationHelper.isMyLocationLocateCurrentCity() || 
-				(getQueryType() == TrafficQuery.QUERY_TYPE_DRIVE && Globals.g_My_Location_City_Info != null)) {
-			POI poi = mMapLocationHelper.getMyLocation();
-			setPOI(poi, START);
-		} else {
-		    mSelectedEdt.clear();
-		}
-        }
+	    if (showStartMyLocation) {
+	        //如果要求显示起点，定位为设定城市，在起点框填写上当前位置。
+	        if (mStart.isEmpty() && mMapLocationHelper.isMyLocationLocateCurrentCity()) {
+	            POI poi = mMapLocationHelper.getMyLocation();
+	            setPOI(poi, START);
+	        }
+	        //否则什么都不做，不影响当前起点框内容
+	    } else {
+	        //否则清空起点框的内容。
+	        mSelectedEdt.clear();
+	    }
+		
+		//TODO:这些东西从这里抽出去
 		if (mStateTransitionTable.getCurrentState() == State.Input) {
 		    mSelectedEdt.mEdt.requestFocus();
 		} else {
@@ -570,7 +575,6 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	public void submitTrafficQuery() {
 		
-		//xupeng:预计在这里修改没有坐标点的问题。
 		POI start = mStart.getPOI();
 		POI end = mEnd.getPOI();
 		
@@ -614,8 +618,6 @@ public class TrafficQueryFragment extends BaseFragment {
 	}
     
     public static void submitTrafficQuery(Sphinx sphinx, POI start, POI end, int queryType) {
-        
-        //xupeng:预计在这里修改没有坐标点的问题。
         
         if (start == null || end == null)
             return;
@@ -735,11 +737,27 @@ public class TrafficQueryFragment extends BaseFragment {
     	mStateTransitionTable.event(TrafficViewSTT.Event.ClickBookmark);
     }
     
-    public void setDataNoSuggest(POI poi, int index) {
+    //TODO:把这个函数也重写，mSettedRadioBtn不要这么用
+    public void setDataNoSuggest(POI poi, int index, int queryType) {
         if (index != START && index != END && index != SELECTED) 
             return;
         changeToMode(TRAFFIC_MODE);
-        mRadioGroup.check(R.id.traffic_transfer_rbt);
+        //自定起起点功能要求不显示起点，用这个变量进行标识，onpause的时候恢复
+        showStartMyLocation = false;
+        
+        mSettedRadioBtn = R.id.traffic_transfer_rbt;
+        switch (queryType) {
+        case TrafficQuery.QUERY_TYPE_DRIVE:
+            mSettedRadioBtn = R.id.traffic_drive_rbt;
+            break;
+        case TrafficQuery.QUERY_TYPE_TRANSFER:
+            mSettedRadioBtn = R.id.traffic_transfer_rbt;
+            break;
+        case TrafficQuery.QUERY_TYPE_WALK:
+            mSettedRadioBtn = R.id.traffic_walk_rbt;
+            break;
+        }
+        mRadioGroup.check(mSettedRadioBtn);
         setPOI(poi.clone(), index);
     }    
     
