@@ -485,7 +485,11 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         	mSphinx.setPreviousNextViewVisible();
         	
             mSphinx.getResultMapFragment().setData(mContext.getString(R.string.title_traffic_result_map), actionTag);
-            if (mSphinx.uiStackContains(R.id.view_result_map)) {
+            String resultMapActionTag = mSphinx.getResultMapFragment().mActionTag;
+            if (mSphinx.uiStackContains(R.id.view_result_map)
+                    && (actionTag.equals(resultMapActionTag)
+                            || actionTag.equals(resultMapActionTag)
+                            || actionTag.equals(resultMapActionTag))) {
                 dismiss();
             } else {
                 mSphinx.showView(R.id.view_result_map);

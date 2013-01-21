@@ -130,7 +130,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             str = mContext.getString(R.string.at_location_searching);
         }
         mQueryingTxv.setText(str);
-        mTitleText = lastDataQuerying.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD);
+        mTitleText = mSphinx.getString(R.string.searching_title);
         
         this.mState = STATE_QUERYING;
         updateView();
@@ -231,20 +231,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             POIResponse poiModel = (POIResponse)dataQuery.getResponse();
             if (poiModel != null) {
                 POIList poiList = poiModel.getAPOIList();
-                long aTotal = 0;
                 if (poiList != null) {
-                    str = poiList.getMessage();
-                    aTotal = poiList.getTotal();
+                    mTitleText = poiList.getShortMessage();
                 }
         
                 poiList = poiModel.getBPOIList();
-                long bTotal = 0;
                 if (poiList != null) {
-                    str = poiList.getMessage();
-                    bTotal = poiList.getTotal();
+                    mTitleText = poiList.getShortMessage();
                 }
-                
-                mTitleText = mSphinx.getString(R.string.search_result, dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD), aTotal > 1 ? aTotal : bTotal);
             }
         }
         

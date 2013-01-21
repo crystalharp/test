@@ -1301,9 +1301,18 @@ public final class DataQuery extends BaseQuery {
             // 0x02 x_array<x_map> poi列表
             public static final byte FIELD_LIST = 0x02;
 
+            // 0x04 | x_string | 短信息提示
+            public static final byte FIELD_SHORT_MESSAGE = 0x04;
+
             private List<POI> list;
 
             private int resultType;
+            
+            private String shortMessage;
+
+            public String getShortMessage() {
+                return shortMessage;
+            }
 
             public List<POI> getList() {
                 return list;
@@ -1329,6 +1338,9 @@ public final class DataQuery extends BaseQuery {
                             list.add(poi);
                         }
                     }
+                }
+                if (this.data.containsKey(FIELD_SHORT_MESSAGE)) {
+                    this.shortMessage = this.data.getString(FIELD_SHORT_MESSAGE);
                 }
 
             }
