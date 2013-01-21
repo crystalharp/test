@@ -231,16 +231,18 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             POIResponse poiModel = (POIResponse)dataQuery.getResponse();
             if (poiModel != null) {
                 POIList poiList = poiModel.getAPOIList();
+                long aTotal = 0;
                 if (poiList != null) {
                     str = poiList.getMessage();
+                    aTotal = poiList.getTotal();
                 }
-                long aTotal = poiList.getTotal();
         
                 poiList = poiModel.getBPOIList();
+                long bTotal = 0;
                 if (poiList != null) {
                     str = poiList.getMessage();
+                    bTotal = poiList.getTotal();
                 }
-                long bTotal = poiList.getTotal();
                 
                 mTitleText = mSphinx.getString(R.string.search_result, dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD), aTotal > 1 ? aTotal : bTotal);
             }
@@ -415,6 +417,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 
             default:
                 if (mState != STATE_LIST || mDataQuery == null) {
+                    return;
+                }
+                
+                if (mState == STATE_QUERYING && mResultLsv.getState(false) != SpringbackListView.REFRESHING) {
                     return;
                 }
                 
@@ -681,7 +687,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     mResultLsv.setFooterSpringback(true);
                     return;
                 }
-                mRetryView.setText(R.string.network_failed);
+                mRetryView.setText(R.string.touch_screen_and_retry);
                 mState = STATE_ERROR;
                 updateView();
                 return;

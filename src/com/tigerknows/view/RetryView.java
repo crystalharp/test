@@ -85,4 +85,8 @@ public class RetryView extends LinearLayout {
     public void setText(int resid) {
         mTextTxv.setText(resid);
     }
+    
+    public void setText(String text) {
+        mTextTxv.setText(text);
+    }
 }

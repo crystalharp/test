@@ -1481,8 +1481,8 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         if (intent != null) {
             int sourceViewId = intent.getIntExtra(BaseActivity.SOURCE_VIEW_ID, R.id.view_invalid);
             if (sourceViewId == R.id.activity_poi_comment) {
-                TKConfig.setPref(this, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(3));
-                getMoreFragment().refreshMoreBtn(true);
+                TKConfig.setPref(this, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(MoreFragment.SHOW_COMMENT_TIP_TIMES));
+                getMoreFragment().refreshMoreBtn(false);
                 mHandler.post(mOnNewIntentStamp);
             
             // 登录之后的返回
