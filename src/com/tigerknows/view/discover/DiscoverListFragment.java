@@ -655,6 +655,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     return;
                 }
                 
+                if (mState == STATE_QUERYING && mResultLsv.getState(false) != SpringbackListView.REFRESHING) {
+                    return;
+                }
+                
                 if (mTkAsyncTasking != null) {
                     mTkAsyncTasking.stop();
                 }
@@ -912,7 +916,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     invokeIPagerListCallBack();
                     return;
                 }
-                mRetryView.setText(R.string.network_failed);
+                mRetryView.setText(R.string.touch_screen_and_retry);
                 mState = STATE_ERROR;
                 updateView();
                 invokeIPagerListCallBack();

@@ -171,16 +171,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     }
     
     protected void setListener() {
-        setOnTouchListener(new OnTouchListener() {
-            
-            @Override
-            public boolean onTouch(View arg0, MotionEvent arg1) {
-                if (callBack != null) {
-                    callBack.cancelFilter();
-                }
-                return false;
-            }
-        });
         parentLsv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
@@ -191,12 +181,12 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                 Filter filter = parentFilterList.get(position);
                 List<Filter> filterList = filter.getChidrenFilterList();
                 if (filterList.size() == 0) {
-                    childLsv.setVisibility(View.INVISIBLE);
+                    childFilterList.clear();
+                    childAdapter.notifyDataSetChanged();
                     doFilter(filter);
                 } else {
                     selectedParentPosition = position;
                     parentAdapter.notifyDataSetChanged();
-                    childLsv.setVisibility(View.VISIBLE);
                     childFilterList.clear();
                     childFilterList.addAll(filterList);
                     childAdapter.notifyDataSetChanged();

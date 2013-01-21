@@ -195,6 +195,10 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         
         @Override
         public void onClick(View view) {
+            if (mMapEngine.isExternalStorage() == false) {
+                Toast.makeText(mThis, R.string.not_enough_space, Toast.LENGTH_LONG).show();
+                return;
+            }
             for(int i = 0; i < mDownloadCityList.size(); i++) {
                 DownloadCity downloadCity = mDownloadCityList.get(i);
                 if (downloadCity.cityInfo.getId() == CITY_ID_TITLE_ONE || downloadCity.cityInfo.getId() == CITY_ID_TITLE_TWO) {

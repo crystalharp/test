@@ -40,6 +40,7 @@
 				    android:isScrollContainer="true"
 				    android:layout_marginLeft="4dp"
 				    android:layout_marginRight="4dp"
+				    android:paddingBottom="24dp"
 				    android:focusable="true"
 				    android:focusableInTouchMode="true"
 				    android:hint="@string/poi_comment_intput_hit"
