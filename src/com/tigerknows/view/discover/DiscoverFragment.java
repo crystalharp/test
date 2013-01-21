@@ -449,12 +449,12 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                             DiscoverCategory discoverCategory = new DiscoverCategory(value);
                             mDiscoverCategoryList.add(discoverCategory);
                         }
-                        value = Long.parseLong(BaseQuery.DATA_TYPE_ZHANLAN);
+                        value = Long.parseLong(BaseQuery.DATA_TYPE_YANCHU);
                         if (valueList.contains(value)) {
                             DiscoverCategory discoverCategory = new DiscoverCategory(value);
                             mDiscoverCategoryList.add(discoverCategory);
                         }
-                        value = Long.parseLong(BaseQuery.DATA_TYPE_YANCHU);
+                        value = Long.parseLong(BaseQuery.DATA_TYPE_ZHANLAN);
                         if (valueList.contains(value)) {
                             DiscoverCategory discoverCategory = new DiscoverCategory(value);
                             mDiscoverCategoryList.add(discoverCategory);

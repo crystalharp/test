@@ -256,6 +256,27 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     }
     
     InfoWindowTrafficButtonListener mInfoWindowTrafficButtonListener = new InfoWindowTrafficButtonListener();
+    
+    Runnable mLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            mHandler.removeCallbacks(mActualLoadedDrawableRun);
+            mHandler.post(mActualLoadedDrawableRun);
+        }
+    };
+    
+    Runnable mActualLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+        	InfoWindow infoWindow = mMapView.getInfoWindow();
+            OverlayItem overlayItem = infoWindow.getAssociatedOverlayItem();
+              if (infoWindow.isVisible() && overlayItem != null) {
+            	  showInfoWindow(overlayItem);
+              }
+        }
+    };
 
     
     class InfoWindowLongListener implements View.OnTouchListener {
@@ -2012,7 +2033,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             layoutInfoWindow(nameTxv, max);
             
             if (tkDrawable != null) {
-                Drawable drawable = tkDrawable.loadDrawable(null, null, null);
+                Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, getResultMapFragment().toString());
                 if(drawable != null) {
                     pictureImv.setBackgroundDrawable(drawable);
                 } else {
@@ -2054,7 +2075,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             layoutInfoWindow(nameTxv, max);
             
             if (tkDrawable != null) {
-                Drawable drawable = tkDrawable.loadDrawable(null, null, null);
+                Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, getResultMapFragment().toString());
                 if(drawable != null) {
                     pictureImv.setBackgroundDrawable(drawable);
                 } else {
