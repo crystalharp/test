@@ -1114,4 +1114,14 @@ public class CommonUtils {
         }
         textView.setText(word);
     }
+    
+    public static String substring(String text, int length) {
+        if (text == null) {
+            return text;
+        }
+        if (text.length() > length) {
+            text = text.substring(0, length) + "...";
+        }
+        return text;
+    }
 }
