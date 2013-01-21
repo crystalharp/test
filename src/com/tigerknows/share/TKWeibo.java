@@ -19,7 +19,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 
 import java.io.IOException;
 

@@ -36,7 +36,6 @@
                 android:maxLines="8"
                 android:lines="6"
                 android:hint="@string/your_feedback"
-                android:textColorHint="#ffacacac"
                 android:background="@color/white"
                 android:imeOptions="actionNext"
                 >
@@ -73,7 +72,6 @@
                     android:background="@color/white"
                     android:lines="1"
                     android:hint="@string/your_mobile_number"
-                    android:textColorHint="#ffacacac"
                     android:imeOptions="actionSend"
                     >
                 </EditText>
@@ -94,7 +92,7 @@
                         android:id="@+id/feedback_send"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@drawable/feedback_send_btn"
+                        android:background="@drawable/btn_send_feedback"
                         android:gravity="center|center_vertical"
                         />
                 </LinearLayout>

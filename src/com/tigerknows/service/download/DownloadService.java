@@ -21,7 +21,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -51,7 +51,7 @@ public class DownloadService extends IntentService {
 	            LogWrapper.d("chen", "to download"+url);
             }
             else {
-            	showToast(context, R.string.file_downloading);
+                Toast.makeText(context, R.string.file_downloading, com.tigerknows.widget.Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -92,21 +92,13 @@ public class DownloadService extends IntentService {
     	// 由于外部可不掉用download静态方法来下载而直接调用startService来启动服务，因此这里仍需判断重复
     	if(downloadingUrlSet.contains(url)) {
     		intent.putExtra("isDownloading", true);
-    		showToast(this, R.string.file_downloading);
+    		Toast.makeText(this, R.string.file_downloading, Toast.LENGTH_SHORT).show();
     	}
     	else {
         	downloadingUrlSet.add(url);
-        	showToast(this, R.string.add_to_download_list);
+        	Toast.makeText(this, R.string.add_to_download_list, Toast.LENGTH_SHORT).show();
     	}
         return super.onStartCommand(intent, flags, startId);
-    }
-    
-    private static void showToast(Context context, int resId) {
-    	if(toast == null) 
-    		toast = Toast.makeText(context, resId, Toast.LENGTH_SHORT);
-    	else
-    		toast.setText(resId);
-    	toast.show();
     }
     
 	@Override

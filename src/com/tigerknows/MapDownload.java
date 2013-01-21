@@ -41,8 +41,8 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import com.tigerknows.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.tigerknows.maps.MapEngine;

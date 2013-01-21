@@ -25,7 +25,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
 
 import java.util.Hashtable;
@@ -50,6 +50,7 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
         setListener();
 
         mTitleBtn.setText(R.string.feedback);
+        feedback_send.setEnabled(false);
 //        SpannableString ss = new SpannableString(mThis.getString(R.string.feedback_text2));
 //        ss.setSpan(new ClickableSpan() {
 //            @Override

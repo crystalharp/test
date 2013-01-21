@@ -41,7 +41,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 
 /**
  * @author Peng Wenyue
@@ -204,6 +204,8 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
         mTKLocationManager.removeUpdates();
 
         unregisterReceiver(mSDCardEventReceiver);
+        
+        com.tigerknows.widget.Toast.cancel();
         super.onPause();
     }
     

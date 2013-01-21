@@ -21,7 +21,6 @@
 	    android:lines="1"
 	    android:maxLines="1"
 	    android:ellipsize="end"
-	    android:textColorHint="#ff898989"
 	    android:focusable="false"
 	    android:focusableInTouchMode="false"
 	    android:padding="8dp"
