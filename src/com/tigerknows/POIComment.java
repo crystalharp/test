@@ -221,6 +221,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             }
             if (mPOI == null) {
                 finish();
+                return;
             }
         }
 

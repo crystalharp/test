@@ -3649,7 +3649,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             	} else {
                 	mMapView.panToPosition(overlayItem.getPosition());
                 }
-            	itemizedOverlay.isShowInPreferZoom = false;
             } else {
             	mMapView.panToPosition(overlayItem.getPosition());
             }
