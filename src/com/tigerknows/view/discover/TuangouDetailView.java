@@ -515,13 +515,15 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
       		
       		//Judge original visibility to avoid unnecessary message loops
       		if(mBarView_2.getVisibility()==View.INVISIBLE){
-            		mBarView_2.setVisibility(View.VISIBLE);
+        		mBarView.setVisibility(View.INVISIBLE);
+        		mBarView_2.setVisibility(View.VISIBLE);
             		return true;
       		}
       		
       	}else{
-      		if(mBarView_2.getVisibility()==View.VISIBLE){
-            		mBarView_2.setVisibility(View.INVISIBLE);
+      		if(mBarView_2.getVisibility()==View.VISIBLE){                                                                                                                              
+        		mBarView.setVisibility(View.VISIBLE);
+        		mBarView_2.setVisibility(View.INVISIBLE);
             		return true;
       		}
       	}

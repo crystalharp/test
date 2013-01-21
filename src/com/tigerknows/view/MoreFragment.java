@@ -115,7 +115,6 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         mTitleBtn.setText(R.string.more);
         mRightBtn.setVisibility(View.INVISIBLE);
 
-        mMenuFragment.updateMenuStatus(R.id.more_btn);
         mMenuFragment.display();
         
         refreshUserEntrance();

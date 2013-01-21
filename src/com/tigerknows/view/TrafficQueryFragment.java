@@ -295,7 +295,6 @@ public class TrafficQueryFragment extends BaseFragment {
             mSphinx.setTouchMode(TouchMode.LONG_CLICK);
             
             mSphinx.clearMap();
-    		mMenuFragment.updateMenuStatus(R.id.traffic_btn);
             mMenuFragment.display();
         }
         
