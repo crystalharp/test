@@ -34,8 +34,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.provider.ContactsContract;
 import android.provider.Settings;
 import android.support.v4.view.ViewPager.LayoutParams;
@@ -44,7 +42,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -76,7 +73,6 @@ import com.decarta.android.map.Compass;
 import com.decarta.android.map.Icon;
 import com.decarta.android.map.InfoWindow;
 import com.decarta.android.map.ItemizedOverlay;
-import com.decarta.android.map.MapActivity;
 import com.decarta.android.map.MapText;
 import com.decarta.android.map.MapView;
 import com.decarta.android.map.MyLocation;
@@ -118,10 +114,8 @@ import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.service.MapStatsService;
 import com.tigerknows.service.SuggestLexiconService;
-import com.tigerknows.service.TKLocationManager;
 import com.tigerknows.service.TKLocationManager.TKLocationListener;
 import com.tigerknows.util.CommonUtils;
-import com.tigerknows.util.SoftInputManager;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.BaseDialog;
 import com.tigerknows.view.BaseFragment;
@@ -165,14 +159,13 @@ import com.tigerknows.view.user.UserUpdateNickNameActivity;
 import com.tigerknows.view.user.UserUpdatePasswordActivity;
 import com.tigerknows.view.user.UserUpdatePhoneActivity;
 
-public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
+public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
 	private static final int CONFIG_SERVER = 8;
 	private static final int PROFILE = 7;
 	
 	public static final int CONFIG_SERVER_CODE = 14;
 
-	Sphinx mThis;
 	private MapView mMapView;
     private TextView mDownloadView;
     private View mCompassView;
@@ -190,8 +183,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 	public enum TouchMode{
 		NORMAL, CHOOSE_ROUTING_START_POINT, CHOOSE_ROUTING_END_POINT, LONG_CLICK;
 	}
-	
-	private Handler mHandler=null;
 	
 	// Handler message code
 	public static int PREVIOUS_NEXT_HIDE = 0x01;
@@ -214,9 +205,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     private static final String TAG = "Sphinx";
     private static final int REQUEST_CODE_LOCATION_SETTINGS = 15;
     private ResolveInfo mSMSResolveInfo;
-    
-    private PowerManager mPowerManager; //电源控制，比如防锁屏
-    private WakeLock mWakeLock;
     
     private ViewGroup mRootView;
     private ViewGroup mTitleView;
@@ -249,7 +237,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         public boolean onTouch(View v,android.view.MotionEvent ev) {
             if(ev.getAction()==MotionEvent.ACTION_UP){
                 mActionLog.addAction(actionLog);
-                CommonUtils.queryTraffic(mThis, poi);
+                CommonUtils.queryTraffic(Sphinx.this, poi);
             }
             return true;
         }
@@ -297,24 +285,18 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     InfoWindowLongListener mInfoWindowLongStartListener = new InfoWindowLongListener();
     InfoWindowLongListener mInfoWindowLongEndListener = new InfoWindowLongListener();
     
-    private MapEngine mMapEngine;
     private boolean mShowPromptSettingLocationDialog = false;
     private boolean mFromIntent = false;
     public boolean mSnapMap = false;
-    public ActionLog mActionLog;
     
     // 老虎动画时间
     private static final int LOGO_ANIMATION_TIME = 2000;
 
     private Context mContext;
-    private LayoutInflater mLayoutInflater;
-    private ConnectivityManager mConnectivityManager;
 
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mThis = this;
-        
         WindowManager winMan=(WindowManager)getSystemService(Context.WINDOW_SERVICE);
         Display display=winMan.getDefaultDisplay();
         display.getMetrics(Globals.g_metrics);
@@ -322,30 +304,29 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         
         TKConfig.readConfig();
         Globals.init(mThis);
-		
-		mContext = getBaseContext();
-        mLayoutInflater = getLayoutInflater();
+        
+        mContext = getBaseContext();
+        mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+        Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+        
         mMapEngine = MapEngine.getInstance();
         try {
-            mMapEngine.initMapDataPath(mContext);
+            mMapEngine.initMapDataPath(mThis, false);
         } catch (APIException exception) {
             exception.printStackTrace();
-            Toast.makeText(this, R.string.not_enough_space, Toast.LENGTH_LONG).show();
+            CommonUtils.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
             finish();
+            return;
         }
         mMapEngine.resetFontSize(1.5f+(Globals.g_metrics.scaledDensity > 1.0f ? Globals.g_metrics.scaledDensity-1.0f : 0));
         mMapEngine.resetIconSize(Globals.g_metrics.densityDpi >= DisplayMetrics.DENSITY_HIGH ? 3 : 2);
         CityInfo cityInfo = mMapEngine.getCityInfo(MapEngine.CITY_ID_BEIJING);
         if (cityInfo.isAvailably() == false) {
             finish();
+            return;
         }
         
-        mSoftInputManager = new SoftInputManager(mThis);
-        mActionLog = ActionLog.getInstance(mContext);
         mActionLog.onCreate();
-        
-        mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-        Sensor sensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
         
         try{
             setContentView(R.layout.sphinx);
@@ -450,6 +431,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                     
                     @Override
                     public void run() {
+                        mMapView.setStopDraw(true);
                         if (fristUse) {
                             Intent intent = new Intent();
                             intent.putExtra(Help.APP_FIRST_START, fristUse);
@@ -489,14 +471,8 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             }).start();
             
             
-            mPowerManager = (PowerManager) getSystemService(POWER_SERVICE);
-            mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, getClass().getName()); //处理屏幕防止锁屏
-            mTKLocationManager = new TKLocationManager(TKApplication.getInstance());
             mTKLocationManager.onCreate();
             mLocationListener = new MyLocationListener(this, mLocationChangedRun);
-
-            mConnectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            mConnectivityReceiver = new ConnectivityBroadcastReceiver();
             
             mZoomView.setVisibility(View.INVISIBLE);
             
@@ -1004,40 +980,14 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 		super.onResume();
 		Log.i(TAG,"onResume()");
 		mActionLog.onResume();
-		try {
-		    mMapEngine.initMapDataPath(this);
-		} catch (Exception exception){
-		    exception.printStackTrace();
-		    Toast.makeText(this, R.string.not_enough_space, Toast.LENGTH_LONG).show();
-		    finish();
-		}
 
         Globals.setConnectionFast(CommonUtils.isConnectionFast(this));
         Globals.getAsyncImageLoader().onResume();
-        
-        mTKLocationManager.addLocationListener(mLocationListener);
-        mTKLocationManager.prepareLocation();
         
         TKConfig.updateIMSI(mConnectivityManager);
         
         IntentFilter intentFilter= new IntentFilter(MapStatsService.ACTION_MAP_STATS_COMPLATE);
         registerReceiver(mMapStatsBroadcastReceiver, intentFilter);
-
-        intentFilter = new IntentFilter();
-        intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mConnectivityReceiver, intentFilter);
-        
-        // install an intent filter to receive SD card related events.
-        intentFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
-        intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
-        registerReceiver(mSDCardEventReceiver, intentFilter);
-        
-        intentFilter = new IntentFilter("android.intent.action.SERVICE_STATE"); // "android.intent.action.SERVICE_STATE" Intent.ACTION_AIRPLANE_MODE_CHANGED Intent.ACTION_SERVICE_STATE_CHANGED
-        registerReceiver(mAirPlaneModeReceiver, intentFilter);
-        
-        if (TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_ACQUIRE_WAKELOCK)) && mWakeLock.isHeld() == false) {
-            mWakeLock.acquire();
-        }
         
         if (mActivityResult == false) {
             getDiscoverFragment().resetDataQuery();
@@ -1153,38 +1103,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 	public MapView getMapView() {
 		return mMapView;
 	}
-    
-    private final BroadcastReceiver mSDCardEventReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if (action.equals(Intent.ACTION_MEDIA_MOUNTED)
-                    || action.equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
-                try {
-                    mMapEngine.initMapDataPath(mContext);
-                } catch (APIException e) {
-                    e.printStackTrace();
-                    Toast.makeText(mContext, R.string.not_enough_space, Toast.LENGTH_LONG).show();
-                    finish();
-                }
-            }
-        }
-    };
-
-    private boolean mAirPlaneModeOn = false;
-    private BroadcastReceiver mAirPlaneModeReceiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            boolean airPlaneModeOn = Settings.System.getInt(context.getContentResolver(),
-                    Settings.System.AIRPLANE_MODE_ON, 0) != 0;
-            if(airPlaneModeOn != mAirPlaneModeOn){
-                TKConfig.init(mContext);
-                mAirPlaneModeOn = airPlaneModeOn;
-            }
-        }
-    };
 
     //接受地图统计完成信息。
     private BroadcastReceiver mMapStatsBroadcastReceiver = new BroadcastReceiver() {
@@ -1194,15 +1112,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             getMoreFragment().refreshMoreBtn(false);
             }
     };
-
-    private class ConnectivityBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            TKConfig.updateIMSI(mConnectivityManager);
-        }
-    };
-    
-    private ConnectivityBroadcastReceiver mConnectivityReceiver;
     
     public MapEngine getMapEngine() {
         return mMapEngine;
@@ -1549,16 +1458,12 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     protected void onPause() {
         LogWrapper.i(TAG, "onPause");
         mActionLog.onPause();
-        if (mWakeLock.isHeld()) {
-            mWakeLock.release();
-        }
         int id = uiStackPeek();
         BaseFragment baseFragment = getFragment(id);
         if (baseFragment != null) {
             baseFragment.onPause();
         }
 
-        mTKLocationManager.removeUpdates();
         if (null != mMapView && null != mMapEngine) {
             Position position = mMapView.getCenterPosition();
             // 地图显示的位置在当前城市范围内才更新最后一次位置信息
@@ -1574,9 +1479,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
 
         // 需要一直监听联想词下载服务的下载完成信息，来解压联想词。
         unregisterReceiver(mMapStatsBroadcastReceiver);
-        unregisterReceiver(mConnectivityReceiver);
-        unregisterReceiver(mSDCardEventReceiver);
-        unregisterReceiver(mAirPlaneModeReceiver);
         
         Intent service = new Intent(Sphinx.this, SuggestLexiconService.class);
         stopService(service);
@@ -1592,6 +1494,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     }
         
     public void snapMapView(SnapMap snapMap, Position position) {
+        mMapView.setStopDraw(false);
         mMapView.snapMapView(this, snapMap, position);
     }
     
@@ -2228,22 +2131,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     };
     
     // TODO: cityinfo end
-    
-    // TODO: soft input begin    
-    private SoftInputManager mSoftInputManager;
-    
-    public void showSoftInput(View view) {
-        mSoftInputManager.showSoftInput(view);
-    }
-    
-    public void hideSoftInput() {
-        mSoftInputManager.hideSoftInput();
-    }
-    
-    public void hideSoftInput(View view) {
-        mSoftInputManager.hideSoftInput(view);
-    }
-    // TODO: soft input end
     
     // TODO: initMapCenter begin
     private void OnSetup() {
@@ -3437,8 +3324,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         }
     }
     
-    public TKLocationManager mTKLocationManager;
-    public MyLocationListener mLocationListener;
     private boolean mActivityResult = false;
 
     public static final int ZOOM_LEVEL_DEFAULT = 5; // 200km

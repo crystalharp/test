@@ -171,6 +171,9 @@ public class UserLoginActivity extends UserBaseActivity {
 				&& !TextUtils.isEmpty(data.getStringExtra(TKConfig.PREFS_PHONENUM))) {
 			String prefsPhoneNum = data.getStringExtra(TKConfig.PREFS_PHONENUM);
 			setPrefsPhoneNum(prefsPhoneNum);
+			if (TextUtils.isEmpty(prefsPhoneNum) == false) {
+                passwordEdt.requestFocus();
+			}
 		}
 		
 		super.onActivityResult(requestCode, resultCode, data);

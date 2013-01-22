@@ -220,6 +220,7 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 			case Response.RESPONSE_CODE_OK:
 				showToast(R.string.update_phone_success);
 				Globals.clearSessionAndUser(this);
+				TKConfig.setPref(UserUpdatePhoneActivity.this, TKConfig.PREFS_PHONENUM, "");
 				startActivityForResult(new Intent(UserUpdatePhoneActivity.this, UserLoginActivity.class), 0);
 				break;
 			case Response.RESPONSE_CODE_MOBILE_PHONE_EXIST:

@@ -137,6 +137,9 @@ public class TilesView extends GLSurfaceView {
     }
 
     private static Paint tilePText;
+    private Timer drawMyLocationTimer;
+    boolean isMyLocation = false;
+    boolean stopDraw = false;
     
     private MapText mapText = new MapText();
 
@@ -473,6 +476,17 @@ public class TilesView extends GLSurfaceView {
         mapText.canvasSize.y=displaySize.y;
         XYFloat offset = new XYFloat(0, 0);
         mapText.setOffset(offset, new RotationTilt());
+        
+        drawMyLocationTimer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                if (isMyLocation) {
+                    refreshMap();
+                }
+            }
+        };
+        drawMyLocationTimer.schedule(timerTask, 0, 1000);
         // tigerknows add end
     }
 	
@@ -616,7 +630,10 @@ public class TilesView extends GLSurfaceView {
 		tileImages.clear();
 		overlays.clear();
 		shapes.clear();
-			
+		if (drawMyLocationTimer != null) {
+            drawMyLocationTimer.cancel();
+            drawMyLocationTimer.purge();
+        }
 	}
 	
 	@Override
@@ -2451,6 +2468,9 @@ public class TilesView extends GLSurfaceView {
 		 * the main method to draw all the map elements
 		 */
 		public void onDrawFrame(GL10 gl){
+		    if (stopDraw) {
+		        return;
+		    }
 			if(centerXY==null){
 				return;
 			}
@@ -2466,7 +2486,7 @@ public class TilesView extends GLSurfaceView {
 			boolean rotatingZ=false;
 			boolean rotatingZJustDoneL=false;
 			// Tigerknows begin
-            boolean isMyLocation = false;
+            isMyLocation = false;
             boolean drawFullTile = false;
 			// Tigerknows end
 			
@@ -3234,17 +3254,12 @@ public class TilesView extends GLSurfaceView {
                         }
                     }
  
-                    boolean requestRender = false;
     		        if(zoomingL || fading || movingL || rotatingX || rotatingZ) {
-    		            requestRender = true;
     		            requestRender();
     		        }
                     else if (isSnap && mapText.texImageChanged == false && mapText.screenTextGetting == false && drawFullTile){
                         snapBmp = savePixels(0, 0, displaySize.x, displaySize.y, gl);
                         isSnap = false;
-                    }
-                    if (isMyLocation && requestRender == false) {
-                        requestRender();
                     }
 
 				}catch(Exception e){

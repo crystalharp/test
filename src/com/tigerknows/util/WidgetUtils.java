@@ -86,15 +86,15 @@ public class WidgetUtils {
                             
                             @Override
                             public void finish(Uri uri) {
+                                sphinx.clearMap();
+                                Intent intent = new Intent();
                                 if(uri != null) {
-                                    sphinx.clearMap();
-                                    
-                                    Intent intent = new Intent();
                                     intent.putExtra(ShareAPI.EXTRA_SHARE_PIC_URI, uri.toString());
-                                    intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, weiboContent);
-                                    intent.setClass(activity, WeiboSend.class);
-                                    activity.startActivity(intent);
                                 }
+                                intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, weiboContent);
+                                intent.setClass(activity, WeiboSend.class);
+                                activity.startActivity(intent);
+                                sphinx.getMapView().setStopDraw(false);
                             }
                         }, position);
                         break;
@@ -127,24 +127,23 @@ public class WidgetUtils {
                                 
                                 @Override
                                 public void finish(Uri uri) {
+                                    sphinx.clearMap();
+                                    
+                                    Intent intent = new Intent();
+                                    intent = new Intent(Intent.ACTION_SEND, Uri.parse("mms://"));
+                                    intent.setType("image/png");
+                                    intent.putExtra(Intent.EXTRA_TEXT, smsContent);
                                     if(uri != null) {
-                                        sphinx.clearMap();
-                                        
-                                        Intent intent = new Intent();
-                                        intent = new Intent();
-                                        intent.setAction(Intent.ACTION_SEND);
-                                        intent.setType("image/png");
-                                        intent.putExtra(Intent.EXTRA_TEXT, smsContent);
                                         intent.putExtra(Intent.EXTRA_STREAM, uri);
-                                        intent.putExtra("sms_body", smsContent);
-                                        intent.putExtra("file_name", uri.toString());
-                                        intent.putExtra("exit_on_sent", true);
-                                        intent.setClassName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name);
-                                        try {
-                                            activity.startActivity(intent);
-                                        } catch (android.content.ActivityNotFoundException ex) {
-                                            Toast.makeText(activity, R.string.no_way_to_share_message, Toast.LENGTH_SHORT).show();
-                                        }
+                                    }
+                                    intent.putExtra("sms_body", smsContent);
+                                    intent.putExtra("file_name", uri.toString());
+                                    intent.putExtra("exit_on_sent", true);
+                                    intent.setClassName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name);
+                                    try {
+                                        activity.startActivity(intent);
+                                    } catch (android.content.ActivityNotFoundException ex) {
+                                        Toast.makeText(activity, R.string.no_way_to_share_message, Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             }, position);

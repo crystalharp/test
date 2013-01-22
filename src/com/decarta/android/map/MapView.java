@@ -988,7 +988,8 @@ public class MapView extends RelativeLayout implements
             public void run() {
                 tilesView.snap();
                 XYFloat xy = new XYFloat(0, 0);
-                while (mapViewSnap && (tilesView.isSnap() || Math.abs(xy.x - tilesView.getDisplaySize().x/2) > 64 || Math.abs(xy.y - tilesView.getDisplaySize().y/2) > 64)) {
+                int waitTimes = 0;
+                while (waitTimes < 15 && mapViewSnap && (tilesView.isSnap() || Math.abs(xy.x - tilesView.getDisplaySize().x/2) > 128 || Math.abs(xy.y - tilesView.getDisplaySize().y/2) > 128)) {
                     try {
                         Thread.sleep(2*1000);
                     } catch (InterruptedException e) {
@@ -1001,6 +1002,7 @@ public class MapView extends RelativeLayout implements
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
+                    waitTimes++;
                 }
                 
                 activity.runOnUiThread(new Runnable() {
@@ -1034,5 +1036,9 @@ public class MapView extends RelativeLayout implements
     
     public MapText getMapText() {
         return tilesView.getMapText();
+    }
+    
+    public void setStopDraw(boolean stopDraw) {
+        tilesView.stopDraw = stopDraw;
     }
 }

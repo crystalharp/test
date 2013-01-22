@@ -27,14 +27,12 @@ public class TrafficQueryStateHelper {
 		
 		@Override
 		public void execute() {
-			// TODO Auto-generated method stub
 			eventExecute();
 			uiExecute();
 		}
 
 		@Override
 		public void rollback() {
-			// TODO Auto-generated method stub
 			eventRollback();
 			uiRollback();
 		}
@@ -52,20 +50,17 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiExecute() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficHome);
 			applyInnateProperty(TrafficViewSTT.State.Input);
 		}
 
 		@Override
 		public void eventExecute() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mEventHelper.applyListenersInInputState();
 		}
 
 		@Override
 		public void uiRollback() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficInput);
 			mQueryFragment.mSphinx.getMenuFragment().display();
 //			resetNormalStateMap();
@@ -74,7 +69,6 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void eventRollback() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mEventHelper.applyListenersInNormalState();
 			
 //			if (!isEqualsToMapCenter(mCityInfo)) {
@@ -89,7 +83,6 @@ public class TrafficQueryStateHelper {
 	
 		@Override
 		public void uiExecute() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficHome);
 			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeToMap);
 			
@@ -103,13 +96,11 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void eventExecute() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mEventHelper.applyListenersInMapState();
 		}
 
 		@Override
 		public void uiRollback() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficMap);
 			mQueryFragment.mMapLocationHelper.resetNormalStateMap();
 
@@ -122,7 +113,6 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void eventRollback() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mEventHelper.applyListenersInNormalState();
 		}
 		
@@ -132,20 +122,17 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiExecute() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficMap);
 			applyInnateProperty(TrafficViewSTT.State.Input);
 		}
 
 		@Override
 		public void eventExecute() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mEventHelper.applyListenersInInputState();
 		}
 
 		@Override
 		public void uiRollback() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficInput);
 			/*
 			 * 从Input返回Map时, 记录之前Check的Id
@@ -162,7 +149,6 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void eventRollback() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mEventHelper.applyListenersInMapState();
 			mQueryFragment.mMapLocationHelper.resetMapStateMap();
 		}
@@ -173,7 +159,6 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiExecute() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficHome);
 			mQueryFragment.displayCommonTitle();
 			mQueryFragment.mRightBtn.setVisibility(View.GONE);
@@ -186,13 +171,11 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void eventExecute() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mEventHelper.applyListenersInSelectPointState();
 		}
 
 		@Override
 		public void uiRollback() {
-			// TODO Auto-generated method stub
 			mQueryFragment.hideCommonTitle();
 			mQueryFragment.mTitle.setVisibility(View.VISIBLE);
 			mQueryFragment.mMenuFragment.display();
@@ -202,7 +185,6 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void eventRollback() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mMapLocationHelper.resetNormalStateMap();
 		}
 		
@@ -212,7 +194,6 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiExecute() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficInput);
 			mQueryFragment.displayCommonTitle();
 			mQueryFragment.mRightBtn.setVisibility(View.GONE);
@@ -223,13 +204,11 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void eventExecute() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mEventHelper.applyListenersInSelectPointState();
 		}
 
 		@Override
 		public void uiRollback() {
-			// TODO Auto-generated method stub
 			mQueryFragment.hideCommonTitle();
 			mQueryFragment.mTitle.setVisibility(View.VISIBLE);
 			applyInnateProperty(TrafficViewSTT.State.Input);
@@ -237,7 +216,6 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void eventRollback() {
-			// TODO Auto-generated method stub
 		}
 		
 	}
@@ -245,7 +223,6 @@ public class TrafficQueryStateHelper {
 	private class SelectPointToInputAction extends TrafficAction {
 		@Override
 		public void uiExecute() {
-			// TODO Auto-generated method stub
 			mQueryFragment.hideCommonTitle();
 			mQueryFragment.mTitle.setVisibility(View.VISIBLE);
 			applyInnateProperty(TrafficViewSTT.State.Input);
@@ -253,13 +230,11 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void eventExecute() {
-			// TODO Auto-generated method stub
 			mQueryFragment.mEventHelper.applyListenersInInputState();
 		}
 
 		@Override
 		public void uiRollback() {
-			// TODO Auto-generated method stub
 			mQueryFragment.displayCommonTitle();
 			mQueryFragment.mRightBtn.setVisibility(View.GONE);
 			mQueryFragment.mTitleBtn.setText(R.string.title_click_map);
@@ -269,7 +244,6 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void eventRollback() {
-			// TODO Auto-generated method stub
 		}
 	}
 	
