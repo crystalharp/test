@@ -1034,6 +1034,7 @@ public class CommonUtils {
                     TrafficQueryFragment.submitTrafficQuery(sphinx, start, end, queryType);
                 } else {
                     trafficQueryFragment.setDataNoSuggest(poi, location, queryType);
+                    sphinx.uiStackPop(R.id.view_result_map);
                     sphinx.showView(R.id.view_traffic_query);
                 }
             }

@@ -228,6 +228,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             if (null != commentQuery) {
                 setCommentQuery(commentQuery);
             }
+            refreshDetail();
         }  
         mBodyScv.smoothScrollTo(0, 0);
     }

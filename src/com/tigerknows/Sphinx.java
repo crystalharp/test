@@ -1785,6 +1785,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     
     private void layoutInfoWindow(View view, int max) {
+        view.getLayoutParams().width = LayoutParams.WRAP_CONTENT;
         view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         int width =  view.getMeasuredWidth();
         if (width > max) {
@@ -2455,6 +2456,17 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
             }
             mUIProcessing = false;
+        }
+    }
+    
+    public boolean uiStackPop(int id) {
+        synchronized (mUILock) {
+            for(int i = mUIStack.size()-1; i >= 0; i--) {
+                if (mUIStack.get(i) == id) {
+                    mUIStack.remove(i);
+                }
+            }
+            return false;
         }
     }
     
