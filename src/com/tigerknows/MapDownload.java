@@ -19,7 +19,6 @@ import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -489,24 +488,33 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             StringBuilder s = new StringBuilder();
             for (int i = mDownloadCityList.size()-1; i >= 0; i--) {
                 DownloadCity downloadCity = mDownloadCityList.get(i);
-                CityInfo cityInfo = downloadCity.cityInfo;
-                if (cityInfo.getType() == CityInfo.TYPE_CITY && cityInfo.getId() >= MapEngine.CITY_ID_QUANGUO) {        
-                    if (s.length() > 0) {
-                        s.append(";"); 
-                    }
-                    s.append(cityInfo.getCName());
-                    s.append(","); 
-                    s.append(downloadCity.getTotalSize()); 
-                    s.append(","); 
-                    s.append(downloadCity.getDownloadedSize()); 
-                    s.append(","); 
-                    s.append(downloadCity.getState()); 
+                recordDownloadCity(downloadCity, s);
+                List <DownloadCity> list = downloadCity.childList;
+                for(int j = list.size()-1; j >= 0; j--) {
+                    recordDownloadCity(list.get(j), s);
                 }
             }
             TKConfig.setPref(mThis, TKConfig.PREFS_MAP_DOWNLOAD_CITYS, s.toString());
             mMapEngine.statsMapEnd(mDownloadCityList, true);
         }
         super.onPause();
+    }
+    
+    private void recordDownloadCity(DownloadCity downloadCity, StringBuilder s) {
+        CityInfo cityInfo = downloadCity.cityInfo;
+        if (cityInfo.getType() == CityInfo.TYPE_CITY
+                && cityInfo.getId() > 0) {        
+            if (s.length() > 0) {
+                s.append(";"); 
+            }
+            s.append(cityInfo.getCName());
+            s.append(","); 
+            s.append(downloadCity.getTotalSize()); 
+            s.append(","); 
+            s.append(downloadCity.getDownloadedSize()); 
+            s.append(","); 
+            s.append(downloadCity.getState()); 
+        }
     }
     
     private Runnable updateDownloadCityElv = new Runnable() {
