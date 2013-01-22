@@ -230,12 +230,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             if (poiModel != null) {
                 POIList poiList = poiModel.getAPOIList();
                 if (poiList != null) {
-                    mTitleText = poiList.getShortMessage();
+                    mTitleText = CommonUtils.substring(poiList.getShortMessage(), 7)
+                    + mSphinx.getString(R.string.double_bracket, poiList.getTotal());
                 }
         
                 poiList = poiModel.getBPOIList();
                 if (poiList != null) {
-                    mTitleText = poiList.getShortMessage();
+                    mTitleText = CommonUtils.substring(poiList.getShortMessage(), 7)
+                    + mSphinx.getString(R.string.double_bracket, poiList.getTotal());
                 }
             }
         }

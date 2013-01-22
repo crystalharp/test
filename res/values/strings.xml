@@ -39,6 +39,7 @@
     <string name="distance">距</string>
     <string name="me">我</string>
     <string name="distanceA">距地标</string>
+    <string name="double_bracket">（%1$s）</string>
     
 	<string name="start_text">起点：%1$s</string>
 	<string name="end_text">终点：%1$s</string>

@@ -256,6 +256,7 @@ public class UserLoginActivity extends UserBaseActivity {
 					if (source.validErrorType == ExtValidationEditText.ValidErrorType.PhoneFormatError) {
 						source.selectAll();
 					}
+					showSoftInput(source);
 				}
 			}
 		});
