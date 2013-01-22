@@ -159,7 +159,9 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 	
 	private void validationAction(final ExtValidationEditText source) {
 		CommonUtils.showNormalDialog(UserResetPasswordActivity.this, getString(R.string.title_error_tip), source.msg, 
-				new OnClickListener() {
+		        getString(R.string.confirm),
+                null,
+                new OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -225,7 +227,9 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 	
 	private void dealWith402() {
 		CommonUtils.showNormalDialog(UserResetPasswordActivity.this, getString(R.string.title_error_tip), getString(R.string.response_code_402), 
-				new OnClickListener() {
+		        getString(R.string.confirm),
+                null,
+                new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog,
@@ -244,7 +248,9 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 	
 	private void dealWith403() {
 		CommonUtils.showNormalDialog(UserResetPasswordActivity.this, getString(R.string.title_error_tip), getString(R.string.response_code_403_resetpassword), 
-				new OnClickListener() {
+		        getString(R.string.confirm),
+                null,
+                new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog,
@@ -263,7 +269,9 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 	
 	private void dealWith503() {
 		CommonUtils.showNormalDialog(UserResetPasswordActivity.this, getString(R.string.title_error_tip), getString(R.string.response_code_503), 
-				new OnClickListener() {
+		        getString(R.string.confirm),
+                null,
+                new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog,

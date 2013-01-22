@@ -124,7 +124,9 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 	
 	private void doAction(final ExtValidationEditText source) {
 		CommonUtils.showNormalDialog(UserUpdatePasswordActivity.this, getString(R.string.title_error_tip), source.msg, 
-				new OnClickListener() {
+		        getString(R.string.confirm),
+                null,
+                new OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -165,7 +167,9 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 	
 	private void dealWith405() {
 		CommonUtils.showNormalDialog(UserUpdatePasswordActivity.this, getString(R.string.title_error_tip), getString(R.string.response_code_405), 
-				new OnClickListener() {
+		        getString(R.string.confirm),
+                null,
+                new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog,

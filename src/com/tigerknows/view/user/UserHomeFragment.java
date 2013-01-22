@@ -138,7 +138,9 @@ public class UserHomeFragment extends UserBaseFragment {
 				// TODO 注销登录, 跳转"更多"页面
 				mActionLog.addAction(ActionLog.UserHomeLogout);
 				CommonUtils.showNormalDialog(mSphinx, mContext.getString(R.string.title_error_tip), 
-						mContext.getString(R.string.logout_account_tip), new DialogInterface.OnClickListener() {
+						mContext.getString(R.string.logout_account_tip), mSphinx.getString(R.string.confirm),
+		                null,
+		                new DialogInterface.OnClickListener() {
 
 					@Override
 					public void onClick(DialogInterface dialog,

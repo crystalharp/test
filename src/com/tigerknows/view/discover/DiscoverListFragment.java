@@ -79,8 +79,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private FilterListView mFilterListView = null;
     
-    private PopupWindow mPopupWindow;
-
     private ViewGroup mFilterControlView = null;
     
     private SpringbackListView mResultLsv = null;
@@ -583,9 +581,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     public void doFilter(String name) {
         FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         
-        if (mPopupWindow != null && mPopupWindow.isShowing()) {
-            mPopupWindow.dismiss();
-        }
+        dismissPopupWindow();
         
         DataQuery lastDataQuery = mDataQuery;
         if (lastDataQuery == null) {
@@ -607,9 +603,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     }
     
     public void cancelFilter() {
-        if (mPopupWindow != null && mPopupWindow.isShowing()) {
-            mPopupWindow.dismiss();
-        }
+        dismissPopupWindow();
         if (mResultLsv.isFooterSpringback() && mFilterListView.isTurnPaging()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
         }
@@ -651,9 +645,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 break;
                 
             default:
-                if (mState != STATE_LIST || mDataQuery == null) {
-                    return;
-                }
                 
                 if (mState == STATE_QUERYING && mResultLsv.getState(false) != SpringbackListView.REFRESHING) {
                     return;

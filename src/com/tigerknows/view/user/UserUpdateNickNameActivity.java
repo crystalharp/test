@@ -84,7 +84,9 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 				if (!UserRegistActivity.class.getName().equals(getCallingActivity().getClassName())
 						&& TextUtils.equals(Globals.g_User.getNickName(), nickNameEdt.getText().toString().trim())) {
 					CommonUtils.showNormalDialog(UserUpdateNickNameActivity.this, getString(R.string.title_error_tip), getString(R.string.nickname_no_modify), 
-							new OnClickListener() {
+					        getString(R.string.confirm),
+			                null,
+			                new OnClickListener() {
 
 						@Override
 						public void onClick(DialogInterface dialog,
@@ -246,7 +248,9 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 	
 	private void doAction(final ExtValidationEditText source) {
 		CommonUtils.showNormalDialog(UserUpdateNickNameActivity.this, getString(R.string.title_error_tip), source.msg, 
-				new OnClickListener() {
+		        getString(R.string.confirm),
+                null,
+                new OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -287,7 +291,9 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 	
 	private void dealWith401() {
 		CommonUtils.showNormalDialog(UserUpdateNickNameActivity.this, getString(R.string.title_error_tip), getString(R.string.response_code_401), 
-				new OnClickListener() {
+                getString(R.string.confirm),
+                null,
+                new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog,

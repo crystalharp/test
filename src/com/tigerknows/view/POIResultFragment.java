@@ -59,8 +59,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     private FilterListView mFilterListView = null;
     
-    private PopupWindow mPopupWindow;
-    
     private String mTitleText;
 
     private ViewGroup mFilterControlView = null;
@@ -367,9 +365,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void doFilter(String name) {
         FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         
-        if (mPopupWindow != null && mPopupWindow.isShowing()) {
-            mPopupWindow.dismiss();
-        }
+        dismissPopupWindow();
         DataQuery lastDataQuery = mDataQuery;
         if (lastDataQuery == null) {
             return;
@@ -390,9 +386,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     public void cancelFilter() {
-        if (mPopupWindow != null && mPopupWindow.isShowing()) {
-            mPopupWindow.dismiss();
-        }
+        dismissPopupWindow();
         if (mResultLsv.isFooterSpringback() && mFilterListView.isTurnPaging()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
         }
@@ -410,9 +404,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 break;
                 
             default:
-                if (mState != STATE_LIST || mDataQuery == null) {
-                    return;
-                }
                 
                 if (mState == STATE_QUERYING && mResultLsv.getState(false) != SpringbackListView.REFRESHING) {
                     return;

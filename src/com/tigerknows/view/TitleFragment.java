@@ -36,8 +36,6 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
     
     protected Button rightBtn;
     
-    protected PopupWindow popupWindow;
-    
     protected ListView popupLsv;
     
     @Override
@@ -86,28 +84,28 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
     }
     
     public void showPopupWindow(ListAdapter adapter, OnItemClickListener listener) {
-        if (popupWindow == null) {
+        if (mPopupWindow == null) {
             View view  = mLayoutInflater.inflate(R.layout.title_popup_list, this, false);
             popupLsv = (ListView) view.findViewById(R.id.listview);
             
-            popupWindow = new PopupWindow(view);
-            popupWindow.setWindowLayoutMode(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            popupWindow.setFocusable(true);
+            mPopupWindow = new PopupWindow(view);
+            mPopupWindow.setWindowLayoutMode(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            mPopupWindow.setFocusable(true);
             // 设置允许在外点击消失
-            popupWindow.setOutsideTouchable(true);
+            mPopupWindow.setOutsideTouchable(true);
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
-            popupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
         }
         popupLsv.setOnItemClickListener(listener);
         popupLsv.setAdapter(adapter);
         
-        popupWindow.showAsDropDown(this, 0, 0);
+        mPopupWindow.showAsDropDown(this, 0, 0);
     }
     
     public void dismissPopupWindow() {
-        if (popupWindow != null && popupWindow.isShowing()) {
-            popupWindow.dismiss();
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
         }
     }
 }

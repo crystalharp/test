@@ -211,7 +211,9 @@ public abstract class UserBaseFragment extends BaseFragment {
 		 * @param edittext
 		 */
 		public void showErrorThenSelectAllAndShowSoftkeyboard(int titleResId, int bodyResId, final ExtValidationEditText edittext) {
-			CommonUtils.showNormalDialog(mSphinx, mContext.getString(titleResId), mContext.getString(bodyResId), new DialogInterface.OnClickListener() {
+			CommonUtils.showNormalDialog(mSphinx, mContext.getString(titleResId), mContext.getString(bodyResId), mSphinx.getString(R.string.confirm),
+	                null,
+	                new DialogInterface.OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog,
@@ -234,7 +236,9 @@ public abstract class UserBaseFragment extends BaseFragment {
 		 * @param edittext
 		 */
 		public void showErrorThenClearAndShowSoftkeyboard(int titleResId, int bodyResId, final ExtValidationEditText edittext) {
-			CommonUtils.showNormalDialog(mSphinx, mContext.getString(titleResId), mContext.getString(bodyResId), new DialogInterface.OnClickListener() {
+			CommonUtils.showNormalDialog(mSphinx, mContext.getString(titleResId), mContext.getString(bodyResId), mSphinx.getString(R.string.confirm),
+	                null,
+	                new DialogInterface.OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog,

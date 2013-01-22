@@ -34,6 +34,7 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 /**
@@ -70,6 +71,8 @@ public class BaseFragment extends LinearLayout {
     public BaseQuery mBaseQuerying;
     
     public TKAsyncTask mTkAsyncTasking;
+    
+    protected PopupWindow mPopupWindow;
     
     public DialogInterface.OnClickListener mCancelLoginListener = new DialogInterface.OnClickListener() {
         
@@ -241,7 +244,13 @@ public class BaseFragment extends LinearLayout {
     public void onPause() {
         // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onPause()"+mActionTag);
-        mSphinx.hideSoftInput();
+        int id = getId();
+        if (id != R.id.view_invalid
+                && id != R.id.view_title
+                && id != R.id.view_menu) {
+            mSphinx.hideSoftInput();
+
+        }
     }
 
     public void onPrepareOptionsMenu(Menu menu) {
@@ -253,7 +262,9 @@ public class BaseFragment extends LinearLayout {
         // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onResume()"+mActionTag);
         int id = getId();
-        if (id != R.id.view_invalid) {
+        if (id != R.id.view_invalid
+                && id != R.id.view_title
+                && id != R.id.view_menu) {
             mSphinx.replace(this);   
             
             mTitleFragment = mSphinx.getTitleFragment();
@@ -333,5 +344,11 @@ public class BaseFragment extends LinearLayout {
     
     public boolean isShowing() {
         return mSphinx.uiStackPeek() == getId();
+    }
+    
+    public void dismissPopupWindow() {
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
+        }
     }
 }

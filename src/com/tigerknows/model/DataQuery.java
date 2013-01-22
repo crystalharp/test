@@ -392,6 +392,10 @@ public final class DataQuery extends BaseQuery {
                         nfv = Filter_Category_Order_POI.version;
                     }
                     addFilterParameters(criteria, requestParameters, cfv, nfv);
+                    String poiid = poi.getUUID();
+                    if (TextUtils.isEmpty(poiid) == false) {
+                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_POI_ID, poiid));
+                    }
                 }
 
             } else if (DATA_TYPE_DISCOVER.equals(dataType)) { 
