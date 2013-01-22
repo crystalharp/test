@@ -40,8 +40,12 @@
 				    android:isScrollContainer="true"
 				    android:layout_marginLeft="4dp"
 				    android:layout_marginRight="4dp"
-				    android:hint="@string/comment_content_hit3"
-				    android:background="@color/transparent"/>
+				    android:paddingBottom="24dp"
+				    android:focusable="true"
+				    android:focusableInTouchMode="true"
+				    android:hint="@string/poi_comment_intput_hit"
+				    android:background="@color/transparent"
+				    />
 			        
 		        <TextView
 			        android:id="@+id/text_limit_txv"

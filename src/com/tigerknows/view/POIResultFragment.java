@@ -130,7 +130,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             str = mContext.getString(R.string.at_location_searching);
         }
         mQueryingTxv.setText(str);
-        mTitleText = lastDataQuerying.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD);
+        mTitleText = mSphinx.getString(R.string.searching_title);
         
         this.mState = STATE_QUERYING;
         updateView();
@@ -232,17 +232,13 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             if (poiModel != null) {
                 POIList poiList = poiModel.getAPOIList();
                 if (poiList != null) {
-                    str = poiList.getMessage();
+                    mTitleText = poiList.getShortMessage();
                 }
-                long aTotal = poiList.getTotal();
         
                 poiList = poiModel.getBPOIList();
                 if (poiList != null) {
-                    str = poiList.getMessage();
+                    mTitleText = poiList.getShortMessage();
                 }
-                long bTotal = poiList.getTotal();
-                
-                mTitleText = mSphinx.getString(R.string.search_result, dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_KEYWORD), aTotal > 1 ? aTotal : bTotal);
             }
         }
         
@@ -418,6 +414,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     return;
                 }
                 
+                if (mState == STATE_QUERYING && mResultLsv.getState(false) != SpringbackListView.REFRESHING) {
+                    return;
+                }
+                
                 if (mTkAsyncTasking != null) {
                     mTkAsyncTasking.stop();
                 }
@@ -443,6 +443,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         private Drawable icAPOI;
         private String distanceA;
         private Drawable icComment;
+        private Drawable icAddress;
         private int aColor;
         private int bColor;
         private Context context;
@@ -460,6 +461,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             Resources resources = context.getResources();
             icAPOI = resources.getDrawable(R.drawable.ic_a_poi);
             icComment = resources.getDrawable(R.drawable.ic_comment);
+            icAddress = resources.getDrawable(R.drawable.ic_discover_address);
             aColor = resources.getColor(R.color.blue);
             bColor = resources.getColor(R.color.black_dark);
             distanceA = context.getString(R.string.distanceA);
@@ -548,8 +550,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 str = poi.getAddress();
                 if (!TextUtils.isEmpty(str)) {
                     commentTxv.setText(str);
+                    icAddress.setBounds(0, 0, icAddress.getIntrinsicWidth(), icAddress.getIntrinsicHeight());
                     commentTxv.setCompoundDrawablePadding(Util.dip2px(Globals.g_metrics.density, 4));
-                    commentTxv.setCompoundDrawables(null, null, null, null);
+                    commentTxv.setCompoundDrawables(icAddress, null, null, null);
                     commentTxv.setVisibility(View.VISIBLE);
                 } else {
                     commentTxv.setVisibility(View.INVISIBLE);
@@ -678,7 +681,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     mResultLsv.setFooterSpringback(true);
                     return;
                 }
-                mRetryView.setText(R.string.network_failed);
+                mRetryView.setText(R.string.touch_screen_and_retry);
                 mState = STATE_ERROR;
                 updateView();
                 return;

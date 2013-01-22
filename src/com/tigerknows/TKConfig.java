@@ -56,7 +56,8 @@ public class TKConfig {
     public static final int BORDER_default=0;
     public static final int TILE_THREAD_COUNT_default=5;
     
-    public static boolean CACHE_BITMAP_TO_MEMORY = false;
+    public static boolean CACHE_BITMAP_TO_MEMORY = true;
+    public static int CACHE_SIZE = 32;
     
     
     //application level configuration

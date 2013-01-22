@@ -23,7 +23,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.TextView.OnEditorActionListener;
 
@@ -150,7 +150,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText(R.string.nearby_search);
+        mTitleBtn.setText(mSphinx.getString(R.string.at_where_search, CommonUtils.substring(mPOI.getName(), 6)));
         mRightBtn.setVisibility(View.INVISIBLE);
         
         reset();
@@ -282,6 +282,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     
     private void submitQuery(String keyword, boolean isInput) {
         if (!TextUtils.isEmpty(keyword)) {
+            mSphinx.hideSoftInput(mKeywordEdt.getInput());
             DataQuery poiQuery = new DataQuery(mContext);
             POI requestPOI = mPOI;
             int cityId = mSphinx.getMapEngine().getCityId(requestPOI.getPosition());

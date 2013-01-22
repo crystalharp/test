@@ -11,6 +11,8 @@ import java.util.List;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Spannable;
@@ -36,9 +38,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.util.Util;
@@ -104,6 +107,16 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     private TextView mCategoryTxv;
 
     private TextView mMoneyTxv;
+
+    private TextView mDistanceTxv;
+    
+    private TextView mDistanceFromTxv;
+    
+    private Drawable mIcAPOI;
+    
+    private String mDistance;
+    
+    private String mDistanceA;
 
     private RatingBar mStartsRtb;
 
@@ -183,7 +196,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 refreshComment();
             }
         });
-        
+
+        Resources resources = mSphinx.getResources();
+        mIcAPOI = resources.getDrawable(R.drawable.ic_a_poi);
+        mDistance = mSphinx.getString(R.string.distance);
+        mDistanceA = mSphinx.getString(R.string.distanceA);
         return mRootView;
     }
 
@@ -255,16 +272,40 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         int money = poi.getPerCapity();
         if (money > -1) {
             mMoneyTxv.setText(mContext.getString(R.string.yuan, money));
+            mMoneyTxv.setVisibility(View.VISIBLE);
         } else {
-            mMoneyTxv.setText("");
+            mMoneyTxv.setVisibility(View.GONE);
         }
-
+        
+        String distance = poi.getToCenterDistance();
+        if (!TextUtils.isEmpty(distance)) {
+            if (distance.startsWith(mDistanceA)) {
+                mIcAPOI.setBounds(0, 0, mIcAPOI.getIntrinsicWidth(), mIcAPOI.getIntrinsicHeight());
+                mDistanceFromTxv.setCompoundDrawables(null, null, mIcAPOI, null);
+                mDistanceFromTxv.setText(mDistance);
+                mDistanceTxv.setText(distance.replace(mDistanceA, ""));
+            } else {
+                mDistanceFromTxv.setText("");
+                mDistanceFromTxv.setCompoundDrawables(null, null, null, null);
+                mDistanceTxv.setText(distance);
+            }
+        } else {
+            mDistanceFromTxv.setText("");
+            mDistanceFromTxv.setCompoundDrawables(null, null, null, null);
+            mDistanceTxv.setText("");
+        }
+        
+        RelativeLayout.LayoutParams layoutParams = (RelativeLayout.LayoutParams)mMoneyTxv.getLayoutParams();
         SpannableStringBuilder description = getDescription();
         if (description.length() > 0) {
             mDescriptionTxv.setText(description);
             mDescriptionTxv.setVisibility(View.VISIBLE);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 0);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 1);
         } else {
             mDescriptionTxv.setVisibility(View.GONE);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT, 1);
+            layoutParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, 0);
         }
         
         /**
@@ -293,8 +334,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 mAddressView.setBackgroundResource(R.drawable.list_single);
                 mAddressTelephoneDividerImv.setVisibility(View.GONE);
             } else {
-                mTelephoneView.setBackgroundResource(R.drawable.list_header);
-                mAddressView.setBackgroundResource(R.drawable.list_footer);
+                mTelephoneView.setBackgroundResource(R.drawable.list_footer);
+                mAddressView.setBackgroundResource(R.drawable.list_header);
             }
             mAddressAndPhoneView.setVisibility(View.VISIBLE);
         } else {
@@ -475,6 +516,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mCategoryTxv = (TextView) mRootView.findViewById(R.id.category_txv);
         mMoneyTxv = (TextView) mRootView.findViewById(R.id.money_txv);
         mDescriptionTxv = (TextView)mRootView.findViewById(R.id.description_txv);
+        mDistanceTxv = (TextView)mRootView.findViewById(R.id.distance_txv);
+        mDistanceFromTxv = (TextView) mRootView.findViewById(R.id.distance_from_txv);
         
         mPOIBtn = (Button) mRootView.findViewById(R.id.poi_btn);
         mShareBtn = (Button)mRootView.findViewById(R.id.share_btn);
@@ -1066,8 +1109,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     tuangou.setFendian(((FendianQueryResponse) response).getFendian());
                     List<Tuangou> list = new ArrayList<Tuangou>();
                     list.add(tuangou);
-                    mSphinx.getTuangouDetailFragment().setData(list, 0, null);
                     mSphinx.showView(R.id.view_tuangou_detail);
+                    mSphinx.getTuangouDetailFragment().setData(list, 0, null);
                 } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
                     if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
                         return;
@@ -1075,8 +1118,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     Yanchu yanchu = ((YanchuQueryResponse) response).getYanchu();
                     List<Yanchu> list = new ArrayList<Yanchu>();
                     list.add(yanchu);
-                    mSphinx.getYanchuDetailFragment().setData(list, 0, null);
                     mSphinx.showView(R.id.view_yanchu_detail);
+                    mSphinx.getYanchuDetailFragment().setData(list, 0, null);
                 } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
                     if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
                         return;
@@ -1084,8 +1127,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     Zhanlan zhanlan = ((ZhanlanQueryResponse) response).getZhanlan();
                     List<Zhanlan> list = new ArrayList<Zhanlan>();
                     list.add(zhanlan);
-                    mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
                     mSphinx.showView(R.id.view_zhanlan_detail);
+                    mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
                 }
             }
         }

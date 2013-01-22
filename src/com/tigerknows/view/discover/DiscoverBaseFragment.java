@@ -20,7 +20,6 @@ public class DiscoverBaseFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        Globals.getAsyncImageLoader().setViewToken(toString());
     }
 
 }

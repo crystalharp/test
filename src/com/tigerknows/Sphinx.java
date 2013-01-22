@@ -61,7 +61,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 
 import com.decarta.CONFIG;
 import com.decarta.Globals;
@@ -256,6 +256,27 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     }
     
     InfoWindowTrafficButtonListener mInfoWindowTrafficButtonListener = new InfoWindowTrafficButtonListener();
+    
+    Runnable mLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            mHandler.removeCallbacks(mActualLoadedDrawableRun);
+            mHandler.post(mActualLoadedDrawableRun);
+        }
+    };
+    
+    Runnable mActualLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+        	InfoWindow infoWindow = mMapView.getInfoWindow();
+            OverlayItem overlayItem = infoWindow.getAssociatedOverlayItem();
+              if (infoWindow.isVisible() && overlayItem != null) {
+            	  showInfoWindow(overlayItem);
+              }
+        }
+    };
 
     
     class InfoWindowLongListener implements View.OnTouchListener {
@@ -1481,8 +1502,8 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         if (intent != null) {
             int sourceViewId = intent.getIntExtra(BaseActivity.SOURCE_VIEW_ID, R.id.view_invalid);
             if (sourceViewId == R.id.activity_poi_comment) {
-                TKConfig.setPref(this, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(3));
-                getMoreFragment().refreshMoreBtn(true);
+                TKConfig.setPref(this, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(MoreFragment.SHOW_COMMENT_TIP_TIMES));
+                getMoreFragment().refreshMoreBtn(false);
                 mHandler.post(mOnNewIntentStamp);
             
             // 登录之后的返回
@@ -2012,7 +2033,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             layoutInfoWindow(nameTxv, max);
             
             if (tkDrawable != null) {
-                Drawable drawable = tkDrawable.loadDrawable(null, null, null);
+                Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, getResultMapFragment().toString());
                 if(drawable != null) {
                     pictureImv.setBackgroundDrawable(drawable);
                 } else {
@@ -2054,7 +2075,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             layoutInfoWindow(nameTxv, max);
             
             if (tkDrawable != null) {
-                Drawable drawable = tkDrawable.loadDrawable(null, null, null);
+                Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, getResultMapFragment().toString());
                 if(drawable != null) {
                     pictureImv.setBackgroundDrawable(drawable);
                 } else {
@@ -2215,6 +2236,10 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     
     public void hideSoftInput() {
         mSoftInputManager.hideSoftInput();
+    }
+    
+    public void hideSoftInput(View view) {
+        mSoftInputManager.hideSoftInput(view);
     }
     // TODO: soft input end
     
@@ -2440,6 +2465,16 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
     public Object mUILock = new Object();
     public boolean mUIProcessing = false;
     private ArrayList<Integer> mUIStack = new ArrayList<Integer>();
+    
+    public int uiStackPeekBottom(){
+        synchronized (mUILock) {
+        	if(mUIStack.size()>0){
+        		return mUIStack.get(0);
+        	}else{
+        		return R.id.view_home;
+        	}
+        }
+    }
     
     public void uiStackPush(int id) {
         synchronized (mUILock) {
@@ -3614,7 +3649,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             	} else {
                 	mMapView.panToPosition(overlayItem.getPosition());
                 }
-            	itemizedOverlay.isShowInPreferZoom = false;
             } else {
             	mMapView.panToPosition(overlayItem.getPosition());
             }

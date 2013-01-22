@@ -14,7 +14,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteException;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 
 /**
  * 

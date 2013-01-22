@@ -41,7 +41,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 
 /**
  * @author Peng Wenyue
@@ -204,6 +204,8 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
         mTKLocationManager.removeUpdates();
 
         unregisterReceiver(mSDCardEventReceiver);
+        
+        com.tigerknows.widget.Toast.cancel();
         super.onPause();
     }
     
@@ -294,6 +296,10 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
     public void hideSoftInput() {
         mSoftInputManager.hideSoftInput();
     }
+    
+    public void hideSoftInput(View view) {
+        mSoftInputManager.hideSoftInput(view);
+    }
     // TODO: soft input end
 
     // TODO: query begin
@@ -317,7 +323,7 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
     
     public static boolean checkReLogin(BaseQuery baseQuery, final Activity activity, boolean sourceUserHome,
             final int sourceViewIdLogin, final int targetViewIdLoginSuccess, final int targetViewIdLoginFailed,
-            DialogInterface.OnClickListener cancelOnClickListener) {
+            final DialogInterface.OnClickListener cancelOnClickListener) {
         final Response response = baseQuery.getResponse();
         if (response != null) {
             int responseCode = response.getResponseCode();
@@ -346,7 +352,11 @@ public class BaseActivity extends Activity implements TKAsyncTask.EventListener 
                                         intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, targetViewIdLoginSuccess);
                                         intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, targetViewIdLoginFailed);
                                         activity.startActivityForResult(intent, R.id.activity_user_login);
-                                    }
+                                    	} else {
+                                		    if (cancelOnClickListener != null) {
+                                		    	cancelOnClickListener.onClick(arg0, id);
+                                    		    }
+                                    	}
                                 }
                             });
                 } else {

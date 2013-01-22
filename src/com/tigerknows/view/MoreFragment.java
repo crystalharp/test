@@ -50,6 +50,8 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
 
     static final String TAG = "MoreFragment";
     
+    public static final int SHOW_COMMENT_TIP_TIMES = 3;
+    
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private ListView mListLsv;
@@ -76,8 +78,6 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     public static final int UPGRADE_TYPE_COMMENT = 2;
     public static final int UPGRADE_TYPE_SOFTWARE = 3;
     private int mUpgradeType = UPGRADE_TYPE_NONE;
-    
-    private int mShowCommentTipTimes = 0;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -115,7 +115,6 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         mTitleBtn.setText(R.string.more);
         mRightBtn.setVisibility(View.INVISIBLE);
 
-        mMenuFragment.updateMenuStatus(R.id.more_btn);
         mMenuFragment.display();
         
         refreshUserEntrance();
@@ -135,19 +134,20 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
             }
         }
 
-        if (isCreate) {
-            String commentTip = TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP);
-            if (!TextUtils.isEmpty(commentTip)) {
-                mShowCommentTipTimes = Integer.parseInt(commentTip);
-                if (mShowCommentTipTimes < 3) {
-                    TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(mShowCommentTipTimes+1));
-                }
-            } else {
-                TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(1));
+        int showCommentTipTimes = 0;
+        String commentTip = TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP);
+        if (!TextUtils.isEmpty(commentTip)) {
+            showCommentTipTimes = Integer.parseInt(commentTip);
+            if (isCreate) {
+                TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(showCommentTipTimes+1));
+            }
+        } else {
+            if (isCreate) {
+                TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(0));
             }
         }
         
-        if (mShowCommentTipTimes < 3) {
+        if (showCommentTipTimes < SHOW_COMMENT_TIP_TIMES) {
             setUpgrade(MoreFragment.UPGRADE_TYPE_COMMENT);
             return;
         }

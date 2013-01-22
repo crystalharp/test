@@ -14,7 +14,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 
 import com.decarta.Globals;
 import com.tigerknows.ActionLog;
@@ -82,7 +82,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 				}
 				
 				if (!UserRegistActivity.class.getName().equals(getCallingActivity().getClassName())
-						&& TextUtils.equals(Globals.g_User.getNickName(), nickNameEdt.getText().toString())) {
+						&& TextUtils.equals(Globals.g_User.getNickName(), nickNameEdt.getText().toString().trim())) {
 					CommonUtils.showNormalDialog(UserUpdateNickNameActivity.this, getString(R.string.title_error_tip), getString(R.string.nickname_no_modify), 
 							new OnClickListener() {
 

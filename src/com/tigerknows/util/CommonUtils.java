@@ -61,7 +61,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
@@ -1032,7 +1032,7 @@ public class CommonUtils {
                     }
                     TrafficQueryFragment.submitTrafficQuery(sphinx, start, end, queryType);
                 } else {
-                    trafficQueryFragment.setDataNoSuggest(poi, location);
+                    trafficQueryFragment.setDataNoSuggest(poi, location, queryType);
                     sphinx.showView(R.id.view_traffic_query);
                 }
             }
@@ -1113,5 +1113,15 @@ public class CommonUtils {
             }
         }
         textView.setText(word);
+    }
+    
+    public static String substring(String text, int length) {
+        if (text == null) {
+            return text;
+        }
+        if (text.length() > length) {
+            text = text.substring(0, length) + "...";
+        }
+        return text;
     }
 }

@@ -27,7 +27,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.Globals;
@@ -148,6 +148,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         	//不用顶部弹出切换
         	mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
         }
+        setFavoriteState(mFavorateBtn, line.checkFavorite(mContext));
 
         history();
     }

@@ -120,6 +120,7 @@ public class POICommentList extends BaseActivity {
                 }
             } else {
                 finish();
+                return;
             }
         }
     }

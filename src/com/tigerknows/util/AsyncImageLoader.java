@@ -22,10 +22,9 @@ import android.os.Handler;
 
 public class AsyncImageLoader {
     
-    public static int CACHE_SIZE = 32;
     
     // 为了加快速度，在内存中开启缓存（主要应用于重复图片较多时，或者同一个图片要多次被访问，比如在ListView时来回滚动）
-    public LinkedHashMap<String, SoftReference<BitmapDrawable>> imageCache = new LinkedHashMap<String, SoftReference<BitmapDrawable>>(CACHE_SIZE,0.75f,true);
+    public LinkedHashMap<String, SoftReference<BitmapDrawable>> imageCache = new LinkedHashMap<String, SoftReference<BitmapDrawable>>(TKConfig.CACHE_SIZE,0.75f,true);
 
     private ExecutorService executorService = null; // 固定五个线程来执行任务
 
@@ -75,13 +74,11 @@ public class AsyncImageLoader {
             public void run() {
                 try {
                     final BitmapDrawable bitmapDrawable = loadImageFromUrl(context, imageUrl);
-
                     if (bitmapDrawable != null) {
                         if (TKConfig.CACHE_BITMAP_TO_MEMORY) {
                             imageCache.put(imageUrl.url, new SoftReference<BitmapDrawable>(bitmapDrawable));
                         }
                     }
-                    
                     handler.post(new Runnable() {
                         public void run() {
                             callback.imageLoaded(bitmapDrawable);

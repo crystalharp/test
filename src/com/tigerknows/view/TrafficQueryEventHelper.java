@@ -20,8 +20,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import com.tigerknows.widget.Toast;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.location.Position;
@@ -293,19 +293,16 @@ public class TrafficQueryEventHelper {
             	if (mQueryFragment.mLogHelper.logForTabChange)
             		mQueryFragment.mActionLog.addAction(ActionLog.TrafficBusTab);
             	mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
-            	mQueryFragment.initStartContent();
                 break;
             case R.id.traffic_drive_rbt:
             	if (mQueryFragment.mLogHelper.logForTabChange)
             		mQueryFragment.mActionLog.addAction(ActionLog.TrafficDriveTab);
             	mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
-            	mQueryFragment.initStartContent();
                 break;
             case R.id.traffic_walk_rbt:
             	if (mQueryFragment.mLogHelper.logForTabChange)
             		mQueryFragment.mActionLog.addAction(ActionLog.TrafficWalkTab);
             	mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
-            	mQueryFragment.initStartContent();
                 break;
             case R.id.traffic_busline_rbt:
             	if (mQueryFragment.mLogHelper.logForTabChange)

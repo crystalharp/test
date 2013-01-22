@@ -109,21 +109,22 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
     
     private View mNotimeView = null;
     
-    protected Runnable mActualLoadedDrawableRun = new Runnable() {
-        
-        @Override
-        public void run() {
-            Drawable drawable = mData.getPicturesDetail().loadDrawable(null, null, null);
-            if(drawable != null) {
-                mPictureImv.setImageDrawable(drawable);
-            }
-        }
-    };
-    
     public DianyingDetailView(Sphinx sphinx, DianyingDetailFragment parentFragment) {
         super(sphinx, parentFragment, R.layout.dianying_detail);
         findViews();
         mActionTag = ActionLog.DianyingXiangqing;
+        
+        mActualLoadedDrawableRun = new Runnable() {
+            
+            @Override
+            public void run() {
+                Drawable drawable = mData.getPicturesDetail().loadDrawable(null, null, null);
+                if(drawable != null) {
+                    mPictureImv.setImageDrawable(drawable);
+                }
+            }
+        };
+        
     }
 
     @Override

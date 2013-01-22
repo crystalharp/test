@@ -145,7 +145,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mTitleFragment.hide();
         mCityBtn.setText(Globals.g_Current_City_Info.getCName());
         
-        mMenuFragment.updateMenuStatus(R.id.poi_btn);
         mMenuFragment.display();
 
         refreshLocationView();

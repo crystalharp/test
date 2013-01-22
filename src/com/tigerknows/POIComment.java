@@ -40,7 +40,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
@@ -65,7 +64,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.RatingBar.OnRatingBarChangeListener;
 
@@ -222,6 +221,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             }
             if (mPOI == null) {
                 finish();
+                return;
             }
         }
 
@@ -358,14 +358,6 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         } else {
             mExpandView.setVisibility(View.GONE);
         }
-
-        new Handler().postDelayed(new Runnable() {
-            
-            @Override
-            public void run() {
-                showSoftInput(mContentEdt);
-            }
-        }, 512);
     }
     
     @Override

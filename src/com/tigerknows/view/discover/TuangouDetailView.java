@@ -134,34 +134,6 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
 	int[] locationScv = new int[]{0, 1};
 	int[] locationBar = new int[]{0, 2};
 	  
-    protected Runnable mActualLoadedDrawableRun = new Runnable() {
-        
-        @Override
-        public void run() {
-            Drawable drawable = mData.getPicturesDetail().loadDrawable(null, null, null);
-            if(drawable != null) {
-                mPictureImv.setBackgroundDrawable(drawable);
-            }
-            TKDrawable tkDrawable = mData.getContentPic();
-            if (tkDrawable != null) {
-                drawable = tkDrawable.loadDrawable(null, null, null);
-                if(drawable != null) {
-                    mContentTxv.setText(null);
-                    mContentTxv.setBackgroundDrawable(drawable);
-                    ViewGroup.LayoutParams layoutParams = mContentTxv.getLayoutParams();
-                    layoutParams.width = mPictureDetailWidth;
-                    layoutParams.height = (int) (mPictureDetailWidth*((float)drawable.getIntrinsicHeight()/drawable.getIntrinsicWidth()));
-                }
-            }
-            Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), null, null);
-            if (shangjia != null) {
-                mShangjiaMarkerImv.setImageDrawable(shangjia.getMarker());
-            } else {
-                mShangjiaMarkerImv.setImageDrawable(null);
-            }
-        }
-    };
-    
     protected DialogInterface.OnClickListener mCancelLoginListener = new DialogInterface.OnClickListener() {
         
         @Override
@@ -195,6 +167,35 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         layoutParams.height = height;
         
         mPictureDetailWidth = (int)(Globals.g_metrics.widthPixels);
+        
+        mActualLoadedDrawableRun = new Runnable() {
+            
+            @Override
+            public void run() {
+                Drawable drawable = mData.getPicturesDetail().loadDrawable(null, null, null);
+                if(drawable != null) {
+                    mPictureImv.setBackgroundDrawable(drawable);
+                }
+                TKDrawable tkDrawable = mData.getContentPic();
+                if (tkDrawable != null) {
+                    drawable = tkDrawable.loadDrawable(null, null, null);
+                    if(drawable != null) {
+                        mContentTxv.setText(null);
+                        mContentTxv.setBackgroundDrawable(drawable);
+                        ViewGroup.LayoutParams layoutParams = mContentTxv.getLayoutParams();
+                        layoutParams.width = mPictureDetailWidth;
+                        layoutParams.height = (int) (mPictureDetailWidth*((float)drawable.getIntrinsicHeight()/drawable.getIntrinsicWidth()));
+                    }
+                }
+                Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), null, null);
+                if (shangjia != null) {
+                    mShangjiaMarkerImv.setImageDrawable(shangjia.getMarker());
+                } else {
+                    mShangjiaMarkerImv.setImageDrawable(null);
+                }
+            }
+        };
+        
     }
 
     private final int FLOATING_BAR_MSG_DELAY = 100; 
@@ -251,9 +252,11 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         
         if (TextUtils.isEmpty(mFilterArea) || mData.getBranchNum() < 2) {
             mNearbyFendianTxv.setVisibility(View.GONE);
+            mNearbyFendianView.setClickable(false);
         } else {
             mNearbyFendianTxv.setText(mFilterArea + mSphinx.getString(R.string.tuangou_detail_nearby, mData.getBranchNum()));
             mNearbyFendianTxv.setVisibility(View.VISIBLE);
+            mNearbyFendianView.setClickable(true);
         }
 
         String description = mData.getDescription();
@@ -507,20 +510,20 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
 	      	mBodyScv.getLocationInWindow(locationScv);
 	      	mBarView.getLocationInWindow(locationBar);
     	}
-    	
-      	//System.out.println(locationScv[1] + ":" + locationBar[1]);
       	
       	if(locationBar[1]<=locationScv[1]){
       		
       		//Judge original visibility to avoid unnecessary message loops
       		if(mBarView_2.getVisibility()==View.INVISIBLE){
-            		mBarView_2.setVisibility(View.VISIBLE);
+        		mBarView.setVisibility(View.INVISIBLE);
+        		mBarView_2.setVisibility(View.VISIBLE);
             		return true;
       		}
       		
       	}else{
-      		if(mBarView_2.getVisibility()==View.VISIBLE){
-            		mBarView_2.setVisibility(View.INVISIBLE);
+      		if(mBarView_2.getVisibility()==View.VISIBLE){                                                                                                                              
+        		mBarView.setVisibility(View.VISIBLE);
+        		mBarView_2.setVisibility(View.INVISIBLE);
             		return true;
       		}
       	}

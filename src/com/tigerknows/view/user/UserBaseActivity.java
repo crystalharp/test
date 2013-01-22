@@ -16,7 +16,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import com.tigerknows.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;

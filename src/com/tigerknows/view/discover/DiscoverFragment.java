@@ -106,7 +106,6 @@ public class DiscoverFragment extends DiscoverBaseFragment {
     public void onResume() {
         super.onResume();
         mTitleFragment.hide();
-        mMenuFragment.updateMenuStatus(R.id.discover_btn);
         mMenuFragment.display();
         mSphinx.getHomeFragment().refreshLocationView();
         if (mCityId != Globals.g_Current_City_Info.getId()) {
@@ -382,9 +381,11 @@ public class DiscoverFragment extends DiscoverBaseFragment {
             for(int i = mDiscoverCategoryList.size()-1; i >= 0; i--) {
                 mDiscoverCategoryList.get(i).init(new XMap());
             }
-            for(int i = mDiscoverCategoryAdapter.getList().size()-1; i >= 0; i--) {
-                DiscoverCategory discoverCategory = getDiscoverCategoryByType(mDiscoverCategoryList, mDiscoverCategoryAdapter.getList().get(i).getType());
-                mDiscoverCategoryAdapter.getListView().get(i).setData(discoverCategory);
+            if (mDiscoverCategoryAdapter != null) {
+                for(int i = mDiscoverCategoryAdapter.getList().size()-1; i >= 0; i--) {
+                    DiscoverCategory discoverCategory = getDiscoverCategoryByType(mDiscoverCategoryList, mDiscoverCategoryAdapter.getList().get(i).getType());
+                    mDiscoverCategoryAdapter.getListView().get(i).setData(discoverCategory);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -447,12 +448,12 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                             DiscoverCategory discoverCategory = new DiscoverCategory(value);
                             mDiscoverCategoryList.add(discoverCategory);
                         }
-                        value = Long.parseLong(BaseQuery.DATA_TYPE_ZHANLAN);
+                        value = Long.parseLong(BaseQuery.DATA_TYPE_YANCHU);
                         if (valueList.contains(value)) {
                             DiscoverCategory discoverCategory = new DiscoverCategory(value);
                             mDiscoverCategoryList.add(discoverCategory);
                         }
-                        value = Long.parseLong(BaseQuery.DATA_TYPE_YANCHU);
+                        value = Long.parseLong(BaseQuery.DATA_TYPE_ZHANLAN);
                         if (valueList.contains(value)) {
                             DiscoverCategory discoverCategory = new DiscoverCategory(value);
                             mDiscoverCategoryList.add(discoverCategory);
