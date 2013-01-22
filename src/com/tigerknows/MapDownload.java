@@ -773,6 +773,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         }
         ChangeCity.makeSuggestCityList(sAllAddCityInfoList, mSuggestCityItemList, userInput, mNotFindCity, mAddCityElv, mSuggestCityLsv);
         mSuggestCityAdapter.notifyDataSetChanged();
+        mSuggestCityLsv.setSelectionFromTop(0, 0);
     }
     
     private void addDownloadCity(CityInfo addCityInfo, int state) {

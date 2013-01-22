@@ -116,7 +116,8 @@ public class SpringbackListView extends ListView {
             if ((headerSpringback && getFirstVisiblePosition() == 0) && !isRecoredHeader) {  
                 startY = (int) event.getY();  
                 isRecoredHeader = true;  
-            } else if ((footerSpringback && getLastVisiblePosition() == getCount()-1) && !isRecoredFooter) {  
+            }
+            if ((footerSpringback && getLastVisiblePosition() == getCount()-1) && !isRecoredFooter) {  
                 startY = (int) event.getY();  
                 isRecoredFooter = true;  
                 LogWrapper.d(TAG, "记录按下时的位置:"+event.getY());  
@@ -146,7 +147,8 @@ public class SpringbackListView extends ListView {
                 }  
       
                 isRecoredHeader = false;  
-            } else if (footerSpringback && isRecoredFooter) {
+            }
+            if (footerSpringback && isRecoredFooter) {
                 if (stateFooter != REFRESHING) {  
                     if (stateFooter == DONE) {  
                         LogWrapper.d(TAG, "什么都不做");  
@@ -177,7 +179,8 @@ public class SpringbackListView extends ListView {
             if ((headerSpringback && getFirstVisiblePosition() == 0) && !isRecoredHeader) {  
                 startY = tempY;  
                 isRecoredHeader = true;  
-            } else if ((footerSpringback && getLastVisiblePosition() == getCount()-1) && !isRecoredFooter) {  
+            }
+            if ((footerSpringback && getLastVisiblePosition() == getCount()-1) && !isRecoredFooter) {  
                 startY = tempY;  
                 isRecoredFooter = true;  
             }  
@@ -244,7 +247,8 @@ public class SpringbackListView extends ListView {
                     headerView.setPadding(0, temp > 0 ? temp : 0, 0, 0);  
                     headerView.invalidate();  
                 }  
-            } else if (footerSpringback && stateFooter != REFRESHING && isRecoredFooter && tempY > 0 && tempY - startY < 0 && footerView != null){
+            }
+            if (footerSpringback && stateFooter != REFRESHING && isRecoredFooter && tempY > 0 && tempY - startY < 0 && footerView != null){
                 
                 // 可以松开刷新了   
                 if (stateFooter == RELEASE_TO_REFRESH) {  

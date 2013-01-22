@@ -61,6 +61,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     private int mMyLocationViewHeight;
     private int mCategoryBtnPadding;
     private int mCategoryPadding = 0;
+
+    private View mHeaderView;
+    private View mFooterView;
     
     private String[] mCategoryNameList;
     private final int[] mCategoryResIdList = {R.drawable.category_eat,
@@ -123,9 +126,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
             categoryList.add(categorylist);
         }
         
-        View v = new LinearLayout(mContext);
-        mCategoryLsv.addHeaderView(v);
-        mCategoryLsv.addFooterView(v);
+        mHeaderView = new LinearLayout(mContext);
+        mFooterView = new LinearLayout(mContext);
+        mCategoryLsv.addHeaderView(mHeaderView);
+        mCategoryLsv.addFooterView(mFooterView);
         
         mCategoryAdapter = new CategoryAdapter(mContext, categoryList);
         mCategoryLsv.setAdapter(mCategoryAdapter);
@@ -148,12 +152,13 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mMenuFragment.display();
 
         refreshLocationView();
+        // 将mCategoryLsv滚动到最顶
+        mCategoryLsv.changeHeaderViewByState(true, SpringbackListView.DONE);
         mCategoryLsv.setSelectionFromTop(0, 0);
     }
 
     @Override
     public void onPause() {
-        mCategoryLsv.setSelectionFromTop(0, 0);
         super.onPause();
     }
 
