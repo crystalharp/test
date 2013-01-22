@@ -245,8 +245,6 @@ public class TrafficQueryFragment extends BaseFragment {
     	mSphinx.setTouchMode(TouchMode.NORMAL);
     	mStart.clear();
     	mEnd.clear();
-    	//TODO:是否需要恢复查询？
-//    	mCheckBtn = R.id.traffic_transfer_rbt;
     	
     	/*
     	 * BUG 187
@@ -732,7 +730,7 @@ public class TrafficQueryFragment extends BaseFragment {
     		return;
     	
     	setPOI(poi.clone(), index);
-    	mStateTransitionTable.event(TrafficViewSTT.Event.ClickBookmark);
+    	mStateTransitionTable.event(TrafficViewSTT.Event.ClickSelectStartEndBtn);
     }
     
     public void setDataNoSuggest(POI poi, int index) {
@@ -765,11 +763,12 @@ public class TrafficQueryFragment extends BaseFragment {
     /*
      * 单击选点
      */
+    //TODO:把这个函数换个名字，setdata怎么都不像要发event的
     public void setDataForSelectPoint(POI poi, int index) {
     	mLogHelper.logForSelectPoint(index);
-    	mStateTransitionTable.event(TrafficViewSTT.Event.SelectPoint);
+    	mStateTransitionTable.event(TrafficViewSTT.Event.PointSelected);
     	setData(poi.clone(), index);
-    	mStateTransitionTable.mergeFirstTwoTranstion(TrafficViewSTT.Event.ClickBookmark, mStateHelper.createNormalToInputAction());
+    	mStateTransitionTable.mergeFirstTwoTranstion(TrafficViewSTT.Event.ClickSelectStartEndBtn, mStateHelper.createNormalToInputAction());
     }
 	
     public void modifyData(POI poi, int index) {

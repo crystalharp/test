@@ -13,9 +13,12 @@ import java.util.Vector;
  */
 public class TrafficViewSTT {
 	
+    //交通输入页的基本状态：普通状态，地图状态，输入状态，选点输入状态。
 	public enum State {Normal, Map, Input, SelectPoint};
 	
-	public enum Event {ClickBookmark, ClickEditText, TouchMap, ClickRadioGroup, LongClick, Point, SelectPoint};
+	//交通输入页的基本事件：点击起终点选择按钮，点击输入框，点击地图，点击上面的交通方式切换按钮
+	//                      长按地图，点击地图选点，选点完成
+	public enum Event {ClickSelectStartEndBtn, ClickEditText, TouchMap, ClickRadioGroup, LongClick, ClicktoSelectPoint, PointSelected};
 
 	private Vector<Transition> transitions = new Vector<Transition>();
 	
@@ -39,27 +42,32 @@ public class TrafficViewSTT {
 
 	private class Transition {
 		
-		public Transition(State startState, Event event, Action action, State endState) {
-			this.startState = startState;
-			this.event = event;
-			this.action = action;
-			this.endState = endState;
-		}
-		private State startState;
-		private Event event;
-		private Action action;
-		private State endState;
+	    private State startState;
+	    private Event event;
+	    private Action action;
+	    private State endState;
+		
+	    public Transition(State startState, Event event, Action action, State endState) {
+	        this.startState = startState;
+	        this.event = event;
+	        this.action = action;
+	        this.endState = endState;
+	    }
+		
+	    public String toString(){
+	        return startState.toString() + "->" + endState.toString() + "^" + event.toString(); 
+	    }
 	}
 	
 	public TrafficViewSTT(TrafficQueryStateHelper mStateHelper) {
-		addTransition(State.Normal, Event.ClickBookmark, mStateHelper.createNormalToInputAction(), State.Input);
+	    addTransition(State.Normal, Event.ClickSelectStartEndBtn, mStateHelper.createNormalToInputAction(), State.Input);
 		addTransition(State.Normal, Event.ClickEditText, mStateHelper.createNormalToInputAction(), State.Input);
 		addTransition(State.Normal, Event.TouchMap, mStateHelper.createNormalToMapAction(), State.Map);
-		addTransition(State.Normal, Event.Point, mStateHelper.createNormalToSelectPointAction(), State.SelectPoint);
+		addTransition(State.Normal, Event.ClicktoSelectPoint, mStateHelper.createNormalToSelectPointAction(), State.SelectPoint);
 		addTransition(State.Map, Event.ClickRadioGroup, mStateHelper.createMapToInputAction(), State.Input);
 		addTransition(State.Map, Event.LongClick, mStateHelper.createMapToInputAction(), State.Input);
-		addTransition(State.Input, Event.Point, mStateHelper.createInputToSelectPointAction(), State.SelectPoint);
-		addTransition(State.SelectPoint, Event.SelectPoint, mStateHelper.createSelectPointToInputAction(), State.Input);
+		addTransition(State.Input, Event.ClicktoSelectPoint, mStateHelper.createInputToSelectPointAction(), State.SelectPoint);
+		addTransition(State.SelectPoint, Event.PointSelected, mStateHelper.createSelectPointToInputAction(), State.Input);
 	}
 	
 	public void addTransition(State startState, Event event, Action action, State endState) {

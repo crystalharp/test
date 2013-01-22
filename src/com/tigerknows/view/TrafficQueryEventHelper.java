@@ -75,7 +75,6 @@ public class TrafficQueryEventHelper {
 		clearSuggestWatcherInInputState();
 		
 		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(null);
-		//mQueryFragment.mExchangeBtn.setOnClickListener(null);
 		mQueryFragment.mSelectStartBtn.setOnClickListener(null);
 		mQueryFragment.mSelectEndBtn.setOnClickListener(null);
 		mQueryFragment.mBackBtn.setOnClickListener(null);
@@ -110,7 +109,6 @@ public class TrafficQueryEventHelper {
 		applyCommonListeners();
 		
 		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new NormalOnCheckedChangeListener());
-		//mQueryFragment.mExchangeBtn.setOnClickListener(new NormalExchangeClickListener());
 		mQueryFragment.mSelectStartBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mStart));
 		mQueryFragment.mSelectEndBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mEnd));
 	}
@@ -123,7 +121,6 @@ public class TrafficQueryEventHelper {
 		
 		mQueryFragment.mBackBtn.setOnClickListener(new InputBackClickListener());
 		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new InputOnCheckedChangeListener());
-		//mQueryFragment.mExchangeBtn.setOnClickListener(new InputExchangeClickListener());
 		mQueryFragment.mSelectStartBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mStart));
 		mQueryFragment.mSelectEndBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mEnd));
 		mQueryFragment.mTrafficQueryBtn.setOnClickListener(new InputQueryClickListener());
@@ -197,7 +194,6 @@ public class TrafficQueryEventHelper {
 		
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
 			mQueryFragment.mSelectedEdt = mQueryEdt;
 			
         		/*
@@ -225,13 +221,11 @@ public class TrafficQueryEventHelper {
 		@Override
 		public void beforeTextChanged(CharSequence s, int start,
 				int count, int after) {
-			// TODO Auto-generated method stub
 		}
 
 		@Override
 		public void onTextChanged(CharSequence s, int start,
 				int before, int count) {
-			// TODO Auto-generated method stub
 		}
 
 		@Override
@@ -285,7 +279,6 @@ public class TrafficQueryEventHelper {
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			// TODO Auto-generated method stub
 			return true;
 		}
 		
@@ -295,7 +288,6 @@ public class TrafficQueryEventHelper {
     	
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
-            // TODO Auto-generated method stub
         	switch(checkedId){
             case R.id.traffic_transfer_rbt:
             	if (mQueryFragment.mLogHelper.logForTabChange)
@@ -339,7 +331,6 @@ public class TrafficQueryEventHelper {
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			// TODO Auto-generated method stub
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
 				mQueryFragment.mSelectedEdt = mQueryEdt;
 				mQueryFragment.mLogHelper.logForClickOnEditText(mQueryEdt);
@@ -361,7 +352,6 @@ public class TrafficQueryEventHelper {
 		@Override
 		//xupeng:这是交换按钮的处理函数。
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
 			mQueryFragment.mActionLog.addAction(ActionLog.TrafficExchangeBtn);
 			POI temp = mQueryFragment.mStart.getPOI();
 			mQueryFragment.mStart.setPOI(mQueryFragment.mEnd.getPOI());
@@ -374,7 +364,6 @@ public class TrafficQueryEventHelper {
 
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
 //			onBack();
 			synchronized (mQueryFragment.mSphinx.mUILock) {
                 if (!mQueryFragment.mSphinx.mUIProcessing) {
@@ -405,7 +394,6 @@ public class TrafficQueryEventHelper {
 	protected class InputExchangeClickListener extends NormalExchangeClickListener {
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
 			mQueryFragment.mSphinx.hideSoftInput();
 			clearSuggestWatcherInInputState();
 			super.onClick(v);
@@ -417,7 +405,6 @@ public class TrafficQueryEventHelper {
 
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
 			mQueryFragment.query();
 		}
 		
@@ -428,7 +415,6 @@ public class TrafficQueryEventHelper {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view,
 				int position, long id) {
-			// TODO Auto-generated method stub
 			LogWrapper.d("eric", "SuggestLsv.onItemClick");
 			TKWord tkWord = ((SuggestArrayAdapter) parent.getAdapter()).getItem(position);
 			
@@ -460,7 +446,6 @@ public class TrafficQueryEventHelper {
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			// TODO Auto-generated method stub
 //			LogWrapper.d("eric", "SuggestLsv.onTouch");
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
 				mQueryFragment.mSphinx.hideSoftInput();
@@ -489,13 +474,11 @@ public class TrafficQueryEventHelper {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count,
                 int after) {
-            // TODO Auto-generated method stub
         }
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before,
                 int count) {
-            // TODO Auto-generated method stub
         }
 	}
 	
@@ -503,7 +486,6 @@ public class TrafficQueryEventHelper {
 
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
 			mQueryFragment.mRadioGroup.setOnCheckedChangeListener(null);
 //			onBack();
 			synchronized (mQueryFragment.mSphinx.mUILock) {
@@ -528,7 +510,6 @@ public class TrafficQueryEventHelper {
 		
 		@Override
 		public void onClick(View v) {
-			// TODO Auto-generated method stub
 			mQueryFragment.mStateTransitionTable.rollback();
 		}
 	}
@@ -634,7 +615,7 @@ public class TrafficQueryEventHelper {
 				PinOverlayHelper.drawSelectPointOverlay(mQueryFragment.mContext, mQueryFragment.mSphinx.getHandler(), mQueryFragment.mSphinx.getMapView(), R.id.start_edt == queryEditText.getEdt().getId(), positionName, center);
 				mQueryFragment.mSphinx.getMapView().refreshMap();
 				
-				mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.Point);
+				mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.ClicktoSelectPoint);
 	            
 	            String tip = mQueryFragment.mContext.getString(R.id.start_edt == queryEditText.getEdt().getId() ? R.string.click_map_as_start : R.string.click_map_as_end);
 	            mQueryFragment.mSphinx.showTip(tip, Toast.LENGTH_SHORT);
