@@ -292,7 +292,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     	mMenuIndexSelected = indexPressed;
 		Animation animation = new TranslateAnimation(mLocations[oldIndex][0], mLocations[indexPressed][0], 0, 0);
 		animation.setFillAfter(true);
-		animation.setDuration(350);
+		animation.setDuration(0);
 		animation.setAnimationListener(mAnimListeners[indexPressed]);
 		mCursorImv.startAnimation(animation);
 		

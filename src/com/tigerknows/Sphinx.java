@@ -1913,7 +1913,9 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             if (sourceType == POI.SOURCE_TYPE_TUANGOU
                     || sourceType == POI.SOURCE_TYPE_DIANYING
                     || sourceType == POI.SOURCE_TYPE_YANCHU
-                    || sourceType == POI.SOURCE_TYPE_ZHANLAN) {
+                    || sourceType == POI.SOURCE_TYPE_ZHANLAN
+                    || sourceType == POI.SOURCE_TYPE_FENDIAN
+                    || sourceType == POI.SOURCE_TYPE_YINGXUN) {
                 if (mInfoWindowTuangouDetail == null) {
                     mInfoWindowTuangouDetail = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_tuangou_detail, null);
                 }
@@ -2068,7 +2070,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             TextView priceTxv= (TextView)mInfoWindowTuangouList.findViewById(R.id.price_txv);
             Button trafficBtn=(Button)mInfoWindowTuangouList.findViewById(R.id.traffic_btn);
             
-            nameTxv.setText(poi.getName());
+            nameTxv.setText(target.getShortDesc());
             priceTxv.setText(price);
             
             int max = Globals.g_metrics.widthPixels - (int)(Globals.g_metrics.density*(186));

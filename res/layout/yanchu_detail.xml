@@ -148,7 +148,6 @@
                         android:text="@string/yanchu_detail_introduce"
                         android:textColor="@color/blue"
                         android:textSize="16sp"
-                        android:textStyle="bold"
                         />
                     <ImageView
                         android:layout_width="fill_parent"
@@ -166,6 +165,7 @@
                         android:text="@string/yanchu_detail_introduce"
                         android:textColor="@color/black_dark"
                         android:textSize="14sp"
+                        android:lineSpacingExtra="4dp"
                         />
                  </LinearLayout>
              </LinearLayout>
