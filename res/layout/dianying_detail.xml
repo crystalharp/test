@@ -33,7 +33,7 @@
                     android:layout_height="180dp"
                     android:layout_gravity="center_horizontal"
                     android:padding="4dp"
-                    android:layout_marginLeft="8dp"
+                    android:layout_marginLeft="4dp"
                     android:scaleType="fitXY"
                     android:background="@drawable/bg_picture_dianying_detail"
                     />
