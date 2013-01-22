@@ -103,6 +103,7 @@
         android:layout_alignParentRight="true" 
         android:layout_below="@id/category_txv" 
         android:layout_marginTop="4dp"
+        android:layout_marginLeft="8dp"
         android:paddingBottom="2dp"
         android:textColor="@color/orange"
         android:textSize="16sp"
