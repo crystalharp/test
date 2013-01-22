@@ -341,6 +341,7 @@
             android:layout_alignParentTop="true"
             android:background="@color/white"
             android:padding="6dp"
+            android:visibility="invisible"
             >
             <Button 
                 android:id="@+id/buy_btn_2"
