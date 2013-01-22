@@ -241,7 +241,9 @@ public abstract class UserBaseActivity extends BaseActivity {
 		 * @param edittext
 		 */
 		public void showErrorThenSelectAllAndShowSoftkeyboard(int titleResId, int bodyResId, final ExtValidationEditText edittext) {
-			CommonUtils.showNormalDialog(UserBaseActivity.this, getString(titleResId), getString(bodyResId), new OnClickListener() {
+			CommonUtils.showNormalDialog(UserBaseActivity.this, getString(titleResId), getString(bodyResId), getString(R.string.confirm),
+	                null,
+	                new OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog,
@@ -264,7 +266,9 @@ public abstract class UserBaseActivity extends BaseActivity {
 		 * @param edittext
 		 */
 		public void showErrorThenClearAndShowSoftkeyboard(int titleResId, int bodyResId, final ExtValidationEditText edittext) {
-			CommonUtils.showNormalDialog(UserBaseActivity.this, getString(titleResId), getString(bodyResId), new OnClickListener() {
+			CommonUtils.showNormalDialog(UserBaseActivity.this, getString(titleResId), getString(bodyResId), getString(R.string.confirm),
+	                null,
+	                new OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog,

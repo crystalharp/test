@@ -87,6 +87,7 @@ public class UserLoginActivity extends UserBaseActivity {
                 @Override
                 public void onClick(View arg0) {
                     mActionLog.addAction(ActionLog.Title_Left_Back, mActionTag);
+                    hideSoftInput();
                     onBack();
                 }
             });
@@ -239,7 +240,9 @@ public class UserLoginActivity extends UserBaseActivity {
 
 	private void doAction(final ExtValidationEditText source) {
 		CommonUtils.showNormalDialog(UserLoginActivity.this, getString(R.string.title_error_tip), source.msg, 
-				new OnClickListener() {
+		        getString(R.string.confirm),
+                null,
+                new OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {

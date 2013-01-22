@@ -2997,6 +2997,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         synchronized (mUILock) {
             if (mTitleFragment == null) {
                 TitleFragment titleFragment = new TitleFragment(Sphinx.this);
+                titleFragment.setId(R.id.view_title);
                 titleFragment.onCreate(null);
                 mTitleView.addView(titleFragment);
                 mTitleFragment = titleFragment;
@@ -3009,6 +3010,7 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
         synchronized (mUILock) {
             if (mMenuFragment == null) {
                 MenuFragment menuFragment = new MenuFragment(Sphinx.this);
+                menuFragment.setId(R.id.view_menu);
                 menuFragment.onCreate(null);
                 mMenuView.addView(menuFragment);
                 mMenuFragment = menuFragment;

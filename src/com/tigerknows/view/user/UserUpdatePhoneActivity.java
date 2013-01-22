@@ -177,7 +177,9 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 
 	private void validationAction(final ExtValidationEditText source) {
 		CommonUtils.showNormalDialog(UserUpdatePhoneActivity.this, getString(R.string.title_error_tip), source.msg, 
-				new OnClickListener() {
+		        getString(R.string.confirm),
+                null,
+                new OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
@@ -237,7 +239,9 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 	
 	private void dealWith400() {
 		CommonUtils.showNormalDialog(UserUpdatePhoneActivity.this, getString(R.string.title_error_tip), getString(R.string.response_code_400), 
-				new OnClickListener() {
+                getString(R.string.confirm),
+                null,
+                new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog,
@@ -256,7 +260,9 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 	
 	private void dealWith402() {
 		CommonUtils.showNormalDialog(UserUpdatePhoneActivity.this, getString(R.string.title_error_tip), getString(R.string.response_code_402), 
-				new OnClickListener() {
+		        getString(R.string.confirm),
+                null,
+                new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog,
@@ -275,7 +281,9 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 	
 	private void dealWith404() {
 		CommonUtils.showNormalDialog(UserUpdatePhoneActivity.this, getString(R.string.title_error_tip), getString(R.string.response_code_404), 
-				new OnClickListener() {
+		        getString(R.string.confirm),
+                null,
+                new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog,
@@ -293,7 +301,9 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 	
 	private void dealWith503() {
 		CommonUtils.showNormalDialog(UserUpdatePhoneActivity.this, getString(R.string.title_error_tip), getString(R.string.response_code_503), 
-				new OnClickListener() {
+		        getString(R.string.confirm),
+                null,
+                new OnClickListener() {
 
 			@Override
 			public void onClick(DialogInterface dialog,
