@@ -29,6 +29,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.MapDownload.DownloadCity;
+import com.tigerknows.service.MapStatsService;
 import com.tigerknows.service.SuggestLexiconService;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.CommonUtils;
@@ -191,7 +192,6 @@ public class MapEngine {
         readLastRegionIdList(context);
         int status = Ca.tk_init_engine(TKConfig.getDataPath(false), this.mapPath, CONFIG.TILE_SIZE, CONFIG.TILE_SIZE, bitmapBuffer, 1);
         if (status == 0) {
-            this.isClosed = false;
             int icon_num = MapWord.Icon.RESOURCE_ID.length;
             Ca.tk_init_icon_num(icon_num);
             for(int i=0; i < icon_num; i++) {
@@ -200,6 +200,7 @@ public class MapEngine {
                     Ca.tk_set_icon(i, bm.getWidth(), bm.getHeight());
                 }
             }
+            this.isClosed = false;
         } else {
             destroyEngine();
         }
@@ -692,7 +693,7 @@ public class MapEngine {
         return instance;
     }
 
-    public void initMapDataPath(Context context) throws APIException{
+    public void initMapDataPath(Context context, boolean onResume) throws APIException{
         String appPath = TKConfig.getDataPath(true);
         if (!appPath.equals(mapPath)) {
             try {
@@ -704,8 +705,16 @@ public class MapEngine {
                 new File(appPath, "try.txt").delete();
                 destroyEngine();
                 initEngine(context, appPath);
+
+                if (onResume) {
+                    statsMapEnd(new ArrayList<DownloadCity>(), false);
+                    Intent service = new Intent(context, MapStatsService.class);
+                    context.startService(service);
+                }
                 LogWrapper.i(TAG, "setupDataPath() app path:"+ appPath + " map path:"+ mapPath + ",exist:" + new File(appPath).exists());
             } catch (Exception e) {
+                isClosed = true;
+                mapPath = null;
                 throw new APIException("Can't write/read cache. Please Grand permission");
             }
         }

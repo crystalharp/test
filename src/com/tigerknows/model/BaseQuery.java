@@ -18,6 +18,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.content.Context;
+import android.content.Intent;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
@@ -55,6 +56,8 @@ import com.tigerknows.util.HttpUtils.TKHttpClient.ProgressUpdate;
 public abstract class BaseQuery {
     
     public static boolean Test = false;
+    
+    public static final String ACTION_NETWORK_STATUS_REPORT = "ACTION_NETWORK_STATUS_REPORT";
 
     // 交通查询
     public static final String API_TYPE_TRAFFIC_QUERY = "t";
@@ -552,6 +555,8 @@ public abstract class BaseQuery {
             if (needReconntection && !isStop) {
                 try {
                     Thread.sleep(RECONNECTION_WAIT_TIMES);
+                    Intent intent = new Intent(ACTION_NETWORK_STATUS_REPORT);
+                    context.sendBroadcast(intent);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

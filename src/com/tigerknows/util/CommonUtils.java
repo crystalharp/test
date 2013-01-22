@@ -65,6 +65,7 @@ import com.tigerknows.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.ErrorDialogActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -1123,5 +1124,15 @@ public class CommonUtils {
             text = text.substring(0, length) + "...";
         }
         return text;
+    }
+    
+    public static void showDialogAcitvity(Activity activity, String msg) {
+        if (activity == null || msg == null) {
+            return;
+        }
+        Intent intent = new Intent();
+        intent.setClass(activity, ErrorDialogActivity.class);
+        intent.putExtra(ErrorDialogActivity.ERROR_MSG, msg);
+        activity.startActivity(intent);
     }
 }

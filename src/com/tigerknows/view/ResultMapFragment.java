@@ -121,6 +121,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
+        mSphinx.getMapView().setStopDraw(false);
         mTitleBtn.setText(mTitle);
         mRightBtn.setVisibility(View.INVISIBLE);
         mRootView.setOnTouchListener(null);

@@ -1037,4 +1037,8 @@ public class MapView extends RelativeLayout implements
     public MapText getMapText() {
         return tilesView.getMapText();
     }
+    
+    public void setStopDraw(boolean stopDraw) {
+        tilesView.stopDraw = stopDraw;
+    }
 }
