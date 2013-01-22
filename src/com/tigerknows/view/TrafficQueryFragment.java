@@ -755,6 +755,7 @@ public class TrafficQueryFragment extends BaseFragment {
             break;
         }
         mRadioGroup.check(mSettedRadioBtn);
+        setState(TrafficViewSTT.State.Input);
         setPOI(poi.clone(), index);
     }    
     
