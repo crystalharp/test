@@ -416,9 +416,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 break;
                 
             default:
-                if (mState != STATE_LIST || mDataQuery == null) {
-                    return;
-                }
                 
                 if (mState == STATE_QUERYING && mResultLsv.getState(false) != SpringbackListView.REFRESHING) {
                     return;

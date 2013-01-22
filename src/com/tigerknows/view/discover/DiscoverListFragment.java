@@ -651,9 +651,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 break;
                 
             default:
-                if (mState != STATE_LIST || mDataQuery == null) {
-                    return;
-                }
                 
                 if (mState == STATE_QUERYING && mResultLsv.getState(false) != SpringbackListView.REFRESHING) {
                     return;
