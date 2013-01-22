@@ -34,6 +34,7 @@ import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 /**
@@ -70,6 +71,8 @@ public class BaseFragment extends LinearLayout {
     public BaseQuery mBaseQuerying;
     
     public TKAsyncTask mTkAsyncTasking;
+    
+    protected PopupWindow mPopupWindow;
     
     public DialogInterface.OnClickListener mCancelLoginListener = new DialogInterface.OnClickListener() {
         
@@ -333,5 +336,11 @@ public class BaseFragment extends LinearLayout {
     
     public boolean isShowing() {
         return mSphinx.uiStackPeek() == getId();
+    }
+    
+    public void dismissPopupWindow() {
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
+        }
     }
 }

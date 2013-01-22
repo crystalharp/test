@@ -284,6 +284,7 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
     void showSuggestCity(String userInput) {
         makeSuggestCityList(sAllCityInfoList, mSuggestCityList, userInput, mNotFindCity, mCityElv, mSuggestCityLsv);
         mSuggestCityAdapter.notifyDataSetChanged();
+        mSuggestCityLsv.setSelectionFromTop(0, 0);
     }
     
     public static void makeSuggestCityList(List<CityInfo> allCity, List<CityInfo> suggestList, String userInput

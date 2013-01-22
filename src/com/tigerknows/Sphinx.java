@@ -2313,6 +2313,11 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
                             public void onClick(DialogInterface dialog, int id) {
                                 switch (id) {                                            
                                     case DialogInterface.BUTTON_POSITIVE:
+                                        getTitleFragment().dismissPopupWindow();
+                                        BaseFragment baseFragment = getFragment(uiStackPeek());
+                                        if (baseFragment != null) {
+                                            baseFragment.dismissPopupWindow();
+                                        }
                                         mActionLog.addAction(ActionLog.ChangeToMyLocationCityDialogYes, mylocationCName);
                                         uiStackEmpty();
                                         showView(R.id.view_home);
@@ -3649,7 +3654,6 @@ public class Sphinx extends MapActivity implements TKAsyncTask.EventListener {
             	} else {
                 	mMapView.panToPosition(overlayItem.getPosition());
                 }
-            	itemizedOverlay.isShowInPreferZoom = false;
             } else {
             	mMapView.panToPosition(overlayItem.getPosition());
             }

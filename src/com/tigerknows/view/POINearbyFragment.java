@@ -150,7 +150,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText(R.string.nearby_search);
+        mTitleBtn.setText(mSphinx.getString(R.string.at_where_search, CommonUtils.substring(mPOI.getName(), 6)));
         mRightBtn.setVisibility(View.INVISIBLE);
         
         reset();

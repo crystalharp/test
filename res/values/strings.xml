@@ -64,7 +64,7 @@
     <string name="pause_download">暂停下载</string>
     <string name="upgrade_map">升级地图</string>
     
-    <string name="at_where_search">在“%1$s”附近搜索</string>    
+    <string name="at_where_search">在“%1$s”周边</string>    
     <string name="select_where_as_start">选择\u0020%1$s\u0020作为起点</string>  
     <string name="select_where_as_end">选择\u0020%1$s\u0020作为终点</string>
     <string name="click_map_as_start">点击地图选择起点</string>  
@@ -907,4 +907,5 @@
 
     <string name="touch_screen_and_retry">点击屏幕，重新加载</string>
     <string name="are_you_exit_add_merchart">你确定要放弃添加商户？</string>
+    <string name="searching_title">搜索中…</string>
 </resources>
