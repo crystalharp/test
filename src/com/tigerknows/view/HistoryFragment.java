@@ -443,7 +443,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 if (count > 0) {
                     CommonUtils.showNormalDialog(mSphinx,
                             mContext.getString(R.string.prompt),
-                            mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_a_history_poi : R.string.delete_a_history_traffic),
+                            mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_all_history_poi : R.string.delete_all_history_traffic),
                             new DialogInterface.OnClickListener() {
                                 
                                 @Override

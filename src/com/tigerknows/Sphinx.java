@@ -444,12 +444,26 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             
                             TKConfig.setPref(mContext, TKConfig.PREFS_FIRST_USE, "1");
                             TKConfig.setPref(mContext, TKConfig.PREFS_UPGRADE, "1");
+                            mHandler.postDelayed(new Runnable() {
+                                
+                                @Override
+                                public void run() {
+                                    initView(null);
+                                }
+                            }, 1000);
                         } else {
                             if (upgrade) {
                                 Intent intent = new Intent();
                                 intent.putExtra(Help.APP_UPGRADE, upgrade);
                                 showView(R.id.activity_help, intent);
                                 TKConfig.setPref(mContext, TKConfig.PREFS_UPGRADE, "1");
+                                mHandler.postDelayed(new Runnable() {
+                                    
+                                    @Override
+                                    public void run() {
+                                        initView(null);
+                                    }
+                                }, 1000);
                             } else {
                                 initView(null);
                                 checkLocationCity();
@@ -883,11 +897,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		        if (data.getBooleanExtra(Help.APP_FIRST_START, false)) {
                     mShowPromptSettingLocationDialog = false;
 		            OnSetup();
-		            initView(null);
 		        } else if (data.getBooleanExtra(Help.APP_UPGRADE, false)) {
                     mShowPromptSettingLocationDialog = false;
                     checkLocationCity();
-                    initView(null);
 		        }
 		    }
 		} else if (R.id.activity_app_recommend == requestCode) {
@@ -1745,7 +1757,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             overlay.isShowInPreferZoom = true;
             int screenX = Globals.g_metrics.widthPixels;
             int screenY = Globals.g_metrics.heightPixels;
-            int fitZoomLevle = Util.getZoomLevelToFitPositions(screenX, screenY, icon.getSize().x/2 , mMapView.getPadding().top, positions, srcreenPosition);
+            int fitZoomLevle = Util.getZoomLevelToFitPositions(screenX, screenY, TKConfig.sMap_Padding, positions, srcreenPosition);
             mMapView.zoomTo(fitZoomLevle, srcreenPosition, -1, null);
             mPreviousNextView.setVisibility(View.VISIBLE);
         } else {
