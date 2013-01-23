@@ -196,6 +196,7 @@ public class TrafficQueryEventHelper {
 		public void onClick(View v) {
 			mQueryFragment.mSelectedEdt = mQueryEdt;
 			
+			mQueryFragment.mSphinx.hideSoftInput();
         		/*
         		 * 显示选择对话框
         		 */
@@ -204,7 +205,6 @@ public class TrafficQueryEventHelper {
         		
         		showSelectOptionDialog(mQueryFragment.mSphinx, mQueryEdt, title, hasMyLocation);
         		
-        		mQueryFragment.mSphinx.hideSoftInput();
         		mQueryFragment.mLogHelper.logForClickBookmarkOnEditText(mQueryEdt);
         	}
 		
@@ -551,34 +551,26 @@ public class TrafficQueryEventHelper {
                 public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
                     dialog.dismiss();
                     mQueryFragment.mSelectedEdt = queryEdt;
+                    //如果没有定位，则第一个选择当前位置不显示，which加一对应到相应操作。
+                    if (hasMyLocation == false) {
+                        which++;
+                    }
                     switch (which) {
                     case 0:
-                        if (hasMyLocation) {
-                            performSelectMyLocation();
-                        } else {
-                            performMapSelectPoint(queryEdt);
-                        }
+                        //当前位置
+                        performSelectMyLocation();
                         break;
                     case 1:
-                        if (hasMyLocation) {
-                            performMapSelectPoint(queryEdt);
-                        } else {
-                            performSelectFavorite();
-                        }
+                        //地图选点
+                        performMapSelectPoint(queryEdt);
                         break;
                     case 2:
+                        //收藏夹
                         performSelectFavorite();
                         break;
                     case 3:
-                        //交换起点终点。
-                        mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mSphinx, null, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
-                        clearSuggestWatcherInInputState();
-                        mQueryFragment.mActionLog.addAction(ActionLog.TrafficExchangeBtn);
-                        POI temp = mQueryFragment.mStart.getPOI();
-                        mQueryFragment.mStart.setPOI(mQueryFragment.mEnd.getPOI());
-                        mQueryFragment.mEnd.setPOI(temp);
-                        addSuggestWatcherInInputState();
-//                        mQueryFragment.mBlock.requestFocus();
+                        //交换起终点
+                        performSwitchStartEnd();
                         break;
                     default:
                     }
@@ -586,6 +578,17 @@ public class TrafficQueryEventHelper {
             });
         }
 			
+		    private void performSwitchStartEnd() {
+		        mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mSphinx, null, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
+                clearSuggestWatcherInInputState();
+                mQueryFragment.mActionLog.addAction(ActionLog.TrafficExchangeBtn);
+                POI temp = mQueryFragment.mStart.getPOI();
+                mQueryFragment.mStart.setPOI(mQueryFragment.mEnd.getPOI());
+                mQueryFragment.mEnd.setPOI(temp);
+                addSuggestWatcherInInputState();
+//                mQueryFragment.mBlock.requestFocus();
+		    }
+		    
 			private void performSelectMyLocation() {
 				LogWrapper.d("eric", "performSelectMyLocation()");
 
