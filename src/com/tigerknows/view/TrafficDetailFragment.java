@@ -146,14 +146,16 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         if (mPlanList != null) {
         	//有内容，需要弹出顶部切换菜单
         	mTitleBtn.setText(mTitlePopupArrayAdapter.mSelectedItem);
-	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
-	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
-				@Override
-				public void onClick(View v) {
-			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
-			        mTitlePopupArrayAdapter.notifyDataSetChanged();
-				}
-	        });
+        	if (mPlanList.size() > 1) {
+    	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
+    	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
+    				@Override
+    				public void onClick(View v) {
+    			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+    			        mTitlePopupArrayAdapter.notifyDataSetChanged();
+    				}
+    	        });
+        	}
         }
         
         setFavoriteState(mRootView, plan.checkFavorite(mContext));

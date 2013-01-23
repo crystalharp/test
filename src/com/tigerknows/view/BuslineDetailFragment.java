@@ -136,14 +136,16 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         //TODO:修改titlebtn的内容
         if (mLineList != null) {
         	mTitleBtn.setText(line.getName());
-	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
-	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
-				@Override
-				public void onClick(View v) {
-			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
-			        mTitlePopupArrayAdapter.notifyDataSetChanged();
-				}
-	        });
+        	if (mLineList.size() > 1) {
+    	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
+    	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
+    				@Override
+    				public void onClick(View v) {
+    			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+    			        mTitlePopupArrayAdapter.notifyDataSetChanged();
+    				}
+    	        });
+        	}
         } else {
         	//不用顶部弹出切换
         	mTitleBtn.setText(mContext.getString(R.string.title_busline_line));

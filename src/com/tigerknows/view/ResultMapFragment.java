@@ -135,9 +135,11 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         
         //如果顶端切换list不为空，设置切换列表
         if (mTitlePopupList.size() > 0) {
-            mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
-            mTitleBtn.setOnClickListener(this);
             mTitleBtn.setText(mTitlePopupArrayAdapter.mSelectedItem);
+            if (mTitlePopupList.size() > 1) {
+                mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
+                mTitleBtn.setOnClickListener(this);
+            }
         }
         //如果是驾车和步行，需要在这里可以切换到详情页
         if (mActionTag == ActionLog.MapTrafficDrive || mActionTag == ActionLog.MapTrafficWalk) {
