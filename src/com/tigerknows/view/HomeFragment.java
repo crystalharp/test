@@ -146,6 +146,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
+        mMenuFragment.updateMenuStatus(R.id.poi_btn);
         mTitleFragment.hide();
         mCityBtn.setText(Globals.g_Current_City_Info.getCName());
         

@@ -1,43 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@color/gray_dark"
     >
-    <RelativeLayout
+    
+    <include layout="@layout/search_bar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="5dp"
-        android:paddingTop="6dp"
-        android:paddingRight="5dp"
-        android:paddingBottom="6dp"
-        android:gravity="center"
-        android:background="@color/white"
-        >
-            
-        <Button
-            android:id="@+id/query_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:background="@drawable/btn_search"
-            />
-            
-        <com.tigerknows.view.TKEditText
-            android:id="@+id/keyword_edt"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_toLeftOf="@id/query_btn"
-            tkandroid:background="@drawable/textfield_search"
-            tkandroid:hint="@string/find_poi"
-            tkandroid:maxLength="50"
-            tkandroid:imeOptions="actionSearch"
-            >
-        </com.tigerknows.view.TKEditText>
-            
-    </RelativeLayout>
+        />
+        
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"

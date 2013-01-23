@@ -360,6 +360,12 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         }
     }
     
+    protected boolean isReLogin() {
+        boolean isRelogin = this.isReLogin;
+        this.isReLogin = false;
+        return isRelogin;
+    }
+    
     @Override
     public void onResume() {
         super.onResume();        
@@ -1041,6 +1047,9 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                         
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
+                            User user = Globals.g_User;
+                            if (user != null) {
+                            mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_USER);
                             mStatus = STATUS_MODIFY;
                             mTitleBtn.setText(R.string.modify_comment);
                             Hashtable<String, String> criteria = commentOperation.getCriteria();
@@ -1050,6 +1059,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                             DataOperation dataOperation = new DataOperation(mThis);
                             dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), -1, mFromViewId, mThis.getString(R.string.doing_and_wait));
                             queryStart(dataOperation);
+                            }
                         }
                     });
                 } else if (response.getResponseCode() == 602) {

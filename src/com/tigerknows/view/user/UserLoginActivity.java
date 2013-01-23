@@ -255,7 +255,12 @@ public class UserLoginActivity extends UserBaseActivity {
 					
 					if (source.validErrorType == ExtValidationEditText.ValidErrorType.PhoneFormatError) {
 						source.selectAll();
-					}
+					} else if (source.validErrorType == ExtValidationEditText.ValidErrorType.PasswordFormatError) {
+                        if (source.hasUnionView()) {
+                            source.getUnionView().setText("");
+                        }
+                        source.setText("");
+                    }
 					showSoftInput(source);
 				}
 			}

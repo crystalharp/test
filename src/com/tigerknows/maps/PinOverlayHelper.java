@@ -40,7 +40,7 @@ public class PinOverlayHelper {
 	            String message = context.getString(isStart ? R.string.select_where_as_start : R.string.select_where_as_end, name);
 	            ItemizedOverlay overlay = new ItemizedOverlay(ItemizedOverlay.PIN_OVERLAY);
 	            RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
-	            OverlayItem overlayItem = new OverlayItem(poi.getPosition(), Icon.getIcon(context.getResources(), R.drawable.icon_longclick_bubble, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
+	            OverlayItem overlayItem = new OverlayItem(poi.getPosition(), Icon.getIcon(context.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
 	            		message, rt);
 	            overlayItem.setAssociatedObject(poi);
 		        
@@ -85,7 +85,7 @@ public class PinOverlayHelper {
                 
 	            ItemizedOverlay overlay = new ItemizedOverlay(ItemizedOverlay.PIN_OVERLAY);
 	            RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
-	            OverlayItem overlayItem = new OverlayItem(position, Icon.getIcon(context.getResources(), R.drawable.icon_longclick_bubble, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
+	            OverlayItem overlayItem = new OverlayItem(position, Icon.getIcon(context.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
 	            		name, rt);
 		        overlayItem.setAssociatedObject(poi);
 		        

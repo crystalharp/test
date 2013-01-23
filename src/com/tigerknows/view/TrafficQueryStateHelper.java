@@ -297,7 +297,7 @@ public class TrafficQueryStateHelper {
 		mQueryFragment.mSphinx.clearMap();
 		mQueryFragment.mSphinx.setTouchMode(TouchMode.LONG_CLICK);
 		
-		mQueryFragment.mBlock.requestFocus();
+//		mQueryFragment.mSelectStartBtn.requestFocus();
 		mQueryFragment.clearAllText();
 		mQueryFragment.initStartContent();
 		mQueryFragment.getContentView().setVisibility(View.VISIBLE);

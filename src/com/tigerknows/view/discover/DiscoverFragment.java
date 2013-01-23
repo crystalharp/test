@@ -105,6 +105,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
     @Override
     public void onResume() {
         super.onResume();
+        mMenuFragment.updateMenuStatus(R.id.discover_btn);
         mTitleFragment.hide();
         mMenuFragment.display();
         mSphinx.getHomeFragment().refreshLocationView();

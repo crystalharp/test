@@ -102,6 +102,10 @@ public class TrafficResultFragment extends BaseFragment {
         
         mResultAdapter = new TransferProjectListAdapter(mTrafficQuery.getTrafficModel().getPlanList());
         mResultLsv.setAdapter(mResultAdapter);
+     
+        // 下一行代码为避免以下操作会出现问题
+        // 搜索-结果列表-详情-地图-点击气泡中的交通按钮-选择到这里去/公交-公交方案-公交详情-点击地图显示公交方案页(期望进入 地图界面)
+        mSphinx.uiStackPop(R.id.view_result_map); 
     }
 
     @Override

@@ -108,7 +108,6 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 			@Override
 			public void afterTextChanged(Editable s) {
 				// TODO Auto-generated method stub
-				valiNumBtn.reset(getString(R.string.reqest_validate_num));
 			}
 		});
 	}

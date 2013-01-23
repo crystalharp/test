@@ -699,7 +699,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             Tuangou tuangou = getItem(position);
             Drawable drawable = tuangou.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
             if(drawable != null) {
-                pictureImv.setBackgroundDrawable(drawable);
+            	pictureImv.setBackgroundDrawable(null);
+            	pictureImv.setBackgroundDrawable(drawable);
             } else {
                 pictureImv.setBackgroundDrawable(null);
             }

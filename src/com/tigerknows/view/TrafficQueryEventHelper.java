@@ -231,7 +231,8 @@ public class TrafficQueryEventHelper {
 		@Override
 		public void afterTextChanged(Editable s) {
 			mQueryFragment.checkQueryState();
-			if (mQueryEdt.getEdt().getText().toString().equals(mQueryFragment.mContext.getString(R.string.my_location))) {
+			if (mQueryEdt.getEdt().getText().toString().equals(mQueryFragment.mContext.getString(R.string.my_location))
+			        && mQueryEdt != mQueryFragment.mBusline) {
                 mQueryEdt.getEdt().setTextColor(0xFF009CFF);
                 mQueryEdt.getEdt().setSelectAllOnFocus(true);
             } else {
