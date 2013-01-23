@@ -327,6 +327,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mMapEngine.resetIconSize(Globals.g_metrics.densityDpi >= DisplayMetrics.DENSITY_HIGH ? 3 : 2);
         CityInfo cityInfo = mMapEngine.getCityInfo(MapEngine.CITY_ID_BEIJING);
         if (cityInfo.isAvailably() == false) {
+            CommonUtils.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
             finish();
             return;
         }
@@ -752,12 +753,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }catch(Exception e){
             e.printStackTrace();
             String msg=e.getMessage();
-            if(e.equals(APIException.INVALID_MERCATOR_Y_INFINITY) || e.equals(APIException.INVALID_LATITUDE_90)){
-                AppUtil.alert(((msg!=null && !msg.equals(""))?(msg+","):"")+"please restart the application.", this, "WARNING");
-            }else{
-                AppUtil.alert(((msg!=null && !msg.equals(""))?(msg+","):"")+"please try changing the configuration.", this, "WARNING");
-            }
-            
+            CommonUtils.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
+            finish();
+            return;
         }
         
         mMapEngine.statsMapEnd(new ArrayList<DownloadCity>(), false);
