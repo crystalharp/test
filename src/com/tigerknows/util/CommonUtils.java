@@ -1096,7 +1096,7 @@ public class CommonUtils {
             case TelephonyManager.NETWORK_TYPE_UNKNOWN:  
                 return false;   
             default:  
-                return false;  
+                return true;  
             }  
         }else{  
             return false;  
