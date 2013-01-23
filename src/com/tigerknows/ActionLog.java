@@ -27,7 +27,7 @@ public class ActionLog {
     private static final int UPLOAD_LENGTH = 10 * 1024;
     private static final int WRITE_FILE_SIZE = 1024;
     
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
+    private SimpleDateFormat simpleDateFormat;
     
     private static ActionLog sActionLog;
     public static ActionLog getInstance(Context context) {
@@ -941,6 +941,7 @@ public class ActionLog {
             mFileLength = 0;
             
             try {
+                simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
                 File file = new File(mPath);
                 if (!file.exists()) {
                     if (!file.createNewFile()) {
@@ -1109,6 +1110,9 @@ public class ActionLog {
     
     public void onDestroy() {
         synchronized (mLock) {
+            if (mStringBuilder == null) {
+                return;
+            }
             addAction(SEPARATOR_STAET+simpleDateFormat.format(Calendar.getInstance().getTime())+SEPARATOR_MIDDLE+LifecycleDestroy, false);
             write();
         }

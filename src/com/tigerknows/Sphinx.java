@@ -35,7 +35,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.ContactsContract;
-import android.provider.Settings;
 import android.support.v4.view.ViewPager.LayoutParams;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -327,6 +326,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mMapEngine.resetIconSize(Globals.g_metrics.densityDpi >= DisplayMetrics.DENSITY_HIGH ? 3 : 2);
         CityInfo cityInfo = mMapEngine.getCityInfo(MapEngine.CITY_ID_BEIJING);
         if (cityInfo.isAvailably() == false) {
+            CommonUtils.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
             finish();
             return;
         }
@@ -444,12 +444,26 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             
                             TKConfig.setPref(mContext, TKConfig.PREFS_FIRST_USE, "1");
                             TKConfig.setPref(mContext, TKConfig.PREFS_UPGRADE, "1");
+                            mHandler.postDelayed(new Runnable() {
+                                
+                                @Override
+                                public void run() {
+                                    initView(null);
+                                }
+                            }, 1000);
                         } else {
                             if (upgrade) {
                                 Intent intent = new Intent();
                                 intent.putExtra(Help.APP_UPGRADE, upgrade);
                                 showView(R.id.activity_help, intent);
                                 TKConfig.setPref(mContext, TKConfig.PREFS_UPGRADE, "1");
+                                mHandler.postDelayed(new Runnable() {
+                                    
+                                    @Override
+                                    public void run() {
+                                        initView(null);
+                                    }
+                                }, 1000);
                             } else {
                                 initView(null);
                                 checkLocationCity();
@@ -738,12 +752,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }catch(Exception e){
             e.printStackTrace();
             String msg=e.getMessage();
-            if(e.equals(APIException.INVALID_MERCATOR_Y_INFINITY) || e.equals(APIException.INVALID_LATITUDE_90)){
-                AppUtil.alert(((msg!=null && !msg.equals(""))?(msg+","):"")+"please restart the application.", this, "WARNING");
-            }else{
-                AppUtil.alert(((msg!=null && !msg.equals(""))?(msg+","):"")+"please try changing the configuration.", this, "WARNING");
-            }
-            
+            CommonUtils.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
+            finish();
+            return;
         }
         
         mMapEngine.statsMapEnd(new ArrayList<DownloadCity>(), false);
@@ -883,11 +894,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		        if (data.getBooleanExtra(Help.APP_FIRST_START, false)) {
                     mShowPromptSettingLocationDialog = false;
 		            OnSetup();
-		            initView(null);
 		        } else if (data.getBooleanExtra(Help.APP_UPGRADE, false)) {
                     mShowPromptSettingLocationDialog = false;
                     checkLocationCity();
-                    initView(null);
 		        }
 		    }
 		} else if (R.id.activity_app_recommend == requestCode) {
@@ -1086,6 +1095,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         stopService(service);
         dalvik.system.VMRuntime.getRuntime().gcSoftReferences();
         super.onDestroy();
+
 	}
 	/**
 	 * store the last known position and zoom level then close the database.
@@ -1093,7 +1103,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	@Override
 	public void finish() {
 		super.finish();
-		
 	}
 
 	public TouchMode getTouchMode() {
@@ -1745,7 +1754,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             overlay.isShowInPreferZoom = true;
             int screenX = Globals.g_metrics.widthPixels;
             int screenY = Globals.g_metrics.heightPixels;
-            int fitZoomLevle = Util.getZoomLevelToFitPositions(screenX, screenY, icon.getSize().x/2 , mMapView.getPadding().top, positions, srcreenPosition);
+            int fitZoomLevle = Util.getZoomLevelToFitPositions(screenX, screenY, TKConfig.sMap_Padding, positions, srcreenPosition);
             mMapView.zoomTo(fitZoomLevle, srcreenPosition, -1, null);
             mPreviousNextView.setVisibility(View.VISIBLE);
         } else {

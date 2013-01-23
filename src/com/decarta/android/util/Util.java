@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.decarta.CONFIG;
+import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.BoundingBox;
 import com.decarta.android.location.Position;
@@ -415,7 +416,7 @@ public class Util {
 			
 	}
 
-    public static int getZoomLevelToFitPositions(int screenX, int screenY, int paddingLeftRight, int paddingTop, ArrayList<Position> positions, Position screenCenter) throws APIException {
+    public static int getZoomLevelToFitPositions(int screenX, int screenY, int padding, ArrayList<Position> positions, Position screenCenter) throws APIException {
         if (positions == null || positions.isEmpty()) {
             throw new APIException("positions is null");
         }
@@ -455,7 +456,7 @@ public class Util {
         }
         
         if (boundingBox != null) {
-            return Util.getZoomLevelToFitBoundingBox(screenX, screenY, paddingLeftRight, paddingTop, boundingBox);
+            return Util.getZoomLevelToFitBoundingBox(screenX, screenY, padding, boundingBox);
         } else {
             throw new APIException("boundingBox is null");
         }
@@ -476,7 +477,7 @@ public class Util {
      *            to fit
      * 
      */
-    public static int getZoomLevelToFitBoundingBox(int screenX, int screenY, int halfIconSize, int titleHeight, BoundingBox boundingBox) throws APIException {
+    public static int getZoomLevelToFitBoundingBox(int screenX, int screenY, int padding, BoundingBox boundingBox) throws APIException {
         screenX = Math.abs(screenX / 2);
         screenY = Math.abs(screenY / 2);
         int fitZoom = CONFIG.ZOOM_LOWER_BOUND;
@@ -487,11 +488,11 @@ public class Util {
             double pixelsY = Util.lat2pix(boundingBox.getCenterPosition().getLat(), scale);
             double pixelsX = Util.lon2pix(boundingBox.getCenterPosition().getLon(), scale);
 
-            double maxlat = Util.pix2lat((int) pixelsY + (screenY - halfIconSize), scale);
-            double maxlon = Util.pix2lon((int) pixelsX + (screenX - halfIconSize), scale);
+            double maxlat = Util.pix2lat((int) pixelsY + (screenY - padding), scale);
+            double maxlon = Util.pix2lon((int) pixelsX + (screenX - padding), scale);
 
-            double minlat = Util.pix2lat((int) pixelsY - (screenY - halfIconSize - titleHeight), scale);
-            double minlon = Util.pix2lon((int) pixelsX - (screenX - halfIconSize), scale);
+            double minlat = Util.pix2lat((int) pixelsY - (screenY - padding), scale);
+            double minlon = Util.pix2lon((int) pixelsX - (screenX - padding), scale);
 
             BoundingBox gxbbox = new BoundingBox(new Position(minlat, minlon),new Position(maxlat, maxlon));
 

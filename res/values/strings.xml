@@ -39,7 +39,7 @@
     <string name="distance">距</string>
     <string name="me">我</string>
     <string name="distanceA">距地标</string>
-    <string name="double_bracket">（%1$s）</string>
+    <string name="double_bracket">（%1$s个）</string>
     
 	<string name="start_text">起点：%1$s</string>
 	<string name="end_text">终点：%1$s</string>
@@ -94,7 +94,7 @@
     <string name="cancel_all_select">取消全选</string>
     <string name="feature">特点：</string>
 
-    <string name="doing_and_wait">处理中，请稍候...</string>
+    <string name="doing_and_wait">处理中，请稍候</string>
     <string name="network_failed">网络异常，请稍后重试。</string>
     <string name="no_network">无网络可用，请检查网络后重试！</string>
     <string name="network_error">网络错误！</string>
@@ -347,7 +347,6 @@
     <string name="about_copyright">北京老虎宝典科技有限责任公司版权所有\n</string>
     
     <string name="searching">正在搜索...</string>
-    <string name="search_result">%1$s(%2$s个）</string>
     <string name="at_city_searching">正在%1$s市搜索...</string>
     <string name="at_location_searching">正在所选位置搜索...</string>
     
@@ -372,8 +371,12 @@
     <string name="delete_a_favorite_traffic">"确定删除此条收藏交通？"</string>
     <string name="delete_a_history_poi">"确定删除此条地点记录？"</string>
     <string name="delete_a_history_traffic">"确定删除此条交通记录？"</string>
+    <string name="delete_all_favorite_poi">"确定删除全部收藏地点？"</string>
+    <string name="delete_all_favorite_traffic">"确定删除全部收藏交通？"</string>
+    <string name="delete_all_history_poi">"确定删除全部地点记录？"</string>
+    <string name="delete_all_history_traffic">"确定删除全部交通记录？"</string>
     
-    <string name="feedback_submiting">正在发送中...</string>
+    <string name="feedback_submiting">正在发送中</string>
     <string name="feedback_success">我们已经收到你的建议，感谢你的支持！</string>
     <string name="feedback_failure">提交失败！</string>
     <string name="your_feedback">感谢你使用老虎宝典，请输入你的意见</string>
@@ -434,12 +437,12 @@
     <string name="weibo_token_expire">微博访问口令已过期, 请重新登录</string>
     <string name="weibo_getprofile_failed">获取用户信息失败</string>
     <string name="weibo_network_error">网络错误，请稍后再试。</string>
-    <string name="weibo_loading">正在加载, 请稍候...</string>
+    <string name="weibo_loading">正在加载, 请稍候</string>
 <!-- Share Module SinaWeibo End -->
 
 <!-- Share Module Tencent Start -->
 	<string name="tencent_auth_fail">获取QQ访问授权失败</string>
-    <string name="tencent_getprofile_loading">正在获取用户信息, 请稍候...</string>
+    <string name="tencent_getprofile_loading">正在获取用户信息, 请稍候</string>
     <string name="tencent_getprofile_failed">获取QQ用户信息失败</string>
     <string name="tencent_share_title">来自老虎宝典的分享</string>
     <string name="tencent_share_content_empty">你的输入为空!</string>
@@ -727,7 +730,7 @@
     <string name="comment_empty">暂无点评</string>
     <string name="comment_share_to">分享到：</string>
     <string name="comment_grade">满意度</string>
-    <string name="comment_publishing_and_wait">发表中，请稍候...</string>
+    <string name="comment_publishing_and_wait">发表中，请稍候</string>
     <string name="go_comment_hit">搜索你去过的商家发表点评...</string>
     <string name="poi_comment_override_tip">确定覆盖你之前的点评？</string>
     <string name="poi_comment_poi_invalid_not_create">该地点已失效，你无法对其进行点评。</string>
