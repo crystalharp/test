@@ -488,10 +488,13 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 break;
                 
             case Tigerknows.History.HISTORY_TRANSFER:
+                mSphinx.getTrafficDetailFragment().setData(traffic.getTrafficQuery().getTrafficModel().getPlanList().get(0));
+                mSphinx.showView(R.id.view_traffic_result_detail);
+                break;
             case Tigerknows.History.HISTORY_DRIVE:
             case Tigerknows.History.HISTORY_WALK:
                 mSphinx.getTrafficDetailFragment().setData(traffic.getTrafficQuery().getTrafficModel().getPlanList().get(0));
-                mSphinx.showView(R.id.view_traffic_result_detail);
+                mSphinx.getTrafficDetailFragment().viewPlanMap();
                 break;
 
             default:

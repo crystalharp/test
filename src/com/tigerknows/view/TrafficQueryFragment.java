@@ -899,10 +899,7 @@ public class TrafficQueryFragment extends BaseFragment {
             	    
             	    Plan plan = trafficModel.getPlanList().get(0);
             		mSphinx.getTrafficDetailFragment().setData(plan);
-            		mSphinx.getTrafficDetailFragment().viewMap();
-            		mSphinx.getResultMapFragment().onResume();
-            		// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
-                    TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
+            		mSphinx.getTrafficDetailFragment().viewPlanMap();
             	}
             }
         } 

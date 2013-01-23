@@ -498,6 +498,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             }
         }
     }
+    
+    public void viewPlanMap(){
+        viewMap();
+        mSphinx.getResultMapFragment().onResume();
+        TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
+    }
 
     private void history() {
         if (plan != null) {
