@@ -35,7 +35,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.ContactsContract;
-import android.provider.Settings;
 import android.support.v4.view.ViewPager.LayoutParams;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -1096,6 +1095,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         stopService(service);
         dalvik.system.VMRuntime.getRuntime().gcSoftReferences();
         super.onDestroy();
+
 	}
 	/**
 	 * store the last known position and zoom level then close the database.
@@ -1103,7 +1103,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	@Override
 	public void finish() {
 		super.finish();
-		
 	}
 
 	public TouchMode getTouchMode() {
