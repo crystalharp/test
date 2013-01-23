@@ -61,6 +61,8 @@
 			        android:textSize="18sp"
 	                android:background="@drawable/list_footer_normal"
 			        emptyErrorTip="@string/password_empty_tip"
+			        validateType="password"
+			        formatErrorTip="@string/password_format_error_tip"
 			        flag="1"
 			        android:hint="@string/please_input_password"
 			        android:inputType="textPassword" />

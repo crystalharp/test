@@ -28,7 +28,8 @@
 			            android:background="@drawable/btn_traffic_select_start"
 			            android:layout_gravity="center_vertical"
 			            android:layout_width="wrap_content"
-			            android:layout_height="wrap_content" />
+			            android:layout_height="wrap_content"
+			            android:focusable="true" />
 
 			        <com.tigerknows.view.TKEditText
 			            android:id="@+id/start_edt"

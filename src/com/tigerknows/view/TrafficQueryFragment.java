@@ -268,29 +268,37 @@ public class TrafficQueryFragment extends BaseFragment {
     public void onPause() {
     	super.onPause();
     	mSettedRadioBtn = 0;
+    	mStart.mEdt.getInput().clearFocus();
+    	mEnd.mEdt.getInput().clearFocus();
+    	mBusline.mEdt.getInput().clearFocus();
     	showStartMyLocation = true;
     	mSphinx.setTouchMode(TouchMode.NORMAL);
     }
     
 	@Override
 	public void onResume() {
+	    TrafficViewSTT.State currentState = mStateTransitionTable.getCurrentState();
 	    if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_LOCATION) == null
-	            && mStateTransitionTable.getCurrentState() != TrafficViewSTT.State.Input) {
+	            && currentState != TrafficViewSTT.State.Input) {
 	        mSphinx.showHint(TKConfig.PREFS_HINT_LOCATION, R.layout.hint_location);
 	    }
-		if (mStateTransitionTable.getCurrentState() != TrafficViewSTT.State.SelectPoint) { // 选点操作时, 按HOME键, 再进入应用 
+		if (currentState != TrafficViewSTT.State.SelectPoint) { // 选点操作时, 按HOME键, 再进入应用 
 			super.onResume();
 			hideCommonTitle();
 		}
         mSphinx.getMapView().setStopDraw(false);
       
-        LogWrapper.d("eric", "TrafficQueryView.show() currentState: " + mStateTransitionTable.getCurrentState());
+        LogWrapper.d("eric", "TrafficQueryView.show() currentState: " + currentState);
 
-        if (mStateTransitionTable.getCurrentState() == TrafficViewSTT.State.Input) {
+        if (currentState == TrafficViewSTT.State.Input) {
         	mMapLocationHelper.resetMapStateMap();
             mMenuFragment.hide();
-        }
-        if (mStateTransitionTable.getCurrentState() == TrafficViewSTT.State.Normal) {
+            if (mode == TRAFFIC_MODE) {
+                mSphinx.showSoftInput(mStart.getEdt().getInput());
+            } else {
+                mSphinx.showSoftInput(mBusline.getEdt().getInput());
+            }
+        } else if (currentState == TrafficViewSTT.State.Normal) {
         	mMapLocationHelper.centerOnMyLocation();
         	mMapLocationHelper.showNormalStateMap();
             /*
@@ -299,14 +307,11 @@ public class TrafficQueryFragment extends BaseFragment {
             mSphinx.setTouchMode(TouchMode.LONG_CLICK);
             
             mSphinx.clearMap();
+            mMenuFragment.updateMenuStatus(R.id.traffic_btn);
             mMenuFragment.display();
-        }
-        
-        if (mStateTransitionTable.getCurrentState() == TrafficViewSTT.State.Map) {
+        } else if (currentState == TrafficViewSTT.State.Map) {
         	mSphinx.setTouchMode(TouchMode.LONG_CLICK);
-        }
-        
-        if (mStateTransitionTable.getCurrentState() == TrafficViewSTT.State.SelectPoint) {
+        } else if (currentState == TrafficViewSTT.State.SelectPoint) {
 			mSphinx.setTouchMode(R.id.start_edt == mSelectedEdt.getEdt().getId() ? 
 					TouchMode.CHOOSE_ROUTING_START_POINT : TouchMode.CHOOSE_ROUTING_END_POINT);
         }
@@ -544,7 +549,6 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	public void query() {
 		mSphinx.hideSoftInput();
-		mBlock.requestFocus();
 		
 		if (mode == TRAFFIC_MODE) {
 			submitTrafficQuery();

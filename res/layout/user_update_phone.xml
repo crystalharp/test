@@ -86,6 +86,8 @@
 		        android:hint="@string/please_input_old_password"
 		        android:background="@drawable/list_single_normal"
 		        flag="2"
+		        validateType="password"
+		        formatErrorTip="@string/password_format_error_tip"
 		        emptyErrorTip="@string/password_empty_tip" />
 		    
 		    <Button

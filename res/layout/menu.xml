@@ -1,97 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<AbsoluteLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view" 
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content"
+    android:gravity="top|left" 
+    android:weightSum="4"
+    android:orientation="horizontal"
     android:background="@drawable/bg_menu_bar">
-
-	<ImageView android:id="@+id/btn_cursor" 
-	        android:layout_width="wrap_content" 
-	        android:layout_height="wrap_content"
-	        android:background="@drawable/menu_bg_yellow"
-	        android:scaleType="fitEnd"
-	        android:gravity="center"/>
-		
-	<LinearLayout 
-	    android:id="@+id/root_view" 
-	    android:layout_width="fill_parent" 
-	    android:layout_height="wrap_content"
-	    android:gravity="top|left" 
-	    android:weightSum="4"
-	    android:orientation="horizontal">
-	           
-	    <RelativeLayout
-	        android:layout_width="wrap_content" 
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"> 
-	        
-	    <ImageButton android:id="@+id/poi_btn" 
-	        android:layout_width="wrap_content" 
-	        android:layout_height="wrap_content"
-	        android:background="@drawable/menu_poi"
-	        android:layout_centerInParent="true"
-	        android:scaleType="fitEnd"
-	        android:gravity="center"/>
-	    </RelativeLayout>
-	           
-	    <RelativeLayout
-	        android:layout_width="wrap_content" 
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"> 
-	        
-	    <ImageButton android:id="@+id/discover_btn" 
-	        android:layout_width="wrap_content" 
-	        android:layout_height="wrap_content"
-	        android:background="@drawable/menu_discover"
-	        android:layout_centerInParent="true"
-	        android:scaleType="fitEnd"
-	        android:gravity="center"/>
-	        
-	        <ImageView android:id="@+id/discover_imv" 
-	            android:layout_width="wrap_content" 
-	            android:layout_height="wrap_content"
-	            android:background="@drawable/ic_new"
-	            android:layout_alignParentTop="true"
-	            android:layout_centerHorizontal="true"
-	            android:gravity="center"
-	            android:visibility="gone"/>
-	    </RelativeLayout>
-	           
-	    <RelativeLayout
-	        android:layout_width="wrap_content" 
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1"> 
-	    <ImageButton android:id="@+id/traffic_btn" 
-	        android:layout_width="wrap_content" 
-	        android:layout_height="wrap_content"
-	        android:background="@drawable/menu_traffic"
-	        android:layout_centerInParent="true"
-	        android:scaleType="fitEnd"
-	        android:gravity="center"/>
-	    </RelativeLayout>
-	        
-	    <RelativeLayout
-	        android:layout_width="wrap_content" 
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1">
-	        
-	        <ImageButton android:id="@+id/more_btn" 
-	            android:layout_width="wrap_content" 
-	            android:layout_height="wrap_content"
-	            android:background="@drawable/menu_more"
-	            android:layout_centerInParent="true"
-	            android:scaleType="fitEnd"
-	            android:gravity="center"/>
-	        
-	        <ImageView android:id="@+id/upgrade_imv" 
-	            android:layout_width="wrap_content" 
-	            android:layout_height="wrap_content"
-	            android:background="@drawable/menu_upgrade"
-	            android:layout_alignParentTop="true"
-	            android:layout_centerHorizontal="true"
-	            android:gravity="center"
-	            android:visibility="gone"/>
-	    </RelativeLayout>
-	</LinearLayout>
-
-</AbsoluteLayout>
+           
+    <RelativeLayout
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_weight="1"> 
+        
+    <ImageButton android:id="@+id/poi_btn" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:background="@drawable/menu_poi"
+        android:layout_centerInParent="true"
+        android:scaleType="fitEnd"
+        android:gravity="center"/>
+    </RelativeLayout>
+           
+    <RelativeLayout
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_weight="1"> 
+        
+    <ImageButton android:id="@+id/discover_btn" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:background="@drawable/menu_discover"
+        android:layout_centerInParent="true"
+        android:scaleType="fitEnd"
+        android:gravity="center"/>
+        
+        <ImageView android:id="@+id/discover_imv" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:background="@drawable/ic_new"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:visibility="gone"/>
+    </RelativeLayout>
+           
+    <RelativeLayout
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_weight="1"> 
+    <ImageButton android:id="@+id/traffic_btn" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:background="@drawable/menu_traffic"
+        android:layout_centerInParent="true"
+        android:scaleType="fitEnd"
+        android:gravity="center"/>
+    </RelativeLayout>
+        
+    <RelativeLayout
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content"
+        android:layout_weight="1">
+        
+        <ImageButton android:id="@+id/more_btn" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:background="@drawable/menu_more"
+            android:layout_centerInParent="true"
+            android:scaleType="fitEnd"
+            android:gravity="center"/>
+        
+        <ImageView android:id="@+id/upgrade_imv" 
+            android:layout_width="wrap_content" 
+            android:layout_height="wrap_content"
+            android:background="@drawable/menu_upgrade"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:visibility="gone"/>
+    </RelativeLayout>
+</LinearLayout>

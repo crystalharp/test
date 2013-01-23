@@ -187,7 +187,12 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 				if (which == DialogInterface.BUTTON_POSITIVE) {
 					if (source.validErrorType == ExtValidationEditText.ValidErrorType.PhoneFormatError) {
 						source.selectAll();
-					} 
+					} else if (source.validErrorType == ExtValidationEditText.ValidErrorType.PasswordFormatError) {
+                        if (source.hasUnionView()) {
+                            source.getUnionView().setText("");
+                        }
+                        source.setText("");
+                    }
 
 					source.requestFocus();
 					showSoftInput(source);

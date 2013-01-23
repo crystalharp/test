@@ -218,6 +218,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private ViewGroup mInfoWindowTuangouDetail = null;
     private ViewGroup mInfoWindowYanchuList = null;
     
+    private Dialog mDialog = null;
+    public void setDialog(Dialog dialog) {
+        mDialog = dialog;
+    }
+    
     View.OnTouchListener mInfoWindowBodyViewListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, android.view.MotionEvent ev) {
@@ -2203,6 +2208,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             public void onClick(DialogInterface dialog, int id) {
                                 switch (id) {                                            
                                     case DialogInterface.BUTTON_POSITIVE:
+                                        Dialog dialg = mDialog;
+                                        if (dialg != null && dialg.isShowing()) {
+                                            dialg.dismiss();
+                                        }
                                         getTitleFragment().dismissPopupWindow();
                                         BaseFragment baseFragment = getFragment(uiStackPeek());
                                         if (baseFragment != null) {
@@ -2356,7 +2365,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     // TODO: query end
 
-    // TODO: ui stack begin    
+    // TODO: ui stack begin   
     public Object mUILock = new Object();
     public boolean mUIProcessing = false;
     private ArrayList<Integer> mUIStack = new ArrayList<Integer>();
