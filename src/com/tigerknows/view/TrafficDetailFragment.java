@@ -135,10 +135,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         case SHOW_TYPE_DRVIE:
             mTitleBtn.setText(mContext.getString(R.string.title_drive_plan));
             mSubTitleTxv.setText(mSphinx.getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
+            mErrorRecoveryLayout.setVisibility(View.GONE);
             break;
         case SHOW_TYPE_WALK:
             mTitleBtn.setText(mContext.getString(R.string.title_walk_plan));
             mSubTitleTxv.setText(mSphinx.getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
+            mErrorRecoveryLayout.setVisibility(View.GONE);
             break;
         default:
         }

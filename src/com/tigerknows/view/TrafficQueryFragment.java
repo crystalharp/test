@@ -422,7 +422,11 @@ public class TrafficQueryFragment extends BaseFragment {
 
 		public void setPOI(POI mPOI) {
 			this.mPOI = mPOI;
-			setText(mPOI.getName());
+			if (this.mPOI == null) {
+			    setText("");
+			} else {
+			    setText(mPOI.getName());
+			}
 		}
 
 		protected void setText(String text) {

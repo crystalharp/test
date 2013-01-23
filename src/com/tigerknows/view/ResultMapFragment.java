@@ -165,7 +165,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     public void setData(String title, String actionTag) {
         mTitle = title;
         mActionTag = actionTag;
-        mTitleBtn.setText(mTitle);
         
         /*
          * setData方法被调用时, 表明将要进入结果地图, 
