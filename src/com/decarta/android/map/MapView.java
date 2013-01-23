@@ -121,6 +121,7 @@ public class MapView extends RelativeLayout implements
 		zoomControls = new ZoomControls(context);
 
 		tilesView = new TilesView(context, this);
+		tilesView.setId(R.id.view_invalid);
 		addView(tilesView, android.view.ViewGroup.LayoutParams.FILL_PARENT,
 				android.view.ViewGroup.LayoutParams.FILL_PARENT);
 

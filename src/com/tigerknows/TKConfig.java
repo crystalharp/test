@@ -170,6 +170,8 @@ public class TKConfig {
     
     private static int sPage_Size = 20;
     
+    public static int sMap_Padding = 40;
+    
     public static int LON_LAT_DIVISOR = 100000;
     
     public static final String TIGERKNOWS_PREFS = "tigerknows_prefs";
@@ -657,6 +659,7 @@ public class TKConfig {
     }
     
     public static void readConfig() {
+        sMap_Padding = (int)(56*Globals.g_metrics.density);
         String mapPath = TKConfig.getDataPath(true);
         if (TextUtils.isEmpty(mapPath)) {
             return;

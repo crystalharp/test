@@ -26,6 +26,7 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.util.NavigationSplitJointRule;
@@ -206,8 +207,8 @@ public class TrafficOverlayHelper {
 		try {
 		    Icon start = Icon.getIcon(activity.getResources(), R.drawable.icon_start_pin, Icon.OFFSET_LOCATION_CENTER_BOTTOM);
 //			int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, getStartIcon(activity).getSize().x/2, boundingBox);
-			int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, start.getSize().x/2, 
-					mapview.getPadding().top, boundingBox);
+			int fitZoom = Util.getZoomLevelToFitBoundingBox(screenX, screenY, 
+			        TKConfig.sMap_Padding, boundingBox);
 
 			LogWrapper.d(TAG, "get fitZoom: " + fitZoom);
 			Position centerPosition = boundingBox.getCenterPosition();
