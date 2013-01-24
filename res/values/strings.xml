@@ -640,7 +640,7 @@
 	<string name="poi_address_noexist_error">地点不存在</string>
 	<string name="poi_address_duplicate_error">地点重复</string>
 	<string name="poi_ohter_error">其他</string>
-	<string name="error_recovery_success">我们将尽快处理, 谢谢你的反馈</string>
+	<string name="error_recovery_success">我们将尽快处理, 谢谢你的反馈！</string>
 <!-- Error Recover End -->
 
 <!--  =======================    Common Part    =========================== -->
