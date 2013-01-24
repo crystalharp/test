@@ -73,7 +73,16 @@ public class BuslineOverlayHelper {
 		        int i = 0;
 		        final int startIndex = 0;
 		        final int endIndex = poiList.size() - 1;
-				for (POI poi : poiList) {
+		        
+		        //以下奇怪的遍历方式是因为先添加的图标会覆盖后添加的图标，为了保证起终点在最上面，先添加起点，然后从终点倒序添加。
+		        POI startPoi = poiList.get(startIndex);
+                OverlayItem overlayItem = new OverlayItem(startPoi.getPosition(), busStartIc, context.getString(R.string.busline_map_bubble_content, i, startPoi.getName()), rt);
+                overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
+                addTouchEventListenerToOverlayItem(mainThreadHandler, mapView, overlayItem);
+                overlay.addOverlayItem(overlayItem);
+                
+			    for (i = endIndex; i > 0; i--) {
+			        POI poi = poiList.get(i);
 					if (i == startIndex) {
 						busIc = busStartIc;
 					} else if (i == endIndex) {
@@ -81,9 +90,8 @@ public class BuslineOverlayHelper {
 					} else {
 						busIc = busStationIc;
 					}
-					i++;
 					
-					OverlayItem overlayItem = new OverlayItem(poi.getPosition(), busIc, context.getString(R.string.busline_map_bubble_content, i, poi.getName()), rt);
+					overlayItem = new OverlayItem(poi.getPosition(), busIc, context.getString(R.string.busline_map_bubble_content, i, poi.getName()), rt);
 					
 					overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
 	                
@@ -120,7 +128,6 @@ public class BuslineOverlayHelper {
 			    }
 			});
 		} catch (APIException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
