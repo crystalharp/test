@@ -220,7 +220,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             return;
         }
         mData = (Tuangou)data;
-        
+
         mFilterArea = mData.getFilterArea();
         
         Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), mSphinx, mLoadedDrawableRun);
@@ -289,6 +289,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     @Override
     protected void refreshDrawable() {
         super.refreshDrawable();
+        
         if (mData == null) {
             return;
         }

@@ -383,7 +383,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                 mDiscoverCategoryList.get(i).init(new XMap());
             }
             if (mDiscoverCategoryAdapter != null) {
-                for(int i = mDiscoverCategoryAdapter.getList().size()-1; i >= 0; i--) {
+                for(int i = 0, size = mDiscoverCategoryAdapter.getList().size(); i < size; i++) {
                     DiscoverCategory discoverCategory = getDiscoverCategoryByType(mDiscoverCategoryList, mDiscoverCategoryAdapter.getList().get(i).getType());
                     mDiscoverCategoryAdapter.getListView().get(i).setData(discoverCategory);
                 }
@@ -413,7 +413,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         if (discoverCategoryList != null && discoverCategoryList.getList() != null && discoverCategoryList.getList().size() > 0) {
             List<DiscoverCategory> list = discoverCategoryList.getList();
             try {
-                for(int i = mDiscoverCategoryAdapter.getList().size()-1; i >= 0; i--) {
+                for(int i = 0, size = mDiscoverCategoryAdapter.getList().size(); i < size; i++) {
                     DiscoverCategory discoverCategory = mDiscoverCategoryAdapter.getList().get(i);
                     DiscoverCategory discoverCategoryNow = getDiscoverCategoryByType(list, discoverCategory.getType());
                     discoverCategory.init(discoverCategoryNow.getData());

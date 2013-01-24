@@ -97,9 +97,7 @@ public class TuangouDetailFragment extends BaseDetailFragment
         
         this.mDataList = dataList;
         setData(dataList.size(), position, iPagerList);
-        TuangouDetailView view = (TuangouDetailView) mCyclePagerAdapter.viewList.get(mViewPager.getCurrentItem()%mCyclePagerAdapter.viewList.size());
-        view.setData(mDataList.get(position));
-        view.onResume();
+        refreshViews(position);
     }
     
     public void viewMap() {
@@ -119,6 +117,11 @@ public class TuangouDetailFragment extends BaseDetailFragment
     public void refreshViews(int position) {
         super.refreshViews(position);
         TuangouDetailView view;
+
+        view = (TuangouDetailView) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
+        view.setData(mDataList.get(position));
+        view.onResume();
+        
         if (position - 1 >= 0) {
             view = (TuangouDetailView) mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
             view.setData(mDataList.get(position-1));

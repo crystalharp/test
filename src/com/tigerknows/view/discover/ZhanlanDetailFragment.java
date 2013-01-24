@@ -82,9 +82,7 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
         }
         mDataList = dataList;
         setData(dataList.size(), position, iPagerList);
-        ZhanlanDetailView view = (ZhanlanDetailView) mCyclePagerAdapter.viewList.get(mViewPager.getCurrentItem()%mCyclePagerAdapter.viewList.size());
-        view.setData(mDataList.get(position));
-        view.onResume();
+        refreshViews(position);
     }
     
     public void viewMap() {
@@ -102,6 +100,11 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
     public void refreshViews(int position) {
         super.refreshViews(position);
         ZhanlanDetailView view;
+
+        view = (ZhanlanDetailView) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
+        view.setData(mDataList.get(position));
+        view.onResume();
+        
         if (position - 1 >= 0) {
             view = (ZhanlanDetailView) mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
             view.setData(mDataList.get(position-1));

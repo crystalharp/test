@@ -11,7 +11,9 @@ import org.apache.http.client.HttpClient;
 
 import java.io.ByteArrayInputStream;
 import java.lang.ref.SoftReference;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -34,13 +36,24 @@ public class AsyncImageLoader {
     
     private String viewToken = "";
 
-    /**
-     * @param imageUrl 图像url地址
-     * @param callback 回调接口
-     * @return 返回内存中缓存的图像，第一次加载返回null
-     */
-    public BitmapDrawable loadDrawable(final Context context, final TKURL imageUrl, final ImageCallback callback) {
-        // 如果缓存过就从缓存中取出数据
+    class CallbackBitmapRunnable implements Runnable{
+    	
+    	ImageCallback mCallback;
+    	BitmapDrawable mDrawable;
+    	
+    	CallbackBitmapRunnable(ImageCallback callback, BitmapDrawable drawable){
+    		this.mCallback=callback;
+    		this.mDrawable = drawable;
+    	}
+    	
+		public void run() {
+			mCallback.imageLoaded(mDrawable);
+		}
+		
+	}
+    
+    private BitmapDrawable checkMemoryAndDisk(final Context context, final TKURL imageUrl) {
+    	// 如果缓存过就从缓存中取出数据
         if (TKConfig.CACHE_BITMAP_TO_MEMORY) {
             if (imageCache.containsKey(imageUrl.url)) {
                 SoftReference<BitmapDrawable> softReference = imageCache.get(imageUrl.url);
@@ -64,6 +77,20 @@ public class AsyncImageLoader {
             }
             return bitmapDrawable;
         }
+        return null;
+    }
+    
+    /**
+     * @param imageUrl 图像url地址
+     * @param callback 回调接口
+     * @return 返回内存中缓存的图像，第一次加载返回null
+     */
+    public BitmapDrawable loadDrawable(final Context context, final TKURL imageUrl, final ImageCallback callback) {
+        
+    	BitmapDrawable b = checkMemoryAndDisk(context, imageUrl);
+    	if (b != null) {
+    		return b;
+    	}
 
         if (viewToken.equals(imageUrl.viewToken) == false || executorService == null || executorService.isShutdown() || context == null || callback == null) {
             return null;
@@ -72,18 +99,41 @@ public class AsyncImageLoader {
         // 缓存中没有图像，则从网络上取出数据，并将取出的数据缓存到内存中
         executorService.submit(new Runnable() {
             public void run() {
+            	
                 try {
-                    final BitmapDrawable bitmapDrawable = loadImageFromUrl(context, imageUrl);
-                    if (bitmapDrawable != null) {
-                        if (TKConfig.CACHE_BITMAP_TO_MEMORY) {
-                            imageCache.put(imageUrl.url, new SoftReference<BitmapDrawable>(bitmapDrawable));
-                        }
-                    }
-                    handler.post(new Runnable() {
-                        public void run() {
-                            callback.imageLoaded(bitmapDrawable);
-                        }
-                    });
+                	  BitmapDrawable bitmapDrawable;
+                	  bitmapDrawable = checkMemoryAndDisk(context, imageUrl);
+                	  if(bitmapDrawable == null){
+                		  String signal = testAndPutUrlInList(imageUrl.url);
+                		  if (signal != null) {
+                			  synchronized (signal) {
+                    			  signal.wait();	
+                    			  bitmapDrawable = checkMemoryAndDisk(context, imageUrl);
+							}
+                		  }else{
+                			  
+                			  long startTime = System.currentTimeMillis();
+                			  //load image from url
+                			  bitmapDrawable = loadImageFromUrl(context, imageUrl);
+                			  //Put the image into the cache
+                			  if (bitmapDrawable != null) {
+                				  if (TKConfig.CACHE_BITMAP_TO_MEMORY) {
+                					  imageCache.put(imageUrl.url, new SoftReference<BitmapDrawable>(bitmapDrawable));
+                				  }
+                			  }
+
+                			  removeDownloadTaskAndNotifyOthers(imageUrl.url);
+                			  //Everything is ok and notify others
+
+                			  synchronized (imageUrl.url) {
+                    			  imageUrl.url.notifyAll();	
+							}
+                			  
+                		  }
+                	  }
+              	  handler.post(new CallbackBitmapRunnable(callback, bitmapDrawable));
+              	  
+                   
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -91,13 +141,43 @@ public class AsyncImageLoader {
         });
         return null;
     }
+    
+    private List<String> mDwonloadList = new ArrayList<String>(10);
 
+    /**
+     * test whether the url has been in the download list
+     * If it's in the download list, return the corrresponding url in the list
+     * If it's not in the download list, return null and put the url in the list;
+     * @param url
+     */
+    private String testAndPutUrlInList(String url){
+    	int index = 0;
+    	synchronized (mDwonloadList) {
+    		index = mDwonloadList.indexOf(url);
+    		if(index == -1){
+    			mDwonloadList.add(url);
+    			return null;
+    		}else{
+        		return mDwonloadList.get(index);	
+    		}
+		}
+    }
+
+    private void removeDownloadTaskAndNotifyOthers(String url){
+    	
+    	synchronized (mDwonloadList) {
+    		mDwonloadList.remove(url);
+		}
+    	
+    }
+    
     // 从网络上取数据方法
     protected BitmapDrawable loadImageFromUrl(Context context, TKURL imageUrl) {
         try {
             if (viewToken.equals(imageUrl.viewToken) == false) {
                 return null;
             }
+
             if (mHttpClient == null) {
                 mHttpClient = Utility.getNewHttpClient(context);
             }
@@ -111,6 +191,7 @@ public class AsyncImageLoader {
                 mHttpClient = null;
                 e.printStackTrace();
             }
+            
             return null;
 //            return (BitmapDrawable) BitmapDrawable.createFromStream(new URL(imageUrl).openStream(), "image.png");
 

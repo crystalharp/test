@@ -147,6 +147,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             mSphinx.queryStart(dataQuery);
             setup();
             onResume();
+            mTitleBtn.setClickable(false);
         }
     };
     
@@ -574,8 +575,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             actionTag = ActionLog.MapZhanlanList;
         }
         mSphinx.showPOI(dataList, page[2]);
-        mSphinx.showView(R.id.view_result_map);   
         mSphinx.getResultMapFragment().setData(mContext.getString(name), actionTag);
+        mSphinx.showView(R.id.view_result_map);   
     }
     
     public void doFilter(String name) {
@@ -872,6 +873,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
+        mTitleBtn.setClickable(true);
+        
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
         
         mResultLsv.onRefreshComplete(false);
@@ -991,6 +994,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     item.setFilterArea(mFilterArea);
                 }
                 mDianyingList.addAll(list);
+
+                mDingdanBtn.setVisibility(View.INVISIBLE);
                 
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
@@ -1023,6 +1028,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 }
                 
                 mYanchuList.addAll(yanchuResponse.getList().getList());
+
+                mDingdanBtn.setVisibility(View.INVISIBLE);
                 
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
@@ -1055,6 +1062,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 }
                 
                 mZhanlanList.addAll(zhanlanResponse.getList().getList());
+                mDingdanBtn.setVisibility(View.INVISIBLE);
                 
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
