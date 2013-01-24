@@ -296,6 +296,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             	CommonUtils.showNormalDialog(mSphinx, 
                         mContext.getString(R.string.prompt),
                         mContext.getString(R.string.cancel_favorite_tip),
+                        mContext.getString(R.string.yes),
+                        mContext.getString(R.string.no),
                         new DialogInterface.OnClickListener() {
                             
                             @Override

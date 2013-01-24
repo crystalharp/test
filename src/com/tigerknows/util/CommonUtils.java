@@ -1088,8 +1088,8 @@ public class CommonUtils {
 //                return true; // ~ 5 Mbps  
 //            case Connectivity.NETWORK_TYPE_HSPAP:  
 //                return true; // ~ 10-20 Mbps  
-//            case Connectivity.NETWORK_TYPE_IDEN:  
-//                return false; // ~25 kbps   
+            case TelephonyManager.NETWORK_TYPE_IDEN:  
+                return false; // ~25 kbps   
 //            case Connectivity.NETWORK_TYPE_LTE:  
 //                return true; // ~ 10+ Mbps  
             // Unknown  

@@ -858,7 +858,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             
             @Override
             public void onDismiss(DialogInterface arg0) {
-                mSphinx.hideSoftInput();
+                mSphinx.postHideSoftInput();
             }
         });
     }

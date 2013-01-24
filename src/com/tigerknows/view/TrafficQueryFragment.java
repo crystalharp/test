@@ -286,7 +286,7 @@ public class TrafficQueryFragment extends BaseFragment {
 			super.onResume();
 			hideCommonTitle();
 		}
-        mSphinx.getMapView().setStopDraw(false);
+        mSphinx.getMapView().setStopRefreshMyLocation(false);
       
         LogWrapper.d("eric", "TrafficQueryView.show() currentState: " + currentState);
 

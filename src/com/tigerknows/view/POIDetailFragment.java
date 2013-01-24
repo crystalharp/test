@@ -667,6 +667,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             CommonUtils.showNormalDialog(mSphinx, 
                     mContext.getString(R.string.favorite_yet), 
                     mContext.getString(R.string.cancel_favorite_tip),
+                    mContext.getString(R.string.yes),
+                    mContext.getString(R.string.no),
                     new DialogInterface.OnClickListener() {
                         
                         @Override

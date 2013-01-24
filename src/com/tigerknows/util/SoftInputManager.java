@@ -68,6 +68,14 @@ public class SoftInputManager {
     public void hideSoftInput() {
         View view = activity.getCurrentFocus();
         if (view != null) {
+            view.clearFocus();
+            inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }     
+    
+    public void postHideSoftInput() {
+        View view = activity.getCurrentFocus();
+        if (view != null) {
             hideSoftInput.view = view;
             handler.post(hideSoftInput);
         }

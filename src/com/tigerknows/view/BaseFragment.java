@@ -290,7 +290,7 @@ public class BaseFragment extends LinearLayout {
             mMenuFragment.hide();
         	mTitleFragment.display();
             Globals.getAsyncImageLoader().setViewToken(toString());
-        	mSphinx.getMapView().setStopDraw(true);
+        	mSphinx.getMapView().setStopRefreshMyLocation(true);
         }
         
         if (mRootView != null) {
