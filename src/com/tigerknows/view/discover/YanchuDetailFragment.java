@@ -82,9 +82,7 @@ public class YanchuDetailFragment extends BaseDetailFragment
         }
         mDataList = dataList;
         setData(dataList.size(), position, iPagerList);
-        YanchuDetailView view = (YanchuDetailView) mCyclePagerAdapter.viewList.get(mViewPager.getCurrentItem()%mCyclePagerAdapter.viewList.size());
-        view.setData(mDataList.get(position));
-        view.onResume();
+        refreshViews(position);
     }
     
     public void viewMap() {
@@ -102,6 +100,11 @@ public class YanchuDetailFragment extends BaseDetailFragment
     public void refreshViews(int position) {
         super.refreshViews(position);
         YanchuDetailView view;
+        
+        view = (YanchuDetailView) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
+        view.setData(mDataList.get(position));
+        view.onResume();
+        
         if (position - 1 >= 0) {
             view = (YanchuDetailView) mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
             view.setData(mDataList.get(position-1));

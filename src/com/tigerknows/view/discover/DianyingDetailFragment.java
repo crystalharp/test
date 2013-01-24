@@ -82,9 +82,7 @@ public class DianyingDetailFragment extends BaseDetailFragment
         }
         mDataList = dataList;
         setData(dataList.size(), position, iPagerList);
-        DianyingDetailView view = (DianyingDetailView) mCyclePagerAdapter.viewList.get(mViewPager.getCurrentItem()%mCyclePagerAdapter.viewList.size());
-        view.setData(mDataList.get(position));
-        view.onResume();
+        refreshViews(position);
     }
     
     public void viewMap() {
@@ -100,6 +98,11 @@ public class DianyingDetailFragment extends BaseDetailFragment
     public void refreshViews(int position) {
         super.refreshViews(position);
         DianyingDetailView view;
+        
+        view = (DianyingDetailView) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
+        view.setData(mDataList.get(position));
+        view.onResume();
+        
         if (position - 1 >= 0) {
             view = (DianyingDetailView) mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
             view.setData(mDataList.get(position-1));

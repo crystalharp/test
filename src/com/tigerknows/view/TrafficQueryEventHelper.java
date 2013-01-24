@@ -551,7 +551,8 @@ public class TrafficQueryEventHelper {
                 public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
                     dialog.dismiss();
                     mQueryFragment.mSelectedEdt = queryEdt;
-                    //如果没有定位，则第一个选择当前位置不显示，which加一对应到相应操作。
+                    //有定位的情况下四个选项为“当前位置”，“地图选点”，“收藏夹”，“交换起终点”
+                    //如果没有定位，则正常第一个选择“当前位置”不显示，which加一才能对应到到正确操作。
                     if (hasMyLocation == false) {
                         which++;
                     }
