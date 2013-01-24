@@ -113,6 +113,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         List<Filter> filterList1 = this.filter.getChidrenFilterList();
         this.parentFilterList.addAll(filterList1);
         
+        int selectedChiledPosition = -1;
         for(int i = filterList1.size()-1; i >= 0; i--) {
             Filter filter1 = filterList1.get(i);
             List<Filter> filterList2 = filter1.getChidrenFilterList();
@@ -125,6 +126,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                     Filter filter2 = filterList2.get(j);
                     if (filter2.isSelected()) {
                         selectedParentPosition = i;
+                        selectedChiledPosition = j;
                         selectedParentFilter = filter1;
                         selectedChildFilter = filter2;
                         this.childFilterList.addAll(filterList2);
@@ -137,6 +139,11 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         }
         parentAdapter.notifyDataSetChanged();
         childAdapter.notifyDataSetChanged();
+        if (selectedParentPosition > 0)
+            parentLsv.setSelectionFromTop(selectedParentPosition, 0);
+        
+        if (selectedChiledPosition > 0)
+            parentLsv.setSelectionFromTop(selectedChiledPosition, 0);
     }
         
     public FilterListView(Context context) {
@@ -190,6 +197,17 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                     childFilterList.clear();
                     childFilterList.addAll(filterList);
                     childAdapter.notifyDataSetChanged();
+                    int selectedChiledPosition = -1;
+                    for(int j = childFilterList.size()-1; j >= 0; j--) {
+                        Filter filter2 = childFilterList.get(j);
+                        if (filter2.isSelected()) {
+                            selectedChiledPosition = j;
+                            break;
+                        }
+                    }
+                    
+                    if (selectedChiledPosition > -1)
+                        childLsv.setSelectionFromTop(selectedChiledPosition, 0);
                 }
             }
         });

@@ -41,6 +41,8 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
+import com.tigerknows.view.user.User;
 import com.tigerknows.widget.Toast;
 
 import com.decarta.Globals;
@@ -667,6 +669,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             CommonUtils.showNormalDialog(mSphinx, 
                     mContext.getString(R.string.favorite_yet), 
                     mContext.getString(R.string.cancel_favorite_tip),
+                    mContext.getString(R.string.yes),
+                    mContext.getString(R.string.no),
                     new DialogInterface.OnClickListener() {
                         
                         @Override
@@ -914,7 +918,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             if (commentList != null && commentList.getList() != null && commentList.getList().size() > 0) {
                 List<Comment> commentArrayList = commentList.getList();
                 poi.updateAttribute();
-                Collections.sort(commentArrayList, Comment.COMPARATOR);
+                Collections.sort(commentArrayList, Comment.COMPARATOR_DATETIME);
                 int size = commentArrayList.size();
                 mCommentListView.setVisibility(View.VISIBLE);
                 int length = size;
@@ -974,6 +978,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             if (comment.getAttribute() > 0) {
                 view.setBackgroundResource(R.drawable.list_middle);
                 authorTxv.setTextColor(0xff009CFF);
+                User user = Globals.g_User;
+                if (user != null) {
+                    authorTxv.setText(user.getNickName());
+                }
                 poi.setMyComment(comment);
                 view.setOnClickListener(new OnClickListener() {
                     

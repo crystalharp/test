@@ -128,6 +128,7 @@ public class DiscoverCategoryView extends LinearLayout {
         }
         mDiscoverCategory = discoverCategory;
         mDataType = mDiscoverCategory.getType();
+
         
         refreshContent();
         

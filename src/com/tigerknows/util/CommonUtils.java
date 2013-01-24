@@ -71,6 +71,7 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TrafficQuery;
+import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.view.SpringbackListView;
 import com.tigerknows.view.StringArrayAdapter;
 import com.tigerknows.view.TrafficQueryFragment;
@@ -1038,6 +1039,8 @@ public class CommonUtils {
                         start = myLocationPOI;
                         end = poi;
                     }
+                    
+                    sphinx.getTrafficQueryFragment().addHistoryWord(poi, HistoryWordTable.TYPE_TRAFFIC);
                     TrafficQueryFragment.submitTrafficQuery(sphinx, start, end, queryType);
                 } else {
                     trafficQueryFragment.setDataNoSuggest(poi, location, queryType);
@@ -1088,8 +1091,8 @@ public class CommonUtils {
 //                return true; // ~ 5 Mbps  
 //            case Connectivity.NETWORK_TYPE_HSPAP:  
 //                return true; // ~ 10-20 Mbps  
-//            case Connectivity.NETWORK_TYPE_IDEN:  
-//                return false; // ~25 kbps   
+            case TelephonyManager.NETWORK_TYPE_IDEN:  
+                return false; // ~25 kbps   
 //            case Connectivity.NETWORK_TYPE_LTE:  
 //                return true; // ~ 10+ Mbps  
             // Unknown  

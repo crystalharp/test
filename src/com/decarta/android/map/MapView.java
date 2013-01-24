@@ -1039,7 +1039,7 @@ public class MapView extends RelativeLayout implements
         return tilesView.getMapText();
     }
     
-    public void setStopDraw(boolean stopDraw) {
-        tilesView.stopDraw = stopDraw;
+    public void setStopRefreshMyLocation(boolean stopRefreshMyLocation) {
+        tilesView.stopRefreshMyLocation = stopRefreshMyLocation;
     }
 }

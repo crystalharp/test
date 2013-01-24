@@ -147,6 +147,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             mSphinx.queryStart(dataQuery);
             setup();
             onResume();
+            mTitleBtn.setClickable(false);
         }
     };
     
@@ -492,15 +493,15 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 } else if (getList().size() > 0) {
                     mRightBtn.setVisibility(View.VISIBLE);
                     if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
-                        if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_DISCOVER_LIST) == null) {
-                            TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_DISCOVER_LIST, "1");
+                        if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_LIST) == null) {
+                            TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_POI_LIST, "1");
                             TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, "1");
                             mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_LIST, R.layout.hint_discover_tuangou_list);
                         } else {
                             mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_TUANGOU_DINGDAN, R.layout.hint_discover_tuangou_dingdan);
                         }
                     } else {
-                        mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_LIST, R.layout.hint_poi_list);
+                        mSphinx.showHint(TKConfig.PREFS_HINT_POI_LIST, R.layout.hint_poi_list);
                     }
                 } else {
                     mRightBtn.setVisibility(View.GONE);
@@ -574,8 +575,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             actionTag = ActionLog.MapZhanlanList;
         }
         mSphinx.showPOI(dataList, page[2]);
-        mSphinx.showView(R.id.view_result_map);   
         mSphinx.getResultMapFragment().setData(mContext.getString(name), actionTag);
+        mSphinx.showView(R.id.view_result_map);   
     }
     
     public void doFilter(String name) {
@@ -872,6 +873,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
+        mTitleBtn.setClickable(true);
+        
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
         
         mResultLsv.onRefreshComplete(false);
@@ -991,6 +994,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     item.setFilterArea(mFilterArea);
                 }
                 mDianyingList.addAll(list);
+
+                mDingdanBtn.setVisibility(View.INVISIBLE);
                 
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
@@ -1023,6 +1028,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 }
                 
                 mYanchuList.addAll(yanchuResponse.getList().getList());
+
+                mDingdanBtn.setVisibility(View.INVISIBLE);
                 
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
@@ -1055,6 +1062,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 }
                 
                 mZhanlanList.addAll(zhanlanResponse.getList().getList());
+                mDingdanBtn.setVisibility(View.INVISIBLE);
                 
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);

@@ -355,7 +355,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         
         int minIndex = page[0];
         int maxIndex = page[1];
-        for(;minIndex <= maxIndex && minIndex < size; minIndex++) {
+        for(;minIndex < maxIndex && minIndex < size; minIndex++) {
             poi = mPOIList.get(minIndex);
             poiList.add(poi);
         }

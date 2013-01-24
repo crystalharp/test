@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -34,7 +33,6 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.Sphinx.TouchMode;
-import com.tigerknows.maps.TrafficOverlayHelper;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineModel;
@@ -286,7 +284,7 @@ public class TrafficQueryFragment extends BaseFragment {
 			super.onResume();
 			hideCommonTitle();
 		}
-        mSphinx.getMapView().setStopDraw(false);
+        mSphinx.getMapView().setStopRefreshMyLocation(false);
       
         LogWrapper.d("eric", "TrafficQueryView.show() currentState: " + currentState);
 
@@ -571,7 +569,7 @@ public class TrafficQueryFragment extends BaseFragment {
 		}
 
 		int cityId = mMapLocationHelper.getQueryCityInfo().getId();
-        addHistoryWord(mBusline, cityId, HistoryWordTable.TYPE_BUSLINE);
+        addHistoryWord(mBusline, HistoryWordTable.TYPE_BUSLINE);
         BuslineQuery buslineQuery = new BuslineQuery(mContext);
         buslineQuery.setup(cityId, searchword, 0, false, getId(), mContext.getString(R.string.doing_and_wait));
         
@@ -605,8 +603,8 @@ public class TrafficQueryFragment extends BaseFragment {
         
         int cityId = mMapLocationHelper.getQueryCityInfo().getId();
         
-        addHistoryWord(mStart, cityId, HistoryWordTable.TYPE_TRAFFIC);
-        addHistoryWord(mEnd, cityId, HistoryWordTable.TYPE_TRAFFIC);
+        addHistoryWord(mStart, HistoryWordTable.TYPE_TRAFFIC);
+        addHistoryWord(mEnd, HistoryWordTable.TYPE_TRAFFIC);
     		
         mActionLog.addAction(ActionLog.TrafficQueryBtnT, mStart.getEdt().getText().toString(), mEnd.getEdt().getText().toString());
         trafficQuery.setup(cityId, start, end, getQueryType(), getId(), mContext.getString(R.string.doing_and_wait));
@@ -614,14 +612,24 @@ public class TrafficQueryFragment extends BaseFragment {
         mSphinx.queryStart(trafficQuery);
 	}
 	
-	private void addHistoryWord(QueryEditText queryEditText, int cityId, int type) {
+	private void addHistoryWord(QueryEditText queryEditText, int type) {
 	    if (!isKeyword(queryEditText.getEdt().getText().toString())) {
             POI poi = queryEditText.getPOI();
-            String name = poi.getName();
+            addHistoryWord(poi, type);
+        }
+	}
+    
+    public void addHistoryWord(POI poi, int type) {
+        if (poi == null) {
+            return;
+        }
+        int cityId = mMapLocationHelper.getQueryCityInfo().getId();
+        String name = poi.getName();
+        if (name != null && name.trim().equals(mSphinx.getString(R.string.my_location)) == false) {
             Position position = poi.getPosition();
             HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, name, position), cityId, type);
         }
-	}
+    }
     
     public static void submitTrafficQuery(Sphinx sphinx, POI start, POI end, int queryType) {
         

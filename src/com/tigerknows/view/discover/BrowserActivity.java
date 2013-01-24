@@ -10,8 +10,6 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.View;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -96,9 +94,6 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
         mWebWbv.getSettings().setJavaScriptEnabled(true);
         mWebWbv.setScrollBarStyle(0);
         mWebWbv.addJavascriptInterface(new MyHandler(), "handler");
-        CookieSyncManager.createInstance(this);
-        CookieSyncManager.getInstance().startSync();
-        CookieManager.getInstance().removeSessionCookie(); 
         mWebWbv.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {

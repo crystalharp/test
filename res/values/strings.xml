@@ -220,7 +220,7 @@
     <string name="settings_map_home_description">在本软件打开时直接显示地图</string>
     
     <string name="delete_city_map_tip">确认删除该城市地图包？</string>
-    <string name="cancel_favorite_tip">确认取消收藏？</string>
+    <string name="cancel_favorite_tip">是否取消收藏？</string>
     
     <string name="off_line_download_dialog_title">下载离线地图包</string>
     <string name="off_line_download_dialog_message">1.通过电脑访问网址http://www.tigerknows.com/android.html下载离线地图包，并解压。\n2.找到解压出的map文件夹，把它装入手机的/sdcard/tigermap/map文件夹。\n3.断开电脑连接，打开老虎宝典即可查看地图。\n4.浏览已经下载地图包的地图将更快速且不再消耗流量！</string>
@@ -640,7 +640,7 @@
 	<string name="poi_address_noexist_error">地点不存在</string>
 	<string name="poi_address_duplicate_error">地点重复</string>
 	<string name="poi_ohter_error">其他</string>
-	<string name="error_recovery_success">我们将尽快处理, 谢谢你的反馈</string>
+	<string name="error_recovery_success">我们将尽快处理, 谢谢你的反馈！</string>
 <!-- Error Recover End -->
 
 <!--  =======================    Common Part    =========================== -->

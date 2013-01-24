@@ -105,10 +105,8 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
         mCycleOnPageChangeListener.isPageTurning = false;
         mCycleOnPageChangeListener.count = mCyclePagerAdapter.count;
         mCyclePagerAdapter.notifyDataSetChanged();
-        
         mViewPager.setCurrentItem(position);
         this.position = -1;
-        refreshViews(position);
     }
 
     protected void findViews() {
