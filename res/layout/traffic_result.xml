@@ -6,24 +6,25 @@
     android:gravity="center" 
     android:background="@color/gray_light">
 	
-    <ImageView 
+    <!-- <ImageView 
         android:id="@+id/shadow1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:background="@color/white"
         android:scaleType="fitXY"
-        android:src="@drawable/bg_shadow" />
+        android:src="@drawable/bg_shadow" /> -->
     
     <LinearLayout android:id="@+id/top_view"
-        android:layout_below="@id/shadow1"
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
+        android:background="@drawable/bg_subtitle"
         android:orientation="vertical" >
         <LinearLayout
             android:id="@+id/sub_title_2column_view"
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content"
+	        android:gravity="center_vertical"
         	android:paddingLeft="8dp"
         	android:paddingTop="2dp"
         	android:paddingRight="8dp"
@@ -40,11 +41,7 @@
 	            android:layout_weight="1"
 	            android:layout_gravity="center_vertical">
 	        </TextView>
-	            <!-- android:drawableLeft="@drawable/icon_start"
-	            android:drawablePadding="8dp"
 	        
-	            android:drawablePadding="8dp"
-	            android:drawableLeft="@drawable/icon_end" -->
 	        <TextView android:id="@+id/end_txv"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
@@ -81,13 +78,13 @@
 	            android:layout_gravity="center_vertical">
 	        </TextView>
 	    </LinearLayout>
-        <ImageView 
+        <!-- <ImageView 
 	        android:id="@+id/shadow2"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:background="@color/white"
 	        android:scaleType="fitXY"
-	        android:src="@drawable/bg_real_line" />
+	        android:src="@drawable/bg_real_line" /> -->
     </LinearLayout>        
 	
     <TextView android:id="@+id/length_txv"
@@ -110,11 +107,18 @@
     <ListView android:id="@+id/result_lsv"
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
-        android:layout_below="@id/length_txv"
+        android:layout_below="@id/top_view"
         android:layout_above="@id/traffic_detail_foot"
         android:fadingEdge="none"
         android:drawSelectorOnTop="false"
         android:scrollingCache="false"
 		android:divider="@drawable/bg_real_line" />
+    <ImageView 
+        android:id="@+id/subtitle_down"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/top_view"
+        android:scaleType="fitXY"
+        android:src="@drawable/bg_subtitle_down" />
     
 </RelativeLayout>
