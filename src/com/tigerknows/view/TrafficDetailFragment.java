@@ -298,6 +298,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             stepHolder.image.setBackgroundDrawable(getDrawable(stepType));
 			stepHolder.textView.setText(getItemContent(position));
 			stepHolder.textView.setTextColor(Color.parseColor("#000000"));
+			//convertView.setBackgroundResource(R.drawable.btn_traffic_detail_end_normal);
 				
 			return convertView;
 

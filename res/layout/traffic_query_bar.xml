@@ -2,7 +2,6 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:paddingLeft="10dp"
     android:background="@drawable/bg_title" >
     <RelativeLayout 
         android:layout_width="fill_parent"
@@ -12,17 +11,17 @@
 		<ImageButton android:id="@+id/back_btn"
 			android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_gravity="left|center_vertical"
+	        android:layout_marginLeft="10dp"
+            android:layout_centerInParent="true"
 		    android:src="@drawable/btn_back"
 		    android:gravity="center"
 		    android:layout_alignParentLeft="true"
-		    android:background="#00000000"
+		    android:background="@color/transparent"
 		    android:visibility="visible" /> 
 	
 <!-- 		    android:layout_alignParentRight="true" -->
 	    <RadioGroup android:id="@+id/traffic_rgp"
 		    android:layout_centerInParent="true"
-		    android:layout_marginRight="24dp"
 		    android:gravity="center_vertical"
 	     	android:layout_width="wrap_content"
 	     	android:layout_height="wrap_content" 
