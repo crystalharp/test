@@ -81,6 +81,7 @@ public class BuslineOverlayHelper {
                 addTouchEventListenerToOverlayItem(mainThreadHandler, mapView, overlayItem);
                 overlay.addOverlayItem(overlayItem);
                 
+                //以下为从终点逆序遍历，不遍历起点
 			    for (i = endIndex; i > 0; i--) {
 			        POI poi = poiList.get(i);
 					if (i == startIndex) {
