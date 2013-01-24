@@ -31,6 +31,7 @@ import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
@@ -43,6 +44,7 @@ import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.SpringbackListView;
 import com.tigerknows.view.SpringbackListView.OnRefreshListener;
+import com.tigerknows.view.user.User;
 
 /**
  * @author Peng Wenyue
@@ -376,6 +378,10 @@ public class POICommentList extends BaseActivity {
                 final POI poi = mCommentQuery.getPOI();
                 authorTxv.setText(comment.getUser());
                 if (comment.getAttribute() > 0) {
+                    User user = Globals.g_User;
+                    if (user != null) {
+                        authorTxv.setText(user.getNickName());
+                    }
                     view.setBackgroundResource(R.drawable.list_middle);
                     authorTxv.setTextColor(0xff009CFF);
                     poi.setMyComment(comment);
