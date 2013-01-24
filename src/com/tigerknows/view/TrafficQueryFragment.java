@@ -117,6 +117,7 @@ public class TrafficQueryFragment extends BaseFragment {
 
 	RelativeLayout mBuslineLayout;
 
+	//TODO:有空把这个变量清掉
 	int oldCheckButton;
 
 	String[] KEYWORDS;
@@ -269,7 +270,6 @@ public class TrafficQueryFragment extends BaseFragment {
     	mStart.mEdt.getInput().clearFocus();
     	mEnd.mEdt.getInput().clearFocus();
     	mBusline.mEdt.getInput().clearFocus();
-    	showStartMyLocation = true;
     	mSphinx.setTouchMode(TouchMode.NORMAL);
     }
     
@@ -450,6 +450,10 @@ public class TrafficQueryFragment extends BaseFragment {
 		mStart.clear();
 		mEnd.clear();
 		mBusline.clear();
+	}
+	
+	public void setShowStartMyLocation(boolean showMyLocation) {
+	    this.showStartMyLocation = showMyLocation;
 	}
 	
 	public void initStartContent() {
@@ -757,7 +761,7 @@ public class TrafficQueryFragment extends BaseFragment {
             return;
         changeToMode(TRAFFIC_MODE);
         //自定起起点功能要求不显示起点，用这个变量进行标识，onpause的时候恢复
-        showStartMyLocation = false;
+        setShowStartMyLocation(false);
         
         mSettedRadioBtn = R.id.traffic_transfer_rbt;
         switch (queryType) {

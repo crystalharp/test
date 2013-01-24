@@ -117,6 +117,8 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             case R.id.traffic_btn:
             	mActionLog.addAction(ActionLog.MenuTraffic);
             	mSphinx.getTrafficQueryFragment().setState(TrafficViewSTT.State.Normal);
+            	//正常使用菜单进入交通，默认在起点显示我的位置。
+            	mSphinx.getTrafficQueryFragment().setShowStartMyLocation(true);
                 mSphinx.showView(R.id.view_traffic_query);
                 break;
             case R.id.more_btn:
