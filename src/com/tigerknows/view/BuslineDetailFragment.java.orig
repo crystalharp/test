@@ -56,7 +56,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         // TODO Auto-generated constructor stub
     }
     
-    private int curLineNum = -1;
+    private int curLineNum;
 
     private ListAdapter mResultAdapter;
    
@@ -135,8 +135,10 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         	mTimeTxv.setVisibility(View.GONE);
         }
         
+        //TODO:修改titlebtn的内容
+<<<<<<< HEAD
         if (mLineList != null) {
-        	mTitleBtn.setText(mSphinx.getString(R.string.title_busline_line_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
+        	mTitleBtn.setText(line.getName());
         	if (mLineList.size() > 1) {
     	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
     	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
@@ -147,6 +149,18 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     				}
     	        });
         	}
+=======
+        if (mLineList != null && mLineList.size() > 0) {
+        	mTitleBtn.setText(mSphinx.getString(R.string.title_busline_line_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
+	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
+	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
+				@Override
+				public void onClick(View v) {
+			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+			        mTitlePopupArrayAdapter.notifyDataSetChanged();
+				}
+	        });
+>>>>>>> plan-n-to-str
         } else {
         	//不用顶部弹出切换
         	mTitleBtn.setText(mContext.getString(R.string.title_busline_line));

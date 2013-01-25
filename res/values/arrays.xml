@@ -15,6 +15,22 @@
 -->
 
 <resources>
+    <string-array name="num_to_str">
+        <item></item>
+        <item>一</item>
+        <item>二</item>
+        <item>三</item>
+        <item>四</item>
+        <item>五</item>
+        <item>六</item>
+        <item>七</item>
+        <item>八</item>
+        <item>九</item>
+    </string-array>
+    <string-array name="num_base_to_str">
+        <item ></item>
+        <item>十</item>
+    </string-array>
     <string-array name="share">
         <item>分享到新浪微博</item>
         <item>分享到QQ空间</item>

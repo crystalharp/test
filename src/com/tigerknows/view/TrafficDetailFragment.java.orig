@@ -39,8 +39,11 @@ import com.tigerknows.maps.TrafficOverlayHelper;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;
+<<<<<<< HEAD
 import com.tigerknows.model.TrafficModel.Plan.Step;
+=======
 import com.tigerknows.model.TrafficQuery;
+>>>>>>> plan-n-to-str
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.NavigationSplitJointRule;
@@ -150,7 +153,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         
         if (mPlanList != null) {
         	//有内容，需要弹出顶部切换菜单
-            mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
+<<<<<<< HEAD
+        	mTitleBtn.setText(mTitlePopupArrayAdapter.mSelectedItem);
         	if (mPlanList.size() > 1) {
     	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
     	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
@@ -161,9 +165,20 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     				}
     	        });
         	}
+=======
+            mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
+	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
+	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
+				@Override
+				public void onClick(View v) {
+			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+			        mTitlePopupArrayAdapter.notifyDataSetChanged();
+				}
+	        });
         } else {
         	//不用顶部弹出切换
         	mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
+>>>>>>> plan-n-to-str
         }
         
         setFavoriteState(mRootView, plan.checkFavorite(mContext));

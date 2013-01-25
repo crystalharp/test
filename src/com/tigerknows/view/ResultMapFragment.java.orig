@@ -138,16 +138,21 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         
         //如果顶端切换list不为空，设置切换列表
         if (mTitlePopupList.size() > 0) {
+<<<<<<< HEAD
+            mTitleBtn.setText(mTitlePopupArrayAdapter.mSelectedItem);
+            if (mTitlePopupList.size() > 1) {
+                mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
+                mTitleBtn.setOnClickListener(this);
+=======
+            mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
+            mTitleBtn.setOnClickListener(this);
             if (mActionTag.equals(ActionLog.MapBusline)) {
                 mTitleBtn.setText(mSphinx.getString(R.string.title_busline_line_popup, 
                         TrafficQuery.numToStr(mSphinx, mSphinx.getBuslineDetailFragment().getCurLine() + 1)));
             } else if (mActionTag.equals(ActionLog.MapTrafficTransfer)) {
                 mTitleBtn.setText(mSphinx.getString(R.string.title_transfer_plan_popup, 
                         TrafficQuery.numToStr(mSphinx, mSphinx.getTrafficDetailFragment().getCurLine() + 1)));
-			}
-            if (mTitlePopupList.size() > 1) {
-                mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
-                mTitleBtn.setOnClickListener(this);
+>>>>>>> plan-n-to-str
             }
         }
         //如果是驾车和步行，需要在这里可以切换到详情页
