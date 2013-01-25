@@ -19,6 +19,7 @@ import com.tigerknows.maps.TrafficOverlayHelper;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.model.TrafficModel.Plan;
+import com.tigerknows.model.TrafficQuery;
 
 import android.app.Activity;
 import android.content.Context;
@@ -69,9 +70,10 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                         BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), line);
                         mSphinx.setPreviousNextViewVisible();
                         mSphinx.resetLoactionButtonState();
-                        mTitleBtn.setText(mTitlePopupArrayAdapter.mSelectedItem);
+                        mSphinx.getBuslineDetailFragment().setData(line, position);
+                        mTitleBtn.setText(mSphinx.getString(R.string.title_busline_line_popup, 
+                                TrafficQuery.numToStr(mSphinx, mSphinx.getBuslineDetailFragment().getCurLine() + 1)));
                         BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
-                        mSphinx.getBuslineDetailFragment().setData(line);
                         break;
                     }
                 }
@@ -84,9 +86,10 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                         TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), plan, plan.getType());
                         mSphinx.setPreviousNextViewVisible();
                         mSphinx.resetLoactionButtonState();
-                        mTitleBtn.setText(mTitlePopupArrayAdapter.mSelectedItem);
+                        mSphinx.getTrafficDetailFragment().setData(plan, position);
+                        mTitleBtn.setText(mSphinx.getString(R.string.title_transfer_plan_popup, 
+                                TrafficQuery.numToStr(mSphinx, mSphinx.getTrafficDetailFragment().getCurLine() + 1)));
                         TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
-                        mSphinx.getTrafficDetailFragment().setData(plan);
                         break;
                     }
                 }
@@ -140,7 +143,13 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         if (mTitlePopupList.size() > 0) {
             mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
             mTitleBtn.setOnClickListener(this);
-            mTitleBtn.setText(mTitlePopupArrayAdapter.mSelectedItem);
+            if (mActionTag.equals(ActionLog.MapBusline)) {
+                mTitleBtn.setText(mSphinx.getString(R.string.title_busline_line_popup, 
+                        TrafficQuery.numToStr(mSphinx, mSphinx.getBuslineDetailFragment().getCurLine() + 1)));
+            } else if (mActionTag.equals(ActionLog.MapTrafficTransfer)) {
+                mTitleBtn.setText(mSphinx.getString(R.string.title_transfer_plan_popup, 
+                        TrafficQuery.numToStr(mSphinx, mSphinx.getTrafficDetailFragment().getCurLine() + 1)));
+            }
         }
         //如果是驾车和步行，需要在这里可以切换到详情页
         if (mActionTag == ActionLog.MapTrafficDrive || mActionTag == ActionLog.MapTrafficWalk) {

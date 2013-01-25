@@ -55,6 +55,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         super(sphinx);
         // TODO Auto-generated constructor stub
     }
+    
+    private int curLineNum;
 
     private ListAdapter mResultAdapter;
    
@@ -87,7 +89,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             if (clickedLine.equals(line)) {
             	return;
             } else {
-            	setData(clickedLine);
+            	setData(clickedLine, position);
             	onResume();            	
             }
 
@@ -134,8 +136,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         }
         
         //TODO:修改titlebtn的内容
-        if (mLineList != null) {
-        	mTitleBtn.setText(line.getName());
+        if (mLineList != null && mLineList.size() > 0) {
+        	mTitleBtn.setText(mSphinx.getString(R.string.title_busline_line_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
 	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
 	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
 				@Override
@@ -185,12 +187,17 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     }
     
     public void setData(Line line) {
+        setData(line, -1);
+    }
+    
+    public void setData(Line line, int position) {
     	
     	if (line == null)
     		return;
 
         this.line = line;
         this.mLineList = mSphinx.getBuslineResultLineFragment().getData();
+        this.curLineNum = position;
         
         mTitlePopupList.clear();
         if (this.mLineList != null) {
@@ -381,5 +388,9 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     
     public Line getData() {
         return line;
+    }
+    
+    public int getCurLine(){
+        return curLineNum;
     }
 }

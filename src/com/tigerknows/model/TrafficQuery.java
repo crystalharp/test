@@ -18,7 +18,9 @@ import android.text.TextUtils;
 
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
+import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.TrafficModel.Plan;
@@ -38,7 +40,7 @@ public final class TrafficQuery extends BaseQuery {
     public static final int QUERY_TYPE_DRIVE = Step.TYPE_DRIVE;
     // 3:步行导航
     public static final int QUERY_TYPE_WALK = Step.TYPE_WALK;
-
+    
     /*
      * 每次默认的最大方案请求数目.
      */
@@ -254,4 +256,31 @@ public final class TrafficQuery extends BaseQuery {
         }
 		return filter;
 	}
+    
+    //用来给方案序号转换数字和汉字
+    public static String numToStr(Context mContext, int num) {
+        String[] numTransTable = mContext.getResources().getStringArray(R.array.num_to_str);
+        String[] baseTable = mContext.getResources().getStringArray(R.array.num_base_to_str);
+    	int oldNum = num;
+        
+    	String result = "";
+    	
+    	//这个限制只是因为方案不会太多，如果过了100，可以在arrays.xml里增加num_base_to_str的值，然后把这个限制增加
+    	if (num > 99) {
+    		return result;
+    	}
+    	
+    	for (int i = 0; num != 0; i++) {
+    	    result = numTransTable[num % 10] + baseTable[i] + result;
+    	    num = num / 10;
+    	}
+
+    	//在10到19之间，十位数不需要写出来
+    	if (oldNum >= 10 && oldNum < 20) {
+    	    result = result.substring(1);
+    	}
+    	
+    	return result;
+    }
+
 }

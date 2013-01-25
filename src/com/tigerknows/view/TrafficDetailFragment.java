@@ -39,6 +39,7 @@ import com.tigerknows.maps.TrafficOverlayHelper;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;
+import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.NavigationSplitJointRule;
@@ -92,6 +93,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     
     private TitlePopupArrayAdapter mTitlePopupArrayAdapter;
     
+    private int curLineNum = -1;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -144,7 +147,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         
         if (mPlanList != null) {
         	//有内容，需要弹出顶部切换菜单
-        	mTitleBtn.setText(mTitlePopupArrayAdapter.mSelectedItem);
+            mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
 	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
 	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
 				@Override
@@ -170,7 +173,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             if (clickedPlan.equals(plan)) {
             	return;
             } else {
-            	setData(clickedPlan);
+            	setData(clickedPlan, position);
             	onResume();            	
             }
 
@@ -234,14 +237,18 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 			TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
 		}
 	}
-    
     public void setData(Plan plan) {
+        setData(plan, -1);
+    }
+    
+    public void setData(Plan plan, int curLine) {
     	
     	if (plan == null)
     		return;
 
         this.plan = plan;
         mShowType = plan.getType();
+        this.curLineNum = curLine;
 
         mTitlePopupList.clear();
         mPlanList = null;
@@ -528,5 +535,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
     public Plan getData() {
         return plan;
+    }
+    
+    public int getCurLine(){
+        return curLineNum;
     }
 }
