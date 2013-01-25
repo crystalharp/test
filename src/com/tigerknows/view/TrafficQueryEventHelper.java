@@ -234,11 +234,12 @@ public class TrafficQueryEventHelper {
 			if (mQueryEdt.getEdt().getText().toString().equals(mQueryFragment.mContext.getString(R.string.my_location))
 			        && mQueryEdt != mQueryFragment.mBusline) {
                 mQueryEdt.getEdt().setTextColor(0xFF009CFF);
-                mQueryEdt.getEdt().setSelectAllOnFocus(true);
+                //和马然确认，去掉所有自动选中的状态
+//                mQueryEdt.getEdt().setSelectAllOnFocus(true);
             } else {
                 mQueryEdt.getEdt().setTextColor(0xFF000000);
                 mQueryEdt.getEdt().setEnabled(true);
-                mQueryEdt.getEdt().setSelectAllOnFocus(false);
+//                mQueryEdt.getEdt().setSelectAllOnFocus(false);
             }
 			
 			if (mQueryFragment.mStart == mQueryEdt) {
