@@ -1998,6 +1998,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (tkDrawable != null) {
                 Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, getResultMapFragment().toString());
                 if(drawable != null) {
+                	//Hard coded here to prevent problems on some platforms. such as htc t328w
+                	   drawable.setBounds(0, 0, Util.dip2px(Globals.g_metrics.density, 90), Util.dip2px(Globals.g_metrics.density, 60));
                     pictureImv.setBackgroundDrawable(drawable);
                 } else {
                     pictureImv.setBackgroundDrawable(null);
