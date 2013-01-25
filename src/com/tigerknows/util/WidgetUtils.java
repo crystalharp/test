@@ -13,6 +13,7 @@ import android.widget.ListView;
 import com.tigerknows.widget.Toast;
 
 import com.decarta.android.location.Position;
+import com.decarta.android.map.MapView.MapScene;
 import com.decarta.android.map.MapView.SnapMap;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
@@ -43,6 +44,9 @@ public class WidgetUtils {
      * @return
      */
     public static void share(final Activity activity, final String smsContent, final String weiboContent, final String qzoneContent, final Position position) {
+        share(activity, smsContent, weiboContent, qzoneContent, position, null);
+    }
+    public static void share(final Activity activity, final String smsContent, final String weiboContent, final String qzoneContent, final Position position, final MapScene mapScene) {
         
         final Sphinx sphinx = (Sphinx)activity;
         String[] list = activity.getResources().getStringArray(R.array.share);
@@ -81,12 +85,10 @@ public class WidgetUtils {
                 switch (index) {
                     case 0:
                         actionLog.addAction(ActionLog.ShareWeibo);
-                        
                         sphinx.snapMapView(new SnapMap() {
                             
                             @Override
                             public void finish(Uri uri) {
-                                sphinx.clearMap();
                                 Intent intent = new Intent();
                                 if(uri != null) {
                                     intent.putExtra(ShareAPI.EXTRA_SHARE_PIC_URI, uri.toString());
@@ -94,9 +96,8 @@ public class WidgetUtils {
                                 intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, weiboContent);
                                 intent.setClass(activity, WeiboSend.class);
                                 activity.startActivity(intent);
-                                sphinx.getMapView().setStopRefreshMyLocation(false);
                             }
-                        }, position);
+                        }, position, mapScene);
                         break;
                     case 1:
                         actionLog.addAction(ActionLog.ShareQzone);
@@ -127,17 +128,15 @@ public class WidgetUtils {
                                 
                                 @Override
                                 public void finish(Uri uri) {
-                                    sphinx.clearMap();
-                                    
                                     Intent intent = new Intent();
                                     intent = new Intent(Intent.ACTION_SEND, Uri.parse("mms://"));
                                     intent.setType("image/png");
                                     intent.putExtra(Intent.EXTRA_TEXT, smsContent);
                                     if(uri != null) {
                                         intent.putExtra(Intent.EXTRA_STREAM, uri);
+                                        intent.putExtra("file_name", uri.toString());
                                     }
                                     intent.putExtra("sms_body", smsContent);
-                                    intent.putExtra("file_name", uri.toString());
                                     intent.putExtra("exit_on_sent", true);
                                     intent.setClassName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name);
                                     try {
@@ -146,7 +145,7 @@ public class WidgetUtils {
                                         Toast.makeText(activity, R.string.no_way_to_share_message, Toast.LENGTH_SHORT).show();
                                     }
                                 }
-                            }, position);
+                            }, position, mapScene);
                             break;
                         }  
                         
@@ -157,11 +156,9 @@ public class WidgetUtils {
                             @Override
                             public void finish(Uri uri) {
                                 if(uri != null) {
-                                    sphinx.clearMap();
-                                    
                                     CommonUtils.share(sphinx, activity.getString(R.string.share), smsContent, uri);
                                 }}
-                        }, position);
+                        }, position, mapScene);
                         break;
                 }
                 dialog.dismiss();

@@ -349,7 +349,7 @@ public class WeiboSend extends Activity implements OnClickListener {
             }
             case R.id.text_limit_unit_lnl: {
                 mActionLog.addAction(ActionLog.WeiboSendClickedDelWord);
-                if (TextUtils.isEmpty(mTextEdt.getEditableText().toString()) == false) {
+                if (mTextEdt.getEditableText().length() > 0) {
                     CommonUtils.showNormalDialog(WeiboSend.this,
                             getString(R.string.attention),
                             getString(R.string.are_you_delete_all), 

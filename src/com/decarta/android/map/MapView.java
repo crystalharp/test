@@ -719,6 +719,16 @@ public class MapView extends RelativeLayout implements
         }
         return null;
     }
+    
+    public Shape getCurrentShape() {
+        for(int i=0;i<tilesView.getShapes().size();i++){
+            Shape overlay=tilesView.getShapes().get(i);
+            if(!overlay.getName().equals(Shape.MY_LOCATION)){
+                return overlay;
+            }
+        }
+        return null;
+    }
 	
 	public int getOverlaysSize(){
 		return tilesView.getOverlays().size();
@@ -961,24 +971,20 @@ public class MapView extends RelativeLayout implements
         public void finish(Uri uri);
     }
     
-    Dialog tipProgressDialog;
-    boolean mapViewSnap;
-    public void snapMapView(final Activity activity, final SnapMap snapMap, final Position position) {
+    public void snapMapView(final Activity activity, final SnapMap snapMap, final Position position, final MapScene mapScene) {
         if (activity == null || snapMap == null || position == null) {
             return;
         }
-        mapViewSnap = true;
         View custom = activity.getLayoutInflater().inflate(R.layout.loading, null);
         TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
         loadingTxv.setText(R.string.doing_and_wait);
-        tipProgressDialog = CommonUtils.showNormalDialog(activity, custom);
+        final Dialog tipProgressDialog = CommonUtils.showNormalDialog(activity, custom);
         tipProgressDialog.setCancelable(true);
         tipProgressDialog.setCanceledOnTouchOutside(false);
         tipProgressDialog.setOnDismissListener(new OnDismissListener() {
             
             @Override
             public void onDismiss(DialogInterface arg0) {
-                mapViewSnap = false;
                 tilesView.cancelSnap();
             }
         }); 
@@ -990,7 +996,7 @@ public class MapView extends RelativeLayout implements
                 tilesView.snap();
                 XYFloat xy = new XYFloat(0, 0);
                 int waitTimes = 0;
-                while (waitTimes < 15 && mapViewSnap && (tilesView.isSnap() || Math.abs(xy.x - tilesView.getDisplaySize().x/2) > 128 || Math.abs(xy.y - tilesView.getDisplaySize().y/2) > 128)) {
+                while (waitTimes < 30 && tipProgressDialog.isShowing() && (tilesView.isSnap() || Math.abs(xy.x - tilesView.getDisplaySize().x/2) > 128 || Math.abs(xy.y - tilesView.getDisplaySize().y/2) > 128)) {
                     try {
                         Thread.sleep(2*1000);
                     } catch (InterruptedException e) {
@@ -1012,19 +1018,19 @@ public class MapView extends RelativeLayout implements
                     public void run() {
                         if (tipProgressDialog != null && tipProgressDialog.isShowing()) {
                             tipProgressDialog.dismiss();
-                            Bitmap bm = tilesView.getSnapBitmap();
-                            String mapPath = TKConfig.getDataPath(true);
-                            if (bm != null && !TextUtils.isEmpty(mapPath)) {
-                                Uri uri = CommonUtils.bitmap2Png(bm, "mapsnap.png", mapPath);
-                                if (bm.isRecycled() == false) {
-                                    bm.recycle();
-                                }
-                                bm = null;
-                                if (snapMap != null) {
-                                    snapMap.finish(uri);
-                                }
-                            }
                         }                            
+                        restoreScene(mapScene);
+                        Bitmap bm = tilesView.getSnapBitmap();
+                        String mapPath = TKConfig.getDataPath(true);
+                        Uri uri = null;
+                        if (bm != null && !TextUtils.isEmpty(mapPath)) {
+                            uri = CommonUtils.bitmap2Png(bm, "mapsnap.png", mapPath);
+                            if (bm.isRecycled() == false) {
+                                bm.recycle();
+                            }
+                            bm = null;
+                        }
+                        snapMap.finish(uri);
                     }
                 });
             }
@@ -1041,5 +1047,43 @@ public class MapView extends RelativeLayout implements
     
     public void setStopRefreshMyLocation(boolean stopRefreshMyLocation) {
         tilesView.stopRefreshMyLocation = stopRefreshMyLocation;
+    }
+    
+    public MapScene getCurrentMapScene() {
+        MapScene mapScene = new MapScene();
+        mapScene.position = getCenterPosition();
+        mapScene.zoomLevel = (int) getZoomLevel();
+        mapScene.itemizedOverlay = getCurrentOverlay();
+        mapScene.shape = getCurrentShape();
+        return mapScene;
+    }
+    
+    public void restoreScene(MapScene mapScene) {
+        try {
+            clearMap();
+            if (mapScene == null) {
+                return;
+            }
+            if (mapScene.shape != null) {
+                addShape(mapScene.shape);
+            }
+            if (mapScene.itemizedOverlay != null) {
+                addOverlay(mapScene.itemizedOverlay);
+            }
+            showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, false);
+            if (mapScene.position != null) {
+                centerOnPosition(mapScene.position, mapScene.zoomLevel);
+            }
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static class MapScene {
+        public Position position;
+        public int zoomLevel;
+        public ItemizedOverlay itemizedOverlay;
+        public Shape shape;
     }
 }

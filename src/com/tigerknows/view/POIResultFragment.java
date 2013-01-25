@@ -20,6 +20,7 @@ import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.POIResponse;
 import com.tigerknows.model.DataQuery.POIResponse.POIList;
 import com.tigerknows.model.POI.DynamicPOI;
+import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.SpringbackListView.OnRefreshListener;
@@ -556,7 +557,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             startsRtb.setRating(star/2);
 
             ImageView stampImv = (ImageView) view.findViewById(R.id.stamp_imv);
-            if (showStamp) {
+            int storeType = poi.getStoreType();
+             
+            if (showStamp
+                    // 跟马然沟通，本地搜藏或历史浏览的在我要点评是没有戳的，但是在加载出来的非本地poi若用户点评过是应该有戳的。但是现在没有戳。
+                    || (storeType != Tigerknows.STORE_TYPE_FAVORITE
+                            && storeType != Tigerknows.STORE_TYPE_HISTORY)) {
                 long attribute = poi.getAttribute();
                 User user = Globals.g_User;
                 if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0 && user != null) {

@@ -76,6 +76,7 @@ import com.decarta.android.map.MapText;
 import com.decarta.android.map.MapView;
 import com.decarta.android.map.MyLocation;
 import com.decarta.android.map.MapView.DownloadEventListener;
+import com.decarta.android.map.MapView.MapScene;
 import com.decarta.android.map.MapView.SnapMap;
 import com.decarta.android.map.MapView.ZoomEndEventListener;
 import com.decarta.android.map.OverlayItem;
@@ -1508,9 +1509,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mActionLog.onStop();
     }
         
-    public void snapMapView(SnapMap snapMap, Position position) {
-        mMapView.setStopRefreshMyLocation(false);
-        mMapView.snapMapView(this, snapMap, position);
+    public void snapMapView(SnapMap snapMap, Position position, MapScene mapScene) {
+        mMapView.snapMapView(this, snapMap, position, mapScene);
     }
     
     public void changeCity(long cityId) {

@@ -682,6 +682,7 @@
     <string name="weibo_poi_text_type">【%1$s】</string>
     <string name="weibo_text_tail">来自@老虎宝典 http://www.tigerknows.com/</string>
     <string name="weibo_omission">...</string>
+    <string name="weibo_no_repeat">不能发送重复的微博！</string>
     
     <string name="please_login">请登录！</string>
     <string name="logon_sucess">登录成功！</string>
