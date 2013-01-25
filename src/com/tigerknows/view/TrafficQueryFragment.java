@@ -598,10 +598,10 @@ public class TrafficQueryFragment extends BaseFragment {
 		}
 		
         if (start.getName().equals(mContext.getString(R.string.my_location))) {
-        	start.setName(getMyLocationName(start.getPosition()));
+        	start.setName(getMyLocationName(mSphinx, start.getPosition()));
         } 
         if (end.getName().equals(mContext.getString(R.string.my_location))) {
-        	end.setName(getMyLocationName(end.getPosition()));
+        	end.setName(getMyLocationName(mSphinx, end.getPosition()));
         }
 
         TrafficQuery trafficQuery = new TrafficQuery(mContext);
@@ -642,6 +642,13 @@ public class TrafficQueryFragment extends BaseFragment {
         
         if (start == null || end == null)
             return;
+        //以下内容出现在两个submit中，以后重构的时候注意写在一块
+        if (start.getName().equals(sphinx.getString(R.string.my_location))) {
+            start.setName(getMyLocationName(sphinx, start.getPosition()));
+        } 
+        if (end.getName().equals(sphinx.getString(R.string.my_location))) {
+            end.setName(getMyLocationName(sphinx, end.getPosition()));
+        }
         
         TrafficQuery trafficQuery = new TrafficQuery(sphinx);
             
@@ -650,7 +657,7 @@ public class TrafficQueryFragment extends BaseFragment {
         sphinx.queryStart(trafficQuery);
     }
 	
-	private String getMyLocationName(Position position) {
+	public static String getMyLocationName(Sphinx mSphinx, Position position) {
 		String mLocationName = mSphinx.getMapEngine().getPositionName(position);
 		
 		if (!TextUtils.isEmpty(mLocationName)) {
