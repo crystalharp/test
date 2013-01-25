@@ -77,16 +77,6 @@ public class TrafficOverlayHelper {
 	            addTouchEventListenerToOverlayItem(mainThreadHandler, mapView, overlayItem);
                 overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
                 overlay.addOverlayItem(overlayItem);
-
-                // 添加终点item. 包括终点图标, 终点文本:"到达终点"
-                Step lastStep = steps.get(steps.size()-1);
-                Position endPos = lastStep.getPositionList().get(lastStep.getPositionList().size()-1);
-                overlayItem = new OverlayItem(endPos, end, 
-                        context.getString(R.string.traffic_goto_end_station), rt);
-                addTouchEventListenerToOverlayItem(mainThreadHandler, mapView, overlayItem);
-                overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
-                overlay.addOverlayItem(overlayItem);
-                
 	            for(int i = 0; i < steps.size(); i++){
 	                
 	                // 起点图标为startIc
@@ -117,6 +107,15 @@ public class TrafficOverlayHelper {
 	                addTouchEventListenerToOverlayItem(mainThreadHandler, mapView, overlayItem);
 	                overlay.addOverlayItem(overlayItem);
 	            }
+	            
+	            // 添加终点item. 包括终点图标, 终点文本:"到达终点"
+	            Step lastStep = steps.get(steps.size()-1);
+	            Position endPos = lastStep.getPositionList().get(lastStep.getPositionList().size()-1);
+	            overlayItem = new OverlayItem(endPos, end, 
+	            		context.getString(R.string.traffic_goto_end_station), rt);
+	            addTouchEventListenerToOverlayItem(mainThreadHandler, mapView, overlayItem);
+	            overlayItem.setPreferZoomLevel(DEFAULT_SHOW_STEP_ZOOMLEVEL);
+                overlay.addOverlayItem(overlayItem);
                 
                 // 更新地图, 并显示"上下按钮"
                 mapView.addOverlay(overlay);
