@@ -787,7 +787,7 @@
     
     <string name="dianying_list">电影列表</string>
     <string name="dianying_no_length_now">暂无时间</string>
-    <string name="dianying_detail_nearest">最近影院：%1$s</string>
+    <string name="dianying_detail_nearest">最近影院 %1$s</string>
     <string name="dianying_detail_distance_to_me">%1$s</string>
     <string name="dianying_detail">电影详情</string>
     <string name="dianying_detail_nearby">%1$s%2$s家影院</string>

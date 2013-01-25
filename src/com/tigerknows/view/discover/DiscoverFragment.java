@@ -231,6 +231,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                         mSphinx.queryStart(dataQuery);
                         mSphinx.getDiscoverListFragment().setup();
                         mSphinx.showView(R.id.view_discover_list);
+                        mTitleBtn.setClickable(false);
                         isBegingDrag = false;
                         return false;
                     }
