@@ -572,7 +572,8 @@ public class TrafficQueryFragment extends BaseFragment {
 			return;
 		}
 
-		int cityId = mMapLocationHelper.getQueryCityInfo().getId();
+//		int cityId = mMapLocationHelper.getQueryCityInfo().getId();
+        int cityId = Globals.g_Current_City_Info.getId();
         addHistoryWord(mBusline, HistoryWordTable.TYPE_BUSLINE);
         BuslineQuery buslineQuery = new BuslineQuery(mContext);
         buslineQuery.setup(cityId, searchword, 0, false, getId(), mContext.getString(R.string.doing_and_wait));
@@ -605,7 +606,9 @@ public class TrafficQueryFragment extends BaseFragment {
 
         TrafficQuery trafficQuery = new TrafficQuery(mContext);
         
-        int cityId = mMapLocationHelper.getQueryCityInfo().getId();
+        //和产品确认所查询的换乘所属的城市是当前所设置的城市，而不是地图所在的城市
+//        int cityId = mMapLocationHelper.getQueryCityInfo().getId();
+        int cityId = Globals.g_Current_City_Info.getId();
         
         addHistoryWord(mStart, HistoryWordTable.TYPE_TRAFFIC);
         addHistoryWord(mEnd, HistoryWordTable.TYPE_TRAFFIC);
