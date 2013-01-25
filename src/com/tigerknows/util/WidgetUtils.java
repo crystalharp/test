@@ -94,7 +94,7 @@ public class WidgetUtils {
                                 intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, weiboContent);
                                 intent.setClass(activity, WeiboSend.class);
                                 activity.startActivity(intent);
-                                sphinx.getMapView().setStopDraw(false);
+                                sphinx.getMapView().setStopRefreshMyLocation(false);
                             }
                         }, position);
                         break;

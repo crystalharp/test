@@ -5,7 +5,7 @@
  	android:layout_width="fill_parent"
   	android:layout_height="wrap_content"
   	android:layout_alignParentTop="true"
-	android:padding="8dp"
+	android:padding="4dp"
 	android:gravity="center_vertical|left" >
 
     <TextView android:id="@+id/index"
@@ -15,28 +15,28 @@
       	android:layout_alignParentLeft="true"
       	android:gravity="center"
   		android:textColor="@color/white"
-  		android:textSize="18dp"
+  		android:textSize="14dp"
   		android:focusable="false"
       	android:focusableInTouchMode="false"
         android:background="@drawable/btn_index" />
 
-  	<ImageView 
+  	<!-- <ImageView 
       	android:id="@+id/indicator"
       	android:layout_width="wrap_content"
       	android:layout_height="wrap_content" 
       	android:layout_centerVertical="true" 
       	android:layout_alignParentRight="true"
       	android:focusable="false"
-      	android:background="@drawable/icon_arrow_right" />        
+      	android:background="@drawable/icon_arrow_right" /> -->        
 
   	<TextView android:id="@+id/text1"
       	android:layout_width="wrap_content"
       	android:layout_height="wrap_content"
       	android:layout_marginLeft="10dp"
       	android:layout_marginRight="10dp"
+      	android:paddingTop="4dp"
       	android:layout_alignParentTop="true"
       	android:layout_toRightOf="@id/index"
-      	android:layout_toLeftOf="@id/indicator"
       	android:textColor="@color/black"
       	android:textSize="16sp"
       	android:singleLine="true"
@@ -47,8 +47,8 @@
       	android:layout_below="@id/text1"
       	android:layout_marginLeft="10dp"
       	android:layout_marginRight="10dp"
+      	android:paddingBottom="4dp"
       	android:layout_toRightOf="@id/index"
-      	android:layout_toLeftOf="@id/indicator"
       	android:layout_width="wrap_content"
       	android:layout_height="wrap_content"
       	android:singleLine="true"

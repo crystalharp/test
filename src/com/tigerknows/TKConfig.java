@@ -210,7 +210,6 @@ public class TKConfig {
     public static final String PREFS_HINT_POI_DETAIL = "prefs_hint_poi_detail";
     public static final String PREFS_HINT_DISCOVER_HOME = "prefs_discover";
     public static final String PREFS_HINT_POI_LIST = "prefs_hint_poi_list";
-    public static final String PREFS_HINT_DISCOVER_LIST = "prefs_hint_discover_list";
     public static final String PREFS_HINT_DISCOVER_TUANGOU_LIST = "prefs_hint_discover_tuangou_list";
     public static final String PREFS_HINT_DISCOVER_TUANGOU_DINGDAN = "prefs_hint_discover_tuangou_dingdan";
     public static final String PREFS_HINT_LOCATION = "prefs_hint_location";

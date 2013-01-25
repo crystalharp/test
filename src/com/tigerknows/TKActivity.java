@@ -198,7 +198,6 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         unregisterReceiver(mAirPlaneModeReceiver);
         unregisterReceiver(mConnectivityReceiver);
         
-        com.tigerknows.widget.Toast.cancel();
         super.onPause();
     }
     
@@ -275,6 +274,14 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
     
     public void hideSoftInput(View view) {
         mSoftInputManager.hideSoftInput(view);
+    }
+    
+    public void postHideSoftInput() {
+        mSoftInputManager.postHideSoftInput();
+    }
+    
+    public void postHideSoftInput(View view) {
+        mSoftInputManager.postHideSoftInput(view);
     }
     // TODO: soft input end
 

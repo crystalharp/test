@@ -436,7 +436,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     
                     @Override
                     public void run() {
-                        mMapView.setStopDraw(true);
+                        mMapView.setStopRefreshMyLocation(true);
                         if (fristUse) {
                             Intent intent = new Intent();
                             intent.putExtra(Help.APP_FIRST_START, fristUse);
@@ -902,6 +902,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		} else if (R.id.activity_app_recommend == requestCode) {
         } else if (R.id.activity_change_city == requestCode) {
             if (data != null && RESULT_OK == resultCode) {
+                Globals.g_My_Location_State = Globals.LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG;
                 changeCity(data.getIntExtra("cityId", Globals.g_Current_City_Info.getId()));
             }
         } else if (R.id.activity_setting_location == requestCode) {
@@ -1508,7 +1509,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
         
     public void snapMapView(SnapMap snapMap, Position position) {
-        mMapView.setStopDraw(false);
+        mMapView.setStopRefreshMyLocation(false);
         mMapView.snapMapView(this, snapMap, position);
     }
     
@@ -3573,6 +3574,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             	} else {
                 	mMapView.panToPosition(overlayItem.getPosition());
                 }
+                itemizedOverlay.isShowInPreferZoom = false;
             } else {
             	mMapView.panToPosition(overlayItem.getPosition());
             }

@@ -50,7 +50,6 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
         setListener();
 
         mTitleBtn.setText(R.string.feedback);
-        feedback_send.setEnabled(false);
 //        SpannableString ss = new SpannableString(mThis.getString(R.string.feedback_text2));
 //        ss.setSpan(new ClickableSpan() {
 //            @Override
@@ -126,27 +125,6 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
                     return true;
                 }
                 return false;
-            }
-        });
-        mFeedbackEdt.addTextChangedListener(new TextWatcher() {
-            
-            @Override
-            public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-            }
-            
-            @Override
-            public void beforeTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-                // TODO Auto-generated method stub
-                
-            }
-            
-            @Override
-            public void afterTextChanged(Editable arg0) {
-                if (TextUtils.isEmpty(mFeedbackEdt.getEditableText().toString())) {
-                	feedback_send.setEnabled(false);
-                } else {
-                	feedback_send.setEnabled(true);
-                }
             }
         });
     }

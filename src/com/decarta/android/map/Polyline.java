@@ -194,10 +194,6 @@ public class Polyline extends Shape implements EventSource{
 			}
 			
 		}
-		/*
-		 * 地图上点的坐标系计算仍有问题, 当前暂时绕过
-		 */
-		overlapTiles = Util.getVerticalLargerOverlapTiles(overlapTiles);
 		for(int j=0;j<overlapTiles.size();j++){
 			XYZ xyz=overlapTiles.get(j);
 			//String key=xyz.z+"_"+xyz.x+"_"+xyz.y;

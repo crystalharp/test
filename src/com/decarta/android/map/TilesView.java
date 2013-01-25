@@ -139,7 +139,7 @@ public class TilesView extends GLSurfaceView {
     private static Paint tilePText;
     private Timer drawMyLocationTimer;
     boolean isMyLocation = false;
-    boolean stopDraw = false;
+    boolean stopRefreshMyLocation = false;
     
     private MapText mapText = new MapText();
 
@@ -481,6 +481,9 @@ public class TilesView extends GLSurfaceView {
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
+                if (stopRefreshMyLocation) {
+                    return;
+                }
                 if (isMyLocation) {
                     refreshMap();
                 }
@@ -2468,9 +2471,6 @@ public class TilesView extends GLSurfaceView {
 		 * the main method to draw all the map elements
 		 */
 		public void onDrawFrame(GL10 gl){
-		    if (stopDraw) {
-		        return;
-		    }
 			if(centerXY==null){
 				return;
 			}
@@ -2633,10 +2633,10 @@ public class TilesView extends GLSurfaceView {
 	                    //Log.i("TilesView","onDraw mapLayerLevel,zoomLevel,LRTB:"+centerXYZ.z+","+zoomLevel+","+leftDist+","+rightDist+","+topDist+","+bottomDist);
 	                    if(bottomDist>=topDist && rightDist>=leftDist){
 	                    	//Log.i("TilesView.onDraw","zoomScale,moveX,moveY:"+zoomScale+","+mapLayer.tilesMove.x+","+mapLayer.tilesMove.y);
-	                    	for (int i = topDist; i <= bottomDist; i++) {
+	                    	for (int i = topDist-4; i <= bottomDist+4; i++) { // -4,+4 暴力：为了避免绘制线路或气泡在屏幕边缘时不能被判断为屏幕之内的问题
 	                    		int yi = centerXYZ.y - i;
                                 int yiTK = centerXYZTK.y + i;
-	                    		for (int j = leftDist; j <= rightDist; j++) {
+	                    		for (int j = leftDist-4; j <= rightDist+4; j++) { // -4,+4暴力：为了避免绘制线路或气泡在屏幕边缘时不能被判断为屏幕之内的问题
 	                    			int xi = centerXYZ.x + j;
                                     int xiTK = centerXYZTK.x + j;
 	                    			Tile requestTile = mapLayer.createTile();

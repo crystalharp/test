@@ -1634,6 +1634,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     private void changeState(int state) {
         mState = state;
         if (mState == STATE_EMPTY) {
+            mTitleBtn.setText(R.string.map_download);
             mAddBtn.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.VISIBLE);
             mDownloadView.setVisibility(View.GONE);
@@ -1642,6 +1643,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             hideSoftInput();
             mCloseBtn.requestFocus();
         } else if (mState == STATE_DOWNLOAD) {
+            mTitleBtn.setText(R.string.map_download);
             mAddBtn.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mDownloadView.setVisibility(View.VISIBLE);
@@ -1650,6 +1652,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             hideSoftInput();
             mDownloadCityLsv.requestFocus();
         } else {
+            mTitleBtn.setText(R.string.add_city);
             mAddBtn.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
             mDownloadView.setVisibility(View.GONE);

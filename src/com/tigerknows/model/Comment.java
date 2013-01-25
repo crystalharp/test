@@ -490,6 +490,15 @@ public class Comment extends BaseData {
             return comment2.getTime().compareTo(comment1.getTime());
         };
     };
+    public static Comparator COMPARATOR_DATETIME = new Comparator() {
+
+        @Override
+        public int compare(Object object1, Object object2) {
+            Comment comment1 = (Comment) object1;
+            Comment comment2 = (Comment) object2;
+            return comment2.getTime().compareTo(comment1.getTime());
+        };
+    };
     
     public static DataQuery createPOICommentQuery(Context context, POI poi, int sourceViewId, int targerViewId) {
 

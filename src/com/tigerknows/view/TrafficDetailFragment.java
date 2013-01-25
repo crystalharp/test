@@ -40,6 +40,7 @@ import com.tigerknows.model.BaseData;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.Step;
+import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.NavigationSplitJointRule;
@@ -92,6 +93,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     private List<String> mTitlePopupList = new ArrayList<String>();
     
     private TitlePopupArrayAdapter mTitlePopupArrayAdapter;
+    
+    private int curLineNum = -1;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -147,7 +150,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         
         if (mPlanList != null) {
         	//有内容，需要弹出顶部切换菜单
-        	mTitleBtn.setText(mTitlePopupArrayAdapter.mSelectedItem);
+            mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
         	if (mPlanList.size() > 1) {
     	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
     	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
@@ -158,6 +161,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     				}
     	        });
         	}
+        } else {
+        	//不用顶部弹出切换
+        	mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
         }
         
         setFavoriteState(mRootView, plan.checkFavorite(mContext));
@@ -174,7 +180,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             if (clickedPlan.equals(plan)) {
             	return;
             } else {
-            	setData(clickedPlan);
+            	setData(clickedPlan, position);
             	onResume();            	
             }
 
@@ -226,14 +232,18 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 			TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
 		}
 	}
-    
     public void setData(Plan plan) {
+        setData(plan, -1);
+    }
+    
+    public void setData(Plan plan, int curLine) {
     	
     	if (plan == null)
     		return;
 
         this.plan = plan;
         mShowType = plan.getType();
+        this.curLineNum = curLine;
 
         mTitlePopupList.clear();
         mPlanList = null;
@@ -298,6 +308,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             stepHolder.image.setBackgroundDrawable(getDrawable(stepType));
 			stepHolder.textView.setText(getItemContent(position));
 			stepHolder.textView.setTextColor(Color.parseColor("#000000"));
+			//convertView.setBackgroundResource(R.drawable.btn_traffic_detail_end_normal);
 				
 			return convertView;
 
@@ -406,6 +417,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 	        	CommonUtils.showNormalDialog(mSphinx, 
                         mContext.getString(R.string.prompt),
                         mContext.getString(R.string.cancel_favorite_tip),
+                        mContext.getString(R.string.yes),
+                        mContext.getString(R.string.no),
                         new DialogInterface.OnClickListener() {
                             
                             @Override
@@ -515,5 +528,9 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
     public Plan getData() {
         return plan;
+    }
+    
+    public int getCurLine(){
+        return curLineNum;
     }
 }

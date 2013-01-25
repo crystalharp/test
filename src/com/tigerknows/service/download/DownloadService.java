@@ -33,8 +33,6 @@ import java.util.*;
 
 public class DownloadService extends IntentService {
 	
-	private static Toast toast = null;
-	
 	private static Set<String> downloadingUrlSet = new HashSet<String>();
     
 	private static Map<String, DownloadedProcessor> processorMap = new HashMap<String, DownloadedProcessor>();
@@ -191,7 +189,7 @@ public class DownloadService extends IntentService {
         } catch (Exception e) {
         }
     	nm.cancel(notificationId);
-        toast.cancel();
+        Toast.cancel();
         LogWrapper.d("chen", "download failed");
         return null;
     }

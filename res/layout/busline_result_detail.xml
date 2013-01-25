@@ -22,10 +22,7 @@
 	        android:layout_width="fill_parent" 
 	        android:layout_height="wrap_content"
         	android:orientation="vertical"
-        	android:paddingLeft="8dp"
-        	android:paddingTop="16dp"
-        	android:paddingRight="8dp"
-        	android:paddingBottom="16dp" >
+        	android:padding="8dp" >
 	        <TextView android:id="@+id/name_txv"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"

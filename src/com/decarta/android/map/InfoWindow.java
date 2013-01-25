@@ -176,6 +176,7 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 		}
 		changed=true;
 		type=InfoWindowType.TEXT;
+		setBackgroundColor(InfoWindow.BACKGROUND_COLOR_UNCLICKED);
 	}
 	
 	public ViewGroup getViewGroup() {
@@ -189,6 +190,7 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 		this.viewGroup = viewGroup;
 		changed=true;
 		type=InfoWindowType.VIEWGROUP;
+        setBackgroundColor(InfoWindow.BACKGROUND_COLOR_UNCLICKED);
 	}
 
 	public InfoWindowType getType() {

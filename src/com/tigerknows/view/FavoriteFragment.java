@@ -207,7 +207,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mRightBtn.setBackgroundResource(R.drawable.btn_delete_all);
 
         if (mDismiss) {
-            mDismiss = false;
             readPOI(mPOIList, Long.MAX_VALUE, 0, false);
             readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
             mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
@@ -244,6 +243,12 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 changeTab(ItemizedOverlay.TRAFFIC_OVERLAY);
             }
         }
+        
+        if (mDismiss) {
+            mPOILsv.setSelectionFromTop(0, 0);
+            mTrafficLsv.setSelectionFromTop(0, 0);
+        }
+        mDismiss = false;
     }
 
     @Override
@@ -858,7 +863,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             
             @Override
             public void onDismiss(DialogInterface arg0) {
-                mSphinx.hideSoftInput();
+                mSphinx.postHideSoftInput();
             }
         });
     }

@@ -1,0 +1,551 @@
+/*
+ * Copyright (C) 2010 pengwenyue@tigerknows.com
+ */
+
+package com.tigerknows.view;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import android.app.Activity;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.os.Bundle;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import com.tigerknows.widget.Toast;
+import android.widget.AdapterView.OnItemClickListener;
+
+import com.decarta.android.location.Position;
+import com.decarta.android.util.LogWrapper;
+import com.tigerknows.ActionLog;
+import com.tigerknows.R;
+import com.tigerknows.Sphinx;
+import com.tigerknows.TransferErrorRecovery;
+import com.tigerknows.maps.TrafficOverlayHelper;
+import com.tigerknows.model.BaseData;
+import com.tigerknows.model.TrafficModel;
+import com.tigerknows.model.TrafficModel.Plan;
+<<<<<<< HEAD
+import com.tigerknows.model.TrafficModel.Plan.Step;
+=======
+import com.tigerknows.model.TrafficQuery;
+>>>>>>> plan-n-to-str
+import com.tigerknows.provider.Tigerknows;
+import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.NavigationSplitJointRule;
+import com.tigerknows.util.ShareTextUtil;
+import com.tigerknows.util.WidgetUtils;
+import com.tigerknows.view.ResultMapFragment.TitlePopupArrayAdapter;
+
+public class TrafficDetailFragment extends BaseFragment implements View.OnClickListener{
+    
+    public TrafficDetailFragment(Sphinx sphinx) {
+        super(sphinx);
+    }
+
+    private static final int SHOW_TYPE_TRANSFER = Plan.Step.TYPE_TRANSFER;
+    
+    private static final int SHOW_TYPE_DRVIE = Plan.Step.TYPE_DRIVE;
+    
+    private static final int SHOW_TYPE_WALK = Plan.Step.TYPE_WALK;
+    
+	private static final int TYPE_RESULT_LIST_START = 6;
+
+	private static final int TYPE_RESULT_LIST_END = 7;
+	
+    private ListAdapter mResultAdapter;
+    
+    private TextView mSubTitleTxv = null;
+    
+    private TextView mLengthTxv = null;
+    
+    private ImageView mShadowImv = null;
+    
+    private ListView mResultLsv = null;
+    
+    private Button mFavorateBtn = null;
+    
+    private Button mShareBtn = null;
+    
+    private Button mErrorRecoveryBtn = null;
+    
+    private int mShowType = -1;
+
+    private Plan plan = null;
+    
+    private LinearLayout mErrorRecoveryLayout = null;
+    
+    private int mChildLayoutId = R.layout.traffic_child_traffic;
+    
+    private List<Plan> mPlanList = null;
+    
+    private List<String> mTitlePopupList = new ArrayList<String>();
+    
+    private TitlePopupArrayAdapter mTitlePopupArrayAdapter;
+    
+    private int curLineNum = -1;
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mActionTag = ActionLog.TrafficDetail;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        LogWrapper.d(BaseFragment.TAG, "onCreateView()"+mActionTag);
+        
+        mRootView = mLayoutInflater.inflate(R.layout.traffic_result, container, false);
+        findViews();
+        setListener();
+        
+        mFavorateBtn.setOnClickListener(new ResultOnClickListener());
+        mShareBtn.setOnClickListener(new ResultOnClickListener());
+        mErrorRecoveryBtn.setOnClickListener(new ResultOnClickListener());
+        
+        mTitlePopupArrayAdapter = new TitlePopupArrayAdapter(mSphinx, mTitlePopupList);
+        
+        return mRootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        
+        mResultAdapter = new StringListAdapter(mContext);
+        mResultLsv.setAdapter(mResultAdapter);
+                   
+        switch(mShowType) {
+        case SHOW_TYPE_TRANSFER:
+            mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
+        	mRightBtn.setOnClickListener(this);
+            mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan));
+            mErrorRecoveryLayout.setVisibility(View.VISIBLE);
+        	mSubTitleTxv.setText(this.plan.getTitle(mSphinx));
+            break;
+        case SHOW_TYPE_DRVIE:
+            mTitleBtn.setText(mContext.getString(R.string.title_drive_plan));
+            mSubTitleTxv.setText(mSphinx.getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
+            mErrorRecoveryLayout.setVisibility(View.GONE);
+            break;
+        case SHOW_TYPE_WALK:
+            mTitleBtn.setText(mContext.getString(R.string.title_walk_plan));
+            mSubTitleTxv.setText(mSphinx.getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
+            mErrorRecoveryLayout.setVisibility(View.GONE);
+            break;
+        default:
+        }
+        
+        if (mPlanList != null) {
+        	//有内容，需要弹出顶部切换菜单
+<<<<<<< HEAD
+        	mTitleBtn.setText(mTitlePopupArrayAdapter.mSelectedItem);
+        	if (mPlanList.size() > 1) {
+    	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
+    	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
+    				@Override
+    				public void onClick(View v) {
+    			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+    			        mTitlePopupArrayAdapter.notifyDataSetChanged();
+    				}
+    	        });
+        	}
+=======
+            mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan_popup, TrafficQuery.numToStr(mSphinx, curLineNum + 1)));
+	        mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
+	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
+				@Override
+				public void onClick(View v) {
+			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+			        mTitlePopupArrayAdapter.notifyDataSetChanged();
+				}
+	        });
+        } else {
+        	//不用顶部弹出切换
+        	mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
+>>>>>>> plan-n-to-str
+        }
+        
+        setFavoriteState(mRootView, plan.checkFavorite(mContext));
+                
+        history();
+    }
+    
+    private OnItemClickListener mTitlePopupOnItemClickListener = new OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
+            mTitleFragment.dismissPopupWindow();
+            Plan clickedPlan = mPlanList.get(position);
+            if (clickedPlan.equals(plan)) {
+            	return;
+            } else {
+            	setData(clickedPlan, position);
+            	onResume();            	
+            }
+
+        }
+    };
+
+    @Override
+    public void onPause() {
+        super.onPause();
+    }
+   
+    protected void findViews() {
+    	mSubTitleTxv = (TextView)mRootView.findViewById(R.id.subtitle_txv);
+        mLengthTxv = (TextView)mRootView.findViewById(R.id.length_txv);
+        mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
+        mShadowImv = (ImageView)mRootView.findViewById(R.id.shadow2);
+        mRootView.findViewById(R.id.sub_title_1column_view).setVisibility(View.VISIBLE);
+        mRootView.findViewById(R.id.sub_title_2column_view).setVisibility(View.GONE);
+        mErrorRecoveryLayout = (LinearLayout)mRootView.findViewById(R.id.error_recovery_layout);
+        mErrorRecoveryBtn = (Button)mRootView.findViewById(R.id.error_recovery_btn);
+        mFavorateBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
+        mShareBtn = (Button)mRootView.findViewById(R.id.share_btn);
+    }
+
+    protected void setListener() {
+        mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+        	@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				mActionLog.addAction(ActionLog.TrafficDetailStep, position);
+
+				// 绘制交通图层
+                viewMap();
+                // 将地图平移到某一item index, 并缩放至某一级别
+            	TrafficOverlayHelper.panToPosition(mSphinx.getHandler(), position, mSphinx.getMapView());
+            }
+        });
+    }
+    
+	@Override
+	public void onClick(View v) {
+		int viewId = v.getId();
+		if (viewId == R.id.right_btn) {
+		    mActionLog.addAction(ActionLog.TrafficDetailMapBtn);
+			// 绘制交通图层
+			viewMap();
+			// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
+			TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
+		}
+	}
+    public void setData(Plan plan) {
+        setData(plan, -1);
+    }
+    
+    public void setData(Plan plan, int curLine) {
+    	
+    	if (plan == null)
+    		return;
+
+        this.plan = plan;
+        mShowType = plan.getType();
+        this.curLineNum = curLine;
+
+        mTitlePopupList.clear();
+        mPlanList = null;
+        if (mShowType == SHOW_TYPE_TRANSFER) {
+        	this.mPlanList = mSphinx.getTrafficResultFragment().getData();
+        	if (mPlanList != null) {
+	            mTitlePopupArrayAdapter.mSelectedItem = this.plan.getTitle(mSphinx);
+		        for(int i = 0, size = mPlanList.size(); i < size; i++) {
+		            mTitlePopupList.add(mPlanList.get(i).getTitle(mSphinx));
+		        }
+        	}
+        }
+        
+    }
+
+    public static class StepViewHolder {
+    	public ImageView image;
+    	public TextView textView;
+    }
+
+    class StringListAdapter extends BaseAdapter{
+
+        private List<Integer> types = new ArrayList<Integer>();
+        
+        private List<CharSequence> strList = new ArrayList<CharSequence>();
+
+        public StringListAdapter(Context context) {
+        	super();
+            strList = NavigationSplitJointRule.splitJoint(context, mShowType, plan);
+            types = (ArrayList<Integer>)plan.getStepTypeList(mContext);
+
+            //列表前面显示起点，后面显示终点
+            strList.add(0, plan.getStart().getName());
+            types.add(0, TYPE_RESULT_LIST_START);
+            strList.add(plan.getEnd().getName());
+            types.add(TYPE_RESULT_LIST_END);
+        }
+
+        @Override
+        public int getCount() {
+            return strList.size();
+        }
+
+        private CharSequence getItemContent(int position) {
+            return strList.get(position);
+        }
+
+		@Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+			if(convertView == null) {
+				convertView = mLayoutInflater.inflate(mChildLayoutId, parent, false);
+				StepViewHolder stepHolder = new StepViewHolder();
+				stepHolder.image = (ImageView)convertView.findViewById(R.id.image1);
+				stepHolder.textView = (TextView)convertView.findViewById(R.id.text);
+				convertView.setTag(stepHolder);
+			}
+
+			StepViewHolder stepHolder = (StepViewHolder)convertView.getTag();
+			
+			Integer stepType = types.get(position);
+            stepHolder.image.setBackgroundDrawable(getDrawable(stepType));
+			stepHolder.textView.setText(getItemContent(position));
+			stepHolder.textView.setTextColor(Color.parseColor("#000000"));
+			//convertView.setBackgroundResource(R.drawable.btn_traffic_detail_end_normal);
+				
+			return convertView;
+
+        }
+        
+        private Drawable getDrawable(int steptype){
+            if (mShowType == SHOW_TYPE_TRANSFER) {
+            	return getTransferDrawable(steptype);
+            } else {
+            	return getDirectionDrawable(steptype);
+            }
+        }
+        
+        private Drawable getTransferDrawable(int steptype) {
+        	int res = R.drawable.icon_marker_bus;
+            
+            switch(steptype){
+            case TrafficModel.Plan.Step.TYPE_TRANSFER:
+                res = R.drawable.icon_marker_bus;
+                break;
+            case TrafficModel.Plan.Step.TYPE_WALK:
+                res = R.drawable.icon_marker_walk;
+                break;
+			case TYPE_RESULT_LIST_START:
+				res = R.drawable.icon_marker_start;
+				break;
+            case TYPE_RESULT_LIST_END:
+            	res = R.drawable.icon_marker_end;
+            	break;
+            default:
+                
+            }
+            return mContext.getResources().getDrawable(res);
+        }
+        
+        private Drawable getDirectionDrawable(int steptype) {
+        	int res = R.drawable.icon_marker_drive_forward;
+            
+            switch(steptype){
+            
+            case TrafficModel.Plan.Step.TYPE_FORWARD:
+                res = R.drawable.icon_marker_drive_forward;
+                break;
+            case TrafficModel.Plan.Step.TYPE_BACK:
+                res = R.drawable.icon_marker_drive_back;
+                break;
+            case TrafficModel.Plan.Step.TYPE_ROUND_LEFT:
+                res = R.drawable.icon_marker_drive_round_left;
+                break;
+            case TrafficModel.Plan.Step.TYPE_LEFT:
+                res = R.drawable.icon_marker_drive_left;
+                break;
+            case TrafficModel.Plan.Step.TYPE_ROUND_RIGHT:
+                res = R.drawable.icon_marker_drive_round_right;
+                break;
+            case TrafficModel.Plan.Step.TYPE_RIGHT:
+                res = R.drawable.icon_marker_drive_right;
+                break;
+            case TYPE_RESULT_LIST_START:
+				res = R.drawable.icon_marker_start;
+				break;
+            case TYPE_RESULT_LIST_END:
+            	res = R.drawable.icon_marker_end;
+            	break;
+            default:
+                
+            }
+            return mContext.getResources().getDrawable(res);
+        }
+
+		@Override
+		public Object getItem(int position) {
+			return null;
+		}
+
+		@Override
+		public long getItemId(int position) {
+			return 0;
+		}
+    }
+
+    private class ResultOnClickListener implements View.OnClickListener {
+    	
+		@Override
+		public void onClick(View v) {
+
+            if (v.getId() == R.id.share_btn) {
+                //弹出分享对话框
+                mActionLog.addAction(ActionLog.TrafficDetailShare);
+                share(plan);
+            } else if (v.getId() == R.id.favorite_btn) {
+            	favorite(plan, v);
+            } else if (v.getId() == R.id.error_recovery_btn) {
+                mActionLog.addAction(ActionLog.TrafficDetailErrorRecovery);
+            	TransferErrorRecovery.addTarget(plan);
+            	mSphinx.showView(R.id.activity_traffic_error_recovery);
+            }
+		}
+
+		public void favorite(final BaseData data, final View v) {
+			if (data == null)
+				return ;
+			
+	        boolean isFavorite = data.checkFavorite(mContext);
+	        if (isFavorite) {
+	        	CommonUtils.showNormalDialog(mSphinx, 
+                        mContext.getString(R.string.prompt),
+                        mContext.getString(R.string.cancel_favorite_tip),
+                        mContext.getString(R.string.yes),
+                        mContext.getString(R.string.no),
+                        new DialogInterface.OnClickListener() {
+                            
+                            @Override
+                            public void onClick(DialogInterface arg0, int id) {
+                                if (id == DialogInterface.BUTTON_POSITIVE) {
+                                    mActionLog.addAction(ActionLog.TrafficDetailCancelFav);
+                                    setFavoriteState(v, false);
+                                    data.deleteFavorite(mContext);
+                                }
+                            }
+                        });
+	        } else {
+	        	mActionLog.addAction(ActionLog.TrafficDetailFavorite);
+	        	setFavoriteState(v, true);
+				data.writeToDatabases(mContext, -1, Tigerknows.STORE_TYPE_FAVORITE);
+                Toast.makeText(mSphinx, R.string.favorite_toast, Toast.LENGTH_LONG).show();
+	        }
+	    }
+    }
+    
+    public void share(final Plan plan) {
+        if(plan == null)
+            return;
+                
+    	String smsContent = "";
+    	String weiboContent = "";
+    	String qzoneContent = "";
+    	if (plan != null) {
+    		if (SHOW_TYPE_TRANSFER == mShowType) {
+                weiboContent = ShareTextUtil.shareTrafficTransferWeiboContent(plan, mContext);
+                smsContent = ShareTextUtil.shareTrafficTransferSmsContent(plan, mContext);
+                qzoneContent = ShareTextUtil.shareTrafficTransferQzoneContent(plan, mContext);
+            } else if (SHOW_TYPE_DRVIE == mShowType) {
+                weiboContent = ShareTextUtil.shareTrafficDriveWeiboContent(plan, mContext);
+                smsContent = ShareTextUtil.shareTrafficDriveSmsContent(plan, mContext);
+                qzoneContent = ShareTextUtil.shareTrafficDriveQzoneContent(plan, mContext);
+            } else if (SHOW_TYPE_WALK == mShowType) {
+                weiboContent = ShareTextUtil.shareTrafficWalkWeiboContnet(plan, mContext);
+                smsContent = ShareTextUtil.shareTrafficWalkSmsContnet(plan, mContext);
+                qzoneContent = ShareTextUtil.shareTrafficWalkQzoneContnet(plan, mContext);
+            }
+    	}
+    	
+    	mSphinx.clearMap();
+    	TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), plan, mShowType);
+    	Position position = TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
+    	
+    	WidgetUtils.share(mSphinx, smsContent, weiboContent, qzoneContent, position);
+    }
+
+    private void setFavoriteState(View v, boolean favoriteYet) {
+    	    	
+    	if (favoriteYet) {
+    		mFavorateBtn.setBackgroundResource(R.drawable.btn_cancel_favorite);
+    	} else {
+    		mFavorateBtn.setBackgroundResource(R.drawable.btn_favorite);
+    	}
+    	
+    }
+    
+    public void viewMap() {
+
+        if (plan != null) {
+            String actionTag = "";
+        	switch(mShowType) {
+        	case SHOW_TYPE_TRANSFER:
+        	    actionTag = ActionLog.MapTrafficTransfer;
+        		break;
+        	case SHOW_TYPE_DRVIE:
+                actionTag = ActionLog.MapTrafficDrive;
+        		break;
+        	case SHOW_TYPE_WALK:
+                actionTag = ActionLog.MapTrafficWalk;
+        		break;
+        	default:
+        			
+        	}
+
+        	mSphinx.clearMap();
+        	TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), plan, mShowType);
+        	mSphinx.setPreviousNextViewVisible();
+        	
+            mSphinx.getResultMapFragment().setData(mContext.getString(R.string.title_traffic_result_map), actionTag);
+            String resultMapActionTag = mSphinx.getResultMapFragment().mActionTag;
+            if (mSphinx.uiStackContains(R.id.view_result_map)
+                    && (actionTag.equals(resultMapActionTag)
+                            || actionTag.equals(resultMapActionTag)
+                            || actionTag.equals(resultMapActionTag))) {
+                dismiss();
+            } else {
+                mSphinx.showView(R.id.view_result_map);
+            }
+        }
+    }
+    
+    public void viewPlanMap(){
+        viewMap();
+        mSphinx.getResultMapFragment().onResume();
+        TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
+    }
+
+    private void history() {
+        if (plan != null) {
+            plan.updateHistory(mContext);
+        }
+    }
+
+    public Plan getData() {
+        return plan;
+    }
+    
+    public int getCurLine(){
+        return curLineNum;
+    }
+}

@@ -349,24 +349,26 @@ public class WeiboSend extends Activity implements OnClickListener {
             }
             case R.id.text_limit_unit_lnl: {
                 mActionLog.addAction(ActionLog.WeiboSendClickedDelWord);
-                CommonUtils.showNormalDialog(WeiboSend.this,
-                        getString(R.string.attention),
-                        getString(R.string.are_you_delete_all), 
-                        null,
-                        getString(R.string.yes),
-                        getString(R.string.cancel),
-                        new DialogInterface.OnClickListener() {
-                            
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (DialogInterface.BUTTON_POSITIVE == which) {
-                                    mActionLog.addAction(ActionLog.WeiboSendClickedDelWordYes);
-                                    mTextEdt.setText("");
-                                } else {
-                                    mActionLog.addAction(ActionLog.WeiboSendClickedDelWordNo);
+                if (TextUtils.isEmpty(mTextEdt.getEditableText().toString()) == false) {
+                    CommonUtils.showNormalDialog(WeiboSend.this,
+                            getString(R.string.attention),
+                            getString(R.string.are_you_delete_all), 
+                            null,
+                            getString(R.string.yes),
+                            getString(R.string.cancel),
+                            new DialogInterface.OnClickListener() {
+                                
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    if (DialogInterface.BUTTON_POSITIVE == which) {
+                                        mActionLog.addAction(ActionLog.WeiboSendClickedDelWordYes);
+                                        mTextEdt.setText("");
+                                    } else {
+                                        mActionLog.addAction(ActionLog.WeiboSendClickedDelWordNo);
+                                    }
                                 }
-                            }
-                        });                
+                            });
+                }
                 break;
             }
             case R.id.pic_imv: {
