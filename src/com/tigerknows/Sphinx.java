@@ -1998,6 +1998,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (tkDrawable != null) {
                 Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, getResultMapFragment().toString());
                 if(drawable != null) {
+                	//Hard coded here to prevent problems on some platforms. such as htc t328w
+                	   drawable.setBounds(0, 0, Util.dip2px(Globals.g_metrics.density, 90), Util.dip2px(Globals.g_metrics.density, 60));
                     pictureImv.setBackgroundDrawable(drawable);
                 } else {
                     pictureImv.setBackgroundDrawable(null);
@@ -2071,36 +2073,36 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     }
                 } else if (object instanceof Tuangou) {
                     Tuangou target = (Tuangou) object;
-                    getTuangouDetailFragment().setData(target);
                     if (uiStackContains(R.id.view_tuangou_detail)) {
                         dismissView(R.id.view_result_map);
                     } else {
                         showView(R.id.view_tuangou_detail);
                     }
+                    getTuangouDetailFragment().setData(target);
                 } else if (object instanceof Dianying) {
                     Dianying target = (Dianying) object;
-                    getDianyingDetailFragment().setData(target);
                     if (uiStackContains(R.id.view_dianying_detail)) {
                         dismissView(R.id.view_result_map);
                     } else {
                         showView(R.id.view_dianying_detail);
                     }
+                    getDianyingDetailFragment().setData(target);
                 } else if (object instanceof Zhanlan) {
                     Zhanlan target = (Zhanlan) object;
-                    getZhanlanDetailFragment().setData(target);
                     if (uiStackContains(R.id.view_zhanlan_detail)) {
                         dismissView(R.id.view_result_map);
                     } else {
                         showView(R.id.view_zhanlan_detail);
                     }
+                    getZhanlanDetailFragment().setData(target);
                 } else if (object instanceof Yanchu) {
                     Yanchu target = (Yanchu) object;
-                    getYanchuDetailFragment().setData(target);
                     if (uiStackContains(R.id.view_yanchu_detail)) {
                         dismissView(R.id.view_result_map);
                     } else {
                         showView(R.id.view_yanchu_detail);
                     }
+                    getYanchuDetailFragment().setData(target);
                 }
             } else if (overlayName.equals(ItemizedOverlay.TRAFFIC_OVERLAY)) {
                 mActionLog.addAction(ActionLog.MapTrafficBubble);
