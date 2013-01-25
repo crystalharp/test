@@ -14,6 +14,12 @@
         android:id="@+id/tuangou_fendian_list_item"
         />
 
+    <ImageView android:id="@+id/divider_imv"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_real_line"
+        />
+    
     <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -34,23 +40,13 @@
             android:gravity="center_vertical"
             android:orientation="horizontal"
             >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="4dp"
-                android:gravity="left"
-                android:text="@string/show_date"
-                android:textColor="@color/black"
-                android:textSize="16sp"
-                />
+            
             <Button
                 android:id="@+id/after_tomorrow_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="15dp"
+                android:layout_marginRight="40dp"
                 android:gravity="left"
                 android:textColor="@color/bright_foreground_light"
                 android:textSize="16sp"
@@ -60,8 +56,7 @@
                 android:id="@+id/tomorrow_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/after_tomorrow_btn"
-                android:layout_marginTop="15dp"
+                android:layout_centerInParent="true"
                 android:gravity="left"
                 android:textColor="@color/bright_foreground_light"
                 android:textSize="16sp"
@@ -71,8 +66,8 @@
                 android:id="@+id/today_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/tomorrow_btn"
-                android:layout_marginTop="15dp"
+                android:layout_marginLeft="40dp"
+                android:layout_alignParentLeft="true"
                 android:gravity="left"
                 android:textColor="@android:color/background_dark"
                 android:textSize="16sp"
@@ -85,6 +80,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/show_time_view"
             android:paddingTop="2dp"
+            android:paddingLeft="8dp"
             android:orientation="vertical"
             android:gravity="center_horizontal"
             />

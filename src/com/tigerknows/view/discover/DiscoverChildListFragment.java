@@ -678,6 +678,10 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                 row = linearLayout;
                 parent.addView(row, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
             }
+            if( i==rows-1 ){
+            	row.setPadding(0, 0, 0, Util.dip2px(Globals.g_metrics.density, 8));
+            }
+            
             int rowViewChildCount = row.getChildCount();
             for(int j = 0; j < colums; j++) {
                 ViewGroup colum;

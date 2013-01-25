@@ -1948,7 +1948,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             Button trafficBtn=(Button)mInfoWindowYanchuList.findViewById(R.id.traffic_btn);
             
             nameTxv.setText(name);
-            starsRtb.setRating(rating);
+            starsRtb.setProgress((int)rating);
             
             int max = Globals.g_metrics.widthPixels - (int)(Globals.g_metrics.density*(148));
             layoutInfoWindow(nameTxv, max);
