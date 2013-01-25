@@ -298,11 +298,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, mParentFragment.toString());
             if(drawable != null) {
                 mPictureImv.setBackgroundDrawable(drawable);
-            } else {
-                mPictureImv.setBackgroundDrawable(null);
             }
-        } else {
-            mPictureImv.setBackgroundDrawable(null);
         }
         tkDrawable = mData.getContentPic();
         if (tkDrawable != null) {
