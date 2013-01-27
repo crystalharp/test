@@ -109,6 +109,7 @@
                 android:imeOptions="actionNext"
 			    android:singleLine="false"
 			    android:minLines="4"
+                android:maxLength="1024"
 			    android:gravity="top|left"
 			    android:isScrollContainer="true"
 			    android:hint="@string/errorrecovery_description"

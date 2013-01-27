@@ -60,6 +60,7 @@
 	    android:layout_below="@id/title_rll"
 	    android:background="@null"
 	    android:hint="@string/share_text_hint"
+        android:maxLength="140"
 	    android:capitalize="sentences"
 	    android:imeOptions="actionDone"
 	    android:singleLine="false"
