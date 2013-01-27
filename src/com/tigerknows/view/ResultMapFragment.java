@@ -266,7 +266,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
 	        			mSphinx.setResult(Activity.RESULT_OK, intent);
 	        		}
 	        	}
-	        }, mSphinx.getMapView().getCenterPosition());
+	        }, mSphinx.getMapView().getCenterPosition(), null);
 	        mSphinx.finish();
 	        break;
         case R.id.right_btn:

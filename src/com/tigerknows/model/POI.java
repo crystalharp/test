@@ -545,6 +545,10 @@ public class POI extends BaseData {
         return commentSummary;
     }
     
+    public void setCommentSummary(String commentSummary) {
+        this.commentSummary = commentSummary;
+    }
+    
     public boolean isOnlyAPOI() {
         return onlyAPOI;
     }

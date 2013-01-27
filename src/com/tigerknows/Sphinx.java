@@ -76,6 +76,7 @@ import com.decarta.android.map.MapText;
 import com.decarta.android.map.MapView;
 import com.decarta.android.map.MyLocation;
 import com.decarta.android.map.MapView.DownloadEventListener;
+import com.decarta.android.map.MapView.MapScene;
 import com.decarta.android.map.MapView.SnapMap;
 import com.decarta.android.map.MapView.ZoomEndEventListener;
 import com.decarta.android.map.OverlayItem;
@@ -164,6 +165,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	private static final int PROFILE = 7;
 	
 	public static final int CONFIG_SERVER_CODE = 14;
+	public static final String REFRESH_POI_DETAIL = "refresh_poi_detail";
 
 	private MapView mMapView;
     private TextView mDownloadView;
@@ -813,14 +815,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mUIStack.clear();
         getTitleFragment();
         getMenuFragment();
-        if (uiStack == null) {
-            getMoreFragment().refreshMoreBtn(true);
-            showView(R.id.view_home);
-        } else if (uiStack.size() >= 1) {
-            showView(uiStack.get(0));
-        } else {
-            showView(R.id.view_home);
-        }
+        getMoreFragment().refreshMoreBtn(true);
+        showView(R.id.view_home);
         
         mMenuView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         mMenuViewHeiht = mMenuView.getMeasuredHeight();
@@ -924,6 +920,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 loginBack(data);
                 mOnActivityResultLoginBack = true;
             }
+		} else if (R.id.activity_poi_comment == requestCode) {
+			if (resultCode == RESULT_CANCELED
+					&& data != null
+					&& data.getBooleanExtra(REFRESH_POI_DETAIL, false)) {
+				getPOIDetailFragment().refreshDetail();
+			}
         }
 		
         if (REQUEST_CODE_LOCATION_SETTINGS == requestCode) {
@@ -1508,9 +1510,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mActionLog.onStop();
     }
         
-    public void snapMapView(SnapMap snapMap, Position position) {
-        mMapView.setStopRefreshMyLocation(false);
-        mMapView.snapMapView(this, snapMap, position);
+    public void snapMapView(SnapMap snapMap, Position position, MapScene mapScene) {
+        mMapView.snapMapView(this, snapMap, position, mapScene);
     }
     
     public void changeCity(long cityId) {

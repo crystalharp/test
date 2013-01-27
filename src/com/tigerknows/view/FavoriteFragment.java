@@ -460,10 +460,12 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                                         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
                                             SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.POI.CONTENT_URI, Tigerknows.POI.STORE_TYPE + "="+Tigerknows.STORE_TYPE_FAVORITE, null);
                                             mPOIList.clear();
+                                            mPOILsv.setFooterSpringback(false);
                                             mPOIAdapter.notifyDataSetChanged();
                                         } else {
                                             SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.Favorite.CONTENT_URI, null, null);
                                             mTrafficList.clear();
+                                            mTrafficLsv.setFooterSpringback(false);
                                             mTrafficAdapter.notifyDataSetChanged();
                                         }
                                         refreshContent();

@@ -502,8 +502,12 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     
     private void recordDownloadCity(DownloadCity downloadCity, StringBuilder s) {
         CityInfo cityInfo = downloadCity.cityInfo;
+        int id = cityInfo.getId();
         if (cityInfo.getType() == CityInfo.TYPE_CITY
-                && cityInfo.getId() > 0) {        
+                && id > 0
+                && id != CITY_ID_TITLE_ONE
+                && id != CITY_ID_TITLE_TWO
+                && id != CITY_ID_TITLE_THREE) {        
             if (s.length() > 0) {
                 s.append(";"); 
             }

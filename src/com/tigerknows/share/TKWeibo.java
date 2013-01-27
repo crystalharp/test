@@ -130,26 +130,30 @@ public class TKWeibo implements AsyncWeiboRunner.RequestListener {
 
             @Override
             public void run() {
-                Toast.makeText(activity, R.string.weibo_send_failed, Toast.LENGTH_LONG).show();
                 if (showDialog)
                     activity.dismissDialog(R.id.dialog_share_doing);
-                
-                if (finish) {
-                    int statusCode = e.getStatusCode();
-                    if (statusCode == 40110 
-                            || statusCode == 40111 
-                            || statusCode == 40113 
-                            || statusCode == 40113 
-                            || statusCode == 40114
-                            || statusCode == 40110
-                            || statusCode == 40302) {
-                        if (activity instanceof WeiboSend) {
-                            ShareAPI.clearIdentity(activity, ShareAPI.TYPE_WEIBO);
-                            WeiboSend weiboSend = (WeiboSend) activity;
-                            weiboSend.getLogoutBtn().setText(R.string.back);
-                            TKWeibo.login(activity, weiboSend.getSinaAuthDialogListener());
+                int statusCode = e.getStatusCode();
+                // http://open.weibo.com/wiki/Error_code
+                if (statusCode == 20019 || statusCode == 20111) {
+                    Toast.makeText(activity, R.string.weibo_no_repeat, Toast.LENGTH_LONG).show();
+                } else {
+                    if (statusCode == 21314 
+                            || statusCode == 21315 
+                            || statusCode == 21316 
+                            || statusCode == 21317
+                            || statusCode == 21318
+                            || statusCode == 21319
+                            || statusCode == 21327) {
+                        if (finish) {
+                            if (activity instanceof WeiboSend) {
+                                ShareAPI.clearIdentity(activity, ShareAPI.TYPE_WEIBO);
+                                WeiboSend weiboSend = (WeiboSend) activity;
+                                weiboSend.getLogoutBtn().setText(R.string.back);
+                                TKWeibo.login(activity, weiboSend.getSinaAuthDialogListener());
+                            }
                         }
                     }
+                    Toast.makeText(activity, R.string.weibo_send_failed, Toast.LENGTH_LONG).show();
                 }
             }
         });

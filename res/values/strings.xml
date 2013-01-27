@@ -82,7 +82,7 @@
     <string name="are_your_change_to_location_city">上次设置为%1$s市，是否切换到你当前定位城市%2$s市？</string> 
     <string name="are_your_change_to_map_center_city">你的地图已经切换到%1$s，是否切换？</string> 
     <string name="current_location">当前位置：%1$s附近</string> 
-    <string name="find_poi">请输入地点、商户名等</string> 
+    <string name="find_poi">输入地点、商户名</string> 
     <string name="no_comment">目前暂无评论</string> 
     
     <string name="hotspot">热点</string>    
@@ -239,7 +239,7 @@
     <string name="my_location_failure">无法获取当前位置</string>
     <string name="select_has_point">选定的位置</string>
 
-    <string name="no_result">暂无结果.</string>
+    <string name="no_result">找不到你要的结果！</string>
 
     <string name="confirm_start_station">你要找的起点是</string>
     <string name="confirm_end_station">你要找的终点是</string>
@@ -682,6 +682,7 @@
     <string name="weibo_poi_text_type">【%1$s】</string>
     <string name="weibo_text_tail">来自@老虎宝典 http://www.tigerknows.com/</string>
     <string name="weibo_omission">...</string>
+    <string name="weibo_no_repeat">不能发送重复的微博！</string>
     
     <string name="please_login">请登录！</string>
     <string name="logon_sucess">登录成功！</string>

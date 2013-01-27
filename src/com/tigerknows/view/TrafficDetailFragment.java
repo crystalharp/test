@@ -30,6 +30,7 @@ import com.tigerknows.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.android.location.Position;
+import com.decarta.android.map.MapView.MapScene;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
@@ -462,11 +463,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             }
     	}
     	
+    	MapScene mapScene = mSphinx.getMapView().getCurrentMapScene();
     	mSphinx.clearMap();
     	TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), plan, mShowType);
     	Position position = TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
     	
-    	WidgetUtils.share(mSphinx, smsContent, weiboContent, qzoneContent, position);
+    	WidgetUtils.share(mSphinx, smsContent, weiboContent, qzoneContent, position, mapScene);
     }
 
     private void setFavoriteState(View v, boolean favoriteYet) {

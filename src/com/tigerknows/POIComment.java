@@ -33,6 +33,7 @@ import com.tigerknows.view.user.UserBaseActivity;
 import com.tigerknows.view.user.UserCommentAfterActivity;
 import com.tigerknows.view.user.UserUpdateNickNameActivity;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -989,6 +990,9 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             if (whichButton == DialogInterface.BUTTON_POSITIVE) {
                                 mActionLog.addAction(ActionLog.POICommentClickExitOK);
+                                Intent data = new Intent();
+                                data.putExtra(Sphinx.REFRESH_POI_DETAIL, true);
+                                setResult(Activity.RESULT_CANCELED, data);
                                 finish();
                             } else {
                                 mActionLog.addAction(ActionLog.POICommentClickExitCancel);
@@ -1038,6 +1042,10 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 if (response.getResponseCode() == 201) {
                     BaseActivity.showErrorDialog(mThis, mThis.getString(R.string.response_code_201), mThis, true);
                 } else if (response.getResponseCode() == 601 && response instanceof CommentCreateResponse) {
+                    mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_USER);
+                    mStatus = STATUS_MODIFY;
+                    mTitleBtn.setText(R.string.modify_comment);
+                    mComment.setUid(((CommentCreateResponse)response).getUid());
                     CommonUtils.showNormalDialog(mThis, 
                             mThis.getString(R.string.prompt), 
                             mThis.getString(R.string.response_code_601), 
@@ -1049,12 +1057,8 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                         public void onClick(DialogInterface arg0, int arg1) {
                             User user = Globals.g_User;
                             if (user != null) {
-                            mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_USER);
-                            mStatus = STATUS_MODIFY;
-                            mTitleBtn.setText(R.string.modify_comment);
                             Hashtable<String, String> criteria = commentOperation.getCriteria();
                             criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_UPDATE);
-                            mComment.setUid(((CommentCreateResponse)response).getUid());
                             criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mComment.getUid());
                             DataOperation dataOperation = new DataOperation(mThis);
                             dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), -1, mFromViewId, mThis.getString(R.string.doing_and_wait));

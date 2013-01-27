@@ -35,6 +35,10 @@ public class SoftInputManager {
     private ShowSoftInput showSoftInput = new ShowSoftInput();
     
     public void showSoftInput(View view) {
+        postShowSoftInput(view);
+    }
+    
+    public void postShowSoftInput(View view) {
         if (view != null) {
             showSoftInput.view = view;
             handler.postDelayed(showSoftInput, 200);
@@ -42,6 +46,10 @@ public class SoftInputManager {
     }
     
     public void showSoftInput() {
+        postShowSoftInput();
+    }
+    
+    public void postShowSoftInput() {
         View view = activity.getCurrentFocus();
         if (view != null) {
             showSoftInput.view = view;

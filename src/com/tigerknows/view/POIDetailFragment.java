@@ -182,8 +182,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             
             @Override
             public void onAnimationStart(Animation arg0) {
-                // TODO Auto-generated method stub
-                
             }
             
             @Override
@@ -230,7 +228,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             if (null != commentQuery) {
                 setCommentQuery(commentQuery);
             }
-            refreshDetail();
         }  
         mBodyScv.smoothScrollTo(0, 0);
     }
@@ -924,6 +921,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 int length = size;
                 if (size > 1) {
                     length = 1;
+                }
+                if (size > 0) {
+                    if (TextUtils.isEmpty(poi.getCommentSummary())) {
+                        poi.setCommentSummary(commentArrayList.get(0).getContent());
+                    }
                 }
                 LayoutParams layoutParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
                 for (int i = 0; i < length; i++) {
