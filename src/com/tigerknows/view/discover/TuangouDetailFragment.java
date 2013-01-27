@@ -11,12 +11,15 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import com.decarta.Globals;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Tuangou;
@@ -37,6 +40,33 @@ public class TuangouDetailFragment extends BaseDetailFragment
     }
     
     private List<Tuangou> mDataList = null;
+    
+    public boolean isReLogin() {
+        boolean isRelogin = this.isReLogin;
+        this.isReLogin = false;
+        if (isRelogin) {
+            if (mBaseQuerying != null) {
+                // 这里判断为创建订单操作时且没有登录成功时，将mBaseQuerying置为null，避免在没有用户登录的情况再次发出创建订单请求
+                if (BaseQuery.API_TYPE_DATA_OPERATION.equals(mBaseQuerying.getAPIType())) {
+                    Hashtable<String, String> criteria = mBaseQuerying.getCriteria();
+                    if (criteria != null && criteria.containsKey(BaseQuery.SERVER_PARAMETER_DATA_TYPE)) {
+                        String dataType = criteria.get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+                        if (DataOperation.DATA_TYPE_DINGDAN.equals(dataType)) {
+                            if (Globals.g_User == null) {
+                                mBaseQuerying = null;
+                            }
+                        }
+                    }
+                }
+                    
+                if (mBaseQuerying != null) {
+                    mBaseQuerying.setResponse(null);
+                    mSphinx.queryStart(mBaseQuerying);
+                }
+            }
+        }
+        return isRelogin;
+    }
     
     boolean isRequsetBuy = false;
     
