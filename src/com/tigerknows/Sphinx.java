@@ -165,6 +165,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	private static final int PROFILE = 7;
 	
 	public static final int CONFIG_SERVER_CODE = 14;
+	public static final String REFRESH_POI_DETAIL = "refresh_poi_detail";
 
 	private MapView mMapView;
     private TextView mDownloadView;
@@ -814,14 +815,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mUIStack.clear();
         getTitleFragment();
         getMenuFragment();
-        if (uiStack == null) {
-            getMoreFragment().refreshMoreBtn(true);
-            showView(R.id.view_home);
-        } else if (uiStack.size() >= 1) {
-            showView(uiStack.get(0));
-        } else {
-            showView(R.id.view_home);
-        }
+        getMoreFragment().refreshMoreBtn(true);
+        showView(R.id.view_home);
         
         mMenuView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
         mMenuViewHeiht = mMenuView.getMeasuredHeight();
@@ -925,6 +920,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 loginBack(data);
                 mOnActivityResultLoginBack = true;
             }
+		} else if (R.id.activity_poi_comment == requestCode) {
+			if (resultCode == RESULT_CANCELED
+					&& data != null
+					&& data.getBooleanExtra(REFRESH_POI_DETAIL, false)) {
+				getPOIDetailFragment().refreshDetail();
+			}
         }
 		
         if (REQUEST_CODE_LOCATION_SETTINGS == requestCode) {
