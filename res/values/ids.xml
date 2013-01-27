@@ -2,8 +2,10 @@
 <resources>
    
     <item type="id" name="dialog_traffic_alternatives" />
-    <item type="id" name="dialog_change_to_my_location_city" />
+    <item type="id" name="dialog_prompt_change_to_my_location_city" />
     <item type="id" name="dialog_prompt_setting_location" />
+    <item type="id" name="dialog_prompt_setting_location_first" />
+    <item type="id" name="dialog_prompt_choose_city" />
     <item type="id" name="dialog_fetch_favorite_poi" />
     
     <item type="id" name="dialog_share_doing" />

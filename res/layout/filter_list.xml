@@ -26,6 +26,7 @@
         android:paddingBottom="64dp"
         >
         <RelativeLayout
+            android:id="@+id/parent_view"
 	        android:layout_width="wrap_content"
 	        android:layout_height="fill_parent"
 	        android:layout_weight="1"
@@ -43,6 +44,7 @@
 	            />
         </RelativeLayout>
         <RelativeLayout
+            android:id="@+id/child_view"
 	        android:layout_width="wrap_content"
 	        android:layout_height="fill_parent"
 	        android:layout_weight="1"
@@ -51,8 +53,8 @@
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:padding="0dp"
-	            android:dividerHeight="0dp"
-	            android:divider="@color/black_light"
+	            android:dividerHeight="1.5dp"
+	            android:divider="@color/transparent"
 	            android:drawSelectorOnTop="false"
 	            android:scrollingCache="false"
 	            android:footerDividersEnabled="false"

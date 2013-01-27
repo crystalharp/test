@@ -143,7 +143,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             parentLsv.setSelectionFromTop(selectedParentPosition, 0);
         
         if (selectedChiledPosition > 0)
-            parentLsv.setSelectionFromTop(selectedChiledPosition, 0);
+            childLsv.setSelectionFromTop(selectedChiledPosition, 0);
     }
         
     public FilterListView(Context context) {
@@ -178,6 +178,28 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     }
     
     protected void setListener() {
+        findViewById(R.id.parent_view).setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+        findViewById(R.id.child_view).setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+        setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                cancel();
+                return false;
+            }
+        });
         parentLsv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
