@@ -749,19 +749,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
             if (dataQuery.getSourceViewId() == R.id.view_poi_nearby) {
                 if (this.mSphinx.uiStackContains(R.id.view_favorite)) {
-                    mSphinx.uiStackClear();
-                    mSphinx.uiStackPush(R.id.view_more);
-                    mSphinx.uiStackPush(R.id.view_favorite);
-                    mSphinx.uiStackPush(getId());
+                    mSphinx.uiStackClose(new int[]{R.id.view_more, R.id.view_favorite, getId()});
                 } else if (this.mSphinx.uiStackContains(R.id.view_history)) {
-                    mSphinx.uiStackClear();
-                    mSphinx.uiStackPush(R.id.view_more);
-                    mSphinx.uiStackPush(R.id.view_history);
-                    mSphinx.uiStackPush(getId());
+                    mSphinx.uiStackClose(new int[]{R.id.view_more, R.id.view_history, getId()});
                 } else {
-                    mSphinx.uiStackClear();
-                    mSphinx.uiStackPush(R.id.view_home);
-                    mSphinx.uiStackPush(getId());
+                    mSphinx.uiStackClose(new int[]{R.id.view_home, getId()});
                 }
             }
 

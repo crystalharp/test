@@ -89,7 +89,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                 mAirPlaneModeOn = airPlaneModeOn;
             }
             if (mAirPlaneModeOn) {
-                if (hasWindowFocus()) {
+                if (isFinishing() == false) {
                     Toast.makeText(mThis, R.string.network_error, Toast.LENGTH_LONG).show();
                 }
             }
@@ -101,7 +101,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(BaseQuery.ACTION_NETWORK_STATUS_REPORT)) {
-                if (hasWindowFocus()) {
+                if (isFinishing() == false) {
                     Toast.makeText(mThis, R.string.network_error, Toast.LENGTH_LONG).show();
                 }
             }

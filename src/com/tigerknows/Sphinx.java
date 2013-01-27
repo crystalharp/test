@@ -291,7 +291,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     InfoWindowLongListener mInfoWindowLongStartListener = new InfoWindowLongListener();
     InfoWindowLongListener mInfoWindowLongEndListener = new InfoWindowLongListener();
     
-    private boolean mShowPromptSettingLocationDialog = false;
     private boolean mFromIntent = false;
     public boolean mSnapMap = false;
     
@@ -432,8 +431,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mMenuView.setVisibility(View.INVISIBLE);
                 final boolean fristUse = TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_FIRST_USE));
                 final boolean upgrade = TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_UPGRADE));
-                mShowPromptSettingLocationDialog |= fristUse;
-                mShowPromptSettingLocationDialog |= upgrade;
+                mPreventShowChangeMyLocationDialog |= fristUse;
+                mPreventShowChangeMyLocationDialog |= upgrade;
                 mHandler.postDelayed(new Runnable() {
                     
                     @Override
@@ -839,7 +838,24 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	    return getDialog(id);
 	}
 	
-	/* Creates the menu items */
+	@Override
+    protected void onPrepareDialog(int id, Dialog dialog) {
+	    super.onPrepareDialog(id, dialog);
+	    if (id == R.id.dialog_prompt_change_to_my_location_city) {
+	        TextView messageTxv =(TextView)dialog.findViewById(R.id.message);
+	        String currentCityName = Globals.g_Current_City_Info.getCName();
+	        String locationCityName;
+	        CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
+	        if (myLocationCityInfo != null) {
+	            locationCityName = myLocationCityInfo.getCName();
+	        } else {
+	            locationCityName = currentCityName;
+	        }
+	        messageTxv.setText(getString(R.string.are_your_change_to_location_city, currentCityName, locationCityName));
+	    }
+    }
+
+    /* Creates the menu items */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 //	    menu.add(0, CONFIG_SERVER, 8, "config");
@@ -888,17 +904,17 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		if (R.id.activity_help == requestCode) {
 		    if (data != null) {
 		        if (data.getBooleanExtra(Help.APP_FIRST_START, false)) {
-                    mShowPromptSettingLocationDialog = false;
+                    mPreventShowChangeMyLocationDialog = false;
 		            OnSetup();
 		        } else if (data.getBooleanExtra(Help.APP_UPGRADE, false)) {
-                    mShowPromptSettingLocationDialog = false;
+                    mPreventShowChangeMyLocationDialog = false;
                     checkLocationCity();
 		        }
 		    }
 		} else if (R.id.activity_app_recommend == requestCode) {
         } else if (R.id.activity_change_city == requestCode) {
             if (data != null && RESULT_OK == resultCode) {
-                Globals.g_My_Location_State = Globals.LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG;
+                mPreventShowChangeMyLocationDialog = true;
                 changeCity(data.getIntExtra("cityId", Globals.g_Current_City_Info.getId()));
             }
         } else if (R.id.activity_setting_location == requestCode) {
@@ -1019,7 +1035,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mActivityResult = false;
             return;
         }
-        
+        mPreventShowChangeMyLocationDialog = false;
+        if (Globals.g_My_Location_State == Globals.LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG) {
+            Globals.g_My_Location_State = Globals.LOCATION_STATE_FIRST_SUCCESS;
+        }
         checkLocationCity();
 	}
 	
@@ -1030,7 +1049,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         if (myLocationCityInfo != null) {
             if (myLocationCityInfo.getId() != cityInfo.getId()) {
-                showChangeToMyLocationCityDialog(myLocationCityInfo);
+                showPromptChangeToMyLocationCityDialog(myLocationCityInfo);
             }
         } else {
             if (!gps) {
@@ -1365,7 +1384,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 Cursor cursor = getContentResolver().query(uri, null, null, null, null);
                 if (cursor!=null && cursor.getCount() > 0) {
                     if (uiStackPeek() != R.id.view_home) {
-                        uiStackEmpty();
+                        uiStackClose(new int[]{R.id.view_home});
                         showView(R.id.view_home);
                     }
                     cursor.moveToFirst();
@@ -2169,173 +2188,84 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             changeCity(cityInfo);
         } else {
             if (gps) {
-                chooseCity();
+                showLocationDialog(R.id.dialog_prompt_choose_city);
             } else {
-                mShowPromptSettingLocationDialog = true;
-                CommonUtils.showNormalDialog(Sphinx.this,
-                        mContext.getString(R.string.prompt),
-                        mContext.getString(R.string.location_failed_and_jump_settings),
-                        mContext.getString(R.string.confirm),
-                        mContext.getString(R.string.settings),
-                        new DialogInterface.OnClickListener() {
-                            
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                switch (id) {
-                                    case DialogInterface.BUTTON_POSITIVE:
-                                        chooseCity();
-                                        dialog.dismiss();
-                                        break;
-                                    case DialogInterface.BUTTON_NEGATIVE:
-                                        startLocationSettings();
-                                        dialog.dismiss();
-                                        break;
-
-                                    default:
-                                        break;
-                                }
-                            }
-                        });
+                showLocationDialog(R.id.dialog_prompt_setting_location_first);
             }
         }
     }
     
-    private boolean showChangeToMyLocationCityDialog(final CityInfo locationCity) {
-        Globals.g_My_Location_State = Globals.LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG;
-        if (mFromIntent || mSnapMap) {
-            return true;
+    private boolean showPromptChangeToMyLocationCityDialog(final CityInfo locationCity) {
+        if (mPreventShowChangeMyLocationDialog) {
+            return false;
         }
-        if (mChangeToMyLocationCityDialogShowing || uiStackSize() <= 0) {
-            return true;
-        }
-
-        final String currertCName = Globals.g_Current_City_Info.getCName();
-        final String mylocationCName = locationCity.getCName();
-        Dialog dialog = CommonUtils.showNormalDialog(this, getString(R.string.prompt),
-                getString(R.string.are_your_change_to_location_city, currertCName, mylocationCName),
-                getString(R.string.yes),
-                getString(R.string.no),
-                new DialogInterface.OnClickListener() {
-                            
-                            @Override
-                            public void onClick(DialogInterface dialog, int id) {
-                                switch (id) {                                            
-                                    case DialogInterface.BUTTON_POSITIVE:
-                                        Dialog dialg = mDialog;
-                                        if (dialg != null && dialg.isShowing()) {
-                                            dialg.dismiss();
-                                        }
-                                        getTitleFragment().dismissPopupWindow();
-                                        BaseFragment baseFragment = getFragment(uiStackPeek());
-                                        if (baseFragment != null) {
-                                            baseFragment.dismissPopupWindow();
-                                        }
-                                        mActionLog.addAction(ActionLog.ChangeToMyLocationCityDialogYes, mylocationCName);
-                                        uiStackEmpty();
-                                        showView(R.id.view_home);
-                                        changeCity(locationCity);
-                                        mActionLog.addAction(ActionLog.LifecycleSelectCity, currertCName);
-                                        break;          
-                                        
-                                    case DialogInterface.BUTTON_NEGATIVE:
-                                        mActionLog.addAction(ActionLog.ChangeToMyLocationCityDialogNo);
-                                        break;    
-                                        
-                                    default:
-                                        break;
-                                }
-                            }
-                        });
-        dialog.setOnDismissListener(new OnDismissListener() {
-            
-            @Override
-            public void onDismiss(DialogInterface arg0) {
-                mChangeToMyLocationCityDialogShowing = false;
-            }
-        });
-        mChangeToMyLocationCityDialogShowing = true;
         
-        mActionLog.addAction(ActionLog.ChangeToMyLocationCityDialog);
-        return true;
+        if (Globals.g_My_Location_State == Globals.LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG) {
+            return false;
+        }
+        
+        CityInfo myLocationCity = Globals.g_My_Location_City_Info;
+        if (myLocationCity == null) {
+            return false;
+        }
+        
+        if (showLocationDialog(R.id.dialog_prompt_change_to_my_location_city)) {
+            Globals.g_My_Location_State = Globals.LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG;
+            mActionLog.addAction(ActionLog.ChangeToMyLocationCityDialog);
+            return true;
+        }
+        return false;
     }
     
     private void showPromptSettingLocationDialog() {
-        if (mFromIntent || mSnapMap) {
-            return;
-        }
-        if (mShowPromptSettingLocationDialog == true || uiStackSize() <= 0) {
-            return;
-        }
         boolean showLocationSettingsTip = TextUtils.isEmpty(TKConfig.getPref(Sphinx.this, TKConfig.PREFS_SHOW_LOCATION_SETTINGS_TIP));
         if (showLocationSettingsTip == false) {
             return;
         }
-        
-        View settingLocationView = mLayoutInflater.inflate(R.layout.alert_setting_location, null, false);
-        final CheckBox checkChb = (CheckBox) settingLocationView.findViewById(R.id.check_chb);
-        checkChb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            
-            @Override
-            public void onCheckedChanged(CompoundButton arg0, boolean checked) {
-                TKConfig.setPref(Sphinx.this, TKConfig.PREFS_SHOW_LOCATION_SETTINGS_TIP, checked ? "1" : "");
-            }
-        });
-
-        
-        Dialog dialog = CommonUtils.showNormalDialog(Sphinx.this,
-                getString(R.string.prompt),
-                null,
-                settingLocationView,
-                Sphinx.this.getString(R.string.i_know),
-                Sphinx.this.getString(R.string.settings),
-                new DialogInterface.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(DialogInterface arg0, int id) {
-                        if (id == DialogInterface.BUTTON_NEGATIVE) {
-                            startLocationSettings();
-                        }
-                    }
-                });
-        dialog.setOnDismissListener(new OnDismissListener() {
-            
-            @Override
-            public void onDismiss(DialogInterface arg0) {
-                mShowPromptSettingLocationDialog = false;
-            }
-        });
-        mShowPromptSettingLocationDialog = true;
-    }
-        
-    private void chooseCity() {
-        
-        CommonUtils.showNormalDialog(Sphinx.this,
-                mContext.getString(R.string.prompt),
-                mContext.getString(R.string.location_failed_and_change_city),
-                mContext.getString(R.string.confirm),
-                mContext.getString(R.string.cancel),
-                new DialogInterface.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        switch (id) {
-                            case DialogInterface.BUTTON_POSITIVE:
-                                showView(R.id.activity_change_city);
-                                dialog.dismiss();
-                                break;
-
-                            default:
-                                break;
-                        }
-                    }
-                });
+        showLocationDialog(R.id.dialog_prompt_setting_location);
     }
     
-    public void startLocationSettings() {
-        mShowPromptSettingLocationDialog = true;
-        Intent intent = new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
-        intent.addCategory(Intent.CATEGORY_DEFAULT);
-        startActivityForResult(intent, R.id.activity_setting_location);
+    private boolean showLocationDialog(int id) {
+        if (mFromIntent || mSnapMap) {
+            return false;
+        }
+        
+        if (uiStackSize() <= 0) {
+            return false;
+        }
+        
+        Dialog dialog;
+        
+        if (id != R.id.dialog_prompt_choose_city) {
+            dialog = getDialog(R.id.dialog_prompt_choose_city);
+            if (dialog.isShowing()) {
+                return false;
+            }     
+        }
+        
+        if (id != R.id.dialog_prompt_setting_location_first) {
+            dialog = getDialog(R.id.dialog_prompt_setting_location_first);
+            if (dialog.isShowing()) {
+                return false;
+            }     
+        }
+        
+        if (id != R.id.dialog_prompt_setting_location) {
+            dialog = getDialog(R.id.dialog_prompt_setting_location);
+            if (dialog.isShowing()) {
+                return false;
+            }     
+        }
+        
+        if (id != R.id.dialog_prompt_change_to_my_location_city) {
+            dialog = getDialog(R.id.dialog_prompt_change_to_my_location_city);
+            if (dialog.isShowing()) {
+                return false;
+            }     
+        }
+        
+        showDialog(id);
+        return true;
     }
     // TODO: initMapCenter end
 
@@ -2381,6 +2311,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     // TODO: ui stack begin   
     public Object mUILock = new Object();
     public boolean mUIProcessing = false;
+    boolean mUIPreventDismissCallBack = false;
     private ArrayList<Integer> mUIStack = new ArrayList<Integer>();
     
     public int uiStackPeekBottom(){
@@ -2393,24 +2324,27 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
     
-    public void uiStackPush(int id) {
+    public boolean uiStackPush(int id) {
         synchronized (mUILock) {
-
+            boolean result = false;
             int oldId = uiStackPeek();
             if (oldId != id && id != R.id.view_invalid) {
                 mUIStack.add(id);
+                result = true;
             }
+            return result;
         }
     }
     
     public boolean uiStackContains(int id) {
         synchronized (mUILock) {
+            boolean result = false;
             for(int i : mUIStack) {
                 if (i == id) {
-                    return true;
+                    result = true;
                 }
             }
-            return false;
+            return result;
         }
     }
     
@@ -2424,8 +2358,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
     
-    private void uiStackRemove(int id) {
+    private boolean uiStackRemove(int id) {
         synchronized (mUILock) {
+            boolean result = false;
             int index = 0;
             for(int i : mUIStack) {
                 if (i == id) {
@@ -2437,17 +2372,23 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             int size = mUIStack.size();
             if (size > 0 && index < size) {
                 mUIStack.remove(index);
+                result = true;
             }
+            return result;
         }
     }
 
-    public void uiStackDismiss(int id) {
+    public boolean uiStackDismiss(int id) {
         synchronized (mUILock) {
-            mUIProcessing = true;
+            boolean result = false;
+            if (mUIPreventDismissCallBack) {
+                return result;
+            }
             if (id == R.id.view_invalid || id != uiStackPeek()) {
-                return;
+                return result;
             }
             
+            mUIProcessing = true;
             int size = mUIStack.size(); 
             if (size > 0 && uiStackPeek() == id) {
                 mUIStack.remove(size-1);
@@ -2466,87 +2407,134 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 if (fragment != null) {
                     fragment.onResume();
+                    result = true;
                 } else {
                     Dialog backDialog = getDialog(id);
                     if (backDialog != null) {
                         if (!backDialog.isShowing()) {
                             showView(id);
+                            result = true;
                         } else if (backDialog instanceof BaseDialog) {
                             ((BaseDialog)backDialog).onResume();
+                            result = true;
                         }
                     }
                 }
             }
             mUIProcessing = false;
+            return result;
         }
     }
     
     public boolean uiStackPop(int id) {
         synchronized (mUILock) {
-            for(int i = mUIStack.size()-1; i >= 0; i--) {
-                if (mUIStack.get(i) == id) {
-                    mUIStack.remove(i);
+            boolean result = false;
+            if (uiStackPeek() != id || mUIStack.size() < 1) {
+                return result;
+            }
+            mUIPreventDismissCallBack = true;
+            mUIStack.remove(mUIStack.size()-1);
+            BaseFragment baseFragment = getFragment(id);
+            if (baseFragment != null) {
+                baseFragment.dismiss();
+                result = true;
+            } else {
+                Dialog dialog = getDialog(id);
+                if (dialog != null) {
+                    if (dialog.isShowing()) {
+                        dismissDialog(id);
+                        result = true;
+                    }
                 }
             }
-            return false;
+            mUIPreventDismissCallBack = false;
+            return result;
         }
     }
     
     public boolean uiStackBack() {
         synchronized (mUILock) {
+            boolean result = false;
             if (mUIStack.size() > 1) {
                 int id = uiStackPeek();
                 
                 if (id != R.id.view_invalid) {
                     dismissView(id);                    
-                    return true;
+                    result = true;
                 }
             }
-            return false;
+            return result;
         }
     }
     
-    public void uiStackClear() {
+    public void uiStackClose(int[] filterIds) {
         synchronized (mUILock) {
-            mUIStack.clear();
-        }
-    }
-    
-    public void uiStackEmpty() {
-        synchronized (mUILock) {
-            for(int id : mUIStack) {
-                BaseFragment baseFragment = getFragment(id);
-                if (baseFragment != null && baseFragment.getId() != R.id.view_home) {
-                    baseFragment.onPause();
-                } else {
-                    Dialog dialog = getDialog(id);
-                    if (dialog != null) {
-                        dialog.dismiss();
+            mUIPreventDismissCallBack = true;
+            // 从最上面的窗口往下逐渐关闭
+            for(int i = mUIStack.size()-1; i >= 0; i--) {
+                int id = mUIStack.get(i);
+                boolean dismiss = true;
+                if (filterIds != null) {
+                    for(int filterId : filterIds) {
+                        if (filterId == id) {
+                            dismiss = false;
+                            break;
+                        }
+                    }
+                }
+                if (dismiss) {
+                    mUIStack.remove(i);
+                    BaseFragment baseFragment = getFragment(id);
+                    if (baseFragment != null) {
+                        baseFragment.dismiss();
+                    } else {
+                        Dialog dialog = getDialog(id);
+                        if (dialog != null) {
+                            if (dialog.isShowing()) {
+                                dismissDialog(id);
+                            }
+                        }
                     }
                 }
             }
-            mUIStack.clear();
+            mUIPreventDismissCallBack = false;
         }
     }
     
-    public void uiStackClearTop(int preferTop) {
+    public boolean uiStackClearTop(int preferTop) {
     	LogWrapper.d(TAG, "uiStackClearTop");
-    	synchronized (mUILock) {
-            if (!uiStackContains(preferTop) || uiStackPeek() == preferTop) {
-            	return;
-            }
-            
+    	synchronized (mUILock) {            
             LogWrapper.d(TAG, "preferTop: " + preferTop);
             LogWrapper.d(TAG, "mUIStack: " + mUIStack);
-            int index = mUIStack.lastIndexOf(preferTop);
-            
-            for(int i = mUIStack.size()-1-index; i > 0; i--) {
-            	getFragment(uiStackPeek()).dismiss();
+            boolean result = false;
+            if (uiStackContains(preferTop) == false) {
+                return result;
             }
-            
-//            List<Integer> newStack = mUIStack.subList(0, index + 1);
-//            mUIStack = new ArrayList<Integer>(newStack);
+            int[] filterIds = null;
+            int index = mUIStack.indexOf(preferTop);
+            int size = mUIStack.size();
+            if (index > -1 && index < size) {
+                filterIds = new int[index+1];
+                for(int i = 0; i <= index; i++) {
+                    filterIds[i] = mUIStack.get(i);
+                }
+            }
+            uiStackClose(filterIds);
+            BaseFragment baseFragment = getFragment(preferTop);
+            if (baseFragment != null) {
+                baseFragment.onResume();
+                result = true;
+            } else {
+                Dialog dialog = getDialog(preferTop);
+                if (dialog != null) {
+                    if (dialog instanceof BaseDialog) {
+                        ((BaseDialog)dialog).onResume();
+                        result = true;
+                    }
+                }
+            }
             LogWrapper.d(TAG, "mUIStack after cleartop: " + mUIStack);
+            return result;
         }
     }
     
@@ -2660,20 +2648,25 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 intent.setClass(this, UserUpdatePasswordActivity.class);
                 startActivityForResult(intent, R.id.activity_user_update_password);
                 return true;
+            } else if (R.id.activity_setting_location == viewId) {
+                intent.setAction("android.settings.LOCATION_SOURCE_SETTINGS");
+                intent.addCategory(Intent.CATEGORY_DEFAULT);
+                startActivityForResult(intent, R.id.activity_setting_location);
+                return true;
             }
             mUIProcessing = true;
             boolean show = false;
-            int backId = uiStackPeek();
-            if (backId != viewId) {
+            int currentId = uiStackPeek();
+            if (currentId != viewId) {
                 BaseFragment baseFragment = getFragment(viewId);
                 
                 if (baseFragment != null) {
                     
-                    BaseFragment backBaseFragment = getFragment(backId);
+                    BaseFragment backBaseFragment = getFragment(currentId);
                     if (backBaseFragment != null) {
                         backBaseFragment.onPause();
                     } else {
-                        Dialog backDialog = getDialog(backId);
+                        Dialog backDialog = getDialog(currentId);
                         if (backDialog != null) {
                             if (backDialog instanceof BaseDialog) {
                                 ((BaseDialog)backDialog).onPause();
@@ -2686,11 +2679,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 } else {
                     Dialog  dialog = getDialog(viewId);
                     if (dialog != null) {
-                        BaseFragment backFragment = getFragment(backId);
+                        BaseFragment backFragment = getFragment(currentId);
                         if (backFragment != null) {
                             backFragment.onPause();
                         } else {
-                            Dialog backDialog = getDialog(backId);
+                            Dialog backDialog = getDialog(currentId);
                             if (backDialog != null) {
                                 if (backDialog instanceof BaseDialog) {
                                     ((BaseDialog)backDialog).onPause();
@@ -2747,6 +2740,130 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
             case R.id.dialog_fetch_favorite_poi:
                 dialog = getFetchFavoriteDialog();
+                break;
+                
+            case R.id.dialog_prompt_change_to_my_location_city:
+                dialog = CommonUtils.getDialog(mThis,
+                            getString(R.string.prompt),
+                            getString(R.string.are_your_change_to_location_city),
+                            null,
+                            getString(R.string.yes),
+                            getString(R.string.no),
+                            new DialogInterface.OnClickListener() {
+                                
+                                @Override
+                                public void onClick(DialogInterface dialog, int id) {
+                                    switch (id) {                                            
+                                        case DialogInterface.BUTTON_POSITIVE:
+                                            CityInfo locationCity = Globals.g_My_Location_City_Info;
+                                            if (locationCity != null && locationCity.isAvailably()) {
+                                                Dialog dialg = mDialog;
+                                                if (dialg != null && dialg.isShowing()) {
+                                                    dialg.dismiss();
+                                                }
+                                                getTitleFragment().dismissPopupWindow();
+                                                BaseFragment baseFragment = getFragment(uiStackPeek());
+                                                if (baseFragment != null) {
+                                                    baseFragment.dismissPopupWindow();
+                                                }
+                                                String mylocationCName = locationCity.getCName();
+                                                mActionLog.addAction(ActionLog.ChangeToMyLocationCityDialogYes, mylocationCName);
+                                                uiStackClose(new int[]{R.id.view_home});
+                                                showView(R.id.view_home);
+                                                changeCity(locationCity);
+                                                mActionLog.addAction(ActionLog.LifecycleSelectCity, Globals.g_Current_City_Info.getCName());
+                                            }
+                                            break;          
+                                            
+                                        case DialogInterface.BUTTON_NEGATIVE:
+                                            mActionLog.addAction(ActionLog.ChangeToMyLocationCityDialogNo);
+                                            break;    
+                                            
+                                        default:
+                                            break;
+                                    }
+                                }
+                            });
+                break;
+                
+            case R.id.dialog_prompt_setting_location:
+                View settingLocationView = mLayoutInflater.inflate(R.layout.alert_setting_location, null, false);
+                dialog = CommonUtils.getDialog(Sphinx.this,
+                        getString(R.string.prompt),
+                        null,
+                        settingLocationView,
+                        Sphinx.this.getString(R.string.i_know),
+                        Sphinx.this.getString(R.string.settings),
+                        new DialogInterface.OnClickListener() {
+                            
+                            @Override
+                            public void onClick(DialogInterface arg0, int id) {
+                                if (id == DialogInterface.BUTTON_NEGATIVE) {
+                                    showView(R.id.activity_setting_location);
+                                }
+                            }
+                        });
+
+                
+                final CheckBox checkChb = (CheckBox) dialog.findViewById(R.id.check_chb);
+                checkChb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                    
+                    @Override
+                    public void onCheckedChanged(CompoundButton arg0, boolean checked) {
+                        TKConfig.setPref(Sphinx.this, TKConfig.PREFS_SHOW_LOCATION_SETTINGS_TIP, checked ? "1" : "");
+                    }
+                });
+                break;
+                
+            case R.id.dialog_prompt_setting_location_first:
+                dialog = CommonUtils.getDialog(Sphinx.this,
+                        mContext.getString(R.string.prompt),
+                        mContext.getString(R.string.location_failed_and_jump_settings),
+                        null,
+                        mContext.getString(R.string.confirm),
+                        mContext.getString(R.string.settings),
+                        new DialogInterface.OnClickListener() {
+                            
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                switch (id) {
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        showLocationDialog(R.id.dialog_prompt_choose_city);
+                                        dialog.dismiss();
+                                        break;
+                                    case DialogInterface.BUTTON_NEGATIVE:
+                                        showView(R.id.activity_setting_location);
+                                        dialog.dismiss();
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+                            }
+                        });
+                break;
+                
+            case R.id.dialog_prompt_choose_city:
+                dialog = CommonUtils.getDialog(Sphinx.this,
+                        mContext.getString(R.string.prompt),
+                        mContext.getString(R.string.location_failed_and_change_city),
+                        null,
+                        mContext.getString(R.string.confirm),
+                        mContext.getString(R.string.cancel),
+                        new DialogInterface.OnClickListener() {
+                            
+                            @Override
+                            public void onClick(DialogInterface dialog, int id) {
+                                switch (id) {
+                                    case DialogInterface.BUTTON_POSITIVE:
+                                        showView(R.id.activity_change_city);
+                                        break;
+
+                                    default:
+                                        break;
+                                }
+                            }
+                        });
                 break;
                 
             default:
@@ -3257,9 +3374,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     // TODO: get fragment end
 
     // TODO: my location begin    
+    private boolean mPreventShowChangeMyLocationDialog = false;
     private MyLocation mMyLocation;
     private ItemizedOverlay mMyLocationOverlay;
-    private boolean mChangeToMyLocationCityDialogShowing = false;
     private Runnable mLocationChangedRun = new Runnable() {
         
         @Override
@@ -3286,11 +3403,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 resetLoactionButtonState();
             }
             
-            if (Globals.g_My_Location_State == Globals.LOCATION_STATE_FIRST_SUCCESS && myLocationCityInfo != null && uiStackSize() > 0) {
-                Globals.g_My_Location_State = Globals.LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG;
+            if (Globals.g_My_Location_State == Globals.LOCATION_STATE_FIRST_SUCCESS
+                    && myLocationCityInfo != null) {
                 CityInfo currentCity = Globals.g_Current_City_Info;
                 if (currentCity.getId() != myLocationCityInfo.getId()) {
-                    showChangeToMyLocationCityDialog(myLocationCityInfo);
+                    showPromptChangeToMyLocationCityDialog(myLocationCityInfo);
                 }
             }
         }

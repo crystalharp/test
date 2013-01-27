@@ -100,13 +100,14 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     
     @Override
     public void onClick(View view) {
-    	mSphinx.uiStackEmpty();
         switch (view.getId()) {
             case R.id.poi_btn:
             	mActionLog.addAction(ActionLog.MenuSearch);
+                mSphinx.uiStackClose(new int[]{R.id.view_home});
                 mSphinx.showView(R.id.view_home);
                 break;
             case R.id.discover_btn:
+                mSphinx.uiStackClose(new int[]{R.id.view_discover});
                 mSphinx.showView(R.id.view_discover);
                 mSphinx.getDiscoverFragment().setCurrentItem(0);
                 if (mDiscvoerImv.getVisibility() == View.VISIBLE) {
@@ -115,6 +116,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 }
                 break;
             case R.id.traffic_btn:
+                mSphinx.uiStackClose(new int[]{R.id.view_traffic_query});
             	mActionLog.addAction(ActionLog.MenuTraffic);
             	mSphinx.getTrafficQueryFragment().setState(TrafficViewSTT.State.Normal);
             	//正常使用菜单进入交通，默认在起点显示我的位置。
@@ -122,6 +124,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 mSphinx.showView(R.id.view_traffic_query);
                 break;
             case R.id.more_btn:
+                mSphinx.uiStackClose(new int[]{R.id.view_more});
             	mActionLog.addAction(ActionLog.MenuMore);
                 mSphinx.showView(R.id.view_more);
                 break;
