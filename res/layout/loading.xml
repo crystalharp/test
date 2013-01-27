@@ -4,7 +4,6 @@
     android:layout_height="wrap_content"
     android:gravity="center"
     android:orientation="horizontal"
-    android:background="@drawable/list_selector_background_gray_light"
     >
 
     <TextView

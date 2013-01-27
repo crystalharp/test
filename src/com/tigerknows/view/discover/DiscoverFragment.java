@@ -268,7 +268,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                         String leftStr = mDiscoverCategoryAdapter.listView.get((position-1)%size).getTitleText();
                         String centerStr = mDiscoverCategoryAdapter.listView.get((position)%size).getTitleText();
                         String rightStr = mDiscoverCategoryAdapter.listView.get((position+1)%size).getTitleText();
-                        String rightRightStr = mDiscoverCategoryAdapter.listView.get((position+1)%size).getTitleText();
+                        String rightRightStr = mDiscoverCategoryAdapter.listView.get((position+2)%size).getTitleText();
                         mDiscoverTopIndicator.onPageSelected(position, leftStr, centerStr, rightStr, leftLeftStr, rightRightStr);
                         } catch (Exception e) {
                             e.printStackTrace();
