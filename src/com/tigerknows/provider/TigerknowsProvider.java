@@ -364,7 +364,14 @@ public class TigerknowsProvider extends ContentProvider {
     }
     
     private void deleteHistoryDetail(Uri url, String where, String[] whereArgs) {
-        Cursor c = query(url, null, where, whereArgs, null);
+        // Cursor c = query(url, null, where, whereArgs, null);
+        // 因为上一行的query()有Limit为20的限制，导致不能全部删除，所以用qb.query()查询表中所有行
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        qb.setTables("history");
+        qb.setProjectionMap(HISTORY_LIST_PROJECTION_MAP);
+    	SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        Cursor c = qb.query(db, null, where, whereArgs,
+                null, null, null, null);
         if (c != null) {
             int count = c.getCount();
             if (count > 0) {
@@ -417,7 +424,14 @@ public class TigerknowsProvider extends ContentProvider {
     }
     
     private void deleteFavoriteDetail(Uri url, String where, String[] whereArgs) {
-        Cursor c = query(url, null, where, whereArgs, null);
+        // Cursor c = query(url, null, where, whereArgs, null);
+        // 因为上一行的query()有Limit为20的限制，导致不能全部删除，所以用qb.query()查询表中所有行
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        qb.setTables("favorite");
+        qb.setProjectionMap(FAVORITE_LIST_PROJECTION_MAP);
+    	SQLiteDatabase db = mOpenHelper.getReadableDatabase();
+        Cursor c = qb.query(db, null, where, whereArgs,
+                null, null, null, null);
         if (c != null) {
             int count = c.getCount();
             if (count > 0) {
@@ -500,6 +514,7 @@ public class TigerknowsProvider extends ContentProvider {
                     if (c.getCount() > Tigerknows.HISTORY_MAX_SIZE) {
                         c.moveToFirst();
                         for(int i = c.getCount(); i > Tigerknows.HISTORY_MAX_SIZE; i--) {
+                        	deleteHistoryDetail(url, Tigerknows.History._ID + "=" + c.getLong(c.getColumnIndex(Tigerknows.History._ID)), null);
                             db.delete(table, Tigerknows.History._ID + "=" + c.getLong(c.getColumnIndex(Tigerknows.History._ID)), null);
                             c.moveToNext();
                         }
