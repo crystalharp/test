@@ -181,46 +181,45 @@ public class LocationTable {
                 null, null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
-        }
-        if(mCursor.getCount()>0){
+            int count = mCursor.getCount();
             try {
-                LocationParameter locationParameter = new LocationParameter();
-                locationParameter.mnc = mCursor.getInt(0);
-                locationParameter.mcc = mCursor.getInt(1);
-                String str= mCursor.getString(2);
-                locationParameter.tkCellLocation = new TKCellLocation(str);
-                str= mCursor.getString(3);
-                if (TextUtils.isEmpty(str) == false) {
-                    String[] arr = str.split(";");
-                    for(int i = arr.length - 1; i >= 0; i--) {
-                        TKNeighboringCellInfo neighboringCellInfo = new TKNeighboringCellInfo(arr[i]);
-                        locationParameter.neighboringCellInfoList.add(neighboringCellInfo);
+                for(int j = 0;j < count; j++) {
+                    LocationParameter locationParameter = new LocationParameter();
+                    locationParameter.mnc = mCursor.getInt(0);
+                    locationParameter.mcc = mCursor.getInt(1);
+                    String str= mCursor.getString(2);
+                    locationParameter.tkCellLocation = new TKCellLocation(str);
+                    str= mCursor.getString(3);
+                    if (TextUtils.isEmpty(str) == false) {
+                        String[] arr = str.split(";");
+                        for(int i = arr.length - 1; i >= 0; i--) {
+                            TKNeighboringCellInfo neighboringCellInfo = new TKNeighboringCellInfo(arr[i]);
+                            locationParameter.neighboringCellInfoList.add(neighboringCellInfo);
+                        }
                     }
-                }
-                str= mCursor.getString(4);
-                if (TextUtils.isEmpty(str) == false) {
-                    String[] arr = str.split(";");
-                    for(int i = arr.length - 1; i >= 0; i--) {
-                        TKScanResult tkScanResult = TKScanResult.parse(arr[i]);
-                        if (tkScanResult != null)
-                            locationParameter.wifiList.add(tkScanResult);
+                    str= mCursor.getString(4);
+                    if (TextUtils.isEmpty(str) == false) {
+                        String[] arr = str.split(";");
+                        for(int i = arr.length - 1; i >= 0; i--) {
+                            TKScanResult tkScanResult = TKScanResult.parse(arr[i]);
+                            if (tkScanResult != null)
+                                locationParameter.wifiList.add(tkScanResult);
+                        }
                     }
+                    str= mCursor.getString(5);
+                    if (TextUtils.isEmpty(str) == false) {
+                        Location location = new Location(LocationQuery.PROVIDER_DATABASE);
+                        String[] arr = str.split(",");
+                        location.setLatitude(Double.parseDouble(arr[0]));
+                        location.setLongitude(Double.parseDouble(arr[1]));
+                        location.setAccuracy(Float.parseFloat(arr[2]));
+                        map.put(locationParameter, location);
+                    }
+                    mCursor.moveToNext();
                 }
-                str= mCursor.getString(5);
-                if (TextUtils.isEmpty(str) == false) {
-                    Location location = new Location(LocationQuery.PROVIDER_DATABASE);
-                    String[] arr = str.split(",");
-                    location.setLatitude(Double.parseDouble(arr[0]));
-                    location.setLongitude(Double.parseDouble(arr[1]));
-                    location.setAccuracy(Float.parseFloat(arr[2]));
-                    map.put(locationParameter, location);
-                }
-                mCursor.moveToNext();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        if(mCursor!=null){
             mCursor.close();
         }
     }

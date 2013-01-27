@@ -189,7 +189,6 @@ public class DownloadService extends IntentService {
         } catch (Exception e) {
         }
     	nm.cancel(notificationId);
-        Toast.cancel();
         LogWrapper.d("chen", "download failed");
         return null;
     }

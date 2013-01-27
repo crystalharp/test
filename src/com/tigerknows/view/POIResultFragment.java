@@ -117,6 +117,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         if (lastDataQuerying.getSourceViewId() != getId()) {
             mDataQuery = null;
             mFilterControlView.setVisibility(View.GONE);
+            mFilterList.clear();
         }
 
         POI poi = lastDataQuerying.getPOI();
@@ -216,7 +217,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 mActionLog.addAction(ActionLog.KeyCodeBack);
                 mState = STATE_LIST;
                 updateView();
-                refreshFilter(lastDataQuery);
+                refreshFilter(lastDataQuery.getFilterList());
                 refreshResultTitleText(lastDataQuery);
                 return true;
             }
@@ -249,17 +250,16 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mEmptyTxv.setText(str);
     }
     
-    private void refreshFilter(DataQuery dataQuery) {
-        if (dataQuery == null) {
-            return;
+    private void refreshFilter(List<Filter> filterList) {
+        if (mFilterList != filterList) {
+            mFilterList.clear();
+            if (filterList != null) {
+                for(Filter filter : filterList) {
+                    mFilterList.add(filter.clone());
+                }
+            }
+            FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         }
-        mFilterList.clear();
-
-        List<Filter> filterList = dataQuery.getFilterList();
-        for(Filter filter : filterList) {
-            mFilterList.add(filter.clone());
-        }
-        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
     }
 
     @Override
@@ -391,7 +391,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void cancelFilter() {
         dismissPopupWindow();
         if (mResultLsv.isFooterSpringback() && mFilterListView.isTurnPaging()) {
-            mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
+            turnPage();
         }
     }
 
@@ -408,7 +408,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 
             default:
                 
-                if (mState == STATE_QUERYING && mResultLsv.getState(false) != SpringbackListView.REFRESHING) {
+                boolean turnPageing = (mResultLsv.getState(false) == SpringbackListView.REFRESHING);
+                if (mState == STATE_QUERYING && turnPageing == false) {
                     return;
                 }
                 
@@ -427,7 +428,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 } else if (key == POIResponse.FIELD_FILTER_ORDER_INDEX) {
                     mActionLog.addAction(ActionLog.SearchResultFilterOrder);
                 }
-                mFilterListView.setData(mFilterList, key, POIResultFragment.this, mResultLsv.getState(false) == SpringbackListView.REFRESHING);
+                mFilterListView.setData(mFilterList, key, POIResultFragment.this, turnPageing);
         }
     }
     
@@ -687,7 +688,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
         }
 
-        refreshFilter(dataQuery);
         POIResponse poiResponse = (POIResponse)dataQuery.getResponse();
         if ((poiResponse.getAPOIList() != null && 
                 poiResponse.getAPOIList().getList() != null && 
@@ -758,6 +758,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
 
             mResultLsv.setFooterSpringback(canTurnPage());
+            refreshFilter(mDataQuery.getFilterList());
         } else {
             if (dataQuery.isTurnPage()) {
                 return;

@@ -9,6 +9,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -1117,7 +1118,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         stopService(service);
         dalvik.system.VMRuntime.getRuntime().gcSoftReferences();
         super.onDestroy();
-
+        ActivityManager am = (ActivityManager)getSystemService(
+                Context.ACTIVITY_SERVICE);
+        am.restartPackage("com.tigerknows");
 	}
 	/**
 	 * store the last known position and zoom level then close the database.

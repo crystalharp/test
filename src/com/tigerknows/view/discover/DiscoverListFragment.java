@@ -188,9 +188,11 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         if (lastDataQuerying == null) {
             return;
         }
-        if (lastDataQuerying.getSourceViewId() != getId()) {
+        if (lastDataQuerying.getSourceViewId() != getId()
+                || lastDataQuerying.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE).equals(mDataType) == false) {
             mDataQuery = null;
             mFilterControlView.setVisibility(View.GONE);
+            mFilterList.clear();
         }
         
         String str = mContext.getString(R.string.loading);
@@ -376,7 +378,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 mActionLog.addAction(ActionLog.KeyCodeBack);
                 mState = STATE_LIST;
                 updateView();
-                refreshFilter(lastDataQuery);
+                refreshFilter(lastDataQuery.getFilterList());
                 return true;
             }
         }
@@ -395,15 +397,16 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mEmptyTxv.setText(str);
     }
     
-    private void refreshFilter(DataQuery dataQuery) {
-        mFilterList.clear();
-        if (dataQuery != null) {
-            List<Filter> filterList = dataQuery.getFilterList();
-            for(Filter filter : filterList) {
-                mFilterList.add(filter.clone());
+    private void refreshFilter(List<Filter> filterList) {
+        if (mFilterList != filterList) {
+            mFilterList.clear();
+            if (filterList != null) {
+                for(Filter filter : filterList) {
+                    mFilterList.add(filter.clone());
+                }
             }
+            FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         }
-        FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
     }
 
     @SuppressWarnings("unchecked")
@@ -606,7 +609,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     public void cancelFilter() {
         dismissPopupWindow();
         if (mResultLsv.isFooterSpringback() && mFilterListView.isTurnPaging()) {
-            mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
+            turnPage(null);
         }
     }
 
@@ -646,8 +649,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 break;
                 
             default:
-                
-                if (mState == STATE_QUERYING && mResultLsv.getState(false) != SpringbackListView.REFRESHING) {
+
+                boolean turnPageing = (mResultLsv.getState(false) == SpringbackListView.REFRESHING);
+                if (mState == STATE_QUERYING && turnPageing == false) {
                     return;
                 }
                 
@@ -666,7 +670,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 } else if (key == FilterResponse.FIELD_FILTER_ORDER_INDEX) {
                     mActionLog.addAction(mActionTag+ActionLog.DiscoverListFilterOrder);
                 }
-                mFilterListView.setData(mFilterList, key, DiscoverListFragment.this, mResultLsv.getState(false) == SpringbackListView.REFRESHING);
+                mFilterListView.setData(mFilterList, key, DiscoverListFragment.this, turnPageing);
         }
     }
     
@@ -926,12 +930,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private void setDataQuery(DataQuery dataQuery) {
         Response response = dataQuery.getResponse();
-
-        refreshFilter(dataQuery);
-        if (dataQuery.isTurnPage() == false) {
-            dataQuery.getCriteria().put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
-            mFilterArea = FilterListView.getFilterTitle(mSphinx, mFilterList.get(0));
-        }
         if (response instanceof TuangouResponse) {
             TuangouResponse tuangouResponse = (TuangouResponse)dataQuery.getResponse();
             
@@ -962,6 +960,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
                 }
+                refreshFilter(mDataQuery.getFilterList());
+                makeFilterArea(dataQuery);
             } else {
                 if (dataQuery.isTurnPage()) {
                     return;
@@ -1000,6 +1000,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
                 }
+                refreshFilter(mDataQuery.getFilterList());
+                makeFilterArea(dataQuery);
             } else {
                 if (dataQuery.isTurnPage()) {
                     return;
@@ -1034,6 +1036,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
                 }
+                refreshFilter(mDataQuery.getFilterList());
+                makeFilterArea(dataQuery);
             } else {
                 if (dataQuery.isTurnPage()) {
                     return;
@@ -1067,6 +1071,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
                 }
+                refreshFilter(mDataQuery.getFilterList());
+                makeFilterArea(dataQuery);
             } else {
                 if (dataQuery.isTurnPage()) {
                     return;
@@ -1081,6 +1087,15 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
+        }
+    }
+    
+    private void makeFilterArea(DataQuery dataQuery) {
+        if (dataQuery.isTurnPage() == false) {
+            dataQuery.getCriteria().put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
+            if (mFilterList.size() > 0) {
+                mFilterArea = FilterListView.getFilterTitle(mSphinx, mFilterList.get(0));
+            }
         }
     }
     

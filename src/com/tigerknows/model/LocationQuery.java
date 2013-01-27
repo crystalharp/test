@@ -253,17 +253,20 @@ public class LocationQuery extends BaseQuery {
         while (iter.hasNext()) {
             Map.Entry<LocationParameter, Location> entry = (Map.Entry<LocationParameter, Location>)iter.next();
             LocationParameter key = entry.getKey();
-            if (locationParameter.equalsCellInfo(key)) {
-                float temp = locationParameter.equalsWifi(key);
-                if (temp >= WIFI_RATE && temp >= rate) {
-                    Location value = entry.getValue();
-                    if (value != null && PROVIDER_ERROR.equals(value.getProvider()) == false) {
-                        rate = temp;
-                        location = value;
+            Location value = entry.getValue();
+            if (value != null && PROVIDER_ERROR.equals(value.getProvider()) == false) {
+                if (locationParameter.equalsCellInfo(key)) {
+                    location = value; 
+                    float temp = locationParameter.equalsWifi(key);
+                    if (temp >= WIFI_RATE && temp >= rate) {
+                        if (value != null) {
+                            rate = temp;
+                            location = value;
+                        }
                     }
-                }
-                if (temp >= 1f) {
-                    break;
+                    if (temp >= 1f) {
+                        break;
+                    }
                 }
             }
         }
