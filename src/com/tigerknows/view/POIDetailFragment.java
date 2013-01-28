@@ -348,6 +348,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         int viewCount = mDynamicPOIListView.getChildCount();
         int viewIndex = 0;
         int size = list.size();
+        if(size==0){
+        	mDynamicPOIListView.setVisibility(View.GONE);
+        }else{
+        	mDynamicPOIListView.setVisibility(View.VISIBLE);
+        }
         for(int i = 0; i < size; i++) {
             final DynamicPOI dynamicPOI = list.get(i);
             final String dataType = dynamicPOI.getType();

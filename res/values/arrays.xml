@@ -81,64 +81,64 @@
     </string-array>
     
     <string-array name = "poi_xdescription_name">
-        <item>评分:</item>
-        <item>包间大小:</item>
-        <item>包间数:</item>
-        <item>产品:</item>
-        <item>菜系:</item>
-        <item>房价:</item>
-        <item>服务:</item>
-        <item>环境:</item>
-        <item>简介:</item>
-        <item>客容量:</item>
-        <item>口味:</item>
-        <item>类别:</item>
-        <item>人均:</item>
-        <item>人气:</item>
-        <item>氛围:</item>
-        <item>推荐:</item>
-        <item>推荐菜:</item>
-        <item>星级:</item>
-        <item>线路:</item>
-        <item>营业面积:</item>
-        <item>有停车场:</item>
-        <item>折扣:</item>
-        <item>交通描述:</item>
-        <item>观影评价:</item>
-        <item>医疗水平:</item>
-        <item>服务:</item>
-        <item>价格:</item>
-        <item>医院性质:</item>
-        <item>医院等级:</item>
-        <item>医院类型:</item>
-        <item>科室数量:</item>
-        <item>医护人数:</item>
-        <item>是否医保:</item>
-        <item>先进设备:</item>
-        <item>所获荣誉:</item>
-        <item>景点点评:</item>
-        <item>国家认证:</item>
-        <item>最佳旅游时间:</item>
-        <item>旅游喜好:</item>
-        <item>人文景观:</item>
-        <item>自然风光:</item>
-        <item>官方网站:</item>
-        <item>详情:</item>
-        <item>营业时间:</item>
-        <item>影院特色:</item>
-        <item>优惠信息:</item>
-        <item>会员政策:</item>
-        <item>观影效果:</item>
-        <item>服务:</item>
-        <item>推荐景点:</item>
-        <item>辖内景点:</item>
-        <item>周边信息:</item>
-        <item>公司主页:</item>
-        <item>公司类型:</item>
-        <item>公司规模:</item>
-        <item>产业简介:</item>
-        <item>特色专科:</item>
-        <item>产品:</item>
+        <item>评分 </item>
+        <item>包间大小 </item>
+        <item>包间数 </item>
+        <item>产品 </item>
+        <item>菜系 </item>
+        <item>房价 </item>
+        <item>服务 </item>
+        <item>环境 </item>
+        <item>简介 </item>
+        <item>客容量 </item>
+        <item>口味 </item>
+        <item>类别 </item>
+        <item>人均 </item>
+        <item>人气 </item>
+        <item>氛围 </item>
+        <item>推荐 </item>
+        <item>推荐菜 </item>
+        <item>星级 </item>
+        <item>线路 </item>
+        <item>营业面积 </item>
+        <item>有停车场 </item>
+        <item>折扣 </item>
+        <item>交通描述 </item>
+        <item>观影评价 </item>
+        <item>医疗水平 </item>
+        <item>服务 </item>
+        <item>价格 </item>
+        <item>医院性质 </item>
+        <item>医院等级 </item>
+        <item>医院类型 </item>
+        <item>科室数量 </item>
+        <item>医护人数 </item>
+        <item>是否医保 </item>
+        <item>先进设备 </item>
+        <item>所获荣誉 </item>
+        <item>景点点评 </item>
+        <item>国家认证 </item>
+        <item>最佳旅游时间 </item>
+        <item>旅游喜好 </item>
+        <item>人文景观 </item>
+        <item>自然风光 </item>
+        <item>官方网站 </item>
+        <item>详情 </item>
+        <item>营业时间 </item>
+        <item>影院特色 </item>
+        <item>优惠信息 </item>
+        <item>会员政策 </item>
+        <item>观影效果 </item>
+        <item>服务 </item>
+        <item>推荐景点 </item>
+        <item>辖内景点 </item>
+        <item>周边信息 </item>
+        <item>公司主页 </item>
+        <item>公司类型 </item>
+        <item>公司规模 </item>
+        <item>产业简介 </item>
+        <item>特色专科 </item>
+        <item>产品 </item>
     </string-array>
         
     <string-array name="poi_description_name">

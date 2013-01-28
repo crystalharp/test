@@ -927,7 +927,7 @@ public class POI extends BaseData {
         }
     	
     	String showName = Description.Name_List[Description.KEY_LIST.indexOf(showKey)];
-    	return showName;
+    	return showName+" ";
     }
     
     /**

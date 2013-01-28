@@ -429,6 +429,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             telephoneView.setVisibility(View.VISIBLE);
             dividerView.setVisibility(View.GONE);
         }
+
     }
     
     public class YingxunAdapter extends ArrayAdapter<Yingxun>{

@@ -163,7 +163,7 @@
                         android:layout_toLeftOf="@id/distance_from_txv" 
                         android:layout_below="@id/name_txv" 
                         android:textColor="@color/black_light"
-                        android:textSize="16sp"
+                        android:textSize="14sp"
                         android:text="@string/app_name"
                         android:singleLine="true"
                         android:focusable="false" 
@@ -190,7 +190,7 @@
                         android:layout_toLeftOf="@id/money_txv"
                         android:paddingTop="4dp"
                         android:textColor="@color/black_light"
-                        android:textSize="15sp"
+                        android:textSize="14sp"
                         android:text="@string/app_name"
                         android:focusable="false"
                         />    
@@ -220,7 +220,7 @@
                     <TextView android:id="@+id/address_txv"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
+                        android:padding="9dp"
                         android:gravity="left|center_vertical"
                         android:text="@string/app_name" 
                         android:textColor="@color/black"
@@ -230,10 +230,11 @@
                         />
                 </RelativeLayout>
                 
-                <ImageView android:id="@+id/address_telephome_divider_imv" 
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" 
-                    android:background="@drawable/bg_real_line" />
+                	<ImageView android:id="@+id/address_telephome_divider_imv"
+						android:background="@drawable/bg_line_split"
+						android:layout_width="fill_parent"
+						android:layout_height="wrap_content"/>
+                	
                 <LinearLayout android:id="@+id/telephone_view"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content" 
@@ -243,7 +244,7 @@
                     <TextView android:id="@+id/telephone_txv"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content" 
-                        android:layout_margin="8dp"
+                        android:padding="8dp"
                         android:gravity="left|center_vertical"
                         android:drawableRight="@drawable/ic_telephone"
                         android:text="@string/app_name" 
