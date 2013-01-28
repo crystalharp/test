@@ -85,7 +85,7 @@ public class TrafficQueryFragment extends BaseFragment {
 
 	FrameLayout mTitle;
 	
-	ImageButton mBackBtn;
+	Button mBackBtn;
 	
 	Button mTrafficQueryBtn;
 	
@@ -214,7 +214,7 @@ public class TrafficQueryFragment extends BaseFragment {
 		mTrafficLayout = (RelativeLayout)mRootView.findViewById(R.id.traffic_rll);
 		mBuslineLayout = (RelativeLayout)mRootView.findViewById(R.id.busline_rll);
         
-    	mBackBtn = (ImageButton)mRootView.findViewById(R.id.back_btn);
+    	mBackBtn = (Button)mRootView.findViewById(R.id.back_btn);
     	mTrafficQueryBtn = (Button)mRootView.findViewById(R.id.traffic_query_btn);
     	mBuslineQueryBtn = (Button)mRootView.findViewById(R.id.busline_query_btn);
     	mRadioGroup = (RadioGroup)mRootView.findViewById(R.id.traffic_rgp);
