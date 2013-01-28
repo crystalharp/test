@@ -19,6 +19,7 @@
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
         android:background="@drawable/bg_subtitle"
+        android:gravity="center_vertical"
         android:orientation="vertical" >
         <LinearLayout
             android:id="@+id/sub_title_2column_view"
