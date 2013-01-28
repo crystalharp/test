@@ -46,4 +46,6 @@
     <color name="transparent">#00000000</color>
     <color name="blue">#3b94d8</color>
     <color name="blue_light">#cdedff</color>
+    
+    <color name="infowindow_split_line">#e6e6e6</color>
 </resources>
