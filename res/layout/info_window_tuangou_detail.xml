@@ -43,7 +43,7 @@
             
     </RelativeLayout>
     <View android:id="@+id/view2"
-        android:background="@color/black_light"
+        android:background="@color/infowindow_split_line"
         android:layout_height="fill_parent"
         android:layout_width="1dp"
         android:layout_marginRight="8dp"
