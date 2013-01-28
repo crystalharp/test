@@ -210,7 +210,7 @@ public class LocationQuery extends BaseQuery {
 
         Location location = null;
         rate = 0f;
-        location = queryCache(locationParameter, onlineLocationCache);
+        location = queryCache(locationParameter, onlineLocationCache, true);
         
         time++;
         if (location == null) {
@@ -227,7 +227,7 @@ public class LocationQuery extends BaseQuery {
                 locationTable.read(offlineLocationCache);
                 readOfflineLocationCache = true;
             }
-            location = queryCache(locationParameter, offlineLocationCache);
+            location = queryCache(locationParameter, offlineLocationCache, false);
         }
         
         LogWrapper.i("LocationQuery", "getLocation() time:"+time+", queryTime:"+queryTime);
@@ -244,7 +244,7 @@ public class LocationQuery extends BaseQuery {
         }
     }
     
-    private Location queryCache(LocationParameter locationParameter, HashMap<LocationParameter, Location> cache) {
+    private Location queryCache(LocationParameter locationParameter, HashMap<LocationParameter, Location> cache, boolean mustEqualsWifi) {
         Location location = null;
         if (cache == null || cache.isEmpty()) {
             return location;
@@ -256,7 +256,9 @@ public class LocationQuery extends BaseQuery {
             Location value = entry.getValue();
             if (value != null && PROVIDER_ERROR.equals(value.getProvider()) == false) {
                 if (locationParameter.equalsCellInfo(key)) {
-                    location = value; 
+                    if (location == null && mustEqualsWifi == false) {
+                        location = value; 
+                    }
                     float temp = locationParameter.equalsWifi(key);
                     if (temp >= WIFI_RATE && temp >= rate) {
                         if (value != null) {

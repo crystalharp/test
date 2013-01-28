@@ -759,9 +759,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return;
         }
         
-        mMapEngine.statsMapEnd(new ArrayList<DownloadCity>(), false);
-        Intent service = new Intent(Sphinx.this, MapStatsService.class);
-        startService(service);
+        if (TKConfig.sCountMapWhenOnCreate) {
+            mMapEngine.statsMapEnd(new ArrayList<DownloadCity>(), false);
+            Intent service = new Intent(Sphinx.this, MapStatsService.class);
+            startService(service);
+        }
 
         UserLogon userLogon = new UserLogon(mContext);
         queryStart(userLogon, false);

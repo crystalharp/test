@@ -97,7 +97,8 @@ public class TKConfig {
     public static final String SUGGEST_LEXCION_FILE = "sw2_%d.slf"; 
     
     public static final String MAP_REGION_METAFILE = "region%d.meta";
-    
+
+    public static boolean sCountMapWhenOnCreate = true;
     public static boolean sLoadBalance = true;
     public static String sDOWNLOAD_MAP_URL = "http://%s/quantum/string";
     public static String sDOWNLOAD_SUGGEST_URL = "http://%s/suggest_lexicon";
@@ -770,6 +771,12 @@ public class TKConfig {
                 if (start > -1 && end > -1) {
                     start += "pageSize=".length();
                     sPage_Size = Integer.parseInt(text.substring(start, end));
+                }
+                start = text.indexOf("countMapWhenOnCreate=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "countMapWhenOnCreate=".length();
+                    TKConfig.sCountMapWhenOnCreate = text.substring(start, end).equals("true");
                 }
                 BaseQuery.initCommonParameters();
             } catch (Exception e) {

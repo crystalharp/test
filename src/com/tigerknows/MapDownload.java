@@ -13,6 +13,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.res.Resources;
 import android.net.wifi.WifiManager;
@@ -275,6 +276,12 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         mSuggestCityLsv.setAdapter(mSuggestCityAdapter);
         
         mMapEngine = MapEngine.getInstance();
+
+        if (TKConfig.sCountMapWhenOnCreate == false) {
+            mMapEngine.statsMapEnd(new ArrayList<DownloadCity>(), false);
+            Intent service = new Intent(mThis, MapStatsService.class);
+            startService(service);
+        }
         
         if (sAllAddCityInfoList == null) {
             sAllAddCityInfoList = new ArrayList<CityInfo>();
@@ -360,18 +367,20 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                     while (mMapEngine.isStatsFinish() == false) {
                     }
 
-                    List<DownloadCity> downloadCityList = mMapEngine.getDownloadCityList();
-                    List<Integer> list = new ArrayList<Integer>();
-                    for(DownloadCity downloadCity : downloadCityList) {
-                        list.addAll(downloadCity.getRegionIdList());
-                    }
-                    MapVersionQuery mapVersionQuery = new MapVersionQuery(getBaseContext());
-                    mapVersionQuery.setup(list);
-                    mapVersionQuery.query();
-                    HashMap<Integer, RegionDataInfo> regionVersionMap = mapVersionQuery.getRegionVersion();
-                    synchronized (mMapEngine) {
+                    if (TKConfig.sCountMapWhenOnCreate) {
+                        List<DownloadCity> downloadCityList = mMapEngine.getDownloadCityList();
+                        List<Integer> list = new ArrayList<Integer>();
                         for(DownloadCity downloadCity : downloadCityList) {
-                            MapStatsService.countDownloadCity(downloadCity, regionVersionMap);
+                            list.addAll(downloadCity.getRegionIdList());
+                        }
+                        MapVersionQuery mapVersionQuery = new MapVersionQuery(getBaseContext());
+                        mapVersionQuery.setup(list);
+                        mapVersionQuery.query();
+                        HashMap<Integer, RegionDataInfo> regionVersionMap = mapVersionQuery.getRegionVersion();
+                        synchronized (mMapEngine) {
+                            for(DownloadCity downloadCity : downloadCityList) {
+                                MapStatsService.countDownloadCity(downloadCity, regionVersionMap);
+                            }
                         }
                     }
                     
