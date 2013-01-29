@@ -2785,7 +2785,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                                 }
                                                 String mylocationCName = locationCity.getCName();
                                                 mActionLog.addAction(ActionLog.ChangeToMyLocationCityDialogYes, mylocationCName);
-                                                uiStackClose(new int[]{R.id.view_home});
+                                                uiStackClose(null);
                                                 showView(R.id.view_home);
                                                 changeCity(locationCity);
                                                 mActionLog.addAction(ActionLog.LifecycleSelectCity, Globals.g_Current_City_Info.getCName());

@@ -52,7 +52,7 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
         setListener();
 
         mTitleBtn.setText(R.string.error_recovery);
-        mRightBtn.setText(R.string.submit);
+        mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
         
         synchronized (sTargetList) {
             int size = sTargetList.size();
