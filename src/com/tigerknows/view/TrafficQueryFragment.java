@@ -200,6 +200,7 @@ public class TrafficQueryFragment extends BaseFragment {
         mStart.setHint(mContext.getString(R.string.start_));
         mEnd.setHint(mContext.getString(R.string.end_));
         mBusline.setHint(mContext.getString(R.string.busline_name_, ""));
+        mSelectedEdt = mStart;
 		
 		mMapLocationHelper.getCurrentMapInfo();
         
@@ -247,6 +248,7 @@ public class TrafficQueryFragment extends BaseFragment {
     	mSphinx.setTouchMode(TouchMode.NORMAL);
     	mStart.clear();
     	mEnd.clear();
+    	mSelectedEdt = mStart;
     	
     	/*
     	 * BUG 187
@@ -292,7 +294,7 @@ public class TrafficQueryFragment extends BaseFragment {
         	mMapLocationHelper.resetMapStateMap();
             mMenuFragment.hide();
             if (mode == TRAFFIC_MODE) {
-                mSphinx.showSoftInput(mStart.getEdt().getInput());
+                mSphinx.showSoftInput(mSelectedEdt.getEdt().getInput());
             } else {
                 mSphinx.showSoftInput(mBusline.getEdt().getInput());
             }
@@ -458,7 +460,6 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	public void initStartContent() {
 
-	    mSelectedEdt = mStart;
 	    if (showStartMyLocation) {
 	        //如果要求显示起点，定位为设定城市，在起点框填写上当前位置。
 	        if (mStart.isEmpty() && mMapLocationHelper.isMyLocationLocateCurrentCity()) {

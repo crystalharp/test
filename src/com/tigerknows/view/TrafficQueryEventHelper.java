@@ -12,6 +12,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnFocusChangeListener;
 import android.view.View.OnTouchListener;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
@@ -58,6 +59,9 @@ public class TrafficQueryEventHelper {
 		endSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mEnd, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
 		buslineSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mBusline, TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE);
 		
+		mQueryFragment.mStart.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mStart));
+		mQueryFragment.mEnd.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mEnd));
+		mQueryFragment.mBusline.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mBusline));
 	}
 	
 	/*
@@ -357,6 +361,27 @@ public class TrafficQueryEventHelper {
 			mQueryFragment.mEnd.setPOI(temp);
 		}
 		
+	}
+	
+	protected class TrafficEditFocusListener implements OnFocusChangeListener {
+
+	    private QueryEditText mQueryEdt;
+	    
+	    public TrafficEditFocusListener(QueryEditText queryEdt) {
+	        mQueryEdt = queryEdt;
+	    }
+	    
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            /*
+             *  写这个函数的目的目前是为了保证建议词点击的时候会把建议词填到正确的输入框中
+             *  以后需要把所有在focus的时候产生的变化都转移到这里来。
+             */
+            if (hasFocus) {
+                mQueryFragment.mSelectedEdt = mQueryEdt;
+            }
+        }
+	    
 	}
 
 	protected class InputBackClickListener implements OnClickListener {

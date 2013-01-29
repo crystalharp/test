@@ -252,5 +252,9 @@ public class TKEditText extends LinearLayout implements OnClickListener {
     public EditText getInput() {
         return mInputEdt;
     }
+    
+    public void setOnFocusChangeListener(OnFocusChangeListener l) {
+        mInputEdt.setOnFocusChangeListener(l);
+    }
 }
 
