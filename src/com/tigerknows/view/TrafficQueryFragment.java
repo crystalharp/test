@@ -81,6 +81,8 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	private int mSettedRadioBtn = 0;
 	
+	private boolean mDismissed = true;
+	
 	boolean showStartMyLocation = true;
 
 	FrameLayout mTitle;
@@ -248,7 +250,10 @@ public class TrafficQueryFragment extends BaseFragment {
     	mSphinx.setTouchMode(TouchMode.NORMAL);
     	mStart.clear();
     	mEnd.clear();
+    	mBusline.clear();
+    	showStartMyLocation = true; 
     	mSelectedEdt = mStart;
+    	mDismissed = true;
     	
     	/*
     	 * BUG 187
@@ -316,7 +321,15 @@ public class TrafficQueryFragment extends BaseFragment {
 					TouchMode.CHOOSE_ROUTING_START_POINT : TouchMode.CHOOSE_ROUTING_END_POINT);
         }
         
-        initStartContent();
+        /*
+         * 由于在一个“session”中会多次调用onresume，导致在地图选点和收藏夹选点之后返回本页面都会调用initstart
+         * 这里引入mDissmissed变量，在整个页面被dismiss的时候设为true，onresume的时候把变量设为false，并把所有
+         * 应该初始化的内容初始化。这个概念以后应该被扩展到其他的页面。
+         */
+        if (mDismissed) {
+            initStartContent();
+            mDismissed = false;
+        }
         
 	}
 
@@ -469,7 +482,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	        //否则什么都不做，不影响当前起点框内容
 	    } else {
 	        //否则清空起点框的内容。
-	        mSelectedEdt.clear();
+	        mStart.clear();
 	    }
 		
 		//TODO:这些东西从这里抽出去
