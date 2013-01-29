@@ -59,8 +59,9 @@ public class TrafficQueryEventHelper {
 		endSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mEnd, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
 		buslineSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mBusline, TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE);
 		
-		mQueryFragment.mStart.getEdt().setOnFocusChangeListener(new StartEndEditFocusListener(mQueryFragment.mStart));
-		mQueryFragment.mEnd.getEdt().setOnFocusChangeListener(new StartEndEditFocusListener(mQueryFragment.mEnd));
+		mQueryFragment.mStart.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mStart));
+		mQueryFragment.mEnd.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mEnd));
+		mQueryFragment.mBusline.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mBusline));
 	}
 	
 	/*
@@ -362,11 +363,11 @@ public class TrafficQueryEventHelper {
 		
 	}
 	
-	protected class StartEndEditFocusListener implements OnFocusChangeListener {
+	protected class TrafficEditFocusListener implements OnFocusChangeListener {
 
 	    private QueryEditText mQueryEdt;
 	    
-	    public StartEndEditFocusListener(QueryEditText queryEdt) {
+	    public TrafficEditFocusListener(QueryEditText queryEdt) {
 	        mQueryEdt = queryEdt;
 	    }
 	    
