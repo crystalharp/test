@@ -372,7 +372,7 @@ public class POICommentList extends BaseActivity {
                 TextView srcTxv = (TextView) view.findViewById(R.id.src_txv);
                 
                 Comment comment = getItem(position);
-                float grade = comment.getGrade()/2;
+                float grade = comment.getGrade()/2.0f;
                 gradeRtb.setRating(grade);
                 
                 final POI poi = mCommentQuery.getPOI();

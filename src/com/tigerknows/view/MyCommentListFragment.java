@@ -271,7 +271,7 @@ public class MyCommentListFragment extends BaseFragment {
                     }
                 });
                 
-                float grade = comment.getGrade()/2;
+                float grade = comment.getGrade()/2.0f;
                 gradeRtb.setRating(grade);
 
                 authorTxv.setVisibility(View.GONE);

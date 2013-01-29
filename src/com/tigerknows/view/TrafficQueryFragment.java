@@ -926,17 +926,15 @@ public class TrafficQueryFragment extends BaseFragment {
             		modifyData(trafficQuery.getEnd(), TrafficQueryFragment.END);
             	} 
             	
+            	// 下一行代码为避免以下操作会出现问题
+            	// 搜索-结果列表-详情-地图-点击气泡中的交通按钮-选择到这里去/自驾-点击左上按钮无反应(期望进入 详情界面)
+            	mSphinx.uiStackPop(R.id.view_result_map);
             	if (trafficModel.getPlanList().get(0).getType() == Plan.Step.TYPE_TRANSFER) {
             	    // 换乘方式
             		mSphinx.getTrafficResultFragment().setData(trafficQuery);
             		mSphinx.showView(R.id.view_traffic_result_transfer);
             	} else {
             	    //驾车或步行方式
-            	    
-            	    // 下一行代码为避免以下操作会出现问题
-                    // 搜索-结果列表-详情-地图-点击气泡中的交通按钮-选择到这里去/自驾-点击左上按钮无反应(期望进入 详情界面)
-            	    mSphinx.uiStackPop(R.id.view_result_map);
-            	    
             	    Plan plan = trafficModel.getPlanList().get(0);
             		mSphinx.getTrafficDetailFragment().setData(plan);
             		mSphinx.getTrafficDetailFragment().viewPlanMap();

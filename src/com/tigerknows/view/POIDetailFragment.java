@@ -163,6 +163,20 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     private List<BaseQuery> mBaseQuerying;
     
+    public boolean isReLogin() {
+        boolean isRelogin = this.isReLogin;
+        this.isReLogin = false;
+        if (isRelogin) {
+            if (mBaseQuerying != null) {
+                for(BaseQuery baseQuery : mBaseQuerying) {
+                    baseQuery.setResponse(null);
+                }
+                mTkAsyncTasking = mSphinx.queryStart(mBaseQuerying);
+            }
+        }
+        return isRelogin;
+    }
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -212,12 +226,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
         mRightBtn.setOnClickListener(this); 
         
-        if (isReLogin == true) {
-            isReLogin = false;
-            for(BaseQuery baseQuery : mBaseQuerying) {
-                baseQuery.setResponse(null);
-            }
-            mTkAsyncTasking = mSphinx.queryStart(mBaseQuerying);
+        if (isReLogin()) {
+            return;
         }
         POI poi = mPOI;
         if (poi != null) {
@@ -261,7 +271,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
 
         float star = poi.getGrade();
-        mStartsRtb.setRating(star/2);
+        mStartsRtb.setRating(star/2.0f);
         
         if (!TextUtils.isEmpty(category)) {
             mCategoryTxv.setText(category);
@@ -978,7 +988,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             TextView commentTxv = (TextView) view.findViewById(R.id.comment_txv);
             TextView srcTxv = (TextView) view.findViewById(R.id.src_txv);
             
-            float grade = comment.getGrade()/2;
+            float grade = comment.getGrade()/2.0f;
             gradeRtb.setRating(grade);
 
             authorTxv.setText(comment.getUser());
