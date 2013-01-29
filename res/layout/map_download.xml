@@ -40,7 +40,8 @@
 	        android:focusable="true"
 	        android:scrollingCache="false"
 	        android:childDivider="@drawable/bg_real_line"
-	        android:divider="@drawable/bg_real_line"
+	        android:divider="@color/transparent"
+	        android:dividerHeight="0dp"
 	        android:drawSelectorOnTop="false"
 	        android:fadingEdge="none" />
     </RelativeLayout>

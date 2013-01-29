@@ -61,7 +61,7 @@ public class TransferErrorRecovery extends BaseActivity {
 		findViews();
 		setListener();
 		
-		mRightBtn.setText(R.string.submit);
+		mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
         mTitleBtn.setText(getString(R.string.error_recovery));
 		
 		synchronized (sTargetList) {
