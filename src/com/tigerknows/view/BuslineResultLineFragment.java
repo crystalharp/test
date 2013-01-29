@@ -143,7 +143,7 @@ public class BuslineResultLineFragment extends BaseFragment {
             
             @Override
             public void onRefresh(boolean isHeader) {
-                if (isHeader) {
+                if (isHeader || mBuslineModel == null) {
                     return;
                 }
             	if (mLineList.size() >= mBuslineModel.getTotal()) {
