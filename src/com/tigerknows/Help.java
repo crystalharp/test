@@ -50,24 +50,19 @@ public class Help extends BaseActivity {
         List<View> viewList = new ArrayList<View>();
         if (mAppUpgrade || mAppFirstStart) {
             ImageView view = new ImageView(mThis);
-            view.setImageResource(R.drawable.ic_learn_new1);
+            view.setImageResource(R.drawable.ic_learn1);
             view.setScaleType(ScaleType.FIT_XY);
             viewList.add(view);
 
             view = new ImageView(mThis);
-            view.setImageResource(R.drawable.ic_learn_new2);
-            view.setScaleType(ScaleType.FIT_XY);
-            viewList.add(view);
-
-            view = new ImageView(mThis);
-            view.setImageResource(R.drawable.ic_learn_new3);
+            view.setImageResource(R.drawable.ic_learn2);
             view.setScaleType(ScaleType.FIT_XY);
             viewList.add(view);
 
             LayoutInflater layoutInflater = (LayoutInflater)mThis.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View layout = layoutInflater.inflate(R.layout.help_end, null, false);
             view = (ImageView) layout.findViewById(R.id.image_imv);
-            view.setImageResource(R.drawable.ic_learn_new4);
+            view.setImageResource(R.drawable.ic_learn3);
             view.setScaleType(ScaleType.FIT_XY);
             Button button = (Button) layout.findViewById(R.id.enter_btn);
             button.setOnClickListener(new View.OnClickListener() {

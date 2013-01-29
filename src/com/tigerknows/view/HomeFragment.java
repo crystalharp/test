@@ -343,7 +343,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
             }
 
             if (position == 0) {
-                view.setPadding(0, mCategoryTop/2, 0, 0);
+                view.setPadding(0, mCategoryPadding, 0, 0);
             } else if (position == getCount()-1){
                 view.setPadding(0, 0, 0, mCategoryTop);
             } else {
