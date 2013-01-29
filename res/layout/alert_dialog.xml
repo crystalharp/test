@@ -113,6 +113,7 @@
                 android:textColor="@color/black_dark"
 	             android:textSize="14sp"
                 android:background="@drawable/btn_dialog" 
+                android:gravity="center"
 	        android:text="@string/app_name"/>
             <ImageView android:id="@+id/split_imv"
                 android:layout_width="wrap_content"
@@ -128,7 +129,8 @@
                 android:background="@drawable/btn_dialog"
                 android:textColor="@color/black_dark"
 	        	  android:textSize="14sp"
-                android:visibility="visible" 
+                android:visibility="visible"
+                android:gravity="center" 
 	        android:text="@string/app_name"/>
         </LinearLayout>
      </LinearLayout>
