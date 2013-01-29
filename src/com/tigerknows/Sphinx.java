@@ -1922,7 +1922,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 Button trafficBtn=(Button)mInfoWindowPOI.findViewById(R.id.traffic_btn);
                 
                 nameTxv.setText(poi.getName());
-                starsRtb.setRating((int)(poi.getGrade()/2));
+                starsRtb.setRating(poi.getGrade()/2.0f);
                 int money = poi.getPerCapity();
                 if (money > -1) {
                     priceTxv.setText(mContext.getString(R.string.yuan, money));
@@ -2326,6 +2326,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         	}else{
         		return R.id.view_home;
         	}
+        }
+    }
+    
+    public boolean uiStackInsert(int id, int index) {
+        synchronized (mUILock) {
+            boolean result = false;
+            int oldId = uiStackPeek();
+            if (oldId != id && id != R.id.view_invalid) {
+                mUIStack.add(index, id);
+                result = true;
+            }
+            return result;
         }
     }
     

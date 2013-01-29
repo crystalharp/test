@@ -232,13 +232,13 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             if (poiModel != null) {
                 POIList poiList = poiModel.getAPOIList();
                 if (poiList != null) {
-                    mTitleText = CommonUtils.substring(poiList.getShortMessage(), 7)
+                    mTitleText = CommonUtils.substring(poiList.getShortMessage(), 5)
                     + mSphinx.getString(R.string.double_bracket, poiList.getTotal());
                 }
         
                 poiList = poiModel.getBPOIList();
                 if (poiList != null) {
-                    mTitleText = CommonUtils.substring(poiList.getShortMessage(), 7)
+                    mTitleText = CommonUtils.substring(poiList.getShortMessage(), 5)
                     + mSphinx.getString(R.string.double_bracket, poiList.getTotal());
                 }
             }
@@ -555,7 +555,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
 
             float star = poi.getGrade();
-            startsRtb.setRating(star/2);
+            startsRtb.setRating(star/2.0f);
 
             ImageView stampImv = (ImageView) view.findViewById(R.id.stamp_imv);
             int storeType = poi.getStoreType();
@@ -754,6 +754,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     mSphinx.uiStackClose(new int[]{R.id.view_more, R.id.view_history, getId()});
                 } else {
                     mSphinx.uiStackClose(new int[]{R.id.view_home, getId()});
+                    if (mSphinx.uiStackContains(R.id.view_home) == false) {
+                        mSphinx.uiStackInsert(R.id.view_home, 0);
+                    }
                 }
             }
 

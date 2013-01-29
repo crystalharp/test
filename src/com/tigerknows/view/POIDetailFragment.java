@@ -261,7 +261,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
 
         float star = poi.getGrade();
-        mStartsRtb.setRating(star/2);
+        mStartsRtb.setRating(star/2.0f);
         
         if (!TextUtils.isEmpty(category)) {
             mCategoryTxv.setText(category);
@@ -978,7 +978,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             TextView commentTxv = (TextView) view.findViewById(R.id.comment_txv);
             TextView srcTxv = (TextView) view.findViewById(R.id.src_txv);
             
-            float grade = comment.getGrade()/2;
+            float grade = comment.getGrade()/2.0f;
             gradeRtb.setRating(grade);
 
             authorTxv.setText(comment.getUser());
