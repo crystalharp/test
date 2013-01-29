@@ -9,6 +9,7 @@ import com.decarta.android.location.Position;
 import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.map.OverlayItem;
 import com.decarta.android.map.MapView.SnapMap;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
@@ -65,7 +66,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 List<Line> list = mSphinx.getBuslineResultLineFragment().getData();
                 for(int i = 0, size = list.size(); i < size; i++) {
                     Line line = list.get(i);
-                    if (mTitlePopupArrayAdapter.mSelectedItem.equals(line.getName())) {
+                    if (mTitlePopupArrayAdapter.mSelectedItem.equals(mSphinx.getString(R.string.title_popup_content, i + 1, line.getName()))) {
                         mSphinx.clearMap();
                         BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), line);
                         mSphinx.setPreviousNextViewVisible();
@@ -81,7 +82,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                 List<Plan> list = mSphinx.getTrafficResultFragment().getData();
                 for(int i = 0, size = list.size(); i < size; i++) {
                     Plan plan = list.get(i);
-                    if (mTitlePopupArrayAdapter.mSelectedItem.equals(plan.getTitle(mSphinx))) {
+                    if (mTitlePopupArrayAdapter.mSelectedItem.equals(mSphinx.getString(R.string.title_popup_content, i + 1, plan.getTitle(mSphinx)))) {
                         mSphinx.clearMap();
                         TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), plan, plan.getType());
                         mSphinx.setPreviousNextViewVisible();
@@ -187,16 +188,18 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         if (mSphinx.uiStackContains(R.id.view_favorite) == false
                 && mSphinx.uiStackContains(R.id.view_history) == false) {
             if (mActionTag.equals(ActionLog.MapBusline)) {
-                mTitlePopupArrayAdapter.mSelectedItem = mSphinx.getBuslineDetailFragment().getData().getName();
+                mTitlePopupArrayAdapter.mSelectedItem = mSphinx.getString(R.string.title_popup_content,
+                        mSphinx.getBuslineDetailFragment().getCurLine() + 1, mSphinx.getBuslineDetailFragment().getData().getName());
                 List<Line> list = mSphinx.getBuslineResultLineFragment().getData();
                 for(int i = 0, size = list.size(); i < size; i++) {
-                    mTitlePopupList.add(list.get(i).getName());
+                    mTitlePopupList.add(mSphinx.getString(R.string.title_popup_content, i + 1, list.get(i).getName()));
                 }
             } else if (mActionTag.equals(ActionLog.MapTrafficTransfer)) {
-                mTitlePopupArrayAdapter.mSelectedItem = mSphinx.getTrafficDetailFragment().getData().getTitle(mSphinx);
+                mTitlePopupArrayAdapter.mSelectedItem = mSphinx.getString(R.string.title_popup_content,
+                        mSphinx.getTrafficDetailFragment().getCurLine() + 1, mSphinx.getTrafficDetailFragment().getData().getTitle(mSphinx));
                 List<Plan> list = mSphinx.getTrafficResultFragment().getData();
                 for(int i = 0, size = list.size(); i < size; i++) {
-                    mTitlePopupList.add(list.get(i).getTitle(mSphinx));
+                    mTitlePopupList.add(mSphinx.getString(R.string.title_popup_content, i + 1, list.get(i).getTitle(mSphinx)));
                 }
             }
         }

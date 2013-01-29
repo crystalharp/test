@@ -203,8 +203,9 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         
         mTitlePopupList.clear();
         if (this.mLineList != null) {
+            mTitlePopupArrayAdapter.mSelectedItem = mSphinx.getString(R.string.title_popup_content, curLineNum + 1, this.line.getName());
             for(int i = 0, size = mLineList.size(); i < size; i++) {
-                mTitlePopupList.add(mLineList.get(i).getName());
+                mTitlePopupList.add(mSphinx.getString(R.string.title_popup_content,i + 1, mLineList.get(i).getName()));
             }
         }
     }
