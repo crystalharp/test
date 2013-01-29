@@ -25,6 +25,8 @@
     android:orientation="vertical"
     android:minWidth="400dp"
     android:paddingLeft="40dp"
+    android:paddingTop="40dp"
+    android:paddingBottom="40dp"
     android:paddingRight="40dp"
     >
 	<LinearLayout android:id="@+id/titlePanel"
