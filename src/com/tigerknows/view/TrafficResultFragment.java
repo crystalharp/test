@@ -98,7 +98,7 @@ public class TrafficResultFragment extends BaseFragment {
         mTitleBtn.setText(mContext.getString(R.string.title_type_transfer));
         mLengthTxv.setVisibility(View.GONE);
         
-        mFootLayout.setVisibility(View.INVISIBLE);
+        mFootLayout.setVisibility(View.GONE);
         
         mResultAdapter = new TransferProjectListAdapter(mTrafficQuery.getTrafficModel().getPlanList());
         mResultLsv.setAdapter(mResultAdapter);
