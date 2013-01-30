@@ -56,6 +56,7 @@
                     android:focusable="false"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
+                    android:maxLines="6"
                     />
             </RelativeLayout>
             
@@ -250,18 +251,22 @@
                      android:layout_marginLeft="8dp"
                      android:layout_marginRight="8dp"
                      />
-                 <TextView
-                     android:id="@+id/content_txv"
-                     android:layout_width="wrap_content"
+                 <LinearLayout 
+                     android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
-                     android:padding="8dp"
-                     android:layout_gravity="center_horizontal"
-                     android:gravity="left|center_vertical"
-                     android:text="@string/app_name"
-                     android:textColor="@color/black_dark"
-                     android:textSize="14sp"
-                     android:lineSpacingExtra="4dp"
-                     />
+                     android:padding="8dp">
+	                 <TextView
+	                     android:id="@+id/content_txv"
+	                     android:layout_width="fill_parent"
+	                     android:layout_height="wrap_content"
+	                     android:layout_gravity="center_horizontal"
+	                     android:gravity="left|center_vertical"
+	                     android:text="@string/app_name"
+	                     android:textColor="@color/black_dark"
+	                     android:textSize="14sp"
+	                     android:lineSpacingExtra="4dp"
+	                     />
+                 </LinearLayout>
              </LinearLayout>
 
             <LinearLayout
@@ -294,7 +299,7 @@
                      android:id="@+id/noticed_txv"
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
-                     android:padding="16dp"
+                     android:padding="8dp"
                      android:textSize="14sp"
                      android:textColor="@color/black_dark"
                      android:lineSpacingExtra="4dp"

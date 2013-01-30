@@ -5,6 +5,7 @@
     android:layout_height="wrap_content"
     android:orientation="horizontal"
     android:background="@color/transparent"
+    android:paddingBottom="64dp"
     >
    <RelativeLayout
         android:id="@+id/left_view"
@@ -20,13 +21,12 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/left_view"
         android:layout_toLeftOf="@id/right_view"
-        android:padding="0dp"
         android:divider="@drawable/bg_real_line"
         android:drawSelectorOnTop="false"
         android:scrollingCache="false"
         android:footerDividersEnabled="false"
         android:fadingEdge="none"
-        android:background="@color/transparent"
+        android:background="@drawable/bg_title_popup_window"
         />
     
        <RelativeLayout
