@@ -25,8 +25,6 @@ public class Hint extends BaseActivity implements View.OnClickListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        mActionTag = ActionLog.HitComment;
-        
         if (mIntent != null) {
             mLayoutResID = mIntent.getIntExtra(LAYOUT_RES_ID, R.id.view_invalid);
             if (mLayoutResID == R.id.view_invalid) {

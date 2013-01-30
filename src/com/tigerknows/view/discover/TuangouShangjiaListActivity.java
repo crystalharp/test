@@ -95,7 +95,7 @@ public class TuangouShangjiaListActivity extends BaseActivity {
                 if (position < adapter.getCount()) {
                     Shangjia shangjia = (Shangjia) adapter.getItem(position);
                     if (shangjia != null && TextUtils.isEmpty(shangjia.getUrl()) == false) {
-                        mActionLog.addAction(ActionLog.DingdanListSelectItem, position+1, shangjia.getName());
+                        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, position+1, shangjia.getName());
                         Intent intent = new Intent();
                         intent.setClass(mThis, BrowserActivity.class);
                         intent.putExtra(BrowserActivity.TITLE, mThis.getString(R.string.wodedingdan));

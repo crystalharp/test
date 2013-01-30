@@ -49,14 +49,6 @@ public class TrafficQueryLogHelper {
 		}
 	}
 	
-	public void logForClickDeleteOnEditText(QueryEditText edt) {
-		if (edt == mQueryFragment.mStart) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficStartDeleteBtn);
-		} else if (edt == mQueryFragment.mEnd) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficEndDeleteBtn);
-		}
-	}
-	
 	public void logForSuggestDispatch(QueryEditText edt, int index) {
 		if (TextUtils.isEmpty(edt.getEdt().getText().toString())) {
 			logForHistoryWordSelected(edt, index);
