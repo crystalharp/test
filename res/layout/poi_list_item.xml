@@ -3,14 +3,16 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content"
-    android:padding="8dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingBottom="8dp"
     android:background="@drawable/list_selector_background_gray_light">
     
     <ImageView 
         android:id="@+id/bubble_imv" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="14dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:src="@drawable/ic_a_poi" />    
@@ -18,7 +20,7 @@
         android:id="@+id/name_view" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="10dp"
         android:orientation="horizontal"
         android:layout_toRightOf="@id/bubble_imv" 
         android:paddingBottom="5dp"  >

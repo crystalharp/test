@@ -112,6 +112,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         int viewWidth = view.getMeasuredWidth()+2*mCategoryBtnPadding;
 
         int columnWidth = screenWidth / viewWidth;
+        if (columnWidth > 2) {
+            columnWidth = 2;
+        }
         List<List<Category>> categoryList = new ArrayList<List<Category>>();
         for(int i = 0, length = mCategoryResIdList.length; (i*columnWidth) < length; i++) {
             int index = (i*columnWidth);
