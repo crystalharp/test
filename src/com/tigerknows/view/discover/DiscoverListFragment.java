@@ -148,6 +148,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             setup();
             onResume();
             mTitleBtn.setClickable(false);
+            mActionLog.addAction(ActionLog.DiscoverListTitleSelection, position);
         }
     };
     

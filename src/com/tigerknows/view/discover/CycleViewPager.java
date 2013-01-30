@@ -1,8 +1,10 @@
 package com.tigerknows.view.discover;
 
+import com.tigerknows.ActionLog;
 import com.tigerknows.view.SpringbackListView.IPagerList;
 import com.tigerknows.view.SpringbackListView.IPagerListCallBack;
 
+import android.content.Context;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -90,10 +92,11 @@ public class CycleViewPager {
         public int count = 0;
         public boolean isPageTurning = false;
         int time = 0;
-        
-        public CycleOnPageChangeListener(IRefreshViews iRefreshViews, IPagerListCallBack iPagerListCallBack) {
+        Context mContext;
+        public CycleOnPageChangeListener(Context context, IRefreshViews iRefreshViews, IPagerListCallBack iPagerListCallBack) {
             this.iRefreshViews = iRefreshViews;
             this.iPagerListCallBack = iPagerListCallBack;
+            this.mContext = context;
         }
         
         // 当滑动状态改变时调用
@@ -118,6 +121,7 @@ public class CycleViewPager {
         public void onPageSelected(int position) {
             iRefreshViews.refreshViews(position);
             time = 0;
+            ActionLog.getInstance(mContext).addAction(ActionLog.DiscoverDetailFling, position);
         }
     }
 }
