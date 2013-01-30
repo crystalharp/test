@@ -70,7 +70,7 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 	public static int INFO_TEXTOFFSET_HORIZONTAL=5;
 	public static int INFO_ROUND_RADIUS=0;
 	public static int INFO_BORDER_SIZE=2;
-	public static int INFO_BORDER_COLOR=Color.DKGRAY;
+	public static int INFO_BORDER_COLOR=0xc8c8c8;
 	
 	public static boolean INFO_BORDER_ANTIALIAS=false;
 	public static boolean INFO_TEXT_ANTIALIAS=true;

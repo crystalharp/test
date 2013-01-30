@@ -932,6 +932,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 poi.updateAttribute();
                 Collections.sort(commentArrayList, Comment.COMPARATOR_DATETIME);
                 int size = commentArrayList.size();
+                // 找出我的点评
+                for(int i = 0; i < size; i++) {
+                    Comment comment = commentArrayList.get(i);
+                    if (comment.getAttribute() > 0) {
+                        poi.setMyComment(comment);
+                        break;
+                    }
+                }
                 mCommentListView.setVisibility(View.VISIBLE);
                 int length = size;
                 if (size > 1) {

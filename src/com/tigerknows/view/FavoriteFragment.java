@@ -214,7 +214,9 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             if (mPOIList.isEmpty() && mTrafficList.isEmpty() == false) {
                 mLayerType = ItemizedOverlay.TRAFFIC_OVERLAY;
             }
-            Toast.makeText(mContext, R.string.favorite_long_click_tip, 3000).show();
+            if (mPOIList.isEmpty() == false || mTrafficList.isEmpty() == false) {
+                Toast.makeText(mContext, R.string.favorite_long_click_tip, 3000).show();
+            }
         } else {
             long min = 0;
             if (mPOIList.size() > 0) {
