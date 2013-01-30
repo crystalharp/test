@@ -36,7 +36,7 @@
 			        android:singleLine="true"
 			        android:maxLength="11"
 			        android:ellipsize="end"
-			        android:textSize="18sp"
+			        android:textSize="14sp"
 			        android:background="@drawable/list_header_normal"
 			        emptyErrorTip="@string/phone_empty_tip"
 			        flag="0"
@@ -47,10 +47,12 @@
 			
 			        <requestFocus />
 			    </com.tigerknows.view.user.ExtValidationEditText>
+			    
 			    <ImageView
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
-	                android:background="@drawable/bg_real_line" />
+	                android:background="@drawable/bg_line_split" />
+			    
 			    <com.tigerknows.view.user.ExtValidationEditText
 			        android:id="@+id/password_edt"
 			        android:layout_width="match_parent"
@@ -60,7 +62,7 @@
 			        android:drawablePadding="8dp"
 			        android:singleLine="true"
 			        android:ellipsize="end"
-			        android:textSize="18sp"
+			        android:textSize="14sp"
 	                android:background="@drawable/list_footer_normal"
 			        emptyErrorTip="@string/password_empty_tip"
 			        validateType="password"
@@ -80,19 +82,20 @@
 			        android:layout_weight="2"
 			        android:layout_height="wrap_content"
 			        android:text="@string/regist"
-			        android:textSize="18sp"
+			        android:textSize="14sp"
 			        android:textColor="@color/black"
-			        android:padding="8dp"
+			        android:padding="12dp"
 			        android:background="@drawable/btn_register" />
 			    <Button
 			        android:id="@+id/login_btn"
 			        android:layout_width="0dp"
 			        android:layout_weight="3"
-			        android:layout_height="match_parent"
+			        android:layout_height="wrap_content"
 			        android:layout_marginLeft="8dp"
 			        android:text="@string/login"
-			        android:textSize="18sp"
+			        android:textSize="14sp"
 			        android:textColor="@color/white"
+			        android:padding="12dp"
 			        android:background="@drawable/btn_blue_green" />
 		    </LinearLayout>
 		    <TextView
