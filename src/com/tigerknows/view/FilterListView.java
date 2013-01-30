@@ -16,9 +16,12 @@
 
 package com.tigerknows.view;
 
+import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.DataQuery.Filter;
+import com.tigerknows.model.DataQuery.POIResponse;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -80,6 +83,13 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     public void setData(List<Filter> filterList, byte key, CallBack callBack, boolean isTurnPaging) {
         if (filterList == null) {
             return;
+        }
+        if (key == POIResponse.FIELD_FILTER_AREA_INDEX) {
+            ActionLog.getInstance(getContext()).addAction(ActionLog.FILTER_AREA_ONCLICK);
+        } else if (key == POIResponse.FIELD_FILTER_CATEGORY_INDEX) {
+            ActionLog.getInstance(getContext()).addAction(ActionLog.FILTER_CATEGORY_ONCLICK);
+        } else if (key == POIResponse.FIELD_FILTER_ORDER_INDEX) {
+            ActionLog.getInstance(getContext()).addAction(ActionLog.FILTER_ORDER_ONCLICK);
         }
         refreshFilterButton(controlView, filterList, getContext(), this);
         this.filterList = filterList;
@@ -256,6 +266,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         filter.setSelected(true);
         
         if (callBack != null) {
+            ActionLog.getInstance(getContext()).addAction(ActionLog.FILTER_SELECTED, filter.getFilterOption().getName(), DataQuery.makeFilterRequest(this.filterList));
             callBack.doFilter(filter.getFilterOption().getName());
         }
     }
@@ -279,6 +290,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     
     public void cancel() {
         if (callBack != null) {
+            ActionLog.getInstance(getContext()).addAction(ActionLog.FILTER_CANCEL);
             callBack.cancelFilter();
         }
     }

@@ -39,6 +39,7 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
+import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine;
@@ -978,6 +979,7 @@ public class MapView extends RelativeLayout implements
         View custom = activity.getLayoutInflater().inflate(R.layout.loading, null);
         TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
         loadingTxv.setText(R.string.doing_and_wait);
+        ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, loadingTxv);
         final Dialog tipProgressDialog = CommonUtils.showNormalDialog(activity, custom);
         tipProgressDialog.setCancelable(true);
         tipProgressDialog.setCanceledOnTouchOutside(false);

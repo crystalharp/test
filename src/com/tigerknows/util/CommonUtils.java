@@ -65,6 +65,7 @@ import com.tigerknows.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.ActionLog;
 import com.tigerknows.ErrorDialogActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -647,14 +648,18 @@ public class CommonUtils {
     }
 
     public static Dialog showNormalDialog(Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener) {
-        
+        if (message != null) {
+            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, message);
+        } else if (title !=  null) {
+            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, title);
+        }
         Dialog dialog = getDialog(activity, title, message, custom, leftButtonText, rightButtonText, onClickListener);
         dialog.show();
         
         return dialog;
     }
 
-    public static Dialog getDialog(Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener) {
+    public static Dialog getDialog(final Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener) {
         
         LayoutInflater layoutInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         
@@ -698,15 +703,21 @@ public class CommonUtils {
         if (leftButtonText != null || rightButtonText != null) {
             bottonView.setVisibility(View.VISIBLE);
             View split = bottonView.findViewById(R.id.split_imv);
-            Button leftBtn = (Button) bottonView.findViewById(R.id.button1);
-            Button rightBtn = (Button) bottonView.findViewById(R.id.button2);
+            final Button leftBtn = (Button) bottonView.findViewById(R.id.button1);
+            final Button rightBtn = (Button) bottonView.findViewById(R.id.button2);
             View.OnClickListener listener = new View.OnClickListener() {
                 
                 @Override
                 public void onClick(View view) {
                     dialog.dismiss();
-                    if (onClickListener != null)
+                    if (onClickListener != null) {
+                        if (view.getId() == R.id.button1) {
+                            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG_BUTTON_ONCLICK, leftBtn.getText());
+                        } else {
+                            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG_BUTTON_ONCLICK, rightBtn.getText());
+                        }
                         onClickListener.onClick(dialog, view.getId() == R.id.button1 ? DialogInterface.BUTTON_POSITIVE : DialogInterface.BUTTON_NEGATIVE);
+                    }
                 }
             };
             if (leftButtonText == null) {
@@ -1012,17 +1023,21 @@ public class CommonUtils {
                 switch (index) {
                     case 0:
                         queryType = TrafficQuery.QUERY_TYPE_TRANSFER;
+                        ActionLog.getInstance(sphinx).addAction(ActionLog.DIALOG_COME_HERE_TRANSFER);
                         break;
                         
                     case 1:
                         queryType = TrafficQuery.QUERY_TYPE_DRIVE;
+                        ActionLog.getInstance(sphinx).addAction(ActionLog.DIALOG_COME_HERE_DRIVE);
                         break;
                         
                     case 2:
                         queryType = TrafficQuery.QUERY_TYPE_WALK;
+                        ActionLog.getInstance(sphinx).addAction(ActionLog.DIALOG_COME_HERE_WALK);
                         break;
                         
                     case 3:
+                        ActionLog.getInstance(sphinx).addAction(ActionLog.DIALOG_COME_HERE_CUSTOM_START);
                         break;
                 }
                 

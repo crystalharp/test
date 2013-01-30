@@ -228,7 +228,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 	public void onClick(View v) {
 		int viewId = v.getId();
 		if (viewId == R.id.right_btn) {
-		    mActionLog.addAction(ActionLog.TrafficDetailMapBtn);
+            mActionLog.addAction(ActionLog.Title_Right_Button);
 			// 绘制交通图层
 			viewMap();
 			// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点

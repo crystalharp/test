@@ -86,7 +86,7 @@ public class UserHomeFragment extends UserBaseFragment {
                 
                 @Override
                 public void onClick(View arg0) {
-                    mActionLog.addAction(ActionLog.Title_Left_Back, mActionTag);
+                    mActionLog.addAction(ActionLog.Title_Left_Back);
                     onBack();
                 }
             });
@@ -198,7 +198,7 @@ public class UserHomeFragment extends UserBaseFragment {
                 
                 @Override
                 public void onClick(View arg0) {
-                    mActionLog.addAction(ActionLog.Title_Left_Back, mActionTag);
+                    mActionLog.addAction(ActionLog.Title_Left_Back);
                     onBack();
                 }
             });

@@ -206,7 +206,7 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
                 exit();
                 break;
             case R.id.right_btn:
-                mActionLog.addAction(ActionLog.Title_Right_Button, mActionTag);
+                mActionLog.addAction(ActionLog.Title_Right_Button);
                 StringBuilder s = new StringBuilder();
                 try {
                     String str = mShanghumingchengEdt.getEditableText().toString().trim();

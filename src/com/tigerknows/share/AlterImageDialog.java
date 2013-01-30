@@ -68,8 +68,6 @@ public class AlterImageDialog extends Dialog {
 
 	@Override
 	public void dismiss() {
-		// TODO Auto-generated method stub
-		mActionLog.addAction(ActionLog.Dismiss, ActionLog.WeiboImage);
 		super.dismiss();
 	}
 	

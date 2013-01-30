@@ -101,7 +101,7 @@ public class BaseFragment extends LinearLayout {
             synchronized (mSphinx.mUILock) {
                 if (!mSphinx.mUIProcessing) {
                 	if (arg0.getVisibility() == View.VISIBLE) {
-                	    mActionLog.addAction(ActionLog.Title_Left_Back, mActionTag);
+                	    mActionLog.addAction(ActionLog.Title_Left_Back);
 	                	dismiss();
                 	}
                 }
@@ -127,9 +127,6 @@ public class BaseFragment extends LinearLayout {
     }
     
     public void dismiss() {
-        if (!TextUtils.isEmpty(mActionTag)) {
-            mActionLog.addAction(ActionLog.Dismiss, mActionTag);
-        }
         onPause();
         mSphinx.uiStackDismiss(getId());
         
@@ -138,10 +135,7 @@ public class BaseFragment extends LinearLayout {
         }
     }
     
-    public void show() {   
-        if (!TextUtils.isEmpty(mActionTag)) {
-            mActionLog.addAction(mActionTag);
-        }  
+    public void show() {    
         mSphinx.uiStackPush(getId());  
         onResume();
     }
@@ -264,7 +258,10 @@ public class BaseFragment extends LinearLayout {
         int id = getId();
         if (id != R.id.view_invalid
                 && id != R.id.view_title
-                && id != R.id.view_menu) {
+                && id != R.id.view_menu) { 
+            if (!TextUtils.isEmpty(mActionTag)) {
+                mActionLog.addAction(mActionTag);
+            }
             mSphinx.replace(this);   
             
             mTitleFragment = mSphinx.getTitleFragment();

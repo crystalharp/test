@@ -275,6 +275,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
 	        mSphinx.finish();
 	        break;
         case R.id.right_btn:
+            mActionLog.addAction(ActionLog.Title_Right_Button);
         	mSphinx.showView(R.id.view_traffic_result_detail);
         	break;
     	default:

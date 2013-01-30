@@ -16,6 +16,7 @@
 
 package com.tigerknows.view;
 
+import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 
 import android.content.Context;
@@ -65,6 +66,7 @@ public class RetryView extends LinearLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (mCallBack != null) {
+            ActionLog.getInstance(getContext()).addAction(ActionLog.RETRY);
             mCallBack.retry();
         }
         return true;

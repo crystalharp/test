@@ -855,7 +855,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	            locationCityName = currentCityName;
 	        }
 	        messageTxv.setText(getString(R.string.are_your_change_to_location_city, currentCityName, locationCityName));
-	    }
+            mActionLog.addAction(ActionLog.DIALOG, messageTxv.getText());
+	    } else if (id == R.id.dialog_prompt_choose_city
+	            || id == R.id.dialog_prompt_setting_location_first) {
+            TextView messageTxv =(TextView)dialog.findViewById(R.id.message);
+            mActionLog.addAction(ActionLog.DIALOG, messageTxv.getText());
+	    } else if (id == R.id.dialog_prompt_setting_location) {
+            mActionLog.addAction(ActionLog.DIALOG, getString(R.string.location_failed_and_jump_settings));
+        }
     }
 
     /* Creates the menu items */
@@ -2828,6 +2835,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     @Override
                     public void onCheckedChanged(CompoundButton arg0, boolean checked) {
                         TKConfig.setPref(Sphinx.this, TKConfig.PREFS_SHOW_LOCATION_SETTINGS_TIP, checked ? "1" : "");
+                        mActionLog.addAction(ActionLog.DIALOG_SETTING_LOCATION_CHECKBOX, checked ? "1" : "");
                     }
                 });
                 break;

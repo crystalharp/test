@@ -613,7 +613,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         switch (view.getId()) {                
             case R.id.right_btn:
-                mActionLog.addAction(ActionLog.POIDetailMap);
+                mActionLog.addAction(ActionLog.Title_Right_Button);
                 viewMap();
                 break;
             case R.id.telephone_view:

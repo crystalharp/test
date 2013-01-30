@@ -24,6 +24,7 @@ import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.ActionLog;
 import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.MapEngine.CityInfo;
@@ -584,6 +585,9 @@ public abstract class BaseQuery {
                     translateResponseV12(util);
                 } else {
                     translateResponse(data);
+                    if (response != null) {
+                        ActionLog.getInstance(context).addAction(ActionLog.RESULT, apiType, response.getResponseCode(), response.getDescription());
+                    }
                     LogWrapper.d("BaseQuery", "translate():at="+apiType+", response="+response);
                 }
             } catch (APIException e) {

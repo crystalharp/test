@@ -38,13 +38,56 @@ public class ActionLog {
     }
 
     // 标题栏左上角按钮 界面UI名称LB
-    public static final String Title_Left_Back = "%sZA";
+    public static final String Title_Left_Back = "ZC";
     // 回退键
     public static final String KeyCodeBack = "ZB";    
-    // 关闭界面 界面名称DM
-    public static final String Dismiss = "%sZC"; 
     // 标题栏右上角按钮 界面UI名称
-    public static final String Title_Right_Button = "%sZD";
+    public static final String Title_Right_Button = "ZD";
+    
+    // 提示对话框出现  ZA-提示内容
+    public static final String DIALOG = "ZA-%s";
+    // 点击对话框响应按钮   ZAAA-含义
+    public static final String DIALOG_BUTTON_ONCLICK = "ZAAA-%s";
+    // 结果框  ZI-含义-成功/失败原因
+    public static final String RESULT = "ZI-%s-%s-%s";
+    // 重试
+    public static final String RETRY = "ZL";
+    
+    // 到这里去对话框
+    public static final String DIALOG_COME = "DB";
+    
+    public static final String DIALOG_COME_HERE_TRANSFER = DIALOG_COME + "AA";
+    
+    public static final String DIALOG_COME_HERE_DRIVE = DIALOG_COME + "AB";
+    
+    public static final String DIALOG_COME_HERE_WALK = DIALOG_COME + "AC";
+    
+    public static final String DIALOG_COME_HERE_CUSTOM_START = DIALOG_COME + "AD";
+    
+    // 提示设置定位对话框
+    public static final String DIALOG_SETTING_LOCATION_CHECKBOX = "DCAA-%s";
+    
+
+    // 点击区域筛选框 
+    public static final String FILTER_AREA_ONCLICK = "ZM";
+    // 点击分类筛选框 
+    public static final String FILTER_CATEGORY_ONCLICK = "ZN";
+    // 点击排序筛选框 
+    public static final String FILTER_ORDER_ONCLICK = "ZO";
+    // 选择筛选条件
+    public static final String FILTER_SELECTED = "ZP-%s-%s";
+    // 取消筛选
+    public static final String FILTER_CANCEL = "ZQ";
+    // 点击列表中的某一项
+    public static final String LISTVIEW_ITEM_ONCLICK = "ZS-%s";
+    
+    // 翻页
+    public static final String LOAD_MORE_TRIGGER = "ZR";
+
+    // 日志超长 EXCP
+    public static final String LOG_OUT = "EXCP";
+    // 异常退出 EXCE
+    public static final String EXCEPTION_EXIT = "EXCE";
     
     // 搜索频道 
     // 搜索首页 AP
@@ -91,22 +134,8 @@ public class ActionLog {
 
     // 结果列表页 AR
     public static final String SearchResult = "AR";
-    // 结果列表页显示 AR
-    // 点击左上角返回按钮 ARZA
-    // 点击右上角地图 ARAA
-    public static final String SearchResultMap = SearchResult + "AA";
-    // 点击区域筛选框 ARAB
-    public static final String SearchResultFilterArea = SearchResult + "AB";
-    // 点击分类筛选框 ARAC
-    public static final String SearchResultFilterCategory = SearchResult + "AC";
-    // 点击排序筛选框 ARAD
-    public static final String SearchResultFilterOrder = SearchResult + "AD";
-    // 选择筛选条件 ARAE-条件
-    public static final String SearchResultFilter = SearchResult + "AE-%s-%s";
     // 点击某一个POI ARAF-下标
     public static final String SearchResultSelect = SearchResult + "AF-%s-%s-%s";
-    // 点击“显示下10条” ARAG
-    public static final String SearchResultNextPage = SearchResult + "AG";
     
     // Poi详情页 AE
     public static final String POIDetail = "AE";
@@ -251,6 +280,7 @@ public class ActionLog {
     // 点击当前所在城市 AHAJ
     // 点击热门城市某一个城市 AHAK
     // 点击按省份查询某一城市 AHAL
+    public static final String DownloadMapCloseOnClick = DownloadMap + "AM";
 
     // 收藏夹页
     public static final String Favorite = "AI";
@@ -378,6 +408,8 @@ public class ActionLog {
     public static final String MenuTraffic = Menu + "AB";
     // 点击更多 ATAC
     public static final String MenuMore = Menu + "AC";
+    // 点击发现 ATAD
+    public static final String MenuDiscover = Menu + "AD";
 
     // 软件生命周期  AO
     public static final String Lifecycle = "AO";
@@ -774,17 +806,6 @@ public class ActionLog {
     
     // 团购结果列表页
     public static final String TuangouList = "CB";
-    // 结果列表页显示 CB
-    // 点击返回按钮
-    // 点击右上角地图
-    // 点击区域筛选框 CBAA
-    public static final String DiscoverListFilterArea = "AA";
-    // 点击分类筛选框 CBAB
-    public static final String DiscoverListFilterCategory = "AB";
-    // 点击排序筛选框 CBAC
-    public static final String DiscoverListFilterOrder = "AC";
-    // 选择筛选条件 CBAD-%s
-    public static final String DiscoverListFilterSelect = "AD-%s-%s";
     // 点击某一条结果 CBAE-%s(下标)
     public static final String DiscoverListSelectItem = "AE-%s-%s";
     // 往上拉加载后20条结果 CBAF
@@ -979,11 +1000,15 @@ public class ActionLog {
             Object[] str = new String[args.length];
             int i = 0;
             for(Object object : args) {
-                String s = object.toString().replaceAll("[-_%, \t\r{}\\[\\]\\\\&~#$*^+=()]", "@");//"[-_%, \t\r{}\\[\\]\\\\&~#$*^+=()]", "@"
-                if (TextUtils.isEmpty(s)) {
-                    str[i] = "0";
+                if (object != null) {
+                    String s = object.toString().replaceAll("[-_%, \t\r{}\\[\\]\\\\&~#$*^+=()]", "@");//"[-_%, \t\r{}\\[\\]\\\\&~#$*^+=()]", "@"
+                    if (TextUtils.isEmpty(s)) {
+                        str[i] = "0";
+                    } else {
+                        str[i] = s;
+                    }
                 } else {
-                    str[i] = s;
+                    str[i] = "null";
                 }
                 i++;
             }
@@ -1043,7 +1068,7 @@ public class ActionLog {
                 }
                 File file = new File(mPath);
                 FileInputStream fis = new FileInputStream(file);
-                final String str = CommonUtils.readFile(fis)+SEPARATOR_STAET+(simpleDateFormat.format(Calendar.getInstance().getTime()))+SEPARATOR_MIDDLE+"EXCP";
+                final String str = CommonUtils.readFile(fis)+SEPARATOR_STAET+(simpleDateFormat.format(Calendar.getInstance().getTime()))+SEPARATOR_MIDDLE+LOG_OUT;
                 fis.close();
                 
                 if (file.delete()) {

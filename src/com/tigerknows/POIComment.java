@@ -589,6 +589,14 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         });
         mSyncSinaChb.setOnClickListener(this);
         mSyncQZoneChb.setOnClickListener(this);
+        mGradeRtb.setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                hideSoftInput();
+                return false;
+            }
+        });
         mGradeRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
             
             @Override
@@ -687,7 +695,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     public void onClick(View view) {
         int viewId = view.getId();
         if (R.id.right_btn == viewId) {
-            mActionLog.addAction(ActionLog.POICommentClickSubmit);
+            mActionLog.addAction(ActionLog.Title_Right_Button);
             if (mContentEdt.getEditableText().toString().trim().length() < MIN_CHAR) {
                 CommonUtils.showNormalDialog(mThis, 
                         mThis.getString(R.string.prompt), 
@@ -778,7 +786,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                         }
                     });
         } else if (viewId == R.id.left_btn) {
-            mActionLog.addAction(ActionLog.Title_Left_Back, mActionTag);
+            mActionLog.addAction(ActionLog.Title_Left_Back);
             if (showDiscardDialog() == false) {
                 finish();
             }

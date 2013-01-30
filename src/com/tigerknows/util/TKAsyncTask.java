@@ -4,6 +4,7 @@
 package com.tigerknows.util;
 
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
@@ -93,6 +94,7 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
         View custom = activity.getLayoutInflater().inflate(R.layout.loading, null);
         TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
         loadingTxv.setText(tipText);
+        ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, tipText);
         tipProgressDialog = CommonUtils.showNormalDialog(activity, custom);
         tipProgressDialog.setCancelable(cancelable);
         tipProgressDialog.setCanceledOnTouchOutside(false);

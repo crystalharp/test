@@ -1,5 +1,7 @@
 package com.tigerknows.share;
 
+import com.decarta.android.util.LogWrapper;
+import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.share.ShareAPI.LoginCallBack;
 import com.weibo.net.AccessToken;
@@ -133,6 +135,7 @@ public class TKWeibo implements AsyncWeiboRunner.RequestListener {
                 if (showDialog)
                     activity.dismissDialog(R.id.dialog_share_doing);
                 int statusCode = e.getStatusCode();
+                LogWrapper.d("TKWeibo", statusCode+":"+e.getMessage());
                 // http://open.weibo.com/wiki/Error_code
                 if (statusCode == 20019 || statusCode == 20111) {
                     Toast.makeText(activity, R.string.weibo_no_repeat, Toast.LENGTH_LONG).show();
@@ -225,8 +228,10 @@ public class TKWeibo implements AsyncWeiboRunner.RequestListener {
     }
     
     public static String logout(TKWeibo tkweibo, Weibo weibo, String source, RequestListener requestListener) {
-        if (tkweibo.showDialog)
+        if (tkweibo.showDialog) {
+            ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.DIALOG, tkweibo.activity.getString(R.string.doing_and_wait));
             tkweibo.activity.showDialog(R.id.dialog_share_doing);
+        }
         WeiboParameters bundle = new WeiboParameters();
         bundle.add("source", source);
         String rlt = "";
@@ -239,8 +244,10 @@ public class TKWeibo implements AsyncWeiboRunner.RequestListener {
 
     public static String upload(TKWeibo tkweibo, Weibo weibo, String source, String file, String status, String lon,
             String lat) {
-        if (tkweibo.showDialog)
+        if (tkweibo.showDialog) {
+            ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.DIALOG, tkweibo.activity.getString(R.string.doing_and_wait));
             tkweibo.activity.showDialog(R.id.dialog_share_doing);
+        }
         WeiboParameters bundle = new WeiboParameters();
         bundle.add("source", source);
         bundle.add("pic", file);
@@ -260,8 +267,10 @@ public class TKWeibo implements AsyncWeiboRunner.RequestListener {
     }
 
     public static String update(TKWeibo tkweibo, Weibo weibo, String source, String status, String lon, String lat) {
-        if (tkweibo.showDialog)
+        if (tkweibo.showDialog) {
+            ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.DIALOG, tkweibo.activity.getString(R.string.doing_and_wait));
             tkweibo.activity.showDialog(R.id.dialog_share_doing);
+        }
         WeiboParameters bundle = new WeiboParameters();
         bundle.add("source", source);
         bundle.add("status", status);

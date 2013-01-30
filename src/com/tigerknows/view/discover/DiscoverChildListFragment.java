@@ -266,7 +266,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             return;
         }
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
-        mActionLog.addAction(ActionLog.SearchResultNextPage);
+        mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
 
         DataQuery dataQuery = new DataQuery(mContext);
         int cityId = lastDataQuery.getCityId();
@@ -315,7 +315,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                 if (getList().isEmpty()) {
                     return;
                 }
-                mActionLog.addAction(ActionLog.Title_Right_Button, mActionTag);
+                mActionLog.addAction(ActionLog.Title_Right_Button);
                 viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 

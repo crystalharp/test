@@ -109,7 +109,7 @@ public class TKConfig {
     public static String LOGIN_URL = "http://%s/bootstrap/local";
     
     // 返回结果中字符串字段的编码，参数值必须是java.lang.String.getBytes(String charset)支持的编码，否则整个查询结果为空；如果不提供该参数，默认编码为UTF-16LE 
-    private static String sENCODING = System.getProperty("file.encoding");
+    private static String sENCODING = System.getProperty("file.encoding"); // "utf-8"
     
     // mobile country code，国家码，在大陆地区为460
     private static int sMCC = -1;
@@ -117,10 +117,10 @@ public class TKConfig {
     private static int sMNC = -1;
     
     // 客户端软件版本
-    private static String sCLIENT_SOFT_VERSION = "4.00.20121002A";
+    private static String sCLIENT_SOFT_VERSION = "4.20.20130131A";
     // 客户端软件发布日期
-    public static final String CLIENT_SOFT_VERSION = "4.00.alpha1";
-    public static final String CLIENT_SOFT_RELEASE_DATE = "2012-10-02";
+    public static final String CLIENT_SOFT_VERSION = "4.20.rc1";
+    public static final String CLIENT_SOFT_RELEASE_DATE = "2013-01-31";
     // 地图数据版本
     private static String sMAP_DATA_VERSION = "2.50";
     // 联想词版本

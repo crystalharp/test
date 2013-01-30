@@ -223,7 +223,7 @@ public class POICommentList extends BaseActivity {
             mTurnPageFooter = true;
         }
 
-        mActionLog.addAction(ActionLog.SearchResultNextPage);
+        mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
 
         DataQuery dataQuery = new DataQuery(mThis);
         POI requestPOI = mCommentQuery.getPOI();

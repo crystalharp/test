@@ -38,11 +38,12 @@ import com.tigerknows.widget.Toast;
 
 import com.tencent.tauth.TAuthView;
 import com.tigerknows.ActionLog;
+import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.share.TKTencentOpenAPI.AuthReceiver;
 import com.tigerknows.util.CommonUtils;
 
-public class QZoneSend extends Activity implements OnClickListener {
+public class QZoneSend extends BaseActivity implements OnClickListener {
 	
     private Button mLogoutBtn;
 
@@ -53,10 +54,6 @@ public class QZoneSend extends Activity implements OnClickListener {
     private TextView mTitleTxv;
 
     private String mContent = "";
-    
-    private String mActionTag;
-    
-    private ActionLog mActionLog;
     
     private ShareAPI.LoginCallBack mLoginCallBack = new ShareAPI.LoginCallBack() {
         
@@ -143,15 +140,16 @@ public class QZoneSend extends Activity implements OnClickListener {
         checkUserAccessIdenty(true);
     }
 
-    private void findViews() {
-
+    protected void findViews() {
+        super.findViews();
         mTitleTxv = (TextView)findViewById(R.id.title_txv);
         mLogoutBtn = (Button)this.findViewById(R.id.logout_btn);
         mSendBtn = (Button)this.findViewById(R.id.send_btn);
         mTextEdt = (EditText)this.findViewById(R.id.text_edt);
     }
 
-    private void setListener() {
+    protected void setListener() {
+        super.setListener();
         mLogoutBtn.setOnClickListener(this);
         mSendBtn.setOnClickListener(this);
     }
@@ -159,13 +157,11 @@ public class QZoneSend extends Activity implements OnClickListener {
     @Override
     protected void onPause() {
         super.onPause();
-        mActionLog.addAction(mActionTag+"DM");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mActionLog.addAction(mActionTag);
     }
 
     @Override

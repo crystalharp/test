@@ -50,7 +50,6 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiExecute() {
-			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficHome);
 			applyInnateProperty(TrafficViewSTT.State.Input);
 		}
 
@@ -61,7 +60,6 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiRollback() {
-			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficInput);
 			mQueryFragment.mSphinx.getMenuFragment().display();
 //			resetNormalStateMap();
 			applyInnateProperty(TrafficViewSTT.State.Normal);
@@ -83,7 +81,6 @@ public class TrafficQueryStateHelper {
 	
 		@Override
 		public void uiExecute() {
-			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficHome);
 			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeToMap);
 			
 			mQueryFragment.oldCheckButton = mQueryFragment.mRadioGroup.getCheckedRadioButtonId();
@@ -101,7 +98,6 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiRollback() {
-			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficMap);
 			mQueryFragment.mMapLocationHelper.resetNormalStateMap();
 
 			mQueryFragment.mLogHelper.checkedRadioButton(R.id.traffic_transfer_rbt);
@@ -122,7 +118,6 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiExecute() {
-			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficMap);
 			applyInnateProperty(TrafficViewSTT.State.Input);
 		}
 
@@ -133,7 +128,6 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiRollback() {
-			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficInput);
 			/*
 			 * 从Input返回Map时, 记录之前Check的Id
 			 */
@@ -159,7 +153,6 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiExecute() {
-			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficHome);
 			mQueryFragment.displayCommonTitle();
 			mQueryFragment.mRightBtn.setVisibility(View.GONE);
 			mQueryFragment.mTitleBtn.setText(R.string.title_click_map);
@@ -194,7 +187,6 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiExecute() {
-			mQueryFragment.mActionLog.addAction(ActionLog.Dismiss, ActionLog.TrafficInput);
 			mQueryFragment.displayCommonTitle();
 			mQueryFragment.mRightBtn.setVisibility(View.GONE);
 			mQueryFragment.mTitleBtn.setText(R.string.title_click_map);

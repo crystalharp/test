@@ -6,6 +6,7 @@ import com.tencent.tauth.bean.OpenId;
 import com.tencent.tauth.bean.UserInfo;
 import com.tencent.tauth.http.Callback;
 import com.tencent.tauth.http.TDebug;
+import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.share.ShareAPI.LoginCallBack;
 
@@ -78,6 +79,7 @@ public class TKTencentOpenAPI {
             if (access_token != null) {
                 mAccessToken = access_token;
 //              TDebug.msg("正在获取OpenID...", getApplicationContext());
+                ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, this.activity.getString(R.string.doing_and_wait));
                 this.activity.showDialog(R.id.dialog_share_doing);
                 //用access token 来获取open id
                 TencentOpenAPI.openid(access_token, new Callback() {
@@ -173,8 +175,10 @@ public class TKTencentOpenAPI {
 //            TDebug.msg("请先获取access token和open id", activity);
             return;
         }
-        if (showDialog)
+        if (showDialog) {
+            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, activity.getString(R.string.doing_and_wait));
             activity.showDialog(R.id.dialog_share_doing);
+        }
         Bundle bundle = null;
         bundle = new Bundle();
         bundle.putString("title", activity.getString(R.string.tencent_share_title));//必须。feeds的标题，最长36个中文字，超出部分会被截断。

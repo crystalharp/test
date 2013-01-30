@@ -522,6 +522,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             return;
         }
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
+        mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
 
         DataQuery dataQuery = new DataQuery(mContext);
         Hashtable<String, String> criteria = lastDataQuery.getCriteria();
@@ -593,8 +594,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             return;
         }
 
-        mActionLog.addAction(mActionTag+ActionLog.DiscoverListFilterSelect, name, DataQuery.makeFilterRequest(this.mFilterList));
-        
         DataQuery dataQuery = new DataQuery(mContext);
 
         POI requestPOI = lastDataQuery.getPOI();
@@ -629,7 +628,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (mDataQuery == null || mState != STATE_LIST) {
                     return;
                 }
-                mActionLog.addAction(ActionLog.Title_Right_Button, mActionTag);
+                mActionLog.addAction(ActionLog.Title_Right_Button);
                 viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 
@@ -664,13 +663,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 showFilterListView(mTitleFragment);
 
                 byte key = (Byte)view.getTag();
-                if (key == FilterResponse.FIELD_FILTER_AREA_INDEX) {
-                    mActionLog.addAction(mActionTag+ActionLog.DiscoverListFilterArea);
-                } else if (key == FilterResponse.FIELD_FILTER_CATEGORY_INDEX) {
-                    mActionLog.addAction(mActionTag+ActionLog.DiscoverListFilterCategory);
-                } else if (key == FilterResponse.FIELD_FILTER_ORDER_INDEX) {
-                    mActionLog.addAction(mActionTag+ActionLog.DiscoverListFilterOrder);
-                }
                 mFilterListView.setData(mFilterList, key, DiscoverListFragment.this, turnPageing);
         }
     }

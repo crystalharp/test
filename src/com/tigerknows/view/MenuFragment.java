@@ -108,6 +108,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.discover_btn:
                 mSphinx.uiStackClose(new int[]{R.id.view_discover});
+                mActionLog.addAction(ActionLog.MenuDiscover);
                 mSphinx.showView(R.id.view_discover);
                 mSphinx.getDiscoverFragment().setCurrentItem(0);
                 if (mDiscvoerImv.getVisibility() == View.VISIBLE) {

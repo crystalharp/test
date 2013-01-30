@@ -329,7 +329,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             return;
         }
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
-        mActionLog.addAction(ActionLog.SearchResultNextPage);
+        mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
 
         DataQuery poiQuery = new DataQuery(mContext);
         POI requestPOI = lastDataQuery.getPOI();
@@ -374,8 +374,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             return;
         }
 
-        mActionLog.addAction(mActionTag+ActionLog.SearchResultFilter, name, DataQuery.makeFilterRequest(this.mFilterList));
-        
         DataQuery poiQuery = new DataQuery(mContext);
 
         POI requestPOI = lastDataQuery.getPOI();
@@ -402,7 +400,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (mPOIList.isEmpty() || mState != STATE_LIST) {
                     return;
                 }
-                mActionLog.addAction(ActionLog.SearchResultMap);
+                mActionLog.addAction(ActionLog.Title_Right_Button);
                 viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 
@@ -421,13 +419,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 showFilterListView(mTitleFragment);
 
                 byte key = (Byte)view.getTag();
-                if (key == POIResponse.FIELD_FILTER_AREA_INDEX) {
-                    mActionLog.addAction(ActionLog.SearchResultFilterArea);
-                } else if (key == POIResponse.FIELD_FILTER_CATEGORY_INDEX) {
-                    mActionLog.addAction(ActionLog.SearchResultFilterCategory);
-                } else if (key == POIResponse.FIELD_FILTER_ORDER_INDEX) {
-                    mActionLog.addAction(ActionLog.SearchResultFilterOrder);
-                }
                 mFilterListView.setData(mFilterList, key, POIResultFragment.this, turnPageing);
         }
     }

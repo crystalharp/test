@@ -85,7 +85,7 @@ public class BaseDialog extends Dialog {
                 public void onClick(View arg0) {
                     synchronized (mSphinx.mUILock) {
                         if (!mSphinx.mUIProcessing) {
-                            mActionLog.addAction(ActionLog.Title_Left_Back, mActionTag);
+                            mActionLog.addAction(ActionLog.Title_Left_Back);
                             dismiss();
                         }
                     }
@@ -96,10 +96,6 @@ public class BaseDialog extends Dialog {
     
     @Override
     public void dismiss() {
-        if (!TextUtils.isEmpty(mActionTag)) {
-            mActionLog.addAction(ActionLog.Dismiss, mActionTag);
-        }
-        
         if (mSphinx != null) {
             mSphinx.uiStackDismiss(mId);
         }
@@ -109,9 +105,6 @@ public class BaseDialog extends Dialog {
 
     @Override
     public void show() {
-        if (!TextUtils.isEmpty(mActionTag)) {
-            mActionLog.addAction(mActionTag);
-        }
         if (mSphinx != null) {
             mSphinx.uiStackPush(mId);
         }
@@ -137,6 +130,9 @@ public class BaseDialog extends Dialog {
     }
     
     public void onResume() {
+        if (!TextUtils.isEmpty(mActionTag)) {
+            mActionLog.addAction(mActionTag);
+        }
         mTitleBtn.setBackgroundDrawable(null);
     }
     

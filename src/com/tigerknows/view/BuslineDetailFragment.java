@@ -384,7 +384,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.right_btn) {
-        	mActionLog.addAction(ActionLog.TrafficLineDetailMapBtn);
+            mActionLog.addAction(ActionLog.Title_Right_Button);
         	// 绘制交通图层
 			viewMap();
 			// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点

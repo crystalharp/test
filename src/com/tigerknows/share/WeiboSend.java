@@ -47,6 +47,7 @@ import android.widget.TextView;
 import com.tigerknows.widget.Toast;
 
 import com.tigerknows.ActionLog;
+import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.decarta.Globals;
 import com.decarta.android.util.Util;
@@ -59,7 +60,7 @@ import com.weibo.net.Weibo;
 import com.weibo.net.WeiboException;
 import com.weibo.net.AsyncWeiboRunner.RequestListener;
 
-public class WeiboSend extends Activity implements OnClickListener {
+public class WeiboSend extends BaseActivity implements OnClickListener {
 	
     public static final int MAX_LEN = 140;
     
@@ -83,10 +84,6 @@ public class WeiboSend extends Activity implements OnClickListener {
     
     public static final int WEIBO_MAX_LENGTH = 140;
 
-    private String mActionTag;
-    
-    private ActionLog mActionLog;
-    
     private TKWeibo mSina;
 	
 	public void removeImage() {
@@ -206,8 +203,8 @@ public class WeiboSend extends Activity implements OnClickListener {
         }
     }
 
-    private void findViews() {
-
+    protected void findViews() {
+        super.findViews();
         mTitleTxv = (TextView)findViewById(R.id.title_txv);
         mLogoutBtn = (Button)this.findViewById(R.id.logout_btn);
         mSendBtn = (Button)this.findViewById(R.id.send_btn);
@@ -217,8 +214,8 @@ public class WeiboSend extends Activity implements OnClickListener {
         mTextLimitUnitLnl = (LinearLayout)this.findViewById(R.id.text_limit_unit_lnl);
     }
 
-    private void setListener() {
-
+    protected void setListener() {
+        super.setListener();
         mLogoutBtn.setOnClickListener(this);
         mSendBtn.setOnClickListener(this);
         mPic.setOnClickListener(this);
@@ -250,13 +247,11 @@ public class WeiboSend extends Activity implements OnClickListener {
     @Override
     protected void onPause() {
         super.onPause();
-        mActionLog.addAction(mActionTag+"DM");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mActionLog.addAction(mActionTag);
     }
 
     @Override
@@ -328,6 +323,7 @@ public class WeiboSend extends Activity implements OnClickListener {
                     return;
                 }
                 hideInputMethodManager();
+                ActionLog.getInstance(this).addAction(ActionLog.DIALOG, getString(R.string.doing_and_wait));
                 showDialog(R.id.dialog_share_doing);
                 new Thread() {
                     

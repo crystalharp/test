@@ -359,6 +359,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 }
             });
             mTipProgressDialog.show();
+            ActionLog.getInstance(this).addAction(ActionLog.DIALOG, mThis.getString(R.string.map_static_waiting_tip));
             
             new Thread(new Runnable() {
                 
@@ -1626,7 +1627,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.left_btn:
-                mActionLog.addAction(ActionLog.Title_Left_Back, mActionTag);
+                mActionLog.addAction(ActionLog.Title_Left_Back);
                 onBack();
                 break;
                 
@@ -1636,6 +1637,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 break;
 
             case R.id.close_btn:
+                mActionLog.addAction(ActionLog.DownloadMapCloseOnClick);
                 mWifiView.setVisibility(View.GONE);
                 break;
                 
