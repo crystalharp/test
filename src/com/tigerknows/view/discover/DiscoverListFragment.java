@@ -294,12 +294,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                         if (object instanceof Tuangou) {
                             Tuangou tagret = (Tuangou) object;
 //                            tagret.getFendian().setOrderNumber(position+1);
-                            mActionLog.addAction(mActionTag+ActionLog.DiscoverListSelectItem, position+1, tagret.getUid());
+                            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, position+1, tagret.getUid());
                             mSphinx.showView(R.id.view_tuangou_detail);
                             mSphinx.getTuangouDetailFragment().setData(mTuangouList, position, DiscoverListFragment.this);
                         } else if (object instanceof Yanchu){
                             Yanchu tagret = (Yanchu) object;
-                            mActionLog.addAction(mActionTag+ActionLog.DiscoverListSelectItem, position+1, tagret.getUid());
+                            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, position+1, tagret.getUid());
                             mSphinx.showView(R.id.view_yanchu_detail);
                         	mSphinx.getYanchuDetailFragment().setData(mYanchuList, position, DiscoverListFragment.this);
                         } else if (object instanceof Dianying){
@@ -317,12 +317,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                             }
                             tagret.getYingxun().setChangciOption(changciOption);
 //                            tagret.getYingxun().setOrderNumber(position+1);
-                            mActionLog.addAction(mActionTag+ActionLog.DiscoverListSelectItem, position+1, tagret.getUid());
+                            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, position+1, tagret.getUid());
                         	mSphinx.showView(R.id.view_dianying_detail);
                         	mSphinx.getDianyingDetailFragment().setData(mDianyingList, position, DiscoverListFragment.this);
                         } else if (object instanceof Zhanlan){
                         	Zhanlan tagret = (Zhanlan) object;
-                            mActionLog.addAction(mActionTag+ActionLog.DiscoverListSelectItem, position+1, tagret.getUid());
+                            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, position+1, tagret.getUid());
                             mSphinx.showView(R.id.view_zhanlan_detail);
                         	mSphinx.getZhanlanDetailFragment().setData(mZhanlanList, position, DiscoverListFragment.this);
                         }
@@ -336,7 +336,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             
             @Override
             public void onRefresh(boolean isHeader) {
-                mActionLog.addAction(mActionTag+ActionLog.DiscoverListLoading);
                 turnPage(null);
             }
         });

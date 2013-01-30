@@ -145,6 +145,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     				public void onClick(View v) {
     			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
     			        mTitlePopupArrayAdapter.notifyDataSetChanged();
+    			        mActionLog.addAction(ActionLog.TrafficPopupWindow);
     				}
     	        });
         	}

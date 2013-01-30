@@ -164,7 +164,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                 if (isHeader) {
                     return;
                 }
-                mActionLog.addAction(ActionLog.GoCommentClickMore);
+                mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
                 turnPage();
             }
         });

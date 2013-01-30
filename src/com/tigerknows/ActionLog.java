@@ -37,11 +37,11 @@ public class ActionLog {
         return sActionLog;
     }
 
-    // 标题栏左上角按钮 界面UI名称LB
+    // 标题栏左上角按钮
     public static final String Title_Left_Back = "ZC";
     // 回退键
     public static final String KeyCodeBack = "ZB";    
-    // 标题栏右上角按钮 界面UI名称
+    // 标题栏右上角按钮
     public static final String Title_Right_Button = "ZD";
     
     // 提示对话框出现  ZA-提示内容
@@ -56,18 +56,14 @@ public class ActionLog {
     // 到这里去对话框
     public static final String DIALOG_COME = "DB";
     
-    public static final String DIALOG_COME_HERE_TRANSFER = DIALOG_COME + "AA";
+    public static final String DIALOG_COME_HERE_TRANSFER = "AA";
     
-    public static final String DIALOG_COME_HERE_DRIVE = DIALOG_COME + "AB";
+    public static final String DIALOG_COME_HERE_DRIVE = "AB";
     
-    public static final String DIALOG_COME_HERE_WALK = DIALOG_COME + "AC";
+    public static final String DIALOG_COME_HERE_WALK = "AC";
     
-    public static final String DIALOG_COME_HERE_CUSTOM_START = DIALOG_COME + "AD";
+    public static final String DIALOG_COME_HERE_CUSTOM_START = "AD";
     
-    // 提示设置定位对话框
-    public static final String DIALOG_SETTING_LOCATION_CHECKBOX = "DCAA-%s";
-    
-
     // 点击区域筛选框 
     public static final String FILTER_AREA_ONCLICK = "ZM";
     // 点击分类筛选框 
@@ -78,16 +74,14 @@ public class ActionLog {
     public static final String FILTER_SELECTED = "ZP-%s-%s";
     // 取消筛选
     public static final String FILTER_CANCEL = "ZQ";
-    // 点击列表中的某一项
-    public static final String LISTVIEW_ITEM_ONCLICK = "ZS-%s";
     
     // 翻页
     public static final String LOAD_MORE_TRIGGER = "ZR";
+    
+    public static final String LISTVIEW_ITEM_ONCLICK = "ZT-%s-%s";
 
     // 日志超长 EXCP
     public static final String LOG_OUT = "EXCP";
-    // 异常退出 EXCE
-    public static final String EXCEPTION_EXIT = "EXCE";
     
     // 搜索频道 
     // 搜索首页 AP
@@ -141,9 +135,6 @@ public class ActionLog {
     public static final String POIDetail = "AE";
     // POI详情页显示 AEAA-poi uuid-名称
     public static final String POIDetailShow = POIDetail + "AA-%s-%s-%s";
-    // 点击“结果列表”按钮AEAB
-    // 点击右上角地图按钮 AEAC
-    public static final String POIDetailMap = POIDetail + "AC";
     // 点击地址 AEAD
     public static final String POIDetailAddress = POIDetail + "AD";
     // 点击电话 AEAE
@@ -152,9 +143,6 @@ public class ActionLog {
     public static final String POIDetailFavorite = POIDetail + "AF-%s";
     // 点击分享 AEAG
     public static final String POIDetailShare = POIDetail + "AG";
-    // 点击发送短信按钮 AEAH
-    // 点击到这里去 AEAI
-    public static final String POIDetailGoToHere = POIDetail + "AI";
     // 点击搜索周边 AEAJ
     public static final String POIDetailSearch = POIDetail + "AJ";
     // 点击全部点评 AEAK
@@ -173,8 +161,6 @@ public class ActionLog {
 
     // 周边搜索页 AS
     public static final String SearchNearby = "AS";
-    // 点击返回按钮 ASZA
-    // 周边搜索页显示 AS
     // 点击分类tab按钮 ASAA
     public static final String SearchNearbyCategory = SearchNearby + "AA";
     // 点击美食 ASAB
@@ -243,6 +229,7 @@ public class ActionLog {
     public static final String MoreUserHome = More + "AQ";
     // 点击软件更新 AFAR
     public static final String MoreUpdateSoft = More + "AR";
+    public static final String MoreGiveFavourableComment = More + "AS";
 
     // 切换城市页
     public static final String ChangeCity = "AG";
@@ -284,9 +271,6 @@ public class ActionLog {
 
     // 收藏夹页
     public static final String Favorite = "AI";
-    // 收藏夹页 AI
-    // 点击左上角返回按钮 AIZA
-    // 点击右上角删除按钮 AIAA
     // 点击地点tab AIAB
     public static final String FavoritePOI = Favorite + "AB";
     // 点击交通tab AIAC
@@ -535,14 +519,11 @@ public class ActionLog {
     // 交通线路列表页显示   TB
     public static final String TrafficBusline = "BV";
     // 线路列表翻页    TBP
-    public static final String TrafficBuslinePage = TrafficBusline + "AA";
     // 点击线路    TBL-%s(%s所选线路的下标)
     public static final String TrafficBusineLine = TrafficBusline + "AB-%s";
 
     // 交通站点列表页显示	TS
     public static final String TrafficStation = "BW";
-    // 站点列表翻页    TSP
-    public static final String TrafficStationPage = TrafficStation + "AA";
     // 点击站点    TSS-%s(%s所选站点的下标)    
     public static final String TrafficStationSelect = TrafficStation + "AB-%s";
 
@@ -708,8 +689,6 @@ public class ActionLog {
     public static final String MyCommentClickPOI = MyComment+"AA-%s";
     // 点击点评内容AAAB-%s (%s=index)
     public static final String MyCommentClickComment = MyComment+"AB-%s";
-    // 往上拉加载点评 ACAC
-    public static final String MyCommentClickMore = MyComment+"AC";
 
     // 点评输入页 CI
     public static final String POIComment = "AB";
@@ -758,8 +737,6 @@ public class ActionLog {
     public static final String GoCommentClickInputBox = GoComment+"AA";
     // 点击某一个POI ACAB-%s-%s-%s
     public static final String GoCommentClickPOI = GoComment+"AB-%s-%s-%s";
-    // 往上拉加载点评 ACAC
-    public static final String GoCommentClickMore = GoComment+"AC";
 
     // POI点评列表页 AD
     public static final String POICommentList = "AD";
@@ -806,10 +783,6 @@ public class ActionLog {
     
     // 团购结果列表页
     public static final String TuangouList = "CB";
-    // 点击某一条结果 CBAE-%s(下标)
-    public static final String DiscoverListSelectItem = "AE-%s-%s";
-    // 往上拉加载后20条结果 CBAF
-    public static final String DiscoverListLoading = "AF";
     // 点击订单按钮 CBAG
     public static final String TuangouListDingdan = TuangouList + "AG";
     // 点击TitleButton选择category AH-%d
@@ -827,10 +800,6 @@ public class ActionLog {
     // 团购详情页
     // 团购详情页显示 CE
     public static final String TuangouXiangqing = "CE";
-    // 点击右上角地图
-    // 点击返回按钮
-    // 点击到这里去按钮 CEAA
-    public static final String DiscoverDetailDistance = "AA";
     // 点击地址 CEAB
     public static final String DiscoverDetailAddress = "AB";
     // 点击电话 CEAC

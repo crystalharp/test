@@ -123,7 +123,7 @@ public class MyCommentListFragment extends BaseFragment {
             
             @Override
             public void onRefresh(boolean isHeader) {
-                mActionLog.addAction(ActionLog.MyCommentClickMore);
+                mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
                 turnPage(isHeader);
             }
         });
