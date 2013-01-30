@@ -159,6 +159,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     				public void onClick(View v) {
     			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
     			        mTitlePopupArrayAdapter.notifyDataSetChanged();
+    			        mActionLog.addAction(ActionLog.TrafficPopupWindow);
     				}
     	        });
         	}
@@ -178,6 +179,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
             mTitleFragment.dismissPopupWindow();
             Plan clickedPlan = mPlanList.get(position);
+            mActionLog.addAction(ActionLog.TrafficPopupClickItem, position);
             if (clickedPlan.equals(plan)) {
             	return;
             } else {

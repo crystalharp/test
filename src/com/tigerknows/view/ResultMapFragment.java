@@ -62,6 +62,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
             mTitleFragment.dismissPopupWindow();
             mTitlePopupArrayAdapter.mSelectedItem = mTitlePopupArrayAdapter.getItem(position);
+            mActionLog.addAction(ActionLog.TrafficPopupClickItem, position);
             if (mActionTag.equals(ActionLog.MapBusline)) {
                 List<Line> list = mSphinx.getBuslineResultLineFragment().getData();
                 for(int i = 0, size = list.size(); i < size; i++) {
@@ -224,6 +225,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         	if (mTitlePopupList.size() > 0) {
         		mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
         		mTitlePopupArrayAdapter.notifyDataSetChanged();
+        		mActionLog.addAction(ActionLog.TrafficPopupWindow);
         	}
         	break;
         case R.id.confirm_btn:

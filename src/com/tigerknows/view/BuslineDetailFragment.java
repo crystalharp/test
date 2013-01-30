@@ -86,6 +86,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
             mTitleFragment.dismissPopupWindow();
             Line clickedLine = mLineList.get(position);
+            mActionLog.addAction(ActionLog.TrafficPopupClickItem, position);
             if (clickedLine.equals(line)) {
             	return;
             } else {

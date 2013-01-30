@@ -463,6 +463,10 @@ public class ActionLog {
     public static final String TrafficQueryResultT = Traffic + "BD-%s";
     // 线路查询有结果   TQRB-%s(%s返回的结果数目，限制条件???)
     public static final String TrafficQueryResultB = Traffic + "BE-%s";
+    // 点击title弹出popup window
+    public static final String TrafficPopupWindow = Traffic + "BF";
+    // 点击popup window的某一选项
+    public static final String TrafficPopupClickItem = Traffic + "BG-%s";
     
     // 显示选择收藏的POI点页面 TFF
     public static final String TrafficFetchFavorite = "BR";
@@ -1013,6 +1017,7 @@ public class ActionLog {
                     lastAction = actionLog;
                 }
                 mStringBuilder.append(actionLog);
+                LogWrapper.d("ActionLog", actionLog);
     
                 // 判断是否要写入文件
                 if (mStringBuilder.length() > WRITE_FILE_SIZE) {
