@@ -787,6 +787,10 @@ public class ActionLog {
     public static final String DiscoverListLoading = "AF";
     // 点击订单按钮 CBAG
     public static final String TuangouListDingdan = TuangouList + "AG";
+    // 点击TitleButton选择category AH-%d
+    public static final String DiscoverListTitleSelection = "AH-%s";
+    // 在发现详情页面，滑动页面 AI-%s(index)
+    public static final String DiscoverDetailFling = "AI-%s";
     
     // 电影结果列表页
     public static final String DianyingList = "CR";

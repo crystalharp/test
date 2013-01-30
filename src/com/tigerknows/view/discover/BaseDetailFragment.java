@@ -117,7 +117,7 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     }
 
     protected void setListener() {
-        mCycleOnPageChangeListener = new CycleOnPageChangeListener(this, this);
+        mCycleOnPageChangeListener = new CycleOnPageChangeListener(mContext, this, this);
         mViewPager.setOnPageChangeListener(mCycleOnPageChangeListener);
     }
 
