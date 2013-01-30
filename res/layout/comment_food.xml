@@ -116,6 +116,7 @@
 	        android:layout_width="70dp"
 	        android:layout_height="wrap_content"
 	        android:layout_marginRight="4dp"
+	        android:layout_gravity="center_vertical"
 	        android:gravity="left|center_vertical"
 	        android:text="@string/comment_food_caipin"/>
 	    <EditText android:id="@+id/recommend_edt"
@@ -123,8 +124,6 @@
 	        android:layout_height="wrap_content"
 	        android:maxLength="80"
 	        android:textSize="14sp"
-		    android:layout_marginTop="2dp"
-		    android:layout_marginBottom="6dp"
 		    android:singleLine="true"
 		    android:ellipsize="end"
 	        android:hint="@string/comment_food_recommed_hit" />

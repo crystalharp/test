@@ -962,7 +962,7 @@ public class POI extends BaseData {
                 List<String> strs = description.getXArray(key).toStringList();
                 for(String str : strs) {
                     if (s.length() > 0) {
-                        s.append(',');
+                        s.append(' ');
                     }
                     s.append(str);
                 }
