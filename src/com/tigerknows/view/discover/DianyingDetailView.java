@@ -213,10 +213,12 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         else
         	mStartTimeTxv.setVisibility(View.GONE);
         if (TextUtils.isEmpty(mFilterArea) || mData.getNum() < 2) {
-            mNearbyFendianView.setVisibility(View.GONE);
+            mNearbyFendianTxv.setVisibility(View.GONE);
+            mNearbyFendianView.setClickable(false);
         } else {
             mNearbyFendianTxv.setText(mSphinx.getString(R.string.dianying_detail_nearby,mFilterArea,mData.getNum()));
-            mNearbyFendianView.setVisibility(View.VISIBLE);
+            mNearbyFendianTxv.setVisibility(View.VISIBLE);
+            mNearbyFendianView.setClickable(true);
         }
         
         refreshDescription(true);
