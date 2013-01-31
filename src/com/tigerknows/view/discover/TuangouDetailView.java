@@ -175,6 +175,8 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 Drawable drawable = mData.getPicturesDetail().loadDrawable(null, null, null);
                 if(drawable != null) {
                     mPictureImv.setBackgroundDrawable(drawable);
+                }else{
+                	mPictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou_detail);
                 }
                 TKDrawable tkDrawable = mData.getContentPic();
                 if (tkDrawable != null) {
@@ -209,7 +211,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     @Override
     public void dismiss() {
         super.dismiss();
-        mPictureImv.setBackgroundDrawable(null);
+        mPictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou_detail);
         mContentTxv.setBackgroundDrawable(null);
     }
     
@@ -298,6 +300,8 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, mParentFragment.toString());
             if(drawable != null) {
                 mPictureImv.setBackgroundDrawable(drawable);
+            }else{
+            	mPictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou_detail);
             }
         }
         tkDrawable = mData.getContentPic();

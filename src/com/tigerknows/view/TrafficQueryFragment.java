@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
@@ -110,7 +111,11 @@ public class TrafficQueryFragment extends BaseFragment {
 	QueryEditText mSelectedEdt;
 	
     TextView mCityTxt;
+    
+    View mCityView;
 
+    View mShadowWhite;
+    
     LinearLayout mSuggestLnl;
     
 	ListView mSuggestLsv;
@@ -228,6 +233,8 @@ public class TrafficQueryFragment extends BaseFragment {
 		mEnd     = new QueryEditText((TKEditText)mRootView.findViewById(R.id.end_edt));
 		mStart   = new QueryEditText((TKEditText)mRootView.findViewById(R.id.start_edt));
 		mCityTxt = (TextView)mRootView.findViewById(R.id.cur_city_txt);
+		mCityView = (View)mRootView.findViewById(R.id.cur_city_view);
+		mShadowWhite = (View)mRootView.findViewById(R.id.shadow_input);
 		
 		mSuggestLnl = (LinearLayout)mRootView.findViewById(R.id.suggest_lnl);
 		mSuggestLsv = (ListView)mRootView.findViewById(R.id.suggest_lsv);
