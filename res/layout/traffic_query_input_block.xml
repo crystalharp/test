@@ -29,6 +29,7 @@
 			            android:layout_gravity="center_vertical"
 			            android:layout_width="wrap_content"
 			            android:layout_height="wrap_content"
+			            android:layout_marginRight="4dp"
 			            android:focusable="true" />
 
 			        <com.tigerknows.view.TKEditText
@@ -48,6 +49,7 @@
 			            style="?android:attr/buttonStyleSmall"
 			            android:background="@drawable/btn_traffic_select_end"
 			            android:layout_gravity="center_vertical"
+			            android:layout_marginRight="4dp"
 			            android:layout_width="wrap_content"
 			            android:layout_height="wrap_content" />
 			        <com.tigerknows.view.TKEditText
