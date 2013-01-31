@@ -111,8 +111,8 @@ public class TilesView extends GLSurfaceView {
 	private static final float ABNORMAL_PINCH_CENTER_DIST=300/1.5f;
 	private static final int ABNORMAL_ZROTATION=30;
 	
-	private static final int MAX_TILE_IMAGE_DEF=70;
-	private static final int MAX_TILE_TEXTURE_REF_DEF=200;
+	private static final int MAX_TILE_IMAGE_DEF=2;
+	private static final int MAX_TILE_TEXTURE_REF_DEF=128;
 	
 	private static final float XROTATION_YDIST=300/1.5f;
 	private static final int XROTATION_TIME=500*1000000;

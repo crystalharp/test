@@ -17,6 +17,7 @@
 package com.tigerknows.view;
 
 import com.decarta.Globals;
+import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 
 import android.content.Context;
@@ -196,6 +197,7 @@ public class TKEditText extends LinearLayout implements OnClickListener {
 
     @Override
     public void onClick(View view) {
+        ActionLog.getInstance(getContext()).addAction(ActionLog.EDITTEXT_DELELE_ONCLICK);
         setText(null);
         mInputEdt.requestFocus();
     }

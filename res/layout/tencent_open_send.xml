@@ -50,7 +50,8 @@
             android:layout_centerInParent="true"
             android:ellipsize="marquee"
             android:gravity="center"
-            android:textSize="18sp"/>
+            android:textSize="18sp"
+            android:textColor="@color/white"/>
     </RelativeLayout>
     
     <EditText

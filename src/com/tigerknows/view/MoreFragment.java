@@ -27,14 +27,19 @@ import android.widget.TextView;
 import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
+import com.tigerknows.AppRecommend;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.MapDownload.DownloadCity;
 import com.tigerknows.maps.MapEngine;
+import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.UserLogonModel;
+import com.tigerknows.model.UserLogonModel.Recommend;
 import com.tigerknows.model.UserLogonModel.SoftwareUpdate;
+import com.tigerknows.model.UserLogonModel.Recommend.RecommendApp;
 import com.tigerknows.util.CommonUtils;
+import com.tigerknows.view.discover.BrowserActivity;
 import com.tigerknows.view.user.UserBaseActivity;
 import com.tigerknows.view.user.UserLoginActivity;
 
@@ -77,6 +82,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     public static final int UPGRADE_TYPE_MAP = 1;
     public static final int UPGRADE_TYPE_COMMENT = 2;
     public static final int UPGRADE_TYPE_SOFTWARE = 3;
+    public static final int UPGRADE_TYPE_PUBLIC_WELFARRE = 4;
     private int mUpgradeType = UPGRADE_TYPE_NONE;
     
     @Override
@@ -235,6 +241,14 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                 } else if (mUpgradeType == UPGRADE_TYPE_MAP) {
                     mActionLog.addAction(ActionLog.MoreUpdateMap);
                     showUpgradeMapDialog();
+                } else if (mUpgradeType == UPGRADE_TYPE_PUBLIC_WELFARRE) {
+                    RecommendApp publicWelfarre = getPublicWelfarre();
+                    if (publicWelfarre != null) {
+                        Intent intent = new Intent(); 
+                        intent.putExtra(BrowserActivity.TITLE, publicWelfarre.getName());
+                        intent.putExtra(BrowserActivity.URL, publicWelfarre.getUrl());
+                        mSphinx.showView(R.id.activity_browser, intent);
+                    }
                 }
                 break;
             case R.id.user_btn:
@@ -353,20 +367,35 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
             if (mUpgradeType == UPGRADE_TYPE_SOFTWARE) {
                 mUpgradeBtn.setText(R.string.upgrade_tip_software);
                 mUpgradeBtn.setBackgroundResource(R.drawable.btn_update);
+                mUpgradeBtn.setVisibility(View.VISIBLE);
+                mSphinx.getMenuFragment().setUpgrade(View.VISIBLE);
+                return;
             } else if (mUpgradeType == UPGRADE_TYPE_COMMENT) {
                 mUpgradeBtn.setText(R.string.upgrade_tip_comment);
                 mUpgradeBtn.setBackgroundResource(R.drawable.btn_orangle);
                 TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_MAP_TIP);
+                mUpgradeBtn.setVisibility(View.VISIBLE);
+                mSphinx.getMenuFragment().setUpgrade(View.VISIBLE);
+                return;
             } else if (mUpgradeType == UPGRADE_TYPE_MAP) {
                 mUpgradeBtn.setText(R.string.upgrade_tip_map);
                 mUpgradeBtn.setBackgroundResource(R.drawable.btn_update);
+                mUpgradeBtn.setVisibility(View.VISIBLE);
+                mSphinx.getMenuFragment().setUpgrade(View.VISIBLE);
+                return;
+            } else if (mUpgradeType == UPGRADE_TYPE_PUBLIC_WELFARRE) {
+                RecommendApp publicWelfarre = getPublicWelfarre();
+                if (publicWelfarre != null) {
+                    mUpgradeBtn.setText(publicWelfarre.getName());
+                    mUpgradeBtn.setBackgroundResource(R.drawable.btn_update);
+                    mUpgradeBtn.setVisibility(View.VISIBLE);
+                    mSphinx.getMenuFragment().setUpgrade(View.VISIBLE);
+                    return;
+                }
             }
-            mUpgradeBtn.setVisibility(View.VISIBLE);
-            mSphinx.getMenuFragment().setUpgrade(View.VISIBLE);
-        } else {
-            mUpgradeBtn.setVisibility(View.GONE);
-            mSphinx.getMenuFragment().setUpgrade(View.GONE);
         }
+        mUpgradeBtn.setVisibility(View.GONE);
+        mSphinx.getMenuFragment().setUpgrade(View.GONE);
     }
 
     private void showDownloadSoftwareDialog() {
@@ -435,5 +464,27 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                         mSphinx.showView(R.id.activity_map_download, intent);
                     }
                 });
+    }
+    
+    public RecommendApp getPublicWelfarre() {
+        RecommendApp publicWelfarre = null;
+        UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
+        if (userLogonModel != null) {
+            Recommend recommend = userLogonModel.getRecommend();
+            if (recommend != null) {
+                List<RecommendApp> list = recommend.getRecommendAppList();
+                if (list != null) {
+                    for(int i = 0, size = list.size(); i < size; i++) {
+                        RecommendApp recommendApp = list.get(i);
+                        if (recommendApp != null
+                                && mSphinx.getString(R.string.public_welfarre).equals(recommendApp.getName())) {
+                            publicWelfarre = recommendApp;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return publicWelfarre;
     }
 }

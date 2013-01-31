@@ -26,7 +26,7 @@
 
     <string name="yuan">%1$d元</string>
     <string name="rmb_text">元</string>
-    <string name="brackets">【%1$s】</string>
+    <string name="brackets">（%1$s）</string>
     <string name="map">地图</string>
     <string name="back">返回</string>
     <string name="back_home">返回首页</string>
@@ -337,7 +337,7 @@
     <string name="about_current_city_sw_version">当前城市联想词版本：%1$s</string>
     <string name="about_me">老虎宝典是老虎地图的全面升级版，致力于让大众的生活更加丰富多彩。</string>
     <string name="about_name">Beijing TigerKnows Technology Co.Ltd</string>
-    <string name="about_right">© 2012 TigerKnows. All Rights reserved</string>
+    <string name="about_right">© 2013 TigerKnows. All Rights reserved</string>
     <string name="about_web">官网 \u0020 http://www.tigerknows.com</string>
     <string name="about_weibo">官方 \u0020 http://weibo.com/tigermap</string>
     <string name="about_wap">Wap网址 \u0020 http://wap.tigerknows.com</string>
@@ -916,4 +916,5 @@
     <string name="touch_screen_and_retry">点击屏幕，重新加载</string>
     <string name="are_you_exit_add_merchart">你确定要放弃添加商户？</string>
     <string name="searching_title">搜索中…</string>
+    <string name="public_welfarre">微宝贝</string>
 </resources>

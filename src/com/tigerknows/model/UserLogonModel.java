@@ -36,6 +36,14 @@ public class UserLogonModel extends XMapData {
     public SoftwareUpdate getSoftwareUpdate() {
         return softwareUpdate;
     }
+    
+    public void setSoftwareUpdate(SoftwareUpdate softwareUpdate) {
+        this.softwareUpdate = softwareUpdate;
+    }
+    
+    public void setRecommend(Recommend recommend) {
+        this.recommend = recommend;
+    }
 
     public DomainName getDomainName() {
         return domainName;
