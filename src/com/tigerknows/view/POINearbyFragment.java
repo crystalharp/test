@@ -183,6 +183,11 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onPageSelected(int index) {
                 CommonUtils.pageIndicatorChanged(mSphinx, mPageIndicatorView, index);
+                if (index == 0) {
+                    mActionLog.addAction(ActionLog.SearchNearbyCategory);
+                } else {
+                    mActionLog.addAction(ActionLog.SearchNearbyJingQue);
+                }
             }
             
             @Override

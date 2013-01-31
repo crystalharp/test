@@ -540,23 +540,24 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             
             @Override
             public void onFocusChange(View v, boolean value) {
-                switch (v.getId()) {
-                    case R.id.content_edt:
-                        mActionLog.addAction(ActionLog.POICommentContent);
-                        break;
-                        
-                    case R.id.avg_edt:
-                        mActionLog.addAction(ActionLog.POICommentAvg);                        
-                        break;
-                        
-                    case R.id.recommend_edt:
-                        mActionLog.addAction(ActionLog.POICommentRecommend);  
-                        break;
-
-                    default:
-                        break;
+                if (value) {
+                    switch (v.getId()) {
+                        case R.id.content_edt:
+                            mActionLog.addAction(ActionLog.POICommentContent);
+                            break;
+                            
+                        case R.id.avg_edt:
+                            mActionLog.addAction(ActionLog.POICommentAvg);                        
+                            break;
+                            
+                        case R.id.recommend_edt:
+                            mActionLog.addAction(ActionLog.POICommentRecommend);  
+                            break;
+    
+                        default:
+                            break;
+                    }
                 }
-                
             }
         };
         mContentEdt.setOnFocusChangeListener(onFocusChangeListener);
@@ -613,6 +614,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                     } else if (rating == 5) {
                         resId = R.string.poi_comment_share_grade5;
                     }
+                    mActionLog.addAction(ActionLog.POICommentClickGrade, rating);
                     mGradeTipTxv.setText(resId);
                     mGradeTipTxv.setVisibility(View.VISIBLE);
                     mGradeTipTxv.startAnimation(animation);
@@ -997,13 +999,10 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int whichButton) {
                             if (whichButton == DialogInterface.BUTTON_POSITIVE) {
-                                mActionLog.addAction(ActionLog.POICommentClickExitOK);
                                 Intent data = new Intent();
                                 data.putExtra(Sphinx.REFRESH_POI_DETAIL, true);
                                 setResult(Activity.RESULT_CANCELED, data);
                                 finish();
-                            } else {
-                                mActionLog.addAction(ActionLog.POICommentClickExitCancel);
                             }
                         }
                     });

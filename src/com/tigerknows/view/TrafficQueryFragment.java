@@ -634,7 +634,7 @@ public class TrafficQueryFragment extends BaseFragment {
         addHistoryWord(mStart, HistoryWordTable.TYPE_TRAFFIC);
         addHistoryWord(mEnd, HistoryWordTable.TYPE_TRAFFIC);
     		
-        mActionLog.addAction(ActionLog.TrafficQueryBtnT, mStart.getEdt().getText().toString(), mEnd.getEdt().getText().toString());
+        mActionLog.addAction(ActionLog.TrafficQueryBtnT, getQueryType(), mStart.getEdt().getText().toString(), mEnd.getEdt().getText().toString());
         trafficQuery.setup(cityId, start, end, getQueryType(), getId(), mContext.getString(R.string.doing_and_wait));
         
         mSphinx.queryStart(trafficQuery);

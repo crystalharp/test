@@ -121,11 +121,8 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
                                     @Override
                                     public void onClick(DialogInterface arg0, int which) {
                                         if (which == DialogInterface.BUTTON_POSITIVE) {
-                                            mActionLog.addAction(ActionLog.AppRecommendOK);
                                             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
                                             mThis.startActivity(intent);
-                                        } else {
-                                            mActionLog.addAction(ActionLog.AppRecommendCancel);
                                         }
                                     }
                         });

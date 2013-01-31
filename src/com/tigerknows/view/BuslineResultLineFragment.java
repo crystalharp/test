@@ -200,7 +200,7 @@ public class BuslineResultLineFragment extends BaseFragment {
         BuslineQuery buslineQuery = new BuslineQuery(mContext);
         buslineQuery.setup(mBuslineQuery.getCityId(), mBuslineQuery.getKeyword(), mLineList.size(), true, getId(), null);
         mSphinx.queryStart(buslineQuery);
-        mActionLog.addAction(ActionLog.TrafficBuslinePage);
+        mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
         }
     }
 

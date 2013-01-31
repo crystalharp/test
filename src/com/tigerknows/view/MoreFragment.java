@@ -296,6 +296,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                 break;
                 
             case R.id.give_favourable_comment_btn:
+                mActionLog.addAction(ActionLog.MoreGiveFavourableComment);
                 giveFavourableComment();
                 break;
 

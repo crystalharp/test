@@ -144,7 +144,7 @@ public class POICommentList extends BaseActivity {
             @Override
             public void onRefresh(boolean isHeader) {
                 turnPage(isHeader);
-                mActionLog.addAction(ActionLog.POICommentListClickMore);
+                mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
             }
         });
 

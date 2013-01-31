@@ -2835,7 +2835,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     @Override
                     public void onCheckedChanged(CompoundButton arg0, boolean checked) {
                         TKConfig.setPref(Sphinx.this, TKConfig.PREFS_SHOW_LOCATION_SETTINGS_TIP, checked ? "1" : "");
-                        mActionLog.addAction(ActionLog.DIALOG_SETTING_LOCATION_CHECKBOX, checked ? "1" : "");
                     }
                 });
                 break;

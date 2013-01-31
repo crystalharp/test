@@ -152,7 +152,7 @@ public class TransferErrorRecovery extends BaseActivity {
 				
 //				String result = "T" + stationError + lineError + descript + phone;
 				LogWrapper.d(TAG, "errorrecovery: " + result);
-				mActionLog.addAction(ActionLog.TransferErrorRecoverySubmit);
+				mActionLog.addAction(ActionLog.Title_Right_Button);
 				Hashtable<String, String> criteria = new Hashtable<String, String>();
                 criteria.put(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, result.toString());
                 FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
