@@ -81,6 +81,7 @@
 	            android:layout_width="fill_parent" 
 	            android:layout_height="wrap_content"
 	            android:orientation="vertical"
+	            android:layout_marginRight="8dp"
 	            android:layout_toLeftOf="@+id/busline_query_btn">
 			        <com.tigerknows.view.TKEditText
 			            android:id="@+id/busline_edt"
