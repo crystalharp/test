@@ -139,7 +139,7 @@ public class TilesView extends GLSurfaceView {
     private static Paint tilePText;
     private Timer drawMyLocationTimer;
     boolean isMyLocation = false;
-    boolean stopRefreshMyLocation = false;
+    public boolean stopRefreshMyLocation = false;
     
     private MapText mapText = new MapText();
 
