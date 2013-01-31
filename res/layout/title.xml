@@ -63,7 +63,7 @@
         android:gravity="left|center_vertical"
         android:shadowDx="0"
         android:shadowDy="1"
-        android:shadowColor="#ff4e280c"
+        android:shadowColor="#a77a00"
         android:shadowRadius="1"
         >
      </Button>

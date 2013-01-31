@@ -1002,7 +1002,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             authorTxv.setText(comment.getUser());
             if (comment.getAttribute() > 0) {
                 view.setBackgroundResource(R.drawable.list_middle);
-                authorTxv.setTextColor(0xff009CFF);
                 User user = Globals.g_User;
                 if (user != null) {
                     authorTxv.setText(user.getNickName());
