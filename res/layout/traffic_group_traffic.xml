@@ -26,6 +26,7 @@
   	    android:layout_height="wrap_content"
   	    android:layout_toRightOf="@id/index"
   	    android:layout_toLeftOf="@id/text1"
+  	    android:lineSpacingExtra="4dp"
   	    android:gravity="center_vertical|left"
   	    android:layout_centerVertical="true"
   	    android:paddingLeft="4dp"
