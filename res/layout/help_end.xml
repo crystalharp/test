@@ -17,6 +17,6 @@
          android:layout_alignParentRight="true"
          android:layout_alignBottom="@id/image_imv"
          android:layout_marginRight="16dp"
-         android:layout_marginBottom="16dp" />
+         android:layout_marginBottom="96dp" />
 </RelativeLayout>
 
