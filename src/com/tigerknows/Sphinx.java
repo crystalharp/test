@@ -1990,10 +1990,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 if(drawable != null) {
                     pictureImv.setBackgroundDrawable(drawable);
                 } else {
-                    pictureImv.setBackgroundDrawable(null);
+                    pictureImv.setBackgroundResource(R.drawable.bg_picture_dianying);
                 }
             } else {
-                pictureImv.setBackgroundDrawable(null);
+                pictureImv.setBackgroundResource(R.drawable.bg_picture_dianying);
             }
             
             ViewGroup bodyView=(ViewGroup)mInfoWindowYanchuList.findViewById(R.id.body_view);
@@ -2034,10 +2034,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 	   drawable.setBounds(0, 0, Util.dip2px(Globals.g_metrics.density, 90), Util.dip2px(Globals.g_metrics.density, 60));
                     pictureImv.setBackgroundDrawable(drawable);
                 } else {
-                    pictureImv.setBackgroundDrawable(null);
+                    pictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou);
                 }
             } else {
-                pictureImv.setBackgroundDrawable(null);
+                pictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou);
             }
             
             ViewGroup bodyView=(ViewGroup)mInfoWindowTuangouList.findViewById(R.id.body_view);

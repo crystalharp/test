@@ -4,7 +4,6 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/list_selector_background_gray_light"
-    android:padding="8dp"
     >
     <ImageView
         android:id="@+id/icon_imv"
@@ -12,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
+        android:layout_margin="8dp"
         android:src="@drawable/ic_time"
         android:focusable="false"
         android:focusableInTouchMode="false"
@@ -22,9 +22,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:background="@drawable/ic_input"
+        android:background="@drawable/btn_fill_in"
         android:focusable="false"
-        android:focusableInTouchMode="false"
+        android:focusableInTouchMode="true"
         />
     <TextView
         android:id="@+id/text_txv"
@@ -33,7 +33,8 @@
         android:layout_centerVertical="true"
         android:layout_toLeftOf="@id/input_btn"
         android:layout_toRightOf="@id/icon_imv"
-        android:padding="8dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="16dp"
         android:gravity="center_vertical|left"
         android:text="@string/app_name"
         android:textColor="@color/black_dark"
