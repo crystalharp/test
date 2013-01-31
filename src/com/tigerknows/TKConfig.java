@@ -119,7 +119,7 @@ public class TKConfig {
     // 客户端软件版本
     private static String sCLIENT_SOFT_VERSION = "4.20.20130131A";
     // 客户端软件发布日期
-    public static final String CLIENT_SOFT_VERSION = "4.20.rc1";
+    public static final String CLIENT_SOFT_VERSION = "4.20.rc2";
     public static final String CLIENT_SOFT_RELEASE_DATE = "2013-01-31";
     // 地图数据版本
     private static String sMAP_DATA_VERSION = "2.50";

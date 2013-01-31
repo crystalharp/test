@@ -257,6 +257,9 @@ public class ActionLog {
     public static final String DownloadMapInputBox = DownloadMap + "AI";
     // 点击按省份查询某一城市 AHAL
     public static final String DownloadMapCloseOnClick = DownloadMap + "AM";
+    public static final String DownloadMapStartOnClick = DownloadMap + "AN";
+    public static final String DownloadMapPauseOnClick = DownloadMap + "AO";
+    public static final String DownloadMapUpdateOnClick = DownloadMap + "AP";
 
     // 收藏夹页
     public static final String Favorite = "AI";

@@ -167,6 +167,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         
         @Override
         public void onClick(View view) {
+            mActionLog.addAction(ActionLog.DownloadMapUpdateOnClick);
             List<DownloadCity> list = new ArrayList<DownloadCity>();
             for(int i = 0; i < mDownloadCityList.size(); i++) {
                 DownloadCity downloadCity = mDownloadCityList.get(i);
@@ -195,6 +196,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         
         @Override
         public void onClick(View view) {
+            mActionLog.addAction(ActionLog.DownloadMapStartOnClick);
             if (mMapEngine.isExternalStorage() == false) {
                 Toast.makeText(mThis, R.string.not_enough_space, Toast.LENGTH_LONG).show();
                 return;
@@ -218,6 +220,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         
         @Override
         public void onClick(View view) {
+            mActionLog.addAction(ActionLog.DownloadMapPauseOnClick);
             stopAllDownload(DownloadCity.STOPPED);
             for(int i = 0; i < mDownloadCityList.size(); i++) {
                 DownloadCity downloadCity = mDownloadCityList.get(i);
