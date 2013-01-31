@@ -1,10 +1,5 @@
 package com.tigerknows.view.user;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import android.content.Context;
@@ -23,7 +18,8 @@ public class User implements Serializable {
 	private long userId = Long.MIN_VALUE;
 
     // User对象在SharePreference存储的KEY值
-    private static final String PREFS_KEY = "User";
+    private static final String PREFS_KEY_USER_NICKNAME = "UserNickName";
+    private static final String PREFS_KEY_USERID = "UserId";
     
     public boolean isNickNameDefault(Context context) {
     	return context.getString(R.string.default_nick_name).equals(nickName);
@@ -56,17 +52,10 @@ public class User implements Serializable {
 	 * @param context
 	 */
 	public void store(Context context) {
-		ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream(); 
-		ObjectOutputStream out;
-		try {
-		    out = new ObjectOutputStream(arrayOutputStream);
-		    out.writeObject(this);
-		    out.close();
-		    arrayOutputStream.close();
-		} catch (IOException e) {
-		    e.printStackTrace();
-		}
-		TKConfig.setPref(context, PREFS_KEY, new String(Base64.encode(arrayOutputStream.toByteArray(), Base64.DEFAULT)));
+	    if (nickName != null) {
+            TKConfig.setPref(context, PREFS_KEY_USER_NICKNAME, new String(Base64.encode(nickName.getBytes(), Base64.DEFAULT)));
+            TKConfig.setPref(context, PREFS_KEY_USERID, new String(Base64.encode(String.valueOf(userId).getBytes(), Base64.DEFAULT)));
+	    }
 	}
 	
 	/**
@@ -76,15 +65,13 @@ public class User implements Serializable {
 	public static User loadDefault(Context context) {
 		User user = null;
 		try {
-			String prefSession = TKConfig.getPref(context, PREFS_KEY);
-			
-			if (!TextUtils.isEmpty(prefSession)) {
-				byte [] data = Base64.decode(prefSession, Base64.DEFAULT);
-				ByteArrayInputStream byteArray = new ByteArrayInputStream(data);
-				ObjectInputStream in = new ObjectInputStream(byteArray);
-				
-				user = (User)in.readObject();
-			}
+            String nickNameStr = TKConfig.getPref(context, PREFS_KEY_USER_NICKNAME);
+            String userIdStr = TKConfig.getPref(context, PREFS_KEY_USERID);
+            if (!TextUtils.isEmpty(nickNameStr) && !TextUtils.isEmpty(userIdStr)) {
+                byte [] nickName = Base64.decode(nickNameStr, Base64.DEFAULT);
+                byte [] userId = Base64.decode(userIdStr, Base64.DEFAULT);
+                user = new User(new String(nickName), Long.parseLong(new String(userId)));
+            }
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -93,6 +80,7 @@ public class User implements Serializable {
 	}
 	
 	public void clear(Context context) {
-		TKConfig.removePref(context, PREFS_KEY);
+		TKConfig.removePref(context, PREFS_KEY_USER_NICKNAME);
+        TKConfig.removePref(context, PREFS_KEY_USERID);
 	}
 }

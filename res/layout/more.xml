@@ -9,10 +9,80 @@
     android:orientation="vertical"
     android:background="@drawable/bg_discover"
     >
-        
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:id="@+id/title_view"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:paddingRight="8dp"
+	    android:background="@drawable/bg_title"
+	    >
+	    <RelativeLayout
+	        android:id="@+id/left_view"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_centerVertical="true"
+	        android:paddingRight="4dp"
+	        >
+	
+	        <Button android:id="@+id/left_btn"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerInParent="true"
+	            android:background="@drawable/btn_back"
+	            android:textSize="14sp"
+	            android:textColor="@color/btn_title"
+	            android:gravity="center"
+	            android:visibility="invisible"
+	            />
+	    </RelativeLayout>
+	
+	    <RelativeLayout
+	        android:id="@+id/right_view"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentRight="true"
+	        android:layout_centerVertical="true"
+	        >
+	
+	        <Button android:id="@+id/right_btn"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_centerInParent="true"
+	            android:background="@color/transparent"
+	            android:textSize="14sp"
+	            android:textColor="@color/btn_title"
+	            android:gravity="center"
+	            android:visibility="invisible"
+	            />
+	    </RelativeLayout>
+	
+	    <Button 
+	        android:id="@+id/title_btn"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_toRightOf="@id/left_view"
+	        android:layout_marginRight="44dp"
+	        android:background="@color/transparent"
+	        android:layout_centerVertical="true"
+	        android:padding="0dp"
+	        android:text="@string/more"
+	        android:textSize="20sp"
+	        android:textColor="@color/white"
+	        android:singleLine="true"
+	        android:ellipsize="end"
+	        android:gravity="center"
+	        android:shadowDx="0"
+	        android:shadowDy="1"
+	        android:shadowColor="#a77a00"
+	        android:shadowRadius="1"
+	        >
+	     </Button>
+	</RelativeLayout>
     <LinearLayout 
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_below="@id/title_view"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="8dp"

@@ -1,16 +1,10 @@
 package com.tigerknows.view.user;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
 
 import android.content.Context;
 import android.text.TextUtils;
 
-import com.decarta.Globals;
 import com.tigerknows.TKConfig;
 import com.tigerknows.share.Base64;
 
@@ -26,7 +20,8 @@ public class Session implements Serializable{
     private long mExpiresIn = 0;
 
     // Session对象在SharePreference存储的KEY值
-    private static final String PREFS_KEY = "Session";
+    private static final String PREFS_KEY_SESSTIONID = "SessionID";
+    private static final String PREFS_KEY_SESSTION_TIMEOUT = "SessionTimeOut";
     
 	public String getSessionId() {
 		return mSessionId;
@@ -79,17 +74,10 @@ public class Session implements Serializable{
 	 * @param context
 	 */
 	public void store(Context context) {
-		ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream(); 
-		ObjectOutputStream out;
-		try {
-		    out = new ObjectOutputStream(arrayOutputStream);
-		    out.writeObject(this);
-		    out.close();
-		    arrayOutputStream.close();
-		} catch (IOException e) {
-		    e.printStackTrace();
-		}
-		TKConfig.setPref(context, PREFS_KEY, new String(Base64.encode(arrayOutputStream.toByteArray(), Base64.DEFAULT)));
+	    if (mSessionId != null) {
+            TKConfig.setPref(context, PREFS_KEY_SESSTIONID, new String(Base64.encode(mSessionId.getBytes(), Base64.DEFAULT)));
+            TKConfig.setPref(context, PREFS_KEY_SESSTION_TIMEOUT, new String(Base64.encode(String.valueOf(timeout).getBytes(), Base64.DEFAULT)));
+	    }
 	}
 	
 	/**
@@ -99,14 +87,12 @@ public class Session implements Serializable{
 	public static Session loadDefault(Context context) {
 		Session session = null;
 		try {
-			String prefSession = TKConfig.getPref(context, PREFS_KEY);
-			
-			if (!TextUtils.isEmpty(prefSession)) {
-				byte [] data = Base64.decode(prefSession, Base64.DEFAULT);
-				ByteArrayInputStream byteArray = new ByteArrayInputStream(data);
-				ObjectInputStream in = new ObjectInputStream(byteArray);
-				
-				session = (Session)in.readObject();
+			String sessionIdStr = TKConfig.getPref(context, PREFS_KEY_SESSTIONID);
+			String timeOutStr = TKConfig.getPref(context, PREFS_KEY_SESSTION_TIMEOUT);
+			if (!TextUtils.isEmpty(sessionIdStr) && !TextUtils.isEmpty(timeOutStr)) {
+				byte [] sessionId = Base64.decode(sessionIdStr, Base64.DEFAULT);
+				byte [] timeout = Base64.decode(timeOutStr, Base64.DEFAULT);
+				session = new Session(new String(sessionId), Long.parseLong(new String(timeout)));
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -116,7 +102,8 @@ public class Session implements Serializable{
 	}
 	
 	public void clear(Context context) {
-		TKConfig.removePref(context, PREFS_KEY);
+		TKConfig.removePref(context, PREFS_KEY_SESSTIONID);
+        TKConfig.removePref(context, PREFS_KEY_SESSTION_TIMEOUT);
 	}
 
 	@Override
