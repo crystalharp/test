@@ -27,19 +27,16 @@ import android.widget.TextView;
 import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
-import com.tigerknows.AppRecommend;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.MapDownload.DownloadCity;
 import com.tigerknows.maps.MapEngine;
-import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.UserLogonModel;
 import com.tigerknows.model.UserLogonModel.Recommend;
 import com.tigerknows.model.UserLogonModel.SoftwareUpdate;
 import com.tigerknows.model.UserLogonModel.Recommend.RecommendApp;
 import com.tigerknows.util.CommonUtils;
-import com.tigerknows.view.discover.BrowserActivity;
 import com.tigerknows.view.user.UserBaseActivity;
 import com.tigerknows.view.user.UserLoginActivity;
 
@@ -187,6 +184,12 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
             setUpgrade(MoreFragment.UPGRADE_TYPE_MAP);
             return;
         }
+        
+        RecommendApp recommendApp = getPublicWelfarre();
+        if (recommendApp != null) {
+            setUpgrade(UPGRADE_TYPE_PUBLIC_WELFARRE);
+            return;
+        }
     }
 
     @Override
@@ -244,10 +247,8 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                 } else if (mUpgradeType == UPGRADE_TYPE_PUBLIC_WELFARRE) {
                     RecommendApp publicWelfarre = getPublicWelfarre();
                     if (publicWelfarre != null) {
-                        Intent intent = new Intent(); 
-                        intent.putExtra(BrowserActivity.TITLE, publicWelfarre.getName());
-                        intent.putExtra(BrowserActivity.URL, publicWelfarre.getUrl());
-                        mSphinx.showView(R.id.activity_browser, intent);
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(publicWelfarre.getUrl()));
+                        mSphinx.startActivity(intent);
                     }
                 }
                 break;
@@ -386,7 +387,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
             } else if (mUpgradeType == UPGRADE_TYPE_PUBLIC_WELFARRE) {
                 RecommendApp publicWelfarre = getPublicWelfarre();
                 if (publicWelfarre != null) {
-                    mUpgradeBtn.setText(publicWelfarre.getName());
+                    mUpgradeBtn.setText(publicWelfarre.getBody());
                     mUpgradeBtn.setBackgroundResource(R.drawable.btn_update);
                     mUpgradeBtn.setVisibility(View.VISIBLE);
                     mSphinx.getMenuFragment().setUpgrade(View.VISIBLE);
@@ -477,7 +478,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                     for(int i = 0, size = list.size(); i < size; i++) {
                         RecommendApp recommendApp = list.get(i);
                         if (recommendApp != null
-                                && mSphinx.getString(R.string.public_welfarre).equals(recommendApp.getName())) {
+                                && mSphinx.getString(R.string.public_welfarre).equals(recommendApp.getBody())) {
                             publicWelfarre = recommendApp;
                             break;
                         }

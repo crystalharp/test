@@ -15,6 +15,7 @@ import com.tigerknows.model.DataQuery.DiscoverResponse;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.service.TKLocationManager;
 import com.tigerknows.service.TigerknowsLocationManager;
+import com.tigerknows.view.MoreFragment;
 import com.tigerknows.view.StringArrayAdapter;
 
 import android.app.Activity;
@@ -112,6 +113,15 @@ public class BaseQueryTest {
         layout.addView(locationChb);
         final EditText locationEdt = new EditText(activity);
         layout.addView(locationEdt, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+
+        final Button updateSoftTip = new Button(activity);
+        layout.addView(updateSoftTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button commentTip = new Button(activity);
+        layout.addView(commentTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button updateMapTip = new Button(activity);
+        layout.addView(updateMapTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button publicWelfarreTip = new Button(activity);
+        layout.addView(publicWelfarreTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         
         editConfigBtn.setText("View or Modify config.txt");
         editConfigBtn.setOnClickListener(new View.OnClickListener() {
@@ -248,6 +258,46 @@ public class BaseQueryTest {
         });
         locationEdt.setText("39.904156,116.397764,1000");
         locationEdt.setVisibility(View.GONE);
+        
+        updateSoftTip.setText("clear updateSoftTip");
+        updateSoftTip.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                if (Globals.g_User_Logon_Model != null) {
+                    Globals.g_User_Logon_Model.setSoftwareUpdate(null);
+                }
+            }
+        });
+        
+        commentTip.setText("clear commenTip");
+        commentTip.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                TKConfig.setPref(activity, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(MoreFragment.SHOW_COMMENT_TIP_TIMES));
+            }
+        });
+        
+        updateMapTip.setText("clear updateMapTip");
+        updateMapTip.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                MapEngine.getInstance().getDownloadCityList().clear();
+            }
+        });
+        
+        publicWelfarreTip.setText("clear publicWelfarreTip");
+        publicWelfarreTip.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                if (Globals.g_User_Logon_Model != null) {
+                    Globals.g_User_Logon_Model.setRecommend(null);
+                }
+            }
+        });
         
         ScrollView scrollView = new ScrollView(activity);
         scrollView.addView(layout);

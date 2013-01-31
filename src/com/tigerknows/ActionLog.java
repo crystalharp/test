@@ -67,6 +67,7 @@ public class ActionLog {
     // 翻页
     public static final String LOAD_MORE_TRIGGER = "ZR";
     public static final String LISTVIEW_ITEM_ONCLICK = "ZS-%s-%s";
+    public static final String EDITTEXT_DELELE_ONCLICK = "ZT";
 
     // 日志超长 EXCP
     public static final String LOG_OUT = "EXCP";
