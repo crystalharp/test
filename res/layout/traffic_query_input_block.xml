@@ -95,28 +95,44 @@
 	            android:layout_centerVertical="true" />
 	    </RelativeLayout>
 		
-	    <LinearLayout 
+	    <RelativeLayout
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:orientation="vertical" >
-	        <ImageView 
-		        android:id="@+id/shadow1"
+			
+		    <RelativeLayout
+		        android:id="@+id/cur_city_view" 
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
-		        android:background="@color/white"
-		        android:scaleType="fitXY"
-		        android:src="@drawable/bg_shadow" />
-		    <TextView 
-		        android:id="@+id/cur_city_txt" 
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:paddingLeft="10dp"
-		        android:paddingTop="2dp"
-		        android:paddingBottom="2dp"
-		        android:textColor="@color/black"
-		        android:textSize="13sp"
-		        android:singleLine="true" 
-		        android:background="@color/traffic_current_city_bg"/>
-	    </LinearLayout>
+		        android:layout_alignParentTop="true"
+		        android:orientation="vertical" >
+			    <TextView 
+			        android:id="@+id/cur_city_txt" 
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_alignParentTop="true"
+			        android:paddingLeft="10dp"
+			        android:paddingTop="2dp"
+			        android:paddingBottom="2dp"
+			        android:textColor="@color/black"
+			        android:textSize="13sp"
+			        android:singleLine="true" 
+			        android:background="@color/traffic_current_city_bg"/>
+			    
+		        <ImageView 
+			        android:id="@+id/shadow1"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_alignParentTop="true"
+			        android:background="@drawable/bg_shadow" />
+		    </RelativeLayout>
 	
+	        <LinearLayout
+	            android:id="@+id/shadow_input"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentTop="true"
+	            android:background="@drawable/bg_shadow_white" />
+		        
+	    </RelativeLayout>
     </LinearLayout>

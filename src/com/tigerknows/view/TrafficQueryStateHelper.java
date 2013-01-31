@@ -136,7 +136,8 @@ public class TrafficQueryStateHelper {
 			mQueryFragment.mSphinx.clearMap();
 			
 			mQueryFragment.getContentView().setVisibility(View.GONE);
-			mQueryFragment.mCityTxt.setVisibility(View.VISIBLE);
+			mQueryFragment.mCityView.setVisibility(View.VISIBLE);
+			mQueryFragment.mShadowWhite.setVisibility(View.GONE);
 			applyInnateProperty(TrafficViewSTT.State.Map);
 			mQueryFragment.mSphinx.getControlView().setPadding(0, 0, 0, 0);
 		}
@@ -293,7 +294,8 @@ public class TrafficQueryStateHelper {
 		mQueryFragment.clearAllText();
 		mQueryFragment.initStartContent();
 		mQueryFragment.getContentView().setVisibility(View.VISIBLE);
-		mQueryFragment.mCityTxt.setVisibility(View.VISIBLE);
+		mQueryFragment.mCityView.setVisibility(View.VISIBLE);
+		mQueryFragment.mShadowWhite.setVisibility(View.GONE);
 		mQueryFragment.mBackBtn.setVisibility(View.GONE);
 		mQueryFragment.mSuggestLnl.setVisibility(View.GONE);
 	}
@@ -305,7 +307,8 @@ public class TrafficQueryStateHelper {
 		mQueryFragment.mSuggestHistoryHelper.check();
 		mQueryFragment.mSuggestLnl.setVisibility(View.VISIBLE);
 		mQueryFragment.mSphinx.getMenuFragment().setVisibility(View.GONE);
-		mQueryFragment.mCityTxt.setVisibility(View.GONE);
+		mQueryFragment.mCityView.setVisibility(View.GONE);
+		mQueryFragment.mShadowWhite.setVisibility(View.VISIBLE);
 		mQueryFragment.mBackBtn.setVisibility(View.VISIBLE);
 		mQueryFragment.getContentView().setVisibility(View.VISIBLE);
 	}
@@ -324,7 +327,8 @@ public class TrafficQueryStateHelper {
 	public void applySelectPointInnateProperty() {
 		
 		mQueryFragment.getContentView().setVisibility(View.GONE);
-		mQueryFragment.mCityTxt.setVisibility(View.VISIBLE);
+		mQueryFragment.mCityView.setVisibility(View.VISIBLE);
+		mQueryFragment.mShadowWhite.setVisibility(View.GONE);
 		mQueryFragment.mMenuFragment.hide();
 		mQueryFragment.mSuggestLnl.setVisibility(View.GONE);
 

@@ -23,7 +23,7 @@
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
         android:layout_below="@id/content_frl"
-	    android:background="@color/gray_dark"
+	    android:background="#f9f9f9"
 	    android:visibility="gone" >
   	    <ListView android:id="@+id/suggest_lsv"
 	        android:layout_width="fill_parent" 
