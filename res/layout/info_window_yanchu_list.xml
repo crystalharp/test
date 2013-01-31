@@ -10,7 +10,7 @@
         android:id="@+id/icon_imv"
         android:layout_width="46dp"
         android:layout_height="60dp"
-        android:background="@drawable/icon"
+        android:background="@drawable/bg_picture_dianying"
         />
     <RelativeLayout
         android:id="@+id/body_view"
