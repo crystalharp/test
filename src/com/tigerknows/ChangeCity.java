@@ -43,7 +43,7 @@ import com.tigerknows.view.TKEditText;
 /**
  * @author Peng Wenyue
  */
-public class ChangeCity extends BaseActivity implements View.OnClickListener {
+public class ChangeCity extends BaseActivity {
 
     static final int ORDER_LOCATION_TITLE = 1;
     static final int ORDER_CITY_TITLE = 10;
@@ -137,7 +137,16 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
 
     protected void setListener() {
         super.setListener();
-        mKeywordEdt.setOnClickListener(this);
+        mKeywordEdt.setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    mActionLog.addAction(ActionLog.ChangeCityInputBox);
+                }
+                return false;
+            }
+        });
         mKeywordEdt.addTextChangedListener(new TextWatcher() {
             
             @Override
@@ -481,10 +490,5 @@ public class ChangeCity extends BaseActivity implements View.OnClickListener {
         public boolean hasStableIds() {
             return true;
         }
-    }
-
-    @Override
-    public void onClick(View view) {
-        mActionLog.addAction(ActionLog.ChangeCityInputBox);
     }
 }

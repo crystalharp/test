@@ -115,43 +115,44 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
                 return false;
             }
         });
-        OnFocusChangeListener onFocusChangeListener = new OnFocusChangeListener() {
+        OnTouchListener onTouchListener = new OnTouchListener() {
             
             @Override
-            public void onFocusChange(View v, boolean value) {
-                switch(v.getId()){
-                    case R.id.shanghumingcheng_edt:
-                        if (value)
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    switch (v.getId()) {
+                        case R.id.shanghumingcheng_edt:
                             mActionLog.addAction(ActionLog.AddMerchantName);
-                        break;
-                        
-                    case R.id.shanghudizhi_edt:
-                        if (value)
+                            break;
+                            
+                        case R.id.shanghudizhi_edt:
                             mActionLog.addAction(ActionLog.AddMerchantAddress);
-                        break;
-                        
-                    case R.id.shanghudianhua_edt:
-                        if (value)
+                            break;
+                            
+                        case R.id.shanghudianhua_edt:
                             mActionLog.addAction(ActionLog.AddMerchantTelephone);
-                        break;
-                        
-                    case R.id.yingyeshijian_edt:
-                        if (value)
+                            break;
+                            
+                        case R.id.yingyeshijian_edt:
                             mActionLog.addAction(ActionLog.AddMerchantTime);
-                        break;
-                        
-                    case R.id.ningdedianhua_edt:
-                        if (value)
+                            break;
+                            
+                        case R.id.ningdedianhua_edt:
                             mActionLog.addAction(ActionLog.AddMerchantMobile);
-                        break;
+                            break;
+                            
+                        default:
+                            break;
+                    }
                 }
+                return false;
             }
         };
-        mShanghumingchengEdt.setOnFocusChangeListener(onFocusChangeListener);
-        mShanghudizhiEdt.setOnFocusChangeListener(onFocusChangeListener);
-        mShanghudianhuaEdt.setOnFocusChangeListener(onFocusChangeListener);
-        mYingyeshijianEdt.setOnFocusChangeListener(onFocusChangeListener);
-        mNingdedianhuaEdt.setOnFocusChangeListener(onFocusChangeListener);
+        mShanghumingchengEdt.setOnTouchListener(onTouchListener);
+        mShanghudizhiEdt.setOnTouchListener(onTouchListener);
+        mShanghudianhuaEdt.setOnTouchListener(onTouchListener);
+        mYingyeshijianEdt.setOnTouchListener(onTouchListener);
+        mNingdedianhuaEdt.setOnTouchListener(onTouchListener);
     }
     
     @Override
