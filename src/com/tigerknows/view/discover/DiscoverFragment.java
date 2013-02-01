@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemSelectedListener;
 
@@ -67,8 +68,10 @@ public class DiscoverFragment extends DiscoverBaseFragment {
     private DiscoverTopIndicator mDiscoverTopIndicator;
 
     private TextView mNoSupportTitleTxv;
-    
+
     private TextView mNoSupportMessageTxv;
+    
+    private ImageView mNoSupportMessageImv;
     
     private int mCityId = -1;
     
@@ -160,6 +163,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         mMyLoactionTxv = (TextView) mRootView.findViewById(R.id.my_location_txv);
         mNoSupportTitleTxv = (TextView)mRootView.findViewById(R.id.no_support_title_txv);
         mNoSupportMessageTxv = (TextView)mRootView.findViewById(R.id.no_support_message_txv);
+        mNoSupportMessageImv = (ImageView)mRootView.findViewById(R.id.no_support_message_imv);
     }
     
     private class MySimpleGesture extends GestureDetector.SimpleOnGestureListener {   
@@ -463,6 +467,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                         if (mDiscoverCategoryList.size() > 0) {
                             mNoSupportTitleTxv.setVisibility(View.GONE);
                             mNoSupportMessageTxv.setVisibility(View.GONE);
+                            mNoSupportMessageImv.setVisibility(View.GONE);
                             mViewPager.setVisibility(View.VISIBLE);
                             mDiscoverTopIndicator.setVisibility(View.VISIBLE);
                             
@@ -491,6 +496,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         mNoSupportTitleTxv.setVisibility(View.VISIBLE);
         mNoSupportMessageTxv.setText(mSphinx.getString(R.string.discover_no_support_tip, cityInfo.getCName()));
         mNoSupportMessageTxv.setVisibility(View.VISIBLE);
+        mNoSupportMessageImv.setVisibility(View.VISIBLE);
     }
 
     public class DiscoverCategoryAdapter extends BaseAdapter {
