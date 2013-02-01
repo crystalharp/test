@@ -66,15 +66,23 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
         android:layout_margin="32dp"
-        android:layout_below="@id/title_view"
-        android:gravity="left|bottom"
+        android:layout_above="@+id/no_support_arrow"
+        android:gravity="center_horizontal|bottom"
         android:paddingLeft="48dp"
         android:paddingRight="48dp"
-        android:paddingBottom="60dp"
         android:textSize="16sp"
         android:text="@string/discover_no_support_tip"
-        android:background="@drawable/bg_discover_no_support"
         />
+    
+    <ImageView 
+        android:id="@+id/no_support_arrow"
+        android:layout_width="120dp"
+        android:layout_height="200dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="32dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/bg_no_support_arrow"/>
     
     <com.tigerknows.view.AlwaysMarqueeTextView android:id="@+id/my_location_txv"
         android:layout_width="fill_parent"

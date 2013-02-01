@@ -826,7 +826,7 @@
     <string name="zhanlan_detail_introduce">展览简介</string>
     <string name="zhanlan_didian">展览地点</string>
     
-    <string name="discover_no_support_tip">亲爱的用户：\n\n%1$s市的发现工程尚未竣工，敬请期待！</string>
+    <string name="discover_no_support_tip">%1$s市暂无发现内容\n去搜索频道逛逛吧！</string>
     
     <string name="add_merchant">添加商户</string>
     <string name="need_star">*</string>
