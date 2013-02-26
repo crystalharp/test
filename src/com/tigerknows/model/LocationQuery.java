@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
@@ -106,7 +107,7 @@ public class LocationQuery extends BaseQuery {
     @Override
     protected void makeRequestParameters() throws APIException {
         super.makeRequestParameters();
-        addCommonParameters(requestParameters, MapEngine.CITY_ID_INVALID, true);
+        addCommonParameters(requestParameters, Globals.getCurrentCityId(), true);
         
         if (wifiManager != null) {
             List<ScanResult> scanResults = wifiManager.getScanResults();
