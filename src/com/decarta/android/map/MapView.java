@@ -59,8 +59,8 @@ public class MapView extends RelativeLayout implements
 	 * of map to the front of screen
 	 */
 	public static float MAP_TILT_MIN=-45;
-	public static long PAN_TO_POSITION_TIME_DEF=500*1000000;//500 miniseconds
-	public static int DIGITAL_ZOOMING_TIME_PER_LEVEL=500*1000000;
+	public static long PAN_TO_POSITION_TIME_DEF=300*1000000;//500 miniseconds
+	public static int DIGITAL_ZOOMING_TIME_PER_LEVEL=300*1000000;
 	
 	
 	static{

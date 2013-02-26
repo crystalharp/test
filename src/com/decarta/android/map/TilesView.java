@@ -115,8 +115,8 @@ public class TilesView extends GLSurfaceView {
 	private static final int MAX_TILE_TEXTURE_REF_DEF=128;
 	
 	private static final float XROTATION_YDIST=300/1.5f;
-	private static final int XROTATION_TIME=500*1000000;
-	private static final int ZROTATION_TIME=500*1000000;
+	private static final int XROTATION_TIME=300*1000000;
+	private static final int ZROTATION_TIME=300*1000000;
 	
 	private static Paint tileP;
 	private static Paint backgroundP;
