@@ -149,10 +149,10 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         }
         parentAdapter.notifyDataSetChanged();
         childAdapter.notifyDataSetChanged();
-        if (selectedParentPosition > 0)
+        if (selectedParentPosition >= 0)
             parentLsv.setSelectionFromTop(selectedParentPosition, 0);
         
-        if (selectedChiledPosition > 0)
+        if (selectedChiledPosition >= 0)
             childLsv.setSelectionFromTop(selectedChiledPosition, 0);
     }
         
