@@ -10,6 +10,7 @@ import java.util.List;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -72,6 +73,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     private Button mHelpBtn;
     private Button mAboutBtn;
     private Button mGiveFavourableCommentBtn;
+    private View mGiveFavourableCommentImv;
     
     private String mCityName;
     
@@ -106,6 +108,14 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
             mAppRecommendBtn.setText(R.string.recommend_tencent);
         } else {
             mAppRecommendBtn.setText(R.string.app_recommend);
+        }
+        
+        if (mSphinx.getPackageManager().queryIntentActivities(makeGiveFavourableIntent(), PackageManager.MATCH_DEFAULT_ONLY).size() > 0) {
+            mGiveFavourableCommentBtn.setVisibility(View.VISIBLE);
+            mGiveFavourableCommentImv.setVisibility(View.VISIBLE);
+        } else {
+            mGiveFavourableCommentBtn.setVisibility(View.GONE);
+            mGiveFavourableCommentImv.setVisibility(View.GONE);
         }
         
         return mRootView;
@@ -213,6 +223,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         mHelpBtn = (Button)mRootView.findViewById(R.id.help_btn);
         mAboutBtn = (Button)mRootView.findViewById(R.id.about_btn);
         mGiveFavourableCommentBtn = (Button)mRootView.findViewById(R.id.give_favourable_comment_btn);
+        mGiveFavourableCommentImv = mRootView.findViewById(R.id.give_favourable_comment_imv);
     }
     
     protected void setListener() {
@@ -312,7 +323,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                 
             case R.id.give_favourable_comment_btn:
                 mActionLog.addAction(ActionLog.MoreGiveFavourableComment);
-                giveFavourableComment();
+                mSphinx.startActivity(makeGiveFavourableIntent());  
                 break;
 
             default:
@@ -320,11 +331,11 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         }
     }
     
-    private void giveFavourableComment() {
+    private Intent makeGiveFavourableIntent() {
         String str = "market://details?id=" + mSphinx.getPackageName();  
         Intent localIntent = new Intent("android.intent.action.VIEW");  
         localIntent.setData(Uri.parse(str));  
-        mSphinx.startActivity(localIntent);  
+        return localIntent;
     }
     
     public void refreshCity(String cityName) {

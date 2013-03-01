@@ -325,28 +325,35 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         String telephone = poi.getTelephone();
         if (!TextUtils.isEmpty(telephone) || !TextUtils.isEmpty(address)) {
             
-            if (!TextUtils.isEmpty(telephone)) {
-                mTelephoneView.setVisibility(View.VISIBLE);
-                mTelephoneTxv.setText(telephone.replace("|", mSphinx.getString(R.string.dunhao)));
-            } else {
-                mTelephoneView.setVisibility(View.GONE);
-            }
-            
             if (!TextUtils.isEmpty(address)) {
                 mAddressView.setVisibility(View.VISIBLE);
                 mAddressTxv.setText(address);
-                mAddressTelephoneDividerImv.setVisibility(View.VISIBLE);
+                if (TextUtils.isEmpty(telephone)) {
+                    mAddressView.setBackgroundResource(R.drawable.list_single);
+                    mAddressTelephoneDividerImv.setVisibility(View.GONE);
+                } else {
+                    mAddressView.setBackgroundResource(R.drawable.list_header);
+                    mAddressTelephoneDividerImv.setVisibility(View.VISIBLE);
+                }
             } else {
                 mAddressView.setVisibility(View.GONE);
             }
             
-            if (TextUtils.isEmpty(telephone) || TextUtils.isEmpty(address)) {
-                mAddressView.setBackgroundResource(R.drawable.list_single);
-                mAddressTelephoneDividerImv.setVisibility(View.GONE);
+            if (!TextUtils.isEmpty(telephone)) {
+                mTelephoneView.setVisibility(View.VISIBLE);
+                mTelephoneTxv.setText(telephone.replace("|", mSphinx.getString(R.string.dunhao)));
+                
+                if (TextUtils.isEmpty(address)) {
+                    mTelephoneView.setBackgroundResource(R.drawable.list_single);
+                    mAddressTelephoneDividerImv.setVisibility(View.GONE);
+                } else {
+                    mTelephoneView.setBackgroundResource(R.drawable.list_footer);
+                    mAddressTelephoneDividerImv.setVisibility(View.VISIBLE);
+                }
             } else {
-                mTelephoneView.setBackgroundResource(R.drawable.list_footer);
-                mAddressView.setBackgroundResource(R.drawable.list_header);
+                mTelephoneView.setVisibility(View.GONE);
             }
+
             mAddressAndPhoneView.setVisibility(View.VISIBLE);
         } else {
             mAddressAndPhoneView.setVisibility(View.GONE);
@@ -968,7 +975,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         mCommentListView.addView(imageView, layoutParams);
                     }
                     commentView.setBackgroundResource(R.drawable.list_middle);
-                    commentView.setOnClickListener(this);
                 }
             }
         }
@@ -1027,7 +1033,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             } else {
                 view.setBackgroundResource(R.drawable.list_middle_normal);
                 authorTxv.setTextColor(0xff000000);
-                view.setOnClickListener(null);
+                view.setOnClickListener(this);
             }
             
             String time = comment.getTime();

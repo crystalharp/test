@@ -294,6 +294,9 @@ public class HttpUtils {
                 progressUpdate = null;
             } catch (IOException e) {
                 fail = e.toString();
+                if (TextUtils.isEmpty(fail)) {
+                    fail="fail";
+                }
                 if (keepAlive) {
                     close();
                     client = createHttpClient(context);

@@ -12,6 +12,7 @@ import com.decarta.android.util.XYInteger;
 import com.tigerknows.ImageCache;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.UserLogonModel;
 import com.tigerknows.model.AccountManage.UserRespnose;
@@ -175,5 +176,14 @@ public class Globals {
             }
             Globals.g_User = null;
         }
+    }
+    
+    public static int getCurrentCityId() {
+        int cityId = MapEngine.CITY_ID_INVALID;
+        CityInfo cityInfo = g_Current_City_Info;
+        if (cityInfo != null) {
+            cityId = cityInfo.getId(); 
+        }
+        return cityId;
     }
 }
