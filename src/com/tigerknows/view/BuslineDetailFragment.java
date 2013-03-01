@@ -276,12 +276,6 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 			return 0;
 		}
 		
-		@Override
-		public boolean isEnabled(int position) {
-			if(position == this.getCount()-1)
-              return false;
-          return true;
-		}
     }
 
     private class ResultOnClickListener implements View.OnClickListener {
