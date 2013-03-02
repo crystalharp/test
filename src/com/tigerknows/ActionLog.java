@@ -75,13 +75,13 @@ public class ActionLog {
     // 到这里去对话框
     public static final String DIALOG_COME = "DB";
     
-    public static final String DIALOG_COME_HERE_TRANSFER = "AA";
+    public static final String DIALOG_COME_HERE_TRANSFER = DIALOG_COME + "AA";
     
-    public static final String DIALOG_COME_HERE_DRIVE = "AB";
+    public static final String DIALOG_COME_HERE_DRIVE = DIALOG_COME + "AB";
     
-    public static final String DIALOG_COME_HERE_WALK = "AC";
+    public static final String DIALOG_COME_HERE_WALK = DIALOG_COME + "AC";
     
-    public static final String DIALOG_COME_HERE_CUSTOM_START = "AD";
+    public static final String DIALOG_COME_HERE_CUSTOM_START = DIALOG_COME + "AD";
     
     // 搜索频道 
     // 搜索首页 AP
@@ -739,9 +739,9 @@ public class ActionLog {
     // 点击订单按钮 CBAG
     public static final String TuangouListDingdan = TuangouList + "AG";
     // 点击TitleButton选择category AH-%d
-    public static final String DiscoverListTitleSelection = "AH-%s";
+    public static final String DiscoverListTitleSelection = TuangouList + "AH-%s";
     // 在发现详情页面，滑动页面 AI-%s(index)
-    public static final String DiscoverDetailFling = "AI-%s";
+    public static final String DiscoverDetailFling = TuangouList + "AI-%s";
     
     // 电影结果列表页
     public static final String DianyingList = "CR";
@@ -1045,7 +1045,7 @@ public class ActionLog {
             }
 
             mStartMillis = System.currentTimeMillis();
-            addAction(SEPARATOR_STAET+simpleDateFormat.format(Calendar.getInstance().getTime())+SEPARATOR_MIDDLE+LifecycleCreate, false);
+            addAction(SEPARATOR_STAET+simpleDateFormat.format(Calendar.getInstance().getTime())+SEPARATOR_MIDDLE+LifecycleCreate+SEPARATOR_MIDDLE+TKConfig.getClientSoftVersion(), false);
         }
     }
     
