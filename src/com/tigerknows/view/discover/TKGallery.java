@@ -2,6 +2,7 @@
 package com.tigerknows.view.discover;
 
 import com.decarta.Globals;
+import com.tigerknows.TKConfig;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -21,9 +22,31 @@ public class TKGallery extends Gallery {
         super(context, attrs);
         width = (int) ((Globals.g_metrics.widthPixels > Globals.g_metrics.heightPixels ? Globals.g_metrics.heightPixels : Globals.g_metrics.widthPixels)*0.85);
     }
+    
 
+    int mInitialSelectedItemPosition = 0;
+    
     @Override
+	public boolean onTouchEvent(MotionEvent event) {
+    	if(event.getAction() == MotionEvent.ACTION_DOWN){
+    		mInitialSelectedItemPosition = getSelectedItemPosition();
+    	}
+		return super.onTouchEvent(event);
+	}
+
+	@Override
+	public boolean onInterceptTouchEvent(MotionEvent ev) {
+		// TODO Auto-generated method stub
+		return super.onInterceptTouchEvent(ev);
+	}
+
+	@Override
     public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+		
+    	if(mInitialSelectedItemPosition != this.getSelectedItemPosition()){
+    		return true;
+    	}
+    	
         int kEvent;
         if (isScrollingLeft(e1, e2)) {
             // Check if scrolling left
