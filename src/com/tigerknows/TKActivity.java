@@ -317,7 +317,10 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                 resId = R.string.response_code_301;
             }
             
-            if (resId != R.id.app_name && activity.isFinishing() == false) {
+            if (resId != R.id.app_name
+                    && activity.isFinishing() == false
+                    && Globals.g_Session_Id != null
+                    && Globals.g_User != null) {
                 Globals.clearSessionAndUser(activity);
                 if (sourceUserHome == false) {
                     CommonUtils.showNormalDialog(activity, 
@@ -361,8 +364,8 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                                 }
                             });
                 }
-                return true;
             }
+            return resId != R.id.app_name;
         }
         
         return false;
