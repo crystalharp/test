@@ -1988,7 +1988,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (tkDrawable != null) {
                 Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, getResultMapFragment().toString());
                 if(drawable != null) {
-                    pictureImv.setBackgroundDrawable(drawable);
+                	//To prevent the problem of size change of the same pic 
+                	//After it is used at a different place with smaller size
+                	pictureImv.setBackgroundDrawable(null);
+                	pictureImv.setBackgroundDrawable(drawable);
                 } else {
                     pictureImv.setBackgroundResource(R.drawable.bg_picture_dianying);
                 }
@@ -2030,8 +2033,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (tkDrawable != null) {
                 Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, getResultMapFragment().toString());
                 if(drawable != null) {
-                	//Hard coded here to prevent problems on some platforms. such as htc t328w
-                	   drawable.setBounds(0, 0, Util.dip2px(Globals.g_metrics.density, 90), Util.dip2px(Globals.g_metrics.density, 60));
+                	//To prevent the problem of size change of the same pic 
+                	//After it is used at a different place with smaller size
+                    pictureImv.setBackgroundDrawable(null);
                     pictureImv.setBackgroundDrawable(drawable);
                 } else {
                     pictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou);

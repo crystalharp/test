@@ -696,6 +696,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             Tuangou tuangou = getItem(position);
             Drawable drawable = tuangou.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
             if(drawable != null) {
+            	//To prevent the problem of size change of the same pic 
+            	//After it is used at a different place with smaller size
             	pictureImv.setBackgroundDrawable(null);
             	pictureImv.setBackgroundDrawable(drawable);
             } else {
@@ -846,7 +848,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             Zhanlan yanchu = getItem(position);
             Drawable drawable = yanchu.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
             if(drawable != null) {
-                pictureImv.setImageDrawable(drawable);
+            	pictureImv.setImageDrawable(null);
+            	pictureImv.setImageDrawable(drawable);
             } else {
                 pictureImv.setImageDrawable(null);
             }
