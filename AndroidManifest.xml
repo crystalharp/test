@@ -259,6 +259,27 @@
 		<activity android:configChanges="orientation" android:name="com.decarta.example.ProfileResultActivity" />
 		<activity android:configChanges="orientation" android:name="com.decarta.example.ConfigActivity" />
 
+        <receiver android:name="com.tigerknows.radar.AlarmInitReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="action.com.tigerknows.first.startup" />
+            </intent-filter>
+        </receiver>
+        
+		<receiver android:name="com.tigerknows.radar.ConnectivityChangeReceiver">
+		    <intent-filter>
+	           <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+		    </intent-filter>
+		</receiver>
+        
+        <service android:name="com.tigerknows.service.PullService" android:process=":remote">
+        </service>
+        
+        <service android:name="com.tigerknows.service.LocationCollectionService" android:process=":remote">
+        </service>
+
     </application>
     <supports-screens android:anyDensity="true" android:resizeable="true" android:largeScreens="true" android:smallScreens="true"></supports-screens>
     <uses-sdk android:minSdkVersion="5" />

@@ -161,7 +161,8 @@ import com.tigerknows.view.user.UserUpdatePasswordActivity;
 import com.tigerknows.view.user.UserUpdatePhoneActivity;
 
 public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
-    
+
+    public static final String EXTRA_SOURCE_NOTIFICATION = "extra_source_notification";
     public static final String ACTION_FIRST_STARTUP = "action.com.tigerknows.first.startup";
     
 	private static final int CONFIG_SERVER = 8;
@@ -1456,6 +1457,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
+        if (checkFormNotification(intent)) {
+            return;
+        }
         
         if (intent != null) {
             int sourceViewId = intent.getIntExtra(BaseActivity.SOURCE_VIEW_ID, R.id.view_invalid);
@@ -1469,6 +1473,20 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 loginBack(intent);
             }
         }
+    }
+    
+    boolean checkFormNotification(Intent newIntent) {
+        boolean result = false;
+        if (newIntent != null) {
+            int type = newIntent.getIntExtra(Sphinx.EXTRA_SOURCE_NOTIFICATION, -1);
+            if (type != -1) {
+                TKNotificationManager.cancel(mThis);
+                uiStackClose(new int[]{R.id.view_discover});
+                showView(R.id.view_discover);
+                result = true;
+            }
+        }
+        return result;
     }
     
     boolean mOnActivityResultLoginBack = false;

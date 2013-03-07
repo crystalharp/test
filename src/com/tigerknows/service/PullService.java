@@ -43,6 +43,11 @@ public class PullService extends Service {
                 
                 // 获取当前城市
                 CityInfo currentCityInfo = Globals.getLastCityInfo(context);
+                // 安装后从来没有使用过老虎宝典的情况
+                if (currentCityInfo == null) {
+                    exitService(null);
+                    return;
+                }
                 
                 // 获取定位城市
                 CityInfo locationCityInfo = null;
@@ -72,7 +77,7 @@ public class PullService extends Service {
                 
                 // 定时下一个唤醒
                 Calendar next = Calendar.getInstance();
-                stopService(next);
+                exitService(next);
             }
         }).start();
     }
@@ -87,13 +92,15 @@ public class PullService extends Service {
         super.onDestroy();
     }
     
-    void stopService(Calendar next) {
-        Context context = getApplicationContext();
-        TKConfig.setPref(context,
-                TKConfig.PREFS_RADAR_PULL_ALARM, 
-                Alarms.SIMPLE_DATE_FORMAT.format(next.getTime()));
+    void exitService(Calendar next) {
         Intent name = new Intent(this, PullService.class);
-        Alarms.enableAlarm(context, next.getTimeInMillis(), name);
+        if (next != null) {
+            Context context = getApplicationContext();
+            TKConfig.setPref(context,
+                    TKConfig.PREFS_RADAR_PULL_ALARM, 
+                    Alarms.SIMPLE_DATE_FORMAT.format(next.getTime()));
+            Alarms.enableAlarm(context, next.getTimeInMillis(), name);
+        }
         stopService(name);
     }
 }
