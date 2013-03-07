@@ -363,17 +363,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mSensorManager.registerListener(mSensorListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
             }
             
-            final double lastLon = Double.parseDouble(TKConfig.getPref(mContext, TKConfig.PREFS_LAST_LON, "361"));
-            final double lastLat = Double.parseDouble(TKConfig.getPref(mContext, TKConfig.PREFS_LAST_LAT, "361"));
-            final int lastZoomLevel = Integer.parseInt(TKConfig.getPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(TKConfig.ZOOM_LEVEL_DEFAULT)));
-
-            final Position lastPosition = new Position(lastLat, lastLon);
-            Log.i(TAG,"onCreate positon,zoomLevel:"+lastPosition+","+lastZoomLevel);
-            if(Util.inChina(lastPosition)){
-                int cityId = mMapEngine.getCityId(lastPosition);
-                cityInfo = mMapEngine.getCityInfo(cityId);
-                cityInfo.setPosition(lastPosition);
-                cityInfo.setLevel(lastZoomLevel);
+            CityInfo lastCityInfo = Globals.getLastCityInfo(this);
+            if(lastCityInfo != null && lastCityInfo.isAvailably()){
+                cityInfo = lastCityInfo;
             }
             changeCity(cityInfo);
             if (Globals.g_User != null) {

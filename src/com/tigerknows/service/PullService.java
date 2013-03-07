@@ -4,11 +4,19 @@
 
 package com.tigerknows.service;
 
+import com.decarta.Globals;
+import com.decarta.android.exception.APIException;
+import com.decarta.android.location.Position;
 import com.tigerknows.TKConfig;
+import com.tigerknows.maps.MapEngine;
+import com.tigerknows.maps.MapEngine.CityInfo;
+import com.tigerknows.model.LocationQuery;
 import com.tigerknows.radar.Alarms;
 
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.os.IBinder;
 
 import java.util.Calendar;
@@ -27,12 +35,43 @@ public class PullService extends Service {
             
             @Override
             public void run() {
-                // TODO: 去服务器上拉数据
+                long currentTimeMillis = System.currentTimeMillis();
+                Calendar now = Calendar.getInstance();
+                now.setTimeInMillis(currentTimeMillis);
+                
+                Context context = getApplicationContext();
+                
+                // 获取当前城市
+                CityInfo currentCityInfo = Globals.getLastCityInfo(context);
+                
+                // 获取定位城市
+                CityInfo locationCityInfo = null;
+                LocationQuery locationQuery = LocationQuery.getInstance(context);
+                Location location = locationQuery.getLocation();
+                if (location != null) {
+                    MapEngine mapEngine = MapEngine.getInstance();
+                    try {
+                        mapEngine.initMapDataPath(context, false);
+                        int cityId = mapEngine.getCityId(new Position(location.getLatitude(), location.getLongitude()));
+                        locationCityInfo = mapEngine.getCityInfo(cityId);
+                    } catch (APIException exception) {
+                        exception.printStackTrace();
+                    }
+                }
+                
+                if (currentCityInfo != null
+                        && locationCityInfo != null
+                        && currentCityInfo.isAvailably()
+                        && locationCityInfo.isAvailably()
+                        && currentCityInfo.getId() == locationCityInfo.getId()) {    
+                    // TODO: 去服务器上拉数据
+                    
+                } else {
+                    
+                }
                 
                 // 定时下一个唤醒
-                long currentTimeMillis = System.currentTimeMillis();
                 Calendar next = Calendar.getInstance();
-                next.setTimeInMillis(currentTimeMillis);
                 stopService(next);
             }
         }).start();
