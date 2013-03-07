@@ -1134,7 +1134,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mDiscoverFragment = null;
         Intent service = new Intent(Sphinx.this, MapStatsService.class);
         stopService(service);
-        dalvik.system.VMRuntime.getRuntime().gcSoftReferences();
         super.onDestroy();
         ActivityManager am = (ActivityManager)getSystemService(
                 Context.ACTIVITY_SERVICE);
