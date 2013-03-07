@@ -134,16 +134,18 @@ public class LocationCollectionService extends Service {
     }
     
     void stopService() {
+        Context context = getApplicationContext();
         long currentTimeMillis = System.currentTimeMillis();
         Calendar next = Calendar.getInstance();
         next.setTimeInMillis(currentTimeMillis);
         next.set(Calendar.HOUR, makeRandomHour());
         next.set(Calendar.MINUTE, makeRandomMinute());
         next.add(Calendar.DAY_OF_YEAR, 1);
-        TKConfig.setPref(getApplicationContext(),
+        TKConfig.setPref(context,
                 TKConfig.PREFS_RADAR_LOCATION_COLLECTION_ALARM, 
                 Alarms.SIMPLE_DATE_FORMAT.format(next.getTime()));
         Intent name = new Intent(this, LocationCollectionService.class);
+        Alarms.enableAlarm(context, next.getTimeInMillis(), name);
         stopService(name);
     }
     

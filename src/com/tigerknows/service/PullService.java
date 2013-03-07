@@ -88,10 +88,12 @@ public class PullService extends Service {
     }
     
     void stopService(Calendar next) {
-        TKConfig.setPref(getApplicationContext(),
+        Context context = getApplicationContext();
+        TKConfig.setPref(context,
                 TKConfig.PREFS_RADAR_PULL_ALARM, 
                 Alarms.SIMPLE_DATE_FORMAT.format(next.getTime()));
         Intent name = new Intent(this, PullService.class);
+        Alarms.enableAlarm(context, next.getTimeInMillis(), name);
         stopService(name);
     }
 }
