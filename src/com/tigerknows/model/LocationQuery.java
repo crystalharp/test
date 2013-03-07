@@ -225,7 +225,7 @@ public class LocationQuery extends BaseQuery {
         if (location == null || PROVIDER_ERROR.equals(location.getProvider())) {
             checkLocationTable();
             if (readOfflineLocationCache == false) {
-                locationTable.read(offlineLocationCache);
+                locationTable.read(offlineLocationCache, LocationTable.PROVIDER_TIGERKNOWS, LocationTable.PROVIDER_NETWORK);
                 readOfflineLocationCache = true;
             }
             location = queryCache(locationParameter, offlineLocationCache, false);
@@ -281,7 +281,7 @@ public class LocationQuery extends BaseQuery {
     
     public void onDestory() {
         if (locationTable != null && locationTable.isOpen()) {
-            locationTable.optimize();
+            locationTable.optimize(LocationTable.PROVIDER_TIGERKNOWS, LocationTable.PROVIDER_NETWORK);
             locationTable.close();
         }
     }

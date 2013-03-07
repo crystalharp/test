@@ -162,6 +162,8 @@ import com.tigerknows.view.user.UserUpdatePhoneActivity;
 
 public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
+    public static final String ACTION_FIRST_STARTUP = "action.com.tigerknows.first.startup";
+    
 	private static final int CONFIG_SERVER = 8;
 	private static final int PROFILE = 7;
 	
@@ -440,6 +442,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     public void run() {
                         mMapView.setStopRefreshMyLocation(true);
                         if (fristUse) {
+                            sendFirstStartupBroadcast();
                             Intent intent = new Intent();
                             intent.putExtra(Help.APP_FIRST_START, fristUse);
                             showView(R.id.activity_help, intent);
@@ -455,6 +458,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             }, 1000);
                         } else {
                             if (upgrade) {
+                                sendFirstStartupBroadcast();
                                 Intent intent = new Intent();
                                 intent.putExtra(Help.APP_UPGRADE, upgrade);
                                 showView(R.id.activity_help, intent);
@@ -769,6 +773,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         queryStart(userLogon, false);
         
         checkCitySupportDiscover(Globals.g_Current_City_Info.getId());
+	}
+	
+	private void sendFirstStartupBroadcast() {
+        Intent intent = new Intent(ACTION_FIRST_STARTUP);
+        sendBroadcast(intent);
 	}
 	
 	private void checkCitySupportDiscover(int cityId) {

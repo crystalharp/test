@@ -10,6 +10,7 @@ import com.tigerknows.model.LocationQuery.LocationParameter;
 import com.tigerknows.model.LocationQuery.TKCellLocation;
 import com.tigerknows.model.LocationQuery.TKNeighboringCellInfo;
 import com.tigerknows.model.LocationQuery.TKScanResult;
+import com.tigerknows.service.TKLocationManager;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -49,6 +50,7 @@ public class LocationTable {
     public static final int PROVIDER_TIGERKNOWS = 0;
     public static final int PROVIDER_GPS = 1;
     public static final int PROVIDER_NETWORK = 2;
+    public static final int PROVIDER_GPS_COLLECTION = 10;
 
 	// DB NAME
 	protected static final String DATABASE_NAME = "locationDB";
@@ -151,7 +153,9 @@ public class LocationTable {
 	        provider = PROVIDER_GPS;
 	    } else if (LocationManager.NETWORK_PROVIDER.equals(location.getProvider())) {
 	        provider = PROVIDER_NETWORK;
-	    }
+	    } else if (TKLocationManager.GPS_COLLECTION_PROVIDER.equals(location.getProvider())) {
+            provider = PROVIDER_GPS_COLLECTION;
+        }
         return provider;
 	}
 
@@ -173,47 +177,50 @@ public class LocationTable {
 		return count;
 	}
 
-    public void read(HashMap<LocationParameter, Location> map) {
+    public void read(HashMap<LocationParameter, Location> map, int min, int max) {
         if(!mDb.isOpen())
             return;
         Cursor mCursor = mDb.query(true, TABLE_NAME,
-                new String[] { MNC, MCC, TKCELLLOCATION, NEIGHBORINGCELLINFO_LIST, WIFI_LIST, LOCATION}, null,
+                new String[] { PROVIDER, MNC, MCC, TKCELLLOCATION, NEIGHBORINGCELLINFO_LIST, WIFI_LIST, LOCATION}, null,
                 null, null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
             int count = mCursor.getCount();
             try {
                 for(int j = 0;j < count; j++) {
-                    LocationParameter locationParameter = new LocationParameter();
-                    locationParameter.mnc = mCursor.getInt(0);
-                    locationParameter.mcc = mCursor.getInt(1);
-                    String str= mCursor.getString(2);
-                    locationParameter.tkCellLocation = new TKCellLocation(str);
-                    str= mCursor.getString(3);
-                    if (TextUtils.isEmpty(str) == false) {
-                        String[] arr = str.split(";");
-                        for(int i = arr.length - 1; i >= 0; i--) {
-                            TKNeighboringCellInfo neighboringCellInfo = new TKNeighboringCellInfo(arr[i]);
-                            locationParameter.neighboringCellInfoList.add(neighboringCellInfo);
+                    int type = mCursor.getInt(0);
+                    if (type >= min && type <= max) {
+                        LocationParameter locationParameter = new LocationParameter();
+                        locationParameter.mnc = mCursor.getInt(1);
+                        locationParameter.mcc = mCursor.getInt(2);
+                        String str= mCursor.getString(3);
+                        locationParameter.tkCellLocation = new TKCellLocation(str);
+                        str= mCursor.getString(4);
+                        if (TextUtils.isEmpty(str) == false) {
+                            String[] arr = str.split(";");
+                            for(int i = arr.length - 1; i >= 0; i--) {
+                                TKNeighboringCellInfo neighboringCellInfo = new TKNeighboringCellInfo(arr[i]);
+                                locationParameter.neighboringCellInfoList.add(neighboringCellInfo);
+                            }
                         }
-                    }
-                    str= mCursor.getString(4);
-                    if (TextUtils.isEmpty(str) == false) {
-                        String[] arr = str.split(";");
-                        for(int i = arr.length - 1; i >= 0; i--) {
-                            TKScanResult tkScanResult = TKScanResult.parse(arr[i]);
-                            if (tkScanResult != null)
-                                locationParameter.wifiList.add(tkScanResult);
+                        str= mCursor.getString(5);
+                        if (TextUtils.isEmpty(str) == false) {
+                            String[] arr = str.split(";");
+                            for(int i = arr.length - 1; i >= 0; i--) {
+                                TKScanResult tkScanResult = TKScanResult.parse(arr[i]);
+                                if (tkScanResult != null)
+                                    locationParameter.wifiList.add(tkScanResult);
+                            }
                         }
-                    }
-                    str= mCursor.getString(5);
-                    if (TextUtils.isEmpty(str) == false) {
-                        Location location = new Location(LocationQuery.PROVIDER_DATABASE);
-                        String[] arr = str.split(",");
-                        location.setLatitude(Double.parseDouble(arr[0]));
-                        location.setLongitude(Double.parseDouble(arr[1]));
-                        location.setAccuracy(Float.parseFloat(arr[2]));
-                        map.put(locationParameter, location);
+                        str= mCursor.getString(6);
+                        if (TextUtils.isEmpty(str) == false) {
+                            Location location = new Location(LocationQuery.PROVIDER_DATABASE);
+                            String[] arr = str.split(",");
+                            location.setLatitude(Double.parseDouble(arr[0]));
+                            location.setLongitude(Double.parseDouble(arr[1]));
+                            location.setAccuracy(Float.parseFloat(arr[2]));
+                            map.put(locationParameter, location);
+                        }
                     }
                     mCursor.moveToNext();
                 }
@@ -234,11 +241,11 @@ public class LocationTable {
 		return true;
 	}
 
-    public void optimize() throws SQLException {
+    public void optimize(int min, int max) throws SQLException {
         if(!mDb.isOpen())
             return;
         Cursor mCursor = mDb.query(true, TABLE_NAME,
-                new String[]{ID}, null,
+                new String[]{ID}, PROVIDER + ">=" + min + " AND " + PROVIDER + "<=" + max,
                 null, null, null, ID + " ASC", null);
         int count = mCursor.getCount();
         if (count > MAX_COUNT) {
