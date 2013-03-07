@@ -113,6 +113,7 @@ import com.tigerknows.model.Zhanlan;
 import com.tigerknows.model.DataQuery.POIResponse;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.provider.HistoryWordTable;
+import com.tigerknows.radar.TKNotificationManager;
 import com.tigerknows.service.MapStatsService;
 import com.tigerknows.service.SuggestLexiconService;
 import com.tigerknows.service.TKLocationManager.TKLocationListener;
