@@ -8,6 +8,9 @@ import android.util.DisplayMetrics;
 
 import java.util.HashMap;
 
+import com.decarta.android.exception.APIException;
+import com.decarta.android.location.Position;
+import com.decarta.android.util.Util;
 import com.decarta.android.util.XYInteger;
 import com.tigerknows.ImageCache;
 import com.tigerknows.R;
@@ -185,5 +188,29 @@ public class Globals {
             cityId = cityInfo.getId(); 
         }
         return cityId;
+    }
+    
+    public static CityInfo getLastCityInfo(Context context) {
+        CityInfo cityInfo = g_Current_City_Info;
+        if (cityInfo == null) {
+            double lastLon = Double.parseDouble(TKConfig.getPref(context, TKConfig.PREFS_LAST_LON, "361"));
+            double lastLat = Double.parseDouble(TKConfig.getPref(context, TKConfig.PREFS_LAST_LAT, "361"));
+            int lastZoomLevel = Integer.parseInt(TKConfig.getPref(context, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(TKConfig.ZOOM_LEVEL_DEFAULT)));
+
+            Position lastPosition = new Position(lastLat, lastLon);
+            if(Util.inChina(lastPosition)) {
+                MapEngine mapEngine = MapEngine.getInstance();
+                try {
+                    mapEngine.initMapDataPath(context, false);
+                    int cityId = mapEngine.getCityId(lastPosition);
+                    cityInfo = mapEngine.getCityInfo(cityId);
+                    cityInfo.setPosition(lastPosition);
+                    cityInfo.setLevel(lastZoomLevel);
+                } catch (APIException exception) {
+                    exception.printStackTrace();
+                }
+            }
+        }
+        return cityInfo;
     }
 }
