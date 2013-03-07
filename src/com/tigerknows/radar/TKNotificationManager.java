@@ -19,8 +19,8 @@ public class TKNotificationManager {
         // extras to be the ones passed in here.
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, Sphinx.class)
-//                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                        .putExtra("type", data),
+                        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        .putExtra(Sphinx.EXTRA_SOURCE_NOTIFICATION, data),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         return contentIntent;
     }
@@ -47,5 +47,10 @@ public class TKNotificationManager {
         // we use a string id because is a unique number.  we use it later to cancel the
         // notification
         nm.notify(R.layout.sphinx, notif);
+    }
+
+    public static void cancel(Context context) {
+        NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        nm.cancel(R.layout.sphinx);
     }
 }

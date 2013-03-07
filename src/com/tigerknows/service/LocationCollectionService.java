@@ -128,12 +128,12 @@ public class LocationCollectionService extends Service {
                     i++;
                 }
                 removeUpdates();
-                stopService();
+                exitService();
             }
         }).start();
     }
     
-    void stopService() {
+    void exitService() {
         Context context = getApplicationContext();
         long currentTimeMillis = System.currentTimeMillis();
         Calendar next = Calendar.getInstance();
