@@ -169,8 +169,8 @@ public class QZoneSend extends BaseActivity implements OnClickListener {
         int viewId = v.getId();
         switch (viewId) {
             case R.id.logout_btn: {
-                mActionLog.addAction(ActionLog.QzoneSendClickLogoutbBtn);
                 if (checkUserAccessIdenty(false) == false) {
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft", checkUserAccessIdenty(false));
                     QZoneSend.this.finish();
                     return;
                 }
@@ -181,7 +181,7 @@ public class QZoneSend extends BaseActivity implements OnClickListener {
                 break;
             }
             case R.id.send_btn: {
-                mActionLog.addAction(ActionLog.QzoneSendClickSendBtn, mContent);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight", mContent);
                 if (checkUserAccessIdenty(true) == false) {
                     return;
                 }

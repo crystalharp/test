@@ -78,13 +78,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         R.drawable.category_hospital
         };
 
-    private final String[] mCategoryActionTag = {
-            ActionLog.SearchHomeFood, ActionLog.SearchHomeYuLe, ActionLog.SearchHomeBuy,
-            ActionLog.SearchHomeHotel, ActionLog.SearchHomeLuYou, ActionLog.SearchHomeLiRen,
-            ActionLog.SearchHomeSprot, ActionLog.SearchHomeBank, ActionLog.SearchHomeTraffic,
-            ActionLog.SearchHomeYiLiao
-    };
-    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -123,7 +116,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
                 Category category = new Category();
                 category.resId = mCategoryResIdList[index+j];
                 category.name = mCategoryNameList[index+j];
-                category.tag = mCategoryActionTag[index+j];
                 categorylist.add(category);
             }
             categoryList.add(categorylist);
@@ -189,10 +181,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.city_btn) {
-            mActionLog.addAction(ActionLog.SearchHomeChangeCity);
+            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "changecity", Globals.g_Current_City_Info.getCName());
             mSphinx.showView(R.id.activity_change_city);
         } else if (id == R.id.input_btn) {
-            mActionLog.addAction(ActionLog.SearchHomeSearchInput);
+            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "input");
             mSphinx.showView(R.id.view_poi_query);
         }
     }
@@ -274,7 +266,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     private static class Category {
         int resId;
         String name;
-        String tag;
     }
     
     public class CategoryAdapter extends ArrayAdapter<List<Category>> {
@@ -316,7 +307,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
                         @Override
                         public void onClick(View v) {
-                            mActionLog.addAction(category.tag);
+                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "category", category.name);
 
                             DataQuery poiQuery = new DataQuery(mContext);
                             POI requestPOI = mSphinx.getPOI();

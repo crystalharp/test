@@ -142,7 +142,7 @@ public class ChangeCity extends BaseActivity {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-                    mActionLog.addAction(ActionLog.ChangeCityInputBox);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "input");
                 }
                 return false;
             }
@@ -178,14 +178,12 @@ public class ChangeCity extends BaseActivity {
                 return false;
             }
         });
-        
+
         mCityElv.setOnGroupCollapseListener(new OnGroupCollapseListener() {
             
             @Override
             public void onGroupCollapse(int groupPosition) {
-                if (sAllCityInfoList.get(groupPosition).getCityList().size() == 1) {
-                    changeCity(sAllCityInfoList.get(groupPosition));
-                }
+                mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "provinceCollapse", groupPosition, sAllCityInfoList.get(groupPosition).getCName());
             }
         });
         
@@ -194,8 +192,11 @@ public class ChangeCity extends BaseActivity {
             @Override
             public void onGroupExpand(int groupPosition) {
                 if (sAllCityInfoList.get(groupPosition).getCityList().size() == 1) {
+                    mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "city", groupPosition, sAllCityInfoList.get(groupPosition).getCName());
                     changeCity(sAllCityInfoList.get(groupPosition));
-                }                
+                } else {
+                    mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "provinceExpend", groupPosition, sAllCityInfoList.get(groupPosition).getCName());
+                }
             }
         });
         
@@ -204,6 +205,7 @@ public class ChangeCity extends BaseActivity {
             @Override
             public boolean onChildClick(ExpandableListView arg0, View arg1, int groupPosition, int childPosition, long arg4) {
                 changeCity(sAllCityInfoList.get(groupPosition).getCityList().get(childPosition));
+                mActionLog.addAction(ActionLog.LISTVIEW_CHILD_ITEM_ONCLICK, "city", groupPosition, childPosition, sAllCityInfoList.get(groupPosition).getCityList().get(childPosition).getCName());
                 return false;
             }
         });
@@ -214,6 +216,7 @@ public class ChangeCity extends BaseActivity {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 CityInfo cityInfo = (CityInfo)(arg1.getTag());
                 if (!mNotFindCity.equals(cityInfo.getCName())) {
+                    mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "suggestCity", arg2, cityInfo.getCName());
                     changeCity(cityInfo);
                 }
                 return;
@@ -278,11 +281,6 @@ public class ChangeCity extends BaseActivity {
     private void changeCity(CityInfo cityInfo) {
         if (cityInfo.isAvailably() == false || cityInfo.getId() == -5 || cityInfo.getId() == -6) {
             return;
-        }
-        if (cityInfo.getId() == Globals.g_Current_City_Info.getId()) {
-            mActionLog.addAction(ActionLog.ChangeCityCurrent, cityInfo.getCName());
-        } else {
-            mActionLog.addAction(ActionLog.ChangeCitySelect, cityInfo.getCName());
         }
         Intent intent = new Intent();
         intent.putExtra("cityId", cityInfo.getId());

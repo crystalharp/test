@@ -127,8 +127,8 @@ public class TrafficQueryEventHelper {
 		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new InputOnCheckedChangeListener());
 		mQueryFragment.mSelectStartBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mStart));
 		mQueryFragment.mSelectEndBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mEnd));
-		mQueryFragment.mTrafficQueryBtn.setOnClickListener(new InputQueryClickListener());
-		mQueryFragment.mBuslineQueryBtn.setOnClickListener(new InputQueryClickListener());
+		mQueryFragment.mTrafficQueryBtn.setOnClickListener(new InputQueryClickListener("queryTraffic"));
+		mQueryFragment.mBuslineQueryBtn.setOnClickListener(new InputQueryClickListener("queryBusline"));
 		mQueryFragment.mSuggestLsv.setOnItemClickListener(new InputSuggestOnItemClickListener());
 		mQueryFragment.mSuggestLsv.setOnTouchListener(new InputSuggestOnTouchListener());
 		mQueryFragment.mSuggestLnl.setOnTouchListener(new InputSuggestOnTouchListener());
@@ -166,6 +166,13 @@ public class TrafficQueryEventHelper {
 	protected class StartEndEdtClickListener implements OnEditorActionListener {
 		
 		public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                mQueryFragment.mActionLog.addAction(ActionLog.SOFTINPUT_ACTION, "next");
+            } else if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                mQueryFragment.mActionLog.addAction(ActionLog.SOFTINPUT_ACTION, "search");
+            } else if (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER) {
+                mQueryFragment.mActionLog.addAction(ActionLog.SOFTINPUT_KEY, "enter");
+            }
 			if (actionId == EditorInfo.IME_ACTION_NEXT
                     || actionId == EditorInfo.IME_ACTION_SEARCH 
 			        || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
@@ -297,22 +304,22 @@ public class TrafficQueryEventHelper {
         	switch(checkedId){
             case R.id.traffic_transfer_rbt:
             	if (mQueryFragment.mLogHelper.logForTabChange)
-            		mQueryFragment.mActionLog.addAction(ActionLog.TrafficBusTab);
+            		mQueryFragment.mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "transfer");
             	mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
                 break;
             case R.id.traffic_drive_rbt:
             	if (mQueryFragment.mLogHelper.logForTabChange)
-            		mQueryFragment.mActionLog.addAction(ActionLog.TrafficDriveTab);
+                    mQueryFragment.mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "drive");
             	mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
                 break;
             case R.id.traffic_walk_rbt:
             	if (mQueryFragment.mLogHelper.logForTabChange)
-            		mQueryFragment.mActionLog.addAction(ActionLog.TrafficWalkTab);
+                    mQueryFragment.mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "walk");
             	mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
                 break;
             case R.id.traffic_busline_rbt:
             	if (mQueryFragment.mLogHelper.logForTabChange)
-            		mQueryFragment.mActionLog.addAction(ActionLog.TrafficLineTab);
+                    mQueryFragment.mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "busline");
             	mQueryFragment.changeToMode(TrafficQueryFragment.BUSLINE_MODE);
             default:
                 break;
@@ -355,7 +362,7 @@ public class TrafficQueryEventHelper {
 		@Override
 		//xupeng:这是交换按钮的处理函数。
 		public void onClick(View v) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficExchangeBtn);
+            mQueryFragment.mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "exchange");
 			POI temp = mQueryFragment.mStart.getPOI();
 			mQueryFragment.mStart.setPOI(mQueryFragment.mEnd.getPOI());
 			mQueryFragment.mEnd.setPOI(temp);
@@ -426,9 +433,15 @@ public class TrafficQueryEventHelper {
 	}
 
 	protected class InputQueryClickListener implements OnClickListener {
+	    
+	    String log;
+	    InputQueryClickListener(String log) {
+	        this.log = log;
+	    }
 
 		@Override
 		public void onClick(View v) {
+		    mQueryFragment.mActionLog.addAction(ActionLog.CONTROL_ONCLICK, log);
 			mQueryFragment.query();
 		}
 		
@@ -439,11 +452,17 @@ public class TrafficQueryEventHelper {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view,
 				int position, long id) {
-			LogWrapper.d("eric", "SuggestLsv.onItemClick");
 			TKWord tkWord = ((SuggestArrayAdapter) parent.getAdapter()).getItem(position);
-			
+
+			String log = "Start";
+            if (mQueryFragment.mSelectedEdt == mQueryFragment.mEnd) {
+                log = "End";
+            } else if (mQueryFragment.mSelectedEdt == mQueryFragment.mBusline) {
+                log = "Busline";
+            }
+            
 			if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
-			    mQueryFragment.mActionLog.addAction(ActionLog.TrafficClearHistory);
+                mQueryFragment.mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "clearHistoryWord"+log);
 	            if (mQueryFragment.mode == TrafficQueryFragment.TRAFFIC_MODE) {
 	                HistoryWordTable.clearHistoryWord(mQueryFragment.mSphinx, mQueryFragment.mMapLocationHelper.getQueryCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
 	                mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryFragment.mSelectedEdt.getEdt(), TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
@@ -457,9 +476,10 @@ public class TrafficQueryEventHelper {
 				if (null != wordLonLat && Util.inChina(wordLonLat)) {
 					poi.setPosition(wordLonLat);
 				}
+				mQueryFragment.mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "suggestWord"+log, mQueryFragment.mLogHelper.logForSuggestDispatch(mQueryFragment.mSelectedEdt, position), tkWord.word);
 				mQueryFragment.mSuggestHistoryHelper.suggestSelect(poi, position);
-				
 			} else  if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
+			    mQueryFragment.mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "historyWord"+log, mQueryFragment.mLogHelper.logForSuggestDispatch(mQueryFragment.mSelectedEdt, position), tkWord.word);
 			    mQueryFragment.mSuggestHistoryHelper.suggestSelect(tkWord.toPOI(), position);
 			}
 		}
@@ -547,7 +567,7 @@ public class TrafficQueryEventHelper {
 		
 		public void showSelectOptionDialog(Activity activity, final QueryEditText queryEdt, String title, final boolean hasMyLocation) {
 		    String[] strList = mQueryFragment.mContext.getResources().getStringArray(R.array.select_location_option);
-            List<String> selectOptionList = new ArrayList<String>();
+            final List<String> selectOptionList = new ArrayList<String>();
             int[] resIdList;
             for(String str : strList) {
                 selectOptionList.add(str);
@@ -576,6 +596,7 @@ public class TrafficQueryEventHelper {
                 @Override
                 public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
                     dialog.dismiss();
+                    mQueryFragment.mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "select", selectOptionList.get(which));
                     mQueryFragment.mSelectedEdt = queryEdt;
                     //有定位的情况下四个选项为“当前位置”，“地图选点”，“收藏夹”，“交换起终点”
                     //如果没有定位，则正常第一个选择“当前位置”不显示，which加一才能对应到到正确操作。
@@ -608,7 +629,6 @@ public class TrafficQueryEventHelper {
 		    private void performSwitchStartEnd() {
 		        mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mSphinx, null, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
                 clearSuggestWatcherInInputState();
-                mQueryFragment.mActionLog.addAction(ActionLog.TrafficExchangeBtn);
                 POI temp = mQueryFragment.mStart.getPOI();
                 mQueryFragment.mStart.setPOI(mQueryFragment.mEnd.getPOI());
                 mQueryFragment.mEnd.setPOI(temp);
@@ -619,7 +639,6 @@ public class TrafficQueryEventHelper {
 			private void performSelectMyLocation() {
 				LogWrapper.d("eric", "performSelectMyLocation()");
 
-				mQueryFragment.mActionLog.addAction(ActionLog.TrafficBookmarkFirst);
 	        		POI poi = new POI();
 	        		poi.setName(mQueryFragment.mContext.getString(R.string.my_location));
 	        		mQueryFragment.setData(poi, TrafficQueryFragment.SELECTED);
@@ -629,8 +648,6 @@ public class TrafficQueryEventHelper {
 			private void performMapSelectPoint(QueryEditText queryEditText) {
 				LogWrapper.d("eric", "performMapSelectPoint()");
 
-				mQueryFragment.mActionLog.addAction(ActionLog.TrafficBookmarkSecond);
-				
 				mQueryFragment.mSphinx.setTouchMode(R.id.start_edt == queryEditText.getEdt().getId() ? TouchMode.CHOOSE_ROUTING_START_POINT : TouchMode.CHOOSE_ROUTING_END_POINT);
 				
 				Position center = mQueryFragment.mSphinx.getMapView().getCenterPosition();
@@ -652,8 +669,6 @@ public class TrafficQueryEventHelper {
 			private void performSelectFavorite() {
 				LogWrapper.d("eric", "performSelectFavorite()");
 
-				mQueryFragment.mActionLog.addAction(ActionLog.TrafficBookmarkThird);
-				
 				mQueryFragment.mSphinx.getFetchFavoriteDialog().setData(mQueryFragment);
 				mQueryFragment.mSphinx.showView(R.id.dialog_fetch_favorite_poi);
 			}

@@ -148,7 +148,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             setup();
             onResume();
             mTitleBtn.setClickable(false);
-            mActionLog.addAction(ActionLog.DiscoverListTitleSelection, position);
+            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "channel", position, discoverCategory.getType());
         }
     };
     
@@ -375,7 +375,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             DataQuery lastDataQuery = mDataQuery;
             if (mState != STATE_QUERYING && mState != STATE_LIST && lastDataQuery != null) {
-                mActionLog.addAction(ActionLog.KeyCodeBack);
+                mActionLog.addAction(ActionLog.KEYCODE, "back");
                 mState = STATE_LIST;
                 updateView();
                 refreshFilter(lastDataQuery.getFilterList());
@@ -521,7 +521,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             return;
         }
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
-        mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
+        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "loadMore");
 
         DataQuery dataQuery = new DataQuery(mContext);
         Hashtable<String, String> criteria = lastDataQuery.getCriteria();
@@ -627,12 +627,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (mDataQuery == null || mState != STATE_LIST) {
                     return;
                 }
-                mActionLog.addAction(ActionLog.Title_Right_Button);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
                 viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 
             case R.id.dingdan_btn:
-                mActionLog.addAction(ActionLog.TuangouListDingdan);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "dingdan");
                 User user = Globals.g_User;
                 if (user != null) {
                     Intent intent = new Intent();
@@ -1140,6 +1140,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     }
     
     private void showFilterListView(View parent) {
+        mActionLog.addAction(ActionLog.POPUPWINDOW, "filter");
         if (mPopupWindow == null) {
             mFilterListView = new FilterListView(mSphinx);
             mPopupWindow = new PopupWindow(mFilterListView);

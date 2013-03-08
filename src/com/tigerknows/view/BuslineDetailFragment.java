@@ -86,7 +86,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
             mTitleFragment.dismissPopupWindow();
             Line clickedLine = mLineList.get(position);
-            mActionLog.addAction(ActionLog.TrafficPopupClickItem, position);
+            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "titlePopup", position+1);
             if (clickedLine.equals(line)) {
             	return;
             } else {
@@ -145,7 +145,6 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     				public void onClick(View v) {
     			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
     			        mTitlePopupArrayAdapter.notifyDataSetChanged();
-    			        mActionLog.addAction(ActionLog.TrafficPopupWindow);
     				}
     	        });
         	}
@@ -178,7 +177,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         	@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-                mActionLog.addAction(ActionLog.TrafficLineDetailStation, position);
+                mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", position+1);
                 // 绘制线路图层
                 viewMap();
                 // 将地图平移到某一坐标点, 并缩放至某一级别
@@ -283,7 +282,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         @Override
         public void onClick(View v) {
             if(v.getId() == R.id.share_btn){
-            	mActionLog.addAction(ActionLog.TrafficLineDetailShareBtn);
+            	mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "share");
             	share(line);
             }else if(v.getId() == R.id.favorite_btn){
                 favorite(line, v);
@@ -295,6 +294,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
                 return ;
             
             boolean isFavorite = data.checkFavorite(mContext);
+            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "favorite", isFavorite);
             if (isFavorite) {
             	CommonUtils.showNormalDialog(mSphinx, 
                         mContext.getString(R.string.prompt),
@@ -306,14 +306,12 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
                             @Override
                             public void onClick(DialogInterface arg0, int id) {
                                 if (id == DialogInterface.BUTTON_POSITIVE) {
-                                	mActionLog.addAction(ActionLog.TrafficLineDetailCancelFav);
                                     setFavoriteState(v, false);
                                     data.deleteFavorite(mContext);
                                 }
                             }
                         });
             } else {
-            	mActionLog.addAction(ActionLog.TrafficLineDetailFavorite);
             	setFavoriteState(v, true);
                 data.writeToDatabases(mContext, -1, Tigerknows.STORE_TYPE_FAVORITE);
                 Toast.makeText(mSphinx, R.string.favorite_toast, Toast.LENGTH_LONG).show();
@@ -379,7 +377,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.right_btn) {
-            mActionLog.addAction(ActionLog.Title_Right_Button);
+            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
         	// 绘制交通图层
 			viewMap();
 			// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点

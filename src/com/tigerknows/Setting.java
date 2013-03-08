@@ -65,7 +65,7 @@ public class Setting extends BaseActivity {
                     return;
                 }
                 switchWakeLock();
-                mActionLog.addAction(checkBox.isChecked() ? ActionLog.SettingAcquireWakeLockYes : ActionLog.SettingAcquireWakeLockNo);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "wakelock", checkBox.isChecked() ? "on" : "off");
             }
         };
         dataBean.showIcon = false;
@@ -105,13 +105,13 @@ public class Setting extends BaseActivity {
                 int type = dataBean.type;
                 switch (type) {
                     case DataBean.TYPE_GPS:
-                        mActionLog.addAction(ActionLog.SettingGPS, checkGPS() ? "0" : "1");
+                        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "gps", index, checkGPS() ? "on" : "off");
                         Intent intent = new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
                         startActivityForResult(intent, R.id.activity_setting_location);
                         break;
                     case DataBean.TYPE_WAKELOCK:
                         dataBean.checked = !dataBean.checked;
-                        mActionLog.addAction(dataBean.checked ? ActionLog.SettingAcquireWakeLockYes : ActionLog.SettingAcquireWakeLockNo);
+                        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "wakelock", index, dataBean.checked ? "on" : "off");
                         mSettingAdatpter.notifyDataSetChanged();
                         switchWakeLock();
                         break;

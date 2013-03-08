@@ -113,7 +113,7 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
         // TODO Auto-generated method stub
         switch(v.getId()){
             case R.id.right_btn:
-                mActionLog.addAction(ActionLog.Title_Right_Button);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
                 // md=$uid-$errcode[-$detail]_$uid-$errcode[-$detail]_$uid-$errcode[-$detail]_ 
                 // md=edc1e4c9-5081-428a-935d-1d31fd3848f5-502_8d5cc821-c130-4f9e-acfa-d4906e82c016-404
                 StringBuilder s = new StringBuilder();
@@ -185,7 +185,6 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
 //                }
                 
                 hideSoftInput();
-                mActionLog.addAction(ActionLog.Title_Right_Button);
                 Hashtable<String, String> criteria = new Hashtable<String, String>();
                 criteria.put(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, s.toString());
                 FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);

@@ -124,7 +124,7 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     public void onClick(View view) {
         switch (view.getId()) {                
             case R.id.right_btn:
-                mActionLog.addAction(ActionLog.Title_Right_Button);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
                 viewMap();
                 break;
         }

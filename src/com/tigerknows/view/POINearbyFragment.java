@@ -89,13 +89,6 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         R.drawable.ic_hospital_search_near
         };
     
-    private final String[] mCategoryActionTag = {
-            ActionLog.SearchNearbyFood, ActionLog.SearchNearbyYuLe, ActionLog.SearchNearbyBuy,
-            ActionLog.SearchNearbyHotel, ActionLog.SearchNearbyLuYou, ActionLog.SearchNearbyLiRen,
-            ActionLog.SearchNearbySprot, ActionLog.SearchNearbyBank, ActionLog.SearchNearbyTraffic,
-            ActionLog.SearchNearbyYiLiao
-    };
-    
     private final TextWatcher mFindEdtWatcher = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
@@ -184,9 +177,9 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             public void onPageSelected(int index) {
                 CommonUtils.pageIndicatorChanged(mSphinx, mPageIndicatorView, index);
                 if (index == 0) {
-                    mActionLog.addAction(ActionLog.SearchNearbyCategory);
+                    mActionLog.addAction(ActionLog.VIEWPAGER_SELECTED, "category");
                 } else {
-                    mActionLog.addAction(ActionLog.SearchNearbyJingQue);
+                    mActionLog.addAction(ActionLog.VIEWPAGER_SELECTED, "input");
                 }
             }
             
@@ -203,7 +196,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                mActionLog.addAction(mCategoryActionTag[position]);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "category", mCategoryName[position]);
                 submitQuery(mCategoryName[position], false);                
             }
         });
@@ -241,7 +234,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 TKWord tkWord = (TKWord) arg0.getAdapter().getItem(position);
                 if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
-                    mActionLog.addAction(ActionLog.SearchNearbyCleanHistory);
+                    mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "cleanHistoryWord");
                     HistoryWordTable.clearHistoryWord(mSphinx, Globals.g_Current_City_Info.getId(), HistoryWordTable.TYPE_POI);
                     String key = mKeywordEdt.getText().toString();
                     POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, key);
@@ -249,9 +242,9 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
                     notifyDataSetChanged();
                 } else {
                     if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
-                        mActionLog.addAction(ActionLog.SearchNearHistoryWord, tkWord.word, position);
+                        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "historyWord", position+1, tkWord.word);
                     } else {
-                        mActionLog.addAction(ActionLog.SearchNearSuggestWord, tkWord.word, position);
+                        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "suggestWord", position+1, tkWord.word);
                     }
                     mKeywordEdt.setText(tkWord.word); //处理光标问题
                     submitQuery(mKeywordEdt.getText().toString().trim(), true);
@@ -276,7 +269,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         switch (view.getId()) {
                 
             case R.id.query_btn:
-                mActionLog.addAction(ActionLog.SearchNearbySubimt, mKeywordEdt.getText().toString().trim());
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "search", mKeywordEdt.getText().toString().trim());
                 submitQuery(mKeywordEdt.getText().toString().trim(), true);
                 break;
 

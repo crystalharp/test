@@ -46,10 +46,13 @@ public class MapWord {
             R.drawable.ic_map_provincial_capital, R.drawable.ic_map_other_cities, R.drawable.icon,
             R.drawable.icon, R.drawable.ic_map_area, R.drawable.icon};
         
-        private static Bitmap[] BitmapPool;
+        private static Bitmap[] BitmapPool = null;
         private static NinePatchDrawable[] NinePatchDrawablePool;
         
         public static void init(Context context) {
+            if (BitmapPool != null) {
+                return;
+            }
             Resources resources = context.getResources();
             BitmapPool = new Bitmap[RESOURCE_ID.length];
             for(int i = 0; i < RESOURCE_ID.length; i++) {

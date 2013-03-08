@@ -121,7 +121,7 @@ public class CycleViewPager {
         public void onPageSelected(int position) {
             iRefreshViews.refreshViews(position);
             time = 0;
-            ActionLog.getInstance(mContext).addAction(ActionLog.DiscoverDetailFling, position);
+            ActionLog.getInstance(mContext).addAction(ActionLog.VIEWPAGER_SELECTED, position);
         }
     }
 }

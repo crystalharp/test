@@ -10,6 +10,7 @@ import android.widget.ListView;
 
 import com.decarta.android.location.Position;
 import com.decarta.android.util.Util;
+import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.POI;
@@ -80,7 +81,6 @@ public class TrafficQuerySuggestHistoryHelper {
                 break;
             default:
             }
-            
             int historyNum=0;
             if (TextUtils.isEmpty(searchWord)) {
                 // 显示历史词
@@ -113,7 +113,6 @@ public class TrafficQuerySuggestHistoryHelper {
 
 	public void suggestSelect(POI poi, int index) {
 		
-        mQueryFragment.mLogHelper.logForSuggestDispatch(mQueryFragment.mSelectedEdt, index);
         mQueryFragment.mSelectedEdt.setPOI(poi);
 		
 		if (mQueryFragment.mTrafficQueryBtn.isEnabled() || mQueryFragment.mBuslineQueryBtn.isEnabled()) {

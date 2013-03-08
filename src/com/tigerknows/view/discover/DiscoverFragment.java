@@ -224,7 +224,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                     DiscoverCategory discoverCategory = mDiscoverCategoryList.get(position
                             % mDiscoverCategoryList.size());
                     if (discoverCategory.getNumCity() > 0 || discoverCategory.getNumNearby() > 0) {
-                        mActionLog.addAction(ActionLog.DiscoverHomeSelectItem, discoverCategory.getType());
+                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "discoverChannel", discoverCategory.getType());
                         DataQuery dataQuery = new DataQuery(mSphinx);
                         Hashtable<String, String> criteria = new Hashtable<String, String>();
                         criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, discoverCategory.getType());
@@ -289,9 +289,9 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                 if (isBegingDrag == false) {
                     if (mPosition != -1) {
                         if (position > mPosition) {
-                            mActionLog.addAction(ActionLog.DiscoverHomeRightFling);
+                            mActionLog.addAction(ActionLog.FLING, "channel", "left");
                         } else {
-                            mActionLog.addAction(ActionLog.DiscoverHomeLeftFling);
+                            mActionLog.addAction(ActionLog.FLING, "channel", "right");
                         }
                     }
                     mPosition = position;

@@ -96,7 +96,7 @@ public class FetchFavoriteDialog extends BaseDialog {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 int mPosition = arg2;
                 if (getPOI(mPosition) != null) {
-                	mActionLog.addAction(ActionLog.TrafficFavoriteAsRoutePoint, mPosition);
+                	mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", mPosition);
                 	queryBaseView.setData(getPOI(mPosition), TrafficQueryFragment.SELECTED);
                 	dismiss();
                 }

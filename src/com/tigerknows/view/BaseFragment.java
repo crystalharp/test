@@ -101,7 +101,7 @@ public class BaseFragment extends LinearLayout {
             synchronized (mSphinx.mUILock) {
                 if (!mSphinx.mUIProcessing) {
                 	if (arg0.getVisibility() == View.VISIBLE) {
-                	    mActionLog.addAction(ActionLog.Title_Left_Back);
+                	    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft");
 	                	dismiss();
                 	}
                 }
@@ -260,7 +260,7 @@ public class BaseFragment extends LinearLayout {
                 && id != R.id.view_title
                 && id != R.id.view_menu) { 
             if (!TextUtils.isEmpty(mActionTag)) {
-                mActionLog.addAction(mActionTag);
+                mActionLog.addAction(ActionLog.UI, mActionTag);
             }
             mSphinx.replace(this);   
             

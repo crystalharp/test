@@ -355,17 +355,17 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.telephone_view:
-                mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailTelphone);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "telephone");
                 CommonUtils.telephone(mSphinx, mTelephoneTxv);
                 break;
                 
             case R.id.address_view:
-                mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailAddress);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "address");
                 CommonUtils.queryTraffic(mSphinx, mYingxun.getPOI(POI.SOURCE_TYPE_DIANYING));
                 break;
                 
             case R.id.after_tomorrow_btn:
-                mActionLog.addAction(mActionTag+ActionLog.DianyingAfterTomorrow);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "afterTomorrow");
                 if (Changci.OPTION_DAY_AFTER_TOMORROW == mYingxun.getChangciOption()) {
                     mYingxun.setChangciOption(0);
                 } else {
@@ -374,7 +374,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
             	refreshShowTime();
                 break;
             case R.id.tomorrow_btn:
-                mActionLog.addAction(mActionTag+ActionLog.DianyingTomorrow);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "tomorrow");
                 if (Changci.OPTION_DAY_TOMORROW == mYingxun.getChangciOption()) {
                     mYingxun.setChangciOption(0);
                 } else {
@@ -383,7 +383,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
                 refreshShowTime();
                 break;
             case R.id.today_btn:
-                mActionLog.addAction(mActionTag+ActionLog.DianyingToday);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "taday");
                 if (Changci.OPTION_DAY_TODAY == mYingxun.getChangciOption()) {
                     mYingxun.setChangciOption(0);
                 } else {
@@ -393,7 +393,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
                 break;    
                 
             case R.id.nearby_fendian_view:        
-                mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailBranch);   	
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "fendian");   	
             	mSphinx.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.YingxunList);
                 mSphinx.showView(R.id.view_discover_child_list);
                 break;

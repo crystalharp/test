@@ -159,7 +159,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     				public void onClick(View v) {
     			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
     			        mTitlePopupArrayAdapter.notifyDataSetChanged();
-    			        mActionLog.addAction(ActionLog.TrafficPopupWindow);
     				}
     	        });
         	}
@@ -179,7 +178,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
             mTitleFragment.dismissPopupWindow();
             Plan clickedPlan = mPlanList.get(position);
-            mActionLog.addAction(ActionLog.TrafficPopupClickItem, position);
+            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "titleList", position);
             if (clickedPlan.equals(plan)) {
             	return;
             } else {
@@ -214,7 +213,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         	@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				mActionLog.addAction(ActionLog.TrafficDetailStep, position);
+				mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", position);
 
 				// 绘制交通图层
                 viewMap();
@@ -228,7 +227,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 	public void onClick(View v) {
 		int viewId = v.getId();
 		if (viewId == R.id.right_btn) {
-            mActionLog.addAction(ActionLog.Title_Right_Button);
+            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
 			// 绘制交通图层
 			viewMap();
 			// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
@@ -400,12 +399,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
             if (v.getId() == R.id.share_btn) {
                 //弹出分享对话框
-                mActionLog.addAction(ActionLog.TrafficDetailShare);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "share");
                 share(plan);
             } else if (v.getId() == R.id.favorite_btn) {
             	favorite(plan, v);
             } else if (v.getId() == R.id.error_recovery_btn) {
-                mActionLog.addAction(ActionLog.TrafficDetailErrorRecovery);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "recovery");
             	TransferErrorRecovery.addTarget(plan);
             	mSphinx.showView(R.id.activity_traffic_error_recovery);
             }
@@ -416,6 +415,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 				return ;
 			
 	        boolean isFavorite = data.checkFavorite(mContext);
+            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "favorite", isFavorite);
 	        if (isFavorite) {
 	        	CommonUtils.showNormalDialog(mSphinx, 
                         mContext.getString(R.string.prompt),
@@ -427,14 +427,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                             @Override
                             public void onClick(DialogInterface arg0, int id) {
                                 if (id == DialogInterface.BUTTON_POSITIVE) {
-                                    mActionLog.addAction(ActionLog.TrafficDetailCancelFav);
                                     setFavoriteState(v, false);
                                     data.deleteFavorite(mContext);
                                 }
                             }
                         });
 	        } else {
-	        	mActionLog.addAction(ActionLog.TrafficDetailFavorite);
 	        	setFavoriteState(v, true);
 				data.writeToDatabases(mContext, -1, Tigerknows.STORE_TYPE_FAVORITE);
                 Toast.makeText(mSphinx, R.string.favorite_toast, Toast.LENGTH_LONG).show();

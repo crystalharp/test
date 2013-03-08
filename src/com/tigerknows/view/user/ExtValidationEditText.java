@@ -152,19 +152,19 @@ public class ExtValidationEditText extends EditText {
 	public void log() {
 		switch(validType) {
 		case Phone:
-			mActionLog.addAction(ActionLog.UserClickPhoneEdt);
+			mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "mobile");
 			break;
 		case Password:
-			mActionLog.addAction(ActionLog.UserClickNewPasswordEdt);
+			mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "password");
 			break;
 		case Name:
-			mActionLog.addAction(ActionLog.UserClickNickNameEdt);
+			mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "nickName");
 			break;
 		case ValiNum:
-			mActionLog.addAction(ActionLog.UserClickValidNumEdt);
+			mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "validateCode");
 			break;
 		case RePassword:
-			mActionLog.addAction(ActionLog.UserClickNewRePasswordEdt);
+			mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "repeatPassword");
 			break;
 		default:
 		}

@@ -111,7 +111,7 @@ public class TilesView extends GLSurfaceView {
 	private static final float ABNORMAL_PINCH_CENTER_DIST=300/1.5f;
 	private static final int ABNORMAL_ZROTATION=30;
 	
-	private static final int MAX_TILE_IMAGE_DEF=2;
+	private static final int MAX_TILE_IMAGE_DEF=1;
 	private static final int MAX_TILE_TEXTURE_REF_DEF=128;
 	
 	private static final float XROTATION_YDIST=300/1.5f;
@@ -124,7 +124,7 @@ public class TilesView extends GLSurfaceView {
 	/**
      * tile buffer so tiles can be loaded before they are visible
      */
-	private static int TILE_BUFFER=0;
+	private static int TILE_BUFFER=4;
 	private static float ZOOMING_LAG=0.1f;
 	
 	private static float Cos30=(float)Math.cos(30*Math.PI/180);
@@ -2887,7 +2887,10 @@ public class TilesView extends GLSurfaceView {
                             }
                             if (mapWords != null) {
                                 Bitmap bm;
-                                for (MapWord mapWord : mapWords) {
+                                int length = mapWords.length;
+                                
+                                for (int i = 0; i < length; i++) {
+                                    MapWord mapWord = mapWords[i];
                                     bm = mapWord.icon.getBitmap(); 
                                     if (bm != null) {
                                         int textureRef = 0;

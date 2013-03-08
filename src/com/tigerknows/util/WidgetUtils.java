@@ -79,12 +79,12 @@ public class WidgetUtils {
         listView.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
+            public void onItemClick(AdapterView<?> adapterView, View arg1, int index, long arg3) {
                 ActionLog actionLog = ActionLog.getInstance(activity);
                 Intent intent;
+                actionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, index, adapterView.getAdapter().getItem(index));
                 switch (index) {
                     case 0:
-                        actionLog.addAction(ActionLog.ShareWeibo);
                         sphinx.snapMapView(new SnapMap() {
                             
                             @Override
@@ -100,14 +100,12 @@ public class WidgetUtils {
                         }, position, mapScene);
                         break;
                     case 1:
-                        actionLog.addAction(ActionLog.ShareQzone);
                         intent = new Intent();
                         intent.setClass(activity, QZoneSend.class);
                         intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, qzoneContent);
                         activity.startActivity(intent);
                         break;
                     case 2:
-                        actionLog.addAction(ActionLog.ShareSms);
                         intent = new Intent(Intent.ACTION_VIEW);    
                         intent.putExtra(Intent.EXTRA_TEXT, smsContent);
                         intent.putExtra("sms_body", smsContent);
@@ -122,8 +120,6 @@ public class WidgetUtils {
                         
                     case 3:
                         if (resolveInfo != null) {
-                            actionLog.addAction(ActionLog.ShareMms);
-
                             sphinx.snapMapView(new SnapMap() {
                                 
                                 @Override
@@ -150,7 +146,6 @@ public class WidgetUtils {
                         }  
                         
                     case 4:
-                        actionLog.addAction(ActionLog.ShareMore);
                         sphinx.snapMapView(new SnapMap() {
                             
                             @Override

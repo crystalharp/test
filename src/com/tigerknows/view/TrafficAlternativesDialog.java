@@ -74,7 +74,7 @@ public class TrafficAlternativesDialog extends BaseDialog {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
                 mStartPOI = mStartStations.get(arg2).toPOI();
                 
-            	mActionLog.addAction(ActionLog.TrafficAlterSelectStart, arg2);
+            	mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "start", arg2);
                 
                 if(POI.isNameEqual(mStartPOI, mEndPOI)){
     	            mSphinx.showTip(R.string.start_equal_to_end_select, Toast.LENGTH_SHORT);
@@ -97,7 +97,7 @@ public class TrafficAlternativesDialog extends BaseDialog {
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {            	
             	mEndPOI = mEndStations.get(arg2).toPOI();
             	
-            	mActionLog.addAction(ActionLog.TrafficAlterSelectEnd, arg2);
+            	mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "end", arg2);
             	
             	if(POI.isNameEqual(mStartPOI, mEndPOI)){
     	            mSphinx.showTip(R.string.start_equal_to_end_select, Toast.LENGTH_SHORT);
@@ -119,7 +119,7 @@ public class TrafficAlternativesDialog extends BaseDialog {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                mActionLog.addAction(ActionLog.KeyCodeBack);
+                mActionLog.addAction(ActionLog.KEYCODE, "back");
                 if (mEndLsv.getVisibility() == View.VISIBLE) {
 
                     if(mStartStations == null || mStartStations.size() == 1) {
@@ -142,7 +142,7 @@ public class TrafficAlternativesDialog extends BaseDialog {
     public boolean onKeyUp(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
-                mActionLog.addAction(ActionLog.KeyCodeBack);
+                mActionLog.addAction(ActionLog.KEYCODE, "back");
                 return true;
 
             default:

@@ -35,6 +35,8 @@ import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
+import android.widget.ExpandableListView.OnGroupCollapseListener;
+import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -167,7 +169,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         
         @Override
         public void onClick(View view) {
-            mActionLog.addAction(ActionLog.DownloadMapUpdateOnClick);
+            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "updateAll");
             List<DownloadCity> list = new ArrayList<DownloadCity>();
             for(int i = 0; i < mDownloadCityList.size(); i++) {
                 DownloadCity downloadCity = mDownloadCityList.get(i);
@@ -196,7 +198,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         
         @Override
         public void onClick(View view) {
-            mActionLog.addAction(ActionLog.DownloadMapStartOnClick);
+            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "startAll");
             if (mMapEngine.isExternalStorage() == false) {
                 Toast.makeText(mThis, R.string.not_enough_space, Toast.LENGTH_LONG).show();
                 return;
@@ -220,7 +222,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         
         @Override
         public void onClick(View view) {
-            mActionLog.addAction(ActionLog.DownloadMapPauseOnClick);
+            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "pauseAll");
             stopAllDownload(DownloadCity.STOPPED);
             for(int i = 0; i < mDownloadCityList.size(); i++) {
                 DownloadCity downloadCity = mDownloadCityList.get(i);
@@ -567,42 +569,68 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         super.setListener();
         mAddBtn.setOnClickListener(this);
         mCloseBtn.setOnClickListener(this);
-        mDownloadCityLsv.setOnGroupClickListener(new OnGroupClickListener() {
+
+        mDownloadCityLsv.setOnGroupCollapseListener(new OnGroupCollapseListener() {
             
             @Override
-            public boolean onGroupClick(ExpandableListView arg0, View arg1, int position, long arg3) {
-                DownloadCity downloadCity = mDownloadCityList.get(position);
-                CityInfo cityInfo = downloadCity.getCityInfo();
-                if (cityInfo.getType() == CityInfo.TYPE_PROVINCE || 
-                        cityInfo.getId() == CITY_ID_TITLE_ONE || 
-                        cityInfo.getId() == CITY_ID_TITLE_TWO || 
-                        cityInfo.getId() == CITY_ID_TITLE_THREE) {
-                    return false;
-                }
-                onClickDownloadCity(downloadCity);
-                return false;
+            public void onGroupCollapse(int groupPosition) {
+                mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "downloadProvinceCollapse", groupPosition, mDownloadCityList.get(groupPosition).getCityInfo().getCName());
             }
         });
+        
+        mDownloadCityLsv.setOnGroupExpandListener(new OnGroupExpandListener() {
+            
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (mDownloadCityList.get(groupPosition).childList.size() == 0) {
+                    DownloadCity downloadCity = mDownloadCityList.get(groupPosition);
+                    CityInfo cityInfo = downloadCity.getCityInfo();
+                    if (cityInfo.getType() == CityInfo.TYPE_PROVINCE || 
+                            cityInfo.getId() == CITY_ID_TITLE_ONE || 
+                            cityInfo.getId() == CITY_ID_TITLE_TWO || 
+                            cityInfo.getId() == CITY_ID_TITLE_THREE) {
+                        return;
+                    }
+                    mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "downloadCity", groupPosition, cityInfo.getCName());
+                    onClickDownloadCity(downloadCity);
+                } else {
+                    mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "downloadProvinceExpend", groupPosition, mDownloadCityList.get(groupPosition).getCityInfo().getCName());
+                }
+            }
+        });
+
         mDownloadCityLsv.setOnChildClickListener(new OnChildClickListener() {
             
             @Override
             public boolean onChildClick(ExpandableListView arg0, View arg1, int groupPosition, int childPosition, long arg4) {
-                onClickDownloadCity(mDownloadCityList.get(groupPosition).childList.get(childPosition));
+                DownloadCity downloadCity = mDownloadCityList.get(groupPosition).childList.get(childPosition);
+                mActionLog.addAction(ActionLog.LISTVIEW_CHILD_ITEM_ONCLICK, "downloadCity", groupPosition, childPosition, downloadCity.getCityInfo().getCName());
+                onClickDownloadCity(downloadCity);
                 return false;
             }
         });
-        
-        mAddCityElv.setOnGroupClickListener(new OnGroupClickListener() {
+
+        mAddCityElv.setOnGroupCollapseListener(new OnGroupCollapseListener() {
             
             @Override
-            public boolean onGroupClick(ExpandableListView arg0, View arg1, int groupPosition, long arg3) {
+            public void onGroupCollapse(int groupPosition) {
+                mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "addProvinceCollapse", groupPosition, sAllAddCityInfoList.get(groupPosition).getCName());
+            }
+        });
+        
+        mAddCityElv.setOnGroupExpandListener(new OnGroupExpandListener() {
+            
+            @Override
+            public void onGroupExpand(int groupPosition) {
                 CityInfo cityInfo = sAllAddCityInfoList.get(groupPosition);
 
                 List<CityInfo> cityInfoList = cityInfo.getCityList();
                 if (cityInfoList.size() == 1) {
+                    mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "addCity", groupPosition, cityInfo.getCName());
                     addDownloadCity(cityInfoList.get(0), DownloadCity.WAITING);
+                } else {
+                    mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "addProvinceExpend", groupPosition, cityInfo.getCName());
                 }
-                return false;
             }
         });
         
@@ -611,6 +639,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             @Override
             public boolean onChildClick(ExpandableListView arg0, View arg1, int groupPosition, int childrenPosition, long arg4) {
                 CityInfo cityInfo = sAllAddCityInfoList.get(groupPosition).getCityList().get(childrenPosition);
+                mActionLog.addAction(ActionLog.LISTVIEW_CHILD_ITEM_ONCLICK, "addCity", groupPosition, childrenPosition, cityInfo.getCName());
                 if (cityInfo.getType() == CityInfo.TYPE_CITY) {
                     addDownloadCity(cityInfo, DownloadCity.WAITING);
                 } else if (cityInfo.getType() == CityInfo.TYPE_PROVINCE) {
@@ -620,6 +649,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 return false;
             }
         });
+        
         mAddCityElv.setOnTouchListener(new OnTouchListener() {
             
             @Override
@@ -636,6 +666,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 CityInfo cityInfo = mSuggestCityItemList.get(position);
+                mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "suggestCity", position, cityInfo.getCName());
                 DownloadCity downloadCity = getDownloadCity(mDownloadCityList, cityInfo);
                 if (downloadCity == null && !mNotFindCity.equals(cityInfo.getCName())) {
                     addDownloadCity(cityInfo, DownloadCity.WAITING);
@@ -656,6 +687,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             public void afterTextChanged(Editable s) {
             }
         });
+        
         mKeywordEdt.setOnEditorActionListener(new OnEditorActionListener() {
             
             @Override
@@ -672,7 +704,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    mActionLog.addAction(ActionLog.DownloadMapInputBox);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "input");
                     showAddCityOrSuggestCity(mKeywordEdt.getText().toString().trim());
                 }
                 return false;
@@ -694,7 +726,6 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     private void onClickDownloadCity(final DownloadCity downloadCity) {
         final CityInfo cityInfo = downloadCity.cityInfo;
         final String cityName = cityInfo.getCName();
-        mActionLog.addAction(ActionLog.DownloadMapSelect, cityName);
         final List<String> list = new ArrayList<String>();
         int state = downloadCity.getState();
         if (state == DownloadCity.DOWNLOADING ||
@@ -724,9 +755,9 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
                 String str = list.get(which);
+                mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, str, which+1, cityName);
                 if (str.equals(mThis.getString(R.string.download_map))) {
                     if (mMapEngine.isExternalStorage()) {
-                        mActionLog.addAction(ActionLog.DownloadMapDownload, cityName);
                         downloadCity.setState(DownloadCity.WAITING);
                         notifyDataSetChanged();
                         download();
@@ -734,7 +765,6 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                         Toast.makeText(mThis, R.string.not_enough_space, Toast.LENGTH_LONG).show();
                     }
                 } else if (str.equals(mThis.getString(R.string.upgrade_map))) {
-                    mActionLog.addAction(ActionLog.DownloadMapUpgrade, cityName);
                     mMapEngine.removeCityData(cityName);
                     downloadCity.setDownloadedSize(0);
                     downloadCity.setState(DownloadCity.WAITING);
@@ -743,7 +773,6 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                     notifyDataSetChanged();
                     download();
                 } else if (str.equals(mThis.getString(R.string.pause_download))) {
-                    mActionLog.addAction(ActionLog.DownloadMapPause, cityName);
                     DownloadAsyncTask task = mDownloadCityTaskMap.remove(cityInfo.getCName());
                     if (task != null && !task.mIsStop)
                         task.stop();
@@ -761,7 +790,6 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                                 public void onClick(DialogInterface arg0, int id) {
                                     if (id == DialogInterface.BUTTON_POSITIVE) {
                                         String cityName = cityInfo.getCName();
-                                        mActionLog.addAction(ActionLog.DownloadMapDelete, cityName);
                                         DownloadAsyncTask tkAsyncTask = mDownloadCityTaskMap.remove(cityInfo.getCName());
                                         if (tkAsyncTask != null && !tkAsyncTask.mIsStop) {
                                             tkAsyncTask.stop();
@@ -1018,6 +1046,9 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         }
         
         private void setDownloadCityView(DownloadCity downloadCity, View cityView) {
+            if (downloadCity.getTotalSize() <= 0) {
+                MapStatsService.countDownloadCity(downloadCity, null);
+            }
             CityInfo cityInfo = downloadCity.cityInfo;
             TextView nameTxv = (TextView) cityView.findViewById(R.id.text_txv);
             TextView percentTxv = (TextView) cityView.findViewById(R.id.percent_txv);
@@ -1619,7 +1650,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {                
             case KeyEvent.KEYCODE_BACK:
-                mActionLog.addAction(ActionLog.KeyCodeBack);
+                mActionLog.addAction(ActionLog.KEYCODE, "back");
                 onBack();
                 return true;
         }
@@ -1630,17 +1661,17 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.left_btn:
-                mActionLog.addAction(ActionLog.Title_Left_Back);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft");
                 onBack();
                 break;
                 
             case R.id.add_btn:
-                mActionLog.addAction(ActionLog.DownloadMapAdd);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "add");
                 changeState(STATE_ADD);
                 break;
 
             case R.id.close_btn:
-                mActionLog.addAction(ActionLog.DownloadMapCloseOnClick);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "close");
                 mWifiView.setVisibility(View.GONE);
                 break;
                 
@@ -1652,7 +1683,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     private void changeState(int state) {
         mState = state;
         if (mState == STATE_EMPTY) {
-            mTitleBtn.setText(R.string.map_download);
+            mTitleBtn.setText(R.string.download_map);
             mAddBtn.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.VISIBLE);
             mDownloadView.setVisibility(View.GONE);
@@ -1661,7 +1692,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             hideSoftInput();
             mCloseBtn.requestFocus();
         } else if (mState == STATE_DOWNLOAD) {
-            mTitleBtn.setText(R.string.map_download);
+            mTitleBtn.setText(R.string.download_map);
             mAddBtn.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.GONE);
             mDownloadView.setVisibility(View.VISIBLE);
@@ -1725,10 +1756,15 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         if (getDownloadCity(list, cityInfo) != null) {
             return;
         }
+        String hongkong = context.getString(R.string.hongkong);
+        String macao = context.getString(R.string.macao);
         String pName = cityInfo.getCProvinceName();
+        if (macao.equals(pName) || hongkong.equals(pName)) {
+            return;
+        }
         boolean exist = false;
         float percent = downloadCity.getPercent();
-        if (downloadCity.getState() == DownloadCity.MAYUPDATE) {
+        if ((isManual || percent > PERCENT_VISIBILITY) && downloadCity.getState() == DownloadCity.MAYUPDATE) {
             downloadCity.cityInfo.order = CITY_ID_TITLE_ONE+orderCityId;
             if (list.size() > 0) {
                 DownloadCity downloadCity1 = list.get(0);

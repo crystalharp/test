@@ -85,11 +85,11 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             return;
         }
         if (key == POIResponse.FIELD_FILTER_AREA_INDEX) {
-            ActionLog.getInstance(getContext()).addAction(ActionLog.FILTER_AREA_ONCLICK);
+            ActionLog.getInstance(getContext()).addAction(ActionLog.CONTROL_ONCLICK, "filterArea");
         } else if (key == POIResponse.FIELD_FILTER_CATEGORY_INDEX) {
-            ActionLog.getInstance(getContext()).addAction(ActionLog.FILTER_CATEGORY_ONCLICK);
+            ActionLog.getInstance(getContext()).addAction(ActionLog.CONTROL_ONCLICK, "filterCategory");
         } else if (key == POIResponse.FIELD_FILTER_ORDER_INDEX) {
-            ActionLog.getInstance(getContext()).addAction(ActionLog.FILTER_ORDER_ONCLICK);
+            ActionLog.getInstance(getContext()).addAction(ActionLog.CONTROL_ONCLICK, "filterOrder");
         }
         refreshFilterButton(controlView, filterList, getContext(), this);
         this.filterList = filterList;
@@ -149,11 +149,17 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         }
         parentAdapter.notifyDataSetChanged();
         childAdapter.notifyDataSetChanged();
-        if (selectedParentPosition >= 0)
+        if (selectedParentPosition > -1) {
             parentLsv.setSelectionFromTop(selectedParentPosition, 0);
+        } else {
+            parentLsv.setSelectionFromTop(0, 0);
+        }
         
-        if (selectedChiledPosition >= 0)
+        if (selectedChiledPosition > -1) {
             childLsv.setSelectionFromTop(selectedChiledPosition, 0);
+        } else {
+            childLsv.setSelectionFromTop(0, 0);
+        }
     }
         
     public FilterListView(Context context) {
@@ -238,8 +244,11 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                         }
                     }
                     
-                    if (selectedChiledPosition > -1)
+                    if (selectedChiledPosition > -1) {
                         childLsv.setSelectionFromTop(selectedChiledPosition, 0);
+                    } else {
+                        childLsv.setSelectionFromTop(0, 0);
+                    }
                 }
             }
         });

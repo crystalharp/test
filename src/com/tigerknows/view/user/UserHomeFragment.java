@@ -86,7 +86,7 @@ public class UserHomeFragment extends UserBaseFragment {
                 
                 @Override
                 public void onClick(View arg0) {
-                    mActionLog.addAction(ActionLog.Title_Left_Back);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft");
                     onBack();
                 }
             });
@@ -97,7 +97,7 @@ public class UserHomeFragment extends UserBaseFragment {
 			@Override
 			public void onClick(View v) {
 				// TODO 跳转到修改电话页面
-				mActionLog.addAction(ActionLog.UserHomeToUpdatePhone);
+				mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "mobile");
                 Intent intent = new Intent(mSphinx, UserUpdatePhoneActivity.class);
                 intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, getId());
                 intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, getId());
@@ -111,7 +111,7 @@ public class UserHomeFragment extends UserBaseFragment {
 			@Override
 			public void onClick(View v) {
 				// TODO 跳转到修改昵称页面
-				mActionLog.addAction(ActionLog.UserHomeToUpdateName);
+				mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "nickname");
 				Intent intent = new Intent(mSphinx, UserUpdateNickNameActivity.class);
                 mSphinx.showView(R.id.activity_user_update_nickname, intent);
 			}
@@ -122,7 +122,7 @@ public class UserHomeFragment extends UserBaseFragment {
 			@Override
 			public void onClick(View v) {
 				// TODO 跳转到修改密码页面
-				mActionLog.addAction(ActionLog.UserHomeToUpdatePassword);
+				mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "password");
 				Intent intent = new Intent(mSphinx, UserUpdatePasswordActivity.class);
 				intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, getId());
                 intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, getId());
@@ -136,7 +136,7 @@ public class UserHomeFragment extends UserBaseFragment {
 			@Override
 			public void onClick(View v) {
 				// TODO 注销登录, 跳转"更多"页面
-				mActionLog.addAction(ActionLog.UserHomeLogout);
+				mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "logout");
 				CommonUtils.showNormalDialog(mSphinx, mContext.getString(R.string.title_error_tip), 
 						mContext.getString(R.string.logout_account_tip), mSphinx.getString(R.string.confirm),
 		                null,
@@ -160,7 +160,7 @@ public class UserHomeFragment extends UserBaseFragment {
 
             @Override
             public void onClick(View v) {
-				mActionLog.addAction(ActionLog.UserHomeToMyComment);
+				mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "myComment");
                 mSphinx.showView(R.id.view_my_comment_list);
             }
         });
@@ -169,7 +169,7 @@ public class UserHomeFragment extends UserBaseFragment {
 
             @Override
             public void onClick(View v) {
-                mActionLog.addAction(ActionLog.UserHomeDingdan);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "dingdan");
                 Intent intent = new Intent();
                 intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID, getId());
                 mSphinx.showView(R.id.activity_tuangou_shangjia_list, intent);
@@ -198,7 +198,7 @@ public class UserHomeFragment extends UserBaseFragment {
                 
                 @Override
                 public void onClick(View arg0) {
-                    mActionLog.addAction(ActionLog.Title_Left_Back);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft");
                     onBack();
                 }
             });
@@ -209,7 +209,7 @@ public class UserHomeFragment extends UserBaseFragment {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-            mActionLog.addAction(ActionLog.KeyCodeBack, mActionTag);
+            mActionLog.addAction(ActionLog.KEYCODE, "back");
 			onBack();
 			return true;
 		}

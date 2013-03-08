@@ -69,7 +69,7 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					mActionLog.addAction(ActionLog.UserClickPasswordEdt);
+					mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "password");
 				}
 				
 				return false;
@@ -81,7 +81,7 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO 获取验证码
-				mActionLog.addAction(ActionLog.UserUpdatPhoneValidNumBtn);
+				mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "getValidateCode");
 				if (!phoneEdt.isValid()) {
 					validationAction(phoneEdt);
 					return;

@@ -648,10 +648,8 @@ public class CommonUtils {
     }
 
     public static Dialog showNormalDialog(Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener) {
-        if (message != null) {
-            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, message);
-        } else if (title !=  null) {
-            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, title);
+        if (title != null || message != null) {
+            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, title, message);
         }
         Dialog dialog = getDialog(activity, title, message, custom, leftButtonText, rightButtonText, onClickListener);
         dialog.show();
@@ -712,9 +710,9 @@ public class CommonUtils {
                     dialog.dismiss();
                     if (onClickListener != null) {
                         if (view.getId() == R.id.button1) {
-                            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG_BUTTON_ONCLICK, leftBtn.getText());
+                            ActionLog.getInstance(activity).addAction(ActionLog.CONTROL_ONCLICK, leftBtn.getText());
                         } else {
-                            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG_BUTTON_ONCLICK, rightBtn.getText());
+                            ActionLog.getInstance(activity).addAction(ActionLog.CONTROL_ONCLICK, rightBtn.getText());
                         }
                         onClickListener.onClick(dialog, view.getId() == R.id.button1 ? DialogInterface.BUTTON_POSITIVE : DialogInterface.BUTTON_NEGATIVE);
                     }
@@ -999,7 +997,7 @@ public class CommonUtils {
     
     public static void queryTraffic(final Sphinx sphinx, final POI poi, final int location) {
         
-        String[] list = sphinx.getResources().getStringArray(R.array.goto_here);
+        final String[] list = sphinx.getResources().getStringArray(R.array.goto_here);
         int[] leftCompoundResIdList = new int[] {R.drawable.ic_bus, R.drawable.ic_drive, R.drawable.ic_walk, R.drawable.ic_start};
         final ArrayAdapter<String> adapter = new StringArrayAdapter(sphinx, list, leftCompoundResIdList);
         
@@ -1019,25 +1017,22 @@ public class CommonUtils {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
                 dialog.dismiss();
+                ActionLog.getInstance(sphinx).addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", index, list[index]);
                 int queryType = -1;
                 switch (index) {
                     case 0:
                         queryType = TrafficQuery.QUERY_TYPE_TRANSFER;
-                        ActionLog.getInstance(sphinx).addAction(ActionLog.DIALOG_COME_HERE_TRANSFER);
                         break;
                         
                     case 1:
                         queryType = TrafficQuery.QUERY_TYPE_DRIVE;
-                        ActionLog.getInstance(sphinx).addAction(ActionLog.DIALOG_COME_HERE_DRIVE);
                         break;
                         
                     case 2:
                         queryType = TrafficQuery.QUERY_TYPE_WALK;
-                        ActionLog.getInstance(sphinx).addAction(ActionLog.DIALOG_COME_HERE_WALK);
                         break;
                         
                     case 3:
-                        ActionLog.getInstance(sphinx).addAction(ActionLog.DIALOG_COME_HERE_CUSTOM_START);
                         break;
                 }
                 

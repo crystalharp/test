@@ -65,7 +65,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
                 
                 @Override
                 public void onClick(View arg0) {
-                    mActionLog.addAction(ActionLog.Title_Left_Back);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft");
                     onBack();
                 }
             });
@@ -142,7 +142,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				mActionLog.addAction(ActionLog.UserUpdateNickNameDelBtn);
+				mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "delete");
 				nickNameEdt.setText("");
 				showSoftInput(nickNameEdt);
 			}
@@ -153,7 +153,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-            mActionLog.addAction(ActionLog.KeyCodeBack, mActionTag);
+            mActionLog.addAction(ActionLog.KEYCODE, "back");
 			onBack();
 			return true;
 		}

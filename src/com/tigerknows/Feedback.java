@@ -101,7 +101,7 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
             @Override
             public void onFocusChange(View arg0, boolean focused) {
                 if (focused) {
-                    mActionLog.addAction(ActionLog.FeedBackContent);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "content");
                 }
             }
         });
@@ -110,7 +110,7 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
             @Override
             public void onFocusChange(View arg0, boolean focused) {
                 if (focused) {
-                    mActionLog.addAction(ActionLog.FeedbackMobile);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "mobile");
                 }
             }
         });
@@ -131,7 +131,7 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.feedback_send:
-                mActionLog.addAction(ActionLog.FeedbackSubmit);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "submit");
                 send();
                 break;
             case R.id.weibo_txv:

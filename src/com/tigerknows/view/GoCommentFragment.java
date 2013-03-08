@@ -150,7 +150,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 if (position < mPOIList.size()) {
                     POI poi = mPOIList.get(position);
-                    mActionLog.addAction(ActionLog.GoCommentClickPOI, position, poi.getUUID(), poi.getName());
+                    mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", position, poi.getUUID(), poi.getName());
                     mSphinx.getPOIDetailFragment().setData(poi);
                     mSphinx.showView(R.id.view_poi_detail);
                 }
@@ -164,7 +164,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                 if (isHeader) {
                     return;
                 }
-                mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
+                mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "loadMore");
                 turnPage();
             }
         });
@@ -172,7 +172,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        mActionLog.addAction(ActionLog.GoCommentClickInputBox);
+        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "input");
         mSphinx.showView(R.id.view_poi_query);
     }
     

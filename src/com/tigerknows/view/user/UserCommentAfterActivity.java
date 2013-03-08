@@ -45,7 +45,7 @@ public class UserCommentAfterActivity extends UserBaseActivity {
 
 			@Override
 			public void onClick(View v) {
-			    mActionLog.addAction(ActionLog.UserCommentAfterLogin);
+			    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "login");
 				Intent intent = new Intent(UserCommentAfterActivity.this, UserLoginActivity.class);
 				startActivityForResult(intent, 0);
 			}
@@ -55,7 +55,7 @@ public class UserCommentAfterActivity extends UserBaseActivity {
 
 			@Override
 			public void onClick(View v) {
-                mActionLog.addAction(ActionLog.UserCommentAfterRegist);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "register");
 				Intent intent = new Intent(UserCommentAfterActivity.this, UserRegistActivity.class);
 				startActivityForResult(intent, 0);
 			}

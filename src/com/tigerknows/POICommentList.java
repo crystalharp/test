@@ -144,7 +144,6 @@ public class POICommentList extends BaseActivity {
             @Override
             public void onRefresh(boolean isHeader) {
                 turnPage(isHeader);
-                mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
             }
         });
 
@@ -153,7 +152,7 @@ public class POICommentList extends BaseActivity {
             @Override
             public boolean onTouch(View arg0, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-                    mActionLog.addAction(ActionLog.POICommentListClickInputBox);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
                     if (mCommentQuery != null) {
                         POI poi = mCommentQuery.getPOI();
                         if (poi != null) {
@@ -223,7 +222,7 @@ public class POICommentList extends BaseActivity {
             mTurnPageFooter = true;
         }
 
-        mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
+        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "loadMore");
 
         DataQuery dataQuery = new DataQuery(mThis);
         POI requestPOI = mCommentQuery.getPOI();
@@ -389,7 +388,7 @@ public class POICommentList extends BaseActivity {
                         
                         @Override
                         public void onClick(View arg0) {
-                            mActionLog.addAction(ActionLog.POICommentListClickMyComment);
+                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "myComment");
                             if (poi.getStatus() >= 0) {
                                 Intent intent = new Intent();
                                 intent.setClass(mThis, POIComment.class);
@@ -433,7 +432,7 @@ public class POICommentList extends BaseActivity {
         
                         @Override
                         public void onClick(final View widget) {
-                            mActionLog.addAction(ActionLog.POICommentListClickUrl, url);
+                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "source", position, url);
                             CommonUtils.showNormalDialog(mThis,
                                     mThis.getString(R.string.prompt), 
                                     mThis.getString(R.string.are_you_view_url, url),

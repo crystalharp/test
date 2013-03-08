@@ -189,7 +189,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (position < adapterView.getCount()) {
                     POI poi = (POI) adapterView.getAdapter().getItem(position);
                     if (poi != null) {
-                        mActionLog.addAction(ActionLog.SearchResultSelect, poi.getUUID(), poi.getName(), position+1);
+                        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", position+1, poi.getUUID(), poi.getName());
                         mSphinx.getPOIDetailFragment().setData(poi);
                         mSphinx.showView(R.id.view_poi_detail);
                     }
@@ -214,7 +214,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             DataQuery lastDataQuery = mDataQuery;
             if (mState != STATE_QUERYING && mState != STATE_LIST && lastDataQuery != null) {
-                mActionLog.addAction(ActionLog.KeyCodeBack);
+                mActionLog.addAction(ActionLog.KEYCODE, "back");
                 mState = STATE_LIST;
                 updateView();
                 refreshFilter(lastDataQuery.getFilterList());
@@ -329,7 +329,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             return;
         }
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
-        mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
+        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "loadMore");
 
         DataQuery poiQuery = new DataQuery(mContext);
         POI requestPOI = lastDataQuery.getPOI();
@@ -400,7 +400,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (mPOIList.isEmpty() || mState != STATE_LIST) {
                     return;
                 }
-                mActionLog.addAction(ActionLog.Title_Right_Button);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
                 viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 
@@ -787,6 +787,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     private void showFilterListView(View parent) {
+        mActionLog.addAction(ActionLog.POPUPWINDOW, "filter");
         if (mPopupWindow == null) {
             mFilterListView = new FilterListView(mSphinx);
             

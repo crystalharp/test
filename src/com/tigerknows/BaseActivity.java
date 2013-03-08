@@ -90,7 +90,7 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
                 
                 @Override
                 public void onClick(View arg0) {
-                    mActionLog.addAction(ActionLog.Title_Left_Back);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft");
                     finish();
                 }
             });
@@ -102,7 +102,7 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
         super.onResume();
         LogWrapper.d(TAG, "onResume()");
         if (!TextUtils.isEmpty(mActionTag)) {
-            mActionLog.addAction(mActionTag);
+            mActionLog.addAction(ActionLog.UI, mActionTag);
         }
     }
 

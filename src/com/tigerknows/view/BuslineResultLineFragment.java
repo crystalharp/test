@@ -130,7 +130,7 @@ public class BuslineResultLineFragment extends BaseFragment {
 				// TODO Auto-generated method stub
 				
 				if (mLineList != null && mLineList.size() > position) {
-					mActionLog.addAction(ActionLog.TrafficBusineLine, position);
+					mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", position+1);
 					focusedIndex = position;
 					mSphinx.getBuslineDetailFragment().setData(mLineList.get(position), position);
 					mSphinx.showView(R.id.view_busline_result_detail);
@@ -200,7 +200,7 @@ public class BuslineResultLineFragment extends BaseFragment {
         BuslineQuery buslineQuery = new BuslineQuery(mContext);
         buslineQuery.setup(mBuslineQuery.getCityId(), mBuslineQuery.getKeyword(), mLineList.size(), true, getId(), null);
         mSphinx.queryStart(buslineQuery);
-        mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
+        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "loadMore");
         }
     }
 
@@ -356,10 +356,8 @@ public class BuslineResultLineFragment extends BaseFragment {
         
         if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE){
         	if (buslineModel.getLineList() == null || buslineModel.getLineList().size() <= 0) {
-        		mActionLog.addAction(ActionLog.TrafficQueryNoResultB);
         		mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
         	} else {
-    			mActionLog.addAction(ActionLog.TrafficQueryResultB, buslineModel.getLineList().size());
     			mSphinx.getBuslineResultLineFragment().setData(buslineQuery);
         	}
         }

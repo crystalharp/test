@@ -5,6 +5,7 @@
 package com.tigerknows.view;
 
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 
@@ -84,6 +85,7 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
     }
     
     public void showPopupWindow(ListAdapter adapter, OnItemClickListener listener) {
+        mActionLog.addAction(ActionLog.POPUPWINDOW, "title");
         if (mPopupWindow == null) {
             View view  = mLayoutInflater.inflate(R.layout.title_popup_list, this, false);
             popupLsv = (ListView) view.findViewById(R.id.listview);
