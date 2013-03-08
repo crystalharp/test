@@ -1,7 +1,5 @@
 package com.tigerknows.model;
 
-import java.util.Date;
-
 import com.decarta.android.exception.APIException;
 import com.tigerknows.model.xobject.XMap;
 
@@ -73,7 +71,7 @@ public class PullMessage extends XMapData {
         private long id;
         private long type;
         private int cityId;
-        private Date expireDate;
+        private String expiryDate;
         private String poiUid;
         private String poiName;
         private String poiDateTime;
@@ -86,6 +84,131 @@ public class PullMessage extends XMapData {
 
         public Message(XMap data) throws APIException {
             super(data);
+
+            if (this.data.containsKey(FIELD_MESSAGE_ID)) {
+                this.id = this.data.getInt(FIELD_MESSAGE_ID);
+            }
+            
+            if (this.data.containsKey(FIELD_TYPE)) {
+                this.type = this.data.getInt(FIELD_TYPE);
+            }
+            
+            if (this.data.containsKey(FIELD_CITY_ID)) {
+                String cityId = this.data.getString(FIELD_CITY_ID);
+                try {
+                    this.cityId = Integer.parseInt(cityId);
+                } catch (Exception e) {
+                    // TODO: handle exception
+                }
+            }
+            
+            if (this.data.containsKey(FIELD_EXPIRY_DATE)) {
+                expiryDate = this.data.getString(FIELD_EXPIRY_DATE);
+            }
+            
+            if (this.data.containsKey(FIELD_POI_UID)) {
+                this.poiUid = this.data.getString(FIELD_POI_UID);
+            }
+            
+            if (this.data.containsKey(FIELD_POI_NAME)) {
+                this.poiName = this.data.getString(FIELD_POI_NAME);
+            }
+            
+            if (this.data.containsKey(FIELD_POI_DATETIME)) {
+                this.poiDateTime = this.data.getString(FIELD_POI_DATETIME);
+            }
+            
+            if (this.data.containsKey(FIELD_POI_ADDRESS)) {
+                this.poiAddress = this.data.getString(FIELD_POI_ADDRESS);
+            }
+            
+            if (this.data.containsKey(FIELD_PRODUCT_DOWNLOAD)) {
+                this.productDownload = this.data.getString(FIELD_PRODUCT_DOWNLOAD);
+            }
+            
+            if (this.data.containsKey(FIELD_PRODUCT_DESCRIPTION)) {
+                this.productDescription = this.data.getString(FIELD_PRODUCT_DESCRIPTION);
+            }
+        }
+
+        public long getId() {
+            return id;
+        }
+
+        public void setId(long id) {
+            this.id = id;
+        }
+
+        public long getType() {
+            return type;
+        }
+
+        public void setType(long type) {
+            this.type = type;
+        }
+
+        public int getCityId() {
+            return cityId;
+        }
+
+        public void setCityId(int cityId) {
+            this.cityId = cityId;
+        }
+
+        public String getExpiryDate() {
+            return expiryDate;
+        }
+
+        public void setExpiryDate(String expiryDate) {
+            this.expiryDate = expiryDate;
+        }
+
+        public String getPoiUid() {
+            return poiUid;
+        }
+
+        public void setPoiUid(String poiUid) {
+            this.poiUid = poiUid;
+        }
+
+        public String getPoiName() {
+            return poiName;
+        }
+
+        public void setPoiName(String poiName) {
+            this.poiName = poiName;
+        }
+
+        public String getPoiDateTime() {
+            return poiDateTime;
+        }
+
+        public void setPoiDateTime(String poiDateTime) {
+            this.poiDateTime = poiDateTime;
+        }
+
+        public String getPoiAddress() {
+            return poiAddress;
+        }
+
+        public void setPoiAddress(String poiAddress) {
+            this.poiAddress = poiAddress;
+        }
+
+        public String getProductDownload() {
+            return productDownload;
+        }
+
+        public void setProductDownload(String productDownload) {
+            this.productDownload = productDownload;
+        }
+
+        public String getProductDescription() {
+            return productDescription;
+        }
+
+        public void setProductDescription(String productDescription) {
+            this.productDescription = productDescription;
         }
 
         public int describeContents() {
@@ -96,7 +219,7 @@ public class PullMessage extends XMapData {
             out.writeLong(id);
             out.writeLong(type);
             out.writeInt(cityId);
-            out.writeSerializable(expireDate);
+            out.writeString(expiryDate);
             out.writeString(poiUid);
             out.writeString(poiName);  
             out.writeString(poiDateTime);  
@@ -120,7 +243,7 @@ public class PullMessage extends XMapData {
             id = in.readLong();
             type = in.readLong();
             cityId = in.readInt();
-            expireDate = (Date) in.readSerializable();
+            expiryDate = in.readString();
             poiUid = in.readString();
             poiName = in.readString();
             poiDateTime = in.readString();
@@ -139,6 +262,66 @@ public class PullMessage extends XMapData {
     
     public PullMessage(XMap data) throws APIException {
         super(data);
+
+        if (this.data.containsKey(FIELD_MESSAGE_TOTAL)) {
+            this.total = this.data.getInt(FIELD_MESSAGE_TOTAL);
+        }
+        
+        if (this.data.containsKey(FIELD_NEXT_REQUEST_DATE)) {
+            nextRequsetDate = this.data.getString(FIELD_NEXT_REQUEST_DATE);
+        }
+        
+        if (this.data.containsKey(FIELD_RESPONSE_CODE)) {
+            this.responseCode = this.data.getInt(FIELD_RESPONSE_CODE);
+        }
+        
+        if (this.data.containsKey(FIELD_RECORD_MESSAGE_UPPER_LIMIT)) {
+            this.recordMessageUpperLimit = this.data.getInt(FIELD_RECORD_MESSAGE_UPPER_LIMIT);
+        }
+        
+        if (this.data.containsKey(FIELD_MESSAGE)) {
+            message = new Message(this.data.getXMap(FIELD_MESSAGE));
+        }
+    }
+
+    public long getTotal() {
+        return total;
+    }
+
+    public void setTotal(long total) {
+        this.total = total;
+    }
+
+    public String getNextRequsetDate() {
+        return nextRequsetDate;
+    }
+
+    public void setNextRequsetDate(String nextRequsetDate) {
+        this.nextRequsetDate = nextRequsetDate;
+    }
+
+    public long getResponseCode() {
+        return responseCode;
+    }
+
+    public void setResponseCode(long responseCode) {
+        this.responseCode = responseCode;
+    }
+
+    public long getRecordMessageUpperLimit() {
+        return recordMessageUpperLimit;
+    }
+
+    public void setRecordMessageUpperLimit(long recordMessageUpperLimit) {
+        this.recordMessageUpperLimit = recordMessageUpperLimit;
+    }
+
+    public Message getMessage() {
+        return message;
+    }
+
+    public void setMessage(Message message) {
+        this.message = message;
     }
     
 }

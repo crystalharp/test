@@ -23,7 +23,7 @@ public class Alarms {
         Calendar now = Calendar.getInstance();
         now.setTimeInMillis(currentTimeMillis);
         Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(currentTimeMillis);
+        c.setTimeInMillis(currentTimeMillis-1000);
         Date date = new Date(currentTimeMillis-1000);
         if (TextUtils.isEmpty(alarm) == false) {
             try {
