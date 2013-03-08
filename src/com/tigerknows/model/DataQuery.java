@@ -181,6 +181,16 @@ public final class DataQuery extends BaseQuery {
     private List<Filter> filterList = new ArrayList<Filter>();
     // POI Response End
     
+    private PullMessage pullMessage;
+    
+    public PullMessage getPullMessage() {
+        return pullMessage;
+    }
+
+    public void setPullMessage(PullMessage pullMessage) {
+        this.pullMessage = pullMessage;
+    }
+
     public static DiscoverConfigList getDiscoverConfigList() {
         return Discover_Config_List;
     }
@@ -668,6 +678,8 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_DISCOVER.equals(dataType)) {
             DiscoverResponse response = new DiscoverResponse(responseXMap);
             this.response = response;
+        } else if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
+            this.pullMessage = new PullMessage(responseXMap);
         }
     }
     
@@ -2241,6 +2253,8 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_DISCOVER.equals(dataType)) {
             responseXMap = DataQueryTest.launchDiscoverResponse(context, "launchDiscoverResponse", 
                     DiscoverConfig.SUPPORT_TUANGOU+DiscoverConfig.SUPPORT_DIANYING+DiscoverConfig.SUPPORT_YANCHU+DiscoverConfig.SUPPORT_ZHANLAN);
+        } else if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
+            responseXMap = DataQueryTest.launchPullMessage();
         }
     }
 }

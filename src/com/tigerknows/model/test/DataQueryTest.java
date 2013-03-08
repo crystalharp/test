@@ -9,6 +9,7 @@ import com.tigerknows.model.Comment;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.PullMessage;
 import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Tuangou;
@@ -39,6 +40,7 @@ import com.tigerknows.model.DataQuery.YanchuResponse.YanchuList;
 import com.tigerknows.model.DataQuery.ZhanlanResponse.ZhanlanList;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.DynamicPOI;
+import com.tigerknows.model.PullMessage.Message;
 import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XInt;
@@ -669,6 +671,31 @@ public class DataQueryTest {
         data.put(Comment.FIELD_URL, "FIELD_URL");
         data.put(Comment.FIELD_CLIENT_UID, "FIELD_CLIENT_UID");
         data.put(Comment.FIELD_SOURCE, "test");
+        return data;
+    }
+
+    public static XMap launchPullMessage() {
+        XMap data = new XMap();
+        data.put(PullMessage.FIELD_MESSAGE_TOTAL, 1);
+        data.put(PullMessage.FIELD_NEXT_REQUEST_DATE, "2013-01-01");
+        data.put(PullMessage.FIELD_RECORD_MESSAGE_UPPER_LIMIT, 12);
+        data.put(PullMessage.FIELD_RESPONSE_CODE, 200);
+        data.put(PullMessage.FIELD_MESSAGE, launchMessage());
+        return data;
+    }
+    
+    protected static XMap launchMessage() {
+        XMap data = new XMap();
+        data.put(Message.FIELD_MESSAGE_ID, 10);
+        data.put(Message.FIELD_CITY_ID, "1");
+        data.put(Message.FIELD_EXPIRY_DATE, "2013-01-03");
+        data.put(Message.FIELD_TYPE, Message.TYPE_FILM);
+        data.put(Message.FIELD_POI_UID, "FIELD_POI_UID");
+        data.put(Message.FIELD_POI_NAME, "FIELD_POI_NAME");
+        data.put(Message.FIELD_POI_ADDRESS, "FIELD_POI_ADDRESS");
+        data.put(Message.FIELD_POI_DATETIME, "2013-01-03");
+        data.put(Message.FIELD_PRODUCT_DOWNLOAD, "http://www.tigerknows.com");
+        data.put(Message.FIELD_PRODUCT_DESCRIPTION, "FIELD_PRODUCT_DESCRIPTION");
         return data;
     }
 }
