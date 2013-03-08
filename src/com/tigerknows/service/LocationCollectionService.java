@@ -151,7 +151,7 @@ public class LocationCollectionService extends Service {
                 Alarms.SIMPLE_DATE_FORMAT.format(next.getTime()));
         Intent intent = new Intent(RadarReceiver.ACTION_LOCATION_COLLECTION);
         Alarms.enableAlarm(context, next.getTimeInMillis(), intent);
-        Intent name = new Intent(RadarReceiver.ACTION_LOCATION_COLLECTION);
+        Intent name = new Intent(context, LocationCollectionService.class);
         stopService(name);
     }
     

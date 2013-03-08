@@ -162,15 +162,15 @@ public class PullService extends Service {
     }
     
     void exitService(Calendar next) {
+        Context context = getApplicationContext();
         if (next != null) {
-            Context context = getApplicationContext();
             TKConfig.setPref(context,
                     TKConfig.PREFS_RADAR_PULL_ALARM, 
                     Alarms.SIMPLE_DATE_FORMAT.format(next.getTime()));
             Intent intent = new Intent(RadarReceiver.ACTION_PULL);
             Alarms.enableAlarm(context, next.getTimeInMillis(), intent);
         }
-        Intent name = new Intent(RadarReceiver.ACTION_PULL);
+        Intent name = new Intent(context, PullService.class);
         stopService(name);
     }
 }
