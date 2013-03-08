@@ -163,7 +163,7 @@ import com.tigerknows.view.user.UserUpdatePhoneActivity;
 
 public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
-    public static final String EXTRA_SOURCE_NOTIFICATION = "extra_source_notification";
+    public static final String EXTRA_PULL_MESSAGE = "extra_pull_message";
     public static final String ACTION_FIRST_STARTUP = "action.com.tigerknows.first.startup";
     
 	private static final int CONFIG_SERVER = 8;
@@ -837,6 +837,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mMenuView.setVisibility(View.VISIBLE);
         mControlView.setVisibility(View.VISIBLE);
         Sphinx.this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        checkPullMessage(getIntent());
     }
 
     @Override
@@ -1036,7 +1037,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         registerReceiver(mMapStatsBroadcastReceiver, intentFilter);
         
         if (mActivityResult == false) {
-            getDiscoverFragment().resetDataQuery();
+            if (mDiscoverFragment != null) {
+                getDiscoverFragment().resetDataQuery();
+            }
         }
         int id = uiStackPeek();
         BaseFragment baseFragment = getFragment(id);
@@ -1458,7 +1461,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (checkFormNotification(intent)) {
+        if (checkPullMessage(intent)) {
             return;
         }
         
@@ -1476,11 +1479,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
     
-    boolean checkFormNotification(Intent newIntent) {
+    boolean checkPullMessage(Intent newIntent) {
         boolean result = false;
         if (newIntent != null) {
-            int type = newIntent.getIntExtra(Sphinx.EXTRA_SOURCE_NOTIFICATION, -1);
-            if (type != -1) {
+            com.tigerknows.model.PullMessage.Message message = newIntent.getParcelableExtra(Sphinx.EXTRA_PULL_MESSAGE);
+            if (message != null) {
                 TKNotificationManager.cancel(mThis);
                 uiStackClose(new int[]{R.id.view_discover});
                 showView(R.id.view_discover);
@@ -2198,10 +2201,16 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
         Globals.g_Current_City_Info = cityInfo;
         String cName = cityInfo.getCName();
-        getMoreFragment().refreshCity(cName);
-        getHomeFragment().refreshCity(cName);
-        getTrafficQueryFragment().refreshCity(cName);
-        getHomeFragment().refreshLocationView();
+        if (mHomeFragment != null) {
+            getHomeFragment().refreshCity(cName);
+            getHomeFragment().refreshLocationView();
+        }
+        if (mMoreFragment != null) {
+            getMoreFragment().refreshCity(cName);
+        }
+        if (mTrafficQueryFragment != null) {
+            getTrafficQueryFragment().refreshCity(cName);
+        }
     };
     
     // TODO: cityinfo end

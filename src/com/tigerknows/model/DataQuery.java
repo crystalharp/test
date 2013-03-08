@@ -117,6 +117,15 @@ public final class DataQuery extends BaseQuery {
     
     // ids string false 团购商家id列表  
     public static final String SERVER_PARAMETER_SHANGJIA_IDS = "ids";
+    
+    // lastsuc String false 上次接收到消息的时间,客户端首次请求时此项为空
+    public static final String SERVER_PARAMETER_LAST_PULL_DATE = "lastsuc";
+    
+    // msgIds String false 客户端已收到的消息id，多个id之间用_分隔。如"1000_32762_33658"。首次请求时此项为空。 
+    public static final String SERVER_PARAMETER_MESSAGE_ID_LIST = "msgIds";
+    
+    // cityId  int  false  城市id，定位失败则不提交  
+    public static final String SERVER_PARAMETER_CITY_ID_FOR_PULL_MESSAGE = "cityId";
 
     // 评论版本 
     public static final String COMMENT_VERSION = "1";
@@ -549,6 +558,7 @@ public final class DataQuery extends BaseQuery {
                 if (criteria.containsKey(SERVER_PARAMETER_DIRECTION)) {
                     requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DIRECTION, criteria.get(SERVER_PARAMETER_DIRECTION)));
                 }
+            } else if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
             } else {
                 throw APIException.wrapToMissingRequestParameterException("invalid data type.");
             }

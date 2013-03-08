@@ -2,6 +2,7 @@ package com.tigerknows.radar;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.model.PullMessage.Message;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -12,7 +13,7 @@ import android.widget.RemoteViews;
 
 public class TKNotificationManager {
 
-    public static PendingIntent makeIntent(Context context, int data) {
+    public static PendingIntent makeIntent(Context context, Message data) {
         // The PendingIntent to launch our activity if the user selects this
         // notification.  Note the use of FLAG_UPDATE_CURRENT so that if there
         // is already an active matching pending intent, we will update its
@@ -20,12 +21,12 @@ public class TKNotificationManager {
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0,
                 new Intent(context, Sphinx.class)
                         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        .putExtra(Sphinx.EXTRA_SOURCE_NOTIFICATION, data),
+                        .putExtra(Sphinx.EXTRA_PULL_MESSAGE, data),
                 PendingIntent.FLAG_UPDATE_CURRENT);
         return contentIntent;
     }
 
-    public static void notify(Context context, int data) {
+    public static void notify(Context context, Message data) {
         NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         
         Notification notif = new Notification();
