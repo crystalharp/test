@@ -27,6 +27,9 @@ public class TKNotificationManager {
     }
 
     public static void notify(Context context, Message data) {
+        if (data == null) {
+            return;
+        }
         NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         
         Notification notif = new Notification();
@@ -41,7 +44,7 @@ public class TKNotificationManager {
 
         // our custom view
         RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification);
-        contentView.setTextViewText(R.id.text_txv, text);
+        contentView.setTextViewText(R.id.text_txv, data.getPoiName());
         contentView.setImageViewResource(R.id.icon_imv, R.drawable.icon);
         notif.contentView = contentView;
 

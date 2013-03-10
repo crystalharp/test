@@ -11,6 +11,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.MapEngine.CityInfo;
+import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.PullMessage;
@@ -46,23 +47,22 @@ public class PullService extends Service {
             
             @Override
             public void run() {
-                Calendar next = null;
+                long currentTimeMillis = System.currentTimeMillis();
+                Calendar next = Calendar.getInstance();
+                next.setTimeInMillis(currentTimeMillis);
+                next.add(Calendar.HOUR_OF_DAY, 1);
                 
                 Context context = getApplicationContext();
                 
                 // 获取当前城市
                 CityInfo currentCityInfo = Globals.getLastCityInfo(context);
                 
+                LogWrapper.d(TAG, "currentCityInfo="+currentCityInfo);
                 // 安装后从来没有使用过老虎宝典的情况
-                if (currentCityInfo == null) {
+                if (currentCityInfo == null || currentCityInfo.isAvailably() == false) {
                     exitService(next);
                     return;
                 }
-                
-                long currentTimeMillis = System.currentTimeMillis();
-                next = Calendar.getInstance();
-                next.setTimeInMillis(currentTimeMillis);
-                next.add(Calendar.HOUR_OF_DAY, 1);
                 
                 // 获取定位城市
                 CityInfo locationCityInfo = null;
@@ -80,16 +80,16 @@ public class PullService extends Service {
                         exception.printStackTrace();
                     }
                 }
-                
-                if (currentCityInfo != null
-                        && locationCityInfo != null
-                        && currentCityInfo.isAvailably()
+
+                LogWrapper.d(TAG, "locationCityInfo="+locationCityInfo);
+                if (locationCityInfo != null
                         && locationCityInfo.isAvailably()
                         && currentCityInfo.getId() == locationCityInfo.getId()) {    
                     // TODO: 去服务器上拉数据
                     DataQuery dataQuery = new DataQuery(context);
                     Hashtable<String, String> criteria = new Hashtable<String, String>();
                     String messageIdList = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, "");
+                    criteria.put(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_PULL_MESSAGE);
                     criteria.put(DataQuery.SERVER_PARAMETER_MESSAGE_ID_LIST, messageIdList);
                     criteria.put(DataQuery.SERVER_PARAMETER_CITY_ID_FOR_PULL_MESSAGE, String.valueOf(currentCityInfo.getId()));
                     criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
@@ -100,7 +100,6 @@ public class PullService extends Service {
                     if (pullMessage != null) {
                         recordPullMessage(context, pullMessage);
                         next = null;
-                        TKNotificationManager.notify(context, pullMessage.getMessage());
                     }
                 }
                 
@@ -121,6 +120,7 @@ public class PullService extends Service {
         Message message = pullMessage.getMessage();
         if (message != null) {
             s.append(message.getId());
+            TKNotificationManager.notify(context, message);
         }
         int length = list.length;
         long limit = recordMessageUpperLimit - 1;

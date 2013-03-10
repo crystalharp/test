@@ -1576,12 +1576,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             
             int cityId = cityInfo.getId();
             if (currentCityInfo != null
+                    && currentCityInfo.isAvailably()
                     && cityId == currentCityInfo.getId()) {
                 mMapView.zoomTo(cityInfo.getLevel(), cityInfo.getPosition(), -1, null);
             } else {
-                if (currentCityInfo == null) { // 刚打开软件时，Globals.g_Current_City_Info被初始化为null
-                    Globals.g_Current_City_Info = cityInfo;
-                }
+                Globals.g_Current_City_Info = cityInfo;
                 mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
                 updateCityInfo(cityInfo);
                 checkCitySupportDiscover(cityId);
@@ -2195,7 +2194,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 || cityInfo.isAvailably() == false) {
             return;
         }
-        Globals.g_Current_City_Info = cityInfo;
         String cName = cityInfo.getCName();
         if (mHomeFragment != null) {
             getHomeFragment().refreshCity(cName);
