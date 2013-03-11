@@ -259,9 +259,9 @@ public class WeiboSend extends BaseActivity implements OnClickListener {
         int viewId = v.getId();
         switch (viewId) {
             case R.id.logout_btn: {
-                mActionLog.addAction(ActionLog.WeiboSendClickedLogoutBtn);
                 hideInputMethodManager();
                 UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(this, ShareAPI.TYPE_WEIBO);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft", userAccessIdenty == null);
                 if (userAccessIdenty == null) {
                     WeiboSend.this.finish();
                     return;
@@ -310,7 +310,7 @@ public class WeiboSend extends BaseActivity implements OnClickListener {
                 break;
             }
             case R.id.send_btn: {
-                mActionLog.addAction(ActionLog.WeiboSendClickedSendBtn, mContent);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight", mContent);
                 UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(this, ShareAPI.TYPE_WEIBO);
                 if (userAccessIdenty == null) {
                     mLogoutBtn.setText(R.string.back);
@@ -344,7 +344,7 @@ public class WeiboSend extends BaseActivity implements OnClickListener {
                 break;
             }
             case R.id.text_limit_unit_lnl: {
-                mActionLog.addAction(ActionLog.WeiboSendClickedDelWord);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "delete");
                 if (mTextEdt.getEditableText().length() > 0) {
                     CommonUtils.showNormalDialog(WeiboSend.this,
                             getString(R.string.attention),
@@ -357,10 +357,7 @@ public class WeiboSend extends BaseActivity implements OnClickListener {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     if (DialogInterface.BUTTON_POSITIVE == which) {
-                                        mActionLog.addAction(ActionLog.WeiboSendClickedDelWordYes);
                                         mTextEdt.setText("");
-                                    } else {
-                                        mActionLog.addAction(ActionLog.WeiboSendClickedDelWordNo);
                                     }
                                 }
                             });
@@ -370,7 +367,7 @@ public class WeiboSend extends BaseActivity implements OnClickListener {
             case R.id.pic_imv: {
             	File file = new File(mPicPath);
                 if (file.exists()) {
-                	mActionLog.addAction(ActionLog.WeiboSendClickPic);
+                	mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "picture");
                 	hideInputMethodManager();
                     Bitmap source = BitmapFactory.decodeFile(this.mPicPath);
                     AlterImageDialog imageDialog = new AlterImageDialog(WeiboSend.this, source);

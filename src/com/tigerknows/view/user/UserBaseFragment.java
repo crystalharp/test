@@ -176,8 +176,6 @@ public abstract class UserBaseFragment extends BaseFragment {
 
 		Response response = baseQuery.getResponse();
 		if (response != null) {
-    		mActionLog.addAction(ActionLog.UserRequestResponse, mActionTag, response.getResponseCode());
-    		
     		AccountManage accountManage = (AccountManage)baseQuery;
         	dealResponse(accountManage);
 		} else {

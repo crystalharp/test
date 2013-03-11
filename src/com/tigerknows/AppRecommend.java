@@ -108,10 +108,10 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
         mAppRecommendLsv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> arg0, View view, int arg2, long arg3) {
-                final RecommendApp recommendApp = mRecommendAppList.get(arg2);
+            public void onItemClick(AdapterView<?> arg0, View view, int postion, long arg3) {
+                final RecommendApp recommendApp = mRecommendAppList.get(postion);
                 if (recommendApp != null) {
-                    mActionLog.addAction(ActionLog.AppRecommendSelect, recommendApp.getName());
+                    mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", postion, recommendApp.getName());
                     final String uri = recommendApp.getUrl();
                     if (!TextUtils.isEmpty(uri)) {
                         CommonUtils.showNormalDialog(mThis, mThis.getString(R.string.prompt), 
@@ -182,7 +182,7 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.snda_btn:
-                mActionLog.addAction(ActionLog.AppRecommendSnda);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "snda");
                 boolean bRet = RecommendAPI.init(mThis, "800109436", "ANDsnda");
                 RecommendAPI.setSdid("");
                 RecommendAPI.setPhoneNum("");

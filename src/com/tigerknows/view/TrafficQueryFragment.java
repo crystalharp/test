@@ -599,7 +599,7 @@ public class TrafficQueryFragment extends BaseFragment {
         BuslineQuery buslineQuery = new BuslineQuery(mContext);
         buslineQuery.setup(cityId, searchword, 0, false, getId(), mContext.getString(R.string.doing_and_wait));
         
-        mActionLog.addAction(ActionLog.TrafficQueryBtnB, searchword);
+        mActionLog.addAction(ActionLog.TrafficQueryBusline, searchword);
         mSphinx.queryStart(buslineQuery);
     }
 	
@@ -634,7 +634,7 @@ public class TrafficQueryFragment extends BaseFragment {
         addHistoryWord(mStart, HistoryWordTable.TYPE_TRAFFIC);
         addHistoryWord(mEnd, HistoryWordTable.TYPE_TRAFFIC);
     		
-        mActionLog.addAction(ActionLog.TrafficQueryBtnT, getQueryType(), mStart.getEdt().getText().toString(), mEnd.getEdt().getText().toString());
+        mActionLog.addAction(ActionLog.TrafficQueryTraffic, getQueryType(), mStart.getEdt().getText().toString(), mEnd.getEdt().getText().toString());
         trafficQuery.setup(cityId, start, end, getQueryType(), getId(), mContext.getString(R.string.doing_and_wait));
         
         mSphinx.queryStart(trafficQuery);
@@ -835,7 +835,6 @@ public class TrafficQueryFragment extends BaseFragment {
      */
     //TODO:把这个函数换个名字，setdata怎么都不像要发event的
     public void setDataForSelectPoint(POI poi, int index) {
-    	mLogHelper.logForSelectPoint(index);
     	mStateTransitionTable.event(TrafficViewSTT.Event.PointSelected);
     	setData(poi.clone(), index);
     	mStateTransitionTable.mergeFirstTwoTranstion(TrafficViewSTT.Event.ClickSelectStartEndBtn, mStateHelper.createNormalToInputAction());
@@ -869,7 +868,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (mStateTransitionTable.rollback()) {
-			    mActionLog.addAction(ActionLog.KeyCodeBack);
+			    mActionLog.addAction(ActionLog.KEYCODE, "back");
 				return true;
 			} 
 		}
@@ -913,20 +912,16 @@ public class TrafficQueryFragment extends BaseFragment {
 	public void queryTrafficEnd(TrafficQuery trafficQuery) {
         TrafficModel trafficModel = trafficQuery.getTrafficModel();
         if (trafficModel == null) {
-            mActionLog.addAction(ActionLog.TrafficQueryNoResultT);
             showTrafficErrorTip(trafficQuery);
         } else if (trafficModel.getType() == TrafficModel.TYPE_EMPTY) {
-        	mActionLog.addAction(ActionLog.TrafficQueryNoResultT);
             showTrafficErrorTip(trafficQuery);
         } else if (trafficModel.getType() == TrafficModel.TYPE_ALTERNATIVES 
         		|| trafficModel.getType() == TrafficModel.TYPE_PROJECT){
             if (trafficModel.getType() == TrafficModel.TYPE_ALTERNATIVES) {
         		showAlternativeDialog(trafficQuery.getTrafficModel().getStartAlternativesList(), trafficQuery.getTrafficModel().getEndAlternativesList());
             } else if (trafficModel.getPlanList() == null || trafficModel.getPlanList().size() <= 0){
-            	mActionLog.addAction(ActionLog.TrafficQueryNoResultT);
             	showTrafficErrorTip(trafficQuery);
             } else if (trafficModel.getType() == TrafficModel.TYPE_PROJECT) {
-            	mActionLog.addAction(ActionLog.TrafficQueryResultT, trafficModel.getPlanList().size());
             	// 若之前发出的请求中的起终点被服务器修改, 此处要修改客户端显示
             	if (trafficQuery.isPOIModified()) {
             		modifyData(trafficQuery.getStart(), TrafficQueryFragment.START);
@@ -955,14 +950,12 @@ public class TrafficQueryFragment extends BaseFragment {
         BuslineModel buslineModel = buslineQuery.getBuslineModel();
         
         if (buslineModel == null) {
-        	mActionLog.addAction(ActionLog.TrafficQueryNoResultB);
         	if (buslineQuery.getStatusCode() == BaseQuery.STATUS_CODE_NONE) {
         		mSphinx.showTip(R.string.network_failed, Toast.LENGTH_SHORT);
         	} else {
         		mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
         	}
         } else if (buslineModel.getType() == BuslineModel.TYPE_EMPTY) {
-        	mActionLog.addAction(ActionLog.TrafficQueryNoResultB);
         	mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
         } else if (buslineModel.getType() == BuslineModel.TYPE_UNSUPPORT) {
         	mSphinx.showTip(R.string.busline_not_support, Toast.LENGTH_SHORT);
@@ -970,15 +963,12 @@ public class TrafficQueryFragment extends BaseFragment {
         		|| buslineModel.getType() == BuslineModel.TYPE_STATION){
         	if (((buslineModel.getLineList() == null || buslineModel.getLineList().size() <= 0) && 
             (buslineModel.getStationList() == null || buslineModel.getStationList().size() <= 0))) {
-        		mActionLog.addAction(ActionLog.TrafficQueryNoResultB);
         		mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
         	} else {
         		if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
-        			mActionLog.addAction(ActionLog.TrafficQueryResultB, buslineModel.getLineList().size());
         			mSphinx.getBuslineResultLineFragment().setData(buslineQuery);
         			mSphinx.showView(R.id.view_busline_line_result);
         		} else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
-        			mActionLog.addAction(ActionLog.TrafficQueryResultB, buslineModel.getStationList().size());
         			mSphinx.getBuslineResultStationFragment().setData(buslineQuery);
         			mSphinx.showView(R.id.view_busline_station_result);
         		}        		
@@ -1016,7 +1006,7 @@ public class TrafficQueryFragment extends BaseFragment {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
-            	Station station;
+            	Station station = null;
             	if (start) {
             	    station = startStationList.get(which);
             	    mStart.setPOI(station.toPOI());
@@ -1025,6 +1015,9 @@ public class TrafficQueryFragment extends BaseFragment {
             		mEnd.setPOI(station.toPOI());
             	}
                 dialog.dismiss();
+                if (station != null) {
+                    mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "alternativeList"+(start ? "Start" : "End"), which, station.getName());
+                }
                 if (start == false || end == false) {
                 	submitTrafficQuery();
                 } else {

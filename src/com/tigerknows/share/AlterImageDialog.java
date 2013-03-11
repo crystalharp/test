@@ -59,7 +59,7 @@ public class AlterImageDialog extends Dialog {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				mActionLog.addAction(ActionLog.WeiboImageClickedDelPic);
+				mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "delete");
 				mContext.removeImage();
 				dismiss();
 			}

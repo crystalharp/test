@@ -85,7 +85,7 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
 
                 switch (action & MotionEvent.ACTION_MASK) {
                     case MotionEvent.ACTION_UP: {
-                        mActionLog.addAction(ActionLog.AddMerchantType);
+                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "leixing");
                         StringArrayAdapter adapter =  new StringArrayAdapter(mThis, mAddMerchantTypes);
                         ListView listView = CommonUtils.makeListView(mThis);
                         listView.setAdapter(adapter);
@@ -121,23 +121,23 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     switch (v.getId()) {
                         case R.id.shanghumingcheng_edt:
-                            mActionLog.addAction(ActionLog.AddMerchantName);
+                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "name");
                             break;
                             
                         case R.id.shanghudizhi_edt:
-                            mActionLog.addAction(ActionLog.AddMerchantAddress);
+                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "address");
                             break;
                             
                         case R.id.shanghudianhua_edt:
-                            mActionLog.addAction(ActionLog.AddMerchantTelephone);
+                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "telephone");
                             break;
                             
                         case R.id.yingyeshijian_edt:
-                            mActionLog.addAction(ActionLog.AddMerchantTime);
+                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "time");
                             break;
                             
                         case R.id.ningdedianhua_edt:
-                            mActionLog.addAction(ActionLog.AddMerchantMobile);
+                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "yourTelephone");
                             break;
                             
                         default:
@@ -206,7 +206,7 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
                 exit();
                 break;
             case R.id.right_btn:
-                mActionLog.addAction(ActionLog.Title_Right_Button);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
                 StringBuilder s = new StringBuilder();
                 try {
                     String str = mShanghumingchengEdt.getEditableText().toString().trim();

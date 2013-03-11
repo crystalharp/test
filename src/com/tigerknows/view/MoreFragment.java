@@ -247,13 +247,13 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.upgrade_btn:
                 if (mUpgradeType == UPGRADE_TYPE_SOFTWARE) {
-                    mActionLog.addAction(ActionLog.MoreUpdateSoft);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "upgradeSoftWare");
                     showDownloadSoftwareDialog();
                 } else if (mUpgradeType == UPGRADE_TYPE_COMMENT) {
-                    mActionLog.addAction(ActionLog.MoreUpdateComment);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
                     mSphinx.showView(R.id.view_go_comment);
                 } else if (mUpgradeType == UPGRADE_TYPE_MAP) {
-                    mActionLog.addAction(ActionLog.MoreUpdateMap);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "upgradeMap");
                     showUpgradeMapDialog();
                 } else if (mUpgradeType == UPGRADE_TYPE_PUBLIC_WELFARRE) {
                     RecommendApp publicWelfarre = getPublicWelfarre();
@@ -265,10 +265,10 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.user_btn:
             	if (TextUtils.isEmpty(Globals.g_Session_Id) == false) {
-            		mActionLog.addAction(ActionLog.MoreUserHome);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "userHome");
             		mSphinx.showView(R.id.view_user_home);
             	} else {
-            		mActionLog.addAction(ActionLog.MoreLoginRegist);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "userLogin");
             		Intent intent = new Intent(mSphinx, UserLoginActivity.class);
                     intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, getId());
                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.view_user_home);
@@ -277,15 +277,15 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
             	}
                 break;
             case R.id.change_city_btn:
-                mActionLog.addAction(ActionLog.MoreChangeCity);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "changeCity");
                 mSphinx.showView(R.id.activity_change_city);
                 break;
             case R.id.download_map_btn:
-                mActionLog.addAction(ActionLog.MoreDownloadMap);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "downloadMap");
                 mSphinx.showView(R.id.activity_map_download);
                 break;
             case R.id.app_recommend_btn:
-                mActionLog.addAction(ActionLog.MoreAppRecommend);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "appRecommend");
                 if (TKConfig.sSPREADER.startsWith(TKConfig.sSPREADER_TENCENT)) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://a.wap.myapp.com/and2/s?aid=detail&appid=50801"));
                     mSphinx.startActivity(intent);
@@ -294,35 +294,36 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                 }
                 break;
             case R.id.favorite_btn:
-                mActionLog.addAction(ActionLog.MoreFavorite);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "favorite");
                 mSphinx.showView(R.id.view_favorite);
                 break;
             case R.id.history_browse_btn:
-                mActionLog.addAction(ActionLog.MoreHistory);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "history");
                 mSphinx.showView(R.id.view_history);
                 break;
             case R.id.settings_btn:
-                mActionLog.addAction(ActionLog.MoreSetting);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "setting");
                 mSphinx.showView(R.id.activity_setting);
                 break;
             case R.id.feedback_btn:
-                mActionLog.addAction(ActionLog.MoreFeedback);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "feedback");
                 mSphinx.showView(R.id.activity_feedback);
                 break;
             case R.id.add_merchant_btn:
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "addMerchant");
                 mSphinx.showView(R.id.activity_add_merchant);
                 break;
             case R.id.help_btn:
-                mActionLog.addAction(ActionLog.MoreHelp);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "help");
                 mSphinx.showView(R.id.activity_help);
                 break;
             case R.id.about_btn:
-                mActionLog.addAction(ActionLog.MoreAboutUs);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "aboutUs");
                 mSphinx.showView(R.id.activity_about_us);
                 break;
                 
             case R.id.give_favourable_comment_btn:
-                mActionLog.addAction(ActionLog.MoreGiveFavourableComment);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "giveFavourable");
                 mSphinx.startActivity(makeGiveFavourableIntent());  
                 break;
 
@@ -468,10 +469,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                     public void onClick(DialogInterface arg0, int id) {
                         Intent intent = new Intent();
                         if (id == DialogInterface.BUTTON_POSITIVE) {
-                            mActionLog.addAction(ActionLog.MoreUpdateMapAll);
                             intent.putExtra("upgradeAll", true);
-                        } else {
-                            mActionLog.addAction(ActionLog.MoreUpdateMapManual);
                         }
                         mSphinx.showView(R.id.activity_map_download, intent);
                     }

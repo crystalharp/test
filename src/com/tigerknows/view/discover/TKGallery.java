@@ -2,7 +2,6 @@
 package com.tigerknows.view.discover;
 
 import com.decarta.Globals;
-import com.tigerknows.TKConfig;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -32,12 +31,6 @@ public class TKGallery extends Gallery {
     		mInitialSelectedItemPosition = getSelectedItemPosition();
     	}
 		return super.onTouchEvent(event);
-	}
-
-	@Override
-	public boolean onInterceptTouchEvent(MotionEvent ev) {
-		// TODO Auto-generated method stub
-		return super.onInterceptTouchEvent(ev);
 	}
 
 	@Override

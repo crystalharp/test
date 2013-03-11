@@ -266,7 +266,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             return;
         }
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
-        mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
+        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "loadMore");
 
         DataQuery dataQuery = new DataQuery(mContext);
         int cityId = lastDataQuery.getCityId();
@@ -315,7 +315,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                 if (getList().isEmpty()) {
                     return;
                 }
-                mActionLog.addAction(ActionLog.Title_Right_Button);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
                 viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 
@@ -363,11 +363,11 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                 public void onClick(View view) {
                     int id = view.getId();
                     if (id == R.id.address_view) {
-                        mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailAddress);
+                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "address");
                         POI poi = fendian.getPOI(POI.SOURCE_TYPE_FENDIAN);
                         CommonUtils.queryTraffic(mSphinx, poi);
                     } else if (id == R.id.telephone_view) {
-                        mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailTelphone);
+                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "telephone");
                         CommonUtils.telephone(mSphinx, telephoneTxv);
                     }
                 }
@@ -485,31 +485,31 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                 public void onClick(View view) {
                     int id = view.getId();
                     if (id  == R.id.today_btn) {
-                        mActionLog.addAction(mActionTag+ActionLog.DianyingToday);
+                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "taday");
                         if (Changci.OPTION_DAY_TODAY == yingxun.getChangciOption()) {
                             yingxun.setChangciOption(0);
                         } else {
                             yingxun.setChangciOption(Changci.OPTION_DAY_TODAY);
                         }
                     } else if (id  == R.id.tomorrow_btn) {
-                        mActionLog.addAction(mActionTag+ActionLog.DianyingTomorrow);
+                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "tomorrow");
                         if (Changci.OPTION_DAY_TOMORROW == yingxun.getChangciOption()) {
                             yingxun.setChangciOption(0);
                         } else {
                             yingxun.setChangciOption(Changci.OPTION_DAY_TOMORROW);
                         }
                     } else if (id  == R.id.after_tomorrow_btn) {
-                        mActionLog.addAction(mActionTag+ActionLog.DianyingAfterTomorrow);
+                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "afterTomorrow");
                         if (Changci.OPTION_DAY_AFTER_TOMORROW == yingxun.getChangciOption()) {
                             yingxun.setChangciOption(0);
                         } else {
                             yingxun.setChangciOption(Changci.OPTION_DAY_AFTER_TOMORROW);
                         }
                     } else if (id == R.id.telephone_view) {
-                        mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailTelphone);
+                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "telephone");
                         CommonUtils.telephone(mSphinx, telephoneTxv);
                     } else if (id == R.id.address_view) {
-                        mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailAddress);
+                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "address");
                         /* 交通界面的显示 */
                         POI poi = yingxun.getPOI(POI.SOURCE_TYPE_YINGXUN);
                         CommonUtils.queryTraffic(mSphinx, poi);

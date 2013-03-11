@@ -517,11 +517,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 switch (action & MotionEvent.ACTION_MASK) {
                     case MotionEvent.ACTION_UP: {
                         if (R.id.taste_rbt == v.getId()) {
-                            mActionLog.addAction(ActionLog.POICommentTaste);
+                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "taste");
                         } else if (R.id.environment_rbt == v.getId()) {
-                            mActionLog.addAction(ActionLog.POICommentEnvironment);
+                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "environment");
                         } else if (R.id.qos_rbt == v.getId()) {
-                            mActionLog.addAction(ActionLog.POICommentQos);
+                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "qos");
                         }
                         break;
                     }
@@ -543,15 +543,15 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 if (value) {
                     switch (v.getId()) {
                         case R.id.content_edt:
-                            mActionLog.addAction(ActionLog.POICommentContent);
+                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "content");
                             break;
                             
                         case R.id.avg_edt:
-                            mActionLog.addAction(ActionLog.POICommentAvg);                        
+                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "avg");                        
                             break;
                             
                         case R.id.recommend_edt:
-                            mActionLog.addAction(ActionLog.POICommentRecommend);  
+                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "recommend");  
                             break;
     
                         default:
@@ -614,7 +614,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                     } else if (rating == 5) {
                         resId = R.string.poi_comment_share_grade5;
                     }
-                    mActionLog.addAction(ActionLog.POICommentClickGrade, rating);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "grade", rating);
                     mGradeTipTxv.setText(resId);
                     mGradeTipTxv.setVisibility(View.VISIBLE);
                     mGradeTipTxv.startAnimation(animation);
@@ -697,7 +697,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     public void onClick(View view) {
         int viewId = view.getId();
         if (R.id.right_btn == viewId) {
-            mActionLog.addAction(ActionLog.Title_Right_Button);
+            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
             if (mContentEdt.getEditableText().toString().trim().length() < MIN_CHAR) {
                 CommonUtils.showNormalDialog(mThis, 
                         mThis.getString(R.string.prompt), 
@@ -731,7 +731,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             }
             
         } else if (R.id.restair_btn == viewId) {
-            mActionLog.addAction(ActionLog.POICommentRestair);
+            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "restair");
             if (mRestairArray == null) {
                 mRestairArray = mThis.getResources().getStringArray(R.array.comment_restair);
                 mRestairChecked = new boolean[mRestairArray.length];
@@ -781,20 +781,17 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                                     }
                                 }
                                 mRestairBtn.setText(s.toString());
-                                mActionLog.addAction(ActionLog.POICommentClickRestairOK);
-                            } else {
-                                mActionLog.addAction(ActionLog.POICommentClickRestairCancel);
                             }
                         }
                     });
         } else if (viewId == R.id.left_btn) {
-            mActionLog.addAction(ActionLog.Title_Left_Back);
+            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft");
             if (showDiscardDialog() == false) {
                 finish();
             }
         } else if (viewId == R.id.sync_qzone_chb) { 
+            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "qzone", mSyncQZoneChb.isChecked());
             if (mSyncQZoneChb.isChecked() == true) {
-                mActionLog.addAction(ActionLog.POICommentClickQZone, 0);
                 UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_TENCENT);
                 if (userAccessIdenty != null) {
                     mSyncQZoneChb.setChecked(true);
@@ -803,12 +800,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                     TKTencentOpenAPI.login(mThis);
                 }
             } else {
-                mActionLog.addAction(ActionLog.POICommentClickQZone, 1);
                 mSyncQZoneChb.setChecked(false);
             }
         } else if (viewId == R.id.sync_sina_chb) {
+            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "sina", mSyncSinaChb.isChecked());
             if (mSyncSinaChb.isChecked() == true) {
-                mActionLog.addAction(ActionLog.POICommentClickSina, 0);
                 UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_WEIBO);
                 if (userAccessIdenty != null) {
                     mSyncSinaChb.setChecked(true);
@@ -817,7 +813,6 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                     TKWeibo.login(mThis, mSinaAuthDialogListener);
                 }
             } else {
-                mActionLog.addAction(ActionLog.POICommentClickSina, 1);
                 mSyncSinaChb.setChecked(false);
             }
         }
@@ -1183,7 +1178,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (showDiscardDialog() == false) {
-                mActionLog.addAction(ActionLog.KeyCodeBack);
+                mActionLog.addAction(ActionLog.KEYCODE, "back");
                 finish();
                 return true;
             }

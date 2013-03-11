@@ -538,7 +538,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         switch (view.getId()) {                     
 	        case R.id.buy_btn:                  
 	        case R.id.buy_btn_2:
-                mActionLog.addAction(ActionLog.TuangouXiangqingBuy);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "buy");
                 String sessionId = Globals.g_Session_Id;
                 if (TextUtils.isEmpty(sessionId)) {
                     ((TuangouDetailFragment) mParentFragment).isRequsetBuy = true;
@@ -554,12 +554,12 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 break;
                 
             case R.id.telephone_view:
-                mActionLog.addAction(ActionLog.TuangouXiangqing+ActionLog.DiscoverDetailTelphone);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "telephone");
                 CommonUtils.telephone(mSphinx, mTelephoneTxv);
                 break;
                 
             case R.id.address_view:
-                mActionLog.addAction(ActionLog.TuangouXiangqing+ActionLog.DiscoverDetailAddress);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "address");
                 Fendian fendian = mData.getFendian();
                 if (fendian == null) {
                     return;
@@ -569,13 +569,13 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 
             case R.id.nearby_fendian_view:
                 if (mNearbyFendianTxv.getVisibility() == View.VISIBLE) {
-                    mActionLog.addAction(ActionLog.TuangouXiangqing+ActionLog.DiscoverDetailBranch);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "fendian");
                     mSphinx.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.FendianList);
                     mSphinx.showView(R.id.view_discover_child_list);
                 }
                 break;
             case R.id.service_hotline_view:
-                mActionLog.addAction(ActionLog.TuangouXiangqingCustomService);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "hotline");
                 CommonUtils.telephone(mSphinx, mServiceHotlineTxv);
                 break;
         }

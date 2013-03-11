@@ -85,7 +85,7 @@ public class BaseDialog extends Dialog {
                 public void onClick(View arg0) {
                     synchronized (mSphinx.mUILock) {
                         if (!mSphinx.mUIProcessing) {
-                            mActionLog.addAction(ActionLog.Title_Left_Back);
+                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft");
                             dismiss();
                         }
                     }
@@ -118,7 +118,7 @@ public class BaseDialog extends Dialog {
             case KeyEvent.KEYCODE_SEARCH:
                 return true;
             case KeyEvent.KEYCODE_BACK:
-            	mActionLog.addAction(ActionLog.KeyCodeBack);
+            	mActionLog.addAction(ActionLog.KEYCODE, "back");
             	dismiss();
                 return true;
         }
@@ -131,7 +131,7 @@ public class BaseDialog extends Dialog {
     
     public void onResume() {
         if (!TextUtils.isEmpty(mActionTag)) {
-            mActionLog.addAction(mActionTag);
+            mActionLog.addAction(ActionLog.UI, mActionTag);
         }
         mTitleBtn.setBackgroundDrawable(null);
     }

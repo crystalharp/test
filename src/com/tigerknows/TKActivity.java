@@ -215,7 +215,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {                
             case KeyEvent.KEYCODE_BACK:
-                mActionLog.addAction(ActionLog.KeyCodeBack);
+                mActionLog.addAction(ActionLog.KEYCODE, "back");
                 break;
                 
             case KeyEvent.KEYCODE_SEARCH:

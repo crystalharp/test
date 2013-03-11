@@ -68,7 +68,7 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					mActionLog.addAction(ActionLog.UserClickPasswordEdt);
+					mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "oldPassword");
 				}
 				
 				return false;
@@ -80,7 +80,7 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO 跳转到重置密码页面
-				mActionLog.addAction(ActionLog.UserUpdatePasswordForgetPassword);
+				mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "forgetPassword");
 				startActivity(new Intent(UserUpdatePasswordActivity.this, UserResetPasswordActivity.class));
 			}
 		});

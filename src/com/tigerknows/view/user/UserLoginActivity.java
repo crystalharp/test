@@ -86,7 +86,7 @@ public class UserLoginActivity extends UserBaseActivity {
                 
                 @Override
                 public void onClick(View arg0) {
-                    mActionLog.addAction(ActionLog.Title_Left_Back);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft");
                     hideSoftInput();
                     onBack();
                 }
@@ -98,7 +98,7 @@ public class UserLoginActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO 跳转到重置密码页面
-				mActionLog.addAction(ActionLog.UserLoginForgetPassword);
+				mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "forgetPassword");
 				startActivityForResult(new Intent(UserLoginActivity.this, UserResetPasswordActivity.class), 0);
 			}
 		});
@@ -122,7 +122,7 @@ public class UserLoginActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO 跳转到注册页面
-				mActionLog.addAction(ActionLog.UserLoginRegistBtn);
+				mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "register");
 				Intent intent = new Intent(UserLoginActivity.this, UserRegistActivity.class);
 				startActivityForResult(intent, REQUEST_CODE_REGIST);
 			}
@@ -134,7 +134,7 @@ public class UserLoginActivity extends UserBaseActivity {
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
 				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					mActionLog.addAction(ActionLog.UserClickPasswordEdt);
+					mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "password");
 				}
 				return false;
 			}
@@ -183,7 +183,7 @@ public class UserLoginActivity extends UserBaseActivity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-            mActionLog.addAction(ActionLog.KeyCodeBack, mActionTag);
+            mActionLog.addAction(ActionLog.KEYCODE, "back");
 			onBack();
 			return true;
 		}

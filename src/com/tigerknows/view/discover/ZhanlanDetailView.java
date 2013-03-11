@@ -218,12 +218,12 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.telephone_view:
-                mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailTelphone);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "telephone");
                 CommonUtils.telephone(mSphinx, mTelephoneTxv);
                 break;
                 
             case R.id.address_view:
-                mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailAddress);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "address");
                 POI poi = mData.getPOI();
                 poi.setName(mData.getPlaceName());
                 poi.setAddress(mData.getAddress());

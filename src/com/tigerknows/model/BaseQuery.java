@@ -201,6 +201,9 @@ public abstract class BaseQuery {
 
     // 发现首页动态数据统计 100
     public static final String DATA_TYPE_DISCOVER = "100";
+
+    // 消息推送 18
+    public static final String DATA_TYPE_PULL_MESSAGE = "18";
     
     public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     

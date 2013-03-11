@@ -206,7 +206,6 @@ public abstract class UserBaseActivity extends BaseActivity {
 		
 		Response response = baseQuery.getResponse();
 		if (response != null) {
-    		mActionLog.addAction(ActionLog.UserRequestResponse, mActionTag, response.getResponseCode());
     		AccountManage accountManage = (AccountManage)baseQuery;
         	dealResponse(accountManage);
 		} else {

@@ -123,7 +123,7 @@ public class MyCommentListFragment extends BaseFragment {
             
             @Override
             public void onRefresh(boolean isHeader) {
-                mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
+                mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "loadMore");
                 turnPage(isHeader);
             }
         });
@@ -133,7 +133,7 @@ public class MyCommentListFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 if (position < adapterView.getCount()) {
-                    mActionLog.addAction(ActionLog.MyCommentClickComment, position);
+                    mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", position);
                     Comment comment = (Comment) adapterView.getAdapter().getItem(position);
                     if (comment != null) {
                         long status = comment.getPOIStatus();
@@ -248,7 +248,7 @@ public class MyCommentListFragment extends BaseFragment {
                     
                     @Override
                     public void onClick(View arg0) {
-                        mActionLog.addAction(ActionLog.MyCommentClickPOI, comment.getPOIName());
+                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "poi", comment.getPOIName());
                         if (comment.getPOIStatus() >= 0) {
                             POI poi = comment.getPOI();
                             if (poi.getPosition() != null) {

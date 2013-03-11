@@ -68,7 +68,7 @@ public class UserRegistActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO 获取验证码
-				mActionLog.addAction(ActionLog.UserRegistValidNumBtn);
+				mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "getValidateCode");
 				if (!phoneEdt.isValid()) {
 					validationAction(phoneEdt);
 					return;

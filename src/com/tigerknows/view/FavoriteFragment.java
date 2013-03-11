@@ -198,7 +198,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         return mRootView;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void onResume() {
         super.onResume();
@@ -309,7 +308,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 if (position < adapterView.getCount()) {
                     Favorite traffic = (Favorite) adapterView.getAdapter().getItem(position);
                     if (traffic != null) {
-                        mActionLog.addAction(ActionLog.FavoriteSelectTraffic, position);
+                        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "traffic", position+1);
                         showTrafficDetail(traffic);
                     }
                 }
@@ -324,7 +323,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 if (position < adapterView.getCount()) {
                     POI poi = (POI) adapterView.getAdapter().getItem(position);
                     if (poi != null) {
-                        mActionLog.addAction(ActionLog.FavoriteSelectPOI, position);
+                        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "poi", position+1);
                         mSphinx.getPOIDetailFragment().setData(poi);
                         mSphinx.showView(R.id.view_poi_detail);
                     }
@@ -371,7 +370,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         loadThread.layerType = ItemizedOverlay.POI_OVERLAY;
         loadThread.maxId = maxId;
         loadThread.start();
-        mActionLog.addAction(ActionLog.FavoriteMore, 0);
+        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "loadMore");
         }
     }
 
@@ -391,7 +390,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             loadThread.layerType = ItemizedOverlay.TRAFFIC_OVERLAY;
             loadThread.maxId = maxId;
             loadThread.start();
-        mActionLog.addAction(ActionLog.FavoriteMore, 1);
+        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "loadMore");
         }
     }
     
@@ -400,6 +399,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         if (mSelectIndex > -1) {
             switch (item.getItemId()) {
                 case MENU_DELETE:
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "menuDelete");
                     CommonUtils.showNormalDialog(mSphinx,
                             mContext.getString(R.string.prompt),
                             mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_a_favorite_poi : R.string.delete_a_favorite_traffic),
@@ -430,7 +430,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                             });
                     return true;
                 case MENU_RENAME:
-                    mActionLog.addAction(ActionLog.FavoriteRename);
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "menuRename");
                     showRenameDialog(mSelectIndex);
                     return true;
             }
@@ -442,7 +442,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()) {                
             case R.id.right_btn:
-                mActionLog.addAction(ActionLog.FavoriteRightDelete, (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? "0" : "1"));
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
 
                 int count = 0;
                 if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
@@ -477,12 +477,12 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 }
                 break;
             case R.id.poi_btn:
-                mActionLog.addAction(ActionLog.FavoritePOI);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "poi");
                 mViewPager.setCurrentItem(0);
                 break;
                 
             case R.id.traffic_btn:
-                mActionLog.addAction(ActionLog.FavoriteTraffic);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "traffic");
                 mViewPager.setCurrentItem(1);
                 break;
                 
@@ -889,8 +889,10 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         @Override
         public void onPageSelected(int position) {
             if (position == 0) {
+                mActionLog.addAction(ActionLog.VIEWPAGER_SELECTED, "poi");
                 changeTab(ItemizedOverlay.POI_OVERLAY);
             } else {
+                mActionLog.addAction(ActionLog.VIEWPAGER_SELECTED, "traffic");
                 changeTab(ItemizedOverlay.TRAFFIC_OVERLAY);
             }
         }

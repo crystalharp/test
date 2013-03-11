@@ -1,11 +1,13 @@
 package com.tigerknows.service;
 
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.LocationQuery.LocationParameter;
 import com.tigerknows.model.LocationQuery.TKNeighboringCellInfo;
 import com.tigerknows.model.LocationQuery.TKScanResult;
 import com.tigerknows.provider.LocationTable;
 import com.tigerknows.radar.Alarms;
+import com.tigerknows.radar.RadarReceiver;
 
 import android.app.Service;
 import android.content.Context;
@@ -24,6 +26,8 @@ import java.util.List;
 import java.util.Random;
 
 public class LocationCollectionService extends Service {
+    
+    static final String TAG = "LocationCollectionService";
 
     public static final String ACTION_LOCATION_COLLECTION_COMPLATE = "action.com.tigerknows.location.collection.complate";
     public static final int REQUEST_MIN_TIME = 10;
@@ -110,6 +114,7 @@ public class LocationCollectionService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        LogWrapper.d(TAG, "onCreate()");
         wifiManager = (WifiManager)getSystemService(Context.WIFI_SERVICE);
         locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         
@@ -144,8 +149,9 @@ public class LocationCollectionService extends Service {
         TKConfig.setPref(context,
                 TKConfig.PREFS_RADAR_LOCATION_COLLECTION_ALARM, 
                 Alarms.SIMPLE_DATE_FORMAT.format(next.getTime()));
-        Intent name = new Intent(this, LocationCollectionService.class);
-        Alarms.enableAlarm(context, next.getTimeInMillis(), name);
+        Intent intent = new Intent(RadarReceiver.ACTION_LOCATION_COLLECTION);
+        Alarms.enableAlarm(context, next.getTimeInMillis(), intent);
+        Intent name = new Intent(context, LocationCollectionService.class);
         stopService(name);
     }
     
