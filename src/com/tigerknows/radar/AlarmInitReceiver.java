@@ -2,8 +2,6 @@ package com.tigerknows.radar;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.service.LocationCollectionService;
-import com.tigerknows.service.PullService;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
