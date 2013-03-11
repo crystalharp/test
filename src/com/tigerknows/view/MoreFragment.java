@@ -82,6 +82,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     public static final int UPGRADE_TYPE_COMMENT = 2;
     public static final int UPGRADE_TYPE_SOFTWARE = 3;
     public static final int UPGRADE_TYPE_PUBLIC_WELFARRE = 4;
+    public static final int UPGRADE_TYPE_USER_SURVEY = 5;
     private int mUpgradeType = UPGRADE_TYPE_NONE;
     
     @Override
@@ -261,6 +262,11 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                         Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(publicWelfarre.getUrl()));
                         mSphinx.startActivity(intent);
                     }
+                } else if (mUpgradeType == UPGRADE_TYPE_USER_SURVEY) {
+                	UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
+                	Intent intent=new Intent(Intent.ACTION_VIEW,Uri.parse(userLogonModel.getUserSurvey()));
+                	mSphinx.startActivity(intent);
+                	//modify something
                 }
                 break;
             case R.id.user_btn:
@@ -497,4 +503,5 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         }
         return publicWelfarre;
     }
+    
 }
