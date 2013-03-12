@@ -27,11 +27,15 @@ public class UserLogonModel extends XMapData {
 
     // 0x04 String 是否上传日志，值为on或off   
     private static final byte FIELD_UPLOAD_LOG = 0x04;
+    
+    // 0x05 String 是否用户调研
+    private static final byte FIELD_USER_SURVEY = 0x05;
 
     private SoftwareUpdate softwareUpdate;
     private DomainName domainName;
     private Recommend recommend;
     private String uploadLog;
+    private String userSurvey;
 
     public SoftwareUpdate getSoftwareUpdate() {
         return softwareUpdate;
@@ -56,6 +60,10 @@ public class UserLogonModel extends XMapData {
     public String getUploadLog() {
         return uploadLog;
     }
+    
+    public String getUserSurvey() {
+    	return userSurvey;
+    }
 
     public UserLogonModel(XMap data) throws APIException {
         super(data);
@@ -75,7 +83,11 @@ public class UserLogonModel extends XMapData {
         if (this.data.containsKey(FIELD_UPLOAD_LOG)) {
             this.uploadLog = this.data.getString(FIELD_UPLOAD_LOG);
         }
-    }
+        
+        if (this.data.containsKey(FIELD_USER_SURVEY)){
+        	this.userSurvey = this.data.getString(FIELD_USER_SURVEY);
+        }
+     }
     
     public static class SoftwareUpdate extends XMapData {
         // 0x01 int ID 
@@ -215,7 +227,7 @@ public class UserLogonModel extends XMapData {
             private static final byte FIELD_URL = 0x03;
             // 0x04 String  ID，指不同平台上软件版本的唯一ID 
             private static final byte FIELD_ID = 0x04;
-            // 0x05 String  icon url，url of icon
+            // 0x05 String  icon url，图片URL 
             private static final byte FIELD_ICON = 0x05;
             
             private String name;
@@ -259,7 +271,9 @@ public class UserLogonModel extends XMapData {
                     id = this.data.getString(FIELD_ID);
                 }
                 if (this.data.containsKey(FIELD_ICON)) {
-                    icon = new TKDrawable(this.data.getXMap(FIELD_ICON));
+                    XMap xmap = new XMap();
+                    xmap.put(TKDrawable.FIELD_URL, this.data.getString(FIELD_ICON));
+                    icon = new TKDrawable(xmap);
                 }
             }
         }
