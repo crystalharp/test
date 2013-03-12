@@ -143,7 +143,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         }
     }
     
-    public void setUpgrade(int visibility) {
+    public void setFragmentMessage(int visibility) {
         mUpgradeImv.setVisibility(visibility);
     }
     

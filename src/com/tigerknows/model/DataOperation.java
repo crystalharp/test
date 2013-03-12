@@ -154,7 +154,7 @@ public class DataOperation extends BaseQuery {
             } else if (DATA_TYPE_ZHANLAN.equals(dataType)) {
                 response = new ZhanlanQueryResponse(responseXMap);
             } else if (DATA_TYPE_YONGHUDIAOYAN.equals(dataType)){
-            	response = new YonghudiaoyanQueryResponse(responseXMap);
+            	response = new DiaoyanQueryResponse(responseXMap);
             }
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
             if (DATA_TYPE_DIANPING.equals(dataType)) {
@@ -374,7 +374,7 @@ public class DataOperation extends BaseQuery {
         } 
     }
     
-    public static class YonghudiaoyanQueryResponse extends Response {
+    public static class DiaoyanQueryResponse extends Response {
     	
     	//调研标题
     	public static final byte FIELD_SURVEY_TITLE = 0x02;
@@ -401,7 +401,7 @@ public class DataOperation extends BaseQuery {
 			return url;
 		}
  	
-		public YonghudiaoyanQueryResponse(XMap data) throws APIException{
+		public DiaoyanQueryResponse(XMap data) throws APIException{
 			super(data);
 			
 			if(this.data.containsKey(FIELD_SURVEY_TITLE)){

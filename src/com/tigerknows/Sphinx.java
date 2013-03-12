@@ -98,10 +98,13 @@ import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.maps.PinOverlayHelper;
 import com.tigerknows.maps.TrafficOverlayHelper;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.DataOperation;
+import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.Response;
 import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Tuangou;
@@ -762,6 +765,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
         UserLogon userLogon = new UserLogon(mContext);
         queryStart(userLogon, false);
+        
+        DataOperation diaoyanQuery = new DataOperation(mContext);
+        queryStart(diaoyanQuery, false);
         
         checkCitySupportDiscover(Globals.g_Current_City_Info.getId());
 	}
@@ -1695,6 +1701,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 Globals.g_User_Logon_Model = userLogonModel;
             }
             getMoreFragment().refreshMoreBtn(false);
+        } else if (baseQuery instanceof DataOperation) {
+        	Response response = baseQuery.getResponse();
+        	if (response instanceof DiaoyanQueryResponse) {
+        		DiaoyanQueryResponse diaoyanQueryResponse = (DiaoyanQueryResponse) response;
+        		if (diaoyanQueryResponse.getHasSurveyed() == 0) {
+        			getMoreFragment().setDiaoyanQueryResponse(diaoyanQueryResponse);
+        			getMoreFragment().refreshMoreBtn(false);
+        		}
+        	}
         }
     }
     

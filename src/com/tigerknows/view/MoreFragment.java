@@ -34,6 +34,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.MapDownload.DownloadCity;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.UserLogonModel;
+import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
 import com.tigerknows.model.UserLogonModel.Recommend;
 import com.tigerknows.model.UserLogonModel.SoftwareUpdate;
 import com.tigerknows.model.UserLogonModel.Recommend.RecommendApp;
@@ -60,7 +61,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     private ListView mListLsv;
     private TextView mUserNameTxv;
     private TextView mCurrentCityTxv;
-    private Button mUpgradeBtn;
+    private Button mMessageBtn;
     private Button mUserBtn;
     private Button mChangeCityBtn;
     private Button mDownloadMapBtn;
@@ -77,13 +78,18 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     
     private String mCityName;
     
-    public static final int UPGRADE_TYPE_NONE = 0;
-    public static final int UPGRADE_TYPE_MAP = 1;
-    public static final int UPGRADE_TYPE_COMMENT = 2;
-    public static final int UPGRADE_TYPE_SOFTWARE = 3;
-    public static final int UPGRADE_TYPE_PUBLIC_WELFARRE = 4;
-    public static final int UPGRADE_TYPE_USER_SURVEY = 5;
-    private int mUpgradeType = UPGRADE_TYPE_NONE;
+    public static final int MESSAGE_TYPE_NONE = 0;
+    public static final int MESSAGE_TYPE_MAP_UPDATE = 1;
+    public static final int MESSAGE_TYPE_COMMENT = 2;
+    public static final int MESSAGE_TYPE_SOFTWARE_UPDATE = 3;
+    public static final int MESSAGE_TYPE_USER_SURVEY = 4;
+    private int mMessageType = MESSAGE_TYPE_NONE;
+    
+    private DiaoyanQueryResponse mDiaoyanQueryResponse;
+    
+    public void setDiaoyanQueryResponse(DiaoyanQueryResponse diaoyanQueryResponse) {
+    	mDiaoyanQueryResponse = diaoyanQueryResponse;
+    }
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,13 +144,13 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     
     public void refreshMoreBtn(boolean isCreate) {
         
-        setUpgrade(UPGRADE_TYPE_NONE);
+        setFragmentMessage(MESSAGE_TYPE_NONE);
         
         UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
         if (userLogonModel != null) {            
             SoftwareUpdate softwareUpdate = userLogonModel.getSoftwareUpdate();
             if (softwareUpdate != null) {
-                setUpgrade(MoreFragment.UPGRADE_TYPE_SOFTWARE);
+                setFragmentMessage(MoreFragment.MESSAGE_TYPE_SOFTWARE_UPDATE);
                 return;
             }
         }
@@ -163,7 +169,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         }
         
         if (showCommentTipTimes < SHOW_COMMENT_TIP_TIMES) {
-            setUpgrade(MoreFragment.UPGRADE_TYPE_COMMENT);
+            setFragmentMessage(MoreFragment.MESSAGE_TYPE_COMMENT);
             return;
         }
         
@@ -192,13 +198,12 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
             }
         }
         if (upgrade && out >= 7) {
-            setUpgrade(MoreFragment.UPGRADE_TYPE_MAP);
+            setFragmentMessage(MoreFragment.MESSAGE_TYPE_MAP_UPDATE);
             return;
         }
         
-        RecommendApp recommendApp = getPublicWelfarre();
-        if (recommendApp != null) {
-            setUpgrade(UPGRADE_TYPE_PUBLIC_WELFARRE);
+        if (mDiaoyanQueryResponse != null) {
+            setFragmentMessage(MESSAGE_TYPE_USER_SURVEY);
             return;
         }
     }
@@ -211,7 +216,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     protected void findViews() {
         mCurrentCityTxv = (TextView) mRootView.findViewById(R.id.current_city_txv);
         mUserNameTxv = (TextView) mRootView.findViewById(R.id.user_name_txv);
-        mUpgradeBtn = (Button)mRootView.findViewById(R.id.upgrade_btn);
+        mMessageBtn = (Button)mRootView.findViewById(R.id.upgrade_btn);
         mUserBtn = (Button)mRootView.findViewById(R.id.user_btn);
         mChangeCityBtn = (Button)mRootView.findViewById(R.id.change_city_btn);
         mDownloadMapBtn = (Button)mRootView.findViewById(R.id.download_map_btn);
@@ -228,7 +233,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     }
     
     protected void setListener() {
-        mUpgradeBtn.setOnClickListener(this);
+        mMessageBtn.setOnClickListener(this);
         mUserBtn.setOnClickListener(this);
         mChangeCityBtn.setOnClickListener(this);
         mDownloadMapBtn.setOnClickListener(this);
@@ -247,24 +252,17 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.upgrade_btn:
-                if (mUpgradeType == UPGRADE_TYPE_SOFTWARE) {
+                if (mMessageType == MESSAGE_TYPE_SOFTWARE_UPDATE) {
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "upgradeSoftWare");
                     showDownloadSoftwareDialog();
-                } else if (mUpgradeType == UPGRADE_TYPE_COMMENT) {
+                } else if (mMessageType == MESSAGE_TYPE_COMMENT) {
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
                     mSphinx.showView(R.id.view_go_comment);
-                } else if (mUpgradeType == UPGRADE_TYPE_MAP) {
+                } else if (mMessageType == MESSAGE_TYPE_MAP_UPDATE) {
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "upgradeMap");
                     showUpgradeMapDialog();
-                } else if (mUpgradeType == UPGRADE_TYPE_PUBLIC_WELFARRE) {
-                    RecommendApp publicWelfarre = getPublicWelfarre();
-                    if (publicWelfarre != null) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(publicWelfarre.getUrl()));
-                        mSphinx.startActivity(intent);
-                    }
-                } else if (mUpgradeType == UPGRADE_TYPE_USER_SURVEY) {
-                	UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
-                	Intent intent=new Intent(Intent.ACTION_VIEW,Uri.parse(userLogonModel.getUserSurvey()));
+                } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
+                	Intent intent=new Intent(Intent.ACTION_VIEW,Uri.parse(mDiaoyanQueryResponse.getUrl()));
                 	mSphinx.startActivity(intent);
                 	//modify something
                 }
@@ -375,46 +373,43 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         }
     }
     
-    private void setUpgrade(int upgradeType) {
-        if (upgradeType == UPGRADE_TYPE_NONE) {
-            mUpgradeType = UPGRADE_TYPE_NONE;
-        } else if (upgradeType > mUpgradeType) {
-            mUpgradeType = upgradeType;
+    private void setFragmentMessage(int messageType) {
+        if (messageType == MESSAGE_TYPE_NONE) {
+            mMessageType = MESSAGE_TYPE_NONE;
+        } else if (messageType > mMessageType) {
+            mMessageType = messageType;
         }
-        if (mUpgradeType > UPGRADE_TYPE_NONE) {
-            mUpgradeBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
-            if (mUpgradeType == UPGRADE_TYPE_SOFTWARE) {
-                mUpgradeBtn.setText(R.string.upgrade_tip_software);
-                mUpgradeBtn.setBackgroundResource(R.drawable.btn_update);
-                mUpgradeBtn.setVisibility(View.VISIBLE);
-                mSphinx.getMenuFragment().setUpgrade(View.VISIBLE);
+        if (mMessageType > MESSAGE_TYPE_NONE) {
+            mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
+            if (mMessageType == MESSAGE_TYPE_SOFTWARE_UPDATE) {
+                mMessageBtn.setText(R.string.upgrade_tip_software);
+                mMessageBtn.setBackgroundResource(R.drawable.btn_update);
+                mMessageBtn.setVisibility(View.VISIBLE);
+                mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
-            } else if (mUpgradeType == UPGRADE_TYPE_COMMENT) {
-                mUpgradeBtn.setText(R.string.upgrade_tip_comment);
-                mUpgradeBtn.setBackgroundResource(R.drawable.btn_orangle);
+            } else if (mMessageType == MESSAGE_TYPE_COMMENT) {
+                mMessageBtn.setText(R.string.upgrade_tip_comment);
+                mMessageBtn.setBackgroundResource(R.drawable.btn_orangle);
                 TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_MAP_TIP);
-                mUpgradeBtn.setVisibility(View.VISIBLE);
-                mSphinx.getMenuFragment().setUpgrade(View.VISIBLE);
+                mMessageBtn.setVisibility(View.VISIBLE);
+                mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
-            } else if (mUpgradeType == UPGRADE_TYPE_MAP) {
-                mUpgradeBtn.setText(R.string.upgrade_tip_map);
-                mUpgradeBtn.setBackgroundResource(R.drawable.btn_update);
-                mUpgradeBtn.setVisibility(View.VISIBLE);
-                mSphinx.getMenuFragment().setUpgrade(View.VISIBLE);
+            } else if (mMessageType == MESSAGE_TYPE_MAP_UPDATE) {
+                mMessageBtn.setText(R.string.upgrade_tip_map);
+                mMessageBtn.setBackgroundResource(R.drawable.btn_update);
+                mMessageBtn.setVisibility(View.VISIBLE);
+                mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
-            } else if (mUpgradeType == UPGRADE_TYPE_PUBLIC_WELFARRE) {
-                RecommendApp publicWelfarre = getPublicWelfarre();
-                if (publicWelfarre != null) {
-                    mUpgradeBtn.setText(publicWelfarre.getBody());
-                    mUpgradeBtn.setBackgroundResource(R.drawable.btn_update);
-                    mUpgradeBtn.setVisibility(View.VISIBLE);
-                    mSphinx.getMenuFragment().setUpgrade(View.VISIBLE);
-                    return;
-                }
+            } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
+                mMessageBtn.setText(mDiaoyanQueryResponse.getSurveyTitle());
+                mMessageBtn.setBackgroundResource(R.drawable.btn_update);
+                mMessageBtn.setVisibility(View.VISIBLE);
+                mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
+                return;
             }
         }
-        mUpgradeBtn.setVisibility(View.GONE);
-        mSphinx.getMenuFragment().setUpgrade(View.GONE);
+        mMessageBtn.setVisibility(View.GONE);
+        mSphinx.getMenuFragment().setFragmentMessage(View.GONE);
     }
 
     private void showDownloadSoftwareDialog() {
@@ -480,28 +475,6 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                         mSphinx.showView(R.id.activity_map_download, intent);
                     }
                 });
-    }
-    
-    public RecommendApp getPublicWelfarre() {
-        RecommendApp publicWelfarre = null;
-        UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
-        if (userLogonModel != null) {
-            Recommend recommend = userLogonModel.getRecommend();
-            if (recommend != null) {
-                List<RecommendApp> list = recommend.getRecommendAppList();
-                if (list != null) {
-                    for(int i = 0, size = list.size(); i < size; i++) {
-                        RecommendApp recommendApp = list.get(i);
-                        if (recommendApp != null
-                                && mSphinx.getString(R.string.public_welfarre).equals(recommendApp.getBody())) {
-                            publicWelfarre = recommendApp;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return publicWelfarre;
     }
     
 }

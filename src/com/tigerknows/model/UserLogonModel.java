@@ -28,14 +28,10 @@ public class UserLogonModel extends XMapData {
     // 0x04 String 是否上传日志，值为on或off   
     private static final byte FIELD_UPLOAD_LOG = 0x04;
     
-    // 0x05 String 是否用户调研
-    private static final byte FIELD_USER_SURVEY = 0x05;
-
     private SoftwareUpdate softwareUpdate;
     private DomainName domainName;
     private Recommend recommend;
     private String uploadLog;
-    private String userSurvey;
 
     public SoftwareUpdate getSoftwareUpdate() {
         return softwareUpdate;
@@ -61,10 +57,6 @@ public class UserLogonModel extends XMapData {
         return uploadLog;
     }
     
-    public String getUserSurvey() {
-    	return userSurvey;
-    }
-
     public UserLogonModel(XMap data) throws APIException {
         super(data);
         
@@ -82,10 +74,6 @@ public class UserLogonModel extends XMapData {
         
         if (this.data.containsKey(FIELD_UPLOAD_LOG)) {
             this.uploadLog = this.data.getString(FIELD_UPLOAD_LOG);
-        }
-        
-        if (this.data.containsKey(FIELD_USER_SURVEY)){
-        	this.userSurvey = this.data.getString(FIELD_USER_SURVEY);
         }
      }
     
