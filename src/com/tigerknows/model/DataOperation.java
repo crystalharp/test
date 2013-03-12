@@ -153,6 +153,8 @@ public class DataOperation extends BaseQuery {
                 response = new YanchuQueryResponse(responseXMap);
             } else if (DATA_TYPE_ZHANLAN.equals(dataType)) {
                 response = new ZhanlanQueryResponse(responseXMap);
+            } else if (DATA_TYPE_YONGHUDIAOYAN.equals(dataType)){
+            	response = new YonghudiaoyanQueryResponse(responseXMap);
             }
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
             if (DATA_TYPE_DIANPING.equals(dataType)) {
@@ -370,6 +372,50 @@ public class DataOperation extends BaseQuery {
                 zhanlan = new Zhanlan(this.data.getXMap(FIELD_DATA));
             }
         } 
+    }
+    
+    public static class YonghudiaoyanQueryResponse extends Response {
+    	
+    	//调研标题
+    	public static final byte FIELD_SURVEY_TITLE = 0x02;
+    	
+    	//是否参加过本期调研
+    	public static final byte FIELD_HAS_SURVEYED = 0x03;
+    	
+    	//调研URL
+    	public static final byte FIELD_URL = 0x04;
+    	
+    	private String surveyTitle;
+		private long hasSurveyed;
+		private String url;
+
+		public long getHasSurveyed() {
+			return hasSurveyed;
+		}
+    	
+    	public String getSurveyTitle() {
+			return surveyTitle;
+		}
+		
+		public String getUrl() {
+			return url;
+		}
+ 	
+		public YonghudiaoyanQueryResponse(XMap data) throws APIException{
+			super(data);
+			
+			if(this.data.containsKey(FIELD_SURVEY_TITLE)){
+				surveyTitle = this.data.getString(FIELD_SURVEY_TITLE);
+			}
+			
+			if(this.data.containsKey(FIELD_HAS_SURVEYED)){
+				hasSurveyed = this.data.getInt(FIELD_HAS_SURVEYED);
+			}
+			
+			if(this.data.containsKey(FIELD_URL)){
+				url = this.data.getString(FIELD_URL);
+			}
+		}
     }
     
     public static class DingdanCreateResponse extends Response {
