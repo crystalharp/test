@@ -220,6 +220,8 @@
     <string name="settings_gps_description_close">关闭GPS可能会降低定位精度</string>
     <string name="settings_acquire_wakelock">保持屏幕常亮</string>
     <string name="settings_acquire_wakelock_description">使用本软件时屏幕常亮，耗电量稍大</string>
+	<string name="settings_radar_push">开启雷达推送</string>
+	<string name="settings_radar_push_description">开启雷达推送</string>
     <string name="settings_map_home">设置地图为首页</string>
     <string name="settings_map_home_description">在本软件打开时直接显示地图</string>
     

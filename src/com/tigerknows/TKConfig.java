@@ -220,6 +220,7 @@ public class TKConfig {
     public static final String PREFS_RADAR_LOCATION_COLLECTION_ALARM = "prefs_radar_location_collection_alarm";
     public static final String PREFS_RADAR_RECORD_MESSAGE_ID_LIST = "prefs_radar_record_message_id_list";
     public static final String PREFS_RADAR_RECORD_MESSAGE_UPPER_LIMIT = "prefs_radar_record_message_upper_limit";
+    public static final String PREFS_RADAR_PULL_SERVICE_SWITCH = "prefs_radar_pull_service_switch";
 
     public static final int PICTURE_DISCOVER_HOME = 1;
     public static final int PICTURE_TUANGOU_LIST = 2;
