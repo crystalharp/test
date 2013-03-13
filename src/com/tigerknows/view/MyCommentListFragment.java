@@ -10,10 +10,7 @@ import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -23,7 +20,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import com.tigerknows.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
@@ -38,7 +34,6 @@ import com.tigerknows.model.Comment;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
-import com.tigerknows.model.Response;
 import com.tigerknows.model.DataOperation.POIQueryResponse;
 import com.tigerknows.model.DataQuery.CommentResponse;
 import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
@@ -63,17 +58,6 @@ public class MyCommentListFragment extends BaseFragment {
     private DataQuery mDataQuery;
     private List<Comment> mCommentArrayList = new ArrayList<Comment>();
     private CommentAdapter mCommentAdapter;
-    
-    @SuppressWarnings("unchecked")
-    public static Comparator COMPARATOR = new Comparator() {
-
-        @Override
-        public int compare(Object object1, Object object2) {
-            Comment comment1 = (Comment) object1;
-            Comment comment2 = (Comment) object2;
-            return comment2.getTime().compareTo(comment1.getTime());
-        };
-    };
     
     
     private Runnable mTurnPageRun = new Runnable() {
@@ -186,6 +170,7 @@ public class MyCommentListFragment extends BaseFragment {
         }
     }
     
+    @SuppressWarnings("unchecked")
     public void onResume() {
         super.onResume();
         
@@ -204,7 +189,7 @@ public class MyCommentListFragment extends BaseFragment {
                 Comment commentnew = comment.getPOI().getMyComment();
                 if (commentnew != null) {
                     try {
-                        commentnew.resetData();
+                        commentnew.setData(null);
                         comment.init(commentnew.getData());
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
@@ -212,7 +197,7 @@ public class MyCommentListFragment extends BaseFragment {
                     }
                 }
             }
-            Collections.sort(mCommentArrayList, COMPARATOR);
+            Collections.sort(mCommentArrayList, Comment.COMPARATOR);
             mCommentAdapter.notifyDataSetChanged();
         }
     }
@@ -416,9 +401,10 @@ public class MyCommentListFragment extends BaseFragment {
         }
     }
     
+    @SuppressWarnings("unchecked")
     public void refreshComment() {
         if (mCommentArrayList != null) {
-            Collections.sort(mCommentArrayList, COMPARATOR);
+            Collections.sort(mCommentArrayList, Comment.COMPARATOR);
             mCommentAdapter.notifyDataSetChanged();
         }
     }

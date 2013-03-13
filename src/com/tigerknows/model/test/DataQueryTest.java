@@ -598,10 +598,10 @@ public class DataQueryTest {
         data.put(POI.FIELD_ADDRESS, "FIELD_ADDRESS");
         data.put(POI.FIELD_URL, "FIELD_URL");
         data.put(POI.FIELD_TO_CENTER_DISTANCE, "12km");
-        data.put(POI.FIELD_COMMENT_SUMMARY, "FIELD_COMMENT_SUMMARY");
         data.put(POI.FIELD_COMMENT_PATTERN, POI.COMMENT_PATTERN_FOOD);
         data.put(POI.FIELD_ATTRIBUTE, 1);
         data.put(POI.FIELD_STATUS, 1);
+        data.put(POI.FIELD_LAST_COMMENT, launchDianping("FIELD_LAST_COMMENT"));
         XArray<XMap> xarray = new XArray<XMap>();
         for(int i = 0; i < 16; i ++) {
             xarray.add(launchDynamicPOI(i));

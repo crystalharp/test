@@ -11,12 +11,11 @@ package com.tigerknows.model;
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.view.user.User;
 
-import android.content.Context;
 import android.text.TextUtils;
 
 import java.util.Comparator;
-import java.util.Hashtable;
 
 public class Comment extends BaseData {
     
@@ -110,7 +109,6 @@ public class Comment extends BaseData {
     private String url; // 0x14 x_string url 新版客户端需要的点评url 否
     private String clientUid; // 0x15 x_string client_uid 发表点评的客户端软件的uid  否 
     private String source; // 0x1f    x_string    source  点评来源   是，详细定义见点评数据表中source字段 
-    private long attribute;
     
     private POI poi;
     
@@ -190,10 +188,6 @@ public class Comment extends BaseData {
         if (this.data.containsKey(FIELD_SOURCE)) {
             this.source = this.data.getString(FIELD_SOURCE);
         }
-    }
-    
-    public void resetData() {
-        this.data = null;
     }
     
     public XMap getData() {
@@ -425,14 +419,6 @@ public class Comment extends BaseData {
         this.clientUid = clientUid;
     }
 
-    public long getAttribute() {
-        return attribute;
-    }
-
-    public void setAttribute(long attribute) {
-        this.attribute = attribute;
-    }
-    
     public POI getPOI() {
         if (poi == null) {
             poi = new POI();
@@ -482,14 +468,37 @@ public class Comment extends BaseData {
         public int compare(Object object1, Object object2) {
             Comment comment1 = (Comment) object1;
             Comment comment2 = (Comment) object2;
-            if (comment1.getAttribute() > 0) {
+
+            if (isAuthorMe(comment1) > 0) {
                 return -1;
-            } else if (comment2.getAttribute() > 0) {
+            } else if (isAuthorMe(comment2) > 0) {
                 return 1;
             }
             return comment2.getTime().compareTo(comment1.getTime());
         };
     };
+    
+    public static long isAuthorMe(Comment comment) {
+        long attr = 0;
+        String clientUID = Globals.g_ClientUID;
+        User user = Globals.g_User;
+        long userId = -1;
+        if (user != null) {
+            userId = user.getUserId();
+        }
+        if (userId != -1 && comment.getUserId() == userId) {
+            attr = POI.ATTRIBUTE_COMMENT_USER;
+        } else if (userId == -1
+                && comment.getUserId() == -1
+                && clientUID != null
+                && clientUID.equals(comment.getClientUid())) {
+            attr = POI.ATTRIBUTE_COMMENT_ANONYMOUS;
+        }
+        
+        return attr;
+    }
+    
+    @SuppressWarnings("unchecked")
     public static Comparator COMPARATOR_DATETIME = new Comparator() {
 
         @Override
@@ -499,15 +508,4 @@ public class Comment extends BaseData {
             return comment2.getTime().compareTo(comment1.getTime());
         };
     };
-    
-    public static DataQuery createPOICommentQuery(Context context, POI poi, int sourceViewId, int targerViewId) {
-
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
-        criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
-        criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
-        DataQuery commentQuery = new DataQuery(context);
-        commentQuery.setup(criteria, Globals.g_Current_City_Info.getId(), sourceViewId, targerViewId, null, false, false, poi);
-        return commentQuery;
-    }
 }

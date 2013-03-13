@@ -33,7 +33,6 @@ import android.widget.TextView;
 
 import com.decarta.Globals;
 import com.tigerknows.R;
-import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
@@ -55,8 +54,9 @@ public class POICommentList extends BaseActivity {
     
     public static final int REQUEST_CODE_COMMENT = 1;
 
-    private static List<DataQuery> sCommentQuery = new ArrayList<DataQuery>();
+    private static POI sPOI = null;
     
+    private POI mPOI = null;
     private SpringbackListView mCommentLsv = null;
     private DataQuery mCommentQuery;
     private List<Comment> mCommentArrayList = new ArrayList<Comment>();
@@ -79,10 +79,8 @@ public class POICommentList extends BaseActivity {
     
     private Button mCommentTipEdt;
     
-    public static void setCommentQuery(DataQuery commentQuery) {
-        synchronized (sCommentQuery) {
-            sCommentQuery.add(commentQuery);
-        }
+    public static void setPOI(POI poi) {
+        sPOI = poi;
     }
     
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,28 +100,35 @@ public class POICommentList extends BaseActivity {
         mTitleBtn.setText(R.string.all_comment);
         mRightBtn.setVisibility(View.GONE);
         
-        synchronized (sCommentQuery) {
-            int size = sCommentQuery.size();
-            if (size > 0) {
-                DataQuery dataQuery = sCommentQuery.get(size-1);
+        mPOI = sPOI;
+        if (mPOI != null) {
+            mCommentLsv.setFooterSpringback(false);
+            DataQuery dataQuery = mPOI.getCommentQuery();
+            if (dataQuery == null) {
+                Hashtable<String, String> criteria = new Hashtable<String, String>();
+                criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+                criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
+                criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
+                dataQuery = new DataQuery(mThis);
+                dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(), mId, mId, null, false, false, mPOI);
+                mCommentLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
+                queryStart(dataQuery);
+            } else {
                 mCommentLsv.onRefreshComplete(true);
-                mCommentLsv.setFooterSpringback(false);
                 setData(dataQuery);
                 mCommentAdapter.notifyDataSetChanged();
-
-                POI poi = dataQuery.getPOI();
-                long attribute = poi.getAttribute();
-                if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0) {
-                    mCommentTipEdt.setHint(R.string.comment_tip_hit1);
-                } else if ((attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0) {
-                    mCommentTipEdt.setHint(R.string.comment_tip_hit1);
-                } else {
-                    mCommentTipEdt.setHint(R.string.comment_tip_hit0);
-                }
-            } else {
-                finish();
-                return;
             }
+
+            long attribute = mPOI.getAttribute();
+            if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0) {
+                mCommentTipEdt.setHint(R.string.comment_tip_hit1);
+            } else if ((attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0) {
+                mCommentTipEdt.setHint(R.string.comment_tip_hit1);
+            } else {
+                mCommentTipEdt.setHint(R.string.comment_tip_hit0);
+            }
+        } else {
+            finish();
         }
     }
 
@@ -153,32 +158,30 @@ public class POICommentList extends BaseActivity {
             public boolean onTouch(View arg0, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
-                    if (mCommentQuery != null) {
-                        POI poi = mCommentQuery.getPOI();
-                        if (poi != null) {
-                            boolean isMe = false;
-                            long attribute = poi.getAttribute();
-                            if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0) {
-                                isMe = true;
-                            } else if ((attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0) {
-                                isMe = true;
-                            }
-                            if (poi.getStatus() < 0) {
-                                int resId;
-                                if (isMe) {
-                                    resId = R.string.poi_comment_poi_invalid_not_update;
-                                } else {
-                                    resId = R.string.poi_comment_poi_invalid_not_create;
-                                }
-
-                                CommonUtils.showNormalDialog(mThis, 
-                                        mThis.getString(resId));
+                    POI poi = mPOI;
+                    if (poi != null) {
+                        boolean isMe = false;
+                        long attribute = poi.getAttribute();
+                        if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0) {
+                            isMe = true;
+                        } else if ((attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0) {
+                            isMe = true;
+                        }
+                        if (poi.getStatus() < 0) {
+                            int resId;
+                            if (isMe) {
+                                resId = R.string.poi_comment_poi_invalid_not_update;
                             } else {
-                                POIComment.setPOI(mCommentQuery.getPOI(), R.id.activity_poi_comment_list, isMe ? POIComment.STATUS_MODIFY : POIComment.STATUS_NEW);
-                                Intent intent = new Intent();
-                                intent.setClass(mThis, POIComment.class);
-                                mThis.startActivityForResult(intent, REQUEST_CODE_COMMENT);
+                                resId = R.string.poi_comment_poi_invalid_not_create;
                             }
+
+                            CommonUtils.showNormalDialog(mThis, 
+                                    mThis.getString(resId));
+                        } else {
+                            POIComment.setPOI(poi, R.id.activity_poi_comment_list, isMe ? POIComment.STATUS_MODIFY : POIComment.STATUS_NEW);
+                            Intent intent = new Intent();
+                            intent.setClass(mThis, POIComment.class);
+                            mThis.startActivityForResult(intent, REQUEST_CODE_COMMENT);
                         }
                     }
                 }
@@ -200,6 +203,11 @@ public class POICommentList extends BaseActivity {
             if (RESULT_OK == resultCode) {
                 setResult(RESULT_OK, data);
                 finish();
+            }
+        } else {
+            // 在提示用户在登录超时对话框后，点击重新登录返回时
+            if (isReLogin()) {
+                return;
             }
         }
      }
@@ -232,7 +240,7 @@ public class POICommentList extends BaseActivity {
             mCommentLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
             if (isHeader) {
                 Comment comment = mCommentArrayList.get(0);
-                if (comment.getAttribute() > 0) {
+                if (Comment.isAuthorMe(comment) > 0) {
                     if (mCommentArrayList.size() > 1) {
                         criteria.put(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(1).getTime());
                     } else {
@@ -299,7 +307,6 @@ public class POICommentList extends BaseActivity {
                             mCommentArrayList.addAll(list);
                         }
                         ((CommentResponse)mCommentQuery.getResponse()).getList().getList().addAll(list);
-                        poi.updateAttribute();
                         Collections.sort(mCommentArrayList, Comment.COMPARATOR);
                         mCommentAdapter.notifyDataSetChanged();
                         if (list.size()+commentList.getTotal() >= TKConfig.getPageSize()) {
@@ -321,7 +328,6 @@ public class POICommentList extends BaseActivity {
                     if (commentArrayList != null && commentArrayList.size() > 0) {
                         mCommentQuery = dataQuery;
                         mCommentArrayList.addAll(commentArrayList);
-                        poi.updateAttribute();
                         Collections.sort(mCommentArrayList, Comment.COMPARATOR);
                         mCommentAdapter.notifyDataSetChanged();
                         if (mCommentArrayList.isEmpty()) {
@@ -374,25 +380,24 @@ public class POICommentList extends BaseActivity {
                 float grade = comment.getGrade()/2.0f;
                 gradeRtb.setRating(grade);
                 
-                final POI poi = mCommentQuery.getPOI();
                 authorTxv.setText(comment.getUser());
-                if (comment.getAttribute() > 0) {
+                if (Comment.isAuthorMe(comment) > 0) {
                     User user = Globals.g_User;
                     if (user != null) {
                         authorTxv.setText(user.getNickName());
                     }
                     view.setBackgroundResource(R.drawable.list_middle);
                     authorTxv.setTextColor(0xff009CFF);
-                    poi.setMyComment(comment);
+                    mPOI.setMyComment(comment);
                     view.setOnClickListener(new OnClickListener() {
                         
                         @Override
                         public void onClick(View arg0) {
                             mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "myComment");
-                            if (poi.getStatus() >= 0) {
+                            if (mPOI.getStatus() >= 0) {
                                 Intent intent = new Intent();
                                 intent.setClass(mThis, POIComment.class);
-                                POIComment.setPOI(poi, mId, POIComment.STATUS_MODIFY);
+                                POIComment.setPOI(mPOI, mId, POIComment.STATUS_MODIFY);
                                 mThis.startActivityForResult(intent, R.id.activity_poi_comment);
                             } else {
                                 CommonUtils.showNormalDialog(mThis, 
@@ -464,36 +469,24 @@ public class POICommentList extends BaseActivity {
     }
     
     public void finish() {
-        synchronized (sCommentQuery) {
-            int size = sCommentQuery.size();
-            if (size > 0) {
-                sCommentQuery.remove(size-1);
-            }
-        }
+        sPOI = null;
         super.finish();        
     }
 
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
-        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+        DataQuery dataQuery = (DataQuery)(tkAsyncTask.getBaseQuery());
 
-        boolean exit = true;
-        if (baseQuery.getCriteria().containsKey(DataQuery.SERVER_PARAMETER_TIME)) {
-            mCommentLsv.onRefreshComplete(false);
-            mCommentLsv.setFooterSpringback(true);
-            exit = false;
-        }
-        if (BaseActivity.checkReLogin(baseQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(dataQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.checkResponseCode(baseQuery, mThis, null, true, mThis, exit)) {
+        } else if (BaseActivity.checkResponseCode(dataQuery, mThis, null, true, mThis, dataQuery.isTurnPage() == false)) {
             return;
         }
         
-        DataQuery commentQuery = (DataQuery)(baseQuery);
         boolean isHeader = true;
-        Hashtable<String, String> criteria = commentQuery.getCriteria();
+        Hashtable<String, String> criteria = dataQuery.getCriteria();
         if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {
             String direction = criteria.get(DataQuery.SERVER_PARAMETER_DIRECTION);
             if (DataQuery.DIRECTION_AFTER.equals(direction)) {
@@ -507,7 +500,7 @@ public class POICommentList extends BaseActivity {
         mCommentLsv.onRefreshComplete(isHeader);
         mCommentLsv.setFooterSpringback(false);
         
-        setData(commentQuery);
+        setData(dataQuery);
     }
     @Override
     public void onCancelled(TKAsyncTask tkAsyncTask) {

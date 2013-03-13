@@ -13,6 +13,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.Comment;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Response;
@@ -525,7 +526,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 moneyTxv.setText("");
             }
 
-            str = poi.getCommentSummary();            
+            str = null;
+            Comment lastComment = poi.getLastComment();
+            if (lastComment != null) {
+                str = lastComment.getContent();
+            }
             if (!TextUtils.isEmpty(str)) {
                 commentTxv.setText(str);
                 icComment.setBounds(0, 0, icComment.getIntrinsicWidth(), icComment.getIntrinsicHeight());
