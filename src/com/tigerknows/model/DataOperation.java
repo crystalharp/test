@@ -58,8 +58,9 @@ public class DataOperation extends BaseQuery {
         if (criteria == null) {
             throw new APIException(APIException.CRITERIA_IS_NULL);
         }
+        String sessionId = Globals.g_Session_Id;
 
-        if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE)) {
+        if (criteria.containsKey(SERVER_PARAMETER_DATA_TYPE)) {
             String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
             requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_TYPE, dataType));
             if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE)) {
@@ -68,14 +69,20 @@ public class DataOperation extends BaseQuery {
                 if (OPERATION_CODE_QUERY.equals(operationCode)) {
                     if (criteria.containsKey(SERVER_PARAMETER_NEED_FEILD)) {
                         requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, criteria.get(SERVER_PARAMETER_NEED_FEILD)));
+                    } else if(dataType.equals(DATA_TYPE_DIAOYAN)){
+                    	if(TextUtils.isEmpty(sessionId)){
+                    		throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
+                    	}
                     } else {
+                        //只有dty!=21时需要提供额外参数
                         throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_NEED_FEILD);
                     }
                     
                     if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
                         requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID)));
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
+                    } else if(dataType.equals(DATA_TYPE_DIAOYAN) == false){
+                        //只有dty!=21时需要提供额外参数
+                    	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
                     }
                     if (criteria.containsKey(SERVER_PARAMETER_PICTURE)) {
                         requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PICTURE, criteria.get(SERVER_PARAMETER_PICTURE)));
@@ -113,10 +120,10 @@ public class DataOperation extends BaseQuery {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_TYPE);
         }
         
-        String sessionId = Globals.g_Session_Id;
+//        String sessionId = Globals.g_Session_Id;	挪动到了几十行之前
         if (!TextUtils.isEmpty(sessionId)) {
             requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SESSION_ID, sessionId));
-        }
+        } 
         if (!TextUtils.isEmpty(Globals.g_ClientUID)) {
             requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_CLIENT_ID, Globals.g_ClientUID));
         } else {
@@ -137,7 +144,7 @@ public class DataOperation extends BaseQuery {
 
         String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
         String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
-
+        
         if (OPERATION_CODE_QUERY.equals(operationCode)) {
             if (DATA_TYPE_POI.equals(dataType)) {
                 response = new POIQueryResponse(responseXMap);
@@ -153,7 +160,7 @@ public class DataOperation extends BaseQuery {
                 response = new YanchuQueryResponse(responseXMap);
             } else if (DATA_TYPE_ZHANLAN.equals(dataType)) {
                 response = new ZhanlanQueryResponse(responseXMap);
-            } else if (DATA_TYPE_YONGHUDIAOYAN.equals(dataType)){
+            } else if (DATA_TYPE_DIAOYAN.equals(dataType)){
             	response = new DiaoyanQueryResponse(responseXMap);
             }
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
@@ -464,6 +471,8 @@ public class DataOperation extends BaseQuery {
                     responseXMap = DataOperationTest.launchZhanlanQueryResponse(context);
                 } else if (DATA_TYPE_DIANPING.equals(dataType)) {
                     responseXMap = DataOperationTest.launchDianpingQueryResponse();
+                } else if (DATA_TYPE_DIAOYAN.equals(dataType)) {
+                	responseXMap = DataOperationTest.launchDiaoyanQueryResponse(context);
                 }
             } if (OPERATION_CODE_UPDATE.equals(operationCode)) {
                 if (DATA_TYPE_DIANPING.equals(dataType)) {

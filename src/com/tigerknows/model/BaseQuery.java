@@ -200,7 +200,7 @@ public abstract class BaseQuery {
     public static final String DATA_TYPE_FENDIAN = "16";
     
     // 用户调研 21
-    public static final String DATA_TYPE_YONGHUDIAOYAN = "21";
+    public static final String DATA_TYPE_DIAOYAN = "21";
 
     // 发现首页动态数据统计 100
     public static final String DATA_TYPE_DISCOVER = "100";

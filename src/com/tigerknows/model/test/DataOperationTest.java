@@ -4,6 +4,7 @@ import com.tigerknows.model.DataOperation.CommentCreateResponse;
 import com.tigerknows.model.DataOperation.CommentQueryResponse;
 import com.tigerknows.model.DataOperation.CommentUpdateResponse;
 import com.tigerknows.model.DataOperation.DianyingQueryResponse;
+import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
 import com.tigerknows.model.DataOperation.FendianQueryResponse;
 import com.tigerknows.model.DataOperation.POIQueryResponse;
 import com.tigerknows.model.DataOperation.TuangouQueryResponse;
@@ -89,6 +90,15 @@ public class DataOperationTest {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
         data.put(POIQueryResponse.FIELD_POI, DataQueryTest.launchPOI("poi"));
+        return data;
+    }
+
+    public static XMap launchDiaoyanQueryResponse(Context context) {
+        XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        data.put(DiaoyanQueryResponse.FIELD_SURVEY_TITLE, "FIELD_SURVEY_TITLE");
+        data.put(DiaoyanQueryResponse.FIELD_HAS_SURVEYED, 0);
+        data.put(DiaoyanQueryResponse.FIELD_URL, "http://www.tigerknows.com");
         return data;
     }
 }
