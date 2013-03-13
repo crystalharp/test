@@ -258,9 +258,9 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                 } else if (mMessageType == MESSAGE_TYPE_COMMENT) {
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
                     mSphinx.showView(R.id.view_go_comment);
-//              } else if (mMessageType == MESSAGE_TYPE_MAP_UPDATE) {
-//                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "upgradeMap");
-//                    showUpgradeMapDialog();
+                } else if (mMessageType == MESSAGE_TYPE_MAP_UPDATE) {
+                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "upgradeMap");
+                    showUpgradeMapDialog();
                 } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
                 	Intent intent=new Intent(Intent.ACTION_VIEW,Uri.parse(mDiaoyanQueryResponse.getUrl()));
                 	mSphinx.startActivity(intent);
