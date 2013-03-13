@@ -198,7 +198,8 @@ public class UserLoginActivity extends UserBaseActivity {
             startActivity(intent);
             return;
         }
-		if (mSourceViewIdLogin != R.id.activity_poi_comment) {
+		if (mSourceViewIdLogin != R.id.activity_poi_comment
+		        && mSourceViewIdLogin != R.id.activity_poi_comment_list) {
 			Intent intent = new Intent(UserLoginActivity.this, Sphinx.class);
 	        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	        startActivity(intent);

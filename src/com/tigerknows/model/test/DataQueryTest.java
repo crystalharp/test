@@ -602,6 +602,7 @@ public class DataQueryTest {
         data.put(POI.FIELD_COMMENT_PATTERN, POI.COMMENT_PATTERN_FOOD);
         data.put(POI.FIELD_ATTRIBUTE, 1);
         data.put(POI.FIELD_STATUS, 1);
+        data.put(POI.FIELD_LAST_COMMENT, launchDianping("FIELD_LAST_COMMENT"));
         XArray<XMap> xarray = new XArray<XMap>();
         for(int i = 0; i < 16; i ++) {
             xarray.add(launchDynamicPOI(i));

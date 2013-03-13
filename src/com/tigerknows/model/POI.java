@@ -8,19 +8,15 @@
 
 package com.tigerknows.model;
 
-import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
-import com.tigerknows.model.DataQuery.CommentResponse;
-import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.SqliteWrapper;
-import com.tigerknows.view.user.User;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -278,9 +274,6 @@ public class POI extends BaseData {
     // 0x0b x_int 距中心点距离（单位为米）
     public static final byte FIELD_TO_CENTER_DISTANCE = 0x0b;
 
-    // 0x11 x_string    点评摘要 
-    public static final byte FIELD_COMMENT_SUMMARY = 0x11;
-    
     // 0x12 x_int   点评模式 
     public static final byte FIELD_COMMENT_PATTERN = 0x12;
     
@@ -292,6 +285,9 @@ public class POI extends BaseData {
     
     // 0x15 x_array<x_map>  动态poi摘要，最多给10条 
     public static final byte FIELD_DYNAMIC_POI = 0x15;
+    
+    // 0x16 x_map  最近的一条点评 
+    public static final byte FIELD_LAST_COMMENT = 0x16;
     
     public static class DynamicPOI extends XMapData {
         // 0x01 x_int 动态poi的类型
@@ -398,7 +394,7 @@ public class POI extends BaseData {
 
     public static final int FROM_LOCAL = 1;
     
-    public static final String NEED_FILELD = "0102030405060708090a0b1112131415";
+    public static final String NEED_FILELD = "0102030405060708090a0b1213141516";
     
     private String uuid;
     
@@ -422,8 +418,6 @@ public class POI extends BaseData {
     
     private String toCenterDistance;
     
-    private String commentSummary;
-    
     private long commentPattern;
     
     private long attribute;
@@ -432,7 +426,7 @@ public class POI extends BaseData {
     
     private List<DynamicPOI> dynamicPOIList = new ArrayList<DynamicPOI>();
     
-    private DataQuery commentQuery;
+    private DataQuery commentQuery = null;
     
     private int resultType = 0;
     
@@ -468,6 +462,8 @@ public class POI extends BaseData {
     
     private Comment myComment = new Comment();
     
+    private Comment lastComment;
+    
     public int ciytId = 0;
     
     public boolean isUpdated() {
@@ -500,30 +496,6 @@ public class POI extends BaseData {
             e1.printStackTrace();
         }
     }
-    
-    public void updateComment(Context context) {
-        BaseData baseData = checkStore(context, storeType, -1, false);
-        if (baseData != null) {
-            if (commentQuery != null) {
-                Response response = commentQuery.getResponse();
-                if (response != null) {
-                    CommentResponse commentResponse = (CommentResponse) response;
-                    commentResponse.data = null;
-                    commentResponse.getList().data = null;
-                    XMap xmap = commentResponse.getData();
-                    try {
-                        ContentValues values = new ContentValues();
-                        values.put(Tigerknows.POI.COMMENT_DATA, ByteUtil.xobjectToByte(xmap));
-                        this.dateTime = System.currentTimeMillis();
-                        values.put(Tigerknows.POI.DATETIME, this.dateTime);
-                        SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
 
     public int getFrom() {
         return from;
@@ -541,12 +513,12 @@ public class POI extends BaseData {
         this.myComment = myComment;
     }
 
-    public String getCommentSummary() {
-        return commentSummary;
+    public Comment getLastComment() {
+        return this.lastComment;
     }
     
-    public void setCommentSummary(String commentSummary) {
-        this.commentSummary = commentSummary;
+    public void setLastComment(Comment lastComment) {
+        this.lastComment = lastComment;
     }
     
     public boolean isOnlyAPOI() {
@@ -830,9 +802,6 @@ public class POI extends BaseData {
         if (this.data.containsKey(FIELD_TO_CENTER_DISTANCE)) {
             this.toCenterDistance = this.data.getString(FIELD_TO_CENTER_DISTANCE);
         }
-        if (this.data.containsKey(FIELD_COMMENT_SUMMARY)) {
-            this.commentSummary = this.data.getString(FIELD_COMMENT_SUMMARY);
-        }
         if (this.data.containsKey(FIELD_COMMENT_PATTERN)) {
             this.commentPattern = this.data.getInt(FIELD_COMMENT_PATTERN);
         }
@@ -850,6 +819,9 @@ public class POI extends BaseData {
                     dynamicPOIList.add(new DynamicPOI(xarray.get(i)));
                 }
             }
+        }
+        if (this.data.containsKey(FIELD_LAST_COMMENT)) {
+            this.lastComment = new Comment(this.data.getXMap(FIELD_LAST_COMMENT));
         }
     }
     
@@ -883,11 +855,10 @@ public class POI extends BaseData {
             if (!TextUtils.isEmpty(this.url)) {
                 this.data.put(FIELD_URL, this.url);
             }
-            
-            this.data.put(FIELD_TO_CENTER_DISTANCE, this.toCenterDistance);
-            if (!TextUtils.isEmpty(this.commentSummary)) {
-                this.data.put(FIELD_COMMENT_SUMMARY, this.commentSummary);
+            if (lastComment != null) {
+                this.data.put(FIELD_LAST_COMMENT, lastComment.getData());
             }
+            this.data.put(FIELD_TO_CENTER_DISTANCE, this.toCenterDistance);
             this.data.put(FIELD_COMMENT_PATTERN, this.commentPattern);
             this.data.put(FIELD_ATTRIBUTE, this.attribute);
             this.data.put(FIELD_STATUS, this.status);
@@ -1099,22 +1070,6 @@ public class POI extends BaseData {
                 return false;
             }
         }
-        values.put(Tigerknows.POI.COMMENT_DATA, new byte[0]);
-        if (poi.commentQuery != null) {
-            Response response = poi.commentQuery.getResponse();
-            if (response != null) {
-                CommentResponse commentResponse = (CommentResponse) response;
-                commentResponse.data = null;
-                commentResponse.getList().data = null;
-                xmap = commentResponse.getData();
-                try {
-                    values.put(Tigerknows.POI.COMMENT_DATA, ByteUtil.xobjectToByte(xmap));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return false;
-                }
-            }
-        }
         values.put(Tigerknows.POI.DATETIME, System.currentTimeMillis());
         values.put(Tigerknows.POI.POI_VERSION, DataQuery.VERSION);
         return true;
@@ -1183,27 +1138,12 @@ public class POI extends BaseData {
                 if (index > 0) {
                     dataBytes = cursor.getBlob(index);
                 }
-                byte[] commentBytes = null;
-                index = cursor.getColumnIndex(Tigerknows.POI.COMMENT_DATA); 
-                if (index > 0) {
-                    commentBytes = cursor.getBlob(index);
-                }
 
                 int version = cursor.getInt(cursor.getColumnIndex(Tigerknows.POI.POI_VERSION));
                 if (version == 13) {
                     if (dataBytes != null && dataBytes.length > 0) {
                         try {
                             poi.init((XMap) ByteUtil.byteToXObject(dataBytes));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    if (commentBytes != null && commentBytes.length > 0) {
-                        try {
-                            CommentResponse commentResponse = new CommentResponse((XMap) ByteUtil.byteToXObject(commentBytes));
-                            DataQuery commentQuery = Comment.createPOICommentQuery(context, poi, -1, -1);
-                            commentQuery.setResponse(commentResponse);
-                            poi.commentQuery = commentQuery;
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -1430,39 +1370,6 @@ public class POI extends BaseData {
 		
 		return false;
 	}
-    
-    public void updateAttribute() {
-        attribute = 0;
-        DataQuery dataQuery = this.commentQuery;
-        if (dataQuery != null) {
-            Response response = dataQuery.getResponse();
-            if (response != null && response instanceof CommentResponse) {
-                CommentList commentList = ((CommentResponse)response).getList();
-                if (commentList != null) {
-                    List<Comment> commentArrayList = commentList.getList();
-                    if (commentArrayList != null && commentArrayList.size() > 0) {
-                        User user = Globals.g_User;
-                        long userId = Long.MIN_VALUE;
-                        if (user != null) {
-                            userId = user.getUserId();
-                        }
-                        for(Comment comment : commentArrayList) {
-                            long attr = 0;
-                            if (userId != Long.MIN_VALUE && comment.getUserId() == userId) {
-                                attribute = POI.ATTRIBUTE_COMMENT_USER;
-                                attr = POI.ATTRIBUTE_COMMENT_USER;
-                            } else if (userId == Long.MIN_VALUE && comment.getUserId() == -1 && TextUtils.isEmpty(Globals.g_ClientUID) == false && Globals.g_ClientUID.equals(comment.getClientUid())) {
-                                attribute = POI.ATTRIBUTE_COMMENT_ANONYMOUS;
-                                attr = POI.ATTRIBUTE_COMMENT_ANONYMOUS;
-                            }
-                            comment.setAttribute(attr);
-                        }
-                        
-                    }
-                }
-            }
-        }
-    }
     
     /**
      * 克隆一个POI对象。

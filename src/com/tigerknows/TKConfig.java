@@ -23,6 +23,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.NetworkInfo.State;
@@ -640,7 +641,13 @@ public class TKConfig {
             return;
         }
         SharedPreferences sharedPreferences = context.getSharedPreferences(TKConfig.TIGERKNOWS_PREFS, Context.MODE_WORLD_WRITEABLE);
-        sharedPreferences.edit().putString(name, value).commit();
+        try {
+            sharedPreferences.edit().putString(name, value).commit();
+        } catch (Exception e) {
+            Editor editor = sharedPreferences.edit();
+            editor.remove(name).commit();
+            editor.putString(name, value).commit();
+        }
     }
 
     /**
@@ -656,11 +663,19 @@ public class TKConfig {
      * @param name
      */
     public static String getPref(Context context, String name, String defaultValue) {
+        String value = defaultValue;
         if (context == null || TextUtils.isEmpty(name)) {
-            return defaultValue;
+            return value;
         }
         SharedPreferences sharedPreferences = context.getSharedPreferences(TKConfig.TIGERKNOWS_PREFS, Context.MODE_WORLD_READABLE);
-        return sharedPreferences.getString(name, defaultValue);
+        try {
+            value = sharedPreferences.getString(name, defaultValue);
+        } catch (Exception e) {
+            Editor editor = sharedPreferences.edit();
+            editor.remove(name).commit();
+            editor.putString(name, value).commit();
+        }
+        return value;
     }
     
     public static void readConfig() {

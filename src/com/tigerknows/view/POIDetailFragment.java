@@ -5,7 +5,6 @@
 package com.tigerknows.view;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -56,11 +55,9 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine;
-import com.tigerknows.model.BaseData;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.DataOperation;
-import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
@@ -72,8 +69,6 @@ import com.tigerknows.model.DataOperation.POIQueryResponse;
 import com.tigerknows.model.DataOperation.TuangouQueryResponse;
 import com.tigerknows.model.DataOperation.YanchuQueryResponse;
 import com.tigerknows.model.DataOperation.ZhanlanQueryResponse;
-import com.tigerknows.model.DataQuery.CommentResponse;
-import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.provider.Tigerknows;
@@ -207,6 +202,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onAnimationEnd(Animation arg0) {
                 mStampBigImv.setVisibility(View.GONE);
+                refreshDetail();
                 refreshComment();
             }
         });
@@ -233,10 +229,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi != null) {
             if (poi.getStatus() < POI.STATUS_NONE) {
                 BaseActivity.showErrorDialog(mSphinx, mSphinx.getString(R.string.response_code_603), this, true);
-            }
-            DataQuery commentQuery = poi.getCommentQuery();
-            if (null != commentQuery) {
-                setCommentQuery(commentQuery);
             }
         }  
         mBodyScv.smoothScrollTo(0, 0);
@@ -504,24 +496,51 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
-    public DataQuery refreshComment() {
+    public boolean refreshComment() {
+        boolean result = false;
+        mCommentTipView.setVisibility(View.VISIBLE);
+        int count = mCommentListView.getChildCount();
+        for(int i = 2; i < count; i++) {
+            mCommentListView.getChildAt(i).setVisibility(View.GONE);
+        }
+        mCommentListView.setVisibility(View.GONE);
+        
         POI poi = mPOI;
-        if (poi == null) {
-            return null;
-        }
-        DataQuery commentQuery = poi.getCommentQuery();
-        if (null != commentQuery) {
-            setCommentQuery(commentQuery);
-            refreshDetail();
-
-            if (commentQuery.getSourceViewId() != -1 && commentQuery.getTargetViewId() != -1) {
-                return null;
+        if (poi != null) {
+            Comment lastComment = poi.getLastComment();
+            if (lastComment != null) {
+                result = true;
+                if (Comment.isAuthorMe(lastComment) > 0) {
+                    poi.setMyComment(lastComment);
+                }
+                
+                mCommentListView.setVisibility(View.VISIBLE);
+                LayoutParams layoutParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
+                View commentView = null;
+                if (count == 4) {
+                    View view = null;
+                    view = mCommentListView.getChildAt(3);
+                    view.setVisibility(View.VISIBLE);
+                    view = mCommentListView.getChildAt(2);
+                    view.setVisibility(View.VISIBLE);
+                    commentView = getCommentItemView(view, mCommentListView, lastComment, poi);
+                } else {
+                    commentView = getCommentItemView(null, mCommentListView, lastComment, poi);
+                    mCommentListView.addView(commentView);
+                    ImageView imageView = new ImageView(mContext);
+                    imageView.setBackgroundResource(R.drawable.bg_line_split);
+                    mCommentListView.addView(imageView, layoutParams);
+                }
+                commentView.setBackgroundResource(R.drawable.list_middle);
             }
-        } else {
-            mCommentListView.setVisibility(View.GONE);
-            refreshDetail();
         }
-        return Comment.createPOICommentQuery(mSphinx, poi, getId(), getId());
+        
+        if (mCommentListView.getVisibility() == View.VISIBLE) {
+            mCommentTipView.setBackgroundResource(R.drawable.list_footer);
+        } else {
+            mCommentTipView.setBackgroundResource(R.drawable.list_single);
+        }
+        return result;
     }
     
     @Override
@@ -783,13 +802,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 baseQueryList.add(poiQuery);
             }
             
-            DataQuery commentQuery = refreshComment();
-            if (commentQuery != null) {
-                baseQueryList.add(commentQuery);
-                mCommentTipView.setVisibility(View.GONE);
-            } else {
-                mCommentTipView.setVisibility(View.VISIBLE);
-            }
+            refreshDetail();
+            refreshComment();
             if (baseQueryList.isEmpty() == false) {
                 mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
                 mBaseQuerying = baseQueryList;
@@ -916,76 +930,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         return style;
     }
     
-    @SuppressWarnings("unchecked")
-    private void setCommentQuery(DataQuery commentQuery) {
-        Response response = commentQuery.getResponse();
-        POI poi = commentQuery.getPOI();
-        
-        if (poi == null || poi.equals(mPOI) == false) {
-            return;
-        }
-
-        mCommentTipView.setVisibility(View.VISIBLE);
-        int count = mCommentListView.getChildCount();
-        for(int i = 2; i < count; i++) {
-            mCommentListView.getChildAt(i).setVisibility(View.GONE);
-        }
-        mCommentListView.setVisibility(View.GONE);
-
-        if (response != null && response instanceof CommentResponse) {
-            CommentList commentList = ((CommentResponse)response).getList();
-            if (commentList != null && commentList.getList() != null && commentList.getList().size() > 0) {
-                List<Comment> commentArrayList = commentList.getList();
-                poi.updateAttribute();
-                Collections.sort(commentArrayList, Comment.COMPARATOR_DATETIME);
-                int size = commentArrayList.size();
-                // 找出我的点评
-                for(int i = 0; i < size; i++) {
-                    Comment comment = commentArrayList.get(i);
-                    if (comment.getAttribute() > 0) {
-                        poi.setMyComment(comment);
-                        break;
-                    }
-                }
-                mCommentListView.setVisibility(View.VISIBLE);
-                int length = size;
-                if (size > 1) {
-                    length = 1;
-                }
-                if (size > 0) {
-                    if (TextUtils.isEmpty(poi.getCommentSummary())) {
-                        poi.setCommentSummary(commentArrayList.get(0).getContent());
-                    }
-                }
-                LayoutParams layoutParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
-                for (int i = 0; i < length; i++) {
-                    View commentView = null;
-                    if (i*2+3 < count) {
-                        View view = null;
-                        view = mCommentListView.getChildAt(i*2+3);
-                        view.setVisibility(View.VISIBLE);
-                        view = mCommentListView.getChildAt(i*2+2);
-                        view.setVisibility(View.VISIBLE);
-                        commentView = getCommentItemView(view, mCommentListView, commentArrayList.get(i), poi);
-                    } else {
-                        commentView = getCommentItemView(null, mCommentListView, commentArrayList.get(i), poi);
-                        mCommentListView.addView(commentView);
-                        ImageView imageView = new ImageView(mContext);
-                        imageView.setBackgroundResource(R.drawable.bg_line_split);
-                        mCommentListView.addView(imageView, layoutParams);
-                    }
-                    commentView.setBackgroundResource(R.drawable.list_middle);
-                }
-            }
-        }
-        
-        if (mCommentListView.getVisibility() == View.VISIBLE) {
-            mCommentTipView.setBackgroundResource(R.drawable.list_footer);
-        } else {
-            mCommentTipView.setBackgroundResource(R.drawable.list_single);
-        }
-    }
-    
     public View getCommentItemView(View convertView, ViewGroup parent, Comment comment, final POI poi) {
         View view;
         if (convertView == null) {
@@ -1006,7 +950,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             gradeRtb.setRating(grade);
 
             authorTxv.setText(comment.getUser());
-            if (comment.getAttribute() > 0) {
+            if (Comment.isAuthorMe(comment) > 0) {
                 view.setBackgroundResource(R.drawable.list_middle);
                 authorTxv.setTextColor(mSphinx.getResources().getColor(R.color.blue));
                 User user = Globals.g_User;
@@ -1110,16 +1054,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             Hashtable<String, String> criteria = baseQuery.getCriteria();
             String dataType = criteria.get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
             Response response = baseQuery.getResponse();
-            if (baseQuery instanceof DataQuery) {
-                mLoadingView.setVisibility(View.GONE);
-                if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, this, false)) {
-                    return;
-                }
-                DataQuery dataQuery = (DataQuery) baseQuery;
-                POI requestPOI = dataQuery.getPOI();
-                requestPOI.updateComment(mSphinx);
-                refreshComment();
-            } else if (baseQuery instanceof DataOperation) {
+            if (baseQuery instanceof DataOperation) {
                 if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
                     mLoadingView.setVisibility(View.GONE);
                     if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[]{603}, false, this, false)) {
@@ -1190,16 +1125,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             return;
         }
 
-        DataQuery commentQuery = poi.getCommentQuery();
-        if (commentQuery != null) {
-            Response response = commentQuery.getResponse();
-            if (response != null && response instanceof CommentResponse) {
-                CommentList commentList = ((CommentResponse)response).getList();
-                if (commentList != null && commentList.getList() != null && commentList.getList().size() > 0) {
-                    POICommentList.setCommentQuery(commentQuery);
-                    mSphinx.showView(R.id.activity_poi_comment_list);
-                }
-            }
-        }
+        POICommentList.setPOI(poi);
+        mSphinx.showView(R.id.activity_poi_comment_list);
     }    
 }

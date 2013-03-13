@@ -5,20 +5,15 @@
 package com.tigerknows;
 
 import com.decarta.Globals;
-import com.decarta.android.exception.APIException;
 import com.decarta.android.util.Util;
 import com.tencent.tauth.TAuthView;
 import com.tigerknows.R;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.DataOperation;
-import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.DataOperation.CommentCreateResponse;
 import com.tigerknows.model.DataOperation.CommentUpdateResponse;
-import com.tigerknows.model.DataQuery.CommentResponse;
-import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
-import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.share.ShareAPI;
 import com.tigerknows.share.TKTencentOpenAPI;
 import com.tigerknows.share.TKWeibo;
@@ -72,7 +67,6 @@ import android.widget.RatingBar.OnRatingBarChangeListener;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -1028,7 +1022,6 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         }
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
@@ -1093,78 +1086,28 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             mComment.setTime(commentUpdateResponse.getTimeStamp());
         }
         
-        long userId = Long.MIN_VALUE;
         User user = Globals.g_User;            
         if (user != null) {
+            long userId = Long.MIN_VALUE;
             userId = user.getUserId();
             mComment.setUserId(userId);
             mComment.getPOI().setAttribute(POI.ATTRIBUTE_COMMENT_USER);
+            mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_USER);
             mComment.setUser(user.getNickName());
         } else {
             mComment.getPOI().setAttribute(POI.ATTRIBUTE_COMMENT_ANONYMOUS);
+            mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_ANONYMOUS);
             mComment.setUserId(-1);
             mComment.setUser(mThis.getString(R.string.default_guest_name));
         }
         mComment.setClientUid(Globals.g_ClientUID);
         
         mPOI.setMyComment(mComment);
-        DataQuery dataQuery = mPOI.getCommentQuery();
-        
-        List<Comment> commentArrayList = null;
-        // 正常不会出现commentQuery为空的情况
-        if (dataQuery != null) {
-            Response commentResponse = dataQuery.getResponse();
-            if (commentResponse != null && commentResponse instanceof CommentResponse) {
-                CommentList commentList = ((CommentResponse)commentResponse).getList();
-                if (commentList != null) {
-                    commentArrayList = commentList.getList();
-                    if (commentArrayList != null) {
-                        if (commentArrayList.size() > 0) {
-                            mPOI.updateAttribute();
-                            Collections.sort(commentArrayList, Comment.COMPARATOR);
-                            long attribute = mPOI.getAttribute();
-                            if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0 || (attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0) {
-                                commentArrayList.remove(0);
-                                commentArrayList.add(0, mComment);
-                            } else {
-                                commentArrayList.add(0, mComment);
-                                commentList.setTotal(1);
-                            }
-                        } else {
-                            commentArrayList.add(mComment);
-                            commentList.setTotal(1);
-                        }
-                    }
-                }
-            }
-        }
-        
-        if (commentArrayList == null || commentArrayList.isEmpty()) {
-            try {
-                XMap data = new XMap();
-                CommentList commentList = new CommentList(data);
-                CommentResponse commentResponse = new CommentResponse(data);
-                commentArrayList = new ArrayList<Comment>();
-                commentArrayList.add(mComment);
-                commentList.setTotal(1);
-                commentList.setList(commentArrayList);
-                commentResponse.setList(commentList);
-                DataQuery commentQuery = Comment.createPOICommentQuery(mThis, mPOI, -1, -1);
-                commentQuery.setResponse(commentResponse);
-                mPOI.setCommentQuery(commentQuery);
-            } catch (APIException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-        }
-        mPOI.updateAttribute();
-        mComment.setData(null);
-        mPOI.updateComment(mThis);
-        
-        if (userId != Long.MIN_VALUE) {
-            mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_USER);
-        } else {
-            mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_ANONYMOUS);
+        if (mPOI.getLastComment() == null || Comment.isAuthorMe(mComment) > 0) {
+            mPOI.setLastComment(mComment);
+            mComment.setData(null);
+            mPOI.setData(null);
+            mPOI.updateData(mThis, mPOI.getData());
         }
         
         mPOI.update(mThis, mPOI.getStoreType());
