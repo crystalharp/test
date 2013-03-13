@@ -58,69 +58,65 @@ public class DataOperation extends BaseQuery {
         if (criteria == null) {
             throw new APIException(APIException.CRITERIA_IS_NULL);
         }
-        String sessionId = Globals.g_Session_Id;
 
-        if (criteria.containsKey(SERVER_PARAMETER_DATA_TYPE)) {
-            String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
+        if (criteria.containsKey(SERVER_PARAMETER_DATA_TYPE) == false) {
+        	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_TYPE);
+        } else if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE) == false) {
+        	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_OPERATION_CODE);
+        } else {
+        	String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
             requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_TYPE, dataType));
-            if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE)) {
-                String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_OPERATION_CODE, operationCode));
-                if (OPERATION_CODE_QUERY.equals(operationCode)) {
-                    if (criteria.containsKey(SERVER_PARAMETER_NEED_FEILD)) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, criteria.get(SERVER_PARAMETER_NEED_FEILD)));
-                    } else if(dataType.equals(DATA_TYPE_DIAOYAN)){
-                    	if(TextUtils.isEmpty(sessionId)){
-                    		throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
-                    	}
-                    } else {
-                        //只有dty!=21时需要提供额外参数
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_NEED_FEILD);
-                    }
-                    
-                    if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID)));
-                    } else if(dataType.equals(DATA_TYPE_DIAOYAN) == false){
-                        //只有dty!=21时需要提供额外参数
-                    	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
-                    }
-                    if (criteria.containsKey(SERVER_PARAMETER_PICTURE)) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PICTURE, criteria.get(SERVER_PARAMETER_PICTURE)));
-                    }
-                } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-                    if (criteria.containsKey(SERVER_PARAMETER_ENTITY)) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY)));
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ENTITY);
-                    }
-                } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
-                    if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID)));
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
-                    }
-                    if (criteria.containsKey(SERVER_PARAMETER_ENTITY)) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY)));
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ENTITY);
-                    }
-                } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
-                    if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID)));
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
-                    }
+            String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_OPERATION_CODE, operationCode));
+            if (OPERATION_CODE_QUERY.equals(operationCode)) {
+            	if (criteria.containsKey(SERVER_PARAMETER_NEED_FEILD)) {
+                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, criteria.get(SERVER_PARAMETER_NEED_FEILD)));
+                } else if(dataType.equals(DATA_TYPE_DIAOYAN)){
+                	//do nothing
                 } else {
-                    throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_NEED_FEILD);
+                }
+                
+                if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
+                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID)));
+                } else if(dataType.equals(DATA_TYPE_DIAOYAN) == false){
+                	//do nothing
+                } else {
+                	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
+                }
+                if (criteria.containsKey(SERVER_PARAMETER_PICTURE)) {
+                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PICTURE, criteria.get(SERVER_PARAMETER_PICTURE)));
+                }
+            } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
+                if (criteria.containsKey(SERVER_PARAMETER_ENTITY)) {
+                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY)));
+                } else {
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ENTITY);
+                }
+            } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
+                if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
+                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID)));
+                } else {
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
+                }
+                if (criteria.containsKey(SERVER_PARAMETER_ENTITY)) {
+                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY)));
+                } else {
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ENTITY);
+                }
+            } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
+                if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
+                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID)));
+                } else {
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
                 }
             } else {
-                throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_OPERATION_CODE);
+                throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
             }
-        } else {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_TYPE);
         }
+
         
-//        String sessionId = Globals.g_Session_Id;	挪动到了几十行之前
+        String sessionId = Globals.g_Session_Id;
         if (!TextUtils.isEmpty(sessionId)) {
             requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SESSION_ID, sessionId));
         } 
