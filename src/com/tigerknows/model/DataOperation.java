@@ -58,7 +58,6 @@ public class DataOperation extends BaseQuery {
         if (criteria == null) {
             throw new APIException(APIException.CRITERIA_IS_NULL);
         }
-        String sessionId = Globals.g_Session_Id;
 
         if (criteria.containsKey(SERVER_PARAMETER_DATA_TYPE) == false) {
         	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_TYPE);
@@ -73,18 +72,16 @@ public class DataOperation extends BaseQuery {
             	if (criteria.containsKey(SERVER_PARAMETER_NEED_FEILD)) {
                     requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, criteria.get(SERVER_PARAMETER_NEED_FEILD)));
                 } else if(dataType.equals(DATA_TYPE_DIAOYAN)){
-                	if(TextUtils.isEmpty(sessionId)){
-                		throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
-                	}
+                	//do nothing
                 } else {
-                    //只有dty!=21时需要提供额外参数
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_NEED_FEILD);
                 }
                 
                 if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
                     requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID)));
                 } else if(dataType.equals(DATA_TYPE_DIAOYAN) == false){
-                    //只有dty!=21时需要提供额外参数
+                	//do nothing
+                } else {
                 	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_PICTURE)) {
@@ -119,7 +116,7 @@ public class DataOperation extends BaseQuery {
         }
 
         
-//        String sessionId = Globals.g_Session_Id;	挪动到了几十行之前
+        String sessionId = Globals.g_Session_Id;
         if (!TextUtils.isEmpty(sessionId)) {
             requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SESSION_ID, sessionId));
         } 
