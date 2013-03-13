@@ -145,11 +145,6 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     public void refreshMoreBtn(boolean isCreate) {
         
         setFragmentMessage(MESSAGE_TYPE_NONE);
-        //用户调研
-        if (mDiaoyanQueryResponse != null) {
-            setFragmentMessage(MESSAGE_TYPE_USER_SURVEY);
-            return;
-        }        
         //软件更新
         UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
         if (userLogonModel != null) {            
@@ -190,7 +185,11 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
             return;
         }
         
-
+        //用户调研
+        if (mDiaoyanQueryResponse != null) {
+            setFragmentMessage(MESSAGE_TYPE_USER_SURVEY);
+            return;
+        }        
         
         //点评
         int showCommentTipTimes = 0;
