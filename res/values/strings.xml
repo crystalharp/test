@@ -236,7 +236,7 @@
     <string name="pop_categories">热门搜索</string>
     <string name="pop_location">热门地点</string>
     <string name="search_location_me_failure_and_select">暂时无法获取当前位置，请选择具体位置或在地图上指定位置！</string>
-    <string name="search_input_keyword">你忘记输入搜索词啦</string>
+    <string name="search_input_keyword">你忘记输入搜索词啦！</string>
     <string name="search_input_valid_tip">没有找到相关的结果，你可以换个词或换个城市试试！</string>
     <string name="my_location_failure">无法获取当前位置</string>
     <string name="select_has_point">选定的位置</string>
@@ -383,7 +383,7 @@
     <string name="feedback_submiting">正在发送中</string>
     <string name="feedback_success">我们已经收到你的建议，感谢你的支持！</string>
     <string name="feedback_failure">提交失败！</string>
-    <string name="your_feedback">感谢你使用老虎宝典，请输入你的意见</string>
+    <string name="your_feedback">感谢你使用老虎宝典，请输入你的意见！</string>
     <string name="your_mobile_number">请输入你的手机号码(选填)</string>
     <string name="mobile_number_">手机号码：</string>
 

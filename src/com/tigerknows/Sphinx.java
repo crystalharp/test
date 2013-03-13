@@ -302,7 +302,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public boolean mSnapMap = false;
     
     // 老虎动画时间
-    private static final int LOGO_ANIMATION_TIME = 2000;
+    private static final int LOGO_ANIMATION_TIME = 1000;
 
     private Context mContext;
 
@@ -1707,10 +1707,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             getMoreFragment().refreshMoreBtn(false);
         } else if (baseQuery instanceof DataOperation) {
         	Response response = baseQuery.getResponse();
-        	LogWrapper.d("feng", "diao yan");
         	if (response instanceof DiaoyanQueryResponse) {
         		DiaoyanQueryResponse diaoyanQueryResponse = (DiaoyanQueryResponse) response;
-            	LogWrapper.d("feng", "diao yan success");
         		if (diaoyanQueryResponse.getHasSurveyed() == 0) {
         			getMoreFragment().setDiaoyanQueryResponse(diaoyanQueryResponse);
         			getMoreFragment().refreshMoreBtn(false);
