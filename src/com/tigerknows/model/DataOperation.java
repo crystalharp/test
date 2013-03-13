@@ -79,7 +79,7 @@ public class DataOperation extends BaseQuery {
                 
                 if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
                     requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID)));
-                } else if(dataType.equals(DATA_TYPE_DIAOYAN) == false){
+                } else if(dataType.equals(DATA_TYPE_DIAOYAN)){
                 	//do nothing
                 } else {
                 	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
@@ -379,16 +379,12 @@ public class DataOperation extends BaseQuery {
     
     public static class DiaoyanQueryResponse extends Response {
     	
-    	//调研标题
-    	public static final byte FIELD_SURVEY_TITLE = 0x02;
-    	
     	//是否参加过本期调研
     	public static final byte FIELD_HAS_SURVEYED = 0x03;
     	
     	//调研URL
     	public static final byte FIELD_URL = 0x04;
     	
-    	private String surveyTitle;
 		private long hasSurveyed;
 		private String url;
 
@@ -396,20 +392,12 @@ public class DataOperation extends BaseQuery {
 			return hasSurveyed;
 		}
     	
-    	public String getSurveyTitle() {
-			return surveyTitle;
-		}
-		
 		public String getUrl() {
 			return url;
 		}
  	
 		public DiaoyanQueryResponse(XMap data) throws APIException{
 			super(data);
-			
-			if(this.data.containsKey(FIELD_SURVEY_TITLE)){
-				surveyTitle = this.data.getString(FIELD_SURVEY_TITLE);
-			}
 			
 			if(this.data.containsKey(FIELD_HAS_SURVEYED)){
 				hasSurveyed = this.data.getInt(FIELD_HAS_SURVEYED);

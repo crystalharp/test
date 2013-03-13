@@ -96,7 +96,6 @@ public class DataOperationTest {
     public static XMap launchDiaoyanQueryResponse(Context context) {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
-        data.put(DiaoyanQueryResponse.FIELD_SURVEY_TITLE, "FIELD_SURVEY_TITLE");
         data.put(DiaoyanQueryResponse.FIELD_HAS_SURVEYED, 0);
         data.put(DiaoyanQueryResponse.FIELD_URL, "http://www.tigerknows.com");
         return data;

@@ -767,11 +767,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         queryStart(userLogon, false);
 
         DataOperation diaoyanQuery = new DataOperation(mContext);
-//调研测试代码
-//        Hashtable<String, String> criteria = new Hashtable<String, String>();
-//        criteria.put(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIAOYAN);
-//        criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-//        diaoyanQuery.setup(criteria);
+        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        criteria.put(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIAOYAN);
+        criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+        diaoyanQuery.setup(criteria, Globals.g_Current_City_Info.getId());	//
         queryStart(diaoyanQuery, false);
         
         checkCitySupportDiscover(Globals.g_Current_City_Info.getId());
@@ -1708,9 +1707,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             getMoreFragment().refreshMoreBtn(false);
         } else if (baseQuery instanceof DataOperation) {
         	Response response = baseQuery.getResponse();
-//        	LogWrapper.d("feng", "diao yan");
+        	LogWrapper.d("feng", "diao yan");
         	if (response instanceof DiaoyanQueryResponse) {
         		DiaoyanQueryResponse diaoyanQueryResponse = (DiaoyanQueryResponse) response;
+            	LogWrapper.d("feng", "diao yan success");
         		if (diaoyanQueryResponse.getHasSurveyed() == 0) {
         			getMoreFragment().setDiaoyanQueryResponse(diaoyanQueryResponse);
         			getMoreFragment().refreshMoreBtn(false);

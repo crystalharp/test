@@ -145,7 +145,12 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     public void refreshMoreBtn(boolean isCreate) {
         
         setFragmentMessage(MESSAGE_TYPE_NONE);
-        
+        //用户调研
+        if (mDiaoyanQueryResponse != null) {
+            setFragmentMessage(MESSAGE_TYPE_USER_SURVEY);
+            return;
+        }        
+        //软件更新
         UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
         if (userLogonModel != null) {            
             SoftwareUpdate softwareUpdate = userLogonModel.getSoftwareUpdate();
@@ -155,24 +160,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
             }
         }
 
-        int showCommentTipTimes = 0;
-        String commentTip = TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP);
-        if (!TextUtils.isEmpty(commentTip)) {
-            showCommentTipTimes = Integer.parseInt(commentTip);
-            if (isCreate) {
-                TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(showCommentTipTimes+1));
-            }
-        } else {
-            if (isCreate) {
-                TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(0));
-            }
-        }
-        
-        if (showCommentTipTimes < SHOW_COMMENT_TIP_TIMES) {
-            setFragmentMessage(MoreFragment.MESSAGE_TYPE_COMMENT);
-            return;
-        }
-        
+        //地图更新
         String upgradeMapTip = TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_MAP_TIP);
         int out = 8;
         if (!TextUtils.isEmpty(upgradeMapTip)) {
@@ -202,8 +190,24 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
             return;
         }
         
-        if (mDiaoyanQueryResponse != null) {
-            setFragmentMessage(MESSAGE_TYPE_USER_SURVEY);
+
+        
+        //点评
+        int showCommentTipTimes = 0;
+        String commentTip = TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP);
+        if (!TextUtils.isEmpty(commentTip)) {
+            showCommentTipTimes = Integer.parseInt(commentTip);
+            if (isCreate) {
+                TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(showCommentTipTimes+1));
+            }
+        } else {
+            if (isCreate) {
+                TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(0));
+            }
+        }
+        
+        if (showCommentTipTimes < SHOW_COMMENT_TIP_TIMES) {
+            setFragmentMessage(MoreFragment.MESSAGE_TYPE_COMMENT);
             return;
         }
     }
@@ -216,7 +220,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     protected void findViews() {
         mCurrentCityTxv = (TextView) mRootView.findViewById(R.id.current_city_txv);
         mUserNameTxv = (TextView) mRootView.findViewById(R.id.user_name_txv);
-        mMessageBtn = (Button)mRootView.findViewById(R.id.upgrade_btn);
+        mMessageBtn = (Button)mRootView.findViewById(R.id.message_btn);
         mUserBtn = (Button)mRootView.findViewById(R.id.user_btn);
         mChangeCityBtn = (Button)mRootView.findViewById(R.id.change_city_btn);
         mDownloadMapBtn = (Button)mRootView.findViewById(R.id.download_map_btn);
@@ -251,7 +255,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.upgrade_btn:
+            case R.id.message_btn:
                 if (mMessageType == MESSAGE_TYPE_SOFTWARE_UPDATE) {
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "upgradeSoftWare");
                     showDownloadSoftwareDialog();
@@ -381,26 +385,26 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         if (mMessageType > MESSAGE_TYPE_NONE) {
             mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
             if (mMessageType == MESSAGE_TYPE_SOFTWARE_UPDATE) {
-                mMessageBtn.setText(R.string.upgrade_tip_software);
+                mMessageBtn.setText(R.string.message_tip_software_update);
                 mMessageBtn.setBackgroundResource(R.drawable.btn_update);
                 mMessageBtn.setVisibility(View.VISIBLE);
                 mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
             } else if (mMessageType == MESSAGE_TYPE_COMMENT) {
-                mMessageBtn.setText(R.string.upgrade_tip_comment);
+                mMessageBtn.setText(R.string.message_tip_comment);
                 mMessageBtn.setBackgroundResource(R.drawable.btn_orangle);
                 TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_MAP_TIP);
                 mMessageBtn.setVisibility(View.VISIBLE);
                 mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
             } else if (mMessageType == MESSAGE_TYPE_MAP_UPDATE) {
-                mMessageBtn.setText(R.string.upgrade_tip_map);
+                mMessageBtn.setText(R.string.message_tip_map_upgrade);
                 mMessageBtn.setBackgroundResource(R.drawable.btn_update);
                 mMessageBtn.setVisibility(View.VISIBLE);
                 mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
             } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
-                mMessageBtn.setText(mDiaoyanQueryResponse.getSurveyTitle());
+                mMessageBtn.setText(R.string.message_tip_user_survey);
                 mMessageBtn.setBackgroundResource(R.drawable.btn_update);
                 mMessageBtn.setVisibility(View.VISIBLE);
                 mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);

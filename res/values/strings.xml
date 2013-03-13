@@ -196,9 +196,10 @@
     <string name="select_point">选择该点</string>
     
     <string name="more">更多</string>
-    <string name="upgrade_tip_software">软件有新版本了, 点击下载!</string>
-    <string name="upgrade_tip_comment">没见解？不可能！来发表个点评吧！</string>
-    <string name="upgrade_tip_map">地图有更新数据了，点击升级!</string>
+    <string name="message_tip_software_update">软件有新版本了, 点击下载!</string>
+    <string name="message_tip_comment">没见解？不可能！来发表个点评吧！</string>
+    <string name="message_tip_map_upgrade">地图有更新数据了，点击升级!</string>
+    <string name="message_tip_user_survey">欢迎参加老虎宝典有奖用户调研</string>
     <string name="not_tip_week">一周之内不提醒</string>
     <string name="upgrade_all">全部升级</string>
     <string name="upgrade_manual">手动更新</string>
