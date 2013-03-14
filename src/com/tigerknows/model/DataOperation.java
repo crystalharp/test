@@ -387,6 +387,10 @@ public class DataOperation extends BaseQuery {
     	public static final byte FIELD_URL = 0x04;
     	
 		private long hasSurveyed;
+		public void setHasSurveyed(long hasSurveyed) {
+			this.hasSurveyed = hasSurveyed;
+		}
+
 		private String url;
 
 		public long getHasSurveyed() {

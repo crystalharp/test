@@ -770,7 +770,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIAOYAN);
         criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-        diaoyanQuery.setup(criteria, Globals.g_Current_City_Info.getId());	//
+        diaoyanQuery.setup(criteria, -1);
         queryStart(diaoyanQuery, false);
         
         checkCitySupportDiscover(Globals.g_Current_City_Info.getId());

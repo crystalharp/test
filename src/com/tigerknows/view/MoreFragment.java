@@ -145,6 +145,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     public void refreshMoreBtn(boolean isCreate) {
         
         setFragmentMessage(MESSAGE_TYPE_NONE);
+
         //软件更新
         UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
         if (userLogonModel != null) {            
@@ -265,6 +266,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                     showUpgradeMapDialog();
                 } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
                 	String url=mDiaoyanQueryResponse.getUrl();
+                	mDiaoyanQueryResponse.setHasSurveyed(1);
                 	Intent intent=new Intent(Intent.ACTION_VIEW,Uri.parse(url));
                 	mSphinx.startActivity(intent);
                 } else if (mMessageType == MESSAGE_TYPE_COMMENT) {
