@@ -59,6 +59,11 @@ public class DataOperation extends BaseQuery {
             throw new APIException(APIException.CRITERIA_IS_NULL);
         }
 
+        String sessionId = Globals.g_Session_Id;
+        if (!TextUtils.isEmpty(sessionId)) {
+            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SESSION_ID, sessionId));
+        } 
+
         if (criteria.containsKey(SERVER_PARAMETER_DATA_TYPE) == false) {
         	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_TYPE);
         } else if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE) == false) {
@@ -116,10 +121,6 @@ public class DataOperation extends BaseQuery {
         }
 
         
-        String sessionId = Globals.g_Session_Id;
-        if (!TextUtils.isEmpty(sessionId)) {
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SESSION_ID, sessionId));
-        } 
         if (!TextUtils.isEmpty(Globals.g_ClientUID)) {
             requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_CLIENT_ID, Globals.g_ClientUID));
         } else {

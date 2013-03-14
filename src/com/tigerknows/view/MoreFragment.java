@@ -79,10 +79,10 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     private String mCityName;
     
     public static final int MESSAGE_TYPE_NONE = 0;
-    public static final int MESSAGE_TYPE_MAP_UPDATE = 1;
-    public static final int MESSAGE_TYPE_COMMENT = 2;
-    public static final int MESSAGE_TYPE_SOFTWARE_UPDATE = 3;
-    public static final int MESSAGE_TYPE_USER_SURVEY = 4;
+    public static final int MESSAGE_TYPE_SOFTWARE_UPDATE = 1;
+    public static final int MESSAGE_TYPE_MAP_UPDATE = 2;
+    public static final int MESSAGE_TYPE_USER_SURVEY = 3;
+    public static final int MESSAGE_TYPE_COMMENT = 4;
     private int mMessageType = MESSAGE_TYPE_NONE;
     
     private DiaoyanQueryResponse mDiaoyanQueryResponse;
@@ -187,8 +187,10 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         
         //用户调研
         if (mDiaoyanQueryResponse != null) {
-            setFragmentMessage(MESSAGE_TYPE_USER_SURVEY);
-            return;
+        	if(mDiaoyanQueryResponse.getHasSurveyed() == 0){
+                setFragmentMessage(MESSAGE_TYPE_USER_SURVEY);
+                return;
+        	}
         }        
         
         //点评
@@ -262,7 +264,8 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "upgradeMap");
                     showUpgradeMapDialog();
                 } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
-                	Intent intent=new Intent(Intent.ACTION_VIEW,Uri.parse(mDiaoyanQueryResponse.getUrl()));
+                	String url=mDiaoyanQueryResponse.getUrl();
+                	Intent intent=new Intent(Intent.ACTION_VIEW,Uri.parse(url));
                 	mSphinx.startActivity(intent);
                 } else if (mMessageType == MESSAGE_TYPE_COMMENT) {
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
