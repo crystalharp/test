@@ -11,6 +11,7 @@ import android.text.TextUtils;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 
 public class Alarms {
     
@@ -106,5 +107,18 @@ public class Alarms {
                 context, 0, intent,
                 PendingIntent.FLAG_CANCEL_CURRENT);
         am.cancel(sender);
+    }
+    
+    /**
+     *  return a random time from startHour to endHour in such form: 12:33:46
+     */
+    public static String makeRandomTime(int startHour, int endHour) {
+        String time = "";
+        Random rand = new Random(System.currentTimeMillis());
+        int hour = startHour + rand.nextInt(endHour - startHour);
+        int minute = rand.nextInt(60);
+        int second = rand.nextInt(60);
+        time += hour + ":" + minute + ":" + second;
+        return time;
     }
 }

@@ -28,7 +28,6 @@ import android.os.IBinder;
 
 import java.util.Calendar;
 import java.util.Hashtable;
-import java.util.Random;
 
 /**
  * 
@@ -133,22 +132,8 @@ public class PullService extends Service {
         Intent pullIntent = new Intent(RadarReceiver.ACTION_PULL);
         Alarms.disableAlarm(context, pullIntent);
         
-        Calendar next = Alarms.calculateAlarm(nextRequestDate+" " + makeRandomHour() + ":" + makeRandom(60) + ":" + makeRandom(60));
+        Calendar next = Alarms.calculateAlarm(nextRequestDate+ " " + Alarms.makeRandomTime(6, 22));
         Alarms.enableAlarm(context, next.getTimeInMillis(), pullIntent);
-    }
-    
-    int makeRandomHour() {
-        int hour = 6;
-        Random ran =new Random(System.currentTimeMillis()); 
-        hour += ran.nextInt(16);
-        return hour;
-    }
-    
-    int makeRandom(int n) {
-        int value = 0;
-        Random ran =new Random(System.currentTimeMillis()); 
-        value = ran.nextInt(n);
-        return value;
     }
 
     @Override
@@ -169,6 +154,7 @@ public class PullService extends Service {
                     Alarms.SIMPLE_DATE_FORMAT.format(next.getTime()));
             Intent intent = new Intent(RadarReceiver.ACTION_PULL);
             Alarms.enableAlarm(context, next.getTimeInMillis(), intent);
+            LogWrapper.d(TAG, "next alarm:" + next.getTime().toString());
         }
         Intent name = new Intent(context, PullService.class);
         stopService(name);
