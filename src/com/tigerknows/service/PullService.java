@@ -32,11 +32,15 @@ import java.util.Hashtable;
 /**
  * 
  * @author pengwenyue
+ * 这个类名为Pull，实际上做法是随机找一个时间连接服务器，去查询服务器上有没有信息
+ * 如果有的话查询出来发本地通知
  *
  */
 public class PullService extends Service {
     
     static final String TAG = "PullService";
+    static int fail = 0;
+    final static int MaxFail = 3;
 
     @Override
     public void onCreate() {
@@ -99,6 +103,8 @@ public class PullService extends Service {
                     if (pullMessage != null) {
                         recordPullMessage(context, pullMessage);
                         next = null;
+                        fail = 0;
+                        LogWrapper.d(TAG, "PullMessage:" + pullMessage);
                     }
                 }
                 
@@ -134,6 +140,7 @@ public class PullService extends Service {
         
         Calendar next = Alarms.calculateAlarm(nextRequestDate+ " " + Alarms.makeRandomTime(6, 22));
         Alarms.enableAlarm(context, next.getTimeInMillis(), pullIntent);
+        LogWrapper.d(TAG, "in recordPullMessage, next alarm:" + next.getTime().toLocaleString());
     }
 
     @Override
@@ -147,6 +154,11 @@ public class PullService extends Service {
     }
     
     void exitService(Calendar next) {
+        fail += 1;
+        if (fail > MaxFail) {
+            fail = 0;
+            next = null;
+        }
         Context context = getApplicationContext();
         if (next != null) {
             TKConfig.setPref(context,
@@ -154,7 +166,9 @@ public class PullService extends Service {
                     Alarms.SIMPLE_DATE_FORMAT.format(next.getTime()));
             Intent intent = new Intent(RadarReceiver.ACTION_PULL);
             Alarms.enableAlarm(context, next.getTimeInMillis(), intent);
-            LogWrapper.d(TAG, "next alarm:" + next.getTime().toString());
+            LogWrapper.d(TAG, "fail=" + fail + "in ExitService, next alarm:" + next.getTime().toString());
+        } else {
+            LogWrapper.d(TAG, "do not have next alarm in ExitService");
         }
         Intent name = new Intent(context, PullService.class);
         stopService(name);
