@@ -56,7 +56,7 @@ import com.tigerknows.util.HttpUtils.TKHttpClient.ProgressUpdate;
  */
 public abstract class BaseQuery {
     
-    public static boolean Test = true;
+    public static boolean Test = false;
     
     public static final String ACTION_NETWORK_STATUS_REPORT = "ACTION_NETWORK_STATUS_REPORT";
 

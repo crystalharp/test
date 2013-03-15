@@ -913,6 +913,8 @@
     <string name="wifi_enabled">wifi已开启</string>
     <string name="wifi_disabled">wifi已关闭</string>
     
+    <string name="user_survey">用户调研</string>
+    
     <string name="shanghu_xingxi">商户信息</string>
     <string name="call_telephone">拨打电话</string>
 

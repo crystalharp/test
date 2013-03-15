@@ -26,6 +26,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.decarta.Globals;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
@@ -39,6 +40,7 @@ import com.tigerknows.model.UserLogonModel.Recommend;
 import com.tigerknows.model.UserLogonModel.SoftwareUpdate;
 import com.tigerknows.model.UserLogonModel.Recommend.RecommendApp;
 import com.tigerknows.util.CommonUtils;
+import com.tigerknows.view.discover.BrowserActivity;
 import com.tigerknows.view.user.UserBaseActivity;
 import com.tigerknows.view.user.UserLoginActivity;
 
@@ -145,7 +147,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     public void refreshMoreBtn(boolean isCreate) {
         
         setFragmentMessage(MESSAGE_TYPE_NONE);
-
+        
         //软件更新
         UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
         if (userLogonModel != null) {            
@@ -192,8 +194,8 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                 setFragmentMessage(MESSAGE_TYPE_USER_SURVEY);
                 return;
         	}
-        }        
-        
+        }
+
         //点评
         int showCommentTipTimes = 0;
         String commentTip = TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP);
@@ -266,9 +268,10 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                     showUpgradeMapDialog();
                 } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
                 	String url=mDiaoyanQueryResponse.getUrl();
-                	mDiaoyanQueryResponse.setHasSurveyed(1);
-                	Intent intent=new Intent(Intent.ACTION_VIEW,Uri.parse(url));
-                	mSphinx.startActivity(intent);
+                	Intent intent=new Intent();
+                	intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.user_survey));
+                	intent.putExtra(BrowserActivity.URL, url);
+                	mSphinx.showView(R.id.activity_browser, intent);
                 } else if (mMessageType == MESSAGE_TYPE_COMMENT) {
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
                     mSphinx.showView(R.id.view_go_comment);
