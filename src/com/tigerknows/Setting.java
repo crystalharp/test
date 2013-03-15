@@ -6,6 +6,8 @@ package com.tigerknows;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
+import com.tigerknows.radar.AlarmInitReceiver;
+import com.tigerknows.radar.RadarReceiver;
 
 import android.content.Context;
 import android.content.Intent;
@@ -113,6 +115,8 @@ public class Setting extends BaseActivity {
             TKConfig.setPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "");
         } else {
             TKConfig.setPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "on");
+            Intent pullIntent = new Intent(AlarmInitReceiver.ACTION_ALARM_INIT);
+            mThis.sendBroadcast(pullIntent);
         }
         LogWrapper.d("conan", "Radar status:" + TKConfig.getPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "failed"));
     }
