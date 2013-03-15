@@ -302,7 +302,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public boolean mSnapMap = false;
     
     // 老虎动画时间
-    private static final int LOGO_ANIMATION_TIME = 2000;
+    private static final int LOGO_ANIMATION_TIME = 1000;
 
     private Context mContext;
 

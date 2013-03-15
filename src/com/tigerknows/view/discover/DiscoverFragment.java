@@ -73,6 +73,8 @@ public class DiscoverFragment extends DiscoverBaseFragment {
     
     private ImageView mNoSupportMessageImv;
     
+    private ViewGroup mIndicationView;
+    
     private int mCityId = -1;
     
     private DataQuery mDataQuery = null;
@@ -164,6 +166,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         mNoSupportTitleTxv = (TextView)mRootView.findViewById(R.id.no_support_title_txv);
         mNoSupportMessageTxv = (TextView)mRootView.findViewById(R.id.no_support_message_txv);
         mNoSupportMessageImv = (ImageView)mRootView.findViewById(R.id.no_support_message_imv);
+        mIndicationView = (ViewGroup)mRootView.findViewById(R.id.indication_view);
     }
     
     private class MySimpleGesture extends GestureDetector.SimpleOnGestureListener {   
@@ -297,16 +300,26 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                     mPosition = position;
                     if (mDiscoverCategoryAdapter != null) {
                         try {
-                        int size = mDiscoverCategoryAdapter.list.size();
-                        String leftLeftStr = mDiscoverCategoryAdapter.listView.get((position-2)%size).getTitleText();
-                        String leftStr = mDiscoverCategoryAdapter.listView.get((position-1)%size).getTitleText();
-                        String centerStr = mDiscoverCategoryAdapter.listView.get((position)%size).getTitleText();
-                        String rightStr = mDiscoverCategoryAdapter.listView.get((position+1)%size).getTitleText();
-                        String rightRightStr = mDiscoverCategoryAdapter.listView.get((position+2)%size).getTitleText();
-                        mDiscoverTopIndicator.onPageSelected(position, leftStr, centerStr, rightStr, leftLeftStr, rightRightStr);
+                            int size = mDiscoverCategoryAdapter.list.size();
+                            String leftLeftStr = mDiscoverCategoryAdapter.listView.get((position-2)%size).getTitleText();
+                            String leftStr = mDiscoverCategoryAdapter.listView.get((position-1)%size).getTitleText();
+                            String centerStr = mDiscoverCategoryAdapter.listView.get((position)%size).getTitleText();
+                            String rightStr = mDiscoverCategoryAdapter.listView.get((position+1)%size).getTitleText();
+                            String rightRightStr = mDiscoverCategoryAdapter.listView.get((position+2)%size).getTitleText();
+                            mDiscoverTopIndicator.onPageSelected(position, leftStr, centerStr, rightStr, leftLeftStr, rightRightStr);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
+                    }
+                }
+                int count = mIndicationView.getChildCount();
+                int realPosition = (position%count);
+                for(int i = 0; i < count; i++) {
+                    ImageView imageView = (ImageView) mIndicationView.getChildAt(i);
+                    if (i == realPosition) {
+                        imageView.setBackgroundResource(R.drawable.ic_learn_dot_selected);
+                    } else {
+                        imageView.setBackgroundResource(R.drawable.ic_learn_dot_normal);
                     }
                 }
             }
@@ -464,7 +477,14 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                             DiscoverCategory discoverCategory = new DiscoverCategory(value);
                             mDiscoverCategoryList.add(discoverCategory);
                         }
-                        if (mDiscoverCategoryList.size() > 0) {
+                        mIndicationView.removeAllViews();
+                        mIndicationView.setVisibility(View.VISIBLE);
+                        int size = mDiscoverCategoryList.size();
+                        if (size > 0) {
+                            for(int i = 0; i < size; i++) {
+                                ImageView imageView = new ImageView(mSphinx);
+                                mIndicationView.addView(imageView);
+                            }
                             mNoSupportTitleTxv.setVisibility(View.GONE);
                             mNoSupportMessageTxv.setVisibility(View.GONE);
                             mNoSupportMessageImv.setVisibility(View.GONE);
@@ -497,6 +517,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         mNoSupportMessageTxv.setText(mSphinx.getString(R.string.discover_no_support_tip, cityInfo.getCName()));
         mNoSupportMessageTxv.setVisibility(View.VISIBLE);
         mNoSupportMessageImv.setVisibility(View.VISIBLE);
+        mIndicationView.setVisibility(View.GONE);
     }
 
     public class DiscoverCategoryAdapter extends BaseAdapter {

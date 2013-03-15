@@ -44,8 +44,9 @@ public class TKNotificationManager {
 
         // our custom view
         RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification);
-        contentView.setTextViewText(R.id.text_txv, data.getPoiName());
+        contentView.setTextViewText(R.id.text_txv, data.toString());
         contentView.setImageViewResource(R.id.icon_imv, R.drawable.icon);
+        
         notif.contentView = contentView;
 
         // we use a string id because is a unique number.  we use it later to cancel the

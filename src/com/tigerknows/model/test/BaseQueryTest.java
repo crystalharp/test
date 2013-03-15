@@ -13,6 +13,8 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.DataQuery.DiscoverResponse;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.radar.Alarms;
+import com.tigerknows.radar.RadarReceiver;
 import com.tigerknows.service.TKLocationManager;
 import com.tigerknows.service.TigerknowsLocationManager;
 import com.tigerknows.view.MoreFragment;
@@ -47,6 +49,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -122,6 +125,8 @@ public class BaseQueryTest {
         layout.addView(updateMapTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final Button publicWelfarreTip = new Button(activity);
         layout.addView(publicWelfarreTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button radarPushBtn = new Button(activity);
+        layout.addView(radarPushBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         
         editConfigBtn.setText("View or Modify config.txt");
         editConfigBtn.setOnClickListener(new View.OnClickListener() {
@@ -296,6 +301,19 @@ public class BaseQueryTest {
                 if (Globals.g_User_Logon_Model != null) {
                     Globals.g_User_Logon_Model.setRecommend(null);
                 }
+            }
+        });
+
+        radarPushBtn.setText("send a Radar Push in 5s");
+        radarPushBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                Intent radarPushIntent = new Intent(RadarReceiver.ACTION_PULL);
+                Calendar next = Calendar.getInstance();
+                next.setTimeInMillis(System.currentTimeMillis());
+                next.add(Calendar.SECOND, 5);
+                Alarms.enableAlarm(activity, next.getTimeInMillis(), radarPushIntent);
             }
         });
         

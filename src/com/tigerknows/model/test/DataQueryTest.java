@@ -689,13 +689,13 @@ public class DataQueryTest {
         data.put(Message.FIELD_MESSAGE_ID, 10);
         data.put(Message.FIELD_CITY_ID, "1");
         data.put(Message.FIELD_EXPIRY_DATE, "2013-01-03");
-        data.put(Message.FIELD_TYPE, Message.TYPE_FILM);
-        data.put(Message.FIELD_POI_UID, "FIELD_POI_UID");
-        data.put(Message.FIELD_POI_NAME, "FIELD_POI_NAME");
-        data.put(Message.FIELD_POI_ADDRESS, "FIELD_POI_ADDRESS");
-        data.put(Message.FIELD_POI_DATETIME, "2013-01-03");
-        data.put(Message.FIELD_PRODUCT_DOWNLOAD, "http://www.tigerknows.com");
-        data.put(Message.FIELD_PRODUCT_DESCRIPTION, "FIELD_PRODUCT_DESCRIPTION");
+        data.put(Message.FIELD_MSG_TYPE, Message.TYPE_FILM);
+        data.put(Message.PulledDynamicPOI.FIELD_MASTER_POI_UID, "FIELD_POI_UID");
+        data.put(Message.PulledDynamicPOI.FIELD_POI_NAME, "FIELD_POI_NAME");
+        data.put(Message.PulledDynamicPOI.FIELD_POI_ADDRESS, "FIELD_POI_ADDRESS");
+        data.put(Message.PulledDynamicPOI.FIELD_POI_DATETIME, "2013-01-03");
+        data.put(Message.PulledProductMessage.FILED_PRODUCT_DOWNLOAD_URL, "http://www.tigerknows.com");
+        data.put(Message.PulledProductMessage.FIELD_PRODUCT_DESCRIPTION, "FIELD_PRODUCT_DESCRIPTION");
         return data;
     }
 }
