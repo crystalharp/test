@@ -1,5 +1,7 @@
 package com.tigerknows.model;
 
+import java.util.HashMap;
+
 import com.decarta.android.exception.APIException;
 import com.tigerknows.model.xobject.XMap;
 
@@ -42,44 +44,252 @@ public class PullMessage extends XMapData {
         public static final byte FIELD_MESSAGE_ID = 0x00;
 
         // 0x01  x_int  #适推优先级。 10，20为产品类消息；30，40，50为动态poi类消息 
-        public static final byte FIELD_TYPE = 0x01;
+        public static final byte FIELD_MSG_TYPE = 0x01;
 
         // 0x02  x_string  cityId  
         public static final byte FIELD_CITY_ID = 0x02;
 
         // 0x03  x_string  有效期的截止时间  
         public static final byte FIELD_EXPIRY_DATE = 0x03;
+        
+        // 0x10  x_string  动态poi消息时有效，表示动态poi的uid。  
+        public static final byte FIELD_POI_INFO = 0x10;
+        
+        public static class PulledDynamicPOI extends XMapData implements Parcelable {
+
+            // 0x01	 主动态POI的dty
+            public static final byte FIELD_MASTER_POI_TYPE = 0x01;
+            
+            // 0x02	 主动态POI的uid
+            public static final byte FIELD_MASTER_POI_UID = 0x02;
+            
+            // 0x03	 从动态POI的dty
+            public static final byte FIELD_SLAVE_POI_TYPE = 0x03;
+
+            // 0x04 从动态POI的uid
+            public static final byte FIELD_SLAVE_POI_UID = 0x04;
+            
+            // 0x10	 动态POI的名称（以下三项都是指显示数据时的名称/时间/地点
+            public static final byte FIELD_POI_NAME = 0x10;
+
+            // 0x11	 动态POI的时间， 目前时间这项没什么用  
+            public static final byte FIELD_POI_DATETIME = 0x11;
+            
+            // 0x12	 动态POI的地点， 目前地点这项没什么用
+            public static final byte FIELD_POI_ADDRESS = 0x12;
+
+            private long masterType;
+            private String masterUID;
+            private long slaveType;
+            private String slaveUID;
+            private String name;
+            private String dateTime;
+            private String address;
+            
+            public PulledDynamicPOI(XMap data) throws APIException{
+            	super(data);
+            	
+            	if (this.data.containsKey(FIELD_MASTER_POI_TYPE)) {
+            		this.masterType = this.data.getInt(FIELD_MASTER_POI_TYPE);
+            	}
+            	
+                if (this.data.containsKey(FIELD_MASTER_POI_UID)) {
+                    this.masterUID = this.data.getString(FIELD_MASTER_POI_UID);
+                }
+                
+                if (this.data.containsKey(FIELD_SLAVE_POI_TYPE)) {
+                    this.slaveType = this.data.getInt(FIELD_SLAVE_POI_TYPE);
+                }
+
+                if (this.data.containsKey(FIELD_SLAVE_POI_UID)) {
+                    this.slaveUID = this.data.getString(FIELD_SLAVE_POI_UID);
+                }
+
+                if (this.data.containsKey(FIELD_POI_NAME)) {
+                    this.name = this.data.getString(FIELD_POI_NAME);
+                }
+
+                if (this.data.containsKey(FIELD_POI_DATETIME)) {
+                    this.dateTime = this.data.getString(FIELD_POI_DATETIME);
+                }
+
+                if (this.data.containsKey(FIELD_POI_ADDRESS)) {
+                    this.address = this.data.getString(FIELD_POI_ADDRESS);
+                }
+            }
+
+            public static final Parcelable.Creator<PulledDynamicPOI> CREATOR
+		            = new Parcelable.Creator<PulledDynamicPOI>() {
+		        public PulledDynamicPOI createFromParcel(Parcel in) {
+		            return new PulledDynamicPOI(in);
+		        }
+		
+		        public PulledDynamicPOI[] newArray(int size) {
+		            return new PulledDynamicPOI[size];
+		        }
+		    };
+		    
+
+			public long getMasterType() {
+				return masterType;
+			}
+
+			public void setMasterType(long masterType) {
+				this.masterType = masterType;
+			}
+
+			public String getMasterUID() {
+				return masterUID;
+			}
+
+			public void setMasterUID(String masterUID) {
+				this.masterUID = masterUID;
+			}
+			
+			public long getSlaveType() {
+				return slaveType;
+			}
+			
+			public void setSlaveType(long slaveType) {
+				this.slaveType = slaveType;
+			}
+
+			public String getSlaveUID() {
+				return slaveUID;
+			}
+
+			public void setSlaveUID(String slaveUID) {
+				this.slaveUID = slaveUID;
+			}
+
+			public String getName() {
+				return name;
+			}
+
+			public void setName(String name) {
+				this.name = name;
+			}
+
+			public String getDateTime() {
+				return dateTime;
+			}
+
+			public void setDateTime(String dateTime) {
+				this.dateTime = dateTime;
+			}
+
+			public String getAddress() {
+				return address;
+			}
+
+			public void setAddress(String address) {
+				this.address = address;
+			}
+
+			@Override
+			public int describeContents() {
+				return 0;
+			}
+
+            private PulledDynamicPOI(Parcel in) {
+            	masterType = in.readLong();
+                masterUID = in.readString();
+                slaveType = in.readLong();
+                slaveUID = in.readString();
+                name = in.readString();
+                dateTime = in.readString();
+                address = in.readString();
+            }
+            
+			@Override
+			public void writeToParcel(Parcel dest, int flags) {
+				dest.writeLong(masterType);
+				dest.writeString(masterUID);
+	            dest.writeLong(slaveType);  
+	            dest.writeString(slaveUID);  
+	            dest.writeString(name);  
+	            dest.writeString(dateTime);  
+	            dest.writeString(address);
+			}
+            
+        }
 
         // 0x10  x_string  动态poi消息时有效，表示动态poi的uid。  
-        public static final byte FIELD_POI_UID = 0x10;
+        public static final byte FIELD_PRODUCT_MESSAGE = 0x11;
 
-        // 0x11  x_string  动态poi消息时有效，表示动态poi的名称。  
-        public static final byte FIELD_POI_NAME = 0x11;
+        public static class PulledProductMessage extends XMapData implements Parcelable{
 
-        // 0x12  x_string  动态poi消息时有效，表示动态poi的时间。  
-        public static final byte FIELD_POI_DATETIME = 0x12;
+        	public static final byte FILED_PRODUCT_DOWNLOAD_URL = 0x01;
+        	public static final byte FIELD_PRODUCT_DESCRIPTION = 0x02;
+        	
+        	private String downloadUrl;
+        	private String description;
+        	
+            public static final Parcelable.Creator<PulledProductMessage> CREATOR
+		            = new Parcelable.Creator<PulledProductMessage>() {
+		        public PulledProductMessage createFromParcel(Parcel in) {
+		            return new PulledProductMessage(in);
+		        }
+		
+		        public PulledProductMessage[] newArray(int size) {
+		            return new PulledProductMessage[size];
+		        }
+		    };
+		    
+			@Override
+			public int describeContents() {
+				return 0;
+			}
 
-        // 0x13  x_string  动态poi消息时有效，表示动态poi的地点。  
-        public static final byte FIELD_POI_ADDRESS= 0x13;
+	        private PulledProductMessage(XMap data) {
+	        	
+	            if (this.data.containsKey(FILED_PRODUCT_DOWNLOAD_URL)) {
+	                this.downloadUrl = this.data.getString(FILED_PRODUCT_DOWNLOAD_URL);
+	            }
+	            
+	            if (this.data.containsKey(FIELD_PRODUCT_DESCRIPTION)) {
+	                this.description = this.data.getString(FIELD_PRODUCT_DESCRIPTION);
+	            }
+	            
+	        }
 
-        // 0x30  x_string  产品升级推送消息时有效，表示下载链接。  
-        public static final byte FIELD_PRODUCT_DOWNLOAD = 0x30;
+	        private PulledProductMessage(Parcel in) {
+	        	downloadUrl = in.readString();
+	        	description = in.readString();
+	        }
+	        
+			@Override
+			public void writeToParcel(Parcel dest, int flags) {
+				dest.writeString(downloadUrl);
+				dest.writeString(description);
+			}
 
-        // 0x31  x_string  产品类消息时有效，表示适推模板/消息描述。    
-        public static final byte FIELD_PRODUCT_DESCRIPTION = 0x31;     
+			public String getDownloadUrl() {
+				return downloadUrl;
+			}
+
+			public void setDownloadUrl(String downloadUrl) {
+				this.downloadUrl = downloadUrl;
+			}
+
+			public String getDescription() {
+				return description;
+			}
+
+			public void setDescription(String description) {
+				this.description = description;
+			}
+
+        }  
 
         private long id;
         private long type;
         private int cityId;
         private String expiryDate;
-        private String poiUid;
-        private String poiName;
-        private String poiDateTime;
-        private String poiAddress;
-        private String productDownload;
-        private String productDescription;
+        private PulledDynamicPOI dynamicPOI;
+        private PulledProductMessage productMsg;
         
-        public Message() {
+		public Message() {
         }
 
         public Message(XMap data) throws APIException {
@@ -89,8 +299,25 @@ public class PullMessage extends XMapData {
                 this.id = this.data.getInt(FIELD_MESSAGE_ID);
             }
             
-            if (this.data.containsKey(FIELD_TYPE)) {
-                this.type = this.data.getInt(FIELD_TYPE);
+            if (this.data.containsKey(FIELD_MSG_TYPE)) {
+                this.type = this.data.getInt(FIELD_MSG_TYPE);
+                
+                switch ((int)this.type) {
+					case TYPE_HOLIDAY:
+					case TYPE_FILM:
+					case TYPE_INTERVAL:
+	                	dynamicPOI = new PulledDynamicPOI(this.data.getXMap(FIELD_POI_INFO));
+						break;
+	
+					case TYPE_PRODUCT_UPGRADE:
+					case TYPE_PRODUCT_INFOMATION:
+						productMsg = new PulledProductMessage(this.data.getXMap(FIELD_PRODUCT_MESSAGE));
+						break;
+	
+					default:
+						break;
+				}
+                
             }
             
             if (this.data.containsKey(FIELD_CITY_ID)) {
@@ -106,29 +333,6 @@ public class PullMessage extends XMapData {
                 expiryDate = this.data.getString(FIELD_EXPIRY_DATE);
             }
             
-            if (this.data.containsKey(FIELD_POI_UID)) {
-                this.poiUid = this.data.getString(FIELD_POI_UID);
-            }
-            
-            if (this.data.containsKey(FIELD_POI_NAME)) {
-                this.poiName = this.data.getString(FIELD_POI_NAME);
-            }
-            
-            if (this.data.containsKey(FIELD_POI_DATETIME)) {
-                this.poiDateTime = this.data.getString(FIELD_POI_DATETIME);
-            }
-            
-            if (this.data.containsKey(FIELD_POI_ADDRESS)) {
-                this.poiAddress = this.data.getString(FIELD_POI_ADDRESS);
-            }
-            
-            if (this.data.containsKey(FIELD_PRODUCT_DOWNLOAD)) {
-                this.productDownload = this.data.getString(FIELD_PRODUCT_DOWNLOAD);
-            }
-            
-            if (this.data.containsKey(FIELD_PRODUCT_DESCRIPTION)) {
-                this.productDescription = this.data.getString(FIELD_PRODUCT_DESCRIPTION);
-            }
         }
 
         public long getId() {
@@ -163,70 +367,22 @@ public class PullMessage extends XMapData {
             this.expiryDate = expiryDate;
         }
 
-        public String getPoiUid() {
-            return poiUid;
-        }
+        public PulledDynamicPOI getDynamicPOI() {
+			return dynamicPOI;
+		}
 
-        public void setPoiUid(String poiUid) {
-            this.poiUid = poiUid;
-        }
+		public void setDynamicPOI(PulledDynamicPOI dynamicPOI) {
+			this.dynamicPOI = dynamicPOI;
+		}
 
-        public String getPoiName() {
-            return poiName;
-        }
+		public PulledProductMessage getProductMsg() {
+			return productMsg;
+		}
 
-        public void setPoiName(String poiName) {
-            this.poiName = poiName;
-        }
+		public void setProductMsg(PulledProductMessage productMsg) {
+			this.productMsg = productMsg;
+		}
 
-        public String getPoiDateTime() {
-            return poiDateTime;
-        }
-
-        public void setPoiDateTime(String poiDateTime) {
-            this.poiDateTime = poiDateTime;
-        }
-
-        public String getPoiAddress() {
-            return poiAddress;
-        }
-
-        public void setPoiAddress(String poiAddress) {
-            this.poiAddress = poiAddress;
-        }
-
-        public String getProductDownload() {
-            return productDownload;
-        }
-
-        public void setProductDownload(String productDownload) {
-            this.productDownload = productDownload;
-        }
-
-        public String getProductDescription() {
-            return productDescription;
-        }
-
-        public void setProductDescription(String productDescription) {
-            this.productDescription = productDescription;
-        }
-
-        public int describeContents() {
-            return 0;
-        }
-
-        public void writeToParcel(Parcel out, int flags) {
-            out.writeLong(id);
-            out.writeLong(type);
-            out.writeInt(cityId);
-            out.writeString(expiryDate);
-            out.writeString(poiUid);
-            out.writeString(poiName);  
-            out.writeString(poiDateTime);  
-            out.writeString(poiAddress);  
-            out.writeString(productDownload);  
-            out.writeString(productDescription);  
-        }
 
         public static final Parcelable.Creator<Message> CREATOR
                 = new Parcelable.Creator<Message>() {
@@ -239,19 +395,27 @@ public class PullMessage extends XMapData {
             }
         };
         
+        public int describeContents() {
+        	return 0;
+        }
+        
         private Message(Parcel in) {
             id = in.readLong();
             type = in.readLong();
             cityId = in.readInt();
             expiryDate = in.readString();
-            poiUid = in.readString();
-            poiName = in.readString();
-            poiDateTime = in.readString();
-            poiAddress = in.readString();
-            productDownload = in.readString();
-            productDescription = in.readString();
+            dynamicPOI = in.readParcelable(null);
+            productMsg = in.readParcelable(null);
         }
-        
+
+        public void writeToParcel(Parcel out, int flags) {
+            out.writeLong(id);
+            out.writeLong(type);
+            out.writeInt(cityId);
+            out.writeString(expiryDate);
+            out.writeParcelable(this.dynamicPOI, flags);
+            out.writeParcelable(this.productMsg, flags);
+        }
     }
 
     private long total;

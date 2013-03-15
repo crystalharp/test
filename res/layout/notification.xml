@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     >
@@ -7,6 +7,7 @@
         android:id="@+id/icon_imv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_gravity="center_vertical"
         android:src="@drawable/icon"
         android:gravity="center"
@@ -15,6 +16,33 @@
         android:id="@+id/text_txv"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/icon_imv"
+        android:layout_marginTop="8dp"
+        android:textSize="16sp"
         android:text="@string/app_name"
         />
-</LinearLayout>
+    
+    <TextView
+        android:id="@+id/text2_txv"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/icon_imv"
+        android:layout_below="@id/text_txv"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:textSize="14sp"
+        android:text="@string/app_name"
+        />
+    
+    
+    <TextView
+        android:id="@+id/time_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignBaseline="@id/text_txv"
+        android:layout_marginTop="8dp"
+        android:text="@string/app_name"
+        />
+    
+</RelativeLayout>
