@@ -8,12 +8,15 @@
 
 package com.tigerknows.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.xobject.XMap;
 
-public class Yanchu extends BaseData {
+public class Yanchu extends BaseData implements Parcelable{
 
     public static final String NEED_FILELD = "0001041407080a0b0c0f1012191a";
     
@@ -373,5 +376,75 @@ public class Yanchu extends BaseData {
     
     public Position getPosition() {
         return position;
-    } 
+    }
+
+    public Yanchu(Parcel in){
+		uid = in.readString();
+		name = in.readString();
+		cityId = in.readString();
+		pictures = in.readParcelable(null);
+		picturesDetail = in.readParcelable(null);
+		description = in.readString();
+		linkUid = in.readString();
+		x = in.readLong();
+		y = in.readLong();
+		timeInfo = in.readString();
+		timeDesc = in.readString();
+		price = in.readString();
+		contactTel = in.readString();
+		placeName = in.readString();
+		address = in.readString();
+		url = in.readString();
+		adminname = in.readString();
+		areaname = in.readString();
+		source = in.readString();
+		orderTel = in.readString();
+		distance = in.readString();
+		position = in.readParcelable(null);
+    	
+    }
+
+    public static final Parcelable.Creator<Yanchu> CREATOR
+		    = new Parcelable.Creator<Yanchu>() {
+		public Yanchu createFromParcel(Parcel in) {
+		    return new Yanchu(in);
+		}
+		
+		public Yanchu[] newArray(int size) {
+		    return new Yanchu[size];
+		}
+	};
+	
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString( uid);
+		dest.writeString(name);
+		dest.writeString(cityId);
+		dest.writeParcelable(pictures, flags);
+		dest.writeParcelable(picturesDetail, flags);
+		dest.writeString(description);
+		dest.writeString(linkUid);
+		dest.writeLong(x);
+		dest.writeLong(y);
+		dest.writeString(timeInfo);
+		dest.writeString(timeDesc);
+		dest.writeString(price);
+		dest.writeString(contactTel);
+		dest.writeString(placeName);
+		dest.writeString(address);
+		dest.writeString(url);
+		dest.writeString(adminname);
+		dest.writeString(areaname);
+		dest.writeString(source);
+		dest.writeString(orderTel);
+		dest.writeString(distance);
+		dest.writeParcelable(position, flags);
+	}
+
 }

@@ -8,6 +8,9 @@
 
 package com.tigerknows.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.tigerknows.TKConfig;
@@ -17,7 +20,7 @@ import com.tigerknows.model.xobject.XMap;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Yingxun extends BaseData {
+public class Yingxun extends BaseData implements Parcelable {
 
     public static final String NEED_FILELD = "20262728292a2b2c";
         
@@ -181,7 +184,7 @@ public class Yingxun extends BaseData {
         return poi;
     }
     
-    public static class Changci extends BaseData {
+    public static class Changci extends BaseData implements Parcelable{
 
         public static final String NEED_FILELD = "40414243";
         
@@ -297,6 +300,40 @@ public class Yingxun extends BaseData {
         public long getOption() {
             return option;
         }
+        
+        public Changci(Parcel in){
+			uid = in.readString();
+			yingxUid = in.readString();
+			startTime = in.readString();
+			version = in.readString();
+			option = in.readLong();
+        }
+
+        public static final Parcelable.Creator<Changci> CREATOR
+    		    = new Parcelable.Creator<Changci>() {
+    		public Changci createFromParcel(Parcel in) {
+    		    return new Changci(in);
+    		}
+    		
+    		public Changci[] newArray(int size) {
+    		    return new Changci[size];
+    		}
+    	};
+
+		@Override
+		public int describeContents() {
+			return 0;
+		}
+
+		@Override
+		public void writeToParcel(Parcel dest, int flags) {
+			dest.writeString(uid);
+			dest.writeString(yingxUid);
+			dest.writeString(startTime);
+			dest.writeString(version);
+			dest.writeLong(option);
+		}
+		
     }
 
     public String getUid() {
@@ -410,5 +447,81 @@ public class Yingxun extends BaseData {
     public int getChangciAfterTomorrow() {
         return changciAfterTomorrow;
     }
+
+    public Yingxun(Parcel in){
+		uid = in.readString();
+		cityId = in.readString();
+		linkUid = in.readString();
+		movieUid = in.readString();
+		adminname = in.readString();
+		areaname = in.readString();
+		x = in.readLong();
+		y = in.readLong();
+		name = in.readString();
+		address = in.readString();
+		phone = in.readString();
+		distance = in.readString();
+		changciList = new ArrayList<Changci>();
+		in.readList(changciList, null);
+		position = in.readParcelable(null);
+		changciOption = in.readInt();
+		changciToday = in.readInt();
+		changciTomorrow = in.readInt();
+		changciAfterTomorrow = in.readInt();
+		
+    }
+
+    public static final Parcelable.Creator<Yingxun> CREATOR
+		    = new Parcelable.Creator<Yingxun>() {
+		public Yingxun createFromParcel(Parcel in) {
+		    return new Yingxun(in);
+		}
+		
+		public Yingxun[] newArray(int size) {
+		    return new Yingxun[size];
+		}
+	};
+    
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(uid);
+		dest.writeString(cityId);
+		dest.writeString(linkUid);
+		dest.writeString(movieUid);
+		dest.writeString(adminname);
+		dest.writeString(areaname);
+		dest.writeLong(x);
+		dest.writeLong(y);
+		dest.writeString(name);
+		dest.writeString(address);
+		dest.writeString(phone);
+		dest.writeString(distance);
+		dest.writeList(changciList);
+		dest.writeParcelable(position, flags);
+		dest.writeInt(changciOption);
+		dest.writeInt(changciToday);
+		dest.writeInt(changciTomorrow);
+		dest.writeInt(changciAfterTomorrow);
+		
+		//!!! Here poi is ignored!
+	}
+
+	@Override
+	public String toString() {
+		return "Yingxun [uid=" + uid + ", cityId=" + cityId + ", linkUid="
+				+ linkUid + ", movieUid=" + movieUid + ", adminname="
+				+ adminname + ", areaname=" + areaname + ", x=" + x + ", y="
+				+ y + ", name=" + name + ", address=" + address + ", phone="
+				+ phone + ", distance=" + distance + ", changciList="
+				+ changciList + ", position=" + position + ", poi=" + poi
+				+ ", changciOption=" + changciOption + ", changciToday="
+				+ changciToday + ", changciTomorrow=" + changciTomorrow
+				+ ", changciAfterTomorrow=" + changciAfterTomorrow + "]";
+	}
     
 }

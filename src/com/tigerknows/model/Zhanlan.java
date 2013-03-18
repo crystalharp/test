@@ -8,12 +8,15 @@
 
 package com.tigerknows.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.xobject.XMap;
 
-public class Zhanlan extends BaseData {
+public class Zhanlan extends BaseData implements Parcelable{
     
     public static final String NEED_FILELD = "0001041407080a0b0c0f101219";
     
@@ -355,4 +358,89 @@ public class Zhanlan extends BaseData {
     public Position getPosition() {
         return position;
     }
+
+    public Zhanlan(Parcel in){
+    	uid = in.readString();
+		name = in.readString();
+		cityId = in.readString();
+		pictures = in.readParcelable(null);
+		picturesDetail = in.readParcelable(null);
+		description = in.readString();
+		linkUid = in.readString();
+		x = in.readLong();
+		y = in.readLong();
+		timeInfo = in.readString();
+		timeDesc = in.readString();
+		price = in.readString();
+		contact_tel = in.readString();
+		placeName = in.readString();
+		address = in.readString();
+		hot = in.readLong();
+		url = in.readString();
+		adminname = in.readString();
+		areaname = in.readString();
+		source = in.readString();
+		distance = in.readString();
+		position = in.readParcelable(null);
+    }
+
+    public static final Parcelable.Creator<Zhanlan> CREATOR
+		    = new Parcelable.Creator<Zhanlan>() {
+		public Zhanlan createFromParcel(Parcel in) {
+		    return new Zhanlan(in);
+		}
+		
+		public Zhanlan[] newArray(int size) {
+		    return new Zhanlan[size];
+		}
+	};
+	
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(uid);
+		dest.writeString(name);
+		dest.writeString(cityId);
+		dest.writeParcelable(pictures, flags);
+		dest.writeParcelable(picturesDetail, flags);
+		dest.writeString(description);
+		dest.writeString(linkUid);
+		dest.writeLong(x);
+		dest.writeLong(y);
+		dest.writeString(timeInfo);
+		dest.writeString(timeDesc);
+		dest.writeString(price);
+		dest.writeString(contact_tel);
+		dest.writeString(placeName);
+		dest.writeString(address);
+		dest.writeLong(hot);
+		dest.writeString(url);
+		dest.writeString(adminname);
+		dest.writeString(areaname);
+		dest.writeString(source);
+		dest.writeString(distance);
+		dest.writeParcelable(position, flags);
+	}
+
+	
+	@Override
+	public String toString() {
+		return "Zhanlan [uid=" + uid + ", name=" + name + ", cityId=" + cityId
+				+ ", pictures=" + pictures + ", picturesDetail="
+				+ picturesDetail + ", description=" + description
+				+ ", linkUid=" + linkUid + ", x=" + x + ", y=" + y
+				+ ", timeInfo=" + timeInfo + ", timeDesc=" + timeDesc
+				+ ", price=" + price + ", contact_tel=" + contact_tel
+				+ ", placeName=" + placeName + ", address=" + address
+				+ ", hot=" + hot + ", url=" + url + ", adminname=" + adminname
+				+ ", areaname=" + areaname + ", source=" + source
+				+ ", distance=" + distance + ", position=" + position
+				+ ", poi=" + poi + "]";
+	}
+	
+	
 }

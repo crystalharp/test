@@ -8,10 +8,14 @@
 
 package com.tigerknows.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.decarta.android.exception.APIException;
+import com.tigerknows.model.PullMessage.Message;
 import com.tigerknows.model.xobject.XMap;
 
-public class Dianying extends BaseData {
+public class Dianying extends BaseData implements Parcelable{
     
     public static final String NEED_FILELD = "000102030414060708090a0b0c0d20262728292a2b2c";
     
@@ -306,4 +310,66 @@ public class Dianying extends BaseData {
 	public POI getPOI() {
 		return yingxun.getPOI(POI.SOURCE_TYPE_DIANYING);
 	}
+
+	public Dianying(Parcel in){
+		uid = in.readString();
+		name = in.readString();
+		alias = in.readString();
+		tag = in.readString();
+		pictures = in.readParcelable(null);
+		picturesDetail = in.readParcelable(null);
+		description = in.readString();
+		startTime = in.readString();
+		length = in.readString();
+		language = in.readString();
+		rank = in.readLong();
+		country = in.readString();
+		director = in.readString();
+		mainActor = in.readString();
+		num = in.readLong();
+		yingxun = in.readParcelable(null);
+		filterArea = in.readString();
+	}
+
+    public static final Parcelable.Creator<Dianying> CREATOR
+            = new Parcelable.Creator<Dianying>() {
+        public Dianying createFromParcel(Parcel in) {
+            return new Dianying(in);
+        }
+
+        public Dianying[] newArray(int size) {
+            return new Dianying[size];
+        }
+    };
+    
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(uid);
+		dest.writeString(name);
+		dest.writeString(alias);
+		dest.writeString(tag);
+		dest.writeParcelable(pictures, flags);
+		dest.writeParcelable(picturesDetail, flags);
+		dest.writeString(description);
+		dest.writeString(startTime);
+		dest.writeString(length);
+		dest.writeString(language);
+		dest.writeLong(rank);
+		dest.writeString(country);
+		dest.writeString(director);
+		dest.writeString(mainActor);
+		dest.writeLong(num);
+		dest.writeParcelable(yingxun, flags);
+		dest.writeString(filterArea);
+		
+		//!!! here data query is ignored!!
+		
+	}
+	
 }
