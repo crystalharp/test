@@ -676,8 +676,8 @@ public class DataQueryTest {
 
     public static XMap launchPullMessage() {
         XMap data = new XMap();
-        data.put(PullMessage.FIELD_MESSAGE_TOTAL, 1);
-        data.put(PullMessage.FIELD_NEXT_REQUEST_DATE, "2013-01-01");
+//        data.put(PullMessage.FIELD_MESSAGE_TOTAL, 1);
+        data.put(PullMessage.FIELD_REQUEST_INTERVAL_DAY, "1");
         data.put(PullMessage.FIELD_RECORD_MESSAGE_UPPER_LIMIT, 12);
         data.put(PullMessage.FIELD_RESPONSE_CODE, 200);
         data.put(PullMessage.FIELD_MESSAGE, launchMessage());

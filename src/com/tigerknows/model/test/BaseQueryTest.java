@@ -2,6 +2,7 @@ package com.tigerknows.model.test;
 
 import com.decarta.Globals;
 import com.decarta.android.map.MapView;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -314,6 +315,7 @@ public class BaseQueryTest {
                 next.setTimeInMillis(System.currentTimeMillis());
                 next.add(Calendar.SECOND, 5);
                 Alarms.enableAlarm(activity, next.getTimeInMillis(), radarPushIntent);
+                LogWrapper.d("PullService", "Radar Push send in 5 seconds");
             }
         });
         
