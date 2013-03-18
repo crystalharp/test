@@ -9,9 +9,18 @@ import android.content.Intent;
 
 import java.util.Calendar;
 
+/**
+ * 
+ * @author xupeng
+ * 这里是定时器的发起点，所有的定时器初始化均由AlarmInitReceiver接受到广播来启动，
+ * 所有定时器启动应该是发送广播来启动，而不要直接enableAlarm。
+ * 它所接受的广播类型在AndroidManifest.xml中
+ */
+
 public class AlarmInitReceiver extends BroadcastReceiver {
     
     static final String TAG = "AlarmInitReceiver";
+    public static final String ACTION_ALARM_INIT = "com.tigerknows.action.AlarmInit";
     
     public static boolean IS_WAITING_NETWORK_CHANGE = false;
     

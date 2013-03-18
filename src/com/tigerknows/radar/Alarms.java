@@ -1,6 +1,7 @@
 package com.tigerknows.radar;
 
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.TKConfig;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -21,8 +22,6 @@ public class Alarms {
     
     public static Calendar calculateAlarm(String alarm) {
         long currentTimeMillis = System.currentTimeMillis();
-        Calendar now = Calendar.getInstance();
-        now.setTimeInMillis(currentTimeMillis);
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(currentTimeMillis-1000);
         Date date = new Date(currentTimeMillis-1000);
@@ -37,45 +36,33 @@ public class Alarms {
                         date.getSeconds());
             } catch (Exception e) {
                 // TODO: handle exception
+                e.printStackTrace();
             }
         }
 
-        if (c.before(now)) {
-            now.add(Calendar.HOUR_OF_DAY, 1);
-            c = now;
-        }
-        LogWrapper.d(TAG, "calculateAlarm() " + c);
-        return c;
+        return calculateAlarm(c, 0);
     }
     
     /**
-     * Given an alarm in hours and minutes, return a time suitable for
-     * setting in AlarmManager.
-     * @param hour Always in 24 hour 0-23
-     * @param minute 0-59
-     * @param daysOfYear 0-31
+     * 给定一个calendar和推迟的天数，返回一个计算好的calendar。
+     * 被其他同名函数所调用，检查返回的时间不要迟于当下。
      */
-    public static Calendar calculateAlarm(int hour, int minute, int addDays) {
+    public static Calendar calculateAlarm(Calendar next, long addDays) {
 
-        // start with now
-        Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(System.currentTimeMillis());
-
-        int nowHour = c.get(Calendar.HOUR_OF_DAY);
-        int nowMinute = c.get(Calendar.MINUTE);
-
-        // if alarm is behind current time, advance one day
-        if (hour < nowHour  ||
-            hour == nowHour && minute <= nowMinute) {
-            c.add(Calendar.DAY_OF_YEAR, 1);
+        if (addDays > 0) {
+            next.add(Calendar.DAY_OF_YEAR, (int)addDays);
         }
-        c.set(Calendar.HOUR_OF_DAY, hour);
-        c.set(Calendar.MINUTE, minute);
-        c.set(Calendar.SECOND, 0);
-        c.set(Calendar.MILLISECOND, 0);
-
-        if (addDays > 0) c.add(Calendar.DAY_OF_YEAR, addDays);
-        return c;
+        
+        long currentTimeMillis = System.currentTimeMillis();
+        Calendar now = Calendar.getInstance();
+        now.setTimeInMillis(currentTimeMillis);
+        
+        if (next.before(now)) {
+            now.add(Calendar.HOUR_OF_DAY, 1);
+            next = now;
+        }
+        LogWrapper.d(TAG, "calculateAlarm() " + next);
+        return next;
     }
     
     /**
@@ -90,6 +77,10 @@ public class Alarms {
                 context.getSystemService(Context.ALARM_SERVICE);
 
         LogWrapper.d(TAG, "enableAlarm() atTime " + atTimeInMillis);
+        
+        TKConfig.setPref(context,
+                TKConfig.PREFS_RADAR_PULL_ALARM, 
+                Alarms.SIMPLE_DATE_FORMAT.format(atTimeInMillis));
 
         PendingIntent sender = PendingIntent.getBroadcast(
                 context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -120,5 +111,17 @@ public class Alarms {
         int second = rand.nextInt(60);
         time += hour + ":" + minute + ":" + second;
         return time;
+    }
+    
+    public static Calendar calculateRandomAlarmInNextDay(Calendar cal, int startHour, int endHour) {
+        Random rand = new Random(System.currentTimeMillis());
+        int hour = startHour + rand.nextInt(endHour - startHour);
+        int minute = rand.nextInt(60);
+        int second = rand.nextInt(60);
+        cal.add(Calendar.DAY_OF_YEAR, 1);
+        cal.set(Calendar.MINUTE, minute);
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.SECOND, second);
+        return cal;
     }
 }
