@@ -125,7 +125,7 @@ public final class DataQuery extends BaseQuery {
     public static final String SERVER_PARAMETER_MESSAGE_ID_LIST = "msgIds";
     
     // cityId  int  false  城市id，定位失败则不提交  
-    public static final String SERVER_PARAMETER_CITY_ID_FOR_PULL_MESSAGE = "cityId";
+    public static final String SERVER_PARAMETER_CITY_ID_FOR_PULL_MESSAGE = "c";
 
     // 评论版本 
     public static final String COMMENT_VERSION = "1";
@@ -569,6 +569,21 @@ public final class DataQuery extends BaseQuery {
                     requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DIRECTION, criteria.get(SERVER_PARAMETER_DIRECTION)));
                 }
             } else if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
+                if (criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY)) {
+                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_CITY, criteria.get(SERVER_PARAMETER_LOCATION_CITY)));
+                }
+                if (criteria.containsKey(SERVER_PARAMETER_MESSAGE_ID_LIST)) {
+                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_MESSAGE_ID_LIST, criteria.get(SERVER_PARAMETER_MESSAGE_ID_LIST)));
+                }
+                if (criteria.containsKey(SERVER_PARAMETER_LAST_PULL_DATE)) {
+                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LAST_PULL_DATE, criteria.get(SERVER_PARAMETER_LAST_PULL_DATE)));
+                }
+                if (criteria.containsKey(SERVER_PARAMETER_LOCATION_LONGITUDE)) {
+                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_LONGITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LONGITUDE)));
+                }
+                if (criteria.containsKey(SERVER_PARAMETER_LOCATION_LATITUDE)) {
+                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_LATITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LATITUDE)));
+                }
             } else {
                 throw APIException.wrapToMissingRequestParameterException("invalid data type.");
             }
