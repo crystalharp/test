@@ -18,7 +18,7 @@ public class Alarms {
     
     static final String TAG = "Alarms";
     
-    public static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     
     public static Calendar calculateAlarm(String alarm) {
         long currentTimeMillis = System.currentTimeMillis();
@@ -118,7 +118,7 @@ public class Alarms {
         int hour = startHour + rand.nextInt(endHour - startHour);
         int minute = rand.nextInt(60);
         int second = rand.nextInt(60);
-        cal.add(Calendar.DAY_OF_YEAR, 1);
+        cal = calculateAlarm(cal, 1);
         cal.set(Calendar.MINUTE, minute);
         cal.set(Calendar.HOUR_OF_DAY, hour);
         cal.set(Calendar.SECOND, second);

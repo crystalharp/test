@@ -25,9 +25,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.os.IBinder;
+import android.text.TextUtils;
 
 import java.util.Calendar;
 import java.util.Hashtable;
+import java.util.List;
 
 /**
  * 
@@ -41,6 +43,8 @@ public class PullService extends Service {
     static final String TAG = "PullService";
     static int fail = 0;
     final static int MaxFail = 3;
+    final static int requestStartHour = 9;
+    final static int requestEndHour = 21;
 
     @Override
     public void onCreate() {
@@ -56,6 +60,12 @@ public class PullService extends Service {
                 Calendar requestCal = Calendar.getInstance();
                 requestCal.setTimeInMillis(currentTimeMillis);
                 Calendar next = (Calendar) requestCal.clone();
+                //如果不在请求时间范围内，肯定是请求失败被推迟的定时器，推迟到第二天的随机时间再请求
+                if (requestCal.getTime().getHours() > requestEndHour ||requestCal.getTime().getHours() < requestStartHour) {
+                    next = Alarms.calculateRandomAlarmInNextDay(requestCal, requestStartHour, requestEndHour);
+                    exitService(next);
+                }
+                //TODO:普通失败，推迟一天
                 next.add(Calendar.MINUTE, 1);
 //                next.add(Calendar.HOUR_OF_DAY, 1);
                 
@@ -96,22 +106,28 @@ public class PullService extends Service {
                     DataQuery dataQuery = new DataQuery(context);
                     Hashtable<String, String> criteria = new Hashtable<String, String>();
                     String messageIdList = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, "");
+                    String lastSucceedTime = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_LAST_SUCCEED_TIME, "");
                     criteria.put(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_PULL_MESSAGE);
-                    criteria.put(DataQuery.SERVER_PARAMETER_MESSAGE_ID_LIST, messageIdList);
-//                    criteria.put(DataQuery.SERVER_PARAMETER_LAST_PULL_DATE, "");
                     criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_CITY, String.valueOf(locationCityInfo.getId()));
                     criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
                     criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
                     criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(position.getLon()));
                     criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(position.getLat()));
+                    criteria.put(DataQuery.SERVER_PARAMETER_MESSAGE_ID_LIST, messageIdList);
+                    if (!TextUtils.isEmpty(lastSucceedTime)) {
+                        criteria.put(DataQuery.SERVER_PARAMETER_LAST_PULL_DATE, lastSucceedTime);
+                    }
                     dataQuery.setup(criteria, currentCityInfo.getId());
                     dataQuery.query();
                     PullMessage pullMessage = dataQuery.getPullMessage();
-                    LogWrapper.d(TAG, "PullMessage:" + pullMessage);
                     if (pullMessage != null) {
-                        recordPullMessage(context, pullMessage, requestCal);
-                        next = null;
                         fail = 0;
+                        TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_LAST_SUCCEED_TIME, 
+                                Alarms.SIMPLE_DATE_FORMAT.format(requestCal.getTime()));
+                        next = recordPullMessage(context, pullMessage, requestCal);
+                        LogWrapper.d(TAG, "pull succeeded, fail = " + fail);
+                    } else {
+                        fail += 1;
                     }
                 }
                 
@@ -121,15 +137,18 @@ public class PullService extends Service {
         }).start();
     }
 
-    public void recordPullMessage(Context context, PullMessage pullMessage, Calendar requestCal) {
+    public Calendar recordPullMessage(Context context, PullMessage pullMessage, Calendar requestCal) {
         
         long recordMessageUpperLimit = pullMessage.getRecordMessageUpperLimit();
-        long nextRequestDate = pullMessage.getNextRequsetDate();
+        long requsetIntervalDays = pullMessage.getRequsetIntervalDays();
         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_UPPER_LIMIT, String.valueOf(pullMessage.getRecordMessageUpperLimit()));
         String messageIdList = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, "");
         String[] list = messageIdList.split("_");
         StringBuilder s = new StringBuilder();
-        Message message = pullMessage.getMessage();
+        List<Message> messageList = pullMessage.getMessageList();
+        
+        //由于产品还没想好怎么处理多条数据，目前message只显示列表中第一条。
+        Message message = messageList.get(0);
         if (message != null) {
             s.append(message.getId());
             TKNotificationManager.notify(context, message);
@@ -142,13 +161,7 @@ public class PullService extends Service {
         }
         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, s.toString());
         
-        Intent pullIntent = new Intent(RadarReceiver.ACTION_PULL);
-        Alarms.disableAlarm(context, pullIntent);
-        
-        Calendar next = Alarms.calculateAlarm(requestCal, nextRequestDate);
-        Alarms.enableAlarm(context, next.getTimeInMillis(), pullIntent);
-        LogWrapper.d(TAG, "nextDate:" + nextRequestDate);
-        LogWrapper.d(TAG, "in recordPullMessage, next alarm:" + next.getTime().toString());
+        return Alarms.calculateAlarm(requestCal, requsetIntervalDays);
     }
 
     @Override
@@ -162,19 +175,21 @@ public class PullService extends Service {
     }
     
     void exitService(Calendar next) {
-        fail += 1;
-        if (fail >= MaxFail) {
+        if (fail >= MaxFail || next == null) {
             fail = 0;
-            next = Alarms.calculateRandomAlarmInNextDay(next, 6, 22);
+            next = Alarms.calculateRandomAlarmInNextDay(next, requestStartHour, requestEndHour);
         }
+        
         Context context = getApplicationContext();
-        if (next != null) {
-            Intent intent = new Intent(RadarReceiver.ACTION_PULL);
-            Alarms.enableAlarm(context, next.getTimeInMillis(), intent);
-            LogWrapper.d(TAG, "fail=" + fail + " in ExitService, next alarm:" + next.getTime().toString());
+        Intent intent = new Intent(RadarReceiver.ACTION_PULL);
+        Alarms.disableAlarm(context, intent);
+        Alarms.enableAlarm(context, next.getTimeInMillis(), intent);
+        if (fail > 0) {
+            LogWrapper.d(TAG, "Pull failed " + fail + " times, next alarm:" + next.getTime().toLocaleString());
         } else {
-            LogWrapper.d(TAG, "do not have next alarm in ExitService");
+            LogWrapper.d(TAG, "Pull succeeded, next alarm:" + next.getTime().toLocaleString());
         }
+        
         Intent name = new Intent(context, PullService.class);
         stopService(name);
     }

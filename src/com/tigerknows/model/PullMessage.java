@@ -1,9 +1,10 @@
 package com.tigerknows.model;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.decarta.android.exception.APIException;
-import com.decarta.android.util.LogWrapper;
+import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 
 import android.os.Parcel;
@@ -19,8 +20,8 @@ public class PullMessage extends XMapData {
     // 0x01 String  请求状态描述
     public static final byte FIELD_RESPONSE_DESCRIPTION = 0x01;
 
-    // 0x01  x_int  下次请求间隔，单位为天 
-    public static final byte FIELD_REQUEST_INTERVAL_DAY = 0x02;
+    // 0x01  x_int  下次请求间隔时间，单位为天 
+    public static final byte FIELD_REQUEST_INTERVAL_DAYS = 0x02;
 
 
     // 0x02  x_int  客户端记录的msgId上限个数   
@@ -420,45 +421,42 @@ public class PullMessage extends XMapData {
         }
     }
 
-//    private long total;
     private long responseCode;
     private String responseDescription;
-    private long requestIntervalDay;
+    private long requestIntervalDays;
     private long recordMessageUpperLimit;
-    private Message message;
+    private List<Message> messageList;
     
     public PullMessage(XMap data) throws APIException {
         super(data);
-        int match = 0;
-        LogWrapper.d("conan", "newing PullMessage, data:" + data.toString());
 
         if (this.data.containsKey(FIELD_RESPONSE_CODE)) {
             this.responseCode = this.data.getInt(FIELD_RESPONSE_CODE);
-            match |= 0x1;
+        }
+        
+        if (this.data.containsKey(FIELD_MESSAGE)) {
+            messageList = new ArrayList<Message>();
+            @SuppressWarnings("unchecked")
+            XArray<XMap> xarray = (XArray<XMap>)this.data.getXArray(FIELD_MESSAGE);
+            if (xarray != null) {
+                for (int i = 0; i < xarray.size(); i++) {
+                    Message message = new Message(xarray.get(i));
+                    messageList.add(message);
+                }
+            }
         }
         
         if (this.data.containsKey(FIELD_RESPONSE_DESCRIPTION)) {
             this.responseDescription = this.data.getString(FIELD_RESPONSE_DESCRIPTION);
-            match |= 0x2;
         }
         
-        if (this.data.containsKey(FIELD_REQUEST_INTERVAL_DAY)) {
-            requestIntervalDay = this.data.getInt(FIELD_REQUEST_INTERVAL_DAY);
-            match |= 0x4;
+        if (this.data.containsKey(FIELD_REQUEST_INTERVAL_DAYS)) {
+            requestIntervalDays = this.data.getInt(FIELD_REQUEST_INTERVAL_DAYS);
         }
-        LogWrapper.d("conan", "match:" + match);
         
         if (this.data.containsKey(FIELD_RECORD_MESSAGE_UPPER_LIMIT)) {
             this.recordMessageUpperLimit = this.data.getInt(FIELD_RECORD_MESSAGE_UPPER_LIMIT);
-            match |= 0x8;
         }
-        LogWrapper.d("conan", "match:" + match);
-        
-        if (this.data.containsKey(FIELD_MESSAGE)) {
-            message = new Message(this.data.getXMap(FIELD_MESSAGE));
-            match |= 0x16;
-        }
-        LogWrapper.d("conan", "match:" + match);
     }
 
     public String getResponseDescription() {
@@ -469,12 +467,12 @@ public class PullMessage extends XMapData {
         this.responseDescription = responseDescription;
     }
 
-    public long getNextRequsetDate() {
-        return requestIntervalDay;
+    public long getRequsetIntervalDays() {
+        return requestIntervalDays;
     }
 
-    public void setNextRequsetDate(long requestIntervalDay) {
-        this.requestIntervalDay = requestIntervalDay;
+    public void setRequsetIntervalDays(long requestIntervalDays) {
+        this.requestIntervalDays = requestIntervalDays;
     }
 
     public long getResponseCode() {
@@ -493,12 +491,12 @@ public class PullMessage extends XMapData {
         this.recordMessageUpperLimit = recordMessageUpperLimit;
     }
 
-    public Message getMessage() {
-        return message;
+    public List<Message> getMessageList() {
+        return messageList;
     }
 
-    public void setMessage(Message message) {
-        this.message = message;
-    }
+//    public void setMessage(Message message) {
+//        this.message = message;
+//    }
     
 }
