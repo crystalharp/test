@@ -3,6 +3,7 @@ package com.tigerknows.model;
 import java.util.HashMap;
 
 import com.decarta.android.exception.APIException;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.model.xobject.XMap;
 
 import android.os.Parcel;
@@ -12,16 +13,17 @@ public class PullMessage extends XMapData {
     
     public static int RecordMessageUpperLimit = Integer.MAX_VALUE;
     
-    // 0x00  x_int  普通消息的个数。目前只能为0（本次请求没有消息推送）或1（本次请求有一个消息推送）     
-    public static final byte FIELD_MESSAGE_TOTAL = 0x00;
+    // 0x00  x_int  响应状态码，具体待定  
+    public static final byte FIELD_RESPONSE_CODE = 0x00;
+    
+    // 0x01 String  请求状态描述
+    public static final byte FIELD_RESPONSE_DESCRIPTION = 0x01;
 
-    // 0x01  x_string  下次请求日期，形如"2013-01-15" 
-    public static final byte FIELD_NEXT_REQUEST_DATE = 0x01;
+    // 0x01  x_int  下次请求间隔，单位为天 
+    public static final byte FIELD_REQUEST_INTERVAL_DAY = 0x02;
 
-    // 0x02  x_int  响应状态码，具体待定  
-    public static final byte FIELD_RESPONSE_CODE = 0x02;
 
-    // 0x03  x_int  客户端记录的msgId上限个数   
+    // 0x02  x_int  客户端记录的msgId上限个数   
     public static final byte FIELD_RECORD_MESSAGE_UPPER_LIMIT = 0x03;
 
     // 0x10  x_array<x_map>  #消息格式   
@@ -418,50 +420,61 @@ public class PullMessage extends XMapData {
         }
     }
 
-    private long total;
-    private String nextRequsetDate;
+//    private long total;
     private long responseCode;
+    private String responseDescription;
+    private long requestIntervalDay;
     private long recordMessageUpperLimit;
     private Message message;
     
     public PullMessage(XMap data) throws APIException {
         super(data);
+        int match = 0;
+        LogWrapper.d("conan", "newing PullMessage, data:" + data.toString());
 
-        if (this.data.containsKey(FIELD_MESSAGE_TOTAL)) {
-            this.total = this.data.getInt(FIELD_MESSAGE_TOTAL);
-        }
-        
-        if (this.data.containsKey(FIELD_NEXT_REQUEST_DATE)) {
-            nextRequsetDate = this.data.getString(FIELD_NEXT_REQUEST_DATE);
-        }
-        
         if (this.data.containsKey(FIELD_RESPONSE_CODE)) {
             this.responseCode = this.data.getInt(FIELD_RESPONSE_CODE);
+            match |= 0x1;
         }
+        
+        if (this.data.containsKey(FIELD_RESPONSE_DESCRIPTION)) {
+            this.responseDescription = this.data.getString(FIELD_RESPONSE_DESCRIPTION);
+            match |= 0x2;
+        }
+        
+        if (this.data.containsKey(FIELD_REQUEST_INTERVAL_DAY)) {
+            requestIntervalDay = this.data.getInt(FIELD_REQUEST_INTERVAL_DAY);
+            match |= 0x4;
+        }
+        LogWrapper.d("conan", "match:" + match);
         
         if (this.data.containsKey(FIELD_RECORD_MESSAGE_UPPER_LIMIT)) {
             this.recordMessageUpperLimit = this.data.getInt(FIELD_RECORD_MESSAGE_UPPER_LIMIT);
+            match |= 0x8;
         }
+        LogWrapper.d("conan", "match:" + match);
         
         if (this.data.containsKey(FIELD_MESSAGE)) {
             message = new Message(this.data.getXMap(FIELD_MESSAGE));
+            match |= 0x16;
         }
+        LogWrapper.d("conan", "match:" + match);
     }
 
-    public long getTotal() {
-        return total;
+    public String getResponseDescription() {
+        return responseDescription;
+    }
+    
+    public void setResponseDescription(String responseDescription) {
+        this.responseDescription = responseDescription;
     }
 
-    public void setTotal(long total) {
-        this.total = total;
+    public long getNextRequsetDate() {
+        return requestIntervalDay;
     }
 
-    public String getNextRequsetDate() {
-        return nextRequsetDate;
-    }
-
-    public void setNextRequsetDate(String nextRequsetDate) {
-        this.nextRequsetDate = nextRequsetDate;
+    public void setNextRequsetDate(long requestIntervalDay) {
+        this.requestIntervalDay = requestIntervalDay;
     }
 
     public long getResponseCode() {
