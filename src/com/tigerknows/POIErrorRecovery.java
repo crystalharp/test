@@ -196,6 +196,7 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
             case R.id.address_error_chb:
             case R.id.telephone_error_chb:
             case R.id.coordinate_error_chb:
+            	hideSoftInput();
                 mPOIRgp.check(R.id.base_infomation_error_rbt);
                 break;
             
@@ -203,6 +204,7 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
             case R.id.place_absent_error_rbt:
             case R.id.place_duplication_error_rbt:
             case R.id.other_error_rbt:
+            	hideSoftInput();
                 if (mPOIRgp.getCheckedRadioButtonId() != R.id.base_infomation_error_rbt) {
                     mNameErrorChb.setChecked(false);
                     mAddressErrorChb.setChecked(false);
