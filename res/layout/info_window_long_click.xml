@@ -10,6 +10,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_prompt_traffic_start_normal"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
         />
         
     <View android:layout_width="1dip"
@@ -17,6 +20,9 @@
         android:layout_height="fill_parent"
         android:id="@+id/sep1"
         android:layout_marginLeft="8dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="12dp"
         >
     </View>
     <RelativeLayout
@@ -24,8 +30,8 @@
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:orientation="vertical"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="8dp"
         android:layout_gravity="center_vertical"
         >
         
@@ -45,7 +51,10 @@
         android:background="@color/infowindow_split_line"
         android:layout_height="fill_parent"
         android:layout_width="1dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="6dp"
         android:layout_marginRight="8dp"
+        android:layout_marginBottom="12dp"
         >
     </View>
     <Button 
@@ -53,5 +62,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_prompt_traffic_end_normal"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         />
 </LinearLayout>

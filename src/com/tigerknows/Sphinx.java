@@ -225,6 +225,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private ViewGroup mInfoWindowTuangouList = null;
     private ViewGroup mInfoWindowTuangouDetail = null;
     private ViewGroup mInfoWindowYanchuList = null;
+    private ViewGroup mInfoWindowMessage = null;
     
     private Dialog mDialog = null;
     public void setDialog(Dialog dialog) {
@@ -1879,7 +1880,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
 
-    private void showInfoWindow(OverlayItem overlayItem) {
+    public void showInfoWindow(OverlayItem overlayItem) {
         
         if (overlayItem == null) {
         	return;
@@ -1986,7 +1987,21 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 infoWindow.setViewGroup(mInfoWindowPOI);
             } else {
-                infoWindow.setMessage(overlayItem.getMessage());
+                if (mInfoWindowMessage == null) {
+                    mInfoWindowMessage = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_message, null);
+                }
+                
+                TextView nameTxv=(TextView)mInfoWindowMessage.findViewById(R.id.name_txv);
+                
+                nameTxv.setText(poi.getName());
+                
+                int max = Globals.g_metrics.widthPixels - (int)(Globals.g_metrics.density*(96));
+                layoutInfoWindow(nameTxv, max);
+                
+                ViewGroup bodyView=(ViewGroup)mInfoWindowMessage.findViewById(R.id.body_view);
+                bodyView.setOnTouchListener(mInfoWindowBodyViewListener);
+                
+                infoWindow.setViewGroup(mInfoWindowMessage);
             }
         } else if (object instanceof Zhanlan || object instanceof Yanchu) {
             POI poi;

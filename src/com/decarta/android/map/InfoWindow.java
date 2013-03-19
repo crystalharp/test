@@ -47,6 +47,7 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYFloat;
+import com.tigerknows.R;
 
 /**
  * A Pin that gets attached to a Map object has a default, simple message for 
@@ -363,7 +364,8 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
     		float infoWindowHeight=ivg.getMeasuredHeight()+2*InfoWindow.INFO_BORDER_SIZE;
     		
     		RectF infoWindowRect=new RectF(screenXY.x-infoWindowWidth/2,
-    				screenXY.y-infoWindowHeight-InfoWindow.INFO_TRIANGLE_HEIGHT,screenXY.x+infoWindowWidth/2,screenXY.y-InfoWindow.INFO_TRIANGLE_HEIGHT);
+    				screenXY.y-infoWindowHeight,screenXY.x+infoWindowWidth/2,screenXY.y);
+//                    screenXY.y-infoWindowHeight-InfoWindow.INFO_TRIANGLE_HEIGHT,screenXY.x+infoWindowWidth/2,screenXY.y-InfoWindow.INFO_TRIANGLE_HEIGHT);
     		return infoWindowRect;
     	}
     	else{
@@ -426,8 +428,6 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
     	infoWindowRect.offset(screenXY.x, screenXY.y);
     	
     	float roundRadius=InfoWindow.INFO_ROUND_RADIUS*Globals.g_metrics.density;
-    	canvas.drawRoundRect(infoWindowRect, roundRadius, roundRadius, getInfoWindowInnerPaint());
-		canvas.drawRoundRect(infoWindowRect, roundRadius, roundRadius, infoWindowBorderP);
 		
 		if(type.equals(InfoWindow.InfoWindowType.VIEWGROUP) && viewGroup!=null){
 			Bitmap.Config config = Bitmap.Config.ARGB_4444;
@@ -436,6 +436,11 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 			
 			ViewGroup ivg=viewGroup;
 			if(changed){
+			    if (backgroundColor == BACKGROUND_COLOR_CLICKED) {
+			        ivg.setBackgroundResource(R.drawable.btn_bubble_focused);
+			    } else {
+			        ivg.setBackgroundResource(R.drawable.btn_bubble_normal);
+			    }
 				ivg.layout(0, 0, (int)(infoWindowRect.width()-2*InfoWindow.INFO_BORDER_SIZE), (int)(infoWindowRect.height()-2*InfoWindow.INFO_BORDER_SIZE));
 			}
 			ivg.draw(infoImageCanvas);
@@ -444,6 +449,8 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 			canvas.drawBitmap(vgBitmap,infoWindowRect.left+InfoWindow.INFO_BORDER_SIZE,infoWindowRect.top+InfoWindow.INFO_BORDER_SIZE,paint);
 		}
 		else if(type.equals(InfoWindow.InfoWindowType.TEXT) && message!=null){
+		    canvas.drawRoundRect(infoWindowRect, roundRadius, roundRadius, getInfoWindowInnerPaint());
+		    canvas.drawRoundRect(infoWindowRect, roundRadius, roundRadius, infoWindowBorderP);
 			float textOffsetY=InfoWindow.INFO_TEXTOFFSET_VERTICAL*Globals.g_metrics.density;
 	    	float textOffsetX=InfoWindow.INFO_TEXTOFFSET_HORIZONTAL*Globals.g_metrics.density;
 	    	
@@ -462,34 +469,34 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 					canvas.drawText(msg_line,(infoWindowRect.left+infoWindowRect.right)/2,infoWindowRect.top+textOffsetY+(i+0.8f)*(textSizeY),paint);
 				}
 			}
+			int x = (int)infoWindowRect.left+(int)((infoWindowRect.right-infoWindowRect.left)/2);
+			int y = (int)infoWindowRect.bottom-1;
+			
+			// Points of the triangle pointer on info window
+			
+			Point triangleTL = new Point(x-InfoWindow.INFO_TRIANGLE_WIDTH/2,y);        
+			Point triangleTR = new Point(x+InfoWindow.INFO_TRIANGLE_WIDTH/2,y);
+			Point triangleBC = new Point(x,y+InfoWindow.INFO_TRIANGLE_HEIGHT+1);
+			
+			// triangle background
+			Path triangleBGPath = new Path();
+			triangleBGPath.setFillType(Path.FillType.EVEN_ODD);
+			triangleBGPath.moveTo(triangleTL.x,triangleTL.y);
+			triangleBGPath.lineTo(triangleTR.x,triangleTR.y);
+			triangleBGPath.lineTo(triangleBC.x,triangleBC.y);
+			triangleBGPath.lineTo(triangleTL.x,triangleTL.y);
+			triangleBGPath.close();
+			canvas.drawPath(triangleBGPath, getInfoWindowInnerPaint());
+			
+			// triangle border
+			Path triangleBorderPath = new Path();
+			triangleBorderPath.setFillType(Path.FillType.EVEN_ODD);	    
+			triangleBorderPath.moveTo(triangleTL.x,triangleTL.y+1);	
+			triangleBorderPath.lineTo(triangleBC.x,triangleBC.y);
+			triangleBorderPath.lineTo(triangleTR.x,triangleTR.y+1);
+			canvas.drawPath(triangleBorderPath, infoWindowBorderP);
 		}
 		
-		int x = (int)infoWindowRect.left+(int)((infoWindowRect.right-infoWindowRect.left)/2);
-	    int y = (int)infoWindowRect.bottom-1;
-
-	    // Points of the triangle pointer on info window
-	    
-	    Point triangleTL = new Point(x-InfoWindow.INFO_TRIANGLE_WIDTH/2,y);        
-	    Point triangleTR = new Point(x+InfoWindow.INFO_TRIANGLE_WIDTH/2,y);
-	    Point triangleBC = new Point(x,y+InfoWindow.INFO_TRIANGLE_HEIGHT+1);
-
-	    // triangle background
-	    Path triangleBGPath = new Path();
-	    triangleBGPath.setFillType(Path.FillType.EVEN_ODD);
-	    triangleBGPath.moveTo(triangleTL.x,triangleTL.y);
-	    triangleBGPath.lineTo(triangleTR.x,triangleTR.y);
-	    triangleBGPath.lineTo(triangleBC.x,triangleBC.y);
-	    triangleBGPath.lineTo(triangleTL.x,triangleTL.y);
-	    triangleBGPath.close();
-	    canvas.drawPath(triangleBGPath, getInfoWindowInnerPaint());
-	    
-	    // triangle border
-	    Path triangleBorderPath = new Path();
-	    triangleBorderPath.setFillType(Path.FillType.EVEN_ODD);	    
-	    triangleBorderPath.moveTo(triangleTL.x,triangleTL.y+1);	
-	    triangleBorderPath.lineTo(triangleBC.x,triangleBC.y);
-	    triangleBorderPath.lineTo(triangleTR.x,triangleTR.y+1);
-	    canvas.drawPath(triangleBorderPath, infoWindowBorderP);
     	
 	    changed=false;
     } 
