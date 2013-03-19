@@ -64,12 +64,7 @@ public class Alarms {
         if (TextUtils.isEmpty(alarm) == false) {
             try {
                 date = SIMPLE_DATE_FORMAT.parse(alarm); 
-                c.set(date.getYear(),
-                        date.getMonth(),
-                        date.getDate(),
-                        date.getHours(),
-                        date.getMinutes(),
-                        date.getSeconds());
+                c.setTimeInMillis(date.getTime());
             } catch (Exception e) {
                 // TODO: handle exception
                 e.printStackTrace();
