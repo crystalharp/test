@@ -123,9 +123,6 @@ public final class DataQuery extends BaseQuery {
     
     // msgIds String false 客户端已收到的消息id，多个id之间用_分隔。如"1000_32762_33658"。首次请求时此项为空。 
     public static final String SERVER_PARAMETER_MESSAGE_ID_LIST = "msgIds";
-    
-    // cityId  int  false  城市id，定位失败则不提交  
-    public static final String SERVER_PARAMETER_CITY_ID_FOR_PULL_MESSAGE = "c";
 
     // 评论版本 
     public static final String COMMENT_VERSION = "1";
