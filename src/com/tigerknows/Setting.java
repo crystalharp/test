@@ -110,19 +110,18 @@ public class Setting extends BaseActivity {
     }
     
     private void switchRadarPush() {
-        String radarSwitch = TKConfig.getPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "");
-        if (radarSwitch.equals("on")) {
-            TKConfig.setPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "");
+        if (radarOn()) {
+            TKConfig.setPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "off");
         } else {
-            TKConfig.setPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "on");
+            TKConfig.setPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "");
             Intent pullIntent = new Intent(AlarmInitReceiver.ACTION_ALARM_INIT);
             mThis.sendBroadcast(pullIntent);
         }
-        LogWrapper.d("conan", "Radar status:" + TKConfig.getPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "failed"));
+        LogWrapper.d("conan", "Radar status:" + TKConfig.getPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "on"));
     }
     
     private boolean radarOn() {
-        return "on".equals(TKConfig.getPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, ""));
+        return TextUtils.isEmpty(TKConfig.getPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, ""));
     }
 
     protected void findViews() {
