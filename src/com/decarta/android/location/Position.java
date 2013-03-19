@@ -6,7 +6,6 @@
 
 package com.decarta.android.location;
 
-import com.tigerknows.model.Zhanlan;
 import com.tigerknows.service.TigerknowsLocationManager;
 
 import android.location.Location;
