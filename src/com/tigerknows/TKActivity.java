@@ -45,6 +45,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import com.tigerknows.widget.Toast;
+import com.weibo.sdk.android.sso.SsoHandler;
 
 /**
  * @author Peng Wenyue
@@ -134,6 +135,11 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         }
     };
     private ConnectivityBroadcastReceiver mConnectivityReceiver = new ConnectivityBroadcastReceiver();
+    
+    /**
+     * SsoHandler 仅当sdk支持sso时有效，
+     */
+    public SsoHandler mSsoHandler;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -524,6 +530,13 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {     
         super.onActivityResult(requestCode, resultCode, data);
+
+        /**
+         * 下面两个注释掉的代码，仅当sdk支持sso时有效，
+         */
+        if (mSsoHandler != null) {
+            mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+        }
     }    
     
     @Override

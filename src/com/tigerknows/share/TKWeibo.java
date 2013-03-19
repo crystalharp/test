@@ -252,7 +252,7 @@ public class TKWeibo implements RequestListener {
         ssoHandler.authorize(weiboAuthListener);
     }
     
-    public static void show(TKWeibo tkweibo, long uid) {
+    static void show(TKWeibo tkweibo, long uid) {
         if (tkweibo.showProgressDialog) {
             ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.DIALOG, tkweibo.activity.getString(R.string.doing_and_wait));
             postShowDialog(tkweibo.activity);
