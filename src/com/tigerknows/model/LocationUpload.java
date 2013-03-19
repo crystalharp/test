@@ -51,7 +51,7 @@ public class LocationUpload {
     
     private Calendar startTimeNetwork = Calendar.getInstance();
     
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss");
+    public static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss");
     
     private Location locationGps = new Location(LocationManager.GPS_PROVIDER);
     
@@ -160,7 +160,7 @@ public class LocationUpload {
                 if (data.length() > 0) {
                     data.append("|");
                 }
-                data.append(simpleDateFormat.format(Calendar.getInstance().getTime()));
+                data.append(SIMPLE_DATE_FORMAT.format(Calendar.getInstance().getTime()));
                 data.append(",");
                 data.append(CommonUtils.doubleKeep(location.getLatitude(), 6));
                 data.append(",");
