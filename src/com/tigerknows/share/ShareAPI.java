@@ -11,10 +11,8 @@ import android.app.Activity;
 import android.text.TextUtils;
 
 import com.tigerknows.TKConfig;
-import com.weibo.net.AccessToken;
-import com.weibo.net.Oauth2AccessTokenHeader;
-import com.weibo.net.Utility;
-import com.weibo.net.Weibo;
+import com.weibo.sdk.android.Oauth2AccessToken;
+import com.weibo.sdk.android.Weibo;
 
 public class ShareAPI {
 
@@ -90,12 +88,13 @@ public class ShareAPI {
 	private static void setToken(String shareType, UserAccessIdenty identity) {
 	    if (TYPE_WEIBO.equals(shareType)) {
 	        if (identity != null) {
-	            Utility.setAuthorization(new Oauth2AccessTokenHeader());
-                AccessToken accessToken = new AccessToken(identity.getAccessToken(), Weibo.getAppSecret());
+	            Oauth2AccessToken accessToken = new Oauth2AccessToken(identity.getAccessToken());
                 accessToken.setExpiresIn(identity.getExpireIn());
-                Weibo.getInstance().setAccessToken(accessToken);
+                TKWeibo.accessToken = accessToken;
+                Weibo.getInstance(TKWeibo.CONSUMER_KEY, TKWeibo.REDIRECT_URL).accessToken  = accessToken;
 	        } else {
-	            Weibo.getInstance().setAccessToken(null);
+                TKWeibo.accessToken = null;
+	            Weibo.getInstance(TKWeibo.CONSUMER_KEY, TKWeibo.REDIRECT_URL).accessToken = null;
 	        }
         } else if (TYPE_TENCENT.equals(shareType)) {
             if (identity != null) {
