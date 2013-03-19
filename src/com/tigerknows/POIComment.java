@@ -17,6 +17,7 @@ import com.tigerknows.model.DataOperation.CommentUpdateResponse;
 import com.tigerknows.share.ShareAPI;
 import com.tigerknows.share.TKTencentOpenAPI;
 import com.tigerknows.share.TKWeibo;
+import com.tigerknows.share.TKWeibo;
 import com.tigerknows.share.UserAccessIdenty;
 import com.tigerknows.share.ShareAPI.LoginCallBack;
 import com.tigerknows.share.TKTencentOpenAPI.AuthReceiver;
@@ -198,6 +199,8 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         }
     }
     
+    TKWeibo mTKWeibo = null;
+    
     private AuthDialogListener mSinaAuthDialogListener;
     
     private AuthReceiver mTencentAuthReceiver;
@@ -225,7 +228,8 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         findViews();
         setListener();
         
-        mSinaAuthDialogListener = new AuthDialogListener(mThis, new MyLoginCallBack(ShareAPI.TYPE_WEIBO));
+        mTKWeibo = new TKWeibo(mThis, true, false);
+        mSinaAuthDialogListener = new AuthDialogListener(mTKWeibo, new MyLoginCallBack(ShareAPI.TYPE_WEIBO));
         mTencentAuthReceiver = new AuthReceiver(mThis, new MyLoginCallBack(ShareAPI.TYPE_TENCENT));
         registerIntentReceivers();
         
@@ -804,7 +808,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                     mSyncSinaChb.setChecked(true);
                 } else {
                     mSyncSinaChb.setChecked(false);
-                    TKWeibo.login(mThis, mSinaAuthDialogListener);
+                    TKWeibo.authorize(mTKWeibo, mSinaAuthDialogListener);
                 }
             } else {
                 mSyncSinaChb.setChecked(false);

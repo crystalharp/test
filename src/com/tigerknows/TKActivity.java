@@ -32,6 +32,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import com.tigerknows.widget.Toast;
+import com.weibo.sdk.android.sso.SsoHandler;
 
 /**
  * @author Peng Wenyue
@@ -133,6 +135,11 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         }
     };
     private ConnectivityBroadcastReceiver mConnectivityReceiver = new ConnectivityBroadcastReceiver();
+    
+    /**
+     * SsoHandler 仅当sdk支持sso时有效，
+     */
+    public SsoHandler mSsoHandler;
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -322,8 +329,9 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                     && Globals.g_Session_Id != null
                     && Globals.g_User != null) {
                 Globals.clearSessionAndUser(activity);
+                Dialog dialog;
                 if (sourceUserHome == false) {
-                    CommonUtils.showNormalDialog(activity, 
+                    dialog = CommonUtils.showNormalDialog(activity, 
                             activity.getString(R.string.prompt), 
                             activity.getString(resId),
                             activity.getString(R.string.relogin),
@@ -338,15 +346,15 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                                         intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, targetViewIdLoginSuccess);
                                         intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, targetViewIdLoginFailed);
                                         activity.startActivityForResult(intent, R.id.activity_user_login);
-                                    	} else {
-                                		    if (cancelOnClickListener != null) {
-                                		    	cancelOnClickListener.onClick(arg0, id);
-                                    		    }
-                                    	}
+                                	} else {
+                            		    if (cancelOnClickListener != null) {
+                            		    	cancelOnClickListener.onClick(arg0, id);
+                                		}
+                                	}
                                 }
                             });
                 } else {
-                    CommonUtils.showNormalDialog(activity, 
+                    dialog = CommonUtils.showNormalDialog(activity, 
                             activity.getString(R.string.prompt), 
                             activity.getString(resId),
                             activity.getString(R.string.confirm),
@@ -364,6 +372,13 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                                 }
                             });
                 }
+                dialog.setOnCancelListener(new OnCancelListener() {
+                    
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        cancelOnClickListener.onClick(dialog, DialogInterface.BUTTON_NEGATIVE);
+                    }
+                });
             }
             return resId != R.id.app_name;
         }
@@ -515,6 +530,13 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {     
         super.onActivityResult(requestCode, resultCode, data);
+
+        /**
+         * 下面两个注释掉的代码，仅当sdk支持sso时有效，
+         */
+        if (mSsoHandler != null) {
+            mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+        }
     }    
     
     @Override
