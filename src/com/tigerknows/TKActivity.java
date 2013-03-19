@@ -32,6 +32,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
@@ -322,8 +323,9 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                     && Globals.g_Session_Id != null
                     && Globals.g_User != null) {
                 Globals.clearSessionAndUser(activity);
+                Dialog dialog;
                 if (sourceUserHome == false) {
-                    CommonUtils.showNormalDialog(activity, 
+                    dialog = CommonUtils.showNormalDialog(activity, 
                             activity.getString(R.string.prompt), 
                             activity.getString(resId),
                             activity.getString(R.string.relogin),
@@ -338,15 +340,15 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                                         intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, targetViewIdLoginSuccess);
                                         intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, targetViewIdLoginFailed);
                                         activity.startActivityForResult(intent, R.id.activity_user_login);
-                                    	} else {
-                                		    if (cancelOnClickListener != null) {
-                                		    	cancelOnClickListener.onClick(arg0, id);
-                                    		    }
-                                    	}
+                                	} else {
+                            		    if (cancelOnClickListener != null) {
+                            		    	cancelOnClickListener.onClick(arg0, id);
+                                		}
+                                	}
                                 }
                             });
                 } else {
-                    CommonUtils.showNormalDialog(activity, 
+                    dialog = CommonUtils.showNormalDialog(activity, 
                             activity.getString(R.string.prompt), 
                             activity.getString(resId),
                             activity.getString(R.string.confirm),
@@ -364,6 +366,13 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                                 }
                             });
                 }
+                dialog.setOnCancelListener(new OnCancelListener() {
+                    
+                    @Override
+                    public void onCancel(DialogInterface dialog) {
+                        cancelOnClickListener.onClick(dialog, DialogInterface.BUTTON_NEGATIVE);
+                    }
+                });
             }
             return resId != R.id.app_name;
         }
