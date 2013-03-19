@@ -150,7 +150,7 @@ public class LocationCollectionService extends Service {
                 TKConfig.PREFS_RADAR_LOCATION_COLLECTION_ALARM, 
                 Alarms.SIMPLE_DATE_FORMAT.format(next.getTime()));
         Intent intent = new Intent(RadarReceiver.ACTION_LOCATION_COLLECTION);
-        Alarms.enableAlarm(context, next.getTimeInMillis(), intent);
+        Alarms.enableAlarm(context, next, intent);
         Intent name = new Intent(context, LocationCollectionService.class);
         stopService(name);
     }

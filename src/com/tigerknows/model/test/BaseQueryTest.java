@@ -314,7 +314,7 @@ public class BaseQueryTest {
                 Calendar next = Calendar.getInstance();
                 next.setTimeInMillis(System.currentTimeMillis());
                 next.add(Calendar.SECOND, 5);
-                Alarms.enableAlarm(activity, next.getTimeInMillis(), radarPushIntent);
+                Alarms.enableAlarm(activity, next, radarPushIntent);
                 LogWrapper.d("PullService", "Radar Push send in 5 seconds");
             }
         });

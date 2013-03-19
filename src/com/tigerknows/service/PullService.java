@@ -36,6 +36,22 @@ import java.util.List;
  * @author pengwenyue
  * 这个类名为Pull，实际上做法是随机找一个时间连接服务器，去查询服务器上有没有信息
  * 如果有的话查询出来发本地通知
+ * 整个推送服务的机制分为以下几步：
+ * 1.定时器初始化。
+ *   这个部分在radar/AlarmInitReceiver.java中，它接收若干类型的广播intent启动，具体接受的
+ *   广播类型在AndroidManifest.xml中，初始设计接受五种广播，分别是系统的启动，时间或时区变更，
+ *   软件第一次启动，设置推送开启。初始化时获取TKConfig的prefs里面设置的下一次定时器时间，计算
+ *   出定时器calendar并设置。
+ * 2.计算和设置定时器
+ *   这个部分在radar/Alarms.java中。
+ *   计算定时器有若干个函数，返回calendar对象。
+ *   设置定时器统一使用enableAlarm函数，每次调用都要把要设置的时间写到TKConfig的prefs里。设置
+ *   定时器之前要进行定时器检查，确保使用的定时器在当前时间之后。
+ *   checkAlarm检查如果在当前时间之前则返回一个当前时间一小时之后的定时器。
+ * 3.PullService被定时器调用
+ *   RadarReceiver收到定时器的Intent调用，启动PullService
+ *   PullService会获取当前定位信息并连接服务器查询是否有新的推送信息，如果有则从服务器获取下来发送
+ *   本地推送信息。
  *
  */
 public class PullService extends Service {
@@ -61,13 +77,13 @@ public class PullService extends Service {
                 requestCal.setTimeInMillis(currentTimeMillis);
                 Calendar next = (Calendar) requestCal.clone();
                 //如果不在请求时间范围内，肯定是请求失败被推迟的定时器，推迟到第二天的随机时间再请求
-                if (requestCal.getTime().getHours() > requestEndHour ||requestCal.getTime().getHours() < requestStartHour) {
+                if (requestCal.getTime().getHours() >= requestEndHour ||requestCal.getTime().getHours() < requestStartHour) {
                     next = Alarms.calculateRandomAlarmInNextDay(requestCal, requestStartHour, requestEndHour);
                     exitService(next);
                 }
                 //TODO:普通失败，推迟一天
                 next.add(Calendar.MINUTE, 1);
-//                next.add(Calendar.HOUR_OF_DAY, 1);
+//                Alarms.alarmAddHours(next, 1);
                 
                 Context context = getApplicationContext();
                 
@@ -96,13 +112,15 @@ public class PullService extends Service {
                     } catch (APIException exception) {
                         exception.printStackTrace();
                     }
+                } else {
+                    fail += 1;
+                    exitService(next);
+                    return;
                 }
-
                 LogWrapper.d(TAG, "locationCityInfo="+locationCityInfo);
-                if (locationCityInfo != null
-                        && locationCityInfo.isAvailably()
+
+                if (locationCityInfo.isAvailably()
                         && currentCityInfo.getId() == locationCityInfo.getId()) {    
-                    // TODO: 去服务器上拉数据
                     DataQuery dataQuery = new DataQuery(context);
                     Hashtable<String, String> criteria = new Hashtable<String, String>();
                     String messageIdList = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, "");
@@ -120,18 +138,17 @@ public class PullService extends Service {
                     dataQuery.setup(criteria, currentCityInfo.getId());
                     dataQuery.query();
                     PullMessage pullMessage = dataQuery.getPullMessage();
-                    if (pullMessage != null) {
+                    if (pullMessage != null && pullMessage.getResponseCode() == 200) {
                         fail = 0;
                         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_LAST_SUCCEED_TIME, 
                                 Alarms.SIMPLE_DATE_FORMAT.format(requestCal.getTime()));
                         next = recordPullMessage(context, pullMessage, requestCal);
-                        LogWrapper.d(TAG, "pull succeeded, fail = " + fail);
                     } else {
                         fail += 1;
                     }
                 }
                 
-                // 定时下一个唤醒
+                // 退出并设置下一个定时器
                 exitService(next);
             }
         }).start();
@@ -141,6 +158,7 @@ public class PullService extends Service {
         
         long recordMessageUpperLimit = pullMessage.getRecordMessageUpperLimit();
         long requsetIntervalDays = pullMessage.getRequsetIntervalDays();
+        LogWrapper.d(TAG, "interval day:" + requsetIntervalDays);
         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_UPPER_LIMIT, String.valueOf(pullMessage.getRecordMessageUpperLimit()));
         String messageIdList = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, "");
         String[] list = messageIdList.split("_");
@@ -148,8 +166,8 @@ public class PullService extends Service {
         List<Message> messageList = pullMessage.getMessageList();
         
         //由于产品还没想好怎么处理多条数据，目前message只显示列表中第一条。
-        Message message = messageList.get(0);
-        if (message != null) {
+        if (messageList != null) {
+            Message message = messageList.get(0);
             s.append(message.getId());
             TKNotificationManager.notify(context, message);
         }
@@ -161,7 +179,7 @@ public class PullService extends Service {
         }
         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, s.toString());
         
-        return Alarms.calculateAlarm(requestCal, requsetIntervalDays);
+        return Alarms.alarmAddDays(requestCal, requsetIntervalDays);
     }
 
     @Override
@@ -175,20 +193,18 @@ public class PullService extends Service {
     }
     
     void exitService(Calendar next) {
+        LogWrapper.d(TAG, fail == 0 ? ("Pull Succeeded.") : ("Pull failed " + fail + " times"));
+        
         if (fail >= MaxFail || next == null) {
             fail = 0;
             next = Alarms.calculateRandomAlarmInNextDay(next, requestStartHour, requestEndHour);
         }
+        LogWrapper.d(TAG, "next Alarm: " + next.getTime().toLocaleString());
         
         Context context = getApplicationContext();
         Intent intent = new Intent(RadarReceiver.ACTION_PULL);
         Alarms.disableAlarm(context, intent);
-        Alarms.enableAlarm(context, next.getTimeInMillis(), intent);
-        if (fail > 0) {
-            LogWrapper.d(TAG, "Pull failed " + fail + " times, next alarm:" + next.getTime().toLocaleString());
-        } else {
-            LogWrapper.d(TAG, "Pull succeeded, next alarm:" + next.getTime().toLocaleString());
-        }
+        Alarms.enableAlarm(context, next, intent);
         
         Intent name = new Intent(context, PullService.class);
         stopService(name);

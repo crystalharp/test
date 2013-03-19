@@ -53,11 +53,11 @@ public class AlarmInitReceiver extends BroadcastReceiver {
         String nextAlarm = TKConfig.getPref(context, TKConfig.PREFS_RADAR_LOCATION_COLLECTION_ALARM, "");
         Calendar next = Alarms.calculateAlarm(nextAlarm);
         Intent locationCollection = new Intent(RadarReceiver.ACTION_LOCATION_COLLECTION);
-        Alarms.enableAlarm(context, next.getTimeInMillis(), locationCollection);
+        Alarms.enableAlarm(context, next, locationCollection);
         
         nextAlarm = TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_ALARM, "");
         next = Alarms.calculateAlarm(nextAlarm);
         Intent pullIntent = new Intent(RadarReceiver.ACTION_PULL);
-        Alarms.enableAlarm(context, next.getTimeInMillis(), pullIntent);
+        Alarms.enableAlarm(context, next, pullIntent);
     }
 }

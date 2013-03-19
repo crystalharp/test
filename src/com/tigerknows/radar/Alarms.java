@@ -20,6 +20,42 @@ public class Alarms {
     
     public static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     
+    /**
+     * Sets alert in AlarmManger.  This is what will
+     * actually launch the pull data service when the alarm triggers.
+     *
+     * @param alarm Alarm.
+     * @param atTimeInMillis milliseconds since epoch
+     */
+    public static void enableAlarm(Context context, Calendar alarmCal, Intent intent) {
+        AlarmManager am = (AlarmManager)
+                context.getSystemService(Context.ALARM_SERVICE);
+
+        alarmCal = checkAlarm(alarmCal);
+        LogWrapper.d(TAG, "enableAlarm atTime " + alarmCal.getTime().toLocaleString());
+        
+        TKConfig.setPref(context,
+                TKConfig.PREFS_RADAR_PULL_ALARM, 
+                Alarms.SIMPLE_DATE_FORMAT.format(alarmCal.getTimeInMillis()));
+
+        PendingIntent sender = PendingIntent.getBroadcast(
+                context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        am.set(AlarmManager.RTC_WAKEUP, alarmCal.getTimeInMillis(), sender);
+    }
+
+    /**
+     * Disables alert in AlarmManger.
+     */
+    public static void disableAlarm(Context context, Intent intent) {
+        AlarmManager am = (AlarmManager)
+                context.getSystemService(Context.ALARM_SERVICE);
+        PendingIntent sender = PendingIntent.getBroadcast(
+                context, 0, intent,
+                PendingIntent.FLAG_CANCEL_CURRENT);
+        am.cancel(sender);
+    }
+    
     public static Calendar calculateAlarm(String alarm) {
         long currentTimeMillis = System.currentTimeMillis();
         Calendar c = Calendar.getInstance();
@@ -39,65 +75,46 @@ public class Alarms {
                 e.printStackTrace();
             }
         }
-
-        return calculateAlarm(c, 0);
+        
+        return c;
     }
     
-    /**
-     * 给定一个calendar和推迟的天数，返回一个计算好的calendar。
-     * 被其他同名函数所调用，检查返回的时间不要迟于当下。
-     */
-    public static Calendar calculateAlarm(Calendar next, long addDays) {
-
-        if (addDays > 0) {
+    public static Calendar alarmAddDays(Calendar next, long addDays) {
+        
+        if (addDays > 0 && next != null) {
             next.add(Calendar.DAY_OF_YEAR, (int)addDays);
         }
         
-        long currentTimeMillis = System.currentTimeMillis();
-        Calendar now = Calendar.getInstance();
-        now.setTimeInMillis(currentTimeMillis);
+        return next;
+    }
+    
+    public static Calendar alarmAddHours(Calendar next, int addHours) {
         
-        if (next.before(now)) {
-            now.add(Calendar.HOUR_OF_DAY, 1);
-            next = now;
+        if (addHours > 0 && next != null) {
+            next.add(Calendar.HOUR_OF_DAY, (int)addHours);
         }
-        LogWrapper.d(TAG, "calculateAlarm() " + next);
+        
         return next;
     }
     
     /**
-     * Sets alert in AlarmManger.  This is what will
-     * actually launch the pull data service when the alarm triggers.
-     *
-     * @param alarm Alarm.
-     * @param atTimeInMillis milliseconds since epoch
+     * 检查返回的时间不要迟于当下。
      */
-    public static void enableAlarm(Context context, final long atTimeInMillis, Intent intent) {
-        AlarmManager am = (AlarmManager)
-                context.getSystemService(Context.ALARM_SERVICE);
-
-        LogWrapper.d(TAG, "enableAlarm() atTime " + atTimeInMillis);
+    private static Calendar checkAlarm(Calendar next){
+        long currentTimeMillis = System.currentTimeMillis();
+        Calendar now = Calendar.getInstance();
+        now.setTimeInMillis(currentTimeMillis);
         
-        TKConfig.setPref(context,
-                TKConfig.PREFS_RADAR_PULL_ALARM, 
-                Alarms.SIMPLE_DATE_FORMAT.format(atTimeInMillis));
-
-        PendingIntent sender = PendingIntent.getBroadcast(
-                context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-
-        am.set(AlarmManager.RTC_WAKEUP, atTimeInMillis, sender);
-    }
-
-    /**
-     * Disables alert in AlarmManger.
-     */
-    public static void disableAlarm(Context context, Intent intent) {
-        AlarmManager am = (AlarmManager)
-                context.getSystemService(Context.ALARM_SERVICE);
-        PendingIntent sender = PendingIntent.getBroadcast(
-                context, 0, intent,
-                PendingIntent.FLAG_CANCEL_CURRENT);
-        am.cancel(sender);
+        if (next == null) {
+            next = now;
+        }
+        LogWrapper.d(TAG, "before check, alarm is: " + next.getTime().toLocaleString());
+        
+        if (next.compareTo(now) <= 0) {
+            now.add(Calendar.HOUR_OF_DAY, 1);
+            next = now;
+        }
+        return next;
     }
     
     /**
@@ -118,10 +135,12 @@ public class Alarms {
         int hour = startHour + rand.nextInt(endHour - startHour);
         int minute = rand.nextInt(60);
         int second = rand.nextInt(60);
-        cal = calculateAlarm(cal, 1);
-        cal.set(Calendar.MINUTE, minute);
-        cal.set(Calendar.HOUR_OF_DAY, hour);
-        cal.set(Calendar.SECOND, second);
+        if (cal != null) {
+            cal.add(Calendar.DAY_OF_YEAR, 1);
+            cal.set(Calendar.MINUTE, minute);
+            cal.set(Calendar.HOUR_OF_DAY, hour);
+            cal.set(Calendar.SECOND, second);
+        }
         return cal;
     }
 }
