@@ -35,6 +35,7 @@ import android.location.Location;
 import android.os.IBinder;
 import android.text.TextUtils;
 
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -44,7 +45,7 @@ import java.util.Map;
 
 /**
  * 
- * @author pengwenyue
+ * @author xupeng
  * 这个类名为Pull，实际上做法是随机找一个时间连接服务器，去查询服务器上有没有信息
  * 如果有的话查询出来发本地通知
  * 整个推送服务的机制分为以下几步：
@@ -53,6 +54,10 @@ import java.util.Map;
  *   广播类型在AndroidManifest.xml中，初始设计接受五种广播，分别是系统的启动，时间或时区变更，
  *   软件第一次启动，设置推送开启。初始化时获取TKConfig的prefs里面设置的下一次定时器时间，计算
  *   出定时器calendar并设置。
+ *   变更1：时间或时区变更不再在定时器初始化中进行接收，因为这两个行为不会丢定时器，在PullService
+ *   中进行处理即可，不需要重新设置定时器。它所接受的广播应该是那些会导致没有定时器或者定时器丢失的
+ *   行为。时间或时区变更会导致的问题是过期的定时器会被立即触发而无法disable掉，所以在PullService
+ *   中进行了检查，如果是和所设置的定时器不符的intent调用则推迟一小时再来。
  * 2.计算和设置定时器
  *   这个部分在radar/Alarms.java中。
  *   计算定时器有若干个函数，返回calendar对象。
@@ -91,10 +96,28 @@ public class PullService extends Service {
                 if (requestCal.getTime().getHours() >= requestEndHour ||requestCal.getTime().getHours() < requestStartHour) {
                     next = Alarms.calculateRandomAlarmInNextDay(requestCal, requestStartHour, requestEndHour);
                     exitService(next);
+                    return;
                 }
                 //TODO:普通失败，推迟一天
-                next.add(Calendar.MINUTE, 1);
+                next.add(Calendar.MINUTE, 5);
 //                Alarms.alarmAddHours(next, 1);
+                
+                //如果是因为调整系统时间导致定时器时间在过去而触发了PullService
+                String recordedAlarm = TKConfig.getPref(getApplicationContext(), TKConfig.PREFS_RADAR_PULL_ALARM, "");
+                if (!TextUtils.isEmpty(recordedAlarm)) {
+                    long recordedAlarmInMillis;
+                    try {
+                        recordedAlarmInMillis = Alarms.SIMPLE_DATE_FORMAT.parse(recordedAlarm).getTime();
+                        //如果当前时间被调整到了定时器时间之后
+                        if (requestCal.getTimeInMillis() - recordedAlarmInMillis > 1000) {
+                            LogWrapper.d(TAG, "alarm is in the past time, need a new Alarm.");
+                            exitService(next);
+                            return;
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
                 
                 Context context = getApplicationContext();
                 

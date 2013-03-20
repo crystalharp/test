@@ -32,13 +32,6 @@ public class AlarmInitReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         LogWrapper.d(TAG, "onReceive() " + action);
-        
-        // 开机
-        if (action.equals(Intent.ACTION_TIMEZONE_CHANGED)
-                || action.equals(Intent.ACTION_TIME_CHANGED)) {
-            // 以上两个action是改变时间引起的， 在这里需要取消之前的rtc注册定时唤醒，然后重新计算时间并注册
-            disableAlarm(context);
-        }
         enableAlarm(context);
     }
     
