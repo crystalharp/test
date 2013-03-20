@@ -304,7 +304,7 @@ public class PullService extends Service {
         List<Message> messageList = pullMessage.getMessageList();
         
         //由于产品还没想好怎么处理多条数据，目前message只显示列表中第一条。
-        if (messageList != null) {
+        if (messageList != null && messageList.size() > 0) {
             Message message = messageList.get(0);
             s.append(message.getId());
             TKNotificationManager.notify(context, message);
