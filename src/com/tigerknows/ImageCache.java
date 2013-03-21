@@ -42,25 +42,7 @@ public class ImageCache {
 	private LinkedList<ImageData> writingList=new LinkedList<ImageData>();
 	private final int MAX_WRITING_LIST_SIZE=300;
 	
-	private LinkedHashMap<String,Boolean> cacheTileFileNames=new LinkedHashMap<String,Boolean>(CONFIG.CACHE_SIZE,0.75f,true){
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected boolean removeEldestEntry(
-                java.util.Map.Entry<String, Boolean> eldest) {
-            // TODO Auto-generated method stub
-            if(size()>CONFIG.CACHE_SIZE){
-                String fileName =eldest.getKey();
-                if(fileName!=null){
-                    File file=new File(appPath,fileName);
-                    file.delete();
-                }
-                remove(eldest.getKey());
-            }
-            return false;
-        }
-    };
-	
+	private LinkedHashMap<String,Boolean> cacheTileFileNames=new LinkedHashMap<String,Boolean>(CONFIG.CACHE_SIZE,0.75f,true);
 	
 	public ImageCache(){
 	}
@@ -129,10 +111,6 @@ public class ImageCache {
 				while (true) {
 					if(stopWriting){
 						LogWrapper.i("TileTable","writing thread break at beginning");
-						break;
-					}
-					if(stopWriting){
-						LogWrapper.i("TileTable","writing thread break after drawingLock");
 						break;
 					}
 					
@@ -306,10 +284,10 @@ public class ImageCache {
 						
 						String fileName=cacheTileFileNames.entrySet().iterator().next().getKey();
 						cacheTileFileNames.remove(fileName);
-//						if(fileName!=null){
-//							File file=new File(appPath,fileName);
-//							file.delete();
-//						}
+						if(fileName!=null){
+							File file=new File(appPath,fileName);
+							file.delete();
+						}
 					}
 				} catch (Exception e) {
 					LogWrapper.e("TileTable", e.getMessage());

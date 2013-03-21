@@ -237,6 +237,7 @@ public class WeiboSend extends BaseActivity implements OnClickListener {
                         TKWeibo.logout(mTKWeibo);
 					}
                 }.start();
+                Toast.makeText(this, R.string.logout_success, Toast.LENGTH_LONG).show();
                 WeiboSend.this.finish();
                 break;
             }

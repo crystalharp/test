@@ -290,7 +290,7 @@ public class BaseQueryTest {
             
             @Override
             public void onClick(View arg0) {
-                MapEngine.getInstance().getDownloadCityList().clear();
+                MoreFragment.CurrentDownloadCity = null;
             }
         });
         

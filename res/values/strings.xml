@@ -188,8 +188,7 @@
     <string name="map_download">地图下载</string>
     <string name="change_city">切换城市</string>
     <string name="check_update">检查更新</string>
-    <string name="favorite">收藏</string>
-    <string name="favoriten">收藏夹</string>
+    <string name="favorite">收藏夹</string>
     <string name="clean_history">清空记录</string>
     <string name="settings">设置</string>
     <string name="system_settings">系统设置</string>
@@ -460,11 +459,11 @@
     <string name="send">发送</string>
     <string name="attention">注意</string>
     <string name="are_you_delete_all">是否要删除全部文本内容？</string>
-    <string name="weibo_send_sucess">新浪微博分享成功！</string>
+    <string name="weibo_send_success">新浪微博分享成功！</string>
     <string name="weibo_send_failed">新浪微博分享失败！</string>
-    <string name="logout_sucess">注销成功！</string>
+    <string name="logout_success">注销成功！</string>
     <string name="logout_failed">注销失败！</string>
-    <string name="tencent_share_sucess">QQ空间分享成功！</string>
+    <string name="tencent_share_success">QQ空间分享成功！</string>
     <string name="tencent_share_failed">QQ空间分享失败！</string>
     <string name="tencent_share_failed_token_error">QQ空间授权已经过期，请重新绑定！</string>
     <string name="del_pic">是否删除图片？</string>
@@ -587,7 +586,7 @@
 	<!-- User ResetPassword End -->
 	
 	<!-- User Account Start -->
-	<string name="logout_success">退出成功!</string>
+	<string name="logout_account_success">退出成功!</string>
 	<!-- User Account End -->
 	
 	<!-- User Common Start -->
@@ -689,7 +688,7 @@
     <string name="weibo_no_repeat">不能发送重复的微博！</string>
     
     <string name="please_login">请登录！</string>
-    <string name="logon_sucess">登录成功！</string>
+    <string name="logon_success">登录成功！</string>
     <string name="logon_failed">登录失败！</string>
     
     <string name="weibo_logon_failed">登录失败</string>
@@ -922,4 +921,6 @@
     <string name="are_you_exit_add_merchart">你确定要放弃添加商户？</string>
     <string name="searching_title">搜索中…</string>
     <string name="public_welfarre">传递正能量，手机照亮失踪宝贝回家之路</string>
+    
+    <string name="counting_tip">正在统计...</string>
 </resources>

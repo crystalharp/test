@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import com.tigerknows.maps.MapEngine.RegionMetaVersion;
-import com.tigerknows.model.MapVersionQuery.RegionDataInfo;
+import com.tigerknows.model.MapVersionQuery.ServerRegionDataInfo;
 import com.tigerknows.util.ParserUtil;
 
 /**
@@ -42,7 +42,7 @@ uint2   uint1   uint1   uint2   uint1   uint1   unit4
     无效的时候版本号和年月日全为0
      */
     
-    private HashMap<Integer, RegionDataInfo> mRegionDataInfos;
+    private HashMap<Integer, ServerRegionDataInfo> mRegionDataInfos;
     
     public MapVersionCake(final int lenth) {
     }
@@ -53,7 +53,7 @@ uint2   uint1   uint1   uint2   uint1   uint1   unit4
     public void parse(ParserUtil util) throws IOException {
         int num = util.readIntFromTwoBytes();
         util.advance(2);
-        mRegionDataInfos = new HashMap<Integer, RegionDataInfo>(num);
+        mRegionDataInfos = new HashMap<Integer, ServerRegionDataInfo>(num);
         for (int i=0; i<num; i++) {
             int regionID = util.readIntFromTwoBytes();
             if (regionID == 0xfffd) {
@@ -66,12 +66,12 @@ uint2   uint1   uint1   uint2   uint1   uint1   unit4
             int day = util.readIntFromOneByte();
             RegionMetaVersion version = new RegionMetaVersion(mainVersion, secondVersion, year, month, day);
             int totalSize = util.readIntFromFourBytes();
-            RegionDataInfo regionDataInfo = new RegionDataInfo(version.toString(), totalSize);
+            ServerRegionDataInfo regionDataInfo = new ServerRegionDataInfo(version.toString(), totalSize);
             mRegionDataInfos.put(regionID, regionDataInfo);
         }
     }
     
-    public HashMap<Integer, RegionDataInfo> getRegionVersionMap() {
+    public HashMap<Integer, ServerRegionDataInfo> getRegionVersionMap() {
         return mRegionDataInfos;
     }
 }
