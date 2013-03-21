@@ -165,7 +165,9 @@ public class PullService extends Service {
                     criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
                     criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(position.getLon()));
                     criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(position.getLat()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_MESSAGE_ID_LIST, messageIdList);
+                    if (!TextUtils.isEmpty(messageIdList)) {
+                        criteria.put(DataQuery.SERVER_PARAMETER_MESSAGE_ID_LIST, messageIdList);
+                    }
                     if (!TextUtils.isEmpty(lastSucceedTime)) {
                         criteria.put(DataQuery.SERVER_PARAMETER_LAST_PULL_DATE, lastSucceedTime);
                     }
@@ -311,9 +313,12 @@ public class PullService extends Service {
         }
         int length = list.length;
         long limit = recordMessageUpperLimit - 1;
-        for(int i = 0; i < limit && i < length; i++) {
-            s.append("_");
-            s.append(list[i]);
+        if (length > 0) {
+            s.append(list[0]);
+            for(int i = 1; i < limit && i < length; i++) {
+                s.append("_");
+                s.append(list[i]);
+            }
         }
         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, s.toString());
         
