@@ -176,7 +176,7 @@ public class QZoneSend extends BaseActivity implements OnClickListener {
                 }
                 hideInputMethodManager();
                 TKTencentOpenAPI.logout(QZoneSend.this);     
-                Toast.makeText(this, R.string.logout_sucess, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.logout_success, Toast.LENGTH_LONG).show();
                 finish();
                 break;
             }
