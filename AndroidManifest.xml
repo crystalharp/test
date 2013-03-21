@@ -279,6 +279,11 @@
 		<receiver android:name="com.tigerknows.radar.RadarReceiver">
 		    <intent-filter>
 	           <action android:name="action.com.tigerknows.radar.PullReceiver" />
+		    </intent-filter>
+		</receiver>
+		
+		<receiver android:name="com.tigerknows.radar.LocationCollectorReceiver">
+		    <intent-filter>
 	           <action android:name="action.com.tigerknows.radar.LocationCollectionReceiver" />
 		    </intent-filter>
 		</receiver>

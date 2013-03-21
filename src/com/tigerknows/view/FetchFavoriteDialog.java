@@ -77,7 +77,7 @@ public class FetchFavoriteDialog extends BaseDialog {
         mFavoriteAdapter = new FavoriteAdapter(mContext, mFavoriteList);
         mFavoriteLsv.setAdapter(mFavoriteAdapter);
 
-        mTitleBtn.setText(mContext.getString(R.string.favoriten));
+        mTitleBtn.setText(mContext.getString(R.string.favorite));
 	}
 	
 	protected void findViews() {

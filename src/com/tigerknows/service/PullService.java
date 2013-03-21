@@ -104,13 +104,14 @@ public class PullService extends Service {
                 
                 //如果是因为调整系统时间导致定时器时间在过去而触发了PullService
                 String recordedAlarm = TKConfig.getPref(getApplicationContext(), TKConfig.PREFS_RADAR_PULL_ALARM, "");
+                LogWrapper.d(TAG, "recorded Alarm is:" +recordedAlarm);
                 if (!TextUtils.isEmpty(recordedAlarm)) {
                     long recordedAlarmInMillis;
                     try {
                         recordedAlarmInMillis = Alarms.SIMPLE_DATE_FORMAT.parse(recordedAlarm).getTime();
                         //如果当前时间被调整到了定时器时间之后
                         if (requestCal.getTimeInMillis() - recordedAlarmInMillis > 1000) {
-                            LogWrapper.d(TAG, "alarm is in the past time, need a new Alarm.");
+                            LogWrapper.d(TAG, "recorded alarm is in the past time, now is " + requestCal.getTime().toLocaleString() + ", need a new Alarm.");
                             exitService(next);
                             return;
                         }

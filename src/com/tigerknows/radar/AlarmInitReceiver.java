@@ -36,7 +36,7 @@ public class AlarmInitReceiver extends BroadcastReceiver {
     }
     
     void disableAlarm(Context context) {
-        Intent locationCollection = new Intent(RadarReceiver.ACTION_LOCATION_COLLECTION);
+        Intent locationCollection = new Intent(LocationCollectorReceiver.ACTION_LOCATION_COLLECTION);
         Alarms.disableAlarm(context, locationCollection);
         Intent pullIntent = new Intent(RadarReceiver.ACTION_PULL);
         Alarms.disableAlarm(context, pullIntent);
@@ -45,7 +45,7 @@ public class AlarmInitReceiver extends BroadcastReceiver {
     void enableAlarm(Context context) {
         String nextAlarm = TKConfig.getPref(context, TKConfig.PREFS_RADAR_LOCATION_COLLECTION_ALARM, "");
         Calendar next = Alarms.calculateAlarm(nextAlarm);
-        Intent locationCollection = new Intent(RadarReceiver.ACTION_LOCATION_COLLECTION);
+        Intent locationCollection = new Intent(LocationCollectorReceiver.ACTION_LOCATION_COLLECTION);
         Alarms.enableAlarm(context, next, locationCollection);
         
         nextAlarm = TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_ALARM, "");

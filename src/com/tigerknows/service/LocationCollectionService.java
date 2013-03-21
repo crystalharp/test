@@ -7,7 +7,7 @@ import com.tigerknows.model.LocationQuery.TKNeighboringCellInfo;
 import com.tigerknows.model.LocationQuery.TKScanResult;
 import com.tigerknows.provider.LocationTable;
 import com.tigerknows.radar.Alarms;
-import com.tigerknows.radar.RadarReceiver;
+import com.tigerknows.radar.LocationCollectorReceiver;
 
 import android.app.Service;
 import android.content.Context;
@@ -149,7 +149,7 @@ public class LocationCollectionService extends Service {
         TKConfig.setPref(context,
                 TKConfig.PREFS_RADAR_LOCATION_COLLECTION_ALARM, 
                 Alarms.SIMPLE_DATE_FORMAT.format(next.getTime()));
-        Intent intent = new Intent(RadarReceiver.ACTION_LOCATION_COLLECTION);
+        Intent intent = new Intent(LocationCollectorReceiver.ACTION_LOCATION_COLLECTION);
         Alarms.enableAlarm(context, next, intent);
         Intent name = new Intent(context, LocationCollectionService.class);
         stopService(name);

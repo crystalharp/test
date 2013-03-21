@@ -249,7 +249,7 @@ public class UserHomeFragment extends UserBaseFragment {
 			// 200, 400, 503
 			switch(accountManage.getResponse().getResponseCode()){
 			case Response.RESPONSE_CODE_OK:
-				showToast(R.string.logout_success);
+				showToast(R.string.logout_account_success);
 				Globals.clearSessionAndUser(mContext);
 				dismiss();
 				break;

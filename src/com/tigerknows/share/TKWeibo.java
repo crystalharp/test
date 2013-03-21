@@ -153,13 +153,13 @@ public class TKWeibo implements RequestListener {
                         }
                     }
                 } else if (currentAccessMethod == ACCESS_METHOD_ACCOUNT_LOGOUT) {
-                    Toast.makeText(activity, R.string.logout_sucess, Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, R.string.logout_success, Toast.LENGTH_LONG).show();
                     if (finishActivity) {
                         activity.finish();
                     }
                 } else if (currentAccessMethod == ACCESS_METHOD_STATUSES_UPDATE
                         || currentAccessMethod == ACCESS_METHOD_STATUSES_UPLOAD) {
-                    Toast.makeText(activity, R.string.weibo_send_sucess, Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity, R.string.weibo_send_success, Toast.LENGTH_LONG).show();
                     if (finishActivity) {
                         activity.finish();
                     }
