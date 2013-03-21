@@ -315,7 +315,7 @@ public class BaseQueryTest {
                 next.setTimeInMillis(System.currentTimeMillis());
                 next.add(Calendar.SECOND, 5);
                 Alarms.enableAlarm(activity, next, radarPushIntent);
-                LogWrapper.d("PullService", "Radar Push send in 5 seconds");
+                LogWrapper.d("PullService", "Radar Push send in:" + next.getTime().toLocaleString());
             }
         });
         

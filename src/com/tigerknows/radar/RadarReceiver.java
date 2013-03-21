@@ -2,7 +2,6 @@ package com.tigerknows.radar;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.service.LocationCollectionService;
 import com.tigerknows.service.PullService;
 
 import android.content.BroadcastReceiver;
@@ -22,14 +21,8 @@ public class RadarReceiver extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
 
         LogWrapper.d(TAG, "onReceive() " + intent);
-        String action = intent.getAction();
-        if (ACTION_PULL.equals(action)){
-            if (TextUtils.isEmpty(TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, ""))) {
-                Intent service = new Intent(context, PullService.class);
-                context.startService(service);
-            }
-        } else if (ACTION_LOCATION_COLLECTION.equals(action)){
-            Intent service = new Intent(context, LocationCollectionService.class);
+        if (TextUtils.isEmpty(TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, ""))) {
+            Intent service = new Intent(context, PullService.class);
             context.startService(service);
         }
     }
