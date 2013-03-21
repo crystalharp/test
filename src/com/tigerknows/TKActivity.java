@@ -16,6 +16,8 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.test.BaseQueryTest;
+import com.tigerknows.service.MapDownloadService;
+import com.tigerknows.service.MapStatsService;
 import com.tigerknows.service.TKLocationManager;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.SoftInputManager;
@@ -110,22 +112,32 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         }
     };
     
-    private final BroadcastReceiver mSDCardEventReceiver = new BroadcastReceiver() {
+    BroadcastReceiver mSDCardEventReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if (action.equals(Intent.ACTION_MEDIA_MOUNTED)
                     || action.equals(Intent.ACTION_MEDIA_UNMOUNTED)) {
-                try {
-                    mMapEngine.initMapDataPath(mThis, true);
-                } catch (APIException e) {
-                    e.printStackTrace();
-                    CommonUtils.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
-                    finish();
-                }
+                onMediaChanged();
             }
         }
     };
+    
+    protected void onMediaChanged() {
+        try {
+            mMapEngine.initMapDataPath(mThis);
+        } catch (APIException e) {
+            e.printStackTrace();
+            CommonUtils.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
+            finish();
+            return;
+        }
+        
+        Intent service = new Intent(mThis, MapStatsService.class);
+        stopService(service);
+        service = new Intent(mThis, MapDownloadService.class);
+        stopService(service);
+    }
 
     protected ConnectivityManager mConnectivityManager;
     private class ConnectivityBroadcastReceiver extends BroadcastReceiver {
@@ -161,7 +173,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
     protected void onResume() {
         super.onResume();
         try {
-            mMapEngine.initMapDataPath(this, true);
+            mMapEngine.initMapDataPath(this);
         } catch (Exception exception){
             exception.printStackTrace();
             CommonUtils.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));

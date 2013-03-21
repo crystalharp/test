@@ -139,7 +139,7 @@ public class PullService extends Service {
                 if (location != null) {
                     MapEngine mapEngine = MapEngine.getInstance();
                     try {
-                        mapEngine.initMapDataPath(context, false);
+                        mapEngine.initMapDataPath(context);
                         position = mapEngine.latlonTransform(new Position(location.getLatitude(), location.getLongitude()));
                         int cityId = mapEngine.getCityId(position);
                         locationCityInfo = mapEngine.getCityInfo(cityId);

@@ -74,6 +74,8 @@
         
         <service android:name=".service.MapStatsService" android:enabled="true"></service>
         
+        <service android:name=".service.MapDownloadService" android:enabled="true"></service>
+        
         <service android:name=".service.download.DownloadService" android:enabled="true"></service>
         
         <activity android:name=".ErrorDialogActivity"

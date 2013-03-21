@@ -29,7 +29,7 @@ public class MapVersionQuery extends BaseQuery {
     public static final String VERSION = "2";
     
     private List<Integer> regionIdList;
-    private HashMap<Integer, RegionDataInfo> regionDataInfos = null;
+    private HashMap<Integer, ServerRegionDataInfo> regionDataInfos = null;
 
     public MapVersionQuery(Context context) {
         super(context, API_TYPE_MAP_VERSION_QUERY, VERSION);
@@ -39,7 +39,7 @@ public class MapVersionQuery extends BaseQuery {
         this.regionIdList = regionIdList;
     }
     
-    public HashMap<Integer, RegionDataInfo> getRegionVersion() {
+    public HashMap<Integer, ServerRegionDataInfo> getServerRegionDataInfoMap() {
         return regionDataInfos;
     }
     
@@ -99,13 +99,13 @@ public class MapVersionQuery extends BaseQuery {
         }
     }
 
-    public static class RegionDataInfo {
+    public static class ServerRegionDataInfo {
         private int mRegionId;
         private String mRegionVersion;
         private int mTotalSize;
         private String mCheckSum;
         
-        public RegionDataInfo(final String regionVersion, final int totalSize) {
+        public ServerRegionDataInfo(final String regionVersion, final int totalSize) {
             this.mRegionVersion = regionVersion;
             this.mTotalSize = totalSize;
         }

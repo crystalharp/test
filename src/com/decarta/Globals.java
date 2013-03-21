@@ -201,7 +201,7 @@ public class Globals {
             if(Util.inChina(lastPosition)) {
                 MapEngine mapEngine = MapEngine.getInstance();
                 try {
-                    mapEngine.initMapDataPath(context, false);
+                    mapEngine.initMapDataPath(context);
                     int cityId = mapEngine.getCityId(lastPosition);
                     cityInfo = mapEngine.getCityInfo(cityId);
                     cityInfo.setPosition(lastPosition);
