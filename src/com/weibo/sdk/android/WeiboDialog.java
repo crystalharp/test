@@ -29,6 +29,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -106,6 +108,8 @@ public class WeiboDialog extends Dialog {
 	private void setUpWebView() {
 		webViewContainer = new RelativeLayout(getContext());
 		mWebView = new WebView(getContext());
+		CookieSyncManager.createInstance(getContext());
+		CookieManager.getInstance().removeAllCookie();
 		mWebView.setVerticalScrollBarEnabled(false);
 		mWebView.setHorizontalScrollBarEnabled(false);
 		mWebView.getSettings().setJavaScriptEnabled(true);
