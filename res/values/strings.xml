@@ -188,8 +188,7 @@
     <string name="map_download">地图下载</string>
     <string name="change_city">切换城市</string>
     <string name="check_update">检查更新</string>
-    <string name="favorite">收藏</string>
-    <string name="favoriten">收藏夹</string>
+    <string name="favorite">收藏夹</string>
     <string name="clean_history">清空记录</string>
     <string name="settings">设置</string>
     <string name="system_settings">系统设置</string>
