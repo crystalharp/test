@@ -174,7 +174,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         boolean upgrade = false;
         DownloadCity currentDownloadCity = CurrentDownloadCity;
         if (currentDownloadCity != null
-                && currentDownloadCity.state == DownloadCity.MAYBE_UPGRADE
+                && currentDownloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE
                 && currentDownloadCity.cityInfo.getId() != MapEngine.CITY_ID_QUANGUO) {
             upgrade = true;
         }
