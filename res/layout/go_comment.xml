@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:padding="0dp"
             android:dividerHeight="0dp"
-            android:divider="@drawable/bg_real_line"
+            android:divider="@drawable/bg_line_split"
             android:drawSelectorOnTop="false"
             android:scrollingCache="false"
             android:footerDividersEnabled="false"
