@@ -128,6 +128,7 @@ public class TuangouDetailFragment extends BaseDetailFragment
         this.mDataList = dataList;
         setData(dataList.size(), position, iPagerList);
         refreshViews(position);
+    	setViewsVisibility(View.VISIBLE);
     }
     
     public void viewMap() {

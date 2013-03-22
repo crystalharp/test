@@ -73,8 +73,8 @@
     
     <string name="at_where_discover">发现：在%1$s进行发现 </string>
     <string name="at_where_discover_how">在"%1$s"发现%2$s个</string>   
-    <string name="discover_exist_tip">已经更新发现结果</string>   
-    
+    <string name="discover_exist_tip">已经更新发现结果</string>
+       
     <string name="init_map_dir_title">初始化地图数据</string>
     <string name="init_map_dir_message">程序异常退出可能是因为使用过程中地图数据文件损坏，建议你删除损坏的地图数据文件?</string>
     
@@ -892,6 +892,8 @@
     <string name="response_code_603">抱歉，该地址不存在或已失效。</string>
     <string name="response_code_801">创建订单失败，请重试。</string>
     
+    <string name="response_code_410_pulled">抱歉,原信息已过期\n欢迎发现更多身边的精彩!</string>
+    
     <string name="retry">重试</string>
     <string name="location_city">定位城市</string>
     <string name="all_city">全部城市</string>
@@ -922,4 +924,10 @@
     <string name="are_you_exit_add_merchart">你确定要放弃添加商户？</string>
     <string name="searching_title">搜索中…</string>
     <string name="public_welfarre">传递正能量，手机照亮失踪宝贝回家之路</string>
+    
+    <string name="radar_new_version">【嗷呜！有新版本出没！】</string>
+    <string name="radar_new_film">【嗷呜！新片来了！】</string>
+    <string name="radar_holidy">【嗷呜！节日来了！】</string>
+    <string name="radar_interval">【嗷呜！周末来了！】</string>
+    
 </resources>

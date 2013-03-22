@@ -16,6 +16,7 @@ import android.view.animation.Animation;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.SpringbackListView;
 import com.tigerknows.view.SpringbackListView.IPagerList;
@@ -217,4 +218,14 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
         mSphinx.getHandler().removeCallbacks(mDismissOnScreenControlRunner);
         mSphinx.getHandler().postDelayed(mDismissOnScreenControlRunner, 2000);
     }
+
+    public void setPulledDynamicPOI(PulledDynamicPOI dynamicPOI){
+    }
+    
+    void setViewsVisibility(int visibility){
+    	for (View view : mCyclePagerAdapter.viewList) {
+    		view.setVisibility(visibility);
+		}
+    }
+    
 }

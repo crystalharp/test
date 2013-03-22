@@ -16,8 +16,11 @@ import com.tigerknows.model.PullMessage.Message;
 import com.tigerknows.model.xobject.XMap;
 
 public class Dianying extends BaseData implements Parcelable{
-    
-    public static final String NEED_FILELD = "000102030414060708090a0b0c0d20262728292a2b2c";
+
+    public static final String NEED_FILELD = "000102030414060708090a0b0c0d" +
+    		"20262728292a2b2c";
+
+    public static final String NEED_FILELD_ONLY_DIANYING = "000102030414060708090a0b0c0d";
     
     // 0x00 x_string UUID uid
     public static final byte FIELD_UID = 0x00;
@@ -294,7 +297,11 @@ public class Dianying extends BaseData implements Parcelable{
         return yingxunQuery;
     }
 
-    public void setYingxunQuery(DataQuery yingxunQuery) {
+    public void setYingxun(Yingxun yingxun) {
+		this.yingxun = yingxun;
+	}
+
+	public void setYingxunQuery(DataQuery yingxunQuery) {
         this.yingxunQuery = yingxunQuery;
     }
 

@@ -58,6 +58,12 @@ public class PullMessage extends XMapData {
         // 0x10  x_string  动态poi消息时有效，表示动态poi的uid。  
         public static final byte FIELD_POI_INFO = 0x10;
         
+        /**
+         * Dynamic POI with a specific master type/uid and slave type/uid
+         * Slava fields can be null
+         * @author jiangshuai
+         *
+         */
         public static class PulledDynamicPOI extends XMapData implements Parcelable {
 
             // 0x01	 主动态POI的dty
@@ -72,22 +78,19 @@ public class PullMessage extends XMapData {
             // 0x04 从动态POI的uid
             public static final byte FIELD_SLAVE_POI_UID = 0x04;
             
-            // 0x10	 动态POI的名称（以下三项都是指显示数据时的名称/时间/地点
-            public static final byte FIELD_POI_NAME = 0x10;
+            // 0x10	 x_string	 动态POI的摘要字符串
+            public static final byte FIELD_POI_DESCRIPTION = 0x10;
 
-            // 0x11	 动态POI的时间， 目前时间这项没什么用  
-            public static final byte FIELD_POI_DATETIME = 0x11;
-            
-            // 0x12	 动态POI的地点， 目前地点这项没什么用
-            public static final byte FIELD_POI_ADDRESS = 0x12;
 
             private long masterType;
             private String masterUID;
             private long slaveType;
             private String slaveUID;
-            private String name;
-            private String dateTime;
-            private String address;
+            private String description;
+            
+            public PulledDynamicPOI(){
+            	
+            }
             
             public PulledDynamicPOI(XMap data) throws APIException{
             	super(data);
@@ -107,18 +110,11 @@ public class PullMessage extends XMapData {
                 if (this.data.containsKey(FIELD_SLAVE_POI_UID)) {
                     this.slaveUID = this.data.getString(FIELD_SLAVE_POI_UID);
                 }
-
-                if (this.data.containsKey(FIELD_POI_NAME)) {
-                    this.name = this.data.getString(FIELD_POI_NAME);
+                
+                if (this.data.containsKey(FIELD_POI_DESCRIPTION)) {
+                    this.description = this.data.getString(FIELD_POI_DESCRIPTION);
                 }
-
-                if (this.data.containsKey(FIELD_POI_DATETIME)) {
-                    this.dateTime = this.data.getString(FIELD_POI_DATETIME);
-                }
-
-                if (this.data.containsKey(FIELD_POI_ADDRESS)) {
-                    this.address = this.data.getString(FIELD_POI_ADDRESS);
-                }
+                
             }
 
             public static final Parcelable.Creator<PulledDynamicPOI> CREATOR
@@ -165,28 +161,12 @@ public class PullMessage extends XMapData {
 				this.slaveUID = slaveUID;
 			}
 
-			public String getName() {
-				return name;
+			public String getDescription() {
+				return description;
 			}
 
-			public void setName(String name) {
-				this.name = name;
-			}
-
-			public String getDateTime() {
-				return dateTime;
-			}
-
-			public void setDateTime(String dateTime) {
-				this.dateTime = dateTime;
-			}
-
-			public String getAddress() {
-				return address;
-			}
-
-			public void setAddress(String address) {
-				this.address = address;
+			public void setDescription(String description) {
+				this.description = description;
 			}
 
 			@Override
@@ -199,9 +179,7 @@ public class PullMessage extends XMapData {
                 masterUID = in.readString();
                 slaveType = in.readLong();
                 slaveUID = in.readString();
-                name = in.readString();
-                dateTime = in.readString();
-                address = in.readString();
+                description = in.readString();
             }
             
 			@Override
@@ -209,10 +187,8 @@ public class PullMessage extends XMapData {
 				dest.writeLong(masterType);
 				dest.writeString(masterUID);
 	            dest.writeLong(slaveType);  
-	            dest.writeString(slaveUID);  
-	            dest.writeString(name);  
-	            dest.writeString(dateTime);  
-	            dest.writeString(address);
+	            dest.writeString(slaveUID);
+	            dest.writeString(description);
 			}
             
         }

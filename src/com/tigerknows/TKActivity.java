@@ -390,7 +390,39 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         return checkResponseCode(baseQuery, activity, null, true, sourceView, true);
     }
     
+    public static final int SHOW_ERROR_MSG_NO = 0;
+    public static final int SHOW_ERROR_MSG_DIALOG = 1;
+    public static final int SHOW_ERROR_MSG_TOAST = 2;
+    
+    /**
+     * Check the response code and show a error msg if an error happens
+     * @param baseQuery
+     * @param activity
+     * @param filterResponseCodes
+     * @param showErrorDialog whether to shou a dialog when an error happens
+     * @param sourceView
+     * @param exit
+     * @return
+     */
     public static boolean checkResponseCode(final BaseQuery baseQuery, final Activity activity, int[] filterResponseCodes, boolean showErrorDialog, final Object sourceView, boolean exit) {
+    	if(showErrorDialog){
+    		return checkResponseCode(baseQuery, activity, filterResponseCodes, SHOW_ERROR_MSG_DIALOG, sourceView, exit);
+    	}else{
+    		return checkResponseCode(baseQuery, activity, filterResponseCodes, SHOW_ERROR_MSG_NO, sourceView, exit);
+    	}
+    }
+    
+    /**
+     * Check the response code and show a error msg if an error happens
+     * @param baseQuery
+     * @param activity
+     * @param filterResponseCodes
+     * @param showErrorType	the type of presentation of error msg
+     * @param sourceView
+     * @param exit
+     * @return
+     */
+    public static boolean checkResponseCode(final BaseQuery baseQuery, final Activity activity, int[] filterResponseCodes, int showErrorType, final Object sourceView, boolean exit) {
         boolean result = true;
         if (baseQuery == null || activity == null || sourceView == null) {
             return result;
@@ -412,8 +444,12 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         }
         
         result = (resId != R.string.response_code_200);
-        if (result && (filter == false) && showErrorDialog) {
-            showErrorDialog(activity, activity.getString(resId), sourceView, exit);
+        if (result && (filter == false)) {
+        	if(showErrorType == SHOW_ERROR_MSG_DIALOG){
+        		showErrorDialog(activity, activity.getString(resId), sourceView, exit);
+        	}else if(showErrorType == SHOW_ERROR_MSG_TOAST){
+        		showErrorToast(activity, activity.getString(resId), sourceView, exit);
+        	}
         }
         return result;
     }
@@ -423,7 +459,11 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         int resId;
         Response response = baseQuery.getResponse();
         if (response != null) {
-            int responseCode = response.getResponseCode(); 
+            int responseCode = response.getResponseCode();
+            String responseString = baseQuery.getCriteria().get(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + (responseCode));
+            if(responseString!=null){
+            	return Integer.parseInt(responseString);
+            }
 
             switch (responseCode) {
                 case 200:
@@ -492,6 +532,32 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         }
         
         return resId;
+    }
+    public static void showErrorToast(final Activity activity, String message, final Object sourceView, final boolean exit) {
+        if (activity == null || TextUtils.isEmpty(message) || sourceView == null) {
+            return;
+        }
+        if (sourceView instanceof BaseFragment && ((BaseFragment) sourceView).isShowing() == false) {
+            return;
+        } else if (sourceView instanceof Activity && ((Activity) sourceView).isFinishing()) {
+            return;
+        } else if (sourceView instanceof Dialog && ((Dialog) sourceView).isShowing() == false) {
+            return;
+        }
+        Toast.makeText(activity, message, Toast.LENGTH_SHORT).show();
+        if (exit == false) {
+        	return;
+        }
+        if (sourceView instanceof BaseFragment) {
+        	((BaseFragment) sourceView).dismiss();
+        } else if (sourceView instanceof BaseDialog) {
+        	((BaseDialog) sourceView).dismiss();
+        } else if (sourceView instanceof Activity) {
+        	((Activity) sourceView).finish();
+        } else if (sourceView instanceof Dialog) {
+        	((Dialog) sourceView).dismiss();
+        }
+        
     }
     
     public static void showErrorDialog(final Activity activity, String message, final Object sourceView, final boolean exit) {

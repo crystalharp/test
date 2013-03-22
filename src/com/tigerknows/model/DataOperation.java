@@ -153,6 +153,8 @@ public class DataOperation extends BaseQuery {
                 response = new FendianQueryResponse(responseXMap);
             } else if (DATA_TYPE_DIANYING.equals(dataType)) {
                 response = new DianyingQueryResponse(responseXMap);
+            } else if (DATA_TYPE_YINGXUN.equals(dataType)) {
+                response = new YingxunQueryResponse(responseXMap);
             } else if (DATA_TYPE_YANCHU.equals(dataType)) {
                 response = new YanchuQueryResponse(responseXMap);
             } else if (DATA_TYPE_ZHANLAN.equals(dataType)) {
@@ -301,7 +303,7 @@ public class DataOperation extends BaseQuery {
             }
         } 
     }
-    
+
     public static class FendianQueryResponse extends Response {
         
         public static final byte FIELD_DATA = 0x02;
@@ -317,6 +319,25 @@ public class DataOperation extends BaseQuery {
             
             if (this.data.containsKey(FIELD_DATA)) {
                 fendian = new Fendian(this.data.getXMap(FIELD_DATA));
+            }
+        } 
+    }
+    
+    public static class YingxunQueryResponse extends Response {
+        
+        public static final byte FIELD_DATA = 0x02;
+        
+        private Yingxun yingxun;
+
+        public Yingxun getYingxun() {
+			return yingxun;
+		}
+
+		public YingxunQueryResponse(XMap data) throws APIException {
+            super(data);
+            
+            if (this.data.containsKey(FIELD_DATA)) {
+                yingxun = new Yingxun(this.data.getXMap(FIELD_DATA));
             }
         } 
     }
