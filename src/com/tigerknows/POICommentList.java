@@ -322,6 +322,7 @@ public class POICommentList extends BaseActivity {
             Response response = dataQuery.getResponse();
             if (response != null && response instanceof CommentResponse) {
                 CommentResponse commentResponse = (CommentResponse)response;
+                poi.setCommentQuery(dataQuery);
                 CommentList commentList = commentResponse.getList();
                 if (commentList != null) {
                     List<Comment> commentArrayList = commentList.getList();

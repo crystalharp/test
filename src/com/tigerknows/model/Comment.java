@@ -478,6 +478,7 @@ public class Comment extends BaseData {
         };
     };
     
+    @SuppressWarnings("unchecked")
     public static Comparator COMPARATOR_ONLY_TIME = new Comparator() {
 
         @Override
@@ -488,16 +489,28 @@ public class Comment extends BaseData {
         };
     };
     
+    /**
+     * 判断评论的作者是否为自己
+     * @param comment
+     * @return
+     */
     public static long isAuthorMe(Comment comment) {
         long attr = 0;
+        if (comment == null) {
+            return attr; 
+        }
         String clientUID = Globals.g_ClientUID;
         User user = Globals.g_User;
         long userId = -1;
         if (user != null) {
             userId = user.getUserId();
         }
+        
+        // 金截
         if (userId != -1 && comment.getUserId() == userId) {
             attr = POI.ATTRIBUTE_COMMENT_USER;
+            
+        // 银截
         } else if (userId == -1
                 && comment.getUserId() == -1
                 && clientUID != null
