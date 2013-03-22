@@ -32,7 +32,7 @@
 	           	android:layout_marginTop="4dp"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
-		        android:background="@drawable/bg_real_line" />
+		        android:background="@drawable/bg_line_split" />
         </LinearLayout>
         <LinearLayout 
             android:padding="8dp"
@@ -103,7 +103,7 @@
 		        <ImageView
 		            android:layout_width="fill_parent"
 		            android:layout_height="wrap_content"
-		            android:background="@drawable/bg_real_line" />
+		            android:background="@drawable/bg_line_split" />
 		        <Button
 		            android:id="@+id/update_password_btn" 
 		            android:layout_width="fill_parent"

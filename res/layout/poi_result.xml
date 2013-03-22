@@ -48,7 +48,7 @@
                 android:id="@+id/result_lsv"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                android:divider="@drawable/bg_real_line"
+                android:divider="@drawable/bg_line_split"
                 android:footerDividersEnabled="false"
                 android:fadingEdge="none"
                 android:scrollingCache="false"

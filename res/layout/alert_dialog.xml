@@ -99,7 +99,7 @@
 	        android:visibility="gone"
 	        android:scaleType="fitXY"
 	        android:gravity="fill_horizontal"
-	        android:src="@drawable/bg_real_line"/>
+	        android:src="@drawable/bg_line_split"/>
 	        
         <LinearLayout 
             android:layout_width="fill_parent"

@@ -752,13 +752,17 @@ public class CommonUtils {
         
         return dialog;
     }
-    
+
     public static ListView makeListView(Context context) {
+    	return makeListView(context, R.drawable.bg_real_line);
+    }
+    
+    public static ListView makeListView(Context context, int dividerResId) {
         ListView listView = new ListView(context);
         listView.setFadingEdgeLength(0);
         listView.setScrollingCacheEnabled(false);
         listView.setFooterDividersEnabled(false);
-        listView.setDivider(context.getResources().getDrawable(R.drawable.bg_real_line));
+        listView.setDivider(context.getResources().getDrawable(dividerResId));
         return listView;
     }
     

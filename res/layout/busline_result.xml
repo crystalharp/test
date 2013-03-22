@@ -30,13 +30,13 @@
 	        android:layout_height="wrap_content"
 	        android:background="@color/white"
 	        android:scaleType="fitXY"
-	        android:src="@drawable/bg_real_line" />
+	        android:src="@drawable/bg_line_split" />
         
         <com.tigerknows.view.SpringbackListView android:id="@+id/result_lsv"
             android:layout_below="@id/shadow2"
             android:layout_width="fill_parent" 
             android:layout_height="fill_parent"
-            android:divider="@drawable/bg_real_line"
+            android:divider="@drawable/bg_line_split"
             android:scrollingCache="false"
             android:fadingEdge="none"
             android:drawSelectorOnTop="false"

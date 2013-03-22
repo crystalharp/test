@@ -96,7 +96,7 @@
 		        <ImageView
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
-	                android:background="@drawable/bg_real_line" />
+	                android:background="@drawable/bg_line_split" />
 			    <com.tigerknows.view.user.ExtValidationEditText
 			        android:id="@+id/re_password_edt"
 			        android:layout_width="match_parent"

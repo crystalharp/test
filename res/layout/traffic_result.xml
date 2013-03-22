@@ -87,7 +87,7 @@
 	        android:layout_height="wrap_content"
 	        android:background="@color/white"
 	        android:scaleType="fitXY"
-	        android:src="@drawable/bg_real_line" /> -->
+	        android:src="@drawable/bg_line_split" /> -->
     </LinearLayout>        
 	
     <TextView android:id="@+id/length_txv"
@@ -115,7 +115,7 @@
         android:fadingEdge="none"
         android:drawSelectorOnTop="false"
         android:scrollingCache="false"
-		android:divider="@drawable/bg_real_line" />
+		android:divider="@drawable/bg_line_split" />
     <ImageView 
         android:id="@+id/subtitle_down"
         android:layout_width="fill_parent"

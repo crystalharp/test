@@ -160,9 +160,9 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         mQueryBtn = (Button)mRootView.findViewById(R.id.query_btn);
         mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);
         
-        mCategoryLsv = CommonUtils.makeListView(mSphinx);
+        mCategoryLsv = CommonUtils.makeListView(mSphinx, R.drawable.bg_line_split);
         mViewList.add(mCategoryLsv);
-        mSuggestLsv = CommonUtils.makeListView(mSphinx);
+        mSuggestLsv = CommonUtils.makeListView(mSphinx, R.drawable.bg_line_split);
         mViewList.add(mSuggestLsv);
         mViewPager.setAdapter(new MyAdapter());
         
