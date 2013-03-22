@@ -387,7 +387,13 @@ public final class DataQuery extends BaseQuery {
         if (criteria == null) {
             throw new APIException(APIException.CRITERIA_IS_NULL);
         }
-        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize())));
+        String size;
+        if (criteria.containsKey(SERVER_PARAMETER_SIZE)) {
+            size = criteria.get(SERVER_PARAMETER_SIZE);
+        } else {
+            size = String.valueOf(TKConfig.getPageSize());
+        }
+        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SIZE, size));
         if (criteria.containsKey(SERVER_PARAMETER_DATA_TYPE)) {
             String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
             if (DATA_TYPE_POI.equals(dataType)) {     
@@ -684,9 +690,6 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_DIANPING.equals(dataType)) {
             CommentResponse response = new CommentResponse(responseXMap);
             this.response = response;
-            if (isTurnPage == false && this.response != null && poi != null) {
-                poi.setCommentQuery(this);
-            }
         } else if (DATA_TYPE_DISCOVER.equals(dataType)) {
             DiscoverResponse response = new DiscoverResponse(responseXMap);
             this.response = response;

@@ -15,7 +15,7 @@ import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.DataQuery.DiscoverResponse;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.radar.Alarms;
-import com.tigerknows.radar.RadarReceiver;
+import com.tigerknows.service.PullService;
 import com.tigerknows.service.TKLocationManager;
 import com.tigerknows.service.TigerknowsLocationManager;
 import com.tigerknows.view.MoreFragment;
@@ -310,11 +310,10 @@ public class BaseQueryTest {
             
             @Override
             public void onClick(View v) {
-                Intent radarPushIntent = new Intent(RadarReceiver.ACTION_PULL);
                 Calendar next = Calendar.getInstance();
                 next.setTimeInMillis(System.currentTimeMillis());
                 next.add(Calendar.SECOND, 5);
-                Alarms.enableAlarm(activity, next, radarPushIntent);
+                Alarms.enableAlarm(activity, next, PullService.alarmAction);
                 LogWrapper.d("PullService", "Radar Push send in:" + next.getTime().toLocaleString());
             }
         });

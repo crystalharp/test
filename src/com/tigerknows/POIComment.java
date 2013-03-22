@@ -10,13 +10,15 @@ import com.tencent.tauth.TAuthView;
 import com.tigerknows.R;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.DataOperation;
+import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.DataOperation.CommentCreateResponse;
 import com.tigerknows.model.DataOperation.CommentUpdateResponse;
+import com.tigerknows.model.DataQuery.CommentResponse;
+import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
 import com.tigerknows.share.ShareAPI;
 import com.tigerknows.share.TKTencentOpenAPI;
-import com.tigerknows.share.TKWeibo;
 import com.tigerknows.share.TKWeibo;
 import com.tigerknows.share.UserAccessIdenty;
 import com.tigerknows.share.ShareAPI.LoginCallBack;
@@ -236,19 +238,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         mTitleBtn.setText(mStatus == STATUS_NEW ? R.string.publish_comment : R.string.modify_comment);
         mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
         Comment comment = mPOI.getMyComment();
-        long userId = Long.MIN_VALUE;
-        User user = Globals.g_User;            
-        if (user != null) {
-            userId = user.getUserId();
-            if (comment.getUserId() != userId) {
-                mPOI.setMyComment(new Comment());
-            }
-        } else {
-            if (!Globals.g_ClientUID.equals(comment.getClientUid())) {
-                mPOI.setMyComment(new Comment());
-            }
+        if (Comment.isAuthorMe(comment) <= 0) {
+            comment = new Comment();
+            mPOI.setMyComment(comment);
         }
-        mComment = mPOI.getMyComment();
+        mComment = comment;
         long commentPattern = mPOI.getCommentPattern();
 
         int grade = (int) (mComment.getGrade()/2);
@@ -1107,11 +1101,34 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         mComment.setClientUid(Globals.g_ClientUID);
         
         mPOI.setMyComment(mComment);
+        
+        // 如果没有最近点评或者最近这条点评是我的，则更新它
         if (mPOI.getLastComment() == null || Comment.isAuthorMe(mComment) > 0) {
             mPOI.setLastComment(mComment);
             mComment.setData(null);
             mPOI.setData(null);
             mPOI.updateData(mThis, mPOI.getData());
+        }
+        
+        // 如果以前查看过点评列表，则更新列表中属于我的那条点评信息
+        DataQuery dataQuery = mPOI.getCommentQuery();
+        if (dataQuery != null) {
+            CommentResponse commentResponse = (CommentResponse)dataQuery.getResponse();
+            if (commentResponse != null) {
+                CommentList commentList = commentResponse.getList();
+                if (commentList != null) {
+                    List<Comment> list = commentList.getList();
+                    if (list != null) {
+                        for(int i = list.size()-1; i >= 0; i--) {
+                            if (Comment.isAuthorMe(list.get(i)) > 0) {
+                                list.remove(i);
+                                list.add(i, mComment);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
         
         mPOI.update(mThis, mPOI.getStoreType());

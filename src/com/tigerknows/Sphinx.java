@@ -2182,6 +2182,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             getTrafficQueryFragment().setDataForSelectPoint(poi, TrafficQueryFragment.SELECTED);
         } else if(touchMode.equals(TouchMode.LONG_CLICK)){
             // TODO: 什么也不用做
+            return;
         } else if (overlayItem != null) {
             infoWindow.setVisible(false);
             if (overlayName.equals(ItemizedOverlay.POI_OVERLAY)) {

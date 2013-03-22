@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 lihong@tigerknows.com
+ * Copyright (C) 2010 xupeng@tigerknows.com
  */
 
 package com.tigerknows.service;
@@ -77,6 +77,8 @@ public class PullService extends Service {
     final static int MaxFail = 3;
     final static int requestStartHour = 9;
     final static int requestEndHour = 21;
+    
+    public static PullAlarmAction alarmAction = new PullAlarmAction();
 
     @Override
     public void onCreate() {
@@ -101,24 +103,6 @@ public class PullService extends Service {
                 //TODO:普通失败，推迟一天
                 next.add(Calendar.MINUTE, 5);
 //                Alarms.alarmAddHours(next, 1);
-                
-                //如果是因为调整系统时间导致定时器时间在过去而触发了PullService
-                String recordedAlarm = TKConfig.getPref(getApplicationContext(), TKConfig.PREFS_RADAR_PULL_ALARM, "");
-                LogWrapper.d(TAG, "recorded Alarm is:" +recordedAlarm);
-                if (!TextUtils.isEmpty(recordedAlarm)) {
-                    long recordedAlarmInMillis;
-                    try {
-                        recordedAlarmInMillis = Alarms.SIMPLE_DATE_FORMAT.parse(recordedAlarm).getTime();
-                        //如果当前时间被调整到了定时器时间之后
-                        if (requestCal.getTimeInMillis() - recordedAlarmInMillis > 1000) {
-                            LogWrapper.d(TAG, "recorded alarm is in the past time, now is " + requestCal.getTime().toLocaleString() + ", need a new Alarm.");
-                            exitService(next);
-                            return;
-                        }
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                    }
-                }
                 
                 Context context = getApplicationContext();
                 
@@ -314,9 +298,10 @@ public class PullService extends Service {
         }
         int length = list.length;
         long limit = recordMessageUpperLimit - 1;
+        limit = Math.min(length, limit);
         if (length > 0) {
             s.append(list[0]);
-            for(int i = 1; i < limit && i < length; i++) {
+            for(int i = 1; i < limit; i++) {
                 s.append("_");
                 s.append(list[i]);
             }
@@ -346,11 +331,37 @@ public class PullService extends Service {
         LogWrapper.d(TAG, "next Alarm: " + next.getTime().toLocaleString());
         
         Context context = getApplicationContext();
-        Intent intent = new Intent(RadarReceiver.ACTION_PULL);
-        Alarms.disableAlarm(context, intent);
-        Alarms.enableAlarm(context, next, intent);
+        Alarms.enableAlarm(context, next, alarmAction);
         
         Intent name = new Intent(context, PullService.class);
         stopService(name);
+    }
+
+    public static class PullAlarmAction implements Alarms.AlarmAction {
+        
+        @Override
+        public void saveAlarm(Context context, String absAlarm, String relAlarm) {
+            if (absAlarm != null && !TextUtils.isEmpty(absAlarm)) {
+                TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_ALARM_ABSOLUTE, absAlarm);
+            }
+            if (relAlarm != null && !TextUtils.isEmpty(relAlarm)) {
+                TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_ALARM_RELETIVE, relAlarm);
+            }
+        }
+
+        @Override
+        public Intent getIntent() {
+            return new Intent(RadarReceiver.ACTION_PULL);
+        }
+
+        @Override
+        public String getAbsAlarm(Context context) {
+            return TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_ALARM_ABSOLUTE, "");
+        }
+
+        @Override
+        public String getRelAlarm(Context context) {
+            return TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_ALARM_RELETIVE, "");
+        }
     }
 }

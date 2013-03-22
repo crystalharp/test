@@ -58,6 +58,7 @@ import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.DataOperation;
+import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
@@ -69,6 +70,8 @@ import com.tigerknows.model.DataOperation.POIQueryResponse;
 import com.tigerknows.model.DataOperation.TuangouQueryResponse;
 import com.tigerknows.model.DataOperation.YanchuQueryResponse;
 import com.tigerknows.model.DataOperation.ZhanlanQueryResponse;
+import com.tigerknows.model.DataQuery.CommentResponse;
+import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.provider.Tigerknows;
@@ -511,9 +514,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             Comment lastComment = poi.getLastComment();
             if (lastComment != null) {
                 result = true;
-                if (Comment.isAuthorMe(lastComment) > 0) {
-                    poi.setMyComment(lastComment);
-                }
                 
                 mCommentListView.setVisibility(View.VISIBLE);
                 LayoutParams layoutParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
@@ -620,12 +620,31 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             resId = R.string.poi_comment_poi_invalid_not_create;
                         }
 
-
                         CommonUtils.showNormalDialog(mSphinx, 
                                 mSphinx.getString(resId));
                     } else {
-                        POIComment.setPOI(poi, getId(), isMe ? POIComment.STATUS_MODIFY : POIComment.STATUS_NEW);
-                        mSphinx.showView(R.id.activity_poi_comment);
+                        if (isMe) {
+                            if (poi.getMyComment() != null) {
+                                POIComment.setPOI(poi, getId(), POIComment.STATUS_MODIFY);
+                                mSphinx.showView(R.id.activity_poi_comment);
+                            
+                            // 查询我的点评
+                            } else {
+                                Hashtable<String, String> criteria = new Hashtable<String, String>();
+                                criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+                                criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
+                                criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
+                                criteria.put(DataQuery.SERVER_PARAMETER_SIZE, "1");
+                                DataQuery commentQuery = new DataQuery(mSphinx);
+                                commentQuery.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait), false, false, poi);
+                                List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
+                                baseQueryList.add(commentQuery);
+                                mSphinx.queryStart(baseQueryList);
+                            }
+                        } else {
+                            POIComment.setPOI(poi, getId(), POIComment.STATUS_NEW);
+                            mSphinx.showView(R.id.activity_poi_comment);
+                        }
                     }
                 }
                 return false;
@@ -1055,7 +1074,30 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             Hashtable<String, String> criteria = baseQuery.getCriteria();
             String dataType = criteria.get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
             Response response = baseQuery.getResponse();
-            if (baseQuery instanceof DataOperation) {
+            
+            // 查询我的点评的结果
+            if (baseQuery instanceof DataQuery && response instanceof CommentResponse) {
+                if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, this, false)) {
+                    return;
+                }
+                DataQuery dataQuery = (DataQuery) baseQuery;
+                POI requestPOI = dataQuery.getPOI();
+                CommentResponse commentResponse = (CommentResponse) response;
+                CommentList commentList = commentResponse.getList();
+                if (commentList != null) {
+                    List<Comment> list = commentList.getList();
+                    if (list != null && list.size() > 0) {
+                        Comment comment = list.get(0);
+                        if (requestPOI.equals(poi) && Comment.isAuthorMe(comment) > 0) {
+                            requestPOI.setMyComment(comment);
+                            POIComment.setPOI(requestPOI, getId(), POIComment.STATUS_MODIFY);
+                            mSphinx.showView(R.id.activity_poi_comment);
+                        }
+                    }
+                }
+                
+            } else if (baseQuery instanceof DataOperation) {
+                // 查询POI的结果
                 if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
                     mLoadingView.setVisibility(View.GONE);
                     if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[]{603}, false, this, false)) {
@@ -1073,11 +1115,15 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         poi.updateData(mSphinx, onlinePOI.getData());
                         refreshDetail();
                     }
+                    
+                // 查询团购的结果
                 } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
                     if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
                         return;
                     }
                     tuangou = ((TuangouQueryResponse) response).getTuangou();
+                    
+                // 查询团购分店的结果
                 } else if (BaseQuery.DATA_TYPE_FENDIAN.equals(dataType)) {
                     if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
                         return;
@@ -1087,6 +1133,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     list.add(tuangou);
                     mSphinx.showView(R.id.view_tuangou_detail);
                     mSphinx.getTuangouDetailFragment().setData(list, 0, null);
+                    
+                // 查询演出的结果
                 } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
                     if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
                         return;
@@ -1096,6 +1144,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     list.add(yanchu);
                     mSphinx.showView(R.id.view_yanchu_detail);
                     mSphinx.getYanchuDetailFragment().setData(list, 0, null);
+                    
+                // 查询展览的结果
                 } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
                     if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
                         return;

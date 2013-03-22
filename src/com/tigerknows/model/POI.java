@@ -460,7 +460,7 @@ public class POI extends BaseData {
     
     private boolean onlyAPOI = false;
     
-    private Comment myComment = new Comment();
+    private Comment myComment = null;
     
     private Comment lastComment;
     

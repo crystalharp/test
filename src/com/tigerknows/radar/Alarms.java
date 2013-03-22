@@ -7,6 +7,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.SystemClock;
 import android.text.TextUtils;
 
 import java.text.SimpleDateFormat;
@@ -23,25 +24,25 @@ public class Alarms {
     /**
      * Sets alert in AlarmManger.  This is what will
      * actually launch the pull data service when the alarm triggers.
-     *
-     * @param alarm Alarm.
-     * @param atTimeInMillis milliseconds since epoch
+     * 使用相对时间设置定时器的原因是为了避免将时间调整到已设定时器之后的时间，那样会导致之前的所设置的定时器立即被触发。
      */
-    public static void enableAlarm(Context context, Calendar alarmCal, Intent intent) {
+    public static void enableAlarm(Context context, Calendar alarmCal, AlarmAction action) {
         AlarmManager am = (AlarmManager)
                 context.getSystemService(Context.ALARM_SERVICE);
 
         alarmCal = checkAlarm(alarmCal);
-        LogWrapper.d(TAG, "enableAlarm atTime " + alarmCal.getTime().toLocaleString());
+        //checkAlarm可以保证alarmCal在当前之间之后
+        long timeGap = alarmCal.getTimeInMillis() - System.currentTimeMillis();
+        long timer = SystemClock.elapsedRealtime() + timeGap;
         
-        TKConfig.setPref(context,
-                TKConfig.PREFS_RADAR_PULL_ALARM, 
-                Alarms.SIMPLE_DATE_FORMAT.format(alarmCal.getTimeInMillis()));
-
+        action.saveAlarm(context, Alarms.SIMPLE_DATE_FORMAT.format(alarmCal.getTimeInMillis()), String.valueOf(timer));
+        Intent intent = action.getIntent();
+        LogWrapper.d(TAG, intent.getAction() + " enableAlarm atTime " + alarmCal.getTime().toLocaleString());
+        
         PendingIntent sender = PendingIntent.getBroadcast(
                 context, 0, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 
-        am.set(AlarmManager.RTC_WAKEUP, alarmCal.getTimeInMillis(), sender);
+        am.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, timer, sender);
     }
 
     /**
@@ -137,5 +138,12 @@ public class Alarms {
             cal.set(Calendar.SECOND, second);
         }
         return cal;
+    }
+    
+    public interface AlarmAction {
+        void saveAlarm(Context context, String absAlarm, String relAlarm);
+        String getAbsAlarm(Context context);
+        String getRelAlarm(Context context);
+        Intent getIntent();
     }
 }

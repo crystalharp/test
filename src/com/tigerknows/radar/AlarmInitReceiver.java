@@ -2,6 +2,8 @@ package com.tigerknows.radar;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
+import com.tigerknows.service.LocationCollectionService;
+import com.tigerknows.service.PullService;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -43,14 +45,12 @@ public class AlarmInitReceiver extends BroadcastReceiver {
     }
     
     void enableAlarm(Context context) {
-        String nextAlarm = TKConfig.getPref(context, TKConfig.PREFS_RADAR_LOCATION_COLLECTION_ALARM, "");
-        Calendar next = Alarms.calculateAlarm(nextAlarm);
-        Intent locationCollection = new Intent(LocationCollectorReceiver.ACTION_LOCATION_COLLECTION);
-        Alarms.enableAlarm(context, next, locationCollection);
+        String locationAlarm = LocationCollectionService.alarmAction.getAbsAlarm(context);
+        Calendar locationNext = Alarms.calculateAlarm(locationAlarm);
+        Alarms.enableAlarm(context, locationNext, LocationCollectionService.alarmAction);
         
-        nextAlarm = TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_ALARM, "");
-        next = Alarms.calculateAlarm(nextAlarm);
-        Intent pullIntent = new Intent(RadarReceiver.ACTION_PULL);
-        Alarms.enableAlarm(context, next, pullIntent);
+        String pullAlarm = PullService.alarmAction.getAbsAlarm(context);
+        Calendar pullNext = Alarms.calculateAlarm(pullAlarm);
+        Alarms.enableAlarm(context, pullNext, PullService.alarmAction);
     }
 }
