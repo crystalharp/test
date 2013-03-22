@@ -34,7 +34,7 @@
             android:layout_height="32dp"
             android:layout_alignRight="@id/bg_imv"
             android:layout_alignParentTop="true"
-            android:layout_margin="2dp"
+            android:layout_margin="1dp"
             android:scaleType="fitXY"
             />
     </RelativeLayout>

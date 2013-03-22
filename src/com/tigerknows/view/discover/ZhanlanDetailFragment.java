@@ -11,13 +11,26 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
+import com.decarta.Globals;
+import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
+import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
+import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
+import com.tigerknows.model.DataOperation.YanchuQueryResponse;
+import com.tigerknows.model.DataOperation.ZhanlanQueryResponse;
+import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
+import com.tigerknows.util.TKAsyncTask;
+import com.tigerknows.view.POIDetailFragment;
 import com.tigerknows.view.SpringbackListView.IPagerList;
 import com.tigerknows.view.discover.CycleViewPager.CyclePagerAdapter;
 
@@ -35,6 +48,7 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
     }
     
     List<Zhanlan> mDataList;
+    private List<BaseQuery> mBaseQuerying;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,6 +97,36 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
         mDataList = dataList;
         setData(dataList.size(), position, iPagerList);
         refreshViews(position);
+        
+    	setViewsVisibility(View.VISIBLE);
+    }
+    
+    public void setPulledDynamicPOI(PulledDynamicPOI dynamicPOI){
+    	
+    	if(dynamicPOI==null || dynamicPOI.getMasterUID()==null
+    			|| dynamicPOI.getMasterType()==0){
+    		return;
+    	}
+    	
+    	setViewsVisibility(View.INVISIBLE);
+    	
+    	DataOperation dataOperation = new DataOperation(mSphinx);
+    	Hashtable<String, String> criteria = new Hashtable<String, String>();
+    	criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_ZHANLAN);
+    	criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+    	criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUID());
+        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+                Zhanlan.NEED_FILELD + Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
+        criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+                Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
+                Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
+    	criteria.put(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + 410, ""+R.string.response_code_410_pulled);
+        dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), ZhanlanDetailFragment.this.getId(), ZhanlanDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+        List<BaseQuery> list = new ArrayList<BaseQuery>();
+        list.add(dataOperation);
+        mTkAsyncTasking = mSphinx.queryStart(list);
+        mBaseQuerying = list;
+        
     }
     
     public void viewMap() {
@@ -116,4 +160,32 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
             view.onResume();
         }
     }
+    
+	@Override
+	public void onPostExecute(TKAsyncTask tkAsyncTask) {
+		super.onPostExecute(tkAsyncTask);
+		
+		List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
+		BaseQuery baseQuery = baseQueryList.get(0);
+        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+            isReLogin = true;
+            return;
+        }
+        if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, this, true)) {
+            return;
+        }
+        
+        ZhanlanQueryResponse response = (ZhanlanQueryResponse) baseQuery.getResponse();
+        Zhanlan zhanlan = response.getZhanlan();
+        List<Zhanlan> list = new ArrayList<Zhanlan>();
+        list.add(zhanlan);
+        mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
+	}
+
+	@Override
+	public void onCancelled(TKAsyncTask tkAsyncTask) {
+		super.onCancelled(tkAsyncTask);
+		this.dismiss();
+	}
+	
 }

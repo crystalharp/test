@@ -475,9 +475,9 @@ public class MapStatsService extends Service {
         downloadCity.totalSize = totalSize;
         downloadCity.downloadedSize = downloadedSize;
         if (maybeUpgrade) {
-            downloadCity.state = DownloadCity.MAYBE_UPGRADE;
+            downloadCity.state = DownloadCity.STATE_CAN_BE_UPGRADE;
         } else if (downloadCity.getPercent() >= MapDownload.PERCENT_COMPLETE) {
-            downloadCity.state = DownloadCity.COMPLETED;
+            downloadCity.state = DownloadCity.STATE_COMPLETED;
         }
     }
 }

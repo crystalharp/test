@@ -2,6 +2,7 @@ package com.tigerknows.radar;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.PullMessage.Message;
 import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.model.PullMessage.Message.PulledProductMessage;
@@ -16,6 +17,11 @@ import android.widget.RemoteViews;
 
 public class TKNotificationManager {
 
+	/**
+	 * Check the integrity of the product upgrade info
+	 * @param msg
+	 * @return true if the pulledProductMessage and downloadUrl not null  
+	 */
 	private static boolean checkProdcutUpgrade(Message msg){
 		PulledProductMessage productMsg;
 		if((productMsg = msg.getProductMsg())!=null 
@@ -26,6 +32,11 @@ public class TKNotificationManager {
 		}
 	}
 	
+	/**
+	 * Check the producInfo fileds
+	 * @param msg
+	 * @return true if the all product info needed fields needed are all there
+	 */
 	private static boolean checkProdcutInfo(Message msg){
 		PulledProductMessage productMsg = msg.getProductMsg();
 		if(productMsg!=null && productMsg.getDescription()!=null ){
@@ -35,16 +46,62 @@ public class TKNotificationManager {
 		}
 	}
 
+	/**
+	 * Check the zhnalan|yanchu fileds
+	 * @param msg
+	 * @return true if the all needed fields needed are all there
+	 */
     private static boolean checkZhanlanYanchu(Message msg) {
     	PulledDynamicPOI dynamicPOI = msg.getDynamicPOI();
-    	if(dynamicPOI!=null){
+    	if(dynamicPOI!=null
+    			&& (BaseQuery.DATA_TYPE_ZHANLAN.equals(""+dynamicPOI.getMasterType()) 
+    					|| BaseQuery.DATA_TYPE_YANCHU.equals(""+dynamicPOI.getMasterType()) ) 
+    			&& dynamicPOI.getMasterUID() != null){
     		return true;
     	}
-    	
+		return false;
+	}
+    
+	/**
+	 * Check the film fileds
+	 * @param msg
+	 * @return true if the all needed fields needed are all there
+	 */
+    private static boolean checkFilminfo(Message msg) {
+    	PulledDynamicPOI dynamicPOI = msg.getDynamicPOI();
+    	if(dynamicPOI!=null
+    			&& BaseQuery.DATA_TYPE_DIANYING.equals(""+dynamicPOI.getMasterType())
+    			&& dynamicPOI.getMasterUID() != null
+    			&& dynamicPOI.getSlaveType() != 0
+    			&& dynamicPOI.getSlaveUID() != null){
+    		return true;
+    	}
 		return false;
 	}
 
-    public static PendingIntent makeIntent(Context context, Message msg) {
+	/**
+	 * Check the inerval msg fileds
+	 * @param msg
+	 * @return true if the all needed fields needed are all there
+	 */
+    private static boolean checkInterval(Message msg) {
+    	PulledDynamicPOI dynamicPOI = msg.getDynamicPOI();
+    	if(dynamicPOI!=null
+    			&& ( (BaseQuery.DATA_TYPE_DIANYING.equals(""+dynamicPOI.getMasterType()) && checkFilminfo(msg))
+    					|| checkZhanlanYanchu(msg) )
+    			){
+    		return true;
+    	}
+		return false;
+	}
+
+    /**
+     * Check the msg integrity and make intent for the notification
+     * @param context
+     * @param msg
+     * @return
+     */
+    public static PendingIntent checkAndMakeIntent(Context context, Message msg) {
     	
     	Intent intent = null;
     	
@@ -70,9 +127,23 @@ public class TKNotificationManager {
                     .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                     .putExtra(Sphinx.EXTRA_PULL_MESSAGE, msg);
 				}
-				
+				break;
+			case Message.TYPE_FILM:
+				if(checkFilminfo(msg)){
+					intent = new Intent(context, Sphinx.class)
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    .putExtra(Sphinx.EXTRA_PULL_MESSAGE, msg);
+				}
 				break;
 				
+			case Message.TYPE_INTERVAL:
+				if((checkInterval(msg))){
+					intent = new Intent(context, Sphinx.class)
+                    .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    .putExtra(Sphinx.EXTRA_PULL_MESSAGE, msg);
+				}
+				break;
+
 			default:
 				return null;
 		}
@@ -92,7 +163,7 @@ public class TKNotificationManager {
         if (msg == null) {
             return;
         }
-        PendingIntent pendingIntent = makeIntent(context, msg);
+        PendingIntent pendingIntent = checkAndMakeIntent(context, msg);
         if(pendingIntent == null){
         	return;
         }
@@ -103,24 +174,60 @@ public class TKNotificationManager {
 
         notif.contentIntent = pendingIntent;
 
-        CharSequence text = context.getString(R.string.app_name);
-        notif.tickerText = text;
-
-        // the icon for the status bar
-        notif.icon = R.drawable.icon;
-
         // our custom view
         RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification);
-        contentView.setTextViewText(R.id.text_txv, msg.toString());
         contentView.setImageViewResource(R.id.icon_imv, R.drawable.icon);
-        
-        notif.contentView = contentView;
+        setNotificationContents(context, notif, msg);
 
         // we use a string id because is a unique number.  we use it later to cancel the
         // notification
         nm.notify(R.layout.sphinx, notif);
     }
 
+	/**
+	 * Set the notification contents
+	 * @param context
+	 * @param notif
+	 * @param msg
+	 * @see String
+	 */
+	private static void setNotificationContents(Context context, Notification notif, Message msg){
+        RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification);
+        String bottomText = "";
+    	switch ((int)msg.getType()) 
+    	{
+			case Message.TYPE_PRODUCT_UPGRADE:
+				bottomText = context.getString(R.string.radar_new_version);
+				break;
+	
+			case Message.TYPE_PRODUCT_INFOMATION:
+				bottomText = msg.getProductMsg().getDescription();
+				break;
+				
+			case Message.TYPE_HOLIDAY:
+				bottomText = context.getString(R.string.radar_holidy) + 
+								(msg.getDynamicPOI().getDescription()==null?"":msg.getDynamicPOI().getDescription());
+				break;
+				
+			case Message.TYPE_FILM:
+				bottomText = context.getString(R.string.radar_new_film) + 
+								(msg.getDynamicPOI().getDescription()==null?"":msg.getDynamicPOI().getDescription());
+				break;
+				
+			case Message.TYPE_INTERVAL:
+				bottomText = context.getString(R.string.radar_interval) + 
+								(msg.getDynamicPOI().getDescription()==null?"":msg.getDynamicPOI().getDescription());
+				break;
+		}
+    	
+    	contentView.setTextViewText(R.id.bottom_txv, bottomText);
+    	contentView.setImageViewResource(R.id.icon_imv, R.drawable.notif_left_icon);
+        notif.contentView = contentView;
+        notif.tickerText = bottomText;
+        notif.icon = R.drawable.notif_left_icon;
+    	
+	}
+	
     public static void cancel(Context context) {
         NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         nm.cancel(R.layout.sphinx);

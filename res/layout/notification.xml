@@ -13,21 +13,22 @@
         android:gravity="center"
         />
     <TextView
-        android:id="@+id/text_txv"
+        android:id="@+id/left_txv"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/icon_imv"
         android:layout_marginTop="8dp"
-        android:textSize="16sp"
+        android:textSize="18sp"
+        android:textColor="@color/white"
         android:text="@string/app_name"
         />
     
     <TextView
-        android:id="@+id/text2_txv"
+        android:id="@+id/bottom_txv"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/icon_imv"
-        android:layout_below="@id/text_txv"
+        android:layout_below="@id/left_txv"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:textSize="14sp"
@@ -40,8 +41,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
-        android:layout_alignBaseline="@id/text_txv"
+        android:layout_alignBaseline="@id/left_txv"
         android:layout_marginTop="8dp"
+        android:textColor="@color/gray_dark"
         android:text="@string/app_name"
         />
     

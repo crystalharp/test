@@ -385,6 +385,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, dataType);
                         criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
                         criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUid());
+                        
                         if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
                             mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "tuangou");
                             criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,

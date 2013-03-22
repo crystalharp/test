@@ -149,6 +149,7 @@ public abstract class BaseQuery {
     // pic string  true 图片们的宽高信息，格式为key0:width_height_[(0|1)+];key1:width_height_[(0|1)+];... 
     public static final String SERVER_PARAMETER_PICTURE = "pic";
 
+	public static final String RESPONSE_CODE_ERROR_MSG_PREFIX = "resp_code_err_msg";
     
     // 数据类型:
     // POI 1
@@ -231,7 +232,7 @@ public abstract class BaseQuery {
     private static final int RECONNECTION_WAIT_TIMES = 15 * 1000;
 
     public static final int KEEP_ALIVE_TIME = 30 * 1000;
-    
+
     private static List<NameValuePair> sCommonParameters;
     
     public static void initCommonParameters() {
