@@ -14,8 +14,6 @@ public class RadarReceiver extends BroadcastReceiver{
     static final String TAG = "RadarReceiver";
 
     public static final String ACTION_PULL = "action.com.tigerknows.radar.PullReceiver";
-
-    public static final String ACTION_LOCATION_COLLECTION = "action.com.tigerknows.radar.LocationCollectionReceiver";
     
     @Override
     public void onReceive(Context context, Intent intent) {
