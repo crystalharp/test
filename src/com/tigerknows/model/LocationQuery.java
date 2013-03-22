@@ -113,8 +113,8 @@ public class LocationQuery extends BaseQuery {
             List<ScanResult> scanResults = wifiManager.getScanResults();
             if (scanResults != null) {
                 for (ScanResult sr : scanResults) {
-                    requestParameters.add(new BasicNameValuePair("wifi_mac[]", sr.BSSID));
-                    requestParameters.add(new BasicNameValuePair("wifi_ss[]", String.valueOf(sr.level)));
+                    requestParameters.add("wifi_mac[]", sr.BSSID);
+                    requestParameters.add("wifi_ss[]", String.valueOf(sr.level));
                 }
             }
         }
@@ -126,9 +126,9 @@ public class LocationQuery extends BaseQuery {
                 lac = cellInfo.getLac();
                 cid = cellInfo.getCid();
                 if (CommonUtils.lacCidValid(lac, cid)) {
-                    requestParameters.add(new BasicNameValuePair("n8b_lac[]", String.valueOf(lac)));
-                    requestParameters.add(new BasicNameValuePair("n8b_ci[]", String.valueOf(cid)));
-                    requestParameters.add(new BasicNameValuePair("n8b_ss[]", String.valueOf(CommonUtils.asu2dbm(cellInfo.getRssi()))));
+                    requestParameters.add("n8b_lac[]", String.valueOf(lac));
+                    requestParameters.add("n8b_ci[]", String.valueOf(cid));
+                    requestParameters.add("n8b_ss[]", String.valueOf(CommonUtils.asu2dbm(cellInfo.getRssi())));
                 }
             }
         }
@@ -141,12 +141,12 @@ public class LocationQuery extends BaseQuery {
 //            int cid;
 //            for (NeighboringCellInfo neighboringCellInfo : list) {
 //                cid = neighboringCellInfo.getCid();
-//                parameters.add(new BasicNameValuePair("n8b_lac[]", String.valueOf(String.valueOf(cid >>> 16))));
-//                parameters.add(new BasicNameValuePair("n8b_ci[]", String.valueOf(cid & 0xffff)));
-//                parameters.add(new BasicNameValuePair("n8b_ss[]", String.valueOf(neighboringCellInfo.getRssi())));
+//                parameters.add("n8b_lac[]", String.valueOf(String.valueOf(cid >>> 16))));
+//                parameters.add("n8b_ci[]", String.valueOf(cid & 0xffff)));
+//                parameters.add("n8b_ss[]", String.valueOf(neighboringCellInfo.getRssi())));
 //            }
 //        }
-        requestParameters.add(new BasicNameValuePair("radio_type", TKConfig.getRadioType()));
+        requestParameters.add("radio_type", TKConfig.getRadioType());
     }
 
     @Override

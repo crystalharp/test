@@ -17,6 +17,8 @@
 package com.tigerknows.net;
 
 import com.tigerknows.TKConfig;
+import com.weibo.sdk.android.WeiboException;
+import com.weibo.sdk.android.WeiboParameters;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
@@ -97,7 +99,7 @@ import android.webkit.CookieSyncManager;
 
 public class Utility {
 
-    private static TKParameters mRequestHeader = new TKParameters();
+    private static WeiboParameters mRequestHeader = new WeiboParameters();
 
     public static final String BOUNDARY = "7cd4a6d158c";
     public static final String MP_BOUNDARY = "--" + BOUNDARY;
@@ -113,7 +115,7 @@ public class Utility {
 
     // 设置http头,如果authParam不为空，则表示当前有token认证信息需要加入到头中
     public static void setHeader(String httpMethod, HttpUriRequest request,
-            TKParameters authParam, String url) throws TKException {
+            WeiboParameters authParam, String url) throws WeiboException {
         if (!isBundleEmpty(mRequestHeader)) {
             for (int loc = 0; loc < mRequestHeader.size(); loc++) {
                 String key = mRequestHeader.getKey(loc);
@@ -123,7 +125,7 @@ public class Utility {
         request.setHeader("User-Agent", TKConfig.getUserAgent());
     }
 
-    public static boolean isBundleEmpty(TKParameters bundle) {
+    public static boolean isBundleEmpty(WeiboParameters bundle) {
         if (bundle == null || bundle.size() == 0) {
             return true;
         }
@@ -136,7 +138,7 @@ public class Utility {
         mRequestHeader.add(key, value);
     }
 
-    public static void setRequestHeader(TKParameters params) {
+    public static void setRequestHeader(WeiboParameters params) {
         mRequestHeader.addAll(params);
     }
 
@@ -163,7 +165,7 @@ public class Utility {
         return sb.toString();
     }
 
-    public static String encodeUrl(TKParameters parameters) {
+    public static String encodeUrl(WeiboParameters parameters) {
         if (parameters == null) {
             return "";
         }
@@ -220,7 +222,7 @@ public class Utility {
      *            :parameters key pairs
      * @return UrlEncodedFormEntity: encoed entity
      */
-    public static UrlEncodedFormEntity getPostParamters(Bundle bundle) throws TKException {
+    public static UrlEncodedFormEntity getPostParamters(Bundle bundle) throws WeiboException {
         if (bundle == null || bundle.isEmpty()) {
             return null;
         }
@@ -232,7 +234,7 @@ public class Utility {
             UrlEncodedFormEntity entity = new UrlEncodedFormEntity(form, "UTF-8");
             return entity;
         } catch (UnsupportedEncodingException e) {
-            throw new TKException(e);
+            throw new WeiboException(e);
         }
     }
 
@@ -253,7 +255,8 @@ public class Utility {
      */
 
     public static byte[] openUrl(Context context, HttpClient client, String url, String method,
-            TKParameters params) throws TKException {
+            WeiboParameters params) throws WeiboException {
+        byte[] rlt = null;
         String file = "";
         for (int loc = 0; loc < params.size(); loc++) {
             String key = params.getKey(loc);
@@ -263,14 +266,16 @@ public class Utility {
             }
         }
         if (TextUtils.isEmpty(file)) {
-            return openUrl(context, client, url, method, params, null);
+            rlt = openUrl(context, client, url, method, params, null);
         } else {
-            return openUrl(context, client, url, method, params, file);
+            rlt = openUrl(context, client, url, method, params, file);
         }
+        return rlt;
     }
 
     public static byte[] openUrl(Context context, HttpClient client, String url, String method,
-            TKParameters params, String file) throws TKException {
+            WeiboParameters params, String file) throws WeiboException {
+        byte[] result = null;
         try {
             if (client == null) {
                 client = getNewHttpClient(context);
@@ -313,12 +318,13 @@ public class Utility {
             int statusCode = status.getStatusCode();
 
             if (statusCode != 200) {
-				throw new TKException(String.format("Network error"), statusCode);
+				throw new WeiboException(String.format("Network error"), statusCode);
             }
             // parse content stream from response
-            return read(response);
+            result = read(response);
+            return result;
         } catch (IOException e) {
-            throw new TKException(e);
+            throw new WeiboException(e);
         }
     }
 
@@ -448,7 +454,7 @@ public class Utility {
      * @return void
      */
     private static void imageContentToUpload(OutputStream out, Bitmap imgpath)
-            throws TKException {
+            throws WeiboException {
         StringBuilder temp = new StringBuilder();
 
         temp.append(MP_BOUNDARY).append("\r\n");
@@ -464,13 +470,13 @@ public class Utility {
             out.write("\r\n".getBytes());
             out.write(("\r\n" + END_MP_BOUNDARY).getBytes());
         } catch (IOException e) {
-            throw new TKException(e);
+            throw new WeiboException(e);
         } finally {
             if (null != bis) {
                 try {
                     bis.close();
                 } catch (IOException e) {
-                    throw new TKException(e);
+                    throw new WeiboException(e);
                 }
             }
         }
@@ -485,8 +491,8 @@ public class Utility {
      *            : post parameters for uploading
      * @return void
      */
-    private static void paramToUpload(OutputStream baos, TKParameters params)
-            throws TKException {
+    private static void paramToUpload(OutputStream baos, WeiboParameters params)
+            throws WeiboException {
         String key = "";
         for (int loc = 0; loc < params.size(); loc++) {
             key = params.getKey(loc);
@@ -499,7 +505,7 @@ public class Utility {
             try {
                 baos.write(res);
             } catch (IOException e) {
-                throw new TKException(e);
+                throw new WeiboException(e);
             }
         }
     }
@@ -512,7 +518,8 @@ public class Utility {
      * 
      * @return String : http response content
      */
-    private static byte[] read(HttpResponse response) throws TKException {
+    private static byte[] read(HttpResponse response) throws WeiboException {
+        byte[] result = null;
         HttpEntity entity = response.getEntity();
         InputStream inputStream;
         try {
@@ -531,11 +538,12 @@ public class Utility {
                 content.write(sBuffer, 0, readBytes);
             }
             // Return result from buffered stream
-            return content.toByteArray();
+            result = content.toByteArray();
+            return result;
         } catch (IllegalStateException e) {
-            throw new TKException(e);
+            throw new WeiboException(e);
         } catch (IOException e) {
-            throw new TKException(e);
+            throw new WeiboException(e);
         }
     }
 
@@ -589,7 +597,7 @@ public class Utility {
         alertBuilder.create().show();
     }
 
-    public static String encodeParameters(TKParameters httpParams) {
+    public static String encodeParameters(WeiboParameters httpParams) {
         if (null == httpParams || Utility.isBundleEmpty(httpParams)) {
             return "";
         }

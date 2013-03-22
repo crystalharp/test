@@ -169,10 +169,10 @@ public class SuggestLexiconDownload extends BaseQuery {
     protected void makeRequestParameters() throws APIException {
         super.makeRequestParameters();
         addCommonParameters(requestParameters, currentCityId);
-        requestParameters.add(new BasicNameValuePair("lr", String.valueOf(oldversion)));
-        requestParameters.add(new BasicNameValuePair("rs", String.valueOf(hasDataLength > 0 ? hasDataLength - VALIDATE_LENGTH : 0)));
+        requestParameters.add("lr", String.valueOf(oldversion));
+        requestParameters.add("rs", String.valueOf(hasDataLength > 0 ? hasDataLength - VALIDATE_LENGTH : 0));
         if (hasDataLength > 0) {
-            requestParameters.add(new BasicNameValuePair("nr", String.valueOf(revision)));
+            requestParameters.add("nr", String.valueOf(revision));
         }
     }
     

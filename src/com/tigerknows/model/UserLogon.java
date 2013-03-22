@@ -35,7 +35,7 @@ public final class UserLogon extends BaseQuery {
         super.makeRequestParameters();
         addCommonParameters(requestParameters);
         // TODO 这个参数必须要，那怕是空？！
-        requestParameters.add(new BasicNameValuePair("fe", ""));
+        requestParameters.add("fe", "");
     }
 
     @Override

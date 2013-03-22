@@ -106,21 +106,21 @@ public final class TrafficQuery extends BaseQuery {
         addCommonParameters(requestParameters, cityId);
 
         if (Util.inChina(startPOI.getPosition())) {
-            requestParameters.add(new BasicNameValuePair("sx", String.valueOf(startPOI.getPosition().getLon())));
-            requestParameters.add(new BasicNameValuePair("sy", String.valueOf(startPOI.getPosition().getLat())));
+            requestParameters.add("sx", String.valueOf(startPOI.getPosition().getLon()));
+            requestParameters.add("sy", String.valueOf(startPOI.getPosition().getLat()));
         }
         String startName = startPOI.getName();
         if (!TextUtils.isEmpty(startName)) {
-            requestParameters.add(new BasicNameValuePair("sn", startName));
+            requestParameters.add("sn", startName);
         }
 
         if (Util.inChina(endPOI.getPosition())) {
-            requestParameters.add(new BasicNameValuePair("ex", String.valueOf(endPOI.getPosition().getLon())));
-            requestParameters.add(new BasicNameValuePair("ey", String.valueOf(endPOI.getPosition().getLat())));
+            requestParameters.add("ex", String.valueOf(endPOI.getPosition().getLon()));
+            requestParameters.add("ey", String.valueOf(endPOI.getPosition().getLat()));
         }
         String endName = endPOI.getName();
         if (!TextUtils.isEmpty(endName)) {
-            requestParameters.add(new BasicNameValuePair("en", endName));
+            requestParameters.add("en", endName);
         }
         
         String type = "0";
@@ -132,9 +132,9 @@ public final class TrafficQuery extends BaseQuery {
             type = "3";
         }
 
-        requestParameters.add(new BasicNameValuePair("type", type));
-        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_INDEX, String.valueOf(0)));
-        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SIZE, String.valueOf(PAGE_SIZE)));
+        requestParameters.add("type", type);
+        requestParameters.add(SERVER_PARAMETER_INDEX, String.valueOf(0));
+        requestParameters.add(SERVER_PARAMETER_SIZE, String.valueOf(PAGE_SIZE));
     }
 
     @Override

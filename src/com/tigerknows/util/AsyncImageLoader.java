@@ -4,8 +4,8 @@ package com.tigerknows.util;
 import com.decarta.Globals;
 import com.tigerknows.ImageCache;
 import com.tigerknows.TKConfig;
-import com.tigerknows.net.TKParameters;
 import com.tigerknows.net.Utility;
+import com.weibo.sdk.android.WeiboParameters;
 
 import org.apache.http.client.HttpClient;
 
@@ -182,7 +182,7 @@ public class AsyncImageLoader {
                 mHttpClient = Utility.getNewHttpClient(context);
             }
             try {
-                byte[] data = Utility.openUrl(context, mHttpClient, imageUrl.url, "GET", new TKParameters());
+                byte[] data = Utility.openUrl(context, mHttpClient, imageUrl.url, "GET", new WeiboParameters());
                 ImageCache imageCache1 = Globals.getImageCache();
                 final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
                 imageCache1.putTile(name, data);

@@ -78,8 +78,8 @@ public class MapMetaFileDownload extends BaseQuery {
     @Override
     protected void makeRequestParameters() throws APIException {
         super.makeRequestParameters();
-        requestParameters.add(new BasicNameValuePair("rid", String.valueOf(mRegionId)));
-        requestParameters.add(new BasicNameValuePair("vs", TKConfig.getClientSoftVersion()));
+        requestParameters.add("rid", String.valueOf(mRegionId));
+        requestParameters.add("vs", TKConfig.getClientSoftVersion());
         String mapPath = TKConfig.getDataPath(true);
         if (TextUtils.isEmpty(mapPath)) {
             return;
@@ -88,13 +88,13 @@ public class MapMetaFileDownload extends BaseQuery {
         if (metaFile.exists()) {
             long off = metaFile.length();
             if (off > 30) {
-                requestParameters.add(new BasicNameValuePair("off", String.valueOf(off)));
+                requestParameters.add("off", String.valueOf(off));
                 String dataVersion = "";
                 RegionMetaVersion version = mapEngine.getRegionMetaVersion(mRegionId);
                 if (null != version) {
                     dataVersion = version.toString();
                 }
-                requestParameters.add(new BasicNameValuePair("vd", dataVersion));
+                requestParameters.add("vd", dataVersion);
             } else {
                 metaFile.delete();
             }

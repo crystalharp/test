@@ -61,7 +61,7 @@ public class DataOperation extends BaseQuery {
 
         String sessionId = Globals.g_Session_Id;
         if (!TextUtils.isEmpty(sessionId)) {
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SESSION_ID, sessionId));
+            requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
         } 
 
         if (criteria.containsKey(SERVER_PARAMETER_DATA_TYPE) == false) {
@@ -70,12 +70,12 @@ public class DataOperation extends BaseQuery {
         	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_OPERATION_CODE);
         } else {
         	String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_TYPE, dataType));
+            requestParameters.add(SERVER_PARAMETER_DATA_TYPE, dataType);
             String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_OPERATION_CODE, operationCode));
+            requestParameters.add(SERVER_PARAMETER_OPERATION_CODE, operationCode);
             if (OPERATION_CODE_QUERY.equals(operationCode)) {
             	if (criteria.containsKey(SERVER_PARAMETER_NEED_FEILD)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, criteria.get(SERVER_PARAMETER_NEED_FEILD)));
+                    requestParameters.add(SERVER_PARAMETER_NEED_FEILD, criteria.get(SERVER_PARAMETER_NEED_FEILD));
                 } else if(dataType.equals(DATA_TYPE_DIAOYAN)){
                 	//do nothing
                 } else {
@@ -83,35 +83,35 @@ public class DataOperation extends BaseQuery {
                 }
                 
                 if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID)));
+                    requestParameters.add(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID));
                 } else if(dataType.equals(DATA_TYPE_DIAOYAN)){
                 	//do nothing
                 } else {
                 	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_PICTURE)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PICTURE, criteria.get(SERVER_PARAMETER_PICTURE)));
+                    requestParameters.add(SERVER_PARAMETER_PICTURE, criteria.get(SERVER_PARAMETER_PICTURE));
                 }
             } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
                 if (criteria.containsKey(SERVER_PARAMETER_ENTITY)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY)));
+                    requestParameters.add(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ENTITY);
                 }
             } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
                 if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID)));
+                    requestParameters.add(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_ENTITY)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY)));
+                    requestParameters.add(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ENTITY);
                 }
             } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
                 if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID)));
+                    requestParameters.add(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
                 }
@@ -122,7 +122,7 @@ public class DataOperation extends BaseQuery {
 
         
         if (!TextUtils.isEmpty(Globals.g_ClientUID)) {
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_CLIENT_ID, Globals.g_ClientUID));
+            requestParameters.add(SERVER_PARAMETER_CLIENT_ID, Globals.g_ClientUID);
         } else {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CLIENT_ID);
         }

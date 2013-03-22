@@ -79,12 +79,12 @@ public final class BuslineQuery extends BaseQuery {
         }
         addCommonParameters(requestParameters, cityId);
         
-        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_KEYWORD, keyword));
-        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_INDEX, String.valueOf(startPos)));
-        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize())));
+        requestParameters.add(SERVER_PARAMETER_KEYWORD, keyword);
+        requestParameters.add(SERVER_PARAMETER_INDEX, String.valueOf(startPos));
+        requestParameters.add(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize()));
 
         if (isReturnTotal) {
-            requestParameters.add(new BasicNameValuePair("w", "1"));
+            requestParameters.add("w", "1");
         }
     }
 

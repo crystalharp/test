@@ -46,6 +46,7 @@ import com.tigerknows.util.HttpUtils;
 import com.tigerknows.util.ParserUtil;
 import com.tigerknows.util.TKLZDecode;
 import com.tigerknows.util.HttpUtils.TKHttpClient.ProgressUpdate;
+import com.weibo.sdk.android.WeiboParameters;
 
 /**
  *本类是所有联网搜索类的公共父类.
@@ -232,37 +233,37 @@ public abstract class BaseQuery {
     private static final int RECONNECTION_WAIT_TIMES = 15 * 1000;
 
     public static final int KEEP_ALIVE_TIME = 30 * 1000;
-
-    private static List<NameValuePair> sCommonParameters;
+    
+    private static WeiboParameters sCommonParameters;
     
     public static void initCommonParameters() {
         
-        sCommonParameters = new ArrayList<NameValuePair>();
-        sCommonParameters.add(new BasicNameValuePair("dv", "1"));
-        sCommonParameters.add(new BasicNameValuePair("e", TKConfig.getIMEI()));
+        sCommonParameters = new WeiboParameters();
+        sCommonParameters.add("dv", "1");
+        sCommonParameters.add("e", TKConfig.getIMEI());
 
-        sCommonParameters.add(new BasicNameValuePair("m", TKConfig.getSpreader()));
-        sCommonParameters.add(new BasicNameValuePair("sc", TKConfig.SERVICE_CENTER));
-        sCommonParameters.add(new BasicNameValuePair("sg", TKConfig.SG));
-        sCommonParameters.add(new BasicNameValuePair("si", TKConfig.SI));
-        sCommonParameters.add(new BasicNameValuePair("sv", TKConfig.SV));
-        sCommonParameters.add(new BasicNameValuePair("ec", TKConfig.getEncoding()));
-        sCommonParameters.add(new BasicNameValuePair("pk", TKConfig.getPhoneKey()));
+        sCommonParameters.add("m", TKConfig.getSpreader());
+        sCommonParameters.add("sc", TKConfig.SERVICE_CENTER);
+        sCommonParameters.add("sg", TKConfig.SG);
+        sCommonParameters.add("si", TKConfig.SI);
+        sCommonParameters.add("sv", TKConfig.SV);
+        sCommonParameters.add("ec", TKConfig.getEncoding());
+        sCommonParameters.add("pk", TKConfig.getPhoneKey());
 
-        sCommonParameters.add(new BasicNameValuePair("vs", TKConfig.getClientSoftVersion()));
-        sCommonParameters.add(new BasicNameValuePair("vd", TKConfig.getClientDataVersion()));
-        sCommonParameters.add(new BasicNameValuePair("vp", TKConfig.getVersionOfPlatform()));
+        sCommonParameters.add("vs", TKConfig.getClientSoftVersion());
+        sCommonParameters.add("vd", TKConfig.getClientDataVersion());
+        sCommonParameters.add("vp", TKConfig.getVersionOfPlatform());
     }
     
-    protected static void addCommonParameters(List<NameValuePair> parameters, int cityId, boolean isLocateMe) {
+    protected static void addCommonParameters(WeiboParameters parameters, int cityId, boolean isLocateMe) {
         parameters.addAll(sCommonParameters);
 
         if (cityId < MapEngine.CITY_ID_BEIJING && isLocateMe == false) {
             cityId = MapEngine.CITY_ID_BEIJING;
         }
-        parameters.add(new BasicNameValuePair("c", String.valueOf(cityId)));
+        parameters.add("c", String.valueOf(cityId));
         
-        parameters.add(new BasicNameValuePair("d", TKConfig.getIMSI()));
+        parameters.add("d", TKConfig.getIMSI());
         boolean simAvailably = true;
         TKCellLocation tkCellLocation = TKConfig.getCellLocation();
         int mcc = TKConfig.getMCC();
@@ -274,19 +275,19 @@ public abstract class BaseQuery {
         }
         
         if (simAvailably) {
-            parameters.add(new BasicNameValuePair("mcc", String.valueOf(mcc)));
-            parameters.add(new BasicNameValuePair("mnc", String.valueOf(mnc)));
-            parameters.add(new BasicNameValuePair("lac", String.valueOf(lac)));
-            parameters.add(new BasicNameValuePair("ci", String.valueOf(cid)));
-            parameters.add(new BasicNameValuePair("ss", String.valueOf(TKConfig.getSignalStrength())));
+            parameters.add("mcc", String.valueOf(mcc));
+            parameters.add("mnc", String.valueOf(mnc));
+            parameters.add("lac", String.valueOf(lac));
+            parameters.add("ci", String.valueOf(cid));
+            parameters.add("ss", String.valueOf(TKConfig.getSignalStrength()));
         }
     }
     
-    protected static void addCommonParameters(List<NameValuePair> parameters) {
+    protected static void addCommonParameters(WeiboParameters parameters) {
         addCommonParameters(parameters, MapEngine.CITY_ID_BEIJING, false);
     }
     
-    protected static void addCommonParameters(List<NameValuePair> parameters, int cityId) {
+    protected static void addCommonParameters(WeiboParameters parameters, int cityId) {
         addCommonParameters(parameters, cityId, false);
     }
     
@@ -308,7 +309,7 @@ public abstract class BaseQuery {
     
     protected String tipText = null;
     
-    protected List<NameValuePair> requestParameters = new ArrayList<NameValuePair>();
+    protected WeiboParameters requestParameters = new WeiboParameters();
 
     protected HttpUtils.TKHttpClient httpClient;
 
@@ -462,18 +463,18 @@ public abstract class BaseQuery {
                     criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(myLocationPosition.getLon()));
                     criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(myLocationPosition.getLat()));
                 }
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_CITY, String.valueOf(myLocationCityInfo.getId())));
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(myLocationPosition.getLon())));
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(myLocationPosition.getLat())));
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_TYPE, String.valueOf(myLocationPosition.getType())));
+                requestParameters.add(SERVER_PARAMETER_LOCATION_CITY, String.valueOf(myLocationCityInfo.getId()));
+                requestParameters.add(SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(myLocationPosition.getLon()));
+                requestParameters.add(SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(myLocationPosition.getLat()));
+                requestParameters.add(SERVER_PARAMETER_LOCATION_TYPE, String.valueOf(myLocationPosition.getType()));
             }
         }
     }
     
     protected void makeRequestParameters() throws APIException {
         requestParameters.clear();
-        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_API_TYPE, apiType));
-        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_VERSION, version));
+        requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
+        requestParameters.add(SERVER_PARAMETER_VERSION, version);
         addMyLocationParameters();
     }
     
