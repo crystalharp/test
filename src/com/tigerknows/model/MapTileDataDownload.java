@@ -176,6 +176,7 @@ public class MapTileDataDownload extends BaseQuery {
                 }
             } else if (responseCode.getResponseCode() == ResponseCode.MAP_TILE_NEW_REVISION) {
                 iTileDownload.upgradeRegion(rid);
+                stop();
             } else {
                 stop();
             }

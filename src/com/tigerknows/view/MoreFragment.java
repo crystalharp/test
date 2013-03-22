@@ -6,7 +6,6 @@ package com.tigerknows.view;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -26,9 +25,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
+import com.tigerknows.MapDownload;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -36,9 +35,7 @@ import com.tigerknows.MapDownload.DownloadCity;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.UserLogonModel;
 import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
-import com.tigerknows.model.UserLogonModel.Recommend;
 import com.tigerknows.model.UserLogonModel.SoftwareUpdate;
-import com.tigerknows.model.UserLogonModel.Recommend.RecommendApp;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.view.discover.BrowserActivity;
 import com.tigerknows.view.user.UserBaseActivity;
@@ -88,6 +85,8 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     private int mMessageType = MESSAGE_TYPE_NONE;
     
     private DiaoyanQueryResponse mDiaoyanQueryResponse;
+    
+    public static DownloadCity CurrentDownloadCity;
     
     public void setDiaoyanQueryResponse(DiaoyanQueryResponse diaoyanQueryResponse) {
     	mDiaoyanQueryResponse = diaoyanQueryResponse;
@@ -173,15 +172,11 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         }
         
         boolean upgrade = false;
-        MapEngine mapEngine = mSphinx.getMapEngine();
-        synchronized (mapEngine) {
-            List<DownloadCity> list = mapEngine.getDownloadCityList();
-            for(DownloadCity downloadCity : list) {
-                if (downloadCity.getState() == DownloadCity.MAYUPDATE && downloadCity.getCityInfo().getId() != MapEngine.CITY_ID_QUANGUO) {
-                    upgrade = true;
-                    break;
-                }
-            }
+        DownloadCity currentDownloadCity = CurrentDownloadCity;
+        if (currentDownloadCity != null
+                && currentDownloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE
+                && currentDownloadCity.cityInfo.getId() != MapEngine.CITY_ID_QUANGUO) {
+            upgrade = true;
         }
         if (upgrade && out >= 7) {
             setFragmentMessage(MoreFragment.MESSAGE_TYPE_MAP_UPDATE);
@@ -480,7 +475,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                     public void onClick(DialogInterface arg0, int id) {
                         Intent intent = new Intent();
                         if (id == DialogInterface.BUTTON_POSITIVE) {
-                            intent.putExtra("upgradeAll", true);
+                            intent.putExtra(MapDownload.EXTRA_UPGRADE_ALL, true);
                         }
                         mSphinx.showView(R.id.activity_map_download, intent);
                     }

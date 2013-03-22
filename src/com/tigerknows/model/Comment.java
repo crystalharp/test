@@ -478,6 +478,16 @@ public class Comment extends BaseData {
         };
     };
     
+    public static Comparator COMPARATOR_ONLY_TIME = new Comparator() {
+
+        @Override
+        public int compare(Object object1, Object object2) {
+            Comment comment1 = (Comment) object1;
+            Comment comment2 = (Comment) object2;
+            return comment2.getTime().compareTo(comment1.getTime());
+        };
+    };
+    
     public static long isAuthorMe(Comment comment) {
         long attr = 0;
         String clientUID = Globals.g_ClientUID;

@@ -196,7 +196,7 @@ public class TKTencentOpenAPI {
                     
                     @Override
                     public void run() {
-                        Toast.makeText(activity, R.string.tencent_share_sucess, Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, R.string.tencent_share_success, Toast.LENGTH_LONG).show();
                         if (showDialog) {
                             activity.dismissDialog(R.id.dialog_share_doing);
                         }

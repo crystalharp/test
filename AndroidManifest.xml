@@ -74,6 +74,8 @@
         
         <service android:name=".service.MapStatsService" android:enabled="true"></service>
         
+        <service android:name=".service.MapDownloadService" android:enabled="true"></service>
+        
         <service android:name=".service.download.DownloadService" android:enabled="true"></service>
         
         <activity android:name=".ErrorDialogActivity"
@@ -263,8 +265,6 @@
         <receiver android:name="com.tigerknows.radar.AlarmInitReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.TIME_SET" />
-                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
                 <action android:name="action.com.tigerknows.first.startup" />
                 <action android:name="com.tigerknows.action.AlarmInit" />
             </intent-filter>
@@ -279,6 +279,11 @@
 		<receiver android:name="com.tigerknows.radar.RadarReceiver">
 		    <intent-filter>
 	           <action android:name="action.com.tigerknows.radar.PullReceiver" />
+		    </intent-filter>
+		</receiver>
+		
+		<receiver android:name="com.tigerknows.radar.LocationCollectorReceiver">
+		    <intent-filter>
 	           <action android:name="action.com.tigerknows.radar.LocationCollectionReceiver" />
 		    </intent-filter>
 		</receiver>

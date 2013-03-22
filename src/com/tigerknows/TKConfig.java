@@ -99,7 +99,6 @@ public class TKConfig {
     
     public static final String MAP_REGION_METAFILE = "region%d.meta";
 
-    public static boolean sCountMapWhenOnCreate = true;
     public static boolean sLoadBalance = true;
     public static String sDOWNLOAD_MAP_URL = "http://%s/quantum/string";
     public static String sDOWNLOAD_SUGGEST_URL = "http://%s/suggest_lexicon";
@@ -199,7 +198,16 @@ public class TKConfig {
     public static final String PREFS_PHONENUM = "prefs_phonenum";
     
     public static final String PREFS_ERROR_RECOVERY = "error_recovery";
+    
+    /*
+     * 出现在下载列表中的所有城市的地图信息及状态
+     * 数据结构如下:
+     * 城市中文名,地图数据总大小,已经下载数据的大小,状态;城市中文名,地图数据总大小,已经下载数据的大小,状态
+     * es:
+     * 北京,561200,562400,3;广州,485655,385521,1
+     */
     public static final String PREFS_MAP_DOWNLOAD_CITYS = "map_download_citys_v2";
+    
     public static final String PREFS_ACQUIRE_WAKELOCK = "acquire_wakelock";
     public static final String PREFS_CLIENT_UID = "prefs_client_uid";
     
@@ -317,27 +325,6 @@ public class TKConfig {
 
         }
 
-        String versionNum = getPref(context, PREFS_VERSION_NAME, "");
-        if (!sCLIENT_SOFT_VERSION.equals(versionNum)) {
-
-            int versionCode = 0;
-            try {
-                versionCode = Integer.parseInt(versionNum.substring(0, 4).replace(".", ""));
-            } catch (Exception e) {
-            }
-
-            if (versionCode < 300) {
-                removePref(context, PREFS_ACQUIRE_WAKELOCK);
-                removePref(context, PREFS_HAS_SHORT_CUT_PREFS);
-                removePref(context, PREFS_LAST_ZOOM_LEVEL);
-                removePref(context, PREFS_USER_ACTION_TRACK);
-                SharedPreferences sharedPreferences = context.getSharedPreferences(TIGERKNOWS_PREFS, Context.MODE_WORLD_READABLE);
-                boolean hasShort = sharedPreferences.getBoolean(PREFS_HAS_SHORT_CUT_PREFS, false);
-                if (hasShort) {
-                    setPref(context, PREFS_HAS_SHORT_CUT_PREFS, "1");
-                }
-            }
-        }
         boolean notShort = TextUtils.isEmpty(getPref(context, PREFS_HAS_SHORT_CUT_PREFS));
         setPref(context, PREFS_HAS_SHORT_CUT_PREFS, "1");
         if (notShort) {
@@ -793,12 +780,6 @@ public class TKConfig {
                 if (start > -1 && end > -1) {
                     start += "pageSize=".length();
                     sPage_Size = Integer.parseInt(text.substring(start, end));
-                }
-                start = text.indexOf("countMapWhenOnCreate=");
-                end = text.indexOf(";", start);
-                if (start > -1 && end > -1) {
-                    start += "countMapWhenOnCreate=".length();
-                    TKConfig.sCountMapWhenOnCreate = text.substring(start, end).equals("true");
                 }
                 BaseQuery.initCommonParameters();
             } catch (Exception e) {

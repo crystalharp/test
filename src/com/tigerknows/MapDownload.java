@@ -3,22 +3,21 @@ package com.tigerknows;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.res.Resources;
 import android.net.wifi.WifiManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -34,7 +33,6 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ExpandableListView.OnChildClickListener;
-import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ExpandableListView.OnGroupCollapseListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.ImageView;
@@ -49,69 +47,117 @@ import android.widget.TextView.OnEditorActionListener;
 import com.decarta.Globals;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.MapEngine.CityInfo;
-import com.tigerknows.maps.MapEngine.RegionMetaVersion;
-import com.tigerknows.maps.RegionMapInfo;
-import com.tigerknows.maps.TileDownload;
-import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.MapMetaFileDownload;
-import com.tigerknows.model.MapTileDataDownload;
-import com.tigerknows.model.MapVersionQuery;
-import com.tigerknows.model.MapVersionQuery.RegionDataInfo;
+import com.tigerknows.service.MapDownloadService;
 import com.tigerknows.service.MapStatsService;
 import com.tigerknows.util.CommonUtils;
-import com.tigerknows.util.HttpUtils;
 import com.tigerknows.view.StringArrayAdapter;
 import com.tigerknows.view.TKEditText;
 
 /**
- * 分为两个界面：
- * 下载界面mDownloadListView：显示手机上的地图信息，百分比，下载、停止、删除、更新等操作；
- * 搜索添加界面mAddListView：给出推荐的省市添加，搜索添加；
- * @author zhouwentao
- *
+ * 管理下载城市，主要分为3个界面：
+ * 1、提示添加城市界面，当用户没有添加过城市到下载列表且当前所有城市的地图数据大小都小于50%才显示此界面；
+ * 2、下载城市列表界面，显示所有下载城市的大小及状态，并可以对其进行操作（停止、下载、更新、删除）；
+ *    2.1、更新操作时会先删除地图数据文件再下载
+ *    2.2、下载地图时启动@MapDownloadService，在@MapDownloadService中实现地图下载并广播通知当前下载进度情况
+ *    2.3、
+ * 3、添加城市界面，显示全国所有城市的列表，在输入框中输入文本可以搜索城市；
+ * 
+ * 每次onResume()都重新统计，一共分为三步：
+ * 首先统计已经保存的下载城市列表（此所有下载城市都是标识未统计），完成后再统计未出现在下载列表中但是tigermap/map文件夹下已经存在地图数据文件的城市列表（此所有下载城市都是标识未统计）
+ * 然后，在DownloadCityAdapter的getView（）方法中判断此城市是否标识未统计，如果未统计则再统计此下载城市，统计完成后标识为已统计
+ * @author pengwenyue
  */
 public class MapDownload extends BaseActivity implements View.OnClickListener {
     
+    /*
+     * 浏览过的城市Id列表
+     */
+    public static final String EXTRA_VIEWED_CITY_ID_LIST = "viewed_city_id_list";
+    
+    /*
+     * 是否更新全部可更新的城市
+     */
+    public static final String EXTRA_UPGRADE_ALL = "upgrade_all";
+    
+    /*
+     * 地图引擎统计已经下载的地图数据信息有误差，这里约定大于或等于98%为已经下载完成状态
+     */
     public static final float PERCENT_COMPLETE = 0.98f;
+    
+    /*
+     * 用户在浏览地图时可能会下载邻近城市的部分地图数据，为了避免在下载列表出现那些不是用户主动添加的城市，
+     * 这里约定如果不是用户主动添加的城市，那它的已下载地图数据大于或等于50%才能显示在下载列表中
+     */
     public static final float PERCENT_VISIBILITY = 0.5f;
     
-    public static final int CITY_ID_TITLE_ONE = 1000;
-    public static final int CITY_ID_TITLE_TWO = 2000;
-    public static final int CITY_ID_TITLE_THREE = 3000;
+    /*
+     * 地图更新（下载列表）或当前城市（城市列表）列表项的orderId
+     */
+    public static final int ORDER_ID_TITLE_ONE = 1000;
     
+    /*
+     * 正在下载（下载列表）或直辖市（城市列表）列表项的orderId
+     */
+    public static final int ORDER_ID_TITLE_TWO = 2000;
+    
+    /*
+     * 下载完成（下载列表）或按省份查找（城市列表）列表项的orderId
+     */
+    public static final int ORDER_ID_TITLE_THREE = 3000;
+    
+    /*
+     * 地图更新列表项的数据
+     */
     private static DownloadCity sUpdateTitle = null;
+    
+    /*
+     * 正在下载列表项的数据
+     */
     private static DownloadCity sDownloadingTitle = null;
+    
+    /*
+     * 下载完成列表项的数据
+     */
     private static DownloadCity sCompleteTitle = null;
 
+    /*
+     * 获取地图更新列表项的数据
+     */
     public static DownloadCity getUpdateTitle(Context context) {
         if (sUpdateTitle == null) {
             CityInfo cityInfo = new CityInfo();
-            cityInfo.setId(MapDownload.CITY_ID_TITLE_ONE);
+            cityInfo.setId(MapDownload.ORDER_ID_TITLE_ONE);
             cityInfo.setCName(context.getString(R.string.map_upgrade));
             sUpdateTitle = new DownloadCity(cityInfo);
-            sUpdateTitle.cityInfo.order = CITY_ID_TITLE_ONE;
+            sUpdateTitle.cityInfo.order = ORDER_ID_TITLE_ONE;
         }
         return sUpdateTitle;
     }
 
+    /*
+     * 获取正在下载列表项的数据
+     */
     public static DownloadCity getDownloadingTitle(Context context) {
         if (sDownloadingTitle == null) {
             CityInfo cityInfo = new CityInfo();
-            cityInfo.setId(MapDownload.CITY_ID_TITLE_TWO);
+            cityInfo.setId(MapDownload.ORDER_ID_TITLE_TWO);
             cityInfo.setCName(context.getString(R.string.file_downloading));
             sDownloadingTitle = new DownloadCity(cityInfo);
-            sDownloadingTitle.cityInfo.order = CITY_ID_TITLE_TWO;
+            sDownloadingTitle.cityInfo.order = ORDER_ID_TITLE_TWO;
         }
         return sDownloadingTitle;
     }
 
+    /*
+     * 获取下载完成列表项的数据
+     */
     public static DownloadCity getCompleteTitle(Context context) {
         if (sCompleteTitle == null) {
             CityInfo cityInfo = new CityInfo();
-            cityInfo.setId(MapDownload.CITY_ID_TITLE_THREE);
+            cityInfo.setId(MapDownload.ORDER_ID_TITLE_THREE);
             cityInfo.setCName(context.getString(R.string.download_complete));
             sCompleteTitle = new DownloadCity(cityInfo);
-            sCompleteTitle.cityInfo.order = CITY_ID_TITLE_THREE;
+            sCompleteTitle.cityInfo.order = ORDER_ID_TITLE_THREE;
         }
         return sCompleteTitle;
     }
@@ -158,12 +204,15 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     
     private MapEngine mMapEngine;
     
-    private HashMap<String, DownloadAsyncTask> mDownloadCityTaskMap = new HashMap<String, DownloadAsyncTask>();
-    
-    private Timer mTimer;
     private ProgressDialog mTipProgressDialog = null;
     private boolean mLoadData = false;
     private String mNotFindCity;
+    
+    protected void onMediaChanged() {
+        super.onMediaChanged();
+        saveDownloadCityList();
+        startStats();
+    }
     
     private View.OnClickListener  mUpdateBtnOnClickListener = new View.OnClickListener() {
         
@@ -173,11 +222,11 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             List<DownloadCity> list = new ArrayList<DownloadCity>();
             for(int i = 0; i < mDownloadCityList.size(); i++) {
                 DownloadCity downloadCity = mDownloadCityList.get(i);
-                if (downloadCity.cityInfo.getId() == CITY_ID_TITLE_ONE) {
+                if (downloadCity.cityInfo.getId() == ORDER_ID_TITLE_ONE) {
                     continue;
-                } else if (downloadCity.cityInfo.getId() == CITY_ID_TITLE_TWO || downloadCity.cityInfo.getId() == CITY_ID_TITLE_THREE) {
+                } else if (downloadCity.cityInfo.getId() == ORDER_ID_TITLE_TWO || downloadCity.cityInfo.getId() == ORDER_ID_TITLE_THREE) {
                     break;
-                } else if (downloadCity.state == DownloadCity.MAYUPDATE) {
+                } else if (downloadCity.isStatsed && downloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE) {
                     list.add(downloadCity);
                 }
             }
@@ -185,12 +234,12 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             for(int i = 0; i < list.size(); i++) {
                 DownloadCity downloadCity = list.get(i);
                 mMapEngine.removeCityData(downloadCity.cityInfo.getCName());
-                deleteDownloadCity(mThis, mDownloadCityList, downloadCity);
-                downloadCity.setState(DownloadCity.WAITING);
+                downloadCity.state = DownloadCity.STATE_WAITING;
+                downloadCity.downloadedSize = 0;
+                operateDownloadCity(downloadCity.cityInfo, MapDownloadService.OPERATION_CODE_ADD);
                 addDownloadCity(mThis, mDownloadCityList, downloadCity, true);
             }
             notifyDataSetChanged();
-            download();
         }
     };
     
@@ -205,16 +254,16 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             }
             for(int i = 0; i < mDownloadCityList.size(); i++) {
                 DownloadCity downloadCity = mDownloadCityList.get(i);
-                if (downloadCity.cityInfo.getId() == CITY_ID_TITLE_ONE || downloadCity.cityInfo.getId() == CITY_ID_TITLE_TWO) {
+                if (downloadCity.cityInfo.getId() == ORDER_ID_TITLE_ONE || downloadCity.cityInfo.getId() == ORDER_ID_TITLE_TWO) {
                     continue;
-                } else if (downloadCity.cityInfo.getId() == CITY_ID_TITLE_THREE) {
+                } else if (downloadCity.cityInfo.getId() == ORDER_ID_TITLE_THREE) {
                     break;
-                } else if (downloadCity.state == DownloadCity.STOPPED){
-                    downloadCity.state = DownloadCity.WAITING;
+                } else if (downloadCity.isStatsed && downloadCity.state == DownloadCity.STATE_STOPPED){
+                    downloadCity.state = DownloadCity.STATE_WAITING;
+                    operateDownloadCity(downloadCity.cityInfo, MapDownloadService.OPERATION_CODE_ADD);
                 }
             }
             notifyDataSetChanged();
-            download();
         }
     };
 
@@ -223,20 +272,35 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         @Override
         public void onClick(View view) {
             mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "pauseAll");
-            stopAllDownload(DownloadCity.STOPPED);
+            operateDownloadCity(null, MapDownloadService.OPERATION_CODE_CLEAR);
             for(int i = 0; i < mDownloadCityList.size(); i++) {
                 DownloadCity downloadCity = mDownloadCityList.get(i);
-                if (downloadCity.cityInfo.getId() == CITY_ID_TITLE_ONE || downloadCity.cityInfo.getId() == CITY_ID_TITLE_TWO) {
+                if (downloadCity.cityInfo.getId() == ORDER_ID_TITLE_ONE || downloadCity.cityInfo.getId() == ORDER_ID_TITLE_TWO) {
                     continue;
-                } else if (downloadCity.cityInfo.getId() == CITY_ID_TITLE_THREE) {
+                } else if (downloadCity.cityInfo.getId() == ORDER_ID_TITLE_THREE) {
                     break;
-                } else if (downloadCity.state == DownloadCity.WAITING || downloadCity.state == DownloadCity.DOWNLOADING){
-                    downloadCity.state = DownloadCity.STOPPED;
+                } else if (downloadCity.isStatsed && (downloadCity.state == DownloadCity.STATE_WAITING || downloadCity.state == DownloadCity.STATE_DOWNLOADING)){
+                    downloadCity.state = DownloadCity.STATE_STOPPED;
+                    operateDownloadCity(downloadCity.cityInfo, MapDownloadService.OPERATION_CODE_REMOVE);
                 }
             }
             notifyDataSetChanged();
         }
     };
+    
+    /**
+     * 通知MapDownloadService添加、删除或清空下载城市
+     * @param cityInfo
+     * @param operationCode
+     */
+    void operateDownloadCity(CityInfo cityInfo, String operationCode) {
+        Intent service = new Intent(mThis, MapDownloadService.class);
+        if (cityInfo != null) {
+            service.putExtra(MapDownloadService.EXTRA_CITY_INFO, cityInfo);
+        }
+        service.putExtra(MapDownloadService.EXTRA_OPERATION_CODE, operationCode);
+        startService(service);
+    }
     
     private Comparator<CityInfo> mCityComparator = new Comparator<CityInfo>() {
 
@@ -253,6 +317,123 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             return downloadCity1.cityInfo.order - downloadCity2.cityInfo.order;
         };
     };
+    
+    private BroadcastReceiver mStatsDownloadCityListBroadcastReceiver = new BroadcastReceiver() {
+        
+        @Override
+        public void onReceive(Context context, Intent intent) { 
+            if (intent != null
+                    && intent.hasExtra(MapStatsService.EXTRA_DOWNLOAD_CITY_LIST)) {
+                ArrayList<DownloadCity> list = intent.getParcelableArrayListExtra(MapStatsService.EXTRA_DOWNLOAD_CITY_LIST);
+                loadData(list);
+                Intent service = new Intent(MapStatsService.ACTION_STATS_DOWNLOAD_CITY_LIST_FOR_EXIST_MAP);
+                service.setClass(mThis, MapStatsService.class);
+                service.putParcelableArrayListExtra(MapStatsService.EXTRA_DOWNLOAD_CITY_LIST, (ArrayList<DownloadCity>) mDownloadCityList);
+                startService(service);
+            }
+        }
+    };
+    
+    private BroadcastReceiver mStatsDownloadCityListForExistBroadcastReceiver = new BroadcastReceiver() {
+        
+        @Override
+        public void onReceive(Context context, Intent intent) { 
+            if (intent != null
+                    && intent.hasExtra(MapStatsService.EXTRA_DOWNLOAD_CITY_LIST)) {
+                ArrayList<DownloadCity> list = intent.getParcelableArrayListExtra(MapStatsService.EXTRA_DOWNLOAD_CITY_LIST);
+                for(int i = list.size()-1; i >= 0; i--) {
+                    DownloadCity downloadCity = list.get(i);
+                    if (mDownloadCityList.contains(downloadCity) == false) {
+                        addDownloadCity(mThis, mDownloadCityList, downloadCity, false);
+                    }
+                }
+                
+                if (mState == STATE_EMPTY && mDownloadCityList.isEmpty() == false) {
+                    changeState(STATE_DOWNLOAD);
+                }
+                notifyDataSetChanged();
+            }
+        }
+    };
+    
+    private BroadcastReceiver mMapDownloadReceiver = new BroadcastReceiver() {
+        
+        @Override
+        public void onReceive(Context context, Intent intent) { 
+            if (intent != null
+                    && intent.hasExtra(MapDownloadService.EXTRA_CITY_INFO)
+                    && intent.hasExtra(MapDownloadService.EXTRA_TOTAL_SIZE)
+                    && intent.hasExtra(MapDownloadService.EXTRA_DOWNLOAD_SIZE)) {
+                CityInfo cityInfo = intent.getParcelableExtra(MapDownloadService.EXTRA_CITY_INFO);
+                int totalSize = intent.getIntExtra(MapDownloadService.EXTRA_TOTAL_SIZE, 0);
+                int downloadSize = intent.getIntExtra(MapDownloadService.EXTRA_DOWNLOAD_SIZE, 0);
+                for(int i = 0, size = mDownloadCityList.size(); i < size; i++) {
+                    DownloadCity downloadCity = mDownloadCityList.get(i);
+                    CityInfo cityInfo2 = downloadCity.cityInfo;
+                    if (cityInfo.getId() == cityInfo2.getId() && cityInfo.getType() == cityInfo2.getType()) {
+                        downloadCity.totalSize = totalSize;
+                        downloadCity.downloadedSize = downloadSize;
+                        if (downloadCity.downloadedSize/(float)downloadCity.totalSize >= PERCENT_COMPLETE) {
+                            downloadCity.state = DownloadCity.STATE_COMPLETED;
+                            addDownloadCity(mThis, mDownloadCityList, downloadCity, true);
+                        }
+                        notifyDataSetChanged();
+                        break;
+                    }
+                }
+            }
+        }
+    };
+    
+    private BroadcastReceiver mStatsDownloadCityReceiver = new BroadcastReceiver() {
+        
+        @Override
+        public void onReceive(Context context, Intent intent) { 
+            if (intent != null
+                    && intent.hasExtra(MapStatsService.EXTRA_DOWNLOAD_CITY)) {
+                DownloadCity statsDownloadCity = intent.getParcelableExtra(MapStatsService.EXTRA_DOWNLOAD_CITY);
+                CityInfo statsCityInfo = statsDownloadCity.cityInfo;
+                for(int i = 0, size = mDownloadCityList.size(); i < size; i++) {
+                    DownloadCity downloadCity = mDownloadCityList.get(i);
+                    CityInfo cityInfo = downloadCity.cityInfo;
+                    if (statsCityInfo.getType() == cityInfo.getType()) {
+                        if (statsCityInfo.getId() == cityInfo.getId()) {
+                            refreshDownloadCity(statsDownloadCity, downloadCity);
+                            return;
+                        }
+                    } else {
+                        // 遍历省份下的城市列表
+                        List<DownloadCity> childList = downloadCity.childList;
+                        for(int j = 0, childSize = childList.size(); j < childSize; j++) {
+                            DownloadCity childDownloadCity = childList.get(j);
+                            CityInfo childCityInfo = childDownloadCity.cityInfo;
+                            if (statsCityInfo.getId() == childCityInfo.getId()) {
+                                refreshDownloadCity(statsDownloadCity, childDownloadCity);
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    };
+    
+    /**
+     * 统计某个DownloadCity完成后刷新下载列表中对应的DownloadCity
+     * @param statsDownloadCity
+     * @param refreshDownloadCity
+     */
+    void refreshDownloadCity(DownloadCity statsDownloadCity, DownloadCity refreshDownloadCity) {
+        refreshDownloadCity.isStatsed = true;
+        
+        refreshDownloadCity.totalSize = statsDownloadCity.totalSize;
+        refreshDownloadCity.downloadedSize = statsDownloadCity.downloadedSize;
+        
+        if (statsDownloadCity.state != refreshDownloadCity.state) {
+            addDownloadCity(mThis, mDownloadCityList, refreshDownloadCity, true);
+        }
+        notifyDataSetChanged();
+    }
     
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -281,12 +462,6 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         mSuggestCityLsv.setAdapter(mSuggestCityAdapter);
         
         mMapEngine = MapEngine.getInstance();
-
-        if (TKConfig.sCountMapWhenOnCreate == false) {
-            mMapEngine.statsMapEnd(new ArrayList<DownloadCity>(), false);
-            Intent service = new Intent(mThis, MapStatsService.class);
-            startService(service);
-        }
         
         if (sAllAddCityInfoList == null) {
             sAllAddCityInfoList = new ArrayList<CityInfo>();
@@ -321,15 +496,15 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             
             CityInfo currentCityTitle = new CityInfo();
             currentCityTitle.setCName(mThis.getString(R.string.current_city_text));
-            currentCityTitle.setId(CITY_ID_TITLE_ONE);
+            currentCityTitle.setId(ORDER_ID_TITLE_ONE);
             
             CityInfo cityTitle = new CityInfo();
             cityTitle.setCName(mThis.getString(R.string.municipality));
-            cityTitle.setId(CITY_ID_TITLE_TWO);
+            cityTitle.setId(ORDER_ID_TITLE_TWO);
             
             CityInfo provinceTitle = new CityInfo();
             provinceTitle.setCName(mThis.getString(R.string.search_by_province));
-            provinceTitle.setId(CITY_ID_TITLE_THREE);
+            provinceTitle.setId(ORDER_ID_TITLE_THREE);
             
             sAllAddCityInfoList.add(0, currentCityTitle);
             sAllAddCityInfoList.add(1, cityTitle);
@@ -350,63 +525,49 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         } else {
             mWifiTxv.setText(R.string.wifi_disabled);
         }
-        if (mTipProgressDialog == null) {
-            mTipProgressDialog = new ProgressDialog(mThis);
-            mTipProgressDialog.setMessage(mThis.getString(R.string.map_static_waiting_tip));
-            mTipProgressDialog.setIndeterminate(true);
-            mTipProgressDialog.setCancelable(true);
-            mTipProgressDialog.setCanceledOnTouchOutside(false);
-            mTipProgressDialog.setOnCancelListener(new OnCancelListener() {
-                
-                @Override
-                public void onCancel(DialogInterface arg0) {
-                    finish();
-                }
-            });
-            mTipProgressDialog.show();
-            ActionLog.getInstance(this).addAction(ActionLog.DIALOG, mThis.getString(R.string.map_static_waiting_tip));
-            
-            new Thread(new Runnable() {
-                
-                @Override
-                public void run() {
-                    while (mMapEngine.isStatsFinish() == false) {
-                    }
+        
+        ActionLog.getInstance(this).addAction(ActionLog.DIALOG, mThis.getString(R.string.map_static_waiting_tip));
 
-                    if (TKConfig.sCountMapWhenOnCreate) {
-                        List<DownloadCity> downloadCityList = mMapEngine.getDownloadCityList();
-                        List<Integer> list = new ArrayList<Integer>();
-                        for(DownloadCity downloadCity : downloadCityList) {
-                            list.addAll(downloadCity.getRegionIdList());
-                        }
-                        MapVersionQuery mapVersionQuery = new MapVersionQuery(getBaseContext());
-                        mapVersionQuery.setup(list);
-                        mapVersionQuery.query();
-                        HashMap<Integer, RegionDataInfo> regionVersionMap = mapVersionQuery.getRegionVersion();
-                        synchronized (mMapEngine) {
-                            for(DownloadCity downloadCity : downloadCityList) {
-                                MapStatsService.countDownloadCity(downloadCity, regionVersionMap);
-                            }
-                        }
-                    }
-                    
-                    mHandler.post(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            loadData();
-                            if (mTipProgressDialog != null && mTipProgressDialog.isShowing()) {
-                                mTipProgressDialog.dismiss();
-                                mTipProgressDialog = null;
-                            }
-                        }
-                    });
-                }
-            }).start();
-        }
+        IntentFilter intentFilter= new IntentFilter(MapStatsService.ACTION_STATS_DOWNLOAD_CITY_LIST_COMPLATE);
+        registerReceiver(mStatsDownloadCityListBroadcastReceiver, intentFilter);
+        intentFilter= new IntentFilter(MapDownloadService.ACTION_MAP_DOWNLOAD_PROGRESS);
+        registerReceiver(mMapDownloadReceiver, intentFilter);
+        intentFilter= new IntentFilter(MapStatsService.ACTION_STATS_DOWNLOAD_CITY_COMPLATE);
+        registerReceiver(mStatsDownloadCityReceiver, intentFilter);
+        intentFilter= new IntentFilter(MapStatsService.ACTION_STATS_DOWNLOAD_CITY_LIST_FOR_EXIST_MAP_COMPLATE);
+        registerReceiver(mStatsDownloadCityListForExistBroadcastReceiver, intentFilter);
+        
+        startStats();
     }
     
-    private void loadData() {
+    /*
+     * 显示统计对话框，启动MapStatsService统计下载城市列表
+     */
+    void startStats() {
+        mTipProgressDialog = new ProgressDialog(mThis);
+        mTipProgressDialog.setMessage(mThis.getString(R.string.map_static_waiting_tip));
+        mTipProgressDialog.setIndeterminate(true);
+        mTipProgressDialog.setCancelable(true);
+        mTipProgressDialog.setCanceledOnTouchOutside(false);
+        mTipProgressDialog.setOnCancelListener(new OnCancelListener() {
+            
+            @Override
+            public void onCancel(DialogInterface arg0) {
+                finish();
+            }
+        });
+        mTipProgressDialog.show();
+        
+        Intent service = new Intent(MapStatsService.ACTION_STATS_DOWNLOAD_CITY_LIST);
+        service.setClass(mThis, MapStatsService.class);
+        startService(service);
+    }
+    
+    private void loadData(List<DownloadCity> list) {
+        if (mTipProgressDialog != null && mTipProgressDialog.isShowing()) {
+            mTipProgressDialog.dismiss();
+        }
+        
         CityInfo cityInfo = Globals.g_Current_City_Info;
         if (cityInfo != null) {
             if (cityInfo.getId() != sAllAddCityInfoList.get(1).getId()) {
@@ -417,7 +578,6 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         } else {
             finish();
         }
-        List<DownloadCity> list = mMapEngine.getDownloadCityList();
         mDownloadCityList.clear();
         mDownloadCityList.addAll(list);
         
@@ -425,14 +585,23 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         if (mMapEngine.isExternalStorage() == false) {
             for(int i = mDownloadCityList.size()-1; i >= 0; i--) {
                 DownloadCity downloadCity = mDownloadCityList.get(i);
-                if (downloadCity.getState() == DownloadCity.WAITING || downloadCity.getState() == DownloadCity.DOWNLOADING) {
-                    downloadCity.setState(DownloadCity.STOPPED);
+                if (downloadCity.state == DownloadCity.STATE_WAITING || downloadCity.state == DownloadCity.STATE_DOWNLOADING) {
+                    downloadCity.state =DownloadCity.STATE_STOPPED;
                 }
-                if (downloadCity.cityInfo.getId() == CITY_ID_TITLE_THREE) {
+                if (downloadCity.cityInfo.getId() == ORDER_ID_TITLE_THREE) {
                     break;
                 }
             }
         }
+        
+        // 将之前正在下载中的城市加入到下载队列
+        for(int i = 0, size = mDownloadCityList.size(); i < size; i++) {
+            DownloadCity downloadCity = mDownloadCityList.get(i);
+            if (downloadCity.state == DownloadCity.STATE_WAITING || downloadCity.state == DownloadCity.STATE_DOWNLOADING) {
+                operateDownloadCity(downloadCity.cityInfo, MapDownloadService.OPERATION_CODE_ADD);
+            }
+        }
+        
         if (mDownloadCityList.isEmpty()) {
             Toast.makeText(mThis, R.string.please_add_city, Toast.LENGTH_LONG).show();
             changeState(STATE_EMPTY);
@@ -441,65 +610,54 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         }
         notifyDataSetChanged();
         
-        mTimer = new Timer();
-        TimerTask timerTask = new TimerTask() {
-            @Override
-            public void run() {
-                updateDownloadCityElv();
-            }
-        };
-        mTimer.schedule(timerTask, 0, 3000);
-        
-        download();
         mLoadData = true;
     }
     
     private void initIntent() {
         if (mIntent != null) {
-            ArrayList<Integer> cityIdList = mIntent.getIntegerArrayListExtra("cityIdList");
+            ArrayList<Integer> cityIdList = mIntent.getIntegerArrayListExtra(EXTRA_VIEWED_CITY_ID_LIST);
             if (cityIdList != null) {
                 for(int cityId: cityIdList) {
                     CityInfo cityInfo = mMapEngine.getCityInfo(cityId);
-                    addDownloadCityInternal(cityInfo, false, DownloadCity.STOPPED);
+                    addDownloadCityInternal(cityInfo, false, DownloadCity.STATE_STOPPED);
                     notifyDataSetChanged();
                 }
             }
-            boolean upgradeAll = mIntent.getBooleanExtra("upgradeAll", false);
+            boolean upgradeAll = mIntent.getBooleanExtra(EXTRA_UPGRADE_ALL, false);
             if (upgradeAll) {
                 for (DownloadCity downloadCity : mDownloadCityList) {
-                    if (downloadCity.getState() == DownloadCity.MAYUPDATE) {
-                        mMapEngine.removeCityData(downloadCity.getCityInfo().getCName());
-                        downloadCity.setDownloadedSize(0);
-                        downloadCity.setState(DownloadCity.WAITING);
+                    if (downloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE) {
+                        mMapEngine.removeCityData(downloadCity.cityInfo.getCName());
+                        downloadCity.downloadedSize = 0;
+                        downloadCity.state = DownloadCity.STATE_WAITING;
                     }
                 }
                 upgradeAll = false;
             }
         }
     }
-    
-    private void stopAllDownload(int state) {
-        Iterator<DownloadAsyncTask> iterator = mDownloadCityTaskMap.values().iterator();
-        while (iterator.hasNext()) {
-            DownloadAsyncTask tkAsyncTask = iterator.next();
-            if (tkAsyncTask != null && !tkAsyncTask.mIsStop) {
-                tkAsyncTask.stop();
-                tkAsyncTask.mDownloadCity.setState(state);
-            }
-        }
-        mDownloadCityTaskMap.clear();
-    }
         
     @Override
     public void onPause() {
-        if (mTimer != null) {
-            mTimer.cancel();
-            mTimer.purge();
+        super.onPause();
+        saveDownloadCityList();
+        
+        unregisterReceiver(mStatsDownloadCityListBroadcastReceiver);
+        unregisterReceiver(mMapDownloadReceiver);
+        unregisterReceiver(mStatsDownloadCityReceiver);
+        unregisterReceiver(mStatsDownloadCityListForExistBroadcastReceiver);
+    }
+    
+    /*
+     * 关闭统计进度对话框，保存下载列表
+     */
+    void saveDownloadCityList() {
+        if (mTipProgressDialog != null && mTipProgressDialog.isShowing()) {
+            mTipProgressDialog.dismiss();
         }
         
-        stopAllDownload(DownloadCity.WAITING);
-        
         if (mLoadData) {
+            mLoadData = false;
             StringBuilder s = new StringBuilder();
             for (int i = mDownloadCityList.size()-1; i >= 0; i--) {
                 DownloadCity downloadCity = mDownloadCityList.get(i);
@@ -510,42 +668,34 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 }
             }
             TKConfig.setPref(mThis, TKConfig.PREFS_MAP_DOWNLOAD_CITYS, s.toString());
-            mMapEngine.statsMapEnd(mDownloadCityList, true);
         }
-        super.onPause();
     }
     
+    /*
+     * 记录城市的地图信息及状态
+     * 数据结构如下:
+     * 城市中文名,地图数据总大小,已经下载数据的大小,状态;城市中文名,地图数据总大小,已经下载数据的大小,状态
+     * es:
+     * 北京,561200,562400,3;广州,485655,385521,1
+     */
     private void recordDownloadCity(DownloadCity downloadCity, StringBuilder s) {
         CityInfo cityInfo = downloadCity.cityInfo;
         int id = cityInfo.getId();
         if (cityInfo.getType() == CityInfo.TYPE_CITY
                 && id > 0
-                && id != CITY_ID_TITLE_ONE
-                && id != CITY_ID_TITLE_TWO
-                && id != CITY_ID_TITLE_THREE) {        
+                && id != ORDER_ID_TITLE_ONE
+                && id != ORDER_ID_TITLE_TWO
+                && id != ORDER_ID_TITLE_THREE) {        
             if (s.length() > 0) {
                 s.append(";"); 
             }
             s.append(cityInfo.getCName());
             s.append(","); 
-            s.append(downloadCity.getTotalSize()); 
+            s.append(downloadCity.totalSize); 
             s.append(","); 
-            s.append(downloadCity.getDownloadedSize()); 
+            s.append(downloadCity.downloadedSize); 
             s.append(","); 
-            s.append(downloadCity.getState()); 
-        }
-    }
-    
-    private Runnable updateDownloadCityElv = new Runnable() {
-        @Override
-        public void run() {
-            mDownloadAdapter.notifyDataSetChanged();
-        }
-    };
-    
-    private void updateDownloadCityElv() {
-        if (mDownloadCityLsv.getVisibility() == View.VISIBLE) {
-            runOnUiThread(updateDownloadCityElv);
+            s.append(downloadCity.state); 
         }
     }
     
@@ -574,7 +724,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             
             @Override
             public void onGroupCollapse(int groupPosition) {
-                mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "downloadProvinceCollapse", groupPosition, mDownloadCityList.get(groupPosition).getCityInfo().getCName());
+                mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "downloadProvinceCollapse", groupPosition, mDownloadCityList.get(groupPosition).cityInfo.getCName());
             }
         });
         
@@ -584,17 +734,17 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             public void onGroupExpand(int groupPosition) {
                 if (mDownloadCityList.get(groupPosition).childList.size() == 0) {
                     DownloadCity downloadCity = mDownloadCityList.get(groupPosition);
-                    CityInfo cityInfo = downloadCity.getCityInfo();
+                    CityInfo cityInfo = downloadCity.cityInfo;
                     if (cityInfo.getType() == CityInfo.TYPE_PROVINCE || 
-                            cityInfo.getId() == CITY_ID_TITLE_ONE || 
-                            cityInfo.getId() == CITY_ID_TITLE_TWO || 
-                            cityInfo.getId() == CITY_ID_TITLE_THREE) {
+                            cityInfo.getId() == ORDER_ID_TITLE_ONE || 
+                            cityInfo.getId() == ORDER_ID_TITLE_TWO || 
+                            cityInfo.getId() == ORDER_ID_TITLE_THREE) {
                         return;
                     }
                     mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "downloadCity", groupPosition, cityInfo.getCName());
-                    onClickDownloadCity(downloadCity);
+                    clickDownloadCity(downloadCity);
                 } else {
-                    mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "downloadProvinceExpend", groupPosition, mDownloadCityList.get(groupPosition).getCityInfo().getCName());
+                    mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "downloadProvinceExpend", groupPosition, mDownloadCityList.get(groupPosition).cityInfo.getCName());
                 }
             }
         });
@@ -604,8 +754,8 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             @Override
             public boolean onChildClick(ExpandableListView arg0, View arg1, int groupPosition, int childPosition, long arg4) {
                 DownloadCity downloadCity = mDownloadCityList.get(groupPosition).childList.get(childPosition);
-                mActionLog.addAction(ActionLog.LISTVIEW_CHILD_ITEM_ONCLICK, "downloadCity", groupPosition, childPosition, downloadCity.getCityInfo().getCName());
-                onClickDownloadCity(downloadCity);
+                mActionLog.addAction(ActionLog.LISTVIEW_CHILD_ITEM_ONCLICK, "downloadCity", groupPosition, childPosition, downloadCity.cityInfo.getCName());
+                clickDownloadCity(downloadCity);
                 return false;
             }
         });
@@ -627,7 +777,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 List<CityInfo> cityInfoList = cityInfo.getCityList();
                 if (cityInfoList.size() == 1) {
                     mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "addCity", groupPosition, cityInfo.getCName());
-                    addDownloadCity(cityInfoList.get(0), DownloadCity.WAITING);
+                    addDownloadCity(cityInfoList.get(0), DownloadCity.STATE_WAITING);
                 } else {
                     mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "addProvinceExpend", groupPosition, cityInfo.getCName());
                 }
@@ -641,10 +791,10 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 CityInfo cityInfo = sAllAddCityInfoList.get(groupPosition).getCityList().get(childrenPosition);
                 mActionLog.addAction(ActionLog.LISTVIEW_CHILD_ITEM_ONCLICK, "addCity", groupPosition, childrenPosition, cityInfo.getCName());
                 if (cityInfo.getType() == CityInfo.TYPE_CITY) {
-                    addDownloadCity(cityInfo, DownloadCity.WAITING);
+                    addDownloadCity(cityInfo, DownloadCity.STATE_WAITING);
                 } else if (cityInfo.getType() == CityInfo.TYPE_PROVINCE) {
                     List<CityInfo> cityInfoList = cityInfo.getCityList();
-                    addDownloadCityList(cityInfoList, DownloadCity.WAITING);
+                    addDownloadCityList(cityInfoList, DownloadCity.STATE_WAITING);
                 }
                 return false;
             }
@@ -669,7 +819,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "suggestCity", position, cityInfo.getCName());
                 DownloadCity downloadCity = getDownloadCity(mDownloadCityList, cityInfo);
                 if (downloadCity == null && !mNotFindCity.equals(cityInfo.getCName())) {
-                    addDownloadCity(cityInfo, DownloadCity.WAITING);
+                    addDownloadCity(cityInfo, DownloadCity.STATE_WAITING);
                 }
             }
         });
@@ -723,18 +873,20 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         });
     }
     
-    private void onClickDownloadCity(final DownloadCity downloadCity) {
+    private void clickDownloadCity(final DownloadCity downloadCity) {
         final CityInfo cityInfo = downloadCity.cityInfo;
         final String cityName = cityInfo.getCName();
         final List<String> list = new ArrayList<String>();
-        int state = downloadCity.getState();
-        if (state == DownloadCity.DOWNLOADING ||
-                state == DownloadCity.WAITING) {
-            list.add(mThis.getString(R.string.pause_download));
-        } else if (state == DownloadCity.STOPPED) {
-            list.add(mThis.getString(R.string.download_map));
-        } else if (state == DownloadCity.MAYUPDATE) {
-            list.add(mThis.getString(R.string.upgrade_map));
+        int state = downloadCity.state;
+        if (downloadCity.isStatsed) {
+            if (state == DownloadCity.STATE_DOWNLOADING ||
+                    state == DownloadCity.STATE_WAITING) {
+                list.add(mThis.getString(R.string.pause_download));
+            } else if (state == DownloadCity.STATE_STOPPED) {
+                list.add(mThis.getString(R.string.download_map));
+            } else if (state == DownloadCity.STATE_CAN_BE_UPGRADE) {
+                list.add(mThis.getString(R.string.upgrade_map));
+            }
         }
         list.add(mThis.getString(R.string.delete_map));
         
@@ -758,28 +910,23 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, str, which+1, cityName);
                 if (str.equals(mThis.getString(R.string.download_map))) {
                     if (mMapEngine.isExternalStorage()) {
-                        downloadCity.setState(DownloadCity.WAITING);
+                        downloadCity.state = DownloadCity.STATE_WAITING;
                         notifyDataSetChanged();
-                        download();
+                        operateDownloadCity(downloadCity.cityInfo, MapDownloadService.OPERATION_CODE_ADD);
                     } else {
                         Toast.makeText(mThis, R.string.not_enough_space, Toast.LENGTH_LONG).show();
                     }
                 } else if (str.equals(mThis.getString(R.string.upgrade_map))) {
                     mMapEngine.removeCityData(cityName);
-                    downloadCity.setDownloadedSize(0);
-                    downloadCity.setState(DownloadCity.WAITING);
-                    deleteDownloadCity(mThis, mDownloadCityList, downloadCity);
+                    downloadCity.downloadedSize = 0;
+                    downloadCity.state = DownloadCity.STATE_WAITING;
                     addDownloadCity(mThis, mDownloadCityList, downloadCity, true);
                     notifyDataSetChanged();
-                    download();
+                    operateDownloadCity(downloadCity.cityInfo, MapDownloadService.OPERATION_CODE_ADD);
                 } else if (str.equals(mThis.getString(R.string.pause_download))) {
-                    DownloadAsyncTask task = mDownloadCityTaskMap.remove(cityInfo.getCName());
-                    if (task != null && !task.mIsStop)
-                        task.stop();
-                    downloadCity.setState(DownloadCity.STOPPED);
-                    
+                    downloadCity.state = DownloadCity.STATE_STOPPED;
                     notifyDataSetChanged();      
-                    download();                      
+                    operateDownloadCity(downloadCity.cityInfo, MapDownloadService.OPERATION_CODE_REMOVE);
                 } else if (str.equals(mThis.getString(R.string.delete_map))) {
                     CommonUtils.showNormalDialog(mThis,
                             mThis.getString(R.string.prompt),
@@ -789,12 +936,8 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                                 @Override
                                 public void onClick(DialogInterface arg0, int id) {
                                     if (id == DialogInterface.BUTTON_POSITIVE) {
-                                        String cityName = cityInfo.getCName();
-                                        DownloadAsyncTask tkAsyncTask = mDownloadCityTaskMap.remove(cityInfo.getCName());
-                                        if (tkAsyncTask != null && !tkAsyncTask.mIsStop) {
-                                            tkAsyncTask.stop();
-                                        }
-                                        downloadCity.setState(DownloadCity.STOPPED);
+                                        operateDownloadCity(downloadCity.cityInfo, MapDownloadService.OPERATION_CODE_REMOVE);
+                                        downloadCity.state = DownloadCity.STATE_STOPPED;
                                         
                                         mMapEngine.removeCityData(cityName);
                                         List <CityInfo> cityInfoList = cityInfo.getCityList();
@@ -804,7 +947,6 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
 
                                         deleteDownloadCity(mThis, mDownloadCityList,downloadCity);
                                         notifyDataSetChanged();
-                                        download();
                                         
                                         if (mDownloadCityList.size() < 1) {
                                             Toast.makeText(mThis, R.string.please_add_city, Toast.LENGTH_LONG).show();
@@ -832,7 +974,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     private void addDownloadCity(CityInfo addCityInfo, int state) {
         DownloadCity addDownloadCity = getDownloadCity(mDownloadCityList, addCityInfo);
         if (addDownloadCity == null) {
-            if (mMapEngine.isExternalStorage() == false && state == DownloadCity.WAITING) {
+            if (mMapEngine.isExternalStorage() == false && state == DownloadCity.STATE_WAITING) {
                 Toast.makeText(mThis, R.string.not_enough_space, Toast.LENGTH_LONG).show();
                 return;
             }
@@ -841,7 +983,6 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         }
         notifyDataSetChanged();
         Toast.makeText(mThis, R.string.exist_download_list, Toast.LENGTH_LONG).show();
-        download();
     }
     
     private void addDownloadCityList(List<CityInfo> list, int state) {
@@ -849,21 +990,20 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         for(int i = 0, size = list.size(); i < size; i++) {
             CityInfo cityInfo = list.get(i);
             DownloadCity addDownloadCity = getDownloadCity(mDownloadCityList, cityInfo);
-            if (addDownloadCity != null) {
-                MapStatsService.countDownloadCity(addDownloadCity, null);
+            if (addDownloadCity != null && addDownloadCity.state == state) {
+                MapStatsService.statsDownloadCity(addDownloadCity, MapStatsService.getServerRegionDataInfoMap());
                 continue;
             } else {
-                if (mMapEngine.isExternalStorage() == false && state == DownloadCity.WAITING) {
+                if (mMapEngine.isExternalStorage() == false && state == DownloadCity.STATE_WAITING) {
                     Toast.makeText(mThis, R.string.not_enough_space, Toast.LENGTH_LONG).show();
                     return;
                 }
-                addDownloadCityInternal(cityInfo, true, DownloadCity.WAITING);
+                addDownloadCityInternal(cityInfo, true, DownloadCity.STATE_WAITING);
             }
         }
         
         notifyDataSetChanged();
         Toast.makeText(mThis, R.string.exist_download_list, Toast.LENGTH_LONG).show();
-        download();
     }
     
     private void notifyDataSetChanged() {
@@ -871,14 +1011,20 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         mAddCityExpandableListAdapter.notifyDataSetChanged();
         mSuggestCityAdapter.notifyDataSetChanged();
     }
+    
     private void addDownloadCityInternal(CityInfo cityInfo, boolean isManual, int state) {
-        if (getDownloadCity(mDownloadCityList, cityInfo) != null) {
+        DownloadCity downloadCity = getDownloadCity(mDownloadCityList, cityInfo);
+        if (downloadCity != null && downloadCity.state == state) {
             return;
         }
-        DownloadCity downloadCity = new DownloadCity(cityInfo);
-        downloadCity.setState(state);
-        MapStatsService.countDownloadCity(downloadCity, null);
+        downloadCity = new DownloadCity(cityInfo);
+        downloadCity.state = state;
+        MapStatsService.statsDownloadCity(downloadCity, MapStatsService.getServerRegionDataInfoMap());
         addDownloadCity(mThis, mDownloadCityList, downloadCity, isManual);
+        if (state == DownloadCity.STATE_WAITING
+                || state == DownloadCity.STATE_DOWNLOADING) {
+            operateDownloadCity(cityInfo, MapDownloadService.OPERATION_CODE_ADD);
+        }
     }
     
     private class DownloadCityAdapter extends BaseExpandableListAdapter {
@@ -918,7 +1064,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             DownloadCity downloadCity = (DownloadCity)getGroup(groupPosition);
             CityInfo cityInfo = downloadCity.cityInfo;
             int count = mDownloadCityList.get(groupPosition).childList.size();
-            return (MapEngine.hasCity(cityInfo.getId()) == false) ? count : 0;
+            return (MapEngine.hasMunicipality(cityInfo.getId()) == false) ? count : 0;
         }
 
         @Override
@@ -955,7 +1101,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             ImageView iconImv = (ImageView) provinceView.findViewById(R.id.icon_imv);
             Button startBtn = (Button)provinceView.findViewById(R.id.start_btn);
             Button pauseBtn = (Button)provinceView.findViewById(R.id.pause_btn);
-            if (cityInfo.getId() == CITY_ID_TITLE_ONE) {
+            if (cityInfo.getId() == ORDER_ID_TITLE_ONE) {
                 provinceView.setBackgroundResource(R.drawable.bg_expandablelistview_group);
                 provinceView.setVisibility(View.VISIBLE);
                 cityView.setVisibility(View.GONE);
@@ -968,7 +1114,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 pauseBtn.setVisibility(View.VISIBLE);
                 pauseBtn.setBackgroundResource(R.drawable.ic_map_upgrade);
                 pauseBtn.setOnClickListener(mUpdateBtnOnClickListener);
-            } else if (cityInfo.getId() == CITY_ID_TITLE_TWO) {
+            } else if (cityInfo.getId() == ORDER_ID_TITLE_TWO) {
                 provinceView.setBackgroundResource(R.drawable.bg_expandablelistview_group);
                 provinceView.setVisibility(View.VISIBLE);
                 cityView.setVisibility(View.GONE);
@@ -984,14 +1130,16 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 boolean pasue = false;
                 for(int i = 0; i < mDownloadCityList.size(); i++) {
                     DownloadCity temp = mDownloadCityList.get(i);
-                    if (temp.cityInfo.getId() == CITY_ID_TITLE_ONE || temp.cityInfo.getId() == CITY_ID_TITLE_TWO) {
+                    if (temp.cityInfo.getId() == ORDER_ID_TITLE_ONE || temp.cityInfo.getId() == ORDER_ID_TITLE_TWO) {
                         continue;
-                    } else if (temp.cityInfo.getId() == CITY_ID_TITLE_THREE) {
+                    } else if (temp.cityInfo.getId() == ORDER_ID_TITLE_THREE) {
                         break;
-                    } else if (temp.state == DownloadCity.STOPPED){
-                        start = true;
-                    } else if (temp.state == DownloadCity.WAITING || temp.state == DownloadCity.DOWNLOADING){
-                        pasue = true;
+                    } else if(temp.isStatsed) {
+                        if (temp.state == DownloadCity.STATE_STOPPED){
+                            start = true;
+                        } else if (temp.state == DownloadCity.STATE_WAITING || temp.state == DownloadCity.STATE_DOWNLOADING){
+                            pasue = true;
+                        }
                     }
                 }
                 
@@ -1010,7 +1158,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                     pauseBtn.setBackgroundResource(R.drawable.btn_pause_disabled);
                     pauseBtn.setOnClickListener(null);
                 }
-            } else if (cityInfo.getId() == CITY_ID_TITLE_THREE) {
+            } else if (cityInfo.getId() == ORDER_ID_TITLE_THREE) {
                 provinceView.setBackgroundResource(R.drawable.bg_expandablelistview_group);
                 provinceView.setVisibility(View.VISIBLE);
                 cityView.setVisibility(View.GONE);
@@ -1046,29 +1194,39 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         }
         
         private void setDownloadCityView(DownloadCity downloadCity, View cityView) {
-            if (downloadCity.getTotalSize() <= 0) {
-                MapStatsService.countDownloadCity(downloadCity, null);
+            if (downloadCity.isStatsed == false) {
+                Intent intent = new Intent(MapStatsService.ACTION_STATS_DOWNLOAD_CITY);
+                intent.setClass(mThis, MapStatsService.class);
+                intent.putExtra(MapStatsService.EXTRA_DOWNLOAD_CITY, downloadCity);
+                startService(intent);
             }
             CityInfo cityInfo = downloadCity.cityInfo;
             TextView nameTxv = (TextView) cityView.findViewById(R.id.text_txv);
             TextView percentTxv = (TextView) cityView.findViewById(R.id.percent_txv);
             ProgressBar progressBar = (ProgressBar) cityView.findViewById(R.id.progress_prb);
-            String size = (downloadCity.getTotalSize() > 0 ? mThis.getString(R.string.brackets, mThis.getString(R.string._m, downloadCity.getTotalSizeTip())) : "");
+            String size = (downloadCity.totalSize > 0 ? mThis.getString(R.string.brackets, mThis.getString(R.string._m, downloadCity.getTotalSizeTip())) : "");
             nameTxv.setText(cityInfo.getCName()+size);
             
-            if (downloadCity.getState() == DownloadCity.MAYUPDATE) {
-                percentTxv.setText(mThis.getString(R.string.may_upgrade));
+            if (downloadCity.isStatsed == false) {
+                percentTxv.setText(mThis.getString(R.string.counting_tip));
+                progressBar.setProgress(0);
             } else {
-                percentTxv.setCompoundDrawables(null, null, null, null);
-                percentTxv.setText((downloadCity.state == DownloadCity.DOWNLOADING || downloadCity.state == DownloadCity.WAITING) ? mThis.getString(R.string.downloading_, String.valueOf(downloadCity.getDownloadPercent())) : 
-                    mThis.getString(R.string.downloaded_, String.valueOf(downloadCity.getDownloadPercent())));
-                
-                if (downloadCity.getPercent() >= PERCENT_COMPLETE) {
-                    downloadCity.setState(DownloadCity.COMPLETED);
-                    percentTxv.setText(mThis.getString(R.string.completed));
+                if (downloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE) {
+                    percentTxv.setText(mThis.getString(R.string.may_upgrade));
+                } else {
+                    if (downloadCity.state == DownloadCity.STATE_DOWNLOADING || downloadCity.state == DownloadCity.STATE_WAITING) {
+                        percentTxv.setText(mThis.getString(R.string.downloading_, String.valueOf(downloadCity.getDownloadPercent())));
+                    } else if (downloadCity.state == DownloadCity.STATE_STOPPED) {
+                        percentTxv.setText(mThis.getString(R.string.downloaded_, String.valueOf(downloadCity.getDownloadPercent())));
+                    } 
+                    
+                    if (downloadCity.getPercent() >= PERCENT_COMPLETE) {
+                        downloadCity.state = DownloadCity.STATE_COMPLETED;
+                        percentTxv.setText(mThis.getString(R.string.completed));
+                    }
                 }
+                progressBar.setProgress((int)Float.parseFloat(downloadCity.getDownloadPercent()));
             }
-            progressBar.setProgress((int)Float.parseFloat(downloadCity.getDownloadPercent()));
         }
 
         @Override
@@ -1082,25 +1240,45 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         }
     }
     
-    public static class DownloadCity {
-        private CityInfo cityInfo;
-        public List<DownloadCity> childList = new ArrayList<DownloadCity>();
-        private List<Integer> mRegionIdList = null;
+    public static class DownloadCity implements Parcelable {
+        /**
+         * 省份下的城市列表
+         */
+    	public ArrayList<DownloadCity> childList = new ArrayList<DownloadCity>();
+    	
+    	/**
+    	 * 下载城市信息
+    	 */
+        public CityInfo cityInfo;
         
-        private int state = STOPPED;
-        private int mTotalSize = 0;
-        private int mDownloadedSize = 0;
+        /**
+         * 当前状态
+         */
+        public int state = STATE_STOPPED;
         
-        public int isManual = 0;
+        /**
+         * 总大小
+         */
+        public int totalSize = 0;
         
-        public static final int WAITING = 0; //在等待下载队列中
-        public static final int DOWNLOADING = 1; //downloading
-        public static final int STOPPED = 2; //paused, stopped 0% start, need to download metefile
-        public static final int COMPLETED = 3; //100% 
-        public static final int MAYUPDATE = 4; //can be updated
+        /**
+         * 已下载大小
+         */
+        public int downloadedSize = 0;
+        
+        /**
+         * 是否被统计过
+         */
+        public boolean isStatsed = false;
+        
+        public static final int STATE_WAITING = 0; // 等待下载
+        public static final int STATE_DOWNLOADING = 1; // 下载中
+        public static final int STATE_STOPPED = 2; // 暂停
+        public static final int STATE_COMPLETED = 3; // 完成 
+        public static final int STATE_CAN_BE_UPGRADE = 4; // 可更新
         
         public DownloadCity(CityInfo cityInfo) {
-            this(cityInfo, STOPPED);
+            this(cityInfo, STATE_STOPPED);
         }
 
         public DownloadCity(CityInfo cityInfo, int state) {
@@ -1108,23 +1286,16 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             this.state = state;
         }
         
-        public CityInfo getCityInfo() {
-            return cityInfo;
-        }
-        
-        public List<Integer> getRegionIdList() {
-            if (mRegionIdList == null) {
-                mRegionIdList = MapEngine.getInstance().getRegionIdListByCityName(cityInfo.getCName());
-            }
-            return mRegionIdList;
-        }
-        
+        /**
+         * 以文本形式描述已下载大小所占的百分比
+         * @return
+         */
         public String getDownloadPercent() {
-            if (mDownloadedSize < 1 || mTotalSize < 1) {
+            if (downloadedSize < 1 || totalSize < 1) {
                 return "0";
             }
-            float downloadPercent = (mDownloadedSize*100f)/mTotalSize;
-            if (mDownloadedSize >= mTotalSize || downloadPercent > 100.0) {
+            float downloadPercent = (downloadedSize*100f)/totalSize;
+            if (downloadedSize >= totalSize || downloadPercent > 100.0) {
                 downloadPercent = 100;
                 return "100";
             }
@@ -1140,8 +1311,12 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             return str.substring(0, str.indexOf(".")+2);
         }
         
+        /**
+         * 以文本形式描述总大小
+         * @return
+         */
         public String getTotalSizeTip() {
-            float size = mTotalSize*1f/(1024*1024);
+            float size = totalSize*1f/(1024*1024);
             if (size < 0.1f) {
                 size = 0.1f;
             }
@@ -1149,42 +1324,16 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             return str.substring(0, str.indexOf(".")+2);
         }
         
-        public int getState() {
-            return state;
-        }
-        
-        public void setState(int state) {
-            if (state == WAITING || state == DOWNLOADING || state == COMPLETED || state == STOPPED || state == MAYUPDATE) {
-                this.state = state;
-            }
-        }
-        
+        /**
+         * 已下载大小所占比率
+         * @return
+         */
         public float getPercent() {
             float percent = 0;
-            if (mDownloadedSize > 0 && mTotalSize > 0) {
-                percent = (float)mDownloadedSize/mTotalSize;
+            if (downloadedSize > 0 && totalSize > 0) {
+                percent = (float)downloadedSize/totalSize;
             }
             return percent;
-        }
-        
-        public int getDownloadedSize() {
-            return mDownloadedSize;
-        }
-        
-        public void setDownloadedSize(final int downloadedSize) {
-            this.mDownloadedSize = downloadedSize;
-        }
-        
-        public void addDownloadedSize(final int downloadedSize) {
-            this.mDownloadedSize += downloadedSize;
-        }
-
-        public int getTotalSize() {
-            return mTotalSize;
-        }
-        
-        public void setTotalSize(final int totalSize) {
-            this.mTotalSize = totalSize;
         }
         
         public int hashCode() {
@@ -1205,248 +1354,44 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             }
             return false;
         }
-    }
 
-    private class DownloadAsyncTask extends AsyncTask<Void, Integer, Void> implements
-            HttpUtils.TKHttpClient.ProgressUpdate, MapTileDataDownload.ITileDownload {
+        @Override
+        public int describeContents() {
+            return 0;
+        }
 
-        private DownloadCity mDownloadCity;
-        private MapMetaFileDownload mMapMetaFileDownload;
-        private MapTileDataDownload mMapTileDataDownload;
-        boolean mIsStop = false;
-        private int statusCode = BaseQuery.STATUS_CODE_NETWORK_OK;
-        private Runnable toast = new Runnable() {
-            
-            @Override
-            public void run() {
-                Toast.makeText(mThis, R.string.network_failed, Toast.LENGTH_LONG).show();
+        @Override
+        public void writeToParcel(Parcel parcel, int flags) {
+            parcel.writeParcelable(cityInfo, flags);
+            parcel.writeInt(totalSize);
+            parcel.writeInt(downloadedSize);
+            parcel.writeInt(state);     
+            DownloadCity[] list = CREATOR.newArray(childList.size());
+            childList.toArray(list);
+            parcel.writeParcelableArray(list, flags);
+        }
+
+        public static final Parcelable.Creator<DownloadCity> CREATOR
+                = new Parcelable.Creator<DownloadCity>() {
+            public DownloadCity createFromParcel(Parcel in) {
+                return new DownloadCity(in);
+            }
+
+            public DownloadCity[] newArray(int size) {
+                return new DownloadCity[size];
             }
         };
         
-        public synchronized void stop() {
-            mMapTileDataDownload.stop();
-            mMapMetaFileDownload.stop();
-            cancel(true);
-            mIsStop = true;
-        }
-
-        public DownloadAsyncTask(DownloadCity downloadCity) {
-            mDownloadCity = downloadCity;
-            mMapMetaFileDownload = new MapMetaFileDownload(mThis, mMapEngine);
-            mMapTileDataDownload = new MapTileDataDownload(mThis, mMapEngine);
-            
-            mMapTileDataDownload.setProgressUpdate(DownloadAsyncTask.this);
-            mMapTileDataDownload.setFillMapTile(DownloadAsyncTask.this);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected Void doInBackground(Void... params) {
-            int totalSize = 0;
-            int downloadedSize = 0;
-            List<Integer> regionIdList = mDownloadCity.getRegionIdList();
-            //检查更新
-            while (mDownloadCity.state != DownloadCity.COMPLETED && mIsStop == false) {
-                statusCode = BaseQuery.STATUS_CODE_NETWORK_OK;
-                MapVersionQuery mapVersionQuery = new MapVersionQuery(mThis);
-                mapVersionQuery.setup(regionIdList);
-                mapVersionQuery.query();
-                if (mapVersionQuery.isStop() == false) {
-                    statusCode = mapVersionQuery.getStatusCode();
-                }
-                HashMap<Integer, RegionDataInfo> regionVersionMap = mapVersionQuery.getRegionVersion();
-                if (regionVersionMap != null) {
-                    for (int regionId : regionIdList) {
-                        RegionMapInfo regionMapInfo = mMapEngine.getRegionStat(regionId);
-                        if (null != regionMapInfo && regionVersionMap.containsKey(regionId)) {
-                            String curVersion = "";
-                            RegionMetaVersion version = mMapEngine.getRegionVersion(regionId);
-                            if (null != version) {
-                                curVersion = version.toString();
-                                String serverVersion = regionVersionMap.get(regionId).getRegionVersion();
-                                List<TileDownload> lostDatas = regionMapInfo.getLostDatas();
-                                //下载或更新meta数据
-                                if (mIsStop) {
-                                    return null;
-                                } else if ((lostDatas != null && lostDatas.size() > 0 && lostDatas.get(0).getOffset() == 0) ||
-                                        (serverVersion != null && !serverVersion.equalsIgnoreCase(curVersion))) {
-                                    mMapMetaFileDownload.setup(regionId);
-                                    mMapMetaFileDownload.query();
-                                    if (mMapMetaFileDownload.isStop() == false) {
-                                        statusCode = mMapMetaFileDownload.getStatusCode();
-                                    }
-                                }
-                                //计算下载百分比
-                                regionMapInfo = mMapEngine.getRegionStat(regionId);
-                                if (null != regionMapInfo) {
-                                    totalSize += regionMapInfo.getTotalSize();
-                                    downloadedSize += regionMapInfo.getDownloadedSize();
-                                }
-                            }
-                        }
-                    }
-                    mDownloadCity.setTotalSize(totalSize);
-                    mDownloadCity.setDownloadedSize(downloadedSize);
-    
-                    //下载tile数据
-                    for (int regionId : regionIdList) {
-                        RegionMapInfo regionMapInfo = mMapEngine.getRegionStat(regionId);
-                        while (regionMapInfo != null && regionMapInfo.getLostDataNum() > 0 && !mIsStop) {
-                            List<TileDownload> lostDatas = regionMapInfo.getLostDatas();
-                            downloadTileData(lostDatas);
-                            regionMapInfo = mMapEngine.getRegionStat(regionId);
-                        }
-                        
-                    }
-                    MapStatsService.countDownloadCity(mDownloadCity, regionVersionMap);
-                } else {
-                    try {
-                        Thread.sleep(15000);
-                    } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-                
-                if (mIsStop == false
-                        && mapVersionQuery.isStop() == false 
-                        && statusCode != BaseQuery.STATUS_CODE_NETWORK_OK) {
-                    mHandler.post(toast);
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onProgressUpdate(final Integer... values) {
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
-            stop();
-            mDownloadCityTaskMap.remove(mDownloadCity.getCityInfo().getCName());
-            if (mDownloadCity.mDownloadedSize >= mDownloadCity.mTotalSize) {
-                deleteDownloadCity(mThis, mDownloadCityList,mDownloadCity);
-                addDownloadCity(mThis, mDownloadCityList, mDownloadCity, true);
-                notifyDataSetChanged();
-            }
-            download();
-        }
-
-        @Override
-        protected void onCancelled() {
-            super.onCancelled();
-        }
-
-        @Override
-        public void onProgressUpdate(int len) {
-            if (len > 0) {
-                mDownloadCity.addDownloadedSize(len);
+        private DownloadCity(Parcel in) {
+            cityInfo = in.readParcelable(CityInfo.class.getClassLoader());
+            totalSize = in.readInt();
+            downloadedSize = in.readInt();
+            state = in.readInt();
+            Parcelable[] parcelables = in.readParcelableArray(DownloadCity.class.getClassLoader());
+            for(int i = 0, length = parcelables.length; i < length; i++) {
+                childList.add((DownloadCity)parcelables[i]);
             }
         }
-        
-        @Override
-        public int fillMapTile(List<TileDownload> tileDownloadList, int rid, byte[] data, int start) {
-            if (tileDownloadList == null || tileDownloadList.isEmpty() || data == null) {
-                return -1;
-            }
-            
-            int remainDataLenth = data.length - start;
-            for(TileDownload tileInfo:tileDownloadList) {
-                if (remainDataLenth <= 0) {
-                    break;
-                } 
-                int tileLen = tileInfo.getLength();
-                if (tileLen < 1 || rid != tileInfo.getRid()) {
-                    continue;
-                }
-                if (tileLen <= remainDataLenth) {
-                    byte[] dest = new byte[tileLen];
-                    System.arraycopy(data, start, dest, 0, tileLen);
-                    int ret = mMapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
-                    if (ret != 0) {
-                        return -1;
-                    }
-                    //let the tile be empty
-                    tileInfo.setLength(-1);
-                    start += tileLen;
-                    remainDataLenth -= tileLen;
-                } else {
-                    byte[] dest = new byte[remainDataLenth];
-                    System.arraycopy(data, start, dest, 0, remainDataLenth);
-                    int ret = mMapEngine.writeRegion(tileInfo.getRid(), tileInfo.getOffset(), dest, tileInfo.getVersion());
-                    if (ret != 0) {
-                        return -1;
-                    }
-                    tileInfo.setOffset(tileInfo.getOffset() + remainDataLenth);
-                    tileInfo.setLength(tileLen - remainDataLenth); 
-                    remainDataLenth = 0;
-                }
-            }
-            return 0;
-        }
-        
-        @Override
-        public void upgradeRegion(int rid) {
-            mMapEngine.removeRegion(rid);
-            mMapMetaFileDownload.setup(rid);
-            mMapMetaFileDownload.query();
-            if (mMapMetaFileDownload.isStop() == false) {
-                statusCode = mMapTileDataDownload.getStatusCode();
-            }
-        }
-        
-        private void downloadTileData(List<TileDownload> lostDatas) {
-            if (lostDatas == null) {
-                return;
-            }
-            // download tile
-            for (TileDownload tileInfo : lostDatas) {
-                if (tileInfo.getLength() <= 0) {
-                    // when len is 0, this tile has been downloaded
-                    continue;
-                }
-                if (mIsStop) {
-                    break;
-                }
-                mMapTileDataDownload.setup(lostDatas, tileInfo.getRid());
-                mMapTileDataDownload.query();
-                if (mMapMetaFileDownload.isStop() == false) {
-                    statusCode = mMapTileDataDownload.getStatusCode();
-                }
-            } // end for
-        }
-    }
-
-    private synchronized void download() {
-        if (mMapEngine.isExternalStorage() == false) {
-            return;
-        }
-        if (mDownloadCityTaskMap.size() < 1) {
-            DownloadCity downloadCity = getFirstWaitingDownloadCity();
-            if (downloadCity != null) {
-                downloadCity.setState(DownloadCity.DOWNLOADING);
-                DownloadAsyncTask downloadAsyncTask = new DownloadAsyncTask(downloadCity);
-                mDownloadCityTaskMap.put(downloadCity.getCityInfo().getCName(), downloadAsyncTask);
-                downloadAsyncTask.execute();
-            }
-        }
-        updateDownloadCityElv();
-    }
-
-    private DownloadCity getFirstWaitingDownloadCity() {
-        for (DownloadCity downloadCity : mDownloadCityList) {
-            if (downloadCity.getState() == DownloadCity.WAITING && downloadCity.getCityInfo().getType() == CityInfo.TYPE_CITY) {
-                return downloadCity;
-            }
-        }
-        return null;
     }
     
     private class SuggestCityAdapter extends ArrayAdapter<CityInfo> {
@@ -1531,7 +1476,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             if (cityInfoList.size() == 0) {
                 String cname = cityInfo.getCName();
                 int cityId = cityInfo.getId();
-                if (cityId == CITY_ID_TITLE_ONE || cityId == CITY_ID_TITLE_TWO || cityId == CITY_ID_TITLE_THREE) {
+                if (cityId == ORDER_ID_TITLE_ONE || cityId == ORDER_ID_TITLE_TWO || cityId == ORDER_ID_TITLE_THREE) {
                     provinceView.setBackgroundResource(R.drawable.bg_expandablelistview_group);
                     provinceView.setVisibility(View.VISIBLE);
                     cityView.setVisibility(View.GONE);
@@ -1747,15 +1692,15 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         return downloadCity;
     }
     
-    public static void addDownloadCity(Context context, List<DownloadCity> list, DownloadCity downloadCity, boolean isManual) {
-        CityInfo cityInfo = downloadCity.getCityInfo();
-        int orderCityId = cityInfo.getId();
-        if (orderCityId < 0) {
-            orderCityId = 1;
+    public static void addDownloadCity(Context context, List<DownloadCity> list, DownloadCity downloadCity, boolean isManualAdd) {
+        deleteDownloadCity(context, list, downloadCity);
+        
+        CityInfo cityInfo = downloadCity.cityInfo;
+        int cityId = cityInfo.getId();
+        if (cityId < 0) {
+            cityId = 1;
         }
-        if (getDownloadCity(list, cityInfo) != null) {
-            return;
-        }
+
         String hongkong = context.getString(R.string.hongkong);
         String macao = context.getString(R.string.macao);
         String pName = cityInfo.getCProvinceName();
@@ -1764,11 +1709,11 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         }
         boolean exist = false;
         float percent = downloadCity.getPercent();
-        if ((isManual || percent > PERCENT_VISIBILITY) && downloadCity.getState() == DownloadCity.MAYUPDATE) {
-            downloadCity.cityInfo.order = CITY_ID_TITLE_ONE+orderCityId;
+        if ((isManualAdd || percent > PERCENT_VISIBILITY) && downloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE) {
+            downloadCity.cityInfo.order = ORDER_ID_TITLE_ONE+cityId;
             if (list.size() > 0) {
                 DownloadCity downloadCity1 = list.get(0);
-                if (downloadCity1.getCityInfo().getId() == CITY_ID_TITLE_ONE) {
+                if (downloadCity1.cityInfo.getId() == ORDER_ID_TITLE_ONE) {
                     exist = true;
                 }
             }
@@ -1777,16 +1722,16 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 list.add(0, downloadCityUpdate);
             }
             list.add(1, downloadCity);
-        } else if ((isManual || percent > PERCENT_VISIBILITY) && percent < PERCENT_COMPLETE) {
-            downloadCity.cityInfo.order = CITY_ID_TITLE_TWO+orderCityId;
+        } else if ((isManualAdd || percent > PERCENT_VISIBILITY) && percent < PERCENT_COMPLETE) {
+            downloadCity.cityInfo.order = ORDER_ID_TITLE_TWO+cityId;
             int positionComplete = list.size();
             int positionDownload = 0;
             for(int i = 0, size = list.size(); i < size; i++) {
                 DownloadCity downloadCity1 = list.get(i);
-                if (downloadCity1.getCityInfo().getId() == CITY_ID_TITLE_TWO) {
+                if (downloadCity1.cityInfo.getId() == ORDER_ID_TITLE_TWO) {
                     exist = true;
                     positionDownload = i;
-                } else if (downloadCity1.getCityInfo().getId() == CITY_ID_TITLE_THREE) {
+                } else if (downloadCity1.cityInfo.getId() == ORDER_ID_TITLE_THREE) {
                     positionComplete = i;
                     break;
                 }
@@ -1799,14 +1744,14 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 list.add(positionDownload+1, downloadCity);
             }
         } else if (percent >= PERCENT_COMPLETE) {
-            downloadCity.cityInfo.order = CITY_ID_TITLE_THREE+orderCityId;
+            downloadCity.cityInfo.order = ORDER_ID_TITLE_THREE+cityId;
             DownloadCity province = null;
             for(int i = 0, size = list.size(); i < size; i++) {
                 DownloadCity downloadCity1 = list.get(i);
-                if (downloadCity1.getCityInfo().getId() == CITY_ID_TITLE_THREE) {
+                if (downloadCity1.cityInfo.getId() == ORDER_ID_TITLE_THREE) {
                     exist = true;
                 } else if (exist) {
-                    if (downloadCity1.getCityInfo().getType() == CityInfo.TYPE_PROVINCE && pName.equals(downloadCity1.getCityInfo().getCName())) {
+                    if (downloadCity1.cityInfo.getType() == CityInfo.TYPE_PROVINCE && pName.equals(downloadCity1.cityInfo.getCName())) {
                         province = downloadCity1;
                         break;
                     }
@@ -1816,20 +1761,19 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 DownloadCity downloadCityUpdate = getCompleteTitle(context);
                 list.add(list.size(), downloadCityUpdate);
             }
-            if (MapEngine.hasCity(cityInfo.getId())) {
+            if (MapEngine.hasMunicipality(cityId)) {
                 list.add(list.size(), downloadCity);
             } else if (province == null) {
-                orderCityId = cityInfo.getId();
                 MapEngine mapEngine = MapEngine.getInstance();
                 List<String> cityNameList = mapEngine.getCitylist(pName);
                 if (cityNameList.size() > 0) {
                     CityInfo cityInfo2 = mapEngine.getCityInfo(mapEngine.getCityid(cityNameList.get(cityNameList.size()-1)));
                     if (cityInfo2.isAvailably()) {
-                        orderCityId = cityInfo2.getId();
+                        cityId = cityInfo2.getId();
                     }
                 }
-                province = getProvinceDownloadCity(pName, orderCityId);
-                province.cityInfo.order = CITY_ID_TITLE_THREE+orderCityId+100; // +100是因为广州作为广东的省会，其id小于天津和重庆
+                province = getProvinceDownloadCity(pName, cityId);
+                province.cityInfo.order = ORDER_ID_TITLE_THREE+cityId+100; // +100是因为广州作为广东的省会，其id小于天津和重庆
                 province.childList.add(downloadCity);
                 list.add(list.size(), province);
             } else {
@@ -1842,16 +1786,20 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     
     public static void deleteDownloadCity(Context context, List<DownloadCity> list, DownloadCity downloadCity) {
         boolean delete = false;
+        
+        // 检测是否为直辖市，是则删除
         if (list.contains(downloadCity)) {
             list.remove(downloadCity);
             delete = true;
-        }
-        if (delete == false) {
+        } else {
+            // 遍历所有省份下的所有城市，找到匹配则删除
             for(int i = list.size()-1; i >= 0; i--) {
                 DownloadCity downloadCity1 = list.get(i);
                 List<DownloadCity> childList = downloadCity1.childList; 
                 if (childList.contains(downloadCity)) {
                     childList.remove(downloadCity);
+                    
+                    // 如果当前省份下没有任何下载城市，则删除省份
                     if (childList.isEmpty()) {
                         list.remove(i);
                     }
@@ -1869,24 +1817,24 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         int state = -1;
         for(int i = 0, size = list.size(); i < size; i++) {
             DownloadCity downloadCity1 = list.get(i);
-            CityInfo cityInfo1 = downloadCity1.getCityInfo();
-            if (cityInfo1.getId() == CITY_ID_TITLE_ONE) {
-                state = CITY_ID_TITLE_ONE;
+            CityInfo cityInfo1 = downloadCity1.cityInfo;
+            if (cityInfo1.getId() == ORDER_ID_TITLE_ONE) {
+                state = ORDER_ID_TITLE_ONE;
                 sizeUpdate = 0;
-            } else if (cityInfo1.getId() == CITY_ID_TITLE_TWO) {
-                state = CITY_ID_TITLE_TWO;
+            } else if (cityInfo1.getId() == ORDER_ID_TITLE_TWO) {
+                state = ORDER_ID_TITLE_TWO;
                 sizeDownload = 0;
-            } else if (cityInfo1.getId() == CITY_ID_TITLE_THREE) {
-                state = CITY_ID_TITLE_THREE;
+            } else if (cityInfo1.getId() == ORDER_ID_TITLE_THREE) {
+                state = ORDER_ID_TITLE_THREE;
                 sizeComplete = 0;
             } else {
-                if (state == CITY_ID_TITLE_ONE && sizeUpdate == 0) {
+                if (state == ORDER_ID_TITLE_ONE && sizeUpdate == 0) {
                     sizeUpdate = 1;
                 }
-                if (state == CITY_ID_TITLE_TWO && sizeDownload == 0) {
+                if (state == ORDER_ID_TITLE_TWO && sizeDownload == 0) {
                     sizeDownload = 1;
                 }
-                if (state == CITY_ID_TITLE_THREE && sizeComplete == 0) {
+                if (state == ORDER_ID_TITLE_THREE && sizeComplete == 0) {
                     sizeComplete = 1;
                 }
             }

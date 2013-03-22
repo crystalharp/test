@@ -3,6 +3,7 @@ package com.tigerknows.model;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -12,7 +13,6 @@ import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.response.Appendix;
 import com.tigerknows.model.response.PositionCake;
 import com.tigerknows.model.response.ResponseCode;
@@ -294,6 +294,11 @@ public class LocationQuery extends BaseQuery {
         public List<TKNeighboringCellInfo> neighboringCellInfoList = new ArrayList<TKNeighboringCellInfo>();
         public List<TKScanResult> wifiList = new ArrayList<TKScanResult>();
         private volatile int hashCode = 0;
+        public String time;
+        
+        public LocationParameter() {
+            time = LocationUpload.SIMPLE_DATE_FORMAT.format(Calendar.getInstance().getTime());
+        }
         
         public boolean equalsCellInfo(LocationParameter other) {
             if (other == null) {
@@ -524,16 +529,19 @@ public class LocationQuery extends BaseQuery {
     public static class TKNeighboringCellInfo {
         public int lac;
         public int cid;
+        public int rssi;
         private volatile int hashCode = 0;
         
-        public TKNeighboringCellInfo(int lac, int cid) {
+        public TKNeighboringCellInfo(int lac, int cid, int rssi) {
             this.lac = lac;
             this.cid = cid;
+            this.rssi = rssi;
         }
         
         public TKNeighboringCellInfo(NeighboringCellInfo neighboringCellInfo) {
             this.lac = neighboringCellInfo.getLac();
             this.cid = neighboringCellInfo.getCid();
+            this.rssi = neighboringCellInfo.getRssi();
         }
         
         public TKNeighboringCellInfo(String str) {
@@ -542,10 +550,9 @@ public class LocationQuery extends BaseQuery {
                 try {
                     lac = Integer.parseInt(arr[0]);
                     cid = Integer.parseInt(arr[1]);
+                    rssi = Integer.parseInt(arr[2]);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    lac = -1;
-                    cid = -1;
                 }
             }
         }
@@ -631,16 +638,11 @@ public class LocationQuery extends BaseQuery {
             TKScanResult tkScanResult = null;
             if (str != null) {
                 String[] arr = str.split(",");
-                if (arr.length == 1) {
-                    tkScanResult = new TKScanResult(arr[0]);
-                } else if (arr.length == 2) {
-                    String bssid = arr[0];
-                    try {
-                        int level = Integer.parseInt(arr[1]);
-                        tkScanResult = new TKScanResult(bssid, level);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                tkScanResult = new TKScanResult(arr[0]);
+                try {
+                    tkScanResult.level = Integer.parseInt(arr[1]);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
             return tkScanResult;

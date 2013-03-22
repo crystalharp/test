@@ -13,12 +13,20 @@ import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.PullMessage;
+import com.tigerknows.model.Response;
+import com.tigerknows.model.LocationQuery.LocationParameter;
+import com.tigerknows.model.LocationQuery.TKCellLocation;
+import com.tigerknows.model.LocationQuery.TKNeighboringCellInfo;
+import com.tigerknows.model.LocationQuery.TKScanResult;
 import com.tigerknows.model.PullMessage.Message;
+import com.tigerknows.provider.LocationTable;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.radar.RadarReceiver;
 import com.tigerknows.radar.TKNotificationManager;
+import com.tigerknows.util.CommonUtils;
 
 import android.app.Service;
 import android.content.Context;
@@ -27,15 +35,39 @@ import android.location.Location;
 import android.os.IBinder;
 import android.text.TextUtils;
 
+import java.text.ParseException;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 
- * @author pengwenyue
+ * @author xupeng
  * 这个类名为Pull，实际上做法是随机找一个时间连接服务器，去查询服务器上有没有信息
  * 如果有的话查询出来发本地通知
+ * 整个推送服务的机制分为以下几步：
+ * 1.定时器初始化。
+ *   这个部分在radar/AlarmInitReceiver.java中，它接收若干类型的广播intent启动，具体接受的
+ *   广播类型在AndroidManifest.xml中，初始设计接受五种广播，分别是系统的启动，时间或时区变更，
+ *   软件第一次启动，设置推送开启。初始化时获取TKConfig的prefs里面设置的下一次定时器时间，计算
+ *   出定时器calendar并设置。
+ *   变更1：时间或时区变更不再在定时器初始化中进行接收，因为这两个行为不会丢定时器，在PullService
+ *   中进行处理即可，不需要重新设置定时器。它所接受的广播应该是那些会导致没有定时器或者定时器丢失的
+ *   行为。时间或时区变更会导致的问题是过期的定时器会被立即触发而无法disable掉，所以在PullService
+ *   中进行了检查，如果是和所设置的定时器不符的intent调用则推迟一小时再来。
+ * 2.计算和设置定时器
+ *   这个部分在radar/Alarms.java中。
+ *   计算定时器有若干个函数，返回calendar对象。
+ *   设置定时器统一使用enableAlarm函数，每次调用都要把要设置的时间写到TKConfig的prefs里。设置
+ *   定时器之前要进行定时器检查，确保使用的定时器在当前时间之后。
+ *   checkAlarm检查如果在当前时间之前则返回一个当前时间一小时之后的定时器。
+ * 3.PullService被定时器调用
+ *   RadarReceiver收到定时器的Intent调用，启动PullService
+ *   PullService会获取当前定位信息并连接服务器查询是否有新的推送信息，如果有则从服务器获取下来发送
+ *   本地推送信息。
  *
  */
 public class PullService extends Service {
@@ -61,13 +93,32 @@ public class PullService extends Service {
                 requestCal.setTimeInMillis(currentTimeMillis);
                 Calendar next = (Calendar) requestCal.clone();
                 //如果不在请求时间范围内，肯定是请求失败被推迟的定时器，推迟到第二天的随机时间再请求
-                if (requestCal.getTime().getHours() > requestEndHour ||requestCal.getTime().getHours() < requestStartHour) {
+                if (requestCal.getTime().getHours() >= requestEndHour ||requestCal.getTime().getHours() < requestStartHour) {
                     next = Alarms.calculateRandomAlarmInNextDay(requestCal, requestStartHour, requestEndHour);
                     exitService(next);
+                    return;
                 }
                 //TODO:普通失败，推迟一天
-                next.add(Calendar.MINUTE, 1);
-//                next.add(Calendar.HOUR_OF_DAY, 1);
+                next.add(Calendar.MINUTE, 5);
+//                Alarms.alarmAddHours(next, 1);
+                
+                //如果是因为调整系统时间导致定时器时间在过去而触发了PullService
+                String recordedAlarm = TKConfig.getPref(getApplicationContext(), TKConfig.PREFS_RADAR_PULL_ALARM, "");
+                LogWrapper.d(TAG, "recorded Alarm is:" +recordedAlarm);
+                if (!TextUtils.isEmpty(recordedAlarm)) {
+                    long recordedAlarmInMillis;
+                    try {
+                        recordedAlarmInMillis = Alarms.SIMPLE_DATE_FORMAT.parse(recordedAlarm).getTime();
+                        //如果当前时间被调整到了定时器时间之后
+                        if (requestCal.getTimeInMillis() - recordedAlarmInMillis > 1000) {
+                            LogWrapper.d(TAG, "recorded alarm is in the past time, now is " + requestCal.getTime().toLocaleString() + ", need a new Alarm.");
+                            exitService(next);
+                            return;
+                        }
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
                 
                 Context context = getApplicationContext();
                 
@@ -89,20 +140,22 @@ public class PullService extends Service {
                 if (location != null) {
                     MapEngine mapEngine = MapEngine.getInstance();
                     try {
-                        mapEngine.initMapDataPath(context, false);
+                        mapEngine.initMapDataPath(context);
                         position = mapEngine.latlonTransform(new Position(location.getLatitude(), location.getLongitude()));
                         int cityId = mapEngine.getCityId(position);
                         locationCityInfo = mapEngine.getCityInfo(cityId);
                     } catch (APIException exception) {
                         exception.printStackTrace();
                     }
+                } else {
+                    fail += 1;
+                    exitService(next);
+                    return;
                 }
-
                 LogWrapper.d(TAG, "locationCityInfo="+locationCityInfo);
-                if (locationCityInfo != null
-                        && locationCityInfo.isAvailably()
+
+                if (locationCityInfo.isAvailably()
                         && currentCityInfo.getId() == locationCityInfo.getId()) {    
-                    // TODO: 去服务器上拉数据
                     DataQuery dataQuery = new DataQuery(context);
                     Hashtable<String, String> criteria = new Hashtable<String, String>();
                     String messageIdList = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, "");
@@ -113,34 +166,140 @@ public class PullService extends Service {
                     criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
                     criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(position.getLon()));
                     criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(position.getLat()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_MESSAGE_ID_LIST, messageIdList);
+                    if (!TextUtils.isEmpty(messageIdList)) {
+                        criteria.put(DataQuery.SERVER_PARAMETER_MESSAGE_ID_LIST, messageIdList);
+                    }
                     if (!TextUtils.isEmpty(lastSucceedTime)) {
                         criteria.put(DataQuery.SERVER_PARAMETER_LAST_PULL_DATE, lastSucceedTime);
                     }
                     dataQuery.setup(criteria, currentCityInfo.getId());
                     dataQuery.query();
                     PullMessage pullMessage = dataQuery.getPullMessage();
-                    if (pullMessage != null) {
+                    if (pullMessage != null && pullMessage.getResponseCode() == 200) {
                         fail = 0;
                         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_LAST_SUCCEED_TIME, 
                                 Alarms.SIMPLE_DATE_FORMAT.format(requestCal.getTime()));
                         next = recordPullMessage(context, pullMessage, requestCal);
-                        LogWrapper.d(TAG, "pull succeeded, fail = " + fail);
                     } else {
                         fail += 1;
                     }
+                    
+                    // 收集定位信息
+                    String locationData = queryCollectionLocation(context);
+                    if (locationData != null) {
+                        uploadLocationData(context, locationData);
+                    }
                 }
                 
-                // 定时下一个唤醒
+                // 退出并设置下一个定时器
                 exitService(next);
             }
         }).start();
+    }
+    
+    /*
+     * 查询是否收集的定位信息，拼接定位信息
+     */
+    String queryCollectionLocation(Context context) {
+        StringBuilder data =  new StringBuilder();
+
+        // 从数据库中读取收集的定位信息
+        LocationTable locationTable = new LocationTable(context);
+        HashMap<LocationParameter, Location> map = new HashMap<LocationParameter, Location>();
+        locationTable.read(map, LocationTable.PROVIDER_GPS_COLLECTION, LocationTable.PROVIDER_GPS_COLLECTION);
+        locationTable.close();
+        
+        // 遍历收集的定位信息记录
+        Iterator<Map.Entry<LocationParameter, Location>> iter = map.entrySet().iterator();
+        while (iter.hasNext()) {
+            Map.Entry<LocationParameter, Location> entry = (Map.Entry<LocationParameter, Location>)iter.next();
+            LocationParameter key = entry.getKey();
+            Location value = entry.getValue();
+            if (value != null) {
+                int mcc = key.mcc;
+                int mnc = key.mnc;
+                
+                TKCellLocation tkCellLocation = key.tkCellLocation;
+                int lac = tkCellLocation.lac;
+                int cid = tkCellLocation.cid;
+                
+                if (data.length() > 0) {
+                    data.append("|");
+                }
+                
+                data.append(key.time);
+                data.append(",");
+                data.append(CommonUtils.doubleKeep(value.getLatitude(), 6));
+                data.append(",");
+                data.append(CommonUtils.doubleKeep(value.getLongitude(), 6));
+                data.append(",");
+                data.append(value.getAccuracy());
+                data.append(","); 
+                
+                // 基站
+                if (CommonUtils.mccMncLacCidValid(mcc, mnc, lac, cid)) {
+                    data.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
+                    data.append("@");
+                    data.append(CommonUtils.asu2dbm(TKConfig.getSignalStrength()));
+                    data.append(";");
+                }
+                
+                // wifi队列
+                List<TKScanResult> scanResultList = key.wifiList;
+                for (int i = 0, size = scanResultList.size(); i < size; i++) {
+                    TKScanResult scanResult = scanResultList.get(i);
+                    String bssid = scanResult.BSSID;
+                    data.append(bssid);
+                    data.append("@");
+                    data.append(scanResult.level);
+                    data.append(";");
+                }
+
+                // 邻近基站队列
+                List<TKNeighboringCellInfo> neighboringCellInfoList = key.neighboringCellInfoList;
+                for (int i = 0, size = neighboringCellInfoList.size(); i < size; i++) {
+                    TKNeighboringCellInfo neighboringCellInfo = neighboringCellInfoList.get(i);
+                    lac = neighboringCellInfo.lac;
+                    cid = neighboringCellInfo.cid;
+                    if (CommonUtils.lacCidValid(lac, cid)) {
+                        data.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
+                        data.append("@");
+                        data.append(CommonUtils.asu2dbm(neighboringCellInfo.rssi));
+                        data.append(";");
+                    }
+                }
+            }
+        }
+
+        return data.toString();
+    }
+    
+    /*
+     * 上传收集的定位数据到服务器，如果上传成功则清空之前收集的定位信息
+     */
+    void uploadLocationData(Context context, String data) {
+        // 上传收集的定位数据到服务器
+        FeedbackUpload feedbackUpload = new FeedbackUpload(context);
+        
+        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        criteria.put(FeedbackUpload.SERVER_PARAMETER_LOCATION, data);
+        feedbackUpload.setup(criteria);
+        feedbackUpload.query();
+        
+        Response response = feedbackUpload.getResponse();
+        // 如果上传成功，则将之前收集的定位信息全部清空
+        if (response != null && response.getResponseCode() == Response.RESPONSE_CODE_OK) {
+            LocationTable locationTable = new LocationTable(context);
+            locationTable.clear(LocationTable.PROVIDER_GPS_COLLECTION, LocationTable.PROVIDER_GPS_COLLECTION);
+            locationTable.close();
+        }
     }
 
     public Calendar recordPullMessage(Context context, PullMessage pullMessage, Calendar requestCal) {
         
         long recordMessageUpperLimit = pullMessage.getRecordMessageUpperLimit();
         long requsetIntervalDays = pullMessage.getRequsetIntervalDays();
+        LogWrapper.d(TAG, "interval day:" + requsetIntervalDays);
         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_UPPER_LIMIT, String.valueOf(pullMessage.getRecordMessageUpperLimit()));
         String messageIdList = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, "");
         String[] list = messageIdList.split("_");
@@ -148,20 +307,23 @@ public class PullService extends Service {
         List<Message> messageList = pullMessage.getMessageList();
         
         //由于产品还没想好怎么处理多条数据，目前message只显示列表中第一条。
-        Message message = messageList.get(0);
-        if (message != null) {
+        if (messageList != null && messageList.size() > 0) {
+            Message message = messageList.get(0);
             s.append(message.getId());
             TKNotificationManager.notify(context, message);
         }
         int length = list.length;
         long limit = recordMessageUpperLimit - 1;
-        for(int i = 0; i < limit && i < length; i++) {
-            s.append("_");
-            s.append(list[i]);
+        if (length > 0) {
+            s.append(list[0]);
+            for(int i = 1; i < limit && i < length; i++) {
+                s.append("_");
+                s.append(list[i]);
+            }
         }
         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, s.toString());
         
-        return Alarms.calculateAlarm(requestCal, requsetIntervalDays);
+        return Alarms.alarmAddDays(requestCal, requsetIntervalDays);
     }
 
     @Override
@@ -175,20 +337,18 @@ public class PullService extends Service {
     }
     
     void exitService(Calendar next) {
+        LogWrapper.d(TAG, fail == 0 ? ("Pull Succeeded.") : ("Pull failed " + fail + " times"));
+        
         if (fail >= MaxFail || next == null) {
             fail = 0;
             next = Alarms.calculateRandomAlarmInNextDay(next, requestStartHour, requestEndHour);
         }
+        LogWrapper.d(TAG, "next Alarm: " + next.getTime().toLocaleString());
         
         Context context = getApplicationContext();
         Intent intent = new Intent(RadarReceiver.ACTION_PULL);
         Alarms.disableAlarm(context, intent);
-        Alarms.enableAlarm(context, next.getTimeInMillis(), intent);
-        if (fail > 0) {
-            LogWrapper.d(TAG, "Pull failed " + fail + " times, next alarm:" + next.getTime().toLocaleString());
-        } else {
-            LogWrapper.d(TAG, "Pull succeeded, next alarm:" + next.getTime().toLocaleString());
-        }
+        Alarms.enableAlarm(context, next, intent);
         
         Intent name = new Intent(context, PullService.class);
         stopService(name);

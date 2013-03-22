@@ -197,7 +197,7 @@ public class MyCommentListFragment extends BaseFragment {
                     }
                 }
             }
-            Collections.sort(mCommentArrayList, Comment.COMPARATOR);
+            Collections.sort(mCommentArrayList, Comment.COMPARATOR_ONLY_TIME);
             mCommentAdapter.notifyDataSetChanged();
         }
     }

@@ -92,7 +92,6 @@ import com.decarta.android.util.XYFloat;
 import com.decarta.example.AppUtil;
 import com.decarta.example.ConfigActivity;
 import com.decarta.example.ProfileResultActivity;
-import com.tigerknows.MapDownload.DownloadCity;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.maps.PinOverlayHelper;
@@ -117,6 +116,7 @@ import com.tigerknows.model.DataQuery.POIResponse;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.radar.TKNotificationManager;
+import com.tigerknows.service.MapDownloadService;
 import com.tigerknows.service.MapStatsService;
 import com.tigerknows.service.SuggestLexiconService;
 import com.tigerknows.service.TKLocationManager.TKLocationListener;
@@ -325,7 +325,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         mMapEngine = MapEngine.getInstance();
         try {
-            mMapEngine.initMapDataPath(mThis, false);
+            mMapEngine.initMapDataPath(mThis);
         } catch (APIException exception) {
             exception.printStackTrace();
             CommonUtils.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
@@ -759,11 +759,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return;
         }
         
-        if (TKConfig.sCountMapWhenOnCreate) {
-            mMapEngine.statsMapEnd(new ArrayList<DownloadCity>(), false);
-            Intent service = new Intent(Sphinx.this, MapStatsService.class);
-            startService(service);
-        }
+        Intent service = new Intent(MapStatsService.ACTION_STATS_CURRENT_DOWNLOAD_CITY);
+        service.setClass(mThis, MapStatsService.class);
+        startService(service);
 
         UserLogon userLogon = new UserLogon(mContext);
         queryStart(userLogon, false);
@@ -772,7 +770,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIAOYAN);
         criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-        diaoyanQuery.setup(criteria, -1);
+        diaoyanQuery.setup(criteria, Globals.g_Current_City_Info.getId());	//
         queryStart(diaoyanQuery, false);
         
         checkCitySupportDiscover(Globals.g_Current_City_Info.getId());
@@ -1042,8 +1040,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         TKConfig.updateIMSI(mConnectivityManager);
         
-        IntentFilter intentFilter= new IntentFilter(MapStatsService.ACTION_MAP_STATS_COMPLATE);
-        registerReceiver(mMapStatsBroadcastReceiver, intentFilter);
+        IntentFilter intentFilter= new IntentFilter(MapStatsService.ACTION_STATS_CURRENT_DOWNLOAD_CITY_COMPLATE);
+        registerReceiver(mCountCurrentDownloadCityBroadcastReceiver, intentFilter);
         
         if (mActivityResult == false) {
             if (mDiscoverFragment != null) {
@@ -1140,6 +1138,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mDiscoverFragment = null;
         Intent service = new Intent(Sphinx.this, MapStatsService.class);
         stopService(service);
+        service = new Intent(Sphinx.this, MapDownloadService.class);
+        stopService(service);
         super.onDestroy();
         ActivityManager am = (ActivityManager)getSystemService(
                 Context.ACTIVITY_SERVICE);
@@ -1167,12 +1167,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	}
 
     //接受地图统计完成信息。
-    private BroadcastReceiver mMapStatsBroadcastReceiver = new BroadcastReceiver() {
+    private BroadcastReceiver mCountCurrentDownloadCityBroadcastReceiver = new BroadcastReceiver() {
         
         @Override
         public void onReceive(Context context, Intent intent) { 
-            getMoreFragment().refreshMoreBtn(false);
+            if (intent != null
+                    && intent.hasExtra(MapStatsService.EXTRA_DOWNLOAD_CITY)) {
+                getMoreFragment().refreshMoreBtn(false);
             }
+        }
     };
     
     public MapEngine getMapEngine() {
@@ -1586,7 +1589,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
 
         // 需要一直监听联想词下载服务的下载完成信息，来解压联想词。
-        unregisterReceiver(mMapStatsBroadcastReceiver);
+        unregisterReceiver(mCountCurrentDownloadCityBroadcastReceiver);
         
         Intent service = new Intent(Sphinx.this, SuggestLexiconService.class);
         stopService(service);
@@ -1625,6 +1628,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
                 updateCityInfo(cityInfo);
                 checkCitySupportDiscover(cityId);
+                if (!mViewedCityInfoList.contains(cityInfo)) {
+                    mViewedCityInfoList.add(cityInfo);
+                }
                 mActionLog.addAction(ActionLog.LifecycleSelectCity, cityInfo.getCName());
 
                 Position position = cityInfo.getPosition();
@@ -2017,20 +2023,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 infoWindow.setViewGroup(mInfoWindowPOI);
             } else {
-                if (mInfoWindowMessage == null) {
-                    mInfoWindowMessage = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_message, null);
-                }
-                
-                TextView nameTxv=(TextView)mInfoWindowMessage.findViewById(R.id.name_txv);
-                
-                nameTxv.setText(poi.getName());
-                
-                int max = Globals.g_metrics.widthPixels - (int)(Globals.g_metrics.density*(96));
-                layoutInfoWindow(nameTxv, max);
-                
-                ViewGroup bodyView=(ViewGroup)mInfoWindowMessage.findViewById(R.id.body_view);
-                bodyView.setOnTouchListener(mInfoWindowBodyViewListener);
-                
+                setInfoWindowMessage(overlayItem.getMessage());
                 infoWindow.setViewGroup(mInfoWindowMessage);
             }
         } else if (object instanceof Zhanlan || object instanceof Yanchu) {
@@ -2135,7 +2128,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             
             infoWindow.setViewGroup(mInfoWindowTuangouList);
         } else {
-        	infoWindow.setMessage(overlayItem.getMessage());
+            setInfoWindowMessage(overlayItem.getMessage());
+            infoWindow.setViewGroup(mInfoWindowMessage);
         }
 
         infoWindow.setOffset(new XYFloat((float)(overlayItem.getIcon().getOffset().x - overlayItem.getIcon().getSize().x/2), 
@@ -2144,6 +2138,28 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         infoWindow.setVisible(true);
         
         mMapView.refreshMap();
+    }
+    
+    /**
+     * 设置mInfoWindowMessage中的文本内容
+     * @param message
+     * @return
+     */
+    void setInfoWindowMessage(String message) {
+        if (mInfoWindowMessage == null) {
+            // 初始化
+            mInfoWindowMessage = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_message, null);
+        }
+        
+        TextView nameTxv=(TextView)mInfoWindowMessage.findViewById(R.id.name_txv);
+        
+        nameTxv.setText(message);
+        
+        int max = Globals.g_metrics.widthPixels - (int)(Globals.g_metrics.density*(96));
+        layoutInfoWindow(nameTxv, max);
+        
+        ViewGroup bodyView=(ViewGroup)mInfoWindowMessage.findViewById(R.id.body_view);
+        bodyView.setOnTouchListener(mInfoWindowBodyViewListener);
     }
     
     private void infoWindowClicked() {
@@ -2730,7 +2746,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     cityIdList.add(cityInfo.getId());
                 }
                 cityInfoList.clear();
-                intent.putIntegerArrayListExtra("cityIdList", cityIdList);
+                intent.putIntegerArrayListExtra(MapDownload.EXTRA_VIEWED_CITY_ID_LIST, cityIdList);
                 intent.setClass(this, MapDownload.class);
                 startActivityForResult(intent, R.id.activity_map_download);
                 return true;

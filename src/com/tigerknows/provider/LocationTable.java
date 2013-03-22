@@ -21,6 +21,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 import android.location.LocationManager;
 import android.text.TextUtils;
+import android.util.Log;
 
 import java.util.HashMap;
 
@@ -44,6 +45,7 @@ public class LocationTable {
     public static final String TKCELLLOCATION = "tk_TKCellLocation";
     public static final String NEIGHBORINGCELLINFO_LIST = "tk_neighboringCellInfoList";
     public static final String WIFI_LIST = "tk_wifiList";
+    public static final String TIME = "tk_time";
     public static final String LOCATION = "tk_location";
     public static final String PROVIDER = "tk_provider";
 
@@ -57,7 +59,7 @@ public class LocationTable {
 
 	// TABLES
 	protected static final String TABLE_NAME = "location";
-	protected static final int DATABASE_VERSION = 1;
+	protected static final int DATABASE_VERSION = 2;
 
 	private static final String TABLE_CREATE = "create table if not exists "
 			+ TABLE_NAME
@@ -70,6 +72,7 @@ public class LocationTable {
             + TKCELLLOCATION + " TEXT not null, "
             + NEIGHBORINGCELLINFO_LIST + " TEXT, "
             + WIFI_LIST + " TEXT, "
+            + TIME + " TEXT, "
 			+ LOCATION + " TEXT not null )";
 
 	public Context mCtx;
@@ -93,10 +96,36 @@ public class LocationTable {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		}
 		@Override
-		public void onCreate(SQLiteDatabase db) {}
+		public void onCreate(SQLiteDatabase db) {
+		    db.execSQL(TABLE_CREATE);
+		}
 		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		    switch (oldVersion) {
+                case 1:
+                    if (newVersion <= 1) {
+                        return;
+                    }
+
+                    db.beginTransaction();
+                    try {
+                        upgradeDatabaseToVersion2(db);
+                        db.setTransactionSuccessful();
+                    } catch (Throwable ex) {
+                        Log.e(TAG, ex.getMessage(), ex);
+                        break;
+                    } finally {
+                        db.endTransaction();
+                    }
+                    break;
+		    }
+		}
+		
+		void upgradeDatabaseToVersion2(SQLiteDatabase db) {
+		    db.execSQL("ALTER TABLE " + TABLE_NAME + " ADD " + TIME + " TEXT;");
+		}
 	}
+	
 
 	/**
 	 * open
@@ -136,6 +165,9 @@ public class LocationTable {
         cv.put(TKCELLLOCATION, locationParameter.tkCellLocation.toString());
         cv.put(NEIGHBORINGCELLINFO_LIST, locationParameter.getNeighboringCellInfoString());
         cv.put(WIFI_LIST, locationParameter.getWifiString());
+        if (locationParameter.time != null) {
+            cv.put(TIME, locationParameter.time);
+        }
         cv.put(LOCATION, location.getLatitude()+","+location.getLongitude()+","+location.getAccuracy());
 		if(check(locationParameter)<=0) // new
 			mDb.insert(TABLE_NAME, null, cv);
@@ -181,7 +213,7 @@ public class LocationTable {
         if(!mDb.isOpen())
             return;
         Cursor mCursor = mDb.query(true, TABLE_NAME,
-                new String[] { PROVIDER, MNC, MCC, TKCELLLOCATION, NEIGHBORINGCELLINFO_LIST, WIFI_LIST, LOCATION}, null,
+                new String[] { PROVIDER, MNC, MCC, TKCELLLOCATION, NEIGHBORINGCELLINFO_LIST, WIFI_LIST, TIME, LOCATION}, null,
                 null, null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
@@ -212,7 +244,11 @@ public class LocationTable {
                                     locationParameter.wifiList.add(tkScanResult);
                             }
                         }
-                        str= mCursor.getString(6);
+                        str=mCursor.getString(6);
+                        if (TextUtils.isEmpty(str) == false) {
+                            locationParameter.time = str;
+                        }
+                        str= mCursor.getString(7);
                         if (TextUtils.isEmpty(str) == false) {
                             Location location = new Location(LocationQuery.PROVIDER_DATABASE);
                             String[] arr = str.split(",");
@@ -240,6 +276,13 @@ public class LocationTable {
 		mDb.delete(TABLE_NAME, null, null);
 		return true;
 	}
+	
+    public boolean clear(int min, int max) throws SQLException {
+        if(!mDb.isOpen())
+            return false;
+        mDb.delete(TABLE_NAME, PROVIDER + ">=" + min + " AND " + PROVIDER + "<=" + max, null);
+        return true;
+    }
 
     public void optimize(int min, int max) throws SQLException {
         if(!mDb.isOpen())

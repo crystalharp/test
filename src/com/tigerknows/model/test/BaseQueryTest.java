@@ -290,7 +290,7 @@ public class BaseQueryTest {
             
             @Override
             public void onClick(View arg0) {
-                MapEngine.getInstance().getDownloadCityList().clear();
+                MoreFragment.CurrentDownloadCity = null;
             }
         });
         
@@ -314,8 +314,8 @@ public class BaseQueryTest {
                 Calendar next = Calendar.getInstance();
                 next.setTimeInMillis(System.currentTimeMillis());
                 next.add(Calendar.SECOND, 5);
-                Alarms.enableAlarm(activity, next.getTimeInMillis(), radarPushIntent);
-                LogWrapper.d("PullService", "Radar Push send in 5 seconds");
+                Alarms.enableAlarm(activity, next, radarPushIntent);
+                LogWrapper.d("PullService", "Radar Push send in:" + next.getTime().toLocaleString());
             }
         });
         

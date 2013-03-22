@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import com.tigerknows.TKConfig;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
+import com.weibo.sdk.android.keep.AccessTokenKeeper;
 
 public class ShareAPI {
 
@@ -52,7 +53,7 @@ public class ShareAPI {
     				ObjectInputStream in = new ObjectInputStream(byteArray);
     				identity = (UserAccessIdenty) in.readObject();
     				sUserCache.put(shareType, identity);
-    				setToken(shareType, identity);
+    				setToken(activity, shareType, identity);
     			}
     		} catch (Exception e) {
     			// TODO Auto-generated catch block
@@ -76,25 +77,25 @@ public class ShareAPI {
 		}
 		TKConfig.setPref(activity, shareType, new String(Base64.encode(arrayOutputStream.toByteArray(), Base64.DEFAULT)));
         sUserCache.put(shareType, identity);
-        setToken(shareType, identity);
+        setToken(activity, shareType, identity);
 	}
 	
 	public static void clearIdentity(Activity activity, String shareType) {
 		TKConfig.removePref(activity, shareType);
         sUserCache.remove(shareType);
-        setToken(shareType, null);
+        setToken(activity, shareType, null);
 	}
 	
-	private static void setToken(String shareType, UserAccessIdenty identity) {
+	private static void setToken(Activity activity, String shareType, UserAccessIdenty identity) {
 	    if (TYPE_WEIBO.equals(shareType)) {
-	        if (identity != null) {
-	            Oauth2AccessToken accessToken = new Oauth2AccessToken(identity.getAccessToken());
-                accessToken.setExpiresIn(identity.getExpireIn());
+	        Oauth2AccessToken accessToken = AccessTokenKeeper.readAccessToken(activity);
+	        if (identity != null && accessToken.isSessionValid()) {
                 TKWeibo.accessToken = accessToken;
                 Weibo.getInstance(TKWeibo.CONSUMER_KEY, TKWeibo.REDIRECT_URL).accessToken  = accessToken;
 	        } else {
                 TKWeibo.accessToken = null;
 	            Weibo.getInstance(TKWeibo.CONSUMER_KEY, TKWeibo.REDIRECT_URL).accessToken = null;
+	            AccessTokenKeeper.clear(activity);
 	        }
         } else if (TYPE_TENCENT.equals(shareType)) {
             if (identity != null) {

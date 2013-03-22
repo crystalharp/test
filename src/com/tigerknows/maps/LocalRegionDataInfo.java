@@ -2,17 +2,17 @@ package com.tigerknows.maps;
 
 import java.util.List;
 
-public class RegionMapInfo {
+public class LocalRegionDataInfo {
 
     private int mTotalSize;
     private int mDownloadedSize;
     private int mLostDataNum;
     private List<TileDownload> mLostDatas;
     
-    public RegionMapInfo() {
+    public LocalRegionDataInfo() {
     }
     
-    public RegionMapInfo(int totalSize, int downloadedSize, int lostDataNum, List<TileDownload> lostDatas) {
+    public LocalRegionDataInfo(int totalSize, int downloadedSize, int lostDataNum, List<TileDownload> lostDatas) {
         mTotalSize = totalSize;
         mDownloadedSize = downloadedSize;
         mLostDataNum = lostDataNum;
@@ -46,6 +46,7 @@ public class RegionMapInfo {
     public void setLostDatas(List<TileDownload> lostDatas) {
         mLostDatas = lostDatas;
     }
+
     @Override
     public String toString() {
         return "mTotalSize: " + mTotalSize + "\tmDownloadedSize: " + mDownloadedSize

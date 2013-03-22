@@ -232,8 +232,4 @@ public class TKNotificationManager {
         NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         nm.cancel(R.layout.sphinx);
     }
-    
-    public static void main(String[] argv) {
-    	System.out.println("hello world!");
-    }
 }
