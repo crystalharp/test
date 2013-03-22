@@ -7,6 +7,7 @@ import com.tigerknows.model.LocationQuery.TKNeighboringCellInfo;
 import com.tigerknows.model.LocationQuery.TKScanResult;
 import com.tigerknows.provider.LocationTable;
 import com.tigerknows.radar.Alarms;
+import com.tigerknows.radar.Alarms.AlarmAction;
 import com.tigerknows.radar.LocationCollectorReceiver;
 
 import android.app.Service;
@@ -20,6 +21,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.telephony.NeighboringCellInfo;
+import android.text.TextUtils;
 
 import java.util.Calendar;
 import java.util.List;
@@ -34,12 +36,16 @@ public class LocationCollectionService extends Service {
     public static final int REQUEST_MIN_DISTANCE = 10;
     static final long COLLECTION_INTERVAL = 6 * 1000;
     static final long COLLECTION_TIME = 150;
+    final static int requestStartHour = 7;
+    final static int requestEndHour = 20;
 
     private WifiManager wifiManager;
     private LocationManager locationManager;
     private LocationListener locationListener;
     private Location lastGpsLocation = null;
     private LocationParameter lastLocationParameter = null;
+    
+    public static LocationAlarmAction alarmAction = new LocationAlarmAction();
     
     void requestLocationUpdates() {
         lastGpsLocation = null;
@@ -143,34 +149,43 @@ public class LocationCollectionService extends Service {
         long currentTimeMillis = System.currentTimeMillis();
         Calendar next = Calendar.getInstance();
         next.setTimeInMillis(currentTimeMillis);
-        next.set(Calendar.HOUR, makeRandomHour());
-        next.set(Calendar.MINUTE, makeRandomMinute());
-        next.add(Calendar.DAY_OF_YEAR, 1);
-        TKConfig.setPref(context,
-                TKConfig.PREFS_RADAR_LOCATION_COLLECTION_ALARM, 
-                Alarms.SIMPLE_DATE_FORMAT.format(next.getTime()));
-        Intent intent = new Intent(LocationCollectorReceiver.ACTION_LOCATION_COLLECTION);
-        Alarms.enableAlarm(context, next, intent);
+        next = Alarms.calculateRandomAlarmInNextDay(next, requestStartHour, requestEndHour);
+        Alarms.enableAlarm(context, next, alarmAction);
         Intent name = new Intent(context, LocationCollectionService.class);
         stopService(name);
-    }
-    
-    int makeRandomHour() {
-        int hour = 6;
-        Random ran =new Random(System.currentTimeMillis()); 
-        hour += ran.nextInt(16);
-        return hour;
-    }
-    
-    int makeRandomMinute() {
-        int minute = 0;
-        Random ran =new Random(System.currentTimeMillis()); 
-        minute = ran.nextInt(60);
-        return minute;
     }
 
     @Override
     public IBinder onBind(Intent arg0) {
         return null;
+    }
+    
+    public static class LocationAlarmAction implements AlarmAction {
+
+        @Override
+        public void saveAlarm(Context context, String absAlarm, String relAlarm) {
+            if (absAlarm != null && !TextUtils.isEmpty(absAlarm)) {
+                TKConfig.setPref(context, TKConfig.PREFS_RADAR_LOCATION_COLLECTION_ALARM_ABSOLUTE, absAlarm);
+            }
+            if (relAlarm != null && !TextUtils.isEmpty(relAlarm)) {
+                TKConfig.setPref(context, TKConfig.PREFS_RADAR_LOCATION_COLLECTION_ALARM_RELETIVE, relAlarm);
+            }
+        }
+
+        @Override
+        public Intent getIntent() {
+            return new Intent(LocationCollectorReceiver.ACTION_LOCATION_COLLECTION);
+        }
+
+        @Override
+        public String getAbsAlarm(Context context) {
+            return TKConfig.getPref(context, TKConfig.PREFS_RADAR_LOCATION_COLLECTION_ALARM_ABSOLUTE, "");
+        }
+
+        @Override
+        public String getRelAlarm(Context context) {
+            return TKConfig.getPref(context, TKConfig.PREFS_RADAR_LOCATION_COLLECTION_ALARM_RELETIVE, "");
+        }
+        
     }
 }

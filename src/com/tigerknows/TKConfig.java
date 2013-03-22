@@ -224,8 +224,10 @@ public class TKConfig {
     public static final String PREFS_HINT_DISCOVER_TUANGOU_DINGDAN = "prefs_hint_discover_tuangou_dingdan";
     public static final String PREFS_HINT_LOCATION = "prefs_hint_location";
     
-    public static final String PREFS_RADAR_PULL_ALARM = "prefs_radar_pull_alarm";
-    public static final String PREFS_RADAR_LOCATION_COLLECTION_ALARM = "prefs_radar_location_collection_alarm";
+    public static final String PREFS_RADAR_PULL_ALARM_ABSOLUTE = "prefs_radar_pull_alarm_absolute";
+    public static final String PREFS_RADAR_PULL_ALARM_RELETIVE = "prefs_radar_pull_alarm_reletive";
+    public static final String PREFS_RADAR_LOCATION_COLLECTION_ALARM_ABSOLUTE = "prefs_radar_location_collection_alarm_absolute";
+    public static final String PREFS_RADAR_LOCATION_COLLECTION_ALARM_RELETIVE = "prefs_radar_location_collection_alarm_reletive";
     public static final String PREFS_RADAR_RECORD_MESSAGE_ID_LIST = "prefs_radar_record_message_id_list";
     public static final String PREFS_RADAR_RECORD_LAST_SUCCEED_TIME = "prefs_radar_record_last_succeed_time";
     public static final String PREFS_RADAR_RECORD_MESSAGE_UPPER_LIMIT = "prefs_radar_record_message_upper_limit";
