@@ -813,7 +813,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void retry() {
         if (mBaseQuerying != null) {
-            mBaseQuerying.setResponse(null);
+        	for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
+                mBaseQuerying.get(i).setResponse(null);
+        	}
             mSphinx.queryStart(mBaseQuerying);
         }
         setup();

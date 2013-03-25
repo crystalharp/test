@@ -323,8 +323,8 @@ public class Dianying extends BaseData implements Parcelable{
 		name = in.readString();
 		alias = in.readString();
 		tag = in.readString();
-		pictures = in.readParcelable(null);
-		picturesDetail = in.readParcelable(null);
+		pictures = in.readParcelable(TKDrawable.class.getClassLoader());
+		picturesDetail = in.readParcelable(TKDrawable.class.getClassLoader());
 		description = in.readString();
 		startTime = in.readString();
 		length = in.readString();
@@ -334,7 +334,7 @@ public class Dianying extends BaseData implements Parcelable{
 		director = in.readString();
 		mainActor = in.readString();
 		num = in.readLong();
-		yingxun = in.readParcelable(null);
+		yingxun = in.readParcelable(Yingxun.class.getClassLoader());
 		filterArea = in.readString();
 	}
 

@@ -462,8 +462,8 @@ public class Yingxun extends BaseData implements Parcelable {
 		phone = in.readString();
 		distance = in.readString();
 		changciList = new ArrayList<Changci>();
-		in.readList(changciList, null);
-		position = in.readParcelable(null);
+		in.readList(changciList, Changci.class.getClassLoader());
+		position = in.readParcelable(Position.class.getClassLoader());
 		changciOption = in.readInt();
 		changciToday = in.readInt();
 		changciTomorrow = in.readInt();

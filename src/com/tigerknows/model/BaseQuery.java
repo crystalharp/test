@@ -14,9 +14,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
 import android.content.Context;
 import android.content.Intent;
 
@@ -151,6 +148,25 @@ public abstract class BaseQuery {
     public static final String SERVER_PARAMETER_PICTURE = "pic";
 
 	public static final String RESPONSE_CODE_ERROR_MSG_PREFIX = "resp_code_err_msg";
+
+    public static final String REQUSET_SOURCE_TYPE = "requset_source_type";
+    
+    public static final String REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI = "pulledDynamicPOI";
+    
+    /**
+     * 检查是否为推送动态POI的查询
+     * @return
+     */
+    public boolean isPulledDynamicPOIRequest() {
+        boolean result = false;
+        if (criteria != null && criteria.containsKey(REQUSET_SOURCE_TYPE)) {
+            String sourceType = criteria.get(REQUSET_SOURCE_TYPE);
+            if (REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI.equals(sourceType)) {
+                result = true;
+            }
+        }
+        return result;
+    }
     
     // 数据类型:
     // POI 1
@@ -501,7 +517,6 @@ public abstract class BaseQuery {
                         apiType.equals(API_TYPE_SUGGEST_LEXICON_DOWNLOAD) == false &&
                         apiType.equals(API_TYPE_TRAFFIC_QUERY) == false &&
                         apiType.equals(API_TYPE_USER_LOGON) == false)) {
-                    LogWrapper.d("BaseQuery", "execute() requestParameters="+requestParameters.toString());
                     launchTest();
                     httpClient.launchTest(ByteUtil.xobjectToByte(responseXMap), STATUS_CODE_NETWORK_OK);
                 } else {

@@ -19,7 +19,9 @@ import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
@@ -30,6 +32,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.BaseData;
+import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.POI;
@@ -37,6 +40,8 @@ import com.tigerknows.model.Response;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Yingxun;
 import com.tigerknows.model.DataOperation.DianyingQueryResponse;
+import com.tigerknows.model.DataOperation.YingxunQueryResponse;
+import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
@@ -148,70 +153,70 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         mRankRtb.setProgress((int) mData.getRank());
         
         if (TextUtils.isEmpty(mData.getDirector()) == false) {
-        	//mDirectorTxv.setText(mSphinx.getString(R.string.dianying_detail_director,mDianying.getDirector()));
-        	mDirectorTxv.setVisibility(View.VISIBLE);
-        	String colortxt = mSphinx.getString(R.string.dianying_detail_director,mData.getDirector());
-        	SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
+            //mDirectorTxv.setText(mSphinx.getString(R.string.dianying_detail_director,mDianying.getDirector()));
+            mDirectorTxv.setVisibility(View.VISIBLE);
+            String colortxt = mSphinx.getString(R.string.dianying_detail_director,mData.getDirector());
+            SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
             style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_BLACK_DARK),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);  
             mDirectorTxv.setText(style);
         }
         else
-        	mDirectorTxv.setVisibility(View.GONE);
+            mDirectorTxv.setVisibility(View.GONE);
         
         if (TextUtils.isEmpty(mData.getMainActor()) == false) {
-        	//mMainActorTxv.setText(mSphinx.getString(R.string.dianying_detail_main_actor,mDianying.getMainActor()));
-        	mMainActorTxv.setVisibility(View.VISIBLE);
-        	String colortxt = mSphinx.getString(R.string.dianying_detail_main_actor,mData.getMainActor());
-        	SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
+            //mMainActorTxv.setText(mSphinx.getString(R.string.dianying_detail_main_actor,mDianying.getMainActor()));
+            mMainActorTxv.setVisibility(View.VISIBLE);
+            String colortxt = mSphinx.getString(R.string.dianying_detail_main_actor,mData.getMainActor());
+            SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
             style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_BLACK_DARK),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             mMainActorTxv.setText(style);
         }
         else
-        	mMainActorTxv.setVisibility(View.GONE);
+            mMainActorTxv.setVisibility(View.GONE);
         
         if (TextUtils.isEmpty(mData.getTag()) == false) {
-        	//mTagTxv.setText(mSphinx.getString(R.string.dianying_detail_tag,mDianying.getTag()));
-        	mTagTxv.setVisibility(View.VISIBLE);
-        	String colortxt = mSphinx.getString(R.string.dianying_detail_tag,mData.getTag());
-        	SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
+            //mTagTxv.setText(mSphinx.getString(R.string.dianying_detail_tag,mDianying.getTag()));
+            mTagTxv.setVisibility(View.VISIBLE);
+            String colortxt = mSphinx.getString(R.string.dianying_detail_tag,mData.getTag());
+            SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
             style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_BLACK_DARK),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             mTagTxv.setText(style);
         }
         else
-        	mTagTxv.setVisibility(View.GONE);
+            mTagTxv.setVisibility(View.GONE);
         
         if (TextUtils.isEmpty(mData.getCountry()) == false) {
-        	//mCountryTxv.setText(mSphinx.getString(R.string.dianying_detail_country,mDianying.getCountry()));
-        	mCountryTxv.setVisibility(View.VISIBLE);
-        	String colortxt = mSphinx.getString(R.string.dianying_detail_country,mData.getCountry());
-        	SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
+            //mCountryTxv.setText(mSphinx.getString(R.string.dianying_detail_country,mDianying.getCountry()));
+            mCountryTxv.setVisibility(View.VISIBLE);
+            String colortxt = mSphinx.getString(R.string.dianying_detail_country,mData.getCountry());
+            SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
             style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_BLACK_DARK),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             mCountryTxv.setText(style);
         }
         else
-        	mCountryTxv.setVisibility(View.GONE);
+            mCountryTxv.setVisibility(View.GONE);
         
         if (TextUtils.isEmpty(mData.getLength()) == false) {
-        	//mLengthTxv.setText(mSphinx.getString(R.string.dianying_detail_length,mDianying.getLength()));
-        	mLengthTxv.setVisibility(View.VISIBLE);
-        	String colortxt = mSphinx.getString(R.string.dianying_detail_length,mData.getLength());
-        	SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
+            //mLengthTxv.setText(mSphinx.getString(R.string.dianying_detail_length,mDianying.getLength()));
+            mLengthTxv.setVisibility(View.VISIBLE);
+            String colortxt = mSphinx.getString(R.string.dianying_detail_length,mData.getLength());
+            SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
             style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_BLACK_DARK),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             mLengthTxv.setText(style);
         }
         else
-        	mLengthTxv.setVisibility(View.GONE);
+            mLengthTxv.setVisibility(View.GONE);
         
         if (TextUtils.isEmpty(mData.getStartTime()) == false) {
-        	//mStartTimeTxv.setText(mSphinx.getString(R.string.dianying_detail_start_time,mDianying.getStartTime()));
-        	mStartTimeTxv.setVisibility(View.VISIBLE);
-        	String colortxt = mSphinx.getString(R.string.dianying_detail_start_time,mData.getStartTime());
-        	SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
+            //mStartTimeTxv.setText(mSphinx.getString(R.string.dianying_detail_start_time,mDianying.getStartTime()));
+            mStartTimeTxv.setVisibility(View.VISIBLE);
+            String colortxt = mSphinx.getString(R.string.dianying_detail_start_time,mData.getStartTime());
+            SpannableStringBuilder style=new SpannableStringBuilder(colortxt);  
             style.setSpan(new ForegroundColorSpan(TKConfig.COLOR_BLACK_DARK),3,colortxt.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
             mStartTimeTxv.setText(style);
         }
         else
-        	mStartTimeTxv.setVisibility(View.GONE);
+            mStartTimeTxv.setVisibility(View.GONE);
         if (TextUtils.isEmpty(mFilterArea) || mData.getNum() < 2) {
             mNearbyFendianTxv.setVisibility(View.GONE);
             mNearbyFendianView.setClickable(false);
@@ -278,8 +283,8 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
             criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
             criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
             dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
-            mBaseQuerying = dataOperation;
-            mSphinx.queryStart(dataOperation);
+            mTKAsyncTasking = mSphinx.queryStart(dataOperation);
+            mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
         }
     }
     
@@ -369,9 +374,9 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
                 if (Changci.OPTION_DAY_AFTER_TOMORROW == mYingxun.getChangciOption()) {
                     mYingxun.setChangciOption(0);
                 } else {
-            	    mYingxun.setChangciOption(Changci.OPTION_DAY_AFTER_TOMORROW);
+                    mYingxun.setChangciOption(Changci.OPTION_DAY_AFTER_TOMORROW);
                 }
-            	refreshShowTime();
+                refreshShowTime();
                 break;
             case R.id.tomorrow_btn:
                 mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "tomorrow");
@@ -393,8 +398,8 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
                 break;    
                 
             case R.id.nearby_fendian_view:        
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "fendian");   	
-            	mSphinx.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.YingxunList);
+                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "fendian");       
+                mSphinx.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.YingxunList);
                 mSphinx.showView(R.id.view_discover_child_list);
                 break;
 
@@ -407,26 +412,100 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
             return false;
         }
         final DataOperation dataOperation = (DataOperation)(tkAsyncTask.getBaseQuery());
+        boolean isPulledDynamicPOIRequest = dataOperation.isPulledDynamicPOIRequest();
         if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener)) {
             mParentFragment.isReLogin = true;
             return true;
-        } else if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, false, mParentFragment, false)) {
-            return true;
+        } else {
+            if (isPulledDynamicPOIRequest) {
+                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, this, true)) {
+                    return true;
+                }
+            } else {
+                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, false, mParentFragment, false)) {
+                    return true;
+                }
+            }
         }
 
         final Response response = dataOperation.getResponse();
         
-        DianyingQueryResponse targetResponse = (DianyingQueryResponse) response;
-        Dianying target = targetResponse.getDianying();
-        if (target != null && dataOperation.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_UID).equals(mData.getUid())) {
-            try {
-                mData.init(target.getData());
-                refreshDescription(false);
-            } catch (APIException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+        if (isPulledDynamicPOIRequest) {
+            Dianying dianying = null;
+            List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
+            
+            for (BaseQuery baseQuery : baseQueryList) {
+                
+                String dataType = baseQuery.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
+                if(BaseQuery.DATA_TYPE_DIANYING.equals(dataType)){
+                    // Dianying query response
+                    DianyingQueryResponse dianyingQueryResponse = (DianyingQueryResponse) baseQuery.getResponse();
+                    dianying = dianyingQueryResponse.getDianying();
+                }else{
+                    // Yinxun query repsonse
+                    YingxunQueryResponse yingxunQueryResponse = (YingxunQueryResponse) baseQuery.getResponse();
+                    Yingxun yingxun = yingxunQueryResponse.getYingxun();
+                    dianying.setYingxun(yingxun);
+                    List<Dianying> list = new ArrayList<Dianying>();
+                    list.add(dianying);
+                    mSphinx.getDianyingDetailFragment().setData(list, mParentFragment.position, null);
+                }
+                
+            }
+        } else {
+            DianyingQueryResponse targetResponse = (DianyingQueryResponse) response;
+            Dianying target = targetResponse.getDianying();
+            if (target != null && dataOperation.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_UID).equals(mData.getUid())) {
+                try {
+                    mData.init(target.getData());
+                    refreshDescription(false);
+                } catch (APIException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         }
         return true;
+    }
+
+    public void setPulledDynamicPOI(PulledDynamicPOI dynamicPOI) {
+        if(dynamicPOI==null || dynamicPOI.getMasterUID()==null
+                || dynamicPOI.getMasterType()==0){
+            return;
+        }
+
+        mParentFragment.setViewsVisibility(View.INVISIBLE);
+        
+        // Set up the master poi query
+        DataOperation dataOperation = new DataOperation(mSphinx);
+        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        criteria.put(BaseQuery.REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI);
+        criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIANYING);
+        criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUID());
+        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+                Dianying.NEED_FILELD_ONLY_DIANYING + Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
+        criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+                Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
+                Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
+        criteria.put(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + 410, ""+R.string.response_code_410_pulled);
+        dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+        List<BaseQuery> list = new ArrayList<BaseQuery>();
+        list.add(dataOperation);
+
+        // Set up the slave poi query
+        dataOperation = new DataOperation(mSphinx);
+        criteria = new Hashtable<String, String>();
+        criteria.put(BaseQuery.REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI);
+        criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+        criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_YINGXUN);
+        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getSlaveUID());
+        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Yingxun.NEED_FILELD);
+        dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+        list.add(dataOperation);
+        
+        //Start the query
+        mTKAsyncTasking = mSphinx.queryStart(list);
+        mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
     }
 }

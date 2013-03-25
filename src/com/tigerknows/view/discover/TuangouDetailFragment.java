@@ -47,8 +47,9 @@ public class TuangouDetailFragment extends BaseDetailFragment
         if (isRelogin) {
             if (mBaseQuerying != null) {
                 // 这里判断为创建订单操作时且没有登录成功时，将mBaseQuerying置为null，避免在没有用户登录的情况再次发出创建订单请求
-                if (BaseQuery.API_TYPE_DATA_OPERATION.equals(mBaseQuerying.getAPIType())) {
-                    Hashtable<String, String> criteria = mBaseQuerying.getCriteria();
+                BaseQuery baseQuery = mBaseQuerying.get(0);
+                if (BaseQuery.API_TYPE_DATA_OPERATION.equals(baseQuery.getAPIType())) {
+                    Hashtable<String, String> criteria = baseQuery.getCriteria();
                     if (criteria != null && criteria.containsKey(BaseQuery.SERVER_PARAMETER_DATA_TYPE)) {
                         String dataType = criteria.get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
                         if (DataOperation.DATA_TYPE_DINGDAN.equals(dataType)) {
@@ -60,7 +61,9 @@ public class TuangouDetailFragment extends BaseDetailFragment
                 }
                     
                 if (mBaseQuerying != null) {
-                    mBaseQuerying.setResponse(null);
+                    for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
+                        mBaseQuerying.get(i).setResponse(null);
+                    }
                     mSphinx.queryStart(mBaseQuerying);
                 }
             }
@@ -128,7 +131,7 @@ public class TuangouDetailFragment extends BaseDetailFragment
         this.mDataList = dataList;
         setData(dataList.size(), position, iPagerList);
         refreshViews(position);
-    	setViewsVisibility(View.VISIBLE);
+        setViewsVisibility(View.VISIBLE);
     }
     
     public void viewMap() {

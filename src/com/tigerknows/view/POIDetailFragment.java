@@ -159,8 +159,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     private Animation mStampAnimation;
     
-    private List<BaseQuery> mBaseQuerying;
-    
     public boolean isReLogin() {
         boolean isRelogin = this.isReLogin;
         this.isReLogin = false;

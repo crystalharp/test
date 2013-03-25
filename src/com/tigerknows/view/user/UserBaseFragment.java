@@ -141,7 +141,7 @@ public abstract class UserBaseFragment extends BaseFragment {
 	 */
 	protected void sendRequest(AccountManage accountManage, Hashtable<String, String> criteria) {
 		accountManage.setup(criteria, getCityParameter(), getId(), getId(), mContext.getString(R.string.query_loading_tip));
-		mSphinx.queryStart(accountManage, true, false);
+		mSphinx.queryStart(accountManage, false);
 	}
 
 	/**

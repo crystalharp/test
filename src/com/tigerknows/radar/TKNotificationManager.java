@@ -72,7 +72,7 @@ public class TKNotificationManager {
     	if(dynamicPOI!=null
     			&& BaseQuery.DATA_TYPE_DIANYING.equals(""+dynamicPOI.getMasterType())
     			&& dynamicPOI.getMasterUID() != null
-    			&& dynamicPOI.getSlaveType() != 0
+                && BaseQuery.DATA_TYPE_YINGXUN.equals(""+dynamicPOI.getSlaveType())
     			&& dynamicPOI.getSlaveUID() != null){
     		return true;
     	}
@@ -109,8 +109,8 @@ public class TKNotificationManager {
     	{
 			case Message.TYPE_PRODUCT_UPGRADE:
 				if(checkProdcutUpgrade(msg)){
-		    			intent = new Intent(Intent.ACTION_VIEW);
-		    			intent.setData(Uri.parse(msg.getProductMsg().getDownloadUrl()));
+	    			intent = new Intent(Intent.ACTION_VIEW);
+	    			intent.setData(Uri.parse(msg.getProductMsg().getDownloadUrl()));
 				}
 				break;
 	
@@ -145,8 +145,12 @@ public class TKNotificationManager {
 				break;
 
 			default:
-				return null;
+			    intent = null;
 		}
+    	
+    	if (intent == null) {
+    	    return null;
+    	}
     	
         // The PendingIntent to launch our activity if the user selects this
         // notification.  Note the use of FLAG_UPDATE_CURRENT so that if there

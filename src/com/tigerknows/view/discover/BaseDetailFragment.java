@@ -35,7 +35,7 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
         // TODO Auto-generated constructor stub
     }
     
-    protected int position = -1;
+    protected int position = 0;
     
     protected ViewPager mViewPager = null;
     
@@ -107,7 +107,6 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
         mCycleOnPageChangeListener.count = mCyclePagerAdapter.count;
         mCyclePagerAdapter.notifyDataSetChanged();
         mViewPager.setCurrentItem(position);
-        this.position = -1;
     }
 
     protected void findViews() {
@@ -143,6 +142,14 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
             if (view.onPostExecute(tkAsyncTask)) {
                 break;
             }
+        }
+    }
+    
+    @Override
+    public void onCancelled(TKAsyncTask tkAsyncTask) {
+        super.onCancelled(tkAsyncTask);
+        if (tkAsyncTask.getBaseQuery().isPulledDynamicPOIRequest()) {
+            dismiss();
         }
     }
     
@@ -223,9 +230,8 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     }
     
     void setViewsVisibility(int visibility){
-    	for (View view : mCyclePagerAdapter.viewList) {
-    		view.setVisibility(visibility);
-		}
+        for (View view : mCyclePagerAdapter.viewList) {
+            view.setVisibility(visibility);
+        }
     }
-    
 }

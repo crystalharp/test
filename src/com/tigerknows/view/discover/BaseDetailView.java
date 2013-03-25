@@ -5,6 +5,8 @@
 package com.tigerknows.view.discover;
 
 
+import java.util.List;
+
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -43,7 +45,7 @@ public class BaseDetailView extends LinearLayout {
     protected String mActionTag;
     protected ActionLog mActionLog;
     protected TKAsyncTask mTKAsyncTasking;
-    protected BaseQuery mBaseQuerying;
+    protected List<BaseQuery> mBaseQuerying;
     private BaseData mData;
     
     public BaseDetailView(Sphinx sphinx, BaseDetailFragment parentFragment, int layoutResId) {
@@ -102,7 +104,7 @@ public class BaseDetailView extends LinearLayout {
     }    
 
     public boolean onPostExecute(TKAsyncTask tkAsyncTask) {
-        if (mBaseQuerying != tkAsyncTask.getBaseQuery()) {
+        if (mBaseQuerying != tkAsyncTask.getBaseQueryList()) {
             return false;
         }
         return true;

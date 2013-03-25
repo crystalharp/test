@@ -60,8 +60,10 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
         this.isReLogin = false;
         if (isRelogin) {
             if (mBaseQuerying != null) {
-                mBaseQuerying.setResponse(null);
-                queryStart(mBaseQuerying);
+            	for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
+	                mBaseQuerying.get(i).setResponse(null);
+            	}
+            	queryStart(mBaseQuerying);
             }
         }
         return isRelogin;

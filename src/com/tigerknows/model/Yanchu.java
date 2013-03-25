@@ -382,8 +382,8 @@ public class Yanchu extends BaseData implements Parcelable{
 		uid = in.readString();
 		name = in.readString();
 		cityId = in.readString();
-		pictures = in.readParcelable(null);
-		picturesDetail = in.readParcelable(null);
+		pictures = in.readParcelable(TKDrawable.class.getClassLoader());
+		picturesDetail = in.readParcelable(TKDrawable.class.getClassLoader());
 		description = in.readString();
 		linkUid = in.readString();
 		x = in.readLong();
@@ -400,7 +400,7 @@ public class Yanchu extends BaseData implements Parcelable{
 		source = in.readString();
 		orderTel = in.readString();
 		distance = in.readString();
-		position = in.readParcelable(null);
+		position = in.readParcelable(Position.class.getClassLoader());
     	
     }
 

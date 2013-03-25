@@ -1288,7 +1288,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     @Override
     public void retry() {
         if (mBaseQuerying != null) {
-            mBaseQuerying.setResponse(null);
+            for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
+                mBaseQuerying.get(i).setResponse(null);
+            }
             mSphinx.queryStart(mBaseQuerying);
         }
         setup();

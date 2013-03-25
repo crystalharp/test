@@ -41,6 +41,7 @@ import com.tigerknows.model.DataQuery.ZhanlanResponse.ZhanlanList;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.model.PullMessage.Message;
+import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XInt;
@@ -676,11 +677,12 @@ public class DataQueryTest {
 
     public static XMap launchPullMessage() {
         XMap data = new XMap();
-//        data.put(PullMessage.FIELD_MESSAGE_TOTAL, 1);
-        data.put(PullMessage.FIELD_REQUEST_INTERVAL_DAYS, "1");
+        BaseQueryTest.launchResponse(data);
+        data.put(PullMessage.FIELD_REQUEST_INTERVAL_DAYS, 1);
         data.put(PullMessage.FIELD_RECORD_MESSAGE_UPPER_LIMIT, 12);
-        data.put(PullMessage.FIELD_RESPONSE_CODE, 200);
-        data.put(PullMessage.FIELD_MESSAGE, launchMessage());
+        XArray<XMap> xArray = new XArray<XMap>();
+        xArray.add(launchMessage());
+        data.put(PullMessage.FIELD_MESSAGE, xArray);
         return data;
     }
     
@@ -690,8 +692,17 @@ public class DataQueryTest {
         data.put(Message.FIELD_CITY_ID, "1");
         data.put(Message.FIELD_EXPIRY_DATE, "2013-01-03");
         data.put(Message.FIELD_MSG_TYPE, Message.TYPE_FILM);
-        data.put(Message.PulledProductMessage.FILED_PRODUCT_DOWNLOAD_URL, "http://www.tigerknows.com");
-        data.put(Message.PulledProductMessage.FIELD_PRODUCT_DESCRIPTION, "FIELD_PRODUCT_DESCRIPTION");
+        data.put(Message.FIELD_POI_INFO, launchPulledDynamicPOI());
+        return data;
+    }
+    
+    protected static XMap launchPulledDynamicPOI() {
+        XMap data = new XMap();
+        data.put(PulledDynamicPOI.FIELD_MASTER_POI_TYPE, Integer.parseInt(BaseQuery.DATA_TYPE_DIANYING));
+        data.put(PulledDynamicPOI.FIELD_MASTER_POI_UID, "FIELD_MASTER_POI_UID");
+        data.put(PulledDynamicPOI.FIELD_SLAVE_POI_TYPE, Integer.parseInt(BaseQuery.DATA_TYPE_YINGXUN));
+        data.put(PulledDynamicPOI.FIELD_SLAVE_POI_UID, "FIELD_SLAVE_POI_UID");
+        data.put(PulledDynamicPOI.FIELD_POI_DESCRIPTION, "FIELD_POI_DESCRIPTION");
         return data;
     }
 }

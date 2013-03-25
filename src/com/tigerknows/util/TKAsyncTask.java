@@ -21,7 +21,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -34,7 +33,7 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
     
     private Activity activity;
     
-    private List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
+    private List<BaseQuery> baseQueryList;
     
     private Runnable cancelTask;
     
@@ -54,24 +53,16 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
         cancel(true);
     }
     
-    public TKAsyncTask(Activity activity, BaseQuery baseQuery, EventListener eventListener, Runnable cancelTask) {
-        this(activity, baseQuery, eventListener, cancelTask, true);
-    }
-    
-    public TKAsyncTask(Activity activity, BaseQuery baseQuery, EventListener eventListener, Runnable cancelTask, boolean cancelable) {
-        this.activity = activity;
-        this.baseQueryList.add(baseQuery);
-        this.eventListener = eventListener;
-        this.cancelTask = cancelTask;
-        this.cancelable = cancelable;
-    }
-    
     public TKAsyncTask(Activity activity, List<BaseQuery> baseQueryList, EventListener eventListener, Runnable cancelTask) {
+    	this(activity, baseQueryList, eventListener, cancelTask, true);
+    }
+    
+    public TKAsyncTask(Activity activity, List<BaseQuery> baseQueryList, EventListener eventListener, Runnable cancelTask, boolean cancelable) {
         this.activity = activity;
         this.baseQueryList = baseQueryList;
         this.eventListener = eventListener;
         this.cancelTask = cancelTask;
-        this.cancelable = true;
+        this.cancelable = cancelable;
     }
 
     @Override

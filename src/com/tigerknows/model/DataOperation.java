@@ -475,6 +475,8 @@ public class DataOperation extends BaseQuery {
                     responseXMap = DataOperationTest.launchFendianQueryResponse(context);
                 } else if (DATA_TYPE_DIANYING.equals(dataType)) {
                     responseXMap = DataOperationTest.launchDianyingQueryResponse(context);
+                } else if (DATA_TYPE_YINGXUN.equals(dataType)) {
+                    responseXMap = DataOperationTest.launchYingxunQueryResponse(context);
                 } else if (DATA_TYPE_YANCHU.equals(dataType)) {
                     responseXMap = DataOperationTest.launchYanchuQueryResponse(context);
                 } else if (DATA_TYPE_ZHANLAN.equals(dataType)) {

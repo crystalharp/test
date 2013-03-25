@@ -363,8 +363,8 @@ public class Zhanlan extends BaseData implements Parcelable{
     	uid = in.readString();
 		name = in.readString();
 		cityId = in.readString();
-		pictures = in.readParcelable(null);
-		picturesDetail = in.readParcelable(null);
+		pictures = in.readParcelable(TKDrawable.class.getClassLoader());
+		picturesDetail = in.readParcelable(TKDrawable.class.getClassLoader());
 		description = in.readString();
 		linkUid = in.readString();
 		x = in.readLong();
@@ -381,7 +381,7 @@ public class Zhanlan extends BaseData implements Parcelable{
 		areaname = in.readString();
 		source = in.readString();
 		distance = in.readString();
-		position = in.readParcelable(null);
+		position = in.readParcelable(Position.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<Zhanlan> CREATOR

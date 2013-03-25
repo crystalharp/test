@@ -207,7 +207,7 @@ public class BaseQueryTest {
                 if (activity instanceof BaseActivity) {
                     ((BaseActivity)(activity)).queryStart(accountManage, false);
                 } else if (activity instanceof Sphinx) {
-                    ((Sphinx)(activity)).queryStart(accountManage, false);
+                    ((Sphinx)(activity)).queryStart(accountManage);
                 }
             }
         });

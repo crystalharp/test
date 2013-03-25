@@ -4,6 +4,9 @@
 
 package com.tigerknows;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.map.MapActivity;
@@ -72,7 +75,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
     
     protected Handler mHandler;
     
-    protected BaseQuery mBaseQuerying;
+    protected List<BaseQuery> mBaseQuerying;
     
     protected TKAsyncTask mTkAsyncTasking;    
     
@@ -305,14 +308,28 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
     // TODO: soft input end
 
     // TODO: query begin
-    public void queryStart(BaseQuery baseQuery) {
-        queryStart(baseQuery, true);
+    public TKAsyncTask queryStart(List<BaseQuery> baseQuerying) {
+        return queryStart(baseQuerying, true);
     }
     
-    public void queryStart(BaseQuery baseQuery, boolean cancelable) {
-        mTkAsyncTasking = new TKAsyncTask(mThis, baseQuery, TKActivity.this, null, cancelable);
+    public TKAsyncTask queryStart(List<BaseQuery> baseQuerying, boolean cancelable) {
+    	if (baseQuerying == null || baseQuerying.size() <= 0) {
+    		return null;
+    	}
+    	mBaseQuerying = baseQuerying;
+        mTkAsyncTasking = new TKAsyncTask(mThis, baseQuerying, this, null, cancelable);
         mTkAsyncTasking.execute();
-        mBaseQuerying = baseQuery;
+        return mTkAsyncTasking;
+    }
+    
+    public TKAsyncTask queryStart(BaseQuery baseQuery) {
+        return queryStart(baseQuery, true);
+    }
+    
+    public TKAsyncTask queryStart(BaseQuery baseQuery, boolean cancelable) {
+        List<BaseQuery> baseQuerying = new ArrayList<BaseQuery>();
+        baseQuerying.add(baseQuery);
+        return queryStart(baseQuerying, cancelable);
     }
 
     public void onCancelled(TKAsyncTask tkAsyncTask) {

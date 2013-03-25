@@ -4,6 +4,8 @@
 
 package com.tigerknows.view;
 
+import java.util.List;
+
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ActionLog;
@@ -32,7 +34,6 @@ import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.animation.Animation;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -68,9 +69,9 @@ public class BaseFragment extends LinearLayout {
     
     public boolean isReLogin = false;
     
-    public BaseQuery mBaseQuerying;
+    protected List<BaseQuery> mBaseQuerying;
     
-    public TKAsyncTask mTkAsyncTasking;
+    protected TKAsyncTask mTkAsyncTasking;
     
     protected PopupWindow mPopupWindow;
     
@@ -87,7 +88,9 @@ public class BaseFragment extends LinearLayout {
         this.isReLogin = false;
         if (isRelogin) {
             if (mBaseQuerying != null) {
-                mBaseQuerying.setResponse(null);
+            	for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
+	                mBaseQuerying.get(i).setResponse(null);
+            	}
                 mSphinx.queryStart(mBaseQuerying);
             }
         }
@@ -348,5 +351,13 @@ public class BaseFragment extends LinearLayout {
         if (mPopupWindow != null && mPopupWindow.isShowing()) {
             mPopupWindow.dismiss();
         }
+    }
+    
+    public void setTkAsyncTasking(TKAsyncTask tkAsyncTask) {
+    	this.mTkAsyncTasking = tkAsyncTask;
+    }
+    
+    public void setBaseQuerying(List<BaseQuery> baseQuerying) {
+    	this.mBaseQuerying = baseQuerying;
     }
 }

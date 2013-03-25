@@ -536,114 +536,114 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
     }
     
     public static void refreashDayBtnView(int day, Yingxun yingxun, Button todayBtn, Button tomorrowBtn, Button afterTomorrowBtn) {
-    	if (day == Changci.OPTION_DAY_TODAY) {
-    		if (yingxun.getChangciToday() > 0)
-    			todayBtn.setBackgroundResource(R.drawable.btn_today_focused);
-    		else
-    			todayBtn.setBackgroundResource(R.drawable.ic_discover_money);
-    		
-    		if (yingxun.getChangciTomorrow() > 0)
-    			tomorrowBtn.setBackgroundResource(R.drawable.btn_tomorrow_normal);
-    		else
-    			tomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);
-    		
-    		if (yingxun.getChangciAfterTomorrow() > 0) 
-    			afterTomorrowBtn.setBackgroundResource(R.drawable.btn_after_tomorrow_normal);
-    		else
-    			afterTomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);
-    		
-    	}
-    	if (day == Changci.OPTION_DAY_TOMORROW) {
-    		if (yingxun.getChangciToday() > 0)
-    			todayBtn.setBackgroundResource(R.drawable.btn_today_normal);
-    		else
-    			todayBtn.setBackgroundResource(R.drawable.ic_discover_money);
-    		
-    		if (yingxun.getChangciTomorrow() > 0)
-    			tomorrowBtn.setBackgroundResource(R.drawable.btn_tomorrow_focused);
-    		else
-    			tomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);
-    		
-    		if (yingxun.getChangciAfterTomorrow() > 0) 
-    			afterTomorrowBtn.setBackgroundResource(R.drawable.btn_after_tomorrow_normal);
-    		else
-    			afterTomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);  		
-    	}
-    	if (day == Changci.OPTION_DAY_AFTER_TOMORROW) {
-    		if (yingxun.getChangciToday() > 0)
-    			todayBtn.setBackgroundResource(R.drawable.btn_today_normal);
-    		else
-    			todayBtn.setBackgroundResource(R.drawable.ic_discover_money);
-    		
-    		if (yingxun.getChangciTomorrow() > 0)
-    			tomorrowBtn.setBackgroundResource(R.drawable.btn_tomorrow_normal);
-    		else
-    			tomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);
-    		
-    		if (yingxun.getChangciAfterTomorrow() > 0) 
-    			afterTomorrowBtn.setBackgroundResource(R.drawable.btn_after_tomorrow_focused);
-    		else
-    			afterTomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);
-    	}    	
+        if (day == Changci.OPTION_DAY_TODAY) {
+            if (yingxun.getChangciToday() > 0)
+                todayBtn.setBackgroundResource(R.drawable.btn_today_focused);
+            else
+                todayBtn.setBackgroundResource(R.drawable.ic_discover_money);
+            
+            if (yingxun.getChangciTomorrow() > 0)
+                tomorrowBtn.setBackgroundResource(R.drawable.btn_tomorrow_normal);
+            else
+                tomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);
+            
+            if (yingxun.getChangciAfterTomorrow() > 0) 
+                afterTomorrowBtn.setBackgroundResource(R.drawable.btn_after_tomorrow_normal);
+            else
+                afterTomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);
+            
+        }
+        if (day == Changci.OPTION_DAY_TOMORROW) {
+            if (yingxun.getChangciToday() > 0)
+                todayBtn.setBackgroundResource(R.drawable.btn_today_normal);
+            else
+                todayBtn.setBackgroundResource(R.drawable.ic_discover_money);
+            
+            if (yingxun.getChangciTomorrow() > 0)
+                tomorrowBtn.setBackgroundResource(R.drawable.btn_tomorrow_focused);
+            else
+                tomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);
+            
+            if (yingxun.getChangciAfterTomorrow() > 0) 
+                afterTomorrowBtn.setBackgroundResource(R.drawable.btn_after_tomorrow_normal);
+            else
+                afterTomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);          
+        }
+        if (day == Changci.OPTION_DAY_AFTER_TOMORROW) {
+            if (yingxun.getChangciToday() > 0)
+                todayBtn.setBackgroundResource(R.drawable.btn_today_normal);
+            else
+                todayBtn.setBackgroundResource(R.drawable.ic_discover_money);
+            
+            if (yingxun.getChangciTomorrow() > 0)
+                tomorrowBtn.setBackgroundResource(R.drawable.btn_tomorrow_normal);
+            else
+                tomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);
+            
+            if (yingxun.getChangciAfterTomorrow() > 0) 
+                afterTomorrowBtn.setBackgroundResource(R.drawable.btn_after_tomorrow_focused);
+            else
+                afterTomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);
+        }        
     }
     
     public static void refreshDayView(Yingxun yingxun, Button todayBtn, Button tomorrowBtn, Button afterTomorrowBtn, ImageView showTimeDividerImv, View mNotimeView) {
 
         int changciOption = yingxun.getChangciOption();
         if (yingxun.getChangciToday() > 0) {
-        	//todayBtn.setBackgroundResource(R.drawable.btn_today_normal);
+            //todayBtn.setBackgroundResource(R.drawable.btn_today_normal);
             todayBtn.setEnabled(true);
         } else {
-        	//todayBtn.setBackgroundResource(R.drawable.ic_discover_money);
+            //todayBtn.setBackgroundResource(R.drawable.ic_discover_money);
             todayBtn.setEnabled(true);
         }
         if (yingxun.getChangciTomorrow() > 0) {
-        	//tomorrowBtn.setBackgroundResource(R.drawable.btn_tomorrow_normal);
+            //tomorrowBtn.setBackgroundResource(R.drawable.btn_tomorrow_normal);
             tomorrowBtn.setEnabled(true);
         } else {
-        	//tomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);;
+            //tomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);;
             tomorrowBtn.setEnabled(true);
         }
         if (yingxun.getChangciAfterTomorrow() > 0) {
-        	//afterTomorrowBtn.setBackgroundResource(R.drawable.btn_after_tomorrow_normal);
+            //afterTomorrowBtn.setBackgroundResource(R.drawable.btn_after_tomorrow_normal);
             afterTomorrowBtn.setEnabled(true);
         } else {
-        	//afterTomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);
+            //afterTomorrowBtn.setBackgroundResource(R.drawable.ic_discover_money);
             afterTomorrowBtn.setEnabled(true);
         }
         if ((changciOption & Changci.OPTION_DAY_TODAY) > 0 ) {
-        	todayBtn.setBackgroundResource(R.drawable.btn_today_focused);
-    		tomorrowBtn.setBackgroundResource(R.drawable.btn_tomorrow_normal);
-    		afterTomorrowBtn.setBackgroundResource(R.drawable.btn_after_tomorrow_normal);
-        	if (yingxun.getChangciToday() > 0) {
-        		showTimeDividerImv.setVisibility(View.VISIBLE);
-        		mNotimeView.setVisibility(View.GONE);
-        	} else {
-        		mNotimeView.setVisibility(View.VISIBLE);
-        		showTimeDividerImv.setVisibility(View.VISIBLE);
-        	}
+            todayBtn.setBackgroundResource(R.drawable.btn_today_focused);
+            tomorrowBtn.setBackgroundResource(R.drawable.btn_tomorrow_normal);
+            afterTomorrowBtn.setBackgroundResource(R.drawable.btn_after_tomorrow_normal);
+            if (yingxun.getChangciToday() > 0) {
+                showTimeDividerImv.setVisibility(View.VISIBLE);
+                mNotimeView.setVisibility(View.GONE);
+            } else {
+                mNotimeView.setVisibility(View.VISIBLE);
+                showTimeDividerImv.setVisibility(View.VISIBLE);
+            }
         } else if ((changciOption & Changci.OPTION_DAY_TOMORROW) > 0 ) {
-        	todayBtn.setBackgroundResource(R.drawable.btn_today_normal);
-    		tomorrowBtn.setBackgroundResource(R.drawable.btn_tomorrow_focused);
-    		afterTomorrowBtn.setBackgroundResource(R.drawable.btn_after_tomorrow_normal);
-        	if (yingxun.getChangciTomorrow() > 0) {
-        		showTimeDividerImv.setVisibility(View.VISIBLE);
-        		mNotimeView.setVisibility(View.GONE);
-        	} else {
-        		mNotimeView.setVisibility(View.VISIBLE);
-        		showTimeDividerImv.setVisibility(View.VISIBLE);
-        	}
+            todayBtn.setBackgroundResource(R.drawable.btn_today_normal);
+            tomorrowBtn.setBackgroundResource(R.drawable.btn_tomorrow_focused);
+            afterTomorrowBtn.setBackgroundResource(R.drawable.btn_after_tomorrow_normal);
+            if (yingxun.getChangciTomorrow() > 0) {
+                showTimeDividerImv.setVisibility(View.VISIBLE);
+                mNotimeView.setVisibility(View.GONE);
+            } else {
+                mNotimeView.setVisibility(View.VISIBLE);
+                showTimeDividerImv.setVisibility(View.VISIBLE);
+            }
         } else if ((changciOption & Changci.OPTION_DAY_AFTER_TOMORROW) > 0 ) {
-        	todayBtn.setBackgroundResource(R.drawable.btn_today_normal);
-    		tomorrowBtn.setBackgroundResource(R.drawable.btn_tomorrow_normal);
-    		afterTomorrowBtn.setBackgroundResource(R.drawable.btn_after_tomorrow_focused);
-        	if (yingxun.getChangciAfterTomorrow() > 0) {
-        		showTimeDividerImv.setVisibility(View.VISIBLE);
-        		mNotimeView.setVisibility(View.GONE);
-        	} else {
-        		mNotimeView.setVisibility(View.VISIBLE);
-        		showTimeDividerImv.setVisibility(View.VISIBLE);
-        	}
+            todayBtn.setBackgroundResource(R.drawable.btn_today_normal);
+            tomorrowBtn.setBackgroundResource(R.drawable.btn_tomorrow_normal);
+            afterTomorrowBtn.setBackgroundResource(R.drawable.btn_after_tomorrow_focused);
+            if (yingxun.getChangciAfterTomorrow() > 0) {
+                showTimeDividerImv.setVisibility(View.VISIBLE);
+                mNotimeView.setVisibility(View.GONE);
+            } else {
+                mNotimeView.setVisibility(View.VISIBLE);
+                showTimeDividerImv.setVisibility(View.VISIBLE);
+            }
         } else {
             todayBtn.setBackgroundResource(R.drawable.btn_today_normal);
             tomorrowBtn.setBackgroundResource(R.drawable.btn_tomorrow_normal);
@@ -680,7 +680,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                 parent.addView(row, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
             }
             if( i==rows-1 ){
-            	row.setPadding(0, 0, 0, Util.dip2px(Globals.g_metrics.density, 8));
+                row.setPadding(0, 0, 0, Util.dip2px(Globals.g_metrics.density, 8));
             }
             
             int rowViewChildCount = row.getChildCount();

@@ -10,19 +10,12 @@ import com.tigerknows.model.xobject.XMap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class PullMessage extends XMapData {
+public class PullMessage extends Response {
     
     public static int RecordMessageUpperLimit = Integer.MAX_VALUE;
-    
-    // 0x00  x_int  响应状态码，具体待定  
-    public static final byte FIELD_RESPONSE_CODE = 0x00;
-    
-    // 0x01 String  请求状态描述
-    public static final byte FIELD_RESPONSE_DESCRIPTION = 0x01;
 
     // 0x01  x_int  下次请求间隔时间，单位为天 
     public static final byte FIELD_REQUEST_INTERVAL_DAYS = 0x02;
-
 
     // 0x02  x_int  客户端记录的msgId上限个数   
     public static final byte FIELD_RECORD_MESSAGE_UPPER_LIMIT = 0x03;
@@ -383,8 +376,8 @@ public class PullMessage extends XMapData {
             type = in.readLong();
             cityId = in.readInt();
             expiryDate = in.readString();
-            dynamicPOI = in.readParcelable(null);
-            productMsg = in.readParcelable(null);
+            dynamicPOI = in.readParcelable(PulledDynamicPOI.class.getClassLoader());
+            productMsg = in.readParcelable(PulledDynamicPOI.class.getClassLoader());
         }
 
         public void writeToParcel(Parcel out, int flags) {
@@ -397,8 +390,6 @@ public class PullMessage extends XMapData {
         }
     }
 
-    private long responseCode;
-    private String responseDescription;
     private long requestIntervalDays;
     private long recordMessageUpperLimit;
     private List<Message> messageList;
@@ -422,10 +413,6 @@ public class PullMessage extends XMapData {
             }
         }
         
-        if (this.data.containsKey(FIELD_RESPONSE_DESCRIPTION)) {
-            this.responseDescription = this.data.getString(FIELD_RESPONSE_DESCRIPTION);
-        }
-        
         if (this.data.containsKey(FIELD_REQUEST_INTERVAL_DAYS)) {
             requestIntervalDays = this.data.getInt(FIELD_REQUEST_INTERVAL_DAYS);
         }
@@ -435,24 +422,12 @@ public class PullMessage extends XMapData {
         }
     }
 
-    public String getResponseDescription() {
-        return responseDescription;
-    }
-    
-    public void setResponseDescription(String responseDescription) {
-        this.responseDescription = responseDescription;
-    }
-
     public long getRequsetIntervalDays() {
         return requestIntervalDays;
     }
 
     public void setRequsetIntervalDays(long requestIntervalDays) {
         this.requestIntervalDays = requestIntervalDays;
-    }
-
-    public long getResponseCode() {
-        return responseCode;
     }
 
     public void setResponseCode(long responseCode) {

@@ -9,6 +9,7 @@ import com.tigerknows.model.DataOperation.FendianQueryResponse;
 import com.tigerknows.model.DataOperation.POIQueryResponse;
 import com.tigerknows.model.DataOperation.TuangouQueryResponse;
 import com.tigerknows.model.DataOperation.YanchuQueryResponse;
+import com.tigerknows.model.DataOperation.YingxunQueryResponse;
 import com.tigerknows.model.DataOperation.ZhanlanQueryResponse;
 import com.tigerknows.model.xobject.XMap;
 
@@ -40,6 +41,13 @@ public class DataOperationTest {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
         data.put(DianyingQueryResponse.FIELD_DATA, DataQueryTest.launchDianying(context, "tuangou", "descrption"));
+        return data;
+    }
+
+    public static XMap launchYingxunQueryResponse(Context context) {
+        XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        data.put(YingxunQueryResponse.FIELD_DATA, DataQueryTest.launchYingxun("launchYingxun"));
         return data;
     }
 

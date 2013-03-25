@@ -764,14 +764,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         startService(service);
 
         UserLogon userLogon = new UserLogon(mContext);
-        queryStart(userLogon, false);
+        queryStart(userLogon);
 
         DataOperation diaoyanQuery = new DataOperation(mContext);
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIAOYAN);
         criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         diaoyanQuery.setup(criteria, Globals.g_Current_City_Info.getId());	//
-        queryStart(diaoyanQuery, false);
+        queryStart(diaoyanQuery);
         
         checkCitySupportDiscover(Globals.g_Current_City_Info.getId());
 	}
@@ -1497,6 +1497,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (message != null) {
                 TKNotificationManager.cancel(mThis);
                 uiStackClose(new int[]{R.id.view_discover});
+                showView(R.id.view_discover);
                 //Show the corresponding view
                 showPulledDynamicPOI(message.getDynamicPOI());
                 result = true;
@@ -1524,9 +1525,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             showView(R.id.view_zhanlan_detail);
             getZhanlanDetailFragment().setPulledDynamicPOI(pulledDynamicPOI);
             
-    	}else if(BaseQuery.DATA_TYPE_DIANPING.equals(masterType)){
+    	}else if(BaseQuery.DATA_TYPE_DIANYING.equals(masterType)){
     		
     		// show dianying dynamic poi
+            showView(R.id.view_dianying_detail);
             getDianyingDetailFragment().setPulledDynamicPOI(pulledDynamicPOI);
             
     	}
@@ -2389,29 +2391,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     // TODO: initMapCenter end
 
     // TODO: query begin
-    public TKAsyncTask queryStart(List<BaseQuery> baseQueryList) {
-        TKAsyncTask tkAsyncTask = new TKAsyncTask(Sphinx.this, baseQueryList, Sphinx.this, null);
-        tkAsyncTask.execute();
+    public TKAsyncTask queryStart(List<BaseQuery> baseQuerying, boolean cancelable) {
+    	TKAsyncTask tkAsyncTask = super.queryStart(baseQuerying, cancelable);
+    	if (tkAsyncTask != null) {
+	        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+	        int targetViewId = baseQuery.getTargetViewId();
+	        BaseFragment baseFragment = getFragment(targetViewId);
+	        if (baseFragment != null) {
+	            baseFragment.setTkAsyncTasking(tkAsyncTask);
+	            baseFragment.setBaseQuerying(baseQuerying);
+	        }
+    	}
         return tkAsyncTask;
-    }
-    
-    public void queryStart(BaseQuery baseQuery) {        
-        queryStart(baseQuery, true);
-    }
-    
-    public void queryStart(BaseQuery baseQuery, boolean isUITask) {     
-    	queryStart(baseQuery, isUITask, true);
-    }
-    
-    public void queryStart(BaseQuery baseQuery, boolean isUITask, boolean cancelable) {     
-        TKAsyncTask tkAsyncTask = new TKAsyncTask(Sphinx.this, baseQuery, Sphinx.this, null, cancelable);
-        tkAsyncTask.execute();
-        int targetViewId = baseQuery.getTargetViewId();
-        BaseFragment baseFragment = getFragment(targetViewId);
-        if (baseFragment != null) {
-            baseFragment.mTkAsyncTasking = tkAsyncTask;
-            baseFragment.mBaseQuerying = baseQuery;
-        }
     }
     
     public int getPOIResultFragmentID() {
