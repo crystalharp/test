@@ -738,10 +738,10 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             public void onGroupExpand(int groupPosition) {
                 DownloadCity downloadCity = mDownloadCityList.get(groupPosition);
                 if (downloadCity.childList.size() == 0) {
-                    mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "downloadCity", groupPosition, cityInfo.getCName());
+                    mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "downloadCity", groupPosition, downloadCity.cityInfo.getCName());
                     clickDownloadCity(downloadCity);
                 } else {
-                    mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "downloadProvinceExpend", groupPosition, mDownloadCityList.get(groupPosition).cityInfo.getCName());
+                    mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "downloadProvinceExpend", groupPosition, downloadCity.cityInfo.getCName());
                 }
             }
         });

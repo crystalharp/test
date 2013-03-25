@@ -223,7 +223,7 @@ public class LocationQuery extends BaseQuery {
         if (location == null || PROVIDER_ERROR.equals(location.getProvider())) {
             checkLocationTable();
             if (readOfflineLocationCache == false) {
-                locationTable.read(offlineLocationCache, LocationTable.PROVIDER_TIGERKNOWS, LocationTable.PROVIDER_NETWORK);
+                locationTable.read(offlineLocationCache, LocationTable.Provider_List_Cache);
                 readOfflineLocationCache = true;
             }
             location = queryCache(locationParameter, offlineLocationCache, false);
@@ -279,7 +279,7 @@ public class LocationQuery extends BaseQuery {
     
     public void onDestory() {
         if (locationTable != null && locationTable.isOpen()) {
-            locationTable.optimize(LocationTable.PROVIDER_TIGERKNOWS, LocationTable.PROVIDER_NETWORK);
+            locationTable.optimize(LocationTable.Provider_List_Cache);
             locationTable.close();
         }
     }
@@ -423,9 +423,7 @@ public class LocationQuery extends BaseQuery {
             StringBuilder s = new StringBuilder();
             for(int i = neighboringCellInfoList.size()-1; i >= 0; i--) {
                 TKNeighboringCellInfo neighboringCellInfo = neighboringCellInfoList.get(i);
-                s.append(neighboringCellInfo.lac);
-                s.append(",");
-                s.append(neighboringCellInfo.cid);
+                s.append(neighboringCellInfo.toString());
                 if (i > 0) {
                     s.append(";");
                 }
@@ -436,10 +434,9 @@ public class LocationQuery extends BaseQuery {
         public String getWifiString() {
             StringBuilder s = new StringBuilder();
             for(int i = wifiList.size()-1; i >= 0; i--) {
-                String bssid = wifiList.get(i).BSSID;
-                s.append(bssid);
+                s.append(wifiList.get(i).toString());
                 if (i > 0) {
-                    s.append(",");
+                    s.append(";");
                 }
             }
             return s.toString();
@@ -466,12 +463,14 @@ public class LocationQuery extends BaseQuery {
         public int phoneType = TelephonyManager.PHONE_TYPE_NONE;
         public int lac = -1;
         public int cid = -1;
+        public int signalStrength = Integer.MAX_VALUE;
         private volatile int hashCode = 0;
         
-        public TKCellLocation(int phoneType, int lac, int cid) {
+        public TKCellLocation(int phoneType, int lac, int cid, int signalStrength) {
             this.phoneType = phoneType;
             this.lac = lac;
             this.cid = cid;
+            this.signalStrength = signalStrength;
         }
         
         public TKCellLocation(String str) {
@@ -481,11 +480,9 @@ public class LocationQuery extends BaseQuery {
                     phoneType = Integer.parseInt(arr[0]);
                     lac = Integer.parseInt(arr[1]);
                     cid = Integer.parseInt(arr[2]);
+                    signalStrength = Integer.parseInt(arr[3]);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    phoneType = TelephonyManager.PHONE_TYPE_NONE;
-                    lac = -1;
-                    cid = -1;
                 }
             }
         }
@@ -519,7 +516,7 @@ public class LocationQuery extends BaseQuery {
         }
         
         public String toString() {
-            return phoneType+","+lac+","+cid;
+            return phoneType+","+lac+","+cid+","+signalStrength;
         }
         
     }
@@ -588,15 +585,21 @@ public class LocationQuery extends BaseQuery {
     
     public static class TKScanResult {
         public String BSSID;
-        public int level;
+        public int level = Integer.MAX_VALUE;
         private volatile int hashCode = 0;
         
         public TKScanResult(ScanResult scanResult) {
             this(scanResult.BSSID, scanResult.level);
         }
         
-        public TKScanResult(String BSSID) {
-            this(BSSID, 0);
+        public TKScanResult(String str) {
+            String[] arr = str.split(",");
+            try {
+                BSSID = arr[0];
+                level = Integer.parseInt(arr[1]);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         
         public TKScanResult(String BSSID, int level) {
@@ -630,20 +633,6 @@ public class LocationQuery extends BaseQuery {
         
         public String toString() {
             return BSSID+","+level;
-        }
-        
-        public static TKScanResult parse(String str) {
-            TKScanResult tkScanResult = null;
-            if (str != null) {
-                String[] arr = str.split(",");
-                tkScanResult = new TKScanResult(arr[0]);
-                try {
-                    tkScanResult.level = Integer.parseInt(arr[1]);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-            return tkScanResult;
         }
     }
 }

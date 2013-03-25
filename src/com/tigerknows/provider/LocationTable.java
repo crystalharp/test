@@ -23,7 +23,9 @@ import android.location.LocationManager;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  */
@@ -53,6 +55,18 @@ public class LocationTable {
     public static final int PROVIDER_GPS = 1;
     public static final int PROVIDER_NETWORK = 2;
     public static final int PROVIDER_GPS_COLLECTION = 10;
+    
+    public static final List<Integer> Provider_List_Cache = new ArrayList<Integer>();
+    
+    public static final List<Integer> Provider_List_Collection = new ArrayList<Integer>();
+    
+    static {
+        Provider_List_Cache.add(PROVIDER_TIGERKNOWS);
+        Provider_List_Cache.add(PROVIDER_GPS);
+        Provider_List_Cache.add(PROVIDER_NETWORK);
+        
+        Provider_List_Collection.add(PROVIDER_GPS_COLLECTION);
+    }
 
 	// DB NAME
 	protected static final String DATABASE_NAME = "locationDB";
@@ -209,7 +223,7 @@ public class LocationTable {
 		return count;
 	}
 
-    public void read(HashMap<LocationParameter, Location> map, int min, int max) {
+    public void read(HashMap<LocationParameter, Location> map, List<Integer> typeList) {
         if(!mDb.isOpen())
             return;
         Cursor mCursor = mDb.query(true, TABLE_NAME,
@@ -221,7 +235,7 @@ public class LocationTable {
             try {
                 for(int j = 0;j < count; j++) {
                     int type = mCursor.getInt(0);
-                    if (type >= min && type <= max) {
+                    if (typeList.contains(type)) {
                         LocationParameter locationParameter = new LocationParameter();
                         locationParameter.mnc = mCursor.getInt(1);
                         locationParameter.mcc = mCursor.getInt(2);
@@ -239,7 +253,7 @@ public class LocationTable {
                         if (TextUtils.isEmpty(str) == false) {
                             String[] arr = str.split(";");
                             for(int i = arr.length - 1; i >= 0; i--) {
-                                TKScanResult tkScanResult = TKScanResult.parse(arr[i]);
+                                TKScanResult tkScanResult = new TKScanResult(arr[i]);
                                 if (tkScanResult != null)
                                     locationParameter.wifiList.add(tkScanResult);
                             }
@@ -277,18 +291,36 @@ public class LocationTable {
 		return true;
 	}
 	
-    public boolean clear(int min, int max) throws SQLException {
+    public boolean clear(List<Integer> typeList) throws SQLException {
         if(!mDb.isOpen())
             return false;
-        mDb.delete(TABLE_NAME, PROVIDER + ">=" + min + " AND " + PROVIDER + "<=" + max, null);
+        mDb.delete(TABLE_NAME, getWhereByTypeList(typeList), null);
         return true;
     }
+    
+    /**
+     * 根据限制的类型列表生成条件表达式字符串
+     * @param typeList
+     * @return
+     */
+    String getWhereByTypeList(List<Integer> typeList) {
+        StringBuilder s = new StringBuilder();
+        for(int i = typeList.size()-1; i >= 0; i--) {
+            s.append(PROVIDER);
+            s.append("=");
+            s.append(typeList.get(i));
+            if (i > 0) {
+                s.append(" OR ");
+            }
+        }
+        return s.toString();
+    }
 
-    public void optimize(int min, int max) throws SQLException {
+    public void optimize(List<Integer> typeList) throws SQLException {
         if(!mDb.isOpen())
             return;
         Cursor mCursor = mDb.query(true, TABLE_NAME,
-                new String[]{ID}, PROVIDER + ">=" + min + " AND " + PROVIDER + "<=" + max,
+                new String[]{ID}, getWhereByTypeList(typeList),
                 null, null, null, ID + " ASC", null);
         int count = mCursor.getCount();
         if (count > MAX_COUNT) {

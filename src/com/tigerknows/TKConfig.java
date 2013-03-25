@@ -129,7 +129,7 @@ public class TKConfig {
     private static String sCLIENT_DATA_VERSION = "1.0.20100619";
     
     // 授权厂商手机产品ID，包括厂商品牌、型号、软件版本等信息，相同品牌不同型号手机不同??
-    private static String sPHONE_KEY = "ANDTest"; 
+    private static String sPHONE_KEY = "Tigerknows"; 
     public static String sSPREADER = "TigerMapTest";
     public static String sCommentSource = "test";
     
@@ -138,7 +138,7 @@ public class TKConfig {
     // IMEI(International Mobile Equipment Identity)，国际移动设备身份码
     private static String sIMEI = "0";
     // 手机信号强度值
-    private static int sSignalStrength = 0;
+    private static int sSignalStrength = Integer.MAX_VALUE;
 
     /*
     si    SP收费相关参数，Android版本取固定值即可：si=5$5$5$5$5
@@ -377,7 +377,7 @@ public class TKConfig {
             }
         }
         
-        return new TKCellLocation(phoneType, lac, cid);
+        return new TKCellLocation(phoneType, lac, cid, sSignalStrength);
     }
     
     public static List<NeighboringCellInfo> getNeighboringCellList() {
