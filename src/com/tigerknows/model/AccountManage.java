@@ -16,8 +16,6 @@ import com.tigerknows.model.test.AccountManageTest;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.xobject.XMap;
 
-import org.apache.http.message.BasicNameValuePair;
-
 import android.content.Context;
 import android.text.TextUtils;
 

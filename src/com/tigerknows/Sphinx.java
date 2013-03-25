@@ -108,8 +108,8 @@ import com.tigerknows.model.Response;
 import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Tuangou;
-import com.tigerknows.model.UserLogon;
-import com.tigerknows.model.UserLogonModel;
+import com.tigerknows.model.Bootstrap;
+import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
 import com.tigerknows.model.DataQuery.POIResponse;
@@ -763,8 +763,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         service.setClass(mThis, MapStatsService.class);
         startService(service);
 
-        UserLogon userLogon = new UserLogon(mContext);
-        queryStart(userLogon);
+        Bootstrap bootstrap = new Bootstrap(mContext);
+        queryStart(bootstrap);
 
         DataOperation diaoyanQuery = new DataOperation(mContext);
         Hashtable<String, String> criteria = new Hashtable<String, String>();
@@ -1738,10 +1738,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             baseFragment.onPostExecute(tkAsyncTask);
         }
         
-        if (baseQuery instanceof UserLogon) {
-            UserLogonModel userLogonModel = ((UserLogon) baseQuery).getUserLogonModel();
-            if (userLogonModel != null) {
-                Globals.g_User_Logon_Model = userLogonModel;
+        if (baseQuery instanceof Bootstrap) {
+            BootstrapModel bootstrapModel = ((Bootstrap) baseQuery).getBootstrapModel();
+            if (bootstrapModel != null) {
+                Globals.g_Bootstrap_Model = bootstrapModel;
             }
             getMoreFragment().refreshMoreBtn(false);
         } else if (baseQuery instanceof DataOperation) {

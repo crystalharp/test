@@ -8,8 +8,6 @@
 
 package com.tigerknows.model;
 
-import org.apache.http.message.BasicNameValuePair;
-
 import android.content.Context;
 
 import com.decarta.android.exception.APIException;
