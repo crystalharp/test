@@ -56,7 +56,7 @@ public abstract class BaseQuery {
     
     static final String TAG = "BaseQuery";
     
-    public static boolean Test = true;
+    public static boolean Test = false;
     
     public static final String ACTION_NETWORK_STATUS_REPORT = "ACTION_NETWORK_STATUS_REPORT";
 
