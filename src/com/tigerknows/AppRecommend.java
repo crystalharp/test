@@ -9,10 +9,10 @@ import com.snda.recommend.api.RecommendAPI;
 import com.tigerknows.R;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.TKDrawable;
-import com.tigerknows.model.UserLogon;
-import com.tigerknows.model.UserLogonModel;
-import com.tigerknows.model.UserLogonModel.Recommend;
-import com.tigerknows.model.UserLogonModel.Recommend.RecommendApp;
+import com.tigerknows.model.Bootstrap;
+import com.tigerknows.model.BootstrapModel;
+import com.tigerknows.model.BootstrapModel.Recommend;
+import com.tigerknows.model.BootstrapModel.Recommend.RecommendApp;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 
@@ -82,18 +82,18 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
         mRecommdAppAdapter = new RecommdAppAdapter(mThis, mRecommendAppList);
         mAppRecommendLsv.setAdapter(mRecommdAppAdapter);
         
-        UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
-        if (userLogonModel != null) {
-            Recommend recommend = userLogonModel.getRecommend();
+        BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
+        if (bootstrapModel != null) {
+            Recommend recommend = bootstrapModel.getRecommend();
             if (recommend != null) {
                 initRecommendAppList(recommend.getRecommendAppList());
                 return;
             }
         }
         
-        UserLogon userLogon = new UserLogon(mThis);
-        userLogon.setup(null, Globals.g_Current_City_Info.getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
-        queryStart(userLogon);
+        Bootstrap bootstrap = new Bootstrap(mThis);
+        bootstrap.setup(null, Globals.g_Current_City_Info.getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+        queryStart(bootstrap);
     }
 
     protected void findViews() {
@@ -195,11 +195,11 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
-        if (baseQuery instanceof UserLogon) {
-            UserLogonModel userLogonModel = ((UserLogon) baseQuery).getUserLogonModel();
-            if (userLogonModel != null) {
-                Globals.g_User_Logon_Model = userLogonModel;
-                Recommend recommend = userLogonModel.getRecommend();
+        if (baseQuery instanceof Bootstrap) {
+            BootstrapModel bootstrapModel = ((Bootstrap) baseQuery).getBootstrapModel();
+            if (bootstrapModel != null) {
+                Globals.g_Bootstrap_Model = bootstrapModel;
+                Recommend recommend = bootstrapModel.getRecommend();
                 if (recommend != null) {
                     initRecommendAppList(recommend.getRecommendAppList());
                     return;

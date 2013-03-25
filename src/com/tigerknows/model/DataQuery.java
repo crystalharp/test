@@ -35,8 +35,6 @@ import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.CommonUtils;
 import com.weibo.sdk.android.WeiboParameters;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.InputSource;

@@ -4,8 +4,6 @@ import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.test.BaseQueryTest;
 
-import org.apache.http.message.BasicNameValuePair;
-
 import android.content.Context;
 
 public class FeedbackUpload extends BaseQuery {

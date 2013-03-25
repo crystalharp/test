@@ -21,8 +21,6 @@ import com.tigerknows.service.TigerknowsLocationManager;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.ParserUtil;
 
-import org.apache.http.message.BasicNameValuePair;
-
 import android.content.Context;
 import android.location.Location;
 import android.net.wifi.ScanResult;
@@ -584,7 +582,7 @@ public class LocationQuery extends BaseQuery {
         }
         
         public String toString() {
-            return lac+","+cid;
+            return lac+","+cid+","+rssi;
         }
     }
     

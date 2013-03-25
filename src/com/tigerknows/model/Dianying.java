@@ -12,7 +12,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.decarta.android.exception.APIException;
-import com.tigerknows.model.PullMessage.Message;
 import com.tigerknows.model.xobject.XMap;
 
 public class Dianying extends BaseData implements Parcelable{
