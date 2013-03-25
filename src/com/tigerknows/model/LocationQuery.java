@@ -84,7 +84,7 @@ public class LocationQuery extends BaseQuery {
     }
 
     @Override
-    public synchronized void query() {
+    public void query() {
         location = null;
         locationResponseCode = LOCATION_RESPONSE_CODE_NONE;
         super.query();
@@ -100,13 +100,6 @@ public class LocationQuery extends BaseQuery {
             
             onlineLocationCache.put(lastLocationParameter, location);
         }
-    }
-    
-    boolean isTest = false;
-    public synchronized Location queryLocation(boolean isTest) {
-        this.isTest = isTest;
-        super.query();
-        return location;
     }
 
     @Override
@@ -158,7 +151,7 @@ public class LocationQuery extends BaseQuery {
     protected void createHttpClient() {
         super.createHttpClient();
         httpClient.setIsEncrypt(false);
-        String url = String.format(TKConfig.getLocationUrl(), isTest ? TKConfig.getLocationHostForTest() : TKConfig.getLocationHost());
+        String url = String.format(TKConfig.getLocationUrl(), TKConfig.getLocationHost());
         httpClient.setURL(url);
     }
 
@@ -192,8 +185,7 @@ public class LocationQuery extends BaseQuery {
     
     int time = 0;
     int queryTime = 0;
-    public synchronized Location getLocation() {
-        isTest = false;
+    public Location getLocation() {
         synchronized (this) {
         LocationParameter locationParameter = new LocationParameter();
         locationParameter.mcc = TKConfig.getMCC();
@@ -348,12 +340,7 @@ public class LocationQuery extends BaseQuery {
                 } else {
                     int match = matchWifi(wifiList, other.wifiList);
                     rate = ((float)match)/size;
-//                    LogWrapper.d("LocationQuery", "match="+match);
-//                    LogWrapper.d("LocationQuery", "size="+size);
-//                    LogWrapper.d("LocationQuery", "scanResult    ="+wifiList);
-//                    LogWrapper.d("LocationQuery", "other.wifiList="+other.wifiList);
                 }
-//                LogWrapper.d("LocationQuery", "rate="+rate);
                 return rate;
             } else if (neighboringCellInfoList == null && other.neighboringCellInfoList == null) {
                 return 1;
