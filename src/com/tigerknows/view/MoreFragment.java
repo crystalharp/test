@@ -33,9 +33,9 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.MapDownload.DownloadCity;
 import com.tigerknows.maps.MapEngine;
-import com.tigerknows.model.UserLogonModel;
+import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
-import com.tigerknows.model.UserLogonModel.SoftwareUpdate;
+import com.tigerknows.model.BootstrapModel.SoftwareUpdate;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.view.discover.BrowserActivity;
 import com.tigerknows.view.user.UserBaseActivity;
@@ -148,9 +148,9 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         setFragmentMessage(MESSAGE_TYPE_NONE);
         
         //软件更新
-        UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
-        if (userLogonModel != null) {            
-            SoftwareUpdate softwareUpdate = userLogonModel.getSoftwareUpdate();
+        BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
+        if (bootstrapModel != null) {            
+            SoftwareUpdate softwareUpdate = bootstrapModel.getSoftwareUpdate();
             if (softwareUpdate != null) {
                 setFragmentMessage(MoreFragment.MESSAGE_TYPE_SOFTWARE_UPDATE);
                 return;
@@ -420,9 +420,9 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     private void showDownloadSoftwareDialog() {
 
         SoftwareUpdate softwareUpdate = null;
-        UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
-        if (userLogonModel != null) {
-            softwareUpdate = userLogonModel.getSoftwareUpdate();
+        BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
+        if (bootstrapModel != null) {
+            softwareUpdate = bootstrapModel.getSoftwareUpdate();
         }
         final SoftwareUpdate finalSoftwareUpdate = softwareUpdate;
         if (finalSoftwareUpdate == null) {

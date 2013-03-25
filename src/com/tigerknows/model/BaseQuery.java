@@ -54,6 +54,8 @@ import com.weibo.sdk.android.WeiboParameters;
  */
 public abstract class BaseQuery {
     
+    static final String TAG = "BaseQuery";
+    
     public static boolean Test = false;
     
     public static final String ACTION_NETWORK_STATUS_REPORT = "ACTION_NETWORK_STATUS_REPORT";
@@ -65,7 +67,7 @@ public abstract class BaseQuery {
     public static final String API_TYPE_BUSLINE_QUERY = "b";
     
     // 用户登录
-    public static final String API_TYPE_USER_LOGON = "l";
+    public static final String API_TYPE_BOOTSTRAP = "l";
     
     // 数据搜索
     public static final String API_TYPE_DATA_QUERY = "s";
@@ -509,26 +511,29 @@ public abstract class BaseQuery {
 
         while ((isFirstConnection || needReconntection) && !isStop) {
             try {
-                if (Test && (apiType.equals(API_TYPE_BUSLINE_QUERY) == false &&
-                        apiType.equals(API_TYPE_LOCATION_QUERY) == false &&
-                        apiType.equals(API_TYPE_MAP_META_DOWNLOAD) == false &&
-                        apiType.equals(API_TYPE_MAP_TILE_DOWNLOAD) == false &&
-                        apiType.equals(API_TYPE_MAP_VERSION_QUERY) == false &&
-                        apiType.equals(API_TYPE_SUGGEST_LEXICON_DOWNLOAD) == false &&
-                        apiType.equals(API_TYPE_TRAFFIC_QUERY) == false &&
-                        apiType.equals(API_TYPE_USER_LOGON) == false)) {
-                    launchTest();
-                    httpClient.launchTest(ByteUtil.xobjectToByte(responseXMap), STATUS_CODE_NETWORK_OK);
-                } else {
+                boolean isLaunchTest = false;
+                if (Test) {
+                    if (apiType.equals(API_TYPE_DATA_QUERY)
+                            || apiType.equals(API_TYPE_DATA_OPERATION)
+                            || apiType.equals(API_TYPE_ACCOUNT_MANAGE)) {
+                        launchTest();
+                        if (responseXMap != null) {
+                            httpClient.launchTest(ByteUtil.xobjectToByte(responseXMap), STATUS_CODE_NETWORK_OK);
+                            isLaunchTest = true;
+                        }
+                    }
+                }
+                LogWrapper.d(TAG, "isLaunchTest="+isLaunchTest);
+                if (isLaunchTest == false) {
                     httpClient.execute(context);
                 }
                 statusCode = httpClient.getStatusCode();
                 if (statusCode == STATUS_CODE_NETWORK_OK) {
                     byte[] data = httpClient.getData();
                     if (data != null) {
-                        LogWrapper.i("BaseQuery", "execute():at="+apiType+", response="+data.length);
+                        LogWrapper.i(TAG, "execute():at="+apiType+", response="+data.length);
                     } else {
-                        LogWrapper.i("BaseQuery", "execute():at="+apiType+", response="+data+", stop="+isStop);
+                        LogWrapper.i(TAG, "execute():at="+apiType+", response="+data+", stop="+isStop);
                     }
                     translate(data);
                     break;
@@ -564,7 +569,7 @@ public abstract class BaseQuery {
                         createHttpClient();
                         continue;
                     }
-                } else if (API_TYPE_USER_LOGON.equals(apiType)) {
+                } else if (API_TYPE_BOOTSTRAP.equals(apiType)) {
                     loginConnectTime++;
                     if (loginConnectTime < 3) {
                         createHttpClient();
@@ -590,20 +595,21 @@ public abstract class BaseQuery {
             isFirstConnection = false;
         }
 
-        LogWrapper.i("BaseQuery", "execute():at="+apiType+", statusCode="+statusCode+", isStop="+isStop);
+        LogWrapper.i(TAG, "execute():at="+apiType+", statusCode="+statusCode+", isStop="+isStop);
     }
 
     protected void translate(byte[] data) {
         if (data == null || data.length == 0) {
             return;
         }
-        if ((isStop == false || isTranslatePart)) {
+        if ((isStop == false
+                || isTranslatePart)) {
             try {
-                if (API_TYPE_MAP_META_DOWNLOAD.equals(apiType) ||
-                        API_TYPE_MAP_TILE_DOWNLOAD.equals(apiType) ||
-                        API_TYPE_MAP_VERSION_QUERY.equals(apiType) ||
-                        API_TYPE_SUGGEST_LEXICON_DOWNLOAD.equals(apiType) ||
-                        API_TYPE_LOCATION_QUERY.equals(apiType))  {
+                if (API_TYPE_MAP_META_DOWNLOAD.equals(apiType)
+                        || API_TYPE_MAP_TILE_DOWNLOAD.equals(apiType)
+                        || API_TYPE_MAP_VERSION_QUERY.equals(apiType)
+                        || API_TYPE_SUGGEST_LEXICON_DOWNLOAD.equals(apiType)
+                        || API_TYPE_LOCATION_QUERY.equals(apiType))  {
                     ParserUtil util = new ParserUtil(data, TKConfig.getEncoding());
                     translateResponseV12(util);
                 } else {
@@ -611,7 +617,7 @@ public abstract class BaseQuery {
                     if (response != null) {
                         ActionLog.getInstance(context).addAction(ActionLog.RESULT, apiType, response.getResponseCode(), response.getDescription());
                     }
-                    LogWrapper.d("BaseQuery", "translate():at="+apiType+", response="+response);
+                    LogWrapper.d(TAG, "translate():at="+apiType+", response="+response);
                 }
             } catch (APIException e) {
                 e.printStackTrace();
@@ -698,10 +704,10 @@ public abstract class BaseQuery {
     
     protected void translateResponse(byte[] data) throws APIException {
         try {
-            if (Test == false || 
-                    apiType.equals(API_TYPE_BUSLINE_QUERY) ||
-                    apiType.equals(API_TYPE_TRAFFIC_QUERY) ||
-                    apiType.equals(API_TYPE_USER_LOGON)) {
+            if (apiType.equals(API_TYPE_BUSLINE_QUERY)
+                    || apiType.equals(API_TYPE_TRAFFIC_QUERY)
+                    || apiType.equals(API_TYPE_BOOTSTRAP)
+                    || Test == false) { // 如果是自动测试分填充的数据，则没有加密
             // 解密数据
             data = DataEncryptor.decrypt(data);
             // 解压数据
@@ -718,7 +724,7 @@ public abstract class BaseQuery {
             } catch (Exception cause) {
                 throw new APIException("byte to xmap error");
             }
-            LogWrapper.d("BaseQuery", "translateResponse():at="+apiType+", responseXMap="+responseXMap);
+            LogWrapper.d(TAG, "translateResponse():at="+apiType+", responseXMap="+responseXMap);
         } catch (APIException cause) {
             throw cause;
         } catch (Exception cause) {

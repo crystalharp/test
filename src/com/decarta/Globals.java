@@ -17,7 +17,7 @@ import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.MapEngine.CityInfo;
-import com.tigerknows.model.UserLogonModel;
+import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.AccountManage.UserRespnose;
 import com.tigerknows.util.AsyncImageLoader;
 import com.tigerknows.util.CommonUtils;
@@ -35,7 +35,7 @@ public class Globals {
     public static Location g_My_Location = null;
     public static CityInfo g_My_Location_City_Info = null;
     public static int g_My_Location_State = 0;
-    public static UserLogonModel g_User_Logon_Model = null;
+    public static BootstrapModel g_Bootstrap_Model = null;
     private static AsyncImageLoader sAsyncImageLoader = new AsyncImageLoader();
     private static ImageCache sImageCache = new ImageCache();
     private static boolean sConnectionFast = false;

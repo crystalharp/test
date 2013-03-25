@@ -4,23 +4,21 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
-import com.tigerknows.model.UserLogonModel.DomainName;
-
-import org.apache.http.message.BasicNameValuePair;
+import com.tigerknows.model.BootstrapModel.DomainName;
 
 import android.content.Context;
 import android.text.TextUtils;
 
-public final class UserLogon extends BaseQuery {
+public final class Bootstrap extends BaseQuery {
 
-    private UserLogonModel userLogonModel;
+    private BootstrapModel bootstrapModel;
     
-    public UserLogonModel getUserLogonModel() {
-        return userLogonModel;
+    public BootstrapModel getBootstrapModel() {
+        return bootstrapModel;
     }
 
-    public UserLogon(Context context) {
-        super(context, API_TYPE_USER_LOGON);
+    public Bootstrap(Context context) {
+        super(context, API_TYPE_BOOTSTRAP);
     }
 
     @Override
@@ -42,9 +40,9 @@ public final class UserLogon extends BaseQuery {
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
 
-        userLogonModel = new UserLogonModel(responseXMap);
+        bootstrapModel = new BootstrapModel(responseXMap);
 
-        DomainName domainName =  userLogonModel.getDomainName();
+        DomainName domainName =  bootstrapModel.getDomainName();
         if (domainName != null) {
             TKConfig.setDownloadHost(domainName.getDownload());
             TKConfig.setQueryHost(domainName.getNewQuery());
@@ -52,7 +50,7 @@ public final class UserLogon extends BaseQuery {
             TKConfig.setAccountManageHost(domainName.getAccountManage());
         }
         
-        String uploadLog = userLogonModel.getUploadLog();
+        String uploadLog = bootstrapModel.getUploadLog();
         if (!TextUtils.isEmpty(uploadLog)) {
             TKConfig.setUserActionTrack(context, uploadLog);
         }
