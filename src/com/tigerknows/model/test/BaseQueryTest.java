@@ -124,8 +124,6 @@ public class BaseQueryTest {
         layout.addView(commentTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final Button updateMapTip = new Button(activity);
         layout.addView(updateMapTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        final Button publicWelfarreTip = new Button(activity);
-        layout.addView(publicWelfarreTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final Button radarPushBtn = new Button(activity);
         layout.addView(radarPushBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         
@@ -270,8 +268,8 @@ public class BaseQueryTest {
             
             @Override
             public void onClick(View arg0) {
-                if (Globals.g_User_Logon_Model != null) {
-                    Globals.g_User_Logon_Model.setSoftwareUpdate(null);
+                if (Globals.g_Bootstrap_Model != null) {
+                    Globals.g_Bootstrap_Model.setSoftwareUpdate(null);
                 }
             }
         });
@@ -291,17 +289,6 @@ public class BaseQueryTest {
             @Override
             public void onClick(View arg0) {
                 MoreFragment.CurrentDownloadCity = null;
-            }
-        });
-        
-        publicWelfarreTip.setText("clear publicWelfarreTip");
-        publicWelfarreTip.setOnClickListener(new OnClickListener() {
-            
-            @Override
-            public void onClick(View arg0) {
-                if (Globals.g_User_Logon_Model != null) {
-                    Globals.g_User_Logon_Model.setRecommend(null);
-                }
             }
         });
 

@@ -15,7 +15,7 @@ import java.util.List;
  * @author Peng Wenyue
  *
  */
-public class UserLogonModel extends XMapData {
+public class BootstrapModel extends XMapData {
     // 0x01 x_map 软件升级结果   
     private static final byte FIELD_SOFTWARE_UPDATE = 0x01;
 
@@ -57,7 +57,7 @@ public class UserLogonModel extends XMapData {
         return uploadLog;
     }
     
-    public UserLogonModel(XMap data) throws APIException {
+    public BootstrapModel(XMap data) throws APIException {
         super(data);
         
         if (this.data.containsKey(FIELD_SOFTWARE_UPDATE)) {

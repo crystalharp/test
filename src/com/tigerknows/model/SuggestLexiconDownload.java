@@ -14,10 +14,7 @@ import com.tigerknows.model.response.ResponseCode;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.ParserUtil;
 
-import org.apache.http.message.BasicNameValuePair;
-
 import android.content.Context;
-import android.content.Intent;
 import android.text.TextUtils;
 import android.util.Log;
 
