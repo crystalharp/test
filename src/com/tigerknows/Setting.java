@@ -7,7 +7,10 @@ package com.tigerknows;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.radar.AlarmInitReceiver;
+import com.tigerknows.radar.Alarms;
 import com.tigerknows.radar.RadarReceiver;
+import com.tigerknows.service.LocationCollectionService;
+import com.tigerknows.service.PullService;
 
 import android.content.Context;
 import android.content.Intent;
@@ -82,7 +85,7 @@ public class Setting extends BaseActivity {
             @Override
             public void onClick(View view) {
                 CheckBox checkBox = (CheckBox) view;
-                if (radarOn() == checkBox.isChecked()) {
+                if (radarOn(mThis) == checkBox.isChecked()) {
                     return;
                 }
                 radarPushBean.checked = !radarPushBean.checked; 
@@ -110,8 +113,10 @@ public class Setting extends BaseActivity {
     }
     
     private void switchRadarPush() {
-        if (radarOn()) {
+        if (radarOn(mThis)) {
             TKConfig.setPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "off");
+            Alarms.disableAlarm(mThis, PullService.alarmAction.getIntent());
+            Alarms.disableAlarm(mThis, LocationCollectionService.alarmAction.getIntent());
         } else {
             TKConfig.setPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "");
             Intent pullIntent = new Intent(AlarmInitReceiver.ACTION_ALARM_INIT);
@@ -120,8 +125,8 @@ public class Setting extends BaseActivity {
         LogWrapper.d("conan", "Radar status:" + TKConfig.getPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "on"));
     }
     
-    private boolean radarOn() {
-        return TextUtils.isEmpty(TKConfig.getPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, ""));
+    public static boolean radarOn(Context context) {
+        return TextUtils.isEmpty(TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, ""));
     }
 
     protected void findViews() {
@@ -185,7 +190,7 @@ public class Setting extends BaseActivity {
         }
         dataBean = getDataBeanByType(DataBean.TYPE_RADARPUSH);
         if (dataBean != null) {
-            dataBean.checked = radarOn();
+            dataBean.checked = radarOn(mThis);
         }
         mSettingAdatpter.notifyDataSetChanged();
     }
