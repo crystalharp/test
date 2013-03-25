@@ -174,62 +174,55 @@ public class TKNotificationManager {
         
         NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         
-        Notification notif = new Notification();
-
-        notif.contentIntent = pendingIntent;
-
-        // our custom view
-        RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification);
-        contentView.setImageViewResource(R.id.icon_imv, R.drawable.icon);
-        setNotificationContents(context, notif, msg);
-
+        Notification notif = createPulledMessageNotification(context, msg, pendingIntent);
+        
         // we use a string id because is a unique number.  we use it later to cancel the
         // notification
         nm.notify(R.layout.sphinx, notif);
     }
 
 	/**
-	 * Set the notification contents
+	 * Create and set the notification contents
 	 * @param context
 	 * @param notif
 	 * @param msg
+	 * @param pendingIntent 
+	 * @return the new notification with the specified content
 	 * @see String
 	 */
-	private static void setNotificationContents(Context context, Notification notif, Message msg){
-        RemoteViews contentView = new RemoteViews(context.getPackageName(), R.layout.notification);
-        String bottomText = "";
+	private static Notification createPulledMessageNotification(Context context, Message msg, PendingIntent pendingIntent){
+		Notification notif = new Notification();
+        String contentText = "";
     	switch ((int)msg.getType()) 
     	{
 			case Message.TYPE_PRODUCT_UPGRADE:
-				bottomText = context.getString(R.string.radar_new_version);
+				contentText = context.getString(R.string.radar_new_version);
 				break;
 	
 			case Message.TYPE_PRODUCT_INFOMATION:
-				bottomText = msg.getProductMsg().getDescription();
+				contentText = msg.getProductMsg().getDescription();
 				break;
 				
 			case Message.TYPE_HOLIDAY:
-				bottomText = context.getString(R.string.radar_holidy) + 
+				contentText = context.getString(R.string.radar_holidy) + 
 								(msg.getDynamicPOI().getDescription()==null?"":msg.getDynamicPOI().getDescription());
 				break;
 				
 			case Message.TYPE_FILM:
-				bottomText = context.getString(R.string.radar_new_film) + 
+				contentText = context.getString(R.string.radar_new_film) + 
 								(msg.getDynamicPOI().getDescription()==null?"":msg.getDynamicPOI().getDescription());
 				break;
 				
 			case Message.TYPE_INTERVAL:
-				bottomText = context.getString(R.string.radar_interval) + 
+				contentText = context.getString(R.string.radar_interval) + 
 								(msg.getDynamicPOI().getDescription()==null?"":msg.getDynamicPOI().getDescription());
 				break;
 		}
-    	
-    	contentView.setTextViewText(R.id.bottom_txv, bottomText);
-    	contentView.setImageViewResource(R.id.icon_imv, R.drawable.notif_left_icon);
-        notif.contentView = contentView;
-        notif.tickerText = bottomText;
-        notif.icon = R.drawable.notif_left_icon;
-    	
+    	notif.icon = R.drawable.notif_left_icon;
+    	notif.tickerText = contentText;
+        notif.setLatestEventInfo(context, context.getString(R.string.app_name), contentText, pendingIntent);
+
+        return notif;
 	}
 	
     public static void cancel(Context context) {

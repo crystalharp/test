@@ -19,10 +19,21 @@
         android:fadingEdge="none"
         android:scrollingCache="false"
         android:paddingBottom="50dp"/>
-        
+	        
     <include android:id="@+id/tip_view"
         layout="@layout/comment_tip"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginBottom="4dp"
+        android:background="@color/white"
         android:layout_alignParentBottom="true" />
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/tip_view"
+        android:background="@drawable/bg_shadow_upward" />
+    
 </RelativeLayout>
