@@ -725,6 +725,10 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             @Override
             public void onGroupCollapse(int groupPosition) {
                 mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "downloadProvinceCollapse", groupPosition, mDownloadCityList.get(groupPosition).cityInfo.getCName());
+                DownloadCity downloadCity = mDownloadCityList.get(groupPosition);
+                if (downloadCity.childList.size() == 0) {
+                    clickDownloadCity(downloadCity);
+                }
             }
         });
         
@@ -732,15 +736,8 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             
             @Override
             public void onGroupExpand(int groupPosition) {
-                if (mDownloadCityList.get(groupPosition).childList.size() == 0) {
-                    DownloadCity downloadCity = mDownloadCityList.get(groupPosition);
-                    CityInfo cityInfo = downloadCity.cityInfo;
-                    if (cityInfo.getType() == CityInfo.TYPE_PROVINCE || 
-                            cityInfo.getId() == ORDER_ID_TITLE_ONE || 
-                            cityInfo.getId() == ORDER_ID_TITLE_TWO || 
-                            cityInfo.getId() == ORDER_ID_TITLE_THREE) {
-                        return;
-                    }
+                DownloadCity downloadCity = mDownloadCityList.get(groupPosition);
+                if (downloadCity.childList.size() == 0) {
                     mActionLog.addAction(ActionLog.LISTVIEW_GROUP_ITEM_ONCLICK, "downloadCity", groupPosition, cityInfo.getCName());
                     clickDownloadCity(downloadCity);
                 } else {
@@ -875,6 +872,12 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     
     private void clickDownloadCity(final DownloadCity downloadCity) {
         final CityInfo cityInfo = downloadCity.cityInfo;
+        if (cityInfo.getType() == CityInfo.TYPE_PROVINCE || 
+                cityInfo.getId() == ORDER_ID_TITLE_ONE || 
+                cityInfo.getId() == ORDER_ID_TITLE_TWO || 
+                cityInfo.getId() == ORDER_ID_TITLE_THREE) {
+            return;
+        }
         final String cityName = cityInfo.getCName();
         final List<String> list = new ArrayList<String>();
         int state = downloadCity.state;
