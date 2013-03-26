@@ -184,13 +184,13 @@ public class PullService extends Service {
     /*
      * 查询是否收集的定位信息，拼接定位信息
      */
-    String queryCollectionLocation(Context context) {
+    public static String queryCollectionLocation(Context context) {
         StringBuilder data =  new StringBuilder();
 
         // 从数据库中读取收集的定位信息
         LocationTable locationTable = new LocationTable(context);
         HashMap<LocationParameter, Location> map = new HashMap<LocationParameter, Location>();
-        locationTable.read(map, LocationTable.PROVIDER_GPS_COLLECTION, LocationTable.PROVIDER_GPS_COLLECTION);
+        locationTable.read(map, LocationTable.Provider_List_Collection);
         locationTable.close();
         
         // 遍历收集的定位信息记录
@@ -224,7 +224,7 @@ public class PullService extends Service {
                 if (CommonUtils.mccMncLacCidValid(mcc, mnc, lac, cid)) {
                     data.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
                     data.append("@");
-                    data.append(CommonUtils.asu2dbm(TKConfig.getSignalStrength()));
+                    data.append(CommonUtils.asu2dbm(tkCellLocation.signalStrength));
                     data.append(";");
                 }
                 
@@ -274,7 +274,7 @@ public class PullService extends Service {
         // 如果上传成功，则将之前收集的定位信息全部清空
         if (response != null && response.getResponseCode() == Response.RESPONSE_CODE_OK) {
             LocationTable locationTable = new LocationTable(context);
-            locationTable.clear(LocationTable.PROVIDER_GPS_COLLECTION, LocationTable.PROVIDER_GPS_COLLECTION);
+            locationTable.clear(LocationTable.Provider_List_Collection);
             locationTable.close();
         }
     }

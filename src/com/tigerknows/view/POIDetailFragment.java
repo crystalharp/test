@@ -526,9 +526,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 } else {
                     commentView = getCommentItemView(null, mCommentListView, lastComment, poi);
                     mCommentListView.addView(commentView);
-                    ImageView imageView = new ImageView(mContext);
-                    imageView.setBackgroundResource(R.drawable.bg_line_split);
-                    mCommentListView.addView(imageView, layoutParams);
                 }
                 commentView.setBackgroundResource(R.drawable.list_middle);
             }

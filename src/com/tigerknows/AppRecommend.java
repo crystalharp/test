@@ -167,6 +167,9 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
             if (tkDrawable != null) {
                 drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, mThis.toString());
             }
+            if (drawable == null) {
+                drawable = getResources().getDrawable(R.drawable.ic_app_icon_loading);
+            }
             iconImv.setImageDrawable(drawable);
             return view;
         }

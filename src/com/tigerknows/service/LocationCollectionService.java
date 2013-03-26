@@ -25,7 +25,6 @@ import android.text.TextUtils;
 
 import java.util.Calendar;
 import java.util.List;
-import java.util.Random;
 
 public class LocationCollectionService extends Service {
     
