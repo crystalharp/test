@@ -5,6 +5,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.model.LocationQuery.LocationParameter;
 import com.tigerknows.model.LocationQuery.TKNeighboringCellInfo;
 import com.tigerknows.model.LocationQuery.TKScanResult;
+import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.provider.LocationTable;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.radar.Alarms.AlarmAction;
@@ -98,6 +99,9 @@ public class LocationCollectionService extends Service {
                     LocationTable locationTable = new LocationTable(getBaseContext());
                     lastGpsLocation.setProvider(TKLocationManager.GPS_COLLECTION_PROVIDER);
                     locationTable.write(lastLocationParameter, lastGpsLocation);
+                    locationTable.optimize(LocationTable.Provider_List_Collection);
+                    locationTable.close();
+                    LogWrapper.d(TAG, "onLocationChanged() lastGpsLocation="+lastGpsLocation);
                 }
             };
             List<String> providers = locationManager.getAllProviders();
@@ -129,6 +133,13 @@ public class LocationCollectionService extends Service {
             @Override
             public void run() {
                 int i = 0;
+                if (BaseQueryTest.Test) {
+                    Location location = new Location(TKLocationManager.GPS_COLLECTION_PROVIDER);
+                    location.setLatitude(111);
+                    location.setLongitude(222);
+                    location.setAccuracy(333);
+                    locationListener.onLocationChanged(location);
+                }
                 while (lastGpsLocation == null && i < COLLECTION_TIME) {
                     try {
                         Thread.sleep(COLLECTION_INTERVAL);

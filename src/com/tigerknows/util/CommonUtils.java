@@ -910,8 +910,8 @@ public class CommonUtils {
             firstVisiblePosition += 1;
         }
         int pageSize = TKConfig.getPageSize()/2;
-        int startPage = firstVisiblePosition/(pageSize);
-        int endPage = lastVisiblePosition/(pageSize)+1;
+        int startPage = firstVisiblePosition/pageSize;
+        int endPage = (lastVisiblePosition/pageSize)+1;
         int diff = endPage - startPage; 
         if (diff < 2) {
             if (lastVisiblePosition >= size-1) {
@@ -927,6 +927,13 @@ public class CommonUtils {
         
         int minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
         int maxIndex = endPage * pageSize + (isShowAPOI ? 1 : 0);
+        
+        if ((maxIndex > size-1 ? size-1 : maxIndex)-minIndex < TKConfig.getPageSize()) {
+            if (startPage > 0) {
+                startPage--;
+                minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
+            }
+        }
         return new int[]{minIndex, maxIndex, (firstVisiblePosition-(isShowAPOI ? 1 : 0)+(startPage%2 != 0 ? pageSize : 0)) % TKConfig.getPageSize()};
     }
     
