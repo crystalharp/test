@@ -590,6 +590,33 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 return false;
             }
         });
+        mTasteRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener(){
+        	@Override
+        	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromTouch){
+        		if(fromTouch && rating==0){
+        			mTasteRtb.setRating(1);
+        		}
+        	}
+        });
+        mFoodEnvironmentRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener(){
+        	@Override
+        	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromTouch){
+        		if(fromTouch && rating==0){
+        			mFoodEnvironmentRtb.setRating(1);
+        		}
+        	}
+        });
+        
+        mFoodQosRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener(){
+        	@Override
+        	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromTouch){
+        		if(fromTouch && rating==0){
+        			mFoodQosRtb.setRating(1);
+        		}
+        	}
+        });
+        
+        
         mGradeRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
             
             @Override
@@ -605,6 +632,9 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                         resId = R.string.poi_comment_share_grade4;
                     } else if (rating == 5) {
                         resId = R.string.poi_comment_share_grade5;
+                    } else if (rating == 0) {
+                    	resId = R.string.poi_comment_share_grade1;
+                    	mGradeRtb.setRating(1);
                     }
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "grade", rating);
                     mGradeTipTxv.setText(resId);
@@ -698,11 +728,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                         null,
                         new DialogInterface.OnClickListener() {
                     
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        mContentEdt.requestFocus();
-                    }
-                });
+		                    @Override
+		                    public void onClick(DialogInterface arg0, int arg1) {
+		                        mContentEdt.requestFocus();
+		                    }
+		                });
                 return;
             }
             if (mStatus == STATUS_MODIFY) {

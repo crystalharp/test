@@ -30,21 +30,31 @@ public class ValidateUtil {
 	// 昵称格式: 昵称由2-10个汉字或4-20个字符组成
 	public static boolean isValidName(String nickname) {
 		
-		Pattern pattern = Pattern.compile("[\\u4e00-\\u9fa5]");
-        Matcher matcher = pattern.matcher(nickname);
-        
-        int chineseCount = 0;
-        while (matcher.find()) {  
-        	chineseCount++;  
-        }
+		int chineseCount = 0;
+/* 下述的Unicode范围不完整，甚至连中文标点都未包含在内
+ * 如仍需使用下述代码，建议将正则表达式设置为
+ * [\\u2e80-\\u9fbf]——————————————————————————————————经测试仍然无效
+ * 
+ * ftx 2013/03/26
+ */
+//		Pattern pattern = Pattern.compile("[\\u4e00-\\u9fa5]");
+//        Matcher matcher = pattern.matcher(nickname);
+//        while (matcher.find()) {  
+//        	chineseCount++;  
+//        }
+
+		char[] nicknameChar = nickname.toCharArray();
+		for(int i = 0; i < nicknameChar.length; i++){
+			if((char)(byte)nicknameChar[i] != nicknameChar[i])chineseCount ++;
+		}
         LogWrapper.d(TAG, "chineseCount: " + chineseCount);
         
         int totalCount = nickname.length() + chineseCount;
         LogWrapper.d(TAG, "totalCount: " + totalCount);
+   
         if (totalCount < 4 || totalCount > 20) {
         	return false;
         }
-        
         return true;
 	}
 }
