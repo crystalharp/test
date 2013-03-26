@@ -244,6 +244,9 @@ public class TKConfig {
     public static final int COLOR_BLACK_LIGHT = 0xff969696;
     public static final int COLOR_ORANGE = 0xffff6c00;
     
+    public static int PullServiceFailedRetryTime=60; // 推送服务失败后重试的时间间隔（单位：分钟）
+    public static int AlarmCheckDelayTime=60; // 无效定时器被重置的延迟时间（单位：分钟）
+    
     public static int getPageSize() {
         return sPage_Size;
     }
@@ -782,6 +785,18 @@ public class TKConfig {
                 if (start > -1 && end > -1) {
                     start += "pageSize=".length();
                     sPage_Size = Integer.parseInt(text.substring(start, end));
+                }
+                start = text.indexOf("pullServiceFailedRetryTime=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "pullServiceFailedRetryTime=".length();
+                    PullServiceFailedRetryTime = Integer.parseInt(text.substring(start, end));
+                }
+                start = text.indexOf("alarmCheckDelayTime=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "alarmCheckDelayTime=".length();
+                    AlarmCheckDelayTime = Integer.parseInt(text.substring(start, end));
                 }
                 BaseQuery.initCommonParameters();
             } catch (Exception e) {
