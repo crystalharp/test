@@ -107,7 +107,7 @@ public class Alarms {
         LogWrapper.d(TAG, "before check, alarm is: " + next.getTime().toLocaleString());
         
         if (next.compareTo(now) <= 0) {
-            now.add(Calendar.HOUR_OF_DAY, 1);
+            now.add(Calendar.MINUTE, TKConfig.AlarmCheckDelayTime);
             next = now;
         }
         return next;

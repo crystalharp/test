@@ -35,7 +35,6 @@ import android.location.Location;
 import android.os.IBinder;
 import android.text.TextUtils;
 
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -101,7 +100,7 @@ public class PullService extends Service {
                     return;
                 }
                 //TODO:普通失败，推迟一天
-                next.add(Calendar.MINUTE, 5);
+                next.add(Calendar.MINUTE, TKConfig.PullServiceFailedRetryTime);
 //                Alarms.alarmAddHours(next, 1);
                 
                 Context context = getApplicationContext();
@@ -192,6 +191,7 @@ public class PullService extends Service {
         HashMap<LocationParameter, Location> map = new HashMap<LocationParameter, Location>();
         locationTable.read(map, LocationTable.Provider_List_Collection);
         locationTable.close();
+        LogWrapper.d(TAG, "queryCollectionLocation() size="+map.size());
         
         // 遍历收集的定位信息记录
         Iterator<Map.Entry<LocationParameter, Location>> iter = map.entrySet().iterator();
@@ -225,18 +225,17 @@ public class PullService extends Service {
                     data.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
                     data.append("@");
                     data.append(CommonUtils.asu2dbm(tkCellLocation.signalStrength));
-                    data.append(";");
                 }
                 
                 // wifi队列
                 List<TKScanResult> scanResultList = key.wifiList;
                 for (int i = 0, size = scanResultList.size(); i < size; i++) {
+                    data.append(";");
                     TKScanResult scanResult = scanResultList.get(i);
                     String bssid = scanResult.BSSID;
                     data.append(bssid);
                     data.append("@");
                     data.append(scanResult.level);
-                    data.append(";");
                 }
 
                 // 邻近基站队列
@@ -246,10 +245,10 @@ public class PullService extends Service {
                     lac = neighboringCellInfo.lac;
                     cid = neighboringCellInfo.cid;
                     if (CommonUtils.lacCidValid(lac, cid)) {
+                        data.append(";");
                         data.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
                         data.append("@");
                         data.append(CommonUtils.asu2dbm(neighboringCellInfo.rssi));
-                        data.append(";");
                     }
                 }
             }

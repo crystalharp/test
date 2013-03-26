@@ -418,7 +418,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
             return true;
         } else {
             if (isPulledDynamicPOIRequest) {
-                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, this, true)) {
+                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, mParentFragment, true)) {
                     return true;
                 }
             } else {
@@ -448,7 +448,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
                     dianying.setYingxun(yingxun);
                     List<Dianying> list = new ArrayList<Dianying>();
                     list.add(dianying);
-                    mSphinx.getDianyingDetailFragment().setData(list, mParentFragment.position, null);
+                    mSphinx.getDianyingDetailFragment().setData(list, 0, null);
                 }
                 
             }

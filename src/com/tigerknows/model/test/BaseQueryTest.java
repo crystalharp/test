@@ -15,9 +15,11 @@ import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.DataQuery.DiscoverResponse;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.radar.Alarms;
+import com.tigerknows.service.LocationCollectionService;
 import com.tigerknows.service.PullService;
 import com.tigerknows.service.TKLocationManager;
 import com.tigerknows.service.TigerknowsLocationManager;
+import com.tigerknows.util.CommonUtils;
 import com.tigerknows.view.MoreFragment;
 import com.tigerknows.view.StringArrayAdapter;
 
@@ -56,7 +58,9 @@ import java.util.List;
 
 public class BaseQueryTest {
     
-    static boolean Test = true;
+    static final String TAG = "BaseQueryTest";
+    
+    public static boolean Test = true;
     
     static int RESPONSE_CODE = BaseQuery.STATUS_CODE_NETWORK_OK;
 
@@ -128,6 +132,10 @@ public class BaseQueryTest {
         layout.addView(updateMapTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final Button radarPushBtn = new Button(activity);
         layout.addView(radarPushBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button radarLocationBtn = new Button(activity);
+        layout.addView(radarLocationBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button readLocationLogBtn = new Button(activity);
+        layout.addView(readLocationLogBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         
         editConfigBtn.setText("View or Modify config.txt");
         editConfigBtn.setOnClickListener(new View.OnClickListener() {
@@ -312,7 +320,30 @@ public class BaseQueryTest {
                 next.setTimeInMillis(System.currentTimeMillis());
                 next.add(Calendar.SECOND, 5);
                 Alarms.enableAlarm(activity, next, PullService.alarmAction);
-                LogWrapper.d("PullService", "Radar Push send in:" + next.getTime().toLocaleString());
+                LogWrapper.d(TAG, "Radar Push send in:" + next.getTime().toLocaleString());
+            }
+        });
+
+        radarLocationBtn.setText("send a Radar location in 5s");
+        radarLocationBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                Calendar next = Calendar.getInstance();
+                next.setTimeInMillis(System.currentTimeMillis());
+                next.add(Calendar.SECOND, 5);
+                Alarms.enableAlarm(activity, next, LocationCollectionService.alarmAction);
+                LogWrapper.d(TAG, "Radar Location send in:" + next.getTime().toLocaleString());
+            }
+        });
+
+        readLocationLogBtn.setText("read location log");
+        readLocationLogBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                String locationLog = PullService.queryCollectionLocation(activity);
+                CommonUtils.showNormalDialog(activity, locationLog);
             }
         });
         

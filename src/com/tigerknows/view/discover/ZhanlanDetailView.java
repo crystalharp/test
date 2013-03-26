@@ -249,7 +249,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
             return true;
         } else {
             if (isPulledDynamicPOIRequest) {
-                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, this, true)) {
+                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, mParentFragment, true)) {
                     return true;
                 }
             } else {
@@ -266,7 +266,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
             if (data != null) {
             List<Zhanlan> list = new ArrayList<Zhanlan>();
             list.add(data);
-            mSphinx.getZhanlanDetailFragment().setData(list, mParentFragment.position, null);
+            mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
             } else {
                 mParentFragment.dismiss();
             }
