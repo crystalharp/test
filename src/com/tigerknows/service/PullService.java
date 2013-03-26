@@ -100,7 +100,7 @@ public class PullService extends Service {
                     return;
                 }
                 //TODO:普通失败，推迟一天
-                next.add(Calendar.MINUTE, 5);
+                next.add(Calendar.MINUTE, TKConfig.PullServiceFailedRetryTime);
 //                Alarms.alarmAddHours(next, 1);
                 
                 Context context = getApplicationContext();
