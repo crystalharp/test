@@ -249,7 +249,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
             return true;
         } else {
             if (isPulledDynamicPOIRequest) {
-                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, this, true)) {
+                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, mParentFragment, true)) {
                     return true;
                 }
             } else {
