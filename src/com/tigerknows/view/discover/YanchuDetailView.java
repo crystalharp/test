@@ -286,7 +286,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
             return true;
         } else {
             if (isPulledDynamicPOIRequest) {
-                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, this, true)) {
+                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, mParentFragment, true)) {
                     return true;
                 }
             } else {
@@ -303,7 +303,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
             if (target != null) {
                 List<Yanchu> list = new ArrayList<Yanchu>();
                 list.add(target);
-                ((YanchuDetailFragment) mParentFragment).setData(list, mParentFragment.position, null);
+                ((YanchuDetailFragment) mParentFragment).setData(list, 0, null);
             } else {
                 mParentFragment.dismiss();
             }
