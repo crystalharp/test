@@ -514,13 +514,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 result = true;
                 
                 mCommentListView.setVisibility(View.VISIBLE);
-                LayoutParams layoutParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT);
                 View commentView = null;
-                if (count == 4) {
-                    View view = null;
-                    view = mCommentListView.getChildAt(3);
-                    view.setVisibility(View.VISIBLE);
-                    view = mCommentListView.getChildAt(2);
+                if (count == 3) {
+                    View view = mCommentListView.getChildAt(2);
                     view.setVisibility(View.VISIBLE);
                     commentView = getCommentItemView(view, mCommentListView, lastComment, poi);
                 } else {
