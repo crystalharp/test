@@ -347,9 +347,16 @@ public class BaseFragment extends LinearLayout {
         return mSphinx.uiStackPeek() == getId();
     }
     
+    Runnable dismissPopupWindowTask = new Runnable() {
+		@Override
+		public void run() {
+            mFilterPopupWindow.dismiss();
+		}
+	};
+    
     public void dismissPopupWindow() {
         if (mFilterPopupWindow != null && mFilterPopupWindow.isShowing()) {
-            mFilterPopupWindow.dismiss();
+        	mRootView.post(dismissPopupWindowTask);
         }
     }
     
