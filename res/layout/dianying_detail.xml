@@ -194,7 +194,7 @@
                     />
              </RelativeLayout>
              
-             <View
+             <ImageView
                  android:background="@drawable/bg_line_split"
                  android:layout_width="fill_parent"
                  android:layout_height="wrap_content"
