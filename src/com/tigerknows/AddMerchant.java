@@ -216,7 +216,7 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
                         s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
                     } else {
                         mShanghumingchengEdt.requestFocus();
-                        Toast.makeText(mThis, mThis.getString(R.string.please_input)+mThis.getString(R.string.shanghumingcheng)+"!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(mThis, mThis.getString(R.string.please_input)+mThis.getString(R.string.shanghumingcheng)+"!", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     
@@ -230,7 +230,7 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
                         s.append(URLEncoder.encode(str.toString(), TKConfig.getEncoding()));
                     } else {
                         mShanghuleixingBtn.requestFocus();
-                        Toast.makeText(mThis, mThis.getString(R.string.please_select)+mThis.getString(R.string.shanghuleixing)+"!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(mThis, mThis.getString(R.string.please_select)+mThis.getString(R.string.shanghuleixing)+"!", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     
@@ -244,7 +244,7 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
                         s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
                     } else {
                         mShanghudizhiEdt.requestFocus();
-                        Toast.makeText(mThis, mThis.getString(R.string.please_input)+mThis.getString(R.string.shanghudizhi)+"!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(mThis, mThis.getString(R.string.please_input)+mThis.getString(R.string.shanghudizhi)+"!", Toast.LENGTH_SHORT).show();
                         return;
                     }
                     
