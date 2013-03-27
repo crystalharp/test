@@ -5,6 +5,12 @@ import android.os.Handler;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
+/**
+ * 管理虚拟键盘
+ * 显示或隐藏
+ * @author pengwenyue
+ *
+ */
 public class SoftInputManager {
 
     Activity activity;
@@ -17,7 +23,11 @@ public class SoftInputManager {
         this.handler = new Handler(activity.getMainLooper());
     }
 
-    
+    /**
+     * 显示虚拟键盘
+     * @author pengwenyue
+     *
+     */
     private class ShowSoftInput implements Runnable {
 
         View view;
@@ -34,10 +44,18 @@ public class SoftInputManager {
     
     private ShowSoftInput showSoftInput = new ShowSoftInput();
     
+    /**
+     * 显示虚拟键盘
+     * @param view 指定需要显示虚拟键盘的view
+     */
     public void showSoftInput(View view) {
         postShowSoftInput(view);
     }
     
+    /**
+     * 显示虚拟键盘
+     * @param view 指定需要显示虚拟键盘的view
+     */
     public void postShowSoftInput(View view) {
         if (view != null) {
             showSoftInput.view = view;
@@ -45,10 +63,16 @@ public class SoftInputManager {
         }
     }
     
+    /**
+     * 显示虚拟键盘
+     */
     public void showSoftInput() {
         postShowSoftInput();
     }
     
+    /**
+     * 显示虚拟键盘
+     */
     public void postShowSoftInput() {
         View view = activity.getCurrentFocus();
         if (view != null) {
@@ -57,6 +81,11 @@ public class SoftInputManager {
         }
     }
     
+    /**
+     * 隐藏虚拟键盘
+     * @author pengwenyue
+     *
+     */
     private class HideSoftInput implements Runnable {
 
         View view;
@@ -73,6 +102,9 @@ public class SoftInputManager {
     
     private HideSoftInput hideSoftInput = new HideSoftInput();    
     
+    /**
+     * 隐藏虚拟键盘
+     */
     public void hideSoftInput() {
         View view = activity.getCurrentFocus();
         if (view != null) {
@@ -81,6 +113,9 @@ public class SoftInputManager {
         }
     }     
     
+    /**
+     * 隐藏虚拟键盘
+     */
     public void postHideSoftInput() {
         View view = activity.getCurrentFocus();
         if (view != null) {
@@ -89,6 +124,10 @@ public class SoftInputManager {
         }
     }  
     
+    /**
+     * 隐藏虚拟键盘
+     * @param view 指定需要隐藏虚拟键盘的view
+     */
     public void hideSoftInput(View view) {
         if (view != null) {
             view.clearFocus();
@@ -96,6 +135,10 @@ public class SoftInputManager {
         }
     }      
     
+    /**
+     * 隐藏虚拟键盘
+     * @param view 指定需要隐藏虚拟键盘的view
+     */
     public void postHideSoftInput(View view) {
 
         if (view != null) {

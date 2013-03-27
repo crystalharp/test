@@ -279,7 +279,7 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 					valiNumEdt.requestFocus();
 					showSoftInput(valiNumEdt);
 				}
-				valiNumBtn.reset(getString(R.string.request_validcode_retry));
+				//valiNumBtn.reset(getString(R.string.request_validcode_retry));
 			}
 			
 		});

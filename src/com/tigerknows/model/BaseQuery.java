@@ -254,22 +254,25 @@ public abstract class BaseQuery {
     
     private static WeiboParameters sCommonParameters;
     
+    /**
+     * 设置网络请求中的公共参数
+     */
     public static void initCommonParameters() {
         
         sCommonParameters = new WeiboParameters();
+        
+        // 下列参数都是固定值，兼容旧版本服务的公共请求参数约定
         sCommonParameters.add("dv", "1");
-        sCommonParameters.add("e", TKConfig.getIMEI());
-
+        sCommonParameters.add("sc", "13800100500");
+        sCommonParameters.add("sg", "25");
+        sCommonParameters.add("si", "5$5$5$5$5");
+        sCommonParameters.add("sv", "1");
+        sCommonParameters.add("vd", "1.0.20100619");
+        
         sCommonParameters.add("m", TKConfig.getSpreader());
-        sCommonParameters.add("sc", TKConfig.SERVICE_CENTER);
-        sCommonParameters.add("sg", TKConfig.SG);
-        sCommonParameters.add("si", TKConfig.SI);
-        sCommonParameters.add("sv", TKConfig.SV);
         sCommonParameters.add("ec", TKConfig.getEncoding());
         sCommonParameters.add("pk", TKConfig.getPhoneKey());
-
         sCommonParameters.add("vs", TKConfig.getClientSoftVersion());
-        sCommonParameters.add("vd", TKConfig.getClientDataVersion());
         sCommonParameters.add("vp", TKConfig.getVersionOfPlatform());
     }
     
@@ -280,7 +283,8 @@ public abstract class BaseQuery {
             cityId = MapEngine.CITY_ID_BEIJING;
         }
         parameters.add("c", String.valueOf(cityId));
-        
+
+        parameters.add("e", TKConfig.getIMEI());
         parameters.add("d", TKConfig.getIMSI());
         boolean simAvailably = true;
         TKCellLocation tkCellLocation = TKConfig.getCellLocation();

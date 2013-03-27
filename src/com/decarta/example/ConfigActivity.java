@@ -3,21 +3,17 @@ package com.decarta.example;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.method.PasswordTransformationMethod;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.MultiAutoCompleteTextView;
 import android.widget.MultiAutoCompleteTextView.Tokenizer;
 import android.widget.Toast;
 
 import com.decarta.CONFIG;
 import com.tigerknows.R;
-import com.tigerknows.TKConfig;
 
 public class ConfigActivity extends Activity {
 	private EditText tileThreadCount=null;
@@ -80,11 +76,11 @@ public class ConfigActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {				
-				tileThreadCount.setText(""+TKConfig.TILE_THREAD_COUNT_default);
-				snapToCloestLevel.setChecked(TKConfig.SNAP_TO_CLOSEST_ZOOMLEVEL_default);
-				fadingTime.setText(""+TKConfig.FADING_TIME_default);
-				border.setText(""+TKConfig.BORDER_default);
-				drawByOpengl.setChecked(TKConfig.DRAW_BY_OPENGL_default);
+				tileThreadCount.setText(""+CONFIG.TILE_THREAD_COUNT);
+				snapToCloestLevel.setChecked(CONFIG.SNAP_TO_CLOSEST_ZOOMLEVEL);
+				fadingTime.setText(""+CONFIG.FADING_TIME);
+				border.setText(""+CONFIG.BORDER);
+				drawByOpengl.setChecked(CONFIG.DRAW_BY_OPENGL);
 				
 			}
 		});
