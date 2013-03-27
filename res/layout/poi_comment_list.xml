@@ -9,7 +9,7 @@
         layout="@layout/title" 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />        
-	            
+                
     <com.tigerknows.view.SpringbackListView android:id="@+id/comment_lsv"
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
@@ -19,16 +19,20 @@
         android:fadingEdge="none"
         android:scrollingCache="false"
         android:paddingBottom="50dp"/>
-	        
-    <include android:id="@+id/tip_view"
-        layout="@layout/comment_tip"
+    
+    <LinearLayout android:id="@+id/tip_view"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp"
-        android:layout_marginBottom="4dp"
+        android:layout_alignParentBottom="true"
         android:background="@color/white"
-        android:layout_alignParentBottom="true" />
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
+        android:paddingBottom="4dp">
+        <include
+            layout="@layout/comment_tip"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
     
     <LinearLayout
         android:layout_width="fill_parent"

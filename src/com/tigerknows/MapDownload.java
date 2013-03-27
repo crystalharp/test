@@ -618,14 +618,26 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             ArrayList<Integer> cityIdList = mIntent.getIntegerArrayListExtra(EXTRA_VIEWED_CITY_ID_LIST);
             if (cityIdList != null) {
                 for(int cityId: cityIdList) {
-                    CityInfo cityInfo = mMapEngine.getCityInfo(cityId);
-                    addDownloadCityInternal(cityInfo, false, DownloadCity.STATE_STOPPED);
-                    notifyDataSetChanged();
+                    boolean exist = false;
+                    for(int i = 0, size = mDownloadCityList.size(); i < size; i++) {
+                        DownloadCity downloadCity = mDownloadCityList.get(i);
+                        if (downloadCity.cityInfo.getId() == cityId) {
+                            exist = true;
+                            break;
+                        }
+                    }
+                    // 如果已经在下载城市列表中，则不用重复添加，免得引起下载城市的状态被改变
+                    if (exist == false) {
+                        CityInfo cityInfo = mMapEngine.getCityInfo(cityId);
+                        addDownloadCityInternal(cityInfo, false, DownloadCity.STATE_STOPPED);
+                        notifyDataSetChanged();
+                    }
                 }
             }
             boolean upgradeAll = mIntent.getBooleanExtra(EXTRA_UPGRADE_ALL, false);
             if (upgradeAll) {
-                for (DownloadCity downloadCity : mDownloadCityList) {
+                for (int i = 0, size = mDownloadCityList.size(); i < size; i++) {
+                    DownloadCity downloadCity = mDownloadCityList.get(i);
                     if (downloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE) {
                         mMapEngine.removeCityData(downloadCity.cityInfo.getCName());
                         downloadCity.downloadedSize = 0;
