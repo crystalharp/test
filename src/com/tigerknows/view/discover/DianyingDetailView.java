@@ -448,7 +448,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
                     dianying.setYingxun(yingxun);
                     List<Dianying> list = new ArrayList<Dianying>();
                     list.add(dianying);
-                    mSphinx.getDianyingDetailFragment().setData(list, 0, null);
+                    mSphinx.getDianyingDetailFragment().setData(list, mParentFragment.position, null);
                 }
                 
             }

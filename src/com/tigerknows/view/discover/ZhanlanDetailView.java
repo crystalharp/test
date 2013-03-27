@@ -266,7 +266,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
             if (data != null) {
             List<Zhanlan> list = new ArrayList<Zhanlan>();
             list.add(data);
-            mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
+            mSphinx.getZhanlanDetailFragment().setData(list, mParentFragment.position, null);
             } else {
                 mParentFragment.dismiss();
             }

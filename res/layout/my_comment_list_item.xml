@@ -8,7 +8,7 @@
 	        android:id="@+id/poi_name_txv" 
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content" 
-	        android:padding="8dp"
+	        android:padding="10dp"
 	        android:textColor="@color/black"
 	        android:textSize="18sp"
 	        android:gravity="left|center_vertical"
@@ -18,11 +18,8 @@
 	        android:drawableRight="@drawable/icon_arrow_right"
 	        android:singleLine="true"
 	        android:ellipsize="end"
-	        android:background="#fff2f2f2"/>
-	<ImageView
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content" 
-	        android:background="@drawable/ic_broken_line"/>
+	        android:background="@drawable/bg_expandablelistview_group"/>
+	
 	<include layout="@layout/poi_comment_list_item"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content" />

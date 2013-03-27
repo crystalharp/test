@@ -20,6 +20,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Hashtable;
 
+/**
+ * 用户行为日志类
+ * @author pengwenyue
+ *
+ */
 public class ActionLog {
 
     public static final String SEPARATOR_STAET = "_";

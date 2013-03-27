@@ -24,7 +24,7 @@ public final class Bootstrap extends BaseQuery {
     @Override
     protected void createHttpClient() {
         super.createHttpClient();
-        String url = String.format(TKConfig.LOGIN_URL, TKConfig.LOGIN_HOST[loginConnectTime%3]);
+        String url = String.format(TKConfig.LOGIN_URL, TKConfig.BOOTSTRAP_HOST[loginConnectTime%3]);
         httpClient.setURL(url);
     }
 
@@ -44,10 +44,10 @@ public final class Bootstrap extends BaseQuery {
 
         DomainName domainName =  bootstrapModel.getDomainName();
         if (domainName != null) {
-            TKConfig.setDownloadHost(domainName.getDownload());
-            TKConfig.setQueryHost(domainName.getNewQuery());
-            TKConfig.setLocationHost(domainName.getLocation());
-            TKConfig.setAccountManageHost(domainName.getAccountManage());
+            TKConfig.setDynamicDownloadHost(domainName.getDownload());
+            TKConfig.setDynamicQueryHost(domainName.getNewQuery());
+            TKConfig.setDynamicLocationHost(domainName.getLocation());
+            TKConfig.setDynamicAccountManageHost(domainName.getAccountManage());
         }
         
         String uploadLog = bootstrapModel.getUploadLog();

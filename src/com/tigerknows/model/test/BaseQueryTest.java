@@ -124,6 +124,8 @@ public class BaseQueryTest {
 
         final Button updateSoftTip = new Button(activity);
         layout.addView(updateSoftTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button diaoyanTip = new Button(activity);
+        layout.addView(diaoyanTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final Button commentTip = new Button(activity);
         layout.addView(commentTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final Button updateMapTip = new Button(activity);
@@ -279,6 +281,15 @@ public class BaseQueryTest {
                 if (Globals.g_Bootstrap_Model != null) {
                     Globals.g_Bootstrap_Model.setSoftwareUpdate(null);
                 }
+            }
+        });
+        
+        diaoyanTip.setText("clear diaoyanTip");
+        diaoyanTip.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+            	(((Sphinx) activity).getMoreFragment()).setDiaoyanQueryResponse(null);
             }
         });
         

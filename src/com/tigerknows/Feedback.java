@@ -157,7 +157,7 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
             feedbackUpload.setup(criteria, -1, -1, -1, mThis.getString(R.string.doing_and_wait));
             queryStart(feedbackUpload);
         } else {
-            Toast.makeText(mThis, R.string.feedback_no_content_tip, Toast.LENGTH_LONG).show();
+            Toast.makeText(mThis, R.string.feedback_no_content_tip, Toast.LENGTH_SHORT).show();
         }
     }
     

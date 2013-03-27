@@ -74,29 +74,58 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 
     public DiscoverListFragment(Sphinx sphinx) {
         super(sphinx);
-        // TODO Auto-generated constructor stub
     }
     
+    /**
+     * Button for Dingdan in Tuangou list
+     */
     private ImageButton mDingdanBtn;
     
+    /**
+     * View containing the filter criterias, parent and child.
+     */
     private FilterListView mFilterListView = null;
     
+    /**
+     * The filter list control view containing three buttons
+     */
     private ViewGroup mFilterControlView = null;
-    
+
+    /**
+     * The list view containing the result of the list view
+     */
     private SpringbackListView mResultLsv = null;
 
+    /**
+     * The view showing that the query is in progress
+     */
     private QueryingView mQueryingView = null;
     
+    /**
+     * The text that shows the user that query is in progress
+     */
     private TextView mQueryingTxv = null;
     
+    /**
+     * The view that shows the query result is empty
+     */
     private View mEmptyView = null;
     
+    /**
+     * The text view that shows the query result is empty
+     */
     private TextView mEmptyTxv = null;
     
+    /**
+     * The view the promote the user to tap the screen to retry
+     */
     private RetryView mRetryView;
     
     private DataQuery mDataQuery;
     
+    /**
+     * Different state of the list fragment
+     */
     static final int STATE_QUERYING = 0;
     static final int STATE_ERROR = 1;
     static final int STATE_EMPTY = 2;
@@ -104,6 +133,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private int mState = STATE_QUERYING;
     
+    /**
+     * List of Discover entities and the corresponding adapter
+     */
     private List<Tuangou> mTuangouList = new ArrayList<Tuangou>();
     
     private TuangouAdapter mTuangouAdapter;
@@ -120,6 +152,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private ZhanlanAdapter mZhanlanAdapter;
     
+    /**
+     * Filter list used in the current list fragment
+     */
     private List<Filter> mFilterList = new ArrayList<Filter>();
     
     private String mFilterArea;
@@ -128,17 +163,27 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private String mDataType;
     
+    /**
+     * 发现分类列表
+     */
     private List<DiscoverCategory> mDiscoverCategoryList = new ArrayList<DiscoverCategory>();
     
+    /**
+     * Adapter used to choose between different discover categroy in list fragmenti
+     */
     private TitlePopupArrayAdapter mTitlePopupArrayAdapter;
     
     private OnItemClickListener mTitlePopupOnItemClickListener = new OnItemClickListener() {
 
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
+        	//close the popup window
             mTitleFragment.dismissPopupWindow();
+            
             TitlePopupArrayAdapter titlePopupArrayAdapter = (TitlePopupArrayAdapter) adapterView.getAdapter();
             DiscoverCategory discoverCategory = titlePopupArrayAdapter.getItem(position);
+            
+            //Build the query
             DataQuery dataQuery = new DataQuery(mSphinx);
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, discoverCategory.getType());
@@ -147,6 +192,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     R.id.view_discover, R.id.view_discover_list, null, false, false,
                     mSphinx.getPOI());
             mSphinx.queryStart(dataQuery);
+            
             setup();
             onResume();
             mTitleBtn.setClickable(false);
@@ -187,12 +233,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     SpringbackListView.IPagerListCallBack mIPagerListCallBack = null;
     
     public void setup() {
-        DataQuery lastDataQuerying = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
-        if (lastDataQuerying == null) {
+        DataQuery lastDataQuery = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
+        if (lastDataQuery == null) {
             return;
         }
-        if (lastDataQuerying.getSourceViewId() != getId()
-                || lastDataQuerying.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE).equals(mDataType) == false) {
+        if (lastDataQuery.getSourceViewId() != getId()
+                || lastDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE).equals(mDataType) == false) {
             mDataQuery = null;
             mFilterControlView.setVisibility(View.GONE);
             mFilterList.clear();
@@ -201,7 +247,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         String str = mContext.getString(R.string.loading);
         mQueryingTxv.setText(str);
         
-        mDataType = lastDataQuerying.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+        mDataType = lastDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             if (mTuangouAdapter == null) {
                 mTuangouAdapter = new TuangouAdapter(mSphinx, mTuangouList);
@@ -250,7 +296,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         findViews();
         setListener();
         
-        mResultLsv.setDivider(mSphinx.getResources().getDrawable(R.drawable.bg_broken_line));
+        //mResultLsv.setDivider(mSphinx.getResources().getDrawable(R.drawable.bg_broken_line));
         mTitlePopupArrayAdapter = new TitlePopupArrayAdapter(mSphinx, mDiscoverCategoryList);
         
         return mRootView;
@@ -1195,19 +1241,19 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private void showFilterListView(View parent) {
         mActionLog.addAction(ActionLog.POPUPWINDOW, "filter");
-        if (mPopupWindow == null) {
+        if (mFilterPopupWindow == null) {
             mFilterListView = new FilterListView(mSphinx);
-            mPopupWindow = new PopupWindow(mFilterListView);
-            mPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-            mPopupWindow.setFocusable(true);
+            mFilterPopupWindow = new PopupWindow(mFilterListView);
+            mFilterPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+            mFilterPopupWindow.setFocusable(true);
             // 设置允许在外点击消失
-            mPopupWindow.setOutsideTouchable(true);
+            mFilterPopupWindow.setOutsideTouchable(true);
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
-            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mFilterPopupWindow.setBackgroundDrawable(new BitmapDrawable());
             
         }
-        mPopupWindow.showAsDropDown(parent, 0, 0);
+        mFilterPopupWindow.showAsDropDown(parent, 0, 0);
 
     }
     

@@ -239,7 +239,7 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 					showSoftInput(valiNumEdt);
 					valiNumEdt.selectAll();
 				}
-				valiNumBtn.reset(getString(R.string.request_validcode_retry));
+				//valiNumBtn.reset(getString(R.string.request_validcode_retry));
 			}
 			
 		});

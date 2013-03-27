@@ -5,23 +5,27 @@
 package com.tigerknows;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
+import com.decarta.android.location.Position;
 import com.decarta.android.map.MapActivity;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
-import com.tigerknows.Sphinx.MyLocationListener;
 import com.tigerknows.maps.MapEngine;
+import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
+import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.service.MapDownloadService;
 import com.tigerknows.service.MapStatsService;
 import com.tigerknows.service.TKLocationManager;
+import com.tigerknows.service.TKLocationManager.TKLocationListener;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.SoftInputManager;
 import com.tigerknows.util.TKAsyncTask;
@@ -39,6 +43,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
+import android.location.Location;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -53,6 +58,10 @@ import com.tigerknows.widget.Toast;
 import com.weibo.sdk.android.sso.SsoHandler;
 
 /**
+ * 应用程序中所有的Acitvity都继承此类
+ * 在onResume()中注册定位监听器（系统的gps定位或无线网络定位、Tigerknows的网络定位）
+ * 在onPause()中撤消对定位的监听
+ * 
  * @author Peng Wenyue
  */
 public class TKActivity extends MapActivity implements TKAsyncTask.EventListener {
@@ -65,8 +74,14 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
     
     protected SoftInputManager mSoftInputManager;
 
-    protected PowerManager mPowerManager; //电源控制，比如防锁屏
+    /**
+     * 电源控制
+     */
+    protected PowerManager mPowerManager;
     
+    /**
+     * 锁屏控制
+     */
     protected WakeLock mWakeLock;
     
     protected ActionLog mActionLog;
@@ -75,15 +90,107 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
     
     protected Handler mHandler;
     
+    /**
+     * 当前的查询
+     */
     protected List<BaseQuery> mBaseQuerying;
     
+    /**
+     * 执行当前查询的AsyncTask
+     */
     protected TKAsyncTask mTkAsyncTasking;    
     
     protected TKLocationManager mTKLocationManager;
     
     public MyLocationListener mLocationListener;
+    
+    /**
+     * 定位改变事件的监听器
+     * 更新Globals的最近定位信息、定位城市及UI
+     * 
+     * @author pengwenyue
+     *
+     */
+    public static class MyLocationListener implements TKLocationListener {
+        
+        private Activity activity;
+        
+        /**
+         * 定位改变后执行的Runnable(Ui线程执行)
+         */
+        private Runnable runnable;
+        public MyLocationListener(Activity activity, Runnable runnable) {
+            this.activity = activity;
+            this.runnable = runnable;
+        }
 
+        @Override
+        public void onLocationChanged(final Location location) {  
+            if (location != null) {
+                Position myLocationPosition = new Position(location.getLatitude(), location.getLongitude());
+                MapEngine mapEngine = MapEngine.getInstance();
+                
+                myLocationPosition = mapEngine.latlonTransform(myLocationPosition);
+                if (myLocationPosition == null) {
+                    Globals.g_My_Location = null;
+                    Globals.g_My_Location_City_Info = null;
+                } else {
+                    myLocationPosition.setAccuracy(location.getAccuracy());
+                    myLocationPosition.setProvider(location.getProvider());
+                    int cityId = mapEngine.getCityId(myLocationPosition);
+                    CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
+                    
+                    // 判断最新的定位是否在定位城市范围内，否则更新定位城市
+                    if (myLocationCityInfo != null && myLocationCityInfo.getId() == cityId) {
+                        myLocationCityInfo.setPosition(myLocationPosition);
+                        Globals.g_My_Location = location;
+                    } else {
+                        CityInfo cityInfo = mapEngine.getCityInfo(cityId);
+                        cityInfo.setPosition(myLocationPosition);
+                        if (cityInfo.isAvailably()) {
+                            Globals.g_My_Location = location;
+                            Globals.g_My_Location_City_Info = cityInfo;
+                        } else {
+                            Globals.g_My_Location = null;
+                            Globals.g_My_Location_City_Info = null;
+                        }
+                    }
+                }
+            } else {
+                Globals.g_My_Location = null;
+                Globals.g_My_Location_City_Info = null;
+            } 
+            
+            // 如果是打开应用软件第一次定到位，则需要通过用户反馈服务通知服务器进行记录，目的是为统计定位成功率？
+            if (Globals.g_My_Location_State == Globals.LOCATION_STATE_NONE && Globals.g_My_Location_City_Info != null) {
+                ActionLog.getInstance(activity).addAction(ActionLog.MapFirstLocation, Globals.g_My_Location_City_Info.getCName());
+                final FeedbackUpload feedbackUpload = new FeedbackUpload(activity);
+                Hashtable<String, String> criteria = new Hashtable<String, String>();
+                feedbackUpload.setup(criteria);
+                new Thread(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+                        feedbackUpload.query();
+                    }
+                }).start();
+                Globals.g_My_Location_State = Globals.LOCATION_STATE_FIRST_SUCCESS;
+            }
+            
+            if (this.activity != null && this.runnable != null) {
+                this.activity.runOnUiThread(runnable);
+            }
+        }
+    }
+
+    /**
+     * 是否开启飞行模式
+     */
     private boolean mAirPlaneModeOn = false;
+    
+    /**
+     * 开启飞机模式的广播接收器
+     */
     private BroadcastReceiver mAirPlaneModeReceiver = new BroadcastReceiver() {
 
         @Override
@@ -91,8 +198,10 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
 
             boolean airPlaneModeOn = Settings.System.getInt(context.getContentResolver(),
                     Settings.System.AIRPLANE_MODE_ON, 0) != 0;
+            
+            // 飞机模式状态与当前不同，则更新mcc,mnc,imsi,imei==
             if(airPlaneModeOn != mAirPlaneModeOn){
-                TKConfig.init(mThis);
+                TKConfig.getTelephonyInfo(mThis);
                 mAirPlaneModeOn = airPlaneModeOn;
             }
             if (mAirPlaneModeOn) {
@@ -103,6 +212,9 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         }
     };
     
+    /**
+     * 网络出错的广播接收器
+     */
     private final BroadcastReceiver mNetworkStatusReportReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -115,7 +227,10 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         }
     };
     
-    BroadcastReceiver mSDCardEventReceiver = new BroadcastReceiver() {
+    /**
+     * 扩展存储卡挂载广播接收器
+     */
+    BroadcastReceiver mExternalStorageMountReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
@@ -126,7 +241,15 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         }
     };
     
+    /**
+     * 存储地图数据文件的路径发生变化时，需要停止地图统计服务和地图下载服务，并重新初始化地图引擎
+     */
     protected void onMediaChanged() {
+        Intent service = new Intent(mThis, MapStatsService.class);
+        stopService(service);
+        service = new Intent(mThis, MapDownloadService.class);
+        stopService(service);
+        
         try {
             mMapEngine.initMapDataPath(mThis);
         } catch (APIException e) {
@@ -136,13 +259,15 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
             return;
         }
         
-        Intent service = new Intent(mThis, MapStatsService.class);
-        stopService(service);
-        service = new Intent(mThis, MapDownloadService.class);
-        stopService(service);
     }
 
     protected ConnectivityManager mConnectivityManager;
+    
+    /**
+     * 数据网络改变广播接收器
+     * @author pengwenyue
+     *
+     */
     private class ConnectivityBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -193,7 +318,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         
         IntentFilter intentFilter = new IntentFilter(Intent.ACTION_MEDIA_MOUNTED);
         intentFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
-        registerReceiver(mSDCardEventReceiver, intentFilter);
+        registerReceiver(mExternalStorageMountReceiver, intentFilter);
         
         intentFilter = new IntentFilter(BaseQuery.ACTION_NETWORK_STATUS_REPORT);
         registerReceiver(mNetworkStatusReportReceiver, intentFilter);
@@ -215,7 +340,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         
         mTKLocationManager.removeUpdates();
 
-        unregisterReceiver(mSDCardEventReceiver);
+        unregisterReceiver(mExternalStorageMountReceiver);
         unregisterReceiver(mNetworkStatusReportReceiver);
         unregisterReceiver(mAirPlaneModeReceiver);
         unregisterReceiver(mConnectivityReceiver);

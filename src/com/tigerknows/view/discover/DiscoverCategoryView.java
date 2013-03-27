@@ -104,7 +104,10 @@ public class DiscoverCategoryView extends LinearLayout {
     public void setup(String dataType) {
         mDataType = dataType;
         mDiscoverCategory = null;
+        
         refreshContent();
+        
+        //Set bubble bg
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             mBubbleImv.setBackgroundResource(R.drawable.ic_discover_tuangou);
         } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
@@ -113,7 +116,8 @@ public class DiscoverCategoryView extends LinearLayout {
             mBubbleImv.setBackgroundResource(R.drawable.ic_discover_yanchu);
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
             mBubbleImv.setBackgroundResource(R.drawable.ic_discover_zhanlan);
-        } 
+        }
+        
         mNearbyNumTxv.setText(formatStr(mSphinx.getString(R.string.nearby_, "12")));
         mNearbyNumTxv.setVisibility(View.INVISIBLE);
         mCityNumTxv.setText(" ");

@@ -303,7 +303,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
             if (target != null) {
                 List<Yanchu> list = new ArrayList<Yanchu>();
                 list.add(target);
-                ((YanchuDetailFragment) mParentFragment).setData(list, 0, null);
+                ((YanchuDetailFragment) mParentFragment).setData(list, mParentFragment.position, null);
             } else {
                 mParentFragment.dismiss();
             }

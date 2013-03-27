@@ -29,7 +29,6 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
-import com.tigerknows.service.MapStatsService;
 import com.tigerknows.service.SuggestLexiconService;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.CommonUtils;
@@ -547,6 +546,12 @@ public class MapEngine {
         }
     }
     
+    /**
+     * 坐标转换
+     * 这个是遵守国家规定，所有定位的坐标都要经过此转换后，在地图上显示才是正确位置
+     * @param position
+     * @return
+     */
     public Position latlonTransform(Position position) {
         synchronized (this) {
         if (isClosed) {
@@ -691,8 +696,8 @@ public class MapEngine {
         return instance;
     }
 
-    /*
-     * 设置地图引擎数据文件夹路径，仅在初始化或扩展存储卡插拔时才设置
+    /**
+     * 设置地图引擎数据文件夹路径，仅在初始化或扩展存储卡插拔时才设置并重启地图引擎
      */
     public void initMapDataPath(Context context) throws APIException{
         String appPath = TKConfig.getDataPath(true);
@@ -716,17 +721,24 @@ public class MapEngine {
         }
     }
     
+    /**
+     * 解压地图引擎资源文件及部分地图数据文件，通过保存版本名称来确保不出现重复解压的情况
+     * @param context
+     * @throws Exception
+     */
     public void setup(Context context) throws Exception {
         String versionName = TKConfig.getPref(context, TKConfig.PREFS_VERSION_NAME, null);
-        if (TextUtils.isEmpty(versionName) || !TKConfig.getClientSoftVersion().equals(versionName)) {
+        if (TextUtils.isEmpty(versionName)   // 第一次安装后使用
+                || !TKConfig.getClientSoftVersion().equals(versionName)) {   // 更新安装后使用
             String mapPath = TKConfig.getDataPath(true);
             AssetManager am = context.getAssets();
+            
             CommonUtils.deleteAllFile(TKConfig.getDataPath(false));
             
             CommonUtils.unZipFile(am, "tigerres.zip", TKConfig.getDataPath(false));
             CommonUtils.unZipFile(am, "tigermap.zip", mapPath);
-            TKConfig.setPref(context, TKConfig.PREFS_VERSION_NAME, TKConfig.getClientSoftVersion());
             
+            TKConfig.setPref(context, TKConfig.PREFS_VERSION_NAME, TKConfig.getClientSoftVersion());
         }
     }
     

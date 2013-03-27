@@ -71,8 +71,17 @@ public class TuangouDetailFragment extends BaseDetailFragment
         return isRelogin;
     }
     
+    /**
+     * Flag, whether the user is requesting a buy action
+     * ie. the user pressed the buy button
+     */
     boolean isRequsetBuy = false;
     
+    /**
+     * Check if the buy button is clicked.
+     * And clear the {@link isRequestBuy} flag
+     * @return
+     */
     private boolean isRequsetBuy() {
         boolean isRequsetBuy = this.isRequsetBuy;
         this.isRequsetBuy = false;
@@ -89,6 +98,7 @@ public class TuangouDetailFragment extends BaseDetailFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
+    	// Create the views used in the ViewPager
         List<View> viewList = new ArrayList<View>();
         TuangouDetailView view;
         view = new TuangouDetailView(mSphinx, this);
@@ -106,12 +116,21 @@ public class TuangouDetailFragment extends BaseDetailFragment
     public void onResume() {
         super.onResume();
         mTitleBtn.setText(R.string.tuangou_detail);
+
+        // On resume, check if user clicks the buy button ()
+        // 	(This happends when user is not logged in and pressed the buy button, logged in and come back)
+        // and the current user is not null
         if (isRequsetBuy() && Globals.g_User != null) {
             ((TuangouDetailView) mCyclePagerAdapter.viewList.get(mViewPager.getCurrentItem()%mCyclePagerAdapter.viewList.size())).buy();
             return;
         }
     }
     
+    /**
+     * Interface for info-window click event
+     * For info window click to go back to Tuangou detail fragment
+     * @param data
+     */
     public void setData(Tuangou data) {
         int position = 0;
         for(int i = mDataList.size()-1; i >= 0; i--) {
@@ -123,6 +142,12 @@ public class TuangouDetailFragment extends BaseDetailFragment
         setData(null, position, null);
     }
     
+    /**
+     * Set data list for this fragment
+     * @param dataList
+     * @param position
+     * @param iPagerList
+     */
     public void setData(List<Tuangou> dataList, int position, IPagerList iPagerList) {
         if (dataList == null) {
             dataList = mDataList;
@@ -134,7 +159,11 @@ public class TuangouDetailFragment extends BaseDetailFragment
         setViewsVisibility(View.VISIBLE);
     }
     
+    /**
+     * View fendian poi on map
+     */
     public void viewMap() {
+    	//Get Fendian poi
         Tuangou data = this.mDataList.get(mViewPager.getCurrentItem());
         Fendian fendian = data.getFendian();
         if (fendian == null) {
@@ -143,11 +172,17 @@ public class TuangouDetailFragment extends BaseDetailFragment
         List<POI> list = new ArrayList<POI>();
         POI poi = fendian.getPOI(POI.SOURCE_TYPE_TUANGOU);
         list.add(poi);
+
+        //Show it on map
         mSphinx.showPOI(list, 0);
         mSphinx.getResultMapFragment().setData(mContext.getString(R.string.shanghu_ditu), ActionLog.MapTuangouXiangqing);
         super.viewMap();
     }
     
+    /**
+     * Refresh the content of the views in the current ViewPager if exists
+     * The current view, the view to the left of it, and the view to the right of it.
+     */
     public void refreshViews(int position) {
         super.refreshViews(position);
         TuangouDetailView view;

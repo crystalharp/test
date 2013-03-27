@@ -73,7 +73,7 @@ public class BaseFragment extends LinearLayout {
     
     protected TKAsyncTask mTkAsyncTasking;
     
-    protected PopupWindow mPopupWindow;
+    protected PopupWindow mFilterPopupWindow;
     
     public DialogInterface.OnClickListener mCancelLoginListener = new DialogInterface.OnClickListener() {
         
@@ -347,9 +347,16 @@ public class BaseFragment extends LinearLayout {
         return mSphinx.uiStackPeek() == getId();
     }
     
+    Runnable dismissPopupWindowTask = new Runnable() {
+		@Override
+		public void run() {
+            mFilterPopupWindow.dismiss();
+		}
+	};
+    
     public void dismissPopupWindow() {
-        if (mPopupWindow != null && mPopupWindow.isShowing()) {
-            mPopupWindow.dismiss();
+        if (mFilterPopupWindow != null && mFilterPopupWindow.isShowing()) {
+        	mRootView.post(dismissPopupWindowTask);
         }
     }
     
