@@ -298,7 +298,7 @@ public class UserRegistActivity extends UserBaseActivity {
 					valiNumEdt.selectAll();
 					showSoftInput(valiNumEdt);
 				}
-				valiNumBtn.reset(getString(R.string.request_validcode_retry));
+				//valiNumBtn.reset(getString(R.string.request_validcode_retry));
 			}
 			
 		});
