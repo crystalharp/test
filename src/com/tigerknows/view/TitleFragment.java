@@ -86,28 +86,28 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
     
     public void showPopupWindow(ListAdapter adapter, OnItemClickListener listener) {
         mActionLog.addAction(ActionLog.POPUPWINDOW, "title");
-        if (mPopupWindow == null) {
+        if (mFilterPopupWindow == null) {
             View view  = mLayoutInflater.inflate(R.layout.title_popup_list, this, false);
             popupLsv = (ListView) view.findViewById(R.id.listview);
             
-            mPopupWindow = new PopupWindow(view);
-            mPopupWindow.setWindowLayoutMode(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            mPopupWindow.setFocusable(true);
+            mFilterPopupWindow = new PopupWindow(view);
+            mFilterPopupWindow.setWindowLayoutMode(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            mFilterPopupWindow.setFocusable(true);
             // 设置允许在外点击消失
-            mPopupWindow.setOutsideTouchable(true);
+            mFilterPopupWindow.setOutsideTouchable(true);
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
-            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mFilterPopupWindow.setBackgroundDrawable(new BitmapDrawable());
         }
         popupLsv.setOnItemClickListener(listener);
         popupLsv.setAdapter(adapter);
         
-        mPopupWindow.showAsDropDown(this, 0, 0);
+        mFilterPopupWindow.showAsDropDown(this, 0, 0);
     }
     
     public void dismissPopupWindow() {
-        if (mPopupWindow != null && mPopupWindow.isShowing()) {
-            mPopupWindow.dismiss();
+        if (mFilterPopupWindow != null && mFilterPopupWindow.isShowing()) {
+            mFilterPopupWindow.dismiss();
         }
     }
 }

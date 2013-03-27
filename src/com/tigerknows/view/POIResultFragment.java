@@ -793,20 +793,20 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     private void showFilterListView(View parent) {
         mActionLog.addAction(ActionLog.POPUPWINDOW, "filter");
-        if (mPopupWindow == null) {
+        if (mFilterPopupWindow == null) {
             mFilterListView = new FilterListView(mSphinx);
             
-            mPopupWindow = new PopupWindow(mFilterListView);
-            mPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-            mPopupWindow.setFocusable(true);
+            mFilterPopupWindow = new PopupWindow(mFilterListView);
+            mFilterPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+            mFilterPopupWindow.setFocusable(true);
             // 设置允许在外点击消失
-            mPopupWindow.setOutsideTouchable(true);
+            mFilterPopupWindow.setOutsideTouchable(true);
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
-            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mFilterPopupWindow.setBackgroundDrawable(new BitmapDrawable());
             
         }
-        mPopupWindow.showAsDropDown(parent, 0, 0);
+        mFilterPopupWindow.showAsDropDown(parent, 0, 0);
 
     }
 

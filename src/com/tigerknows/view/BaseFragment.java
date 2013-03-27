@@ -73,7 +73,7 @@ public class BaseFragment extends LinearLayout {
     
     protected TKAsyncTask mTkAsyncTasking;
     
-    protected PopupWindow mPopupWindow;
+    protected PopupWindow mFilterPopupWindow;
     
     public DialogInterface.OnClickListener mCancelLoginListener = new DialogInterface.OnClickListener() {
         
@@ -348,8 +348,8 @@ public class BaseFragment extends LinearLayout {
     }
     
     public void dismissPopupWindow() {
-        if (mPopupWindow != null && mPopupWindow.isShowing()) {
-            mPopupWindow.dismiss();
+        if (mFilterPopupWindow != null && mFilterPopupWindow.isShowing()) {
+            mFilterPopupWindow.dismiss();
         }
     }
     
