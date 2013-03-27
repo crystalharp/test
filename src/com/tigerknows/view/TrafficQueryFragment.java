@@ -167,9 +167,10 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	public static final String TAG = "TrafficQueryFragment";
 	
-	public CityInfo getQueryCityInfo() {
-		return mMapLocationHelper.getQueryCityInfo();
-	}
+	//疑似无用
+//	public CityInfo getQueryCityInfo() {
+//		return mMapLocationHelper.getQueryCityInfo();
+//	}
 	
 	public TrafficQueryFragment(Sphinx sphinx) {
         super(sphinx);
