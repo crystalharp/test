@@ -470,7 +470,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                 mMyLoactionTxv.setVisibility(View.VISIBLE);
                 
             } else {
-                mMyLoactionTxv.setVisibility(View.GONE);
+                mMyLoactionTxv.setVisibility(View.INVISIBLE);
             }
         } else {
             mMyLoactionTxv.setText(mContext.getString(R.string.location_doing));
