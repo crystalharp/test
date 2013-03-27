@@ -489,6 +489,9 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 criteria.put(DataOperation.SERVER_PARAMETER_PICTURE, pic.toString());
             }
             dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
+            if(mTKAsyncTasking!=null){
+                mTKAsyncTasking.stop();	
+            }
             mTKAsyncTasking = mSphinx.queryStart(dataOperation);
             mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
         } else {
