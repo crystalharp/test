@@ -164,6 +164,12 @@ import com.tigerknows.view.user.UserUpdateNickNameActivity;
 import com.tigerknows.view.user.UserUpdatePasswordActivity;
 import com.tigerknows.view.user.UserUpdatePhoneActivity;
 
+/**
+ * 此类是应用程序的主类
+ * 
+ * @author pengwenyue
+ *
+ */
 public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     public static final String EXTRA_PULL_MESSAGE = "extra_pull_message";
@@ -316,6 +322,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         display.getMetrics(Globals.g_metrics);
         LogWrapper.i(TAG,"onCreate()"+Globals.g_metrics.density);
         
+        TKConfig.sMap_Padding = (int)(56*Globals.g_metrics.density);
         TKConfig.readConfig();
         Globals.init(mThis);
         
@@ -3511,7 +3518,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (myPosition != null) {
                 if (MyLocation.MODE_NONE == mMyLocation.mode) {
                     updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
-                    mMapView.zoomTo(ZOOM_LEVEL_LOCATION, myPosition);
+                    mMapView.zoomTo(TKConfig.ZOOM_LEVEL_LOCATION, myPosition);
                 } else if (MyLocation.MODE_NAVIGATION == mMyLocation.mode || MyLocation.MODE_ROTATION == mMyLocation.mode) {
                     mMapView.panToPosition(myPosition);
                 }
@@ -3529,74 +3536,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     };
     
-    public static class MyLocationListener implements TKLocationListener {
-        
-        private Activity activity;
-        private Runnable runnable;
-        public MyLocationListener(Activity activity, Runnable runnable) {
-            this.activity = activity;
-            this.runnable = runnable;
-        }
-
-        @Override
-        public void onLocationChanged(final Location location) {  
-            if (location != null) {
-                Position myLocationPosition = new Position(location.getLatitude(), location.getLongitude());
-                MapEngine mapEngine = MapEngine.getInstance();
-                myLocationPosition = mapEngine.latlonTransform(myLocationPosition);
-                if (myLocationPosition == null) {
-                    Globals.g_My_Location = null;
-                    Globals.g_My_Location_City_Info = null;
-                } else {
-                    myLocationPosition.setAccuracy(location.getAccuracy());
-                    myLocationPosition.setProvider(location.getProvider());
-                    int cityId = mapEngine.getCityId(myLocationPosition);
-                    CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
-                    if (myLocationCityInfo != null && myLocationCityInfo.getId() == cityId) {
-                        myLocationCityInfo.setPosition(myLocationPosition);
-                        Globals.g_My_Location = location;
-                    } else {
-                        CityInfo cityInfo = mapEngine.getCityInfo(cityId);
-                        cityInfo.setPosition(myLocationPosition);
-                        if (cityInfo.isAvailably()) {
-                            Globals.g_My_Location = location;
-                            Globals.g_My_Location_City_Info = cityInfo;
-                        } else {
-                            Globals.g_My_Location = null;
-                            Globals.g_My_Location_City_Info = null;
-                        }
-                    }
-                }
-            } else {
-                Globals.g_My_Location = null;
-                Globals.g_My_Location_City_Info = null;
-            } 
-            if (Globals.g_My_Location_State == Globals.LOCATION_STATE_NONE && Globals.g_My_Location_City_Info != null) {
-                ActionLog.getInstance(activity).addAction(ActionLog.MapFirstLocation, Globals.g_My_Location_City_Info.getCName());
-                final FeedbackUpload feedbackUpload = new FeedbackUpload(activity);
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                feedbackUpload.setup(criteria);
-                new Thread(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        feedbackUpload.query();
-                    }
-                }).start();
-                Globals.g_My_Location_State = Globals.LOCATION_STATE_FIRST_SUCCESS;
-            }
-            if (this.activity != null && this.runnable != null) {
-                this.activity.runOnUiThread(runnable);
-            }
-        }
-    }
-    
     private boolean mActivityResult = false;
 
-    public static final int ZOOM_LEVEL_DEFAULT = 5; // 200km
-    public static final int ZOOM_LEVEL_CITY = 11; // 2km
-    public static final int ZOOM_LEVEL_LOCATION = 14; // 200m
-    
     protected boolean mSensorOrientation = false;
     private SensorManager mSensorManager=null;
     private float rotateZ = 365;
@@ -3716,7 +3657,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
                 mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "location", mMyLocation.mode == MyLocation.MODE_NONE ? "none" : "normal");
                 int zoomLevel = (int)mMapView.getZoomLevel();
-                mMapView.zoomTo(zoomLevel < ZOOM_LEVEL_LOCATION ? ZOOM_LEVEL_LOCATION : zoomLevel, myLocationCityInfo.getPosition());
+                mMapView.zoomTo(zoomLevel < TKConfig.ZOOM_LEVEL_LOCATION ? TKConfig.ZOOM_LEVEL_LOCATION : zoomLevel, myLocationCityInfo.getPosition());
                 mMapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, true);
             } else if (mMyLocation.mode == MyLocation.MODE_NAVIGATION && mSensorOrientation) {
                 updateLoactionButtonState(MyLocation.MODE_ROTATION);

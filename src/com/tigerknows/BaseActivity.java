@@ -7,7 +7,6 @@ package com.tigerknows;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
-import com.tigerknows.Sphinx.MyLocationListener;
 import com.tigerknows.util.TKAsyncTask;
 
 import android.content.DialogInterface;

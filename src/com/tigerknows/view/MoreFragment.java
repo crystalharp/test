@@ -112,7 +112,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         findViews();        
         setListener();
         
-        if (TKConfig.sSPREADER.startsWith(TKConfig.sSPREADER_TENCENT)) {
+        if (TKConfig.sSPREADER.startsWith(TKConfig.SPREADER_TENCENT)) {
             mAppRecommendBtn.setText(R.string.recommend_tencent);
         } else {
             mAppRecommendBtn.setText(R.string.app_recommend);
@@ -141,6 +141,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         
         refreshUserEntrance();
         refreshMoreBtn(false);
+        refreshCity(Globals.g_Current_City_Info.getCName());
     }
     
     public void refreshMoreBtn(boolean isCreate) {
@@ -295,7 +296,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.app_recommend_btn:
                 mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "appRecommend");
-                if (TKConfig.sSPREADER.startsWith(TKConfig.sSPREADER_TENCENT)) {
+                if (TKConfig.sSPREADER.startsWith(TKConfig.SPREADER_TENCENT)) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://a.wap.myapp.com/and2/s?aid=detail&appid=50801"));
                     mSphinx.startActivity(intent);
                 } else {
