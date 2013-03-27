@@ -124,7 +124,7 @@
                     android:includeFontPadding="false"
                     android:focusable="false"
                     />
-                 <View
+                 <ImageView
                      android:background="@drawable/bg_broken_line"
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
@@ -207,7 +207,7 @@
                     android:textSize="14sp"
                     />
              </RelativeLayout>
-             <View
+             <ImageView
                  android:background="@drawable/bg_line_split"
                  android:layout_width="fill_parent"
                  android:layout_height="wrap_content"
