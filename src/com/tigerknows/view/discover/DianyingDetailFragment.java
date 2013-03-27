@@ -89,6 +89,8 @@ public class DianyingDetailFragment extends BaseDetailFragment
     }
 
     public void setPulledDynamicPOI(PulledDynamicPOI dynamicPOI){
+    	// There is only one item in the list when showing PulledDynamicPOI
+    	position = 0;
         BaseDetailView baseDetailView = (BaseDetailView) mCyclePagerAdapter.viewList.get(position%mCyclePagerAdapter.viewList.size());
         ((DianyingDetailView)baseDetailView).setPulledDynamicPOI(dynamicPOI);
     }

@@ -59,17 +59,35 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     
     private ImageView mShangjiaMarkerImv;
     
-    
+    /**
+     * The bar view embeded in the details
+     */
     private View mBarView = null;
     
+    /**
+     * The price textView
+     */
     private TextView mPriceTxv;
     
+    /**
+     * The original price TextView
+     */
     private TextView mOrgPriceTxv;
     
+    /**
+     * The discount textView
+     */
     private TextView mDiscountTxv;
 
+    /**
+     * Buy buton
+     */
     private Button mBuyBtn = null;
     
+    /**
+     * Duplicate bar view that is to be floating at the top of this detail view<br> 
+     * If the top the embeded bar view become invisible 
+     */
     private View mBarView_2 = null;
     
     private TextView mPriceTxv_2;
@@ -82,57 +100,138 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     
     private TextView mNameTxt = null;
     
+    /**
+     * ImageView representing whether this tuangou support give back your money
+     */
     private ImageView mRefundImv = null;
 
+    /**
+     * TextView representing whether this tuangou support give back your money
+     */
     private TextView mRefundTxv = null;
 
+    /**
+     * Presenting the numbers of customers who has bought this Tuangou
+     */
     private TextView mBuyerNumTxv = null;
     
+    /**
+     * The name view group of the nearest fendian
+     */
     private View mFendianNameView = null;
     
+    /**
+     * Name textView representing the name of the Fendian
+     */
     private TextView mFendianNameTxv = null;
     
+    /**
+     * Distance at the right side of {@link mFendianNameView}
+     */
     private TextView mDistanceTxv = null;
     
+    /**
+     * TextView representing the address
+     */
     private TextView mAddressTxv = null;
     
+    /**
+     * TextView containing the telephones of the Fendian
+     */
     private TextView mTelephoneTxv = null;
     
-    private View mAddressView = null;
+    /**
+     * View group enclosing the {@link mAddressTxv}
+     */
+    private View mAddressViewGroup = null;
     
+    /**
+     * Divider view between Address View and telephone view
+     */
     private View mDividerView;
     
+    /**
+     * View group containing the {@link mTelephoneTxv}
+     */
     private View mTelephoneView = null;
     
+    /**
+     * View group containing nearByFendian stats info
+     */
     private View mNearbyFendianView = null;
     
+    /**
+     * TextView containing the number of nearby Fendian
+     */
     private TextView mNearbyFendianTxv = null;
     
+    /**
+     * View group containing the {@link mContentTxv}
+     */
     private View mContentView;
     
+    /**
+     * TextView presenting the content
+     */
     private TextView mContentTxv;
     
+    /**
+     * View group associated with the {@link mNoticedTxv}
+     */
     private View mNoticedView;
 
+    /**
+     * TextView presenting the special notice the user need to notice 
+     */
     private TextView mNoticedTxv;
 
+    /**
+     * View group containing {@link mServiceHotlineTitleTxv} and {@link mServiceHotlineTxv}
+     */
     private View mServiceHotlineView;
 
+    /**
+     * TextView presenting which Tuangou source the hotline belongs to
+     */
     private TextView mServiceHotlineTitleTxv;
 
+    /**
+     * Hotline number
+     */
     private TextView mServiceHotlineTxv;
     
+    /**
+     * Tuangou data associcated this detain fragment is for
+     */
     private Tuangou mData;
     
+    /**
+     * Filter area by which this tuangou is searched.
+     */
     private String mFilterArea;
     
+    /**
+     * String value in the res xml of R.string.tuangou_no_refund
+     */
     private String noRefundStr;
     
+    /**
+     * Width of pixes of the tuangou main picture
+     */
     private int mPictureDetailWidth;
     
+    /**
+     * Location of the scroll view content
+     * 0:x, 1:y
+     */
     int[] locationScv = new int[]{0, 1};
+    
+    /**
+     * Location of the the embeded bar
+     * 0:x, 1:y
+     */
     int[] locationBar = new int[]{0, 2};
-      
+    
     protected DialogInterface.OnClickListener mCancelLoginListener = new DialogInterface.OnClickListener() {
         
         @Override
@@ -324,7 +423,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     private void refreshFendian() {
         Fendian fendian = mData.getFendian();
         DiscoverChildListFragment.showPOI(mSphinx, fendian.getPlaceName(), fendian.getDistance(), fendian.getAddress(), fendian.getPlacePhone(), 
-                mFendianNameTxv, mDistanceTxv, mAddressView, mDividerView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
+                mFendianNameTxv, mDistanceTxv, mAddressViewGroup, mDividerView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
                 R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer);
     }
     
@@ -428,7 +527,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         view.findViewById(R.id.tuangou_fendian_list_item).setPadding(0, 0, 0, 0);
         mFendianNameTxv = (TextView) view.findViewById(R.id.name_txv);
         mDistanceTxv = (TextView)view.findViewById(R.id.distance_txv);
-        mAddressView = view.findViewById(R.id.address_view);
+        mAddressViewGroup = view.findViewById(R.id.address_view);
         mDividerView = view.findViewById(R.id.divider_imv);
         mTelephoneView = view.findViewById(R.id.telephone_view);
         mAddressTxv = (TextView)view.findViewById(R.id.address_txv);
@@ -471,7 +570,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         super.setListener();
         mBuyBtn.setOnClickListener(this);
         mBuyBtn_2.setOnClickListener(this);
-        mAddressView.setOnClickListener(this);
+        mAddressViewGroup.setOnClickListener(this);
         mTelephoneView.setOnClickListener(this);
         mNearbyFendianView.setOnClickListener(this);
         mServiceHotlineView.setOnClickListener(this);

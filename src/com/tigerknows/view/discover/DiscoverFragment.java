@@ -53,36 +53,87 @@ public class DiscoverFragment extends DiscoverBaseFragment {
 
     static final String TAG = "DiscoverFragment";
     
+    /**
+     * The percentage of a discover category item relative to the screen width
+     */
     public static final float DISCOVER_WIDHT_RATE = 0.85f;
 
+    /**
+     * Textview showing the current city
+     */
     private TextView mMyLoactionTxv;
     
-    private TKGallery mViewPager;
+    /**
+     * Gallery of the body
+     */
+    private TKGallery mCategoryGallery;
     
+    /**
+     * A view that is over the gallery<br>
+     * Used to listen to the touch event to move the content of gallery accordingly
+     */
     private ViewGroup mOverView;
     
+    /**
+     * List of discover category
+     */
     private List<DiscoverCategory> mDiscoverCategoryList = new ArrayList<DiscoverCategory>();
     
+    /**
+     * Discover category Adapter for the discover category
+     */
     private DiscoverCategoryAdapter mDiscoverCategoryAdapter;
     
+    /**
+     * Text presentation of the current discover category<br>
+     * And the ones on the left and right
+     */
     private DiscoverTopIndicator mDiscoverTopIndicator;
 
+    /**
+     * Title textView showing the title
+     */
     private TextView mNoSupportTitleTxv;
 
+    /**
+     * TextView presenting the text	<br> 
+     * If discover of the current city is not supported.
+     */
     private TextView mNoSupportMessageTxv;
     
+    /**
+     * Image view above the {@link mNoSupportMessageTxv}
+     */
     private ImageView mNoSupportMessageImv;
     
+    /**
+     * Viewgroup containing the indicator of the status of the gallery
+     */
     private ViewGroup mIndicationView;
     
+    /**
+     * Current city id
+     */
     private int mCityId = -1;
     
+    /**
+     * Last data query
+     */
     private DataQuery mDataQuery = null;
     
+    /**
+     * Is the discover channel of the current city available
+     */
     private boolean mSupport = true;
     
-    private Rect rect = new Rect();
+    /**
+     *	Rect representing the area of the current category 
+     */
+    private Rect categoryRect = new Rect();
     
+    /**
+     * Width of the screen for further calculation
+     */
     private int screenWidth;
     
     @Override
@@ -91,6 +142,9 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         mActionTag = ActionLog.DiscoverHome;
     }
 
+    /**
+     * Return the view that will be used as the content of this view
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -117,18 +171,18 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         if (mCityId != Globals.g_Current_City_Info.getId()) {
             initViews();
         }
-        int count = mViewPager.getChildCount();
+        int count = mCategoryGallery.getChildCount();
         for(int i =0; i < count; i ++) {
-            ((DiscoverCategoryView) (mViewPager.getChildAt(i))).onResume();
+            ((DiscoverCategoryView) (mCategoryGallery.getChildAt(i))).onResume();
         }
         if (isReLogin()) {
             return;
         }
         refreshData();
-        if (mViewPager.getVisibility() == View.VISIBLE && mDiscoverCategoryAdapter != null) {
+        if (mCategoryGallery.getVisibility() == View.VISIBLE && mDiscoverCategoryAdapter != null) {
             try {
-            int position = mViewPager.getSelectedItemPosition();
-            int size = mDiscoverCategoryAdapter.list.size();
+            int position = mCategoryGallery.getSelectedItemPosition();
+            int size = mDiscoverCategoryAdapter.categoryList.size();
             String leftLeftStr = mDiscoverCategoryAdapter.listView.get((position-2)%size).getTitleText();
             String leftStr = mDiscoverCategoryAdapter.listView.get((position-1)%size).getTitleText();
             String centerStr = mDiscoverCategoryAdapter.listView.get((position)%size).getTitleText();
@@ -152,14 +206,17 @@ public class DiscoverFragment extends DiscoverBaseFragment {
     @Override
     public void dismiss() {
         super.dismiss();
-        int count = mViewPager.getChildCount();
+        int count = mCategoryGallery.getChildCount();
         for(int i =0; i < count; i ++) {
-            ((DiscoverCategoryView) (mViewPager.getChildAt(i))).dismiss();
+            ((DiscoverCategoryView) (mCategoryGallery.getChildAt(i))).dismiss();
         }
     }
     
+    /**
+     * Find views in this fragment and assign them to the class member variable
+     */
     protected void findViews() {
-        mViewPager = (TKGallery)mRootView.findViewById(R.id.scroll_screen);
+        mCategoryGallery = (TKGallery)mRootView.findViewById(R.id.scroll_screen);
         mOverView = (ViewGroup) mRootView.findViewById(R.id.over_view);
         mDiscoverTopIndicator = (DiscoverTopIndicator)mRootView.findViewById(R.id.discover_top_indicator);
         mMyLoactionTxv = (TextView) mRootView.findViewById(R.id.my_location_txv);
@@ -169,6 +226,11 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         mIndicationView = (ViewGroup)mRootView.findViewById(R.id.indication_view);
     }
     
+    /**
+     * A Gesture Listener stub that do what its parent do.
+     * @author jiangshuai
+     *
+     */
     private class MySimpleGesture extends GestureDetector.SimpleOnGestureListener {   
         public boolean onDoubleTap(MotionEvent e) {   
             return super.onDoubleTap(e);   
@@ -206,13 +268,31 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         }   
     }
 
+    /**
+     * Gesture Detector for onFling
+     */
     private GestureDetector mGestureDetector;
 
+    /**
+     * falg of whether the user moves his/her finger
+     */
     boolean isBegingDrag=false;
+    
+    /**
+     * X position of the last touch event
+     */
     float lastx = 0;
+    
+    /**
+     * X position of the down event of a touch event series
+     */
     float downx = 0;
+    
+    /**
+     * Current category's position in gallery
+     */
     int mPosition = -1;
-    int mSelectPosition = -1;
+    
     protected void setListener() {
         mOverView.setClickable(true);
         mGestureDetector = new GestureDetector(mSphinx, new MySimpleGesture());  
@@ -222,8 +302,8 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                 int x = (int)ev.getX();
                 int y = (int)ev.getY();
                 int action = ev.getAction() & MotionEvent.ACTION_MASK;
-                if (mGestureDetector.onTouchEvent(ev) && mSupport && rect.contains(x, y)) {
-                    int position = mViewPager.getSelectedItemPosition();
+                if (mGestureDetector.onTouchEvent(ev) && mSupport && categoryRect.contains(x, y)) {
+                    int position = mCategoryGallery.getSelectedItemPosition();
                     DiscoverCategory discoverCategory = mDiscoverCategoryList.get(position
                             % mDiscoverCategoryList.size());
                     if (discoverCategory.getNumCity() > 0 || discoverCategory.getNumNearby() > 0) {
@@ -243,10 +323,9 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                         return false;
                     }
                 }
-                mViewPager.onTouchEvent(ev);
+                mCategoryGallery.onTouchEvent(ev);
                 if (action == MotionEvent.ACTION_DOWN) {
                     if (isBegingDrag == false) {
-                        mSelectPosition = -1;
                         downx = ev.getX();
                     }
                     lastx = ev.getX();
@@ -255,7 +334,6 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                         downx = ev.getX();
                         downx = lastx;
                         isBegingDrag = true;
-                        mSelectPosition = mViewPager.getFirstVisiblePosition();
                     }
 
                     lastx = ev.getX();
@@ -265,12 +343,11 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                     mDiscoverTopIndicator.onPageScrolled((int)(lastx-downx), offset, (int)(offsetPixels*0.5));
                 } else if (action == MotionEvent.ACTION_UP) {
                     isBegingDrag = false;
-                    mSelectPosition = -1;
                     downx = lastx;
                     if (mDiscoverCategoryAdapter != null) {
                         try {
-                        int size = mDiscoverCategoryAdapter.list.size();
-                        int position = mViewPager.getSelectedItemPosition();
+                        int size = mDiscoverCategoryAdapter.categoryList.size();
+                        int position = mCategoryGallery.getSelectedItemPosition();
                         String leftLeftStr = mDiscoverCategoryAdapter.listView.get((position-2)%size).getTitleText();
                         String leftStr = mDiscoverCategoryAdapter.listView.get((position-1)%size).getTitleText();
                         String centerStr = mDiscoverCategoryAdapter.listView.get((position)%size).getTitleText();
@@ -285,7 +362,8 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                 return false;
             }
         });
-        mViewPager.setOnItemSelectedListener(new OnItemSelectedListener() {
+        
+        mCategoryGallery.setOnItemSelectedListener(new OnItemSelectedListener() {
 
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
@@ -300,7 +378,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                     mPosition = position;
                     if (mDiscoverCategoryAdapter != null) {
                         try {
-                            int size = mDiscoverCategoryAdapter.list.size();
+                            int size = mDiscoverCategoryAdapter.categoryList.size();
                             String leftLeftStr = mDiscoverCategoryAdapter.listView.get((position-2)%size).getTitleText();
                             String leftStr = mDiscoverCategoryAdapter.listView.get((position-1)%size).getTitleText();
                             String centerStr = mDiscoverCategoryAdapter.listView.get((position)%size).getTitleText();
@@ -371,12 +449,26 @@ public class DiscoverFragment extends DiscoverBaseFragment {
 //        }
 //    }
     
-    public void refreshLocationView(String locationName, CityInfo myLocationCityInfo) {
+    /**
+     * Set the content of the {@link mMyLoactionTxv}<br>
+     * If the {@link myLocationCityInfo} is null: Locating.<br>
+     * If the {@link myLocationCityInfo} is not null:<br>
+     *     &emsp;If the current city and located city is the same<br>
+     *     &emsp;&emsp;use this city<br>
+     *     &emsp;else <br>
+     *     &emsp;&emsp;hide the locationView<br>
+     * @param locationName the name of the location to be shown
+     * @param myLocatedCityInfo	the city where the device is located
+     */
+    public void refreshLocationView(String locationName, CityInfo myLocatedCityInfo) {
         CityInfo currentCityInfo = Globals.g_Current_City_Info;
-        if (myLocationCityInfo != null) {
-            if (myLocationCityInfo.getId() == currentCityInfo.getId()) {
+        if (myLocatedCityInfo != null) {
+        	
+            if (myLocatedCityInfo.getId() == currentCityInfo.getId()) {
+            	
                 mMyLoactionTxv.setText(mContext.getString(R.string.current_location, TextUtils.isEmpty(locationName) ? "" : locationName.substring(1)));
                 mMyLoactionTxv.setVisibility(View.VISIBLE);
+                
             } else {
                 mMyLoactionTxv.setVisibility(View.GONE);
             }
@@ -385,12 +477,16 @@ public class DiscoverFragment extends DiscoverBaseFragment {
             mMyLoactionTxv.setVisibility(View.VISIBLE);
         }
     }
-
+    
+    /**
+     * Called when the result of a query has come back
+     */
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
         DiscoverResponse response = (DiscoverResponse) dataQuery.getResponse();
+        // check whether the use has loged in at another device
         if (BaseActivity.checkReLogin(dataQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
@@ -442,8 +538,13 @@ public class DiscoverFragment extends DiscoverBaseFragment {
             }
         }
         mDataQuery = dataQuery;
-    }
+        
+    }// end on postExecute
     
+    /**
+     * Get discover category list<br>
+     * Set visibility and content of views
+     */
     private void initViews() {
         mDataQuery = null;
         DiscoverConfigList discoverConfigList = DataQuery.getDiscoverConfigList();
@@ -455,6 +556,8 @@ public class DiscoverFragment extends DiscoverBaseFragment {
             if (list != null) {
                 for(DiscoverConfig discoverConfig : list) {
                     if (discoverConfig.getSeqId() == mCityId) {
+                    	
+                    	// Get the list of discover category
                         mDiscoverCategoryList = new ArrayList<DiscoverCategory>();
                         List<Long> valueList = discoverConfig.getList(); 
                         long value = Long.parseLong(BaseQuery.DATA_TYPE_TUANGOU);
@@ -477,6 +580,8 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                             DiscoverCategory discoverCategory = new DiscoverCategory(value);
                             mDiscoverCategoryList.add(discoverCategory);
                         }
+                        
+                        // Do the setups of views
                         mIndicationView.removeAllViews();
                         mIndicationView.setVisibility(View.VISIBLE);
                         int size = mDiscoverCategoryList.size();
@@ -488,14 +593,14 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                             mNoSupportTitleTxv.setVisibility(View.GONE);
                             mNoSupportMessageTxv.setVisibility(View.GONE);
                             mNoSupportMessageImv.setVisibility(View.GONE);
-                            mViewPager.setVisibility(View.VISIBLE);
+                            mCategoryGallery.setVisibility(View.VISIBLE);
                             mDiscoverTopIndicator.setVisibility(View.VISIBLE);
                             
                             mDiscoverCategoryAdapter = new DiscoverCategoryAdapter(mDiscoverCategoryList);
-                            mViewPager.setAdapter(mDiscoverCategoryAdapter);
+                            mCategoryGallery.setAdapter(mDiscoverCategoryAdapter);
                             mDiscoverCategoryAdapter.notifyDataSetChanged();
-                            mDiscoverTopIndicator.setGallery(mViewPager);
-                            mViewPager.setSelection(mDiscoverCategoryList.size()*100);
+                            mDiscoverTopIndicator.setGallery(mCategoryGallery);
+                            mCategoryGallery.setSelection(mDiscoverCategoryList.size()*100);
                             mSupport = true;
                             return;
                         }
@@ -508,11 +613,14 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         noSupportDiscover();
     }
     
+    /**
+     * Set visibility and content of views in situation of discover not supported
+     */
     private void noSupportDiscover() {
         mSupport = false;
         CityInfo cityInfo = Globals.g_Current_City_Info;
         mDiscoverTopIndicator.setVisibility(View.GONE);
-        mViewPager.setVisibility(View.GONE);
+        mCategoryGallery.setVisibility(View.GONE);
         mNoSupportTitleTxv.setVisibility(View.VISIBLE);
         mNoSupportMessageTxv.setText(mSphinx.getString(R.string.discover_no_support_tip, cityInfo.getCName()));
         mNoSupportMessageTxv.setVisibility(View.VISIBLE);
@@ -520,16 +628,19 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         mIndicationView.setVisibility(View.GONE);
     }
 
+    /**
+     * Our adapter for the Gallery showing discover gallery
+     */
     public class DiscoverCategoryAdapter extends BaseAdapter {
         
-        List<DiscoverCategory> list;
+        List<DiscoverCategory> categoryList;
         List<DiscoverCategoryView> listView = new ArrayList<DiscoverCategoryView>();
         
         public DiscoverCategoryAdapter(List<DiscoverCategory> list) {
-            this.list = list;
+            this.categoryList = list;
             int width = (int) (screenWidth*DISCOVER_WIDHT_RATE);
-            rect.left = (int) (screenWidth*(1-DISCOVER_WIDHT_RATE))/2;
-            rect.right = rect.left+width;
+            categoryRect.left = (int) (screenWidth*(1-DISCOVER_WIDHT_RATE))/2;
+            categoryRect.right = categoryRect.left+width;
             int size = list.size();
             if (size > 0) {
                 if (size == 1) {
@@ -551,8 +662,8 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                 int height = Globals.g_metrics.heightPixels - Util.dip2px(Globals.g_metrics.density, 96);
                 viewGroup.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 int actualHeight = viewGroup.getMeasuredHeight();
-                rect.top = (height - actualHeight)/2;
-                rect.bottom = actualHeight+rect.top;
+                categoryRect.top = (height - actualHeight)/2;
+                categoryRect.bottom = actualHeight+categoryRect.top;
             }
         }
 
@@ -564,7 +675,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         @Override
         public Object getItem(int position) {
             // TODO Auto-generated method stub
-            return list.get(position);
+            return categoryList.get(position);
         }
 
         @Override
@@ -580,7 +691,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         }
         
         public List<DiscoverCategory> getList() {
-            return list;
+            return categoryList;
         }
 
         public List<DiscoverCategoryView> getListView() {
@@ -589,6 +700,9 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         
     }
     
+    /**
+     * Refresh contents when Discover fragment resumes
+     */
     private void refreshData() {
         if (mDataQuery == null || mDataQuery.getCityId() != mCityId) {
             DataQuery dataQuery = new DataQuery(mSphinx);
@@ -605,9 +719,15 @@ public class DiscoverFragment extends DiscoverBaseFragment {
     }
     
     public void setCurrentItem(int position) {
-        mViewPager.setSelection(position+(128*mDiscoverCategoryList.size()));
+        mCategoryGallery.setSelection(position+(128*mDiscoverCategoryList.size()));
     }
     
+    /**
+     * Get a certain discover category according to the type
+     * @param list
+     * @param type
+     * @return the found category. Null if no matching category is found.
+     */
     private static DiscoverCategory getDiscoverCategoryByType(List<DiscoverCategory> list, String type) {
         if (list == null || TextUtils.isEmpty(type)) {
             return null;

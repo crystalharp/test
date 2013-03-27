@@ -89,6 +89,7 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
     }
     
     public void setPulledDynamicPOI(PulledDynamicPOI dynamicPOI){
+    	position = 0;
         BaseDetailView baseDetailView = (BaseDetailView) mCyclePagerAdapter.viewList.get(position%mCyclePagerAdapter.viewList.size());
         ((ZhanlanDetailView)baseDetailView).setPulledDynamicPOI(dynamicPOI);        
     }

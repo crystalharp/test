@@ -88,6 +88,7 @@ public class YanchuDetailFragment extends BaseDetailFragment
     }
     
     public void setPulledDynamicPOI(PulledDynamicPOI dynamicPOI){
+    	position = 0;
         BaseDetailView baseDetailView = (BaseDetailView) mCyclePagerAdapter.viewList.get(position%mCyclePagerAdapter.viewList.size());
         ((YanchuDetailView)baseDetailView).setPulledDynamicPOI(dynamicPOI);
     }
