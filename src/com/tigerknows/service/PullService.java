@@ -172,6 +172,10 @@ public class PullService extends Service {
                     if (locationData != null) {
                         uploadLocationData(context, locationData);
                     }
+                } else {
+                    //定位城市与设置城市不符，则跳到第二天的随机时间
+                    fail = 0;
+                    next = Alarms.calculateRandomAlarmInNextDay(next, requestStartHour, requestEndHour);
                 }
                 
                 // 退出并设置下一个定时器
@@ -321,7 +325,7 @@ public class PullService extends Service {
     }
     
     void exitService(Calendar next) {
-        LogWrapper.d(TAG, fail == 0 ? ("Pull Succeeded.") : ("Pull failed " + fail + " times"));
+        LogWrapper.d(TAG, "failed times = " + fail);
         
         if (fail >= MaxFail || next == null) {
             fail = 0;

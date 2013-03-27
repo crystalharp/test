@@ -476,19 +476,19 @@ public class POI extends BaseData {
     
     public void updateData(Context context, XMap data) {
         try {
-            init(data);
             BaseData baseData = checkStore(context, storeType, -1, false);
+            init(data);
             if (baseData != null) {
-                    try {
-                        ContentValues values = new ContentValues();
-                        values.put(Tigerknows.POI.DATA, ByteUtil.xobjectToByte(data));
-                        this.dateTime = System.currentTimeMillis();
-                        values.put(Tigerknows.POI.DATETIME, this.dateTime);
-                        SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
-                        this.updated = true;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    ContentValues values = new ContentValues();
+                    values.put(Tigerknows.POI.DATA, ByteUtil.xobjectToByte(data));
+                    this.dateTime = System.currentTimeMillis();
+                    values.put(Tigerknows.POI.DATETIME, this.dateTime);
+                    SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
+                    this.updated = true;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } else {
                 writeToDatabases(context, -1, com.tigerknows.provider.Tigerknows.STORE_TYPE_HISTORY);
             }
@@ -828,7 +828,11 @@ public class POI extends BaseData {
     public XMap getData() {
         if (this.data == null) {
             this.data = new XMap();
-        
+
+            if (this.uuid != null) {
+                this.data.put(FIELD_UUID, this.uuid);
+            }
+            
             this.data.put(FIELD_TYPE, this.type);
             
             if (this.position != null) {
@@ -855,13 +859,13 @@ public class POI extends BaseData {
             if (!TextUtils.isEmpty(this.url)) {
                 this.data.put(FIELD_URL, this.url);
             }
-            if (lastComment != null) {
-                this.data.put(FIELD_LAST_COMMENT, lastComment.getData());
-            }
             this.data.put(FIELD_TO_CENTER_DISTANCE, this.toCenterDistance);
             this.data.put(FIELD_COMMENT_PATTERN, this.commentPattern);
             this.data.put(FIELD_ATTRIBUTE, this.attribute);
             this.data.put(FIELD_STATUS, this.status);
+            if (lastComment != null) {
+                this.data.put(FIELD_LAST_COMMENT, lastComment.getData());
+            }
         }
         return this.data;
     }

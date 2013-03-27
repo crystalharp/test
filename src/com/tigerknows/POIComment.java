@@ -1133,7 +1133,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         mPOI.setMyComment(mComment);
         
         // 如果没有最近点评或者最近这条点评是我的，则更新它
-        if (mPOI.getLastComment() == null || Comment.isAuthorMe(mComment) > 0) {
+        if (Comment.isAuthorMe(mPOI.getLastComment()) > 0) {
             mPOI.setLastComment(mComment);
             mComment.setData(null);
             mPOI.setData(null);
