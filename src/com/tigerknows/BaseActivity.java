@@ -4,9 +4,11 @@
 
 package com.tigerknows;
 
+import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
+import com.tigerknows.util.AsyncImageLoader;
 import com.tigerknows.util.TKAsyncTask;
 
 import android.content.DialogInterface;
@@ -105,6 +107,7 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
         if (!TextUtils.isEmpty(mActionTag)) {
             mActionLog.addAction(ActionLog.UI, mActionTag);
         }
+        Globals.getAsyncImageLoader().setViewToken(mThis.toString());
     }
 
     @Override
