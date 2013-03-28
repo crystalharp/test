@@ -1066,6 +1066,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                     BaseActivity.showErrorDialog(mThis, mThis.getString(R.string.response_code_201), mThis, true);
                 } else if (response.getResponseCode() == 601 && response instanceof CommentCreateResponse) {
                     mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_USER);
+                    mPOI.setMyComment(mComment);
                     mStatus = STATUS_MODIFY;
                     mTitleBtn.setText(R.string.modify_comment);
                     mComment.setUid(((CommentCreateResponse)response).getUid());
@@ -1133,7 +1134,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         mPOI.setMyComment(mComment);
         
         // 如果没有最近点评或者最近这条点评是我的，则更新它
-        if (Comment.isAuthorMe(mPOI.getLastComment()) > 0) {
+        if (mPOI.getLastComment() == null || Comment.isAuthorMe(mPOI.getLastComment()) > 0) {
             mPOI.setLastComment(mComment);
             mComment.setData(null);
             mPOI.setData(null);

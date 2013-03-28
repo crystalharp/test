@@ -511,6 +511,7 @@ public class POI extends BaseData {
 
     public void setMyComment(Comment myComment) {
         this.myComment = myComment;
+        this.attribute = Comment.isAuthorMe(myComment);
     }
 
     public Comment getLastComment() {
