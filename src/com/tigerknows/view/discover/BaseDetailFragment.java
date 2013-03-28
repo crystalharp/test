@@ -148,9 +148,19 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     @Override
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
+        
+        for(int i = mCyclePagerAdapter.viewList.size()-1; i >= 0; i--) {
+            BaseDetailView view = (BaseDetailView) mCyclePagerAdapter.viewList.get(i);
+            if (view.onCancel(tkAsyncTask)) {
+                break;
+            }
+        }
+        
         if (tkAsyncTask.getBaseQuery().isPulledDynamicPOIRequest()) {
             dismiss();
         }
+
+        
     }
     
     public void refreshViews(int position) {

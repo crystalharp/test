@@ -369,9 +369,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void doFilter(String name) {
         FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         
-        dismissPopupWindow();
         DataQuery lastDataQuery = mDataQuery;
         if (lastDataQuery == null) {
+            dismissPopupWindow();
             return;
         }
 
@@ -385,6 +385,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         poiQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(poiQuery);
         setup();
+        dismissPopupWindow();
     }
     
     public void cancelFilter() {

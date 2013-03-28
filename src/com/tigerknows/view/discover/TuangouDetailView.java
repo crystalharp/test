@@ -477,7 +477,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             mNoticedView.setVisibility(View.VISIBLE);
         }
         
-        if (needFiled.length() > 0 && query) {
+        if (needFiled.length() > 0 && query && !mAsyncTaskExecuting) {
             mLoadingView.setVisibility(View.VISIBLE);
             DataOperation dataOperation = new DataOperation(mSphinx);
             Hashtable<String, String> criteria = new Hashtable<String, String>();
@@ -489,9 +489,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 criteria.put(DataOperation.SERVER_PARAMETER_PICTURE, pic.toString());
             }
             dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
-            if(mTKAsyncTasking!=null){
-                mTKAsyncTasking.stop();	
-            }
+            mAsyncTaskExecuting = true;
             mTKAsyncTasking = mSphinx.queryStart(dataOperation);
             mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
         } else {

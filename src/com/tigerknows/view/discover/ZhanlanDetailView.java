@@ -160,7 +160,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
             mDescriptionTxv.setText(str);
             mDescriptionTxv.setVisibility(View.VISIBLE);
             mLoadingView.setVisibility(View.GONE);
-        } else if (query){
+        } else if (query && !mAsyncTaskExecuting){
             mDescriptionTxv.setVisibility(View.GONE);
             mLoadingView.setVisibility(View.VISIBLE);
             DataOperation dataOperation = new DataOperation(mSphinx);
@@ -170,10 +170,8 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
             criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
             criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
             dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
-            if(mTKAsyncTasking!=null){
-                mTKAsyncTasking.stop();	
-            }
             mTKAsyncTasking = mSphinx.queryStart(dataOperation);
+            mAsyncTaskExecuting = true;
             mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
         }
     }
@@ -308,10 +306,8 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
                 Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
         criteria.put(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + 410, ""+R.string.response_code_410_pulled);
         dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
-        if(mTKAsyncTasking!=null){
-            mTKAsyncTasking.stop();	
-        }
         mTKAsyncTasking = mSphinx.queryStart(dataOperation);
+        mAsyncTaskExecuting = true;
         mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
     }
 }
