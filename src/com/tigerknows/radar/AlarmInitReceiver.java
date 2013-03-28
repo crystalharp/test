@@ -1,7 +1,6 @@
 package com.tigerknows.radar;
 
 import com.decarta.android.util.LogWrapper;
-import com.tigerknows.TKConfig;
 import com.tigerknows.service.LocationCollectionService;
 import com.tigerknows.service.PullService;
 
@@ -23,8 +22,6 @@ public class AlarmInitReceiver extends BroadcastReceiver {
     
     static final String TAG = "AlarmInitReceiver";
     public static final String ACTION_ALARM_INIT = "com.tigerknows.action.AlarmInit";
-    
-    public static boolean IS_WAITING_NETWORK_CHANGE = false;
     
     /**
      * Sets alarm on ACTION_BOOT_COMPLETED.  Resets alarm on

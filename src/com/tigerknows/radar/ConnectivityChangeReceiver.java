@@ -1,7 +1,6 @@
 package com.tigerknows.radar;
 
 import com.decarta.android.util.LogWrapper;
-import com.tigerknows.service.PullService;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -21,11 +20,9 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
             // true 代表网络断开   false 代表网络没有断开
             boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
             LogWrapper.d("NetCheckReceiver", "onReceive() noConnectivity="+noConnectivity);
-            if (noConnectivity == false
-                    && AlarmInitReceiver.IS_WAITING_NETWORK_CHANGE) {
-                AlarmInitReceiver.IS_WAITING_NETWORK_CHANGE = false;
-                Intent service = new Intent(context, PullService.class);
-                context.startService(service);
+            if (noConnectivity == false) {
+//                Intent service = new Intent(context, PullService.class);
+//                context.startService(service);
             }
         }
     }

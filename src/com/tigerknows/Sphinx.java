@@ -2292,9 +2292,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (mMoreFragment != null) {
             getMoreFragment().refreshCity(cName);
         }
-        if (mTrafficQueryFragment != null) {
+//        if (mTrafficQueryFragment != null) {
             getTrafficQueryFragment().refreshCity(cName);
-        }
+//        }
     };
     
     // TODO: cityinfo end
