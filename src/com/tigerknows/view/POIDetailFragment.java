@@ -1104,6 +1104,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     POI onlinePOI = ((POIQueryResponse)response).getPOI();
                     if (onlinePOI != null) {
                         poi.updateData(mSphinx, onlinePOI.getData());
+                        poi.setFrom(POI.FROM_ONLINE);
                         refreshDetail();
                         refreshComment();
                     }

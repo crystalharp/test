@@ -18,6 +18,14 @@ import android.os.Bundle;
 import android.util.Log;
 import com.tigerknows.widget.Toast;
 
+/**
+ * 对TencentOpenAPI进行封装，实现用户授权、用户注销、获取登录用户的呢称及发表分享到QQ空间功能
+ * 
+ * 官方文档
+ * http://wiki.opensns.qq.com/wiki/%E3%80%90QQ%E7%99%BB%E5%BD%95%E3%80%91API%E6%96%87%E6%A1%A3
+ * @author pengwenyue
+ *
+ */
 public class TKTencentOpenAPI {
     
     public static final String AUTH_BROADCAST = "com.tigerknows.tencent.auth.BROWSER";
@@ -142,6 +150,10 @@ public class TKTencentOpenAPI {
 
     }
     
+    /**
+     * 检查是否已授权
+     * @return
+     */
     public static boolean satisfyConditions() {
         return  mAccessToken != null && 
                 mAppid != null && 
@@ -151,6 +163,10 @@ public class TKTencentOpenAPI {
                 !mOpenId.equals("");
     }
     
+    /**
+     * 用户授权
+     * @param activity
+     */
     public static void login(Activity activity) {
         Intent intent = new Intent(activity, com.tencent.tauth.TAuthView.class);
         
@@ -163,6 +179,10 @@ public class TKTencentOpenAPI {
         
     }
     
+    /**
+     * 用户注销
+     * @param activity
+     */
     public static void logout(Activity activity) {
         // TODO Auto-generated method stub
         mAccessToken = null;
@@ -170,6 +190,13 @@ public class TKTencentOpenAPI {
         ShareAPI.clearIdentity(activity, ShareAPI.TYPE_TENCENT);
     }
     
+    /**
+     * 发表分享到QQ空间 
+     * @param activity
+     * @param comment
+     * @param showDialog
+     * @param finish
+     */
     public static void addShare(final Activity activity, String comment, final boolean showDialog, final boolean finish) {
         if (!satisfyConditions()) {
 //            TDebug.msg("请先获取access token和open id", activity);

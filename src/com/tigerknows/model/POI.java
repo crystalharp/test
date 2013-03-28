@@ -436,8 +436,6 @@ public class POI extends BaseData {
     
     private int from = FROM_ONLINE;
     
-    private boolean updated = false;
-    
     // 菜系
     private String cookingStyle;
     
@@ -466,14 +464,6 @@ public class POI extends BaseData {
     
     public int ciytId = 0;
     
-    public boolean isUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(boolean updated) {
-        this.updated = updated;
-    }
-    
     public void updateData(Context context, XMap data) {
         try {
             BaseData baseData = checkStore(context, storeType, -1, false);
@@ -485,7 +475,6 @@ public class POI extends BaseData {
                     this.dateTime = System.currentTimeMillis();
                     values.put(Tigerknows.POI.DATETIME, this.dateTime);
                     SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
-                    this.updated = true;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -787,6 +776,8 @@ public class POI extends BaseData {
                 	this.envrionment = this.description.getString(Description.FIELD_ENVIRONMENT);
                 }
             }
+        } else {
+            this.description = null;
         }
         if (this.data.containsKey(FIELD_TELEPHONE)) {
             this.telephone = this.data.getString(FIELD_TELEPHONE);
@@ -823,6 +814,8 @@ public class POI extends BaseData {
         }
         if (this.data.containsKey(FIELD_LAST_COMMENT)) {
             this.lastComment = new Comment(this.data.getXMap(FIELD_LAST_COMMENT));
+        } else {
+            this.lastComment = null;
         }
     }
     
