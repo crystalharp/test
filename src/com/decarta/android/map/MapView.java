@@ -972,6 +972,13 @@ public class MapView extends RelativeLayout implements
         public void finish(Uri uri);
     }
     
+    /**
+     * 快照地图，完成后还原地图状态
+     * @param activity
+     * @param snapMap
+     * @param position
+     * @param mapScene
+     */
     public void snapMapView(final Activity activity, final SnapMap snapMap, final Position position, final MapScene mapScene) {
         if (activity == null || snapMap == null || position == null) {
             return;
@@ -980,34 +987,30 @@ public class MapView extends RelativeLayout implements
         TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
         loadingTxv.setText(R.string.doing_and_wait);
         ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, loadingTxv);
+        
         final Dialog tipProgressDialog = CommonUtils.showNormalDialog(activity, custom);
         tipProgressDialog.setCancelable(true);
         tipProgressDialog.setCanceledOnTouchOutside(false);
         tipProgressDialog.setOnDismissListener(new OnDismissListener() {
             
             @Override
-            public void onDismiss(DialogInterface arg0) {
-                tilesView.cancelSnap();
+            public void onDismiss(DialogInterface dialog) {
+                tilesView.resetSnap();
             }
-        }); 
+        });
         tipProgressDialog.show();
+        
         new Thread(new Runnable() {
             
             @Override
             public void run() {
-                tilesView.snap();
-                XYFloat xy = new XYFloat(0, 0);
+                tilesView.requestSnap(position);
                 int waitTimes = 0;
-                while (waitTimes < 30 && tipProgressDialog.isShowing() && (tilesView.isSnap() || Math.abs(xy.x - tilesView.getDisplaySize().x/2) > 128 || Math.abs(xy.y - tilesView.getDisplaySize().y/2) > 128)) {
+                // 等待快照完成，最长等待时间为60s
+                while (waitTimes < 30 && tipProgressDialog.isShowing() && tilesView.isSnap()) {
                     try {
                         Thread.sleep(2*1000);
                     } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                    try {
-                        xy = tilesView.mercXYToScreenXYConv(Util.posToMercPix(position, getZoomLevel()), getZoomLevel());
-                    } catch (APIException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
@@ -1020,8 +1023,10 @@ public class MapView extends RelativeLayout implements
                     public void run() {
                         if (tipProgressDialog != null && tipProgressDialog.isShowing()) {
                             tipProgressDialog.dismiss();
-                        }                            
+                        }            
+                        
                         restoreScene(mapScene);
+                        
                         Bitmap bm = tilesView.getSnapBitmap();
                         String mapPath = TKConfig.getDataPath(true);
                         Uri uri = null;
@@ -1060,6 +1065,10 @@ public class MapView extends RelativeLayout implements
         return mapScene;
     }
     
+    /**
+     * 还原地图状态（中心点、Shape、OverlayItem）
+     * @param mapScene
+     */
     public void restoreScene(MapScene mapScene) {
         try {
             clearMap();
