@@ -515,6 +515,11 @@ public class TKConfig {
      * 推送和定位收集服务的开关
      */
     public static final String PREFS_RADAR_PULL_SERVICE_SWITCH = "prefs_radar_pull_service_switch";
+    
+    /**
+     * 推送在一天中的失败次数
+     */
+    public static final String PREFS_RADAR_PULL_FAILED_TIMES = "prefs_radar_pull_failed_times";
 
     
     /**

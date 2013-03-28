@@ -72,10 +72,10 @@ import java.util.Map;
 public class PullService extends Service {
     
     static final String TAG = "PullService";
-    static int fail = 0;
     final static int MaxFail = 3;
     final static int requestStartHour = 9;
     final static int requestEndHour = 21;
+    int fail = 0;
     
     public static PullAlarmAction alarmAction = new PullAlarmAction();
 
@@ -89,6 +89,14 @@ public class PullService extends Service {
             public void run() {
                 TKConfig.readConfig();
                 long currentTimeMillis = System.currentTimeMillis();
+                
+                Context context = getApplicationContext();
+                try {
+                    String s = TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_FAILED_TIMES, "0");
+                    fail = Integer.parseInt(s);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 Calendar requestCal = Calendar.getInstance();
                 requestCal.setTimeInMillis(currentTimeMillis);
@@ -103,7 +111,6 @@ public class PullService extends Service {
                 next.add(Calendar.MINUTE, TKConfig.PullServiceFailedRetryTime);
 //                Alarms.alarmAddHours(next, 1);
                 
-                Context context = getApplicationContext();
                 
                 // 获取当前城市
                 CityInfo currentCityInfo = Globals.getLastCityInfo(context);
@@ -335,6 +342,7 @@ public class PullService extends Service {
         
         Context context = getApplicationContext();
         Alarms.enableAlarm(context, next, alarmAction);
+        TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_FAILED_TIMES, String.valueOf(fail));
         
         Intent name = new Intent(context, PullService.class);
         stopService(name);
