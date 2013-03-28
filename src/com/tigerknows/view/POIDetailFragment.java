@@ -1105,6 +1105,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     if (onlinePOI != null) {
                         poi.updateData(mSphinx, onlinePOI.getData());
                         refreshDetail();
+                        refreshComment();
                     }
                     
                 // 查询团购的结果
