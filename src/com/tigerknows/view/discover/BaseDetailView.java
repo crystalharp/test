@@ -44,7 +44,18 @@ public class BaseDetailView extends LinearLayout {
     protected BaseDetailFragment mParentFragment;
     protected String mActionTag;
     protected ActionLog mActionLog;
+    
     protected TKAsyncTask mTKAsyncTasking;
+    /**
+     * Set to true when a query starts
+     * Set to false when a query returns in onPostExecute
+     * When new data is set to the same view, stopQuery will set this to false
+     * and the new data operation can go.
+     * This guarantees there is only one query on-going for a single description item
+     * to remove duplicate download for the same description, to save Data and Time.
+     */
+    protected boolean mAsyncTaskExecuting = false;
+    
     protected List<BaseQuery> mBaseQuerying;
     private BaseData mData;
     
@@ -67,8 +78,13 @@ public class BaseDetailView extends LinearLayout {
         if (mBaseQuerying != null) {
             mBaseQuerying = null;
         }
+        mAsyncTaskExecuting = false;
     }
     
+    /**
+     * 
+     * @param data
+     */
     public void setData(BaseData data) {
         if (mData != data) {
             stopQuery();
@@ -104,9 +120,18 @@ public class BaseDetailView extends LinearLayout {
     }    
 
     public boolean onPostExecute(TKAsyncTask tkAsyncTask) {
+    	mAsyncTaskExecuting = false;
         if (mBaseQuerying != tkAsyncTask.getBaseQueryList()) {
             return false;
         }
         return true;
     }
+
+	public boolean onCancel(TKAsyncTask tkAsyncTask) {
+    	mAsyncTaskExecuting = false;
+        if (mBaseQuerying != tkAsyncTask.getBaseQueryList()) {
+            return false;
+        }
+		return true;
+	}
 }

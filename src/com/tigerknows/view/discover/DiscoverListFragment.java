@@ -634,10 +634,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     public void doFilter(String name) {
         FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         
-        dismissPopupWindow();
-        
         DataQuery lastDataQuery = mDataQuery;
         if (lastDataQuery == null) {
+            dismissPopupWindow();
             return;
         }
 
@@ -651,6 +650,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         dataQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(dataQuery);
         setup();
+        
+        /*
+         * First set up the views that is under the filter list
+         * Then dismiss the PopupWindow to prevent the blink effect 
+         * Of the reverse order.
+         */
+        dismissPopupWindow();
     }
     
     public void cancelFilter() {
