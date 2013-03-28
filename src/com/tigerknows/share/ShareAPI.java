@@ -15,6 +15,11 @@ import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
 import com.weibo.sdk.android.keep.AccessTokenKeeper;
 
+/**
+ * 统一管理新浪微博和腾讯QQ空间分享的用户信息
+ * @author pengwenyue
+ *
+ */
 public class ShareAPI {
 
     public static final String EXTRA_SHARE_CONTENT = "com.tigerknows.share.EXTRA_SHARE_CONTENT";
@@ -31,14 +36,30 @@ public class ShareAPI {
 	
 	private static final HashMap<String, UserAccessIdenty> sUserCache = new HashMap<String, UserAccessIdenty>();
     
+	/**
+	 * 用户授权操作后的回调接口
+	 * @author pengwenyue
+	 *
+	 */
     public interface LoginCallBack {
+        /**
+         * 授权成功
+         */
         public void onSuccess();
+        
+        /**
+         * 授权失败
+         */
         public void onFailed();
+        
+        /**
+         * 取消授权
+         */
         public void onCancel();
     }
 	
-	/*
-	 * Storage Mediator
+	/**
+	 * 读取用户信息
 	 */
 	public static UserAccessIdenty readIdentity(Activity activity, String shareType) {
 		UserAccessIdenty identity = sUserCache.get(shareType);
@@ -64,6 +85,12 @@ public class ShareAPI {
 		return identity;
 	}
 	
+	/**
+	 * 存储用户信息
+	 * @param activity
+	 * @param shareType
+	 * @param identity
+	 */
 	public static void writeIdentity(Activity activity, String shareType, UserAccessIdenty identity) {
 		ByteArrayOutputStream arrayOutputStream = new ByteArrayOutputStream(); 
 		ObjectOutputStream out;
@@ -80,12 +107,23 @@ public class ShareAPI {
         setToken(activity, shareType, identity);
 	}
 	
+	/**
+	 * 删除用户信息
+	 * @param activity
+	 * @param shareType
+	 */
 	public static void clearIdentity(Activity activity, String shareType) {
 		TKConfig.removePref(activity, shareType);
         sUserCache.remove(shareType);
         setToken(activity, shareType, null);
 	}
 	
+	/**
+	 * 设置用户授权的Token
+	 * @param activity
+	 * @param shareType
+	 * @param identity
+	 */
 	private static void setToken(Activity activity, String shareType, UserAccessIdenty identity) {
 	    if (TYPE_WEIBO.equals(shareType)) {
 	        Oauth2AccessToken accessToken = AccessTokenKeeper.readAccessToken(activity);

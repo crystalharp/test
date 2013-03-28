@@ -28,13 +28,18 @@ import com.weibo.sdk.android.util.Utility;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
 /**
+ * 对新浪微博功能进行封装，实现用户授权、用户注销、获取用户信息及发表微博功能
  * 
- * @author liyan (liyan9@staff.sina.com.cn)
+ * 官方文档
+ * http://open.weibo.com/wiki/API%E6%96%87%E6%A1%A3_V2
+ * 
+ * @author pengwenyue
  */
 public class TKWeibo implements RequestListener {
     
-    static final String TAG = "TKWeiboSSO";
+    static final String TAG = "TKWeibo";
 
     public static final String CONSUMER_KEY = "725632899";// 替换为开发者的appkey，例如"1646212860";
     private static String APP_SECRET = "10d7ad791693508c0f201e543faa2488";
@@ -42,13 +47,30 @@ public class TKWeibo implements RequestListener {
     
     public static Oauth2AccessToken accessToken; // 访问令牌
     
-    // 访问方法
+    /**
+     * 访问获取用户信息接口
+     */
     static int ACCESS_METHOD_USERS_SHOW = 1;
+    
+    /**
+     * 访问发表纯文字的微博接口
+     */
     static int ACCESS_METHOD_STATUSES_UPDATE = 2;
+    
+    /**
+     * 访问发表带图片的微博接口
+     */
     static int ACCESS_METHOD_STATUSES_UPLOAD = 3;
+    
+    /**
+     * 访问用户注销接口
+     */
     static int ACCESS_METHOD_ACCOUNT_LOGOUT = 4;
     
-    private int currentAccessMethod = 0; // 当前访问的哪个方法
+    /**
+     * 当前访问哪个接口
+     */
+    private int currentAccessMethod = 0;
     
     private String expires_in; // 过期时间
     private LoginCallBack loginCallBack; // 授权完成后的回调接口
@@ -59,6 +81,11 @@ public class TKWeibo implements RequestListener {
     
     private boolean finishActivity; // 在操作完成时是否关闭当前activity
     
+    /**
+     * @param activity
+     * @param showProgressDialog 是否需要显示进度对话框
+     * @param finishActivity 在调用完成后是否finish()
+     */
     public TKWeibo(Activity activity, boolean showProgressDialog, boolean finishActivity) {
         this.activity = activity;
         this.showProgressDialog = showProgressDialog;
@@ -71,6 +98,11 @@ public class TKWeibo implements RequestListener {
         }
     }
 
+    /**
+     * 用户授权操作监听器
+     * @author pengwenyue
+     *
+     */
     public static class AuthDialogListener implements WeiboAuthListener {
         
         TKWeibo tkWeiboSSO;
@@ -186,7 +218,7 @@ public class TKWeibo implements RequestListener {
                         loginCallBack.onFailed();
                     }
                 } else if (currentAccessMethod == ACCESS_METHOD_ACCOUNT_LOGOUT) {
-
+                    // do nothing
                 } else if (currentAccessMethod == ACCESS_METHOD_STATUSES_UPDATE
                         || currentAccessMethod == ACCESS_METHOD_STATUSES_UPLOAD) {
                     String msg = e.getMessage();
@@ -236,7 +268,7 @@ public class TKWeibo implements RequestListener {
                         loginCallBack.onFailed();
                     }
                 } else if (currentAccessMethod == ACCESS_METHOD_ACCOUNT_LOGOUT) {
-
+                    // do nothing
                 } else if (currentAccessMethod == ACCESS_METHOD_STATUSES_UPDATE
                         || currentAccessMethod == ACCESS_METHOD_STATUSES_UPLOAD) {
                     Toast.makeText(activity, R.string.weibo_send_failed, Toast.LENGTH_LONG).show();
@@ -245,6 +277,11 @@ public class TKWeibo implements RequestListener {
         });
     }
     
+    /**
+     * 用户授权
+     * @param tkweibo
+     * @param weiboAuthListener
+     */
     public static void authorize(TKWeibo tkweibo, WeiboAuthListener weiboAuthListener) {
         Weibo weibo = Weibo.getInstance(CONSUMER_KEY, REDIRECT_URL);
         SsoHandler ssoHandler = new SsoHandler(tkweibo.activity, weibo);
@@ -252,6 +289,11 @@ public class TKWeibo implements RequestListener {
         ssoHandler.authorize(weiboAuthListener);
     }
     
+    /**
+     * 获取用户信息
+     * @param tkweibo
+     * @param uid
+     */
     static void show(TKWeibo tkweibo, long uid) {
         if (tkweibo.showProgressDialog) {
             ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.DIALOG, tkweibo.activity.getString(R.string.doing_and_wait));
@@ -263,6 +305,10 @@ public class TKWeibo implements RequestListener {
         usersAPI.show(uid, tkweibo);
     }
     
+    /**
+     * 用户注销
+     * @param tkweibo
+     */
     public static void logout(TKWeibo tkweibo) {
         tkweibo.showProgressDialog = false;
         tkweibo.currentAccessMethod = ACCESS_METHOD_ACCOUNT_LOGOUT;
@@ -271,6 +317,14 @@ public class TKWeibo implements RequestListener {
         ShareAPI.clearIdentity(tkweibo.activity, ShareAPI.TYPE_WEIBO);
     }
 
+    /**
+     * 发表带图片的微博
+     * @param tkweibo
+     * @param status
+     * @param file
+     * @param lon
+     * @param lat
+     */
     public static void upload(TKWeibo tkweibo, String status, String file, String lon, String lat) {
         if (tkweibo.showProgressDialog) {
             ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.DIALOG, tkweibo.activity.getString(R.string.doing_and_wait));
@@ -282,6 +336,13 @@ public class TKWeibo implements RequestListener {
         statusesAPI.upload(status, file, lat, lon, tkweibo);
     }
 
+    /**
+     * 发表纯文本的微博
+     * @param tkweibo
+     * @param status
+     * @param lon
+     * @param lat
+     */
     public static void update(TKWeibo tkweibo, String status, String lon, String lat) {
         if (tkweibo.showProgressDialog) {
             ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.DIALOG, tkweibo.activity.getString(R.string.doing_and_wait));
@@ -293,6 +354,10 @@ public class TKWeibo implements RequestListener {
         statusesAPI.update(status, lat, lon, tkweibo);
     }
     
+    /**
+     * 显示进度对话框
+     * @param activity
+     */
     static void postShowDialog(final Activity activity) {
         activity.runOnUiThread(new Runnable() {
             
