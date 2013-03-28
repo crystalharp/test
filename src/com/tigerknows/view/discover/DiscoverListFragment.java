@@ -518,8 +518,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     	}
         if (mState == STATE_QUERYING) {
             mTitleBtn.setClickable(false);
+            mTitleBtn.setBackgroundResource(R.color.transparent);
         } else {
             mTitleBtn.setClickable(true);
+            mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
         }
     }
     
