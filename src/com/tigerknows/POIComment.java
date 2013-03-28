@@ -40,6 +40,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -257,6 +258,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         } else {
             mContentEdt.setText(null);
         }
+        mContentEdt.setFilters(new InputFilter[] { new InputFilter.LengthFilter(800) });
         
     	UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_TENCENT);
         if (userAccessIdenty != null) {
