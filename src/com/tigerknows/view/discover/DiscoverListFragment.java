@@ -24,7 +24,6 @@ import com.tigerknows.model.DataQuery.BaseList;
 import com.tigerknows.model.DataQuery.DianyingResponse;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.FilterCategoryOrder;
-import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.model.DataQuery.TuangouResponse;
 import com.tigerknows.model.DataQuery.YanchuResponse;
 import com.tigerknows.model.DataQuery.ZhanlanResponse;
@@ -195,7 +194,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             
             setup();
             onResume();
-            mTitleBtn.setClickable(false);
             mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "channel", position, discoverCategory.getType());
         }
     };
@@ -490,7 +488,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
         mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
         mTitleBtn.setOnClickListener(this);
-        
+
         if (isReLogin()) {
             return;
         }
@@ -511,7 +509,26 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         super.onPause();
     }
     
+    /**
+     * In state querying, the button shouldn't be clickable 
+     */
+    private void updateTitleButtonState(){
+    	if(mTitleBtn == null){
+    		return;
+    	}
+        if (mState == STATE_QUERYING) {
+            mTitleBtn.setClickable(false);
+            mTitleBtn.setBackgroundResource(R.color.transparent);
+        } else {
+            mTitleBtn.setClickable(true);
+            mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
+        }
+    }
+    
     private void updateView() {
+    	
+    	updateTitleButtonState();
+    	
         if (mState == STATE_QUERYING) {
             mQueryingView.setVisibility(View.VISIBLE);
             mRetryView.setVisibility(View.GONE);
@@ -634,10 +651,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     public void doFilter(String name) {
         FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         
-        dismissPopupWindow();
-        
         DataQuery lastDataQuery = mDataQuery;
         if (lastDataQuery == null) {
+            dismissPopupWindow();
             return;
         }
 
@@ -651,6 +667,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         dataQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(dataQuery);
         setup();
+        
+        /*
+         * First set up the views that is under the filter list
+         * Then dismiss the PopupWindow to prevent the blink effect 
+         * Of the reverse order.
+         */
+        dismissPopupWindow();
     }
     
     public void cancelFilter() {
@@ -967,12 +990,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
         mResultLsv.onRefreshComplete(false);
+        invokeIPagerListCallBack();
     }
 
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
-        mTitleBtn.setClickable(true);
         
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
         
@@ -988,6 +1011,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         } else {
             Response response = dataQuery.getResponse();
             if (response != null) {
+                
                 int responsCode = response.getResponseCode();
                 if (responsCode != Response.RESPONSE_CODE_OK) {
                     if (responsCode == 701) {
@@ -1046,17 +1070,20 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     });
                 }
                 
+                makeFilterArea(dataQuery);
+                
                 List<Tuangou> list = tuangouResponse.getList().getList();
                 for(Tuangou item : list) {
                     item.setFilterArea(mFilterArea);
                 }
                 mTuangouList.addAll(list);
+                
                 mDingdanBtn.setVisibility(View.VISIBLE);
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
                 }
                 refreshFilter(mDataQuery.getFilterList());
-                makeFilterArea(dataQuery);
+                
             } else {
                 if (dataQuery.isTurnPage()) {
                     return;
@@ -1083,7 +1110,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                         }
                     });
                 }
-                
+
+                makeFilterArea(dataQuery);
                 List<Dianying> list = dianyingResponse.getList().getList();
                 for(Dianying item : list) {
                     item.setFilterArea(mFilterArea);
@@ -1096,7 +1124,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     mResultLsv.setFooterSpringback(true);
                 }
                 refreshFilter(mDataQuery.getFilterList());
-                makeFilterArea(dataQuery);
+                
             } else {
                 if (dataQuery.isTurnPage()) {
                     return;

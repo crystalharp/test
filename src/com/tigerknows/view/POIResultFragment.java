@@ -369,9 +369,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void doFilter(String name) {
         FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         
-        dismissPopupWindow();
         DataQuery lastDataQuery = mDataQuery;
         if (lastDataQuery == null) {
+            dismissPopupWindow();
             return;
         }
 
@@ -385,6 +385,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         poiQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(poiQuery);
         setup();
+        dismissPopupWindow();
     }
     
     public void cancelFilter() {
@@ -554,18 +555,15 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             startsRtb.setRating(star/2.0f);
 
             ImageView stampImv = (ImageView) view.findViewById(R.id.stamp_imv);
-            int storeType = poi.getStoreType();
+            int from = poi.getFrom();
              
             if (showStamp
                     // 跟马然沟通，本地搜藏或历史浏览的在我要点评是没有戳的，但是在加载出来的非本地poi若用户点评过是应该有戳的。但是现在没有戳。
-                    || (storeType != Tigerknows.STORE_TYPE_FAVORITE
-                            && storeType != Tigerknows.STORE_TYPE_HISTORY)) {
-                long attribute = poi.getAttribute();
-                User user = Globals.g_User;
-                if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0 && user != null) {
+                    || from == POI.FROM_ONLINE) {
+                if (poi.isGoldStamp()) {
                     stampImv.setImageResource(R.drawable.ic_stamp_gold);
                     stampImv.setVisibility(View.VISIBLE);
-                } else if ((attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0 && user == null) {
+                } else if (poi.isSilverStamp()) {
                     stampImv.setImageResource(R.drawable.ic_stamp_silver);
                     stampImv.setVisibility(View.VISIBLE);
                 } else {

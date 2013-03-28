@@ -278,13 +278,13 @@
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
         </receiver>
-        
+        <!-- 
 		<receiver android:name="com.tigerknows.radar.ConnectivityChangeReceiver">
 		    <intent-filter>
 	           <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
 		    </intent-filter>
 		</receiver>
-        
+         -->
 		<receiver android:name="com.tigerknows.radar.RadarReceiver">
 		    <intent-filter>
 	           <action android:name="action.com.tigerknows.radar.PullReceiver" />

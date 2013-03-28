@@ -928,7 +928,7 @@ public class CommonUtils {
         int minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
         int maxIndex = endPage * pageSize + (isShowAPOI ? 1 : 0);
         
-        if ((maxIndex > size-1 ? size-1 : maxIndex)-minIndex < TKConfig.getPageSize()) {
+        if ((maxIndex > size-1 ? size-1 : maxIndex)-minIndex < TKConfig.getPageSize()-1) {
             if (startPage > 0) {
                 startPage--;
                 minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);

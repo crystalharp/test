@@ -249,12 +249,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         setFavoriteState(mFavoriteBtn, poi.checkFavorite(mContext));
         mNameTxt.setText(poi.getName());
 
-        long attribute = poi.getAttribute();
-        if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0) {
+        if (poi.isGoldStamp()) {
             mStampImv.setBackgroundResource(R.drawable.ic_stamp_gold);
             mStampImv.setVisibility(View.VISIBLE);
             mCommentTipEdt.setHint(R.string.comment_tip_hit1);
-        } else if ((attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0) {
+        } else if (poi.isSilverStamp()) {
             mStampImv.setBackgroundResource(R.drawable.ic_stamp_silver);
             mStampImv.setVisibility(View.VISIBLE);
             mCommentTipEdt.setHint(R.string.comment_tip_hit1);
@@ -482,11 +481,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
-        long attribute = poi.getAttribute();
         int resId = Integer.MIN_VALUE;
-        if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0) {
+        if (poi.isGoldStamp()) {
             resId = R.drawable.ic_stamp_gold_big;
-        } else if ((attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0) {
+        } else if (poi.isSilverStamp()) {
             resId = R.drawable.ic_stamp_silver_big;
         }
         if (resId != Integer.MIN_VALUE) {
@@ -596,13 +594,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 }
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
-                    boolean isMe = false;
-                    long attribute = poi.getAttribute();
-                    if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0) {
-                        isMe = true;
-                    } else if ((attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0) {
-                        isMe = true;
-                    }
+                    boolean isMe = (poi.isGoldStamp() || poi.isSilverStamp());
                     if (poi.getStatus() < 0) {
                         int resId;
                         if (isMe) {
@@ -1104,7 +1096,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     POI onlinePOI = ((POIQueryResponse)response).getPOI();
                     if (onlinePOI != null) {
                         poi.updateData(mSphinx, onlinePOI.getData());
+                        poi.setFrom(POI.FROM_ONLINE);
                         refreshDetail();
+                        refreshComment();
                     }
                     
                 // 查询团购的结果

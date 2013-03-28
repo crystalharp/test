@@ -119,10 +119,7 @@ public class POICommentList extends BaseActivity {
                 mCommentAdapter.notifyDataSetChanged();
             }
 
-            long attribute = mPOI.getAttribute();
-            if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0) {
-                mCommentTipEdt.setHint(R.string.comment_tip_hit1);
-            } else if ((attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0) {
+            if (mPOI.isGoldStamp() || mPOI.isSilverStamp()) {
                 mCommentTipEdt.setHint(R.string.comment_tip_hit1);
             } else {
                 mCommentTipEdt.setHint(R.string.comment_tip_hit0);
@@ -160,13 +157,7 @@ public class POICommentList extends BaseActivity {
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
                     POI poi = mPOI;
                     if (poi != null) {
-                        boolean isMe = false;
-                        long attribute = poi.getAttribute();
-                        if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0) {
-                            isMe = true;
-                        } else if ((attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0) {
-                            isMe = true;
-                        }
+                        boolean isMe = (poi.isGoldStamp() || poi.isSilverStamp());
                         if (poi.getStatus() < 0) {
                             int resId;
                             if (isMe) {
@@ -297,9 +288,8 @@ public class POICommentList extends BaseActivity {
                             }
                         }
                         if (isHeader) {
-                            long attribute = poi.getAttribute();
                             int index = 0;
-                            if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0 || (attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0) {
+                            if (poi.isGoldStamp() || poi.isSilverStamp()) {
                                 index = 1;
                             }
                             mCommentArrayList.addAll(index, list);

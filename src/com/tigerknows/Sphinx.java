@@ -227,6 +227,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private ViewGroup mMenuView;
     private ViewGroup mControlView;   
 
+    /**
+     * 下面这些ViewGroup用于InfoWindow
+     * 最初是想避免重新创建它们，但是重用时会出现文字不对齐、高宽计算不协调情况？
+     */
     private ViewGroup mInfoWindowPOI = null;
     private ViewGroup mInfoWindowLongClick = null;
     private ViewGroup mInfoWindowTuangouList = null;
@@ -1950,9 +1954,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     || sourceType == POI.SOURCE_TYPE_ZHANLAN
                     || sourceType == POI.SOURCE_TYPE_FENDIAN
                     || sourceType == POI.SOURCE_TYPE_YINGXUN) {
-                if (mInfoWindowTuangouDetail == null) {
+//                if (mInfoWindowTuangouDetail == null) {
                     mInfoWindowTuangouDetail = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_tuangou_detail, null);
-                }
+//                }
                 
                 TextView nameTxv=(TextView)mInfoWindowTuangouDetail.findViewById(R.id.name_txv);
                 TextView addressTxv= (TextView)mInfoWindowTuangouDetail.findViewById(R.id.address_txv);
@@ -1973,9 +1977,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 infoWindow.setViewGroup(mInfoWindowTuangouDetail);
             } else if (sourceType == POI.SOURCE_TYPE_LONG_CLICK_SELECT_POINT) {
-                if (mInfoWindowLongClick == null) {
+//                if (mInfoWindowLongClick == null) {
                     mInfoWindowLongClick = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_long_click, null);
-                }
+//                }
                 
                 TextView nameTxv=(TextView)mInfoWindowLongClick.findViewById(R.id.name_txv);
                 Button startBtn= (Button)mInfoWindowLongClick.findViewById(R.id.start_btn);
@@ -2002,9 +2006,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 infoWindow.setViewGroup(mInfoWindowLongClick);
             } else if (sourceType != POI.SOURCE_TYPE_CLICK_SELECT_POINT
                     && sourceType != POI.SOURCE_TYPE_MY_LOCATION) {
-                if (mInfoWindowPOI == null) {
+//                if (mInfoWindowPOI == null) {
                     mInfoWindowPOI = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_poi, null);
-                }
+//                }
                 
                 TextView nameTxv=(TextView)mInfoWindowPOI.findViewById(R.id.name_txv);
                 RatingBar starsRtb = (RatingBar) mInfoWindowPOI.findViewById(R.id.stars_rtb);
@@ -2054,9 +2058,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 rating = target.getHot();
             }
 
-            if (mInfoWindowYanchuList == null) {
+//            if (mInfoWindowYanchuList == null) {
                 mInfoWindowYanchuList = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_yanchu_list, null);
-            }
+//            }
             
             ImageView pictureImv = (ImageView)mInfoWindowYanchuList.findViewById(R.id.icon_imv);
             TextView nameTxv=(TextView)mInfoWindowYanchuList.findViewById(R.id.name_txv);
@@ -2099,9 +2103,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             tkDrawable = target.getPictures();
             String price = target.getPrice();
 
-            if (mInfoWindowTuangouList == null) {
+//            if (mInfoWindowTuangouList == null) {
                 mInfoWindowTuangouList = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_tuangou_list, null);
-            }
+//            }
             
             ImageView pictureImv = (ImageView)mInfoWindowTuangouList.findViewById(R.id.icon_imv);
             TextView nameTxv=(TextView)mInfoWindowTuangouList.findViewById(R.id.name_txv);
@@ -2155,10 +2159,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
      * @return
      */
     void setInfoWindowMessage(String message) {
-        if (mInfoWindowMessage == null) {
+//        if (mInfoWindowMessage == null) {
             // 初始化
             mInfoWindowMessage = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_message, null);
-        }
+//        }
         
         TextView nameTxv=(TextView)mInfoWindowMessage.findViewById(R.id.name_txv);
         

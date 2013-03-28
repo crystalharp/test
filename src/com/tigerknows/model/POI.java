@@ -8,6 +8,7 @@
 
 package com.tigerknows.model;
 
+import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.tigerknows.R;
@@ -17,6 +18,7 @@ import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.SqliteWrapper;
+import com.tigerknows.view.user.User;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -436,8 +438,6 @@ public class POI extends BaseData {
     
     private int from = FROM_ONLINE;
     
-    private boolean updated = false;
-    
     // 菜系
     private String cookingStyle;
     
@@ -456,8 +456,6 @@ public class POI extends BaseData {
     // 环境 FIELD_ENVIRONMENT
     private String envrionment;
     
-    private boolean isSelected;
-    
     private boolean onlyAPOI = false;
     
     private Comment myComment = null;
@@ -465,14 +463,6 @@ public class POI extends BaseData {
     private Comment lastComment;
     
     public int ciytId = 0;
-    
-    public boolean isUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(boolean updated) {
-        this.updated = updated;
-    }
     
     public void updateData(Context context, XMap data) {
         try {
@@ -485,7 +475,6 @@ public class POI extends BaseData {
                     this.dateTime = System.currentTimeMillis();
                     values.put(Tigerknows.POI.DATETIME, this.dateTime);
                     SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
-                    this.updated = true;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -511,6 +500,7 @@ public class POI extends BaseData {
 
     public void setMyComment(Comment myComment) {
         this.myComment = myComment;
+        this.attribute = Comment.isAuthorMe(myComment);
     }
 
     public Comment getLastComment() {
@@ -527,14 +517,6 @@ public class POI extends BaseData {
 
     public void setOnlyAPOI(boolean onlyAPOI) {
         this.onlyAPOI = onlyAPOI;
-    }
-
-    public boolean isSelected() {
-        return isSelected;
-    }
-    
-    public void setSelected(boolean isSelected) {
-        this.isSelected = isSelected;
     }
 
     public void setSourceType(int sourceType) {
@@ -786,6 +768,8 @@ public class POI extends BaseData {
                 	this.envrionment = this.description.getString(Description.FIELD_ENVIRONMENT);
                 }
             }
+        } else {
+            this.description = null;
         }
         if (this.data.containsKey(FIELD_TELEPHONE)) {
             this.telephone = this.data.getString(FIELD_TELEPHONE);
@@ -822,6 +806,8 @@ public class POI extends BaseData {
         }
         if (this.data.containsKey(FIELD_LAST_COMMENT)) {
             this.lastComment = new Comment(this.data.getXMap(FIELD_LAST_COMMENT));
+        } else {
+            this.lastComment = null;
         }
     }
     
@@ -1385,5 +1371,47 @@ public class POI extends BaseData {
     	newPOI.setPosition(this.position);
     	
     	return newPOI;
+    }
+    
+    /**
+     * 根据当前用户登录状态，刷新金/银戳状态
+     * @return
+     */
+    long refreshAttribute() {
+        User user = Globals.g_User;
+        if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0 && user != null) {
+            attribute = POI.ATTRIBUTE_COMMENT_USER;
+        } else if ((attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0 && user == null) {
+            attribute = POI.ATTRIBUTE_COMMENT_ANONYMOUS;
+        }
+        return attribute;
+    }
+    
+    /**
+     * 检查是否为金戳，注册用户点评过此POI
+     * @return
+     */
+    public boolean isGoldStamp() {
+        boolean result = false;
+        refreshAttribute();
+        if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0) {
+            result = true;
+        }
+        
+        return result;
+    }
+    
+    /**
+     * 检查是否为银戳，非注册用户点评过此POI
+     * @return
+     */
+    public boolean isSilverStamp() {
+        boolean result = false;
+        refreshAttribute();
+        if ((attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0) {
+            result = true;
+        }
+        
+        return result;
     }
 }

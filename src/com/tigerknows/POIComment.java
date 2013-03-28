@@ -40,6 +40,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -257,6 +258,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         } else {
             mContentEdt.setText(null);
         }
+        mContentEdt.setFilters(new InputFilter[] { new InputFilter.LengthFilter(800) });
         
     	UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_TENCENT);
         if (userAccessIdenty != null) {
@@ -842,14 +844,28 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     
     private void submit() {
         hideSoftInput();
-        String shareGrade = "";
+        int resId = R.string.poi_comment_share_grade1;
+        int rating = (int)mGradeRtb.getRating();
+        if (rating == 2) {
+            resId = R.string.poi_comment_share_grade2;
+        } else if (rating == 3) {
+            resId = R.string.poi_comment_share_grade3;
+        } else if (rating == 4) {
+            resId = R.string.poi_comment_share_grade4;
+        } else if (rating == 5) {
+            resId = R.string.poi_comment_share_grade5;
+        } else {
+            resId = R.string.poi_comment_share_grade1;
+        }
+        String shareGrade = getString(resId);
+        
         String recommendCook = "";
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_DIANPING);
         StringBuilder s = new StringBuilder();
         s.append(Util.byteToHexString(Comment.FIELD_GRADE));
         s.append(':');
-        s.append((int)(mGradeRtb.getRating()*2));
+        s.append(rating*2);
         s.append(',');
         String content = mContentEdt.getEditableText().toString().trim();
         if (!TextUtils.isEmpty(content)) {
@@ -979,22 +995,26 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), -1, mFromViewId, mThis.getString(R.string.comment_publishing_and_wait));
 
         if (mSyncSinaChb.isChecked()) {
+            // http://open.weibo.com/wiki/2/statuses/update
+            // status  true  string  要发布的微博文本内容，必须做URLencode，内容不超过140个汉字。   
             String shareSina = "";
             shareSina = mThis.getString(R.string.poi_comment_share_sina, mPOI.getName(), shareGrade, content, TextUtils.isEmpty(recommendCook) ? "" : mThis.getString(R.string.recommend_cooking, recommendCook));
-            if (shareSina.length() > 120) {
-                shareSina = shareSina.subSequence(0, 117) + "...";
+            if (shareSina.length() > 115) {
+                shareSina = shareSina.subSequence(0, 112) + "...";
             }
-            shareSina = shareSina + "http://www.tigerknows.com";
+            shareSina = shareSina + "http://www.tigerknows.com";   // 25个 TODO: 但是这个网址被微博删除了
             criteria.put(DataOperation.SERVER_PARAMETER_SHARE_SINA, shareSina);
         }
         
         if (mSyncQZoneChb.isChecked()) {
+            // http://wiki.opensns.qq.com/wiki/%E3%80%90QQ%E7%99%BB%E5%BD%95%E3%80%91add_share
+            // summary   string  所分享的网页资源的摘要内容，或者是网页的概要描述，对应上文接口说明的3。最长80个中文字，超出部分会被截断。  
             String shareQzone = "";
             shareQzone = mThis.getString(R.string.poi_comment_share_qzone, mPOI.getName(), shareGrade, content, TextUtils.isEmpty(recommendCook) ? "" : mThis.getString(R.string.recommend_cooking, recommendCook));
-            if (shareQzone.length() > 123) {
-                shareQzone = shareQzone.subSequence(0, 120) + "...";
+            if (shareQzone.length() > 63) {
+                shareQzone = shareQzone.subSequence(0, 60) + "...";
             }
-            shareQzone = shareQzone + mThis.getString(R.string.poi_comment_share_qzone_source);
+            shareQzone = shareQzone + mThis.getString(R.string.poi_comment_share_qzone_source); // 17个
             criteria.put(DataOperation.SERVER_PARAMETER_SHARE_QZONE, shareQzone);
         }
         queryStart(dataOperation, false);
@@ -1066,6 +1086,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                     BaseActivity.showErrorDialog(mThis, mThis.getString(R.string.response_code_201), mThis, true);
                 } else if (response.getResponseCode() == 601 && response instanceof CommentCreateResponse) {
                     mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_USER);
+                    mPOI.setMyComment(mComment);
                     mStatus = STATUS_MODIFY;
                     mTitleBtn.setText(R.string.modify_comment);
                     mComment.setUid(((CommentCreateResponse)response).getUid());
@@ -1133,7 +1154,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         mPOI.setMyComment(mComment);
         
         // 如果没有最近点评或者最近这条点评是我的，则更新它
-        if (Comment.isAuthorMe(mPOI.getLastComment()) > 0) {
+        if (mPOI.getLastComment() == null || Comment.isAuthorMe(mPOI.getLastComment()) > 0) {
             mPOI.setLastComment(mComment);
             mComment.setData(null);
             mPOI.setData(null);
