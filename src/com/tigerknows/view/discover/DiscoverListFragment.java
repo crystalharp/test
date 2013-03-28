@@ -1052,17 +1052,19 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     });
                 }
                 
+                makeFilterArea(dataQuery);
                 List<Tuangou> list = tuangouResponse.getList().getList();
                 for(Tuangou item : list) {
                     item.setFilterArea(mFilterArea);
                 }
                 mTuangouList.addAll(list);
+                
                 mDingdanBtn.setVisibility(View.VISIBLE);
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
                 }
                 refreshFilter(mDataQuery.getFilterList());
-                makeFilterArea(dataQuery);
+                
             } else {
                 if (dataQuery.isTurnPage()) {
                     return;
@@ -1089,7 +1091,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                         }
                     });
                 }
-                
+
+                makeFilterArea(dataQuery);
                 List<Dianying> list = dianyingResponse.getList().getList();
                 for(Dianying item : list) {
                     item.setFilterArea(mFilterArea);
@@ -1102,7 +1105,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     mResultLsv.setFooterSpringback(true);
                 }
                 refreshFilter(mDataQuery.getFilterList());
-                makeFilterArea(dataQuery);
+                
             } else {
                 if (dataQuery.isTurnPage()) {
                     return;
@@ -1138,7 +1141,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     mResultLsv.setFooterSpringback(true);
                 }
                 refreshFilter(mDataQuery.getFilterList());
-                makeFilterArea(dataQuery);
             } else {
                 if (dataQuery.isTurnPage()) {
                     return;

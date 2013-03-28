@@ -604,6 +604,18 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 return true;
             }
         });
+        
+        /**
+         * If the listener is not set, the click event
+         * will be dispatched to the view that's under it, 
+         * which is not visible, and should not be click-able.
+         */
+        mBarView_2.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			}
+		});
     }
 
     private boolean updateBarViewVisibility(boolean renew){
