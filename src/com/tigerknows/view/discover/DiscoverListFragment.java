@@ -973,6 +973,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
         mResultLsv.onRefreshComplete(false);
+        invokeIPagerListCallBack();
     }
 
     @Override
