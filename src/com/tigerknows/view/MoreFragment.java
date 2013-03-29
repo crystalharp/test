@@ -427,11 +427,12 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
             mMessageType = messageType;
         }
         if (mMessageType > MESSAGE_TYPE_NONE) {
-            mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
             if (mMessageType == MESSAGE_TYPE_SOFTWARE_UPDATE) {
                 mMessageBtn.setText(R.string.message_tip_software_update);
                 mMessageBtn.setBackgroundResource(R.drawable.btn_update);
                 mMessageBtn.setVisibility(View.VISIBLE);
+                // setPadding需要在setVisibility之后调用，这样才能避免padding设置不起作用的情况
+                mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
                 mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
             } else if (mMessageType == MESSAGE_TYPE_COMMENT) {
@@ -439,18 +440,21 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                 mMessageBtn.setBackgroundResource(R.drawable.btn_orangle);
                 TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_MAP_TIP);
                 mMessageBtn.setVisibility(View.VISIBLE);
+                mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
                 mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
             } else if (mMessageType == MESSAGE_TYPE_MAP_UPDATE) {
                 mMessageBtn.setText(R.string.message_tip_map_upgrade);
                 mMessageBtn.setBackgroundResource(R.drawable.btn_update);
                 mMessageBtn.setVisibility(View.VISIBLE);
+                mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
                 mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
             } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
                 mMessageBtn.setText(R.string.message_tip_user_survey);
                 mMessageBtn.setBackgroundResource(R.drawable.btn_update);
                 mMessageBtn.setVisibility(View.VISIBLE);
+                mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
                 mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
             }
