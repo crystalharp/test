@@ -75,7 +75,7 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
     public static final String EXTRA_DOWNLOAD_SIZE = "extra_download_size";
     
     Context context;
-    List<CityInfo> cityInfoList = new ArrayList<CityInfo>(); // 下载城市队列
+    public static List<CityInfo> CityInfoList = new ArrayList<CityInfo>(); // 下载城市队列
     boolean isStopAll = false; // 停止全部
     CityInfo currentCityInfo = null; // 当前下载城市
     int writeSize = 0; // 临时写入的大小
@@ -90,6 +90,7 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
     @Override
     public void onCreate() {
         super.onCreate();
+        CityInfoList.clear();
         context = getApplicationContext();
         mapEngine = MapEngine.getInstance();
         mapMetaFileDownload = new MapMetaFileDownload(context, mapEngine);
@@ -105,20 +106,20 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                             LogWrapper.i(TAG,"thread break");
                             break;
                         }
-                        synchronized (cityInfoList) {
-                            if (cityInfoList.isEmpty()) {
+                        synchronized (CityInfoList) {
+                            if (CityInfoList.isEmpty()) {
                                 try {
                                     LogWrapper.i(TAG,"thread wait");
-                                    cityInfoList.wait();
+                                    CityInfoList.wait();
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }
                             }
                         }
-                        if (cityInfoList.isEmpty()) {
+                        if (CityInfoList.isEmpty()) {
                             continue;
                         }
-                        currentCityInfo = cityInfoList.get(0);
+                        currentCityInfo = CityInfoList.get(0);
                         LogWrapper.d(TAG, "currentCityInfo="+currentCityInfo);
                         totalSize = 0;
                         downloadedSize = 0;
@@ -182,8 +183,8 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                         if (totalSize > 0
                                 && downloadedSize > 0
                                 && downloadedSize/(float)totalSize >= MapDownload.PERCENT_COMPLETE) {
-                            synchronized (cityInfoList) {
-                                cityInfoList.remove(currentCityInfo);
+                            synchronized (CityInfoList) {
+                                CityInfoList.remove(currentCityInfo);
                             }
                         }
                         
@@ -213,8 +214,9 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
         isStopAll = true;
         mapMetaFileDownload.stop();
         mapTileDataDownload.stop();
-        synchronized (cityInfoList) {
-            cityInfoList.notifyAll();
+        synchronized (CityInfoList) {
+            CityInfoList.clear();
+            CityInfoList.notifyAll();
         }
     }
 
@@ -222,20 +224,20 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
     public void onStart(final Intent intent, int startId) {
         if (intent != null) {
             if (intent.hasExtra(EXTRA_OPERATION_CODE)) {
-                synchronized (cityInfoList) {
+                synchronized (CityInfoList) {
                     String operationCode = intent.getStringExtra(EXTRA_OPERATION_CODE);
                     LogWrapper.d(TAG, "onStart() operationCode="+operationCode);
                     if (OPERATION_CODE_ADD.equals(operationCode)) {
                         if (intent.hasExtra(EXTRA_CITY_INFO)) {
                             CityInfo cityInfo = intent.getParcelableExtra(EXTRA_CITY_INFO);
-                            cityInfoList.remove(cityInfo);
-                            cityInfoList.add(cityInfo);
-                            cityInfoList.notifyAll();
+                            CityInfoList.remove(cityInfo);
+                            CityInfoList.add(cityInfo);
+                            CityInfoList.notifyAll();
                         }
                     } else if (OPERATION_CODE_REMOVE.equals(operationCode)) {
                         if (intent.hasExtra(EXTRA_CITY_INFO)) {
                             CityInfo cityInfo = intent.getParcelableExtra(EXTRA_CITY_INFO);
-                            cityInfoList.remove(cityInfo);
+                            CityInfoList.remove(cityInfo);
                             CityInfo thisCityInfo = this.currentCityInfo;
                             if (thisCityInfo != null && thisCityInfo.getId() == cityInfo.getId()) {
                                 mapMetaFileDownload.stop();
@@ -244,7 +246,7 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                             }
                         }
                     } else if (OPERATION_CODE_CLEAR.equals(operationCode)) {
-                        cityInfoList.clear();
+                        CityInfoList.clear();
                         mapMetaFileDownload.stop();
                         mapTileDataDownload.stop();
                         isStopCurrentCity = true;

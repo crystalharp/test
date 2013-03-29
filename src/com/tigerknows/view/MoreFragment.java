@@ -6,10 +6,12 @@ package com.tigerknows.view;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Hashtable;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -33,7 +35,9 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.MapDownload.DownloadCity;
 import com.tigerknows.maps.MapEngine;
+import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BootstrapModel;
+import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
 import com.tigerknows.model.BootstrapModel.SoftwareUpdate;
 import com.tigerknows.util.CommonUtils;
@@ -54,6 +58,8 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     static final String TAG = "MoreFragment";
     
     public static final int SHOW_COMMENT_TIP_TIMES = 3;
+    public static final int SHOW_NICKNAME_MAX_WIDTH = 150;
+    public static final int SHOW_NICKNAME_OMIT_WIDTH = 9;
     
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -84,6 +90,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     public static final int MESSAGE_TYPE_COMMENT = 4;
     private int mMessageType = MESSAGE_TYPE_NONE;
     
+    public static final int DIAOYAN_HASCLICKED = 2;
     private DiaoyanQueryResponse mDiaoyanQueryResponse;
     
     public static DownloadCity CurrentDownloadCity;
@@ -189,6 +196,18 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         	if(mDiaoyanQueryResponse.getHasSurveyed() == 0){
                 setFragmentMessage(MESSAGE_TYPE_USER_SURVEY);
                 return;
+        	}else if(mDiaoyanQueryResponse.getHasSurveyed() == DIAOYAN_HASCLICKED){
+        		/*
+        		 * 本处规定如果用户已经点击了用户调研按钮，就把HasSurveyed赋值成2(服务器端不可能出现2)
+        		 * 然后去服务端重新执行查询，再依据查询结果再次刷新
+        		 */
+                DataOperation diaoyanQuery = new DataOperation(mContext);
+                Hashtable<String, String> criteria = new Hashtable<String, String>();
+                criteria.put(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIAOYAN);
+                criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+                diaoyanQuery.setup(criteria, Globals.g_Current_City_Info.getId());
+                mSphinx.queryStart(diaoyanQuery);
+                return;
         	}
         }
 
@@ -264,10 +283,13 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                     showUpgradeMapDialog();
                 } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
                 	String url=mDiaoyanQueryResponse.getUrl();
-                	Intent intent=new Intent();
-                	intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.user_survey));
-                	intent.putExtra(BrowserActivity.URL, url);
-                	mSphinx.showView(R.id.activity_browser, intent);
+                	if(url != null){               		
+                		Intent intent=new Intent();
+                		intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.user_survey));
+                		intent.putExtra(BrowserActivity.URL, url);
+                		mDiaoyanQueryResponse.setHasSurveyed(DIAOYAN_HASCLICKED);
+                		mSphinx.showView(R.id.activity_browser, intent);
+                	}
                 } else if (mMessageType == MESSAGE_TYPE_COMMENT) {
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
                     mSphinx.showView(R.id.view_go_comment);
@@ -366,7 +388,26 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         	mUserBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
         	mUserBtn.setCompoundDrawablePadding(CommonUtils.dip2px(mContext, 10));
         	if (Globals.g_User != null) {
-            	mUserNameTxv.setText(Globals.g_User.getNickName());
+        		/*
+        		 * 下面一段代码衡量显示的昵称会否超出范围，如果超出，则显示时会截断并添加三个点
+        		 * 目前可显示的范围为150个宽度，这相当于12+2/3个"@"的宽度
+        		 * 截断后仍然可以显示11个"@"的宽度
+        		 * 注：这不是最佳的方法，对于屏幕较窄的手机可能仍然并不奏效，但已经优于产品部于
+        		 * 	   2013年03月29日(4.30版)所提出的依据字符数决定的办法，并报产品部通过
+        		 * 注2：若该方法将来在N多地方使用，可能需要单独放在一个Utils里以便调用
+        		 * fengtianxiao@tigerknows 2013/03/29
+        		 */
+        		Paint paint=new Paint();
+        		String nickNameText = Globals.g_User.getNickName();
+        		int strwid = (int)paint.measureText(nickNameText);
+        		if(strwid > SHOW_NICKNAME_MAX_WIDTH){
+        			while(strwid > SHOW_NICKNAME_MAX_WIDTH - SHOW_NICKNAME_OMIT_WIDTH){
+        				nickNameText = nickNameText.substring(0 , nickNameText.length()-1);
+        				strwid = (int)paint.measureText(nickNameText);
+        			}
+        			nickNameText = nickNameText + "...";
+        		}
+            	mUserNameTxv.setText(nickNameText);
             	mUserNameTxv.setVisibility(View.VISIBLE);
         	}
         } else {
@@ -386,11 +427,12 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
             mMessageType = messageType;
         }
         if (mMessageType > MESSAGE_TYPE_NONE) {
-            mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
             if (mMessageType == MESSAGE_TYPE_SOFTWARE_UPDATE) {
                 mMessageBtn.setText(R.string.message_tip_software_update);
                 mMessageBtn.setBackgroundResource(R.drawable.btn_update);
                 mMessageBtn.setVisibility(View.VISIBLE);
+                // setPadding需要在setVisibility之后调用，这样才能避免padding设置不起作用的情况
+                mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
                 mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
             } else if (mMessageType == MESSAGE_TYPE_COMMENT) {
@@ -398,18 +440,21 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                 mMessageBtn.setBackgroundResource(R.drawable.btn_orangle);
                 TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_MAP_TIP);
                 mMessageBtn.setVisibility(View.VISIBLE);
+                mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
                 mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
             } else if (mMessageType == MESSAGE_TYPE_MAP_UPDATE) {
                 mMessageBtn.setText(R.string.message_tip_map_upgrade);
                 mMessageBtn.setBackgroundResource(R.drawable.btn_update);
                 mMessageBtn.setVisibility(View.VISIBLE);
+                mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
                 mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
             } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
                 mMessageBtn.setText(R.string.message_tip_user_survey);
                 mMessageBtn.setBackgroundResource(R.drawable.btn_update);
                 mMessageBtn.setVisibility(View.VISIBLE);
+                mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
                 mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
             }

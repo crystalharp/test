@@ -931,7 +931,9 @@ public class TrafficQueryFragment extends BaseFragment {
             	
             	// 下一行代码为避免以下操作会出现问题
             	// 搜索-结果列表-详情-地图-点击气泡中的交通按钮-选择到这里去/自驾-点击左上按钮无反应(期望进入 详情界面)
-            	mSphinx.uiStackPop(R.id.view_result_map);
+            	// 确保整个UI堆栈里不能出现重复的结果地图界面
+                // Fixed: [And4.30-287] [确实有]【交通】公交详情界面点击“地图”返回到公交方案界面，地图不加载。
+            	mSphinx.uiStackRemove(R.id.view_result_map);
             	if (trafficModel.getPlanList().get(0).getType() == Plan.Step.TYPE_TRANSFER) {
             	    // 换乘方式
             		mSphinx.getTrafficResultFragment().setData(trafficQuery);

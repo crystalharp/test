@@ -212,36 +212,41 @@ public class TilesView extends GLSurfaceView {
     }   
     
     /**
-     * 是否正在快照
+     * 是否取消快照
      */
-    boolean isSnaping = false;
+    boolean isCancelSnap = false;
+    
     /**
      * 快照图片
      */
-    
     Bitmap snapBmp;
+    
     /**
      * 快照的中心位置
      */
-    Position snapPos;
+    Position snapCenterPos;
     
     /**
-     * 重置快照相关的变量
+     * 停止快照
      */
-    public void resetSnap() {
-        snapPos = null;
-        isSnaping = false;
+    public void stopSnap() {
+        snapCenterPos = null;
+        refreshMap();
     }
     
     /**
      * 请求快照地图
      * @param position
      */
-    public void requestSnap(Position position) {
-        isSnaping = true;
-        snapBmp = null;
-        snapPos = position;
+    public void requestSnap(Position snapCenterPos) {
+        stopSnap();
+        this.isCancelSnap = false;
+        this.snapCenterPos = snapCenterPos;
         refreshMap();
+    }
+    
+    public boolean isSnapFinish() {
+        return this.snapCenterPos == null;
     }
     
     /**
@@ -254,12 +259,8 @@ public class TilesView extends GLSurfaceView {
             snapBmp = null;
             return bm;
         } else {
-            snapBmp = CommonUtils.viewToBitmap(this);
-            return snapBmp;
+            return CommonUtils.viewToBitmap(this);
         }
-    }
-    public boolean isSnap() {
-        return isSnaping;
     }
     
     /**
@@ -3305,14 +3306,15 @@ public class TilesView extends GLSurfaceView {
     		        if(zoomingL || fading || movingL || rotatingX || rotatingZ) {
     		            requestRender();
     		        }
-                    else if (isSnaping && mapText.texImageChanged == false && mapText.screenTextGetting == false && drawFullTile){
-                        if (snapPos != null) {
-                            XYFloat xy = mercXYToScreenXYConv(Util.posToMercPix(snapPos, getZoomLevel()), getZoomLevel());
-                            // 确保快照地图时，地图已经移动到指定的中心位置，误差为128像素?
-                            if (Math.abs(xy.x - displaySize.x/2) < 128 && Math.abs(xy.y - displaySize.y/2) < 128) {
-                                snapBmp = savePixels(0, 0, displaySize.x, displaySize.y, gl);
-                                isSnaping = false;
+                    else if (isCancelSnap == false && snapCenterPos != null && mapText.texImageChanged == false && mapText.screenTextGetting == false && drawFullTile){
+                        XYFloat xy = mercXYToScreenXYConv(Util.posToMercPix(snapCenterPos, getZoomLevel()), getZoomLevel());
+                        // 确保快照地图时，地图已经移动到指定的中心位置，误差为32像素?
+                        if (Math.abs(xy.x - displaySize.x/2) < 32 && Math.abs(xy.y - displaySize.y/2) < 32) {
+                            snapBmp = savePixels(0, 0, displaySize.x, displaySize.y, gl);
+                            synchronized (snapCenterPos) {
+                                snapCenterPos.notifyAll();
                             }
+                            snapCenterPos = null;
                         }
                     }
 

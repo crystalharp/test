@@ -1065,7 +1065,7 @@ public class CommonUtils {
                     TrafficQueryFragment.submitTrafficQuery(sphinx, start, end, queryType);
                 } else {
                     trafficQueryFragment.setDataNoSuggest(poi, location, queryType);
-                    sphinx.uiStackPop(R.id.view_result_map);   // 再回退时不出现地图界面
+                    sphinx.uiStackRemove(R.id.view_result_map);   // 再回退时不出现地图界面
                     sphinx.showView(R.id.view_traffic_query);
                 }
             }
