@@ -322,6 +322,14 @@ public class MapStatsService extends Service {
                             downloadCity.totalSize = Integer.parseInt(downloadCityStrArr[1]);
                             downloadCity.downloadedSize = Integer.parseInt(downloadCityStrArr[2]);
                             downloadCity.state = Integer.parseInt(downloadCityStrArr[3]);
+                            
+                            // 在用户退出下载地图界面再进入时
+                            // v4.20要求之前正在下载和等待的状态保持不变
+                            // v4.30要求之前正在下载和等待的状态全部设置为暂停状态
+                            if (downloadCity.state == DownloadCity.STATE_WAITING
+                                    || downloadCity.state == DownloadCity.STATE_DOWNLOADING) {
+                                downloadCity.state = DownloadCity.STATE_STOPPED;
+                            }
                         }
                     }
                 }

@@ -2,10 +2,10 @@ package com.tigerknows.service;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery.LocationParameter;
 import com.tigerknows.model.LocationQuery.TKNeighboringCellInfo;
 import com.tigerknows.model.LocationQuery.TKScanResult;
-import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.provider.LocationTable;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.radar.Alarms.AlarmAction;
@@ -133,7 +133,7 @@ public class LocationCollectionService extends Service {
             @Override
             public void run() {
                 int i = 0;
-                if (BaseQueryTest.Test) {
+                if (BaseQuery.Test) {
                     Location location = new Location(TKLocationManager.GPS_COLLECTION_PROVIDER);
                     location.setLatitude(111);
                     location.setLongitude(222);
