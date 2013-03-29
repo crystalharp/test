@@ -14,7 +14,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
+import android.content.DialogInterface.OnCancelListener;
 import android.graphics.Bitmap;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -979,10 +979,11 @@ public class MapView extends RelativeLayout implements
      * @param position
      * @param mapScene
      */
-    public void snapMapView(final Activity activity, final SnapMap snapMap, final Position position, final MapScene mapScene) {
+    public void snapMapView(final Activity activity, final SnapMap snapMap, Position position, final MapScene mapScene) {
         if (activity == null || snapMap == null || position == null) {
             return;
         }
+        final Position centerPos = position.clone();
         View custom = activity.getLayoutInflater().inflate(R.layout.loading, null);
         TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
         loadingTxv.setText(R.string.doing_and_wait);
@@ -991,11 +992,14 @@ public class MapView extends RelativeLayout implements
         final Dialog tipProgressDialog = CommonUtils.showNormalDialog(activity, custom);
         tipProgressDialog.setCancelable(true);
         tipProgressDialog.setCanceledOnTouchOutside(false);
-        tipProgressDialog.setOnDismissListener(new OnDismissListener() {
+        tipProgressDialog.setOnCancelListener(new OnCancelListener() {
             
             @Override
-            public void onDismiss(DialogInterface dialog) {
-                tilesView.resetSnap();
+            public void onCancel(DialogInterface dialog) {
+                tilesView.isCancelSnap = true;
+                synchronized (centerPos) {
+                    centerPos.notifyAll();
+                }
             }
         });
         tipProgressDialog.show();
@@ -1004,42 +1008,62 @@ public class MapView extends RelativeLayout implements
             
             @Override
             public void run() {
-                tilesView.requestSnap(position);
-                int waitTimes = 0;
-                // 等待快照完成，最长等待时间为60s
-                while (waitTimes < 30 && tipProgressDialog.isShowing() && tilesView.isSnap()) {
+                
+                tilesView.requestSnap(centerPos);
+                
+                synchronized (centerPos) {
                     try {
-                        Thread.sleep(2*1000);
+                        centerPos.wait();
                     } catch (InterruptedException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
                     }
-                    waitTimes++;
                 }
                 
                 activity.runOnUiThread(new Runnable() {
                     
                     @Override
                     public void run() {
+                        
                         if (tipProgressDialog != null && tipProgressDialog.isShowing()) {
                             tipProgressDialog.dismiss();
                         }            
                         
+                        tilesView.stopSnap();
                         restoreScene(mapScene);
-                        
-                        Bitmap bm = tilesView.getSnapBitmap();
-                        String mapPath = TKConfig.getDataPath(true);
-                        Uri uri = null;
-                        if (bm != null && !TextUtils.isEmpty(mapPath)) {
-                            uri = CommonUtils.bitmap2Png(bm, "mapsnap.png", mapPath);
-                            if (bm.isRecycled() == false) {
-                                bm.recycle();
+
+                        if (tilesView.isCancelSnap == false) {
+                            Bitmap bm = tilesView.getSnapBitmap();
+                            String mapPath = TKConfig.getDataPath(true);
+                            Uri uri = null;
+                            if (bm != null && !TextUtils.isEmpty(mapPath)) {
+                                uri = CommonUtils.bitmap2Png(bm, "mapsnap.png", mapPath);
+                                if (bm.isRecycled() == false) {
+                                    bm.recycle();
+                                }
+                                bm = null;
                             }
-                            bm = null;
+                            snapMap.finish(uri);
                         }
-                        snapMap.finish(uri);
                     }
                 });
+            }
+        }).start();
+        
+        // 此线程在60s后唤醒centerPos，如果此时快照地图还没有完成，则立即结束
+        new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(60*1000);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                synchronized (centerPos) {
+                    centerPos.notifyAll();
+                }
             }
         }).start();
     }
