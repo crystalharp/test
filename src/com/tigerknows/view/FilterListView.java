@@ -16,6 +16,8 @@
 
 package com.tigerknows.view;
 
+import com.decarta.Globals;
+import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
@@ -421,7 +423,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         button.setGravity(Gravity.CENTER);
         button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         button.setSingleLine(true);
-        button.setGravity(Gravity.CENTER);
+        button.setPadding(0, 0, Util.dip2px(Globals.g_metrics.density, 2), 0);
         return button;
     }
     
