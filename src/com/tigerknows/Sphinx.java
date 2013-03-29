@@ -2491,21 +2491,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
     
-    private boolean uiStackRemove(int id) {
+    public boolean uiStackRemove(int id) {
         synchronized (mUILock) {
             boolean result = false;
-            int index = 0;
-            for(int i : mUIStack) {
-                if (i == id) {
-                    break;
+            for(int i = mUIStack.size()-1; i >= 0; i--) {
+                if (mUIStack.get(i) == id) {
+                    mUIStack.remove(i);
+                    result = true;
                 }
-                index++;
-            }
-            
-            int size = mUIStack.size();
-            if (size > 0 && index < size) {
-                mUIStack.remove(index);
-                result = true;
             }
             return result;
         }
