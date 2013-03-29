@@ -582,6 +582,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         mDownloadCityList.addAll(list);
         
         initIntent();
+        
         if (mMapEngine.isExternalStorage() == false) {
             for(int i = mDownloadCityList.size()-1; i >= 0; i--) {
                 DownloadCity downloadCity = mDownloadCityList.get(i);
@@ -594,11 +595,25 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             }
         }
         
-        // 将之前正在下载中的城市加入到下载队列
-        for(int i = 0, size = mDownloadCityList.size(); i < size; i++) {
-            DownloadCity downloadCity = mDownloadCityList.get(i);
-            if (downloadCity.state == DownloadCity.STATE_WAITING || downloadCity.state == DownloadCity.STATE_DOWNLOADING) {
-                operateDownloadCity(downloadCity.cityInfo, MapDownloadService.OPERATION_CODE_ADD);
+        // v4.20 将之前正在下载中的城市加入到下载队列
+//        for(int i = 0, size = mDownloadCityList.size(); i < size; i++) {
+//            DownloadCity downloadCity = mDownloadCityList.get(i);
+//            if (downloadCity.state == DownloadCity.STATE_WAITING || downloadCity.state == DownloadCity.STATE_DOWNLOADING) {
+//                operateDownloadCity(downloadCity.cityInfo, MapDownloadService.OPERATION_CODE_ADD);
+//            }
+//        }
+        
+        // 检查是否正在MapDownloadService的下载队列里，如果是则将其设为正在下载
+        List<CityInfo> downloadingList = new ArrayList<CityInfo>();
+        downloadingList.addAll(MapDownloadService.CityInfoList);
+        for(int j = downloadingList.size()-1; j >= 0; j--) {
+            CityInfo downloading = downloadingList.get(j);
+            for(int i = mDownloadCityList.size()-1; i >= 0; i--) {
+                DownloadCity downloadCity = mDownloadCityList.get(i);
+                if (downloadCity.cityInfo.getId() == downloading.getId()) {
+                    downloadCity.state =DownloadCity.STATE_DOWNLOADING;
+                    break;
+                }
             }
         }
         
