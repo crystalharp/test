@@ -32,6 +32,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
+                    android:scaleType="fitXY"
                     android:background="@drawable/bg_picture_tuangou_detail"
                     />
                 <ImageView 
@@ -47,7 +48,7 @@
                     android:id="@+id/name_txv"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
+                    android:layout_alignBottom="@id/picture_imv"
                     android:background="#99000000"
                     android:textColor="@color/white"
                     android:textSize="16sp"
