@@ -6,6 +6,7 @@ package com.tigerknows.view;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Hashtable;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,7 +35,9 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.MapDownload.DownloadCity;
 import com.tigerknows.maps.MapEngine;
+import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BootstrapModel;
+import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
 import com.tigerknows.model.BootstrapModel.SoftwareUpdate;
 import com.tigerknows.util.CommonUtils;
@@ -87,6 +90,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     public static final int MESSAGE_TYPE_COMMENT = 4;
     private int mMessageType = MESSAGE_TYPE_NONE;
     
+    public static final int DIAOYAN_HASCLICKED = 2;
     private DiaoyanQueryResponse mDiaoyanQueryResponse;
     
     public static DownloadCity CurrentDownloadCity;
@@ -192,6 +196,18 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         	if(mDiaoyanQueryResponse.getHasSurveyed() == 0){
                 setFragmentMessage(MESSAGE_TYPE_USER_SURVEY);
                 return;
+        	}else if(mDiaoyanQueryResponse.getHasSurveyed() == DIAOYAN_HASCLICKED){
+        		/*
+        		 * 本处规定如果用户已经点击了用户调研按钮，就把HasSurveyed赋值成2(服务器端不可能出现2)
+        		 * 然后去服务端重新执行查询，再依据查询结果再次刷新
+        		 */
+                DataOperation diaoyanQuery = new DataOperation(mContext);
+                Hashtable<String, String> criteria = new Hashtable<String, String>();
+                criteria.put(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIAOYAN);
+                criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+                diaoyanQuery.setup(criteria, Globals.g_Current_City_Info.getId());
+                mSphinx.queryStart(diaoyanQuery);
+                return;
         	}
         }
 
@@ -267,10 +283,13 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                     showUpgradeMapDialog();
                 } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
                 	String url=mDiaoyanQueryResponse.getUrl();
-                	Intent intent=new Intent();
-                	intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.user_survey));
-                	intent.putExtra(BrowserActivity.URL, url);
-                	mSphinx.showView(R.id.activity_browser, intent);
+                	if(url != null){               		
+                		Intent intent=new Intent();
+                		intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.user_survey));
+                		intent.putExtra(BrowserActivity.URL, url);
+                		mDiaoyanQueryResponse.setHasSurveyed(DIAOYAN_HASCLICKED);
+                		mSphinx.showView(R.id.activity_browser, intent);
+                	}
                 } else if (mMessageType == MESSAGE_TYPE_COMMENT) {
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
                     mSphinx.showView(R.id.view_go_comment);

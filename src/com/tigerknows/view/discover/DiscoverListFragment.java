@@ -51,8 +51,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
@@ -766,10 +764,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 
             Tuangou tuangou = getItem(position);
             Drawable drawable = tuangou.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
-            boolean isNeedAnimation = false;
-            if( pictureImv.getBackground()==null ){
-            	isNeedAnimation = true;
-            }
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
@@ -777,12 +771,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             	pictureImv.setBackgroundDrawable(drawable);
             } else {
                 pictureImv.setBackgroundDrawable(null);
-            }
-            
-            if(isNeedAnimation && pictureImv.getBackground()!=null){
-            	Animation anim = new AlphaAnimation(0, 1);
-            	anim.setDuration(500);
-            	pictureImv.startAnimation(anim);
             }
             
             Shangjia shangjia = Shangjia.getShangjiaById(tuangou.getSource(), mSphinx, mLoadedDrawableRun);
@@ -834,10 +822,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 
             Dianying dianying = getItem(position);
             Drawable drawable = dianying.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
-            boolean isNeedAnimation = false;
-            if( pictureImv.getBackground()==null ){
-            	isNeedAnimation = true;
-            }
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
@@ -845,12 +829,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             	pictureImv.setBackgroundDrawable(drawable);
             } else {
                 pictureImv.setBackgroundDrawable(null);
-            }
-            
-            if(isNeedAnimation && pictureImv.getBackground()!=null){
-            	Animation anim = new AlphaAnimation(0, 1);
-            	anim.setDuration(500);
-            	pictureImv.startAnimation(anim);
             }
             
             nameTxv.setText(dianying.getName());
@@ -902,10 +880,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 
             Yanchu yanchu = getItem(position);
             Drawable drawable = yanchu.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
-            boolean isNeedAnimation = false;
-            if( pictureImv.getBackground()==null ){
-            	isNeedAnimation = true;
-            }
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
@@ -913,12 +887,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             	pictureImv.setBackgroundDrawable(drawable);
             } else {
                 pictureImv.setBackgroundDrawable(null);
-            }
-            
-            if(isNeedAnimation && pictureImv.getBackground()!=null){
-            	Animation anim = new AlphaAnimation(0, 1);
-            	anim.setDuration(500);
-            	pictureImv.startAnimation(anim);
             }
             
             nameTxv.setText(yanchu.getName());
@@ -957,10 +925,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 
             Zhanlan yanchu = getItem(position);
             Drawable drawable = yanchu.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
-            boolean isNeedAnimation = false;
-            if( pictureImv.getBackground()==null ){
-            	isNeedAnimation = true;
-            }
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
@@ -968,12 +932,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             	pictureImv.setBackgroundDrawable(drawable);
             } else {
                 pictureImv.setBackgroundDrawable(null);
-            }
-            
-            if(isNeedAnimation && pictureImv.getBackground()!=null){
-            	Animation anim = new AlphaAnimation(0, 1);
-            	anim.setDuration(500);
-            	pictureImv.startAnimation(anim);
             }
             
             nameTxv.setText(yanchu.getName());
