@@ -2089,6 +2089,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             
             ViewGroup bodyView=(ViewGroup)mInfoWindowYanchuList.findViewById(R.id.body_view);
             bodyView.setOnTouchListener(mInfoWindowBodyViewListener);
+            pictureImv.setOnTouchListener(mInfoWindowBodyViewListener);
             
             mInfoWindowTrafficButtonListener.poi = poi;
             mInfoWindowTrafficButtonListener.actionLog = ActionLog.AboutUs;
@@ -2134,6 +2135,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             
             ViewGroup bodyView=(ViewGroup)mInfoWindowTuangouList.findViewById(R.id.body_view);
             bodyView.setOnTouchListener(mInfoWindowBodyViewListener);
+            pictureImv.setOnTouchListener(mInfoWindowBodyViewListener);
             
             mInfoWindowTrafficButtonListener.poi = poi;
             mInfoWindowTrafficButtonListener.actionLog = ActionLog.AboutUs;
