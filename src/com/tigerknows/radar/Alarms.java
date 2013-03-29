@@ -15,6 +15,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 
+/**
+ * 
+ * @author xupeng
+ * 这个类提供了定时调用intent的服务。它和radar/AlarmAdjustReceiver.java一起提供了
+ * 不受手机时间修改影响的定时器服务。
+ * 使用这个类需要实现AlarmAction接口，具体函数为存储该服务的定时器绝对时间和相对时间;
+ * 读绝对时间;读相对时间;获取定时器调用的intent对象。
+ * 定时器时间的设置完全使用Calendar类来进行传递，并且提供了一些Alarm计算方法，特别根据
+ * 服务的特点添加了生成下一天某时间段中随机时间的方法。
+ * 
+ * 具体例子参见PullService.java的实现。
+ */
 public class Alarms {
     
     static final String TAG = "Alarms";
@@ -22,9 +34,11 @@ public class Alarms {
     public static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     
     /**
-     * Sets alert in AlarmManger.  This is what will
-     * actually launch the pull data service when the alarm triggers.
-     * 使用相对时间设置定时器的原因是为了避免将时间调整到已设定时器之后的时间，那样会导致之前的所设置的定时器立即被触发。
+     * 定时器的传递使用calendar类，绝对时间，设置定时器时使用相对时间来设置，
+     * 原因是使用绝对时间的话如果将时间调整到已设定时器之后的时间，则会立即触发所设置的定时器。
+     * 调用该方法的服务需要实现AlarmAction接口，以进行获取intent和保存定时器时间操作。
+     * 同时保存绝对时间和相对时间的原因是为了在手机时间变化的时候进行绝对时间校准，具体方法
+     * 在radar/AlarmAdjustReceiver.java里
      */
     public static void enableAlarm(Context context, Calendar alarmCal, AlarmAction action) {
         AlarmManager am = (AlarmManager)
@@ -84,10 +98,10 @@ public class Alarms {
         return next;
     }
     
-    public static Calendar alarmAddHours(Calendar next, int addHours) {
+    public static Calendar alarmAddMinutes(Calendar next, int addMinutes) {
         
-        if (addHours > 0 && next != null) {
-            next.add(Calendar.HOUR_OF_DAY, (int)addHours);
+        if (addMinutes > 0 && next != null) {
+            next.add(Calendar.MINUTE, (int)addMinutes);
         }
         
         return next;
@@ -107,7 +121,8 @@ public class Alarms {
         LogWrapper.d(TAG, "before check, alarm is: " + next.getTime().toLocaleString());
         
         if (next.compareTo(now) <= 0) {
-            now.add(Calendar.MINUTE, TKConfig.AlarmCheckDelayTime);
+            now = alarmAddMinutes(now, TKConfig.AlarmCheckDelayTime);
+//            now.add(Calendar.MINUTE, TKConfig.AlarmCheckDelayTime);
             next = now;
         }
         return next;

@@ -57,6 +57,10 @@ import java.util.Map;
  *   中进行处理即可，不需要重新设置定时器。它所接受的广播应该是那些会导致没有定时器或者定时器丢失的
  *   行为。时间或时区变更会导致的问题是过期的定时器会被立即触发而无法disable掉，所以在PullService
  *   中进行了检查，如果是和所设置的定时器不符的intent调用则推迟一小时再来。
+ *   变更2：在PullService中并不能准确的检查是否是过期的定时器，于是决定采用相对时间来设置定时器，
+ *   这样就不会受时间改变的影响。
+ *   变更3：在radar/AlarmAdjustReceiver.java中添加了定时器时钟校准机制，使得定时器不受
+ *   手机时钟修改的影响。具体做法见对应文件的注释。
  * 2.计算和设置定时器
  *   这个部分在radar/Alarms.java中。
  *   计算定时器有若干个函数，返回calendar对象。
@@ -72,10 +76,10 @@ import java.util.Map;
 public class PullService extends Service {
     
     static final String TAG = "PullService";
-    static int fail = 0;
     final static int MaxFail = 3;
     final static int requestStartHour = 9;
     final static int requestEndHour = 21;
+    int fail = 0;
     
     public static PullAlarmAction alarmAction = new PullAlarmAction();
 
@@ -89,6 +93,14 @@ public class PullService extends Service {
             public void run() {
                 TKConfig.readConfig();
                 long currentTimeMillis = System.currentTimeMillis();
+                
+                Context context = getApplicationContext();
+                try {
+                    String s = TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_FAILED_TIMES, "0");
+                    fail = Integer.parseInt(s);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
 
                 Calendar requestCal = Calendar.getInstance();
                 requestCal.setTimeInMillis(currentTimeMillis);
@@ -103,7 +115,6 @@ public class PullService extends Service {
                 next.add(Calendar.MINUTE, TKConfig.PullServiceFailedRetryTime);
 //                Alarms.alarmAddHours(next, 1);
                 
-                Context context = getApplicationContext();
                 
                 // 获取当前城市
                 CityInfo currentCityInfo = Globals.getLastCityInfo(context);
@@ -335,6 +346,7 @@ public class PullService extends Service {
         
         Context context = getApplicationContext();
         Alarms.enableAlarm(context, next, alarmAction);
+        TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_FAILED_TIMES, String.valueOf(fail));
         
         Intent name = new Intent(context, PullService.class);
         stopService(name);

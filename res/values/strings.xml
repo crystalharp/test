@@ -109,7 +109,7 @@
     <string name="add">添加</string>
     <string name="all_province">全省</string>
     <string name="added">已加</string>
-    <string name="map_static_waiting_tip">地图信息统计中...</string>
+    <string name="map_static_waiting_tip">地图信息读取中...</string>
     <string name="city">市</string>
     <string name="province">省</string>
     <string name="please_add_city">请先添加城市...</string>
