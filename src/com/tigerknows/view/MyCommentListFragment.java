@@ -308,7 +308,8 @@ public class MyCommentListFragment extends BaseFragment {
             for(int i = mCommentArrayList.size()-1; i >= 0; i--) {
                 Comment comment = mCommentArrayList.get(i);
                 POI commentPOI = comment.getPOI();
-                if (commentPOI.getUUID().equals(poi.getUUID())) {
+                String uuid = commentPOI.getUUID();
+                if (uuid != null && uuid.equals(poi.getUUID())) {
                     try {
                         commentPOI.init(poi.getData());
                         commentPOI.setMyComment(comment);
