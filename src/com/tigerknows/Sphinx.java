@@ -1759,7 +1759,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         	Response response = baseQuery.getResponse();
         	if (response instanceof DiaoyanQueryResponse) {
         		DiaoyanQueryResponse diaoyanQueryResponse = (DiaoyanQueryResponse) response;
-        		if (diaoyanQueryResponse.getHasSurveyed() == 0) {
+        		if (diaoyanQueryResponse.getHasSurveyed() != 1) {
         			getMoreFragment().setDiaoyanQueryResponse(diaoyanQueryResponse);
         			getMoreFragment().refreshMoreBtn(false);
         		}
