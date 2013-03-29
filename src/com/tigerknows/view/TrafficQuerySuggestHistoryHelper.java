@@ -32,11 +32,14 @@ public class TrafficQuerySuggestHistoryHelper {
 	
 	SuggestArrayAdapter mSuggestArrayAdapter;
 	
+	ListView mSuggestLsv;
+	
 	List<TKWord> mTKWordList = new ArrayList<TKWord>();
 	
 	public TrafficQuerySuggestHistoryHelper(Context context, TrafficQueryFragment queryFragment, ListView listView) {
 		mQueryFragment = queryFragment;
 		mSuggestArrayAdapter = new SuggestArrayAdapter(context, R.layout.suggest_list_item, mTKWordList);
+		mSuggestLsv = listView;
 		mSuggestArrayAdapter.setCallBack(new CallBack() {
             
             @Override
@@ -109,6 +112,7 @@ public class TrafficQuerySuggestHistoryHelper {
             mSuggestArrayAdapter.key = searchWord;
 	    }
         mSuggestArrayAdapter.notifyDataSetChanged();
+        mSuggestLsv.setSelectionFromTop(0, 0);
 	}
 
 	public void suggestSelect(POI poi, int index) {
