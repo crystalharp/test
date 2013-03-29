@@ -10,6 +10,7 @@ import java.util.Calendar;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -54,6 +55,8 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     static final String TAG = "MoreFragment";
     
     public static final int SHOW_COMMENT_TIP_TIMES = 3;
+    public static final int SHOW_NICKNAME_MAX_WIDTH = 150;
+    public static final int SHOW_NICKNAME_OMIT_WIDTH = 9;
     
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -366,7 +369,26 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         	mUserBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
         	mUserBtn.setCompoundDrawablePadding(CommonUtils.dip2px(mContext, 10));
         	if (Globals.g_User != null) {
-            	mUserNameTxv.setText(Globals.g_User.getNickName());
+        		/*
+        		 * 下面一段代码衡量显示的昵称会否超出范围，如果超出，则显示时会截断并添加三个点
+        		 * 目前可显示的范围为150个宽度，这相当于12+2/3个"@"的宽度
+        		 * 截断后仍然可以显示11个"@"的宽度
+        		 * 注：这不是最佳的方法，对于屏幕较窄的手机可能仍然并不奏效，但已经优于产品部于
+        		 * 	   2013年03月29日(4.30版)所提出的依据字符数决定的办法，并报产品部通过
+        		 * 注2：若该方法将来在N多地方使用，可能需要单独放在一个Utils里以便调用
+        		 * fengtianxiao@tigerknows 2013/03/29
+        		 */
+        		Paint paint=new Paint();
+        		String nickNameText = Globals.g_User.getNickName();
+        		int strwid = (int)paint.measureText(nickNameText);
+        		if(strwid > SHOW_NICKNAME_MAX_WIDTH){
+        			while(strwid > SHOW_NICKNAME_MAX_WIDTH - SHOW_NICKNAME_OMIT_WIDTH){
+        				nickNameText = nickNameText.substring(0 , nickNameText.length()-1);
+        				strwid = (int)paint.measureText(nickNameText);
+        			}
+        			nickNameText = nickNameText + "...";
+        		}
+            	mUserNameTxv.setText(nickNameText);
             	mUserNameTxv.setVisibility(View.VISIBLE);
         	}
         } else {
