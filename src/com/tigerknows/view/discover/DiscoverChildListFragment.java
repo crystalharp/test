@@ -341,6 +341,14 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                 view = convertView;
             }
 
+            //Set a listener to prevent the back ground of the the whole list item to become blue when pressed.
+            view.findViewById(R.id.name_view).setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					
+				}
+			});
+            
             TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
             TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
             View addressView = view.findViewById(R.id.address_view);
