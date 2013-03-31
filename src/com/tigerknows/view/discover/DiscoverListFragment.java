@@ -1028,6 +1028,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     });
                 }
                 
+                refreshFilter(mDataQuery.getFilterList());
                 makeFilterArea(dataQuery);
                 
                 List<Tuangou> list = tuangouResponse.getList().getList();
@@ -1040,7 +1041,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
                 }
-                refreshFilter(mDataQuery.getFilterList());
                 
             } else {
                 if (dataQuery.isTurnPage()) {
@@ -1069,7 +1069,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     });
                 }
 
+                refreshFilter(mDataQuery.getFilterList());
                 makeFilterArea(dataQuery);
+                
                 List<Dianying> list = dianyingResponse.getList().getList();
                 for(Dianying item : list) {
                     item.setFilterArea(mFilterArea);
@@ -1081,7 +1083,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
                 }
-                refreshFilter(mDataQuery.getFilterList());
                 
             } else {
                 if (dataQuery.isTurnPage()) {
