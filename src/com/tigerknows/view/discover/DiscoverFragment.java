@@ -276,7 +276,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
     /**
      * falg of whether the user moves his/her finger
      */
-    boolean isBegingDrag=false;
+    boolean isBeginDrag=false;
     
     /**
      * X position of the last touch event
@@ -319,30 +319,30 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                         mSphinx.getDiscoverListFragment().setup();
                         mSphinx.showView(R.id.view_discover_list);
                         mTitleBtn.setClickable(false);
-                        isBegingDrag = false;
+                        isBeginDrag = false;
                         return false;
                     }
                 }
                 mCategoryGallery.onTouchEvent(ev);
                 if (action == MotionEvent.ACTION_DOWN) {
-                    if (isBegingDrag == false) {
+                    if (isBeginDrag == false) {
                         downx = ev.getX();
                     }
                     lastx = ev.getX();
                 } else if (action == MotionEvent.ACTION_MOVE) {
-                    if (isBegingDrag == false) {
+                    if (isBeginDrag == false) {
                         downx = ev.getX();
                         downx = lastx;
-                        isBegingDrag = true;
+                        isBeginDrag = true;
                     }
 
                     lastx = ev.getX();
                     final int widthWithMargin = (int) (screenWidth*DISCOVER_WIDHT_RATE);
                     final int offsetPixels = ((int)Math.abs(lastx-downx)) % ((int) screenWidth);
-                    final float offset = (float) (offsetPixels > widthWithMargin ? widthWithMargin : offsetPixels) / widthWithMargin;
+                    final float offset = (float) (Math.min(widthWithMargin, offsetPixels)) / widthWithMargin;
                     mDiscoverTopIndicator.onPageScrolled((int)(lastx-downx), offset, (int)(offsetPixels*0.5));
                 } else if (action == MotionEvent.ACTION_UP) {
-                    isBegingDrag = false;
+                    isBeginDrag = false;
                     downx = lastx;
                     if (mDiscoverCategoryAdapter != null) {
                         try {
@@ -367,7 +367,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
 
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                if (isBegingDrag == false) {
+                if (isBeginDrag == false) {
                     if (mPosition != -1) {
                         if (position > mPosition) {
                             mActionLog.addAction(ActionLog.FLING, "channel", "left");
@@ -391,10 +391,10 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                     }
                 }
                 int count = mIndicationView.getChildCount();
-                int realPosition = (position%count);
+                int curPos = (position%count);
                 for(int i = 0; i < count; i++) {
                     ImageView imageView = (ImageView) mIndicationView.getChildAt(i);
-                    if (i == realPosition) {
+                    if (i == curPos) {
                         imageView.setBackgroundResource(R.drawable.ic_learn_dot_selected);
                     } else {
                         imageView.setBackgroundResource(R.drawable.ic_learn_dot_normal);
