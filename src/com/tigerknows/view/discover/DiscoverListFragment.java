@@ -359,7 +359,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                                     }
                                 }
                             }
-                            tagret.getYingxun().setChangciOption(changciOption);
+                            for (int i = 0, size=getList().size(); i < size; i++) {
+								((Dianying)getList().get(i)).getYingxun().setChangciOption(changciOption);
+							}
 //                            tagret.getYingxun().setOrderNumber(position+1);
                             mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, position+1, tagret.getUid());
                         	mSphinx.showView(R.id.view_dianying_detail);
