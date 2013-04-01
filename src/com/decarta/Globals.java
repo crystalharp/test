@@ -26,18 +26,47 @@ import com.tigerknows.view.user.User;
 
 public class Globals {
     
+	/**
+	 * 暂无定位信息
+	 */
     public static final int LOCATION_STATE_NONE = 0;
+    
+    /**
+     * 打开软件来第一次定位成功
+     */
     public static final int LOCATION_STATE_FIRST_SUCCESS = 1;
+    
+    /**
+     * 定位成功后，已经显示出切换城市对话框
+     */
     public static final int LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG = 2;
     
+    /**
+     * 屏幕相关参数
+     */
 	public static DisplayMetrics g_metrics=new DisplayMetrics();
+	
+	/**
+	 * 当前所选城市信息
+	 */
     public static CityInfo g_Current_City_Info = new CityInfo();
+    
+    /**
+     * 定位信息
+     */
     public static Location g_My_Location = null;
+    
+    /**
+     * 定位城市信息
+     */
     public static CityInfo g_My_Location_City_Info = null;
     public static int g_My_Location_State = 0;
     public static BootstrapModel g_Bootstrap_Model = null;
     private static AsyncImageLoader sAsyncImageLoader = new AsyncImageLoader();
     private static ImageCache sImageCache = new ImageCache();
+    /**
+     * 当前数据网络的传输速度是否为快速
+     */
     private static boolean sConnectionFast = false;
     private static HashMap<XYInteger, HashMap<Integer, XYInteger>> sScreenAdaptPic = new HashMap<XYInteger, HashMap<Integer, XYInteger>>();
     private static XYInteger sOptimalAdaptiveScreenSize = new XYInteger(480, 800);
@@ -81,6 +110,10 @@ public class Globals {
         sScreenAdaptPic.put(new XYInteger(320, 480), pic);
     }
     
+    /**
+     * 重置当前所选城市、定位信息
+     * @param context
+     */
     public static void init(Context context) {
         Globals.g_Current_City_Info = null;
         Globals.g_My_Location_City_Info = null;
@@ -130,6 +163,10 @@ public class Globals {
         return xyInteger.x+"_"+xyInteger.y;
     }
     
+    /**
+     * 读取会话信息（SessionId）和用户信息（UserId、昵称）
+     * @param context
+     */
     public static void readSessionAndUser(Context context) {
         synchronized (userLock) {
             if (g_Session_Id != null && g_User != null) {
@@ -147,6 +184,11 @@ public class Globals {
         }
     }
     
+    /**
+     * 存储会话信息（SessionId）和用户信息（UserId、昵称）
+     * @param context
+     * @param userResponse
+     */
     public static void storeSessionAndUser(Context context, UserRespnose userResponse) {
         synchronized (userLock) {
             Session session = new Session(userResponse.getSessionId(), userResponse.getTimeout());
@@ -165,6 +207,10 @@ public class Globals {
         }
     }
     
+    /**
+     * 清除会话信息（SessionId）和用户信息（UserId、昵称）
+     * @param context
+     */
     public static void clearSessionAndUser(Context context) {
         synchronized (userLock) {
             Session session = Session.loadDefault(context);
@@ -181,6 +227,10 @@ public class Globals {
         }
     }
     
+    /**
+     * 获取当前城市Id
+     * @return
+     */
     public static int getCurrentCityId() {
         int cityId = MapEngine.CITY_ID_INVALID;
         CityInfo cityInfo = g_Current_City_Info;
@@ -190,6 +240,11 @@ public class Globals {
         return cityId;
     }
     
+    /**
+     * 获取最近所选的城市信息
+     * @param context
+     * @return 当第一次安装使用时，因为还没有选择某个城市所以返回null
+     */
     public static CityInfo getLastCityInfo(Context context) {
         CityInfo cityInfo = g_Current_City_Info;
         if (cityInfo == null || cityInfo.isAvailably() == false) {
