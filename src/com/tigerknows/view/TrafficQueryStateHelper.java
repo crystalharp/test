@@ -304,7 +304,6 @@ public class TrafficQueryStateHelper {
 		mQueryFragment.mSphinx.clearMap();
 		mQueryFragment.mSphinx.setTouchMode(TouchMode.NORMAL);
 		
-		mQueryFragment.mSuggestHistoryHelper.check();
 		mQueryFragment.mSuggestLnl.setVisibility(View.VISIBLE);
 		mQueryFragment.mSphinx.getMenuFragment().setVisibility(View.GONE);
 		mQueryFragment.mCityView.setVisibility(View.GONE);
