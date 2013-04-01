@@ -430,6 +430,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         refreshDownloadCity.downloadedSize = statsDownloadCity.downloadedSize;
         
         if (statsDownloadCity.state != refreshDownloadCity.state) {
+        	refreshDownloadCity.state = statsDownloadCity.state;
             addDownloadCity(mThis, mDownloadCityList, refreshDownloadCity, true);
         }
         notifyDataSetChanged();
@@ -632,7 +633,8 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         if (mIntent != null) {
             ArrayList<Integer> cityIdList = mIntent.getIntegerArrayListExtra(EXTRA_VIEWED_CITY_ID_LIST);
             if (cityIdList != null) {
-                for(int cityId: cityIdList) {
+                for(int j = cityIdList.size()-1; j >= 0; j--) {
+                	int cityId = cityIdList.get(j);
                     boolean exist = false;
                     for(int i = 0, size = mDownloadCityList.size(); i < size; i++) {
                         DownloadCity downloadCity = mDownloadCityList.get(i);
@@ -651,15 +653,24 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             }
             boolean upgradeAll = mIntent.getBooleanExtra(EXTRA_UPGRADE_ALL, false);
             if (upgradeAll) {
-                for (int i = 0, size = mDownloadCityList.size(); i < size; i++) {
-                    DownloadCity downloadCity = mDownloadCityList.get(i);
-                    if (downloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE) {
-                        mMapEngine.removeCityData(downloadCity.cityInfo.getCName());
-                        downloadCity.downloadedSize = 0;
-                        downloadCity.state = DownloadCity.STATE_WAITING;
-                    }
-                }
-                upgradeAll = false;
+            	if (mMapEngine.isExternalStorage()) {
+	            	List<CityInfo> upgradeList = new ArrayList<CityInfo>();
+	                for (int i = mDownloadCityList.size()-1; i >= 0; i--) {
+	                    DownloadCity downloadCity = mDownloadCityList.get(i);
+	                    if (downloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE) {
+	                        mMapEngine.removeCityData(downloadCity.cityInfo.getCName());
+	                        deleteDownloadCity(mThis, mDownloadCityList, downloadCity);
+	                        upgradeList.add(downloadCity.cityInfo);
+	                    }
+	                }
+	                for (int i = upgradeList.size()-1; i >= 0; i--) {
+	                	CityInfo cityInfo = upgradeList.get(i);
+	                    addDownloadCityInternal(cityInfo, true, DownloadCity.STATE_WAITING);
+	                }
+	                notifyDataSetChanged();
+	            }
+            } else {
+            	Toast.makeText(mThis, R.string.not_enough_space, Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -1243,17 +1254,12 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             } else {
                 if (downloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE) {
                     percentTxv.setText(mThis.getString(R.string.may_upgrade));
+                } else if (downloadCity.state == DownloadCity.STATE_DOWNLOADING || downloadCity.state == DownloadCity.STATE_WAITING) {
+                    percentTxv.setText(mThis.getString(R.string.downloading_, String.valueOf(downloadCity.getDownloadPercent())));
+                } else if (downloadCity.state == DownloadCity.STATE_COMPLETED) {
+                    percentTxv.setText(mThis.getString(R.string.completed));
                 } else {
-                    if (downloadCity.state == DownloadCity.STATE_DOWNLOADING || downloadCity.state == DownloadCity.STATE_WAITING) {
-                        percentTxv.setText(mThis.getString(R.string.downloading_, String.valueOf(downloadCity.getDownloadPercent())));
-                    } else if (downloadCity.state == DownloadCity.STATE_STOPPED) {
-                        percentTxv.setText(mThis.getString(R.string.downloaded_, String.valueOf(downloadCity.getDownloadPercent())));
-                    } 
-                    
-                    if (downloadCity.getPercent() >= PERCENT_COMPLETE) {
-                        downloadCity.state = DownloadCity.STATE_COMPLETED;
-                        percentTxv.setText(mThis.getString(R.string.completed));
-                    }
+                	percentTxv.setText(mThis.getString(R.string.downloaded_, String.valueOf(downloadCity.getDownloadPercent())));
                 }
                 progressBar.setProgress((int)Float.parseFloat(downloadCity.getDownloadPercent()));
             }
@@ -1421,6 +1427,21 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             for(int i = 0, length = parcelables.length; i < length; i++) {
                 childList.add((DownloadCity)parcelables[i]);
             }
+        }
+        
+        public DownloadCity clone() {
+        	DownloadCity downloadCity = new DownloadCity(cityInfo.clone());
+        	downloadCity.totalSize = totalSize;
+        	downloadCity.downloadedSize = downloadedSize;
+        	downloadCity.state = state;
+        	if (this.childList != null) {
+        		ArrayList<DownloadCity> childList = new ArrayList<DownloadCity>();
+        		for(int i = 0, size = this.childList.size(); i < size; i++) {
+        			childList.add(this.childList.get(i).clone());
+        		}
+        		downloadCity.childList = childList;
+        	}
+        	return downloadCity;
         }
     }
     
@@ -1688,7 +1709,13 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         }
     }
     
-    public static DownloadCity getProvinceDownloadCity(String pName, int id) {
+    /**
+     * 生成用于DownloadCityAdpater的GroupItem（省份）
+     * @param pName
+     * @param id
+     * @return
+     */
+    public static DownloadCity makeProvinceDownloadCity(String pName, int id) {
         CityInfo provinceCityInfo = new CityInfo();
         provinceCityInfo.setCName(pName);
         provinceCityInfo.setId(id);
@@ -1697,6 +1724,12 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         return provinceDownloadCity;
     }
     
+    /**
+     * 从DownloadCity列表中根据CityInfo查找出相应的DownloadCity
+     * @param list
+     * @param cityInfo
+     * @return
+     */
     public static DownloadCity getDownloadCity(List<DownloadCity> list, CityInfo cityInfo) {
         DownloadCity downloadCity = null;
         for(int i = list.size() - 1; i >= 0; i--) {
@@ -1722,6 +1755,13 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         return downloadCity;
     }
     
+    /**
+     * 添加DownloadCity到列表，添加之前先将其删除，确保列表中不能出现重复项
+     * @param context
+     * @param list
+     * @param downloadCity
+     * @param isManualAdd
+     */
     public static void addDownloadCity(Context context, List<DownloadCity> list, DownloadCity downloadCity, boolean isManualAdd) {
         deleteDownloadCity(context, list, downloadCity);
         
@@ -1802,7 +1842,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                         cityId = cityInfo2.getId();
                     }
                 }
-                province = getProvinceDownloadCity(pName, cityId);
+                province = makeProvinceDownloadCity(pName, cityId);
                 province.cityInfo.order = ORDER_ID_TITLE_THREE+cityId+100; // +100是因为广州作为广东的省会，其id小于天津和重庆
                 province.childList.add(downloadCity);
                 list.add(list.size(), province);
@@ -1814,6 +1854,12 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
         Collections.sort(list, sDownloadCityComparator);
     }
     
+    /**
+     * 从列表中删除指定的DownloadCity，如果删除之后其所属类别下无子项，则删除其所属类别
+     * @param context
+     * @param list
+     * @param downloadCity
+     */
     public static void deleteDownloadCity(Context context, List<DownloadCity> list, DownloadCity downloadCity) {
         boolean delete = false;
         
@@ -1869,12 +1915,18 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
                 }
             }
         }
+        
+        // 如果升级地图类别下无子项，则删除升级地图类别
         if (sizeUpdate == 0) {
             list.remove(getUpdateTitle(context));
         }
+
+        // 如果正在下载类别下无子项，则删除正在下载类别
         if (sizeDownload == 0) {
             list.remove(getDownloadingTitle(context));
         }
+        
+        // 如果下载完成类别下无子项，则删除下载完成类别
         if (sizeComplete == 0) {
             list.remove(getCompleteTitle(context));
         }
