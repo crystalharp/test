@@ -217,6 +217,7 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
                     } else {
                         mShanghumingchengEdt.requestFocus();
                         Toast.makeText(mThis, mThis.getString(R.string.please_input)+mThis.getString(R.string.shanghumingcheng)+"!", Toast.LENGTH_SHORT).show();
+                        showSoftInput();
                         return;
                     }
                     
@@ -231,6 +232,7 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
                     } else {
                         mShanghuleixingBtn.requestFocus();
                         Toast.makeText(mThis, mThis.getString(R.string.please_select)+mThis.getString(R.string.shanghuleixing)+"!", Toast.LENGTH_SHORT).show();
+                        hideSoftInput();
                         return;
                     }
                     
@@ -245,6 +247,7 @@ public class AddMerchant extends BaseActivity implements View.OnClickListener {
                     } else {
                         mShanghudizhiEdt.requestFocus();
                         Toast.makeText(mThis, mThis.getString(R.string.please_input)+mThis.getString(R.string.shanghudizhi)+"!", Toast.LENGTH_SHORT).show();
+                        showSoftInput();
                         return;
                     }
                     
