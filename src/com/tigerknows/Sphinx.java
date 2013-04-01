@@ -1601,7 +1601,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
         }
 
-        // 需要一直监听联想词下载服务的下载完成信息，来解压联想词。
         unregisterReceiver(mCountCurrentDownloadCityBroadcastReceiver);
         
         Intent service = new Intent(Sphinx.this, SuggestLexiconService.class);
