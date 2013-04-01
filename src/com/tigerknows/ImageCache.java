@@ -20,7 +20,8 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 
 /**
- * Tiles caching table
+ * 此类实现缓存图片到扩展存储卡的功能
+ * 如果扩展存储卡不可用，则不缓存
  */
 public class ImageCache {
 	
@@ -75,6 +76,9 @@ public class ImageCache {
 		LogWrapper.i("TileTable", "app path:"+ appPath + ",exist:" + new File(appPath).exists());
 	}
 	
+	/**
+	 * 启动一个线程专门负责图片数据文件写入到扩展存储卡
+	 */
 	void startWritingThread(){
 		stopWriting=false;
 		synchronized(writingList){
@@ -191,7 +195,13 @@ public class ImageCache {
 	
 	}
 	
-	public Bitmap getTile(String name) throws Exception {
+	/**
+	 * 根据文件名返回Bitmap
+	 * @param name
+	 * @return
+	 * @throws Exception
+	 */
+	public Bitmap getImage(String name) throws Exception {
 		if (CONFIG.CACHE_SIZE<=0 || !externalStorage)
 			return null;
 		Bitmap bm = null;
@@ -218,7 +228,13 @@ public class ImageCache {
 		return bm;
 	}
 	
-	public void putTile(String name, byte[] bmBytes) throws Exception {
+	/**
+	 * 将图片数据写入指定名称的文件
+	 * @param name
+	 * @param bmBytes
+	 * @throws Exception
+	 */
+	public void putImage(String name, byte[] bmBytes) throws Exception {
 		if (CONFIG.CACHE_SIZE<=0 || !externalStorage)
 			return;
 
@@ -235,7 +251,10 @@ public class ImageCache {
 		
 	}
 
-	public void clearTiles() {
+	/**
+	 * 清除所有缓存图片文件
+	 */
+	public void clearImages() {
 		if (!externalStorage)
 			return;
 
@@ -254,6 +273,9 @@ public class ImageCache {
 
 	}
 	
+	/**
+	 * 结束写图片文件线程，当缓存的图片文件数目超过限制时，则删除其访问时间离当前较久的一些图片文件
+	 */
 	public void stopWritingAndRemoveOldTiles() {
 		stopWriting=true;
 		

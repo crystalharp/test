@@ -66,7 +66,7 @@ public class AsyncImageLoader {
         final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
         Bitmap bitmap = null;
         try {
-            bitmap = imageCache1.getTile(name);
+            bitmap = imageCache1.getImage(name);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -185,7 +185,7 @@ public class AsyncImageLoader {
                 byte[] data = Utility.openUrl(context, mHttpClient, imageUrl.url, "GET", new WeiboParameters());
                 ImageCache imageCache1 = Globals.getImageCache();
                 final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
-                imageCache1.putTile(name, data);
+                imageCache1.putImage(name, data);
                 return (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(data), "image.png");
             } catch (Exception e) {
                 mHttpClient = null;
