@@ -12,6 +12,7 @@
 	    android:layout_height="wrap_content" />
 	
 	<ScrollView
+	    android:id="@+id/poi_error_recovery_scv"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
 	    android:layout_below="@id/title_view"
