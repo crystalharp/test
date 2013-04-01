@@ -121,7 +121,9 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 			@Override
 			public void afterTextChanged(Editable s) {
 				// TODO Auto-generated method stub
-				valiNumBtn.reset(getString(R.string.reqest_validate_num));
+				//  [And4.30-206] 【更换手机号、重置密码、注册界面】点击获取验证码后，倒计时至少于30秒时，
+				//  重新输入原手机号最后一位，点击获取验证码，可收到验证码
+				// valiNumBtn.reset(getString(R.string.reqest_validate_num));
 			}
 		});
 	}
