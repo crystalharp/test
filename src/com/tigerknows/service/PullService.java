@@ -117,7 +117,7 @@ public class PullService extends Service {
                 
                 
                 // 获取当前城市
-                CityInfo currentCityInfo = Globals.getLastCityInfo(context);
+                CityInfo currentCityInfo = Globals.getLastCityInfo(getApplicationContext());
                 
                 LogWrapper.d(TAG, "currentCityInfo="+currentCityInfo);
                 // 安装后从来没有使用过老虎宝典的情况
@@ -134,7 +134,7 @@ public class PullService extends Service {
                 if (location != null) {
                     MapEngine mapEngine = MapEngine.getInstance();
                     try {
-                        mapEngine.initMapDataPath(context);
+                        mapEngine.initMapDataPath(getApplicationContext());
                         position = mapEngine.latlonTransform(new Position(location.getLatitude(), location.getLongitude()));
                         int cityId = mapEngine.getCityId(position);
                         locationCityInfo = mapEngine.getCityInfo(cityId);

@@ -331,7 +331,7 @@ public class TKConfig {
     private static int sPage_Size = 20;
     
     /**
-     * 地图上显示Shape和OverlayItem的Padding
+     * 地图上显示Shape和OverlayItem内容的Padding
      */
     public static int sMap_Padding = 56;
     

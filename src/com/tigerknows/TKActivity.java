@@ -251,7 +251,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         stopService(service);
         
         try {
-            mMapEngine.initMapDataPath(mThis);
+            mMapEngine.initMapDataPath(getApplicationContext());
         } catch (APIException e) {
             e.printStackTrace();
             CommonUtils.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
@@ -301,7 +301,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
     protected void onResume() {
         super.onResume();
         try {
-            mMapEngine.initMapDataPath(this);
+            mMapEngine.initMapDataPath(getApplicationContext());
         } catch (Exception exception){
             exception.printStackTrace();
             CommonUtils.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));

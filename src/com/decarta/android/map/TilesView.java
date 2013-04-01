@@ -211,6 +211,8 @@ public class TilesView extends GLSurfaceView {
         mParentMapView.executeDownloadListeners(state);
     }   
     
+    boolean clearTileImages = false;
+    
     /**
      * 是否取消快照
      */
@@ -2529,6 +2531,16 @@ public class TilesView extends GLSurfaceView {
 			// Tigerknows end
 			
 			synchronized(drawingLock){
+			    if (clearTileImages) {
+			        tileImages.clear();
+			        Iterator<Integer> iterator1=tileTextureRefs.values().iterator();
+		            while(iterator1.hasNext()){
+		                int textureRef=iterator1.next();
+		                deleteTextureRef(gl,textureRef);
+		            }
+		            tileTextureRefs.clear();
+		            clearTileImages = false;
+			    }
 				//status[0]:moving, status[1]:movingJustDone, status[2]:zooming, status[3]:zoomingJustDone
 				//status[4]:rotatingZ, status[5]:rotatingZJustDone, status[6]:rotatingX status[7]:rotatingXJustDone
 				boolean[] status=new boolean[8];

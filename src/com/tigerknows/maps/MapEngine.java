@@ -38,6 +38,16 @@ public class MapEngine {
 
     public static boolean BMP2PNG = false;
     
+    /**
+     * 删除或更新地图数据时，通知MapView清除缓存的Tile信息
+     */
+    public static final String ACTION_REMOVE_CITY_MAP_DATA = "action.com.tigerknows.remove.city.map.data";
+    
+    /**
+     * 城市Id
+     */
+    public static final String EXTRA_CITY_ID = "extra_city_id";
+    
     public static int CITY_ID_INVALID = -1;
     public static int CITY_ID_QUANGUO = -3;
     public static int CITY_ID_BEIJING = 1;
@@ -60,6 +70,7 @@ public class MapEngine {
     public static final int MAX_REGION_TOTAL_IN_ROM = 30;
     private int lastCityId;
     private List<Integer> lastRegionIdList = new ArrayList<Integer>();
+    private Context context;
     
     private void readLastRegionIdList(Context context) {
         synchronized (this) {
@@ -198,6 +209,7 @@ public class MapEngine {
                 }
             }
             this.isClosed = false;
+            this.context = context;
         } else {
             destroyEngine();
         }
@@ -336,7 +348,26 @@ public class MapEngine {
         if (isClosed) {
             return;
         }
+        int cityId = MapEngine.CITY_ID_INVALID;
+        RegionInfo regionInfo = getRegionInfo(rid);
+        if (regionInfo != null) {
+            cityId = getCityid(regionInfo.getCCityName());
+        }
         Ca.tk_remove_region_data(rid); 
+        sendBroadcastForRemoveMapData(cityId);
+        }
+    }
+    
+    void sendBroadcastForRemoveMapData(int cityId) {
+        synchronized (this) {
+        if (isClosed) {
+            return;
+        }
+        if (context != null) {
+            Intent intent = new Intent(ACTION_REMOVE_CITY_MAP_DATA);
+            intent.putExtra(EXTRA_CITY_ID, cityId);
+            context.sendBroadcast(intent);
+        }
         }
     }
 
@@ -529,6 +560,7 @@ public class MapEngine {
             return;
         }
         Ca.tk_remove_city_data(cityName.trim());
+        sendBroadcastForRemoveMapData(getCityid(cityName));
         }
     }
 

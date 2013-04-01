@@ -605,6 +605,10 @@ public class MapView extends RelativeLayout implements
 	public void clearMap() throws APIException {
 		tilesView.clearMap();
 	}
+	
+	public void clearTileImages() {
+	    tilesView.clearTileImages = true;
+	}
 
 	/**
 	 * get the current zoom level

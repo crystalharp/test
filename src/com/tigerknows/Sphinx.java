@@ -321,11 +321,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        // 读取屏幕参数，如高宽、密度
         WindowManager winMan=(WindowManager)getSystemService(Context.WINDOW_SERVICE);
         Display display=winMan.getDefaultDisplay();
         display.getMetrics(Globals.g_metrics);
         LogWrapper.i(TAG,"onCreate()"+Globals.g_metrics.density);
         
+        // 根据屏幕密度计算出地图上显示Shape和OverlayItem内容的Padding
         TKConfig.sMap_Padding = (int)(56*Globals.g_metrics.density);
         TKConfig.readConfig();
         Globals.init(mThis);
@@ -336,7 +339,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         mMapEngine = MapEngine.getInstance();
         try {
-            mMapEngine.initMapDataPath(mThis);
+            mMapEngine.initMapDataPath(getApplicationContext());
         } catch (APIException exception) {
             exception.printStackTrace();
             CommonUtils.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
@@ -380,7 +383,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mSensorManager.registerListener(mSensorListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
             }
             
-            CityInfo lastCityInfo = Globals.getLastCityInfo(this);
+            CityInfo lastCityInfo = Globals.getLastCityInfo(getApplicationContext());
             if(lastCityInfo != null && lastCityInfo.isAvailably()){
                 cityInfo = lastCityInfo;
             }
@@ -1096,6 +1099,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	protected void onStart() {
 		super.onStart();
 		mZoomView.setVisibility(View.VISIBLE);
+        
+        IntentFilter intentFilter= new IntentFilter(MapEngine.ACTION_REMOVE_CITY_MAP_DATA);
+        registerReceiver(mRemoveCityMapDataBroadcastReceiver, intentFilter);
 	}
 	
 	@Override
@@ -1185,6 +1191,23 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (intent != null
                     && intent.hasExtra(MapStatsService.EXTRA_DOWNLOAD_CITY)) {
                 getMoreFragment().refreshMoreBtn(false);
+            }
+        }
+    };
+    
+    private BroadcastReceiver mRemoveCityMapDataBroadcastReceiver = new BroadcastReceiver() {
+        
+        @Override
+        public void onReceive(Context context, Intent intent) { 
+            if (intent != null
+                    && intent.hasExtra(MapEngine.EXTRA_CITY_ID)) {
+                int cityId = intent.getIntExtra(MapEngine.EXTRA_CITY_ID, MapEngine.CITY_ID_INVALID);
+                if (Globals.g_Current_City_Info.getId()==cityId || mViewedCityInfoList.contains(cityId)) {
+                    if (mMapView != null) {
+                        mMapView.clearTileImages();
+                        mMapView.refreshMap();
+                    }
+                }
             }
         }
     };
@@ -1614,6 +1637,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         LogWrapper.i(TAG, "onStop");
         
         mActionLog.onStop();
+        unregisterReceiver(mRemoveCityMapDataBroadcastReceiver);
     }
         
     public void snapMapView(SnapMap snapMap, Position position, MapScene mapScene) {

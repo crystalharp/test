@@ -243,7 +243,7 @@ public class Globals {
     /**
      * 获取最近所选的城市信息
      * @param context
-     * @return 当第一次安装使用时，因为还没有选择某个城市所以返回null
+     * @return 当第一次安装使用时，因为还没有选择某个城市所以返回无效的城市信息
      */
     public static CityInfo getLastCityInfo(Context context) {
         CityInfo cityInfo = g_Current_City_Info;
