@@ -1071,4 +1071,10 @@ public class TrafficQueryFragment extends BaseFragment {
             }
         }
     }
+
+    public void TrafficOnCityChanged(int cityId) {
+        mSphinx.getMapEngine().suggestwordCheck(mSphinx, cityId);
+        HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_TRAFFIC);
+        HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_BUSLINE);
+    }
 }

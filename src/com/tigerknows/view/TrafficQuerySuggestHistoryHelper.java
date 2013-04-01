@@ -34,7 +34,8 @@ public class TrafficQuerySuggestHistoryHelper {
 	
 	ListView mSuggestLsv;
 	
-	List<TKWord> mTKWordList = new ArrayList<TKWord>();
+	//下轮优化都改成LinkedList
+	List<TKWord> mTKWordList = new LinkedList<TKWord>();
 	
 	public TrafficQuerySuggestHistoryHelper(Context context, TrafficQueryFragment queryFragment, ListView listView) {
 		mQueryFragment = queryFragment;
@@ -61,13 +62,6 @@ public class TrafficQuerySuggestHistoryHelper {
         });
 		listView.setAdapter(mSuggestArrayAdapter);
 	}
-
-	public void check() {
-    	int cityId = mQueryFragment.mMapLocationHelper.getQueryCityInfo().getId();
-    	mQueryFragment.mSphinx.getMapEngine().suggestwordCheck(mQueryFragment.mSphinx, cityId);
-        HistoryWordTable.readHistoryWord(mQueryFragment.mContext, cityId, HistoryWordTable.TYPE_TRAFFIC);
-        HistoryWordTable.readHistoryWord(mQueryFragment.mContext, cityId, HistoryWordTable.TYPE_BUSLINE);
-    }
 	
 	public void refresh(final Context context, final TKEditText tkEditText, final int type) {
 	    mTKWordList.clear();
