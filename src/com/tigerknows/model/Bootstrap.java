@@ -30,7 +30,7 @@ public final class Bootstrap extends BaseQuery {
     protected void createHttpClient() {
         super.createHttpClient();
         String[] bootStrapHostList = TKConfig.getBootStrapHostList();
-        String url = String.format(TKConfig.getBootstarpUrl(), bootStrapHostList[loginConnectTime%bootStrapHostList.length]);
+        String url = String.format(TKConfig.getBootstarpUrl(), bootStrapHostList[bootstrapRetryTime%bootStrapHostList.length]);
         httpClient.setURL(url);
     }
 

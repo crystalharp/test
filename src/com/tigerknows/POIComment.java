@@ -1171,12 +1171,14 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                     List<Comment> list = commentList.getList();
                     if (list != null) {
                         for(int i = list.size()-1; i >= 0; i--) {
+                            // 如果列表中已经有我的点评则将其删除
                             if (Comment.isAuthorMe(list.get(i)) > 0) {
                                 list.remove(i);
-                                list.add(i, mComment);
                                 break;
                             }
                         }
+                        // 将我的点评插入为第一条
+                        list.add(0, mComment);
                     }
                 }
             }

@@ -186,7 +186,12 @@ public class HistoryWordTable {
 		mDb.delete(TABLE_NAME, "(" + CITY_ID + "=" + cityId + ") AND (" + TYPE + "=" + type+ ")", null);
 		return true;
 	}
-
+	
+	/**
+     * 存储的记录数目超过最大值时，将超过的部分记录（插入时间较早的）删除
+     * @param providerList
+     * @throws SQLException
+     */
     public void optimize(int cityId, int type) throws SQLException {
         if(!mDb.isOpen())
             return;

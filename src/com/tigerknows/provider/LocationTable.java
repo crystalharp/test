@@ -28,18 +28,24 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
+ * 此类用于存储定位信息及绑定参数信息（基站、WIFI接入点列表、邻近基站列表信息）
  */
 public class LocationTable {
     
     static final String TAG = "LocationTable";
     
-    static final int MAX_COUNT = 512;
+    /**
+     * 存储记录总数的最大值
+     */
+    static final int COUNT_MAX = 512;
 
 	// HELPERS
 	private DatabaseHelper mDbHelper;
 	private SQLiteDatabase mDb;
 
-	// COLUMNS
+	/** 
+	 * 列名
+	 */
     public static final String ID = "_id";
 	public static final String HASHCODE = "tk_hashCode";
 	public static final String MNC = "tk_mnc";
@@ -51,13 +57,34 @@ public class LocationTable {
     public static final String LOCATION = "tk_location";
     public static final String PROVIDER = "tk_provider";
 
-    public static final int PROVIDER_TIGERKNOWS = 0;
-    public static final int PROVIDER_GPS = 1;
-    public static final int PROVIDER_NETWORK = 2;
-    public static final int PROVIDER_GPS_COLLECTION = 10;
+    /**
+     * 来自老虎宝典的定位
+     */
+    static final int PROVIDER_TIGERKNOWS = 0;
     
+    /**
+     * 来自系统的GPS定位
+     */
+    static final int PROVIDER_GPS = 1;
+    
+    /**
+     * 来自系统的网络定位
+     */
+    static final int PROVIDER_NETWORK = 2;
+    
+    /**
+     * 来自收集的GPS定位
+     */
+    static final int PROVIDER_GPS_COLLECTION = 10;
+    
+    /**
+     * 用于历史定位的来源列表
+     */
     public static final List<Integer> Provider_List_Cache = new ArrayList<Integer>();
     
+    /**
+     * 用于定位收集的来源列表
+     */
     public static final List<Integer> Provider_List_Collection = new ArrayList<Integer>();
     
     static {
@@ -68,13 +95,24 @@ public class LocationTable {
         Provider_List_Collection.add(PROVIDER_GPS_COLLECTION);
     }
 
-	// DB NAME
+	/**
+	 * 数据库文件名
+	 */
 	protected static final String DATABASE_NAME = "locationDB";
 
-	// TABLES
+	/**
+	 *  表名
+	 */
 	protected static final String TABLE_NAME = "location";
+
+	/**
+	 * 数据库版本
+	 */
 	protected static final int DATABASE_VERSION = 2;
 
+	/**
+	 * 创建表的SQL语句
+	 */
 	private static final String TABLE_CREATE = "create table if not exists "
 			+ TABLE_NAME
 			+ "( " 
@@ -152,18 +190,23 @@ public class LocationTable {
 		return this;
 	}
 
+	/**
+	 * 关闭数据库
+	 */
 	public void close() {
 		mDbHelper.close();
 	}
 	
+	/**
+	 * 是否已打开数据库
+	 * @return
+	 */
 	public boolean isOpen(){
 		return mDb.isOpen();
 	}
 
 	/**
-	 * set preference
-	 * 
-	 * 
+	 * 将定位信息及绑定参数信息（基站、WIFI接入点列表、邻近基站列表信息）存储数据表中
 	 */
 	public void write(LocationParameter locationParameter, Location location) {
         if (locationParameter == null || location == null || LocationQuery.PROVIDER_ERROR.equals(location.getProvider())) {
@@ -189,6 +232,11 @@ public class LocationTable {
 			mDb.update(TABLE_NAME, cv, HASHCODE + "=" + locationParameter.hashCode(), null);
 	}
 	
+	/**
+	 * 获取用于存储定位的来源标识
+	 * @param location
+	 * @return
+	 */
 	public int getProvider(Location location) {
 	    int provider = PROVIDER_TIGERKNOWS;
 	    if (location == null) {
@@ -205,6 +253,11 @@ public class LocationTable {
         return provider;
 	}
 
+	/**
+	 * 查询绑定参数信息相同的记录数目
+	 * @param locationParameter
+	 * @return
+	 */
 	public int check(LocationParameter locationParameter) {
 	    int count = -1;
 	    if (locationParameter == null) {
@@ -223,7 +276,12 @@ public class LocationTable {
 		return count;
 	}
 
-    public void read(HashMap<LocationParameter, Location> map, List<Integer> typeList) {
+	/**
+	 * 读取存储的定位记录
+	 * @param map
+	 * @param providerList
+	 */
+    public void read(HashMap<LocationParameter, Location> map, List<Integer> providerList) {
         if(!mDb.isOpen())
             return;
         Cursor mCursor = mDb.query(true, TABLE_NAME,
@@ -234,8 +292,8 @@ public class LocationTable {
             int count = mCursor.getCount();
             try {
                 for(int j = 0;j < count; j++) {
-                    int type = mCursor.getInt(0);
-                    if (typeList.contains(type)) {
+                    int provider = mCursor.getInt(0);
+                    if (providerList.contains(provider)) {
                         LocationParameter locationParameter = new LocationParameter();
                         locationParameter.mnc = mCursor.getInt(1);
                         locationParameter.mcc = mCursor.getInt(2);
@@ -264,7 +322,7 @@ public class LocationTable {
                         }
                         str= mCursor.getString(7);
                         if (TextUtils.isEmpty(str) == false) {
-                            Location location = new Location(LocationQuery.PROVIDER_DATABASE);
+                            Location location = new Location(LocationQuery.PROVIDER_HISTORY);
                             String[] arr = str.split(",");
                             location.setLatitude(Double.parseDouble(arr[0]));
                             location.setLongitude(Double.parseDouble(arr[1]));
@@ -280,8 +338,9 @@ public class LocationTable {
             mCursor.close();
         }
     }
+    
 	/**
-	 * truncates table
+	 * 清空定位数据表中所有记录
 	 * @throws SQLException
 	 */
 	public boolean clear() throws SQLException {
@@ -291,24 +350,30 @@ public class LocationTable {
 		return true;
 	}
 	
-    public boolean clear(List<Integer> typeList) throws SQLException {
+	/**
+	 * 删除定位数据表中记录
+	 * @param providerList
+	 * @return
+	 * @throws SQLException
+	 */
+    public boolean clear(List<Integer> providerList) throws SQLException {
         if(!mDb.isOpen())
             return false;
-        mDb.delete(TABLE_NAME, getWhereByTypeList(typeList), null);
+        mDb.delete(TABLE_NAME, makeWhereByProviderList(providerList), null);
         return true;
     }
     
     /**
-     * 根据限制的类型列表生成条件表达式字符串
-     * @param typeList
+     * 生成用于SQL查询语句WHERE的条件表达式字符串
+     * @param providerList
      * @return
      */
-    String getWhereByTypeList(List<Integer> typeList) {
+    String makeWhereByProviderList(List<Integer> providerList) {
         StringBuilder s = new StringBuilder();
-        for(int i = typeList.size()-1; i >= 0; i--) {
+        for(int i = providerList.size()-1; i >= 0; i--) {
             s.append(PROVIDER);
             s.append("=");
-            s.append(typeList.get(i));
+            s.append(providerList.get(i));
             if (i > 0) {
                 s.append(" OR ");
             }
@@ -316,16 +381,21 @@ public class LocationTable {
         return s.toString();
     }
 
-    public void optimize(List<Integer> typeList) throws SQLException {
+    /**
+     * 存储的记录数目超过最大值时，将超过的部分记录（插入时间较早的）删除
+     * @param providerList
+     * @throws SQLException
+     */
+    public void optimize(List<Integer> providerList) throws SQLException {
         if(!mDb.isOpen())
             return;
         Cursor mCursor = mDb.query(true, TABLE_NAME,
-                new String[]{ID}, getWhereByTypeList(typeList),
+                new String[]{ID}, makeWhereByProviderList(providerList),
                 null, null, null, ID + " ASC", null);
         int count = mCursor.getCount();
-        if (count > MAX_COUNT) {
+        if (count > COUNT_MAX) {
             mCursor.moveToFirst();
-            mCursor.move(count-MAX_COUNT);
+            mCursor.move(count-COUNT_MAX);
             mDb.delete(TABLE_NAME, ID + " <= " + mCursor.getInt(0), null);
         }
         if(mCursor!=null){

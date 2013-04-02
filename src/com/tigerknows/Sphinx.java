@@ -104,6 +104,7 @@ import com.tigerknows.model.Dianying;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
+import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.TKDrawable;
@@ -780,15 +781,22 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         service.setClass(mThis, MapStatsService.class);
         startService(service);
 
+        List<BaseQuery> list = new ArrayList<BaseQuery>();
+        
+        LocationQuery locationQuery = LocationQuery.getInstance(mThis);
+        list.add(locationQuery);
+        
         Bootstrap bootstrap = new Bootstrap(mContext);
-        queryStart(bootstrap);
+        list.add(bootstrap);
 
         DataOperation diaoyanQuery = new DataOperation(mContext);
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIAOYAN);
         criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         diaoyanQuery.setup(criteria, Globals.g_Current_City_Info.getId());	//
-        queryStart(diaoyanQuery);
+        list.add(diaoyanQuery);
+        
+        queryStart(list);
         
         checkCitySupportDiscover(Globals.g_Current_City_Info.getId());
 	}

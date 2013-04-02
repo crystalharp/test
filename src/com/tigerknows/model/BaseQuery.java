@@ -313,7 +313,15 @@ public abstract class BaseQuery {
         addCommonParameters(parameters, cityId, false);
     }
     
-    protected int loginConnectTime = 0;
+    /**
+     * 引导服务进行网络连接的最大重试次数
+     */
+    static final int BOOTSTRAP_RETRY_TIME_MAX = 3;
+    
+    /**
+     * 引导服务进行网络连接的重试次数
+     */
+    protected int bootstrapRetryTime = 0;
 
     protected Context context;
     
@@ -543,6 +551,7 @@ public abstract class BaseQuery {
                     break;
                 }
             } catch (IOException e) {
+                // 当前出现异常，如果当前连接的是服务器推送的动态负载均衡Host，则将此动态负载均衡Host置空，这样就会使用预置的Host
                 if (API_TYPE_MAP_META_DOWNLOAD.equals(apiType) ||
                         API_TYPE_MAP_TILE_DOWNLOAD.equals(apiType) ||
                         API_TYPE_MAP_VERSION_QUERY.equals(apiType) ||
@@ -550,6 +559,8 @@ public abstract class BaseQuery {
                     if (TKConfig.getDynamicDownloadHost() != null) {
                         TKConfig.setDynamicDownloadHost(null);
                         createHttpClient();
+                        // 下面此代码需要注释，因为地图下载服务在下次httpClient.execute(context)时没有重新生成最新的请求参数，
+                        // 会造成将下载的地图数据写入到地图文件中的错误位置，从而引起地图引擎崩溃
 //                        continue;
                     }
                 } else if (API_TYPE_BUSLINE_QUERY.equals(apiType) ||
@@ -574,8 +585,8 @@ public abstract class BaseQuery {
                         continue;
                     }
                 } else if (API_TYPE_BOOTSTRAP.equals(apiType)) {
-                    loginConnectTime++;
-                    if (loginConnectTime < 3) {
+                    bootstrapRetryTime++;
+                    if (bootstrapRetryTime < BOOTSTRAP_RETRY_TIME_MAX) {
                         createHttpClient();
                         continue;
                     }

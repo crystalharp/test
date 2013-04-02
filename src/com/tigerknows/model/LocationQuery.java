@@ -28,26 +28,54 @@ import android.net.wifi.WifiManager;
 import android.telephony.NeighboringCellInfo;
 import android.telephony.TelephonyManager;
 
+/**
+ * 定位服务类
+ * 实现定位查询，缓存定位，重用定位，历史定位功能，避免重复的定位查询
+ * @author pengwenyue
+ *
+ */
 public class LocationQuery extends BaseQuery {
     
     static final String TAG = "LocationQuery";
     
+    /**
+     * 错误的定位数据来源
+     */
     public static final String PROVIDER_ERROR = "tkerror";
     
-    public static final String PROVIDER_DATABASE = "tkdatabase";
+    /**
+     * 历史的定位数据来源（存储在数据库中）
+     */
+    public static final String PROVIDER_HISTORY = "tkhistory";
     
-    static final float WIFI_RATE = 0.8f;
+    /**
+     * WIFI接入点列表的最低匹配率，大于此值才有效
+     */
+    static final float WIFI_MATCH_RATE_MIN = 0.8f;
     
-    protected static final String VERSION = "4";
+    /**
+     * 访问定位服务的版本 
+     */
+    static final String VERSION = "4";
     
-    public static final int LOCATION_RESPONSE_CODE_NONE = 0;
-    
-    public static final int LOCATION_RESPONSE_CODE_SUCCEED = 200;
+    /**
+     * 定位成功的状态响应码（注意此值不是网络状态响应）
+     */
+    static final int LOCATION_RESPONSE_CODE_SUCCEED = 200;
 
-    public static final int LOCATION_RESPONSE_CODE_FAILED = 404;
+    /**
+     * 定位失败的状态响应码，并且表示不用重试（注意此值不是网络状态响应）
+     */
+    static final int LOCATION_RESPONSE_CODE_FAILED = 404;
 
+    /**
+     * 单实例模式
+     */
     private static LocationQuery sInstance;
 
+    /**
+     * 单实例模式
+     */
     public static LocationQuery getInstance(Context context) {
         if (null == sInstance) {
             sInstance = new LocationQuery(context);
@@ -55,24 +83,45 @@ public class LocationQuery extends BaseQuery {
         return sInstance;
     }
     
+    /**
+     * 定位服务返回的定位信息
+     */
     private Location location;
 
+    /**
+     * 查询定位服务提交的基站、WIFI、邻近基站信息
+     */
+    private LocationParameter locationParameter = null;
+    
+    /**
+     * 定位服务返回的状态响应码（注意此值不是网络状态响应）
+     */
     private int locationResponseCode;
 
     private WifiManager wifiManager;
     
-    private LocationParameter lastLocationParameter = new LocationParameter();
+    /**
+     * WIFI接入点列表的匹配率，如果当前WIFI接入点列表为空是此值为1.0
+     */
+    private float wifiMatchRate = 0f;
     
-    private float rate = 0f;
-    
+    /**
+     * 实时的定位信息缓存列表
+     */
     private HashMap<LocationParameter, Location> onlineLocationCache = new HashMap<LocationParameter, Location>();
     
+    /**
+     * 历史的定位信息缓存列表
+     */
     private HashMap<LocationParameter, Location> offlineLocationCache = new HashMap<LocationParameter, Location>();
     
     private LocationTable locationTable = null;
     
     private boolean readOfflineLocationCache = false;
 
+    /**
+     * 清除所有缓存的定位信息
+     */
     public void clearCache() {
         onlineLocationCache.clear();
         offlineLocationCache.clear();
@@ -85,20 +134,25 @@ public class LocationQuery extends BaseQuery {
 
     @Override
     public void query() {
-        location = null;
-        locationResponseCode = LOCATION_RESPONSE_CODE_NONE;
-        super.query();
-        if (locationResponseCode == LOCATION_RESPONSE_CODE_FAILED || locationResponseCode == LOCATION_RESPONSE_CODE_SUCCEED) {
-            LogWrapper.i("LocationQuery", "query():location="+location);
-
-            if (location == null) {
-                location = new Location(PROVIDER_ERROR);
-            } else {
-                checkLocationTable();
-                locationTable.write(lastLocationParameter, location);
+        synchronized (this) {
+            location = null;
+            locationResponseCode = 0;
+            super.query();
+            if (locationResponseCode == LOCATION_RESPONSE_CODE_FAILED || locationResponseCode == LOCATION_RESPONSE_CODE_SUCCEED) {
+                LogWrapper.i("LocationQuery", "query():location="+location);
+                
+                if (location == null) {
+                    location = new Location(PROVIDER_ERROR);
+                } else {
+                    checkLocationTable();
+                    if (locationParameter == null) {
+                        locationParameter = makeLocationParameter();
+                    }
+                    locationTable.write(locationParameter, location);
+                }
+                
+                onlineLocationCache.put(locationParameter, location);
             }
-            
-            onlineLocationCache.put(lastLocationParameter, location);
         }
     }
 
@@ -159,16 +213,18 @@ public class LocationQuery extends BaseQuery {
     protected void translateResponseV12(ParserUtil util) throws IOException {
         super.translateResponseV12(util);
         try {
-            for (Appendix appendix : appendice) {
-                if (appendix.type == Appendix.TYPE_RESPONSE_CODE) {
+            for (int i = appendice.size()-1; i >= 0; i--) {
+                Appendix appendix = appendice.get(i);
+                if (appendix.type == Appendix.TYPE_RESPONSE_CODE && appendix instanceof ResponseCode) {
                     locationResponseCode = ((ResponseCode)appendix).getResponseCode();
                     break;
                 }
             }
 
             if (locationResponseCode == LOCATION_RESPONSE_CODE_SUCCEED) {
-                for (Appendix appendix : appendice) {
-                    if (appendix.type == Appendix.TYPE_POSITION) {
+                for (int i = appendice.size()-1; i >= 0; i--) {
+                    Appendix appendix = appendice.get(i);
+                    if (appendix.type == Appendix.TYPE_POSITION && appendix instanceof PositionCake) {
                         PositionCake positionCake = (PositionCake)appendix;
                         location = new Location(TigerknowsLocationManager.TIGERKNOWS_PROVIDER);
                         location.setLatitude(positionCake.getLat() / 1000000.0d);
@@ -185,8 +241,12 @@ public class LocationQuery extends BaseQuery {
     
     int time = 0;
     int queryTime = 0;
-    public Location getLocation() {
-        synchronized (this) {
+    
+    /**
+     * 生成定位的绑定参数信息
+     * @return
+     */
+    LocationParameter makeLocationParameter() {
         LocationParameter locationParameter = new LocationParameter();
         locationParameter.mcc = TKConfig.getMCC();
         locationParameter.mnc = TKConfig.getMNC();
@@ -206,32 +266,42 @@ public class LocationQuery extends BaseQuery {
                 }
             }
         }
-
-        Location location = null;
-        rate = 0f;
-        location = queryCache(locationParameter, onlineLocationCache, true);
-        
-        time++;
-        if (location == null) {
-            queryTime++;
-            lastLocationParameter = locationParameter; 
-            query();
-            location = this.location;
-        }
-
-        
-        if (location == null || PROVIDER_ERROR.equals(location.getProvider())) {
-            checkLocationTable();
-            if (readOfflineLocationCache == false) {
-                locationTable.read(offlineLocationCache, LocationTable.Provider_List_Cache);
-                readOfflineLocationCache = true;
+        return locationParameter;
+    }
+    
+    /**
+     * 获取当前定位信息
+     * @return
+     */
+    public Location getLocation() {
+        synchronized (this) {
+            LocationParameter locationParameter = makeLocationParameter();
+    
+            Location location = null;
+            wifiMatchRate = 0f;
+            location = queryCache(locationParameter, onlineLocationCache, true);
+            
+            time++;
+            if (location == null) {
+                queryTime++;
+                this.locationParameter = locationParameter; 
+                query();
+                location = this.location;
             }
-            location = queryCache(locationParameter, offlineLocationCache, false);
-        }
-        
-        LogWrapper.i("LocationQuery", "getLocation() time:"+time+", queryTime:"+queryTime);
-        
-        return location;
+    
+            
+            if (location == null || PROVIDER_ERROR.equals(location.getProvider())) {
+                checkLocationTable();
+                if (readOfflineLocationCache == false) {
+                    locationTable.read(offlineLocationCache, LocationTable.Provider_List_Cache);
+                    readOfflineLocationCache = true;
+                }
+                location = queryCache(locationParameter, offlineLocationCache, false);
+            }
+            
+            LogWrapper.i("LocationQuery", "getLocation() time:"+time+", queryTime:"+queryTime);
+            
+            return location;
         }
     }
     
@@ -258,14 +328,14 @@ public class LocationQuery extends BaseQuery {
                     if (location == null && mustEqualsWifi == false) {
                         location = value; 
                     }
-                    float temp = locationParameter.equalsWifi(key);
-                    if (temp >= WIFI_RATE && temp >= rate) {
+                    float rate = locationParameter.calculateWifiMatchRate(key);
+                    if (rate >= WIFI_MATCH_RATE_MIN && rate >= wifiMatchRate) {
                         if (value != null) {
-                            rate = temp;
+                            wifiMatchRate = rate;
                             location = value;
                         }
                     }
-                    if (temp >= 1f) {
+                    if (rate >= 1f) {
                         break;
                     }
                 }
@@ -284,28 +354,58 @@ public class LocationQuery extends BaseQuery {
         }
     }
     
+    /**
+     * 定位的绑定参数信息，包括MNC、MCC、基站、WIFI接入点列表、邻近基站列表、时间戳信息
+     * @author pengwenyue
+     *
+     */
     public static class LocationParameter {
         
         public int mnc = -1;
         public int mcc = -1;
+        
+        /**
+         * 基站信息
+         */
         public TKCellLocation tkCellLocation = null;
+        
+        /**
+         * 邻近基站列表信息
+         */
         public List<TKNeighboringCellInfo> neighboringCellInfoList = new ArrayList<TKNeighboringCellInfo>();
+        
+        /**
+         * WIFI接入点列表信息
+         */
         public List<TKScanResult> wifiList = new ArrayList<TKScanResult>();
-        private volatile int hashCode = 0;
+        
+        /**
+         * 时间戳
+         */
         public String time;
+        
+        private volatile int hashCode = 0;
         
         public LocationParameter() {
             time = LocationUpload.SIMPLE_DATE_FORMAT.format(Calendar.getInstance().getTime());
         }
         
+        /**
+         * 比较基站及邻近基站列表信息是否相同
+         * @param other
+         * @return
+         */
         public boolean equalsCellInfo(LocationParameter other) {
             if (other == null) {
                 return false;
             }
+            // 比较基站
             if (this.mnc == other.mnc 
                     && this.mcc == other.mcc 
                     && ((this.tkCellLocation != null && this.tkCellLocation.equals(other.tkCellLocation)) ||
                             (this.tkCellLocation == null && other.tkCellLocation == null))) {
+                
+                // 比较邻近基站列表
                 if (neighboringCellInfoList != null 
                         && other.neighboringCellInfoList != null 
                         && neighboringCellInfoList.size() == other.neighboringCellInfoList.size()) {
@@ -325,7 +425,12 @@ public class LocationQuery extends BaseQuery {
             return false;
         }
         
-        public float equalsWifi(LocationParameter other) {
+        /**
+         * 计算WIFI接入点列表的匹配率
+         * @param other
+         * @return
+         */
+        public float calculateWifiMatchRate(LocationParameter other) {
             if (other == null) {
                 return 0;
             }
@@ -335,6 +440,7 @@ public class LocationQuery extends BaseQuery {
                 }
                 float rate = 0;
                 int size = wifiList.size();
+                // 如果当前WIFI接入点列表的size为0则比率为1，表示全匹配
                 if (size == 0) {
                     rate = 1;
                 } else {
@@ -342,12 +448,25 @@ public class LocationQuery extends BaseQuery {
                     rate = ((float)match)/size;
                 }
                 return rate;
-            } else if (neighboringCellInfoList == null && other.neighboringCellInfoList == null) {
+            } else if (wifiList == null && other.wifiList == null) {
+                return 1;
+            } else if (wifiList != null) {
+                if (wifiList.size() > 0) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            } else {
                 return 1;
             }
-            return 0;
         }
         
+        /**
+         * 计算两个WIFI接入点列表存在相同WIFI接入点的总数
+         * @param list1
+         * @param list2
+         * @return
+         */
         private int matchWifi(List<TKScanResult> list1, List<TKScanResult> list2) {
             int match = 0;
             if (list1 == null || list2 == null) {
@@ -368,14 +487,6 @@ public class LocationQuery extends BaseQuery {
             return match;
         }
         
-        public void reset() {
-            mnc = -1;
-            mcc = -1;
-            tkCellLocation = null;
-            neighboringCellInfoList = null;
-            wifiList = null;
-        }
-        
         @Override
         public boolean equals(Object object) {
             if (object == null) {
@@ -388,7 +499,7 @@ public class LocationQuery extends BaseQuery {
                         ((tkCellLocation != null && tkCellLocation.equals(other.tkCellLocation)) || 
                                 (tkCellLocation == null && other.tkCellLocation == null))) {
                     if (equalsCellInfo(other)) {
-                        if (equalsWifi(other) == 1) {
+                        if (calculateWifiMatchRate(other) == 1) {
                             return true;
                         }
                     }
