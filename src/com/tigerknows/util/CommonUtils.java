@@ -928,12 +928,12 @@ public class CommonUtils {
         int minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
         int maxIndex = endPage * pageSize + (isShowAPOI ? 1 : 0);
         
-        if ((maxIndex > size-1 ? size-1 : maxIndex)-minIndex < TKConfig.getPageSize()-1) {
-            if (startPage > 0) {
-                startPage--;
-                minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
-            }
-        }
+//        if ((maxIndex > size-1 ? size-1 : maxIndex)-minIndex < pageSize) {
+//            if (startPage > 0) {
+//                startPage--;
+//                minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
+//            }
+//        }
         return new int[]{minIndex, maxIndex, (firstVisiblePosition-(isShowAPOI ? 1 : 0)+(startPage%2 != 0 ? pageSize : 0)) % TKConfig.getPageSize()};
     }
     
@@ -1006,8 +1006,9 @@ public class CommonUtils {
         queryTraffic(sphinx, poi, TrafficQueryFragment.END);
     }
     
-    public static void queryTraffic(final Sphinx sphinx, final POI poi, final int location) {
+    public static void queryTraffic(final Sphinx sphinx, POI poi, final int location) {
         
+        final POI poiForTraffic = poi.clone();
         final String[] list = sphinx.getResources().getStringArray(R.array.goto_here);
         int[] leftCompoundResIdList = new int[] {R.drawable.ic_bus, R.drawable.ic_drive, R.drawable.ic_walk, R.drawable.ic_start};
         final ArrayAdapter<String> adapter = new StringArrayAdapter(sphinx, list, leftCompoundResIdList);
@@ -1054,17 +1055,17 @@ public class CommonUtils {
                     POI start;
                     POI end;
                     if (location == TrafficQueryFragment.START) {
-                        start = poi;
+                        start = poiForTraffic;
                         end = myLocationPOI;
                     } else {
                         start = myLocationPOI;
-                        end = poi;
+                        end = poiForTraffic;
                     }
                     
-                    sphinx.getTrafficQueryFragment().addHistoryWord(poi, HistoryWordTable.TYPE_TRAFFIC);
+                    sphinx.getTrafficQueryFragment().addHistoryWord(poiForTraffic, HistoryWordTable.TYPE_TRAFFIC);
                     TrafficQueryFragment.submitTrafficQuery(sphinx, start, end, queryType);
                 } else {
-                    trafficQueryFragment.setDataNoSuggest(poi, location, queryType);
+                    trafficQueryFragment.setDataNoSuggest(poiForTraffic, location, queryType);
                     sphinx.uiStackRemove(R.id.view_result_map);   // 再回退时不出现地图界面
                     sphinx.showView(R.id.view_traffic_query);
                 }

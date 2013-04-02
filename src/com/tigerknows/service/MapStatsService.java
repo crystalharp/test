@@ -203,17 +203,26 @@ public class MapStatsService extends Service {
     public void onStart(final Intent intent, int startId) {
 
         if (intent != null) {
-            if (ACTION_STATS_DOWNLOAD_CITY.equals(intent.getAction())
-            		&& intent.hasExtra(EXTRA_DOWNLOAD_CITY)) {
-                
-                // 将指定城市加入待统计城市队列
-            	DownloadCity downloadCity = intent.getParcelableExtra(EXTRA_DOWNLOAD_CITY);
-                synchronized (downloadCityList) {
-                	if (downloadCityList.contains(downloadCity) == false) {
-                		downloadCityList.add(downloadCity);
+            if (ACTION_STATS_DOWNLOAD_CITY.equals(intent.getAction())) {
+            	if (intent.hasExtra(EXTRA_DOWNLOAD_CITY_LIST)) {
+                    // 将指定城市列表加入待统计城市队列
+                	ArrayList<DownloadCity> list = intent.getParcelableArrayListExtra(EXTRA_DOWNLOAD_CITY_LIST);
+                    synchronized (downloadCityList) {
+                		downloadCityList.addAll(list);
                 		downloadCityList.notifyAll();
-                	}
-				}
+    				}
+            	} else if (intent.hasExtra(EXTRA_DOWNLOAD_CITY)) {
+
+                    
+                    // 将指定城市加入待统计城市队列
+                    DownloadCity downloadCity = intent.getParcelableExtra(EXTRA_DOWNLOAD_CITY);
+                    synchronized (downloadCityList) {
+                      if (downloadCityList.contains(downloadCity) == false) {
+                            downloadCityList.add(downloadCity);
+                            downloadCityList.notifyAll();
+                      }
+                    }
+            	}
             } else {
                 
                 // 每次统计当前城市、出现在下载列表中的所有城市或出现在下载列表中但是tigermap/map文件夹下已经存在地图数据文件的城市都创建一个新线程
@@ -486,10 +495,10 @@ public class MapStatsService extends Service {
         
         if (maybeUpgrade) {
             downloadCity.state = DownloadCity.STATE_CAN_BE_UPGRADE;
+        } else if (downloadCity.getPercent() >= MapDownload.PERCENT_COMPLETE) {
+    		downloadCity.state = DownloadCity.STATE_COMPLETED;
         } else if (downloadCity.state == DownloadCity.STATE_COMPLETED) {
-            if (downloadCity.getPercent() < MapDownload.PERCENT_COMPLETE) {
-                downloadCity.state = DownloadCity.STATE_STOPPED;
-            }
+           	downloadCity.state = DownloadCity.STATE_STOPPED;
         }
         
     }
