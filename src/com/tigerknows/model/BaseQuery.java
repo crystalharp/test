@@ -547,8 +547,8 @@ public abstract class BaseQuery {
                         API_TYPE_MAP_TILE_DOWNLOAD.equals(apiType) ||
                         API_TYPE_MAP_VERSION_QUERY.equals(apiType) ||
                         API_TYPE_SUGGEST_LEXICON_DOWNLOAD.equals(apiType)) {
-                    if (TKConfig.sDYNAMIC_DOWNLOAD_HOST != null) {
-                        TKConfig.sDYNAMIC_DOWNLOAD_HOST = null;
+                    if (TKConfig.getDynamicDownloadHost() != null) {
+                        TKConfig.setDynamicDownloadHost(null);
                         createHttpClient();
 //                        continue;
                     }
@@ -556,20 +556,20 @@ public abstract class BaseQuery {
                         API_TYPE_TRAFFIC_QUERY.equals(apiType) ||
                         API_TYPE_DATA_QUERY.equals(apiType) ||
                         API_TYPE_DATA_OPERATION.equals(apiType)) {
-                    if (TKConfig.sDYNAMIC_QUERY_HOST != null) {
-                        TKConfig.sDYNAMIC_QUERY_HOST = null;
+                    if (TKConfig.getDynamicQueryHost() != null) {
+                        TKConfig.setDynamicQueryHost(null);
                         createHttpClient();
                         continue;
                     }
                 } else if (API_TYPE_LOCATION_QUERY.equals(apiType)) {
-                    if (TKConfig.sDYNAMIC_LOCATION_HOST != null) {
-                        TKConfig.sDYNAMIC_LOCATION_HOST = null;
+                    if (TKConfig.getDynamicLocationHost() != null) {
+                        TKConfig.setDynamicLocationHost(null);
                         createHttpClient();
                         continue;
                     }
                 } else if (API_TYPE_ACCOUNT_MANAGE.equals(apiType)) {
-                    if (TKConfig.sDYNAMIC_ACCOUNT_MANAGE_HOST != null) {
-                        TKConfig.sDYNAMIC_ACCOUNT_MANAGE_HOST = null;
+                    if (TKConfig.getDynamicAccountManageHost() != null) {
+                        TKConfig.setDynamicAccountManageHost(null);
                         createHttpClient();
                         continue;
                     }

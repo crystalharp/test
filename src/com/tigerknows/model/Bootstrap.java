@@ -9,6 +9,11 @@ import com.tigerknows.model.BootstrapModel.DomainName;
 import android.content.Context;
 import android.text.TextUtils;
 
+/**
+ * 引导服务类
+ * @author pengwenyue
+ *
+ */
 public final class Bootstrap extends BaseQuery {
 
     private BootstrapModel bootstrapModel;
@@ -24,7 +29,8 @@ public final class Bootstrap extends BaseQuery {
     @Override
     protected void createHttpClient() {
         super.createHttpClient();
-        String url = String.format(TKConfig.LOGIN_URL, TKConfig.BOOTSTRAP_HOST[loginConnectTime%3]);
+        String[] bootStrapHostList = TKConfig.getBootStrapHostList();
+        String url = String.format(TKConfig.getBootstarpUrl(), bootStrapHostList[loginConnectTime%bootStrapHostList.length]);
         httpClient.setURL(url);
     }
 
