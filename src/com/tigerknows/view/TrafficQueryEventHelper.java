@@ -160,7 +160,7 @@ public class TrafficQueryEventHelper {
 	public void clearSuggestWatcherInInputState() {
 		mQueryFragment.mStart.getEdt().removeTextChangedListener(startSuggestWatcher);
 		mQueryFragment.mEnd.getEdt().removeTextChangedListener(endSuggestWatcher);
-		mQueryFragment.mBusline.getEdt().removeTextChangedListener(buslineSuggestWatcher);
+//		mQueryFragment.mBusline.getEdt().removeTextChangedListener(buslineSuggestWatcher);
 	}
 	
 	protected class StartEndEdtClickListener implements OnEditorActionListener {
