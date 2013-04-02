@@ -82,6 +82,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 				}
 				
 				if (!UserRegistActivity.class.getName().equals(getCallingActivity().getClassName())
+						&& !TextUtils.equals(nickNameEdt.getText().toString().trim(), getString(R.string.default_nick_name))
 						&& TextUtils.equals(Globals.g_User.getNickName(), nickNameEdt.getText().toString().trim())) {
 					CommonUtils.showNormalDialog(UserUpdateNickNameActivity.this, getString(R.string.title_error_tip), getString(R.string.nickname_no_modify), 
 					        getString(R.string.confirm),
