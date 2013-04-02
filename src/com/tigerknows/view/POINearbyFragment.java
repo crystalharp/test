@@ -221,6 +221,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
                     String key = mKeywordEdt.getText().toString();
                     POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, key);
                     mSuggestAdapter.key = key;
+                    mViewPager.setCurrentItem(1);
                     refreshSuggest();
                 }
                 return false;
@@ -333,11 +334,11 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
      */
     private void refreshSuggest() {
         mSuggestAdapter.notifyDataSetChanged();
-        if (mSuggestWordList.isEmpty()) {
-            mViewPager.setCurrentItem(0);
-        } else {
-            mViewPager.setCurrentItem(1);
-        }
+//        if (mSuggestWordList.isEmpty()) {
+//            mViewPager.setCurrentItem(0);
+//        } else {
+//            mViewPager.setCurrentItem(1);
+//        }
     }
     
     /**

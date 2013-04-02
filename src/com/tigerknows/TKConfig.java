@@ -248,37 +248,37 @@ public class TKConfig {
     /**
      * 是否接受软件登录服务推送用于动态负载均衡的Host
      */
-    public static boolean sLoadBalance = true;
+    private static boolean sLoadBalance = true;
     
     /**
      * 下载地图服务访问URL路径
      */
-    public static String sDOWNLOAD_MAP_URL = "http://%s/quantum/string";
+    private static String sDOWNLOAD_MAP_URL = "http://%s/quantum/string";
     
     /**
      * 下载联想词服务访问URL路径
      */
-    public static String sDOWNLOAD_SUGGEST_URL = "http://%s/suggest_lexicon";
+    private static String sDOWNLOAD_SUGGEST_URL = "http://%s/suggest_lexicon";
     
     /**
      * 查询服务访问URL路径
      */
-    public static String sQUERY_URL = "http://%s/cormorant/local";
+    private static String sQUERY_URL = "http://%s/cormorant/local";
     
     /**
      * 定位服务访问URL路径
      */
-    public static String sLOCATION_URL = "http://%s/tk_locate_me";
+    private static String sLOCATION_URL = "http://%s/tk_locate_me";
     
     /**
      * 账户管理服务访问URL路径
      */
-    public static String sACCOUNT_MANAGE_URL = "http://%s/melon/user"; // http://192.168.11.174:8100/melon/user
+    private static String sACCOUNT_MANAGE_URL = "http://%s/melon/user"; // http://192.168.11.174:8100/melon/user
     
     /**
      * 软件登录服务访问URL路径
      */
-    public static String LOGIN_URL = "http://%s/bootstrap/local";
+    private static String BOOTSTRAP_URL = "http://%s/bootstrap/local";
 
     /**
      * 默认下载服务器Host
@@ -301,29 +301,29 @@ public class TKConfig {
     private static String sDEFAULT_ACCOUNT_MANAGE_HOST = "user.tigerknows.net"; //192.168.11.174:8100 211.151.97.117:8080 user.tigerknows.net
     
     /** 
-     * 默认软件登录服务器的Host
+     * 默认软件登录服务器的Host列表
      */
-    public static String[] BOOTSTRAP_HOST = new String[]{"init.tigerknows.net", "chshh.tigerknows.com", "csh.laohubaodian.net"};
+    private static String[] BOOTSTRAP_HOST_LIST = new String[]{"init.tigerknows.net", "chshh.tigerknows.com", "csh.laohubaodian.net"};
 
     /**
      * 软件登录服务推送用于动态负载均衡的下载服务器Host
      */
-    public static String sDYNAMIC_DOWNLOAD_HOST;
+    private static String sDYNAMIC_DOWNLOAD_HOST;
     
     /**
      * 软件登录服务推送用于动态负载均衡的查询服务器Host
      */
-    public static String sDYNAMIC_QUERY_HOST;
+    private static String sDYNAMIC_QUERY_HOST;
     
     /**
      * 软件登录服务推送用于动态负载均衡的定位服务器Host
      */
-    public static String sDYNAMIC_LOCATION_HOST;
+    private static String sDYNAMIC_LOCATION_HOST;
     
     /**
      * 软件登录服务推送用于动态负载均衡的账户管理服务器Host
      */
-    public static String sDYNAMIC_ACCOUNT_MANAGE_HOST;
+    private static String sDYNAMIC_ACCOUNT_MANAGE_HOST;
     
     /**
      * 分页大小
@@ -812,6 +812,22 @@ public class TKConfig {
     }
     
     /**
+     * 获取引导服务访问的URL
+     * @return
+     */
+    public static String getBootstarpUrl() {
+        return BOOTSTRAP_URL;
+    }
+    
+    /**
+     * 获取引导服务器Host列表
+     * @return
+     */
+    public static String[] getBootStrapHostList() {
+        return BOOTSTRAP_HOST_LIST;
+    }
+    
+    /**
      * 获取下载地图服务访问的URL
      * @return
      */
@@ -863,6 +879,14 @@ public class TKConfig {
     }
     
     /**
+     * 获取动态负载均衡的定位服务器Host
+     * @return
+     */
+    public static String getDynamicLocationHost() {
+        return sDYNAMIC_LOCATION_HOST;
+    }
+    
+    /**
      * 设置动态负载均衡的定位服务器Host
      * @param host
      */
@@ -882,6 +906,14 @@ public class TKConfig {
             return sDYNAMIC_QUERY_HOST;
         }
         return sDEFAULT_QUERY_HOST;
+    }
+    
+    /**
+     * 获取动态负载均衡的查询服务器Host
+     * @return
+     */
+    public static String getDynamicQueryHost() {
+        return sDYNAMIC_QUERY_HOST;
     }
     
     /**
@@ -907,6 +939,14 @@ public class TKConfig {
     }
     
     /**
+     * 获取动态负载均衡的账户管理服务器Host
+     * @return
+     */
+    public static String getDynamicAccountManageHost() {
+        return sDYNAMIC_ACCOUNT_MANAGE_HOST;
+    }
+    
+    /**
      * 设置动态负载均衡的账户管理服务器Host
      * @param host
      */
@@ -926,6 +966,14 @@ public class TKConfig {
             return sDYNAMIC_DOWNLOAD_HOST;
         }
         return sDEFAULT_DOWNLOAD_HOST;
+    }
+    
+    /**
+     * 获取动态负载均衡的下载服务器Host
+     * @return
+     */
+    public static String getDynamicDownloadHost() {
+        return sDYNAMIC_DOWNLOAD_HOST;
     }
     
     /**
@@ -1221,17 +1269,17 @@ public class TKConfig {
                     start += "logLevel=".length();
                     CONFIG.LOG_LEVEL = Integer.parseInt(text.substring(start, end));
                 }
-                start = text.indexOf("loginUrl=");
+                start = text.indexOf("bootstrapUrl=");
                 end = text.indexOf(";", start);
                 if (start > -1 && end > -1) {
-                    start += "loginUrl=".length();
-                    LOGIN_URL = text.substring(start, end);
+                    start += "bootstrapUrl=".length();
+                    BOOTSTRAP_URL = text.substring(start, end);
                 }
-                start = text.indexOf("loginHost=");
+                start = text.indexOf("bootstrapHostList=");
                 end = text.indexOf(";", start);
                 if (start > -1 && end > -1) {
-                    start += "loginHost=".length();
-                    BOOTSTRAP_HOST = text.substring(start, end).split(",");
+                    start += "bootstrapHostList=".length();
+                    BOOTSTRAP_HOST_LIST = text.substring(start, end).split(",");
                 }
                 start = text.indexOf("pageSize=");
                 end = text.indexOf(";", start);

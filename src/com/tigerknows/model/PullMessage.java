@@ -213,8 +213,8 @@ public class PullMessage extends Response {
 				return 0;
 			}
 
-	        private PulledProductMessage(XMap data) {
-	        	
+	        private PulledProductMessage(XMap data) throws APIException {
+	        	super(data);
 	            if (this.data.containsKey(FILED_PRODUCT_DOWNLOAD_URL)) {
 	                this.downloadUrl = this.data.getString(FILED_PRODUCT_DOWNLOAD_URL);
 	            }
@@ -278,12 +278,16 @@ public class PullMessage extends Response {
 					case TYPE_HOLIDAY:
 					case TYPE_FILM:
 					case TYPE_INTERVAL:
-	                	dynamicPOI = new PulledDynamicPOI(this.data.getXMap(FIELD_POI_INFO));
+						if(data.containsKey(FIELD_POI_INFO)){
+							dynamicPOI = new PulledDynamicPOI(this.data.getXMap(FIELD_POI_INFO));
+						}
 						break;
 	
 					case TYPE_PRODUCT_UPGRADE:
 					case TYPE_PRODUCT_INFOMATION:
-						productMsg = new PulledProductMessage(this.data.getXMap(FIELD_PRODUCT_MESSAGE));
+						if(data.containsKey(FIELD_PRODUCT_MESSAGE)){
+							productMsg = new PulledProductMessage(this.data.getXMap(FIELD_PRODUCT_MESSAGE));
+						}
 						break;
 	
 					default:

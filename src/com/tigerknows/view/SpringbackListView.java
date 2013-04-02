@@ -1,5 +1,6 @@
 package com.tigerknows.view;
 
+import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 
@@ -63,9 +64,12 @@ public class SpringbackListView extends ListView {
     public OnRefreshListener refreshListener;  
   
     private final static String TAG = "SpringbackListView";  
+    
+    int MaxSpace = 100;
   
     public SpringbackListView(Context context, AttributeSet attrs) {  
         super(context, attrs);  
+        MaxSpace = Globals.g_metrics.heightPixels/2;
     }  
       
     @Override
@@ -184,7 +188,7 @@ public class SpringbackListView extends ListView {
                 startY = tempY;  
                 isRecoredFooter = true;  
             }  
-            if (headerSpringback && stateHeader != REFRESHING && isRecoredHeader && tempY > 0 && tempY - startY > 0 && headerView != null) {
+            if (headerSpringback && stateHeader != REFRESHING && isRecoredHeader && tempY > 0 && tempY - startY > 0 && tempY - startY < MaxSpace && headerView != null) {
                 // 可以松开刷新了   
                 if (stateHeader == RELEASE_TO_REFRESH) {  
                     // 往上推，推到屏幕足够掩盖head的程度，但还没有全部掩盖   
@@ -248,7 +252,7 @@ public class SpringbackListView extends ListView {
                     headerView.invalidate();  
                 }  
             }
-            if (footerSpringback && stateFooter != REFRESHING && isRecoredFooter && tempY > 0 && tempY - startY < 0 && footerView != null){
+            if (footerSpringback && stateFooter != REFRESHING && isRecoredFooter && tempY > 0 && tempY - startY < 0 && tempY - startY > -MaxSpace && footerView != null){
                 
                 // 可以松开刷新了   
                 if (stateFooter == RELEASE_TO_REFRESH) {  

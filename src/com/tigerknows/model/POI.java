@@ -501,6 +501,10 @@ public class POI extends BaseData {
     public void setMyComment(Comment myComment) {
         this.myComment = myComment;
         this.attribute = Comment.isAuthorMe(myComment);
+        XMap data = getData();
+        if (data != null) {
+            data.put(FIELD_ATTRIBUTE, this.attribute);
+        }
     }
 
     public Comment getLastComment() {
