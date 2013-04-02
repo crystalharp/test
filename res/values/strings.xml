@@ -257,7 +257,7 @@
     <string name="source_">来源：%1$s</string> 
     <string name="reserve_tel">预定电话：</string> 
     <string name="phonenumber">电话：</string> 
-    <string name="recommend_cooking">推荐菜:\u0020</string>
+    <string name="recommend_cooking">推荐菜:%1$s</string>
     <string name="look_all_comment">查看全部</string> 
     <string name="current_city_">当前所在城市：%1$s</string> 
     <string name="add_city">添加城市</string> 
