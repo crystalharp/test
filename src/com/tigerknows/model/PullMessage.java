@@ -213,8 +213,8 @@ public class PullMessage extends Response {
 				return 0;
 			}
 
-	        private PulledProductMessage(XMap data) {
-	        	
+	        private PulledProductMessage(XMap data) throws APIException {
+	        	super(data);
 	            if (this.data.containsKey(FILED_PRODUCT_DOWNLOAD_URL)) {
 	                this.downloadUrl = this.data.getString(FILED_PRODUCT_DOWNLOAD_URL);
 	            }
