@@ -34,6 +34,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.Sphinx.TouchMode;
+import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineModel;
@@ -1072,9 +1073,9 @@ public class TrafficQueryFragment extends BaseFragment {
         }
     }
 
-    public void TrafficOnCityChanged(int cityId) {
-        mSphinx.getMapEngine().suggestwordCheck(mSphinx, cityId);
-        HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_TRAFFIC);
-        HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_BUSLINE);
+    public void TrafficOnCityChanged(Sphinx sphinx, int cityId) {
+        MapEngine.getInstance().suggestwordCheck(sphinx, cityId);
+        HistoryWordTable.readHistoryWord(sphinx, cityId, HistoryWordTable.TYPE_TRAFFIC);
+        HistoryWordTable.readHistoryWord(sphinx, cityId, HistoryWordTable.TYPE_BUSLINE);
     }
 }

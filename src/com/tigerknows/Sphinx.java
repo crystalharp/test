@@ -322,6 +322,46 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        mHandler=new Handler(){
+            @Override
+            public void handleMessage(Message msg) {
+                if (mMapView == null) {
+                    return;
+                }
+                if (msg.what == PREVIOUS_NEXT_HIDE) {
+                    mPreviousNextView.setVisibility(View.INVISIBLE);
+                } else if (msg.what == PREVIOUS_NEXT_SHOW) {
+                    mPreviousNextView.setVisibility(View.VISIBLE);
+                } else if (msg.what == LOCATION_CLICKED) {
+                    onMapTouch(false);
+                } else if (msg.what == ZOOM_CLICKED) {
+                    onMapTouch(false);
+                } else if (msg.what == MAP_TOUCH_DOWN) {
+                    onMapTouch(true);
+                } else if (msg.what == MAP_MOVE) {
+                    onMapCenterChanged();
+                } else if (msg.what == MAP_ZOOMEND) {
+                    onMapCenterChanged();
+                } else if (msg.what == DOWNLOAD_SHOW) {
+                    mDownloadView.setVisibility(View.VISIBLE); 
+                } else if (msg.what == DOWNLOAD_HIDE) {
+                    mDownloadView.setVisibility(View.GONE);
+                } else if (msg.what == DOWNLOAD_ERROR) {
+                    Toast.makeText(Sphinx.this, R.string.network_failed, Toast.LENGTH_LONG).show(); 
+                } 
+                
+                if (msg.what == ROOT_VIEW_INVALIDATE) {
+                    mRootView.invalidate();
+                } else if (msg.what == CENTER_SHOW_FOCUSED_OVERLAYITEM) {
+                    centerShowCurrentOverlayFocusedItem();
+                } else if (msg.what == ADJUST_SHOW_FOCUSED_OVERLAYITEM) {
+                    adjustShowCurrentOverlayFocusedItem();
+                    mMapView.refreshMap();
+                }
+                
+            }
+        };
+        
         // 读取屏幕参数，如高宽、密度
         WindowManager winMan=(WindowManager)getSystemService(Context.WINDOW_SERVICE);
         Display display=winMan.getDefaultDisplay();
@@ -392,43 +432,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mActionLog.addAction(ActionLog.UserReadSuccess);
             }
             mActionLog.addAction(ActionLog.LifecycleSelectCity, cityInfo.getCName());
-            
-            mHandler=new Handler(){
-                @Override
-                public void handleMessage(Message msg) {
-                    if (msg.what == PREVIOUS_NEXT_HIDE) {
-                        mPreviousNextView.setVisibility(View.INVISIBLE);
-                    } else if (msg.what == PREVIOUS_NEXT_SHOW) {
-                        mPreviousNextView.setVisibility(View.VISIBLE);
-                    } else if (msg.what == LOCATION_CLICKED) {
-                        onMapTouch(false);
-                    } else if (msg.what == ZOOM_CLICKED) {
-                        onMapTouch(false);
-                    } else if (msg.what == MAP_TOUCH_DOWN) {
-                        onMapTouch(true);
-                    } else if (msg.what == MAP_MOVE) {
-                        onMapCenterChanged();
-                    } else if (msg.what == MAP_ZOOMEND) {
-                        onMapCenterChanged();
-                    } else if (msg.what == DOWNLOAD_SHOW) {
-                        mDownloadView.setVisibility(View.VISIBLE); 
-                    } else if (msg.what == DOWNLOAD_HIDE) {
-                        mDownloadView.setVisibility(View.GONE);
-                    } else if (msg.what == DOWNLOAD_ERROR) {
-                        Toast.makeText(Sphinx.this, R.string.network_failed, Toast.LENGTH_LONG).show(); 
-                    } 
-                    
-                    if (msg.what == ROOT_VIEW_INVALIDATE) {
-                        mRootView.invalidate();
-                    } else if (msg.what == CENTER_SHOW_FOCUSED_OVERLAYITEM) {
-                        centerShowCurrentOverlayFocusedItem();
-                    } else if (msg.what == ADJUST_SHOW_FOCUSED_OVERLAYITEM) {
-                        adjustShowCurrentOverlayFocusedItem();
-                        mMapView.refreshMap();
-                    }
-                    
-                }
-            };
             
             ArrayList<Integer> uiStack = null;
             if (savedInstanceState != null) {
@@ -1675,7 +1678,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(cityInfo.getLevel()));
 
                 HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
-                getTrafficQueryFragment().TrafficOnCityChanged(cityId);
+                getTrafficQueryFragment().TrafficOnCityChanged(this, cityId);
             }
         }    
     }
