@@ -764,8 +764,10 @@ public class POI extends BaseData {
                 	this.taste = this.description.getString(Description.FIELD_TASTE);
                 }
                 
-                if (this.description.containsKey(Description.FIELD_SERVICE)) {
-                	this.service = this.description.getString(Description.FIELD_SERVICE);
+                if (this.description.containsKey(Description.FIELD_SERVICE_ATTITUDE)) {
+                	this.service = this.description.getString(Description.FIELD_SERVICE_ATTITUDE);
+                } else if (this.description.containsKey(Description.FIELD_SERVICE_QUALITY)) {
+                    this.service = this.description.getString(Description.FIELD_SERVICE_QUALITY);
                 }
                 
                 if (this.description.containsKey(Description.FIELD_ENVIRONMENT)) {

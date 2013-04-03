@@ -12,8 +12,10 @@ import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery;
+import com.tigerknows.model.TKWord;
 import com.tigerknows.model.DataQuery.DiscoverResponse;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.service.LocationCollectionService;
 import com.tigerknows.service.PullService;
@@ -136,6 +138,8 @@ public class BaseQueryTest {
         layout.addView(radarLocationBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final Button readLocationLogBtn = new Button(activity);
         layout.addView(readLocationLogBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button launchHistoryWorkBtn = new Button(activity);
+        layout.addView(launchHistoryWorkBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         
         editConfigBtn.setText("View or Modify config.txt");
         editConfigBtn.setOnClickListener(new View.OnClickListener() {
@@ -344,6 +348,41 @@ public class BaseQueryTest {
             public void onClick(View v) {
                 String locationLog = PullService.queryCollectionLocation(activity);
                 CommonUtils.showNormalDialog(activity, locationLog);
+            }
+        });
+
+        launchHistoryWorkBtn.setText("launch History word");
+        launchHistoryWorkBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                List<CityInfo> allCityInfoList = MapEngine.getInstance().getAllProvinceCityList(activity.getApplicationContext());  
+                for(int i = allCityInfoList.size()-1; i >= 0; i--) {
+                    CityInfo cityInfo1 = allCityInfoList.get(i);
+                    List<CityInfo> childCityInfoList = cityInfo1.getCityList();
+                    if (childCityInfoList.size() > 1) {
+//                        for(int ii = childCityInfoList.size()-1; ii >= 0; ii--) {
+//                            CityInfo cityInfo2 = childCityInfoList.get(ii);
+//                            StringBuilder s = new StringBuilder();
+//                            for(int l = 0; l < 51; l++) {
+//                                s.append(l);
+//                                TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, s.toString(), cityInfo2.getPosition());
+//                                HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo2.getId(), HistoryWordTable.TYPE_POI);
+//                                HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo2.getId(), HistoryWordTable.TYPE_TRAFFIC);
+//                                HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo2.getId(), HistoryWordTable.TYPE_BUSLINE);
+//                            }
+//                        }
+                    } else {
+                        StringBuilder s = new StringBuilder();
+                        for(int l = 0; l < 51; l++) {
+                            s.append(l);
+                            TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, s.toString(), cityInfo1.getPosition());
+                            HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo1.getId(), HistoryWordTable.TYPE_POI);
+                            HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo1.getId(), HistoryWordTable.TYPE_TRAFFIC);
+                            HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo1.getId(), HistoryWordTable.TYPE_BUSLINE);
+                        }
+                    }
+                }
             }
         });
         
