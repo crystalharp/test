@@ -46,6 +46,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -227,6 +228,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private ViewGroup mBodyView;
     private ViewGroup mMenuView;
     private ViewGroup mControlView;   
+    private ViewGroup mOverlayView;
 
     /**
      * 下面这些ViewGroup用于InfoWindow
@@ -1308,9 +1310,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mLocationBtn=(ImageButton)(findViewById(R.id.location_btn));
         mDownloadView = (TextView)findViewById(R.id.download_txv);
         mCompassView = findViewById(R.id.compass_imv);
+        mOverlayView = (ViewGroup) findViewById(R.id.overlay_view);
     }
 
     private void setListener() {
+        mOverlayView.setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                // 拦截所有Touch事件
+                return true;
+            }
+        });
     }
     
     private void initIntent(Intent intent) {
@@ -1540,11 +1551,16 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (newIntent != null) {
             com.tigerknows.model.PullMessage.Message message = newIntent.getParcelableExtra(Sphinx.EXTRA_PULL_MESSAGE);
             if (message != null) {
-                TKNotificationManager.cancel(mThis);
-                uiStackClose(new int[]{R.id.view_discover});
-                showView(R.id.view_discover);
-                //Show the corresponding view
-                showPulledDynamicPOI(message.getDynamicPOI());
+                if (message.getDynamicPOI() != null) {
+                    TKNotificationManager.cancel(mThis);
+                    uiStackClose(new int[]{R.id.view_discover});
+                    showView(R.id.view_discover);
+                    //Show the corresponding view
+                    showPulledDynamicPOI(message.getDynamicPOI());
+                } else {
+                    uiStackClose(new int[]{R.id.view_discover});
+                    showView(R.id.view_home);
+                }
                 result = true;
             }
         }
@@ -1934,6 +1950,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     public ViewGroup getControlView() {
         return mControlView;
+    }
+    
+    public void interceptTouchEnd() {
+        mOverlayView.setVisibility(View.GONE);
+    }
+    
+    public void interceptTouchBegin() {
+        mOverlayView.setVisibility(View.VISIBLE);
     }
     
     public void layoutTopViewPadding(int left, int top, int right, int bottom) {

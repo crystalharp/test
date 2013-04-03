@@ -95,6 +95,13 @@ public class PullService extends Service {
                 long currentTimeMillis = System.currentTimeMillis();
                 
                 Context context = getApplicationContext();
+                
+                // 收集定位信息
+                String locationData = queryCollectionLocation(context);
+                if (locationData != null) {
+                    uploadLocationData(context, locationData);
+                }
+                
                 try {
                     String s = TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_FAILED_TIMES, "0");
                     fail = Integer.parseInt(s);
@@ -176,12 +183,6 @@ public class PullService extends Service {
                         next = recordPullMessage(context, pullMessage, requestCal);
                     } else {
                         fail += 1;
-                    }
-                    
-                    // 收集定位信息
-                    String locationData = queryCollectionLocation(context);
-                    if (locationData != null) {
-                        uploadLocationData(context, locationData);
                     }
                 } else {
                     //定位城市与设置城市不符，则跳到第二天的随机时间

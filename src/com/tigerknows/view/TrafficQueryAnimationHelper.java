@@ -4,6 +4,7 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.view.animation.Animation.AnimationListener;
 
 import com.tigerknows.Sphinx;
 
@@ -15,6 +16,26 @@ import com.tigerknows.Sphinx;
 public class TrafficQueryAnimationHelper {
 
 	private TrafficQueryFragment mQueryFragment;
+	
+	class InterceptTouchListener implements AnimationListener {
+        
+        @Override
+        public void onAnimationStart(Animation animation) {
+            mQueryFragment.mSphinx.interceptTouchBegin();
+        }
+        
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+            // TODO Auto-generated method stub
+            
+        }
+        
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            mQueryFragment.mSphinx.interceptTouchEnd();
+        }
+    };
+    InterceptTouchListener interceptTouchListener = new InterceptTouchListener();
 	
 	public TrafficQueryAnimationHelper(TrafficQueryFragment queryFragment) {
 		super();
@@ -61,7 +82,7 @@ public class TrafficQueryAnimationHelper {
 
 				@Override
 				public void onAnimationStart(Animation animation) {
-					// TODO Auto-generated method stub
+                    mQueryFragment.mSphinx.interceptTouchBegin();
 				}
 
 				@Override
@@ -73,6 +94,7 @@ public class TrafficQueryAnimationHelper {
 						public void run() {
 							// TODO Auto-generated method stub
 							mQueryFragment.getContentView().setVisibility(View.GONE);
+							mQueryFragment.mSphinx.interceptTouchEnd();
 						}
 					});
 				}
@@ -94,6 +116,7 @@ public class TrafficQueryAnimationHelper {
 	    			Animation.ABSOLUTE, mQueryFragment.mMenuFragment.getBottom() - mQueryFragment.mMenuFragment.getTop());
 			setDuration(ANIMATION_TIME);
 			setInterpolator(new AccelerateInterpolator());
+			setAnimationListener(interceptTouchListener);
 		}
 
 	}
@@ -110,7 +133,7 @@ public class TrafficQueryAnimationHelper {
 				
 				@Override
 				public void onAnimationStart(Animation animation) {
-					// TODO Auto-generated method stub
+                    mQueryFragment.mSphinx.interceptTouchBegin();
 				}
 				
 				@Override
@@ -128,6 +151,7 @@ public class TrafficQueryAnimationHelper {
 							// TODO Auto-generated method stub
 							mQueryFragment.mSphinx.getControlView().setPadding(0, 0, 0, 0);
 							mQueryFragment.mMenuFragment.setVisibility(View.GONE);
+                            mQueryFragment.mSphinx.interceptTouchEnd();
 						}
 					});
 				}
@@ -144,6 +168,7 @@ public class TrafficQueryAnimationHelper {
 	    			Animation.RELATIVE_TO_SELF, 0.0f);
 			setDuration(ANIMATION_TIME);
 			setInterpolator(new AccelerateInterpolator());
+			setAnimationListener(interceptTouchListener);
 			// TODO Auto-generated constructor stub
 		}
 	}
@@ -156,6 +181,7 @@ public class TrafficQueryAnimationHelper {
 	    			Animation.RELATIVE_TO_SELF, 0.0f);
 	        setDuration(ANIMATION_TIME);
 			setInterpolator(new AccelerateInterpolator());
+			setAnimationListener(interceptTouchListener);
 			// TODO Auto-generated constructor stub
 		}
 
