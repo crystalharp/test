@@ -161,6 +161,8 @@ public class TrafficQueryEventHelper {
 		mQueryFragment.mStart.getEdt().removeTextChangedListener(startSuggestWatcher);
 		mQueryFragment.mEnd.getEdt().removeTextChangedListener(endSuggestWatcher);
 		mQueryFragment.mBusline.getEdt().removeTextChangedListener(buslineSuggestWatcher);
+		//清除显示的历史词和建议词
+		mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mSphinx, null, 0);
 	}
 	
 	protected class StartEndEdtClickListener implements OnEditorActionListener {
