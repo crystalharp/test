@@ -63,6 +63,8 @@ public class TrafficQueryStateHelper {
 			mQueryFragment.mSphinx.getMenuFragment().display();
 //			resetNormalStateMap();
 			applyInnateProperty(TrafficViewSTT.State.Normal);
+			//返回normal状态时清理掉输入框的光标
+			mQueryFragment.mSelectedEdt.getEdt().clearFocus();
 		}
 
 		@Override
