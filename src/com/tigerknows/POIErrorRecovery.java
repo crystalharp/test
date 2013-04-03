@@ -8,11 +8,11 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
@@ -29,7 +29,7 @@ import com.tigerknows.util.TKAsyncTask;
 
 public class POIErrorRecovery extends BaseActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
     
-	private ScrollView mPOIErrorScv;
+	private LinearLayout mPOIErrorLly;
     private RadioGroup mPOIRgp;
     private RadioButton mBaseInfomationErrorRbt;
     private RadioButton mPlaceDuplicationErrorRbt;
@@ -78,7 +78,7 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
      */
     protected void findViews() {
         super.findViews();
-        mPOIErrorScv = (ScrollView)findViewById(R.id.poi_error_recovery_scv);
+        mPOIErrorLly = (LinearLayout)findViewById(R.id.poi_error_recovery_lly);
         mPOIRgp = (RadioGroup)findViewById(R.id.poi_rgp);
         mBaseInfomationErrorRbt = (RadioButton)findViewById(R.id.base_infomation_error_rbt);
         mPlaceAbsentErrorRbt = (RadioButton)findViewById(R.id.place_absent_error_rbt);
@@ -99,7 +99,7 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
         super.setListener();
         mRightBtn.setOnClickListener(this);
         
-        mPOIErrorScv.setOnTouchListener(new OnTouchListener(){
+        mPOIRgp.setOnTouchListener(new OnTouchListener(){
         	
             @Override
             public boolean onTouch(View v, MotionEvent event) {
