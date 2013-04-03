@@ -29,8 +29,11 @@ import android.telephony.NeighboringCellInfo;
 import android.telephony.TelephonyManager;
 
 /**
- * 定位服务类
- * 实现定位查询，缓存定位，重用定位，历史定位功能，避免重复的定位查询
+ * 定位服务类，实现定位查询、缓存定位、重用定位、历史定位功能、避免重复的定位查询
+ * 定位的缓存机制如下：
+ * 首先遍历内存的缓存定位列表，如果有匹配的定位就返回，否则连接定位服务器进行查询，
+ * 如果能查询到结果就返回，否则遍历史的缓存定位列表，
+ * 如果有匹配就返回，否则返回空
  * @author pengwenyue
  *
  */
@@ -106,7 +109,7 @@ public class LocationQuery extends BaseQuery {
     private float wifiMatchRate = 0f;
     
     /**
-     * 实时的定位信息缓存列表
+     * 内存的定位信息缓存列表
      */
     private HashMap<LocationParameter, Location> onlineLocationCache = new HashMap<LocationParameter, Location>();
     
@@ -116,8 +119,6 @@ public class LocationQuery extends BaseQuery {
     private HashMap<LocationParameter, Location> offlineLocationCache = new HashMap<LocationParameter, Location>();
     
     private LocationTable locationTable = null;
-    
-    private boolean readOfflineLocationCache = false;
 
     /**
      * 清除所有缓存的定位信息
@@ -292,9 +293,8 @@ public class LocationQuery extends BaseQuery {
             
             if (location == null || PROVIDER_ERROR.equals(location.getProvider())) {
                 checkLocationTable();
-                if (readOfflineLocationCache == false) {
+                if (offlineLocationCache.isEmpty()) {
                     locationTable.read(offlineLocationCache, LocationTable.Provider_List_Cache);
-                    readOfflineLocationCache = true;
                 }
                 location = queryCache(locationParameter, offlineLocationCache, false);
             }
@@ -305,6 +305,9 @@ public class LocationQuery extends BaseQuery {
         }
     }
     
+    /**
+     * 检查locationTable是否初始化，否则初始化locationTable
+     */
     private void checkLocationTable() {
         if (locationTable == null) {
             locationTable = new LocationTable(context);
@@ -313,7 +316,14 @@ public class LocationQuery extends BaseQuery {
         }
     }
     
-    private Location queryCache(LocationParameter locationParameter, HashMap<LocationParameter, Location> cache, boolean mustEqualsWifi) {
+    /**
+     * 遍历缓存定位列表，找出匹配率最高的定位信息
+     * @param locationParameter
+     * @param cache
+     * @param mustMatchWifi
+     * @return
+     */
+    private Location queryCache(LocationParameter locationParameter, HashMap<LocationParameter, Location> cache, boolean mustMatchWifi) {
         Location location = null;
         if (cache == null || cache.isEmpty()) {
             return location;
@@ -325,7 +335,7 @@ public class LocationQuery extends BaseQuery {
             Location value = entry.getValue();
             if (value != null && PROVIDER_ERROR.equals(value.getProvider()) == false) {
                 if (locationParameter.equalsCellInfo(key)) {
-                    if (location == null && mustEqualsWifi == false) {
+                    if (location == null && mustMatchWifi == false) {
                         location = value; 
                     }
                     float rate = locationParameter.calculateWifiMatchRate(key);
@@ -344,9 +354,15 @@ public class LocationQuery extends BaseQuery {
         return location;
     }
     
+    /**
+     * 初始化
+     */
     public void onCreate() {
     }
     
+    /**
+     * 释放资源
+     */
     public void onDestory() {
         if (locationTable != null && locationTable.isOpen()) {
             locationTable.optimize(LocationTable.Provider_List_Cache);
@@ -570,6 +586,11 @@ public class LocationQuery extends BaseQuery {
         }
     }
     
+    /**
+     * 基站信息类
+     * @author pengwenyue
+     *
+     */
     public static class TKCellLocation {
         public int phoneType = TelephonyManager.PHONE_TYPE_NONE;
         public int lac = -1;
@@ -632,6 +653,11 @@ public class LocationQuery extends BaseQuery {
         
     }
     
+    /**
+     * 邻近基站信息类
+     * @author pengwenyue
+     *
+     */
     public static class TKNeighboringCellInfo {
         public int lac;
         public int cid;
@@ -694,6 +720,11 @@ public class LocationQuery extends BaseQuery {
         }
     }
     
+    /**
+     * WIFI接点入信息类
+     * @author pengwenyue
+     *
+     */
     public static class TKScanResult {
         public String BSSID;
         public int level = Integer.MAX_VALUE;

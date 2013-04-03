@@ -171,9 +171,12 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         if (mCityId != Globals.g_Current_City_Info.getId()) {
             initViews();
         }
-        int count = mDiscoverCategoryAdapter.listView.size();
-        for(int i =0; i < count; i ++) {
-            (mDiscoverCategoryAdapter.listView.get(i)).onResume();
+        
+        if (mDiscoverCategoryAdapter != null) {
+            int count = mDiscoverCategoryAdapter.listView.size();
+            for(int i =0; i < count; i ++) {
+                (mDiscoverCategoryAdapter.listView.get(i)).onResume();
+            }
         }
         
         if (isReLogin()) {

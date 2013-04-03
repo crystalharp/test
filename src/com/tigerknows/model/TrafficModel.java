@@ -1149,7 +1149,10 @@ public class TrafficModel extends XMapData {
             
             return stepTypeList;
         }
-
+        
+        /**
+         * 如果历史浏览数据表已经存在此交通结果记录则只更新最近浏览时间，否则将其写入历史浏览数据表
+         */
         public void updateHistory(Context context) {
             BaseData baseData = checkStore(context, Tigerknows.STORE_TYPE_HISTORY);
             if (baseData != null) {

@@ -168,8 +168,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         }
         
         setFavoriteState(mRootView, plan.checkFavorite(mContext));
-                
-        history();
     }
     
     private OnItemClickListener mTitlePopupOnItemClickListener = new OnItemClickListener() {
@@ -258,7 +256,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 		        }
         	}
         }
-        
+
+        plan.updateHistory(mContext);
     }
 
     public static class StepViewHolder {
@@ -520,12 +519,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         viewMap();
         mSphinx.getResultMapFragment().onResume();
         TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
-    }
-
-    private void history() {
-        if (plan != null) {
-            plan.updateHistory(mContext);
-        }
     }
 
     public Plan getData() {
