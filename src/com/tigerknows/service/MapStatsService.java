@@ -308,7 +308,7 @@ public class MapStatsService extends Service {
                  */
                 String[] downloadCitysStrArr = downloadCityStr.split(";");
                 
-                for (int i = 0, size = downloadCitysStrArr.length; i < size; i++) {
+                for (int i = downloadCitysStrArr.length-1; i >= 0; i--) {
                     String str = downloadCitysStrArr[i];
                     String[] downloadCityStrArr = str.split(",");
                     String cName = downloadCityStrArr[0];

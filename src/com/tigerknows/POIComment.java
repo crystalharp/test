@@ -1152,14 +1152,10 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         mComment.setClientUid(Globals.g_ClientUID);
         
         mPOI.setMyComment(mComment);
-        
-        // 如果没有最近点评或者最近这条点评是我的，则更新它
-        if (mPOI.getLastComment() == null || Comment.isAuthorMe(mPOI.getLastComment()) > 0) {
-            mPOI.setLastComment(mComment);
-            mComment.setData(null);
-            mPOI.setData(null);
-            mPOI.updateData(mThis, mPOI.getData());
-        }
+        mPOI.setLastComment(mComment);
+        mComment.setData(null);
+        mPOI.setData(null);
+        mPOI.updateData(mThis, mPOI.getData());
         
         // 如果以前查看过点评列表，则更新列表中属于我的那条点评信息
         DataQuery dataQuery = mPOI.getCommentQuery();

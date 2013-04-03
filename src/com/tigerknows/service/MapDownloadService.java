@@ -231,7 +231,7 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                         if (intent.hasExtra(EXTRA_CITY_INFO)) {
                             CityInfo cityInfo = intent.getParcelableExtra(EXTRA_CITY_INFO);
                             CityInfoList.remove(cityInfo);
-                            CityInfoList.add(cityInfo);
+                            CityInfoList.add(0, cityInfo);
                             CityInfoList.notifyAll();
                         }
                     } else if (OPERATION_CODE_REMOVE.equals(operationCode)) {

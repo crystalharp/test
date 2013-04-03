@@ -1029,7 +1029,7 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
     
     private void addDownloadCityList(List<CityInfo> list, int state) {
         
-        for(int i = 0, size = list.size(); i < size; i++) {
+        for(int i = list.size()-1; i >= 0; i--) {
             CityInfo cityInfo = list.get(i);
             DownloadCity addDownloadCity = getDownloadCity(mDownloadCityList, cityInfo);
             if (addDownloadCity != null && addDownloadCity.state == state) {
