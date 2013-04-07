@@ -173,6 +173,7 @@ public class PullService extends Service {
                     if (!TextUtils.isEmpty(lastSucceedTime)) {
                         criteria.put(DataQuery.SERVER_PARAMETER_LAST_PULL_DATE, lastSucceedTime);
                     }
+                    LogWrapper.d(TAG, criteria.toString());
                     dataQuery.setup(criteria, currentCityInfo.getId());
                     dataQuery.query();
                     PullMessage pullMessage = dataQuery.getPullMessage();
