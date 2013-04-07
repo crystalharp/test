@@ -114,6 +114,7 @@ public class PullService extends Service {
                 Calendar next = (Calendar) requestCal.clone();
                 //如果不在请求时间范围内，肯定是请求失败被推迟的定时器，推迟到第二天的随机时间再请求
                 if (requestCal.getTime().getHours() >= requestEndHour ||requestCal.getTime().getHours() < requestStartHour) {
+                    fail = 0;
                     next = Alarms.calculateRandomAlarmInNextDay(requestCal, requestStartHour, requestEndHour);
                     exitService(next);
                     return;
