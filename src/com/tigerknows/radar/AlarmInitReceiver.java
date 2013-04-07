@@ -7,6 +7,7 @@ import com.tigerknows.service.PullService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 
 import java.util.Calendar;
 
@@ -46,12 +47,27 @@ public class AlarmInitReceiver extends BroadcastReceiver {
     }
     
     void enableAlarm(Context context) {
+        Calendar next = Calendar.getInstance();
+        next.setTimeInMillis(System.currentTimeMillis());
+        next = Alarms.alarmAddDays(next, 1);
+        Calendar locationNext = null;
+        Calendar pullNext = null;
+        
         String locationAlarm = LocationCollectionService.alarmAction.getAbsAlarm(context);
-        Calendar locationNext = Alarms.calculateAlarm(locationAlarm);
+        //如果是空，则用户是第一次使用，设置到一天以后
+        if (TextUtils.isEmpty(locationAlarm)) {
+            locationNext = next;
+        } else {
+            locationNext = Alarms.calculateAlarm(locationAlarm);
+        }
         Alarms.enableAlarm(context, locationNext, LocationCollectionService.alarmAction);
         
         String pullAlarm = PullService.alarmAction.getAbsAlarm(context);
-        Calendar pullNext = Alarms.calculateAlarm(pullAlarm);
+        if (TextUtils.isEmpty(pullAlarm)) {
+            pullNext = next;
+        } else {
+            pullNext = Alarms.calculateAlarm(pullAlarm);
+        }
         Alarms.enableAlarm(context, pullNext, PullService.alarmAction);
     }
 }
