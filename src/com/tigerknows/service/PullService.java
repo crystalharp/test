@@ -303,27 +303,33 @@ public class PullService extends Service {
         LogWrapper.d(TAG, "interval day:" + requsetIntervalDays);
         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_UPPER_LIMIT, String.valueOf(pullMessage.getRecordMessageUpperLimit()));
         String messageIdList = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, "");
-        String[] list = messageIdList.split("_");
         StringBuilder s = new StringBuilder();
         List<Message> messageList = pullMessage.getMessageList();
-        
+
         //由于产品还没想好怎么处理多条数据，目前message只显示列表中第一条。
         if (messageList != null && messageList.size() > 0) {
             Message message = messageList.get(0);
             s.append(message.getId());
+            //如果这次的消息有id，则添加上此id，并写入配置文件
+            if (s.length() > 0) {
+                s.append("_");
+                //如果配置文件中有msgIdList，则处理一下这个id列表，重新拼成字符串。
+                if (!TextUtils.isEmpty(messageIdList)) {
+                    String[] list = messageIdList.split("_");
+                    long limit = recordMessageUpperLimit - 1;
+                    limit = Math.min(limit, list.length);
+                    for (int i = 0; i < limit; i++){
+                        s.append(list[i]);
+                        s.append("_");
+                    }
+                }
+                //按照上面的代码生成字符串会在结尾带有下划线，下面一句去掉结尾的下划线
+                messageIdList = s.substring(0, s.length()-1);
+                LogWrapper.d(TAG, "msgidList:" + messageIdList);
+                TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, messageIdList);
+            }
             TKNotificationManager.notify(context, message);
         }
-        int length = list.length;
-        long limit = recordMessageUpperLimit - 1;
-        limit = Math.min(length, limit);
-        if (length > 0) {
-            s.append(list[0]);
-            for(int i = 1; i < limit; i++) {
-                s.append("_");
-                s.append(list[i]);
-            }
-        }
-        TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, s.toString());
         
         return Alarms.alarmAddDays(requestCal, requsetIntervalDays);
     }
