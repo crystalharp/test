@@ -181,7 +181,7 @@ public class PullService extends Service {
                         fail = 0;
                         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_LAST_SUCCEED_TIME, 
                                 Alarms.SIMPLE_DATE_FORMAT.format(requestCal.getTime()));
-                        next = recordPullMessage(context, pullMessage, requestCal);
+                        next = processPullMessage(context, pullMessage, requestCal);
                     } else {
                         fail += 1;
                     }
@@ -295,10 +295,10 @@ public class PullService extends Service {
         }
     }
 
-    public Calendar recordPullMessage(Context context, PullMessage pullMessage, Calendar requestCal) {
+    public Calendar processPullMessage(Context context, PullMessage pullMessage, Calendar requestCal) {
         
         long recordMessageUpperLimit = pullMessage.getRecordMessageUpperLimit();
-        long requsetIntervalDays = pullMessage.getRequsetIntervalDays();
+        int requsetIntervalDays = pullMessage.getRequsetIntervalDays();
         LogWrapper.d(TAG, "interval day:" + requsetIntervalDays);
         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_UPPER_LIMIT, String.valueOf(pullMessage.getRecordMessageUpperLimit()));
         String messageIdList = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, "");
