@@ -394,7 +394,7 @@ public class PullMessage extends Response {
         }
     }
 
-    private long requestIntervalDays;
+    private int requestIntervalDays;
     private long recordMessageUpperLimit;
     private List<Message> messageList;
     
@@ -418,7 +418,7 @@ public class PullMessage extends Response {
         }
         
         if (this.data.containsKey(FIELD_REQUEST_INTERVAL_DAYS)) {
-            requestIntervalDays = this.data.getInt(FIELD_REQUEST_INTERVAL_DAYS);
+            requestIntervalDays = (int)this.data.getInt(FIELD_REQUEST_INTERVAL_DAYS);
         }
         
         if (this.data.containsKey(FIELD_RECORD_MESSAGE_UPPER_LIMIT)) {
@@ -426,11 +426,11 @@ public class PullMessage extends Response {
         }
     }
 
-    public long getRequsetIntervalDays() {
+    public int getRequsetIntervalDays() {
         return requestIntervalDays;
     }
 
-    public void setRequsetIntervalDays(long requestIntervalDays) {
+    public void setRequsetIntervalDays(int requestIntervalDays) {
         this.requestIntervalDays = requestIntervalDays;
     }
 

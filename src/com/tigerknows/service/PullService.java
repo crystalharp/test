@@ -114,6 +114,7 @@ public class PullService extends Service {
                 Calendar next = (Calendar) requestCal.clone();
                 //如果不在请求时间范围内，肯定是请求失败被推迟的定时器，推迟到第二天的随机时间再请求
                 if (requestCal.getTime().getHours() >= requestEndHour ||requestCal.getTime().getHours() < requestStartHour) {
+                    fail = 0;
                     next = Alarms.calculateRandomAlarmInNextDay(requestCal, requestStartHour, requestEndHour);
                     exitService(next);
                     return;
@@ -173,6 +174,7 @@ public class PullService extends Service {
                     if (!TextUtils.isEmpty(lastSucceedTime)) {
                         criteria.put(DataQuery.SERVER_PARAMETER_LAST_PULL_DATE, lastSucceedTime);
                     }
+                    LogWrapper.d(TAG, criteria.toString());
                     dataQuery.setup(criteria, currentCityInfo.getId());
                     dataQuery.query();
                     PullMessage pullMessage = dataQuery.getPullMessage();
@@ -180,7 +182,7 @@ public class PullService extends Service {
                         fail = 0;
                         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_LAST_SUCCEED_TIME, 
                                 Alarms.SIMPLE_DATE_FORMAT.format(requestCal.getTime()));
-                        next = recordPullMessage(context, pullMessage, requestCal);
+                        next = processPullMessage(context, pullMessage, requestCal);
                     } else {
                         fail += 1;
                     }
@@ -294,10 +296,10 @@ public class PullService extends Service {
         }
     }
 
-    public Calendar recordPullMessage(Context context, PullMessage pullMessage, Calendar requestCal) {
+    public Calendar processPullMessage(Context context, PullMessage pullMessage, Calendar requestCal) {
         
         long recordMessageUpperLimit = pullMessage.getRecordMessageUpperLimit();
-        long requsetIntervalDays = pullMessage.getRequsetIntervalDays();
+        int requsetIntervalDays = pullMessage.getRequsetIntervalDays();
         LogWrapper.d(TAG, "interval day:" + requsetIntervalDays);
         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_UPPER_LIMIT, String.valueOf(pullMessage.getRecordMessageUpperLimit()));
         String messageIdList = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, "");
