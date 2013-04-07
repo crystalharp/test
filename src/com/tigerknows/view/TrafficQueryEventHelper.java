@@ -68,26 +68,26 @@ public class TrafficQueryEventHelper {
 	 * Do not remove common Listeners
 	 */
 	public void clearListenersFromTargets() {
-		mQueryFragment.mStart.getEdt().setOnClickListener(null);
-		mQueryFragment.mEnd.getEdt().setOnClickListener(null);
-		mQueryFragment.mBusline.getEdt().setOnClickListener(null);
-		
-		mQueryFragment.mStart.getEdt().setOnTouchListener(null);
-		mQueryFragment.mEnd.getEdt().setOnTouchListener(null);
-		mQueryFragment.mBusline.getEdt().setOnTouchListener(null);
-		
-		clearSuggestWatcherInInputState();
-		
-		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(null);
-		mQueryFragment.mSelectStartBtn.setOnClickListener(null);
-		mQueryFragment.mSelectEndBtn.setOnClickListener(null);
-		mQueryFragment.mBackBtn.setOnClickListener(null);
-		mQueryFragment.mTrafficQueryBtn.setOnClickListener(null);
-		mQueryFragment.mBuslineQueryBtn.setOnClickListener(null);
-		mQueryFragment.mSuggestLsv.setOnItemClickListener(null);
-		mQueryFragment.mSuggestLsv.setOnTouchListener(null);
-		mQueryFragment.mSuggestLnl.setOnTouchListener(null);
-		mQueryFragment.mRootView.setOnTouchListener(null);
+//		mQueryFragment.mStart.getEdt().setOnClickListener(null);
+//		mQueryFragment.mEnd.getEdt().setOnClickListener(null);
+//		mQueryFragment.mBusline.getEdt().setOnClickListener(null);
+//		
+//		mQueryFragment.mStart.getEdt().setOnTouchListener(null);
+//		mQueryFragment.mEnd.getEdt().setOnTouchListener(null);
+//		mQueryFragment.mBusline.getEdt().setOnTouchListener(null);
+//		
+//		clearSuggestWatcherInInputState();
+//		
+//		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(null);
+//		mQueryFragment.mSelectStartBtn.setOnClickListener(null);
+//		mQueryFragment.mSelectEndBtn.setOnClickListener(null);
+//		mQueryFragment.mBackBtn.setOnClickListener(null);
+//		mQueryFragment.mTrafficQueryBtn.setOnClickListener(null);
+//		mQueryFragment.mBuslineQueryBtn.setOnClickListener(null);
+//		mQueryFragment.mSuggestLsv.setOnItemClickListener(null);
+//		mQueryFragment.mSuggestLsv.setOnTouchListener(null);
+//		mQueryFragment.mSuggestLnl.setOnTouchListener(null);
+//		mQueryFragment.mRootView.setOnTouchListener(null);
 	}
 	
 	public void applyCommonListeners() {
