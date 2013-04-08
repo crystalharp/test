@@ -122,9 +122,11 @@ public class CommonUtils {
         intent.setType("image/png");
         intent.putExtra(Intent.EXTRA_TITLE, title);
         intent.putExtra(Intent.EXTRA_TEXT, body);
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
         intent.putExtra("sms_body", body);
-        intent.putExtra("file_name", uri.toString());
+        if (uri != null) {
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            intent.putExtra("file_name", uri.toString());
+        }
         try {
             activity.startActivity(Intent.createChooser(intent, title));
         } catch (android.content.ActivityNotFoundException ex) {

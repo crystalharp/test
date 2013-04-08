@@ -858,6 +858,13 @@ public class POI extends BaseData {
             if (lastComment != null) {
                 this.data.put(FIELD_LAST_COMMENT, lastComment.getData());
             }
+            if (dynamicPOIList.size() > 0) {
+                XArray<XMap> xarray = new XArray<XMap>();
+                for(int i = 0, size = dynamicPOIList.size(); i < size; i++) {
+                    xarray.add(dynamicPOIList.get(i).getData());
+                }
+                this.data.put(FIELD_DYNAMIC_POI, xarray);
+            }
         }
         return this.data;
     }

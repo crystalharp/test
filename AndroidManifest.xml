@@ -298,10 +298,10 @@
 		    </intent-filter>
 		</receiver>
         
-        <service android:name="com.tigerknows.service.PullService" android:process=":remote">
+        <service android:name="com.tigerknows.service.PullService">
         </service>
         
-        <service android:name="com.tigerknows.service.LocationCollectionService" android:process=":remote">
+        <service android:name="com.tigerknows.service.LocationCollectionService">
         </service>
 
     </application>

@@ -954,35 +954,36 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             gradeRtb.setRating(grade);
 
             authorTxv.setText(comment.getUser());
-            if (Comment.isAuthorMe(comment) > 0) {
-                view.setBackgroundResource(R.drawable.list_middle);
-                authorTxv.setTextColor(mSphinx.getResources().getColor(R.color.blue));
-                User user = Globals.g_User;
-                if (user != null) {
-                    authorTxv.setText(user.getNickName());
-                }
-                poi.setMyComment(comment);
-                view.setOnClickListener(new OnClickListener() {
-                    
-                    @Override
-                    public void onClick(View arg0) {
-                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "myComment");
-                        if (poi.getStatus() >= 0) {
-                            Intent intent = new Intent();
-                            intent.setClass(mSphinx, POIComment.class);
-                            POIComment.setPOI(poi, getId(), POIComment.STATUS_MODIFY);
-                            mSphinx.startActivityForResult(intent, R.id.activity_poi_comment);
-                        } else {
-                            CommonUtils.showNormalDialog(mSphinx, 
-                                    mSphinx.getString(R.string.comment_poi_invalid_hit));
-                        }
-                    }
-                });
-            } else {
+            // 在这里不区分最近这条点评是否为我的
+//            if (Comment.isAuthorMe(comment) > 0) {
+//                view.setBackgroundResource(R.drawable.list_middle);
+//                authorTxv.setTextColor(mSphinx.getResources().getColor(R.color.blue));
+//                User user = Globals.g_User;
+//                if (user != null) {
+//                    authorTxv.setText(user.getNickName());
+//                }
+//                poi.setMyComment(comment);
+//                view.setOnClickListener(new OnClickListener() {
+//                    
+//                    @Override
+//                    public void onClick(View arg0) {
+//                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "myComment");
+//                        if (poi.getStatus() >= 0) {
+//                            Intent intent = new Intent();
+//                            intent.setClass(mSphinx, POIComment.class);
+//                            POIComment.setPOI(poi, getId(), POIComment.STATUS_MODIFY);
+//                            mSphinx.startActivityForResult(intent, R.id.activity_poi_comment);
+//                        } else {
+//                            CommonUtils.showNormalDialog(mSphinx, 
+//                                    mSphinx.getString(R.string.comment_poi_invalid_hit));
+//                        }
+//                    }
+//                });
+//            } else {
                 view.setBackgroundResource(R.drawable.list_middle_normal);
                 authorTxv.setTextColor(0xff000000);
                 view.setOnClickListener(this);
-            }
+//            }
             
             String time = comment.getTime();
             if (!TextUtils.isEmpty(time) && time.length() >= 10) {
