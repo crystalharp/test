@@ -150,9 +150,8 @@ public class WidgetUtils {
                             
                             @Override
                             public void finish(Uri uri) {
-                                if(uri != null) {
-                                    CommonUtils.share(sphinx, activity.getString(R.string.share), smsContent, uri);
-                                }}
+                                CommonUtils.share(sphinx, activity.getString(R.string.share), smsContent, uri);
+                                }
                         }, position, mapScene);
                         break;
                 }

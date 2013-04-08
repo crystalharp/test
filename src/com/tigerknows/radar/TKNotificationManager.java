@@ -221,7 +221,7 @@ public class TKNotificationManager {
     	notif.icon = R.drawable.notif_left_icon;
     	notif.tickerText = contentText;
         notif.setLatestEventInfo(context, context.getString(R.string.app_name), contentText, pendingIntent);
-
+        notif.flags = notif.flags|Notification.FLAG_AUTO_CANCEL;
         return notif;
 	}
 	

@@ -156,7 +156,7 @@ public class POICommentList extends BaseActivity {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
                     POI poi = mPOI;
-                    if (poi != null) {
+                    if (poi != null && (poi.getMyComment() != null || poi.getCommentQuery() != null)) {
                         boolean isMe = (poi.isGoldStamp() || poi.isSilverStamp());
                         if (poi.getStatus() < 0) {
                             int resId;
