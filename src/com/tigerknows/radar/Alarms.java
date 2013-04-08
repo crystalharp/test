@@ -89,10 +89,10 @@ public class Alarms {
         return c;
     }
     
-    public static Calendar alarmAddDays(Calendar next, long addDays) {
+    public static Calendar alarmAddDays(Calendar next, int addDays) {
         
         if (addDays > 0 && next != null) {
-            next.add(Calendar.DAY_OF_YEAR, (int)addDays);
+            next.add(Calendar.DAY_OF_YEAR, addDays);
         }
         
         return next;
@@ -101,7 +101,7 @@ public class Alarms {
     public static Calendar alarmAddMinutes(Calendar next, int addMinutes) {
         
         if (addMinutes > 0 && next != null) {
-            next.add(Calendar.MINUTE, (int)addMinutes);
+            next.add(Calendar.MINUTE, addMinutes);
         }
         
         return next;

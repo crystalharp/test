@@ -277,7 +277,7 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 					int which) {
 				// TODO Auto-generated method stub
 //				if (which == DialogInterface.BUTTON_POSITIVE) {
-					valiNumBtn.reset(getString(R.string.reqest_validate_num));
+					valiNumBtn.reset(getString(R.string.request_validcode_retry));
 //				}
 			}
 			
