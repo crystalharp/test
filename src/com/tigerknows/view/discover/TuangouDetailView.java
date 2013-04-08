@@ -409,11 +409,9 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         if (tkDrawable != null) {
             Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, mParentFragment.toString());
             if(drawable != null) {
+            	mContentTxv.setVisibility(View.VISIBLE);
                 mContentTxv.setBackgroundDrawable(drawable);
                 mContentTxv.setText(null);
-            } else {
-                mContentTxv.setBackgroundDrawable(null);
-                mContentTxv.setText(R.string.loading);
             }
         } else {
             mContentTxv.setBackgroundDrawable(null);
@@ -451,8 +449,10 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                     layoutParams = mContentTxv.getLayoutParams();
                     layoutParams.width = mPictureDetailWidth;
                     layoutParams.height = (int) (mPictureDetailWidth*((float)drawable.getIntrinsicHeight()/drawable.getIntrinsicWidth()));
+                    mContentView.setVisibility(View.VISIBLE);
+                }else{
+                    mContentView.setVisibility(View.GONE);
                 }
-                mContentView.setVisibility(View.VISIBLE);
             } else {
                 needFiled.append(Util.byteToHexString(Tuangou.FIELD_CONTENT_TEXT));
                 needFiled.append(Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC));
