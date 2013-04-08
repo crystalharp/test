@@ -160,19 +160,21 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
             mDescriptionTxv.setText(str);
             mDescriptionTxv.setVisibility(View.VISIBLE);
             mLoadingView.setVisibility(View.GONE);
-        } else if (query && !mAsyncTaskExecuting){
-            mDescriptionTxv.setVisibility(View.GONE);
-            mLoadingView.setVisibility(View.VISIBLE);
-            DataOperation dataOperation = new DataOperation(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_ZHANLAN);
-            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
-            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
-            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
-            mTKAsyncTasking = mSphinx.queryStart(dataOperation);
-            mAsyncTaskExecuting = true;
-            mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
+        } else if (query){
+        	if (!mAsyncTaskExecuting) {
+        		mDescriptionTxv.setVisibility(View.GONE);
+        		mLoadingView.setVisibility(View.VISIBLE);
+        		DataOperation dataOperation = new DataOperation(mSphinx);
+        		Hashtable<String, String> criteria = new Hashtable<String, String>();
+        		criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_ZHANLAN);
+        		criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+        		criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
+        		criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
+        		dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
+        		mTKAsyncTasking = mSphinx.queryStart(dataOperation);
+        		mAsyncTaskExecuting = true;
+        		mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
+			}
         }
     }
     

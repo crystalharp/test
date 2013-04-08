@@ -1554,8 +1554,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (newIntent != null) {
             com.tigerknows.model.PullMessage.Message message = newIntent.getParcelableExtra(Sphinx.EXTRA_PULL_MESSAGE);
             if (message != null) {
+            	TKNotificationManager.cancel(mThis);
                 if (message.getDynamicPOI() != null) {
-                    TKNotificationManager.cancel(mThis);
                     uiStackClose(new int[]{R.id.view_discover});
                     showView(R.id.view_discover);
                     //Show the corresponding view

@@ -409,11 +409,9 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         if (tkDrawable != null) {
             Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, mParentFragment.toString());
             if(drawable != null) {
+            	mContentTxv.setVisibility(View.VISIBLE);
                 mContentTxv.setBackgroundDrawable(drawable);
                 mContentTxv.setText(null);
-            } else {
-                mContentTxv.setBackgroundDrawable(null);
-                mContentTxv.setText(R.string.loading);
             }
         } else {
             mContentTxv.setBackgroundDrawable(null);
@@ -451,8 +449,10 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                     layoutParams = mContentTxv.getLayoutParams();
                     layoutParams.width = mPictureDetailWidth;
                     layoutParams.height = (int) (mPictureDetailWidth*((float)drawable.getIntrinsicHeight()/drawable.getIntrinsicWidth()));
+                    mContentView.setVisibility(View.VISIBLE);
+                }else{
+                    mContentView.setVisibility(View.GONE);
                 }
-                mContentView.setVisibility(View.VISIBLE);
             } else {
                 needFiled.append(Util.byteToHexString(Tuangou.FIELD_CONTENT_TEXT));
                 needFiled.append(Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC));
@@ -477,21 +477,23 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             mNoticedView.setVisibility(View.VISIBLE);
         }
         
-        if (needFiled.length() > 0 && query && !mAsyncTaskExecuting) {
-            mLoadingView.setVisibility(View.VISIBLE);
-            DataOperation dataOperation = new DataOperation(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_TUANGOU);
-            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
-            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, needFiled.toString());
-            if (pic.length() > 0) {
-                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE, pic.toString());
-            }
-            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
-            mAsyncTaskExecuting = true;
-            mTKAsyncTasking = mSphinx.queryStart(dataOperation);
-            mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
+        if (needFiled.length() > 0 && query) {
+        	if(!mAsyncTaskExecuting){
+	            mLoadingView.setVisibility(View.VISIBLE);
+	            DataOperation dataOperation = new DataOperation(mSphinx);
+	            Hashtable<String, String> criteria = new Hashtable<String, String>();
+	            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_TUANGOU);
+	            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+	            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
+	            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, needFiled.toString());
+	            if (pic.length() > 0) {
+	                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE, pic.toString());
+	            }
+	            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
+	            mAsyncTaskExecuting = true;
+	            mTKAsyncTasking = mSphinx.queryStart(dataOperation);
+	            mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
+        	}
         } else {
             mLoadingView.setVisibility(View.GONE);
         }
