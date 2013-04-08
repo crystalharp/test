@@ -41,9 +41,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 
 /**
  * @author Peng Wenyue
@@ -661,84 +664,213 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         }
     }
     
-    public static void makeChangciView(Yingxun yingxun, Context context, LayoutInflater layoutInflater, ViewGroup parent) {
+    private static ViewGroup changciTemplateView = null;
+    
+    /**
+     * Get the maximum Changci View width for the changci info in yingxun
+     * @param yingxun
+     * @param layoutInflater
+     * @param parent
+     * @return
+     */
+    private static int getChangciListItemWidth(Yingxun yingxun, LayoutInflater layoutInflater, ViewGroup parent){
+
         int RESOURCE_ID = R.layout.changci_list_item;
         
         int option = yingxun.getChangciOption();
-        View view = layoutInflater.inflate(RESOURCE_ID, parent, false);
-        view.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-        int changciListItemWidth = view.getMeasuredWidth() + Util.dip2px(Globals.g_metrics.density, 6);
+
+        int maxWidth = 0;
+        int curWidth = 0;
+        
+        // Inflate a new view for it.
+        if(changciTemplateView==null){
+        	changciTemplateView = (ViewGroup)layoutInflater.inflate(RESOURCE_ID, parent, false);
+        }
+        
+        //Get the minimum possible width first
+    	((TextView)changciTemplateView.findViewById(R.id.version_txv)).setText("");
+    	changciTemplateView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+    	maxWidth = changciTemplateView.getMeasuredWidth() + Util.dip2px(Globals.g_metrics.density, 6);
+
+    	//Loop through the changci list to get the maximum possible width 
+        List<Changci> list = yingxun.getChangciList();
+        int size = list.size();
+        for(int k = 0;k < size; k++) {
+
+        	// We only care about the current changci option for the yingxun
+            if ((list.get(k).getOption() & option) > 0) {
+            	
+	        	//Set the content and get the width
+	        	((TextView)changciTemplateView.findViewById(R.id.version_txv)).setText(list.get(k).getVersion());
+	        	changciTemplateView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+	        	curWidth = changciTemplateView.getMeasuredWidth() + Util.dip2px(Globals.g_metrics.density, 6);
+	            
+	        	// Update the max
+	        	if(curWidth > maxWidth){
+	        		maxWidth = curWidth;
+	        	}
+            }
+        	
+        }
+        
+		return maxWidth;
+    	
+    }
+
+    private static int lastProcessedChangciIndex = 0;
+    
+    /**
+     * A queue that resues the column views
+     * Since fillChangciRow will only be called in UI thread,
+     * 	no need to synchronize it.
+     */
+    public static Queue< SoftReference<ViewGroup> > viewQueueForChangciItems = null;
+    
+    /**
+     * Fill the changci row with the changci info of yingxun, starting at index {@linkplain lastProcessedChangciIndex}
+     * @param row
+     * @param columNum
+     * @param layoutInflater
+     * @param changciListItemWidth
+     * @param list
+     * @param yingxun
+     * @return return the newly filled changcin item
+     */
+    public static int fillChangciRow(ViewGroup row, int columNum, LayoutInflater layoutInflater, int changciListItemWidth,
+    		Yingxun yingxun){
+
+    	List<Changci> list = yingxun.getChangciList();
+        int RESOURCE_ID = R.layout.changci_list_item;
+        int size = list.size();
+        int option = yingxun.getChangciOption();
+        int newvisibleChangciCount = 0;
+        
+        int rowViewChildCount = row.getChildCount();
+
+        /**
+         * To solve a problem:
+         * 		When we set the changci from "3D" to "IMAX3D", the size of the textView doesn't change.
+         * After trying the methods that i can think up, 
+         * I found we must first remove the views from the row and then add them back
+         * 	to force the ViewGroup to reconsider the size of all childs.
+         */
+        
+        // Allocate the queue when first allocated
+        if(viewQueueForChangciItems == null){
+        	viewQueueForChangciItems = new LinkedList<SoftReference< ViewGroup> >();
+        }
+        
+        // Get all the views from the row and remove them from the row
+        for (int i = 0; i < rowViewChildCount; i++) {
+        	viewQueueForChangciItems.add( new SoftReference<ViewGroup>( (ViewGroup) row.getChildAt(i) ) );
+		}
+        row.removeAllViews();
+        
+        for(int j = 0; j < columNum; j++) {
+            
+            Changci changci = null;
+            for(int k = lastProcessedChangciIndex;k < size; k++) {
+                lastProcessedChangciIndex++;
+                if ((list.get(k).getOption() & option) > 0) {
+                    changci = list.get(k);
+                    break;
+                }
+            }
+
+            ViewGroup colum = null;
+            // get or allocate the View for this column
+            if(!viewQueueForChangciItems.isEmpty()){
+            	colum = viewQueueForChangciItems.remove().get();
+            }
+            if(colum == null){
+            	colum = (ViewGroup) layoutInflater.inflate(RESOURCE_ID, row, false);
+            }
+            if (changci != null) {
+                // Set changci info into views
+                TextView timeTxv = (TextView) colum.findViewById(R.id.time_txv);
+                TextView versionTxv = (TextView) colum.findViewById(R.id.version_txv);
+
+                //Set start time
+                String stratTime = changci.getStartTime();
+                timeTxv.setText(stratTime.length() < 5 ? "  " +stratTime : stratTime);
+                if ((changci.getOption() & Changci.OPTION_FILTER) > 0) {
+                    timeTxv.setTextColor(0xff199dbe);
+                } else {
+                    timeTxv.setTextColor(0x99000000);
+                }
+                
+                //Set version
+                String version = changci.getVersion();
+                if (TextUtils.isEmpty(version) || version.toLowerCase().equals("2d")) {
+                    versionTxv.setVisibility(View.INVISIBLE);
+                } else {
+                    versionTxv.setText(version);
+                    versionTxv.setVisibility(View.VISIBLE);
+                }
+                
+                // Make it visible and Add to row
+                colum.setVisibility(View.VISIBLE);
+                newvisibleChangciCount++;
+            }else {
+                colum.setVisibility(View.INVISIBLE);
+			}
+            // We have to add invisible colums to fill the rest space of incomplete rows.
+            row.addView(colum, new LayoutParams(changciListItemWidth, LayoutParams.WRAP_CONTENT));
+            
+        }
+        
+        return newvisibleChangciCount;
+    }
+    
+
+    public static Queue<SoftReference<ViewGroup>> viewQueueForChangciRows = null;
+    
+    public static void makeChangciView(Yingxun yingxun, Context context, LayoutInflater layoutInflater, ViewGroup parent) {
+        
+        int changciListItemWidth = getChangciListItemWidth(yingxun, layoutInflater, parent);
         
         List<Changci> list = yingxun.getChangciList();
         int size = list.size();
         int colums = (Globals.g_metrics.widthPixels-Util.dip2px(Globals.g_metrics.density, 12))/changciListItemWidth;
         int rows = size/colums + (size%colums == 0 ? 0 : 1);
         int viewChildCount = parent.getChildCount();
-        int changciIndex = 0;
-        int visibleChangciCount = 0;
+        
+        //Allocate the queue
+        if( viewQueueForChangciRows == null){
+        	viewQueueForChangciRows = new LinkedList<SoftReference< ViewGroup > >();
+        }
+
+        // Get all the views from the row and remove them from the row
+        for (int i = 0; i < viewChildCount; i++) {
+        	viewQueueForChangciRows.add( new SoftReference<ViewGroup>((ViewGroup) parent.getChildAt(i)) );
+		}
+        parent.removeAllViews();
+        
+        // Set the last processed changci index to 0
+        lastProcessedChangciIndex = 0;
         for(int i = 0; i < rows; i++) {
-            ViewGroup row;
-            if (i < viewChildCount) {
-                row = (ViewGroup) parent.getChildAt(i);
-                row.setVisibility(View.VISIBLE);
-            } else {
+        	ViewGroup row = null;
+        	// Get or allocate a row
+        	if (!viewQueueForChangciRows.isEmpty()) {
+        		row = viewQueueForChangciRows.remove().get();
+			}
+        	
+            if(row == null){
                 LinearLayout linearLayout = new LinearLayout(context);
                 linearLayout.setOrientation(LinearLayout.HORIZONTAL);
                 row = linearLayout;
-                parent.addView(row, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-            }
-            if( i==rows-1 ){
-                row.setPadding(0, 0, 0, Util.dip2px(Globals.g_metrics.density, 8));
             }
             
-            int rowViewChildCount = row.getChildCount();
-            for(int j = 0; j < colums; j++) {
-                ViewGroup colum;
-                if (j < rowViewChildCount) {
-                    colum = (ViewGroup) row.getChildAt(j);
-                } else {
-                    colum = (ViewGroup) layoutInflater.inflate(RESOURCE_ID, row, false);
-                    row.addView(colum, new LayoutParams(changciListItemWidth, LayoutParams.WRAP_CONTENT));
-                }
-                Changci changci = null;
-                for(int k = changciIndex;k < size; k++) {
-                    changciIndex++;
-                    if ((list.get(k).getOption() & option) > 0) {
-                        changci = list.get(k);
-                        break;
-                    }
-                }
-                if (changci != null) {
-                    TextView timeTxv = (TextView) colum.findViewById(R.id.time_txv);
-                    TextView versionTxv = (TextView) colum.findViewById(R.id.version_txv);
-
-                    String stratTime = changci.getStartTime();
-                    timeTxv.setText(stratTime.length() < 5 ? "  " +stratTime : stratTime);
-                    if ((changci.getOption() & Changci.OPTION_FILTER) > 0) {
-                        timeTxv.setTextColor(0xff199dbe);
-                    } else {
-                        timeTxv.setTextColor(0x99000000);
-                    }
-                    String version = changci.getVersion();
-                    if (TextUtils.isEmpty(version) || version.toLowerCase().equals("2d")) {
-                        versionTxv.setVisibility(View.INVISIBLE);
-                    } else {
-                        versionTxv.setText(version);
-                        versionTxv.setVisibility(View.VISIBLE);
-                    }
-                    colum.setVisibility(View.VISIBLE);
-                    visibleChangciCount++;
-                } else {
-                    colum.setVisibility(View.INVISIBLE);
-                }
-            }
+            //Set the content of the row
+            row.setVisibility(View.VISIBLE);
+            if( fillChangciRow(row, colums, layoutInflater, changciListItemWidth, yingxun) != 0){
+            	parent.addView(row, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+            }else {
+            	viewQueueForChangciRows.add(new SoftReference<ViewGroup>(row));
+            	break;
+			}
         }
         
-        viewChildCount = parent.getChildCount();
-        int visibleRows = visibleChangciCount/colums + (visibleChangciCount%colums == 0 ? 0 : 1);
-        for(int i = visibleRows; i < viewChildCount; i++) {
-            parent.getChildAt(i).setVisibility(View.GONE);
-        }
     }
     
     @Override

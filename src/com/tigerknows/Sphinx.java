@@ -28,7 +28,6 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -102,7 +101,6 @@ import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Dianying;
-import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.model.LocationQuery;
@@ -121,7 +119,6 @@ import com.tigerknows.radar.TKNotificationManager;
 import com.tigerknows.service.MapDownloadService;
 import com.tigerknows.service.MapStatsService;
 import com.tigerknows.service.SuggestLexiconService;
-import com.tigerknows.service.TKLocationManager.TKLocationListener;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.BaseDialog;
@@ -1135,6 +1132,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		LogWrapper.i("Sphinx","onDestroy()");
         if (mSensorOrientation) {
             mSensorManager.unregisterListener(mSensorListener);
+        }
+        if(DiscoverChildListFragment.viewQueueForChangciItems!=null){
+        	DiscoverChildListFragment.viewQueueForChangciItems.clear();
+        }
+        if(DiscoverChildListFragment.viewQueueForChangciRows != null){
+        	DiscoverChildListFragment.viewQueueForChangciRows.clear();
         }
         mActionLog.onDestroy();
         mMenuFragment = null;
