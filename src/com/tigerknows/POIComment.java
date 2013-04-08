@@ -1099,15 +1099,12 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                         
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
-                            User user = Globals.g_User;
-                            if (user != null) {
                             Hashtable<String, String> criteria = commentOperation.getCriteria();
                             criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_UPDATE);
                             criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mComment.getUid());
                             DataOperation dataOperation = new DataOperation(mThis);
                             dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), -1, mFromViewId, mThis.getString(R.string.doing_and_wait));
                             queryStart(dataOperation);
-                            }
                         }
                     });
                 } else if (response.getResponseCode() == 602) {

@@ -207,8 +207,8 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
 
         if (mDismiss) {
             readPOI(mPOIList, Long.MAX_VALUE, 0, false);
-            readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
             mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
+            readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
             mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize());
             if (mPOIList.isEmpty() && mTrafficList.isEmpty() == false) {
                 mLayerType = ItemizedOverlay.TRAFFIC_OVERLAY;
@@ -222,12 +222,12 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 min = mPOIList.get(0).getId();
             }
             readPOI(mPOIList, Long.MAX_VALUE, min, true);
+            checkData(ItemizedOverlay.POI_OVERLAY);
             
             if (mTrafficList.size() > 0) {
                 min = mTrafficList.get(0).getId();
             }
             readTraffic(mTrafficList, Long.MAX_VALUE, min, true);
-            checkData(ItemizedOverlay.POI_OVERLAY);
             checkData(ItemizedOverlay.TRAFFIC_OVERLAY);
         }
         
@@ -796,8 +796,8 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getDateTime(), true);
             } else {
                 readPOI(mPOIList, Long.MAX_VALUE, 0, false);
-                mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
             }
+            mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
             Collections.sort(mPOIList, mComparator);
             mPOIAdapter.notifyDataSetChanged();
         } else {
@@ -810,14 +810,14 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getDateTime(), true);
             } else {
                 readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
-                mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize());
             }
+            mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize());
             Collections.sort(mTrafficList, mComparator);
             mTrafficAdapter.notifyDataSetChanged();
         }
         refreshContent();
-        mPOILsv.changeHeaderViewByState(false, SpringbackListView.DONE);
-        mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+//        mPOILsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+//        mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
     }
     
     private void showRenameDialog(final int position) {
