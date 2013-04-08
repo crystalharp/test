@@ -869,6 +869,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mControlView.setVisibility(View.VISIBLE);
         Sphinx.this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         checkPullMessage(getIntent());
+        mMapView.refreshMap();
     }
 
     @Override
@@ -1058,6 +1059,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		super.onResume();
 		Log.i(TAG,"onResume()");
 		mActionLog.onResume();
+		if (uiStackSize() > 0) {
+		    mMapView.refreshMap();
+		}
+		interceptTouchEnd();
 
         Globals.setConnectionFast(CommonUtils.isConnectionFast(this));
         Globals.getAsyncImageLoader().onResume();
@@ -1561,7 +1566,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     //Show the corresponding view
                     showPulledDynamicPOI(message.getDynamicPOI());
                 } else {
-                    uiStackClose(new int[]{R.id.view_discover});
+                    uiStackClose(new int[]{R.id.view_home});
                     showView(R.id.view_home);
                 }
                 result = true;
@@ -1803,21 +1808,25 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             baseFragment.onPostExecute(tkAsyncTask);
         }
         
-        if (baseQuery instanceof Bootstrap) {
-            BootstrapModel bootstrapModel = ((Bootstrap) baseQuery).getBootstrapModel();
-            if (bootstrapModel != null) {
-                Globals.g_Bootstrap_Model = bootstrapModel;
+        List<BaseQuery> list = tkAsyncTask.getBaseQueryList();
+        for(int i = list.size()-1; i >= 0; i--) {
+            baseQuery = list.get(i);
+            if (baseQuery instanceof Bootstrap) {
+                BootstrapModel bootstrapModel = ((Bootstrap) baseQuery).getBootstrapModel();
+                if (bootstrapModel != null) {
+                    Globals.g_Bootstrap_Model = bootstrapModel;
+                }
+                getMoreFragment().refreshMoreBtn(false);
+            } else if (baseQuery instanceof DataOperation) {
+            	Response response = baseQuery.getResponse();
+            	if (response instanceof DiaoyanQueryResponse) {
+            		DiaoyanQueryResponse diaoyanQueryResponse = (DiaoyanQueryResponse) response;
+            		if (diaoyanQueryResponse.getHasSurveyed() != 1) {
+            			getMoreFragment().setDiaoyanQueryResponse(diaoyanQueryResponse);
+            			getMoreFragment().refreshMoreBtn(false);
+            		}
+            	}
             }
-            getMoreFragment().refreshMoreBtn(false);
-        } else if (baseQuery instanceof DataOperation) {
-        	Response response = baseQuery.getResponse();
-        	if (response instanceof DiaoyanQueryResponse) {
-        		DiaoyanQueryResponse diaoyanQueryResponse = (DiaoyanQueryResponse) response;
-        		if (diaoyanQueryResponse.getHasSurveyed() != 1) {
-        			getMoreFragment().setDiaoyanQueryResponse(diaoyanQueryResponse);
-        			getMoreFragment().refreshMoreBtn(false);
-        		}
-        	}
         }
     }
     

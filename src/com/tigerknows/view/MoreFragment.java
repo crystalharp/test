@@ -205,7 +205,8 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         if (!TextUtils.isEmpty(commentTip)) {
             showCommentTipTimes = Integer.parseInt(commentTip);
             if (isCreate) {
-                TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(showCommentTipTimes+1));
+                showCommentTipTimes++;
+                TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(showCommentTipTimes));
             }
         } else {
             if (isCreate) {
