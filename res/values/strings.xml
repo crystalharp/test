@@ -931,9 +931,4 @@
     
     <string name="counting_tip">正在统计...</string>
 
-<!-- Hotel Reservation Text Start -->
-    <string name="hotel_condition_city">城市</string>
-    <string name="hotel_condition_date">入住时间</string>
-    <string name="hotel_condition_location">位置</string>
-    <string name="hotel_condition_more">星级/品牌/价格</string>
 </resources>
