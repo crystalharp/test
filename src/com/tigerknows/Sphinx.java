@@ -228,7 +228,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private ViewGroup mBodyView;
     private ViewGroup mMenuView;
     private ViewGroup mControlView;   
-    private ViewGroup mOverlayView;
+    private ViewGroup mDisableTouchView;
 
     /**
      * 下面这些ViewGroup用于InfoWindow
@@ -1310,11 +1310,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mLocationBtn=(ImageButton)(findViewById(R.id.location_btn));
         mDownloadView = (TextView)findViewById(R.id.download_txv);
         mCompassView = findViewById(R.id.compass_imv);
-        mOverlayView = (ViewGroup) findViewById(R.id.overlay_view);
+        mDisableTouchView = (ViewGroup) findViewById(R.id.disable_touch_view);
     }
 
     private void setListener() {
-        mOverlayView.setOnTouchListener(new OnTouchListener() {
+        mDisableTouchView.setOnTouchListener(new OnTouchListener() {
             
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -1953,11 +1953,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     
     public void interceptTouchEnd() {
-        mOverlayView.setVisibility(View.GONE);
+        mDisableTouchView.setVisibility(View.GONE);
     }
     
     public void interceptTouchBegin() {
-        mOverlayView.setVisibility(View.VISIBLE);
+        mDisableTouchView.setVisibility(View.VISIBLE);
     }
     
     public void layoutTopViewPadding(int left, int top, int right, int bottom) {
