@@ -62,12 +62,12 @@ public class TrafficQueryEventHelper {
 		mQueryFragment.mStart.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mStart));
 		mQueryFragment.mEnd.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mEnd));
 		mQueryFragment.mBusline.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mBusline));
-	}
+//	}
 	
 	/*
 	 * Do not remove common Listeners
 	 */
-	public void clearListenersFromTargets() {
+//	public void clearListenersFromTargets() {
 //		mQueryFragment.mStart.getEdt().setOnClickListener(null);
 //		mQueryFragment.mEnd.getEdt().setOnClickListener(null);
 //		mQueryFragment.mBusline.getEdt().setOnClickListener(null);
@@ -88,9 +88,15 @@ public class TrafficQueryEventHelper {
 //		mQueryFragment.mSuggestLsv.setOnTouchListener(null);
 //		mQueryFragment.mSuggestLnl.setOnTouchListener(null);
 //		mQueryFragment.mRootView.setOnTouchListener(null);
-	}
+//	}
+		
+//  public void addSuggestWatcherInInputState() {
+        mQueryFragment.mStart.getEdt().addTextChangedListener(startSuggestWatcher);
+        mQueryFragment.mEnd.getEdt().addTextChangedListener(endSuggestWatcher);
+        mQueryFragment.mBusline.getEdt().addTextChangedListener(buslineSuggestWatcher);
+//  }
 	
-	public void applyCommonListeners() {
+//	public void applyCommonListeners() {
 		mQueryFragment.mStart.getEdt().addTextChangedListener(new EditTextContentTextWatcher(mQueryFragment.mStart));
 		mQueryFragment.mEnd.getEdt().addTextChangedListener(new EditTextContentTextWatcher(mQueryFragment.mEnd));
 		mQueryFragment.mBusline.getEdt().addTextChangedListener(new EditTextContentTextWatcher(mQueryFragment.mBusline));
@@ -99,71 +105,63 @@ public class TrafficQueryEventHelper {
 		mQueryFragment.mEnd.getEdt().setOnEditorActionListener(new StartEndEdtClickListener());
 		mQueryFragment.mBusline.getEdt().setOnEditorActionListener(new EditorActionListener(mQueryFragment.mBusline));
 
-		mQueryFragment.mRootView.setOnTouchListener(new RootViewTouchListener());
+//		mQueryFragment.mRootView.setOnTouchListener(new RootViewTouchListener());
 		
 		mQueryFragment.mStart.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mStart, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC));
 		mQueryFragment.mEnd.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mEnd, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC));
 		mQueryFragment.mBusline.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mBusline, TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE));
+		mQueryFragment.mSelectStartBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mStart));
+		mQueryFragment.mSelectEndBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mEnd));
 	}
 	
 	public void applyListenersInNormalState() {
 		LogWrapper.d("eric", "applyListenersInNormalState");
 		
-		clearListenersFromTargets();
-		applyCommonListeners();
+//		clearListenersFromTargets();
+//		applyCommonListeners();
 		
 		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new NormalOnCheckedChangeListener());
-		mQueryFragment.mSelectStartBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mStart));
-		mQueryFragment.mSelectEndBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mEnd));
 	}
-	
+//	
 	public void applyListenersInInputState() {
 		LogWrapper.d("eric", "applyListenersInInputState");
 		
-		clearListenersFromTargets();
-		applyCommonListeners();
+//		clearListenersFromTargets();
+//		applyCommonListeners();
 		
 		mQueryFragment.mBackBtn.setOnClickListener(new InputBackClickListener());
 		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new InputOnCheckedChangeListener());
-		mQueryFragment.mSelectStartBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mStart));
-		mQueryFragment.mSelectEndBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mEnd));
 		mQueryFragment.mTrafficQueryBtn.setOnClickListener(new InputQueryClickListener("queryTraffic"));
 		mQueryFragment.mBuslineQueryBtn.setOnClickListener(new InputQueryClickListener("queryBusline"));
 		mQueryFragment.mSuggestLsv.setOnItemClickListener(new InputSuggestOnItemClickListener());
 		mQueryFragment.mSuggestLsv.setOnTouchListener(new InputSuggestOnTouchListener());
 		mQueryFragment.mSuggestLnl.setOnTouchListener(new InputSuggestOnTouchListener());
 		
-		addSuggestWatcherInInputState();
+//		addSuggestWatcherInInputState();
 	}
 	
 	public void applyListenersInMapState() {
 		LogWrapper.d("eric", "applyListenersInMapState");
 		
-		clearListenersFromTargets();
-		applyCommonListeners();
+//		clearListenersFromTargets();
+//		applyCommonListeners();
 		
 		mQueryFragment.mBackBtn.setOnClickListener(new MapBackClickListener());
 		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new MapRadioOnCheckedChangeListener());
-		mQueryFragment.mRootView.setOnTouchListener(new RootViewTouchListener());
+//		mQueryFragment.mRootView.setOnTouchListener(new RootViewTouchListener());
 	}
-	
+//	
 	public void applyListenersInSelectPointState() {
 		mQueryFragment.mLeftBtn.setOnClickListener(new SelectPointLeftBtnOnClickListener());
 	}
-	
-	public void addSuggestWatcherInInputState() {
-		mQueryFragment.mStart.getEdt().addTextChangedListener(startSuggestWatcher);
-		mQueryFragment.mEnd.getEdt().addTextChangedListener(endSuggestWatcher);
-		mQueryFragment.mBusline.getEdt().addTextChangedListener(buslineSuggestWatcher);
-	}
-	
-	public void clearSuggestWatcherInInputState() {
-		mQueryFragment.mStart.getEdt().removeTextChangedListener(startSuggestWatcher);
-		mQueryFragment.mEnd.getEdt().removeTextChangedListener(endSuggestWatcher);
-		mQueryFragment.mBusline.getEdt().removeTextChangedListener(buslineSuggestWatcher);
-		//清除显示的历史词和建议词
-		mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mSphinx, null, 0);
-	}
+//	
+//	public void clearSuggestWatcherInInputState() {
+//		mQueryFragment.mStart.getEdt().removeTextChangedListener(startSuggestWatcher);
+//		mQueryFragment.mEnd.getEdt().removeTextChangedListener(endSuggestWatcher);
+//		mQueryFragment.mBusline.getEdt().removeTextChangedListener(buslineSuggestWatcher);
+//		//清除显示的历史词和建议词
+//		mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mSphinx, null, 0);
+//	}
 	
 	protected class StartEndEdtClickListener implements OnEditorActionListener {
 		
@@ -428,9 +426,10 @@ public class TrafficQueryEventHelper {
 		@Override
 		public void onClick(View v) {
 			mQueryFragment.mSphinx.hideSoftInput();
-			clearSuggestWatcherInInputState();
+			mQueryFragment.mSuggestHistoryHelper.clearSuggestList(mQueryFragment.mSphinx);
+//			clearSuggestWatcherInInputState();
 			super.onClick(v);
-			addSuggestWatcherInInputState();
+//			addSuggestWatcherInInputState();
 		}
 	}
 
@@ -630,11 +629,12 @@ public class TrafficQueryEventHelper {
 			
 		    private void performSwitchStartEnd() {
 		        mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mSphinx, null, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
-                clearSuggestWatcherInInputState();
+//                clearSuggestWatcherInInputState();
                 POI temp = mQueryFragment.mStart.getPOI();
                 mQueryFragment.mStart.setPOI(mQueryFragment.mEnd.getPOI());
                 mQueryFragment.mEnd.setPOI(temp);
-                addSuggestWatcherInInputState();
+                mQueryFragment.mSuggestHistoryHelper.clearSuggestList(mQueryFragment.mSphinx);
+//                addSuggestWatcherInInputState();
 //                mQueryFragment.mBlock.requestFocus();
 		    }
 		    

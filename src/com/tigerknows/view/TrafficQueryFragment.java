@@ -765,17 +765,17 @@ public class TrafficQueryFragment extends BaseFragment {
     }
 	
 	//1"POI详情-到这里去"默认显示"当前位置"
-    public void setData(POI poi) {
-    	mMapLocationHelper.showNormalStateMap();
-    	setState(TrafficViewSTT.State.Input);
-    	mEventHelper.clearSuggestWatcherInInputState();
-    	clearAllText();
-    	initStartContent();
-    	setPOI(poi.clone(), END);
-    	mSelectedEdt = mEnd;
-    	preferTrafficThanBusline();
-    	mEventHelper.addSuggestWatcherInInputState();
-    }	
+//    public void setData(POI poi) {
+//    	mMapLocationHelper.showNormalStateMap();
+//    	setState(TrafficViewSTT.State.Input);
+//    	mEventHelper.clearSuggestWatcherInInputState();
+//    	clearAllText();
+//    	initStartContent();
+//    	setPOI(poi.clone(), END);
+//    	mSelectedEdt = mEnd;
+//    	preferTrafficThanBusline();
+//    	mEventHelper.addSuggestWatcherInInputState();
+//    }	
 	
 	/*
      * 点击书签选择"当前位置"或"收藏夹" SELECTED

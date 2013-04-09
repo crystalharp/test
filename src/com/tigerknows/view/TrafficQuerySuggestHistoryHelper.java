@@ -63,6 +63,10 @@ public class TrafficQuerySuggestHistoryHelper {
 		listView.setAdapter(mSuggestArrayAdapter);
 	}
 	
+	public void clearSuggestList(final Context context) {
+	    refresh(context, null, 0);
+	}
+	
 	public void refresh(final Context context, final TKEditText tkEditText, final int type) {
 	    mTKWordList.clear();
 	    if (tkEditText != null) {
