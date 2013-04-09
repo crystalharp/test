@@ -48,6 +48,7 @@ import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
+import com.tigerknows.view.TrafficViewSTT.Event;
 import com.tigerknows.view.TrafficViewSTT.State;
 
 /**
@@ -380,7 +381,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	}
     
 	public void setState(TrafficViewSTT.State state) {
-		mStateTransitionTable.setCurrentState(state);
+		mStateTransitionTable.resetInitState(state);
 		/*
 		 * No state transition.
 		 */
@@ -396,7 +397,7 @@ public class TrafficQueryFragment extends BaseFragment {
 		
 		mStateHelper.applyInnateProperty(mStateTransitionTable.getCurrentState());
 		checkQueryState();
-		mStateTransitionTable.clearTransitionStack();
+//		mStateTransitionTable.clearTransitionStack();
 	}
 	
 	public void postTask(Runnable r) {
@@ -561,7 +562,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	/**
 	 * 在input模式和其他模式切换的时候，traffic和busline模式并没有切换,但是也需要模式切换的刷新.
 	 */
-	public void clearMode(){
+	public void clearTrafficMode(){
 	    mode = NULL_MODE;
 	}
 	
@@ -849,7 +850,7 @@ public class TrafficQueryFragment extends BaseFragment {
     public void setDataForSelectPoint(POI poi, int index) {
     	mStateTransitionTable.event(TrafficViewSTT.Event.PointSelected);
     	setData(poi.clone(), index);
-    	mStateTransitionTable.mergeFirstTwoTranstion(TrafficViewSTT.Event.ClickSelectStartEndBtn, mStateHelper.createNormalToInputAction());
+//    	mStateTransitionTable.mergeFirstTwoTranstion(TrafficViewSTT.Event.ClickSelectStartEndBtn, mStateHelper.createNormalToInputAction());
     }
 	
     public void modifyData(POI poi, int index) {
@@ -869,7 +870,7 @@ public class TrafficQueryFragment extends BaseFragment {
     }
 	
 	public void onBack() {
-		if (mStateTransitionTable.rollback()) {
+		if (mStateTransitionTable.event(Event.Back)) {
 			
 		} else {
 			dismiss();
@@ -879,7 +880,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			if (mStateTransitionTable.rollback()) {
+			if (mStateTransitionTable.event(Event.Back)) {
 			    mActionLog.addAction(ActionLog.KEYCODE, "back");
 				return true;
 			} 

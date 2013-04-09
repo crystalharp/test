@@ -37,6 +37,7 @@ import com.tigerknows.model.TKWord;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.view.TrafficQueryFragment.QueryEditText;
+import com.tigerknows.view.TrafficViewSTT.Event;
 
 /**
  * 负责“交通频道首页”TrafficQueryFragment的[[控件事件处理]]
@@ -555,7 +556,7 @@ public class TrafficQueryEventHelper {
 		
 		@Override
 		public void onClick(View v) {
-			mQueryFragment.mStateTransitionTable.rollback();
+			mQueryFragment.mStateTransitionTable.event(Event.Back);
 		}
 	}
 	
