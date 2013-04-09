@@ -69,6 +69,7 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void eventRollback() {
+            mQueryFragment.clearMode();   
 			mQueryFragment.mEventHelper.applyListenersInNormalState();
 			
 //			if (!isEqualsToMapCenter(mCityInfo)) {
@@ -146,6 +147,7 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void eventRollback() {
+		    mQueryFragment.clearMode();
 			mQueryFragment.mEventHelper.applyListenersInMapState();
 			mQueryFragment.mMapLocationHelper.resetMapStateMap();
 		}

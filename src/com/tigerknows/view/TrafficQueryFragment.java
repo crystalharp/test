@@ -67,6 +67,8 @@ import com.tigerknows.view.TrafficViewSTT.State;
  */
 public class TrafficQueryFragment extends BaseFragment {
 
+    public static final int NULL_MODE = 0;
+    
 	public static final int TRAFFIC_MODE = 1;
 	
 	public static final int BUSLINE_MODE = 2;
@@ -547,12 +549,20 @@ public class TrafficQueryFragment extends BaseFragment {
 			mBuslineLayout.setVisibility(View.VISIBLE);
 			mSelectedEdt = mBusline;
 			mSuggestHistoryHelper.refresh(mSphinx, mSelectedEdt.mEdt, TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE);
+			LogWrapper.d("conan", "in changeToMode:refreshed busline suggest");
 		}
 		if (mStateTransitionTable.getCurrentState() == State.Input) {
 		    mSelectedEdt.mEdt.requestFocus();
 		} else {
 		    mSelectedEdt.mEdt.clearFocus();
 		}
+	}
+	
+	/**
+	 * 在input模式和其他模式切换的时候，traffic和busline模式并没有切换,但是也需要模式切换的刷新.
+	 */
+	public void clearMode(){
+	    mode = NULL_MODE;
 	}
 	
 	public void checkQueryState() {
