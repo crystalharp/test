@@ -319,7 +319,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     @Override
     public void setData(BaseData data) {
         super.setData(data);
-        if (data == null || (data instanceof Tuangou) == false) {
+        if (data == null || (data instanceof Tuangou) == false || mData == data) {
             return;
         }
         mData = (Tuangou)data;
