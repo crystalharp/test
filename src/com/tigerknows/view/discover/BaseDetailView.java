@@ -93,7 +93,7 @@ public class BaseDetailView extends LinearLayout {
     }
 
     public void onResume() {
-        mBodyScv.scrollTo(0, 0);
+        mBodyScv.smoothScrollTo(0, 0);
         refreshDrawable();
     }
 

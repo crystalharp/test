@@ -77,8 +77,8 @@ public class PullService extends Service {
     
     static final String TAG = "PullService";
     final static int MaxFail = 3;
-    final static int requestStartHour = 9;
-    final static int requestEndHour = 21;
+    public final static int requestStartHour = 9;
+    public final static int requestEndHour = 21;
     int fail = 0;
     
     public static PullAlarmAction alarmAction = new PullAlarmAction();

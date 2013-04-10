@@ -162,9 +162,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     				}
     	        });
         	}
-        } else {
-        	//不用顶部弹出切换
-        	mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
         }
         
         setFavoriteState(mRootView, plan.checkFavorite(mContext));

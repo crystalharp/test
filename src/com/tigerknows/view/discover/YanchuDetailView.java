@@ -103,7 +103,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
     @Override
     public void setData(BaseData data) {
         super.setData(data);
-        if (data == null || (data instanceof Yanchu) == false) {
+        if (data == null || (data instanceof Yanchu) == false || mData == data) {
             return;
         }
         mData = (Yanchu)data;
@@ -170,19 +170,21 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
             mDescriptionTxv.setText(str);
             mDescriptionTxv.setVisibility(View.VISIBLE);
             mLoadingView.setVisibility(View.GONE);
-        } else if (query && !mAsyncTaskExecuting){
-            mDescriptionTxv.setVisibility(View.GONE);
-            mLoadingView.setVisibility(View.VISIBLE);
-            DataOperation dataOperation = new DataOperation(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_YANCHU);
-            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
-            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
-            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
-            mAsyncTaskExecuting = true;
-            mTKAsyncTasking = mSphinx.queryStart(dataOperation);
-            mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
+        } else if (query){
+        	if(!mAsyncTaskExecuting){
+        		mDescriptionTxv.setVisibility(View.GONE);
+        		mLoadingView.setVisibility(View.VISIBLE);
+        		DataOperation dataOperation = new DataOperation(mSphinx);
+        		Hashtable<String, String> criteria = new Hashtable<String, String>();
+        		criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_YANCHU);
+        		criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+        		criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
+        		criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
+        		dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
+        		mAsyncTaskExecuting = true;
+        		mTKAsyncTasking = mSphinx.queryStart(dataOperation);
+        		mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
+        	}
         }
     }
     

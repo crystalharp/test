@@ -769,7 +769,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
-            	pictureImv.setBackgroundDrawable(null);
+            	if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+            		pictureImv.setBackgroundDrawable(null);
+            	}
             	pictureImv.setBackgroundDrawable(drawable);
             } else {
                 pictureImv.setBackgroundDrawable(null);
@@ -827,7 +829,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
-            	pictureImv.setBackgroundDrawable(null);
+            	if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+            		pictureImv.setBackgroundDrawable(null);
+            	}
             	pictureImv.setBackgroundDrawable(drawable);
             } else {
                 pictureImv.setBackgroundDrawable(null);
@@ -885,7 +889,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
-            	pictureImv.setBackgroundDrawable(null);
+            	if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+            		pictureImv.setBackgroundDrawable(null);
+            	}
             	pictureImv.setBackgroundDrawable(drawable);
             } else {
                 pictureImv.setBackgroundDrawable(null);
@@ -930,7 +936,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
-            	pictureImv.setBackgroundDrawable(null);
+            	if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+            		pictureImv.setBackgroundDrawable(null);
+            	}
             	pictureImv.setBackgroundDrawable(drawable);
             } else {
                 pictureImv.setBackgroundDrawable(null);

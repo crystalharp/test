@@ -302,4 +302,13 @@ public final class ByteUtil {
         xobject.writeTo(writer);
         return os.toByteArray();
     }
+
+    public static int getCharArrayLength(String str){
+    	char[] strChar = str.toCharArray();
+    	int doubleChar = 0;
+        for(int i=0;i<strChar.length;i++){
+        	if((char)(byte)strChar[i] != strChar[i])doubleChar ++;
+        }
+        return str.length() + doubleChar;      	
+    }
 }

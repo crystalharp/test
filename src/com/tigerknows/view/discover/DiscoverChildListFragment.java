@@ -831,7 +831,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         
         List<Changci> list = yingxun.getChangciList();
         int size = list.size();
-        int colums = (Globals.g_metrics.widthPixels-Util.dip2px(Globals.g_metrics.density, 12))/changciListItemWidth;
+        int colums = (Globals.g_metrics.widthPixels-Util.dip2px(Globals.g_metrics.density, 24))/changciListItemWidth;
         int rows = size/colums + (size%colums == 0 ? 0 : 1);
         int viewChildCount = parent.getChildCount();
         

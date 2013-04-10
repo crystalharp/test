@@ -108,6 +108,19 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                     mDiscvoerImv.setVisibility(View.GONE);
                     mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_HOME, R.layout.hint_discover_home);
                 }
+                
+                /*
+                 * 通过这里的这个post可以消除android pad上面出现如下问题
+                 * 发现首页的团购的category上的那3个点不出现。
+                 * 原因不明。只有摩托的pad上边会有这个问题。其他的pad没有测试。
+                 */
+                post(new Runnable() {
+					@Override
+					public void run() {
+		                mSphinx.getDiscoverFragment().setCurrentItem(0);
+					}
+				});
+				
                 break;
             case R.id.traffic_btn:
                 mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "channel", "tarffic");

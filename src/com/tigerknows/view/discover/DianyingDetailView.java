@@ -141,7 +141,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
     @Override
     public void setData(BaseData data) {
         super.setData(data);
-        if (data == null || (data instanceof Dianying) == false) {
+        if (data == null || (data instanceof Dianying) == false || mData==data) {
             return;
         }
         mData = (Dianying)data;
@@ -273,19 +273,21 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
             mDescriptionTxv.setText(str);
             mDescriptionTxv.setVisibility(View.VISIBLE);
             mLoadingView.setVisibility(View.GONE);
-        } else if (query && !mAsyncTaskExecuting){
-            mDescriptionTxv.setVisibility(View.GONE);
-            mLoadingView.setVisibility(View.VISIBLE);
-            DataOperation dataOperation = new DataOperation(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_DIANYING);
-            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
-            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
-            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
-            mTKAsyncTasking = mSphinx.queryStart(dataOperation);
-            mAsyncTaskExecuting = true;
-            mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
+        } else if (query){
+        	if (!mAsyncTaskExecuting) {
+        		mDescriptionTxv.setVisibility(View.GONE);
+        		mLoadingView.setVisibility(View.VISIBLE);
+        		DataOperation dataOperation = new DataOperation(mSphinx);
+        		Hashtable<String, String> criteria = new Hashtable<String, String>();
+        		criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_DIANYING);
+        		criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+        		criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
+        		criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
+        		dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
+        		mTKAsyncTasking = mSphinx.queryStart(dataOperation);
+        		mAsyncTaskExecuting = true;
+        		mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
+			}
         }
     }
     
