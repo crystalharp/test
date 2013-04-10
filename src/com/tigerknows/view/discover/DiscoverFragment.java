@@ -497,6 +497,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
         }
 
         try {
+        	// 先将发现分类列表设置成初始状态，以在网络返回结果无法显示的情况下，清除上次的结果。
             for(int i = mDiscoverCategoryList.size()-1; i >= 0; i--) {
                 mDiscoverCategoryList.get(i).init(new XMap());
             }

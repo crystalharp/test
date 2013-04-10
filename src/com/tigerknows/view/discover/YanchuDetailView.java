@@ -103,7 +103,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
     @Override
     public void setData(BaseData data) {
         super.setData(data);
-        if (data == null || (data instanceof Yanchu) == false) {
+        if (data == null || (data instanceof Yanchu) == false || mData == data) {
             return;
         }
         mData = (Yanchu)data;
