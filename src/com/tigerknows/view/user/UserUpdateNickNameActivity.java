@@ -25,6 +25,7 @@ import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.MaxLengthWatcher;
 
 public class UserUpdateNickNameActivity extends UserBaseActivity {
 	
@@ -33,6 +34,8 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 	private ImageView nickNameImg;
 	
 	private Button confirmBtn;
+	
+	private final int NickNameMaxLength = 20;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +140,8 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 				});
 			}
 		});
+		
+		nickNameEdt.addTextChangedListener(new MaxLengthWatcher(NickNameMaxLength,nickNameEdt));
 		
 		nickNameImg.setOnClickListener(new View.OnClickListener() {
 			

@@ -49,7 +49,6 @@
 			        android:singleLine="true"
 			        android:ellipsize="end"
 			        android:textSize="18sp"
-			        android:maxLength="20"
 		            android:background="@drawable/transparent_bg"
 		            android:hint="@string/nickname_compose_format"
 			        flag="0"

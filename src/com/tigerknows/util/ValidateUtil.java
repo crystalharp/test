@@ -47,10 +47,8 @@ public class ValidateUtil {
 		for(int i = 0; i < nicknameChar.length; i++){
 			if((char)(byte)nicknameChar[i] != nicknameChar[i])chineseCount ++;
 		}
-        LogWrapper.d(TAG, "chineseCount: " + chineseCount);
         
         int totalCount = nickname.length() + chineseCount;
-        LogWrapper.d(TAG, "totalCount: " + totalCount);
    
         if (totalCount < 4 || totalCount > 20) {
         	return false;
