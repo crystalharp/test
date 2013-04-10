@@ -925,9 +925,9 @@
     <string name="public_welfarre">传递正能量，手机照亮失踪宝贝回家之路</string>
     
     <string name="radar_new_version">嗷呜!有新版本出没!</string>
-    <string name="radar_new_film">嗷呜!新片来了!</string>
-    <string name="radar_holidy">嗷呜!节日来了!</string>
-    <string name="radar_interval">嗷呜!周末来了!</string>
+    <string name="radar_new_film">嗷呜!新片!</string>
+    <string name="radar_holidy">嗷呜! 过节啦!</string>
+    <string name="radar_interval">嗷呜!周末!</string>
     
     <string name="counting_tip">正在统计...</string>
 
