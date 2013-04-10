@@ -935,6 +935,9 @@
     <string name="hotel_condition_date">入住时间</string>
     <string name="hotel_condition_location">位置</string>
     <string name="hotel_condition_more">星级/品牌/价格</string>
-	<string name="yudingjiudian">预订酒店</string>
-	<string name="chakandingdan">查看订单</string>
+    <string name="yudingjiudian">预订酒店</string>
+    <string name="chakandingdan">查看订单</string>
+    <string name="distanceli">距离</string>
+    <string name="qi">起</string>
+	
 </resources>
