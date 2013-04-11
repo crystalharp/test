@@ -106,7 +106,6 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 mSphinx.getDiscoverFragment().setCurrentItem(0);
                 if (mDiscvoerImv.getVisibility() == View.VISIBLE) {
                     mDiscvoerImv.setVisibility(View.GONE);
-                    mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_HOME, R.layout.hint_discover_home);
                 }
                 
                 /*
