@@ -103,7 +103,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
     @Override
     public void setData(BaseData data) {
         super.setData(data);
-        if (data == null || (data instanceof Zhanlan) == false) {
+        if (data == null || (data instanceof Zhanlan) == false || mData == data) {
             return;
         }
         mData = (Zhanlan)data;

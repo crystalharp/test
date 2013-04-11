@@ -141,7 +141,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
     @Override
     public void setData(BaseData data) {
         super.setData(data);
-        if (data == null || (data instanceof Dianying) == false) {
+        if (data == null || (data instanceof Dianying) == false || mData==data) {
             return;
         }
         mData = (Dianying)data;

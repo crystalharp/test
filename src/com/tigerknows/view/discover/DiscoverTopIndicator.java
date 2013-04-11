@@ -122,6 +122,7 @@ public class DiscoverTopIndicator extends View {
             rightOffset = (int) (positionOffsetPixels);
             updateColor(positionOffset);
         }
+        System.out.println("Top indicator OnPageScroll. leftOffset: " + leftOffset + " rightOffset: " + rightOffset);
         invalidate();
     }
 
@@ -134,6 +135,7 @@ public class DiscoverTopIndicator extends View {
         leftOffset = 0;
         rightOffset = 0;
         updateColor(0);
+        System.out.println("On page selected: " + toString());
         invalidate();
     }
 
@@ -200,4 +202,15 @@ public class DiscoverTopIndicator extends View {
     public int getTextWidth() {
         return textWidth;
     }
+
+	@Override
+	public String toString() {
+		return "DiscoverTopIndicator [leftStr=" + leftStr + ", centerStr="
+				+ centerStr + ", rightStr=" + rightStr + ", leftLeftStr="
+				+ leftLeftStr + ", rightRightStr=" + rightRightStr + ", width="
+				+ width + ", textWidth=" + textWidth + ", leftOffset="
+				+ leftOffset + ", rightOffset=" + rightOffset + "]";
+	}
+    
+    
 }
