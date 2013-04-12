@@ -530,7 +530,14 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                     
                     @Override
                     public void onCancel(DialogInterface dialog) {
-                        cancelOnClickListener.onClick(dialog, DialogInterface.BUTTON_NEGATIVE);
+                        if (cancelOnClickListener != null) {
+                            cancelOnClickListener.onClick(dialog, DialogInterface.BUTTON_NEGATIVE);
+                        } else {
+                            Intent intent = new Intent(activity, Sphinx.class);
+                            intent.putExtra(BaseActivity.SOURCE_USER_HOME, true);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            activity.startActivity(intent);
+                        }
                     }
                 });
             }
