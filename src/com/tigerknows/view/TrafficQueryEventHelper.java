@@ -59,9 +59,9 @@ public class TrafficQueryEventHelper {
 		endSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mEnd, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
 		buslineSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mBusline, TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE);
 		
-		mQueryFragment.mStart.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mStart));
-		mQueryFragment.mEnd.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mEnd));
-		mQueryFragment.mBusline.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mBusline));
+		mQueryFragment.mStart.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mStart, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC));
+		mQueryFragment.mEnd.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mEnd, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC));
+		mQueryFragment.mBusline.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mBusline, TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE));
 	}
 	
 	/*
@@ -351,7 +351,7 @@ public class TrafficQueryEventHelper {
 				mQueryEdt.getEdt().requestFocus();
 				mQueryFragment.mSphinx.showSoftInput(mQueryEdt.getEdt().getInput());
 				
-				mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryEdt.getEdt(), suggestWordsType);
+//				mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryEdt.getEdt(), suggestWordsType);
 				
 			} 
 			
@@ -376,8 +376,11 @@ public class TrafficQueryEventHelper {
 
 	    private QueryEditText mQueryEdt;
 	    
-	    public TrafficEditFocusListener(QueryEditText queryEdt) {
+	    private int suggestWordsType;
+	    
+	    public TrafficEditFocusListener(QueryEditText queryEdt, final int type) {
 	        mQueryEdt = queryEdt;
+	        suggestWordsType = type;
 	    }
 	    
         @Override
@@ -388,6 +391,7 @@ public class TrafficQueryEventHelper {
              */
             if (hasFocus) {
                 mQueryFragment.mSelectedEdt = mQueryEdt;
+                mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryEdt.getEdt(), suggestWordsType);
             }
         }
 	    

@@ -297,7 +297,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
         
         DataOperation dataOperation = new DataOperation(mSphinx);
         Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(BaseQuery.REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI);
+        criteria.put(BaseQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_ZHANLAN);
         criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUID());
