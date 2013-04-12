@@ -186,6 +186,9 @@ public class TuangouShangjiaListActivity extends BaseActivity {
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
+        if (dataQuery.isStop()) {
+            finish();
+        }
         if (BaseActivity.checkReLogin(dataQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
             return;
         } else if (BaseActivity.checkResponseCode(dataQuery, mThis, mThis)) {

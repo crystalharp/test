@@ -1569,6 +1569,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     uiStackClose(new int[]{R.id.view_home});
                     showView(R.id.view_home);
                 }
+                setIntent(null);
                 result = true;
             }
         }

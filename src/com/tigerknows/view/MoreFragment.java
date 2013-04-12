@@ -193,7 +193,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         
         //用户调研
         if (mDiaoyanQueryResponse != null) {
-        	if(mDiaoyanQueryResponse.getHasSurveyed() == 0){
+        	if(mDiaoyanQueryResponse.getHasSurveyed() == 0 && mDiaoyanQueryResponse.getUrl() != null){
                 setFragmentMessage(MESSAGE_TYPE_USER_SURVEY);
                 return;
         	}

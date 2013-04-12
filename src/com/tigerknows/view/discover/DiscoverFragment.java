@@ -199,8 +199,6 @@ public class DiscoverFragment extends DiscoverBaseFragment {
             }
         }
 
-        mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_HOME, R.layout.hint_discover_home);
-        
     }
 
     @Override

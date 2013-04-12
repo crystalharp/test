@@ -119,6 +119,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
 		                mSphinx.getDiscoverFragment().setCurrentItem(0);
 					}
 				});
+                mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_HOME, R.layout.hint_discover_home);
 				
                 break;
             case R.id.traffic_btn:
