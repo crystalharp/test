@@ -248,7 +248,7 @@ public class TKConfig {
     /**
      * 是否接受软件登录服务推送用于动态负载均衡的Host
      */
-    private static boolean sLoadBalance = true;
+    public static boolean LoadBalance = true;
     
     /**
      * 下载地图服务访问URL路径
@@ -891,9 +891,6 @@ public class TKConfig {
      * @param host
      */
     public static void setDynamicLocationHost(String host) {
-        if (sLoadBalance == false) {
-            return;
-        }
         sDYNAMIC_LOCATION_HOST = host;
     }
     
@@ -921,9 +918,6 @@ public class TKConfig {
      * @param host
      */
     public static void setDynamicQueryHost(String host) {
-        if (sLoadBalance == false) {
-            return;
-        }
         sDYNAMIC_QUERY_HOST = host;
     }
     
@@ -951,9 +945,6 @@ public class TKConfig {
      * @param host
      */
     public static void setDynamicAccountManageHost(String host) {
-        if (sLoadBalance == false) {
-            return;
-        }
         sDYNAMIC_ACCOUNT_MANAGE_HOST = host;
     }
     
@@ -981,9 +972,6 @@ public class TKConfig {
      * @param host
      */
     public static void setDynamicDownloadHost(String host) {
-        if (sLoadBalance == false) {
-            return;
-        }
         sDYNAMIC_DOWNLOAD_HOST = host;
     }
 
@@ -1189,25 +1177,25 @@ public class TKConfig {
                 int end = text.indexOf(";", start);
                 if (start > -1 && end > -1) {
                     start += "downloadHost=".length();
-                    TKConfig.sDYNAMIC_DOWNLOAD_HOST = text.substring(start, end);
+                    TKConfig.sDEFAULT_DOWNLOAD_HOST = text.substring(start, end);
                 }
                 start = text.indexOf("queryHost=");
                 end = text.indexOf(";", start);
                 if (start > -1 && end > -1) {
                     start += "queryHost=".length();
-                    TKConfig.sDYNAMIC_QUERY_HOST = text.substring(start, end);
+                    TKConfig.sDEFAULT_QUERY_HOST = text.substring(start, end);
                 }
                 start = text.indexOf("locationHost=");
                 end = text.indexOf(";", start);
                 if (start > -1 && end > -1) {
                     start += "locationHost=".length();
-                    TKConfig.sDYNAMIC_LOCATION_HOST = text.substring(start, end);
+                    TKConfig.sDEFAULT_LOCATION_HOST = text.substring(start, end);
                 }
                 start = text.indexOf("accountManageHost=");
                 end = text.indexOf(";", start);
                 if (start > -1 && end > -1) {
                     start += "accountManageHost=".length();
-                    TKConfig.sDYNAMIC_ACCOUNT_MANAGE_HOST = text.substring(start, end);
+                    TKConfig.sDEFAULT_ACCOUNT_MANAGE_HOST = text.substring(start, end);
                 }
                 start = text.indexOf("mapDownloadUrl=");
                 end = text.indexOf(";", start);
@@ -1243,7 +1231,7 @@ public class TKConfig {
                 end = text.indexOf(";", start);
                 if (start > -1 && end > -1) {
                     start += "loadBalance=".length();
-                    TKConfig.sLoadBalance = text.substring(start, end).equals("true");
+                    TKConfig.LoadBalance = text.substring(start, end).equals("true");
                 }
                 start = text.indexOf("spreader=");
                 end = text.indexOf(";", start);

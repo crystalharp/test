@@ -50,10 +50,12 @@ public final class Bootstrap extends BaseQuery {
 
         DomainName domainName =  bootstrapModel.getDomainName();
         if (domainName != null) {
-            TKConfig.setDynamicDownloadHost(domainName.getDownload());
-            TKConfig.setDynamicQueryHost(domainName.getNewQuery());
-            TKConfig.setDynamicLocationHost(domainName.getLocation());
-            TKConfig.setDynamicAccountManageHost(domainName.getAccountManage());
+            if (TKConfig.LoadBalance) {
+                TKConfig.setDynamicDownloadHost(domainName.getDownload());
+                TKConfig.setDynamicQueryHost(domainName.getNewQuery());
+                TKConfig.setDynamicLocationHost(domainName.getLocation());
+                TKConfig.setDynamicAccountManageHost(domainName.getAccountManage());
+            }
         }
         
         String uploadLog = bootstrapModel.getUploadLog();
