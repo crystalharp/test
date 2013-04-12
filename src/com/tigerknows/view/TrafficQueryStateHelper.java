@@ -27,54 +27,31 @@ public class TrafficQueryStateHelper {
 		this.mQueryFragment = queryFragment;
 	}
 
-//	public abstract static class TrafficAction implements TrafficViewSTT.Action {
-//		
-//		@Override
-//		public void execute() {
-//			eventExecute();
-//			uiExecute();
-//		}
-//
-//		@Override
-//		public void rollback() {
-//			eventRollback();
-//			uiRollback();
-//		}
-//		
-//		public abstract void uiExecute();
-//		
-//		public abstract void eventExecute();
-//		
-//		public abstract void uiRollback();
-//		
-//		public abstract void eventRollback();
-//	}
-	/*new code begin*/
-	public abstract static class trafficAction implements TrafficViewSTT.newAction {
+	public abstract static class trafficAction implements TrafficViewSTT.Action {
 
         @Override
-        public void preExecute() {
+        public void preEnter() {
             LogWrapper.d(TAG, this.toString() + " preExecute");
         }
 
         @Override
-        public void execute(State oldState) {
+        public void enterFrom(State oldState) {
             eventExecute(oldState); 
             uiExecute(oldState);
         }
 
         @Override
-        public void preLeave() {
+        public void preExit() {
             LogWrapper.d(TAG, this.toString() + " preLeave");
         }
 
         @Override
-        public void postLeave() {
+        public void postExit() {
             LogWrapper.d(TAG, this.toString() + " postLeave");
         }
         
         @Override
-        public void postExecute() {
+        public void postEnter() {
             LogWrapper.d(TAG, this.toString() + " postExecute");
         }
 	    
@@ -86,38 +63,34 @@ public class TrafficQueryStateHelper {
 	private class MapAction extends trafficAction {
 
         @Override
-        public void preExecute() {
+        public void preEnter() {
             // TODO Auto-generated method stub
-            super.preExecute();
+            super.preEnter();
         }
 
         @Override
-        public void preLeave() {
+        public void preExit() {
             // TODO Auto-generated method stub
-            super.preLeave();
+            super.preExit();
         }
 
         @Override
-        public void postLeave() {
+        public void postExit() {
             // TODO Auto-generated method stub
-            super.postLeave();
+            super.postExit();
         }
 
         @Override
-        public void postExecute() {
+        public void postEnter() {
             // TODO Auto-generated method stub
-            super.postExecute();
+            super.postEnter();
+            mQueryFragment.mEventHelper.applyListenersInMapState();
         }
 
         @Override
         public void eventExecute(State oldState) {
             // TODO Auto-generated method stub
             LogWrapper.d(TAG, "map.eventExecute, oldState:" + oldState);
-            //normal and input
-            mQueryFragment.mEventHelper.applyListenersInMapState();
-            if (oldState == State.Input) {
-                mQueryFragment.mMapLocationHelper.resetMapStateMap();
-            }
         }
 
         @Override
@@ -137,6 +110,7 @@ public class TrafficQueryStateHelper {
                 /*
                  * 从Input返回Map时, 记录之前Check的Id
                  */
+                mQueryFragment.mMapLocationHelper.resetMapStateMap();
                 mQueryFragment.oldCheckButton = mQueryFragment.mRadioGroup.getCheckedRadioButtonId();
                 
                 mQueryFragment.mSphinx.clearMap();
@@ -220,8 +194,6 @@ public class TrafficQueryStateHelper {
         public void eventExecute(State oldState) {
             // TODO Auto-generated method stub
             LogWrapper.d(TAG, "selectpoint.eventExcute, oldState:" + oldState);
-
-            mQueryFragment.mEventHelper.applyListenersInSelectPointState();
         }
 
         @Override
@@ -229,6 +201,7 @@ public class TrafficQueryStateHelper {
             // TODO Auto-generated method stub
             LogWrapper.d(TAG, "selectpoint.uiExcute, oldState:" + oldState);
             if (oldState == State.Normal) {
+                //这个是hide动画
                 mQueryFragment.mMenuFragment.hide();
             }
             //以下为normal和input模式的共同操作
@@ -238,6 +211,12 @@ public class TrafficQueryStateHelper {
             mQueryFragment.mTitle.setVisibility(View.GONE);
             
             applyInnateProperty(TrafficViewSTT.State.SelectPoint);
+        }
+        
+        @Override
+        public void postEnter(){
+            super.postEnter();
+            mQueryFragment.mEventHelper.applyListenersInSelectPointState();
         }
 	    
 	}

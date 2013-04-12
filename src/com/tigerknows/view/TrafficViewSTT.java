@@ -90,11 +90,10 @@ public class TrafficViewSTT {
 //			}
 //		}
 //	}
-	/* new code start */
 	private Stack<State> stateStack = new Stack<State>();
 //	State [][]STT = new State[State.MaxSize.ordinal()][Event.MaxSize.ordinal()];
 	int[][] StateTransTbl = new int[State.MaxSize.ordinal()][Event.MaxSize.ordinal()];
-	static newAction[] ActionTbl = new newAction[State.MaxSize.ordinal()];
+	static Action[] ActionTbl = new Action[State.MaxSize.ordinal()];
 
 	public TrafficViewSTT(TrafficQueryStateHelper mStateHelper) {
 	    for (int i = 0; i < State.MaxSize.ordinal(); i++) {
@@ -120,12 +119,12 @@ public class TrafficViewSTT {
     	stateStack.push(State.Normal);
 	}
 	   
-    public interface newAction{
-        void preExecute();
-        void execute(State oldState);
-        void postExecute();
-        void preLeave();
-        void postLeave();
+    public interface Action{
+        void preEnter();
+        void enterFrom(State oldState);
+        void postEnter();
+        void preExit();
+        void postExit();
     }
 	
 	final void setStateTrans(State oldState, Event event, State newState) {
@@ -137,6 +136,7 @@ public class TrafficViewSTT {
 	}
 	
 	public boolean event(Event event) {
+	    LogWrapper.d(TAG, "Event:" + event);
 	    //如果是back,弹栈，执行上个state的和pointSelected，则压栈，否则弹栈。
 	    State oldState, newState;
 	    switch (event) {
@@ -161,57 +161,23 @@ public class TrafficViewSTT {
         default:
             oldState = stateStack.peek();
             newState = getState(oldState, event);
-            stateStack.push(newState);
+            if (newState == State.MaxSize ) {
+                return false;
+            } else {
+                stateStack.push(newState);
+            }
             break;
 	    }
-
-	    if (newState == State.MaxSize) {
-	        //出错了,标准的状态表中不会有
-	        stateStack.clear();
-	        stateStack.push(State.Normal);
-	        newState = State.Normal;
-	    }
+	    
 	    //需要处理：没有这个状态怎么办？
-//	    ActionTbl[newState.ordinal()].preExecute();
-//	    ActionTbl[oldState.ordinal()].preLeave();
-        ActionTbl[newState.ordinal()].execute(oldState);
-//        ActionTbl[newState.ordinal()].postExecute();
-//        ActionTbl[oldState.ordinal()].postLeave();
+	    ActionTbl[newState.ordinal()].preEnter();
+	    ActionTbl[oldState.ordinal()].preExit();
+        ActionTbl[newState.ordinal()].enterFrom(oldState);
+        ActionTbl[newState.ordinal()].postEnter();
+        ActionTbl[oldState.ordinal()].postExit();
         LogWrapper.d(TAG, oldState + " --" + event + "--> " + newState);
         LogWrapper.d(TAG, "stack is:" + stateStack.toString());
         
         return true;
 	}
-	/* new code end */
-//	public boolean rollback() {
-//		if (!stack.isEmpty()) {
-//			Transition transition = stack.pop();
-//			transition.action.rollback();
-//			currentState = transition.startState;
-//			
-//			LogWrapper.d("eric", "event " + " rollback." + "rollback from " + transition.endState.toString() + " to " + transition.startState.toString());
-//			
-//			return true;
-//		}
-//		return false;
-//	}
-//	
-//	public void mergeFirstTwoTranstion(Event event, Action action) {
-//		Transition first = stack.pop();
-//		Transition second = stack.pop();
-//		if (second.startState != first.endState) {
-//			stack.push(new Transition(second.startState, event, action, first.endState));
-//			LogWrapper.d("eric", "mergeFirstTwoTranstion " + "instead with " + second.startState.toString() + " - " + first.endState.toString());
-//		} else {
-//			LogWrapper.d("eric", "mergeFirstTwoTranstion " + "remove transition second: " + second + " first: " + first);
-//		}
-//	}
-//	
-//	public void statckPop() {
-//		stack.pop();
-//	}
-//	
-//	public void clearTransitionStack() {
-//		stateStack.clear();
-//	}
 }

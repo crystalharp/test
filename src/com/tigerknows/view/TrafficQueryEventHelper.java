@@ -548,7 +548,10 @@ public class TrafficQueryEventHelper {
 		@Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
         	super.onCheckedChanged(group, checkedId);
-        	mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.ClickRadioGroup);
+        	LogWrapper.d("conan", "RadioGroup checkedid:" + checkedId);
+        	if (checkedId != -1) {
+        	    mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.ClickRadioGroup);
+        	}
         }
 	}
 
