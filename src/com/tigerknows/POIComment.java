@@ -1149,9 +1149,8 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         mComment.setClientUid(Globals.g_ClientUID);
         
         mPOI.setMyComment(mComment);
-        mPOI.setLastComment(mComment);
         mComment.setData(null);
-        mPOI.setData(null);
+        mPOI.setLastComment(mComment);
         mPOI.updateData(mThis, mPOI.getData());
         
         // 如果以前查看过点评列表，则更新列表中属于我的那条点评信息

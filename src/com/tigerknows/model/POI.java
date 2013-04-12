@@ -516,6 +516,10 @@ public class POI extends BaseData {
     
     public void setLastComment(Comment lastComment) {
         this.lastComment = lastComment;
+        XMap data = getData();
+        if (data != null) {
+            data.put(FIELD_LAST_COMMENT, lastComment.getData());
+        }
     }
     
     public boolean isOnlyAPOI() {

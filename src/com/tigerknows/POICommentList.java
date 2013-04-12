@@ -77,6 +77,8 @@ public class POICommentList extends BaseActivity {
         }
     };
     
+    private View mCommentTipView;
+    
     private Button mCommentTipEdt;
     
     public static void setPOI(POI poi) {
@@ -99,6 +101,7 @@ public class POICommentList extends BaseActivity {
         
         mTitleBtn.setText(R.string.all_comment);
         mRightBtn.setVisibility(View.GONE);
+        mCommentTipView.setVisibility(View.GONE);
         
         mPOI = sPOI;
         if (mPOI != null) {
@@ -136,6 +139,7 @@ public class POICommentList extends BaseActivity {
 //        mCommentLsv.addHeaderView(v);
 //        v = mLayoutInflater.inflate(R.layout.loading, null);
         mCommentLsv.addFooterView(v);
+        mCommentTipView = findViewById(R.id.tip_view);
         mCommentTipEdt = (Button) findViewById(R.id.comment_tip_btn);
     }
     
@@ -156,7 +160,7 @@ public class POICommentList extends BaseActivity {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
                     POI poi = mPOI;
-                    if (poi != null && (poi.getMyComment() != null || poi.getCommentQuery() != null)) {
+                    if (poi != null) {
                         boolean isMe = (poi.isGoldStamp() || poi.isSilverStamp());
                         if (poi.getStatus() < 0) {
                             int resId;
@@ -341,6 +345,7 @@ public class POICommentList extends BaseActivity {
         if (mCommentLsv.isFooterSpringback()) {
             mHandler.postDelayed(mTurnPageRun, 1000);
         }
+        mCommentTipView.setVisibility(View.VISIBLE);
     }
     
     private class CommentAdapter extends ArrayAdapter<Comment>{
