@@ -120,11 +120,12 @@ public class TrafficViewSTT {
 	}
 	   
     public interface Action{
-        void preEnter();
+        //UI需要做的变化
         void enterFrom(State oldState);
+        //listener的挂接
         void postEnter();
-        void preExit();
-        void postExit();
+        //状态离开需要做的清理
+        void exit();
     }
 	
 	final void setStateTrans(State oldState, Event event, State newState) {
@@ -170,11 +171,9 @@ public class TrafficViewSTT {
 	    }
 	    
 	    //需要处理：没有这个状态怎么办？
-	    ActionTbl[newState.ordinal()].preEnter();
-	    ActionTbl[oldState.ordinal()].preExit();
         ActionTbl[newState.ordinal()].enterFrom(oldState);
+        ActionTbl[oldState.ordinal()].exit();
         ActionTbl[newState.ordinal()].postEnter();
-        ActionTbl[oldState.ordinal()].postExit();
         LogWrapper.d(TAG, oldState + " --" + event + "--> " + newState);
         LogWrapper.d(TAG, "stack is:" + stateStack.toString());
         
