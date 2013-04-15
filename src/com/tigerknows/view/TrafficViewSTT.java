@@ -1,35 +1,49 @@
 package com.tigerknows.view;
 
 import com.decarta.android.util.LogWrapper;
-import java.util.EmptyStackException;
 import java.util.Stack;
-import java.util.Vector;
 
 /**
  * 交通页面状态迁移表 
  * 
- * @author linqingzu
- *
+ * @author xupeng
+ * 该文件是交通首页的状态迁移表(State transition table)，状态和状态迁移事件由枚举表示如下。
+ * 
+ * 状态跳转表用二维int数组表示，在本class创建的时候进行内容设置，所有不存在的状态跳转结果状态全部用MaxSize表示。
+ * 
+ * 状态跳转时的处理用接口Action进行执行。接口定义了三个行为，enterFrom，postEnter和exit，执行顺序为：
+ * 1.新状态的enterFrom。一般用来放UI变换的函数。
+ * 2.老状态的exit。一般用来执行老状态可能进行的界面等的清理。
+ * 3.新状态的postEnter。一般用来放最后需要添加的各种控件的listener。
+ * listener放在最后添加的原因是map界面下先添加listener再变换界面会导致RadioGroup的onCheckChanged被触发。
+ * 
+ * 状态可以回退，所以经过的状态用栈来存储，这样回退的时候可以弹出老状态。
+ * 正常的状态跳转是遇到正常事件则将转换得到的新状态压栈，根据老状态和新状态进行界面变换;遇到back事件时弹栈，根据
+ * 弹出的状态和栈顶状态进行界面变换。这个变换中有一个比较怪异的跳转，SelectPoint状态接受PointSelected事件的
+ * 时候到input状态，这时候触发back事件并不会回到SelectPoint状态，而是回到normal状态。也就是说弹栈的时候
+ * SelectPoint状态永远不在其中，于是PointSelected的的处理就比较特殊。接到PointSelected事件的时候固定把
+ * SelectPoint状态弹出来，栈顶如果是input(从input状态转换过来)，就不需要再压入input状态了，这样触发back事件
+ * 的时候永远不会回到SelectPiont。
+ * 
  */
 public class TrafficViewSTT {
 	
     //交通输入页的基本状态：普通状态，地图状态，输入状态，选点输入状态。
-	public enum State {Normal, Map, Input, SelectPoint, MaxSize};
+	public static enum State {Normal, Map, Input, SelectPoint, MaxSize};
 	
 	//交通输入页的基本事件：点击起终点选择按钮，点击输入框，点击地图，点击上面的交通方式切换按钮
 	//                      长按地图，点击地图选点，选点完成, 按返回键或者返回按钮
-	public enum Event {ClickSelectStartEndBtn, ClickEditText, TouchMap, ClickRadioGroup, LongClick, ClicktoSelectPoint, PointSelected, Back, MaxSize};
+	public static enum Event {ClickSelectStartEndBtn, ClickEditText, TouchMap, ClickRadioGroup, LongClick, ClicktoSelectPoint, PointSelected, Back, MaxSize};
 
-	private String TAG = "conan";
-//	private Vector<Transition> transitions = new Vector<Transition>();
+	private Stack<State> stateStack = new Stack<State>();
 	
-//	private State currentState = State.Normal;
+	int[][] StateTransTbl = new int[State.MaxSize.ordinal()][Event.MaxSize.ordinal()];
 	
-//	private Stack<Transition> stack = new Stack<Transition>();
+	static Action[] ActionTbl = new Action[State.MaxSize.ordinal()];
 	
-//	Stack<Integer> s = new Stack<Integer>();
+	private String TAG = "TrafficViewSTT";
+
 	public void resetInitState(State state) {
-//		this.currentState = currentState;
 	    stateStack.clear();
 	    stateStack.push(state);
 	}
@@ -38,70 +52,14 @@ public class TrafficViewSTT {
 		return stateStack.peek();
 	}
 
-//
-//	public interface Action {
-//		void execute();
-//		void rollback();
-//	}
-//
-//	private class Transition {
-//		
-//	    private State startState;
-//	    private Event event;
-//	    private Action action;
-//	    private State endState;
-//		
-//	    public Transition(State startState, Event event, Action action, State endState) {
-//	        this.startState = startState;
-//	        this.event = event;
-//	        this.action = action;
-//	        this.endState = endState;
-//	    }
-//		
-//	    public String toString(){
-//	        return startState.toString() + "->" + endState.toString() + "^" + event.toString(); 
-//	    }
-//	}
-	//应该用二维数组，那样就可以STT[state][event]来进行检索了
-//	public TrafficViewSTT(TrafficQueryStateHelper mStateHelper) {
-//	    addTransition(State.Normal, Event.ClickSelectStartEndBtn, mStateHelper.createNormalToInputAction(), State.Input);
-//		addTransition(State.Normal, Event.ClickEditText, mStateHelper.createNormalToInputAction(), State.Input);
-//		addTransition(State.Normal, Event.TouchMap, mStateHelper.createNormalToMapAction(), State.Map);
-//		addTransition(State.Normal, Event.ClicktoSelectPoint, mStateHelper.createNormalToSelectPointAction(), State.SelectPoint);
-//		addTransition(State.Map, Event.ClickRadioGroup, mStateHelper.createMapToInputAction(), State.Input);
-//		addTransition(State.Map, Event.LongClick, mStateHelper.createMapToInputAction(), State.Input);
-//		addTransition(State.Input, Event.ClicktoSelectPoint, mStateHelper.createInputToSelectPointAction(), State.SelectPoint);
-//		addTransition(State.SelectPoint, Event.PointSelected, mStateHelper.createSelectPointToInputAction(), State.Input);
-//	}
-//	
-//	public void addTransition(State startState, Event event, Action action, State endState) {
-//		transitions.add(new Transition(startState, event, action, endState));
-//	}
-//	
-//	public void event(Event event) {
-//		for (int i = 0 ;i < transitions.size(); i++) {
-//			Transition transition = transitions.elementAt(i);
-//			if (currentState == transition.startState && event == transition.event) {
-//				LogWrapper.d("eric", "event " + event.toString() + " occur." + "Change from " + currentState.toString() + " to " + transition.endState.toString());
-//				
-//				transition.action.execute();
-//				currentState = transition.endState;
-//				stack.push(transition);
-//			}
-//		}
-//	}
-	private Stack<State> stateStack = new Stack<State>();
-//	State [][]STT = new State[State.MaxSize.ordinal()][Event.MaxSize.ordinal()];
-	int[][] StateTransTbl = new int[State.MaxSize.ordinal()][Event.MaxSize.ordinal()];
-	static Action[] ActionTbl = new Action[State.MaxSize.ordinal()];
 
 	public TrafficViewSTT(TrafficQueryStateHelper mStateHelper) {
+	    //状态跳转表初始化
 	    for (int i = 0; i < State.MaxSize.ordinal(); i++) {
 	        for (int j = 0; j < Event.MaxSize.ordinal(); j++) {
 	            StateTransTbl[i][j] = State.MaxSize.ordinal();
 	        }
 	    }
-	    //状态跳转表
     	setStateTrans(State.Normal, Event.ClickSelectStartEndBtn, State.Input);
     	setStateTrans(State.Normal, Event.ClickEditText, State.Input);
     	setStateTrans(State.Normal, Event.TouchMap, State.Map);
@@ -143,7 +101,6 @@ public class TrafficViewSTT {
 	    switch (event) {
 	    case Back:
 	        //返回上个状态，先弹栈，新状态是之前的状态
-	        //错误情况1：栈中没有更多状态了。
 	        if (stateStack.size() == 1) {
 	            return false;
 	        } else {
@@ -163,6 +120,7 @@ public class TrafficViewSTT {
             oldState = stateStack.peek();
             newState = getState(oldState, event);
             if (newState == State.MaxSize ) {
+                //没有这个转换规则，不做任何处理
                 return false;
             } else {
                 stateStack.push(newState);
@@ -170,7 +128,6 @@ public class TrafficViewSTT {
             break;
 	    }
 	    
-	    //需要处理：没有这个状态怎么办？
         ActionTbl[newState.ordinal()].enterFrom(oldState);
         ActionTbl[oldState.ordinal()].exit();
         ActionTbl[newState.ordinal()].postEnter();
