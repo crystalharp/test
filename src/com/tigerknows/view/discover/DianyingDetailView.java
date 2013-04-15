@@ -416,17 +416,22 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         }
         final DataOperation dataOperation = (DataOperation)(tkAsyncTask.getBaseQuery());
         boolean isPulledDynamicPOIRequest = dataOperation.isPulledDynamicPOIRequest();
-        if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener)) {
-            mParentFragment.isReLogin = true;
-            return true;
-        } else {
-            if (isPulledDynamicPOIRequest) {
-                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, mParentFragment, true)) {
-                    return true;
-                }
+
+        List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
+        for (BaseQuery baseQuery : baseQueryList) {
+
+            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener)) {
+                mParentFragment.isReLogin = true;
+                return true;
             } else {
-                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, false, mParentFragment, false)) {
-                    return true;
+                if (isPulledDynamicPOIRequest) {
+                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, mParentFragment, true)) {
+                        return true;
+                    }
+                } else {
+                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, mParentFragment, false)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -435,10 +440,8 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         
         if (isPulledDynamicPOIRequest) {
             Dianying dianying = null;
-            List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
             
             for (BaseQuery baseQuery : baseQueryList) {
-                
                 String dataType = baseQuery.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
                 if(BaseQuery.DATA_TYPE_DIANYING.equals(dataType)){
                     // Dianying query response
