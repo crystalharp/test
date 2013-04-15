@@ -54,15 +54,12 @@ public class TrafficQueryStateHelper {
 
         @Override
         public void postEnter() {
-            // TODO Auto-generated method stub
             super.postEnter();
             mQueryFragment.mEventHelper.applyListenersInMapState();
         }
 
         @Override
         public void enterFrom(State oldState) {
-            // TODO Auto-generated method stub
-            LogWrapper.d(TAG, "map.uiExecute, oldState:" + oldState);
             //input和normal到map状态都要记录之前的checkedBtn
             mQueryFragment.oldCheckButton = mQueryFragment.mRadioGroup.getCheckedRadioButtonId();
             if (oldState == State.Normal) {
@@ -89,7 +86,6 @@ public class TrafficQueryStateHelper {
 
         @Override
         public void enterFrom(State oldState) {
-            LogWrapper.d(TAG, "normal.uiExecute, oldState:" + oldState);
             if (oldState == State.Input) {
                 //返回normal状态时清理掉输入框的光标
                 mQueryFragment.mSelectedEdt.getEdt().clearFocus();
@@ -122,7 +118,6 @@ public class TrafficQueryStateHelper {
 
         @Override
         public void enterFrom(State oldState) {
-            LogWrapper.d(TAG, "input.uiExecute, oldState:" + oldState);
             applyInnateProperty(TrafficViewSTT.State.Input);
         }
 	    
@@ -139,7 +134,6 @@ public class TrafficQueryStateHelper {
 
         @Override
         public void enterFrom(State oldState) {
-            LogWrapper.d(TAG, "selectpoint.uiExcute, oldState:" + oldState);
             //以下为normal和input模式的共同操作
             mQueryFragment.displayCommonTitle();
             mQueryFragment.mRightBtn.setVisibility(View.GONE);

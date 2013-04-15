@@ -93,7 +93,6 @@ public class TrafficAlternativesDialog extends BaseDialog {
         mEndLsv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
-            //xupeng:在这里添加历史词怎么样？还有坐标。
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {            	
             	mEndPOI = mEndStations.get(arg2).toPOI();
             	
