@@ -5,6 +5,7 @@
 package com.tigerknows;
 
 import com.decarta.Globals;
+import com.decarta.android.exception.APIException;
 import com.decarta.android.util.Util;
 import com.tencent.tauth.TAuthView;
 import com.tigerknows.R;
@@ -17,6 +18,7 @@ import com.tigerknows.model.DataOperation.CommentCreateResponse;
 import com.tigerknows.model.DataOperation.CommentUpdateResponse;
 import com.tigerknows.model.DataQuery.CommentResponse;
 import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
+import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.share.ShareAPI;
 import com.tigerknows.share.TKTencentOpenAPI;
 import com.tigerknows.share.TKWeibo;
@@ -1150,8 +1152,10 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         
         mPOI.setMyComment(mComment);
         mComment.setData(null);
-        mPOI.setLastComment(mComment);
+//        mPOI.setLastComment(mComment);
         mPOI.updateData(mThis, mPOI.getData());
+        
+        List<Comment> commentArrayList = null;
         
         // 如果以前查看过点评列表，则更新列表中属于我的那条点评信息
         DataQuery dataQuery = mPOI.getCommentQuery();
@@ -1161,6 +1165,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 CommentList commentList = commentResponse.getList();
                 if (commentList != null) {
                     List<Comment> list = commentList.getList();
+                    commentArrayList = list;
                     if (list != null) {
                         for(int i = list.size()-1; i >= 0; i--) {
                             // 如果列表中已经有我的点评则将其删除
@@ -1176,6 +1181,26 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             }
         }
         
+        if (commentArrayList == null || commentArrayList.isEmpty()) {
+            try {
+                XMap data = new XMap();
+                CommentList commentList = new CommentList(data);
+                CommentResponse commentResponse = new CommentResponse(data);
+                commentArrayList = new ArrayList<Comment>();
+                commentArrayList.add(mComment);
+                commentList.setTotal(1);
+                commentList.setList(commentArrayList);
+                commentResponse.setList(commentList);
+                DataQuery commentQuery = Comment.createPOICommentQuery(mThis, mPOI, -1, -1);
+                commentQuery.setResponse(commentResponse);
+                mPOI.setCommentQuery(commentQuery);
+            } catch (APIException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        mPOI.updateComment(mThis);
+
         mPOI.update(mThis, mPOI.getStoreType());
         Intent intent = new Intent(POIComment.this, Sphinx.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
