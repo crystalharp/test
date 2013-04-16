@@ -26,7 +26,7 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
     public static final int TEXTVIEW_RESOURCE_ID = R.layout.suggest_list_item;
     
     public interface CallBack {
-        public void onItemClicked(TKWord tkWord, int position);
+        public void onInputBtnClicked(TKWord tkWord, int position);
     }
     
     private Context context;
@@ -76,7 +76,7 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
                 
                 @Override
                 public void onClick(View view) {
-                    callBack.onItemClicked(tkWord, position);
+                    callBack.onInputBtnClicked(tkWord, position);
                 }
             });
         }

@@ -100,7 +100,7 @@ public class POIQueryFragment extends BaseFragment implements View.OnClickListen
         mSuggestAdapter.setCallBack(new CallBack() {
             
             @Override
-            public void onItemClicked(TKWord tkWord, int position) {
+            public void onInputBtnClicked(TKWord tkWord, int position) {
                 mKeywordEdt.setText(tkWord.word);
             }
         });

@@ -44,7 +44,7 @@ public class TrafficQuerySuggestHistoryHelper {
 		mSuggestArrayAdapter.setCallBack(new CallBack() {
             
             @Override
-            public void onItemClicked(TKWord tkWord, int position) {
+            public void onInputBtnClicked(TKWord tkWord, int position) {
                 if (tkWord.attribute == TKWord.ATTRIBUTE_SUGGEST) {
                     POI poi = tkWord.toPOI();
                     Position wordLonLat = mQueryFragment.mSphinx.getMapEngine().getwordslistStringWithPosition(tkWord.word, 0);
