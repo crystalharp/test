@@ -20,7 +20,7 @@ public class TrafficQueryStateHelper {
 
 	private TrafficQueryFragment mQueryFragment;
 	
-	private static String TAG = "conan";
+	private static String TAG = "TrafficQueryStateHelper";
 	
 	public TrafficQueryStateHelper(TrafficQueryFragment queryFragment) {
 		super();
@@ -101,6 +101,7 @@ public class TrafficQueryStateHelper {
             mQueryFragment.mMenuFragment.display();
             mQueryFragment.mMapLocationHelper.resetNormalStateMap();
             applyInnateProperty(TrafficViewSTT.State.Normal);
+            //这一行很别扭
             if (oldState != State.SelectPoint) {
                 mQueryFragment.mEventHelper.applyListenersInNormalState();
             }
@@ -166,7 +167,77 @@ public class TrafficQueryStateHelper {
 	public SelectPointAction getSelectPointAction(){
 	    return new SelectPointAction();
 	}
-	/*new code end*/
+    
+    public void applyInnateProperty(TrafficViewSTT.State state) {
+        switch(state) {
+        case Normal:
+            mQueryFragment.mActionLog.addAction(ActionLog.TrafficHome);
+            applyNormalInnateProperty();
+            break;
+        case Input:
+            mQueryFragment.mActionLog.addAction(ActionLog.TrafficInput);
+            applyInputInnateProperty();
+            break;
+        case Map:
+            mQueryFragment.mActionLog.addAction(ActionLog.TrafficMap);
+            applyMapInnateProperty();
+            break;
+        case SelectPoint:
+            // 单击选点在行为日志中并不算一个页面，仅是一个动作
+            applySelectPointInnateProperty();
+            break;
+        default:
+        }
+    }
+    
+    public void applyNormalInnateProperty() {
+        mQueryFragment.mSphinx.clearMap();
+        mQueryFragment.mSphinx.setTouchMode(TouchMode.LONG_CLICK);
+        
+//      mQueryFragment.mSelectStartBtn.requestFocus();
+        mQueryFragment.clearAllText();
+        mQueryFragment.initStartContent();
+        mQueryFragment.getContentView().setVisibility(View.VISIBLE);
+        mQueryFragment.mCityView.setVisibility(View.VISIBLE);
+        mQueryFragment.mShadowWhite.setVisibility(View.GONE);
+        mQueryFragment.mBackBtn.setVisibility(View.GONE);
+        mQueryFragment.mSuggestLnl.setVisibility(View.GONE);
+    }
+    
+    public void applyInputInnateProperty() {
+        mQueryFragment.mSphinx.clearMap();
+        mQueryFragment.mSphinx.setTouchMode(TouchMode.NORMAL);
+        
+        mQueryFragment.mSuggestLnl.setVisibility(View.VISIBLE);
+        mQueryFragment.mSphinx.getMenuFragment().setVisibility(View.GONE);
+        mQueryFragment.mCityView.setVisibility(View.GONE);
+        mQueryFragment.mShadowWhite.setVisibility(View.VISIBLE);
+        mQueryFragment.mBackBtn.setVisibility(View.VISIBLE);
+        mQueryFragment.getContentView().setVisibility(View.VISIBLE);
+    }
+    
+    public void applyMapInnateProperty() {
+        mQueryFragment.mSphinx.setTouchMode(TouchMode.LONG_CLICK);
+        
+        mQueryFragment.mRadioGroup.clearCheck();
+        mQueryFragment.mSuggestLnl.setVisibility(View.GONE);
+        mQueryFragment.mBackBtn.setVisibility(View.VISIBLE);
+        mQueryFragment.enableQueryBtn(mQueryFragment.mTrafficQueryBtn, false);
+        mQueryFragment.enableQueryBtn(mQueryFragment.mBuslineQueryBtn, false);
+        mQueryFragment.mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 78), 0, 0);
+    }
+    
+    public void applySelectPointInnateProperty() {
+        
+        mQueryFragment.getContentView().setVisibility(View.GONE);
+        mQueryFragment.mCityView.setVisibility(View.VISIBLE);
+        mQueryFragment.mShadowWhite.setVisibility(View.GONE);
+        mQueryFragment.mMenuFragment.hide();
+        mQueryFragment.mSuggestLnl.setVisibility(View.GONE);
+
+        mQueryFragment.mSphinx.getControlView().setPadding(0, 0, 0, 0);
+        mQueryFragment.mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 38), 0, 0);
+    }
 //	private class NormalToInputAction extends TrafficAction {
 
 //		@Override
@@ -388,75 +459,4 @@ public class TrafficQueryStateHelper {
 //	public SelectPointToInputAction createSelectPointToInputAction() {
 //		return new SelectPointToInputAction();
 //	}
-	
-	public void applyInnateProperty(TrafficViewSTT.State state) {
-		switch(state) {
-		case Normal:
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHome);
-			applyNormalInnateProperty();
-			break;
-		case Input:
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficInput);
-			applyInputInnateProperty();
-			break;
-		case Map:
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficMap);
-			applyMapInnateProperty();
-			break;
-		case SelectPoint:
-			// 单击选点在行为日志中并不算一个页面，仅是一个动作
-			applySelectPointInnateProperty();
-			break;
-		default:
-		}
-	}
-	
-	public void applyNormalInnateProperty() {
-		mQueryFragment.mSphinx.clearMap();
-		mQueryFragment.mSphinx.setTouchMode(TouchMode.LONG_CLICK);
-		
-//		mQueryFragment.mSelectStartBtn.requestFocus();
-		mQueryFragment.clearAllText();
-		mQueryFragment.initStartContent();
-		mQueryFragment.getContentView().setVisibility(View.VISIBLE);
-		mQueryFragment.mCityView.setVisibility(View.VISIBLE);
-		mQueryFragment.mShadowWhite.setVisibility(View.GONE);
-		mQueryFragment.mBackBtn.setVisibility(View.GONE);
-		mQueryFragment.mSuggestLnl.setVisibility(View.GONE);
-	}
-	
-	public void applyInputInnateProperty() {
-		mQueryFragment.mSphinx.clearMap();
-		mQueryFragment.mSphinx.setTouchMode(TouchMode.NORMAL);
-		
-		mQueryFragment.mSuggestLnl.setVisibility(View.VISIBLE);
-		mQueryFragment.mSphinx.getMenuFragment().setVisibility(View.GONE);
-		mQueryFragment.mCityView.setVisibility(View.GONE);
-		mQueryFragment.mShadowWhite.setVisibility(View.VISIBLE);
-		mQueryFragment.mBackBtn.setVisibility(View.VISIBLE);
-		mQueryFragment.getContentView().setVisibility(View.VISIBLE);
-	}
-	
-	public void applyMapInnateProperty() {
-		mQueryFragment.mSphinx.setTouchMode(TouchMode.LONG_CLICK);
-		
-		mQueryFragment.mRadioGroup.clearCheck();
-		mQueryFragment.mSuggestLnl.setVisibility(View.GONE);
-		mQueryFragment.mBackBtn.setVisibility(View.VISIBLE);
-		mQueryFragment.enableQueryBtn(mQueryFragment.mTrafficQueryBtn, false);
-		mQueryFragment.enableQueryBtn(mQueryFragment.mBuslineQueryBtn, false);
-		mQueryFragment.mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 78), 0, 0);
-	}
-	
-	public void applySelectPointInnateProperty() {
-		
-		mQueryFragment.getContentView().setVisibility(View.GONE);
-		mQueryFragment.mCityView.setVisibility(View.VISIBLE);
-		mQueryFragment.mShadowWhite.setVisibility(View.GONE);
-		mQueryFragment.mMenuFragment.hide();
-		mQueryFragment.mSuggestLnl.setVisibility(View.GONE);
-
-		mQueryFragment.mSphinx.getControlView().setPadding(0, 0, 0, 0);
-		mQueryFragment.mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 38), 0, 0);
-	}
 }
