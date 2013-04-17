@@ -85,6 +85,13 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 					return;
 				}
 				
+				String nickName = null;
+				User user = Globals.g_User;
+				if (user == null) {
+				    onBack();
+				} else {
+				    nickName = user.getNickName();
+				}
 				if (!UserRegistActivity.class.getName().equals(getCallingActivity().getClassName())
 						&& !TextUtils.equals(nickNameEdt.getText().toString().trim(), getString(R.string.default_nick_name))
 						&& TextUtils.equals(Globals.g_User.getNickName(), nickNameEdt.getText().toString().trim())) {
@@ -224,8 +231,10 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 		// TODO Auto-generated method stub
 		super.onResume();
 		User user = User.loadDefault(this);
-		
-		if (user != null && !TextUtils.equals(user.getNickName(), getString(R.string.default_nick_name))) {
+
+        if (user == null) {
+            onBack();
+        } else if (!TextUtils.equals(user.getNickName(), getString(R.string.default_nick_name))) {
 			nickNameEdt.setText(user.getNickName());
 			nickNameEdt.setSelection(nickNameEdt.getText().toString().length());
 			nickNameImg.setVisibility(View.VISIBLE);
