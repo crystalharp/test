@@ -267,14 +267,12 @@ public class TrafficResultFragment extends BaseFragment {
 
     	public ChildView(Context context) {
 			super(context);
-			// TODO Auto-generated constructor stub
 			mLayoutInflater.inflate(R.layout.traffic_group_traffic, this, true);
 			setBackgroundResource(R.drawable.list_selector_background_gray_light);
 		}
 
 		@Override
 		public boolean onTouchEvent(MotionEvent event) {
-			// TODO Auto-generated method stub
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
 				LogWrapper.d(TAG, "ChildView ACTION_DOWN");
 				downView = this;
@@ -289,17 +287,17 @@ public class TrafficResultFragment extends BaseFragment {
 		
     }
     
-    public void submitTrafficQueryWithPosition(TrafficQuery mTrafficQuery){
-    	if (mTrafficQuery.getQueryType() != Step.TYPE_TRANSFER) {
-    		return;
-    	}
-    	if (mTrafficQuery.getStart().getPosition() != null && mTrafficQuery.getEnd().getPosition() != null) {
-    		mSphinx.queryStart(mTrafficQuery);
-    	} else {
-    		//mPreQueryView.submitTrafficQuery();
-            dismiss();
-    	}
-	}
+//    public void submitTrafficQueryWithPosition(TrafficQuery mTrafficQuery){
+//    	if (mTrafficQuery.getQueryType() != Step.TYPE_TRANSFER) {
+//    		return;
+//    	}
+//    	if (mTrafficQuery.getStart().getPosition() != null && mTrafficQuery.getEnd().getPosition() != null) {
+//    		mSphinx.queryStart(mTrafficQuery);
+//    	} else {
+//    		//mPreQueryView.submitTrafficQuery();
+//            dismiss();
+//    	}
+//	}
 
     public List<Plan> getData() {
         if (mTrafficModel != null) {
