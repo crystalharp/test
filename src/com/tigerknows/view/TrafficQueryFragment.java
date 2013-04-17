@@ -334,8 +334,8 @@ public class TrafficQueryFragment extends BaseFragment {
         }
         
         /*
-         * 由于在一个“session”中会多次调用onresume，导致在地图选点和收藏夹选点之后返回本页面都会调用initstart
-         * 这里引入mDissmissed变量，在整个页面被dismiss的时候设为true，onresume的时候把变量设为false，并把所有
+         * 由于在一个“session”中会多次调用onResume，导致在地图选点和收藏夹选点之后返回本页面都会调用initStart
+         * 这里引入mDissmissed变量，在整个页面被dismiss的时候设为true，onResume的时候把变量设为false，并把所有
          * 应该初始化的内容初始化。这个概念以后应该被扩展到其他的页面。
          */
         if (mDismissed) {
@@ -606,8 +606,8 @@ public class TrafficQueryFragment extends BaseFragment {
 			return;
 		}
 
-//		int cityId = mMapLocationHelper.getQueryCityInfo().getId();
-        int cityId = Globals.g_Current_City_Info.getId();
+		int cityId = mMapLocationHelper.getQueryCityInfo().getId();
+//        int cityId = Globals.g_Current_City_Info.getId();
         addHistoryWord(mBusline, HistoryWordTable.TYPE_BUSLINE);
         BuslineQuery buslineQuery = new BuslineQuery(mContext);
         buslineQuery.setup(cityId, searchword, 0, false, getId(), mContext.getString(R.string.doing_and_wait));
@@ -641,8 +641,8 @@ public class TrafficQueryFragment extends BaseFragment {
         TrafficQuery trafficQuery = new TrafficQuery(mContext);
         
         //和产品确认所查询的换乘所属的城市是当前所设置的城市，而不是地图所在的城市
-//        int cityId = mMapLocationHelper.getQueryCityInfo().getId();
-        int cityId = Globals.g_Current_City_Info.getId();
+        int cityId = mMapLocationHelper.getQueryCityInfo().getId();
+//        int cityId = Globals.g_Current_City_Info.getId();
         
         addHistoryWord(mStart, HistoryWordTable.TYPE_TRAFFIC);
         addHistoryWord(mEnd, HistoryWordTable.TYPE_TRAFFIC);

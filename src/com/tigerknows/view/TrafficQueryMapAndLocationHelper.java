@@ -11,6 +11,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.POI;
+import com.tigerknows.view.TrafficViewSTT.State;
 
 /**
  * 负责“交通频道首页”TrafficQueryFragment的[[控制显示地图中心及查询地图中心]]
@@ -156,9 +157,10 @@ public class TrafficQueryMapAndLocationHelper {
         	}
     	}
     	
-    	if (mQueryFragment.mStateTransitionTable.getCurrentState() == TrafficViewSTT.State.Normal
-    			|| mQueryFragment.mStateTransitionTable.getCurrentState() == TrafficViewSTT.State.Map 
-    			|| mQueryFragment.mStateTransitionTable.getCurrentState() == TrafficViewSTT.State.SelectPoint) {
+    	State curState = mQueryFragment.mStateTransitionTable.getCurrentState();
+    	if (curState == TrafficViewSTT.State.Normal
+    			|| curState == TrafficViewSTT.State.Map 
+    			|| curState == TrafficViewSTT.State.SelectPoint) {
     		mQueryCityInfo.setId(mQueryFragment.mSphinx.getMapView().getCenterCityId());
     		mQueryCityInfo.setPosition(newCenter);
     		mQueryCityInfo.setLevel(zoomLevel);
@@ -220,6 +222,7 @@ public class TrafficQueryMapAndLocationHelper {
 	}
 	
 	public void resetMapStateMap() {
+	    //FIXME：这个是什么时候会调用到？
 		if (!isEqualsToMapCenter(mQueryCityInfo)) {
 			mQueryFragment.mSphinx.getMapView().zoomTo(mQueryCityInfo.getLevel(), getCityCenterPosition(mQueryCityInfo));
 			mQueryFragment.mSphinx.resetLoactionButtonState();

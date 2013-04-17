@@ -42,7 +42,7 @@ import com.tigerknows.view.TrafficViewSTT.Event;
 /**
  * 负责“交通频道首页”TrafficQueryFragment的[[控件事件处理]]
  * @author linqingzu
- *
+ * TODO:重新整理一下所有的listener
  */
 public class TrafficQueryEventHelper {
 	
@@ -289,14 +289,14 @@ public class TrafficQueryEventHelper {
         }
     }
 	
-	protected class RootViewTouchListener implements OnTouchListener {
-
-		@Override
-		public boolean onTouch(View v, MotionEvent event) {
-			return true;
-		}
-		
-	}
+//	protected class RootViewTouchListener implements OnTouchListener {
+//
+//		@Override
+//		public boolean onTouch(View v, MotionEvent event) {
+//			return true;
+//		}
+//		
+//	}
 
 	protected class NormalOnCheckedChangeListener implements RadioGroup.OnCheckedChangeListener {
     	
