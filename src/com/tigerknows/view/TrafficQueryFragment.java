@@ -315,6 +315,7 @@ public class TrafficQueryFragment extends BaseFragment {
             } else {
                 mSphinx.showSoftInput(mBusline.getEdt().getInput());
             }
+            mSuggestHistoryHelper.refresh(mContext, mSelectedEdt.getEdt(), mode);
         } else if (currentState == TrafficViewSTT.State.Normal) {
         	mMapLocationHelper.centerOnMyLocation();
         	mMapLocationHelper.showNormalStateMap();

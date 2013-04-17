@@ -25,8 +25,8 @@ import com.tigerknows.view.SuggestArrayAdapter.CallBack;
  */
 public class TrafficQuerySuggestHistoryHelper {
     
-    static final int TYPE_TRAFFIC = 1;
-    static final int TYPE_BUSLINE = 2;
+    static final int TYPE_TRAFFIC = TrafficQueryFragment.TRAFFIC_MODE;
+    static final int TYPE_BUSLINE = TrafficQueryFragment.BUSLINE_MODE;
 
 	TrafficQueryFragment mQueryFragment;
 	
