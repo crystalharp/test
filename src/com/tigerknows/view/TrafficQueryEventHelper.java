@@ -358,19 +358,6 @@ public class TrafficQueryEventHelper {
 		}
 	}
 	
-	protected class NormalExchangeClickListener implements OnClickListener {
-
-		@Override
-		//xupeng:这是交换按钮的处理函数。
-		public void onClick(View v) {
-            mQueryFragment.mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "exchange");
-			POI temp = mQueryFragment.mStart.getPOI();
-			mQueryFragment.mStart.setPOI(mQueryFragment.mEnd.getPOI());
-			mQueryFragment.mEnd.setPOI(temp);
-		}
-		
-	}
-	
 	protected class TrafficEditFocusListener implements OnFocusChangeListener {
 
 	    private QueryEditText mQueryEdt;
@@ -423,17 +410,6 @@ public class TrafficQueryEventHelper {
         }
 	}
 	
-	protected class InputExchangeClickListener extends NormalExchangeClickListener {
-		@Override
-		public void onClick(View v) {
-			mQueryFragment.mSphinx.hideSoftInput();
-			mQueryFragment.mSuggestHistoryHelper.clearSuggestList(mQueryFragment.mSphinx);
-//			clearSuggestWatcherInInputState();
-			super.onClick(v);
-//			addSuggestWatcherInInputState();
-		}
-	}
-
 	protected class InputQueryClickListener implements OnClickListener {
 	    
 	    String log;
@@ -570,112 +546,112 @@ public class TrafficQueryEventHelper {
 	 *
 	 */
 		
-		public void showSelectOptionDialog(Activity activity, final QueryEditText queryEdt, String title, final boolean hasMyLocation) {
-		    String[] strList = mQueryFragment.mContext.getResources().getStringArray(R.array.select_location_option);
-            final List<String> selectOptionList = new ArrayList<String>();
-            int[] resIdList;
-            for(String str : strList) {
-                selectOptionList.add(str);
-            }
-            if (!hasMyLocation) {
-                selectOptionList.remove(0);
-                resIdList = new int[] {R.drawable.ic_select_point, R.drawable.ic_favorite, R.drawable.ic_swap_start_end};
-            } else {
-                resIdList = new int[] {R.drawable.ic_mylocation, R.drawable.ic_select_point, R.drawable.ic_favorite, R.drawable.ic_swap_start_end};
-            }
-            ArrayAdapter<String> adapter = new StringArrayAdapter(mQueryFragment.mContext, selectOptionList, resIdList);
-            
-		    ListView listView = CommonUtils.makeListView(activity);
-		    listView.setAdapter(adapter);
-            final Dialog dialog = CommonUtils.showNormalDialog(mQueryFragment.mSphinx,
-                    title,
-                    null,
-                    listView,
-                    null,
-                    null,
-                    null);
-            
-            dialog.setCancelable(true);
-            listView.setOnItemClickListener(new OnItemClickListener() {
-
-                @Override
-                public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
-                    dialog.dismiss();
-                    mQueryFragment.mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "select", selectOptionList.get(which));
-                    mQueryFragment.mSelectedEdt = queryEdt;
-                    //有定位的情况下四个选项为“当前位置”，“地图选点”，“收藏夹”，“交换起终点”
-                    //如果没有定位，则正常第一个选择“当前位置”不显示，which加一才能对应到到正确操作。
-                    if (hasMyLocation == false) {
-                        which++;
-                    }
-                    switch (which) {
-                    case 0:
-                        //当前位置
-                        performSelectMyLocation();
-                        break;
-                    case 1:
-                        //地图选点
-                        performMapSelectPoint(queryEdt);
-                        break;
-                    case 2:
-                        //收藏夹
-                        performSelectFavorite();
-                        break;
-                    case 3:
-                        //交换起终点
-                        performSwitchStartEnd();
-                        break;
-                    default:
-                    }
-                }
-            });
+	public void showSelectOptionDialog(Activity activity, final QueryEditText queryEdt, String title, final boolean hasMyLocation) {
+	    String[] strList = mQueryFragment.mContext.getResources().getStringArray(R.array.select_location_option);
+        final List<String> selectOptionList = new ArrayList<String>();
+        int[] resIdList;
+        for(String str : strList) {
+            selectOptionList.add(str);
         }
-			
-		    private void performSwitchStartEnd() {
-		        mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mSphinx, null, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
+        if (!hasMyLocation) {
+            selectOptionList.remove(0);
+            resIdList = new int[] {R.drawable.ic_select_point, R.drawable.ic_favorite, R.drawable.ic_swap_start_end};
+        } else {
+            resIdList = new int[] {R.drawable.ic_mylocation, R.drawable.ic_select_point, R.drawable.ic_favorite, R.drawable.ic_swap_start_end};
+        }
+        ArrayAdapter<String> adapter = new StringArrayAdapter(mQueryFragment.mContext, selectOptionList, resIdList);
+        
+	    ListView listView = CommonUtils.makeListView(activity);
+	    listView.setAdapter(adapter);
+        final Dialog dialog = CommonUtils.showNormalDialog(mQueryFragment.mSphinx,
+                title,
+                null,
+                listView,
+                null,
+                null,
+                null);
+        
+        dialog.setCancelable(true);
+        listView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3) {
+                dialog.dismiss();
+                mQueryFragment.mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "select", selectOptionList.get(which));
+                mQueryFragment.mSelectedEdt = queryEdt;
+                //有定位的情况下四个选项为“当前位置”，“地图选点”，“收藏夹”，“交换起终点”
+                //如果没有定位，则正常第一个选择“当前位置”不显示，which加一才能对应到到正确操作。
+                if (hasMyLocation == false) {
+                    which++;
+                }
+                switch (which) {
+                case 0:
+                    //当前位置
+                    performSelectMyLocation();
+                    break;
+                case 1:
+                    //地图选点
+                    performMapSelectPoint(queryEdt);
+                    break;
+                case 2:
+                    //收藏夹
+                    performSelectFavorite();
+                    break;
+                case 3:
+                    //交换起终点
+                    performSwitchStartEnd();
+                    break;
+                default:
+                }
+            }
+        });
+    }
+		
+    private void performSwitchStartEnd() {
+        mQueryFragment.mSuggestHistoryHelper.clearSuggestList(mQueryFragment.mSphinx);
 //                clearSuggestWatcherInInputState();
-                POI temp = mQueryFragment.mStart.getPOI();
-                mQueryFragment.mStart.setPOI(mQueryFragment.mEnd.getPOI());
-                mQueryFragment.mEnd.setPOI(temp);
-                mQueryFragment.mSuggestHistoryHelper.clearSuggestList(mQueryFragment.mSphinx);
+        POI temp = mQueryFragment.mStart.getPOI();
+        mQueryFragment.mStart.setPOI(mQueryFragment.mEnd.getPOI());
+        mQueryFragment.mEnd.setPOI(temp);
+        mQueryFragment.mSuggestHistoryHelper.clearSuggestList(mQueryFragment.mSphinx);
 //                addSuggestWatcherInInputState();
 //                mQueryFragment.mBlock.requestFocus();
-		    }
-		    
-			private void performSelectMyLocation() {
-				LogWrapper.d("eric", "performSelectMyLocation()");
+    }
+    
+	private void performSelectMyLocation() {
+		LogWrapper.d("eric", "performSelectMyLocation()");
 
-	        		POI poi = new POI();
-	        		poi.setName(mQueryFragment.mContext.getString(R.string.my_location));
-	        		mQueryFragment.setData(poi, TrafficQueryFragment.SELECTED);
+    		POI poi = new POI();
+    		poi.setName(mQueryFragment.mContext.getString(R.string.my_location));
+    		mQueryFragment.setData(poi, TrafficQueryFragment.SELECTED);
 
-			}
-			
-			private void performMapSelectPoint(QueryEditText queryEditText) {
-				LogWrapper.d("eric", "performMapSelectPoint()");
+	}
+	
+	private void performMapSelectPoint(QueryEditText queryEditText) {
+		LogWrapper.d("eric", "performMapSelectPoint()");
 
-				mQueryFragment.mSphinx.setTouchMode(R.id.start_edt == queryEditText.getEdt().getId() ? TouchMode.CHOOSE_ROUTING_START_POINT : TouchMode.CHOOSE_ROUTING_END_POINT);
-				
-				Position center = mQueryFragment.mSphinx.getMapView().getCenterPosition();
-				String positionName = mQueryFragment.mSphinx.getMapEngine().getPositionName(center, (int)mQueryFragment.mSphinx.getMapView().getZoomLevel());
-				if (TextUtils.isEmpty(positionName)) {
-					positionName = mQueryFragment.mContext.getString(R.string.select_has_point);
-				}
-				
-				mQueryFragment.mSphinx.clearMap();
-				PinOverlayHelper.drawSelectPointOverlay(mQueryFragment.mSphinx, mQueryFragment.mSphinx.getHandler(), mQueryFragment.mSphinx.getMapView(), R.id.start_edt == queryEditText.getEdt().getId(), positionName, center);
-				mQueryFragment.mSphinx.getMapView().refreshMap();
-				
-				mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.ClicktoSelectPoint);
-	            
-	            String tip = mQueryFragment.mContext.getString(R.id.start_edt == queryEditText.getEdt().getId() ? R.string.click_map_as_start : R.string.click_map_as_end);
-	            mQueryFragment.mSphinx.showTip(tip, Toast.LENGTH_SHORT);
-			}
-			
-			private void performSelectFavorite() {
-				LogWrapper.d("eric", "performSelectFavorite()");
+		mQueryFragment.mSphinx.setTouchMode(R.id.start_edt == queryEditText.getEdt().getId() ? TouchMode.CHOOSE_ROUTING_START_POINT : TouchMode.CHOOSE_ROUTING_END_POINT);
+		
+		Position center = mQueryFragment.mSphinx.getMapView().getCenterPosition();
+		String positionName = mQueryFragment.mSphinx.getMapEngine().getPositionName(center, (int)mQueryFragment.mSphinx.getMapView().getZoomLevel());
+		if (TextUtils.isEmpty(positionName)) {
+			positionName = mQueryFragment.mContext.getString(R.string.select_has_point);
+		}
+		
+		mQueryFragment.mSphinx.clearMap();
+		PinOverlayHelper.drawSelectPointOverlay(mQueryFragment.mSphinx, mQueryFragment.mSphinx.getHandler(), mQueryFragment.mSphinx.getMapView(), R.id.start_edt == queryEditText.getEdt().getId(), positionName, center);
+		mQueryFragment.mSphinx.getMapView().refreshMap();
+		
+		mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.ClicktoSelectPoint);
+        
+        String tip = mQueryFragment.mContext.getString(R.id.start_edt == queryEditText.getEdt().getId() ? R.string.click_map_as_start : R.string.click_map_as_end);
+        mQueryFragment.mSphinx.showTip(tip, Toast.LENGTH_SHORT);
+	}
+	
+	private void performSelectFavorite() {
+		LogWrapper.d("eric", "performSelectFavorite()");
 
-				mQueryFragment.mSphinx.getFetchFavoriteDialog().setData(mQueryFragment);
-				mQueryFragment.mSphinx.showView(R.id.dialog_fetch_favorite_poi);
-			}
+		mQueryFragment.mSphinx.getFetchFavoriteDialog().setData(mQueryFragment);
+		mQueryFragment.mSphinx.showView(R.id.dialog_fetch_favorite_poi);
+	}
 }
