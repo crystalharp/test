@@ -991,7 +991,7 @@ public class MapView extends RelativeLayout implements
         View custom = activity.getLayoutInflater().inflate(R.layout.loading, null);
         TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
         loadingTxv.setText(R.string.doing_and_wait);
-        ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, loadingTxv);
+        ActionLog.getInstance(activity).addAction(ActionLog.Dialog, activity.getString(R.string.doing_and_wait));
         
         final Dialog tipProgressDialog = CommonUtils.showNormalDialog(activity, custom);
         tipProgressDialog.setCancelable(true);

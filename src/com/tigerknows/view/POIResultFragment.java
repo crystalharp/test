@@ -44,6 +44,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.PopupWindow.OnDismissListener;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -140,7 +141,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.SearchResult;
+        mActionTag = ActionLog.POIList;
     }
 
     @Override
@@ -182,7 +183,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
 
     protected void setListener() {
-        mRetryView.setCallBack(this);
+        mRetryView.setCallBack(this, mActionTag);
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -190,7 +191,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (position < adapterView.getCount()) {
                     POI poi = (POI) adapterView.getAdapter().getItem(position);
                     if (poi != null) {
-                        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", position+1, poi.getUUID(), poi.getName());
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, poi.getUUID(), poi.getName());
                         mSphinx.getPOIDetailFragment().setData(poi);
                         mSphinx.showView(R.id.view_poi_detail);
                     }
@@ -215,7 +216,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             DataQuery lastDataQuery = mDataQuery;
             if (mState != STATE_QUERYING && mState != STATE_LIST && lastDataQuery != null) {
-                mActionLog.addAction(ActionLog.KEYCODE, "back");
+                mActionLog.addAction(ActionLog.KeyCodeBack);
                 mState = STATE_LIST;
                 updateView();
                 refreshFilter(lastDataQuery.getFilterList());
@@ -330,7 +331,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             return;
         }
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
-        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "loadMore");
+        mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
 
         DataQuery poiQuery = new DataQuery(mContext);
         POI requestPOI = lastDataQuery.getPOI();
@@ -362,7 +363,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             poiList.add(poi);
         }
         mSphinx.showPOI(poiList, page[2]);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), ActionLog.MapPOI);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), ActionLog.POIListMap);
         mSphinx.showView(R.id.view_result_map);   
     }
     
@@ -402,7 +403,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (mPOIList.isEmpty() || mState != STATE_LIST) {
                     return;
                 }
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 
@@ -421,7 +422,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 showFilterListView(mTitleFragment);
 
                 byte key = (Byte)view.getTag();
-                mFilterListView.setData(mFilterList, key, POIResultFragment.this, turnPageing);
+                mFilterListView.setData(mFilterList, key, POIResultFragment.this, turnPageing, mActionTag);
         }
     }
     
@@ -790,21 +791,28 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     private void showFilterListView(View parent) {
-        mActionLog.addAction(ActionLog.POPUPWINDOW, "filter");
-        if (mFilterPopupWindow == null) {
+        mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter);
+        if (mPopupWindow == null) {
             mFilterListView = new FilterListView(mSphinx);
             
-            mFilterPopupWindow = new PopupWindow(mFilterListView);
-            mFilterPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-            mFilterPopupWindow.setFocusable(true);
+            mPopupWindow = new PopupWindow(mFilterListView);
+            mPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+            mPopupWindow.setFocusable(true);
             // 设置允许在外点击消失
-            mFilterPopupWindow.setOutsideTouchable(true);
+            mPopupWindow.setOutsideTouchable(true);
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
-            mFilterPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow.setOnDismissListener(new OnDismissListener() {
+                
+                @Override
+                public void onDismiss() {
+                    mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter + ActionLog.Dismiss);
+                }
+            });
             
         }
-        mFilterPopupWindow.showAsDropDown(parent, 0, 0);
+        mPopupWindow.showAsDropDown(parent, 0, 0);
 
     }
 

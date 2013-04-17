@@ -24,6 +24,7 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnDismissListener;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -115,6 +116,13 @@ public class WeiboSend extends BaseActivity implements OnClickListener {
             dialog.setCancelable(false);
             dialog.setCanceledOnTouchOutside(false);
             ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait));
+            dialog.setOnDismissListener(new OnDismissListener() {
+                
+                @Override
+                public void onDismiss(DialogInterface arg0) {
+                    mActionLog.addAction(ActionLog.Dialog+ActionLog.Dismiss);
+                }
+            });
             break;
         }
         
@@ -226,7 +234,7 @@ public class WeiboSend extends BaseActivity implements OnClickListener {
             case R.id.logout_btn: {
                 hideInputMethodManager();
                 UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(this, ShareAPI.TYPE_WEIBO);
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft", userAccessIdenty == null);
+                mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton, String.valueOf(userAccessIdenty == null));
                 if (userAccessIdenty == null) {
                     WeiboSend.this.finish();
                     return;
@@ -242,7 +250,7 @@ public class WeiboSend extends BaseActivity implements OnClickListener {
                 break;
             }
             case R.id.send_btn: {
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight", mContent);
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(this, ShareAPI.TYPE_WEIBO);
                 if (userAccessIdenty == null) {
                     mLogoutBtn.setText(R.string.back);
@@ -255,7 +263,7 @@ public class WeiboSend extends BaseActivity implements OnClickListener {
                     return;
                 }
                 hideInputMethodManager();
-                ActionLog.getInstance(this).addAction(ActionLog.DIALOG, getString(R.string.doing_and_wait));
+                ActionLog.getInstance(this).addAction(ActionLog.Dialog, getString(R.string.doing_and_wait));
                 new Thread() {
                     
                     @Override
@@ -271,7 +279,7 @@ public class WeiboSend extends BaseActivity implements OnClickListener {
                 break;
             }
             case R.id.text_limit_unit_lnl: {
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "delete");
+                mActionLog.addAction(mActionTag +  ActionLog.WeiboSendDelWord);
                 if (mTextEdt.getEditableText().length() > 0) {
                     CommonUtils.showNormalDialog(WeiboSend.this,
                             getString(R.string.attention),
@@ -294,7 +302,7 @@ public class WeiboSend extends BaseActivity implements OnClickListener {
             case R.id.pic_imv: {
             	File file = new File(mPicPath);
                 if (file.exists()) {
-                	mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "picture");
+                	mActionLog.addAction(mActionTag +  ActionLog.WeiboSendPic);
                 	hideInputMethodManager();
                     Bitmap source = BitmapFactory.decodeFile(this.mPicPath);
                     AlterImageDialog imageDialog = new AlterImageDialog(WeiboSend.this, source);

@@ -36,6 +36,8 @@ public class RetryView extends LinearLayout {
     private TextView mTextTxv;
     
     CallBack mCallBack;
+    
+    String mActionTag;
         
     public RetryView(Context context) {
         this(context, null);
@@ -66,7 +68,7 @@ public class RetryView extends LinearLayout {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (mCallBack != null) {
-            ActionLog.getInstance(getContext()).addAction(ActionLog.RETRY);
+            ActionLog.getInstance(getContext()).addAction(mActionTag+ActionLog.TouchRetry);
             mCallBack.retry();
         }
         return true;
@@ -80,8 +82,9 @@ public class RetryView extends LinearLayout {
         return mTextTxv.hasFocus();
     }
     
-    public void setCallBack(CallBack callBack) {
+    public void setCallBack(CallBack callBack, String actionTag) {
         mCallBack = callBack;
+        mActionTag = actionTag;
     }
     
     public void setText(int resid) {

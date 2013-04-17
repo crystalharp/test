@@ -130,7 +130,7 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
         // TODO Auto-generated method stub
         switch(v.getId()){
             case R.id.right_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 // md=$uid-$errcode[-$detail]_$uid-$errcode[-$detail]_$uid-$errcode[-$detail]_ 
                 // md=edc1e4c9-5081-428a-935d-1d31fd3848f5-502_8d5cc821-c130-4f9e-acfa-d4906e82c016-404
                 StringBuilder s = new StringBuilder();

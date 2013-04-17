@@ -68,7 +68,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
                 
                 @Override
                 public void onClick(View arg0) {
-                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft");
+                    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
                     onBack();
                 }
             });
@@ -78,6 +78,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 
 			@Override
 			public void onClick(View v) {
+                mActionLog.addAction(mActionTag +  ActionLog.UserCommonConfirmBtn);
 				// TODO 关闭页面, 并跳转到个人中心页面
 				if (!mForm.isValid()) {
 					doAction(mForm.getErrorSource());
@@ -148,7 +149,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "delete");
+				mActionLog.addAction(mActionTag+ActionLog.EditTextDelete);
 				nickNameEdt.setText("");
 				showSoftInput(nickNameEdt);
 			}
@@ -159,7 +160,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-            mActionLog.addAction(ActionLog.KEYCODE, "back");
+            mActionLog.addAction(ActionLog.KeyCodeBack);
 			onBack();
 			return true;
 		}

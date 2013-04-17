@@ -40,7 +40,7 @@ public class YanchuDetailFragment extends BaseDetailFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.YanchuXiangqing;
+        mActionTag = ActionLog.YanchuDetail;
     }
 
     @Override
@@ -101,7 +101,7 @@ public class YanchuDetailFragment extends BaseDetailFragment
         poi.setAddress(data.getAddress());
         list.add(poi);
         mSphinx.showPOI(list, 0);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.yanchu_didian_ditu), ActionLog.MapYanchuXiangqing);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.yanchu_didian_ditu), ActionLog.ResultMapYanchuDetail);
         super.viewMap();
     }
     

@@ -142,7 +142,7 @@ public class TKConfig {
     public static final String SUGGEST_LEXCION_FILE_TEMP = "%d"; 
     
     /**
-     * Region无数据文件名格式
+     * Region元数据文件名格式
      */
     public static final String MAP_REGION_METAFILE = "region%d.meta";
     

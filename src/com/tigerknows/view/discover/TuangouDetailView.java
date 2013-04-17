@@ -256,7 +256,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         super(sphinx, parentFragment, R.layout.tuangou_detail);
         
         findViews();
-        mActionTag = ActionLog.TuangouXiangqing;
+        mActionTag = ActionLog.TuangouDetail;
         
         noRefundStr = mSphinx.getString(R.string.tuangou_no_refund);
 
@@ -654,7 +654,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         switch (view.getId()) {                     
             case R.id.buy_btn:                  
             case R.id.buy_btn_2:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "buy");
+                mActionLog.addAction(mActionTag +  ActionLog.TuangouDetailBuy);
                 String sessionId = Globals.g_Session_Id;
                 if (TextUtils.isEmpty(sessionId)) {
                     ((TuangouDetailFragment) mParentFragment).isRequsetBuy = true;
@@ -670,28 +670,28 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 break;
                 
             case R.id.telephone_view:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "telephone");
+                mActionLog.addAction(mActionTag +  ActionLog.CommonTelphone);
                 CommonUtils.telephone(mSphinx, mTelephoneTxv);
                 break;
                 
             case R.id.address_view:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "address");
+                mActionLog.addAction(mActionTag +  ActionLog.CommonAddress);
                 Fendian fendian = mData.getFendian();
                 if (fendian == null) {
                     return;
                 }
-                CommonUtils.queryTraffic(mSphinx, fendian.getPOI(POI.SOURCE_TYPE_TUANGOU));
+                CommonUtils.queryTraffic(mSphinx, fendian.getPOI(POI.SOURCE_TYPE_TUANGOU), mActionTag);
                 break;
                 
             case R.id.nearby_fendian_view:
                 if (mNearbyFendianTxv.getVisibility() == View.VISIBLE) {
-                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "fendian");
+                    mActionLog.addAction(mActionTag +  ActionLog.DiscoverCommonBranch);
                     mSphinx.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.FendianList);
                     mSphinx.showView(R.id.view_discover_child_list);
                 }
                 break;
             case R.id.service_hotline_view:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "hotline");
+                mActionLog.addAction(mActionTag +  ActionLog.TuangouDetailCustomService);
                 CommonUtils.telephone(mSphinx, mServiceHotlineTxv);
                 break;
         }

@@ -59,6 +59,7 @@ import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.PopupWindow.OnDismissListener;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -192,7 +193,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             
             setup();
             onResume();
-            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "channel", position, discoverCategory.getType());
+            mActionLog.addAction(mActionTag + ActionLog.PopupWindowTitle + ActionLog.ListViewItem, position, discoverCategory.getType());
         }
     };
     
@@ -327,7 +328,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     }
 
     protected void setListener() {
-        mRetryView.setCallBack(this);
+        mRetryView.setCallBack(this, mActionTag);
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -338,12 +339,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                         if (object instanceof Tuangou) {
                             Tuangou tagret = (Tuangou) object;
 //                            tagret.getFendian().setOrderNumber(position+1);
-                            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, position+1, tagret.getUid());
+                            mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
                             mSphinx.showView(R.id.view_tuangou_detail);
                             mSphinx.getTuangouDetailFragment().setData(mTuangouList, position, DiscoverListFragment.this);
                         } else if (object instanceof Yanchu){
                             Yanchu tagret = (Yanchu) object;
-                            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, position+1, tagret.getUid());
+                            mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
                             mSphinx.showView(R.id.view_yanchu_detail);
                         	mSphinx.getYanchuDetailFragment().setData(mYanchuList, position, DiscoverListFragment.this);
                         } else if (object instanceof Dianying){
@@ -363,12 +364,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 								((Dianying)getList().get(i)).getYingxun().setChangciOption(changciOption);
 							}
 //                            tagret.getYingxun().setOrderNumber(position+1);
-                            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, position+1, tagret.getUid());
+                            mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
                         	mSphinx.showView(R.id.view_dianying_detail);
                         	mSphinx.getDianyingDetailFragment().setData(mDianyingList, position, DiscoverListFragment.this);
                         } else if (object instanceof Zhanlan){
                         	Zhanlan tagret = (Zhanlan) object;
-                            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, position+1, tagret.getUid());
+                            mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
                             mSphinx.showView(R.id.view_zhanlan_detail);
                         	mSphinx.getZhanlanDetailFragment().setData(mZhanlanList, position, DiscoverListFragment.this);
                         }
@@ -421,7 +422,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             DataQuery lastDataQuery = mDataQuery;
             if (mState != STATE_QUERYING && mState != STATE_LIST && lastDataQuery != null) {
-                mActionLog.addAction(ActionLog.KEYCODE, "back");
+                mActionLog.addAction(ActionLog.KeyCodeBack);
                 mState = STATE_LIST;
                 updateView();
                 refreshFilter(lastDataQuery.getFilterList());
@@ -586,7 +587,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             return;
         }
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
-        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "loadMore");
+        mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
 
         DataQuery dataQuery = new DataQuery(mContext);
         Hashtable<String, String> criteria = lastDataQuery.getCriteria();
@@ -635,13 +636,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             return;
         }
         int name = R.string.tuangou_ditu;
-        String actionTag = ActionLog.MapTuangouList;
+        String actionTag = ActionLog.ResultMapTuangouList;
         if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
             name = R.string.yanchu_ditu;
-            actionTag = ActionLog.MapYanchuList;
+            actionTag = ActionLog.ResultMapYanchuList;
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
             name = R.string.zhanlan_ditu;
-            actionTag = ActionLog.MapZhanlanList;
+            actionTag = ActionLog.ResultMapZhanlanList;
         }
         mSphinx.showPOI(dataList, page[2]);
         mSphinx.getResultMapFragment().setData(mContext.getString(name), actionTag);
@@ -689,7 +690,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             case R.id.title_btn:
                 if (mDiscoverCategoryList.size() > 0) {
                     mTitlePopupArrayAdapter.mSelectDataType = mDataType;
-                    mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+                    mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener, mActionTag);
                     mTitlePopupArrayAdapter.notifyDataSetChanged();
                 }
                 break;
@@ -698,12 +699,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (mDataQuery == null || mState != STATE_LIST) {
                     return;
                 }
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 
             case R.id.dingdan_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "dingdan");
+                mActionLog.addAction(mActionTag +  ActionLog.TuangouListDingdan);
                 User user = Globals.g_User;
                 if (user != null) {
                     Intent intent = new Intent();
@@ -733,7 +734,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 showFilterListView(mTitleFragment);
 
                 byte key = (Byte)view.getTag();
-                mFilterListView.setData(mFilterList, key, DiscoverListFragment.this, turnPageing);
+                mFilterListView.setData(mFilterList, key, DiscoverListFragment.this, turnPageing, mActionTag);
         }
     }
     
@@ -957,7 +958,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     @Override
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
-        mResultLsv.onRefreshComplete(false);
+        mResultLsv.changeHeaderViewByState(false, SpringbackListView.PULL_TO_REFRESH);
         invokeIPagerListCallBack();
     }
 
@@ -1237,20 +1238,27 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     }
     
     private void showFilterListView(View parent) {
-        mActionLog.addAction(ActionLog.POPUPWINDOW, "filter");
-        if (mFilterPopupWindow == null) {
+        mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter);
+        if (mPopupWindow == null) {
             mFilterListView = new FilterListView(mSphinx);
-            mFilterPopupWindow = new PopupWindow(mFilterListView);
-            mFilterPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
-            mFilterPopupWindow.setFocusable(true);
+            mPopupWindow = new PopupWindow(mFilterListView);
+            mPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+            mPopupWindow.setFocusable(true);
             // 设置允许在外点击消失
-            mFilterPopupWindow.setOutsideTouchable(true);
+            mPopupWindow.setOutsideTouchable(true);
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
-            mFilterPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow.setOnDismissListener(new OnDismissListener() {
+                
+                @Override
+                public void onDismiss() {
+                    mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter + ActionLog.Dismiss);
+                }
+            });
             
         }
-        mFilterPopupWindow.showAsDropDown(parent, 0, 0);
+        mPopupWindow.showAsDropDown(parent, 0, 0);
 
     }
     

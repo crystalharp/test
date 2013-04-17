@@ -387,7 +387,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUid());
                         
                         if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
-                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "tuangou");
+                            mActionLog.addAction(mActionTag +  ActionLog.POIDetailTuangou);
                             criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
                                          Tuangou.NEED_FILELD
                                             + Util.byteToHexString(Tuangou.FIELD_NOTICED)
@@ -411,7 +411,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             mTkAsyncTasking = mSphinx.queryStart(list);
                             mBaseQuerying = list;
                         } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
-                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "yanchu");
+                            mActionLog.addAction(mActionTag +  ActionLog.POIDetailYanchu);
                             criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
                                          Yanchu.NEED_FILELD + Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
                             criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
@@ -423,7 +423,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             mTkAsyncTasking = mSphinx.queryStart(list);
                             mBaseQuerying = list;
                         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "zhanlan");
+                            mActionLog.addAction(mActionTag +  ActionLog.POIDetailZhanlan);
                             criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
                                     Zhanlan.NEED_FILELD + Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
                             criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
@@ -614,7 +614,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     return false;
                 }
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
+                    mActionLog.addAction(mActionTag +  ActionLog.POIDetailInput);
                     boolean isMe = (poi.isGoldStamp() || poi.isSilverStamp());
                     if (poi.getStatus() < 0) {
                         int resId;
@@ -663,27 +663,27 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         switch (view.getId()) {                
             case R.id.right_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 viewMap();
                 break;
             case R.id.telephone_view:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "telephone");
+                mActionLog.addAction(mActionTag +  ActionLog.CommonTelphone);
                 CommonUtils.telephone(mSphinx, mTelephoneTxv);
                 break;
                 
             case R.id.address_view:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "address");             
-                CommonUtils.queryTraffic(mSphinx, poi);
+                mActionLog.addAction(mActionTag +  ActionLog.CommonAddress);             
+                CommonUtils.queryTraffic(mSphinx, poi, mActionTag);
                 break;
                 
             case R.id.poi_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "search");
+                mActionLog.addAction(mActionTag +  ActionLog.POIDetailSearch);
                 mSphinx.getPOINearbyFragment().setData(poi);
                 mSphinx.showView(R.id.view_poi_nearby);
                 break;
                 
             case R.id.share_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "share");
+                mActionLog.addAction(mActionTag +  ActionLog.CommonShare);
                 share();
                 break;
 
@@ -692,17 +692,17 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 break;
             case R.id.error_recovery_btn:
                 // Error Recovery
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "recovery");
+                mActionLog.addAction(mActionTag +  ActionLog.CommonErrorRecovery);
                 errorRecovery();
                 break;
                 
             case R.id.comment_sum_total_view:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "viewComment");
+                mActionLog.addAction(mActionTag +  ActionLog.POIDetailAllComment);
                 showMoreComment();
                 break;
                 
             default:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "comment");
+                mActionLog.addAction(mActionTag +  ActionLog.POIDetailComment);
                 showMoreComment();
                 break;
         }
@@ -716,7 +716,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         List<POI> pois = new ArrayList<POI>();
         pois.add(poi);
         mSphinx.showPOI(pois, 0);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), ActionLog.MapPOI);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), ActionLog.POIDetailMap);
         mSphinx.showView(R.id.view_result_map);
     }
     
@@ -726,7 +726,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             return;
         }
         boolean isFavorite = poi.checkFavorite(mContext);
-        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "favorite", isFavorite);
+        mActionLog.addAction(mActionTag +  ActionLog.CommonFavorite, String.valueOf(isFavorite));
         if (isFavorite) {
             CommonUtils.showNormalDialog(mSphinx, 
                     mContext.getString(R.string.favorite_yet), 
@@ -797,7 +797,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     	pois.add(poi);
 
     	mSphinx.showPOI(pois, 0);
-    	WidgetUtils.share(mSphinx, smsContent, weiboContent, qzoneContent, poi.getPosition());
+    	WidgetUtils.share(mSphinx, smsContent, weiboContent, qzoneContent, poi.getPosition(), mActionTag);
     }
     
     public void setData(POI poi) {

@@ -62,8 +62,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
             mTitleFragment.dismissPopupWindow();
             mTitlePopupArrayAdapter.mSelectedItem = mTitlePopupArrayAdapter.getItem(position);
-            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", position);
-            if (mActionTag.equals(ActionLog.MapBusline)) {
+            mActionLog.addAction(mActionTag + ActionLog.PopupWindowTitle + ActionLog.ListViewItem, position);
+            if (mActionTag.equals(ActionLog.TrafficBuslineMap)) {
                 List<Line> list = mSphinx.getBuslineResultLineFragment().getData();
                 for(int i = 0, size = list.size(); i < size; i++) {
                     Line line = list.get(i);
@@ -79,7 +79,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                         break;
                     }
                 }
-            } else if (mActionTag.equals(ActionLog.MapTrafficTransfer)) {
+            } else if (mActionTag.equals(ActionLog.TrafficTransferMap)) {
                 List<Plan> list = mSphinx.getTrafficResultFragment().getData();
                 for(int i = 0, size = list.size(); i < size; i++) {
                     Plan plan = list.get(i);
@@ -106,7 +106,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.MapPOI;
+        mActionTag = ActionLog.POIListMap;
     }
 
     @Override
@@ -140,10 +140,10 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         
         //如果顶端切换list不为空，设置切换列表
         if (mTitlePopupList.size() > 0) {
-            if (mActionTag.equals(ActionLog.MapBusline)) {
+            if (mActionTag.equals(ActionLog.TrafficBuslineMap)) {
                 mTitleBtn.setText(mSphinx.getString(R.string.title_busline_line_popup, 
                         TrafficQuery.numToStr(mSphinx, mSphinx.getBuslineDetailFragment().getCurLine() + 1)));
-            } else if (mActionTag.equals(ActionLog.MapTrafficTransfer)) {
+            } else if (mActionTag.equals(ActionLog.TrafficTransferMap)) {
                 mTitleBtn.setText(mSphinx.getString(R.string.title_transfer_plan_popup, 
                         TrafficQuery.numToStr(mSphinx, mSphinx.getTrafficDetailFragment().getCurLine() + 1)));
 			}
@@ -153,11 +153,11 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
             }
         }
         //如果是驾车和步行，需要在这里可以切换到详情页
-        if (mActionTag == ActionLog.MapTrafficDrive || mActionTag == ActionLog.MapTrafficWalk) {
+        if (mActionTag == ActionLog.TrafficDriveMap || mActionTag == ActionLog.TrafficWalkMap) {
         	mRightBtn.setVisibility(View.VISIBLE);
         	mRightBtn.setBackgroundResource(R.drawable.btn_view_detail);
         	mRightBtn.setOnClickListener(this);
-        	if (mActionTag == ActionLog.MapTrafficDrive) {
+        	if (mActionTag == ActionLog.TrafficDriveMap) {
         		mTitleBtn.setText(mSphinx.getString(R.string.title_type_drive));
         	} else {
         		mTitleBtn.setText(mSphinx.getString(R.string.title_type_walk));
@@ -188,14 +188,14 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         
         if (mSphinx.uiStackContains(R.id.view_favorite) == false
                 && mSphinx.uiStackContains(R.id.view_history) == false) {
-            if (mActionTag.equals(ActionLog.MapBusline)) {
+            if (mActionTag.equals(ActionLog.TrafficBuslineMap)) {
                 mTitlePopupArrayAdapter.mSelectedItem = mSphinx.getString(R.string.title_popup_content,
                         mSphinx.getBuslineDetailFragment().getCurLine() + 1, mSphinx.getBuslineDetailFragment().getData().getName());
                 List<Line> list = mSphinx.getBuslineResultLineFragment().getData();
                 for(int i = 0, size = list.size(); i < size; i++) {
                     mTitlePopupList.add(mSphinx.getString(R.string.title_popup_content, i + 1, list.get(i).getName()));
                 }
-            } else if (mActionTag.equals(ActionLog.MapTrafficTransfer)) {
+            } else if (mActionTag.equals(ActionLog.TrafficTransferMap)) {
                 mTitlePopupArrayAdapter.mSelectedItem = mSphinx.getString(R.string.title_popup_content,
                         mSphinx.getTrafficDetailFragment().getCurLine() + 1, mSphinx.getTrafficDetailFragment().getData().getTitle(mSphinx));
                 List<Plan> list = mSphinx.getTrafficResultFragment().getData();
@@ -223,7 +223,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         switch (id) {
         case R.id.title_btn:
         	if (mTitlePopupList.size() > 0) {
-        		mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+        		mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener, mActionTag);
         		mTitlePopupArrayAdapter.notifyDataSetChanged();
         	}
         	break;
@@ -274,7 +274,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
 	        mSphinx.finish();
 	        break;
         case R.id.right_btn:
-            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
+            mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
         	mSphinx.showView(R.id.view_traffic_result_detail);
         	break;
     	default:

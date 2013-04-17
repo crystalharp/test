@@ -40,6 +40,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -513,11 +514,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 switch (action & MotionEvent.ACTION_MASK) {
                     case MotionEvent.ACTION_UP: {
                         if (R.id.taste_rbt == v.getId()) {
-                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "taste");
+                            mActionLog.addAction(mActionTag +  ActionLog.POICommentTaste);
                         } else if (R.id.environment_rbt == v.getId()) {
-                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "environment");
+                            mActionLog.addAction(mActionTag +  ActionLog.POICommentEnvironment);
                         } else if (R.id.qos_rbt == v.getId()) {
-                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "qos");
+                            mActionLog.addAction(mActionTag +  ActionLog.POICommentQos);
                         }
                         break;
                     }
@@ -539,15 +540,15 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 if (value) {
                     switch (v.getId()) {
                         case R.id.content_edt:
-                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "content");
+                            mActionLog.addAction(mActionTag +  ActionLog.POICommentContent);
                             break;
                             
                         case R.id.avg_edt:
-                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "avg");                        
+                            mActionLog.addAction(mActionTag +  ActionLog.POICommentAvg);                        
                             break;
                             
                         case R.id.recommend_edt:
-                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "recommend");  
+                            mActionLog.addAction(mActionTag +  ActionLog.POICommentRecommend);  
                             break;
     
                         default:
@@ -640,7 +641,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                     	resId = R.string.poi_comment_share_grade1;
                     	mGradeRtb.setRating(1);
                     }
-                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "grade", rating);
+                    mActionLog.addAction(mActionTag +  ActionLog.POICommentGrade, rating);
                     mGradeTipTxv.setText(resId);
                     mGradeTipTxv.setVisibility(View.VISIBLE);
                     mGradeTipTxv.startAnimation(animation);
@@ -713,6 +714,13 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             dialog = new ProgressDialog(this);
             dialog.setCancelable(false);
             ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait));
+            dialog.setOnDismissListener(new OnDismissListener() {
+                
+                @Override
+                public void onDismiss(DialogInterface arg0) {
+                    mActionLog.addAction(ActionLog.Dialog + ActionLog.Dismiss);
+                }
+            });
             break;
         }
         
@@ -723,7 +731,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     public void onClick(View view) {
         int viewId = view.getId();
         if (R.id.right_btn == viewId) {
-            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
+            mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
             if (mContentEdt.getEditableText().toString().trim().length() < MIN_CHAR) {
                 CommonUtils.showNormalDialog(mThis, 
                         mThis.getString(R.string.prompt), 
@@ -757,7 +765,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             }
             
         } else if (R.id.restair_btn == viewId) {
-            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "restair");
+            mActionLog.addAction(mActionTag +  ActionLog.POICommentRestair);
             if (mRestairArray == null) {
                 mRestairArray = mThis.getResources().getStringArray(R.array.comment_restair);
                 mRestairChecked = new boolean[mRestairArray.length];
@@ -811,12 +819,12 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                         }
                     });
         } else if (viewId == R.id.left_btn) {
-            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft");
+            mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
             if (showDiscardDialog() == false) {
                 finish();
             }
         } else if (viewId == R.id.sync_qzone_chb) { 
-            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "qzone", mSyncQZoneChb.isChecked());
+            mActionLog.addAction(mActionTag +  ActionLog.POICommentQZone, String.valueOf(mSyncQZoneChb.isChecked()));
             if (mSyncQZoneChb.isChecked() == true) {
                 UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_TENCENT);
                 if (userAccessIdenty != null) {
@@ -829,7 +837,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 mSyncQZoneChb.setChecked(false);
             }
         } else if (viewId == R.id.sync_sina_chb) {
-            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "sina", mSyncSinaChb.isChecked());
+            mActionLog.addAction(mActionTag +  ActionLog.POICommentSina, String.valueOf(mSyncSinaChb.isChecked()));
             if (mSyncSinaChb.isChecked() == true) {
                 UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_WEIBO);
                 if (userAccessIdenty != null) {
@@ -1087,7 +1095,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 if (response.getResponseCode() == 201) {
                     BaseActivity.showErrorDialog(mThis, mThis.getString(R.string.response_code_201), mThis, true);
                 } else if (response.getResponseCode() == 601 && response instanceof CommentCreateResponse) {
-                    mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_USER);
+                    mPOI.setAttribute(Globals.g_User != null ? POI.ATTRIBUTE_COMMENT_USER : POI.ATTRIBUTE_COMMENT_ANONYMOUS);
                     mPOI.setMyComment(mComment);
                     mStatus = STATUS_MODIFY;
                     mTitleBtn.setText(R.string.modify_comment);
@@ -1212,7 +1220,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (showDiscardDialog() == false) {
-                mActionLog.addAction(ActionLog.KEYCODE, "back");
+                mActionLog.addAction(ActionLog.KeyCodeBack);
                 finish();
                 return true;
             }

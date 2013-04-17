@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.PopupWindow.OnDismissListener;
 
 /**
  * @author Peng Wenyue
@@ -84,30 +85,38 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
         return rightBtn;
     }
     
-    public void showPopupWindow(ListAdapter adapter, OnItemClickListener listener) {
-        mActionLog.addAction(ActionLog.POPUPWINDOW, "title");
-        if (mFilterPopupWindow == null) {
+    public void showPopupWindow(ListAdapter adapter, OnItemClickListener listener, String actionTag) {
+    	this.mActionTag = actionTag;
+        mActionLog.addAction(this.mActionTag + ActionLog.PopupWindowTitle);
+        if (mPopupWindow == null) {
             View view  = mLayoutInflater.inflate(R.layout.title_popup_list, this, false);
             popupLsv = (ListView) view.findViewById(R.id.listview);
             
-            mFilterPopupWindow = new PopupWindow(view);
-            mFilterPopupWindow.setWindowLayoutMode(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-            mFilterPopupWindow.setFocusable(true);
+            mPopupWindow = new PopupWindow(view);
+            mPopupWindow.setWindowLayoutMode(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+            mPopupWindow.setFocusable(true);
             // 设置允许在外点击消失
-            mFilterPopupWindow.setOutsideTouchable(true);
+            mPopupWindow.setOutsideTouchable(true);
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
-            mFilterPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow.setOnDismissListener(new OnDismissListener() {
+                
+                @Override
+                public void onDismiss() {
+                    mActionLog.addAction(mActionTag+ActionLog.PopupWindowTitle+ActionLog.Dismiss);
+                }
+            });
         }
         popupLsv.setOnItemClickListener(listener);
         popupLsv.setAdapter(adapter);
         
-        mFilterPopupWindow.showAsDropDown(this, 0, 0);
+        mPopupWindow.showAsDropDown(this, 0, 0);
     }
     
     public void dismissPopupWindow() {
-        if (mFilterPopupWindow != null && mFilterPopupWindow.isShowing()) {
-            mFilterPopupWindow.dismiss();
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
         }
     }
 }

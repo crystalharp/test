@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -180,6 +182,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mActionTag = ActionLog.TrafficHomeNormal;
     }
 	
 	@Override
@@ -231,9 +234,9 @@ public class TrafficQueryFragment extends BaseFragment {
     	
     	mSelectStartBtn = (Button)mRootView.findViewById(R.id.select_start_btn);
     	mSelectEndBtn = (Button)mRootView.findViewById(R.id.select_end_btn);
-    	mBusline = new QueryEditText((TKEditText)mRootView.findViewById(R.id.busline_edt));
-		mEnd     = new QueryEditText((TKEditText)mRootView.findViewById(R.id.end_edt));
-		mStart   = new QueryEditText((TKEditText)mRootView.findViewById(R.id.start_edt));
+    	mBusline = new QueryEditText((TKEditText)mRootView.findViewById(R.id.busline_edt), mActionTag);
+		mEnd     = new QueryEditText((TKEditText)mRootView.findViewById(R.id.end_edt), mActionTag);
+		mStart   = new QueryEditText((TKEditText)mRootView.findViewById(R.id.start_edt), mActionTag);
 		mCityTxt = (TextView)mRootView.findViewById(R.id.cur_city_txt);
 		mCityView = (View)mRootView.findViewById(R.id.cur_city_view);
 		mShadowWhite = (View)mRootView.findViewById(R.id.shadow_input);
@@ -299,6 +302,10 @@ public class TrafficQueryFragment extends BaseFragment {
 		if (currentState != TrafficViewSTT.State.SelectPoint) { // 选点操作时, 按HOME键, 再进入应用 
 			super.onResume();
 			hideCommonTitle();
+		} else {
+            if (!TextUtils.isEmpty(mActionTag)) {
+                mActionLog.addAction(mActionTag);
+            }
 		}
         mSphinx.getMapView().setStopRefreshMyLocation(false);
       
@@ -461,8 +468,9 @@ public class TrafficQueryFragment extends BaseFragment {
 			mPOI = new POI();
 		}
 		
-		public QueryEditText(TKEditText tkEditText) {
+		public QueryEditText(TKEditText tkEditText, String actionTag) {
 			mEdt = tkEditText;
+			mEdt.mActionTag = mActionTag;
 		}
 		
 		public void setHint(String hint) {
@@ -601,7 +609,7 @@ public class TrafficQueryFragment extends BaseFragment {
         BuslineQuery buslineQuery = new BuslineQuery(mContext);
         buslineQuery.setup(cityId, searchword, 0, false, getId(), mContext.getString(R.string.doing_and_wait));
         
-        mActionLog.addAction(ActionLog.TrafficQueryBusline, searchword);
+        mActionLog.addAction(mActionTag +  ActionLog.TrafficBuslineBtn, searchword);
         mSphinx.queryStart(buslineQuery);
     }
 	
@@ -636,7 +644,7 @@ public class TrafficQueryFragment extends BaseFragment {
         addHistoryWord(mStart, HistoryWordTable.TYPE_TRAFFIC);
         addHistoryWord(mEnd, HistoryWordTable.TYPE_TRAFFIC);
     		
-        mActionLog.addAction(ActionLog.TrafficQueryTraffic, getQueryType(), mStart.getEdt().getText().toString(), mEnd.getEdt().getText().toString());
+        mActionLog.addAction(mActionTag +  ActionLog.TrafficTrafficBtn, getQueryType(), mStart.getEdt().getText().toString(), mEnd.getEdt().getText().toString());
         trafficQuery.setup(cityId, start, end, getQueryType(), getId(), mContext.getString(R.string.doing_and_wait));
         
         mSphinx.queryStart(trafficQuery);
@@ -870,7 +878,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			if (mStateTransitionTable.rollback()) {
-			    mActionLog.addAction(ActionLog.KEYCODE, "back");
+			    mActionLog.addAction(ActionLog.KeyCodeBack);
 				return true;
 			} 
 		}
@@ -914,16 +922,20 @@ public class TrafficQueryFragment extends BaseFragment {
 	public void queryTrafficEnd(TrafficQuery trafficQuery) {
         TrafficModel trafficModel = trafficQuery.getTrafficModel();
         if (trafficModel == null) {
+            mActionLog.addAction(mActionTag + ActionLog.TrafficResultTraffic, -1);
             showTrafficErrorTip(trafficQuery);
         } else if (trafficModel.getType() == TrafficModel.TYPE_EMPTY) {
+            mActionLog.addAction(mActionTag + ActionLog.TrafficResultTraffic, -2);
             showTrafficErrorTip(trafficQuery);
         } else if (trafficModel.getType() == TrafficModel.TYPE_ALTERNATIVES 
         		|| trafficModel.getType() == TrafficModel.TYPE_PROJECT){
             if (trafficModel.getType() == TrafficModel.TYPE_ALTERNATIVES) {
         		showAlternativeDialog(trafficQuery.getTrafficModel().getStartAlternativesList(), trafficQuery.getTrafficModel().getEndAlternativesList());
             } else if (trafficModel.getPlanList() == null || trafficModel.getPlanList().size() <= 0){
+                mActionLog.addAction(mActionTag + ActionLog.TrafficResultTraffic, 0);
             	showTrafficErrorTip(trafficQuery);
             } else if (trafficModel.getType() == TrafficModel.TYPE_PROJECT) {
+                mActionLog.addAction(mActionTag + ActionLog.TrafficResultTraffic, trafficModel.getPlanList().size());
             	// 若之前发出的请求中的起终点被服务器修改, 此处要修改客户端显示
             	if (trafficQuery.isPOIModified()) {
             		modifyData(trafficQuery.getStart(), TrafficQueryFragment.START);
@@ -954,25 +966,31 @@ public class TrafficQueryFragment extends BaseFragment {
         BuslineModel buslineModel = buslineQuery.getBuslineModel();
         
         if (buslineModel == null) {
+            mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, -1);
         	if (buslineQuery.getStatusCode() == BaseQuery.STATUS_CODE_NONE) {
         		mSphinx.showTip(R.string.network_failed, Toast.LENGTH_SHORT);
         	} else {
         		mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
         	}
         } else if (buslineModel.getType() == BuslineModel.TYPE_EMPTY) {
+            mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, -2);
         	mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
         } else if (buslineModel.getType() == BuslineModel.TYPE_UNSUPPORT) {
+            mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, -3);
         	mSphinx.showTip(R.string.busline_not_support, Toast.LENGTH_SHORT);
         } else if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE 
         		|| buslineModel.getType() == BuslineModel.TYPE_STATION){
         	if (((buslineModel.getLineList() == null || buslineModel.getLineList().size() <= 0) && 
             (buslineModel.getStationList() == null || buslineModel.getStationList().size() <= 0))) {
         		mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
+                mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, 0);
         	} else {
         		if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
+        		    mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getLineList().size());
         			mSphinx.getBuslineResultLineFragment().setData(buslineQuery);
         			mSphinx.showView(R.id.view_busline_line_result);
         		} else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
+                    mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getStationList().size());
         			mSphinx.getBuslineResultStationFragment().setData(buslineQuery);
         			mSphinx.showView(R.id.view_busline_station_result);
         		}        		
@@ -998,6 +1016,7 @@ public class TrafficQueryFragment extends BaseFragment {
         ListView listView = CommonUtils.makeListView(mSphinx);
         listView.setAdapter(adapter);
         
+        mActionLog.addAction(ActionLog.TrafficAlternative);
         final Dialog dialog = CommonUtils.showNormalDialog(mSphinx,
                 mSphinx.getString(start ? R.string.select_start_station : R.string.select_end_station),
                 null,
@@ -1020,7 +1039,7 @@ public class TrafficQueryFragment extends BaseFragment {
             	}
                 dialog.dismiss();
                 if (station != null) {
-                    mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "alternativeList"+(start ? "Start" : "End"), which, station.getName());
+                    mActionLog.addAction(ActionLog.TrafficAlternative + (start ? ActionLog.TrafficAlterStart : ActionLog.TrafficAlterEnd), which, station.getName());
                 }
                 if (start == false || end == false) {
                 	submitTrafficQuery();
@@ -1029,6 +1048,13 @@ public class TrafficQueryFragment extends BaseFragment {
                 }
             }
             
+        });
+        dialog.setOnDismissListener(new OnDismissListener() {
+            
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                mActionLog.addAction(ActionLog.TrafficAlternative + ActionLog.Dismiss);
+            }
         });
     }
     

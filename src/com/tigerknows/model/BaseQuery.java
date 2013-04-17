@@ -635,7 +635,7 @@ public abstract class BaseQuery {
                 } else {
                     translateResponse(data);
                     if (response != null) {
-                        ActionLog.getInstance(context).addAction(ActionLog.RESULT, apiType, response.getResponseCode(), response.getDescription());
+                        ActionLog.getInstance(context).addAction(ActionLog.Response, apiType, response.getResponseCode(), response.getDescription());
                     }
                     LogWrapper.d(TAG, "translate():at="+apiType+", response="+response);
                 }

@@ -1,5 +1,6 @@
 package com.tigerknows.radar;
 
+import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.model.BaseQuery;
@@ -171,6 +172,8 @@ public class TKNotificationManager {
         if(pendingIntent == null){
         	return;
         }
+        
+        ActionLog.getInstance(context).addAction(ActionLog.RadarShow, msg.getType(), msg.getDynamicPOI()==null?"none":(""+msg.getDynamicPOI().getMasterType()));
         
         NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         

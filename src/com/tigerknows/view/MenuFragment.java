@@ -95,12 +95,12 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.poi_btn:
-            	mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "channel", "search");
+            	mActionLog.addAction(ActionLog.MenuPOI);
                 mSphinx.uiStackClose(new int[]{R.id.view_home});
                 mSphinx.showView(R.id.view_home);
                 break;
             case R.id.discover_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "channel", "discover");
+                mActionLog.addAction(ActionLog.MenuDiscover);
                 mSphinx.uiStackClose(new int[]{R.id.view_discover});
                 mSphinx.showView(R.id.view_discover);
                 mSphinx.getDiscoverFragment().setCurrentItem(0);
@@ -123,7 +123,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
 				
                 break;
             case R.id.traffic_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "channel", "tarffic");
+                mActionLog.addAction(ActionLog.MenuTraffic);
                 mSphinx.uiStackClose(new int[]{R.id.view_traffic_query});
             	mSphinx.getTrafficQueryFragment().setState(TrafficViewSTT.State.Normal);
             	//正常使用菜单进入交通，默认在起点显示我的位置。
@@ -131,7 +131,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 mSphinx.showView(R.id.view_traffic_query);
                 break;
             case R.id.more_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "channel", "more");
+                mActionLog.addAction(ActionLog.MenuMore);
                 mSphinx.uiStackClose(new int[]{R.id.view_more});
                 mSphinx.showView(R.id.view_more);
                 break;

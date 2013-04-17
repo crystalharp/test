@@ -73,7 +73,7 @@ public class BaseFragment extends LinearLayout {
     
     protected TKAsyncTask mTkAsyncTasking;
     
-    protected PopupWindow mFilterPopupWindow;
+    protected PopupWindow mPopupWindow;
     
     public DialogInterface.OnClickListener mCancelLoginListener = new DialogInterface.OnClickListener() {
         
@@ -104,7 +104,7 @@ public class BaseFragment extends LinearLayout {
             synchronized (mSphinx.mUILock) {
                 if (!mSphinx.mUIProcessing) {
                 	if (arg0.getVisibility() == View.VISIBLE) {
-                	    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft");
+                	    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
 	                	dismiss();
                 	}
                 }
@@ -246,7 +246,9 @@ public class BaseFragment extends LinearLayout {
                 && id != R.id.view_title
                 && id != R.id.view_menu) {
             mSphinx.hideSoftInput();
-
+            if (!TextUtils.isEmpty(mActionTag)) {
+                mActionLog.addAction(mActionTag + ActionLog.Dismiss);
+            }
         }
     }
 
@@ -263,7 +265,7 @@ public class BaseFragment extends LinearLayout {
                 && id != R.id.view_title
                 && id != R.id.view_menu) { 
             if (!TextUtils.isEmpty(mActionTag)) {
-                mActionLog.addAction(ActionLog.UI, mActionTag);
+                mActionLog.addAction(mActionTag);
             }
             mSphinx.replace(this);   
             
@@ -350,12 +352,12 @@ public class BaseFragment extends LinearLayout {
     Runnable dismissPopupWindowTask = new Runnable() {
 		@Override
 		public void run() {
-            mFilterPopupWindow.dismiss();
+            mPopupWindow.dismiss();
 		}
 	};
     
     public void dismissPopupWindow() {
-        if (mFilterPopupWindow != null && mFilterPopupWindow.isShowing()) {
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
         	mRootView.post(dismissPopupWindowTask);
         }
     }

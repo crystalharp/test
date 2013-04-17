@@ -163,7 +163,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
             
             // 如果是打开应用软件第一次定到位，则需要通过用户反馈服务通知服务器进行记录，目的是为统计定位成功率？
             if (Globals.g_My_Location_State == Globals.LOCATION_STATE_NONE && Globals.g_My_Location_City_Info != null) {
-                ActionLog.getInstance(activity).addAction(ActionLog.MapFirstLocation, Globals.g_My_Location_City_Info.getCName());
+                ActionLog.getInstance(activity).addAction(ActionLog.LifecycleFirstLocationSuccess, Globals.g_My_Location_City_Info.getCName());
                 final FeedbackUpload feedbackUpload = new FeedbackUpload(activity);
                 Hashtable<String, String> criteria = new Hashtable<String, String>();
                 feedbackUpload.setup(criteria);
@@ -362,7 +362,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {                
             case KeyEvent.KEYCODE_BACK:
-                mActionLog.addAction(ActionLog.KEYCODE, "back");
+                mActionLog.addAction(ActionLog.KeyCodeBack);
                 break;
                 
             case KeyEvent.KEYCODE_SEARCH:
@@ -737,6 +737,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
             
             @Override
             public void onDismiss(DialogInterface arg0) {
+                ActionLog.getInstance(activity).addAction(ActionLog.Dialog + ActionLog.Dismiss);
                 if (exit == false) {
                     return;
                 }

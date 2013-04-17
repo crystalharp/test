@@ -105,19 +105,19 @@ public class AboutUs extends BaseActivity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.web_txv:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "web");
+                mActionLog.addAction(mActionTag +  ActionLog.AboutUsWeb);
                 break;
             case R.id.weibo_txv:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "weibo");
+                mActionLog.addAction(mActionTag +  ActionLog.AboutUsWeibo);
                 break;
             case R.id.bbs_txv:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "bbs");
+                mActionLog.addAction(mActionTag +  ActionLog.AboutUsBBS);
                 break;
 //            case R.id.wap_txv:
 //                mActionLog.addAction(ActionLog.AboutUsWap);
 //                break;
             case R.id.telephone_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "telephone");
+                mActionLog.addAction(mActionTag +  ActionLog.AboutUsTelephone);
                 Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse("tel:" + getString(R.string.telephone_num)));
                 startActivity(intent);
                 break;

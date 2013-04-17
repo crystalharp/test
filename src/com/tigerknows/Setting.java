@@ -72,7 +72,7 @@ public class Setting extends BaseActivity {
                 }
                 wakeLockBean.checked = !wakeLockBean.checked;
                 switchWakeLock();
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "wakelock", checkBox.isChecked() ? "on" : "off");
+                mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingWakeLock, checkBox.isChecked());
             }
         };
         wakeLockBean.showIcon = false;
@@ -90,7 +90,7 @@ public class Setting extends BaseActivity {
                 }
                 radarPushBean.checked = !radarPushBean.checked; 
                 switchRadarPush();
-//                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "wakelock", checkBox.isChecked() ? "on" : "off");
+                mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingRadar, checkBox.isChecked());
             }
         };
         radarPushBean.showIcon = false;
@@ -147,19 +147,19 @@ public class Setting extends BaseActivity {
                 int type = dataBean.type;
                 switch (type) {
                     case DataBean.TYPE_GPS:
-                        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "gps", index, checkGPS() ? "on" : "off");
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingGPS, checkGPS());
                         Intent intent = new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
                         startActivityForResult(intent, R.id.activity_setting_location);
                         break;
                     case DataBean.TYPE_WAKELOCK:
                         dataBean.checked = !dataBean.checked;
-                        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "wakelock", index, dataBean.checked ? "on" : "off");
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingWakeLock, dataBean.checked);
                         mSettingAdatpter.notifyDataSetChanged();
                         switchWakeLock();
                         break;
                     case DataBean.TYPE_RADARPUSH:
                         dataBean.checked = !dataBean.checked;
-//                        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "wakelock", index, dataBean.checked ? "on" : "off");
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingRadar, dataBean.checked);
                         mSettingAdatpter.notifyDataSetChanged();
                         switchRadarPush();
                         break;

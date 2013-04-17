@@ -40,7 +40,7 @@ public class DianyingDetailFragment extends BaseDetailFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.DianyingXiangqing;
+        mActionTag = ActionLog.DianyingDetail;
     }
 
     @Override
@@ -101,7 +101,7 @@ public class DianyingDetailFragment extends BaseDetailFragment
         POI poi = data.getPOI();
         list.add(poi);
         mSphinx.showPOI(list, 0);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.dianying_ditu), ActionLog.MapDianyingXiangqing);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.dianying_ditu), ActionLog.ResultMapDianyingDetail);
         super.viewMap();
     }
     
