@@ -507,6 +507,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         POI poi = mPOI;
         Comment lastComment = null;
+        Comment myComment = null;
         if (poi != null && poi.getCommentQuery() != null) {
 
             CommentResponse commentResponse = (CommentResponse) poi.getCommentQuery().getResponse();
@@ -518,7 +519,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         Comment comment = list.get(i);
                         if (Comment.isAuthorMe(comment) > 0) {
                             poi.setMyComment(comment);
-                        } else {
+                            myComment = comment;
+                        } else if (lastComment == null){
                             lastComment = comment;
                         }
                     }
@@ -528,7 +530,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         
         if (lastComment == null) {
-            lastComment = poi.getMyComment();
+            lastComment = myComment;
         }
         
         if (lastComment != null) {

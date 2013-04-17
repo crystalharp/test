@@ -724,10 +724,7 @@ public abstract class BaseQuery {
     
     protected void translateResponse(byte[] data) throws APIException {
         try {
-            if (apiType.equals(API_TYPE_BUSLINE_QUERY)
-                    || apiType.equals(API_TYPE_TRAFFIC_QUERY)
-                    || apiType.equals(API_TYPE_BOOTSTRAP)
-                    || Test == false) { // 如果是自动测试分填充的数据，则没有加密
+            if (Test == false) { // 如果是自动测试分填充的数据，则没有加密
             // 解密数据
             data = DataEncryptor.decrypt(data);
             // 解压数据

@@ -244,7 +244,6 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         Comment comment = mPOI.getMyComment();
         if (Comment.isAuthorMe(comment) <= 0) {
             comment = new Comment();
-            mPOI.setMyComment(comment);
         }
         mComment = comment;
         long commentPattern = mPOI.getCommentPattern();
