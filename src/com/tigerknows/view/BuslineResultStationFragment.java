@@ -148,7 +148,7 @@ public class BuslineResultStationFragment extends BaseFragment {
                 final Station station = (Station)mStationList.get(position);
                 String busLine = station.getName();
                 if (!TextUtils.isEmpty(busLine)) {
-                    mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", position+1);
+                    mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
                     submitBuslineQuery(busLine);
                 }
             }
@@ -202,7 +202,7 @@ public class BuslineResultStationFragment extends BaseFragment {
     	BuslineQuery buslineQuery = new BuslineQuery(mContext);
     	buslineQuery.setup(mBuslineQuery.getCityId(), mBuslineQuery.getKeyword(), mStationList.size(), true, getId(), null);
     	mSphinx.queryStart(buslineQuery);
-        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "loadMore");
+        mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
         }
     }
 

@@ -68,7 +68,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
                 
                 @Override
                 public void onClick(View arg0) {
-                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft");
+                    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
                     onBack();
                 }
             });
@@ -78,12 +78,20 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 
 			@Override
 			public void onClick(View v) {
+                mActionLog.addAction(mActionTag +  ActionLog.UserCommonConfirmBtn);
 				// TODO 关闭页面, 并跳转到个人中心页面
 				if (!mForm.isValid()) {
 					doAction(mForm.getErrorSource());
 					return;
 				}
 				
+				String nickName = null;
+				User user = Globals.g_User;
+				if (user == null) {
+				    onBack();
+				} else {
+				    nickName = user.getNickName();
+				}
 				if (!UserRegistActivity.class.getName().equals(getCallingActivity().getClassName())
 						&& !TextUtils.equals(nickNameEdt.getText().toString().trim(), getString(R.string.default_nick_name))
 						&& TextUtils.equals(Globals.g_User.getNickName(), nickNameEdt.getText().toString().trim())) {
@@ -148,7 +156,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "delete");
+				mActionLog.addAction(mActionTag+ActionLog.EditTextDelete);
 				nickNameEdt.setText("");
 				showSoftInput(nickNameEdt);
 			}
@@ -159,7 +167,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-            mActionLog.addAction(ActionLog.KEYCODE, "back");
+            mActionLog.addAction(ActionLog.KeyCodeBack);
 			onBack();
 			return true;
 		}
@@ -223,8 +231,10 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 		// TODO Auto-generated method stub
 		super.onResume();
 		User user = User.loadDefault(this);
-		
-		if (user != null && !TextUtils.equals(user.getNickName(), getString(R.string.default_nick_name))) {
+
+        if (user == null) {
+            onBack();
+        } else if (!TextUtils.equals(user.getNickName(), getString(R.string.default_nick_name))) {
 			nickNameEdt.setText(user.getNickName());
 			nickNameEdt.setSelection(nickNameEdt.getText().toString().length());
 			nickNameImg.setVisibility(View.VISIBLE);

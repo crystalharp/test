@@ -159,17 +159,17 @@ public class BrowserActivity extends BaseActivity implements View.OnClickListene
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.back_btn) {
-            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "back");
+            mActionLog.addAction(mActionTag +  ActionLog.BrowserBack);
             if (mWebWbv.canGoBack()) {
                 mWebWbv.goBack();
             }
         } else if (id == R.id.forward_btn) {
-            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "forward");
+            mActionLog.addAction(mActionTag +  ActionLog.BrowserForward);
             if (mWebWbv.canGoForward()) {
                 mWebWbv.goForward();
             }
         } else if (id == R.id.refresh_btn) {
-            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "refresh");
+            mActionLog.addAction(mActionTag +  ActionLog.BrowserRefresh);
             mWebWbv.reload();
         } else if (id == R.id.stop_btn) {
             mWebWbv.stopLoading();

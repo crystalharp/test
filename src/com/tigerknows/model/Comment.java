@@ -13,9 +13,11 @@ import com.decarta.android.exception.APIException;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.view.user.User;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import java.util.Comparator;
+import java.util.Hashtable;
 
 public class Comment extends BaseData {
     
@@ -531,4 +533,15 @@ public class Comment extends BaseData {
             return comment2.getTime().compareTo(comment1.getTime());
         };
     };
+    
+    public static DataQuery createPOICommentQuery(Context context, POI poi, int sourceViewId, int targerViewId) {
+
+        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+        criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
+        criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
+        DataQuery commentQuery = new DataQuery(context);
+        commentQuery.setup(criteria, Globals.g_Current_City_Info.getId(), sourceViewId, targerViewId, null, false, false, poi);
+        return commentQuery;
+    }
 }

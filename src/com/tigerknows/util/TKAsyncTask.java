@@ -16,6 +16,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.view.View;
@@ -84,7 +85,7 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
         View custom = activity.getLayoutInflater().inflate(R.layout.loading, null);
         TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
         loadingTxv.setText(tipText);
-        ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, tipText);
+        ActionLog.getInstance(activity).addAction(ActionLog.Dialog, tipText);
         tipProgressDialog = CommonUtils.showNormalDialog(activity, custom);
         tipProgressDialog.setCancelable(cancelable);
         tipProgressDialog.setCanceledOnTouchOutside(false);
@@ -93,6 +94,13 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
             @Override
             public void onCancel(DialogInterface arg0) {
                 TKAsyncTask.this.stop();
+            }
+        });
+        tipProgressDialog.setOnDismissListener(new OnDismissListener() {
+            
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                ActionLog.getInstance(activity).addAction(ActionLog.Dialog + ActionLog.Dismiss);
             }
         });
 

@@ -93,7 +93,7 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
                 
                 @Override
                 public void onClick(View arg0) {
-                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft");
+                    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
                     finish();
                 }
             });
@@ -105,7 +105,7 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
         super.onResume();
         LogWrapper.d(TAG, "onResume()");
         if (!TextUtils.isEmpty(mActionTag)) {
-            mActionLog.addAction(ActionLog.UI, mActionTag);
+            mActionLog.addAction(mActionTag);
         }
         Globals.getAsyncImageLoader().setViewToken(mThis.toString());
     }
@@ -114,6 +114,9 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
     protected void onPause() {
         LogWrapper.d(TAG, "onPause()");
         super.onPause();
+        if (!TextUtils.isEmpty(mActionTag)) {
+            mActionLog.addAction(mActionTag + ActionLog.Dismiss);
+        }
     }
     
     @Override

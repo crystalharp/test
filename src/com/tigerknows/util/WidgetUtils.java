@@ -2,7 +2,9 @@ package com.tigerknows.util;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.view.View;
@@ -43,10 +45,10 @@ public class WidgetUtils {
      * @param layerType
      * @return
      */
-    public static void share(final Activity activity, final String smsContent, final String weiboContent, final String qzoneContent, final Position position) {
-        share(activity, smsContent, weiboContent, qzoneContent, position, null);
+    public static void share(final Activity activity, final String smsContent, final String weiboContent, final String qzoneContent, final Position position, String actionTag) {
+        share(activity, smsContent, weiboContent, qzoneContent, position, null, actionTag);
     }
-    public static void share(final Activity activity, final String smsContent, final String weiboContent, final String qzoneContent, final Position position, final MapScene mapScene) {
+    public static void share(final Activity activity, final String smsContent, final String weiboContent, final String qzoneContent, final Position position, final MapScene mapScene, final String actionTag) {
         
         final Sphinx sphinx = (Sphinx)activity;
         String[] list = activity.getResources().getStringArray(R.array.share);
@@ -76,13 +78,14 @@ public class WidgetUtils {
                 null,
                 null);
         
+        final ActionLog actionLog = ActionLog.getInstance(activity);
+        actionLog.addAction(actionTag + ActionLog.Share);
         listView.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View arg1, int index, long arg3) {
-                ActionLog actionLog = ActionLog.getInstance(activity);
                 Intent intent;
-                actionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, index, adapterView.getAdapter().getItem(index));
+                actionLog.addAction(actionTag + ActionLog.Share + ActionLog.ListViewItem, index, adapterView.getAdapter().getItem(index));
                 switch (index) {
                     case 0:
                         sphinx.snapMapView(new SnapMap() {
@@ -155,6 +158,13 @@ public class WidgetUtils {
                         }, position, mapScene);
                         break;
                 }
+                dialog.setOnDismissListener(new OnDismissListener() {
+                    
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        actionLog.addAction(actionTag + ActionLog.Share + ActionLog.Dismiss);
+                    }
+                });
                 dialog.dismiss();
             }
         });

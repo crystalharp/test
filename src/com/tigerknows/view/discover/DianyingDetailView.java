@@ -117,7 +117,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
     public DianyingDetailView(Sphinx sphinx, DianyingDetailFragment parentFragment) {
         super(sphinx, parentFragment, R.layout.dianying_detail);
         findViews();
-        mActionTag = ActionLog.DianyingXiangqing;
+        mActionTag = ActionLog.DianyingDetail;
         
         mActualLoadedDrawableRun = new Runnable() {
             
@@ -363,17 +363,17 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.telephone_view:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "telephone");
+                mActionLog.addAction(mActionTag +  ActionLog.CommonTelphone);
                 CommonUtils.telephone(mSphinx, mTelephoneTxv);
                 break;
                 
             case R.id.address_view:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "address");
-                CommonUtils.queryTraffic(mSphinx, mYingxun.getPOI(POI.SOURCE_TYPE_DIANYING));
+                mActionLog.addAction(mActionTag +  ActionLog.CommonAddress);
+                CommonUtils.queryTraffic(mSphinx, mYingxun.getPOI(POI.SOURCE_TYPE_DIANYING), mActionTag);
                 break;
                 
             case R.id.after_tomorrow_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "afterTomorrow");
+                mActionLog.addAction(mActionTag +  ActionLog.DiscoverCommonDianyingAfterTomorrow);
                 if (Changci.OPTION_DAY_AFTER_TOMORROW == mYingxun.getChangciOption()) {
                     mYingxun.setChangciOption(0);
                 } else {
@@ -382,7 +382,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
                 refreshShowTime();
                 break;
             case R.id.tomorrow_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "tomorrow");
+                mActionLog.addAction(mActionTag +  ActionLog.DiscoverCommonDianyingTomorrow);
                 if (Changci.OPTION_DAY_TOMORROW == mYingxun.getChangciOption()) {
                     mYingxun.setChangciOption(0);
                 } else {
@@ -391,7 +391,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
                 refreshShowTime();
                 break;
             case R.id.today_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "taday");
+                mActionLog.addAction(mActionTag +  ActionLog.DiscoverCommonDianyingToday);
                 if (Changci.OPTION_DAY_TODAY == mYingxun.getChangciOption()) {
                     mYingxun.setChangciOption(0);
                 } else {
@@ -401,7 +401,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
                 break;    
                 
             case R.id.nearby_fendian_view:        
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "fendian");       
+                mActionLog.addAction(mActionTag +  ActionLog.DiscoverCommonBranch);       
                 mSphinx.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.YingxunList);
                 mSphinx.showView(R.id.view_discover_child_list);
                 break;
@@ -416,17 +416,22 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         }
         final DataOperation dataOperation = (DataOperation)(tkAsyncTask.getBaseQuery());
         boolean isPulledDynamicPOIRequest = dataOperation.isPulledDynamicPOIRequest();
-        if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener)) {
-            mParentFragment.isReLogin = true;
-            return true;
-        } else {
-            if (isPulledDynamicPOIRequest) {
-                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, mParentFragment, true)) {
-                    return true;
-                }
+
+        List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
+        for (BaseQuery baseQuery : baseQueryList) {
+
+            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener)) {
+                mParentFragment.isReLogin = true;
+                return true;
             } else {
-                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, false, mParentFragment, false)) {
-                    return true;
+                if (isPulledDynamicPOIRequest) {
+                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, mParentFragment, true)) {
+                        return true;
+                    }
+                } else {
+                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, mParentFragment, false)) {
+                        return true;
+                    }
                 }
             }
         }
@@ -435,10 +440,8 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         
         if (isPulledDynamicPOIRequest) {
             Dianying dianying = null;
-            List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
             
             for (BaseQuery baseQuery : baseQueryList) {
-                
                 String dataType = baseQuery.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
                 if(BaseQuery.DATA_TYPE_DIANYING.equals(dataType)){
                     // Dianying query response

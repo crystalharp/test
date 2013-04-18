@@ -41,256 +41,465 @@ public class ActionLog {
         }
         return sActionLog;
     }
-    
-    // UI显示
-    public static final String UI = "ZA";
-    
-    // 对话框显示
-    public static final String DIALOG = "ZB";
 
-    // 回退键
-    public static final String KEYCODE = "ZC";
-    public static final String SOFTINPUT_ACTION = "ZD";
-    public static final String SOFTINPUT_KEY = "ZE";
+    // 物理返回键
+    public static final String KeyCodeBack = "ZA";
     
-    public static final String CONTROL_ONCLICK = "ZF";
-    public static final String LISTVIEW_ITEM_ONCLICK = "ZG";
-    public static final String LISTVIEW_CHILD_ITEM_ONCLICK = "ZH";
-    public static final String LISTVIEW_GROUP_ITEM_ONCLICK = "ZI";
-    public static final String EDITTEXT_DELELE_ONCLICK = "ZJ";
-    public static final String FLING = "ZK";
-    public static final String VIEWPAGER_SELECTED = "ZL";
+    // 对话框
+    public static final String Dialog = "ZB";
+    public static final String DialogLeftBtn = Dialog + "BA";
+    public static final String DialogRightBtn = Dialog + "BB";
+
+    // 底部导航栏
+    public static final String MenuPOI = "ZC";
+    public static final String MenuDiscover = "ZD";
+    public static final String MenuTraffic = "ZE";
+    public static final String MenuMore = "ZF";
     
-    // 结果框  ZI-含义-成功/失败原因
-    public static final String RESULT = "ZM";
-    // 重试
-    public static final String RETRY = "ZN";
+    /**
+     * 网络查询
+     * 例如 _324-ZG-s-324733-324833-324900-serverrefuse
+     * 发起http请求 的毫秒时刻
+     * 收到服务器的数据 的毫秒时刻
+     * 收完服务器的数据 的毫秒时刻
+     * 失败时候填的内容 注意，为避免异常字符干扰日志格式，请做正则替换reg_replace_all(FAIL, "[0-9a-zA-Z]+", "")，去除所有非数字和字母字符。
+     * 
+     * 补充说明：
+     * 1、这个需求实际关心的是 “我们联网服务质量是否稳定”，暂不考虑底层DNS花多少时间。
+     * 2、只关心联网步骤之间的时间差，REQ（请求） 的起始时间设置为多少，根据客户端的实现方便即可，设置为0也可以。由我这边计算时间差。
+     * 3、必须记录的at有 p（换乘）,q（驾车）,s（搜索/发现）,dh（热点),dc(类别),f(登陆),lm（定位）,b(线路）,边看边下载（td,rq等）、及以后任何较重要的联网服务。
+     * 4、无论成功失败都必须记录联网请求。
+     * 5、由于边看边下载的请求数可能会比较多，为了保证 客户端日志总长度20K的限制 可以合理运行，规则做了修改。请查看上文“序列长度超过20K”处情况说明。
+     */
+    public static final String NetworkAction = "ZG";
     
-    // 选择筛选条件
-    public static final String FILTER_SELECTED = "ZO";
-    // 取消筛选
-    public static final String FILTER_CANCEL = "ZP";
+    // 服务器返回的结果
+    public static final String Response = "ZH";
     
-    public static final String POPUPWINDOW = "ZQ";
+    // 顶部导航栏
+    public static final String TitleLeftButton = "ZA";
+    public static final String TitleRightButton = "ZB";
     
-    // 日志超长 EXCP
-    public static final String LOG_OUT = "EXCP";
+    // PopupWindow
+    public static final String PopupWindowFilter = "ZC";
+    public static final String PopupWindowFilterGroup = PopupWindowFilter + "BA";
+    public static final String PopupWindowFilterChild = PopupWindowFilter + "BB";
     
-    // 搜索首页 AP
-    public static final String SearchHome = "AP";
-    // 搜索词输入页 AQ
-    public static final String SearchInput = "AQ";
-    // 结果列表页 AR
-    public static final String SearchResult = "AR";
-    // Poi详情页 AE
-    public static final String POIDetail = "AE";
-    // POI详情页显示 AEAA-poi uuid-名称
-    public static final String POIDetailShow = POIDetail + "AA";
-    // 周边搜索页 AS
-    public static final String SearchNearby = "AS";
+    public static final String PopupWindowTitle = "ZD";
+    
+    // UI关闭
+    public static final String Dismiss = "ZE";
+    
+    // ViewPage
+    public static final String ViewPageSelected = "ZF";
+    
+    // ListView
+    public static final String ListViewItem = "ZG";
+    public static final String ListViewItemHistory = "ZH";
+    public static final String ListViewItemSuggest = "ZI";
+    public static final String ListViewItemHistoryClear = "ZJ";
+    public static final String ListViewItemMore = "ZK";
+    public static final String ListViewItemLong = "ZL";
+    
+    // Filter
+    public static final String FilterArea = "ZM";
+    public static final String FilterCategory = "ZO";
+    public static final String FilterOrder = "ZP";
+    public static final String FilterDo = "ZQ";
+    public static final String FilterCancel = "ZR";
+    
+    // EditText
+    public static final String EditTextDelete = "ZS";
+    
+    // 触屏重试
+    public static final String TouchRetry = "ZT";
+    
+    // 分享
+    public static final String Share = "ZU";
+    
+    // 到这里去
+    public static final String GotoHere = "ZV";
+
+    // 日志超长
+    public static final String LogOut = "ZW";
+    
+    // == 共用 ==
+    public static final String CommonAddress = "ZX";
+    public static final String CommonTelphone = "ZY";
+    public static final String CommonFavorite = "ZZ";
+    public static final String CommonShare = "YA";
+    public static final String CommonErrorRecovery = "YB";
+    
+    // POI主页 
+    public static final String POIHome = "AA";
+    public static final String POIHomeChangeCityBtn = "BA";
+    public static final String POIHomeInputEdt = "BB";
+    public static final String POIHomeCategory = "BC";
+    
+    // POI输入查询页
+    public static final String POIHomeInputQuery = "AB";
+    public static final String POIHomeInputQueryBtn = "BA";
+
+    // POI结果列表页
+    public static final String POIList = "AC";
+    
+    // Poi详情页
+    public static final String POIDetail = "AD";
+    public static final String POIDetailShow = POIDetail+"BA";
+    public static final String POIDetailSearch = "BF";
+    public static final String POIDetailAllComment = "BG";
+    public static final String POIDetailComment = "BH";
+    public static final String POIDetailInput = "BJ";
+    public static final String POIDetailYanchu = "BK";
+    public static final String POIDetailZhanlan = "BL";
+    public static final String POIDetailTuangou = "BM";
+
+    // POI点评列表页
+    public static final String POICommentList = "AE";
+    public static final String POICommentListUrl = "BA";
+    public static final String POICommentListMyComment = "BB";
+    public static final String POICommentListInput = "BC";
+
+    // 点评输入页
+    public static final String POIComment = "AF";
+    public static final String POICommentGrade = "BA";
+    public static final String POICommentContent = "BB";
+    public static final String POICommentAvg = "BC";
+    public static final String POICommentTaste = "BD";
+    public static final String POICommentEnvironment = "BE";
+    public static final String POICommentQos = "BF";
+    public static final String POICommentRestair = "BG";
+    public static final String POICommentRecommend = "BH";
+    public static final String POICommentSina = "BI";
+    public static final String POICommentQZone = "BJ";
+
+    // 周边搜索页
+    public static final String POINearbySearch = "AG";
+    public static final String POINearbySearchCategory = "BA";
+    public static final String POINearbySearchSubimt = "BB";
+    public static final String POINearbySearchInput = "BC";
+    
+    // POI纠错页
+    public static final String POIErrorRecovery = "AH";
+    
+    // 我的点评页
+    public static final String MyComment = "AI";
+    public static final String MyCommentPOI = "BA";
+
+    // 我要点评页
+    public static final String GoComment = "AJ";
+    public static final String GoCommentInput = "BA";
+    
+    // POI列表地图页
+    public static final String POIListMap = "AK";
+    
+    // POI详情地图页
+    public static final String POIDetailMap = "AL";
+
     // 更多频道
-    public static final String More = "AF";
+    public static final String More = "CA";
+    public static final String MoreMessageComment = "BA";
+    public static final String MoreLoginRegist = "BB";
+    public static final String MoreChangeCity = "BC";
+    public static final String MoreMapDownload = "BD";
+    public static final String MoreAppRecommend = "BE";
+    public static final String MoreFavorite = "BF";
+    public static final String MoreHistory = "BG";
+    public static final String MoreSetting = "BH";
+    public static final String MoreFeedback = "BI";
+    public static final String MoreHelp = "BJ";
+    public static final String MoreAboutUs = "BK";
+    public static final String MoreMessageMap = "BL";
+    public static final String MoreUserHome = "BM";
+    public static final String MoreMessageSoft = "BN";
+    public static final String MoreGiveFavourableComment = "BO";
+    public static final String MoreMessageUserSurvey = "BP";
+    public static final String MoreAddMerchant = "BQ";
+
     // 切换城市页
-    public static final String ChangeCity = "AG";
-    // 下载地图页
-    public static final String DownloadMap = "AH";
+    public static final String ChangeCity = "CB";
+    public static final String ChangeCityInput =  "BA";
+    public static final String ChangeCityCity = "BB";
+    public static final String ChangeCityProvince = "BC";
+    public static final String ChangeCitySuggest = "BD";
+
+    // 地图下载页
+    public static final String MapDownload = "CC";
+    public static final String MapDownloadAddCityBtn = "BA";
+    public static final String MapDownloadDownloadListCity = "BB";
+    public static final String MapDownloadDownloadListProvince = "BC";
+    public static final String MapDownloadOpertorDelete = "BD";
+    public static final String MapDownloadOpertorDownload = "BE";
+    public static final String MapDownloadOpertorUpgrade = "BF";
+    public static final String MapDownloadOpertorPause = "BG";
+    public static final String MapDownloadInput = "BH";
+    public static final String MapDownloadCloseWifi = "BI";
+    public static final String MapDownloadAllStart = "BJ";
+    public static final String MapDownloadAllPause = "BK";
+    public static final String MapDownloadAllUpdate = "BL";
+    public static final String MapDownloadSuggest = "BM";
+    public static final String MapDownloadAddListCity = "BN";
+    public static final String MapDownloadAddListProvince = "BO";
+
     // 收藏夹页
-    public static final String Favorite = "AI";
+    public static final String Favorite = "CD";
+    public static final String FavoriteMenuDelete = "BA";
+    public static final String FavoriteMenuRename = "BB";
+
     // 历史浏览页
-    public static final String History = "AJ";
+    public static final String History = "CE";
+    public static final String HistoryMenuDelete = "BA";
+
     // 系统设置页
-    public static final String Setting = "AK";
+    public static final String Setting = "CF";
+    public static final String SettingGPS = "BA";
+    public static final String SettingWakeLock = "BB";
+    public static final String SettingRadar = "BC";
+
     // 意见反馈页 AL
-    public static final String Feedback = "AL";
+    public static final String Feedback = "CG";
+    public static final String FeedBackContent = "BA";
+    public static final String FeedbackMobile = "BB";
+
     // 帮助页
-    public static final String Help = "AN";
-    // 关于我们页 AM
-    public static final String AboutUs = "AM";
-    
-    // 地图
-    public static final String Map = "BH";
-    public static final String MapDoubleClick = Map + "AB";
-    public static final String MapLongClick = Map + "AE";
-    public static final String MapMove = Map + "AH";
-    public static final String MapPOIBubble = Map + "AI";
-    public static final String MapTrafficBubble = Map + "AJ";
-    public static final String MapFirstLocation = Map + "AO";
+    public static final String Help = "CH";
+
+    // 关于我们页
+    public static final String AboutUs = "CI";
+    public static final String AboutUsWeb = "BA";
+    public static final String AboutUsWeibo = "BB";
+    public static final String AboutUsBBS = "BC";
+    public static final String AboutUsTelephone = "BD";
+
+    // 应用推荐 AO
+    public static final String AppRecommend = "CJ";
+    public static final String AppRecommendSnda = "BA";
+
+    // 添加商户页
+    public static final String AddMerchant = "CK";
+    public static final String AddMerchantType = "BA";
+    public static final String AddMerchantName = "BB";
+    public static final String AddMerchantAddress = "BC";
+    public static final String AddMerchantTelephone = "BD";
+    public static final String AddMerchantTime = "BE";
+    public static final String AddMerchantMobile = "BF";
 
     // 软件生命周期  AO
-    public static final String Lifecycle = "AO";
-    // 软件启动AA
-    public static final String LifecycleCreate = Lifecycle + "AA";
-    // 软件退出AB
-    public static final String LifecycleDestroy = Lifecycle + "AB";
-    // Resume AC
-    public static final String LifecycleResume = Lifecycle + "AC";
-    // Pause AD
-    public static final String LifecyclePause = Lifecycle + "AD";
-    // Stop AE
-    public static final String LifecycleStop = Lifecycle + "AE";
-    public static final String LifecycleSelectCity = Lifecycle + "AF";
-        
-    // 交通频道页显示    TH
-    public static final String TrafficHome = "BO";
-    // 全屏地图页显示    TM
-    public static final String TrafficMap = "BP";
-    // 交通输入页显示    TI
-    public static final String TrafficInput = "BQ";
-    public static final String Traffic = "BY";
-    public static final String TrafficQueryTraffic = Traffic + "AA";
-    public static final String TrafficQueryBusline = Traffic + "AB";
-    public static final String TrafficHomeToMap = Traffic + "BA";
-    // 显示选择收藏的POI点页面 TFF
-    public static final String TrafficFetchFavorite = "BR";
-    // 交通备选站点页显示    TA
-    public static final String TrafficAlternative = "BS";
-    // 交通方案列表页显示    TR
-    public static final String TrafficResult = "BT";
-    // 交通方案详情页显示    TD
-    public static final String TrafficDetail = "BU";
-    // 交通线路列表页显示   TB
-    public static final String TrafficBusline = "BV";
-    // 交通站点列表页显示	TS
-    public static final String TrafficStation = "BW";
-    // 线路详情页    TG
-    public static final String TrafficLineDetail = "BX";
-    // 微博授权界面    
-    public static final String WeiboAuthorize = "BJ";
+    public static final String Lifecycle = "FA";
+    public static final String LifecycleCreate = Lifecycle + "BA";
+    public static final String LifecycleDestroy = Lifecycle + "BB";
+    public static final String LifecycleResume = Lifecycle + "BC";
+    public static final String LifecyclePause = Lifecycle + "BD";
+    public static final String LifecycleStop = Lifecycle + "BE";
+    public static final String LifecycleSelectCity = Lifecycle + "BF";
+    public static final String LifecycleUserReadSuccess = Lifecycle + "BG";
+    public static final String LifecycleFirstLocationSuccess = Lifecycle + "BH";
+    
+    // 地图
+    public static final String Map = "FB";
+    public static final String MapLocation = Map + "BA";
+    public static final String MapDoubleClick = Map + "BB";
+    public static final String MapLongClick = Map + "BC";
+    public static final String MapMove = Map + "BD";
+    public static final String MapStepUp = Map + "BE";
+    public static final String MapStepDown = Map + "BF";
+    public static final String MapZoomIn = Map + "BG";
+    public static final String MapZoomOut = Map + "BH";
+    public static final String MapInfoWindowBody = Map + "BI";
+    public static final String MapInfoWindowTraffic = Map + "BJ";
+    public static final String MapInfoWindowStart = Map + "BK";
+    public static final String MapInfoWindowEnd = Map + "BL";
+    
     // 微博发送界面    
-    public static final String WeiboSend = "BK";
- 	// 微博图片对话框
-    public static final String WeiboImage = "BL";
+    public static final String WeiboSend = "FC";
+    public static final String WeiboSendDelWord = "BA";
+    public static final String WeiboSendPic = "BB";
+    
+    // 显示微博图片对话框
+    public static final String WeiboImage = "FD";
+    public static final String WeiboImageDelPic = "BA";
+    
     // QQ空间发送页面
-    public static final String QzoneSend = "BM";
-    // POI纠错页
-    public static final String POIErrorRecovery = "AW";
+    public static final String QzoneSend = "FE";
+        
+    // 雷达推送
+    public static final String Radar = "FF";
+    public static final String RadarShow = Radar + "BA";
+    public static final String RadarClick = Radar + "BB";
+    
+    // 交通模块通用
+    public static final String TrafficTransferTab = "AA";
+    public static final String TrafficDriveTab = "AB";
+    public static final String TrafficWalkTab = "AC";
+    public static final String TrafficBusLineTab = "AD";
+    public static final String TrafficTrafficBtn = "AE";
+    public static final String TrafficBuslineBtn = "AF";
+    public static final String TrafficStartEdt = "AG";
+    public static final String TrafficEndEdt = "AH";
+    public static final String TrafficBusLineEdt = "AI";
+    public static final String TrafficStartBtn = "AJ";
+    public static final String TrafficEndBtn = "AK";
+    public static final String TrafficResultTraffic = "AN";
+    public static final String TrafficResultBusline = "AO";
+
+    // 交通查询首页
+    public static final String TrafficHomeNormal = "BA";
+    
+    // 交通查询地图页
+    public static final String TrafficHomeMap = "BB";
+    
+    // 交通查询输入页
+    public static final String TrafficHomeInput = "BC";
+    
+    // 交通查询单击选点
+    public static final String TrafficHomeSelectPoint = "BD";
+    
+    // 收藏的POI列表页
+    public static final String TrafficFetchFavorite = "BE";
+    
+    // 交通备选站点页显示 
+    public static final String TrafficAlternative = "BF";
+    public static final String TrafficAlterStart = "BA";
+    public static final String TrafficAlterEnd = "BB";
+
+    // 交通方案列表页显示
+    public static final String TrafficResult = "BG";
+
+    // 交通方案详情页显示
+    public static final String TrafficDetail = "BH";
+
+    // 交通线路列表页显示
+    public static final String TrafficBusline = "BI";
+
+    // 交通站点列表页显示
+    public static final String TrafficStation = "BJ";
+
+    // 线路详情页
+    public static final String TrafficLineDetail = "BK";
+    
     // 交通换乘纠错页
-    public static final String TransferErrorRecovery = "AX";
-
-    // == 帐户模块通用 ==
-    public static final String User = "BG";
-    // 输入框输入为空
-    public static final String UserEdtEmptyError = User + "AG";
-    // 手机号输入格式错误
-    public static final String UserPhoneFormatError = User + "AH";
-    // 密码输入格式错误
-    public static final String UserPasswordFormatError = User + "AI";
-    // 两次密码不同
-    public static final String UserRePasswordFormatError = User + "AJ";
-    // 昵称输入格式错误
-    public static final String UserNicknameFormatError = User + "AK";
-    public static final String UserLoginSuccessUI = User + "AM";
-    public static final String UserRegisterSuccess = User + "AN";
-    public static final String UserReadSuccess = User + "AO";
+    public static final String TransferErrorRecovery = "BL";
     
-    // == 登录或注册页面 ==
-    public static final String UserCommentAfter = "BF";
+    public static final String TrafficBuslineMap = "BM";
+    public static final String TrafficTransferMap = "BN";
+    public static final String TrafficDriveMap = "BO";
+    public static final String TrafficWalkMap = "BP";
+    
+    // == 用户模块通用 ==
+    public static final String UserCommonLoginBtn = "AA";
+    public static final String UserCommonRegisterBtn = "AB";
+    public static final String UserCommonForgetPasswordBtn = "AC";
+    public static final String UserCommonValidNumBtn = "AD";
+    public static final String UserCommonConfirmBtn = "AE";
+    
     // == 登录页面 ==
-    public static final String UserLogin = "AY";
-    // == 注册页面 ==
-    public static final String UserRegist = "AZ";
-    // == 重置密码页面 ==
-    public static final String UserResetPassword = "BD";
-    // == 个人中心页面 == 
-    public static final String UserHome = "BA";
-    // == 更换手机号 ==
-    public static final String UserUpdatePhone = "BB";
-    // == 修改昵称 ==
-    public static final String UserUpdateNickName = "BC";
-    // == 修改密码页面 ==
-    public static final String UserUpdatePassword = "BE";
-    // 我的点评页 AA
-    public static final String MyComment = "AA";
-    // 点评输入页 CI
-    public static final String POIComment = "AB";
-    // 我要点评页 AC
-    public static final String GoComment = "AC";
-    // POI点评列表页 AD
-    public static final String POICommentList = "AD";
-    // 应用推荐 AO
-    public static final String AppRecommend = "AU";
-    // 发现首页显示 CA
-    public static final String DiscoverHome = "CA";
-    // 团购结果列表页
-    public static final String TuangouList = "CB";
-    // 电影结果列表页
-    public static final String DianyingList = "CR";
-    // 展览结果列表页
-    public static final String ZhanlanList = "CN";
-    // 展览结果列表页
-    public static final String YanchuList = "CJ";
-    // 团购详情页显示 CE
-    public static final String TuangouXiangqing = "CE";
-    // 电影详情页显示 CS
-    public static final String DianyingXiangqing = "CS";
-    // 演出详情页    CL 
-    public static final String YanchuXiangqing = "CL";
-    // 展览详情页显示     CP 
-    public static final String ZhanlanXiangqing = "CP";
-    // 订单查询页 CC
-    public static final String DingdanList = "CC";
-    // 团购地图页显示      CD 
-    public static final String MapTuangouList = "CD";
-    // 团购详情地图页显示 CF
-    public static final String MapTuangouXiangqing = "CF";
-    // 商户地图页显示    CH 
-    public static final String MapTuangouBranchList = "CH";
-    // 影院地图页显示 CT
-    public static final String MapDianyingXiangqing = "CT";
-    // 影院地图页显示 CV
-    public static final String MapDianyingBranchList = "CV";
-    // 演出地图页显示 CK
-    public static final String MapYanchuList = "CK";
-    // 演出详情地图页显示 CM
-    public static final String MapYanchuXiangqing = "CM";
-    // 展览地图页显示 CO
-    public static final String MapZhanlanList = "CO";
-    // 展览详情地图页显示 CQ
-    public static final String MapZhanlanXiangqing = "CQ";
-    // 线路地图页显示      CW 
-    public static final String MapBusline = "CW";
-    // 交通换乘地图页显示    CX 
-    public static final String MapTrafficTransfer = "CX";
-    // 交通自驾地图页显示    CY 
-    public static final String MapTrafficDrive = "CY";
-    // 交通步行地图页显示    CZ 
-    public static final String MapTrafficWalk = "CZ";
-    // POI地图页显示     BI 
-    public static final String MapPOI = "BI";
-    // 团购商户页显示 CG
-    public static final String FendianList = "CG";
-    // 影院列表页显示 CU
-    public static final String YingxunList = "CU";
-    // 团购购买页显示 CI
-    public static final String Browser = "CI";
-    // 添加商户 BZ
-    public static final String AddMerchant = "BZ";
+    public static final String UserLogin = "EA";
     
-    /*
-          例如 _324-CNET-at=p-REQ=324733-REV=324833-RES=324900-FAIL=serverrefuse
+    // == 注册页面 ==
+    public static final String UserRegist = "EB";
+    
+    // == 个人中心页面 == 
+    public static final String UserHome = "EC";
+    public static final String UserHomeMyComment = "BA";
+    public static final String UserHomeUpdatePhone = "BB";
+    public static final String UserHomeUpdateName = "BC";
+    public static final String UserHomeUpdatePassword = "BD";
+    public static final String UserHomeLogout = "BE";
+    public static final String UserHomeDingdan = "BF";
+    
+    // == 更换手机号 ==
+    public static final String UserUpdatePhone = "ED";
+    
+    // == 修改昵称 ==
+    public static final String UserUpdateNickName = "EE";
+    
+    // == 重置密码页面 ==
+    public static final String UserResetPassword = "EF";
+    
+    // == 修改密码页面 ==
+    public static final String UserUpdatePassword = "EG";
+    
+    // == 点评跳转过来的登录页面 ==
+    public static final String UserCommentAfter = "EH";
+    
+    // == 发现通用 ==
+    public static final String DiscoverCommonBranch = "AA";
+    public static final String DiscoverCommonDianyingToday = "AB";
+    public static final String DiscoverCommonDianyingTomorrow = "AC";
+    public static final String DiscoverCommonDianyingAfterTomorrow = "AD";
 
-        REQ 发起http请求 的毫秒时刻
+    // 发现首页显示
+    public static final String DiscoverHome = "DA";
+    public static final String DiscoverHomeItem = "BA";
+    
+    // 团购结果列表页
+    public static final String TuangouList = "DB";
+    public static final String TuangouListDingdan = "BA";
+    
+    // 订单查询页
+    public static final String DingdanList = "DC";
+    
+    // 团购列表地图页
+    public static final String ResultMapTuangouList = "DD";
 
-        REV 收到服务器的数据 的毫秒时刻
+    // 团购详情页
+    public static final String TuangouDetail = "DE";
+    public static final String TuangouDetailBuy = "BA";
+    public static final String TuangouDetailCustomService = "BB";
+    
+    // 团购详情页地图页
+    public static final String ResultMapTuangouDetail = "DF";
 
-        RES 收完服务器的数据 的毫秒时刻
+    // 团购商户页
+    public static final String FendianList = "DG";
+    
+    // 团购分店列表地图页
+    public static final String ResultMapTuangouBranchList = "DH";
 
-        FAIL 失败时候填的内容 注意，为避免异常字符干扰日志格式，请做正则替换reg_replace_all(FAIL, "[0-9a-zA-Z]+", "")，去除所有非数字和字母字符。
+    // 团购购买页
+    public static final String Browser = "DI";
+    public static final String BrowserForward = "BA";
+    public static final String BrowserBack = "BB";
+    public static final String BrowserRefresh = "BC";
+    
+    // 展览结果列表页
+    public static final String YanchuList = "DJ";
+    
+    // 展览结果列表地图页
+    public static final String ResultMapYanchuList = "DK";
+    
+    // 演出详情页
+    public static final String YanchuDetail = "DL";
+    
+    // 演出详情地图页
+    public static final String ResultMapYanchuDetail = "DM";
+    
+    // 展览结果列表页
+    public static final String ZhanlanList = "DN";
+    
+    // 展览结果列表地图页
+    public static final String ResultMapZhanlanList = "DO";
+    
+    // 展览详情页显示
+    public static final String ZhanlanDetail = "DP";
+    
+    // 展览详情地图页
+    public static final String ResultMapZhanlanDetail = "DQ";
+    
+    // 电影结果列表页
+    public static final String DianyingList = "DR";
+    
+    // 电影详情页显示
+    public static final String DianyingDetail = "DS";
+    
+    // 电影详情地图页
+    public static final String ResultMapDianyingDetail = "DT";
 
-          补充说明：
-
-        1、这个需求实际关心的是 “我们联网服务质量是否稳定”，暂不考虑底层DNS花多少时间。
-
-        2、只关心联网步骤之间的时间差，REQ（请求） 的起始时间设置为多少，根据客户端的实现方便即可，设置为0也可以。由我这边计算时间差。
-
-        3、必须记录的at有 p（换乘）,q（驾车）,s（搜索/发现）,dh（热点),dc(类别),f(登陆),lm（定位）,b(线路）,边看边下载（td,rq等）、及以后任何较重要的联网服务。
-
-        4、无论成功失败都必须记录联网请求。
-
-        5、由于边看边下载的请求数可能会比较多，为了保证 客户端日志总长度20K的限制 可以合理运行，规则做了修改。请查看上文“序列长度超过20K”处情况说明。
-
-     */
-    public static final String NetworkAction = "CNET";
+    // 影院列表页
+    public static final String YingxunList = "DU";
+    
+    // 影院列表地图页
+    public static final String ResultMapDianyingBranchList = "DV";
     
     private Context mContext;
     private long mStartMillis = 0;
@@ -398,7 +607,7 @@ public class ActionLog {
                 }
                 File file = new File(mPath);
                 FileInputStream fis = new FileInputStream(file);
-                final String str = CommonUtils.readFile(fis)+SEPARATOR_STAET+(simpleDateFormat.format(Calendar.getInstance().getTime()))+SEPARATOR_MIDDLE+LOG_OUT;
+                final String str = CommonUtils.readFile(fis)+SEPARATOR_STAET+(simpleDateFormat.format(Calendar.getInstance().getTime()))+SEPARATOR_MIDDLE+LogOut;
                 fis.close();
                 
                 if (file.delete()) {
@@ -411,7 +620,7 @@ public class ActionLog {
                     mStringBuilder.append(SEPARATOR_STAET);
                     mStringBuilder.append(simpleDateFormat.format(Calendar.getInstance().getTime()));
                     mStringBuilder.append(SEPARATOR_MIDDLE);
-                    mStringBuilder.append("EXCP");
+                    mStringBuilder.append(LogOut);
                     
                     if (TKConfig.getUserActionTrack().equals("on")) {
                         new Thread(new Runnable() {
@@ -440,7 +649,7 @@ public class ActionLog {
     
     public void addNetworkAction(String apiType, long reqTime, long revTime, long resTime, String fail) {
         try {
-            addAction(NetworkAction, apiType, String.valueOf(reqTime-mStartMillis), String.valueOf(revTime - mStartMillis), String.valueOf(resTime-mStartMillis), fail);
+            addAction(NetworkAction, apiType, String.valueOf(reqTime - mStartMillis), String.valueOf(revTime - mStartMillis), String.valueOf(resTime-mStartMillis), fail);
         } catch (Exception e) {
             LogWrapper.e("ActionLog", "addNetworkAction() e="+e.getMessage());
         }

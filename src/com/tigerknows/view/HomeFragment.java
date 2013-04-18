@@ -81,7 +81,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.SearchHome;
+        mActionTag = ActionLog.POIHome;
     }
     
     @Override
@@ -181,10 +181,10 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.city_btn) {
-            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "changecity", Globals.g_Current_City_Info.getCName());
+            mActionLog.addAction(mActionTag +  ActionLog.POIHomeChangeCityBtn, Globals.g_Current_City_Info.getCName());
             mSphinx.showView(R.id.activity_change_city);
         } else if (id == R.id.input_btn) {
-            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "input");
+            mActionLog.addAction(mActionTag +  ActionLog.POIHomeInputEdt);
             mSphinx.showView(R.id.view_poi_query);
         }
     }
@@ -275,7 +275,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             LinearLayout view;
             if (convertView == null) {
                 int size = getItem(0).size();
@@ -307,7 +307,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
                         @Override
                         public void onClick(View v) {
-                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "category", category.name);
+                            mActionLog.addAction(mActionTag +  ActionLog.POIHomeCategory, category.name);
 
                             DataQuery poiQuery = new DataQuery(mContext);
                             POI requestPOI = mSphinx.getPOI();

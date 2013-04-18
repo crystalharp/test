@@ -296,7 +296,7 @@ public class TKWeibo implements RequestListener {
      */
     static void show(TKWeibo tkweibo, long uid) {
         if (tkweibo.showProgressDialog) {
-            ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.DIALOG, tkweibo.activity.getString(R.string.doing_and_wait));
+            ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.Dialog, tkweibo.activity.getString(R.string.doing_and_wait));
             postShowDialog(tkweibo.activity);
         }
         
@@ -327,7 +327,7 @@ public class TKWeibo implements RequestListener {
      */
     public static void upload(TKWeibo tkweibo, String status, String file, String lon, String lat) {
         if (tkweibo.showProgressDialog) {
-            ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.DIALOG, tkweibo.activity.getString(R.string.doing_and_wait));
+            ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.Dialog, tkweibo.activity.getString(R.string.doing_and_wait));
             postShowDialog(tkweibo.activity);
         }
 
@@ -345,7 +345,7 @@ public class TKWeibo implements RequestListener {
      */
     public static void update(TKWeibo tkweibo, String status, String lon, String lat) {
         if (tkweibo.showProgressDialog) {
-            ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.DIALOG, tkweibo.activity.getString(R.string.doing_and_wait));
+            ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.Dialog, tkweibo.activity.getString(R.string.doing_and_wait));
             postShowDialog(tkweibo.activity);
         }
 
@@ -364,6 +364,7 @@ public class TKWeibo implements RequestListener {
             @Override
             public void run() {
                 activity.showDialog(R.id.dialog_share_doing);
+                ActionLog.getInstance(activity).addAction(ActionLog.Dialog, activity.getString(R.string.doing_and_wait));
             }
         });
     }

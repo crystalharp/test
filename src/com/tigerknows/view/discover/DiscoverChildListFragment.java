@@ -269,7 +269,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             return;
         }
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
-        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "loadMore");
+        mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
 
         DataQuery dataQuery = new DataQuery(mContext);
         int cityId = lastDataQuery.getCityId();
@@ -307,7 +307,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
     private void viewMap(List<POI> poiList, int index) {
         mSphinx.showPOI(poiList, index);
         boolean yingxun = BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType);
-        mSphinx.getResultMapFragment().setData(mContext.getString(yingxun ? R.string.dianying_ditu : R.string.shanghu_ditu), yingxun ? ActionLog.MapDianyingBranchList : ActionLog.MapTuangouBranchList);
+        mSphinx.getResultMapFragment().setData(mContext.getString(yingxun ? R.string.dianying_ditu : R.string.shanghu_ditu), yingxun ? ActionLog.ResultMapDianyingBranchList : ActionLog.ResultMapTuangouBranchList);
         mSphinx.showView(R.id.view_result_map);   
     }
 
@@ -318,7 +318,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                 if (getList().isEmpty()) {
                     return;
                 }
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 
@@ -374,11 +374,11 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                 public void onClick(View view) {
                     int id = view.getId();
                     if (id == R.id.address_view) {
-                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "address");
+                        mActionLog.addAction(mActionTag +  ActionLog.CommonAddress);
                         POI poi = fendian.getPOI(POI.SOURCE_TYPE_FENDIAN);
-                        CommonUtils.queryTraffic(mSphinx, poi);
+                        CommonUtils.queryTraffic(mSphinx, poi, mActionTag);
                     } else if (id == R.id.telephone_view) {
-                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "telephone");
+                        mActionLog.addAction(mActionTag +  ActionLog.CommonTelphone);
                         CommonUtils.telephone(mSphinx, telephoneTxv);
                     }
                 }
@@ -496,34 +496,34 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
                 public void onClick(View view) {
                     int id = view.getId();
                     if (id  == R.id.today_btn) {
-                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "taday");
+                        mActionLog.addAction(mActionTag +  ActionLog.DiscoverCommonDianyingToday);
                         if (Changci.OPTION_DAY_TODAY == yingxun.getChangciOption()) {
                             yingxun.setChangciOption(0);
                         } else {
                             yingxun.setChangciOption(Changci.OPTION_DAY_TODAY);
                         }
                     } else if (id  == R.id.tomorrow_btn) {
-                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "tomorrow");
+                        mActionLog.addAction(mActionTag +  ActionLog.DiscoverCommonDianyingTomorrow);
                         if (Changci.OPTION_DAY_TOMORROW == yingxun.getChangciOption()) {
                             yingxun.setChangciOption(0);
                         } else {
                             yingxun.setChangciOption(Changci.OPTION_DAY_TOMORROW);
                         }
                     } else if (id  == R.id.after_tomorrow_btn) {
-                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "afterTomorrow");
+                        mActionLog.addAction(mActionTag +  ActionLog.DiscoverCommonDianyingAfterTomorrow);
                         if (Changci.OPTION_DAY_AFTER_TOMORROW == yingxun.getChangciOption()) {
                             yingxun.setChangciOption(0);
                         } else {
                             yingxun.setChangciOption(Changci.OPTION_DAY_AFTER_TOMORROW);
                         }
                     } else if (id == R.id.telephone_view) {
-                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "telephone");
+                        mActionLog.addAction(mActionTag +  ActionLog.CommonTelphone);
                         CommonUtils.telephone(mSphinx, telephoneTxv);
                     } else if (id == R.id.address_view) {
-                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "address");
+                        mActionLog.addAction(mActionTag +  ActionLog.CommonAddress);
                         /* 交通界面的显示 */
                         POI poi = yingxun.getPOI(POI.SOURCE_TYPE_YINGXUN);
-                        CommonUtils.queryTraffic(mSphinx, poi);
+                        CommonUtils.queryTraffic(mSphinx, poi, mActionTag);
                     }
                     getAdapter().notifyDataSetChanged();
                 }
