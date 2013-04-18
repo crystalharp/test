@@ -58,7 +58,7 @@ public class ActionLog {
     
     /**
      * 网络查询
-     * 例如 _324-ZC-s-324733-324833-324900-serverrefuse
+     * 例如 _324-ZG-s-324733-324833-324900-serverrefuse
      * 发起http请求 的毫秒时刻
      * 收到服务器的数据 的毫秒时刻
      * 收完服务器的数据 的毫秒时刻
@@ -538,14 +538,6 @@ public class ActionLog {
     public void addAction(String actionLog, Object... args) {
         synchronized (mLock) {
         try {
-        	if (actionLog.equals("BPZA")) {
-        		Object l = null;
-        		try {
-        			l.toString();
-        		} catch (Exception e) {
-					e.printStackTrace();
-				}
-        	}
             Object[] str = new String[args.length];
             int i = 0;
             for(Object object : args) {
