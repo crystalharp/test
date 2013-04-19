@@ -143,6 +143,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mLeftBtn.setVisibility(View.INVISIBLE);
         mTitleBtn.setText(R.string.more);
         mRightBtn.setVisibility(View.INVISIBLE);
+        mListLsv.setSelection(0);
 
         mMenuFragment.display();
         
