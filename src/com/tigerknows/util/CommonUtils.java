@@ -28,6 +28,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -651,7 +652,7 @@ public class CommonUtils {
 
     public static Dialog showNormalDialog(Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener) {
         if (title != null || message != null) {
-            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, title, message);
+            ActionLog.getInstance(activity).addAction(ActionLog.Dialog, title, message);
         }
         Dialog dialog = getDialog(activity, title, message, custom, leftButtonText, rightButtonText, onClickListener);
         dialog.show();
@@ -712,9 +713,9 @@ public class CommonUtils {
                     dialog.dismiss();
                     if (onClickListener != null) {
                         if (view.getId() == R.id.button1) {
-                            ActionLog.getInstance(activity).addAction(ActionLog.CONTROL_ONCLICK, leftBtn.getText());
+                            ActionLog.getInstance(activity).addAction(ActionLog.DialogLeftBtn, leftBtn.getText());
                         } else {
-                            ActionLog.getInstance(activity).addAction(ActionLog.CONTROL_ONCLICK, rightBtn.getText());
+                            ActionLog.getInstance(activity).addAction(ActionLog.DialogRightBtn, rightBtn.getText());
                         }
                         onClickListener.onClick(dialog, view.getId() == R.id.button1 ? DialogInterface.BUTTON_POSITIVE : DialogInterface.BUTTON_NEGATIVE);
                     }
@@ -751,6 +752,14 @@ public class CommonUtils {
                         || message.startsWith(activity.getString(R.string.are_your_change_to_location_city).substring(0, 4)) == false)) {
             ((Sphinx)activity).setDialog(dialog);
         }
+        
+        dialog.setOnDismissListener(new OnDismissListener() {
+            
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                ActionLog.getInstance(activity).addAction(ActionLog.Dialog + ActionLog.Dismiss);
+            }
+        });
         
         return dialog;
     }
@@ -1004,11 +1013,11 @@ public class CommonUtils {
         }
     }
 
-    public static void queryTraffic(final Sphinx sphinx, final POI poi) {
-        queryTraffic(sphinx, poi, TrafficQueryFragment.END);
+    public static void queryTraffic(final Sphinx sphinx, final POI poi, String actionTag) {
+        queryTraffic(sphinx, poi, TrafficQueryFragment.END, actionTag);
     }
     
-    public static void queryTraffic(final Sphinx sphinx, POI poi, final int location) {
+    public static void queryTraffic(final Sphinx sphinx, POI poi, final int location, final String actionTag) {
         
         final POI poiForTraffic = poi.clone();
         final String[] list = sphinx.getResources().getStringArray(R.array.goto_here);
@@ -1026,13 +1035,14 @@ public class CommonUtils {
                 null,
                 null);
         
+        ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere);
         listView.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
                 dialog.dismiss();
-                ActionLog.getInstance(sphinx).addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", index, list[index]);
                 int queryType = -1;
+                ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere + ActionLog.ListViewItem, index, list[index]);
                 switch (index) {
                     case 0:
                         queryType = TrafficQuery.QUERY_TYPE_TRANSFER;
@@ -1071,6 +1081,13 @@ public class CommonUtils {
                     sphinx.uiStackRemove(R.id.view_result_map);   // 再回退时不出现地图界面
                     sphinx.showView(R.id.view_traffic_query);
                 }
+            }
+        });
+        dialog.setOnDismissListener(new OnDismissListener() {
+            
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere + ActionLog.Dismiss);
             }
         });
     }

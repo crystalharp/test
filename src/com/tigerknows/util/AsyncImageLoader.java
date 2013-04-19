@@ -32,6 +32,16 @@ public class AsyncImageLoader {
 
     private final Handler handler = new Handler();
     
+    /*
+     * 网络异常时，建立HttpClient的时间间隔
+     */
+    static final int NEW_HTTP_CLIENT_TIME_INTERVAL = 15000;
+    
+    /*
+     * 最近建立HttpClient的时间截
+     */
+    private long lastNewClientTime = 0;
+    
     private HttpClient mHttpClient;
     
     private String viewToken = "";
@@ -177,19 +187,26 @@ public class AsyncImageLoader {
             if (viewToken.equals(imageUrl.viewToken) == false) {
                 return null;
             }
-
+            
+            long currentTime = System.currentTimeMillis();
             if (mHttpClient == null) {
-                mHttpClient = Utility.getNewHttpClient(context);
+                if (currentTime-lastNewClientTime > NEW_HTTP_CLIENT_TIME_INTERVAL) {
+                    lastNewClientTime = currentTime;
+                    mHttpClient = Utility.getNewHttpClient(context);
+                }
             }
-            try {
-                byte[] data = Utility.openUrl(context, mHttpClient, imageUrl.url, "GET", new WeiboParameters());
-                ImageCache imageCache1 = Globals.getImageCache();
-                final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
-                imageCache1.putImage(name, data);
-                return (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(data), "image.png");
-            } catch (Exception e) {
-                mHttpClient = null;
-                e.printStackTrace();
+            
+            if (mHttpClient != null) {
+                try {
+                    byte[] data = Utility.openUrl(context, mHttpClient, imageUrl.url, "GET", new WeiboParameters());
+                    ImageCache imageCache1 = Globals.getImageCache();
+                    final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
+                    imageCache1.putImage(name, data);
+                    return (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(data), "image.png");
+                } catch (Exception e) {
+                    mHttpClient = null;
+                    e.printStackTrace();
+                }
             }
             
             return null;
@@ -232,6 +249,7 @@ public class AsyncImageLoader {
             httpClient.getConnectionManager().shutdown();
             mHttpClient = null;
         }
+        lastNewClientTime = 0;
     }
     
     public static class TKURL {

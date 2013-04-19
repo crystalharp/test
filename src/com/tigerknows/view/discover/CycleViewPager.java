@@ -93,10 +93,12 @@ public class CycleViewPager {
         public boolean isPageTurning = false;
         int time = 0;
         Context mContext;
-        public CycleOnPageChangeListener(Context context, IRefreshViews iRefreshViews, IPagerListCallBack iPagerListCallBack) {
+        String actionTag;
+        public CycleOnPageChangeListener(Context context, IRefreshViews iRefreshViews, IPagerListCallBack iPagerListCallBack, String actionTag) {
             this.iRefreshViews = iRefreshViews;
             this.iPagerListCallBack = iPagerListCallBack;
             this.mContext = context;
+            this.actionTag = actionTag;
         }
         
         // 当滑动状态改变时调用
@@ -121,7 +123,7 @@ public class CycleViewPager {
         public void onPageSelected(int position) {
             iRefreshViews.refreshViews(position);
             time = 0;
-            ActionLog.getInstance(mContext).addAction(ActionLog.VIEWPAGER_SELECTED, position);
+            ActionLog.getInstance(mContext).addAction(actionTag+ActionLog.ViewPageSelected, position);
         }
     }
 }

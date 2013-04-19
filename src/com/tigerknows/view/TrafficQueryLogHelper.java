@@ -33,19 +33,19 @@ public class TrafficQueryLogHelper {
 	 */
 	public void logForClickOnEditText(QueryEditText edt) {
 		if (edt == mQueryFragment.mStart) {
-			mQueryFragment.mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "inputStart");
+			mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficStartEdt);
 		} else if (edt == mQueryFragment.mEnd) {
-            mQueryFragment.mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "inputEnd");
+            mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficEndEdt);
 		} else if (edt == mQueryFragment.mBusline) {
-            mQueryFragment.mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "inputBusline");
+            mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficBusLineEdt);
 		}
 	}
 	
 	public void logForClickBookmarkOnEditText(QueryEditText edt) {
 		if (edt == mQueryFragment.mStart) {
-            mQueryFragment.mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "start");
+            mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficStartBtn);
 		} else if (edt == mQueryFragment.mEnd) {
-            mQueryFragment.mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "end");
+            mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficEndBtn);
 		}
 	}
 	

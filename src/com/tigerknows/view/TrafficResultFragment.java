@@ -130,7 +130,7 @@ public class TrafficResultFragment extends BaseFragment {
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 
-				mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", position);
+				mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
 				focusedIndex = position;
 				mSphinx.getTrafficDetailFragment().setData(mTrafficModel.getPlanList().get(position), position);
 				mSphinx.showView(R.id.view_traffic_result_detail);

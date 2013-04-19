@@ -151,9 +151,14 @@ public abstract class BaseQuery {
 
 	public static final String RESPONSE_CODE_ERROR_MSG_PREFIX = "resp_code_err_msg";
 
-    public static final String REQUSET_SOURCE_TYPE = "requset_source_type";
+	// dsrc	 string	 true	 data request source，该请求的来源（指客户端的不同“频道”
+    public static final String SERVER_PARAMETER_REQUSET_SOURCE_TYPE = "dsrc";
+
+    // dsrc=dpmsg，表示雷达频道，通过解析推送消息获得动态poi的uid之后，根据uid取完整的动态poi 
+    public static final String REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI = "dpmsg";
     
-    public static final String REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI = "pulledDynamicPOI";
+    // dsrc=dpoi，表示发现频道，通过搜索得到的动态poi的uid之后，根据uid取完整的动态poi
+    public static final String REQUSET_SOURCE_TYPE_DISCOVER = "dpoi";
     
     /**
      * 检查是否为推送动态POI的查询
@@ -161,8 +166,8 @@ public abstract class BaseQuery {
      */
     public boolean isPulledDynamicPOIRequest() {
         boolean result = false;
-        if (criteria != null && criteria.containsKey(REQUSET_SOURCE_TYPE)) {
-            String sourceType = criteria.get(REQUSET_SOURCE_TYPE);
+        if (criteria != null && criteria.containsKey(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {
+            String sourceType = criteria.get(SERVER_PARAMETER_REQUSET_SOURCE_TYPE);
             if (REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI.equals(sourceType)) {
                 result = true;
             }
@@ -630,7 +635,7 @@ public abstract class BaseQuery {
                 } else {
                     translateResponse(data);
                     if (response != null) {
-                        ActionLog.getInstance(context).addAction(ActionLog.RESULT, apiType, response.getResponseCode(), response.getDescription());
+                        ActionLog.getInstance(context).addAction(ActionLog.Response, apiType, response.getResponseCode(), response.getDescription());
                     }
                     LogWrapper.d(TAG, "translate():at="+apiType+", response="+response);
                 }
@@ -719,10 +724,7 @@ public abstract class BaseQuery {
     
     protected void translateResponse(byte[] data) throws APIException {
         try {
-            if (apiType.equals(API_TYPE_BUSLINE_QUERY)
-                    || apiType.equals(API_TYPE_TRAFFIC_QUERY)
-                    || apiType.equals(API_TYPE_BOOTSTRAP)
-                    || Test == false) { // 如果是自动测试分填充的数据，则没有加密
+            if (Test == false) { // 如果是自动测试分填充的数据，则没有加密
             // 解密数据
             data = DataEncryptor.decrypt(data);
             // 解压数据

@@ -123,7 +123,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.SearchNearby;
+        mActionTag = ActionLog.POINearbySearch;
     }
 
     @Override
@@ -187,11 +187,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onPageSelected(int index) {
                 CommonUtils.pageIndicatorChanged(mSphinx, mPageIndicatorView, index);
-                if (index == 0) {
-                    mActionLog.addAction(ActionLog.VIEWPAGER_SELECTED, "category");
-                } else {
-                    mActionLog.addAction(ActionLog.VIEWPAGER_SELECTED, "input");
-                }
+                mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, index);
             }
             
             @Override
@@ -207,7 +203,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "category", mCategoryNames[position]);
+                mActionLog.addAction(mActionTag +  ActionLog.POINearbySearchCategory, mCategoryNames[position]);
                 submitQuery(mCategoryNames[position], false);                
             }
         });
@@ -218,6 +214,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    mActionLog.addAction(ActionLog.POINearbySearchInput);
                     String key = mKeywordEdt.getText().toString();
                     POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, key);
                     mSuggestAdapter.key = key;
@@ -246,7 +243,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 TKWord tkWord = (TKWord) arg0.getAdapter().getItem(position);
                 if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
-                    mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "cleanHistoryWord");
+                    mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistoryClear);
                     HistoryWordTable.clearHistoryWord(mSphinx, Globals.g_Current_City_Info.getId(), HistoryWordTable.TYPE_POI);
                     String key = mKeywordEdt.getText().toString();
                     POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, key);
@@ -254,9 +251,9 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
                     refreshSuggest();
                 } else {
                     if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
-                        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "historyWord", position+1, tkWord.word);
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistory, position, tkWord.word);
                     } else {
-                        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "suggestWord", position+1, tkWord.word);
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItemSuggest, position, tkWord.word);
                     }
                     mKeywordEdt.setText(tkWord.word); //处理光标问题
                     submitQuery(mKeywordEdt.getText().toString().trim(), true);
@@ -281,7 +278,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         switch (view.getId()) {
                 
             case R.id.query_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "search", mKeywordEdt.getText().toString().trim());
+                mActionLog.addAction(mActionTag +  ActionLog.POINearbySearchSubimt, mKeywordEdt.getText().toString().trim());
                 submitQuery(mKeywordEdt.getText().toString().trim(), true);
                 break;
 

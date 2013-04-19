@@ -40,7 +40,7 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.ZhanlanXiangqing;
+        mActionTag = ActionLog.ZhanlanDetail;
     }
 
     @Override
@@ -102,7 +102,7 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
         poi.setAddress(data.getAddress());
         list.add(poi);
         mSphinx.showPOI(list, 0);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.zhanlan_didian_ditu), ActionLog.MapZhanlanXiangqing);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.zhanlan_didian_ditu), ActionLog.ResultMapZhanlanDetail);
         super.viewMap();
     }
     

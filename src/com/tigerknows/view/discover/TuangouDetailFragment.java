@@ -91,7 +91,7 @@ public class TuangouDetailFragment extends BaseDetailFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.TuangouXiangqing;
+        mActionTag = ActionLog.TuangouDetail;
     }
 
     @Override
@@ -175,7 +175,7 @@ public class TuangouDetailFragment extends BaseDetailFragment
 
         //Show it on map
         mSphinx.showPOI(list, 0);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.shanghu_ditu), ActionLog.MapTuangouXiangqing);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.shanghu_ditu), ActionLog.ResultMapTuangouDetail);
         super.viewMap();
     }
     

@@ -79,7 +79,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
     public ZhanlanDetailView(Sphinx sphinx, ZhanlanDetailFragment parentFragment) {
         super(sphinx, parentFragment, R.layout.yanchu_detail);
         findViews();
-        mActionTag = ActionLog.ZhanlanXiangqing;
+        mActionTag = ActionLog.ZhanlanDetail;
         
         mActualLoadedDrawableRun = new Runnable() {
             
@@ -226,16 +226,16 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.telephone_view:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "telephone");
+                mActionLog.addAction(mActionTag +  ActionLog.CommonTelphone);
                 CommonUtils.telephone(mSphinx, mTelephoneTxv);
                 break;
                 
             case R.id.address_view:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "address");
+                mActionLog.addAction(mActionTag +  ActionLog.CommonAddress);
                 POI poi = mData.getPOI();
                 poi.setName(mData.getPlaceName());
                 poi.setAddress(mData.getAddress());
-                CommonUtils.queryTraffic(mSphinx, poi);
+                CommonUtils.queryTraffic(mSphinx, poi, mActionTag);
                 break;
         }
     }
@@ -297,7 +297,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
         
         DataOperation dataOperation = new DataOperation(mSphinx);
         Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(BaseQuery.REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI);
+        criteria.put(BaseQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_ZHANLAN);
         criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUID());

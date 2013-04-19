@@ -117,14 +117,14 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     }
 
     protected void setListener() {
-        mCycleOnPageChangeListener = new CycleOnPageChangeListener(mContext, this, this);
+        mCycleOnPageChangeListener = new CycleOnPageChangeListener(mContext, this, this, mActionTag);
         mViewPager.setOnPageChangeListener(mCycleOnPageChangeListener);
     }
 
     public void onClick(View view) {
         switch (view.getId()) {                
             case R.id.right_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 viewMap();
                 break;
         }

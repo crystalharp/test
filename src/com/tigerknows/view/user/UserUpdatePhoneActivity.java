@@ -63,25 +63,12 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 	protected void setListener() {
 		super.setListener();
 		
-		passwordEdt.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "password");
-				}
-				
-				return false;
-			}
-		});
-		
 		valiNumBtn.setOnClickListener(new android.view.View.OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
 				// TODO 获取验证码
-				mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "getValidateCode");
+				mActionLog.addAction(mActionTag +  ActionLog.UserCommonValidNumBtn);
 				if (!phoneEdt.isValid()) {
 					validationAction(phoneEdt);
 					return;
@@ -96,6 +83,7 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO 成功后, 跳转到个人帐户页面
+                mActionLog.addAction(mActionTag +  ActionLog.UserCommonConfirmBtn);
 				if (!mForm.isValid()) {
 					validationAction(mForm.getErrorSource());
 					return;

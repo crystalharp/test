@@ -92,6 +92,7 @@ public class QZoneSend extends BaseActivity implements OnClickListener {
                 
                 @Override
                 public void onDismiss(DialogInterface arg0) {
+                    mActionLog.addAction(ActionLog.Dialog + ActionLog.Dismiss);
                     checkUserAccessIdenty(false);
                 }
             });
@@ -170,7 +171,7 @@ public class QZoneSend extends BaseActivity implements OnClickListener {
         switch (viewId) {
             case R.id.logout_btn: {
                 if (checkUserAccessIdenty(false) == false) {
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleLeft", checkUserAccessIdenty(false));
+                mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton, String.valueOf(checkUserAccessIdenty(false)));
                     QZoneSend.this.finish();
                     return;
                 }
@@ -181,7 +182,7 @@ public class QZoneSend extends BaseActivity implements OnClickListener {
                 break;
             }
             case R.id.send_btn: {
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight", mContent);
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 if (checkUserAccessIdenty(true) == false) {
                     return;
                 }

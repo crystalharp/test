@@ -77,6 +77,8 @@ public class POICommentList extends BaseActivity {
         }
     };
     
+    private View mCommentTipView;
+    
     private Button mCommentTipEdt;
     
     public static void setPOI(POI poi) {
@@ -99,6 +101,7 @@ public class POICommentList extends BaseActivity {
         
         mTitleBtn.setText(R.string.all_comment);
         mRightBtn.setVisibility(View.GONE);
+        mCommentTipView.setVisibility(View.GONE);
         
         mPOI = sPOI;
         if (mPOI != null) {
@@ -136,6 +139,7 @@ public class POICommentList extends BaseActivity {
 //        mCommentLsv.addHeaderView(v);
 //        v = mLayoutInflater.inflate(R.layout.loading, null);
         mCommentLsv.addFooterView(v);
+        mCommentTipView = findViewById(R.id.tip_view);
         mCommentTipEdt = (Button) findViewById(R.id.comment_tip_btn);
     }
     
@@ -154,9 +158,9 @@ public class POICommentList extends BaseActivity {
             @Override
             public boolean onTouch(View arg0, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
+                    mActionLog.addAction(mActionTag +  ActionLog.POICommentListInput);
                     POI poi = mPOI;
-                    if (poi != null && (poi.getMyComment() != null || poi.getCommentQuery() != null)) {
+                    if (poi != null) {
                         boolean isMe = (poi.isGoldStamp() || poi.isSilverStamp());
                         if (poi.getStatus() < 0) {
                             int resId;
@@ -221,7 +225,7 @@ public class POICommentList extends BaseActivity {
             mTurnPageFooter = true;
         }
 
-        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "loadMore");
+        mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
 
         DataQuery dataQuery = new DataQuery(mThis);
         POI requestPOI = mCommentQuery.getPOI();
@@ -341,6 +345,7 @@ public class POICommentList extends BaseActivity {
         if (mCommentLsv.isFooterSpringback()) {
             mHandler.postDelayed(mTurnPageRun, 1000);
         }
+        mCommentTipView.setVisibility(View.VISIBLE);
     }
     
     private class CommentAdapter extends ArrayAdapter<Comment>{
@@ -384,7 +389,7 @@ public class POICommentList extends BaseActivity {
                         
                         @Override
                         public void onClick(View arg0) {
-                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "myComment");
+                            mActionLog.addAction(mActionTag +  ActionLog.POICommentListMyComment);
                             if (mPOI.getStatus() >= 0) {
                                 Intent intent = new Intent();
                                 intent.setClass(mThis, POIComment.class);
@@ -428,7 +433,7 @@ public class POICommentList extends BaseActivity {
         
                         @Override
                         public void onClick(final View widget) {
-                            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "source", position, url);
+                            mActionLog.addAction(mActionTag +  ActionLog.POICommentListUrl, position, url);
                             CommonUtils.showNormalDialog(mThis,
                                     mThis.getString(R.string.prompt), 
                                     mThis.getString(R.string.are_you_view_url, url),

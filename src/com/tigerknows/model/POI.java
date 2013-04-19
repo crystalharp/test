@@ -13,6 +13,7 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.DataQuery.CommentResponse;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.provider.Tigerknows;
@@ -488,6 +489,30 @@ public class POI extends BaseData {
             e1.printStackTrace();
         }
     }
+    
+    public void updateComment(Context context) {
+        BaseData baseData = checkStore(context, storeType, -1, false);
+        if (baseData != null) {
+            if (commentQuery != null) {
+                Response response = commentQuery.getResponse();
+                if (response != null) {
+                    CommentResponse commentResponse = (CommentResponse) response;
+                    commentResponse.data = null;
+                    commentResponse.getList().data = null;
+                    XMap xmap = commentResponse.getData();
+                    try {
+                        ContentValues values = new ContentValues();
+                        values.put(Tigerknows.POI.COMMENT_DATA, ByteUtil.xobjectToByte(xmap));
+                        this.dateTime = System.currentTimeMillis();
+                        values.put(Tigerknows.POI.DATETIME, this.dateTime);
+                        SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
 
     public int getFrom() {
         return from;
@@ -516,6 +541,10 @@ public class POI extends BaseData {
     
     public void setLastComment(Comment lastComment) {
         this.lastComment = lastComment;
+        XMap data = getData();
+        if (data != null) {
+            data.put(FIELD_LAST_COMMENT, lastComment.getData());
+        }
     }
     
     public boolean isOnlyAPOI() {
@@ -1087,6 +1116,22 @@ public class POI extends BaseData {
                 return false;
             }
         }
+        values.put(Tigerknows.POI.COMMENT_DATA, new byte[0]);
+        if (poi.commentQuery != null) {
+            Response response = poi.commentQuery.getResponse();
+            if (response != null) {
+                CommentResponse commentResponse = (CommentResponse) response;
+                commentResponse.data = null;
+                commentResponse.getList().data = null;
+                xmap = commentResponse.getData();
+                try {
+                    values.put(Tigerknows.POI.COMMENT_DATA, ByteUtil.xobjectToByte(xmap));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+        }
         values.put(Tigerknows.POI.DATETIME, System.currentTimeMillis());
         values.put(Tigerknows.POI.POI_VERSION, DataQuery.VERSION);
         return true;
@@ -1155,12 +1200,27 @@ public class POI extends BaseData {
                 if (index > 0) {
                     dataBytes = cursor.getBlob(index);
                 }
+                byte[] commentBytes = null;
+                index = cursor.getColumnIndex(Tigerknows.POI.COMMENT_DATA); 
+                if (index > 0) {
+                    commentBytes = cursor.getBlob(index);
+                }
 
                 int version = cursor.getInt(cursor.getColumnIndex(Tigerknows.POI.POI_VERSION));
                 if (version == 13) {
                     if (dataBytes != null && dataBytes.length > 0) {
                         try {
                             poi.init((XMap) ByteUtil.byteToXObject(dataBytes));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (commentBytes != null && commentBytes.length > 0) {
+                        try {
+                            CommentResponse commentResponse = new CommentResponse((XMap) ByteUtil.byteToXObject(commentBytes));
+                            DataQuery commentQuery = Comment.createPOICommentQuery(context, poi, -1, -1);
+                            commentQuery.setResponse(commentResponse);
+                            poi.commentQuery = commentQuery;
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

@@ -86,7 +86,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
             mTitleFragment.dismissPopupWindow();
             Line clickedLine = mLineList.get(position);
-            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "titlePopup", position+1);
+            mActionLog.addAction(mActionTag + ActionLog.PopupWindowTitle + ActionLog.ListViewItem, position);
             if (clickedLine.equals(line)) {
             	return;
             } else {
@@ -143,7 +143,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
     				@Override
     				public void onClick(View v) {
-    			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+    			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener, mActionTag);
     			        mTitlePopupArrayAdapter.notifyDataSetChanged();
     				}
     	        });
@@ -177,7 +177,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         	@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-                mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", position+1);
+                mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
                 // 绘制线路图层
                 viewMap();
                 // 将地图平移到某一坐标点, 并缩放至某一级别
@@ -282,7 +282,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         @Override
         public void onClick(View v) {
             if(v.getId() == R.id.share_btn){
-            	mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "share");
+            	mActionLog.addAction(mActionTag +  ActionLog.CommonShare);
             	share(line);
             }else if(v.getId() == R.id.favorite_btn){
                 favorite(line, v);
@@ -294,7 +294,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
                 return ;
             
             boolean isFavorite = data.checkFavorite(mContext);
-            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "favorite", isFavorite);
+            mActionLog.addAction(mActionTag +  ActionLog.CommonFavorite, String.valueOf(isFavorite));
             if (isFavorite) {
             	CommonUtils.showNormalDialog(mSphinx, 
                         mContext.getString(R.string.prompt),
@@ -338,7 +338,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), line);
         Position position = BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
         
-        WidgetUtils.share(mSphinx, smsContent, weiboContent, qZoneContent, position);
+        WidgetUtils.share(mSphinx, smsContent, weiboContent, qZoneContent, position, mActionTag);
     }
     
     private void setFavoriteState(View v, boolean favoriteYet) {
@@ -360,7 +360,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), line);
         mSphinx.setPreviousNextViewVisible();
         
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.title_busline_result_map), ActionLog.MapBusline);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.title_busline_result_map), ActionLog.TrafficBuslineMap);
         mSphinx.showView(R.id.view_result_map);
     }
 
@@ -377,7 +377,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.right_btn) {
-            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
+            mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
         	// 绘制交通图层
 			viewMap();
 			// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点

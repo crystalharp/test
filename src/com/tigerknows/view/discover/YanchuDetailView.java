@@ -79,7 +79,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
     public YanchuDetailView(Sphinx sphinx, YanchuDetailFragment parentFragment) {
         super(sphinx, parentFragment, R.layout.yanchu_detail);
         findViews();
-        mActionTag = ActionLog.YanchuXiangqing;
+        mActionTag = ActionLog.YanchuDetail;
         
         mActualLoadedDrawableRun = new Runnable() {
             
@@ -199,7 +199,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
         
         DataOperation dataOperation = new DataOperation(mSphinx);
         Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(BaseQuery.REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI);
+        criteria.put(BaseQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_YANCHU);
         criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUID());
@@ -263,16 +263,16 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.telephone_view:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "telephone");
+                mActionLog.addAction(mActionTag +  ActionLog.CommonTelphone);
                 CommonUtils.telephone(mSphinx, mTelephoneTxv);
                 break;
                 
             case R.id.address_view:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "address");
+                mActionLog.addAction(mActionTag +  ActionLog.CommonAddress);
                 POI poi = mData.getPOI();
                 poi.setName(mData.getPlaceName());
                 poi.setAddress(mData.getAddress());
-                CommonUtils.queryTraffic(mSphinx, poi);
+                CommonUtils.queryTraffic(mSphinx, poi, mActionTag);
                 break;
                 
         }

@@ -130,7 +130,7 @@ public class BuslineResultLineFragment extends BaseFragment {
 				// TODO Auto-generated method stub
 				
 				if (mLineList != null && mLineList.size() > position) {
-					mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", position+1);
+					mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
 					focusedIndex = position;
 					mSphinx.getBuslineDetailFragment().setData(mLineList.get(position), position);
 					mSphinx.showView(R.id.view_busline_result_detail);
@@ -200,7 +200,7 @@ public class BuslineResultLineFragment extends BaseFragment {
         BuslineQuery buslineQuery = new BuslineQuery(mContext);
         buslineQuery.setup(mBuslineQuery.getCityId(), mBuslineQuery.getKeyword(), mLineList.size(), true, getId(), null);
         mSphinx.queryStart(buslineQuery);
-        mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "loadMore");
+        mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
         }
     }
 

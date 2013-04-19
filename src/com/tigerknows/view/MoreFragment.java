@@ -194,7 +194,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         
         //用户调研
         if (mDiaoyanQueryResponse != null) {
-        	if(mDiaoyanQueryResponse.getHasSurveyed() == 0){
+        	if(mDiaoyanQueryResponse.getHasSurveyed() == 0 && mDiaoyanQueryResponse.getUrl() != null){
                 setFragmentMessage(MESSAGE_TYPE_USER_SURVEY);
                 return;
         	}
@@ -266,10 +266,10 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.message_btn:
                 if (mMessageType == MESSAGE_TYPE_SOFTWARE_UPDATE) {
-                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "upgradeSoftWare");
+                    mActionLog.addAction(mActionTag +  ActionLog.MoreMessageSoft);
                     showDownloadSoftwareDialog();
                 } else if (mMessageType == MESSAGE_TYPE_MAP_UPDATE) {
-                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "upgradeMap");
+                    mActionLog.addAction(mActionTag +  ActionLog.MoreMessageMap);
                     showUpgradeMapDialog();
                 } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
                 	String url=mDiaoyanQueryResponse.getUrl();
@@ -280,17 +280,18 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                 		mDiaoyanQueryResponse.setHasSurveyed(1);
                 		mSphinx.showView(R.id.activity_browser, intent);
                 	}
+                    mActionLog.addAction(mActionTag +  ActionLog.MoreMessageUserSurvey);
                 } else if (mMessageType == MESSAGE_TYPE_COMMENT) {
-                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "commentTip");
+                    mActionLog.addAction(mActionTag +  ActionLog.MoreMessageComment);
                     mSphinx.showView(R.id.view_go_comment);
                 }
                 break;
             case R.id.user_btn:
             	if (TextUtils.isEmpty(Globals.g_Session_Id) == false) {
-                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "userHome");
+                    mActionLog.addAction(mActionTag +  ActionLog.MoreUserHome);
             		mSphinx.showView(R.id.view_user_home);
             	} else {
-                    mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "userLogin");
+                    mActionLog.addAction(mActionTag +  ActionLog.MoreLoginRegist);
             		Intent intent = new Intent(mSphinx, UserLoginActivity.class);
                     intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, getId());
                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.view_user_home);
@@ -299,15 +300,15 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
             	}
                 break;
             case R.id.change_city_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "changeCity");
+                mActionLog.addAction(mActionTag +  ActionLog.MoreChangeCity);
                 mSphinx.showView(R.id.activity_change_city);
                 break;
             case R.id.download_map_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "downloadMap");
+                mActionLog.addAction(mActionTag +  ActionLog.MoreMapDownload);
                 mSphinx.showView(R.id.activity_map_download);
                 break;
             case R.id.app_recommend_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "appRecommend");
+                mActionLog.addAction(mActionTag +  ActionLog.MoreAppRecommend);
                 if (TKConfig.sSPREADER.startsWith(TKConfig.SPREADER_TENCENT)) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://a.wap.myapp.com/and2/s?aid=detail&appid=50801"));
                     mSphinx.startActivity(intent);
@@ -316,36 +317,36 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                 }
                 break;
             case R.id.favorite_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "favorite");
+                mActionLog.addAction(mActionTag +  ActionLog.MoreFavorite);
                 mSphinx.showView(R.id.view_favorite);
                 break;
             case R.id.history_browse_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "history");
+                mActionLog.addAction(mActionTag +  ActionLog.MoreHistory);
                 mSphinx.showView(R.id.view_history);
                 break;
             case R.id.settings_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "setting");
+                mActionLog.addAction(mActionTag +  ActionLog.MoreSetting);
                 mSphinx.showView(R.id.activity_setting);
                 break;
             case R.id.feedback_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "feedback");
+                mActionLog.addAction(mActionTag +  ActionLog.MoreFeedback);
                 mSphinx.showView(R.id.activity_feedback);
                 break;
             case R.id.add_merchant_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "addMerchant");
+                mActionLog.addAction(mActionTag +  ActionLog.MoreAddMerchant);
                 mSphinx.showView(R.id.activity_add_merchant);
                 break;
             case R.id.help_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "help");
+                mActionLog.addAction(mActionTag +  ActionLog.MoreHelp);
                 mSphinx.showView(R.id.activity_help);
                 break;
             case R.id.about_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "aboutUs");
+                mActionLog.addAction(mActionTag +  ActionLog.MoreAboutUs);
                 mSphinx.showView(R.id.activity_about_us);
                 break;
                 
             case R.id.give_favourable_comment_btn:
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "giveFavourable");
+                mActionLog.addAction(mActionTag +  ActionLog.MoreGiveFavourableComment);
                 mSphinx.startActivity(makeGiveFavourableIntent());  
                 break;
 

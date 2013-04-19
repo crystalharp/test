@@ -50,6 +50,9 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiExecute() {
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeNormal+ActionLog.Dismiss);
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeInput);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeInput;
 			applyInnateProperty(TrafficViewSTT.State.Input);
 		}
 
@@ -60,6 +63,9 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiRollback() {
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeInput+ActionLog.Dismiss);
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeNormal);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeNormal;
 			mQueryFragment.mSphinx.getMenuFragment().display();
 //			resetNormalStateMap();
 			applyInnateProperty(TrafficViewSTT.State.Normal);
@@ -83,7 +89,9 @@ public class TrafficQueryStateHelper {
 	
 		@Override
 		public void uiExecute() {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeToMap);
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeNormal+ActionLog.Dismiss);
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeMap);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeMap;
 			
 			mQueryFragment.oldCheckButton = mQueryFragment.mRadioGroup.getCheckedRadioButtonId();
         	
@@ -100,6 +108,9 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiRollback() {
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeMap+ActionLog.Dismiss);
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeNormal);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeNormal;
 			mQueryFragment.mMapLocationHelper.resetNormalStateMap();
 
 			mQueryFragment.mLogHelper.checkedRadioButton(R.id.traffic_transfer_rbt);
@@ -120,6 +131,9 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiExecute() {
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeMap+ActionLog.Dismiss);
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeInput);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeInput;
 			applyInnateProperty(TrafficViewSTT.State.Input);
 		}
 
@@ -130,6 +144,9 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiRollback() {
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeInput+ActionLog.Dismiss);
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeMap);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeMap;
 			/*
 			 * 从Input返回Map时, 记录之前Check的Id
 			 */
@@ -156,6 +173,9 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiExecute() {
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeNormal+ActionLog.Dismiss);
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeSelectPoint);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeSelectPoint;
 			mQueryFragment.displayCommonTitle();
 			mQueryFragment.mRightBtn.setVisibility(View.GONE);
 			mQueryFragment.mTitleBtn.setText(R.string.title_click_map);
@@ -172,6 +192,9 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiRollback() {
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeSelectPoint+ActionLog.Dismiss);
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeNormal);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeNormal;
 			mQueryFragment.hideCommonTitle();
 			mQueryFragment.mTitle.setVisibility(View.VISIBLE);
 			mQueryFragment.mMenuFragment.display();
@@ -190,6 +213,9 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiExecute() {
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeInput+ActionLog.Dismiss);
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeSelectPoint);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeSelectPoint;
 			mQueryFragment.displayCommonTitle();
 			mQueryFragment.mRightBtn.setVisibility(View.GONE);
 			mQueryFragment.mTitleBtn.setText(R.string.title_click_map);
@@ -204,6 +230,9 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiRollback() {
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeSelectPoint+ActionLog.Dismiss);
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeInput);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeInput;
 			mQueryFragment.hideCommonTitle();
 			mQueryFragment.mTitle.setVisibility(View.VISIBLE);
 			applyInnateProperty(TrafficViewSTT.State.Input);
@@ -218,6 +247,9 @@ public class TrafficQueryStateHelper {
 	private class SelectPointToInputAction extends TrafficAction {
 		@Override
 		public void uiExecute() {
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeSelectPoint+ActionLog.Dismiss);
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeInput);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeInput;
 			mQueryFragment.hideCommonTitle();
 			mQueryFragment.mTitle.setVisibility(View.VISIBLE);
 			applyInnateProperty(TrafficViewSTT.State.Input);
@@ -230,6 +262,9 @@ public class TrafficQueryStateHelper {
 
 		@Override
 		public void uiRollback() {
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeInput+ActionLog.Dismiss);
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeSelectPoint);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeSelectPoint;
 			mQueryFragment.displayCommonTitle();
 			mQueryFragment.mRightBtn.setVisibility(View.GONE);
 			mQueryFragment.mTitleBtn.setText(R.string.title_click_map);
@@ -269,15 +304,12 @@ public class TrafficQueryStateHelper {
 	public void applyInnateProperty(TrafficViewSTT.State state) {
 		switch(state) {
 		case Normal:
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHome);
 			applyNormalInnateProperty();
 			break;
 		case Input:
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficInput);
 			applyInputInnateProperty();
 			break;
 		case Map:
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficMap);
 			applyMapInnateProperty();
 			break;
 		case SelectPoint:

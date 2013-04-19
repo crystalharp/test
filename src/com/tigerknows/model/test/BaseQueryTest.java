@@ -412,6 +412,7 @@ public class BaseQueryTest {
                                 sphinx.mLocationListener.onLocationChanged(location);
                             }
                         }
+                        TKConfig.readConfig();
                     } catch (Exception e) {
                         Toast.makeText(activity, "Parse Error!", Toast.LENGTH_LONG).show();
                     }

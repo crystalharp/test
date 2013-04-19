@@ -157,7 +157,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
     				@Override
     				public void onClick(View v) {
-    			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+    			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener, mActionTag);
     			        mTitlePopupArrayAdapter.notifyDataSetChanged();
     				}
     	        });
@@ -173,7 +173,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
             mTitleFragment.dismissPopupWindow();
             Plan clickedPlan = mPlanList.get(position);
-            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "titleList", position);
+            mActionLog.addAction(mActionTag + ActionLog.PopupWindowTitle + ActionLog.ListViewItem, position);
             if (clickedPlan.equals(plan)) {
             	return;
             } else {
@@ -208,7 +208,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         	@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, "list", position);
+				mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
 
 				// 绘制交通图层
                 viewMap();
@@ -222,7 +222,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 	public void onClick(View v) {
 		int viewId = v.getId();
 		if (viewId == R.id.right_btn) {
-            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "titleRight");
+            mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
 			// 绘制交通图层
 			viewMap();
 			// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
@@ -395,12 +395,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
             if (v.getId() == R.id.share_btn) {
                 //弹出分享对话框
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "share");
+                mActionLog.addAction(mActionTag +  ActionLog.CommonShare);
                 share(plan);
             } else if (v.getId() == R.id.favorite_btn) {
             	favorite(plan, v);
             } else if (v.getId() == R.id.error_recovery_btn) {
-                mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "recovery");
+                mActionLog.addAction(mActionTag +  ActionLog.CommonErrorRecovery);
             	TransferErrorRecovery.addTarget(plan);
             	mSphinx.showView(R.id.activity_traffic_error_recovery);
             }
@@ -411,7 +411,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 				return ;
 			
 	        boolean isFavorite = data.checkFavorite(mContext);
-            mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "favorite", isFavorite);
+            mActionLog.addAction(mActionTag +  ActionLog.CommonFavorite, String.valueOf(isFavorite));
 	        if (isFavorite) {
 	        	CommonUtils.showNormalDialog(mSphinx, 
                         mContext.getString(R.string.prompt),
@@ -464,7 +464,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     	TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), plan, mShowType);
     	Position position = TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
     	
-    	WidgetUtils.share(mSphinx, smsContent, weiboContent, qzoneContent, position, mapScene);
+    	WidgetUtils.share(mSphinx, smsContent, weiboContent, qzoneContent, position, mapScene, mActionTag);
     }
 
     private void setFavoriteState(View v, boolean favoriteYet) {
@@ -483,13 +483,13 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             String actionTag = "";
         	switch(mShowType) {
         	case SHOW_TYPE_TRANSFER:
-        	    actionTag = ActionLog.MapTrafficTransfer;
+        	    actionTag = ActionLog.TrafficTransferMap;
         		break;
         	case SHOW_TYPE_DRVIE:
-                actionTag = ActionLog.MapTrafficDrive;
+                actionTag = ActionLog.TrafficDriveMap;
         		break;
         	case SHOW_TYPE_WALK:
-                actionTag = ActionLog.MapTrafficWalk;
+                actionTag = ActionLog.TrafficWalkMap;
         		break;
         	default:
         			

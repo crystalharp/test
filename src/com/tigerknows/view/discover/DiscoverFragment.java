@@ -29,6 +29,7 @@ import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
@@ -197,6 +198,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                 e.printStackTrace();
             }
         }
+
     }
 
     @Override
@@ -311,7 +313,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
                     DiscoverCategory discoverCategory = mDiscoverCategoryList.get(position
                             % mDiscoverCategoryList.size());
                     if (discoverCategory.getNumCity() > 0 || discoverCategory.getNumNearby() > 0) {
-                        mActionLog.addAction(ActionLog.CONTROL_ONCLICK, "discoverChannel", discoverCategory.getType());
+                        mActionLog.addAction(mActionTag +  ActionLog.DiscoverHomeItem, discoverCategory.getType());
                         DataQuery dataQuery = new DataQuery(mSphinx);
                         Hashtable<String, String> criteria = new Hashtable<String, String>();
                         criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, discoverCategory.getType());
@@ -372,13 +374,7 @@ public class DiscoverFragment extends DiscoverBaseFragment {
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 if (isBeginDrag == false) {
-                    if (mPosition != -1) {
-                        if (position > mPosition) {
-                            mActionLog.addAction(ActionLog.FLING, "channel", "left");
-                        } else {
-                            mActionLog.addAction(ActionLog.FLING, "channel", "right");
-                        }
-                    }
+                    mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, String.valueOf(position > mPosition));
                     mPosition = position;
                     if (mDiscoverCategoryAdapter != null) {
                         try {
