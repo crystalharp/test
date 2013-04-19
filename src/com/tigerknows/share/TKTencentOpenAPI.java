@@ -5,9 +5,9 @@ import com.tencent.tauth.TencentOpenAPI;
 import com.tencent.tauth.bean.OpenId;
 import com.tencent.tauth.bean.UserInfo;
 import com.tencent.tauth.http.Callback;
-import com.tencent.tauth.http.TDebug;
-import com.tigerknows.ActionLog;
 import com.tigerknows.R;
+import android.widget.Toast;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.share.ShareAPI.LoginCallBack;
 
 import android.app.Activity;
@@ -16,7 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import com.tigerknows.widget.Toast;
 
 /**
  * 对TencentOpenAPI进行封装，实现用户授权、用户注销、获取登录用户的呢称及发表分享到QQ空间功能

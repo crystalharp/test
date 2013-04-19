@@ -86,9 +86,9 @@ import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
 import com.decarta.android.util.XYZ;
-import com.tigerknows.maps.MapWord;
-import com.tigerknows.maps.TileDownload;
-import com.tigerknows.util.CommonUtils;
+import com.tigerknows.map.MapWord;
+import com.tigerknows.map.TileDownload;
+import com.tigerknows.util.Utility;
 
 /**
  *This class provide all function implementation related to map. It's a child view of MapView.
@@ -261,7 +261,7 @@ public class TilesView extends GLSurfaceView {
             snapBmp = null;
             return bm;
         } else {
-            return CommonUtils.viewToBitmap(this);
+            return Utility.viewToBitmap(this);
         }
     }
     

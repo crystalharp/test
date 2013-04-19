@@ -11,7 +11,7 @@ package com.tigerknows.model;
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.test.AccountManageTest;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.xobject.XMap;

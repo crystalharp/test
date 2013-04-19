@@ -11,7 +11,6 @@ package com.tigerknows.model;
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.model.xobject.XMap;
-import com.tigerknows.view.user.User;
 
 import android.content.Context;
 import android.text.TextUtils;

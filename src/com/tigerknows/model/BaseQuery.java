@@ -21,10 +21,12 @@ import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
-import com.tigerknows.ActionLog;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.maps.MapEngine.CityInfo;
+import com.tigerknows.common.ActionLog;
+import com.tigerknows.crypto.DataEncryptor;
+import com.tigerknows.crypto.DataDecode;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.LocationQuery.TKCellLocation;
 import com.tigerknows.model.response.Appendix;
 import com.tigerknows.model.response.DataPackage;
@@ -37,11 +39,9 @@ import com.tigerknows.model.response.UpdateVersionData;
 import com.tigerknows.model.response.UserActionTrackSwitch;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
-import com.tigerknows.util.CommonUtils;
-import com.tigerknows.util.DataEncryptor;
+import com.tigerknows.util.Utility;
 import com.tigerknows.util.HttpUtils;
 import com.tigerknows.util.ParserUtil;
-import com.tigerknows.util.TKLZDecode;
 import com.tigerknows.util.HttpUtils.TKHttpClient.ProgressUpdate;
 import com.weibo.sdk.android.WeiboParameters;
 
@@ -297,7 +297,7 @@ public abstract class BaseQuery {
         int mnc = TKConfig.getMNC();
         int lac = tkCellLocation.lac;
         int cid = tkCellLocation.cid;
-        if (isLocateMe && !CommonUtils.mccMncLacCidValid(mcc, mnc, lac, cid)) {
+        if (isLocateMe && !Utility.mccMncLacCidValid(mcc, mnc, lac, cid)) {
             simAvailably = false;
         }
         
@@ -730,7 +730,7 @@ public abstract class BaseQuery {
             // 解压数据
             if (compress) {
                 try {
-                    data = TKLZDecode.decode(data, 0);
+                    data = DataDecode.decode(data, 0);
                 } catch (Exception cause) {
                     throw new APIException("decode data error");
                 }

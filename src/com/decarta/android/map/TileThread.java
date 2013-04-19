@@ -13,8 +13,8 @@ import com.decarta.android.map.MapView.DownloadEventListener;
 import com.decarta.android.map.TilesView.TileResponse;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.XYZ;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.maps.TileDownload;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.TileDownload;
 
 /**
  * Thread class for loading tiles

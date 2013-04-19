@@ -17,7 +17,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
-import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.Utility;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
@@ -196,7 +196,7 @@ public class Shangjia extends BaseData implements Parcelable {
                 FileInputStream fis = null;
                 try {
                     fis = new FileInputStream(file);
-                    XArray<XMap> xarray = (XArray<XMap>)ByteUtil.byteToXObject(CommonUtils.readFileToByte(fis));
+                    XArray<XMap> xarray = (XArray<XMap>)ByteUtil.byteToXObject(Utility.readFileToByte(fis));
                     for(int i = 0, size = xarray.size(); i < size; i++) {
                         Shangjia shangjia = new Shangjia();
                         shangjia.init(xarray.get(i));
@@ -230,7 +230,7 @@ public class Shangjia extends BaseData implements Parcelable {
                     XMap xmap = new XMap();
                     xmap.put(FIELD_SOURCE, SOURCE_WOWOTUAN);
                     xmap.put(FIELD_SERVICE_TEL, "4000155555");
-                    xmap.put(FIELD_MARKER, CommonUtils.getDrawableResource(sphinx, R.drawable.ic_wowotuan_marker));
+                    xmap.put(FIELD_MARKER, Utility.getDrawableResource(sphinx, R.drawable.ic_wowotuan_marker));
                     xmap.put(FIELD_NAME, sphinx.getString(R.string.wowotuan_name));
                     
                     Shangjia shangjia = new Shangjia();
@@ -249,7 +249,7 @@ public class Shangjia extends BaseData implements Parcelable {
                     XMap xmap = new XMap();
                     xmap.put(FIELD_SOURCE, SOURCE_NUOMI);
                     xmap.put(FIELD_SERVICE_TEL, "4006888887");
-                    xmap.put(FIELD_MARKER, CommonUtils.getDrawableResource(sphinx, R.drawable.ic_nuomi_marker));
+                    xmap.put(FIELD_MARKER, Utility.getDrawableResource(sphinx, R.drawable.ic_nuomi_marker));
                     xmap.put(FIELD_NAME, sphinx.getString(R.string.nuomi_name));
                     
                     Shangjia shangjia = new Shangjia();
@@ -275,7 +275,7 @@ public class Shangjia extends BaseData implements Parcelable {
                 }
                 String path = TKConfig.getDataPath(false) + "ShangjiaList";
                 byte[] data = ByteUtil.xobjectToByte(xarray);
-                CommonUtils.writeFile(path, data, true);
+                Utility.writeFile(path, data, true);
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

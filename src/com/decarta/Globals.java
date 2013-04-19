@@ -12,17 +12,17 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYInteger;
-import com.tigerknows.ImageCache;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.maps.MapEngine.CityInfo;
+import com.tigerknows.common.AsyncImageLoader;
+import com.tigerknows.common.ImageCache;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BootstrapModel;
+import com.tigerknows.model.Session;
+import com.tigerknows.model.User;
 import com.tigerknows.model.AccountManage.UserRespnose;
-import com.tigerknows.util.AsyncImageLoader;
-import com.tigerknows.util.CommonUtils;
-import com.tigerknows.view.user.Session;
-import com.tigerknows.view.user.User;
+import com.tigerknows.util.Utility;
 
 public class Globals {
     
@@ -121,7 +121,7 @@ public class Globals {
         Globals.g_My_Location_State = LOCATION_STATE_NONE;
         
         Globals.readSessionAndUser(context);
-        Globals.setConnectionFast(CommonUtils.isConnectionFast(context));
+        Globals.setConnectionFast(Utility.isConnectionFast(context));
     }
 
     public static AsyncImageLoader getAsyncImageLoader() {

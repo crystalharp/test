@@ -1,8 +1,8 @@
 package com.tigerknows.radar;
 
-import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.PullMessage.Message;
 import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;

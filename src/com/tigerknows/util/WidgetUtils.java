@@ -12,18 +12,19 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import com.tigerknows.widget.Toast;
 
 import com.decarta.android.location.Position;
 import com.decarta.android.map.MapView.MapScene;
 import com.decarta.android.map.MapView.SnapMap;
-import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.share.QZoneSend;
+
+import android.widget.Toast;
+import com.tigerknows.common.ActionLog;
+import com.tigerknows.share.QZoneSendActivity;
 import com.tigerknows.share.ShareAPI;
-import com.tigerknows.share.WeiboSend;
-import com.tigerknows.view.StringArrayAdapter;
+import com.tigerknows.share.WeiboSendActivity;
+import com.tigerknows.widget.StringArrayAdapter;
 
 /**
  * 一些关于为Widget附加的常用操作
@@ -67,10 +68,10 @@ public class WidgetUtils {
         }
         final ArrayAdapter<String> adapter = new StringArrayAdapter(activity, list, leftCompoundResIdList);
         
-        ListView listView = CommonUtils.makeListView(activity);
+        ListView listView = Utility.makeListView(activity);
         listView.setAdapter(adapter);
         
-        final Dialog dialog = CommonUtils.showNormalDialog(activity, 
+        final Dialog dialog = Utility.showNormalDialog(activity, 
                 activity.getString(R.string.share), 
                 null,
                 listView,
@@ -97,14 +98,14 @@ public class WidgetUtils {
                                     intent.putExtra(ShareAPI.EXTRA_SHARE_PIC_URI, uri.toString());
                                 }
                                 intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, weiboContent);
-                                intent.setClass(activity, WeiboSend.class);
+                                intent.setClass(activity, WeiboSendActivity.class);
                                 activity.startActivity(intent);
                             }
                         }, position, mapScene);
                         break;
                     case 1:
                         intent = new Intent();
-                        intent.setClass(activity, QZoneSend.class);
+                        intent.setClass(activity, QZoneSendActivity.class);
                         intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, qzoneContent);
                         activity.startActivity(intent);
                         break;
@@ -153,7 +154,7 @@ public class WidgetUtils {
                             
                             @Override
                             public void finish(Uri uri) {
-                                CommonUtils.share(sphinx, activity.getString(R.string.share), smsContent, uri);
+                                Utility.share(sphinx, activity.getString(R.string.share), smsContent, uri);
                                 }
                         }, position, mapScene);
                         break;

@@ -12,7 +12,7 @@ import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.provider.Tigerknows.Favorite;
 import com.tigerknows.provider.Tigerknows.History;
 import com.tigerknows.util.ByteUtil;
-import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.Utility;
 import com.tigerknows.util.ShareTextUtil;
 import com.tigerknows.util.SqliteWrapper;
 
@@ -373,7 +373,7 @@ public class BuslineModel extends XMapData {
         public String getSMSString(Context context) {
             StringBuilder body = new StringBuilder();
             body.append(context.getString(R.string.busline_, name));
-            body.append(context.getString(R.string.busline_line_listitem_title, time, CommonUtils.meter2kilometre(length)));//, stationList.size()));
+            body.append(context.getString(R.string.busline_line_listitem_title, time, Utility.meter2kilometre(length)));//, stationList.size()));
             body.append("\n");
             int i = 0;
             for(Station station : stationList) {

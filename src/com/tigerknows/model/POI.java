@@ -19,7 +19,6 @@ import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.SqliteWrapper;
-import com.tigerknows.view.user.User;
 
 import android.content.ContentUris;
 import android.content.ContentValues;

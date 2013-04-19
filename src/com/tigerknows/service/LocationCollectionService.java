@@ -2,6 +2,7 @@ package com.tigerknows.service;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.TKLocationManager;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery.LocationParameter;
 import com.tigerknows.model.LocationQuery.TKNeighboringCellInfo;

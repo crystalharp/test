@@ -2,8 +2,8 @@ package com.tigerknows.model.test;
 
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.maps.MapEngine.CityInfo;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.Dianying;
@@ -46,7 +46,7 @@ import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XInt;
 import com.tigerknows.model.xobject.XMap;
-import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.Utility;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -231,10 +231,10 @@ public class DataQueryTest {
         data.put(Shangjia.FIELD_SOURCE, Shangjia.SOURCE_TEST);
         data.put(Shangjia.FIELD_NAME, "test");
         data.put(Shangjia.FIELD_SERVICE_TEL, "16899168");
-        data.put(Shangjia.FIELD_MARKER, CommonUtils.getDrawableResource(context, R.drawable.icon));
+        data.put(Shangjia.FIELD_MARKER, Utility.getDrawableResource(context, R.drawable.icon));
         data.put(Shangjia.FIELD_URL, "http://www.baidu.com");
         data.put(Shangjia.FIELD_MESSAGE, message);
-        data.put(Shangjia.FIELD_LOGO, CommonUtils.getDrawableResource(context, R.drawable.icon));
+        data.put(Shangjia.FIELD_LOGO, Utility.getDrawableResource(context, R.drawable.icon));
         return data;
     }
 

@@ -36,15 +36,15 @@
                 android:layout_height="fill_parent"
                 />
             
-            <com.tigerknows.view.QueryingView
+            <com.tigerknows.widget.QueryingView
                 android:id="@+id/querying_view"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:visibility="gone"
                 >
-            </com.tigerknows.view.QueryingView>
+            </com.tigerknows.widget.QueryingView>
                 
-            <com.tigerknows.view.SpringbackListView
+            <com.tigerknows.widget.SpringbackListView
                 android:id="@+id/result_lsv"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
@@ -53,13 +53,13 @@
                 android:fadingEdge="none"
                 android:scrollingCache="false"
                 />
-            <com.tigerknows.view.RetryView
+            <com.tigerknows.widget.RetryView
                android:id="@+id/retry_view"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:visibility="gone"
                 >
-            </com.tigerknows.view.RetryView>
+            </com.tigerknows.widget.RetryView>
         </FrameLayout>
     </LinearLayout>
     <ImageButton 

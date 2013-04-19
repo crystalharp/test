@@ -3,12 +3,13 @@ package com.tigerknows.model.test;
 import com.decarta.Globals;
 import com.decarta.android.map.MapView;
 import com.decarta.android.util.LogWrapper;
-import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.maps.MapEngine.CityInfo;
+import com.tigerknows.android.location.TKLocationManager;
+import android.widget.Toast;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery;
@@ -19,11 +20,11 @@ import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.service.LocationCollectionService;
 import com.tigerknows.service.PullService;
-import com.tigerknows.service.TKLocationManager;
 import com.tigerknows.service.TigerknowsLocationManager;
-import com.tigerknows.util.CommonUtils;
-import com.tigerknows.view.MoreFragment;
-import com.tigerknows.view.StringArrayAdapter;
+import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.ui.more.MoreHomeFragment;
+import com.tigerknows.util.Utility;
+import com.tigerknows.widget.StringArrayAdapter;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -47,7 +48,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import com.tigerknows.widget.Toast;
 
 import java.io.File;
 import java.lang.reflect.InvocationHandler;
@@ -302,7 +302,7 @@ public class BaseQueryTest {
             
             @Override
             public void onClick(View arg0) {
-                TKConfig.setPref(activity, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(MoreFragment.SHOW_COMMENT_TIP_TIMES));
+                TKConfig.setPref(activity, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(MoreHomeFragment.SHOW_COMMENT_TIP_TIMES));
             }
         });
         
@@ -311,7 +311,7 @@ public class BaseQueryTest {
             
             @Override
             public void onClick(View arg0) {
-                MoreFragment.CurrentDownloadCity = null;
+                MoreHomeFragment.CurrentDownloadCity = null;
             }
         });
 
@@ -347,7 +347,7 @@ public class BaseQueryTest {
             @Override
             public void onClick(View v) {
                 String locationLog = PullService.queryCollectionLocation(activity);
-                CommonUtils.showNormalDialog(activity, locationLog);
+                Utility.showNormalDialog(activity, locationLog);
             }
         });
 

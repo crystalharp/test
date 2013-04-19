@@ -9,8 +9,8 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.maps.MapEngine.CityInfo;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.FeedbackUpload;
@@ -26,7 +26,7 @@ import com.tigerknows.provider.LocationTable;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.radar.RadarReceiver;
 import com.tigerknows.radar.TKNotificationManager;
-import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.Utility;
 
 import android.app.Service;
 import android.content.Context;
@@ -231,18 +231,18 @@ public class PullService extends Service {
                 
                 data.append(key.time);
                 data.append(",");
-                data.append(CommonUtils.doubleKeep(value.getLatitude(), 6));
+                data.append(Utility.doubleKeep(value.getLatitude(), 6));
                 data.append(",");
-                data.append(CommonUtils.doubleKeep(value.getLongitude(), 6));
+                data.append(Utility.doubleKeep(value.getLongitude(), 6));
                 data.append(",");
                 data.append(value.getAccuracy());
                 data.append(","); 
                 
                 // 基站
-                if (CommonUtils.mccMncLacCidValid(mcc, mnc, lac, cid)) {
+                if (Utility.mccMncLacCidValid(mcc, mnc, lac, cid)) {
                     data.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
                     data.append("@");
-                    data.append(CommonUtils.asu2dbm(tkCellLocation.signalStrength));
+                    data.append(Utility.asu2dbm(tkCellLocation.signalStrength));
                 }
                 
                 // wifi队列
@@ -262,11 +262,11 @@ public class PullService extends Service {
                     TKNeighboringCellInfo neighboringCellInfo = neighboringCellInfoList.get(i);
                     lac = neighboringCellInfo.lac;
                     cid = neighboringCellInfo.cid;
-                    if (CommonUtils.lacCidValid(lac, cid)) {
+                    if (Utility.lacCidValid(lac, cid)) {
                         data.append(";");
                         data.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
                         data.append("@");
-                        data.append(CommonUtils.asu2dbm(neighboringCellInfo.rssi));
+                        data.append(Utility.asu2dbm(neighboringCellInfo.rssi));
                     }
                 }
             }

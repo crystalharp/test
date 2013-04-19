@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows" 
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/white"
+    android:gravity="center_horizontal|top" >
+    <include android:id="@+id/title_view"
+        layout="@layout/title" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+        
+    <RelativeLayout
+        android:id="@+id/input_view"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_view"
+        android:paddingLeft="5dp"
+        android:paddingTop="6dp"
+        android:paddingRight="5dp"
+        android:paddingBottom="6dp"
+        android:gravity="left|center_vertical"
+        android:background="@color/white">
+        <com.tigerknows.android.widget.TKEditText
+            android:id="@+id/input_edt"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            tkandroid:hint="@string/input_city_name_or_first_char"
+            tkandroid:imeOptions="actionDone">
+         </com.tigerknows.android.widget.TKEditText>
+    </RelativeLayout>  
+             
+    <ExpandableListView android:id="@+id/city_elv"
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent"
+        android:layout_below="@id/input_view"
+        android:focusable="true"
+        android:dividerHeight="0dp"
+        android:childDivider="@drawable/bg_line_split"
+        android:divider="@drawable/bg_line_split"
+        android:padding="0dp"
+        android:background="@color/white"
+        android:scrollingCache="false"
+        android:drawSelectorOnTop="false"
+        android:fadingEdge="none" />
+            
+    <ListView android:id="@+id/suggest_city_lsv"
+        android:layout_width="fill_parent" 
+        android:layout_height="fill_parent"
+        android:layout_below="@id/input_view"
+        android:padding="0dp"
+        android:dividerHeight="0dp"
+        android:divider="@drawable/bg_line_split"
+        android:background="@color/white"
+        android:scrollingCache="false"
+        android:drawSelectorOnTop="false"
+        android:fadingEdge="none"
+        android:visibility="gone"
+         />
+        
+</RelativeLayout>

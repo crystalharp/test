@@ -4,8 +4,11 @@ package com.tigerknows.service.download;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.net.Utility;
+
+import android.widget.Toast;
+
+import com.tigerknows.android.net.HttpManager;
+import com.tigerknows.map.MapEngine;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -21,7 +24,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.TextUtils;
 import android.widget.RemoteViews;
-import com.tigerknows.widget.Toast;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -49,7 +51,7 @@ public class DownloadService extends IntentService {
 	            LogWrapper.d("chen", "to download"+url);
             }
             else {
-                Toast.makeText(context, R.string.file_downloading, com.tigerknows.widget.Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.file_downloading, android.widget.Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -149,7 +151,7 @@ public class DownloadService extends IntentService {
     // 下载更新文件，成功返回File对象，否则返回null
     private File downFile(final String url, String showName) {
         try {
-            HttpClient client = Utility.getNewHttpClient(getApplicationContext());
+            HttpClient client = HttpManager.getNewHttpClient();
             HttpResponse response = client.execute(new HttpGet(url));
             HttpEntity entity = response.getEntity();
             long length = entity.getContentLength();

@@ -8,10 +8,11 @@ import com.decarta.CONFIG;
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
-import com.tigerknows.maps.MapEngine;
+import com.tigerknows.android.app.TKApplication;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery.TKCellLocation;
-import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.Utility;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -1171,7 +1172,7 @@ public class TKConfig {
         if (file.exists()) {
             try {
                 FileInputStream fis = new FileInputStream(file);
-                String text = CommonUtils.readFile(fis);
+                String text = Utility.readFile(fis);
                 fis.close();
                 int start = text.indexOf("downloadHost=");
                 int end = text.indexOf(";", start);
