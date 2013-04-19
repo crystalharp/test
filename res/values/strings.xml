@@ -610,14 +610,17 @@
 	
 	<!-- User InputError Tip Start -->
     <string name="phone_empty_tip">请输入手机号</string>
+    <string name="new_phone_empty_tip">请输入新手机号</string>
     <string name="code_empty_tip">请输入验证码</string>
     <string name="password_empty_tip">请输入密码</string>
     <string name="re_password_empty_tip">请再次输入密码</string>
-    <string name="old_password_empty_tip">请输入原密码</string>
+    <string name="old_password_empty_tip">请输入旧密码</string>
+    <string name="prev_password_empty_tip">请输入原密码</string>
     <string name="new_password_empty_tip">请输入新密码</string>
     <string name="name_empty_tip">请输入昵称</string>
     <string name="phone_format_error_tip">手机号格式不正确, 请重新输入11位手机号</string>
     <string name="password_format_error_tip">密码必须由6-16位数字或字母组成, 区分大小写</string>
+    <string name="prev_password_format_error_tip">原始密码有误, 请重新输入</string>
     <string name="password_union_error_tip">密码输入不一致, 请重新输入</string>
     <string name="name_format_error_tip">昵称格式错误, 请重新输入</string>
 	<!-- User InputError Tip End -->

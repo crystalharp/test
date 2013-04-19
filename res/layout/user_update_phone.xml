@@ -34,7 +34,7 @@
 	            android:background="@drawable/list_single_normal"
 		        flag="0"
 		        validateType="phone"
-		        emptyErrorTip="@string/phone_empty_tip"
+		        emptyErrorTip="@string/new_phone_empty_tip"
 		        formatErrorTip="@string/phone_format_error_tip" />
 		        
 		    <RelativeLayout 
@@ -88,7 +88,7 @@
 		        flag="2"
 		        validateType="password"
 		        formatErrorTip="@string/password_format_error_tip"
-		        emptyErrorTip="@string/password_empty_tip" />
+		        emptyErrorTip="@string/old_password_empty_tip" />
 		    
 		    <Button
 		        android:id="@+id/confirm_btn"
