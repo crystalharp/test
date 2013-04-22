@@ -13,12 +13,12 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.DataQuery.CommentResponse;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.SqliteWrapper;
-import com.tigerknows.view.user.User;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -447,14 +447,17 @@ public class POI extends BaseData {
     
     private String feature;
     
-    // 品味 FIELD_TASTE
+    // 口味 FIELD_TASTE
     private String taste;
     
-    // 服务 FIELD_SERVICE
+    // 服务 FIELD_SERVICE|FIELD_SERVICE_ATTITUDE|FIELD_SERVICE_QUALITY
     private String service;
     
     // 环境 FIELD_ENVIRONMENT
     private String envrionment;
+    
+    // 产品 FIELD_PRODUCT|FIELD_PRODUCT_ATTITUDE
+    private String product;
     
     private boolean onlyAPOI = false;
     
@@ -485,6 +488,30 @@ public class POI extends BaseData {
             e1.printStackTrace();
         }
     }
+    
+    public void updateComment(Context context) {
+        BaseData baseData = checkStore(context, storeType, -1, false);
+        if (baseData != null) {
+            if (commentQuery != null) {
+                Response response = commentQuery.getResponse();
+                if (response != null) {
+                    CommentResponse commentResponse = (CommentResponse) response;
+                    commentResponse.data = null;
+                    commentResponse.getList().data = null;
+                    XMap xmap = commentResponse.getData();
+                    try {
+                        ContentValues values = new ContentValues();
+                        values.put(Tigerknows.POI.COMMENT_DATA, ByteUtil.xobjectToByte(xmap));
+                        this.dateTime = System.currentTimeMillis();
+                        values.put(Tigerknows.POI.DATETIME, this.dateTime);
+                        SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
 
     public int getFrom() {
         return from;
@@ -513,6 +540,10 @@ public class POI extends BaseData {
     
     public void setLastComment(Comment lastComment) {
         this.lastComment = lastComment;
+        XMap data = getData();
+        if (data != null) {
+            data.put(FIELD_LAST_COMMENT, lastComment.getData());
+        }
     }
     
     public boolean isOnlyAPOI() {
@@ -639,6 +670,9 @@ public class POI extends BaseData {
     	return envrionment;
     }
     
+    public String getProduct() {
+    	return product;
+    }
     /**
      * 设置POI类型.如果类型不合法，设为全部类型.
      * 
@@ -773,6 +807,14 @@ public class POI extends BaseData {
                 if (this.description.containsKey(Description.FIELD_ENVIRONMENT)) {
                 	this.envrionment = this.description.getString(Description.FIELD_ENVIRONMENT);
                 }
+                
+                //购物POI中的产品信息，4.30 ALPHA3中暂未添加
+                //目前暂无其他代码调用此段信息，仅作为预留
+                if (this.description.containsKey(Description.FIELD_PRODUCT)){
+                	this.product = this.description.getString(Description.FIELD_PRODUCT);
+                } else if(this.description.containsKey(Description.FIELD_PRODUCT_ATTITUDE)){
+                	this.product = this.description.getString(Description.FIELD_PRODUCT_ATTITUDE);
+                }
             }
         } else {
             this.description = null;
@@ -857,6 +899,13 @@ public class POI extends BaseData {
             this.data.put(FIELD_STATUS, this.status);
             if (lastComment != null) {
                 this.data.put(FIELD_LAST_COMMENT, lastComment.getData());
+            }
+            if (dynamicPOIList.size() > 0) {
+                XArray<XMap> xarray = new XArray<XMap>();
+                for(int i = 0, size = dynamicPOIList.size(); i < size; i++) {
+                    xarray.add(dynamicPOIList.get(i).getData());
+                }
+                this.data.put(FIELD_DYNAMIC_POI, xarray);
             }
         }
         return this.data;
@@ -1066,6 +1115,22 @@ public class POI extends BaseData {
                 return false;
             }
         }
+        values.put(Tigerknows.POI.COMMENT_DATA, new byte[0]);
+        if (poi.commentQuery != null) {
+            Response response = poi.commentQuery.getResponse();
+            if (response != null) {
+                CommentResponse commentResponse = (CommentResponse) response;
+                commentResponse.data = null;
+                commentResponse.getList().data = null;
+                xmap = commentResponse.getData();
+                try {
+                    values.put(Tigerknows.POI.COMMENT_DATA, ByteUtil.xobjectToByte(xmap));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+        }
         values.put(Tigerknows.POI.DATETIME, System.currentTimeMillis());
         values.put(Tigerknows.POI.POI_VERSION, DataQuery.VERSION);
         return true;
@@ -1134,12 +1199,27 @@ public class POI extends BaseData {
                 if (index > 0) {
                     dataBytes = cursor.getBlob(index);
                 }
+                byte[] commentBytes = null;
+                index = cursor.getColumnIndex(Tigerknows.POI.COMMENT_DATA); 
+                if (index > 0) {
+                    commentBytes = cursor.getBlob(index);
+                }
 
                 int version = cursor.getInt(cursor.getColumnIndex(Tigerknows.POI.POI_VERSION));
                 if (version == 13) {
                     if (dataBytes != null && dataBytes.length > 0) {
                         try {
                             poi.init((XMap) ByteUtil.byteToXObject(dataBytes));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    if (commentBytes != null && commentBytes.length > 0) {
+                        try {
+                            CommentResponse commentResponse = new CommentResponse((XMap) ByteUtil.byteToXObject(commentBytes));
+                            DataQuery commentQuery = Comment.createPOICommentQuery(context, poi, -1, -1);
+                            commentQuery.setResponse(commentResponse);
+                            poi.commentQuery = commentQuery;
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

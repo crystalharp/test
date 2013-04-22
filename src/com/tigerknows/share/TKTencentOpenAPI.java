@@ -5,9 +5,9 @@ import com.tencent.tauth.TencentOpenAPI;
 import com.tencent.tauth.bean.OpenId;
 import com.tencent.tauth.bean.UserInfo;
 import com.tencent.tauth.http.Callback;
-import com.tencent.tauth.http.TDebug;
-import com.tigerknows.ActionLog;
 import com.tigerknows.R;
+import android.widget.Toast;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.share.ShareAPI.LoginCallBack;
 
 import android.app.Activity;
@@ -16,7 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import com.tigerknows.widget.Toast;
 
 /**
  * 对TencentOpenAPI进行封装，实现用户授权、用户注销、获取登录用户的呢称及发表分享到QQ空间功能
@@ -87,7 +86,7 @@ public class TKTencentOpenAPI {
             if (access_token != null) {
                 mAccessToken = access_token;
 //              TDebug.msg("正在获取OpenID...", getApplicationContext());
-                ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, this.activity.getString(R.string.doing_and_wait));
+                ActionLog.getInstance(activity).addAction(ActionLog.Dialog, this.activity.getString(R.string.doing_and_wait));
                 this.activity.showDialog(R.id.dialog_share_doing);
                 //用access token 来获取open id
                 TencentOpenAPI.openid(access_token, new Callback() {
@@ -203,7 +202,7 @@ public class TKTencentOpenAPI {
             return;
         }
         if (showDialog) {
-            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, activity.getString(R.string.doing_and_wait));
+            ActionLog.getInstance(activity).addAction(ActionLog.Dialog, activity.getString(R.string.doing_and_wait));
             activity.showDialog(R.id.dialog_share_doing);
         }
         Bundle bundle = null;

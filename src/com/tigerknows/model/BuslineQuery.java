@@ -13,7 +13,7 @@ import android.content.Context;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
+import com.tigerknows.map.MapEngine;
 
 public final class BuslineQuery extends BaseQuery {
 

@@ -169,15 +169,15 @@ public class NavigationSplitJointRule {
         // if(!当前道路名称.trim().equals(""))
         if (!TextUtils.isEmpty(step.getDriveRoadName()) && !step.getDriveRoadName().trim().equals("")) {
             // 本条.msg += "沿" + 当前道路名称 + "行驶" + 本条.距离（做一定处理） + "，"
-            s.append(context.getString(R.string.drive_along, step.getDriveRoadName(), CommonUtils.distanceToString(step.getDistance())));
+            s.append(context.getString(R.string.drive_along, step.getDriveRoadName(), Utility.distanceToString(step.getDistance())));
             // else if(本条.是否环岛 == 1)
         } else if (step.getDriveWhetherRoundabout() == 1) {
             // 本条.msg += "沿环岛行驶" + 本条.距离（做一定处理） + "，"
-            s.append(context.getString(R.string.drive_along_roundabout, CommonUtils.distanceToString(step.getDistance())));
+            s.append(context.getString(R.string.drive_along_roundabout, Utility.distanceToString(step.getDistance())));
             // else
         } else {
             // 本条.msg += "行驶" + 本条.距离（做一定处理） + "，"
-            s.append(context.getString(R.string.drive_run, CommonUtils.distanceToString(step.getDistance())));
+            s.append(context.getString(R.string.drive_run, Utility.distanceToString(step.getDistance())));
         }
 
         // if(本条.转向信息.equals("前"))
@@ -246,15 +246,15 @@ public class NavigationSplitJointRule {
       // if(!当前道路名称.trim().equals(""))
       if (!TextUtils.isEmpty(step.getWalkRoadName().trim()) && !step.getWalkRoadName().trim().equals("")) {
           // 本条.msg += "沿" + 当前道路名称 + "走" + 本条.距离（做一定处理） + "，"
-          s.append(context.getString(R.string.walk_along, step.getWalkRoadName(), CommonUtils.distanceToString(step.getDistance())));
+          s.append(context.getString(R.string.walk_along, step.getWalkRoadName(), Utility.distanceToString(step.getDistance())));
           // else if(本条.是否环岛 == 1)
       } else if (step.getWalkWhetherRoundabout() == 1) {
           // 本条.msg += "沿环岛走" + 本条.距离（做一定处理） + "，"
-          s.append(context.getString(R.string.walk_along_roundabout, CommonUtils.distanceToString(step.getDistance())));
+          s.append(context.getString(R.string.walk_along_roundabout, Utility.distanceToString(step.getDistance())));
           // else
       } else {
           // 本条.msg += "走" + 本条.距离（做一定处理） + "，"
-          s.append(context.getString(R.string.walk_run, CommonUtils.distanceToString(step.getDistance())));
+          s.append(context.getString(R.string.walk_run, Utility.distanceToString(step.getDistance())));
       }
 
       // if(本条.转向信息.equals("前"))

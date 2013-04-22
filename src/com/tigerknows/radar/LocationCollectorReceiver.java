@@ -1,8 +1,8 @@
 package com.tigerknows.radar;
 
 import com.decarta.android.util.LogWrapper;
-import com.tigerknows.Setting;
 import com.tigerknows.service.LocationCollectionService;
+import com.tigerknows.ui.more.SettingActivity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -18,7 +18,7 @@ public class LocationCollectorReceiver extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
 
         LogWrapper.d(TAG, "onReceive() " + intent);
-        if (Setting.radarOn(context)) {
+        if (SettingActivity.radarOn(context)) {
             Intent service = new Intent(context, LocationCollectionService.class);
             context.startService(service);
         }

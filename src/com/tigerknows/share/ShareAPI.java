@@ -11,6 +11,7 @@ import android.app.Activity;
 import android.text.TextUtils;
 
 import com.tigerknows.TKConfig;
+import com.tigerknows.crypto.Base64;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
 import com.weibo.sdk.android.keep.AccessTokenKeeper;

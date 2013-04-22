@@ -2,7 +2,9 @@ package com.tigerknows.util;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.view.View;
@@ -10,18 +12,19 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import com.tigerknows.widget.Toast;
 
 import com.decarta.android.location.Position;
 import com.decarta.android.map.MapView.MapScene;
 import com.decarta.android.map.MapView.SnapMap;
-import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.share.QZoneSend;
+
+import android.widget.Toast;
+import com.tigerknows.common.ActionLog;
+import com.tigerknows.share.QZoneSendActivity;
 import com.tigerknows.share.ShareAPI;
-import com.tigerknows.share.WeiboSend;
-import com.tigerknows.view.StringArrayAdapter;
+import com.tigerknows.share.WeiboSendActivity;
+import com.tigerknows.widget.StringArrayAdapter;
 
 /**
  * 一些关于为Widget附加的常用操作
@@ -43,10 +46,10 @@ public class WidgetUtils {
      * @param layerType
      * @return
      */
-    public static void share(final Activity activity, final String smsContent, final String weiboContent, final String qzoneContent, final Position position) {
-        share(activity, smsContent, weiboContent, qzoneContent, position, null);
+    public static void share(final Activity activity, final String smsContent, final String weiboContent, final String qzoneContent, final Position position, String actionTag) {
+        share(activity, smsContent, weiboContent, qzoneContent, position, null, actionTag);
     }
-    public static void share(final Activity activity, final String smsContent, final String weiboContent, final String qzoneContent, final Position position, final MapScene mapScene) {
+    public static void share(final Activity activity, final String smsContent, final String weiboContent, final String qzoneContent, final Position position, final MapScene mapScene, final String actionTag) {
         
         final Sphinx sphinx = (Sphinx)activity;
         String[] list = activity.getResources().getStringArray(R.array.share);
@@ -65,10 +68,10 @@ public class WidgetUtils {
         }
         final ArrayAdapter<String> adapter = new StringArrayAdapter(activity, list, leftCompoundResIdList);
         
-        ListView listView = CommonUtils.makeListView(activity);
+        ListView listView = Utility.makeListView(activity);
         listView.setAdapter(adapter);
         
-        final Dialog dialog = CommonUtils.showNormalDialog(activity, 
+        final Dialog dialog = Utility.showNormalDialog(activity, 
                 activity.getString(R.string.share), 
                 null,
                 listView,
@@ -76,13 +79,14 @@ public class WidgetUtils {
                 null,
                 null);
         
+        final ActionLog actionLog = ActionLog.getInstance(activity);
+        actionLog.addAction(actionTag + ActionLog.Share);
         listView.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View arg1, int index, long arg3) {
-                ActionLog actionLog = ActionLog.getInstance(activity);
                 Intent intent;
-                actionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, index, adapterView.getAdapter().getItem(index));
+                actionLog.addAction(actionTag + ActionLog.Share + ActionLog.ListViewItem, index, adapterView.getAdapter().getItem(index));
                 switch (index) {
                     case 0:
                         sphinx.snapMapView(new SnapMap() {
@@ -94,14 +98,14 @@ public class WidgetUtils {
                                     intent.putExtra(ShareAPI.EXTRA_SHARE_PIC_URI, uri.toString());
                                 }
                                 intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, weiboContent);
-                                intent.setClass(activity, WeiboSend.class);
+                                intent.setClass(activity, WeiboSendActivity.class);
                                 activity.startActivity(intent);
                             }
                         }, position, mapScene);
                         break;
                     case 1:
                         intent = new Intent();
-                        intent.setClass(activity, QZoneSend.class);
+                        intent.setClass(activity, QZoneSendActivity.class);
                         intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, qzoneContent);
                         activity.startActivity(intent);
                         break;
@@ -150,12 +154,18 @@ public class WidgetUtils {
                             
                             @Override
                             public void finish(Uri uri) {
-                                if(uri != null) {
-                                    CommonUtils.share(sphinx, activity.getString(R.string.share), smsContent, uri);
-                                }}
+                                Utility.share(sphinx, activity.getString(R.string.share), smsContent, uri);
+                                }
                         }, position, mapScene);
                         break;
                 }
+                dialog.setOnDismissListener(new OnDismissListener() {
+                    
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        actionLog.addAction(actionTag + ActionLog.Share + ActionLog.Dismiss);
+                    }
+                });
                 dialog.dismiss();
             }
         });

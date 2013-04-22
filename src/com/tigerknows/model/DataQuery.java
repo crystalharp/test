@@ -22,7 +22,7 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverConfigList;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList.DiscoverCategory;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverConfigList.DiscoverConfig;
@@ -32,7 +32,7 @@ import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XInt;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
-import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.Utility;
 import com.weibo.sdk.android.WeiboParameters;
 
 import org.xml.sax.Attributes;
@@ -283,7 +283,7 @@ public final class DataQuery extends BaseQuery {
                     initDiscoverConfigList();
                     
                     if (TextUtils.isEmpty(Discover_Database_Version)) {
-                        Discover_Database_Version = CommonUtils.readFile(new FileInputStream(TKConfig.getDataPath(true) + "discoverDatabaseVersion"));
+                        Discover_Database_Version = Utility.readFile(new FileInputStream(TKConfig.getDataPath(true) + "discoverDatabaseVersion"));
                     }
                 }
                 
@@ -729,7 +729,7 @@ public final class DataQuery extends BaseQuery {
                         XMap filter = filterDataArea.getData();
                         byte[] data = ByteUtil.xobjectToByte(filter);
                         
-                        CommonUtils.writeFile(path, data, true);
+                        Utility.writeFile(path, data, true);
                     }
                 }
                 
@@ -750,7 +750,7 @@ public final class DataQuery extends BaseQuery {
                         XMap filter = filterDataCategoryOrder.getData();
                         byte[] data = ByteUtil.xobjectToByte(filter);
                         
-                        CommonUtils.writeFile(path, data, true);
+                        Utility.writeFile(path, data, true);
                     }
                 }
                 
@@ -1274,7 +1274,7 @@ public final class DataQuery extends BaseQuery {
                 databaseVersion = this.data.getString(FIELD_DATABASE_VERSION);
                 String path = TKConfig.getDataPath(true) + "discoverDatabaseVersion";
                 try {
-                    CommonUtils.writeFile(path, databaseVersion.getBytes(TKConfig.getEncoding()), true);
+                    Utility.writeFile(path, databaseVersion.getBytes(TKConfig.getEncoding()), true);
                 } catch (IOException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -1876,7 +1876,7 @@ public final class DataQuery extends BaseQuery {
                 configList = parseDiscoverConfigList(new ByteArrayInputStream(bytes));
                 if (configList != null) {
                     String path = TKConfig.getDataPath(false) + "discoverConfigList.xml";
-                    CommonUtils.writeFile(path, bytes, true);
+                    Utility.writeFile(path, bytes, true);
                     Discover_Config_List = configList;
                 }
             }

@@ -5,12 +5,11 @@
 package com.tigerknows.util;
 
 import com.decarta.android.util.LogWrapper;
-import com.tigerknows.ActionLog;
 import com.tigerknows.TKConfig;
-import com.tigerknows.net.Utility;
+import com.tigerknows.common.ActionLog;
+import com.tigerknows.crypto.DataEncryptor;
 import com.weibo.sdk.android.WeiboParameters;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -234,7 +233,7 @@ public class HttpUtils {
                 
                 String proxyHost = android.net.Proxy.getDefaultHost();
                 if (proxyHost != null) {
-                    if (CommonUtils.checkMobileNetwork(context)) {
+                    if (Utility.checkMobileNetwork(context)) {
                         LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", proxyHost="+proxyHost);
                         HttpHost proxy = new HttpHost(android.net.Proxy.getDefaultHost(), android.net.Proxy.getDefaultPort(), "http");
                         String domain = url.replace("http://", "");
@@ -351,7 +350,7 @@ public class HttpUtils {
      * @return
      */
     public static String encodeParameters(WeiboParameters httpParams, String enc) {
-        if (null == httpParams || Utility.isBundleEmpty(httpParams)) {
+        if (null == httpParams || com.weibo.sdk.android.util.Utility.isBundleEmpty(httpParams)) {
             return "";
         }
         StringBuilder buf = new StringBuilder();

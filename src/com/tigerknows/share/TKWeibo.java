@@ -1,7 +1,6 @@
 package com.tigerknows.share;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -9,9 +8,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.decarta.android.util.LogWrapper;
-import com.tigerknows.ActionLog;
 import com.tigerknows.R;
-import com.tigerknows.TKActivity;
+import com.tigerknows.android.app.TKActivity;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.share.ShareAPI.LoginCallBack;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
@@ -236,9 +235,9 @@ public class TKWeibo implements RequestListener {
                                 || msg.contains("21319")
                                 || msg.contains("21327")) {
                             if (finishActivity) {
-                                if (activity instanceof WeiboSend) {
+                                if (activity instanceof WeiboSendActivity) {
                                     ShareAPI.clearIdentity(activity, ShareAPI.TYPE_WEIBO);
-                                    WeiboSend weiboSend = (WeiboSend) activity;
+                                    WeiboSendActivity weiboSend = (WeiboSendActivity) activity;
                                     weiboSend.getLogoutBtn().setText(R.string.back);
                                     authorize(TKWeibo.this, weiboSend.getSinaAuthDialogListener());
                                 }
@@ -296,7 +295,7 @@ public class TKWeibo implements RequestListener {
      */
     static void show(TKWeibo tkweibo, long uid) {
         if (tkweibo.showProgressDialog) {
-            ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.DIALOG, tkweibo.activity.getString(R.string.doing_and_wait));
+            ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.Dialog, tkweibo.activity.getString(R.string.doing_and_wait));
             postShowDialog(tkweibo.activity);
         }
         
@@ -327,7 +326,7 @@ public class TKWeibo implements RequestListener {
      */
     public static void upload(TKWeibo tkweibo, String status, String file, String lon, String lat) {
         if (tkweibo.showProgressDialog) {
-            ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.DIALOG, tkweibo.activity.getString(R.string.doing_and_wait));
+            ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.Dialog, tkweibo.activity.getString(R.string.doing_and_wait));
             postShowDialog(tkweibo.activity);
         }
 
@@ -345,7 +344,7 @@ public class TKWeibo implements RequestListener {
      */
     public static void update(TKWeibo tkweibo, String status, String lon, String lat) {
         if (tkweibo.showProgressDialog) {
-            ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.DIALOG, tkweibo.activity.getString(R.string.doing_and_wait));
+            ActionLog.getInstance(tkweibo.activity).addAction(ActionLog.Dialog, tkweibo.activity.getString(R.string.doing_and_wait));
             postShowDialog(tkweibo.activity);
         }
 
@@ -364,6 +363,7 @@ public class TKWeibo implements RequestListener {
             @Override
             public void run() {
                 activity.showDialog(R.id.dialog_share_doing);
+                ActionLog.getInstance(activity).addAction(ActionLog.Dialog, activity.getString(R.string.doing_and_wait));
             }
         });
     }

@@ -40,7 +40,7 @@
 		            android:layout_marginLeft="5dp"
 		            android:layout_marginRight="5dp"
 		            android:background="@drawable/ic_edt_delete" />
-		    	<com.tigerknows.view.user.ExtValidationEditText
+		    	<com.tigerknows.ui.user.ExtValidationEditText
 			        android:id="@+id/nickname_edt"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
@@ -49,14 +49,13 @@
 			        android:singleLine="true"
 			        android:ellipsize="end"
 			        android:textSize="18sp"
-			        android:maxLength="20"
 		            android:background="@drawable/transparent_bg"
 		            android:hint="@string/nickname_compose_format"
 			        flag="0"
 			        validateType="name"
 			        emptyErrorTip="@string/name_empty_tip"
 			        formatErrorTip="@string/name_format_error_tip" >
-		   		</com.tigerknows.view.user.ExtValidationEditText>
+		   		</com.tigerknows.ui.user.ExtValidationEditText>
 	        </RelativeLayout>
 	   		<Button
 		        android:id="@+id/confirm_btn"

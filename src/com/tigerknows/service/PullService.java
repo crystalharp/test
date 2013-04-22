@@ -9,8 +9,8 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.maps.MapEngine.CityInfo;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.FeedbackUpload;
@@ -26,7 +26,7 @@ import com.tigerknows.provider.LocationTable;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.radar.RadarReceiver;
 import com.tigerknows.radar.TKNotificationManager;
-import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.Utility;
 
 import android.app.Service;
 import android.content.Context;
@@ -77,8 +77,8 @@ public class PullService extends Service {
     
     static final String TAG = "PullService";
     final static int MaxFail = 3;
-    final static int requestStartHour = 9;
-    final static int requestEndHour = 21;
+    public final static int requestStartHour = 9;
+    public final static int requestEndHour = 21;
     int fail = 0;
     
     public static PullAlarmAction alarmAction = new PullAlarmAction();
@@ -114,6 +114,7 @@ public class PullService extends Service {
                 Calendar next = (Calendar) requestCal.clone();
                 //如果不在请求时间范围内，肯定是请求失败被推迟的定时器，推迟到第二天的随机时间再请求
                 if (requestCal.getTime().getHours() >= requestEndHour ||requestCal.getTime().getHours() < requestStartHour) {
+                    fail = 0;
                     next = Alarms.calculateRandomAlarmInNextDay(requestCal, requestStartHour, requestEndHour);
                     exitService(next);
                     return;
@@ -230,18 +231,18 @@ public class PullService extends Service {
                 
                 data.append(key.time);
                 data.append(",");
-                data.append(CommonUtils.doubleKeep(value.getLatitude(), 6));
+                data.append(Utility.doubleKeep(value.getLatitude(), 6));
                 data.append(",");
-                data.append(CommonUtils.doubleKeep(value.getLongitude(), 6));
+                data.append(Utility.doubleKeep(value.getLongitude(), 6));
                 data.append(",");
                 data.append(value.getAccuracy());
                 data.append(","); 
                 
                 // 基站
-                if (CommonUtils.mccMncLacCidValid(mcc, mnc, lac, cid)) {
+                if (Utility.mccMncLacCidValid(mcc, mnc, lac, cid)) {
                     data.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
                     data.append("@");
-                    data.append(CommonUtils.asu2dbm(tkCellLocation.signalStrength));
+                    data.append(Utility.asu2dbm(tkCellLocation.signalStrength));
                 }
                 
                 // wifi队列
@@ -261,11 +262,11 @@ public class PullService extends Service {
                     TKNeighboringCellInfo neighboringCellInfo = neighboringCellInfoList.get(i);
                     lac = neighboringCellInfo.lac;
                     cid = neighboringCellInfo.cid;
-                    if (CommonUtils.lacCidValid(lac, cid)) {
+                    if (Utility.lacCidValid(lac, cid)) {
                         data.append(";");
                         data.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
                         data.append("@");
-                        data.append(CommonUtils.asu2dbm(neighboringCellInfo.rssi));
+                        data.append(Utility.asu2dbm(neighboringCellInfo.rssi));
                     }
                 }
             }
@@ -302,27 +303,33 @@ public class PullService extends Service {
         LogWrapper.d(TAG, "interval day:" + requsetIntervalDays);
         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_UPPER_LIMIT, String.valueOf(pullMessage.getRecordMessageUpperLimit()));
         String messageIdList = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, "");
-        String[] list = messageIdList.split("_");
         StringBuilder s = new StringBuilder();
         List<Message> messageList = pullMessage.getMessageList();
-        
+
         //由于产品还没想好怎么处理多条数据，目前message只显示列表中第一条。
         if (messageList != null && messageList.size() > 0) {
             Message message = messageList.get(0);
             s.append(message.getId());
+            //如果这次的消息有id，则添加上此id，并写入配置文件
+            if (s.length() > 0) {
+                s.append("_");
+                //如果配置文件中有msgIdList，则处理一下这个id列表，重新拼成字符串。
+                if (!TextUtils.isEmpty(messageIdList)) {
+                    String[] list = messageIdList.split("_");
+                    long limit = recordMessageUpperLimit - 1;
+                    limit = Math.min(limit, list.length);
+                    for (int i = 0; i < limit; i++){
+                        s.append(list[i]);
+                        s.append("_");
+                    }
+                }
+                //按照上面的代码生成字符串会在结尾带有下划线，下面一句去掉结尾的下划线
+                messageIdList = s.substring(0, s.length()-1);
+                LogWrapper.d(TAG, "msgidList:" + messageIdList);
+                TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, messageIdList);
+            }
             TKNotificationManager.notify(context, message);
         }
-        int length = list.length;
-        long limit = recordMessageUpperLimit - 1;
-        limit = Math.min(length, limit);
-        if (length > 0) {
-            s.append(list[0]);
-            for(int i = 1; i < limit; i++) {
-                s.append("_");
-                s.append(list[i]);
-            }
-        }
-        TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, s.toString());
         
         return Alarms.alarmAddDays(requestCal, requsetIntervalDays);
     }

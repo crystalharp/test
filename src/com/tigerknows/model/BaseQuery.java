@@ -21,10 +21,12 @@ import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
-import com.tigerknows.ActionLog;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.maps.MapEngine.CityInfo;
+import com.tigerknows.common.ActionLog;
+import com.tigerknows.crypto.DataEncryptor;
+import com.tigerknows.crypto.DataDecode;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.LocationQuery.TKCellLocation;
 import com.tigerknows.model.response.Appendix;
 import com.tigerknows.model.response.DataPackage;
@@ -37,11 +39,9 @@ import com.tigerknows.model.response.UpdateVersionData;
 import com.tigerknows.model.response.UserActionTrackSwitch;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
-import com.tigerknows.util.CommonUtils;
-import com.tigerknows.util.DataEncryptor;
+import com.tigerknows.util.Utility;
 import com.tigerknows.util.HttpUtils;
 import com.tigerknows.util.ParserUtil;
-import com.tigerknows.util.TKLZDecode;
 import com.tigerknows.util.HttpUtils.TKHttpClient.ProgressUpdate;
 import com.weibo.sdk.android.WeiboParameters;
 
@@ -151,9 +151,14 @@ public abstract class BaseQuery {
 
 	public static final String RESPONSE_CODE_ERROR_MSG_PREFIX = "resp_code_err_msg";
 
-    public static final String REQUSET_SOURCE_TYPE = "requset_source_type";
+	// dsrc	 string	 true	 data request source，该请求的来源（指客户端的不同“频道”
+    public static final String SERVER_PARAMETER_REQUSET_SOURCE_TYPE = "dsrc";
+
+    // dsrc=dpmsg，表示雷达频道，通过解析推送消息获得动态poi的uid之后，根据uid取完整的动态poi 
+    public static final String REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI = "dpmsg";
     
-    public static final String REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI = "pulledDynamicPOI";
+    // dsrc=dpoi，表示发现频道，通过搜索得到的动态poi的uid之后，根据uid取完整的动态poi
+    public static final String REQUSET_SOURCE_TYPE_DISCOVER = "dpoi";
     
     /**
      * 检查是否为推送动态POI的查询
@@ -161,8 +166,8 @@ public abstract class BaseQuery {
      */
     public boolean isPulledDynamicPOIRequest() {
         boolean result = false;
-        if (criteria != null && criteria.containsKey(REQUSET_SOURCE_TYPE)) {
-            String sourceType = criteria.get(REQUSET_SOURCE_TYPE);
+        if (criteria != null && criteria.containsKey(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {
+            String sourceType = criteria.get(SERVER_PARAMETER_REQUSET_SOURCE_TYPE);
             if (REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI.equals(sourceType)) {
                 result = true;
             }
@@ -292,7 +297,7 @@ public abstract class BaseQuery {
         int mnc = TKConfig.getMNC();
         int lac = tkCellLocation.lac;
         int cid = tkCellLocation.cid;
-        if (isLocateMe && !CommonUtils.mccMncLacCidValid(mcc, mnc, lac, cid)) {
+        if (isLocateMe && !Utility.mccMncLacCidValid(mcc, mnc, lac, cid)) {
             simAvailably = false;
         }
         
@@ -630,7 +635,7 @@ public abstract class BaseQuery {
                 } else {
                     translateResponse(data);
                     if (response != null) {
-                        ActionLog.getInstance(context).addAction(ActionLog.RESULT, apiType, response.getResponseCode(), response.getDescription());
+                        ActionLog.getInstance(context).addAction(ActionLog.Response, apiType, response.getResponseCode(), response.getDescription());
                     }
                     LogWrapper.d(TAG, "translate():at="+apiType+", response="+response);
                 }
@@ -719,16 +724,13 @@ public abstract class BaseQuery {
     
     protected void translateResponse(byte[] data) throws APIException {
         try {
-            if (apiType.equals(API_TYPE_BUSLINE_QUERY)
-                    || apiType.equals(API_TYPE_TRAFFIC_QUERY)
-                    || apiType.equals(API_TYPE_BOOTSTRAP)
-                    || Test == false) { // 如果是自动测试分填充的数据，则没有加密
+            if (Test == false) { // 如果是自动测试分填充的数据，则没有加密
             // 解密数据
             data = DataEncryptor.decrypt(data);
             // 解压数据
             if (compress) {
                 try {
-                    data = TKLZDecode.decode(data, 0);
+                    data = DataDecode.decode(data, 0);
                 } catch (Exception cause) {
                     throw new APIException("decode data error");
                 }

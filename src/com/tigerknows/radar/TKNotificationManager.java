@@ -2,6 +2,7 @@ package com.tigerknows.radar;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.PullMessage.Message;
 import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
@@ -172,6 +173,8 @@ public class TKNotificationManager {
         	return;
         }
         
+        ActionLog.getInstance(context).addAction(ActionLog.RadarShow, msg.getType(), msg.getDynamicPOI()==null?"none":(""+msg.getDynamicPOI().getMasterType()));
+        
         NotificationManager nm = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
         
         Notification notif = createPulledMessageNotification(context, msg, pendingIntent);
@@ -221,7 +224,7 @@ public class TKNotificationManager {
     	notif.icon = R.drawable.notif_left_icon;
     	notif.tickerText = contentText;
         notif.setLatestEventInfo(context, context.getString(R.string.app_name), contentText, pendingIntent);
-
+        notif.flags = notif.flags|Notification.FLAG_AUTO_CANCEL;
         return notif;
 	}
 	

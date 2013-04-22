@@ -39,12 +39,12 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
-import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.util.CommonUtils;
-import com.tigerknows.view.ZoomControls;
+import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.util.Utility;
+import com.tigerknows.widget.ZoomControls;
 
 /**
  * Container for tiles view, map controls such as zoom controller
@@ -991,9 +991,9 @@ public class MapView extends RelativeLayout implements
         View custom = activity.getLayoutInflater().inflate(R.layout.loading, null);
         TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
         loadingTxv.setText(R.string.doing_and_wait);
-        ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, loadingTxv);
+        ActionLog.getInstance(activity).addAction(ActionLog.Dialog, activity.getString(R.string.doing_and_wait));
         
-        final Dialog tipProgressDialog = CommonUtils.showNormalDialog(activity, custom);
+        final Dialog tipProgressDialog = Utility.showNormalDialog(activity, custom);
         tipProgressDialog.setCancelable(true);
         tipProgressDialog.setCanceledOnTouchOutside(false);
         tipProgressDialog.setOnCancelListener(new OnCancelListener() {
@@ -1041,7 +1041,7 @@ public class MapView extends RelativeLayout implements
                             String mapPath = TKConfig.getDataPath(true);
                             Uri uri = null;
                             if (bm != null && !TextUtils.isEmpty(mapPath)) {
-                                uri = CommonUtils.bitmap2Png(bm, "mapsnap.png", mapPath);
+                                uri = Utility.bitmap2Png(bm, "mapsnap.png", mapPath);
                                 if (bm.isRecycled() == false) {
                                     bm.recycle();
                                 }

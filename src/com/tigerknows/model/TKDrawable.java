@@ -2,10 +2,10 @@ package com.tigerknows.model;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
-import com.tigerknows.ImageCache;
+import com.tigerknows.common.ImageCache;
+import com.tigerknows.common.AsyncImageLoader.ImageCallback;
+import com.tigerknows.common.AsyncImageLoader.TKURL;
 import com.tigerknows.model.xobject.XMap;
-import com.tigerknows.util.AsyncImageLoader.ImageCallback;
-import com.tigerknows.util.AsyncImageLoader.TKURL;
 
 import android.app.Activity;
 import android.graphics.drawable.BitmapDrawable;

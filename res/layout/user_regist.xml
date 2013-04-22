@@ -20,7 +20,7 @@
 	        android:layout_height="wrap_content"
 	        android:orientation="vertical"
 	        android:padding="8dp" >
-	        <com.tigerknows.view.user.ExtValidationEditText
+	        <com.tigerknows.ui.user.ExtValidationEditText
 		        android:id="@+id/phone_edt"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
@@ -36,12 +36,12 @@
 		        validateType="phone"
 		        emptyErrorTip="@string/phone_empty_tip"
 		        formatErrorTip="@string/phone_format_error_tip" >
-	    	</com.tigerknows.view.user.ExtValidationEditText>
+	    	</com.tigerknows.ui.user.ExtValidationEditText>
 	    	<RelativeLayout 
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:layout_marginTop="8dp" >
-			    <com.tigerknows.view.user.CountDownButton
+			    <com.tigerknows.ui.user.CountDownButton
 			        android:id="@+id/vali_num_btn"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
@@ -53,7 +53,7 @@
 			        android:textSize="16sp"
 			        android:textColor="@color/black"
 			        android:background="@drawable/btn_valicode" />
-		        <com.tigerknows.view.user.ExtValidationEditText
+		        <com.tigerknows.ui.user.ExtValidationEditText
 			        android:id="@+id/vali_num_edt"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
 		        android:layout_height="wrap_content"
 		        android:orientation="vertical"
 		        android:paddingTop="8dp" >
-		        <com.tigerknows.view.user.ExtValidationEditText
+		        <com.tigerknows.ui.user.ExtValidationEditText
 			        android:id="@+id/password_edt"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
@@ -97,7 +97,7 @@
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
 	                android:background="@drawable/bg_line_split" />
-			    <com.tigerknows.view.user.ExtValidationEditText
+			    <com.tigerknows.ui.user.ExtValidationEditText
 			        android:id="@+id/re_password_edt"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
