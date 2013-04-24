@@ -36,7 +36,6 @@ public class TrafficQuerySuggestHistoryHelper {
 	
 	ListView mSuggestLsv;
 	
-	//下轮优化都改成LinkedList
 	List<TKWord> mTKWordList = new LinkedList<TKWord>();
 	
 	public TrafficQuerySuggestHistoryHelper(Context context, TrafficQueryFragment queryFragment, ListView listView) {

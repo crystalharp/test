@@ -6,6 +6,7 @@ package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.os.Bundle;
@@ -61,7 +62,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
 
     private ListView mSuggestLsv = null;
     
-    private List<TKWord> mSuggestWordList = new ArrayList<TKWord>();
+    private List<TKWord> mSuggestWordList = new LinkedList<TKWord>();
     
     private final TextWatcher mFindEdtWatcher = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {

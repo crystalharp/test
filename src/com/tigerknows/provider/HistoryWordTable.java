@@ -270,7 +270,7 @@ public class HistoryWordTable {
     }
     
     public static List<TKWord> mergeTKWordList(List<TKWord> suggestWordList, String searchword, int type) {
-        List<TKWord> list = new ArrayList<TKWord>();
+        List<TKWord> list = new LinkedList<TKWord>();
         if (suggestWordList == null || searchword == null) {
             return list;
         }
@@ -313,7 +313,7 @@ public class HistoryWordTable {
     }
     
     public static List<TKWord> getHistoryWordList(String searchword, int type) {
-        List<TKWord> list = new ArrayList<TKWord>();
+        List<TKWord> list = new LinkedList<TKWord>();
         List<TKWord> historyWordList;
         if (HistoryWordTable.TYPE_POI == type) {
             historyWordList = History_Word_POI;
@@ -337,7 +337,7 @@ public class HistoryWordTable {
     }
     
     public static List<TKWord> stringToTKWord(List<String> list, int attribute) {
-        List<TKWord> tkList = new ArrayList<TKWord>();
+        List<TKWord> tkList = new LinkedList<TKWord>();
         if (list == null) {
             return tkList;
         }

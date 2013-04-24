@@ -28,6 +28,7 @@ import android.widget.TextView.OnEditorActionListener;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.decarta.Globals;
@@ -80,7 +81,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 
     private ListView mSuggestLsv = null;
     
-    private List<TKWord> mSuggestWordList = new ArrayList<TKWord>();
+    private List<TKWord> mSuggestWordList = new LinkedList<TKWord>();
     
     private ViewGroup mPageIndicatorView;
     
