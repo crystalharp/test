@@ -35,17 +35,33 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
         // TODO Auto-generated constructor stub
     }
     
+    /**
+     * 当前的详情页在列表中的位置
+     */
     protected int position = 0;
     
+    /**
+     * 盛放详情页面的ViewPager
+     */
     protected ViewPager mViewPager = null;
     
+    /**
+     * PagerAdapter for ViewPager.<br />
+     * 他会循环使用3个View提供给ViewPager
+     */
     protected CycleViewPager.CyclePagerAdapter mCyclePagerAdapter;
     
     protected CycleViewPager.CycleOnPageChangeListener mCycleOnPageChangeListener;
 
+    /**
+     * 指示可以左右翻页的左右箭头
+     */
     private View mNextImageView;
     private View mPrevImageView;
     
+    /**
+     * 用来显示和隐藏左右箭头的动画
+     */
     private final Animation mHideNextImageViewAnimation =
         new AlphaAnimation(1F, 0F);
     private final Animation mHidePrevImageViewAnimation =
@@ -55,6 +71,9 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     private final Animation mShowPrevImageViewAnimation =
             new AlphaAnimation(0F, 1F);
 
+    /**
+     * 隐藏左右箭头的任务
+     */
     private final Runnable mDismissOnScreenControlRunner = new Runnable() {
         public void run() {
             hideOnScreenControls();
@@ -130,6 +149,9 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
         }
     }
     
+    /**
+     * 在地图上显示当前详情页相关的POI
+     */
     public void viewMap() {
         mSphinx.showView(R.id.view_result_map);
     }
@@ -160,9 +182,12 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
             dismiss();
         }
 
-        
     }
     
+    /**
+     * 设置当前的位置并<br/>
+     * 刷新当前位置以及左右两边的详情页
+     */
     public void refreshViews(int position) {
         if (this.position == position) {
             return;
@@ -170,6 +195,9 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
         this.position = position;
     }
 
+    /**
+     * 翻页结束时的回调
+     */
     @Override
     public void turnPageEnd(boolean isHeader, int size) {
         if (size > mCyclePagerAdapter.count) {
@@ -181,6 +209,9 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
         mCycleOnPageChangeListener.isPageTurning = false;        
     }
 
+    /**
+     * 隐藏屏幕上的左右箭头
+     */
     public void hideOnScreenControls() {
         if (mNextImageView.getVisibility() == View.VISIBLE) {
             Animation a = mHideNextImageViewAnimation;
@@ -198,6 +229,9 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
 
     }
     
+    /**
+     * 根据左右箭头的可见（与不可见）使其不可见（或不可见）
+     */
     public void updateNextPrevControls() {
         int currentPosition = mViewPager.getCurrentItem();
         boolean showPrev = currentPosition > 0;
@@ -231,11 +265,19 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
         }
     }
 
+    /**
+     * 使用handler的postDelay来避免动画被触发多次。
+     */
     public void scheduleDismissOnScreenControls() {
         mSphinx.getHandler().removeCallbacks(mDismissOnScreenControlRunner);
         mSphinx.getHandler().postDelayed(mDismissOnScreenControlRunner, 2000);
     }
 
+    /**
+     * 设置推送得到的动态poi
+     * 不同的详情由不同的子类负责从服务器拉取数据
+     * @param dynamicPOI
+     */
     public void setPulledDynamicPOI(PulledDynamicPOI dynamicPOI){
     }
     
