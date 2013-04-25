@@ -292,6 +292,9 @@ public class POI extends BaseData {
     // 0x16 x_map  最近的一条点评 
     public static final byte FIELD_LAST_COMMENT = 0x16;
     
+    // 0x17 x_array<x_map>  动态电影
+    public static final byte FIELD_DYNAMIC_DIANYING = 0x17;
+    
     public static class DynamicPOI extends XMapData {
         // 0x01 x_int 动态poi的类型
         public static final byte FIELD_TYPE = 0x01;
@@ -428,6 +431,8 @@ public class POI extends BaseData {
     private long status = STATUS_NONE;
     
     private List<DynamicPOI> dynamicPOIList = new ArrayList<DynamicPOI>();
+    
+    private List<Dianying> dynamicDianyingList = new ArrayList<Dianying>();
     
     private DataQuery commentQuery = null;
     
@@ -721,6 +726,10 @@ public class POI extends BaseData {
     public List<DynamicPOI> getDynamicPOIList() {
         return dynamicPOIList;
     }
+    
+    public List<Dianying> getDynamicDianyingList() {
+    	return dynamicDianyingList;
+    }
 
     public POI() {
     }
@@ -858,6 +867,15 @@ public class POI extends BaseData {
         } else {
             this.lastComment = null;
         }
+        dynamicDianyingList.clear();
+        if (this.data.containsKey(FIELD_DYNAMIC_DIANYING)) {
+            XArray<XMap> xarray = data.getXArray(FIELD_DYNAMIC_DIANYING);
+            if (xarray != null) {
+                for(int i = 0; i < xarray.size(); i++) {
+                	dynamicDianyingList.add(new Dianying(xarray.get(i)));
+                }
+            }
+        }
     }
     
     public XMap getData() {
@@ -907,6 +925,13 @@ public class POI extends BaseData {
                     xarray.add(dynamicPOIList.get(i).getData());
                 }
                 this.data.put(FIELD_DYNAMIC_POI, xarray);
+            }
+            if (dynamicDianyingList.size() > 0) {
+                XArray<XMap> xarray = new XArray<XMap>();
+                for(int i = 0, size = dynamicDianyingList.size(); i < size; i++) {
+                    xarray.add(dynamicDianyingList.get(i).getData());
+                }
+                this.data.put(FIELD_DYNAMIC_DIANYING, xarray);
             }
         }
         return this.data;
@@ -1229,6 +1254,7 @@ public class POI extends BaseData {
                 poi.dateTime = cursor.getLong(cursor.getColumnIndex(Tigerknows.POI.DATETIME));
                 poi.from = FROM_LOCAL;
                 poi.dynamicPOIList.clear();
+                poi.dynamicDianyingList.clear();
                 poi.toCenterDistance = null;
             }
         }

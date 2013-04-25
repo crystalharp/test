@@ -471,14 +471,14 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         final Response response = baseQuery.getResponse();
         if (response != null) {
             int responseCode = response.getResponseCode();
-            int resId = R.id.app_name;
+            int resId = -1;
             if (responseCode == Response.RESPONSE_CODE_SESSION_INVALID) {
                 resId = R.string.response_code_300;
             } else if (responseCode == Response.RESPONSE_CODE_LOGON_EXIST) {
                 resId = R.string.response_code_301;
             }
             
-            if (resId != R.id.app_name
+            if (resId != -1
                     && activity.isFinishing() == false
                     && Globals.g_Session_Id != null
                     && Globals.g_User != null) {
@@ -541,7 +541,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                     }
                 });
             }
-            return resId != R.id.app_name;
+            return resId != -1;
         }
         
         return false;

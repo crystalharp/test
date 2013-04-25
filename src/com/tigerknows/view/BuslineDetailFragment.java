@@ -44,9 +44,9 @@ import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.model.BuslineModel.Station;
 import com.tigerknows.model.POI;
 import com.tigerknows.provider.Tigerknows;
+import com.tigerknows.share.ShareAPI;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.ShareTextUtil;
-import com.tigerknows.util.WidgetUtils;
 import com.tigerknows.view.ResultMapFragment.TitlePopupArrayAdapter;
 
 public class BuslineDetailFragment extends BaseFragment implements View.OnClickListener {
@@ -324,10 +324,6 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     	
         if(line == null)
             return;
-    	
-        String smsContent = ShareTextUtil.shareBuslineSmsContent(line, mContext);
-        String weiboContent = ShareTextUtil.shareBuslineWeiboContent(line, mContext);
-        String qZoneContent = ShareTextUtil.shareBuslineQzoneContent(line, mContext);
         
         List<POI> poiList = new ArrayList<POI>();
         for(Station station : line.getStationList()) {
@@ -338,7 +334,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         BuslineOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), line);
         Position position = BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
         
-        WidgetUtils.share(mSphinx, smsContent, weiboContent, qZoneContent, position, mActionTag);
+        ShareAPI.share(mSphinx, line, position, mActionTag);
     }
     
     private void setFavoriteState(View v, boolean favoriteYet) {

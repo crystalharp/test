@@ -12,54 +12,76 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:background="@drawable/bg_bottom_control"
-        android:weightSum="4"
-        android:gravity="center">
-        <LinearLayout
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center">
-        <Button android:id="@+id/poi_btn" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_search_nearby"
-            android:gravity="center"/>
-        </LinearLayout>
-            
-        <LinearLayout
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center">
-        <Button android:id="@+id/favorite_btn" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_favorite"
-            android:gravity="center"/>
-        </LinearLayout>
+        >
         
-        <LinearLayout
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+        <LinearLayout 
+            android:id="@+id/tools_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" 
+            android:orientation="horizontal"
+            android:weightSum="4"
             android:gravity="center">
-        <Button android:id="@+id/share_btn" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_share"
-            android:gravity="center"/>
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+            <Button android:id="@+id/poi_btn" 
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_search_nearby"
+                android:gravity="center"/>
+            </LinearLayout>
+                
+            <LinearLayout
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+            <Button android:id="@+id/favorite_btn" 
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_favorite"
+                android:gravity="center"/>
+            </LinearLayout>
             
-        <LinearLayout
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            <LinearLayout
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+            <Button android:id="@+id/share_btn" 
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_share"
+                android:gravity="center"/>
+            </LinearLayout>
+                
+            <LinearLayout
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+            <Button android:id="@+id/error_recovery_btn" 
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_recovery_error"
+                android:gravity="center"/>
+            </LinearLayout>
+        </LinearLayout>
+                
+        <LinearLayout 
+            android:id="@+id/weixin_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" 
+            android:orientation="horizontal"
             android:gravity="center">
-        <Button android:id="@+id/error_recovery_btn" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_recovery_error"
-            android:gravity="center"/>
+            
+            <Button android:id="@+id/weixin_btn" 
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content"
+                android:background="@drawable/icon"
+                android:gravity="center" />
         </LinearLayout>
     </LinearLayout>
     
@@ -229,11 +251,11 @@
                         />
                 </RelativeLayout>
                 
-                	<ImageView android:id="@+id/address_telephome_divider_imv"
-						android:background="@drawable/bg_line_split"
-						android:layout_width="fill_parent"
-						android:layout_height="wrap_content"/>
-                	
+                    <ImageView android:id="@+id/address_telephome_divider_imv"
+                        android:background="@drawable/bg_line_split"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"/>
+                    
                 <LinearLayout android:id="@+id/telephone_view"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content" 
@@ -253,6 +275,52 @@
                         ></TextView>
                 </LinearLayout>
 
+            </LinearLayout>
+                
+            <LinearLayout android:id="@+id/dynamic_dianying_view"
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                >
+                <LinearLayout
+                    android:layout_width="fill_parent" 
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/list_header"
+                    >
+                    <TextView
+                        android:layout_width="fill_parent" 
+                        android:layout_height="wrap_content"
+                        android:text="@string/dianying"
+                        android:textSize="18sp"
+                        android:padding="8dp" />
+                
+                    <ImageView
+                        android:background="@drawable/bg_line_split"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+                <LinearLayout android:id="@+id/dynamic_dianying_list_view"
+                    android:layout_width="fill_parent" 
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+                </LinearLayout>
+                <LinearLayout android:id="@+id/dynamic_dianying_more_view"
+                    android:layout_width="fill_parent" 
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/list_footer"
+                    android:gravity="center"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content" 
+                        android:layout_height="wrap_content"
+                        android:text="@string/more" />
+                </LinearLayout>
             </LinearLayout>
                 
             <LinearLayout android:id="@+id/dynamic_poi_list_view"

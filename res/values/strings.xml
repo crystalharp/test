@@ -208,7 +208,7 @@
     <string name="help">帮助</string>
     <string name="about_us">关于我们</string>
     <string name="recommend_snda">盛大推荐</string>
-    <string name="recommend_tencent">腾讯应用中心</string>
+    <string name="recommend_tencent">腾讯应用宝</string>
     <string name="login_or_regist">登录/注册</string>
     <string name="user_home">个人中心</string>
     <string name="give_favourable_comment">给个好评鼓励我们</string>
@@ -931,4 +931,10 @@
     
     <string name="counting_tip">正在统计...</string>
 
+    <!-- 微信 begin -->
+	<string name="errcode_success">发送成功</string>
+	<string name="errcode_cancel">发送取消</string>
+	<string name="errcode_deny">发送被拒绝</string>
+	<string name="errcode_unknown">发送返回</string>
+	<!-- 微信 end -->
 </resources>

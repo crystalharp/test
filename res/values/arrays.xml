@@ -34,6 +34,8 @@
     <string-array name="share">
         <item>分享到新浪微博</item>
         <item>分享到QQ空间</item>
+        <item>分享到微信好友</item>
+        <item>分享到微信朋友圈</item>
         <item>发送短信</item>
         <item>发送彩信</item>
         <item>更多</item>
@@ -193,13 +195,6 @@
         <item>人行横道</item><!-- 人行横道 -->
         <item>地下通道</item><!-- 地下通道 -->
         <item>过街天桥</item><!-- 过街天桥 -->
-    </string-array>
-    
-    <string-array name="share_map_to">
-        <item>分享到新浪微博</item>
-        <item>发送短信</item>
-        <item>发送彩信</item>
-        <item>分享更多</item>
     </string-array>
     
     <string-array name="comment_restair">

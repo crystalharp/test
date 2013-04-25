@@ -119,6 +119,7 @@ import com.tigerknows.radar.TKNotificationManager;
 import com.tigerknows.service.MapDownloadService;
 import com.tigerknows.service.MapStatsService;
 import com.tigerknows.service.SuggestLexiconService;
+import com.tigerknows.share.TKWeixin;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.BaseDialog;
@@ -170,6 +171,7 @@ import com.tigerknows.view.user.UserUpdatePhoneActivity;
  */
 public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
+    public static final String EXTRA_WEIXIN = "extra_weixin";
     public static final String EXTRA_PULL_MESSAGE = "extra_pull_message";
     public static final String ACTION_FIRST_STARTUP = "action.com.tigerknows.first.startup";
     
@@ -316,7 +318,25 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private static final int LOGO_ANIMATION_TIME = 2000;
 
     private Context mContext;
-
+    
+    /**
+     * 是否为微信向老虎宝典请求数据
+     */
+    private boolean mFromWeiXin = false;
+    
+    private Bundle mBundle = null;
+    
+    /**
+     * 是否为微信向老虎宝典请求数据
+     */
+    public boolean isFromWeiXin() {
+    	return mFromWeiXin;
+    }
+    
+    public Bundle getBundle() {
+    	return mBundle;
+    }
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -1123,6 +1143,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	protected void onDestroy() {
         Globals.getAsyncImageLoader().onDestory();
         mTKLocationManager.onDestroy();
+        TKWeixin.getInstance(this).onDestory();
         mMapEngine.writeLastRegionIdList(mContext);
         if (mMapView != null) {
             MapText mapText = mMapView.getMapText();
@@ -1571,8 +1592,35 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
                 
                 mActionLog.addAction(ActionLog.RadarClick, message.getType(), message.getDynamicPOI()==null?"none":(""+message.getDynamicPOI().getMasterType()));
-                setIntent(null);
                 result = true;
+            } else if (newIntent.getBooleanExtra(EXTRA_WEIXIN, false)) {
+            	mFromWeiXin = true;
+            	mBundle = newIntent.getExtras();
+                result = true;
+            } else if ("tigerknows".equals(newIntent.getScheme())) {
+            	uiStackClose(new int[]{R.id.view_home});
+            	showView(R.id.view_home);
+                Uri uri = newIntent.getData();
+                if (uri != null) {
+                	String uriStr = uri.toString();
+                	LogWrapper.d(TAG, "uriStr="+uriStr);
+                    String[] parms = uriStr.substring(uriStr.indexOf("?")+1).split("&");
+                    String[] keyValue = parms[0].split("=");
+                    if (keyValue.length == 2) {
+                    	if (keyValue[0].equals("poiuid")) {
+                    		String poiuid = keyValue[1];
+                    		if (poiuid != null) {
+	                            getPOIDetailFragment().setData(poiuid);
+	                            showView(R.id.view_poi_detail);
+                    		}
+                    	}
+                    }
+                }
+                result = true;
+            }
+            
+            if (result) {
+            	setIntent(null);
             }
         }
         return result;
@@ -1958,7 +2006,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         try {
             mMapView.clearMap();
         } catch (APIException e) {
-            AppUtil.alert(e.getMessage(), this, "WARNING");
+            e.printStackTrace();
         }
         mPreviousNextView.setVisibility(View.INVISIBLE);
     }
