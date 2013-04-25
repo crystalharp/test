@@ -218,7 +218,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.POIComment;
-        mId = R.id.activity_poi_comment;
+        mId = R.id.activity_poi_edit_comment;
         
         synchronized (sPOIList) {
             int size = sPOIList.size();

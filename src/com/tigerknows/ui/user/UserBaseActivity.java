@@ -200,7 +200,7 @@ public abstract class UserBaseActivity extends BaseActivity {
 		// TODO Auto-generated method stub
 		super.onPostExecute(tkAsyncTask);
 		BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
-        if (BaseActivity.checkReLogin(baseQuery, mThis, true, mId, R.id.view_user_home, R.id.view_more, null)) {
+        if (BaseActivity.checkReLogin(baseQuery, mThis, true, mId, R.id.view_user_home, R.id.view_more_home, null)) {
             return;
         }
 		

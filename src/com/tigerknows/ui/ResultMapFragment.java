@@ -185,8 +185,8 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         mTitlePopupArrayAdapter.mSelectedItem = null;
         mTitlePopupList.clear();
         
-        if (mSphinx.uiStackContains(R.id.view_favorite) == false
-                && mSphinx.uiStackContains(R.id.view_history) == false) {
+        if (mSphinx.uiStackContains(R.id.view_more_favorite) == false
+                && mSphinx.uiStackContains(R.id.view_more_history) == false) {
             if (mActionTag.equals(ActionLog.TrafficBuslineMap)) {
                 mTitlePopupArrayAdapter.mSelectedItem = mSphinx.getString(R.string.title_popup_content,
                         mSphinx.getBuslineDetailFragment().getCurLine() + 1, mSphinx.getBuslineDetailFragment().getData().getName());

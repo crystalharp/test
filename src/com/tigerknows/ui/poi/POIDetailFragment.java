@@ -646,7 +646,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 //                            }
 //                        } else {
                             EditCommentActivity.setPOI(poi, getId(), poi.getMyComment() != null ? EditCommentActivity.STATUS_MODIFY : EditCommentActivity.STATUS_NEW);
-                            mSphinx.showView(R.id.activity_poi_comment);
+                            mSphinx.showView(R.id.activity_poi_edit_comment);
 //                        }
                     }
                 }
@@ -678,7 +678,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             case R.id.poi_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.POIDetailSearch);
                 mSphinx.getPOINearbyFragment().setData(poi);
-                mSphinx.showView(R.id.view_poi_nearby);
+                mSphinx.showView(R.id.view_poi_nearby_search);
                 break;
                 
             case R.id.share_btn:
@@ -771,7 +771,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             return;
         }
         POIReportErrorActivity.addTarget(poi);
-        mSphinx.showView(R.id.activity_poi_error_recovery);
+        mSphinx.showView(R.id.activity_poi_report_error);
     }
     
     /**
@@ -1157,7 +1157,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     tuangou.setFendian(((FendianQueryResponse) response).getFendian());
                     List<Tuangou> list = new ArrayList<Tuangou>();
                     list.add(tuangou);
-                    mSphinx.showView(R.id.view_tuangou_detail);
+                    mSphinx.showView(R.id.view_discover_tuangou_detail);
                     mSphinx.getTuangouDetailFragment().setData(list, 0, null);
                     
                 // 查询演出的结果
@@ -1168,7 +1168,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     Yanchu yanchu = ((YanchuQueryResponse) response).getYanchu();
                     List<Yanchu> list = new ArrayList<Yanchu>();
                     list.add(yanchu);
-                    mSphinx.showView(R.id.view_yanchu_detail);
+                    mSphinx.showView(R.id.view_discover_yanchu_detail);
                     mSphinx.getYanchuDetailFragment().setData(list, 0, null);
                     
                 // 查询展览的结果
@@ -1179,7 +1179,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     Zhanlan zhanlan = ((ZhanlanQueryResponse) response).getZhanlan();
                     List<Zhanlan> list = new ArrayList<Zhanlan>();
                     list.add(zhanlan);
-                    mSphinx.showView(R.id.view_zhanlan_detail);
+                    mSphinx.showView(R.id.view_discover_zhanlan_detail);
                     mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
                 }
             }

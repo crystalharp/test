@@ -7,8 +7,10 @@ import java.util.List;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
@@ -22,14 +24,15 @@ import android.widget.TextView;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
+import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.POI;
 import com.tigerknows.provider.Tigerknows;
+import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.SqliteWrapper;
-import com.tigerknows.widget.BaseDialog;
 
-public class FetchFavoriteDialog extends BaseDialog {
+public class FetchFavoriteFragment extends BaseFragment {
 
 	static final String TAG = "FetchFavoriteDialog";
 
@@ -60,37 +63,56 @@ public class FetchFavoriteDialog extends BaseDialog {
         };
     };
     
-	public FetchFavoriteDialog(Context context) {
-		this(context, R.style.Theme_Dialog);
-		// TODO Auto-generated constructor stub
-	}
+    public FetchFavoriteFragment(Sphinx sphinx) {
+        super(sphinx);
+    }
 
-	public FetchFavoriteDialog(Context context, int theme) {
-		super(context, theme);
-		// TODO Auto-generated constructor stub
-		mActionTag = ActionLog.TrafficFetchFavorite;
-		setContentView(R.layout.traffic_fetch_favorite);
+    
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mActionTag = ActionLog.TrafficFetchFavorite;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        LogWrapper.d(BaseFragment.TAG, "onCreateView()"+mActionTag);
+        
+        mRootView = mLayoutInflater.inflate(R.layout.traffic_fetch_favorite, container, false);
         findViews();
         setListener();
         
-        mRightBtn.setVisibility(View.GONE);
-        
         mFavoriteAdapter = new FavoriteAdapter(mContext, mFavoriteList);
         mFavoriteLsv.setAdapter(mFavoriteAdapter);
-
-        mTitleBtn.setText(mContext.getString(R.string.favorite));
+        
+        return mRootView;
 	}
 	
 	protected void findViews() {
-		super.findViews();
-        mFavoriteLsv = (ListView)findViewById(R.id.favorite_lsv);
-        mFavoriteLoadingView = (LinearLayout)findViewById(R.id.loading_lnl);
+        mFavoriteLsv = (ListView)mRootView.findViewById(R.id.favorite_lsv);
+        mFavoriteLoadingView = (LinearLayout)mRootView.findViewById(R.id.loading_lnl);
 //        mFavoriteLsv.addFooterView(mFavoriteLoadingView);
-        mEmptyView = (TextView)findViewById(R.id.empty_txv);
+        mEmptyView = (TextView)mRootView.findViewById(R.id.empty_txv);
     }
 	
-	protected void setListener() {
-		super.setListener();
+	@Override
+    public void onPause() {
+        // TODO Auto-generated method stub
+        super.onPause();
+    }
+
+
+    @Override
+    public void onResume() {
+        // TODO Auto-generated method stub
+        super.onResume();
+
+        mTitleBtn.setText(mContext.getString(R.string.favorite));
+    }
+
+
+    protected void setListener() {
 		mFavoriteLsv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
@@ -151,7 +173,6 @@ public class FetchFavoriteDialog extends BaseDialog {
         @SuppressWarnings("unchecked")
         public void handleMessage(Message msg) {
                 if (mTempFavoriteList.size() > 0) {
-                    mRightBtn.setEnabled(true);
                     mFavoriteList.addAll(mTempFavoriteList);
                     Collections.sort(mFavoriteList, mComparator);
                     mFavoriteAdapter.notifyDataSetChanged();

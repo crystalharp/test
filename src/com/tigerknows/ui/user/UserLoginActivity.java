@@ -188,7 +188,7 @@ public class UserLoginActivity extends UserBaseActivity {
             startActivity(intent);
             return;
         }
-		if (mSourceViewIdLogin != R.id.activity_poi_comment
+		if (mSourceViewIdLogin != R.id.activity_poi_edit_comment
 		        && mSourceViewIdLogin != R.id.activity_poi_comment_list) {
 			Intent intent = new Intent(UserLoginActivity.this, Sphinx.class);
 	        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -199,12 +199,12 @@ public class UserLoginActivity extends UserBaseActivity {
 	}
 	
 	private void onSuccess() {
-		if (mSourceViewIdLogin == R.id.activity_poi_comment) {
+		if (mSourceViewIdLogin == R.id.activity_poi_edit_comment) {
             Intent intent = new Intent(UserLoginActivity.this, EditCommentActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
 		} else if (mSourceViewIdLogin != R.id.activity_poi_comment_list &&
-                mSourceViewIdLogin != R.id.activity_tuangou_shangjia_list){
+                mSourceViewIdLogin != R.id.activity_discover_shangjia_list){
 			Intent intent = new Intent(UserLoginActivity.this, Sphinx.class);
 	        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	        startActivity(intent);

@@ -282,7 +282,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                     mActionLog.addAction(mActionTag +  ActionLog.MoreMessageUserSurvey);
                 } else if (mMessageType == MESSAGE_TYPE_COMMENT) {
                     mActionLog.addAction(mActionTag +  ActionLog.MoreMessageComment);
-                    mSphinx.showView(R.id.view_go_comment);
+                    mSphinx.showView(R.id.view_more_go_comment);
                 }
                 break;
             case R.id.user_btn:
@@ -300,11 +300,11 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 break;
             case R.id.change_city_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreChangeCity);
-                mSphinx.showView(R.id.activity_change_city);
+                mSphinx.showView(R.id.activity_more_change_city);
                 break;
             case R.id.download_map_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreMapDownload);
-                mSphinx.showView(R.id.activity_map_download);
+                mSphinx.showView(R.id.activity_more_map_download);
                 break;
             case R.id.app_recommend_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreAppRecommend);
@@ -312,36 +312,36 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://a.wap.myapp.com/and2/s?aid=detail&appid=50801"));
                     mSphinx.startActivity(intent);
                 } else {
-                    mSphinx.showView(R.id.activity_app_recommend);
+                    mSphinx.showView(R.id.activity_more_app_recommend);
                 }
                 break;
             case R.id.favorite_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreFavorite);
-                mSphinx.showView(R.id.view_favorite);
+                mSphinx.showView(R.id.view_more_favorite);
                 break;
             case R.id.history_browse_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreHistory);
-                mSphinx.showView(R.id.view_history);
+                mSphinx.showView(R.id.view_more_history);
                 break;
             case R.id.settings_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreSetting);
-                mSphinx.showView(R.id.activity_setting);
+                mSphinx.showView(R.id.activity_more_setting);
                 break;
             case R.id.feedback_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreFeedback);
-                mSphinx.showView(R.id.activity_feedback);
+                mSphinx.showView(R.id.activity_more_feedback);
                 break;
             case R.id.add_merchant_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreAddMerchant);
-                mSphinx.showView(R.id.activity_add_merchant);
+                mSphinx.showView(R.id.activity_more_add_merchant);
                 break;
             case R.id.help_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreHelp);
-                mSphinx.showView(R.id.activity_help);
+                mSphinx.showView(R.id.activity_more_help);
                 break;
             case R.id.about_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreAboutUs);
-                mSphinx.showView(R.id.activity_about_us);
+                mSphinx.showView(R.id.activity_more_about_us);
                 break;
                 
             case R.id.give_favourable_comment_btn:
@@ -513,7 +513,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                         if (id == DialogInterface.BUTTON_POSITIVE) {
                             intent.putExtra(MapDownloadActivity.EXTRA_UPGRADE_ALL, true);
                         }
-                        mSphinx.showView(R.id.activity_map_download, intent);
+                        mSphinx.showView(R.id.activity_more_map_download, intent);
                     }
                 });
     }

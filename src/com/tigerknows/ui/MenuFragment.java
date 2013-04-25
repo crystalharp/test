@@ -97,13 +97,13 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         switch (view.getId()) {
             case R.id.poi_btn:
             	mActionLog.addAction(ActionLog.MenuPOI);
-                mSphinx.uiStackClose(new int[]{R.id.view_home});
-                mSphinx.showView(R.id.view_home);
+                mSphinx.uiStackClose(new int[]{R.id.view_poi_home});
+                mSphinx.showView(R.id.view_poi_home);
                 break;
             case R.id.discover_btn:
                 mActionLog.addAction(ActionLog.MenuDiscover);
-                mSphinx.uiStackClose(new int[]{R.id.view_discover});
-                mSphinx.showView(R.id.view_discover);
+                mSphinx.uiStackClose(new int[]{R.id.view_discover_home});
+                mSphinx.showView(R.id.view_discover_home);
                 mSphinx.getDiscoverFragment().setCurrentItem(0);
                 if (mDiscvoerImv.getVisibility() == View.VISIBLE) {
                     mDiscvoerImv.setVisibility(View.GONE);
@@ -125,16 +125,16 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.traffic_btn:
                 mActionLog.addAction(ActionLog.MenuTraffic);
-                mSphinx.uiStackClose(new int[]{R.id.view_traffic_query});
+                mSphinx.uiStackClose(new int[]{R.id.view_traffic_home});
             	mSphinx.getTrafficQueryFragment().setState(TrafficViewSTT.State.Normal);
             	//正常使用菜单进入交通，默认在起点显示我的位置。
             	mSphinx.getTrafficQueryFragment().setShowStartMyLocation(true);
-                mSphinx.showView(R.id.view_traffic_query);
+                mSphinx.showView(R.id.view_traffic_home);
                 break;
             case R.id.more_btn:
                 mActionLog.addAction(ActionLog.MenuMore);
-                mSphinx.uiStackClose(new int[]{R.id.view_more});
-                mSphinx.showView(R.id.view_more);
+                mSphinx.uiStackClose(new int[]{R.id.view_more_home});
+                mSphinx.showView(R.id.view_more_home);
                 break;
 
             default:

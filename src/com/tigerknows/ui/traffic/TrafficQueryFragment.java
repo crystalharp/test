@@ -238,9 +238,9 @@ public class TrafficQueryFragment extends BaseFragment {
     	
     	mSelectStartBtn = (Button)mRootView.findViewById(R.id.select_start_btn);
     	mSelectEndBtn = (Button)mRootView.findViewById(R.id.select_end_btn);
-    	mBusline = new QueryEditText((TKEditText)mRootView.findViewById(R.id.busline_edt), mActionTag);
-		mEnd     = new QueryEditText((TKEditText)mRootView.findViewById(R.id.end_edt), mActionTag);
-		mStart   = new QueryEditText((TKEditText)mRootView.findViewById(R.id.start_edt), mActionTag);
+    	mBusline = new QueryEditText((TKEditText)mRootView.findViewById(R.id.busline_edt));
+		mEnd     = new QueryEditText((TKEditText)mRootView.findViewById(R.id.end_edt));
+		mStart   = new QueryEditText((TKEditText)mRootView.findViewById(R.id.start_edt));
 		mCityTxt = (TextView)mRootView.findViewById(R.id.cur_city_txt);
 		mCityView = (View)mRootView.findViewById(R.id.cur_city_view);
 		mShadowWhite = (View)mRootView.findViewById(R.id.shadow_input);
@@ -473,9 +473,8 @@ public class TrafficQueryFragment extends BaseFragment {
 			mPOI = new POI();
 		}
 		
-		public QueryEditText(TKEditText tkEditText, String actionTag) {
+		public QueryEditText(TKEditText tkEditText) {
 			mEdt = tkEditText;
-			mEdt.mActionTag = mActionTag;
 		}
 		
 		public void setHint(String hint) {
@@ -688,7 +687,7 @@ public class TrafficQueryFragment extends BaseFragment {
         
         TrafficQuery trafficQuery = new TrafficQuery(sphinx);
             
-        trafficQuery.setup(Globals.g_Current_City_Info.getId(), start, end, queryType, R.id.view_traffic_query, sphinx.getString(R.string.doing_and_wait));
+        trafficQuery.setup(Globals.g_Current_City_Info.getId(), start, end, queryType, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
         
         sphinx.queryStart(trafficQuery);
     }
@@ -993,11 +992,11 @@ public class TrafficQueryFragment extends BaseFragment {
         		if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
         		    mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getLineList().size());
         			mSphinx.getBuslineResultLineFragment().setData(buslineQuery);
-        			mSphinx.showView(R.id.view_busline_line_result);
+        			mSphinx.showView(R.id.view_traffic_busline_line_result);
         		} else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
                     mActionLog.addAction(mActionTag + ActionLog.TrafficResultBusline, buslineQuery.getBuslineModel().getStationList().size());
         			mSphinx.getBuslineResultStationFragment().setData(buslineQuery);
-        			mSphinx.showView(R.id.view_busline_station_result);
+        			mSphinx.showView(R.id.view_traffic_busline_station_result);
         		}        		
         	}
         }

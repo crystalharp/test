@@ -36,7 +36,6 @@ import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserLoginActivity;
 import com.tigerknows.util.Utility;
-import com.tigerknows.widget.BaseDialog;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -524,7 +523,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                                     intent.putExtra(BaseActivity.SOURCE_USER_HOME, true);
                                     intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, sourceViewIdLogin);
                                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.view_user_home);
-                                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, R.id.view_more);
+                                    intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_FAILED, R.id.view_more_home);
                                     activity.startActivityForResult(intent, R.id.activity_user_login);
                                 }
                             });
@@ -714,8 +713,6 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         }
         if (sourceView instanceof BaseFragment) {
         	((BaseFragment) sourceView).dismiss();
-        } else if (sourceView instanceof BaseDialog) {
-        	((BaseDialog) sourceView).dismiss();
         } else if (sourceView instanceof Activity) {
         	((Activity) sourceView).finish();
         } else if (sourceView instanceof Dialog) {
@@ -746,8 +743,6 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                 }
                 if (sourceView instanceof BaseFragment) {
                     ((BaseFragment) sourceView).dismiss();
-                } else if (sourceView instanceof BaseDialog) {
-                    ((BaseDialog) sourceView).dismiss();
                 } else if (sourceView instanceof Activity) {
                     ((Activity) sourceView).finish();
                 } else if (sourceView instanceof Dialog) {
