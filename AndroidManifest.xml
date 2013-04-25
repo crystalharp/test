@@ -26,46 +26,60 @@
                   android:windowSoftInputMode="adjustPan|stateHidden"
                   android:label="@string/app_name"
                   android:launchMode="singleTop"
-                  android:screenOrientation="portrait">
+                  android:screenOrientation="portrait"
+                  android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter android:label="@string/app_name" >
-				<action android:name="android.intent.action.VIEW">
-				</action>
-				<category android:name="android.intent.category.DEFAULT">
-				</category>
-				<data android:mimeType="vnd.android.cursor.item/postal-address">
-				</data>
-			</intent-filter>
-			<intent-filter android:label="@string/app_name">
-				<action android:name="android.intent.action.VIEW"></action>
-				<category android:name="android.intent.category.DEFAULT"></category>
-				<data android:mimeType="vnd.android.cursor.item/postal-address_v2"></data>
-			</intent-filter>
-			<intent-filter android:label="@string/app_name" >
-				<action android:name="android.intent.action.VIEW"></action>
-				<category android:name="android.intent.category.DEFAULT"></category>
-				<category android:name="android.intent.category.BROWSABLE"></category>
-				<data android:scheme="geo"></data>
-			</intent-filter>
-			<intent-filter android:label="@string/app_name">
-				<action android:name="android.intent.action.VIEW"></action>
-				<category android:name="android.intent.category.DEFAULT"></category>
-				<category android:name="android.intent.category.BROWSABLE"></category>
-				<data android:scheme="latitude"></data>
-			</intent-filter>
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW"></action>
-				<category android:name="android.intent.category.DEFAULT"></category>
-				<category android:name="android.intent.category.BROWSABLE"></category>
-				<data android:scheme="http"
-					android:host="maps.tigerknows.com"
-					android:pathPrefix="/"
-					>
-				</data>
-			</intent-filter>
+                <action android:name="android.intent.action.VIEW">
+                </action>
+                <category android:name="android.intent.category.DEFAULT">
+                </category>
+                <data android:mimeType="vnd.android.cursor.item/postal-address">
+                </data>
+            </intent-filter>
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <data android:mimeType="vnd.android.cursor.item/postal-address_v2"></data>
+            </intent-filter>
+            <intent-filter android:label="@string/app_name" >
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>
+                <data android:scheme="geo"></data>
+            </intent-filter>
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>
+                <data android:scheme="latitude"></data>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>
+                <data android:scheme="http"
+                    android:host="maps.tigerknows.com"
+                    android:pathPrefix="/"
+                    >
+                </data>
+            </intent-filter>
+            
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>
+                <data android:scheme="tigerknows"
+                    >
+                </data>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="action.com.tigerknows.weixin.test" />
+                <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter>
         </activity>
         
         <service android:name=".service.LocationService" android:enabled="true"></service>
@@ -301,8 +315,18 @@
         <service android:name="com.tigerknows.service.PullService">
         </service>
         
-        <service android:name="com.tigerknows.service.LocationCollectionService">
-        </service>
+        <activity
+            android:theme="@style/Theme.NoTitleBar" 
+            android:name=".wxapi.WXEntryActivity"
+            android:label="@string/app_name"
+            android:exported="true">
+            
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="sdksample"/>
+            </intent-filter>
+        </activity>
 
     </application>
     <supports-screens android:anyDensity="true" android:resizeable="true" android:largeScreens="true" android:smallScreens="true"></supports-screens>
