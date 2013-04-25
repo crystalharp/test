@@ -52,7 +52,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        mId = R.id.activity_add_merchant;
+        mId = R.id.activity_more_add_merchant;
         mActionTag = ActionLog.AddMerchant;
         setContentView(R.layout.more_add_merchant);
         

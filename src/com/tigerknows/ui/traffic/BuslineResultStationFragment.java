@@ -403,7 +403,7 @@ public class BuslineResultStationFragment extends BaseFragment {
         	} else {
         		if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
         			mSphinx.getBuslineResultLineFragment().setData(buslineQuery);
-        			mSphinx.showView(R.id.view_busline_line_result);
+        			mSphinx.showView(R.id.view_traffic_busline_line_result);
         		} else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
         			mSphinx.getBuslineResultStationFragment().setData(buslineQuery);
         		}        		

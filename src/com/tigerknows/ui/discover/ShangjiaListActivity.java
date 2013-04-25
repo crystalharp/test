@@ -65,7 +65,7 @@ public class ShangjiaListActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.DingdanList;
-        mId = R.id.activity_tuangou_shangjia_list;
+        mId = R.id.activity_discover_shangjia_list;
 
         setContentView(R.layout.discover_shangjia_list);
         

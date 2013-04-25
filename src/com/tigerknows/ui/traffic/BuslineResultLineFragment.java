@@ -135,7 +135,7 @@ public class BuslineResultLineFragment extends BaseFragment {
 					mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
 					focusedIndex = position;
 					mSphinx.getBuslineDetailFragment().setData(mLineList.get(position), position);
-					mSphinx.showView(R.id.view_busline_result_detail);
+					mSphinx.showView(R.id.view_traffic_busline_detail);
 	            }
 			}
 

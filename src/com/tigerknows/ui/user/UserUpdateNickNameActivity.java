@@ -184,8 +184,8 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
             startActivity(intent);
             return;
         }
-		if (mSourceViewIdLogin == R.id.activity_poi_comment) {
-		    if (mSourceViewId == R.id.activity_poi_comment) {
+		if (mSourceViewIdLogin == R.id.activity_poi_edit_comment) {
+		    if (mSourceViewId == R.id.activity_poi_edit_comment) {
                 setResult(RESULT_OK);
             } else {
                 Intent intent = new Intent(UserUpdateNickNameActivity.this, EditCommentActivity.class);
@@ -193,7 +193,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
                 startActivity(intent);
             }
 		} else if (mSourceViewIdLogin != R.id.activity_poi_comment_list &&
-		        mSourceViewIdLogin != R.id.activity_tuangou_shangjia_list){
+		        mSourceViewIdLogin != R.id.activity_discover_shangjia_list){
 			Intent intent = new Intent(UserUpdateNickNameActivity.this, Sphinx.class);
 	        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	        startActivity(intent);
@@ -210,8 +210,8 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 			showToast(R.string.update_nicknam_success2);
 		}
 		
-		if (mSourceViewIdLogin == R.id.activity_poi_comment) {
-		    if (mSourceViewId == R.id.activity_poi_comment) {
+		if (mSourceViewIdLogin == R.id.activity_poi_edit_comment) {
+		    if (mSourceViewId == R.id.activity_poi_edit_comment) {
                 setResult(RESULT_OK);
             } else {
                 Intent intent = new Intent(UserUpdateNickNameActivity.this, EditCommentActivity.class);

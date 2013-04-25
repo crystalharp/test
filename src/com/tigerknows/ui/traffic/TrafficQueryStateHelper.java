@@ -55,11 +55,17 @@ public class TrafficQueryStateHelper {
         public void exit() {
             // TODO Auto-generated method stub
             super.exit();
+            mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeMap + ActionLog.Dismiss);
         }
 
         @Override
         public void postEnter() {
             super.postEnter();
+            mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeMap);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeMap;
+			mQueryFragment.mStart.mEdt.mActionTag = ActionLog.TrafficHomeMap;
+			mQueryFragment.mEnd.mEdt.mActionTag = ActionLog.TrafficHomeMap;
+			mQueryFragment.mBusline.mEdt.mActionTag = ActionLog.TrafficHomeMap;
             mQueryFragment.mEventHelper.applyListenersInMapState();
         }
 
@@ -92,12 +98,18 @@ public class TrafficQueryStateHelper {
         public void postEnter() {
             // TODO Auto-generated method stub
             super.postEnter();
+            mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeNormal);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeNormal;
+			mQueryFragment.mStart.mEdt.mActionTag = ActionLog.TrafficHomeNormal;
+			mQueryFragment.mEnd.mEdt.mActionTag = ActionLog.TrafficHomeNormal;
+			mQueryFragment.mBusline.mEdt.mActionTag = ActionLog.TrafficHomeNormal;
         }
 
         @Override
         public void exit() {
             // TODO Auto-generated method stub
             super.exit();
+            mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeNormal + ActionLog.Dismiss);
         }
 
         @Override
@@ -131,11 +143,17 @@ public class TrafficQueryStateHelper {
         public void exit() {
             // TODO Auto-generated method stub
             super.exit();
+            mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeInput + ActionLog.Dismiss);
         }
 
         @Override
         public void postEnter() {
             super.postEnter();
+            mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeInput);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeInput;
+			mQueryFragment.mStart.mEdt.mActionTag = ActionLog.TrafficHomeInput;
+			mQueryFragment.mEnd.mEdt.mActionTag = ActionLog.TrafficHomeInput;
+			mQueryFragment.mBusline.mEdt.mActionTag = ActionLog.TrafficHomeInput;
             mQueryFragment.mEventHelper.applyListenersInInputState();
         }
 
@@ -150,7 +168,7 @@ public class TrafficQueryStateHelper {
 
         @Override
         public void exit() {
-            super.exit();
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeSelectPoint+ActionLog.Dismiss);
             mQueryFragment.hideCommonTitle();
             mQueryFragment.mTitle.setVisibility(View.VISIBLE);
         }
@@ -169,6 +187,11 @@ public class TrafficQueryStateHelper {
         @Override
         public void postEnter(){
             super.postEnter();
+			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeSelectPoint);
+			mQueryFragment.mActionTag = ActionLog.TrafficHomeSelectPoint;
+			mQueryFragment.mStart.mEdt.mActionTag = ActionLog.TrafficHomeSelectPoint;
+			mQueryFragment.mEnd.mEdt.mActionTag = ActionLog.TrafficHomeSelectPoint;
+			mQueryFragment.mBusline.mEdt.mActionTag = ActionLog.TrafficHomeSelectPoint;
             mQueryFragment.mEventHelper.applyListenersInSelectPointState();
         }
 	}

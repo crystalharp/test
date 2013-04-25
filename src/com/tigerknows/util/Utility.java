@@ -1079,7 +1079,7 @@ public class Utility {
                 } else {
                     trafficQueryFragment.setDataNoSuggest(poiForTraffic, location, queryType);
                     sphinx.uiStackRemove(R.id.view_result_map);   // 再回退时不出现地图界面
-                    sphinx.showView(R.id.view_traffic_query);
+                    sphinx.showView(R.id.view_traffic_home);
                 }
             }
         });

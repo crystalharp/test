@@ -403,7 +403,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             } else if (v.getId() == R.id.error_recovery_btn) {
                 mActionLog.addAction(mActionTag +  ActionLog.CommonErrorRecovery);
             	TrafficReportErrorActivity.addTarget(plan);
-            	mSphinx.showView(R.id.activity_traffic_error_recovery);
+            	mSphinx.showView(R.id.activity_traffic_report_error);
             }
 		}
 

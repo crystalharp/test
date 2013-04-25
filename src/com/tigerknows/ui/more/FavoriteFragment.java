@@ -499,7 +499,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         switch (type) {
             case Tigerknows.Favorite.FAVORITE_BUSLINE:
             	mSphinx.getBuslineDetailFragment().setData(traffic.getBuslineQuery().getBuslineModel().getLineList().get(0));
-                mSphinx.showView(R.id.view_busline_result_detail);
+                mSphinx.showView(R.id.view_traffic_busline_detail);
                 break;
                 
             case Tigerknows.Favorite.FAVORITE_TRANSFER:
