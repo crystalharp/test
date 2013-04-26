@@ -241,7 +241,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
-        mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL, R.layout.hint_poi_detail);
+        if (mPOI != null) {
+            mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL, R.layout.hint_poi_detail);
+        }
         mTitleBtn.setText(R.string.detail_info);
         mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
         mRightBtn.setOnClickListener(this); 

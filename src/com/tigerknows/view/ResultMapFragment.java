@@ -130,7 +130,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         mTitleBtn.setText(mTitle);
         mRightBtn.setVisibility(View.INVISIBLE);
         mRootView.setOnTouchListener(null);
-        if (mSphinx.mSnapMap) {
+        if (mSphinx.mRequstSnapMap) {
             mSnapView.setVisibility(View.VISIBLE);
         } else {
             mSnapView.setVisibility(View.GONE);

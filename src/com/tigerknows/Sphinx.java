@@ -171,9 +171,35 @@ import com.tigerknows.view.user.UserUpdatePhoneActivity;
  */
 public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
+	/**
+	 * 是否来自微信	
+	 */
     public static final String EXTRA_WEIXIN = "extra_weixin";
+    
+    /**
+     * 动态POI信息
+     */
     public static final String EXTRA_PULL_MESSAGE = "extra_pull_message";
+    
+    /**
+     * 请求快照的类型
+     */
+    public static final String EXTRA_SNAP_TYPE = "type";
+    
+    /**
+     * 第一次打开本应用时会发送的广播的Action
+     */
     public static final String ACTION_FIRST_STARTUP = "action.com.tigerknows.first.startup";
+
+    /**
+     * 请求当前位置的快照
+     */
+    static final int SNAP_TYPE_MYLOCATION = 0;
+    
+    /**
+     * 请求搜索结果POI的快照
+     */
+    static final int SNAP_TYPE_QUERY_POI = 3;
     
 	private static final int CONFIG_SERVER = 8;
 	private static final int PROFILE = 7;
@@ -311,8 +337,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     InfoWindowLongListener mInfoWindowLongStartListener = new InfoWindowLongListener();
     InfoWindowLongListener mInfoWindowLongEndListener = new InfoWindowLongListener();
     
-    private boolean mFromIntent = false;
-    public boolean mSnapMap = false;
+    /**
+     * 是否 来自第三方的调用
+     */
+    private boolean mFromThirdParty = false;
+    
+    /**
+     * 是否来自索爱的地图快照请求
+     */
+    public boolean mRequstSnapMap = false;
     
     // 老虎动画时间
     private static final int LOGO_ANIMATION_TIME = 2000;
@@ -340,6 +373,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+//        Debug.startMethodTracing("spinxTracing");
         
         mHandler=new Handler(){
             @Override
@@ -459,7 +493,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             LogWrapper.d(TAG, "onCreate() uiStack="+uiStack);
 
             initIntent(getIntent());
-            if (mFromIntent || mSnapMap) {
+            if (mFromThirdParty) {
                 // 来第三方的调用
             } else if (uiStack != null) {
                 initView(uiStack);
@@ -1203,6 +1237,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         ActivityManager am = (ActivityManager)getSystemService(
                 Context.ACTIVITY_SERVICE);
         am.restartPackage("com.tigerknows");
+//        Debug.stopMethodTracing();
 	}
 	/**
 	 * store the last known position and zoom level then close the database.
@@ -1290,7 +1325,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
                 
                 if (!uiStackBack()) {
-                    if (mFromIntent || mSnapMap) {
+                    if (mFromThirdParty) {
                         Sphinx.this.finish();
                     } else {
                         CommonUtils.showNormalDialog(Sphinx.this,
@@ -1358,9 +1393,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return;
         }
         Uri uri = intent.getData();
-        if ("http".equals(intent.getScheme())) {
+        String scheme = intent.getScheme();
+        
+        // 拦截通过URL查看指定经纬度的位置信息的Intent，在地图显示位置信息
+        if ("http".equals(scheme)) {
             initView(null);
-            mFromIntent = true;
+            mFromThirdParty = true;
             try {
                 String uriStr = uri.toString();
                 String[] parms = uriStr.substring(uriStr.indexOf("?")+1).split("&");
@@ -1410,9 +1448,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 e.printStackTrace();
             }
             return;
-        } else if ("geo".equals(intent.getScheme())) {
+        }
+        
+        // 拦截通过URL查看指定经纬度的位置信息的Intent，在地图显示位置信息
+        if ("geo".equals(scheme)) {
             initView(null);
-            mFromIntent = true;
+            mFromThirdParty = true;
             // geo:latitude,longitude
             // geo:latitude,longitude?z=zoom，z表示zoom级别，值为数字1到23
             // geo:0,0?q=my+street+address
@@ -1422,7 +1463,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             try {
                 uriStr = uriStr.substring(uriStr.indexOf(":")+1);
                 double lat = Double.parseDouble(uriStr.substring(0, uriStr.indexOf(",")));
-                LogWrapper.d("Sphinx", "initIntent() lat="+lat);
                 uriStr = uriStr.substring(uriStr.indexOf(",")+1);
                 double lon;
                 if (uriStr.indexOf("?") > -1) {
@@ -1468,10 +1508,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             
         }
-        int type = intent.getIntExtra("type", -1);
-        if (type == 0) {
+        
+        // 来自索爱的调用，为其提供地图快照作为返回
+        int type = intent.getIntExtra(EXTRA_SNAP_TYPE, -1);
+        if (type == SNAP_TYPE_MYLOCATION) {
             initView(null);
-            mSnapMap = true;
+            mFromThirdParty = true;
+            mRequstSnapMap = true;
             POI poi = getPOI();
             if (poi.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
                 poi.setName(mMapEngine.getPositionName(poi.getPosition(), (int)mMapView.getZoomLevel()));
@@ -1484,16 +1527,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             getResultMapFragment().setData(mContext.getString(R.string.result_map), ActionLog.POIDetailMap);
             showView(R.id.view_result_map);
             return;
-        } else if (type == 3) {
+        } else if (type == SNAP_TYPE_QUERY_POI) {
             initView(null);
-            mSnapMap = true;
+            mFromThirdParty = true;
+            mRequstSnapMap = true;
             showView(R.id.view_poi_query);
             return;
         }
+        
+        // 来自联系人应用程序，查询联系人地址的相关POI
         final String mimetype = intent.resolveType(this);
         if ("vnd.android.cursor.item/postal-address_v2".equals(mimetype)) {
             initView(null);
-            mFromIntent = true;
+            mFromThirdParty = true;
             if (uri != null) {
                 Cursor cursor = getContentResolver().query(uri, null, null, null, null);
                 if (cursor!=null && cursor.getCount() > 0) {
@@ -1510,13 +1556,53 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     } else if (city2 > 0) {
                         changeCity(city2);
                     }
-                    String keyword = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET)) + " " + cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.NEIGHBORHOOD));
+                    String keyword = null; 
+                    String street = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.STREET));
+                    String neighborhood = cursor.getString(cursor.getColumnIndex(ContactsContract.CommonDataKinds.StructuredPostal.NEIGHBORHOOD));
+                    if (street == null) {
+                    	keyword = neighborhood;
+                    } else if (neighborhood == null) {
+                    	keyword = street;
+                    } else {
+                    	keyword += street + " " + neighborhood;
+                    }
                     if (!TextUtils.isEmpty(keyword)) {
                         DataQuery dataQuery = getPOIQuery(keyword);
                         queryStart(dataQuery);
                         ((POIResultFragment)getFragment(dataQuery.getTargetViewId())).setup();
                         showView(dataQuery.getTargetViewId());
                     }
+                }
+            }
+            return;
+        }
+        
+        // 来自微信的调用，为其提供POI数据作为返回
+        if (intent.getBooleanExtra(EXTRA_WEIXIN, false)) {
+            initView(null);
+        	mFromThirdParty = true;
+        	mFromWeiXin = true;
+        	mBundle = intent.getExtras();
+            return;
+        } 
+        
+        // 来自微信的调用，在其中浏览POI的WAP页时点击打开按钮后进入到本应用，显示其POI的详情信息
+        if ("tigerknows".equals(scheme)) {
+            initView(null);
+        	mFromThirdParty = true;
+            if (uri != null) {
+            	String uriStr = uri.toString();
+            	LogWrapper.d(TAG, "uriStr="+uriStr);
+                String[] parms = uriStr.substring(uriStr.indexOf("?")+1).split("&");
+                String[] keyValue = parms[0].split("=");
+                if (keyValue.length == 2) {
+                	if (keyValue[0].equals("poiuid")) {
+                		String poiuid = keyValue[1];
+                		if (poiuid != null) {
+                            getPOIDetailFragment().setData(poiuid);
+                            showView(R.id.view_poi_detail);
+                		}
+                	}
                 }
             }
             return;
@@ -1592,30 +1678,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
                 
                 mActionLog.addAction(ActionLog.RadarClick, message.getType(), message.getDynamicPOI()==null?"none":(""+message.getDynamicPOI().getMasterType()));
-                result = true;
-            } else if (newIntent.getBooleanExtra(EXTRA_WEIXIN, false)) {
-            	mFromWeiXin = true;
-            	mBundle = newIntent.getExtras();
-                result = true;
-            } else if ("tigerknows".equals(newIntent.getScheme())) {
-            	uiStackClose(new int[]{R.id.view_home});
-            	showView(R.id.view_home);
-                Uri uri = newIntent.getData();
-                if (uri != null) {
-                	String uriStr = uri.toString();
-                	LogWrapper.d(TAG, "uriStr="+uriStr);
-                    String[] parms = uriStr.substring(uriStr.indexOf("?")+1).split("&");
-                    String[] keyValue = parms[0].split("=");
-                    if (keyValue.length == 2) {
-                    	if (keyValue[0].equals("poiuid")) {
-                    		String poiuid = keyValue[1];
-                    		if (poiuid != null) {
-	                            getPOIDetailFragment().setData(poiuid);
-	                            showView(R.id.view_poi_detail);
-                    		}
-                    	}
-                    }
-                }
                 result = true;
             }
             
@@ -2480,7 +2542,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     
     private boolean showLocationDialog(int id) {
-        if (mFromIntent || mSnapMap) {
+        if (mFromThirdParty) {
             return false;
         }
         
