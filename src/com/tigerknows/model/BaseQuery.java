@@ -56,8 +56,6 @@ public abstract class BaseQuery {
     
     static final String TAG = "BaseQuery";
     
-    public static boolean Test = false;
-    
     public static final String ACTION_NETWORK_STATUS_REPORT = "ACTION_NETWORK_STATUS_REPORT";
 
     // 交通查询
@@ -529,7 +527,7 @@ public abstract class BaseQuery {
         while ((isFirstConnection || needReconntection) && !isStop) {
             try {
                 boolean isLaunchTest = false;
-                if (Test) {
+                if (TKConfig.LaunchTest) {
                     if (apiType.equals(API_TYPE_DATA_QUERY)
                             || apiType.equals(API_TYPE_DATA_OPERATION)
                             || apiType.equals(API_TYPE_ACCOUNT_MANAGE)) {
@@ -724,7 +722,7 @@ public abstract class BaseQuery {
     
     protected void translateResponse(byte[] data) throws APIException {
         try {
-            if (Test == false) { // 如果是自动测试分填充的数据，则没有加密
+            if (TKConfig.LaunchTest == false) { // 如果是自动测试分填充的数据，则没有加密
             // 解密数据
             data = DataEncryptor.decrypt(data);
             // 解压数据

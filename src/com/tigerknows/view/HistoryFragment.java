@@ -313,8 +313,8 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                     POI poi = (POI) adapterView.getAdapter().getItem(position);
                     if (poi != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem + mLayerType, position);
-                        mSphinx.getPOIDetailFragment().setData(poi);
                         mSphinx.showView(R.id.view_poi_detail);
+                        mSphinx.getPOIDetailFragment().setData(poi);
                     }
                 }
             }

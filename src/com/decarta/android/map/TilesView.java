@@ -76,8 +76,6 @@ import com.decarta.android.location.Position;
 import com.decarta.android.map.Compass.PlaceLocation;
 import com.decarta.android.map.MapLayer.MapLayerProperty;
 import com.decarta.android.map.MapLayer.MapLayerType;
-import com.decarta.android.map.MapView.MapType;
-import com.decarta.android.map.MapView.MoveEndEventListener;
 import com.decarta.android.map.RotationTilt.RotateReference;
 import com.decarta.android.map.RotationTilt.TiltReference;
 import com.decarta.android.util.LogWrapper;
@@ -86,8 +84,11 @@ import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
 import com.decarta.android.util.XYZ;
+import com.tigerknows.maps.MapView;
 import com.tigerknows.maps.MapWord;
 import com.tigerknows.maps.TileDownload;
+import com.tigerknows.maps.MapView.MapType;
+import com.tigerknows.maps.MapView.MoveEndEventListener;
 import com.tigerknows.util.CommonUtils;
 
 /**
@@ -211,12 +212,12 @@ public class TilesView extends GLSurfaceView {
         mParentMapView.executeDownloadListeners(state);
     }   
     
-    boolean clearTileImages = false;
+    public boolean clearTileImages = false;
     
     /**
      * 是否取消快照
      */
-    boolean isCancelSnap = false;
+    public boolean isCancelSnap = false;
     
     /**
      * 快照图片

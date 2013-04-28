@@ -53,12 +53,10 @@ public class TrafficQuerySuggestHistoryHelper {
                     }
                     mQueryFragment.mLogHelper.logForSuggestDispatch(mQueryFragment.mSelectedEdt, position);
                     mQueryFragment.mSelectedEdt.setPOI(poi);
-                    mQueryFragment.mSelectedEdt.getEdt().requestFocus();
                     
                 } else  if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
                     mQueryFragment.mLogHelper.logForSuggestDispatch(mQueryFragment.mSelectedEdt, position);
                     mQueryFragment.mSelectedEdt.setPOI(tkWord.toPOI());
-                    mQueryFragment.mSelectedEdt.getEdt().requestFocus();
                 }
             }
         });

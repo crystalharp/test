@@ -317,7 +317,7 @@ public class POI extends BaseData {
         private String masterUid;
         private String summary;
         private String slaveUid;
-        private String dianyingImage;
+        private TKDrawable dianyingImage;
         private String dianyingGrade;
         private String dianyingType;
         private String dianyingLength;
@@ -342,7 +342,10 @@ public class POI extends BaseData {
             }
             
             if (data.containsKey(FIELD_DIANYING_IMAGE_URL)) {
-                dianyingImage = data.getString(FIELD_DIANYING_IMAGE_URL);
+                String url = data.getString(FIELD_DIANYING_IMAGE_URL);
+                TKDrawable tkDrawable = new TKDrawable();
+                tkDrawable.setUrl(url);
+                dianyingImage = tkDrawable;
             }
             
             if (data.containsKey(FIELD_DIANYING_GRADE)) {
@@ -374,7 +377,7 @@ public class POI extends BaseData {
             return slaveUid;
         }
 
-        public String getDianyingImage() {
+        public TKDrawable getDianyingImage() {
             return dianyingImage;
         }
 

@@ -604,8 +604,8 @@ public class DataQueryTest {
         data.put(POI.FIELD_STATUS, 1);
         data.put(POI.FIELD_LAST_COMMENT, launchDianping("FIELD_LAST_COMMENT"));
         XArray<XMap> xarray = new XArray<XMap>();
-        for(int i = 0; i < 16; i ++) {
-            xarray.add(launchDynamicPOI(i));
+        for(int i = 0; i < 168; i ++) {
+            xarray.add(launchDynamicPOI(i%15));
         }
         data.put(POI.FIELD_DYNAMIC_POI, xarray);
         return data;
@@ -626,8 +626,12 @@ public class DataQueryTest {
         XMap data = new XMap();
         data.put(DynamicPOI.FIELD_TYPE, type);
         data.put(DynamicPOI.FIELD_MASTER_UID, "FIELD_MASTER_UID");
-        data.put(DynamicPOI.FIELD_SUMMARY, "FIELD_SUMMARY");
+        data.put(DynamicPOI.FIELD_SUMMARY, "FIELD_SUMMARY"+type);
         data.put(DynamicPOI.FIELD_SLAVE_UID, "FIELD_SLAVE_UID");
+        data.put(DynamicPOI.FIELD_DIANYING_IMAGE_URL, "http://www.tigerknows.com/wp-content/themes/tiger/images/logo.jpg");
+        data.put(DynamicPOI.FIELD_DIANYING_GRADE, "GRADE");
+        data.put(DynamicPOI.FIELD_DIANYING_TYPE, "TYPE");
+        data.put(DynamicPOI.FIELD_DIANYING_LENGTH, "LENGTH");
         return data;
     }
 

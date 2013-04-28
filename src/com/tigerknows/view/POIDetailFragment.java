@@ -64,6 +64,7 @@ import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
+import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Yingxun;
@@ -184,6 +185,138 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     private Animation mStampAnimation;
     
+    private Runnable mLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            mSphinx.getHandler().removeCallbacks(mActualLoadedDrawableRun);
+            mSphinx.getHandler().post(mActualLoadedDrawableRun);
+        }
+    };
+    
+    private Runnable mActualLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            if (mSphinx.uiStackPeek() == getId() && mSphinx.isFinishing() == false) {
+                int childCount = mDynamicDianyingListView.getChildCount();
+                for(int i = 0; i < childCount; i++) {
+                    final DynamicPOI dynamic = mDynamicDianyingList.get(i);
+                    View child = mDynamicDianyingListView.getChildAt(i);
+                    if (child.getVisibility() == View.VISIBLE) {
+                        ImageView iconImv = (ImageView) child.findViewById(R.id.icon_imv);
+                        TKDrawable tkDrawable = dynamic.getDianyingImage();
+                        if (tkDrawable != null) {
+                            Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, POIDetailFragment.this.toString());
+                            iconImv.setBackgroundDrawable(drawable);
+                        } else {
+                            iconImv.setBackgroundDrawable(null);
+                        }
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+    };
+    
+    private OnClickListener mDynamicPOIListener = new View.OnClickListener() {
+        
+        @Override
+        public void onClick(View view) {
+            DynamicPOI dynamic = null;
+            Object object = view.getTag();
+            if (object instanceof DynamicPOI) {
+                dynamic = (DynamicPOI) object;
+            }
+            
+            if (dynamic == null) {
+                return;
+            }
+            
+            String dataType = dynamic.getType();
+            DataOperation dataOperation = new DataOperation(mSphinx);
+            Hashtable<String, String> criteria = new Hashtable<String, String>();
+            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, dataType);
+            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getMasterUid());
+            
+            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+                mActionLog.addAction(mActionTag +  ActionLog.POIDetailTuangou);
+                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+                             Tuangou.NEED_FILELD
+                                + Util.byteToHexString(Tuangou.FIELD_NOTICED)
+                                + Util.byteToHexString(Tuangou.FIELD_CONTENT_TEXT)
+                                + Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC));
+                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+                        Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[0]" + ";" +
+                        Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[0]" + ";" +
+                        Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_TAOCAN)+"_[0]");
+                dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+                List<BaseQuery> list = new ArrayList<BaseQuery>();
+                list.add(dataOperation);
+                dataOperation = new DataOperation(mSphinx);
+                criteria = new Hashtable<String, String>();
+                criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+                criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_FENDIAN);
+                criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getSlaveUid());
+                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Fendian.NEED_FILELD);
+                dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+                list.add(dataOperation);
+                mTkAsyncTasking = mSphinx.queryStart(list);
+                mBaseQuerying = list;
+            } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
+                mActionLog.addAction(mActionTag +  ActionLog.POIDetailYanchu);
+                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+                             Yanchu.NEED_FILELD + Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
+                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+                        Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
+                        Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
+                dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+                List<BaseQuery> list = new ArrayList<BaseQuery>();
+                list.add(dataOperation);
+                mTkAsyncTasking = mSphinx.queryStart(list);
+                mBaseQuerying = list;
+            } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+                mActionLog.addAction(mActionTag +  ActionLog.POIDetailZhanlan);
+                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+                        Zhanlan.NEED_FILELD + Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
+                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+                        Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
+                        Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
+                dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+                List<BaseQuery> list = new ArrayList<BaseQuery>();
+                list.add(dataOperation);
+                mTkAsyncTasking = mSphinx.queryStart(list);
+                mBaseQuerying = list;
+            } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {
+                List<BaseQuery> list = new ArrayList<BaseQuery>();
+                
+                dataOperation = new DataOperation(mSphinx);
+                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+                             Dianying.NEED_FILELD_ONLY_DIANYING
+                                + Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
+                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+                        Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
+                dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+                list.add(dataOperation);
+                
+                dataOperation = new DataOperation(mSphinx);
+                criteria = new Hashtable<String, String>();
+                criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_YINGXUN);
+                criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getSlaveUid());
+                
+                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Yingxun.NEED_FILELD);
+                dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+                list.add(dataOperation);
+                
+                mTkAsyncTasking = mSphinx.queryStart(list);
+                mBaseQuerying = list;
+            }
+        }
+    };
+    
     public boolean isReLogin() {
         boolean isRelogin = this.isReLogin;
         this.isReLogin = false;
@@ -243,9 +376,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
-        if (mPOI != null) {
-            mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL, R.layout.hint_poi_detail);
-        }
         mTitleBtn.setText(R.string.detail_info);
         mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
         mRightBtn.setOnClickListener(this); 
@@ -447,67 +577,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     child = mLayoutInflater.inflate(R.layout.dynamic_poi_list_item, mDynamicPOIListView, false);
                     mDynamicPOIListView.addView(child, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
                 }
-                child.setOnClickListener(new View.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(View view) {
-                        DataOperation dataOperation = new DataOperation(mSphinx);
-                        Hashtable<String, String> criteria = new Hashtable<String, String>();
-                        criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, dataType);
-                        criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUid());
-                        
-                        if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
-                            mActionLog.addAction(mActionTag +  ActionLog.POIDetailTuangou);
-                            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
-                                         Tuangou.NEED_FILELD
-                                            + Util.byteToHexString(Tuangou.FIELD_NOTICED)
-                                            + Util.byteToHexString(Tuangou.FIELD_CONTENT_TEXT)
-                                            + Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC));
-                            criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-                                    Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[0]" + ";" +
-                                    Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[0]" + ";" +
-                                    Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_TAOCAN)+"_[0]");
-                            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-                            List<BaseQuery> list = new ArrayList<BaseQuery>();
-                            list.add(dataOperation);
-                            dataOperation = new DataOperation(mSphinx);
-                            criteria = new Hashtable<String, String>();
-                            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_FENDIAN);
-                            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getSlaveUid());
-                            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Fendian.NEED_FILELD);
-                            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-                            list.add(dataOperation);
-                            mTkAsyncTasking = mSphinx.queryStart(list);
-                            mBaseQuerying = list;
-                        } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
-                            mActionLog.addAction(mActionTag +  ActionLog.POIDetailYanchu);
-                            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
-                                         Yanchu.NEED_FILELD + Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
-                            criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-                                    Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
-                                    Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
-                            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-                            List<BaseQuery> list = new ArrayList<BaseQuery>();
-                            list.add(dataOperation);
-                            mTkAsyncTasking = mSphinx.queryStart(list);
-                            mBaseQuerying = list;
-                        } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-                            mActionLog.addAction(mActionTag +  ActionLog.POIDetailZhanlan);
-                            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
-                                    Zhanlan.NEED_FILELD + Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
-                            criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-                                    Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
-                                    Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
-                            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-                            List<BaseQuery> list = new ArrayList<BaseQuery>();
-                            list.add(dataOperation);
-                            mTkAsyncTasking = mSphinx.queryStart(list);
-                            mBaseQuerying = list;
-                        }
-                    }
-                });
+                child.setOnClickListener(mDynamicPOIListener);
                 ImageView iconImv = (ImageView) child.findViewById(R.id.icon_imv);
                 TextView textTxv = (TextView) child.findViewById(R.id.text_txv);
                 if (BaseQuery.DATA_TYPE_TUANGOU.equals(dynamicPOI.getType())) {
@@ -587,45 +657,20 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 child = mLayoutInflater.inflate(R.layout.poi_dynamic_dianying_list_item, mDynamicDianyingListView, false);
                 mDynamicDianyingListView.addView(child, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
             }
-            child.setOnClickListener(new View.OnClickListener() {
-                
-                @Override
-                public void onClick(View view) {
-                    List<BaseQuery> list = new ArrayList<BaseQuery>();
-                    
-                    DataOperation dataOperation = new DataOperation(mSphinx);
-                    Hashtable<String, String> criteria = new Hashtable<String, String>();
-                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIANYING);
-                    criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getMasterUid());
-                    
-                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
-                                 Dianying.NEED_FILELD_ONLY_DIANYING
-                                    + Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
-                    criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-                            Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
-                    dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-                    list.add(dataOperation);
-                    
-                    dataOperation = new DataOperation(mSphinx);
-                    criteria = new Hashtable<String, String>();
-                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_YINGXUN);
-                    criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getSlaveUid());
-                    
-                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Yingxun.NEED_FILELD);
-                    dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-                    list.add(dataOperation);
-                    
-                    mTkAsyncTasking = mSphinx.queryStart(list);
-                    mBaseQuerying = list;
-                }
-            });
+            child.setTag(dynamic);
+            child.setOnClickListener(mDynamicPOIListener);
             ImageView iconImv = (ImageView) child.findViewById(R.id.icon_imv);
             TextView nameTxv = (TextView) child.findViewById(R.id.name_txv);
             TextView gradeTxv = (TextView) child.findViewById(R.id.grade_txv);
             TextView typeTxv = (TextView) child.findViewById(R.id.type_txv);
             TextView lengthTxv = (TextView) child.findViewById(R.id.length_txv);
+            TKDrawable tkDrawable = dynamic.getDianyingImage();
+            if (tkDrawable != null) {
+                Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, POIDetailFragment.this.toString());
+                iconImv.setBackgroundDrawable(drawable);
+            } else {
+                iconImv.setBackgroundDrawable(null);
+            }
             nameTxv.setText(dynamic.getSummary());
             gradeTxv.setText(dynamic.getDianyingGrade());
             typeTxv.setText(dynamic.getDianyingType());
@@ -1026,6 +1071,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     }
     
     public void setData(POI poi) {
+        mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL, R.layout.hint_poi_detail);
         mShowDynamicDianyingMoreView = true;
         mRootView.setVisibility(View.VISIBLE);
         if (mStampAnimation != null) {

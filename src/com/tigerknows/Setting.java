@@ -9,7 +9,6 @@ import com.tigerknows.R;
 import com.tigerknows.radar.AlarmInitReceiver;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.radar.RadarReceiver;
-import com.tigerknows.service.LocationCollectionService;
 import com.tigerknows.service.PullService;
 
 import android.content.Context;
@@ -116,7 +115,6 @@ public class Setting extends BaseActivity {
         if (radarOn(mThis)) {
             TKConfig.setPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "off");
             Alarms.disableAlarm(mThis, PullService.alarmAction.getIntent());
-            Alarms.disableAlarm(mThis, LocationCollectionService.alarmAction.getIntent());
         } else {
             TKConfig.setPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "");
             Intent pullIntent = new Intent(AlarmInitReceiver.ACTION_ALARM_INIT);

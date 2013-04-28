@@ -73,12 +73,7 @@ import com.decarta.android.map.Icon;
 import com.decarta.android.map.InfoWindow;
 import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.map.MapText;
-import com.decarta.android.map.MapView;
 import com.decarta.android.map.MyLocation;
-import com.decarta.android.map.MapView.DownloadEventListener;
-import com.decarta.android.map.MapView.MapScene;
-import com.decarta.android.map.MapView.SnapMap;
-import com.decarta.android.map.MapView.ZoomEndEventListener;
 import com.decarta.android.map.OverlayItem;
 import com.decarta.android.map.RotationTilt;
 import com.decarta.android.map.RotationTilt.RotateReference;
@@ -94,6 +89,11 @@ import com.decarta.example.ConfigActivity;
 import com.decarta.example.ProfileResultActivity;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.MapEngine.CityInfo;
+import com.tigerknows.maps.MapView.DownloadEventListener;
+import com.tigerknows.maps.MapView.MapScene;
+import com.tigerknows.maps.MapView.SnapMap;
+import com.tigerknows.maps.MapView.ZoomEndEventListener;
+import com.tigerknows.maps.MapView;
 import com.tigerknows.maps.PinOverlayHelper;
 import com.tigerknows.maps.TrafficOverlayHelper;
 import com.tigerknows.model.BaseQuery;
@@ -2398,12 +2398,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             || sourceType == POI.SOURCE_TYPE_TUANGOU) {
                         dismissView(R.id.view_result_map);
                     } else {
-                        getPOIDetailFragment().setData(target);
                         if (uiStackContains(R.id.view_poi_detail)) {
                             dismissView(R.id.view_result_map);
                         } else {
                             showView(R.id.view_poi_detail);
                         }
+                        getPOIDetailFragment().setData(target);
                     }
                 } else if (object instanceof Tuangou) {
                     Tuangou target = (Tuangou) object;
