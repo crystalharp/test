@@ -62,8 +62,6 @@ public class BaseQueryTest {
     
     static final String TAG = "BaseQueryTest";
     
-    public static boolean Test = true;
-    
     static int RESPONSE_CODE = BaseQuery.STATUS_CODE_NETWORK_OK;
 
     public static XMap launchResponse() {
@@ -71,19 +69,13 @@ public class BaseQueryTest {
     }
 
     public static XMap launchResponse(XMap data) {
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         data.put(DiscoverResponse.FIELD_RESPONSE_CODE, RESPONSE_CODE);
         data.put(DiscoverResponse.FIELD_DESCRIPTION, "FIELD_DESCRIPTION");
         return  data;
     }
     
     public static void showSetResponseCode(LayoutInflater layoutInflater, final Activity activity) {
-        if (Test == false) {
+        if (TKConfig.ShowTestOption == false) {
             return;
         }
         LinearLayout layout = new LinearLayout(activity);
@@ -249,13 +241,13 @@ public class BaseQueryTest {
         });
         launchTestChb.setText("Launch fake data(DataQuery, DataOperation, AccountManage");
         launchTestChb.setTextColor(0xffffffff);
-        launchTestChb.setChecked(BaseQuery.Test);
+        launchTestChb.setChecked(TKConfig.LaunchTest);
         launchTestChb.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View arg0) {
-                BaseQuery.Test = launchTestChb.isChecked();
-                lunchTestLayout.setVisibility(BaseQuery.Test ? View.VISIBLE : View.GONE);
+                TKConfig.LaunchTest = launchTestChb.isChecked();
+                lunchTestLayout.setVisibility(TKConfig.LaunchTest ? View.VISIBLE : View.GONE);
             }
         });
         responseCodeTxv.setText("ResponseCode:");
@@ -263,7 +255,7 @@ public class BaseQueryTest {
         responseCodeEdt.setText("");
         responseCodeEdt.setInputType(InputType.TYPE_CLASS_NUMBER);
         responseCodeEdt.setSingleLine();
-        lunchTestLayout.setVisibility(BaseQuery.Test ? View.VISIBLE : View.GONE);
+        lunchTestLayout.setVisibility(TKConfig.LaunchTest ? View.VISIBLE : View.GONE);
         
         locationChb.setText("Specific Location(lat,lon,accuracy)");
         locationChb.setChecked(TKLocationManager.UnallowedLocation);

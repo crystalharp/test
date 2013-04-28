@@ -6,8 +6,12 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
+import com.tigerknows.model.DataQuery.HotelResponse;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
+import com.tigerknows.model.Hotel;
+import com.tigerknows.model.Hotel.HotelTKDrawable;
+import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.PullMessage;
 import com.tigerknows.model.Shangjia;
@@ -628,6 +632,71 @@ public class DataQueryTest {
         data.put(DynamicPOI.FIELD_MASTER_UID, "FIELD_MASTER_UID");
         data.put(DynamicPOI.FIELD_SUMMARY, "FIELD_SUMMARY");
         data.put(DynamicPOI.FIELD_SLAVE_UID, "FIELD_SLAVE_UID");
+        return data;
+    }
+
+    public static XMap launchHotelResponse(int total, String message) {
+        XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        data.put(HotelResponse.FIELD_LIST, launchPOIList(total, message, TKConfig.getPageSize()));
+        data.put(POIResponse.FIELD_FILTER_AREA_INDEX, launchFilterIndex(1, 168));
+        data.put(POIResponse.FIELD_FILTER_CATEGORY_INDEX, launchFilterIndex(2, 168));
+        data.put(POIResponse.FIELD_FILTER_ORDER_INDEX, launchFilterIndex(3, 168));
+        data.put(POIResponse.FIELD_FILTER_AREA, launchFilterArea());
+        data.put(POIResponse.FIELD_FILTER_CATEGORY_ORDER, launchFilterCategoryOrder());
+        return data;
+    }
+
+    public static XMap launchHotelList(int total, String message, int size) {
+        XMap data = new XMap();
+        launchBaseList(data, total, message);
+        XArray<XMap> list = new XArray<XMap>();
+        for(int i = 0 ; i < size; i ++) {
+            list.add(launchHotel("Hotel"+i+"HotelHotelHotelHotelHotelHotelHotel"));
+        }
+        data.put(POIList.FIELD_LIST, list);
+        return data;
+    }
+
+    protected static XMap launchHotel(String name) {
+        XMap data = launchPOI(name);
+        data.put(Hotel.FIELD_UUID, "FIELD_UUID");
+        data.put(Hotel.FIELD_SOURCE, "FIELD_SOURCE");
+        data.put(Hotel.FIELD_BRAND, "FIELD_BRAND");
+        data.put(Hotel.FIELD_IMAGE_THUMB, "FIELD_IMAGE_THUMB");
+        XArray<XMap> xarray = new XArray<XMap>();
+        for(int i = 0; i < 16; i ++) {
+            xarray.add(launchHotelTKDrawable(i));
+        }
+        data.put(Hotel.FIELD_IMAGE_LIST, xarray);
+        xarray = new XArray<XMap>();
+        for(int i = 0; i < 16; i ++) {
+            xarray.add(launchRoomType(i));
+        }
+        data.put(Hotel.FIELD_ROOM_TYPE_LIST, xarray);
+        data.put(Hotel.FIELD_SERVICE, "FIELD_SERVICE");
+        data.put(Hotel.FIELD_CAN_RESERVE, 1);
+        return data;
+    }
+
+    protected static XMap launchHotelTKDrawable(int order) {
+        XMap data = new XMap();
+        data.put(HotelTKDrawable.FIELD_NAME, "FIELD_NAME"+order);
+        data.put(HotelTKDrawable.FIELD_URL, "FIELD_URL");
+        return data;
+    }
+
+    protected static XMap launchRoomType(int order) {
+        XMap data = new XMap();
+        data.put(RoomType.FIELD_ROOM_ID, 168);
+        data.put(RoomType.FIELD_RATEPLAN_ID, 168);
+        data.put(RoomType.FIELD_FLOOR, "FIELD_FLOOR"+order);
+        data.put(RoomType.FIELD_BED_TYPE, "FIELD_BED_TYPE");
+        data.put(RoomType.FIELD_NET_SERVICE, "FIELD_NET_SERVICE");
+        data.put(RoomType.FIELD_NET_SERVICE_FEE, "FIELD_NET_SERVICE_FEE");
+        data.put(RoomType.FIELD_BREAKFAST, "FIELD_BREAKFAST");
+        data.put(RoomType.FIELD_PRICE, "FIELD_PRICE");
+        data.put(RoomType.FIELD_CAN_RESERVE, 1);
         return data;
     }
 

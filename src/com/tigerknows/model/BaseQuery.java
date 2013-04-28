@@ -56,8 +56,6 @@ public abstract class BaseQuery {
     
     static final String TAG = "BaseQuery";
     
-    public static boolean Test = false;
-    
     public static final String ACTION_NETWORK_STATUS_REPORT = "ACTION_NETWORK_STATUS_REPORT";
 
     // 交通查询
@@ -160,6 +158,12 @@ public abstract class BaseQuery {
     // dsrc=dpoi，表示发现频道，通过搜索得到的动态poi的uid之后，根据uid取完整的动态poi
     public static final String REQUSET_SOURCE_TYPE_DISCOVER = "dpoi";
     
+    // ddst    string  false   door request destination，可取值为客户端页面标识 数据挖掘用，服务器业务不关心
+    public static final String SERVER_PARAMETER_DOOR_REQUEST_DESTINATION = "ddst";
+    
+    // subty   int     false   子数据类型，当dty=1时，可有取值，取值范围{0,1} 
+    public static final String SERVER_PARAMETER_SUB_DATA_TYPE = "subty";
+    
     /**
      * 检查是否为推送动态POI的查询
      * @return
@@ -232,6 +236,13 @@ public abstract class BaseQuery {
 
     // 消息推送 18
     public static final String DATA_TYPE_PULL_MESSAGE = "18";
+    
+    // 数据子类型:
+    // POI 0
+    public static final String SUB_DATA_TYPE_POI = "0";
+    
+    // 酒店 1
+    public static final String SUB_DATA_TYPE_HOTEL = "1";
     
     public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     
@@ -529,7 +540,7 @@ public abstract class BaseQuery {
         while ((isFirstConnection || needReconntection) && !isStop) {
             try {
                 boolean isLaunchTest = false;
-                if (Test) {
+                if (TKConfig.LaunchTest) {
                     if (apiType.equals(API_TYPE_DATA_QUERY)
                             || apiType.equals(API_TYPE_DATA_OPERATION)
                             || apiType.equals(API_TYPE_ACCOUNT_MANAGE)) {
@@ -724,7 +735,7 @@ public abstract class BaseQuery {
     
     protected void translateResponse(byte[] data) throws APIException {
         try {
-            if (Test == false) { // 如果是自动测试分填充的数据，则没有加密
+            if (TKConfig.LaunchTest == false) { // 如果是自动测试分填充的数据，则没有加密
             // 解密数据
             data = DataEncryptor.decrypt(data);
             // 解压数据
