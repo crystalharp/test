@@ -315,6 +315,9 @@
         <service android:name="com.tigerknows.service.PullService">
         </service>
         
+        <service android:name="com.tigerknows.service.LocationCollectionService">
+        </service>
+        
         <activity
             android:theme="@style/Theme.NoTitleBar" 
             android:name=".wxapi.WXEntryActivity"

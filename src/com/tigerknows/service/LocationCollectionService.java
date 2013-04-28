@@ -133,7 +133,7 @@ public class LocationCollectionService extends Service {
             @Override
             public void run() {
                 int i = 0;
-                if (BaseQuery.Test) {
+                if (TKConfig.LaunchTest) {
                     Location location = new Location(TKLocationManager.GPS_COLLECTION_PROVIDER);
                     location.setLatitude(111);
                     location.setLongitude(222);

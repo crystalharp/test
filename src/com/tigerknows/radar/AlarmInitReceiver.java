@@ -2,6 +2,7 @@ package com.tigerknows.radar;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
+import com.tigerknows.service.LocationCollectionService;
 import com.tigerknows.service.PullService;
 
 import android.content.BroadcastReceiver;
@@ -41,6 +42,8 @@ public class AlarmInitReceiver extends BroadcastReceiver {
     }
     
     void disableAlarm(Context context) {
+        Intent locationCollection = new Intent(LocationCollectorReceiver.ACTION_LOCATION_COLLECTION);
+        Alarms.disableAlarm(context, locationCollection);
         Intent pullIntent = new Intent(RadarReceiver.ACTION_PULL);
         Alarms.disableAlarm(context, pullIntent);
     }
@@ -50,8 +53,18 @@ public class AlarmInitReceiver extends BroadcastReceiver {
         next.setTimeInMillis(System.currentTimeMillis());
         next = Alarms.calculateRandomAlarmInNextDay(next, PullService.requestStartHour, PullService.requestEndHour);
         
+        Calendar locationNext = null;
         Calendar pullNext = null;
-                
+        
+        String locationAlarm = LocationCollectionService.alarmAction.getAbsAlarm(context);
+        //如果是空，则用户是第一次使用，设置到一天以后
+        if (TextUtils.isEmpty(locationAlarm)) {
+            locationNext = next;
+        } else {
+            locationNext = Alarms.calculateAlarm(locationAlarm);
+        }
+        Alarms.enableAlarm(context, locationNext, LocationCollectionService.alarmAction);
+        
         String pullAlarm = PullService.alarmAction.getAbsAlarm(context);
         if (TextUtils.isEmpty(pullAlarm)) {
             pullNext = next;
