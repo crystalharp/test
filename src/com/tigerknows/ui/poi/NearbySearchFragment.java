@@ -48,7 +48,7 @@ import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.StringArrayAdapter;
 import com.tigerknows.widget.SuggestArrayAdapter;
-import com.tigerknows.widget.SuggestArrayAdapter.CallBack;
+import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
 
 /**
  * 周边搜索界面
@@ -145,10 +145,10 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         mCategoryLsv.setAdapter(new StringArrayAdapter(mContext, mCategoryNames, mCategoryResIds));
         
         mSuggestAdapter = new SuggestArrayAdapter(mContext, SuggestArrayAdapter.TEXTVIEW_RESOURCE_ID, mSuggestWordList);
-        mSuggestAdapter.setCallBack(new CallBack() {
+        mSuggestAdapter.setInputBtnEventHandler(new BtnEventHandler() {
             
             @Override
-            public void onInputBtnClicked(TKWord tkWord, int position) {
+            public void onBtnClicked(TKWord tkWord, int position) {
                 mKeywordEdt.setText(tkWord.word);
             }
         });

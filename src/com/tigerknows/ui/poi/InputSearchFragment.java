@@ -42,7 +42,7 @@ import com.tigerknows.model.TKWord;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.widget.SuggestArrayAdapter;
-import com.tigerknows.widget.SuggestArrayAdapter.CallBack;
+import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
 
 /**
  * @author Peng Wenyue
@@ -101,10 +101,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         setListener();
         
         mSuggestAdapter = new SuggestArrayAdapter(mContext, SuggestArrayAdapter.TEXTVIEW_RESOURCE_ID, mSuggestWordList);
-        mSuggestAdapter.setCallBack(new CallBack() {
+        mSuggestAdapter.setInputBtnEventHandler(new BtnEventHandler() {
             
             @Override
-            public void onInputBtnClicked(TKWord tkWord, int position) {
+            public void onBtnClicked(TKWord tkWord, int position) {
                 mKeywordEdt.setText(tkWord.word);
             }
         });

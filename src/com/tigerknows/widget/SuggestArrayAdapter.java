@@ -6,10 +6,6 @@ import com.tigerknows.model.TKWord;
 import com.tigerknows.util.Utility;
 
 import android.content.Context;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.TextUtils;
-import android.text.style.ForegroundColorSpan;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,20 +17,25 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
+/**
+ * 
+ * @author xupeng
+ * 历史词建议词的Adapter
+ */
 
 public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
     public static final int TEXTVIEW_RESOURCE_ID = R.layout.suggest_list_item;
     
-    public interface CallBack {
-        public void onInputBtnClicked(TKWord tkWord, int position);
+    public interface BtnEventHandler {
+        public void onBtnClicked(TKWord tkWord, int position);
     }
     
     private Context context;
-    private CallBack callBack;
+    private BtnEventHandler inputBtnEventHandler;
     public String key;
     
-    public void setCallBack(CallBack callBack) {
-        this.callBack = callBack;
+    public void setInputBtnEventHandler(BtnEventHandler btnEventHandler) {
+        this.inputBtnEventHandler = btnEventHandler;
     }
 
     public SuggestArrayAdapter(Context context, int textViewResourceId, List<TKWord> objects) {
@@ -65,18 +66,18 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
             iconImv.setImageResource(R.drawable.ic_suggest);
             textTxv.setGravity(Gravity.CENTER_VERTICAL | Gravity.LEFT);
             Utility.formatText(textTxv, tkWord.word, key, TKConfig.COLOR_BLACK_LIGHT);
-        } else {
+        } else if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
             iconImv.setVisibility(View.INVISIBLE);
             inputBtn.setVisibility(View.INVISIBLE);
             textTxv.setGravity(Gravity.CENTER);
             textTxv.setText(tkWord.word);
         }
-        if (callBack != null) {
+        if (inputBtnEventHandler != null) {
             inputBtn.setOnClickListener(new OnClickListener() {
                 
                 @Override
                 public void onClick(View view) {
-                    callBack.onInputBtnClicked(tkWord, position);
+                    inputBtnEventHandler.onBtnClicked(tkWord, position);
                 }
             });
         }
