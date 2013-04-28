@@ -5,7 +5,7 @@
 package com.tigerknows;
 
 import com.decarta.Globals;
-import com.snda.recommend.api.RecommendAPI;
+//import com.snda.recommend.api.RecommendAPI;
 import com.tigerknows.R;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.TKDrawable;
@@ -179,8 +179,9 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.snda_btn:
+/*
                 mActionLog.addAction(mActionTag +  ActionLog.AppRecommendSnda);
-                boolean bRet = RecommendAPI.init(mThis, "800109436", "ANDsnda");
+                boolean bRet = RecommendAPI.init(mThis, "800109436", "ANDTKWWW");
                 RecommendAPI.setSdid("");
                 RecommendAPI.setPhoneNum("");
                 RecommendAPI.setFromPos(mThis, RecommendAPI.MAIN_TOP);
@@ -188,7 +189,7 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
                     RecommendAPI.openRecommendActivity(mThis);
                 }
                 break;
-
+*/
             default:
                 break;
         }

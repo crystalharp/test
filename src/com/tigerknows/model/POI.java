@@ -292,8 +292,8 @@ public class POI extends BaseData {
     // 0x16 x_map  最近的一条点评 
     public static final byte FIELD_LAST_COMMENT = 0x16;
     
-    // 0x17 x_array<x_map>  动态电影
-    public static final byte FIELD_DYNAMIC_DIANYING = 0x17;
+    // 0x17    x_string    价格描述，格式为"960元" 
+    public static final byte FIELD_PERCAPITY = 0x17;
     
     public static class DynamicPOI extends XMapData {
         // 0x01 x_int 动态poi的类型
@@ -308,10 +308,19 @@ public class POI extends BaseData {
         // 0x04 x_string 从动态poi的uid，slaveUid
         public static final byte FIELD_SLAVE_UID = 0x04;
 
+        public static final byte FIELD_DIANYING_IMAGE_URL = 0x05;
+        public static final byte FIELD_DIANYING_GRADE = 0x06;
+        public static final byte FIELD_DIANYING_TYPE = 0x07;
+        public static final byte FIELD_DIANYING_LENGTH = 0x08;
+
         private long type;
         private String masterUid;
         private String summary;
         private String slaveUid;
+        private String dianyingImage;
+        private String dianyingGrade;
+        private String dianyingType;
+        private String dianyingLength;
         
         public DynamicPOI(XMap data) throws APIException {
             super(data);
@@ -331,6 +340,22 @@ public class POI extends BaseData {
             if (data.containsKey(FIELD_SLAVE_UID)) {
                 slaveUid = data.getString(FIELD_SLAVE_UID);
             }
+            
+            if (data.containsKey(FIELD_DIANYING_IMAGE_URL)) {
+                dianyingImage = data.getString(FIELD_DIANYING_IMAGE_URL);
+            }
+            
+            if (data.containsKey(FIELD_DIANYING_GRADE)) {
+                dianyingGrade = data.getString(FIELD_DIANYING_GRADE);
+            }
+            
+            if (data.containsKey(FIELD_DIANYING_TYPE)) {
+                dianyingType = data.getString(FIELD_DIANYING_TYPE);
+            }
+            
+            if (data.containsKey(FIELD_DIANYING_LENGTH)) {
+                dianyingLength = data.getString(FIELD_DIANYING_LENGTH);
+            }
         }
 
         public String getType() {
@@ -347,6 +372,22 @@ public class POI extends BaseData {
 
         public String getSlaveUid() {
             return slaveUid;
+        }
+
+        public String getDianyingImage() {
+            return dianyingImage;
+        }
+
+        public String getDianyingGrade() {
+            return dianyingGrade;
+        }
+
+        public String getDianyingType() {
+            return dianyingType;
+        }
+
+        public String getDianyingLength() {
+            return dianyingLength;
         }
         
     }
@@ -432,8 +473,6 @@ public class POI extends BaseData {
     
     private List<DynamicPOI> dynamicPOIList = new ArrayList<DynamicPOI>();
     
-    private List<Dianying> dynamicDianyingList = new ArrayList<Dianying>();
-    
     private DataQuery commentQuery = null;
     
     private int resultType = 0;
@@ -447,7 +486,7 @@ public class POI extends BaseData {
     // 菜系
     private String cookingStyle;
     
-    private int perCapity = -1;
+    private String perCapity;
     
     private String recommendCook;
     
@@ -652,7 +691,8 @@ public class POI extends BaseData {
         return cookingStyle;
     }
     
-    public int getPerCapity() {
+    
+    public String getPerCapity() {
         return perCapity;
     }
     
@@ -726,10 +766,6 @@ public class POI extends BaseData {
     public List<DynamicPOI> getDynamicPOIList() {
         return dynamicPOIList;
     }
-    
-    public List<Dianying> getDynamicDianyingList() {
-    	return dynamicDianyingList;
-    }
 
     public POI() {
     }
@@ -777,9 +813,6 @@ public class POI extends BaseData {
                     if (s.length() > 0) {
                         this.cookingStyle = s.substring(1);
                     }
-                }
-                if (this.description.containsKey(Description.FIELD_PER_CAPITA)) {
-                    this.perCapity = (int) this.description.getInt(Description.FIELD_PER_CAPITA);
                 }
                 if (this.description.containsKey(Description.FIELD_RECOMMEND_COOK)) {
                     List<String> strs = this.description.getXArray(Description.FIELD_RECOMMEND_COOK).toStringList();
@@ -867,14 +900,9 @@ public class POI extends BaseData {
         } else {
             this.lastComment = null;
         }
-        dynamicDianyingList.clear();
-        if (this.data.containsKey(FIELD_DYNAMIC_DIANYING)) {
-            XArray<XMap> xarray = data.getXArray(FIELD_DYNAMIC_DIANYING);
-            if (xarray != null) {
-                for(int i = 0; i < xarray.size(); i++) {
-                	dynamicDianyingList.add(new Dianying(xarray.get(i)));
-                }
-            }
+        this.perCapity = null;
+        if (this.data.containsKey(FIELD_PERCAPITY)) {
+            this.perCapity = this.data.getString(FIELD_PERCAPITY);
         }
     }
     
@@ -926,13 +954,7 @@ public class POI extends BaseData {
                 }
                 this.data.put(FIELD_DYNAMIC_POI, xarray);
             }
-            if (dynamicDianyingList.size() > 0) {
-                XArray<XMap> xarray = new XArray<XMap>();
-                for(int i = 0, size = dynamicDianyingList.size(); i < size; i++) {
-                    xarray.add(dynamicDianyingList.get(i).getData());
-                }
-                this.data.put(FIELD_DYNAMIC_DIANYING, xarray);
-            }
+            this.data.put(FIELD_PERCAPITY, this.perCapity);
         }
         return this.data;
     }
@@ -1254,7 +1276,6 @@ public class POI extends BaseData {
                 poi.dateTime = cursor.getLong(cursor.getColumnIndex(Tigerknows.POI.DATETIME));
                 poi.from = FROM_LOCAL;
                 poi.dynamicPOIList.clear();
-                poi.dynamicDianyingList.clear();
                 poi.toCenterDistance = null;
             }
         }

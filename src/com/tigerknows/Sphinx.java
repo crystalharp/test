@@ -2201,9 +2201,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 nameTxv.setText(poi.getName());
                 starsRtb.setRating(poi.getGrade()/2.0f);
-                int money = poi.getPerCapity();
-                if (money > -1) {
-                    priceTxv.setText(mContext.getString(R.string.yuan, money));
+                String perCapity = poi.getPerCapity();
+                if (perCapity != null) {
+                    priceTxv.setText(perCapity);
                 } else {
                     priceTxv.setText("");
                 }

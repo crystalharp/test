@@ -33,6 +33,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -62,8 +63,6 @@ public class BaseQueryTest {
     
     static final String TAG = "BaseQueryTest";
     
-    public static boolean Test = true;
-    
     static int RESPONSE_CODE = BaseQuery.STATUS_CODE_NETWORK_OK;
 
     public static XMap launchResponse() {
@@ -71,19 +70,13 @@ public class BaseQueryTest {
     }
 
     public static XMap launchResponse(XMap data) {
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         data.put(DiscoverResponse.FIELD_RESPONSE_CODE, RESPONSE_CODE);
         data.put(DiscoverResponse.FIELD_DESCRIPTION, "FIELD_DESCRIPTION");
         return  data;
     }
     
     public static void showSetResponseCode(LayoutInflater layoutInflater, final Activity activity) {
-        if (Test == false) {
+        if (TKConfig.ShowTestOption == false) {
             return;
         }
         LinearLayout layout = new LinearLayout(activity);
@@ -140,6 +133,10 @@ public class BaseQueryTest {
         layout.addView(readLocationLogBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final Button launchHistoryWorkBtn = new Button(activity);
         layout.addView(launchHistoryWorkBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button weixinWebBtn = new Button(activity);
+        layout.addView(weixinWebBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button weixinRequsetBtn = new Button(activity);
+        layout.addView(weixinRequsetBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         
         editConfigBtn.setText("View or Modify config.txt");
         editConfigBtn.setOnClickListener(new View.OnClickListener() {
@@ -249,13 +246,13 @@ public class BaseQueryTest {
         });
         launchTestChb.setText("Launch fake data(DataQuery, DataOperation, AccountManage");
         launchTestChb.setTextColor(0xffffffff);
-        launchTestChb.setChecked(BaseQuery.Test);
+        launchTestChb.setChecked(TKConfig.LaunchTest);
         launchTestChb.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View arg0) {
-                BaseQuery.Test = launchTestChb.isChecked();
-                lunchTestLayout.setVisibility(BaseQuery.Test ? View.VISIBLE : View.GONE);
+                TKConfig.LaunchTest = launchTestChb.isChecked();
+                lunchTestLayout.setVisibility(TKConfig.LaunchTest ? View.VISIBLE : View.GONE);
             }
         });
         responseCodeTxv.setText("ResponseCode:");
@@ -263,7 +260,7 @@ public class BaseQueryTest {
         responseCodeEdt.setText("");
         responseCodeEdt.setInputType(InputType.TYPE_CLASS_NUMBER);
         responseCodeEdt.setSingleLine();
-        lunchTestLayout.setVisibility(BaseQuery.Test ? View.VISIBLE : View.GONE);
+        lunchTestLayout.setVisibility(TKConfig.LaunchTest ? View.VISIBLE : View.GONE);
         
         locationChb.setText("Specific Location(lat,lon,accuracy)");
         locationChb.setChecked(TKLocationManager.UnallowedLocation);
@@ -336,7 +333,6 @@ public class BaseQueryTest {
                 Calendar next = Calendar.getInstance();
                 next.setTimeInMillis(System.currentTimeMillis());
                 next.add(Calendar.SECOND, 5);
-                Alarms.enableAlarm(activity, next, LocationCollectionService.alarmAction);
                 LogWrapper.d(TAG, "Radar Location send in:" + next.getTime().toLocaleString());
             }
         });
@@ -383,6 +379,29 @@ public class BaseQueryTest {
                         }
                     }
                 }
+            }
+        });
+
+        weixinWebBtn.setText("source weixin web open");
+        weixinWebBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setData(Uri.parse("tigerknows://?poiuid=11"));
+                activity.startActivity(intent);
+            }
+        });
+
+        weixinRequsetBtn.setText("weixin requset data");
+        weixinRequsetBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+	            Intent sphinx = new Intent(activity, Sphinx.class);
+	            sphinx.putExtra(Sphinx.EXTRA_WEIXIN, true);
+	            sphinx.putExtras(new Bundle());
+	            activity.startActivity(sphinx);
             }
         });
         

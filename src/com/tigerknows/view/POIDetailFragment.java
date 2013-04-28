@@ -164,6 +164,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     private LinearLayout mDynamicDianyingView;
     
+    private List<DynamicPOI> mDynamicDianyingList = new ArrayList<POI.DynamicPOI>();
+    
     private LinearLayout mDynamicDianyingListView;
     
     private LinearLayout mDynamicDianyingMoreView;
@@ -325,9 +327,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             mCategoryTxv.setText("");
         }
         
-        int money = poi.getPerCapity();
-        if (money > -1) {
-            mMoneyTxv.setText(mContext.getString(R.string.yuan, money));
+        String perCapity = poi.getPerCapity();
+        if (perCapity != null) {
+            mMoneyTxv.setText(perCapity);
             mMoneyTxv.setVisibility(View.VISIBLE);
         } else {
             mMoneyTxv.setVisibility(View.GONE);
@@ -550,14 +552,23 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * @param poi
      */
     void refreshDynamicDinaying(POI poi) {
+        mDynamicDianyingList.clear();
         if (poi == null) {
             mDynamicDianyingView.setVisibility(View.GONE);
             return;
         }
         
         // 动态影讯
-        List<Dianying> dianyingList = poi.getDynamicDianyingList();
-        int size = dianyingList.size();
+    	List<DynamicPOI> list = poi.getDynamicPOIList();
+    	if (list != null) {
+    	    for(int i = 0, size = list.size(); i < size; i++) {
+    	        DynamicPOI dynamic = list.get(i);
+    	        if (BaseQuery.DATA_TYPE_DIANYING.equals(dynamic.getType())) {
+    	            mDynamicDianyingList.add(dynamic);
+    	        }
+    	    }
+    	}
+        int size = mDynamicDianyingList.size();
         if(size==0){
             mDynamicDianyingView.setVisibility(View.GONE);
         }else{
@@ -567,13 +578,13 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         int childCount = mDynamicDianyingListView.getChildCount();
         int viewCount = 0;
         for(int i = 0; i < size; i++) {
-            final Dianying dynamic = dianyingList.get(i);
+            final DynamicPOI dynamic = mDynamicDianyingList.get(i);
             View child;
             if (viewCount < childCount) {
                 child = mDynamicDianyingListView.getChildAt(viewCount);
                 child.setVisibility(View.VISIBLE);
             } else {
-                child = mLayoutInflater.inflate(R.layout.dynamic_poi_list_item, mDynamicDianyingListView, false);
+                child = mLayoutInflater.inflate(R.layout.poi_dynamic_dianying_list_item, mDynamicDianyingListView, false);
                 mDynamicDianyingListView.addView(child, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
             }
             child.setOnClickListener(new View.OnClickListener() {
@@ -586,7 +597,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     Hashtable<String, String> criteria = new Hashtable<String, String>();
                     criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIANYING);
                     criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getUid());
+                        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getMasterUid());
                     
                     criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
                                  Dianying.NEED_FILELD_ONLY_DIANYING
@@ -600,7 +611,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     criteria = new Hashtable<String, String>();
                     criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_YINGXUN);
                     criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getUid());
+                        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getSlaveUid());
                     
                     criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Yingxun.NEED_FILELD);
                     dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
@@ -611,8 +622,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 }
             });
             ImageView iconImv = (ImageView) child.findViewById(R.id.icon_imv);
-            TextView textTxv = (TextView) child.findViewById(R.id.text_txv);
-            textTxv.setText(dynamic.getName());
+            TextView nameTxv = (TextView) child.findViewById(R.id.name_txv);
+            TextView gradeTxv = (TextView) child.findViewById(R.id.grade_txv);
+            TextView typeTxv = (TextView) child.findViewById(R.id.type_txv);
+            TextView lengthTxv = (TextView) child.findViewById(R.id.length_txv);
+            nameTxv.setText(dynamic.getSummary());
+            gradeTxv.setText(dynamic.getDianyingGrade());
+            typeTxv.setText(dynamic.getDianyingType());
+            lengthTxv.setText(dynamic.getDianyingLength());
             viewCount++;
         }
         
@@ -889,7 +906,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 mShowDynamicDianyingMoreView = false;
                 mDynamicDianyingMoreView.setVisibility(View.GONE);
                 
-                int size = poi.getDynamicDianyingList().size();
+            	int size = mDynamicDianyingList.size();
                 int viewCount = mDynamicDianyingListView.getChildCount();
                 for(int i = 0; i < viewCount && i < size; i++) {
                     mDynamicDianyingListView.getChildAt(i).setVisibility(View.VISIBLE);
@@ -1412,7 +1429,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         return;
                     }
                     dianying = ((DianyingQueryResponse) response).getDianying();
-                    // 电影
+                // 影讯
                 } else if (BaseQuery.DATA_TYPE_YINGXUN.equals(dataType)) {
                     if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
                         return;
