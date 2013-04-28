@@ -276,8 +276,9 @@
     <string name="location_success">当前位置-精确到%1$s</string>
     <string name="mapview_start_click">点击即可选择该点</string>
     
-    <!-- 328路 \u2192 239路 -->
+    <!-- \u2192为一个箭头符号，这个用于交通方案的路线换乘表示。328路 \u2192 239路 -->
     <string name="traffic_transfer_arrow">\u0020\u2192\u0020</string>
+    <!-- 大括号{}用于高亮标记 -->
     <string name="traffic_at_where_walk_how">从{%1$s}步行约%2$s米</string>
     <string name="traffic_at_where_walk_to_where">从{%1$s}步行到{%2$s}</string>
     <string name="traffic_at_where_walk_how_to_where">从{%1$s}步行约%2$s米到{%3$s}</string>
