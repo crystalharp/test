@@ -25,12 +25,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.decarta.android.location.Position;
-import com.decarta.android.map.MapView.MapScene;
-import com.decarta.android.map.MapView.SnapMap;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.maps.MapView.MapScene;
+import com.tigerknows.maps.MapView.SnapMap;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.POI;
 import com.tigerknows.util.CommonUtils;

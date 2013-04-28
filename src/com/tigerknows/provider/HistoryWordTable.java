@@ -196,7 +196,7 @@ public class HistoryWordTable {
         if(!mDb.isOpen())
             return;
         Cursor mCursor = mDb.query(true, TABLE_NAME,
-                new String[]{ID}, "(" + CITY_ID + "=" + cityId + ") AND (" + TYPE + "=" + type+ ")",
+                new String[]{ID}, "(" + TYPE + "=" + type+ ")",
                 null, null, null, ID + " ASC", null);
         int count = mCursor.getCount();
         if (count > MAX_COUNT) {

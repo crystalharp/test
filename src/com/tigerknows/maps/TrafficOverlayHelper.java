@@ -15,7 +15,6 @@ import com.decarta.android.location.BoundingBox;
 import com.decarta.android.location.Position;
 import com.decarta.android.map.Icon;
 import com.decarta.android.map.ItemizedOverlay;
-import com.decarta.android.map.MapView;
 import com.decarta.android.map.OverlayItem;
 import com.decarta.android.map.Polyline;
 import com.decarta.android.map.RotationTilt;

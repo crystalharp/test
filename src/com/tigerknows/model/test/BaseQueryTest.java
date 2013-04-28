@@ -1,13 +1,13 @@
 package com.tigerknows.model.test;
 
 import com.decarta.Globals;
-import com.decarta.android.map.MapView;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine;
+import com.tigerknows.maps.MapView;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
