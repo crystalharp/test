@@ -48,6 +48,7 @@ import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.StringArrayAdapter;
 import com.tigerknows.widget.SuggestArrayAdapter;
+import com.tigerknows.widget.SuggestWordListManager;
 import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
 
 /**
@@ -77,11 +78,9 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
 
     private TKEditText mKeywordEdt = null;
 
-    private SuggestArrayAdapter mSuggestAdapter = null;
-
     private ListView mSuggestLsv = null;
     
-    private List<TKWord> mSuggestWordList = new LinkedList<TKWord>();
+    private SuggestWordListManager mSuggestWordListManager;
     
     private ViewGroup mPageIndicatorView;
     
@@ -110,10 +109,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            String key = mKeywordEdt.getText().toString();
-            InputSearchFragment.makeSuggestWord(mSphinx, mSuggestWordList, key);
-            mSuggestAdapter.key = key;
-            refreshSuggest();
+            mSuggestWordListManager.refresh();
         }
 
         public void afterTextChanged(Editable s) {
@@ -144,15 +140,14 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         mCategoryNames = resources.getStringArray(R.array.home_category);
         mCategoryLsv.setAdapter(new StringArrayAdapter(mContext, mCategoryNames, mCategoryResIds));
         
-        mSuggestAdapter = new SuggestArrayAdapter(mContext, SuggestArrayAdapter.TEXTVIEW_RESOURCE_ID, mSuggestWordList);
-        mSuggestAdapter.setInputBtnEventHandler(new BtnEventHandler() {
+        BtnEventHandler a = new BtnEventHandler() {
             
             @Override
             public void onBtnClicked(TKWord tkWord, int position) {
                 mKeywordEdt.setText(tkWord.word);
             }
-        });
-        mSuggestLsv.setAdapter(mSuggestAdapter);
+        };
+        mSuggestWordListManager = new SuggestWordListManager(mSphinx, mSuggestLsv, mKeywordEdt, a, HistoryWordTable.TYPE_POI);
         return mRootView;
     }
 
@@ -220,11 +215,8 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
                     mActionLog.addAction(ActionLog.POINearbySearchInput);
-                    String key = mKeywordEdt.getText().toString();
-                    InputSearchFragment.makeSuggestWord(mSphinx, mSuggestWordList, key);
-                    mSuggestAdapter.key = key;
+                    mSuggestWordListManager.refresh();
                     mViewPager.setCurrentItem(1);
-                    refreshSuggest();
                 }
                 return false;
             }
@@ -250,10 +242,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistoryClear);
                     HistoryWordTable.clearHistoryWord(mSphinx, Globals.g_Current_City_Info.getId(), HistoryWordTable.TYPE_POI);
-                    String key = mKeywordEdt.getText().toString();
-                    InputSearchFragment.makeSuggestWord(mSphinx, mSuggestWordList, key);
-                    mSuggestAdapter.key = key;
-                    refreshSuggest();
+                    mSuggestWordListManager.refresh();
                 } else {
                     if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistory, position, tkWord.word);
@@ -334,14 +323,14 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     /**
      * 刷新联想词列表，当联想词列表为空时自动切换到分类列表
      */
-    private void refreshSuggest() {
-        mSuggestAdapter.notifyDataSetChanged();
-//        if (mSuggestWordList.isEmpty()) {
-//            mViewPager.setCurrentItem(0);
-//        } else {
-//            mViewPager.setCurrentItem(1);
-//        }
-    }
+//    private void refreshSuggest() {
+//        mSuggestAdapter.notifyDataSetChanged();
+////        if (mSuggestWordList.isEmpty()) {
+////            mViewPager.setCurrentItem(0);
+////        } else {
+////            mViewPager.setCurrentItem(1);
+////        }
+//    }
     
     /**
      * 将UI及内容重置为第一次进入页面时的状态
@@ -352,10 +341,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         mKeywordEdt.setText(null);
         mKeywordEdt.clearFocus();
         mViewPager.setCurrentItem(0);
-        mSuggestWordList.clear();
-        InputSearchFragment.makeSuggestWord(mSphinx, mSuggestWordList, null);
-        mSuggestAdapter.key = null;
-        mSuggestAdapter.notifyDataSetChanged();
         mQueryBtn.setEnabled(false);
         mViewPager.requestFocus();
     }

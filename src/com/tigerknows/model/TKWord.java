@@ -84,4 +84,8 @@ public class TKWord {
         TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_CLEANUP, context.getString(R.string.clean_history));
         return tkWord;
     }
+    
+    public String toString(){
+        return word;
+    }
 }
