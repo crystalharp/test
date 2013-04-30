@@ -17,13 +17,7 @@ import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
  * 负责“交通频道首页”TrafficQueryFragment的[[控制历史词及联想词]]
  * @author linqingzu
  * @comment xupeng
- * 名词定义：
- * 历史词，用户输入过的名字，history word
- * 联想词，地图引擎中取出来的带坐标的名字，associational word
- * 建议词，上面两种加起来，suggest word
- * 输入框文字改变的时候会调用到refresh函数，其中建议词的改变为先把符合输入词的历史词添入建议词列表，
- * 然后把联想词复制一份，把历史词相同的词删除再添入到建议词列表中。
- *
+ * 这个类经过了一番清理，已经比较精简，如果需要进一步精简则在交通重构的时候根据需求清理掉
  */
 public class TrafficQuerySuggestWordHelper {
     

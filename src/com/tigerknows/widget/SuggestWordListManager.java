@@ -19,6 +19,9 @@ import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
  * 
  * 该类直接给传进来的ListView布上数据，不再对外暴露Adapter等中间过程。
  * 
+ * 需要5个参数，sphinx，展示用的ListView，监控的输入框，右侧按钮的处理函数，联想词类型
+ * 根据输入框的内容和联想词类型去更新ListView，中间过程不再需要类外的内容干涉。
+ * 
  * 由于交通部分换乘和公交是同一个listview，切换模式的时候编辑框和历史词类型都会变化，
  * 所以设置了带有参数的refresh来对不同的编辑框和建议词类型刷新数据
  */
