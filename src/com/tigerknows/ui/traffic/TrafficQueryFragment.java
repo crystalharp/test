@@ -170,7 +170,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	/*
 	 * 历史词及联想词辅助类
 	 */
-	TrafficQuerySuggestHistoryHelper mSuggestHistoryHelper;
+	TrafficQuerySuggestWordHelper mSuggestWordHelper;
 	
 	public static final String TAG = "TrafficQueryFragment";
 	
@@ -211,7 +211,7 @@ public class TrafficQueryFragment extends BaseFragment {
         mStateHelper = new TrafficQueryStateHelper(this);
         mStateTransitionTable = new TrafficViewSTT(mStateHelper);
         mLogHelper = new TrafficQueryLogHelper(this);
-        mSuggestHistoryHelper = new TrafficQuerySuggestHistoryHelper(mContext, this, mSuggestLsv);
+        mSuggestWordHelper = new TrafficQuerySuggestWordHelper(mContext, this, mSuggestLsv);
         
         mStart.setHint(mContext.getString(R.string.start_));
         mEnd.setHint(mContext.getString(R.string.end_));
@@ -323,7 +323,7 @@ public class TrafficQueryFragment extends BaseFragment {
             } else {
                 mSphinx.showSoftInput(mBusline.getEdt().getInput());
             }
-            mSuggestHistoryHelper.refresh(mContext, mSelectedEdt.getEdt(), mode);
+            mSuggestWordHelper.refresh(mContext, mSelectedEdt.getEdt(), mode);
         } else if (currentState == TrafficViewSTT.State.Normal) {
         	mMapLocationHelper.centerOnMyLocation();
         	mMapLocationHelper.showNormalStateMap();
@@ -553,12 +553,12 @@ public class TrafficQueryFragment extends BaseFragment {
 			mTrafficLayout.setVisibility(View.VISIBLE);
 			mBuslineLayout.setVisibility(View.GONE);
 			mSelectedEdt = mStart;
-			mSuggestHistoryHelper.refresh(mSphinx, mSelectedEdt.mEdt, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
+			mSuggestWordHelper.refresh(mSphinx, mSelectedEdt.mEdt, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC);
 		} else {
 			mTrafficLayout.setVisibility(View.GONE);
 			mBuslineLayout.setVisibility(View.VISIBLE);
 			mSelectedEdt = mBusline;
-			mSuggestHistoryHelper.refresh(mSphinx, mSelectedEdt.mEdt, TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE);
+			mSuggestWordHelper.refresh(mSphinx, mSelectedEdt.mEdt, TrafficQuerySuggestWordHelper.TYPE_BUSLINE);
 		}
 		if (mStateTransitionTable.getCurrentState() == State.Input) {
 		    mSelectedEdt.mEdt.requestFocus();

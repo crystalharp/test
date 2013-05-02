@@ -59,13 +59,13 @@ public class TrafficQueryEventHelper {
 	
 	public TrafficQueryEventHelper(TrafficQueryFragment queryFragment) {
 		this.mQueryFragment = queryFragment;
-		startSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mStart, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
-		endSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mEnd, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
-		buslineSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mBusline, TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE);
+		startSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mStart, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC);
+		endSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mEnd, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC);
+		buslineSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mBusline, TrafficQuerySuggestWordHelper.TYPE_BUSLINE);
 		
-		mQueryFragment.mStart.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mStart, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC));
-		mQueryFragment.mEnd.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mEnd, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC));
-		mQueryFragment.mBusline.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mBusline, TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE));
+		mQueryFragment.mStart.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mStart, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC));
+		mQueryFragment.mEnd.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mEnd, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC));
+		mQueryFragment.mBusline.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mBusline, TrafficQuerySuggestWordHelper.TYPE_BUSLINE));
 //	}
 	
 	/*
@@ -111,9 +111,9 @@ public class TrafficQueryEventHelper {
 
 //		mQueryFragment.mRootView.setOnTouchListener(new RootViewTouchListener());
 		
-		mQueryFragment.mStart.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mStart, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC));
-		mQueryFragment.mEnd.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mEnd, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC));
-		mQueryFragment.mBusline.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mBusline, TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE));
+		mQueryFragment.mStart.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mStart, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC));
+		mQueryFragment.mEnd.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mEnd, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC));
+		mQueryFragment.mBusline.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mBusline, TrafficQuerySuggestWordHelper.TYPE_BUSLINE));
 		mQueryFragment.mSelectStartBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mStart));
 		mQueryFragment.mSelectEndBtn.setOnClickListener(new SelectStartEndBtnClickListener(mQueryFragment.mEnd));
 	}
@@ -373,7 +373,7 @@ public class TrafficQueryEventHelper {
              */
             if (hasFocus) {
                 mQueryFragment.mSelectedEdt = mQueryEdt;
-                mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryEdt.getEdt(), suggestWordsType);
+                mQueryFragment.mSuggestWordHelper.refresh(mQueryFragment.mContext, mQueryEdt.getEdt(), suggestWordsType);
             }
         }
 	    
@@ -441,10 +441,10 @@ public class TrafficQueryEventHelper {
                 mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag + ActionLog.ListViewItemHistoryClear);
 	            if (mQueryFragment.mode == TrafficQueryFragment.TRAFFIC_MODE) {
 	                HistoryWordTable.clearHistoryWord(mQueryFragment.mSphinx, mQueryFragment.mMapLocationHelper.getQueryCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
-	                mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryFragment.mSelectedEdt.getEdt(), TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
+	                mQueryFragment.mSuggestWordHelper.refresh(mQueryFragment.mContext, mQueryFragment.mSelectedEdt.getEdt(), TrafficQuerySuggestWordHelper.TYPE_TRAFFIC);
 	            } else if (mQueryFragment.mode == TrafficQueryFragment.BUSLINE_MODE){
 	                HistoryWordTable.clearHistoryWord(mQueryFragment.mSphinx, mQueryFragment.mMapLocationHelper.getQueryCityInfo().getId(), HistoryWordTable.TYPE_BUSLINE);
-	                mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryFragment.mSelectedEdt.getEdt(), TrafficQuerySuggestHistoryHelper.TYPE_BUSLINE);
+	                mQueryFragment.mSuggestWordHelper.refresh(mQueryFragment.mContext, mQueryFragment.mSelectedEdt.getEdt(), TrafficQuerySuggestWordHelper.TYPE_BUSLINE);
 	            }
 			} else  if (tkWord.attribute == TKWord.ATTRIBUTE_SUGGEST) {
 			    POI poi = tkWord.toPOI();
@@ -453,10 +453,10 @@ public class TrafficQueryEventHelper {
 					poi.setPosition(wordLonLat);
 				}
 				mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag + ActionLog.ListViewItemSuggest, mQueryFragment.mLogHelper.logForSuggestDispatch(mQueryFragment.mSelectedEdt, position), tkWord.word);
-				mQueryFragment.mSuggestHistoryHelper.suggestSelect(poi, position);
+				mQueryFragment.mSuggestWordHelper.suggestSelect(poi, position);
 			} else  if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
 			    mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag + ActionLog.ListViewItemHistory, mQueryFragment.mLogHelper.logForSuggestDispatch(mQueryFragment.mSelectedEdt, position), tkWord.word);
-			    mQueryFragment.mSuggestHistoryHelper.suggestSelect(tkWord.toPOI(), position);
+			    mQueryFragment.mSuggestWordHelper.suggestSelect(tkWord.toPOI(), position);
 			}
 		}
 		
@@ -488,7 +488,7 @@ public class TrafficQueryEventHelper {
 
 		@Override
         public void afterTextChanged(Editable s) {
-            mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mContext, mQueryEdt.getEdt(), suggestWordsType);
+            mQueryFragment.mSuggestWordHelper.refresh(mQueryFragment.mContext, mQueryEdt.getEdt(), suggestWordsType);
         }
 
         @Override
@@ -606,12 +606,12 @@ public class TrafficQueryEventHelper {
         }
 			
 		    private void performSwitchStartEnd() {
-		        mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mSphinx, null, TrafficQuerySuggestHistoryHelper.TYPE_TRAFFIC);
+		        mQueryFragment.mSuggestWordHelper.clearSuggestList();
 //                clearSuggestWatcherInInputState();
                 POI temp = mQueryFragment.mStart.getPOI();
                 mQueryFragment.mStart.setPOI(mQueryFragment.mEnd.getPOI());
                 mQueryFragment.mEnd.setPOI(temp);
-                mQueryFragment.mSuggestHistoryHelper.clearSuggestList(mQueryFragment.mSphinx);
+                mQueryFragment.mSuggestWordHelper.clearSuggestList();
 //                addSuggestWatcherInInputState();
 //                mQueryFragment.mBlock.requestFocus();
 		    }
