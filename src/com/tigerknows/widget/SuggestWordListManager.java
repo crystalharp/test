@@ -28,6 +28,7 @@ import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
 
 public class SuggestWordListManager {
     
+    //需要监控内容的输入框
     TKEditText mWatchingEdt;
     
     List<TKWord> mSuggestWordList = new LinkedList<TKWord>();
@@ -36,10 +37,13 @@ public class SuggestWordListManager {
     
     Sphinx mSphinx;
     
+    //用来显示数据的listview
     ListView mSuggestLsv;
     
+    //数据列表中右边的输入按钮的响应函数接口
     BtnEventHandler mBtnEventHandler;
     
+    //建议词类别，与HistoryWordTable相同
     int mSuggestType;
     
     public SuggestWordListManager(Sphinx sphinx, ListView suggestLsv, TKEditText watchingEdit, BtnEventHandler btnHandler, int type){
@@ -47,7 +51,7 @@ public class SuggestWordListManager {
         mSuggestLsv = suggestLsv;
         mSphinx = sphinx;
         mSuggestType = type;
-        mSuggestAdapter = new SuggestArrayAdapter(mSphinx, SuggestArrayAdapter.TEXTVIEW_RESOURCE_ID, mSuggestWordList);
+        mSuggestAdapter = new SuggestArrayAdapter(mSphinx, mSuggestWordList);
         mSuggestLsv.setAdapter(mSuggestAdapter);
         mSuggestAdapter.setInputBtnEventHandler(btnHandler);
     }
@@ -72,11 +76,9 @@ public class SuggestWordListManager {
     }
     
     private void updateSuggestWord(Sphinx sphinx, List<TKWord> tkWordList, String searchWord) {
-        //xupeng:为何要clear两次？
         tkWordList.clear();
         MapEngine mapEngine = MapEngine.getInstance();
         mapEngine.suggestwordCheck(sphinx, Globals.g_Current_City_Info.getId());
-        tkWordList.clear();
         tkWordList.addAll(HistoryWordTable.generateSuggestWordList(sphinx, searchWord, mSuggestType));
     }
 }
