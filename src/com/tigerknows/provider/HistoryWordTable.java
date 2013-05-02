@@ -314,25 +314,12 @@ public class HistoryWordTable {
                  break;
             }
             TKWord historyWord = historyWordList.get(i);
+            //xupeng:确认key与建议词完全匹配的时候保留建议词
 //            if (historyWord.word.startsWith(searchword) && !historyWord.word.equals(searchword)) {
-            //xupeng:优化下下面这段代码
             if (historyWord.word.startsWith(key)) {
-                boolean add = true;
-                if (TYPE_TRAFFIC == type) {
-                    int index = associationalList.indexOf(historyWord);
-                    if (index >= 0 && index < associationalList.size()) {
-                        TKWord suggestTKWord = associationalList.get(index);
-                        if (historyWord.position == null && suggestTKWord.position != null) {
-                            add = false;
-                        }
-                    }
-                }
-                
-                if (add) {
-                    suggestList.add(historyWord);
-                    associationalList.remove(historyWord);
-                    historyIndex++;
-                }
+                suggestList.add(historyWord);
+                associationalList.remove(historyWord);
+                historyIndex++;
             }
         }
         
