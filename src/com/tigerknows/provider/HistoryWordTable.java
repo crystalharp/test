@@ -7,7 +7,10 @@ package com.tigerknows.provider;
 
 import com.decarta.android.db.PrefTable;
 import com.decarta.android.location.Position;
+import com.decarta.android.util.LogWrapper;
+import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.TKWord;
 
 import android.content.ContentValues;
@@ -269,31 +272,56 @@ public class HistoryWordTable {
         historyWordTable.close();
     }
     
-    public static List<TKWord> mergeTKWordList(List<TKWord> suggestWordList, String searchword, int type) {
-        List<TKWord> list = new ArrayList<TKWord>();
-        if (suggestWordList == null || searchword == null) {
-            return list;
-        }
+    public static List<TKWord> generateSuggestWordList(Sphinx sphinx, String searchWord, int type){
+        List<TKWord> suggestList = new LinkedList<TKWord>();
+        MapEngine mapEngine = MapEngine.getInstance();
+        List<TKWord> associationalList;
         List<TKWord> historyWordList;
-        if (TYPE_POI == type) {
-            historyWordList = History_Word_POI;
-        } else if (TYPE_TRAFFIC == type) {
-            historyWordList = History_Word_Traffic;
-        } else {
-            historyWordList = History_Word_Busline;
+        
+        if (searchWord == null) {
+            return suggestList;
         }
+        String key = searchWord.trim();
+        
+        switch (type){
+        case TYPE_POI:
+            associationalList = stringToTKWord(mapEngine.getwordslistString(key, 2), TKWord.ATTRIBUTE_SUGGEST);
+            historyWordList = History_Word_POI;
+            break;
+        case TYPE_TRAFFIC:
+            associationalList = stringToTKWord(mapEngine.getwordslistString(key, 0), TKWord.ATTRIBUTE_SUGGEST);
+            historyWordList = History_Word_Traffic;
+            break;
+        case TYPE_BUSLINE:
+            associationalList = stringToTKWord(mapEngine.getwordslistString(key, 0), TKWord.ATTRIBUTE_SUGGEST);
+            historyWordList = History_Word_Busline;
+            break;
+        default:
+            return suggestList;
+        }
+        
+        LogWrapper.d(TAG, "historyWordList:" + historyWordList.toString());
+        LogWrapper.d(TAG, "associationalList:" + associationalList.toString());
+        if (TextUtils.isEmpty(key) && historyWordList.size() > 0){
+            suggestList.addAll(historyWordList);
+            suggestList.add(TKWord.getCleanupTKWord(sphinx));
+            return suggestList;
+        }
+        
         int historyIndex = 0;
         for (int i = 0, size = historyWordList.size(); i < size; i++) {
             if (historyIndex >= HISTORY_WORD_LIST_SIZE) {
                  break;
             }
             TKWord historyWord = historyWordList.get(i);
-            if (historyWord.word.startsWith(searchword) && !historyWord.word.equals(searchword)) {
+//            if (historyWord.word.startsWith(searchword) && !historyWord.word.equals(searchword)) {
+            //xupeng:优化下下面这段代码
+            if (historyWord.word.startsWith(key)) {
                 boolean add = true;
                 if (TYPE_TRAFFIC == type) {
-                    int index = suggestWordList.indexOf(historyWord);
-                    if (index >= 0 && index < suggestWordList.size()) {
-                        TKWord suggestTKWord = suggestWordList.get(index);
+                    int index = associationalList.indexOf(historyWord);
+                    if (index >= 0 && index < associationalList.size()) {
+                        TKWord suggestTKWord = associationalList.get(index);
                         if (historyWord.position == null && suggestTKWord.position != null) {
                             add = false;
                         }
@@ -301,19 +329,20 @@ public class HistoryWordTable {
                 }
                 
                 if (add) {
-                    list.add(historyWord);
-                    suggestWordList.remove(historyWord);
+                    suggestList.add(historyWord);
+                    associationalList.remove(historyWord);
                     historyIndex++;
                 }
             }
         }
         
-        list.addAll(suggestWordList);
-        return list;
+        suggestList.addAll(associationalList);
+        LogWrapper.d(TAG, "suggestList:" + suggestList.toString());
+        return suggestList;
     }
     
     public static List<TKWord> getHistoryWordList(String searchword, int type) {
-        List<TKWord> list = new ArrayList<TKWord>();
+        List<TKWord> list = new LinkedList<TKWord>();
         List<TKWord> historyWordList;
         if (HistoryWordTable.TYPE_POI == type) {
             historyWordList = History_Word_POI;
@@ -337,7 +366,7 @@ public class HistoryWordTable {
     }
     
     public static List<TKWord> stringToTKWord(List<String> list, int attribute) {
-        List<TKWord> tkList = new ArrayList<TKWord>();
+        List<TKWord> tkList = new LinkedList<TKWord>();
         if (list == null) {
             return tkList;
         }

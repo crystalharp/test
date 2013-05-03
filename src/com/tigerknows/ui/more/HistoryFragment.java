@@ -495,7 +495,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         switch (type) {
             case Tigerknows.History.HISTORY_BUSLINE:
             	mSphinx.getBuslineDetailFragment().setData(traffic.getBuslineQuery().getBuslineModel().getLineList().get(0));
-                mSphinx.showView(R.id.view_busline_result_detail);
+                mSphinx.showView(R.id.view_traffic_busline_detail);
                 break;
                 
             case Tigerknows.History.HISTORY_TRANSFER:

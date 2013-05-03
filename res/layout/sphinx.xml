@@ -127,7 +127,7 @@
     
     <!-- 拦截屏幕上的Touch事件 -->
     <RelativeLayout
-        android:id="@+id/overlay_view"
+        android:id="@+id/disable_touch_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/transparent"

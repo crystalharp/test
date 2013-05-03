@@ -26,6 +26,10 @@ public class TKDrawable extends XMapData implements Parcelable {
     
     private String url;
     
+    public TKDrawable() {
+        
+    }
+    
     public TKDrawable(XMap data) throws APIException {
         super(data);
         
@@ -50,6 +54,10 @@ public class TKDrawable extends XMapData implements Parcelable {
 
     public String getUrl() {
         return url;
+    }
+    
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public Drawable loadDrawable(final Activity activity, final Runnable action, final String viewToken) {

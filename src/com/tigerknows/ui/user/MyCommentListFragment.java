@@ -127,7 +127,7 @@ public class MyCommentListFragment extends BaseFragment {
                                     mSphinx.getString(R.string.poi_comment_poi_invalid_not_update));
                         } else {
                             EditCommentActivity.setPOI(comment.getPOI(), getId(), EditCommentActivity.STATUS_MODIFY);
-                            mSphinx.showView(R.id.activity_poi_comment);
+                            mSphinx.showView(R.id.activity_poi_edit_comment);
                         }
                     }
                 }
@@ -296,7 +296,7 @@ public class MyCommentListFragment extends BaseFragment {
     public void onPostExecute(TKAsyncTask tkAsyncTask) {   
         super.onPostExecute(tkAsyncTask);
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();   
-        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), R.id.view_user_home, R.id.view_more, null)) {
+        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), R.id.view_user_home, R.id.view_more_home, null)) {
             isReLogin = true;
             return;
         }

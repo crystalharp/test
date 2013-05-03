@@ -162,7 +162,7 @@ public abstract class UserBaseFragment extends BaseFragment {
 		// TODO Auto-generated method stub
 		super.onPostExecute(tkAsyncTask);
 		BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
-		if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), R.id.view_user_home, R.id.view_more, null)) {
+		if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), R.id.view_user_home, R.id.view_more_home, null)) {
 		    return;
         }
 

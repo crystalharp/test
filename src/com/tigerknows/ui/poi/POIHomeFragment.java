@@ -184,10 +184,10 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         int id = view.getId();
         if (id == R.id.city_btn) {
             mActionLog.addAction(mActionTag +  ActionLog.POIHomeChangeCityBtn, Globals.g_Current_City_Info.getCName());
-            mSphinx.showView(R.id.activity_change_city);
+            mSphinx.showView(R.id.activity_more_change_city);
         } else if (id == R.id.input_btn) {
             mActionLog.addAction(mActionTag +  ActionLog.POIHomeInputEdt);
-            mSphinx.showView(R.id.view_poi_query);
+            mSphinx.showView(R.id.view_poi_input_search);
         }
     }
     

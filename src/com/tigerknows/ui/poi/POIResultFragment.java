@@ -524,9 +524,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 categoryTxv.setText("");
             }
             
-            int money = poi.getPerCapity();
-            if (money > -1) {
-                moneyTxv.setText(context.getString(R.string.yuan, money));
+            String perCapity = poi.getPerCapity();
+            if (perCapity != null) {
+                moneyTxv.setText(perCapity);
             } else {
                 moneyTxv.setText("");
             }
@@ -745,15 +745,15 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 mPOIList.addAll(bPOIList);
             }
 
-            if (dataQuery.getSourceViewId() == R.id.view_poi_nearby) {
-                if (this.mSphinx.uiStackContains(R.id.view_favorite)) {
-                    mSphinx.uiStackClose(new int[]{R.id.view_more, R.id.view_favorite, getId()});
-                } else if (this.mSphinx.uiStackContains(R.id.view_history)) {
-                    mSphinx.uiStackClose(new int[]{R.id.view_more, R.id.view_history, getId()});
+            if (dataQuery.getSourceViewId() == R.id.view_poi_nearby_search) {
+                if (this.mSphinx.uiStackContains(R.id.view_more_favorite)) {
+                    mSphinx.uiStackClose(new int[]{R.id.view_more_home, R.id.view_more_favorite, getId()});
+                } else if (this.mSphinx.uiStackContains(R.id.view_more_history)) {
+                    mSphinx.uiStackClose(new int[]{R.id.view_more_home, R.id.view_more_history, getId()});
                 } else {
-                    mSphinx.uiStackClose(new int[]{R.id.view_home, getId()});
-                    if (mSphinx.uiStackContains(R.id.view_home) == false) {
-                        mSphinx.uiStackInsert(R.id.view_home, 0);
+                    mSphinx.uiStackClose(new int[]{R.id.view_poi_home, getId()});
+                    if (mSphinx.uiStackContains(R.id.view_poi_home) == false) {
+                        mSphinx.uiStackInsert(R.id.view_poi_home, 0);
                     }
                 }
             }

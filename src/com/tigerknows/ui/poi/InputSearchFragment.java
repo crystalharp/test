@@ -6,6 +6,7 @@ package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.os.Bundle;
@@ -41,7 +42,8 @@ import com.tigerknows.model.TKWord;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.widget.SuggestArrayAdapter;
-import com.tigerknows.widget.SuggestArrayAdapter.CallBack;
+import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
+import com.tigerknows.widget.SuggestWordListManager;
 
 /**
  * @author Peng Wenyue
@@ -57,21 +59,16 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
 
     private TKEditText mKeywordEdt = null;
 
-    private SuggestArrayAdapter mSuggestAdapter;
-
     private ListView mSuggestLsv = null;
     
-    private List<TKWord> mSuggestWordList = new ArrayList<TKWord>();
+    private SuggestWordListManager mSuggestWordListManager;
     
     private final TextWatcher mFindEdtWatcher = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            String key = mKeywordEdt.getText().toString();
-            makeSuggestWord(mSphinx, mSuggestWordList, key);
-            mSuggestAdapter.key = key;
-            mSuggestAdapter.notifyDataSetChanged();
+            mSuggestWordListManager.refresh();
         }
 
         public void afterTextChanged(Editable s) {
@@ -99,15 +96,14 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         findViews();
         setListener();
         
-        mSuggestAdapter = new SuggestArrayAdapter(mContext, SuggestArrayAdapter.TEXTVIEW_RESOURCE_ID, mSuggestWordList);
-        mSuggestAdapter.setCallBack(new CallBack() {
+        BtnEventHandler a = new BtnEventHandler() {
             
             @Override
-            public void onItemClicked(TKWord tkWord, int position) {
+            public void onBtnClicked(TKWord tkWord, int position) {
                 mKeywordEdt.setText(tkWord.word);
             }
-        });
-        mSuggestLsv.setAdapter(mSuggestAdapter);
+        };
+        mSuggestWordListManager = new SuggestWordListManager(mSphinx, mSuggestLsv, mKeywordEdt, a, HistoryWordTable.TYPE_POI);
         return mRootView;
     }
 
@@ -134,7 +130,6 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         mKeywordEdt.setOnEditorActionListener(new OnEditorActionListener() {
             
             @Override
-            //xupeng:参考来修改输入法的键位
             public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
                     submitQuery();
@@ -167,10 +162,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistoryClear);
                     HistoryWordTable.clearHistoryWord(mSphinx, Globals.g_Current_City_Info.getId(), HistoryWordTable.TYPE_POI);
-                    String key = mKeywordEdt.getText().toString();
-                    makeSuggestWord(mSphinx, mSuggestWordList, key);
-                    mSuggestAdapter.key = key;
-                    mSuggestAdapter.notifyDataSetChanged();
+                    mSuggestWordListManager.refresh();
                 } else {
                     if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistory, position, tkWord.word);
@@ -236,30 +228,10 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     
     //还原为第一次进入的状态
     public void reset() {
-        mSuggestAdapter.key = null;
         mKeywordEdt.setText(null);
         mSphinx.showSoftInput(mKeywordEdt.getInput());
         mKeywordEdt.getInput().requestFocus();
-        
-        makeSuggestWord(mSphinx, mSuggestWordList, mKeywordEdt.getText().toString());
-        mSuggestAdapter.notifyDataSetChanged();
         mQueryBtn.setEnabled(false);
     }
     
-    public static void makeSuggestWord(Sphinx sphinx, List<TKWord> tkWordList, String searchWord) {
-        tkWordList.clear();
-        MapEngine mapEngine = MapEngine.getInstance();
-        mapEngine.suggestwordCheck(sphinx, Globals.g_Current_City_Info.getId());
-        tkWordList.clear();
-        List<String> list = mapEngine.getwordslistString(searchWord, 2);
-        
-        if (list != null && list.size() > 0) {
-            tkWordList.addAll(HistoryWordTable.mergeTKWordList(HistoryWordTable.stringToTKWord(list, TKWord.ATTRIBUTE_SUGGEST), searchWord, HistoryWordTable.TYPE_POI));
-        } else {
-            tkWordList.addAll(HistoryWordTable.getHistoryWordList(searchWord, HistoryWordTable.TYPE_POI));
-            if (tkWordList.size() > 0) {
-                tkWordList.add(TKWord.getCleanupTKWord(sphinx));
-            }
-        }
-    }
 }

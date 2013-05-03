@@ -397,7 +397,7 @@ public class CommentListActivity extends BaseActivity {
                                 Intent intent = new Intent();
                                 intent.setClass(mThis, EditCommentActivity.class);
                                 EditCommentActivity.setPOI(mPOI, mId, EditCommentActivity.STATUS_MODIFY);
-                                mThis.startActivityForResult(intent, R.id.activity_poi_comment);
+                                mThis.startActivityForResult(intent, R.id.activity_poi_edit_comment);
                             } else {
                                 Utility.showNormalDialog(mThis, 
                                         mThis.getString(R.string.comment_poi_invalid_hit));

@@ -54,17 +54,21 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.DataOperation;
+import com.tigerknows.model.DataOperation.DianyingQueryResponse;
 import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.Yanchu;
+import com.tigerknows.model.Yingxun;
 import com.tigerknows.model.Zhanlan;
 import com.tigerknows.model.DataOperation.FendianQueryResponse;
 import com.tigerknows.model.DataOperation.POIQueryResponse;
 import com.tigerknows.model.DataOperation.TuangouQueryResponse;
 import com.tigerknows.model.DataOperation.YanchuQueryResponse;
+import com.tigerknows.model.DataOperation.YingxunQueryResponse;
 import com.tigerknows.model.DataOperation.ZhanlanQueryResponse;
 import com.tigerknows.model.DataQuery.CommentResponse;
 import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
@@ -85,6 +89,8 @@ import com.tigerknows.util.WidgetUtils;
  * 
  */
 public class POIDetailFragment extends BaseFragment implements View.OnClickListener, OnTouchListener {
+	
+	static final int SHOW_DYNAMIC_YINGXUN_MAX = 3;
     
     public POIDetailFragment(Sphinx sphinx) {
         super(sphinx);
@@ -149,6 +155,16 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     private View mCommentTipView;
     
     private LinearLayout mDynamicPOIListView;
+    
+    private LinearLayout mDynamicDianyingView;
+    
+    private List<DynamicPOI> mDynamicDianyingList = new ArrayList<POI.DynamicPOI>();
+    
+    private LinearLayout mDynamicDianyingListView;
+    
+    private LinearLayout mDynamicDianyingMoreView;
+    
+    private boolean mShowDynamicDianyingMoreView = true;
     
     private Button mCommentTipEdt;
     
@@ -268,9 +284,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             mCategoryTxv.setText("");
         }
         
-        int money = poi.getPerCapity();
-        if (money > -1) {
-            mMoneyTxv.setText(mContext.getString(R.string.yuan, money));
+        String perCapity = poi.getPerCapity();
+        if (perCapity != null) {
+            mMoneyTxv.setText(perCapity);
             mMoneyTxv.setVisibility(View.VISIBLE);
         } else {
             mMoneyTxv.setVisibility(View.GONE);
@@ -350,6 +366,21 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         makeFeature(mFeatureTxv);
         
+        refreshDynamicPOI(poi);
+        
+        refreshDynamicDinaying(poi);
+    }
+    
+    /**
+     * 刷新动态POI（团购、演出、展览）的显示区域
+     * @param poi
+     */
+    void refreshDynamicPOI(POI poi) {
+    	if (poi == null) {
+    		mDynamicPOIListView.setVisibility(View.GONE);
+    		return;
+    	}
+
         List<DynamicPOI> list = poi.getDynamicPOIList();
         int viewCount = mDynamicPOIListView.getChildCount();
         int viewIndex = 0;
@@ -464,6 +495,118 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
                 }
             } else if (i == (viewIndex-1)) {
+                child.setBackgroundResource(R.drawable.list_footer);
+                child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
+            } else {
+                child.setBackgroundResource(R.drawable.list_middle);
+                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
+            }
+        }
+    }
+    
+    /**
+     * 刷新动态电影的显示区域（仅电影院类POI）
+     * @param poi
+     */
+    void refreshDynamicDinaying(POI poi) {
+        mDynamicDianyingList.clear();
+    	if (poi == null) {
+        	mDynamicDianyingView.setVisibility(View.GONE);
+    		return;
+    	}
+        
+        // 动态影讯
+    	List<DynamicPOI> list = poi.getDynamicPOIList();
+    	if (list != null) {
+    	    for(int i = 0, size = list.size(); i < size; i++) {
+    	        DynamicPOI dynamic = list.get(i);
+    	        if (BaseQuery.DATA_TYPE_DIANYING.equals(dynamic.getType())) {
+    	            mDynamicDianyingList.add(dynamic);
+    	        }
+    	    }
+    	}
+        int size = mDynamicDianyingList.size();
+        if(size==0){
+        	mDynamicDianyingView.setVisibility(View.GONE);
+        }else{
+        	mDynamicDianyingView.setVisibility(View.VISIBLE);
+        }
+        
+        int childCount = mDynamicDianyingListView.getChildCount();
+        int viewCount = 0;
+        for(int i = 0; i < size; i++) {
+            final DynamicPOI dynamic = mDynamicDianyingList.get(i);
+            View child;
+            if (viewCount < childCount) {
+                child = mDynamicDianyingListView.getChildAt(viewCount);
+                child.setVisibility(View.VISIBLE);
+            } else {
+                child = mLayoutInflater.inflate(R.layout.poi_dynamic_poi_list_item, mDynamicDianyingListView, false);
+                mDynamicDianyingListView.addView(child, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+            }
+            child.setOnClickListener(new View.OnClickListener() {
+                
+                @Override
+                public void onClick(View view) {
+                	List<BaseQuery> list = new ArrayList<BaseQuery>();
+                	
+                    DataOperation dataOperation = new DataOperation(mSphinx);
+                    Hashtable<String, String> criteria = new Hashtable<String, String>();
+                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIANYING);
+                    criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+                        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getMasterUid());
+                    
+                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+                                 Dianying.NEED_FILELD_ONLY_DIANYING
+                                    + Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
+                    criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+                            Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
+                    dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+                    list.add(dataOperation);
+                    
+                    dataOperation = new DataOperation(mSphinx);
+                    criteria = new Hashtable<String, String>();
+                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_YINGXUN);
+                    criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+                        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getSlaveUid());
+                    
+                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Yingxun.NEED_FILELD);
+                    dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+                    list.add(dataOperation);
+                    
+                    mTkAsyncTasking = mSphinx.queryStart(list);
+                    mBaseQuerying = list;
+                }
+            });
+            ImageView iconImv = (ImageView) child.findViewById(R.id.icon_imv);
+            TextView nameTxv = (TextView) child.findViewById(R.id.name_txv);
+            TextView gradeTxv = (TextView) child.findViewById(R.id.grade_txv);
+            TextView typeTxv = (TextView) child.findViewById(R.id.type_txv);
+            TextView lengthTxv = (TextView) child.findViewById(R.id.length_txv);
+            nameTxv.setText(dynamic.getSummary());
+            gradeTxv.setText(dynamic.getDianyingGrade());
+            typeTxv.setText(dynamic.getDianyingType());
+            lengthTxv.setText(dynamic.getDianyingLength());
+            viewCount++;
+        }
+        
+        childCount = mDynamicDianyingListView.getChildCount();
+        for(int i = viewCount; i < childCount; i++) {
+        	mDynamicDianyingListView.getChildAt(i).setVisibility(View.GONE);
+        }
+        
+        if (size > SHOW_DYNAMIC_YINGXUN_MAX && mShowDynamicDianyingMoreView) {
+        	for(int i = SHOW_DYNAMIC_YINGXUN_MAX; i < childCount; i++) {
+            	mDynamicDianyingListView.getChildAt(i).setVisibility(View.GONE);
+            }
+        	mDynamicDianyingMoreView.setVisibility(View.VISIBLE);
+        } else {
+        	mDynamicDianyingMoreView.setVisibility(View.GONE);
+        }
+        
+        for(int i = 0; i < viewCount; i++) {
+            View child = mDynamicDianyingListView.getChildAt(i);
+            if (i == (viewCount-1) && mDynamicDianyingMoreView.getVisibility() == View.GONE) {
                 child.setBackgroundResource(R.drawable.list_footer);
                 child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
             } else {
@@ -593,6 +736,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mCommentTipView = mRootView.findViewById(R.id.comment_tip_view);
         mCommentTipEdt = (Button) mRootView.findViewById(R.id.comment_tip_btn);
         mLoadingView = mRootView.findViewById(R.id.loading_view);
+
+        mDynamicDianyingView = (LinearLayout) mRootView.findViewById(R.id.dynamic_dianying_view);
+        mDynamicDianyingListView = (LinearLayout) mRootView.findViewById(R.id.dynamic_dianying_list_view);
+        mDynamicDianyingMoreView = (LinearLayout) mRootView.findViewById(R.id.dynamic_dianying_more_view);
     }
 
     protected void setListener() {
@@ -604,6 +751,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mErrorFixBtn.setOnClickListener(this);
         mCommentSumTotalView.setOnClickListener(this);
         mCommentTipView.setOnTouchListener(this);
+        mDynamicDianyingMoreView.setOnClickListener(this);
         mCommentTipEdt.setOnTouchListener(new OnTouchListener() {
             
             @Override
@@ -646,7 +794,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 //                            }
 //                        } else {
                             EditCommentActivity.setPOI(poi, getId(), poi.getMyComment() != null ? EditCommentActivity.STATUS_MODIFY : EditCommentActivity.STATUS_NEW);
-                            mSphinx.showView(R.id.activity_poi_comment);
+                            mSphinx.showView(R.id.activity_poi_edit_comment);
 //                        }
                     }
                 }
@@ -678,7 +826,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             case R.id.poi_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.POIDetailSearch);
                 mSphinx.getPOINearbyFragment().setData(poi);
-                mSphinx.showView(R.id.view_poi_nearby);
+                mSphinx.showView(R.id.view_poi_nearby_search);
                 break;
                 
             case R.id.share_btn:
@@ -698,6 +846,29 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             case R.id.comment_sum_total_view:
                 mActionLog.addAction(mActionTag +  ActionLog.POIDetailAllComment);
                 showMoreComment();
+                break;
+                
+                
+            case R.id.dynamic_dianying_more_view:
+            	mShowDynamicDianyingMoreView = false;
+            	mDynamicDianyingMoreView.setVisibility(View.GONE);
+            	
+            	int size = mDynamicDianyingList.size();
+            	int viewCount = mDynamicDianyingListView.getChildCount();
+                for(int i = 0; i < viewCount && i < size; i++) {
+                	mDynamicDianyingListView.getChildAt(i).setVisibility(View.VISIBLE);
+                }
+                
+                for(int i = 0; i < viewCount; i++) {
+                    View child = mDynamicDianyingListView.getChildAt(i);
+                    if (i == (viewCount-1) && mDynamicDianyingMoreView.getVisibility() == View.GONE) {
+                        child.setBackgroundResource(R.drawable.list_footer);
+                        child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
+                    } else {
+                        child.setBackgroundResource(R.drawable.list_middle);
+                        child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
+                    }
+                }
                 break;
                 
             default:
@@ -771,7 +942,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             return;
         }
         POIReportErrorActivity.addTarget(poi);
-        mSphinx.showView(R.id.activity_poi_error_recovery);
+        mSphinx.showView(R.id.activity_poi_report_error);
     }
     
     /**
@@ -800,6 +971,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     }
     
     public void setData(POI poi) {
+    	mShowDynamicDianyingMoreView = true;
         if (mStampAnimation != null) {
             mStampBigImv.setVisibility(View.GONE);
             mStampAnimation.reset();
@@ -1085,6 +1257,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mLoadingView.setVisibility(View.GONE);
         List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
         Tuangou tuangou = null;
+        Dianying dianying = null;
         for(BaseQuery baseQuery : baseQueryList) {
             if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
                 isReLogin = true;
@@ -1157,7 +1330,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     tuangou.setFendian(((FendianQueryResponse) response).getFendian());
                     List<Tuangou> list = new ArrayList<Tuangou>();
                     list.add(tuangou);
-                    mSphinx.showView(R.id.view_tuangou_detail);
+                    mSphinx.showView(R.id.view_discover_tuangou_detail);
                     mSphinx.getTuangouDetailFragment().setData(list, 0, null);
                     
                 // 查询演出的结果
@@ -1168,7 +1341,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     Yanchu yanchu = ((YanchuQueryResponse) response).getYanchu();
                     List<Yanchu> list = new ArrayList<Yanchu>();
                     list.add(yanchu);
-                    mSphinx.showView(R.id.view_yanchu_detail);
+                    mSphinx.showView(R.id.view_discover_yanchu_detail);
                     mSphinx.getYanchuDetailFragment().setData(list, 0, null);
                     
                 // 查询展览的结果
@@ -1179,8 +1352,25 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     Zhanlan zhanlan = ((ZhanlanQueryResponse) response).getZhanlan();
                     List<Zhanlan> list = new ArrayList<Zhanlan>();
                     list.add(zhanlan);
-                    mSphinx.showView(R.id.view_zhanlan_detail);
+                    mSphinx.showView(R.id.view_discover_zhanlan_detail);
                     mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
+                    
+                // 电影
+                } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {
+                	if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
+                        return;
+                    }
+                	dianying = ((DianyingQueryResponse) response).getDianying();
+                // 影讯
+                } else if (BaseQuery.DATA_TYPE_YINGXUN.equals(dataType)) {
+                	if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
+                        return;
+                    }
+                	dianying.setYingxun(((YingxunQueryResponse) response).getYingxun());
+                    List<Dianying> list = new ArrayList<Dianying>();
+                    list.add(dianying);
+                    mSphinx.showView(R.id.view_discover_dianying_detail);
+                    mSphinx.getDianyingDetailFragment().setData(list, 0, null);
                 }
             }
         }

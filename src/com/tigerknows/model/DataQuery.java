@@ -122,6 +122,15 @@ public final class DataQuery extends BaseQuery {
     
     // msgIds String false 客户端已收到的消息id，多个id之间用_分隔。如"1000_32762_33658"。首次请求时此项为空。 
     public static final String SERVER_PARAMETER_MESSAGE_ID_LIST = "msgIds";
+    
+    // appendaction    string  false   目前支持nosearch（表示不做搜索，只返回筛选项） 
+    public static final String SERVER_PARAMETER_APPENDACTION = "appendaction";
+    
+    // checkin     String  true    入住酒店时间，格式"yyyy-MM-dd"
+    public static final String SERVER_PARAMETER_CHECKIN = "checkin";
+    
+    // checkout    String  true    离开酒店时间，格式"yyyy-MM-dd" 
+    public static final String SERVER_PARAMETER_CHECKOUT = "checkout";
 
     // 评论版本 
     public static final String COMMENT_VERSION = "1";
@@ -159,6 +168,8 @@ public final class DataQuery extends BaseQuery {
     private static Object Filter_Lock = new Object();
     
     private static FilterCategoryOrder Filter_Category_Order_POI;
+    
+    private static FilterCategoryOrder Filter_Category_Order_Hotel;
     
     private static FilterArea Filter_Area;
     
@@ -398,6 +409,11 @@ public final class DataQuery extends BaseQuery {
             if (DATA_TYPE_POI.equals(dataType)) {     
                 if (criteria.containsKey(SERVER_PARAMETER_ID_LIST)) {
                     requestParameters.add(SERVER_PARAMETER_ID_LIST, criteria.get(SERVER_PARAMETER_ID_LIST));
+                    if (criteria.containsKey(SERVER_PARAMETER_SUB_DATA_TYPE)) {
+                        String subDataType = criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
+                    } else {
+                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SUB_DATA_TYPE);
+                    }
                 } else {
                     requestParameters.add(SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);
                     requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
@@ -657,31 +673,38 @@ public final class DataQuery extends BaseQuery {
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
         String dataType = this.criteria.get(SERVER_PARAMETER_DATA_TYPE);
+        String subDataType = this.criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
         if (DATA_TYPE_POI.equals(dataType)) {
-            POIResponse response = new POIResponse(responseXMap);
-            translateFilter(response, dataType, filterList);
-            this.response = response;
+
+            FilterResponse filterResponse = null;
+            if (SUB_DATA_TYPE_POI.equals(subDataType)) {
+                filterResponse = new POIResponse(responseXMap);
+            } else {
+                filterResponse = new HotelResponse(responseXMap);
+            }
+            translateFilter(filterResponse, dataType, subDataType, filterList);
+            this.response = filterResponse;
         } else if (DATA_TYPE_TUANGOU.equals(dataType)) {
             TuangouResponse response = new TuangouResponse(responseXMap);
-            translateFilter(response, dataType, filterList);
+            translateFilter(response, dataType, subDataType, filterList);
             this.response = response;
         } else if (DATA_TYPE_FENDIAN.equals(dataType)) {
             FendianResponse response = new FendianResponse(responseXMap);
             this.response = response;
         } else if (DATA_TYPE_DIANYING.equals(dataType)) {
             DianyingResponse response = new DianyingResponse(responseXMap);
-            translateFilter(response, dataType, filterList);
+            translateFilter(response, dataType, subDataType, filterList);
             this.response = response;
         } else if (DATA_TYPE_YINGXUN.equals(dataType)) {
             YingxunResponse response = new YingxunResponse(responseXMap);
             this.response = response;
         } else if (DATA_TYPE_YANCHU.equals(dataType)) {
             YanchuResponse response = new YanchuResponse(responseXMap);
-            translateFilter(response, dataType, filterList);
+            translateFilter(response, dataType, subDataType, filterList);
             this.response = response;
         } else if (DATA_TYPE_ZHANLAN.equals(dataType)) {
             ZhanlanResponse response = new ZhanlanResponse(responseXMap);
-            translateFilter(response, dataType, filterList);
+            translateFilter(response, dataType, subDataType, filterList);
             this.response = response;
         } else if (DATA_TYPE_SHANGJIA.equals(dataType)) {
             ShangjiaResponse response = new ShangjiaResponse(responseXMap);
@@ -697,7 +720,7 @@ public final class DataQuery extends BaseQuery {
         }
     }
     
-    private void translateFilter(FilterResponse baseResponse, String dataType, List<Filter> filterList) throws APIException {
+    private void translateFilter(FilterResponse baseResponse, String dataType, String subType, List<Filter> filterList) throws APIException {
         filterList.clear();
         synchronized (Filter_Lock) {
             try {      
@@ -705,7 +728,11 @@ public final class DataQuery extends BaseQuery {
                 FilterCategoryOrder staticFilterDataCategoryOrder = null;
                 if (DATA_TYPE_POI.equals(dataType)) {
                     staticFilterDataArea = Filter_Area;
-                    staticFilterDataCategoryOrder = Filter_Category_Order_POI;
+                    if (SUB_DATA_TYPE_POI.equals(subType)) {
+                        staticFilterDataCategoryOrder = Filter_Category_Order_POI;
+                    } else {
+                        staticFilterDataCategoryOrder = Filter_Category_Order_Hotel;
+                    }
                 } else if (DATA_TYPE_TUANGOU.equals(dataType)) {
                     staticFilterDataArea = Filter_Area;
                     staticFilterDataCategoryOrder = Filter_Category_Order_Tuangou;
@@ -1382,6 +1409,53 @@ public final class DataQuery extends BaseQuery {
                 if (this.data.containsKey(FIELD_SHORT_MESSAGE)) {
                     this.shortMessage = this.data.getString(FIELD_SHORT_MESSAGE);
                 }
+
+            }
+
+        }
+    }
+
+    public static class HotelResponse extends FilterResponse {
+        // 0x02 x_map 可预订酒店类poi结果
+        public static final byte FIELD_LIST = 0x02;
+
+        private HotelList hotelList;
+
+        public HotelList getHotelList() {
+            return hotelList;
+        }
+
+        public void setHotelList(HotelList hotelList) {
+            this.hotelList = hotelList;
+        }
+
+        public HotelResponse(XMap data) throws APIException {
+            super(data);
+
+            if (this.data.containsKey(FIELD_LIST)) {
+                this.hotelList = new HotelList(this.data.getXMap(FIELD_LIST));
+            }
+        }
+
+        public static class HotelList extends BaseList {
+
+            // 0x02 x_array<x_map> 可预订酒店列表
+            public static final byte FIELD_LIST = 0x02;
+
+            private List<Hotel> list;
+
+            public List<Hotel> getList() {
+                return list;
+            }
+
+            public void setList(List<Hotel> list) {
+                this.list = list;
+            }
+
+            public HotelList(XMap data) throws APIException {
+                super(data);
+
+                this.list = getListFromXArray(Hotel.getXMapInitializer(), data, FIELD_LIST);
 
             }
 
@@ -2247,7 +2321,12 @@ public final class DataQuery extends BaseQuery {
         super.launchTest();
         String dataType = this.criteria.get(SERVER_PARAMETER_DATA_TYPE);
         if (DATA_TYPE_POI.equals(dataType)) {
-            responseXMap = DataQueryTest.launchPOIResponse(168, "launchPOIResponse");
+            String subDataType = this.criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
+            if (SUB_DATA_TYPE_POI.equals(subDataType)) {
+                responseXMap = DataQueryTest.launchPOIResponse(168, "launchPOIResponse");
+            } if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+                responseXMap = DataQueryTest.launchHotelResponse(168, "launchPOIResponse");
+            }
         } else if (DATA_TYPE_TUANGOU.equals(dataType)) {
             responseXMap = DataQueryTest.launchTuangouResponse(context, 168, "launchTuangouResponse");
         } else if (DATA_TYPE_FENDIAN.equals(dataType)) {

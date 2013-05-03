@@ -11,7 +11,9 @@ import com.tigerknows.Sphinx;
 /**
  * 负责“交通频道首页”TrafficQueryFragment的[[动画效果]]
  * @author linqingzu
- *
+ * InterceptTouchListener是为了防止在播放动画的时候被其他操作
+ * 打断，实现原理是在sphinx.xml里面添加了一个透明层，拦截一切touch
+ * 事件，在动画开始的时候显示，动画结束的时候关闭。
  */
 public class TrafficQueryAnimationHelper {
 

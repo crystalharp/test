@@ -175,7 +175,7 @@ public class UserRegistActivity extends UserBaseActivity {
 
 	private void onSuccess() {
 		showToast(R.string.regist_success);
-		if (mSourceViewIdLogin != R.id.activity_poi_comment) {
+		if (mSourceViewIdLogin != R.id.activity_poi_edit_comment) {
     		Intent intent = new Intent(UserRegistActivity.this, UserUpdateNickNameActivity.class);
     		startActivityForResult(intent, 0);
 		} else {
@@ -241,7 +241,7 @@ public class UserRegistActivity extends UserBaseActivity {
 					int which) {
 				// TODO Auto-generated method stub
 				if (which == DialogInterface.BUTTON_POSITIVE) {
-					if (mSourceViewIdLogin == R.id.activity_poi_comment) {
+					if (mSourceViewIdLogin == R.id.activity_poi_edit_comment) {
 						// 点评-点评后登录页-注册
 						// 点评-点评后登录页-登录-注册
 						Intent intent = new Intent(UserRegistActivity.this, UserLoginActivity.class);
