@@ -541,7 +541,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 child = mDynamicDianyingListView.getChildAt(viewCount);
                 child.setVisibility(View.VISIBLE);
             } else {
-                child = mLayoutInflater.inflate(R.layout.poi_dynamic_poi_list_item, mDynamicDianyingListView, false);
+                child = mLayoutInflater.inflate(R.layout.poi_dynamic_dianying_list_item, mDynamicDianyingListView, false);
                 mDynamicDianyingListView.addView(child, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
             }
             child.setOnClickListener(new View.OnClickListener() {
@@ -984,6 +984,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             if (poi.getFrom() == POI.FROM_LOCAL && TextUtils.isEmpty(uuid) == false) {
                 Hashtable<String, String> criteria = new Hashtable<String, String>();
                 criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
+                criteria.put(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
                 criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
                 criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, uuid);
                 criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);

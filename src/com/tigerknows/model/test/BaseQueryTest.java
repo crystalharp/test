@@ -455,7 +455,7 @@ public class BaseQueryTest {
                           
                           @Override
                           public void run() {
-                              sphinx.changeCity(c2.getId());
+                              sphinx.changeCity(c2);
                           }
                       });
                       try {

@@ -295,8 +295,14 @@ public class POI extends BaseData {
     public static final byte FIELD_PERCAPITY = 0x17;
     
     public static class DynamicPOI extends XMapData {
+        
         // 0x01 x_int 动态poi的类型
         public static final byte FIELD_TYPE = 0x01;
+        // 当key 0x01 = 2，POI附加信息数据类型为团购，附加信息1为团购uid，附加信息2为摘要信息，附加信息3为分店的uid
+        // 当key 0x01 = 13，POI附加信息数据类型为演出，附加信息1为演出uid，其他字段无用
+        // 当key 0x01 = 14，POI附加信息数据类型为展览，附加信息1为展览uid，其他字段无用
+        // 当key 0x01 = 4, POI附加信息数据类型为电影，附加信息1为电影uid，附加信息2为摘要信息，附加信息3为影讯的uid，附加信息4为影片海报url，附加信息5为影片评分，附加信息6为影片星级，附加信息7为影片时长
+        // 当key 0x01 = 65537, POI附加信息数据类型为酒店POI，其他字段无用
         
         // 0x02 x_string    主动态poi的uid，masterUid
         public static final byte FIELD_MASTER_UID = 0x02;

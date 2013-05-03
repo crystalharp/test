@@ -145,6 +145,8 @@ public final class DataQuery extends BaseQuery {
     
     public static final String FILTER_TYPE_ORDER = "13";    
     
+    public static final String APPENDACTION_NOSEARCH = "nosearch";
+    
     private static final SimpleDateFormat TIME_STAMP_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
     
     // ref string  true    取"USER"(表示在个人中心获取用户相关点评)或"POI"(在poi详情页获取poi相关点评)
@@ -224,7 +226,7 @@ public final class DataQuery extends BaseQuery {
         this.cityId = cityId;
         this.isTurnPage = isTurnpage;
         this.needReconntection = needReconntection;
-        initStaticField(this.criteria.get(SERVER_PARAMETER_DATA_TYPE), this.cityId);
+        initStaticField(this.criteria.get(SERVER_PARAMETER_DATA_TYPE), this.criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE), this.cityId);
     }
     
     public static boolean checkDiscoveryCity(int cityId) {
@@ -270,14 +272,18 @@ public final class DataQuery extends BaseQuery {
         }
     }
     
-    public static void initStaticField(String dataType, int cityId) {
+    public static void initStaticField(String dataType, String subDataType, int cityId) {
         try {
             synchronized (Filter_Lock) {
                 FilterArea filterDataArea = null;
                 FilterCategoryOrder filterDataCategoryOrder = null;
                 if (DATA_TYPE_POI.equals(dataType)) {
                     filterDataArea = Filter_Area;
-                    filterDataCategoryOrder = Filter_Category_Order_POI;
+                    if (SUB_DATA_TYPE_POI.equals(subDataType)) {
+                        filterDataCategoryOrder = Filter_Category_Order_POI;
+                    } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+                        filterDataCategoryOrder = Filter_Category_Order_Hotel;
+                    }
                 } else if (DATA_TYPE_TUANGOU.equals(dataType)) {
                     filterDataArea = Filter_Area;
                     filterDataCategoryOrder = Filter_Category_Order_Tuangou;
@@ -343,7 +349,11 @@ public final class DataQuery extends BaseQuery {
                 
                 if (DATA_TYPE_POI.equals(dataType)) {
                     Filter_Area = filterDataArea;
-                    Filter_Category_Order_POI = filterDataCategoryOrder;
+                    if (SUB_DATA_TYPE_POI.equals(subDataType)) {
+                        Filter_Category_Order_POI = filterDataCategoryOrder;
+                    } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+                        Filter_Category_Order_Hotel = filterDataCategoryOrder;   
+                    }
                 } else if (DATA_TYPE_TUANGOU.equals(dataType)) {
                     Filter_Area = filterDataArea;
                     Filter_Category_Order_Tuangou = filterDataCategoryOrder;
@@ -407,32 +417,36 @@ public final class DataQuery extends BaseQuery {
         if (criteria.containsKey(SERVER_PARAMETER_DATA_TYPE)) {
             String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
             if (DATA_TYPE_POI.equals(dataType)) {     
-                if (criteria.containsKey(SERVER_PARAMETER_ID_LIST)) {
-                    requestParameters.add(SERVER_PARAMETER_ID_LIST, criteria.get(SERVER_PARAMETER_ID_LIST));
-                    if (criteria.containsKey(SERVER_PARAMETER_SUB_DATA_TYPE)) {
-                        String subDataType = criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SUB_DATA_TYPE);
+                if (criteria.containsKey(SERVER_PARAMETER_SUB_DATA_TYPE)) {
+                    String subDataType = criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
+                    if (SUB_DATA_TYPE_POI.equals(subDataType)) {
+                        if (criteria.containsKey(SERVER_PARAMETER_ID_LIST)) {
+                            requestParameters.add(SERVER_PARAMETER_ID_LIST, criteria.get(SERVER_PARAMETER_ID_LIST));
+                        } else {
+                            requestParameters.add(SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);
+                            requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
+                            if (criteria.containsKey(SERVER_PARAMETER_BIAS)) {
+                                requestParameters.add(SERVER_PARAMETER_BIAS, criteria.get(SERVER_PARAMETER_BIAS));
+                            }
+                            String cfv = null;
+                            if (Filter_Area != null && Filter_Area.cityId == cityId) {
+                                cfv = Filter_Area.version;
+                            }
+                            String nfv = null;
+                            if (Filter_Category_Order_POI != null) {
+                                nfv = Filter_Category_Order_POI.version;
+                            }
+                            addFilterParameters(criteria, requestParameters, cfv, nfv);
+                            String poiid = poi.getUUID();
+                            if (TextUtils.isEmpty(poiid) == false) {
+                                requestParameters.add(SERVER_PARAMETER_POI_ID, poiid);
+                            }
+                        }
+                    } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+                        
                     }
                 } else {
-                    requestParameters.add(SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);
-                    requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
-                    if (criteria.containsKey(SERVER_PARAMETER_BIAS)) {
-                        requestParameters.add(SERVER_PARAMETER_BIAS, criteria.get(SERVER_PARAMETER_BIAS));
-                    }
-                    String cfv = null;
-                    if (Filter_Area != null && Filter_Area.cityId == cityId) {
-                        cfv = Filter_Area.version;
-                    }
-                    String nfv = null;
-                    if (Filter_Category_Order_POI != null) {
-                        nfv = Filter_Category_Order_POI.version;
-                    }
-                    addFilterParameters(criteria, requestParameters, cfv, nfv);
-                    String poiid = poi.getUUID();
-                    if (TextUtils.isEmpty(poiid) == false) {
-                        requestParameters.add(SERVER_PARAMETER_POI_ID, poiid);
-                    }
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SUB_DATA_TYPE);
                 }
 
             } else if (DATA_TYPE_DISCOVER.equals(dataType)) { 
@@ -679,7 +693,7 @@ public final class DataQuery extends BaseQuery {
             FilterResponse filterResponse = null;
             if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                 filterResponse = new POIResponse(responseXMap);
-            } else {
+            } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                 filterResponse = new HotelResponse(responseXMap);
             }
             translateFilter(filterResponse, dataType, subDataType, filterList);
@@ -730,7 +744,7 @@ public final class DataQuery extends BaseQuery {
                     staticFilterDataArea = Filter_Area;
                     if (SUB_DATA_TYPE_POI.equals(subType)) {
                         staticFilterDataCategoryOrder = Filter_Category_Order_POI;
-                    } else {
+                    } else if (SUB_DATA_TYPE_HOTEL.equals(subType)) {
                         staticFilterDataCategoryOrder = Filter_Category_Order_Hotel;
                     }
                 } else if (DATA_TYPE_TUANGOU.equals(dataType)) {

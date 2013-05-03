@@ -70,5 +70,7 @@
     <item type="id" name="activity_user_update_password" />
     <item type="id" name="activity_user_update_phone" />
     <item type="id" name="activity_user_comment_after" />
-  
+    
+    <item type="id" name="view_hotel_home" />
+    <item type="id" name="view_hotel_pick_location" />
 </resources>

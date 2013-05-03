@@ -53,6 +53,10 @@ import com.tigerknows.ui.BaseActivity;
  */
 public class ChangeCityActivity extends BaseActivity {
 
+    
+    public static final String EXTRA_CITYINFO = "cityinfo";
+    public static final String EXTRA_ONLY_CHANGE_HOTEL_CITY = "only_change_hotel_city";
+
     static final int ORDER_LOCATION_TITLE = 1;
     static final int ORDER_CITY_TITLE = 10;
     static final int ORDER_PROVINCE_TITLE =  100;
@@ -79,6 +83,8 @@ public class ChangeCityActivity extends BaseActivity {
             return cityInfo1.order - cityInfo2.order;
         };
     };
+    
+    private boolean mChangeHotelCity = false;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,6 +140,11 @@ public class ChangeCityActivity extends BaseActivity {
         
         mCityExpandableListAdapter = new CityExpandableListAdapter(mThis);
         mCityElv.setAdapter(mCityExpandableListAdapter);
+        
+        Intent intent = getIntent();
+        if (intent != null && intent.hasExtra(EXTRA_ONLY_CHANGE_HOTEL_CITY)) {
+            mChangeHotelCity = intent.getBooleanExtra(EXTRA_ONLY_CHANGE_HOTEL_CITY, false);
+        }
     }
 
     protected void findViews() {
@@ -202,7 +213,7 @@ public class ChangeCityActivity extends BaseActivity {
             public void onGroupExpand(int groupPosition) {
                 if (sAllCityInfoList.get(groupPosition).getCityList().size() == 1) {
                     mActionLog.addAction(mActionTag + ActionLog.ChangeCityCity, groupPosition, 0, sAllCityInfoList.get(groupPosition).getCName());
-                    changeCity(sAllCityInfoList.get(groupPosition));
+                    changeCity(sAllCityInfoList.get(groupPosition).getCityList().get(0));
                 } else {
                     mActionLog.addAction(mActionTag + ActionLog.ChangeCityProvince, groupPosition, sAllCityInfoList.get(groupPosition).getCName(), "1");
                 }
@@ -292,7 +303,8 @@ public class ChangeCityActivity extends BaseActivity {
             return;
         }
         Intent intent = new Intent();
-        intent.putExtra("cityId", cityInfo.getId());
+        intent.putExtra(EXTRA_CITYINFO, cityInfo);
+        intent.putExtra(EXTRA_ONLY_CHANGE_HOTEL_CITY, mChangeHotelCity);
         setResult(RESULT_OK, intent);
         finish();
     }

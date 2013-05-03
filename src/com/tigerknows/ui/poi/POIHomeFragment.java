@@ -316,6 +316,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
                             int cityId = Globals.g_Current_City_Info.getId();
                             Hashtable<String, String> criteria = new Hashtable<String, String>();
                             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+                            criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
                             criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
                             criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, category.name);
                             Position position = requestPOI.getPosition();

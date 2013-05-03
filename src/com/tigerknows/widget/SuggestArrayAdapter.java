@@ -38,7 +38,7 @@ public class SuggestArrayAdapter extends ArrayAdapter<TKWord> {
         this.inputBtnEventHandler = btnEventHandler;
     }
 
-    public SuggestArrayAdapter(Context context, int textViewResourceId, List<TKWord> objects) {
+    public SuggestArrayAdapter(Context context, List<TKWord> objects) {
         super(context, TEXTVIEW_RESOURCE_ID, objects);
         this.context = context;
     }        

@@ -263,6 +263,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                 Hashtable<String, String> criteria = new Hashtable<String, String>();
                 criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
                 criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+                criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
                 criteria.put(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_MY_COMMENT);
                 Position position = requestPOI.getPosition();
                 if (position != null) {
@@ -294,6 +295,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
         criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+        criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
         criteria.put(DataQuery.SERVER_PARAMETER_BIAS, DataQuery.BIAS_MY_COMMENT);
         POI requestPOI = mSphinx.getPOI();
         Position position = requestPOI.getPosition();
@@ -378,6 +380,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         if (idList.length() > 0) {
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+            criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
             int cityId = Globals.g_Current_City_Info.getId();
             DataQuery poiQuery = new DataQuery(mContext);
             criteria.put(DataQuery.SERVER_PARAMETER_ID_LIST, idList.toString());

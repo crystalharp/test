@@ -150,7 +150,7 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        DataQuery.initStaticField(DataQuery.DATA_TYPE_DISCOVER, Globals.g_Current_City_Info.getId());
+        DataQuery.initStaticField(DataQuery.DATA_TYPE_DISCOVER, null, Globals.g_Current_City_Info.getId());
         mRootView = mLayoutInflater.inflate(R.layout.discover_home, container, false);
         screenWidth = (Globals.g_metrics.widthPixels > Globals.g_metrics.heightPixels ? Globals.g_metrics.heightPixels : Globals.g_metrics.widthPixels);
         
