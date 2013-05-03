@@ -1041,6 +1041,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 					&& data != null
 					&& data.getBooleanExtra(REFRESH_POI_DETAIL, false)) {
 				getPOIDetailFragment().refreshDetail();
+				getPOIDetailFragment().refreshComment();
 			}
         }
 		
@@ -1599,7 +1600,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 	if (keyValue[0].equals("poiuid")) {
                 		String poiuid = keyValue[1];
                 		if (poiuid != null) {
-                            getPOIDetailFragment().setData(poiuid);
+                		    POI poi = new POI();
+                		    poi.setUUID(poiuid);
+                            getPOIDetailFragment().setData(poi);
                             showView(R.id.view_poi_detail);
                 		}
                 	}

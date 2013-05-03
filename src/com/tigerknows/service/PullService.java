@@ -98,7 +98,7 @@ public class PullService extends Service {
                 
                 // 收集定位信息
                 String locationData = queryCollectionLocation(context);
-                if (locationData != null) {
+                if (TextUtils.isEmpty(locationData)) {
                     uploadLocationData(context, locationData);
                 }
                 
