@@ -42,6 +42,9 @@ public class TrafficViewSTT {
 	static Action[] ActionTbl = new Action[State.MaxSize.ordinal()];
 	
 	private String TAG = "TrafficViewSTT";
+	
+	//状态机的运转状态。可设置为false防止误触发状态机跳转
+	private boolean running = true;
 
 	public void resetInitState(State state) {
 	    stateStack.clear();
@@ -52,6 +55,9 @@ public class TrafficViewSTT {
 		return stateStack.peek();
 	}
 
+	public void setRunning(boolean run){
+	    running = run;
+	}
 
 	public TrafficViewSTT(TrafficQueryStateHelper mStateHelper) {
 	    //状态跳转表初始化
@@ -98,6 +104,9 @@ public class TrafficViewSTT {
 	    LogWrapper.d(TAG, "Event:" + event);
 	    //如果是back,弹栈，执行上个state的和pointSelected，则压栈，否则弹栈。
 	    State oldState, newState;
+	    if (!running) {
+	        return false;
+	    }
 	    switch (event) {
 	    case Back:
 	        //返回上个状态，先弹栈，新状态是之前的状态

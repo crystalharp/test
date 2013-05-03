@@ -293,6 +293,10 @@ public class TrafficQueryFragment extends BaseFragment {
     	mStart.mEdt.getInput().clearFocus();
     	mEnd.mEdt.getInput().clearFocus();
     	mBusline.mEdt.getInput().clearFocus();
+    	//xupeng:添加状态机的运转状态是为了防止在别的界面弹出菜单触发状态机的状态转换。
+    	if (mSphinx.uiStackPeek() != R.id.view_traffic_home) {
+    	    mStateTransitionTable.setRunning(false);
+    	}
     	mSphinx.setTouchMode(TouchMode.NORMAL);
     }
     
@@ -303,6 +307,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	            && currentState != TrafficViewSTT.State.Input) {
 	        mSphinx.showHint(TKConfig.PREFS_HINT_LOCATION, R.layout.hint_location);
 	    }
+	    mStateTransitionTable.setRunning(true);
 		if (currentState != TrafficViewSTT.State.SelectPoint) { // 选点操作时, 按HOME键, 再进入应用 
 			super.onResume();
 			hideCommonTitle();
