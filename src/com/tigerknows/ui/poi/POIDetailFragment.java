@@ -984,6 +984,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             if (poi.getFrom() == POI.FROM_LOCAL && TextUtils.isEmpty(uuid) == false) {
                 Hashtable<String, String> criteria = new Hashtable<String, String>();
                 criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
+                criteria.put(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
                 criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
                 criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, uuid);
                 criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);

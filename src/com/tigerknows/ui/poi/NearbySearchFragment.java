@@ -294,6 +294,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             int cityId = mSphinx.getMapEngine().getCityId(requestPOI.getPosition());
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+            criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
             criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
             criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
             Position position = requestPOI.getPosition();
@@ -319,18 +320,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     public void setData(POI poi) {
         mPOI = poi;
     }
-    
-    /**
-     * 刷新联想词列表，当联想词列表为空时自动切换到分类列表
-     */
-//    private void refreshSuggest() {
-//        mSuggestAdapter.notifyDataSetChanged();
-////        if (mSuggestWordList.isEmpty()) {
-////            mViewPager.setCurrentItem(0);
-////        } else {
-////            mViewPager.setCurrentItem(1);
-////        }
-//    }
     
     /**
      * 将UI及内容重置为第一次进入页面时的状态

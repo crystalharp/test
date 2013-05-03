@@ -7,7 +7,6 @@ package com.tigerknows.provider;
 
 import com.decarta.android.db.PrefTable;
 import com.decarta.android.location.Position;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.map.MapEngine;
@@ -300,8 +299,6 @@ public class HistoryWordTable {
             return suggestList;
         }
         
-        LogWrapper.d(TAG, "historyWordList:" + historyWordList.toString());
-        LogWrapper.d(TAG, "associationalList:" + associationalList.toString());
         if (TextUtils.isEmpty(key) && historyWordList.size() > 0){
             suggestList.addAll(historyWordList);
             suggestList.add(TKWord.getCleanupTKWord(sphinx));
@@ -324,7 +321,6 @@ public class HistoryWordTable {
         }
         
         suggestList.addAll(associationalList);
-        LogWrapper.d(TAG, "suggestList:" + suggestList.toString());
         return suggestList;
     }
     

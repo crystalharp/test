@@ -209,6 +209,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             POI requestPOI = mSphinx.getPOI();
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+            criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
             criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
             criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
             Position position = requestPOI.getPosition();
