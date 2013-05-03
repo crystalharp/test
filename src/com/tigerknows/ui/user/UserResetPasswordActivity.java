@@ -2,9 +2,11 @@ package com.tigerknows.ui.user;
 
 import java.util.Hashtable;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -228,7 +230,7 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 	}
 	
 	private void dealWith403() {
-		Utility.showNormalDialog(UserResetPasswordActivity.this, getString(R.string.title_error_tip), getString(R.string.response_code_403_resetpassword), 
+		Dialog dlg=Utility.showNormalDialog(UserResetPasswordActivity.this, getString(R.string.title_error_tip), getString(R.string.response_code_403_resetpassword), 
 		        getString(R.string.confirm),
                 null,
                 new OnClickListener() {
@@ -245,6 +247,12 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 				valiNumBtn.reset(getString(R.string.reqest_validate_num));
 			}
 			
+		});
+		dlg.setOnDismissListener(new OnDismissListener(){
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				valiNumBtn.reset(getString(R.string.reqest_validate_num));
+			}
 		});
 	}
 	
