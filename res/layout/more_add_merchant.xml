@@ -4,7 +4,7 @@
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="@drawable/bg_discover">
 	<include android:id="@+id/title_view"
 	    layout="@layout/title" 
 	    android:layout_width="fill_parent"
@@ -27,7 +27,8 @@
 		        android:paddingTop="2dp"
 		        android:paddingBottom="2dp"
             	android:paddingLeft="8dp"
-		        android:gravity="left|center_vertical">
+		        android:gravity="left|center_vertical"
+		        android:background="@color/white">
 			    <TextView
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
@@ -68,7 +69,8 @@
 		        android:paddingTop="10dp"
 		        android:paddingBottom="10dp"
 		        android:paddingLeft="8dp"
-		        android:gravity="left|center_vertical">
+		        android:gravity="left|center_vertical"
+		        android:background="@color/white">
 			    <TextView
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
@@ -113,7 +115,8 @@
 		        android:paddingTop="2dp"
 		        android:paddingBottom="2dp"
 		        android:paddingLeft="8dp"
-		        android:gravity="left|center_vertical">
+		        android:gravity="left|center_vertical"
+		        android:background="@color/white">
 			    <TextView
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
@@ -155,7 +158,8 @@
 		        android:paddingTop="2dp"
 		        android:paddingBottom="2dp"
 		        android:paddingLeft="8dp"
-		        android:gravity="left|center_vertical">
+		        android:gravity="left|center_vertical"
+		        android:background="@color/white">
 			    <TextView
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
@@ -190,7 +194,8 @@
 		        android:paddingTop="2dp"
 		        android:paddingBottom="2dp"
 		        android:paddingLeft="8dp"
-		        android:gravity="left|center_vertical">
+		        android:gravity="left|center_vertical"
+		        android:background="@color/white">
 			    <TextView
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
@@ -224,7 +229,8 @@
 		        android:paddingTop="2dp"
 		        android:paddingBottom="2dp"
 		        android:paddingLeft="8dp"
-		        android:gravity="left|center_vertical">
+		        android:gravity="left|center_vertical"
+		        android:background="@color/white">
 			    <TextView
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
@@ -248,7 +254,7 @@
 		    </LinearLayout>
 		    <LinearLayout
 	            android:layout_width="fill_parent"
-	            android:layout_height="fill_parent"
+	            android:layout_height="wrap_content"
 	            android:orientation="vertical"
 		        android:background="@drawable/bg_discover">
 		        <ImageView
