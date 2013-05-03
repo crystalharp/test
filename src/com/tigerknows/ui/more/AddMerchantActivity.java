@@ -17,6 +17,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ScrollView;
 
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
@@ -38,6 +39,7 @@ import com.tigerknows.widget.StringArrayAdapter;
 
 public class AddMerchantActivity extends BaseActivity implements View.OnClickListener {
     
+	private ScrollView mAddMerchantScv;
     private Button mShanghuleixingBtn;
     private EditText mShanghumingchengEdt = null;
     private EditText mShanghudizhiEdt = null;
@@ -71,6 +73,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
      */
     protected void findViews() {
         super.findViews();
+        mAddMerchantScv = (ScrollView)findViewById(R.id.add_merchant_scv);
         mShanghumingchengEdt = (EditText)findViewById(R.id.shanghumingcheng_edt);
         mShanghuleixingBtn = (Button)findViewById(R.id.shanghuleixing_btn);
         mShanghudizhiEdt = (EditText)findViewById(R.id.shanghudizhi_edt);
@@ -226,6 +229,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                         s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
                     } else {
                         mShanghumingchengEdt.requestFocus();
+                        mAddMerchantScv.scrollTo(0, 0);
                         Toast.makeText(mThis, mThis.getString(R.string.please_input)+mThis.getString(R.string.shanghumingcheng)+"!", Toast.LENGTH_SHORT).show();
                         showSoftInput();
                         return;
