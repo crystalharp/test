@@ -541,7 +541,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 child = mDynamicDianyingListView.getChildAt(viewCount);
                 child.setVisibility(View.VISIBLE);
             } else {
-                child = mLayoutInflater.inflate(R.layout.poi_dynamic_poi_list_item, mDynamicDianyingListView, false);
+                child = mLayoutInflater.inflate(R.layout.poi_dynamic_dianying_list_item, mDynamicDianyingListView, false);
                 mDynamicDianyingListView.addView(child, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
             }
             child.setOnClickListener(new View.OnClickListener() {
