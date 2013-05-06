@@ -49,7 +49,16 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 		setContentView(R.layout.user_update_nickname);
         findViews();
         setListener();
-        
+		User user = User.loadDefault(this);
+        if (user == null) {
+            onBack();
+        } else if (!TextUtils.equals(user.getNickName(), getString(R.string.default_nick_name))) {
+			nickNameEdt.setText(user.getNickName());
+			nickNameEdt.setSelection(nickNameEdt.getText().toString().length());
+			nickNameImg.setVisibility(View.VISIBLE);
+		} else {
+			nickNameImg.setVisibility(View.GONE);
+		}
         mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(getString(R.string.title_update_nickname));
 	}
@@ -236,13 +245,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 
         if (user == null) {
             onBack();
-        } else if (!TextUtils.equals(user.getNickName(), getString(R.string.default_nick_name))) {
-			nickNameEdt.setText(user.getNickName());
-			nickNameEdt.setSelection(nickNameEdt.getText().toString().length());
-			nickNameImg.setVisibility(View.VISIBLE);
-		} else {
-			nickNameImg.setVisibility(View.GONE);
-		}
+        }
 	}
 
 	/**

@@ -2,8 +2,10 @@ package com.tigerknows.ui.user;
 
 import java.util.Hashtable;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -229,7 +231,7 @@ public class UserRegistActivity extends UserBaseActivity {
 	}
 	
 	private void dealWith400() {
-		Utility.showNormalDialog(UserRegistActivity.this, 
+		Dialog dlg=Utility.showNormalDialog(UserRegistActivity.this, 
 		        getString(R.string.title_error_tip), 
 				getString(R.string.response_code_400), 
 				getString(R.string.confirm),
@@ -260,8 +262,15 @@ public class UserRegistActivity extends UserBaseActivity {
 					valiNumBtn.reset(getString(R.string.reqest_validate_num));
 				}
 			}
-			
+		
 		});
+		dlg.setOnDismissListener(new OnDismissListener(){
+			@Override
+			public void onDismiss(DialogInterface dialog) {
+				valiNumBtn.reset(getString(R.string.reqest_validate_num));
+			}
+		});
+		
 	}
 	
 	private void dealWith402() {

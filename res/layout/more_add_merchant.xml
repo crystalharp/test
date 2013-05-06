@@ -9,7 +9,7 @@
 	    layout="@layout/title" 
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content" />
-	<ScrollView
+	<ScrollView android:id="@+id/add_merchant_scv"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
 	    android:scrollbars="vertical"
