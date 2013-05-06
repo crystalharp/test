@@ -11,6 +11,7 @@ import android.text.TextUtils;
 
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
@@ -1069,7 +1070,9 @@ public class TrafficModel extends XMapData {
                 if((null != other.data && !other.data.equals(data)) || (null == other.data && other.data != data)) {
                     return false;
                 } else {
-                    return true;
+                    if (other.getStart().getName().equals(this.getStart().getName()) && other.getEnd().getName().equals(this.getEnd().getName())){
+                        return true;
+                    }
                 }
             }
             
