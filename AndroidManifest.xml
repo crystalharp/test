@@ -76,8 +76,6 @@
         
         <service android:name="com.tigerknows.service.MapDownloadService" android:enabled="true"></service>
         
-        <service android:name="com.tigerknows.service.download.DownloadService" android:enabled="true"></service>
-        
         <activity android:name="com.tigerknows.ui.ErrorDialogActivity"
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
@@ -291,18 +289,10 @@
 	           <action android:name="action.com.tigerknows.radar.PullReceiver" />
 		    </intent-filter>
 		</receiver>
-		
-		<receiver android:name="com.tigerknows.radar.LocationCollectorReceiver">
-		    <intent-filter>
-	           <action android:name="action.com.tigerknows.radar.LocationCollectionReceiver" />
-		    </intent-filter>
-		</receiver>
         
         <service android:name="com.tigerknows.service.PullService">
         </service>
         
-        <service android:name="com.tigerknows.service.LocationCollectionService">
-        </service>
 
     </application>
     <supports-screens android:anyDensity="true" android:resizeable="true" android:largeScreens="true" android:smallScreens="true"></supports-screens>
