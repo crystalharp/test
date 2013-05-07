@@ -100,7 +100,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         findViews();
         setListener();
         
-        mPOIAdapter = new POIAdapter(mContext, mPOIList);
+        mPOIAdapter = new POIAdapter(mSphinx, mPOIList, null, GoCommentFragment.this.toString());
         mPOIAdapter.setShowStamp(false);
         mPOILsv.setAdapter(mPOIAdapter);
                 

@@ -6,7 +6,8 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
-import com.tigerknows.model.DataQuery.HotelResponse;
+import com.tigerknows.model.DataQuery.AlternativeResponse;
+import com.tigerknows.model.DataQuery.AlternativeResponse.Alternative;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.Hotel;
@@ -611,6 +612,7 @@ public class DataQueryTest {
         for(int i = 0; i < 16; i ++) {
             xarray.add(launchDynamicPOI(i));
         }
+        xarray.add(launchDynamicPOI(Integer.parseInt(DynamicPOI.TYPE_HOTEL)));
         data.put(POI.FIELD_DYNAMIC_POI, xarray);
         return data;
     }
@@ -635,10 +637,10 @@ public class DataQueryTest {
         return data;
     }
 
-    public static XMap launchHotelResponse(int total, String message) {
+    public static XMap launchHotelPOIResponse(int total, String message) {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
-        data.put(HotelResponse.FIELD_LIST, launchPOIList(total, message, TKConfig.getPageSize()));
+        data.put(POIResponse.FIELD_A_POI_LIST, launchHotelPOIList(total, message, TKConfig.getPageSize()));
         data.put(POIResponse.FIELD_FILTER_AREA_INDEX, launchFilterIndex(1, 168));
         data.put(POIResponse.FIELD_FILTER_CATEGORY_INDEX, launchFilterIndex(2, 168));
         data.put(POIResponse.FIELD_FILTER_ORDER_INDEX, launchFilterIndex(3, 168));
@@ -647,18 +649,18 @@ public class DataQueryTest {
         return data;
     }
 
-    public static XMap launchHotelList(int total, String message, int size) {
+    public static XMap launchHotelPOIList(int total, String message, int size) {
         XMap data = new XMap();
         launchBaseList(data, total, message);
         XArray<XMap> list = new XArray<XMap>();
         for(int i = 0 ; i < size; i ++) {
-            list.add(launchHotel("Hotel"+i+"HotelHotelHotelHotelHotelHotelHotel"));
+            list.add(launchHotelPOI("Hotel"+i+"HotelHotelHotelHotelHotelHotelHotel"));
         }
         data.put(POIList.FIELD_LIST, list);
         return data;
     }
 
-    protected static XMap launchHotel(String name) {
+    protected static XMap launchHotelPOI(String name) {
         XMap data = launchPOI(name);
         data.put(Hotel.FIELD_UUID, "FIELD_UUID");
         data.put(Hotel.FIELD_SOURCE, "FIELD_SOURCE");
@@ -688,8 +690,8 @@ public class DataQueryTest {
 
     protected static XMap launchRoomType(int order) {
         XMap data = new XMap();
-        data.put(RoomType.FIELD_ROOM_ID, 168);
-        data.put(RoomType.FIELD_RATEPLAN_ID, 168);
+        data.put(RoomType.FIELD_ROOM_ID, "168");
+        data.put(RoomType.FIELD_RATEPLAN_ID, "168");
         data.put(RoomType.FIELD_FLOOR, "FIELD_FLOOR"+order);
         data.put(RoomType.FIELD_BED_TYPE, "FIELD_BED_TYPE");
         data.put(RoomType.FIELD_NET_SERVICE, "FIELD_NET_SERVICE");
@@ -772,6 +774,36 @@ public class DataQueryTest {
         data.put(PulledDynamicPOI.FIELD_SLAVE_POI_TYPE, Integer.parseInt(BaseQuery.DATA_TYPE_YINGXUN));
         data.put(PulledDynamicPOI.FIELD_SLAVE_POI_UID, "FIELD_SLAVE_POI_UID");
         data.put(PulledDynamicPOI.FIELD_POI_DESCRIPTION, "FIELD_POI_DESCRIPTION");
+        return data;
+    }
+
+    public static XMap launchAlternativeResponse(int total, String message) {
+        XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        data.put(AlternativeResponse.FIELD_LIST, launchPOIList(total, message, TKConfig.getPageSize()));
+        data.put(AlternativeResponse.FIELD_FILTER_AREA, launchFilterArea());
+        data.put(AlternativeResponse.FIELD_POSITION, 16);
+        return data;
+    }
+
+    public static XMap launchAlternativeList(int total, String message, int size) {
+        XMap data = new XMap();
+        launchBaseList(data, total, message);
+        XArray<XMap> list = new XArray<XMap>();
+        for(int i = 0 ; i < size; i ++) {
+            list.add(launchAlternative("Alternative"+i+"AlternativeAlternativeAlternative"));
+        }
+        data.put(AlternativeResponse.FIELD_LIST, list);
+        return data;
+    }
+
+    protected static XMap launchAlternative(String name) {
+        XMap data = new XMap();
+        data.put(Alternative.FIELD_UUID, POI_UUID);
+        data.put(Alternative.FIELD_NAME, name);
+        data.put(Alternative.FIELD_ADDRESS, "ADDRESS");
+        data.put(Alternative.FIELD_LONGITUDE, ((int) (116.397*100000)));
+        data.put(Alternative.FIELD_LATITUDE, ((int) (39.904*100000)));
         return data;
     }
 }

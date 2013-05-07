@@ -58,9 +58,9 @@ public class DateWidget extends LinearLayout {
         if (mCalendar == null) {
             return;
         }
-        mMonthTxv.setText(mCalendar.get(Calendar.MONTH));
-        mDayTxv.setText(mCalendar.get(Calendar.DAY_OF_MONTH));
-        mWeekTxv.setText(mCalendar.get(Calendar.DAY_OF_WEEK));
+        mMonthTxv.setText(String.valueOf(mCalendar.get(Calendar.MONTH))+"月");
+        mDayTxv.setText(String.valueOf(mCalendar.get(Calendar.DAY_OF_MONTH))+"日");
+        mWeekTxv.setText(getContext().getResources().getStringArray(R.array.week_days)[mCalendar.get(Calendar.DAY_OF_WEEK)-1]);
     }
     
     public Calendar getCalendar() {

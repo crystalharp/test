@@ -1276,7 +1276,13 @@ public class MapEngine {
             parcel.writeInt(level);
             parcel.writeString(cProvinceName);
             parcel.writeString(eProvinceName);
-            parcel.writeInt(order);            
+            parcel.writeInt(order);    
+            double[] pos = new double[2];
+            if (position != null) {
+                pos[0] = position.getLat();
+                pos[1] = position.getLon();
+            }
+            parcel.writeDoubleArray(pos);   
         }
 
         public static final Parcelable.Creator<CityInfo> CREATOR
@@ -1299,6 +1305,9 @@ public class MapEngine {
             cProvinceName = in.readString();
             eProvinceName = in.readString();
             order = in.readInt();
+            double[] pos = new double[2];
+            in.readDoubleArray(pos);
+            position = new Position(pos[0], pos[1]);
         }
     }
     

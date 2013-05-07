@@ -195,13 +195,6 @@
         <item>过街天桥</item><!-- 过街天桥 -->
     </string-array>
     
-    <string-array name="share_map_to">
-        <item>分享到新浪微博</item>
-        <item>发送短信</item>
-        <item>发送彩信</item>
-        <item>分享更多</item>
-    </string-array>
-    
     <string-array name="comment_restair">
         <item>随便吃点</item>
         <item>朋友聚会</item>
@@ -221,6 +214,22 @@
         <item>丽人</item>
         <item>运动</item>
         <item>其他分类</item>
+    </string-array>
+    
+    <string-array name="days">
+        <item>今天</item>
+        <item>明天</item>
+        <item>后天</item>
+    </string-array>
+    
+    <string-array name="week_days">
+        <item>周一</item>
+        <item>周二</item>
+        <item>周三</item>
+        <item>周四</item>
+        <item>周五</item>
+        <item>周六</item>
+        <item>周日</item>
     </string-array>
     
 </resources>

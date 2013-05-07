@@ -41,8 +41,6 @@ public class Hotel extends XMapData {
     // 0x57 x_int 是否可预订，0为否，大于0为是
     public static final byte FIELD_CAN_RESERVE = 0x57;
     
-    private POI poi;
-
     // 0x50 x_string 酒店ID
     private String uuid;
 
@@ -69,41 +67,22 @@ public class Hotel extends XMapData {
 
     public Hotel(XMap data) throws APIException {
         super(data);
-        poi = new POI(this.data);
-        if (this.data.containsKey(FIELD_UUID)) {
-            this.uuid = this.data.getString(FIELD_UUID);
-        }
-        if (this.data.containsKey(FIELD_SOURCE)) {
-            this.source = this.data.getString(FIELD_SOURCE);
-        }
-        if (this.data.containsKey(FIELD_BRAND)) {
-            this.brand = this.data.getString(FIELD_BRAND);
-        }
-        if (this.data.containsKey(FIELD_IMAGE_THUMB)) {
+        this.uuid = getStringFromData(FIELD_UUID);
+        this.source = getStringFromData(FIELD_SOURCE);
+        this.brand = getStringFromData(FIELD_BRAND);
+        
+        String imageThumb = getStringFromData(FIELD_IMAGE_THUMB);
+        if (imageThumb != null) {
             TKDrawable tkDrawable = new TKDrawable();
-            tkDrawable.setUrl(this.data.getString(FIELD_IMAGE_THUMB));
+            tkDrawable.setUrl(imageThumb);
             this.imageThumb = tkDrawable;
         }
-        if (this.data.containsKey(FIELD_IMAGE_LIST)) {
-            this.hotelTKDrawableList = getListFromXArray(HotelTKDrawable.getXMapInitializer(),
-                    data, FIELD_IMAGE_LIST);
-        }
-        if (this.data.containsKey(FIELD_ROOM_TYPE_LIST)) {
-            this.roomTypeList = getListFromXArray(RoomType.getXMapInitializer(), data,
-                    FIELD_ROOM_TYPE_LIST);
-        }
-        if (this.data.containsKey(FIELD_SERVICE)) {
-            this.service = this.data.getString(FIELD_SERVICE);
-        }
-        if (this.data.containsKey(FIELD_CAN_RESERVE)) {
-            this.canReserve = this.data.getInt(FIELD_CAN_RESERVE);
-        }
+        this.hotelTKDrawableList = getListFromData(FIELD_IMAGE_LIST, HotelTKDrawable.Initializer);
+        this.roomTypeList = getListFromData(FIELD_ROOM_TYPE_LIST, RoomType.Initializer);
+        this.service = getStringFromData(FIELD_SERVICE);
+        this.canReserve = getLongFromData(FIELD_CAN_RESERVE);
     }
     
-    public POI getPOI() {
-        return poi;
-    }
-
     public String getUuid() {
         return uuid;
     }
@@ -150,11 +129,9 @@ public class Hotel extends XMapData {
 
         public HotelTKDrawable(XMap data) throws APIException {
             super(data);
-            if (this.data.containsKey(FIELD_NAME)) {
-                this.name = this.data.getString(FIELD_NAME);
-            }
-            if (this.data.containsKey(FIELD_URL)) {
-                String url = this.data.getString(FIELD_URL);
+            this.name = getStringFromData(FIELD_NAME);
+            String url = getStringFromData(FIELD_URL);
+            if (url != null) {
                 tkDrawable = new TKDrawable();
                 tkDrawable.setUrl(url);
             }
@@ -168,17 +145,13 @@ public class Hotel extends XMapData {
             return tkDrawable;
         }
 
-        private static XMapInitializer<HotelTKDrawable> initializer = new XMapInitializer<Hotel.HotelTKDrawable>() {
+        public static XMapInitializer<HotelTKDrawable> Initializer = new XMapInitializer<Hotel.HotelTKDrawable>() {
 
             @Override
             public HotelTKDrawable init(XMap data) throws APIException {
                 return new HotelTKDrawable(data);
             }
         };
-
-        public static XMapInitializer<HotelTKDrawable> getXMapInitializer() {
-            return initializer;
-        }
 
     }
 
@@ -242,40 +215,20 @@ public class Hotel extends XMapData {
         private String price;
 
         // 0x09 x_int 可预订情况，0不可预订，1可预订 动态判断
-        private String canReserve;
+        private long canReserve;
 
         public RoomType(XMap data) throws APIException {
             super(data);
-            if (this.data.containsKey(FIELD_ROOM_ID)) {
-                this.roomId = this.data.getString(FIELD_ROOM_ID);
-            }
-            if (this.data.containsKey(FIELD_RATEPLAN_ID)) {
-                this.rateplanId = this.data.getString(FIELD_RATEPLAN_ID);
-            }
-            if (this.data.containsKey(FIELD_FLOOR)) {
-                this.floor = this.data.getString(FIELD_FLOOR);
-            }
-            if (this.data.containsKey(FIELD_BED_TYPE)) {
-                this.bedType = this.data.getString(FIELD_BED_TYPE);
-            }
-            if (this.data.containsKey(FIELD_AREA)) {
-                this.area = this.data.getString(FIELD_AREA);
-            }
-            if (this.data.containsKey(FIELD_NET_SERVICE)) {
-                this.netService = this.data.getString(FIELD_NET_SERVICE);
-            }
-            if (this.data.containsKey(FIELD_NET_SERVICE_FEE)) {
-                this.netServiceFee = this.data.getString(FIELD_NET_SERVICE_FEE);
-            }
-            if (this.data.containsKey(FIELD_BREAKFAST)) {
-                this.breakfast = this.data.getString(FIELD_BREAKFAST);
-            }
-            if (this.data.containsKey(FIELD_PRICE)) {
-                this.price = this.data.getString(FIELD_PRICE);
-            }
-            if (this.data.containsKey(FIELD_CAN_RESERVE)) {
-                this.canReserve = this.data.getString(FIELD_CAN_RESERVE);
-            }
+            this.roomId = getStringFromData(FIELD_ROOM_ID);
+            this.rateplanId = getStringFromData(FIELD_RATEPLAN_ID);
+            this.floor = getStringFromData(FIELD_FLOOR);
+            this.bedType = getStringFromData(FIELD_BED_TYPE);
+            this.area = getStringFromData(FIELD_AREA);
+            this.netService = getStringFromData(FIELD_NET_SERVICE);
+            this.netServiceFee = getStringFromData(FIELD_NET_SERVICE_FEE);
+            this.breakfast = getStringFromData(FIELD_BREAKFAST);
+            this.price = getStringFromData(FIELD_PRICE);
+            this.canReserve = getLongFromData(FIELD_CAN_RESERVE);
         }
 
         public String getRoomId() {
@@ -314,15 +267,11 @@ public class Hotel extends XMapData {
             return price;
         }
 
-        public String getCanReserve() {
+        public long getCanReserve() {
             return canReserve;
         }
 
-        public static XMapInitializer<RoomType> getXMapInitializer() {
-            return initializer;
-        }
-
-        private static XMapInitializer<RoomType> initializer = new XMapInitializer<RoomType>() {
+        public static XMapInitializer<RoomType> Initializer = new XMapInitializer<RoomType>() {
 
             @Override
             public RoomType init(XMap data) throws APIException {
@@ -332,15 +281,11 @@ public class Hotel extends XMapData {
 
     }
 
-    private static XMapInitializer<Hotel> initializer = new XMapInitializer<Hotel>() {
+    public static XMapInitializer<Hotel> Initializer = new XMapInitializer<Hotel>() {
 
         @Override
         public Hotel init(XMap data) throws APIException {
             return new Hotel(data);
         }
     };
-
-    public static XMapInitializer<Hotel> getXMapInitializer() {
-        return initializer;
-    }
 }

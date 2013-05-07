@@ -4,7 +4,7 @@
 
 package com.tigerknows.ui.hotel;
 
-import com.decarta.Globals;
+import com.decarta.android.location.Position;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
@@ -12,24 +12,30 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.DataQuery.Filter;
+import com.tigerknows.model.DataQuery.FilterResponse;
+import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
-import com.tigerknows.model.DataQuery.HotelResponse;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.ChangeCityActivity;
 import com.tigerknows.util.Utility;
+import com.tigerknows.widget.FilterListView;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.DialogInterface.OnCancelListener;
-import android.content.DialogInterface.OnDismissListener;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.widget.PopupWindow.OnDismissListener;
 
+import java.text.SimpleDateFormat;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -38,7 +44,7 @@ import java.util.List;
  * 酒店搜索主页
  * @author Peng Wenyue
  */
-public class HotelHomeFragment extends BaseFragment implements View.OnClickListener {
+public class HotelHomeFragment extends BaseFragment implements View.OnClickListener, FilterListView.CallBack, DateListView.CallBack {
 
     public HotelHomeFragment(Sphinx sphinx) {
         super(sphinx);
@@ -46,6 +52,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     }
 
     static final String TAG = "HotelHomeFragment";
+    
+    static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     private Button mCityBtn;
     private DateWidget mCheckInDat;
@@ -56,6 +64,12 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private Button mQueryBtn;
     private Button mDingdanBtn;
     
+    private FilterListView mFilterListView = null;
+    
+    private DateListView mDateListView = null;
+    
+    private ViewGroup mPopupWindowContain = null;
+    
     /**
      * 酒店查询的目标城市
      * 打开此页面时，默认设为当前所选城市
@@ -64,22 +78,17 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private CityInfo mCityInfo;
     
     /**
-     * 星级/品牌/价格
-     */
-    private int mPrice;
-    
-    /**
      * 筛选数据
      * 每次进入打开此页面时，检查筛选数据是否为空，若为空则发起查询以获取筛选数据，此查询会重试
      * 点击位置或价格时，若此时无筛选数据，则弹出进度对话框，直到筛选数据返回时取消进度对话框，
      * 然后再显示选择位置或价格的页面
      */
-    private HotelResponse mHotelResponse;
+    private List<Filter> mFilterList;
     
     private Dialog mProgressDialog = null;
 
     private int mClickedViewId;
-
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,16 +110,17 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
+        refreshDate();
         mClickedViewId = -1;
-        if (mHotelResponse == null) {
-            query();
+        if (mFilterList == null) {
+            queryFilter();
         }
     }
     
     /**
      * 查询筛选数据，在查询之前需要将之前的查询停止
      */
-    private void query() {
+    private void queryFilter() {
         List<BaseQuery> list = mBaseQuerying;
         if (list != null && list.size() > 0) {
             for(int i = 0, size = list.size(); i < size; i++) {
@@ -126,6 +136,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
         criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
         criteria.put(DataQuery.SERVER_PARAMETER_APPENDACTION, DataQuery.APPENDACTION_NOSEARCH);
+        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
         dataQuery.setup(criteria, mCityInfo.getId(), getId(), getId(), null, true);
         mSphinx.queryStart(dataQuery);
     }
@@ -137,6 +148,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     }
 
     protected void findViews() {
+        mPopupWindowContain = new LinearLayout(mSphinx);
         mCityBtn = (Button) mRootView.findViewById(R.id.city_btn);
         mCheckInDat = (DateWidget) mRootView.findViewById(R.id.checkin_dat);
         mCheckOutDat = (DateWidget) mRootView.findViewById(R.id.checkout_dat);
@@ -168,18 +180,34 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 break;
                 
             case R.id.location_btn:
-                if (mHotelResponse == null) {
+                if (mFilterList == null) {
                     showProgressDialog(id);
                 } else {
-                    
+                    mSphinx.showView(R.id.view_hotel_pick_location);
                 }
+                break;
                 
             case R.id.price_view:
-                if (mHotelResponse == null) {
+                if (mFilterList == null) {
                     showProgressDialog(id);
                 } else {
-                    
+                    showFilterCategory(mTitleFragment);
+                    getFilterListView().setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
                 }
+                break;
+                
+            case R.id.checkin_dat:
+            case R.id.checkout_dat:
+                showDateListView(mTitleFragment);
+                break;
+                
+            case R.id.query_btn:
+                if (mFilterList == null) {
+                    Toast.makeText(mSphinx, "请填写位置", Toast.LENGTH_LONG).show();
+                } else {
+                    submit();
+                }
+                break;
                 
             default:
                 break;
@@ -198,6 +226,10 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         return mCityInfo;
     }
     
+    /**
+     * 显示进度对话框
+     * @param id
+     */
     void showProgressDialog(int id) {
         mClickedViewId = id;
         if (mProgressDialog == null) {
@@ -214,6 +246,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         
     }
     
+    /**
+     * 关闭进度对话框
+     */
     void dismissProgressDialog() {
         if (mProgressDialog != null && mProgressDialog.isShowing()) {
             mProgressDialog.dismiss();
@@ -223,16 +258,176 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
+        
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         Response response = baseQuery.getResponse();
         if (response != null && response.getResponseCode() == Response.RESPONSE_CODE_OK) {
-            mHotelResponse = (HotelResponse) response;
-            if (mClickedViewId == R.id.location_btn) {
+            mFilterList = ((DataQuery) baseQuery).getFilterList();
+            if (mFilterList != null) {
+                dismissProgressDialog();
+                mSphinx.getPickLocationFragment().setData(mFilterList);
+                refreshFilterArea();
+                refreshFilterCategory();
                 
-            } else if (mClickedViewId == R.id.price_view) {
-                
+                if (mClickedViewId == R.id.location_btn) {
+                    mSphinx.showView(R.id.view_hotel_pick_location);
+                } else if (mClickedViewId == R.id.price_view) {
+                    showFilterCategory(mTitleFragment);
+                    mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+                }
             }
         }
     }
     
+    /**
+     * 刷新位置栏的内容
+     */
+    public void refreshFilterArea() {
+        POI poi = mSphinx.getPickLocationFragment().getPOI();
+        if (poi != null) {
+            mLocationBtn.setText(poi.getName());
+        } else {
+            for(int i = 0, size = mFilterList.size(); i < size; i++) {
+                Filter filter = mFilterList.get(i);
+                if (filter.getKey() == FilterResponse.FIELD_FILTER_AREA_INDEX) {
+                    mLocationBtn.setText(FilterListView.getFilterTitle(mSphinx, filter));
+                    break;
+                }
+            }
+        }
+    }
+    
+    /**
+     * 刷新星级/品牌/价格栏的内容
+     */
+    public void refreshFilterCategory() {
+        for(int i = 0, size = mFilterList.size(); i < size; i++) {
+            Filter filter = mFilterList.get(i);
+            if (filter.getKey() == FilterResponse.FIELD_FILTER_CATEGORY_INDEX) {
+                mPriceTxv.setText(FilterListView.getFilterTitle(mSphinx, filter));
+                break;
+            }
+        }
+    }
+    
+    private void makePopupWindow(View parent) {
+        if (mPopupWindow == null) {
+            
+            mPopupWindow = new PopupWindow(mPopupWindowContain);
+            mPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+            mPopupWindow.setFocusable(true);
+            // 设置允许在外点击消失
+            mPopupWindow.setOutsideTouchable(true);
+
+            // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow.setOnDismissListener(new OnDismissListener() {
+                
+                @Override
+                public void onDismiss() {
+                    mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter + ActionLog.Dismiss);
+                }
+            });
+            
+        }
+        mPopupWindow.showAsDropDown(parent, 0, 0);
+
+    }
+    
+    private void showFilterCategory(View parent) {
+        makePopupWindow(parent);
+        mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter);
+        mPopupWindowContain.removeAllViews();
+        mPopupWindowContain.addView(getFilterListView());
+        mPopupWindow.showAsDropDown(parent, 0, 0);
+
+    }
+    
+    FilterListView getFilterListView() {
+        if (mFilterListView == null) {
+            FilterListView view = new FilterListView(mSphinx);
+            mFilterListView = view;
+        }
+        return mFilterListView;
+    }
+    
+    private void showDateListView(View parent) {
+        makePopupWindow(parent);
+        DateListView view = getDateListView();
+        mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter);
+        mPopupWindowContain.removeAllViews();
+        mPopupWindowContain.addView(getDateListView());
+        mPopupWindow.showAsDropDown(parent, 0, 0);
+        view.onResume();
+    }
+    
+    DateListView getDateListView() {
+        if (mDateListView == null) {
+            DateListView view = new DateListView(mSphinx);
+            view.setData(this, mActionTag);
+            mDateListView = view;
+        }
+        return mDateListView;
+    }
+
+    @Override
+    public void doFilter(String name) {
+        mPriceTxv.setText(name);
+        refreshFilterCategory();
+        dismissPopupWindow();
+    }
+
+    @Override
+    public void cancelFilter() {
+        // TODO Auto-generated method stub
+        
+    }
+    
+    void submit() {
+        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+        criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_HOTEL);
+        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
+        criteria.put(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(getDateListView().getCheckin().getTime()));
+        criteria.put(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(getDateListView().getCheckout().getTime()));
+        
+        POI poi = mSphinx.getPickLocationFragment().getPOI();
+        byte key = Byte.MIN_VALUE;
+        if (poi != null) {
+            Position position = poi.getPosition();
+            if (position != null) {
+                criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+                criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+                key = FilterResponse.FIELD_FILTER_AREA;
+            }
+        }
+        criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList, key));
+                
+        int targetViewId = mSphinx.getPOIResultFragmentID();
+        DataQuery dataQuery = new DataQuery(mSphinx);
+        dataQuery.setup(criteria, mCityInfo.getId(), getId(), targetViewId, null);
+        mSphinx.queryStart(dataQuery);
+        mSphinx.showView(targetViewId);
+    }
+    
+    public List<Filter> getFilterList() {
+        return mFilterList;
+    }
+
+    @Override
+    public void confirm() {
+        refreshDate();
+        dismissPopupWindow();
+    }
+
+    @Override
+    public void cancel() {
+        dismissPopupWindow();
+    }
+    
+    public void refreshDate() {
+        DateListView dateListView = getDateListView();
+        mCheckInDat.setCalendar(dateListView.getCheckin());
+        mCheckOutDat.setCalendar(dateListView.getCheckout());
+    }
 }

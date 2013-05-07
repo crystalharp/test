@@ -141,6 +141,7 @@ import com.tigerknows.ui.discover.ShangjiaListActivity;
 import com.tigerknows.ui.discover.YanchuDetailFragment;
 import com.tigerknows.ui.discover.ZhanlanDetailFragment;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
+import com.tigerknows.ui.hotel.PickLocationFragment;
 import com.tigerknows.ui.more.AboutUsActivity;
 import com.tigerknows.ui.more.AddMerchantActivity;
 import com.tigerknows.ui.more.AppRecommendActivity;
@@ -1172,7 +1173,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mActionLog.onDestroy();
         mMenuFragment = null;
         mTitleFragment = null;
-        mHomeFragment = null;
+        mPOIHomeFragment = null;
         mMoreFragment = null;
         mGoCommentFragment = null;
         mResultMapFragment = null;
@@ -1709,7 +1710,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mMapView.snapMapView(this, snapMap, position, mapScene);
     }
     
-    public void changeCity(long cityId) {
+    void changeCity(long cityId) {
         int id = (int)cityId;
         CityInfo cityInfo = getMapEngine().getCityInfo(id);
         changeCity(cityInfo);
@@ -1717,8 +1718,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     public void changeCity(CityInfo cityInfo) {
         if (cityInfo.isAvailably()) {
-            updateCityInfo(cityInfo);
             CityInfo currentCityInfo = Globals.g_Current_City_Info;
+            Globals.g_Current_City_Info = cityInfo;
             
             int cityId = cityInfo.getId();
             if (currentCityInfo != null
@@ -1726,8 +1727,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     && cityId == currentCityInfo.getId()) {
                 mMapView.zoomTo(cityInfo.getLevel(), cityInfo.getPosition(), -1, null);
             } else {
-                Globals.g_Current_City_Info = cityInfo;
                 mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
+                updateCityInfo(cityInfo);
                 checkCitySupportDiscover(cityId);
                 if (!mViewedCityInfoList.contains(cityInfo)) {
                     mViewedCityInfoList.add(cityInfo);
@@ -2390,9 +2391,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return;
         }
         String cName = cityInfo.getCName();
-        if (mHomeFragment != null) {
-            getHomeFragment().refreshCity(cName);
-            getHomeFragment().refreshLocationView();
+        if (mPOIHomeFragment != null) {
+            getPOIHomeFragment().refreshCity(cName);
+            getPOIHomeFragment().refreshLocationView();
         }
         if (mMoreFragment != null) {
             getMoreFragment().refreshCity(cName);
@@ -3027,7 +3028,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     // TODO: get fragment start
     private MenuFragment mMenuFragment;
     private TitleFragment mTitleFragment;
-    private POIHomeFragment mHomeFragment;
+    private POIHomeFragment mPOIHomeFragment;
     private MoreHomeFragment mMoreFragment;
     private GoCommentFragment mGoCommentFragment;
     private ResultMapFragment mResultMapFragment;
@@ -3057,6 +3058,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private DiscoverHomeFragment mDiscoverFragment;
     
     private HotelHomeFragment mHotelHomeFragment;
+    private PickLocationFragment mPickLocationFragment;
     
     public BaseFragment getFragment(int id) {
         BaseFragment baseFragment = null;
@@ -3067,7 +3069,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 break;
                 
             case R.id.view_poi_home:
-                baseFragment = getHomeFragment();
+                baseFragment = getPOIHomeFragment();
                 break;
                 
             case R.id.view_result_map:
@@ -3170,6 +3172,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             case R.id.view_hotel_home:
                 baseFragment = getHotelHomeFragment();
                 break;
+
+            case R.id.view_hotel_pick_location:
+                baseFragment = getPickLocationFragment();
+                break;
                 
             default:
                 break;
@@ -3203,15 +3209,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
     
-    public POIHomeFragment getHomeFragment() {
+    public POIHomeFragment getPOIHomeFragment() {
         synchronized (mUILock) {
-            if (mHomeFragment == null) {
-                POIHomeFragment homeFragment = new POIHomeFragment(Sphinx.this);
-                homeFragment.setId(R.id.view_poi_home);
-                homeFragment.onCreate(null);
-                mHomeFragment = homeFragment;
+            if (mPOIHomeFragment == null) {
+                POIHomeFragment fragment = new POIHomeFragment(Sphinx.this);
+                fragment.setId(R.id.view_poi_home);
+                fragment.onCreate(null);
+                mPOIHomeFragment = fragment;
             }
-            return mHomeFragment;
+            return mPOIHomeFragment;
         }
     }
     
@@ -3540,6 +3546,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return mHotelHomeFragment;
         }
     }
+
+    public PickLocationFragment getPickLocationFragment() {
+        synchronized (mUILock) {
+            if (mPickLocationFragment == null) {
+                PickLocationFragment fragment = new PickLocationFragment(Sphinx.this);
+                fragment.setId(R.id.view_hotel_pick_location);
+                fragment.onCreate(null);
+                mPickLocationFragment = fragment;
+            }
+            return mPickLocationFragment;
+        }
+    }
     // TODO: get fragment end
 
     // TODO: my location begin    
@@ -3558,7 +3576,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             final Position myPosition = myLocationPosition;
             updateMyLocationOverlay(myPosition);  
             if (uiStackPeek() == R.id.view_poi_home || uiStackPeek() == R.id.view_discover_home) {
-                getHomeFragment().refreshLocationView();
+                getPOIHomeFragment().refreshLocationView();
             }
             
             if (myPosition != null) {

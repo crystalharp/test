@@ -60,12 +60,11 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     
     private ViewGroup controlView;
     
+    private LinearLayout bodyView;
     private ListView parentLsv;
     private ListView childLsv;
     
     private CallBack callBack;
-    private Filter selectedParentFilter;
-    private Filter selectedChildFilter;
     private int selectedParentPosition = -1;
     
     private List<Filter> filterList;
@@ -85,6 +84,10 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     }
 
     public void setData(List<Filter> filterList, byte key, CallBack callBack, boolean isTurnPaging, String actionTag) {
+        setData(filterList, key, callBack, isTurnPaging, true, actionTag);
+    }
+
+    public void setData(List<Filter> filterList, byte key, CallBack callBack, boolean isTurnPaging, boolean showFilterButton, String actionTag) {
         if (filterList == null) {
             return;
         }
@@ -96,12 +99,14 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         } else if (key == POIResponse.FIELD_FILTER_ORDER_INDEX) {
             ActionLog.getInstance(getContext()).addAction(this.actionTag+ActionLog.FilterOrder);
         }
-        refreshFilterButton(controlView, filterList, getContext(), this);
+        if (showFilterButton) {
+            refreshFilterButton(controlView, filterList, getContext(), this);
+        } else {
+            bodyView.setPadding(0, 0, 0, 0);
+        }
         this.filterList = filterList;
         this.callBack = callBack;
         this.isTurnPaging = isTurnPaging;
-        this.selectedParentFilter = null;
-        this.selectedChildFilter = null;
         this.selectedParentPosition = -1;
         this.parentFilterList.clear();
         this.childFilterList.clear();
@@ -125,30 +130,26 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             }
         }
         
-        List<Filter> filterList1 = this.filter.getChidrenFilterList();
-        this.parentFilterList.addAll(filterList1);
-        
         int selectedChiledPosition = -1;
-        for(int i = filterList1.size()-1; i >= 0; i--) {
-            Filter filter1 = filterList1.get(i);
-            List<Filter> filterList2 = filter1.getChidrenFilterList();
-            if (filter1.isSelected()) {
-                selectedParentFilter = filter1;
-                selectedParentPosition = i;
-                this.childFilterList.addAll(filterList2);
-            } else {
-                for(int j = filterList2.size()-1; j >= 0; j--) {
-                    Filter filter2 = filterList2.get(j);
-                    if (filter2.isSelected()) {
-                        selectedParentPosition = i;
-                        selectedChiledPosition = j;
-                        selectedParentFilter = filter1;
-                        selectedChildFilter = filter2;
-                        this.childFilterList.addAll(filterList2);
+        if (this.filter != null) {
+            List<Filter> filterList1 = this.filter.getChidrenFilterList();
+            this.parentFilterList.addAll(filterList1);
+            
+            for(int i = filterList1.size()-1; i >= 0; i--) {
+                Filter filter1 = filterList1.get(i);
+                List<Filter> filterList2 = filter1.getChidrenFilterList();
+                if (filter1.isSelected()) {
+                    selectedParentPosition = i;
+                    this.childFilterList.addAll(filterList2);
+                } else {
+                    for(int j = filterList2.size()-1; j >= 0; j--) {
+                        Filter filter2 = filterList2.get(j);
+                        if (filter2.isSelected()) {
+                            selectedParentPosition = i;
+                            selectedChiledPosition = j;
+                            this.childFilterList.addAll(filterList2);
+                        }
                     }
-                }
-                if (selectedChildFilter != null && selectedParentFilter != null) {
-                    break;
                 }
             }
         }
@@ -194,6 +195,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
 
     protected void findViews() {
         controlView = (ViewGroup) findViewById(R.id.control_view);
+        bodyView = (LinearLayout) findViewById(R.id.body_view);
         parentLsv = (ListView) findViewById(R.id.parent_lsv);
         childLsv = (ListView) findViewById(R.id.child_lsv);
     }
@@ -273,13 +275,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     }
     
     private void doFilter(Filter filter) {
-        if (selectedChildFilter != null) {
-            selectedChildFilter.setSelected(false);
-        }
-        if (selectedParentFilter != null) {
-            selectedParentFilter.setSelected(false);
-        }
-        filter.setSelected(true);
+        selectedFilter(this.filter, filter);
         
         if (callBack != null) {
             ActionLog.getInstance(getContext()).addAction(actionTag, ActionLog.FilterDo, filter.getFilterOption().getName(), DataQuery.makeFilterRequest(this.filterList));
@@ -436,14 +432,16 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         String title = null;
         if (filter != null) {
             List<Filter> chidrenFilterList = filter.getChidrenFilterList();
-            for(Filter chidrenFilter : chidrenFilterList) {
+            for(int i = 0, size = chidrenFilterList.size(); i < size; i++) {
+                Filter chidrenFilter = chidrenFilterList.get(i);
                 if (chidrenFilter.isSelected()) {
                     title = chidrenFilter.getFilterOption().getName();
                     break;
                 } else {
                     
                     List<Filter> chidrenFilterList1 = chidrenFilter.getChidrenFilterList();
-                    for(Filter chidrenFilter1 : chidrenFilterList1) {
+                    for(int j = 0, count = chidrenFilterList1.size(); j < count; j++) {
+                        Filter chidrenFilter1 = chidrenFilterList1.get(j);
                         if (chidrenFilter1.isSelected()) {
                             title = chidrenFilter1.getFilterOption().getName();
                             break;
@@ -472,5 +470,27 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     public void onClick(View view) {
         byte key = (Byte)view.getTag();
         setData(filterList, key, callBack, isTurnPaging, this.actionTag);
+    }
+    
+    public static void selectedFilter(Filter filter, Filter selected) {
+        List<Filter> chidrenFilterList = filter.getChidrenFilterList();
+        for(int i = 0, size = chidrenFilterList.size(); i < size; i++) {
+            Filter chidrenFilter = chidrenFilterList.get(i);
+            if (chidrenFilter.equals(selected)) {
+                chidrenFilter.setSelected(true);       
+            } else {
+                chidrenFilter.setSelected(false);
+            }
+            List<Filter> chidrenFilterList1 = chidrenFilter.getChidrenFilterList();
+            for(int j = 0, count = chidrenFilterList1.size(); j < count; j++) {
+                Filter chidrenFilter1 = chidrenFilterList1.get(j);
+                if (chidrenFilter1.equals(selected)) {
+                    chidrenFilter1.setSelected(true);       
+                } else {
+                    chidrenFilter1.setSelected(false);
+                }
+            }
+        }
+        
     }
 }

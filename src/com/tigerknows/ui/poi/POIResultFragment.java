@@ -5,7 +5,6 @@
 package com.tigerknows.ui.poi;
 
 import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -14,6 +13,7 @@ import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
+import com.tigerknows.model.Hotel;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Response;
@@ -30,6 +30,7 @@ import com.tigerknows.widget.RetryView;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
@@ -113,6 +114,25 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
     };
     
+    private Runnable mLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            mSphinx.getHandler().removeCallbacks(mActualLoadedDrawableRun);
+            mSphinx.getHandler().post(mActualLoadedDrawableRun);
+        }
+    };
+    
+    private Runnable mActualLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            if (mSphinx.uiStackPeek() == getId() && mSphinx.isFinishing() == false) {
+                mResultAdapter.notifyDataSetChanged();
+            }
+        }
+    };
+    
     public void setup() {
         DataQuery lastDataQuerying = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
         if (lastDataQuerying == null) {
@@ -150,14 +170,13 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {  
-        LogWrapper.d(TAG, "onCreateView()"+mActionTag);
         
         mRootView = mLayoutInflater.inflate(R.layout.poi_result, container, false);
 
         findViews();
         setListener();
         
-        mResultAdapter = new POIAdapter(mContext, mPOIList);
+        mResultAdapter = new POIAdapter(mSphinx, mPOIList, mLoadedDrawableRun, POIResultFragment.this.toString());
         mResultLsv.setAdapter(mResultAdapter);
         
         return mRootView;
@@ -438,25 +457,29 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         private Drawable icAddress;
         private int aColor;
         private int bColor;
-        private Context context;
+        private Activity activity;
         private LayoutInflater layoutInflater;
         private boolean showStamp = true;
+        private Runnable loadedDrawableRun;
+        private String viewToken;
         
         public void setShowStamp(boolean showStamp) {
             this.showStamp = showStamp;
         }
 
-        public POIAdapter(Context context, List<POI> list) {
-            super(context, RESOURCE_ID, list);
-            this.context = context;
-            layoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            Resources resources = context.getResources();
+        public POIAdapter(Activity activity, List<POI> list, Runnable loadedDrawableRun, String viewToken) {
+            super(activity, RESOURCE_ID, list);
+            this.activity = activity;
+            this.loadedDrawableRun = loadedDrawableRun;
+            this.viewToken = viewToken;
+            layoutInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            Resources resources = activity.getResources();
             icAPOI = resources.getDrawable(R.drawable.ic_a_poi);
             icComment = resources.getDrawable(R.drawable.ic_comment);
             icAddress = resources.getDrawable(R.drawable.ic_discover_address);
             aColor = resources.getColor(R.color.blue);
             bColor = resources.getColor(R.color.black_dark);
-            distanceA = context.getString(R.string.distanceA);
+            distanceA = activity.getString(R.string.distanceA);
         }
         
         @Override
@@ -468,7 +491,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             } else {
                 view = convertView;
             }
-            
+
+            View pictureView = view.findViewById(R.id.picture_view);
+            ImageView pictureImv = (ImageView) view.findViewById(R.id.picture_imv);
+            ImageView markerImv = (ImageView) view.findViewById(R.id.marker_imv);
             ImageView bubbleImv = (ImageView) view.findViewById(R.id.bubble_imv);
             TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
             TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
@@ -489,6 +515,30 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
             }
             
+            Hotel hotel = poi.getHotel();
+            if (hotel != null) {
+                pictureView.setVisibility(View.VISIBLE);
+                Drawable drawable = hotel.getImageThumb().loadDrawable(activity, loadedDrawableRun, viewToken);
+                if(drawable != null) {
+                    //To prevent the problem of size change of the same pic 
+                    //After it is used at a different place with smaller size
+                    if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+                        pictureImv.setBackgroundDrawable(null);
+                    }
+                    pictureImv.setBackgroundDrawable(drawable);
+                } else {
+                    pictureImv.setBackgroundDrawable(null);
+                }
+                
+                if (hotel.getCanReserve() > 0) {
+                    markerImv.setVisibility(View.VISIBLE);
+                } else {
+                    markerImv.setVisibility(View.GONE);
+                }
+            } else {
+                pictureView.setVisibility(View.GONE);
+            }
+            
             if (position == 0 && poi.getResultType() == POIResponse.FIELD_A_POI_LIST && aTotal == 1) {
                 bubbleImv.setVisibility(View.VISIBLE);
                 nameTxv.setTextColor(aColor);
@@ -504,7 +554,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (distance.startsWith(distanceA)) {
                     icAPOI.setBounds(0, 0, icAPOI.getIntrinsicWidth(), icAPOI.getIntrinsicHeight());
                     distanceFromTxv.setCompoundDrawables(null, null, icAPOI, null);
-                    distanceFromTxv.setText(context.getString(R.string.distance));
+                    distanceFromTxv.setText(activity.getString(R.string.distance));
                     distanceTxv.setText(distance.replace(distanceA, ""));
                 } else {
                     distanceFromTxv.setText("");
@@ -581,7 +631,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             List<DynamicPOI> list = poi.getDynamicPOIList();
             int viewCount = dynamicPOIListView.getChildCount();
             int viewIndex = 0;
-            int size = list.size();
+            int size = (list != null ? list.size() : 0);
             int dynamicPOIWidth = 0;
             List<String> types = new ArrayList<String>();
             for(int i = 0; i < size; i++) {
@@ -589,6 +639,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 final String dataType = dynamicPOI.getType();
                 if ((BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
                         BaseQuery.DATA_TYPE_YANCHU.equals(dataType) ||
+                        DynamicPOI.TYPE_HOTEL.equals(dataType) ||
                         BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType))
                         && types.contains(dataType) == false) {
                     types.add(dataType);
@@ -597,7 +648,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         child = dynamicPOIListView.getChildAt(viewIndex);
                         child.setVisibility(View.VISIBLE);
                     } else {
-                        child = new ImageView(context);
+                        child = new ImageView(activity);
                         dynamicPOIListView.addView(child, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
                     }
                     ImageView iconImv = (ImageView) child;
@@ -607,6 +658,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dynamicPOI.getType())) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_yanchu);
                     } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dynamicPOI.getType())) {
+                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
+                    } else if (DynamicPOI.TYPE_HOTEL.equals(dynamicPOI.getType())) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
                     }
                     dynamicPOIWidth += iconImv.getDrawable().getIntrinsicWidth();

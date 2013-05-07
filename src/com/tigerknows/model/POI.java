@@ -302,7 +302,9 @@ public class POI extends BaseData {
         // 当key 0x01 = 13，POI附加信息数据类型为演出，附加信息1为演出uid，其他字段无用
         // 当key 0x01 = 14，POI附加信息数据类型为展览，附加信息1为展览uid，其他字段无用
         // 当key 0x01 = 4, POI附加信息数据类型为电影，附加信息1为电影uid，附加信息2为摘要信息，附加信息3为影讯的uid，附加信息4为影片海报url，附加信息5为影片评分，附加信息6为影片星级，附加信息7为影片时长
+        
         // 当key 0x01 = 65537, POI附加信息数据类型为酒店POI，其他字段无用
+        public static final String TYPE_HOTEL = "65537";
         
         // 0x02 x_string    主动态poi的uid，masterUid
         public static final byte FIELD_MASTER_UID = 0x02;
@@ -322,7 +324,7 @@ public class POI extends BaseData {
         private String masterUid;
         private String summary;
         private String slaveUid;
-        private String dianyingImage;
+        private TKDrawable dianyingImage;
         private String dianyingGrade;
         private String dianyingType;
         private String dianyingLength;
@@ -330,37 +332,18 @@ public class POI extends BaseData {
         public DynamicPOI(XMap data) throws APIException {
             super(data);
             
-            if (data.containsKey(FIELD_TYPE)) {
-                type = data.getInt(FIELD_TYPE);
+            type = getLongFromData(FIELD_TYPE);
+            masterUid = getStringFromData(FIELD_MASTER_UID);
+            summary = getStringFromData(FIELD_SUMMARY);
+            slaveUid = getStringFromData(FIELD_SLAVE_UID);
+            String url = getStringFromData(FIELD_DIANYING_IMAGE_URL);
+            if (url != null) {
+                TKDrawable tkDrawable = new TKDrawable();
+                tkDrawable.setUrl(url);
             }
-            
-            if (data.containsKey(FIELD_MASTER_UID)) {
-                masterUid = data.getString(FIELD_MASTER_UID);
-            }
-            
-            if (data.containsKey(FIELD_SUMMARY)) {
-                summary = data.getString(FIELD_SUMMARY);
-            }
-            
-            if (data.containsKey(FIELD_SLAVE_UID)) {
-                slaveUid = data.getString(FIELD_SLAVE_UID);
-            }
-            
-            if (data.containsKey(FIELD_DIANYING_IMAGE_URL)) {
-                dianyingImage = data.getString(FIELD_DIANYING_IMAGE_URL);
-            }
-            
-            if (data.containsKey(FIELD_DIANYING_GRADE)) {
-                dianyingGrade = data.getString(FIELD_DIANYING_GRADE);
-            }
-            
-            if (data.containsKey(FIELD_DIANYING_TYPE)) {
-                dianyingType = data.getString(FIELD_DIANYING_TYPE);
-            }
-            
-            if (data.containsKey(FIELD_DIANYING_LENGTH)) {
-                dianyingLength = data.getString(FIELD_DIANYING_LENGTH);
-            }
+            dianyingGrade = getStringFromData(FIELD_DIANYING_GRADE);
+            dianyingType = getStringFromData(FIELD_DIANYING_TYPE);
+            dianyingLength = getStringFromData(FIELD_DIANYING_LENGTH);
         }
 
         public String getType() {
@@ -379,7 +362,7 @@ public class POI extends BaseData {
             return slaveUid;
         }
 
-        public String getDianyingImage() {
+        public TKDrawable getDianyingImage() {
             return dianyingImage;
         }
 
@@ -394,7 +377,14 @@ public class POI extends BaseData {
         public String getDianyingLength() {
             return dianyingLength;
         }
-        
+
+        public static XMapInitializer<DynamicPOI> Initializer = new XMapInitializer<DynamicPOI>() {
+
+            @Override
+            public DynamicPOI init(XMap data) throws APIException {
+                return new DynamicPOI(data);
+            }
+        };
     }
     
     // 0x14 x_int   status，> 0 代表poi有效，< 0 代表poi当前已失效， == 0 保留
@@ -476,7 +466,7 @@ public class POI extends BaseData {
     
     private long status = STATUS_NONE;
     
-    private List<DynamicPOI> dynamicPOIList = new ArrayList<DynamicPOI>();
+    private List<DynamicPOI> dynamicPOIList;
     
     private DataQuery commentQuery = null;
     
@@ -484,7 +474,7 @@ public class POI extends BaseData {
     
     private int sourceType = 0;
     
-    private int grade;
+    private long grade;
     
     private int from = FROM_ONLINE;
     
@@ -516,6 +506,8 @@ public class POI extends BaseData {
     private Comment lastComment;
     
     public int ciytId = 0;
+    
+    private Hotel hotel = null;
     
     public void updateData(Context context, XMap data) {
         try {
@@ -688,7 +680,7 @@ public class POI extends BaseData {
         return toCenterDistance;
     }
     
-    public int getGrade() {
+    public long getGrade() {
         return grade;
     }
     
@@ -772,6 +764,10 @@ public class POI extends BaseData {
         return dynamicPOIList;
     }
 
+    public Hotel getHotel() {
+        return hotel;
+    }
+
     public POI() {
     }
 
@@ -787,6 +783,8 @@ public class POI extends BaseData {
         if (this.data.containsKey(FIELD_UUID)) {
             this.uuid = this.data.getString(FIELD_UUID);
         }
+        this.uuid = getStringFromData(FIELD_UUID);
+        
         if (this.data.containsKey(FIELD_TYPE)) {
             int type = (int)this.data.getInt(FIELD_TYPE);
             if (type < 0) {
@@ -796,18 +794,12 @@ public class POI extends BaseData {
             }
             this.type = type;
         }
-        if (this.data.containsKey(FIELD_LATITUDE) && this.data.containsKey(FIELD_LONGITUDE)) {
-            this.position = new Position(((double)this.data.getInt(FIELD_LATITUDE))/TKConfig.LON_LAT_DIVISOR, ((double)this.data.getInt(FIELD_LONGITUDE))/TKConfig.LON_LAT_DIVISOR);
-        }
-        if (this.data.containsKey(FIELD_NAME)) {
-            this.name = this.data.getString(FIELD_NAME);
-        }
+        this.position = getPositionFromData(FIELD_LONGITUDE, FIELD_LATITUDE);
+        this.name = getStringFromData(FIELD_NAME);
         if (this.data.containsKey(FIELD_DESCRIPTION)) {
             this.description = this.data.getXMap(FIELD_DESCRIPTION);
             if (this.description != null) {
-                if (this.description.containsKey(Description.FIELD_GRADE)) {
-                    this.grade = (int)this.description.getInt(Description.FIELD_GRADE);
-                }
+                this.grade = getLongFromData(this.description, Description.FIELD_GRADE);
                 if (this.description.containsKey(Description.FIELD_COOKING_STYLE)) {
                     List<String> strs = this.description.getXArray(Description.FIELD_COOKING_STYLE).toStringList();
                     StringBuilder s = new StringBuilder();
@@ -842,72 +834,38 @@ public class POI extends BaseData {
                     }
                 }
                 
-                if (this.description.containsKey(Description.FIELD_TASTE)) {
-                	this.taste = this.description.getString(Description.FIELD_TASTE);
+                this.taste = getStringFromData(this.description, Description.FIELD_TASTE);
+
+                this.service = getStringFromData(this.description, Description.FIELD_SERVICE_ATTITUDE);
+                if (this.service == null) {
+                    this.service = getStringFromData(this.description, Description.FIELD_SERVICE_QUALITY);
                 }
                 
-                if (this.description.containsKey(Description.FIELD_SERVICE_ATTITUDE)) {
-                	this.service = this.description.getString(Description.FIELD_SERVICE_ATTITUDE);
-                } else if (this.description.containsKey(Description.FIELD_SERVICE_QUALITY)) {
-                    this.service = this.description.getString(Description.FIELD_SERVICE_QUALITY);
-                }
-                
-                if (this.description.containsKey(Description.FIELD_ENVIRONMENT)) {
-                	this.envrionment = this.description.getString(Description.FIELD_ENVIRONMENT);
-                }
+                this.envrionment = getStringFromData(this.description, Description.FIELD_ENVIRONMENT);
                 
                 //购物POI中的产品信息，4.30 ALPHA3中暂未添加
                 //目前暂无其他代码调用此段信息，仅作为预留
-                if (this.description.containsKey(Description.FIELD_PRODUCT)){
-                	this.product = this.description.getString(Description.FIELD_PRODUCT);
-                } else if(this.description.containsKey(Description.FIELD_PRODUCT_ATTITUDE)){
-                	this.product = this.description.getString(Description.FIELD_PRODUCT_ATTITUDE);
+                this.product = getStringFromData(this.description, Description.FIELD_PRODUCT);
+                if (this.product == null){
+                	this.product = getStringFromData(this.description, Description.FIELD_PRODUCT_ATTITUDE);
                 }
             }
         } else {
             this.description = null;
         }
-        if (this.data.containsKey(FIELD_TELEPHONE)) {
-            this.telephone = this.data.getString(FIELD_TELEPHONE);
-        }
-        if (this.data.containsKey(FIELD_RESERVE_TEL)) {
-            this.reserveTel = this.data.getString(FIELD_RESERVE_TEL);
-        }
-        if (this.data.containsKey(FIELD_ADDRESS)) {
-            this.address = this.data.getString(FIELD_ADDRESS);
-        }
-        if (this.data.containsKey(FIELD_URL)) {
-            this.url = this.data.getString(FIELD_URL);
-        }
-        if (this.data.containsKey(FIELD_TO_CENTER_DISTANCE)) {
-            this.toCenterDistance = this.data.getString(FIELD_TO_CENTER_DISTANCE);
-        }
-        if (this.data.containsKey(FIELD_COMMENT_PATTERN)) {
-            this.commentPattern = this.data.getInt(FIELD_COMMENT_PATTERN);
-        }
-        if (this.data.containsKey(FIELD_ATTRIBUTE)) {
-            this.attribute = this.data.getInt(FIELD_ATTRIBUTE);
-        }
-        if (this.data.containsKey(FIELD_STATUS)) {
-            this.status = this.data.getInt(FIELD_STATUS);
-        }
-        dynamicPOIList.clear();
-        if (this.data.containsKey(FIELD_DYNAMIC_POI)) {
-            XArray<XMap> xarray = data.getXArray(FIELD_DYNAMIC_POI);
-            if (xarray != null) {
-                for(int i = 0; i < xarray.size(); i++) {
-                    dynamicPOIList.add(new DynamicPOI(xarray.get(i)));
-                }
-            }
-        }
-        if (this.data.containsKey(FIELD_LAST_COMMENT)) {
-            this.lastComment = new Comment(this.data.getXMap(FIELD_LAST_COMMENT));
-        } else {
-            this.lastComment = null;
-        }
-        this.perCapity = null;
-        if (this.data.containsKey(FIELD_PERCAPITY)) {
-            this.perCapity = this.data.getString(FIELD_PERCAPITY);
+        this.telephone = getStringFromData(FIELD_TELEPHONE);
+        this.reserveTel = getStringFromData(FIELD_RESERVE_TEL);
+        this.address = getStringFromData(FIELD_ADDRESS);
+        this.url = getStringFromData(FIELD_URL);
+        this.toCenterDistance = getStringFromData(FIELD_TO_CENTER_DISTANCE);
+        this.commentPattern = getLongFromData(FIELD_COMMENT_PATTERN);
+        this.attribute = getLongFromData(FIELD_ATTRIBUTE);
+        this.status = getLongFromData(FIELD_STATUS);
+        dynamicPOIList = getListFromData(FIELD_DYNAMIC_POI, DynamicPOI.Initializer);
+        this.lastComment = getObjectFromData(FIELD_LAST_COMMENT, Comment.Initializer);
+        this.perCapity = getStringFromData(FIELD_PERCAPITY);
+        if (this.data.containsKey(Hotel.FIELD_UUID)) {
+            this.hotel = new Hotel(this.data);
         }
     }
     
@@ -952,7 +910,7 @@ public class POI extends BaseData {
             if (lastComment != null) {
                 this.data.put(FIELD_LAST_COMMENT, lastComment.getData());
             }
-            if (dynamicPOIList.size() > 0) {
+            if (dynamicPOIList != null && dynamicPOIList.size() > 0) {
                 XArray<XMap> xarray = new XArray<XMap>();
                 for(int i = 0, size = dynamicPOIList.size(); i < size; i++) {
                     xarray.add(dynamicPOIList.get(i).getData());
@@ -1280,8 +1238,9 @@ public class POI extends BaseData {
                 }
                 poi.dateTime = cursor.getLong(cursor.getColumnIndex(Tigerknows.POI.DATETIME));
                 poi.from = FROM_LOCAL;
-                poi.dynamicPOIList.clear();
+                poi.dynamicPOIList = null;
                 poi.toCenterDistance = null;
+                poi.hotel = null;
             }
         }
 
@@ -1553,4 +1512,12 @@ public class POI extends BaseData {
         
         return result;
     }
+
+    public static XMapInitializer<POI> Initializer = new XMapInitializer<POI>() {
+
+        @Override
+        public POI init(XMap data) throws APIException {
+            return new POI(data);
+        }
+    };
 }

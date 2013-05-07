@@ -192,8 +192,8 @@ public abstract class BaseQuery {
     // 电影? 4
     public static final String DATA_TYPE_DIANYING = "4";
 
-    // 活动 5
-    public static final String DATA_TYPE_HUODONG = "5";
+    // 备选 5
+    public static final String DATA_TYPE_ALTERNATIVE = "5";
 
     // 打折商场 6
     public static final String DATA_TYPE_DAZHESHANGCHANG = "6";
@@ -782,5 +782,61 @@ public abstract class BaseQuery {
         if (source.containsKey(DataQuery.SERVER_PARAMETER_FILTER)) {
             target.put(DataQuery.SERVER_PARAMETER_FILTER, source.get(DataQuery.SERVER_PARAMETER_FILTER));
         }
+    }
+    
+    /**
+     * 根据keys从criteria中获取参数值，将其值添加到requestParameters
+     * @param keys
+     * @throws APIException
+     */
+    void addParameter(String[] keys) throws APIException {
+        addParameter(keys, true);
+    }
+    
+    /**
+     * 根据keys从criteria中获取参数值，将其值添加到requestParameters
+     * @param keys
+     * @param need
+     * @throws APIException
+     */
+    void addParameter(String[] keys, boolean need) throws APIException {
+        if (keys == null) {
+            return;
+        }
+        for(int i = 0, length = keys.length; i < length; i++) {
+            addParameter(keys[i], need);
+        }
+    }
+    
+    /**
+     * 根据key从criteria中获取参数值，将其值添加到requestParameters
+     * @param key
+     * @return
+     * @throws APIException
+     */
+    String addParameter(String key) throws APIException {
+        return addParameter(key, true);
+    }
+    
+    /**
+     * 根据key从criteria中获取参数值，将其值添加到requestParameters
+     * @param key
+     * @param need
+     * @return
+     * @throws APIException
+     */
+    String addParameter(String key, boolean need) throws APIException {
+        String result = null;
+        if (key == null) {
+            return result;
+        }
+        if (criteria.containsKey(key)) {
+            result = criteria.get(key);
+            requestParameters.add(key, result);
+        } else if (need){
+            throw APIException.wrapToMissingRequestParameterException(key);
+        }
+        
+        return result;
     }
 }

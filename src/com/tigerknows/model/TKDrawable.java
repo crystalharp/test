@@ -33,21 +33,18 @@ public class TKDrawable extends XMapData implements Parcelable {
     public TKDrawable(XMap data) throws APIException {
         super(data);
         
-        if (this.data.containsKey(FIELD_URL)) {
-            this.url = this.data.getString(FIELD_URL);
-        }
-        
-        if (this.data.containsKey(FIELD_DATA)) {
-            byte[] bm = this.data.getBytes(FIELD_DATA);
+        this.url = getStringFromData(FIELD_URL);
+        byte[] image = getBytesFromData(FIELD_DATA);
+        if (image != null) {
             ImageCache imageCache1 = Globals.getImageCache();
             final String name = url.substring(url.lastIndexOf("/")+1);
             try {
-                imageCache1.putImage(name, bm);
+                imageCache1.putImage(name, image);
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            BitmapDrawable bitmapDrawable = (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(bm), "image.png");
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(image), "image.png");
             Globals.getAsyncImageLoader().put(url, bitmapDrawable);
         }
     }
@@ -107,4 +104,12 @@ public class TKDrawable extends XMapData implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(url);
     }
+    
+    public static XMapInitializer<TKDrawable> Initializer = new XMapInitializer<TKDrawable>() {
+
+        @Override
+        public TKDrawable init(XMap data) throws APIException {
+            return new TKDrawable(data);
+        }
+    };
 }
