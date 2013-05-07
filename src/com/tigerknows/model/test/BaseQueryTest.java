@@ -18,7 +18,6 @@ import com.tigerknows.model.DataQuery.DiscoverResponse;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.radar.Alarms;
-import com.tigerknows.service.LocationCollectionService;
 import com.tigerknows.service.PullService;
 import com.tigerknows.service.TigerknowsLocationManager;
 import com.tigerknows.ui.BaseActivity;
@@ -126,10 +125,6 @@ public class BaseQueryTest {
         layout.addView(updateMapTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final Button radarPushBtn = new Button(activity);
         layout.addView(radarPushBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        final Button radarLocationBtn = new Button(activity);
-        layout.addView(radarLocationBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        final Button readLocationLogBtn = new Button(activity);
-        layout.addView(readLocationLogBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final Button launchHistoryWorkBtn = new Button(activity);
         layout.addView(launchHistoryWorkBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         
@@ -317,29 +312,6 @@ public class BaseQueryTest {
                 next.add(Calendar.SECOND, 5);
                 Alarms.enableAlarm(activity, next, PullService.alarmAction);
                 LogWrapper.d(TAG, "Radar Push send in:" + next.getTime().toLocaleString());
-            }
-        });
-
-        radarLocationBtn.setText("send a Radar location in 5s");
-        radarLocationBtn.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                Calendar next = Calendar.getInstance();
-                next.setTimeInMillis(System.currentTimeMillis());
-                next.add(Calendar.SECOND, 5);
-                Alarms.enableAlarm(activity, next, LocationCollectionService.alarmAction);
-                LogWrapper.d(TAG, "Radar Location send in:" + next.getTime().toLocaleString());
-            }
-        });
-
-        readLocationLogBtn.setText("read location log");
-        readLocationLogBtn.setOnClickListener(new View.OnClickListener() {
-            
-            @Override
-            public void onClick(View v) {
-                String locationLog = PullService.queryCollectionLocation(activity);
-                Utility.showNormalDialog(activity, locationLog);
             }
         });
 

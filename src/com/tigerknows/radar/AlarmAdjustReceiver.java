@@ -2,7 +2,6 @@ package com.tigerknows.radar;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.service.LocationCollectionService;
 import com.tigerknows.service.PullService;
 
 import android.content.BroadcastReceiver;
@@ -41,15 +40,6 @@ public class AlarmAdjustReceiver extends BroadcastReceiver {
             pullAlarmAbsolute = adjustAbsTimebyRelTime(pullAlarmRelative);
             LogWrapper.d(TAG, "after Adjust, pullAlarm is:" + pullAlarmAbsolute);
             PullService.alarmAction.saveAlarm(context, pullAlarmAbsolute, null);
-        }
-
-        String locationAlarmAbsolute = LocationCollectionService.alarmAction.getAbsAlarm(context);
-        String locationAlarmRelative = LocationCollectionService.alarmAction.getRelAlarm(context);
-        if (!TextUtils.isEmpty(locationAlarmAbsolute)) {
-            LogWrapper.d(TAG, "before Adjust, locationAlarm is:" + locationAlarmAbsolute);
-            locationAlarmAbsolute = adjustAbsTimebyRelTime(locationAlarmRelative);
-            LogWrapper.d(TAG, "after Adjust, locationAlarm is:" + locationAlarmAbsolute);
-            LocationCollectionService.alarmAction.saveAlarm(context, locationAlarmAbsolute, null);
         }
     }
     

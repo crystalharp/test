@@ -6,7 +6,6 @@ package com.tigerknows.ui.poi;
 
 import com.decarta.Globals;
 import com.decarta.android.location.Position;
-import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -89,7 +88,6 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        LogWrapper.d(TAG, "onCreateView()"+mActionTag);        
         
         mRootView = mLayoutInflater.inflate(R.layout.poi_home, container, false);
         
@@ -309,6 +307,11 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 
                         @Override
                         public void onClick(View v) {
+                            if (category.resId == R.drawable.category_hotel) {
+                                mSphinx.getHotelHomeFragment().setCityInfo(Globals.g_Current_City_Info);
+                                mSphinx.showView(R.id.view_hotel_home);
+                                return;
+                            }
                             mActionLog.addAction(mActionTag +  ActionLog.POIHomeCategory, category.name);
 
                             DataQuery poiQuery = new DataQuery(mContext);
