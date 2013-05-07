@@ -13,8 +13,19 @@
         android:background="@color/white"
         android:gravity="center"
         android:orientation="horizontal"
-        android:weightSum="3"
         >
+        <Button
+            android:id="@+id/cancel_btn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="取消"
+	        />
+        <Button
+            android:id="@+id/confirm_btn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="确认"
+	        />
     </LinearLayout>
     
     <LinearLayout
@@ -24,7 +35,6 @@
         android:layout_below="@id/control_view"
         android:orientation="horizontal"
         android:weightSum="2"
-        android:paddingBottom="64dp"
         >
         <RelativeLayout
             android:id="@+id/parent_view"

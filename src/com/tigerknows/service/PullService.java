@@ -177,8 +177,9 @@ public class PullService extends Service {
                     LogWrapper.d(TAG, criteria.toString());
                     dataQuery.setup(criteria, currentCityInfo.getId());
                     dataQuery.query();
-                    PullMessage pullMessage = dataQuery.getPullMessage();
-                    if (pullMessage != null && pullMessage.getResponseCode() == 200) {
+                    Response response = dataQuery.getResponse();
+                    if (response != null && response.getResponseCode() == 200 && response instanceof PullMessage) {
+                        PullMessage pullMessage = (PullMessage) response;
                         fail = 0;
                         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_LAST_SUCCEED_TIME, 
                                 Alarms.SIMPLE_DATE_FORMAT.format(requestCal.getTime()));

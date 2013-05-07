@@ -543,4 +543,12 @@ public class Comment extends BaseData {
         commentQuery.setup(criteria, Globals.g_Current_City_Info.getId(), sourceViewId, targerViewId, null, false, false, poi);
         return commentQuery;
     }
+    
+    public static XMapInitializer<Comment> Initializer = new XMapInitializer<Comment>() {
+
+        @Override
+        public Comment init(XMap data) throws APIException {
+            return new Comment(data);
+        }
+    };
 }

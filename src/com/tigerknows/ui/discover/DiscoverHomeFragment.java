@@ -168,7 +168,7 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
         mMenuFragment.updateMenuStatus(R.id.discover_btn);
         mTitleFragment.hide();
         mMenuFragment.display();
-        mSphinx.getHomeFragment().refreshLocationView();
+        mSphinx.getPOIHomeFragment().refreshLocationView();
         if (mCityId != Globals.g_Current_City_Info.getId()) {
             initViews();
         }

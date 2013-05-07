@@ -191,6 +191,7 @@ public class HistoryWordTable {
 	
 	/**
      * 存储的记录数目超过最大值时，将超过的部分记录（插入时间较早的）删除
+     * 某个类型的历史词最大存储MAX_COUNT个，与城市没有关系
      * @param providerList
      * @throws SQLException
      */
@@ -198,7 +199,7 @@ public class HistoryWordTable {
         if(!mDb.isOpen())
             return;
         Cursor mCursor = mDb.query(true, TABLE_NAME,
-                new String[]{ID}, "(" + CITY_ID + "=" + cityId + ") AND (" + TYPE + "=" + type+ ")",
+                new String[]{ID}, "(" + TYPE + "=" + type+ ")",
                 null, null, null, ID + " ASC", null);
         int count = mCursor.getCount();
         if (count > MAX_COUNT) {
