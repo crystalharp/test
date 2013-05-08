@@ -13,7 +13,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content" />
     
-    <ScrollView
+    <ScrollView android:id="@+id/credit_assure_scv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@+id/title_view"
@@ -321,7 +321,7 @@
                 android:contentDescription="@string/app_name"
                 />
             <Button
-                android:id="@+id/submit_order_btn"
+                android:id="@+id/credit_confirm_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/btn_default"
