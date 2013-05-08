@@ -267,7 +267,7 @@
                     android:textColor="@color/black_dark"
                     android:textSize="16sp" />
 
-                <EditText android:id="@+id/room_mobile_number_edt"
+                <EditText android:id="@+id/credit_cert_code_edt"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:maxLength="50"
@@ -277,7 +277,7 @@
                     android:singleLine="true"
                     android:ellipsize="end"
                     android:background="@color/transparent"
-                    android:inputType="phone"
+                    android:inputType="none"
                     />
             </LinearLayout>
 
@@ -313,38 +313,24 @@
                     android:textColor="@color/black_dark"
                     android:textSize="12sp" />
 
-            </LinearLayout>            <ImageView
+            </LinearLayout>
+            <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
                 android:contentDescription="@string/app_name"
                 />
-            <LinearLayout
+            <Button
+                android:id="@+id/submit_order_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:background="@drawable/list_footer"
-                android:padding="8dp"
-                android:drawablePadding="8dp"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
+                android:background="@drawable/btn_default"
+                android:layout_marginTop="16dp"
                 android:gravity="center"
-                >
-
-                <Button
-                    android:id="@+id/submit_order_btn"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/btn_default"
-                    android:gravity="center"
-                    android:padding="8dp"
-                    android:text="@string/credit_confirm"
-                    android:textColor="@color/black_dark"
-                    android:textSize="16sp" />
-
-            </LinearLayout>
-                
-
+                android:padding="8dp"
+                android:text="@string/credit_confirm"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp" />
         </LinearLayout>
         
     </ScrollView>
