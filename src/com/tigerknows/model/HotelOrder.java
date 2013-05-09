@@ -5,10 +5,12 @@ import java.util.Comparator;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.tigerknows.model.xobject.XMap;
-import com.tigerknows.util.ByteUtil;
 
 /**
- * 
+ * This HotelOrder is different from other model in this package.
+ * It's mainly meant for local storage
+ * Additional function is passing value between different UIs
+ * 	For the second, decide yourself.
  * @author jiangshuai
  *
  */
@@ -179,7 +181,7 @@ public class HotelOrder extends XMapData{
 	 * @return
 	 * @throws APIException
 	 */
-	public XMap toXMap() throws APIException{
+	public XMap toXMapForStorage() throws APIException{
 		XMap map = new XMap();
 		if (id!=null) {
 			map.put(FIELD_ID, id);
