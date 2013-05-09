@@ -22,6 +22,7 @@ import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
@@ -111,7 +112,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     public void onResume() {
         super.onResume();
         refreshDate();
-        mClickedViewId = -1;
         if (mFilterList == null) {
             queryFilter();
         }
@@ -144,7 +144,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onPause() {
         super.onPause();
-        mClickedViewId = -1;
     }
 
     protected void findViews() {
@@ -239,6 +238,13 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             mProgressDialog = Utility.showNormalDialog(mSphinx, custom);
             mProgressDialog.setCancelable(true);
             mProgressDialog.setCanceledOnTouchOutside(false);
+            mProgressDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    mClickedViewId = -1;
+                }
+            });
         }
         if (mProgressDialog.isShowing() == false) {
             mProgressDialog.show();
@@ -264,16 +270,18 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         if (response != null && response.getResponseCode() == Response.RESPONSE_CODE_OK) {
             mFilterList = ((DataQuery) baseQuery).getFilterList();
             if (mFilterList != null) {
-                dismissProgressDialog();
                 mSphinx.getPickLocationFragment().setData(mFilterList);
                 refreshFilterArea();
                 refreshFilterCategory();
                 
-                if (mClickedViewId == R.id.location_btn) {
-                    mSphinx.showView(R.id.view_hotel_pick_location);
-                } else if (mClickedViewId == R.id.price_view) {
-                    showFilterCategory(mTitleFragment);
-                    mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+                if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                    if (mClickedViewId == R.id.location_btn) {
+                        mSphinx.showView(R.id.view_hotel_pick_location);
+                    } else if (mClickedViewId == R.id.price_view) {
+                        showFilterCategory(mTitleFragment);
+                        mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+                    }
+                    dismissProgressDialog();
                 }
             }
         }
