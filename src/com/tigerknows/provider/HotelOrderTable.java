@@ -134,7 +134,7 @@ public class HotelOrderTable {
 			return null;
 		
 		List<HotelOrder> results = new ArrayList<HotelOrder>();
-		Cursor cursor = mDb.query(TABLE_NAME, new String[]{ORDER_CONTENT}, null, null, null, null, null, start + "," + (start + count));
+		Cursor cursor = mDb.query(TABLE_NAME, new String[]{ORDER_CONTENT}, null, null, null, null, ORDER_CREATE_TIME, start + "," + (start + count));
 		System.out.println("Read count: " + cursor.getCount());
 		int contentIndex = cursor.getColumnIndex(ORDER_CONTENT); 
 		while (cursor.moveToNext()) {

@@ -387,24 +387,4 @@ public class HotelOrder extends XMapData{
 		this.mobileNum = mobileNum;
 	}
 	
-	/**
-	 * Comparator used to sort orders loaded from database
-	 */
-	private static Comparator<HotelOrder> comparator = new Comparator<HotelOrder>() {
-
-		@Override
-		public int compare(HotelOrder lhs, HotelOrder rhs) {
-			if( lhs.getCreateTime() > rhs.getCreateTime() ){
-				return -1;
-			}else if( lhs.getCreateTime() == rhs.getCreateTime() ){
-				return 0;
-			}else {
-				return 1;
-			}
-		}
-	};
-
-	public static Comparator<HotelOrder> getComparator(){
-		return comparator;
-	}
 }
