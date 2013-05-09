@@ -254,7 +254,8 @@
                 </LinearLayout>
 
             </LinearLayout>
-                
+            
+<!-- move dianying_view out 
             <LinearLayout android:id="@+id/dynamic_dianying_view"
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
@@ -299,9 +300,9 @@
                         android:layout_height="wrap_content"
                         android:text="@string/more" />
                 </LinearLayout>
-            </LinearLayout>
+            </LinearLayout>-->                
                 
-            <LinearLayout android:id="@+id/dynamic_poi_list_view"
+            <LinearLayout android:id="@+id/below_address"
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
@@ -371,6 +372,16 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
                 />
+            
+            <LinearLayout android:id="@+id/below_comment"
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                >
+            </LinearLayout>
                 
             <LinearLayout 
                 android:id="@+id/feature_txv" 
