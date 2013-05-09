@@ -180,8 +180,6 @@ public class PullService extends Service {
                     PullMessage pullMessage = dataQuery.getPullMessage();
                     if (pullMessage != null && pullMessage.getResponseCode() == 200) {
                         fail = 0;
-                        TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_LAST_SUCCEED_TIME, 
-                                Alarms.SIMPLE_DATE_FORMAT.format(requestCal.getTime()));
                         next = processPullMessage(context, pullMessage, requestCal);
                     } else {
                         fail += 1;
@@ -326,6 +324,9 @@ public class PullService extends Service {
                 //按照上面的代码生成字符串会在结尾带有下划线，下面一句去掉结尾的下划线
                 messageIdList = s.substring(0, s.length()-1);
                 LogWrapper.d(TAG, "msgidList:" + messageIdList);
+                
+                TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_LAST_SUCCEED_TIME, 
+                        Alarms.SIMPLE_DATE_FORMAT.format(requestCal.getTime()));
                 TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, messageIdList);
             }
             TKNotificationManager.notify(context, message);
