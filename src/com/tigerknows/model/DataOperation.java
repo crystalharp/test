@@ -8,9 +8,6 @@
 
 package com.tigerknows.model;
 
-import java.util.List;
-
-import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.test.BaseQueryTest;
@@ -18,7 +15,8 @@ import com.tigerknows.model.test.DataOperationTest;
 import com.tigerknows.model.xobject.XMap;
 
 import android.content.Context;
-import android.text.TextUtils;
+
+import java.util.List;
 
 public class DataOperation extends BaseQuery {
 
@@ -269,9 +267,7 @@ public class DataOperation extends BaseQuery {
         public CommentQueryResponse(XMap data) throws APIException {
             super(data);
             
-            if (this.data.containsKey(FIELD_COMMENT)) {
-                comment = new Comment(this.data.getXMap(FIELD_COMMENT));
-            }
+            comment = getObjectFromData(FIELD_COMMENT, Comment.Initializer);
         }
 
         public void setComment(Comment comment) {
@@ -351,9 +347,7 @@ public class DataOperation extends BaseQuery {
         public TuangouQueryResponse(XMap data) throws APIException {
             super(data);
             
-            if (this.data.containsKey(FIELD_DATA)) {
-                tuangou = new Tuangou(this.data.getXMap(FIELD_DATA));
-            }
+            tuangou = getObjectFromData(FIELD_DATA, Tuangou.Initializer);
         } 
     }
 
@@ -370,9 +364,7 @@ public class DataOperation extends BaseQuery {
         public FendianQueryResponse(XMap data) throws APIException {
             super(data);
             
-            if (this.data.containsKey(FIELD_DATA)) {
-                fendian = new Fendian(this.data.getXMap(FIELD_DATA));
-            }
+            fendian = getObjectFromData(FIELD_DATA, Fendian.Initializer);
         } 
     }
     
@@ -389,9 +381,7 @@ public class DataOperation extends BaseQuery {
 		public YingxunQueryResponse(XMap data) throws APIException {
             super(data);
             
-            if (this.data.containsKey(FIELD_DATA)) {
-                yingxun = new Yingxun(this.data.getXMap(FIELD_DATA));
-            }
+            yingxun = getObjectFromData(FIELD_DATA, Yingxun.Initializer);
         } 
     }
     
@@ -408,9 +398,7 @@ public class DataOperation extends BaseQuery {
         public DianyingQueryResponse(XMap data) throws APIException {
             super(data);
             
-            if (this.data.containsKey(FIELD_DATA)) {
-                dianying = new Dianying(this.data.getXMap(FIELD_DATA));
-            }
+            dianying = getObjectFromData(FIELD_DATA, Dianying.Initializer);
         } 
     }
     
@@ -427,9 +415,7 @@ public class DataOperation extends BaseQuery {
         public YanchuQueryResponse(XMap data) throws APIException {
             super(data);
             
-            if (this.data.containsKey(FIELD_DATA)) {
-                yanchu = new Yanchu(this.data.getXMap(FIELD_DATA));
-            }
+            yanchu = getObjectFromData(FIELD_DATA, Yanchu.Initializer);
         } 
     }
     
@@ -446,9 +432,7 @@ public class DataOperation extends BaseQuery {
         public ZhanlanQueryResponse(XMap data) throws APIException {
             super(data);
             
-            if (this.data.containsKey(FIELD_DATA)) {
-                zhanlan = new Zhanlan(this.data.getXMap(FIELD_DATA));
-            }
+            zhanlan = getObjectFromData(FIELD_DATA, Zhanlan.Initializer);
         } 
     }
     

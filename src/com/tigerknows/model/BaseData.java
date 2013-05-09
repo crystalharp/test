@@ -31,13 +31,6 @@ public class BaseData extends XMapData {
     public BaseData(XMap data) throws APIException {
         super(data);
     }
-    
-    public void init(XMap data) throws APIException {
-        this.data = data;
-        if (this.data == null) {
-            throw new APIException(APIException.RESPONSE_DATA_IS_EMPTY);
-        }
-    }
 
     public long getId() {
         return id;

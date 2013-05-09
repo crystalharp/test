@@ -118,11 +118,10 @@ public class Comment extends BaseData {
 
     public Comment (XMap data) throws APIException {
         super(data);
-        init(data);
     }
     
-    public void init(XMap data) throws APIException {
-        super.init(data);
+    public void init(XMap data, boolean reset) throws APIException {
+        super.init(data, reset);
         if (this.data.containsKey(FIELD_UID)) {
             this.uid = this.data.getString(FIELD_UID);
         }
