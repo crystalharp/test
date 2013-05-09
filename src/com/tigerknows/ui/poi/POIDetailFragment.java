@@ -59,6 +59,8 @@ import com.tigerknows.model.DataOperation.DianyingQueryResponse;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
+import com.tigerknows.model.Hotel;
+import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.TKDrawable;
@@ -169,6 +171,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     private LinearLayout mDynamicDianyingListView;
     
     private LinearLayout mDynamicDianyingMoreView;
+    
+    private LinearLayout mDynamicHotelUpperView;
+    
+    private LinearLayout mDynamicRoomTypeListView;
+    
+    private LinearLayout mDynamicHotelChooseTimeView;
+    
+    private LinearLayout mDynamicRoomTypeMoreView;
     
     private boolean mShowDynamicDianyingMoreView = true;
     
@@ -565,6 +575,49 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     }
     
     /**
+     * 刷新动态酒店的显示区域（仅酒店类POI）
+     * @param poi
+     */
+    void refreshDynamicHotel(POI poi) {
+       //显示 
+        if (poi == null) {
+            return;
+        }
+        
+        List<RoomType> list = poi.getDynamicRoomTypeList();
+        int size = (list != null? list.size() : 0);
+        if (size > 0) {
+            mDynamicHotelUpperView.setVisibility(View.VISIBLE);
+        } else {
+            mDynamicHotelUpperView.setVisibility(View.GONE);
+            return;
+        }
+        
+        int viewCount = initDynamicPOIListView(list, mDynamicRoomTypeListView, R.layout.poi_dynamic_hotel_room_item);
+        
+        int childCount = mDynamicRoomTypeListView.getChildCount();
+        if (size > SHOW_DYNAMIC_YINGXUN_MAX) {
+            for(int i = SHOW_DYNAMIC_YINGXUN_MAX; i < childCount; i++) {
+                mDynamicRoomTypeListView.getChildAt(i).setVisibility(View.GONE);
+            }
+            mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
+        } else {
+            mDynamicRoomTypeMoreView.setVisibility(View.GONE);
+        }
+        
+        for(int i = 0; i < viewCount; i++) {
+            View child = mDynamicRoomTypeListView.getChildAt(i);
+            if (i == (viewCount-1) && mDynamicRoomTypeMoreView.getVisibility() == View.GONE) {
+                child.setBackgroundResource(R.drawable.list_footer);
+                child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
+            } else {
+                child.setBackgroundResource(R.drawable.list_middle);
+                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
+            }
+        }
+        
+    }
+    /**
      * 刷新动态电影的显示区域（仅电影院类POI）
      * @param poi
      */
@@ -633,6 +686,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     initDynamicPOIItemView((DynamicPOI)data, child);
                 } else if (data instanceof Dianying) {
                     initDianyingItemView((Dianying)data, child);
+                } else if (data instanceof RoomType) {
+                    initRoomTypeItemView((RoomType)data, child);
                 }
                 viewCount++;
             }
@@ -686,6 +741,29 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         gradeTxv.setText(String.valueOf(data.getRank()));
         typeTxv.setText(data.getTag());
         lengthTxv.setText(data.getLength());
+    }
+    
+    /**
+     * 初始化房型列表项内容
+     * @param data
+     * @param view
+     */
+    void initRoomTypeItemView(RoomType data, View view){
+        TextView priceTxv = (TextView) view.findViewById(R.id.price_txv);
+        TextView roomTypeTxv = (TextView) view.findViewById(R.id.room_type_txv);
+        TextView roomDetailTxv = (TextView) view.findViewById(R.id.room_detail_txv);
+        Button bookBtn = (Button) view.findViewById(R.id.book_btn);
+        priceTxv.setText(mSphinx.getString(R.string.price_show, data.getPrice()));
+        roomTypeTxv.setText(data.getRoomType());
+        roomDetailTxv.setText(data.getBedType() + " " + data.getBreakfast() + " " + data.getNetService()
+                + " " + data.getFloor() + " " + data.getArea());
+        if (data.getCanReserve() == 0) {
+            bookBtn.setText(mSphinx.getString(R.string.hotel_btn_sold_out));
+            bookBtn.setClickable(false);
+        } else {
+            bookBtn.setText(mSphinx.getString(R.string.hotel_btn_book));
+            bookBtn.setClickable(true);
+        }
     }
     
     public void refreshStamp() {
@@ -814,6 +892,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mDynamicDianyingView = (LinearLayout) mRootView.findViewById(R.id.dynamic_dianying_view);
         mDynamicDianyingListView = (LinearLayout) mRootView.findViewById(R.id.dynamic_dianying_list_view);
         mDynamicDianyingMoreView = (LinearLayout) mRootView.findViewById(R.id.dynamic_dianying_more_view);
+        
+        mDynamicHotelUpperView = (LinearLayout) mRootView.findViewById(R.id.dynamic_hotel_view); 
+        mDynamicHotelChooseTimeView = (LinearLayout) mRootView.findViewById(R.id.dynamic_hotel_choosetime_view);
+        mDynamicRoomTypeListView = (LinearLayout) mRootView.findViewById(R.id.dynamic_roomtype_list_view);
+        mDynamicRoomTypeMoreView = (LinearLayout) mRootView.findViewById(R.id.dynamic_roomtype_more_view);
     }
 
     protected void setListener() {

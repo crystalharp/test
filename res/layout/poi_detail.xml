@@ -255,6 +255,40 @@
 
             </LinearLayout>
                 
+            <LinearLayout android:id="@+id/dynamic_hotel_view"
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                 >
+                <LinearLayout 
+                    android:id="@+id/dynamic_hotel_choosetime_view"
+                    android:layout_width="fill_parent" 
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+                </LinearLayout>
+                <LinearLayout android:id="@+id/dynamic_roomtype_list_view"
+                    android:layout_width="fill_parent" 
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    ></LinearLayout>
+                <LinearLayout android:id="@+id/dynamic_roomtype_more_view"
+                    android:layout_width="fill_parent" 
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/list_footer"
+                    android:gravity="center"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content" 
+                        android:layout_height="wrap_content"
+                        android:text="@string/more" />
+                </LinearLayout>
+            </LinearLayout>
+            
             <LinearLayout android:id="@+id/dynamic_dianying_view"
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
@@ -454,6 +488,20 @@
                 />
                
             </LinearLayout>        
+            <LinearLayout
+                android:id="@+id/hotel_pic_comment"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" 
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:orientation="vertical"
+                android:gravity="left"
+                >
+                
+            </LinearLayout>
             <ImageView 
                 android:id="@+id/stamp_imv" 
                 android:layout_width="wrap_content"
