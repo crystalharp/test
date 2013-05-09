@@ -280,6 +280,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             fragment.mBaseQuerying = list; 
 		}
 		
+		//添加这个接口是为了把同一类的对象build为一个layout显示,主要解决
+		//团购等单条但不唯一的动态POI信息需要多个POI合并显示，首尾都显示的特殊
+		public static LinearLayout layoutBuild(){};
+		
 	}
     
 	//*************new code end*******************
