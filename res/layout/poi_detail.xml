@@ -323,7 +323,27 @@
                 </LinearLayout>
             </LinearLayout>
                 
-            <LinearLayout android:id="@+id/dynamic_poi_list_view"
+            <LinearLayout android:id="@+id/dynamic_tuanguo_list_view"
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                >
+            </LinearLayout>
+                
+            <LinearLayout android:id="@+id/dynamic_yanchu_list_view"
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                >
+            </LinearLayout>
+                
+            <LinearLayout android:id="@+id/dynamic_zhanlan_list_view"
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
@@ -443,4 +463,13 @@
         android:layout_marginBottom="8dp"
         >
     </include> 
+                
+    <LinearLayout 
+        android:id="@+id/doing_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" 
+        android:orientation="horizontal"
+        android:background="@drawable/bg_discover"
+        >
+        </LinearLayout>
 </RelativeLayout>

@@ -308,19 +308,10 @@ public class POI extends BaseData {
         // 0x04 x_string 从动态poi的uid，slaveUid
         public static final byte FIELD_SLAVE_UID = 0x04;
 
-        public static final byte FIELD_DIANYING_IMAGE_URL = 0x05;
-        public static final byte FIELD_DIANYING_GRADE = 0x06;
-        public static final byte FIELD_DIANYING_TYPE = 0x07;
-        public static final byte FIELD_DIANYING_LENGTH = 0x08;
-
         private long type;
         private String masterUid;
         private String summary;
         private String slaveUid;
-        private TKDrawable dianyingImage;
-        private String dianyingGrade;
-        private String dianyingType;
-        private String dianyingLength;
         
         public DynamicPOI(XMap data) throws APIException {
             super(data);
@@ -340,25 +331,6 @@ public class POI extends BaseData {
             if (data.containsKey(FIELD_SLAVE_UID)) {
                 slaveUid = data.getString(FIELD_SLAVE_UID);
             }
-            
-            if (data.containsKey(FIELD_DIANYING_IMAGE_URL)) {
-                String url = data.getString(FIELD_DIANYING_IMAGE_URL);
-                TKDrawable tkDrawable = new TKDrawable();
-                tkDrawable.setUrl(url);
-                dianyingImage = tkDrawable;
-            }
-            
-            if (data.containsKey(FIELD_DIANYING_GRADE)) {
-                dianyingGrade = data.getString(FIELD_DIANYING_GRADE);
-            }
-            
-            if (data.containsKey(FIELD_DIANYING_TYPE)) {
-                dianyingType = data.getString(FIELD_DIANYING_TYPE);
-            }
-            
-            if (data.containsKey(FIELD_DIANYING_LENGTH)) {
-                dianyingLength = data.getString(FIELD_DIANYING_LENGTH);
-            }
         }
 
         public String getType() {
@@ -375,22 +347,6 @@ public class POI extends BaseData {
 
         public String getSlaveUid() {
             return slaveUid;
-        }
-
-        public TKDrawable getDianyingImage() {
-            return dianyingImage;
-        }
-
-        public String getDianyingGrade() {
-            return dianyingGrade;
-        }
-
-        public String getDianyingType() {
-            return dianyingType;
-        }
-
-        public String getDianyingLength() {
-            return dianyingLength;
         }
         
     }
@@ -475,6 +431,8 @@ public class POI extends BaseData {
     private long status = STATUS_NONE;
     
     private List<DynamicPOI> dynamicPOIList = new ArrayList<DynamicPOI>();
+    
+    private List<Dianying> dynamicDianyingList;
     
     private DataQuery commentQuery = null;
     
@@ -768,6 +726,14 @@ public class POI extends BaseData {
 
     public List<DynamicPOI> getDynamicPOIList() {
         return dynamicPOIList;
+    }
+
+    public List<Dianying> getDynamicDianyingList() {
+        return dynamicDianyingList;
+    }
+
+    public void setDynamicDianyingList(List<Dianying> dynamicDianyingList) {
+        this.dynamicDianyingList = dynamicDianyingList;
     }
 
     public POI() {

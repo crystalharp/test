@@ -628,10 +628,6 @@ public class DataQueryTest {
         data.put(DynamicPOI.FIELD_MASTER_UID, "FIELD_MASTER_UID");
         data.put(DynamicPOI.FIELD_SUMMARY, "FIELD_SUMMARY"+type);
         data.put(DynamicPOI.FIELD_SLAVE_UID, "FIELD_SLAVE_UID");
-        data.put(DynamicPOI.FIELD_DIANYING_IMAGE_URL, "http://www.tigerknows.com/wp-content/themes/tiger/images/logo.jpg");
-        data.put(DynamicPOI.FIELD_DIANYING_GRADE, "GRADE");
-        data.put(DynamicPOI.FIELD_DIANYING_TYPE, "TYPE");
-        data.put(DynamicPOI.FIELD_DIANYING_LENGTH, "LENGTH");
         return data;
     }
 

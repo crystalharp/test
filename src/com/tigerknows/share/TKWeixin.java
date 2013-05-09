@@ -11,6 +11,7 @@ import com.tencent.mm.sdk.openapi.WXMediaMessage;
 import com.tencent.mm.sdk.openapi.WXTextObject;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
 import com.tigerknows.R;
+import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.POI;
 import com.tigerknows.util.CommonUtils;
 
@@ -30,13 +31,15 @@ import android.os.Bundle;
 public class TKWeixin {
 	
 	static final String TAG = "TKWeixin";
+	
+	static final String POI_URL = "http://192.168.11.8:7071/tk_spread?v=1&c=%s&uid=%s&from=message";
     
 	/**
 	 * 支持朋友圈的最小版本值
 	 */
     private static final int TIMELINE_SUPPORTED_VERSION = 0x21020001;
     
-    private static final String URL = "http://http://weixin.qq.com/";
+    private static final String URL = "http://weixin.qq.com/";
     
     private static TKWeixin instance = null;
     
@@ -150,7 +153,7 @@ public class TKWeixin {
     
 	public static SendMessageToWX.Req makePOIReq(Activity activity, POI poi) {
 		WXWebpageObject webpage = new WXWebpageObject();
-        webpage.webpageUrl = "http://www.tigerknows.com";
+        webpage.webpageUrl = String.format(POI_URL, MapEngine.getInstance().getCityId(poi.getPosition()), poi.getUUID());
         WXMediaMessage msg = new WXMediaMessage(webpage);
         msg.title = poi.getName();
         msg.description = poi.getAddress();
