@@ -101,7 +101,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     //动态POI枚举类型，他们在枚举类型中的顺序会决定它们的显示顺序.
     //添加新的显示类型时需要添加它在枚举类型中对应的项。
-    public static enum DPOIType {GROUPBUY, SHOW, EXHIBITION, COUPON, MOVIE, HOTEL};
+    public static enum DPOIType {HOTEL, MOVIE, COUPON, GROUPBUY, EXHIBITION, SHOW};
     
     private ScrollView mBodyScv;
 
@@ -226,10 +226,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     }
     
     public interface DPOIViewInitializer<T> {
-        public T init(LayoutInflater inflater, LinearLayout belongsLayout, DynamicPOI data);
+        public T init(POIDetailFragment poiFragment, LayoutInflater inflater, LinearLayout belongsLayout, DynamicPOI data);
     }
     
-	public static abstract class DynamicPOIView {
+	public abstract static class DynamicPOIView {
 
 		LinearLayout mOwnLayout;
 		LinearLayout mBelongsLayout;
@@ -237,11 +237,13 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		DynamicPOI data;
 //		static ArrayList<DynamicPOIView> DPOIPool = new ArrayList<DynamicPOIView>();
 		boolean needToShow = true;
+		POIDetailFragment mPOIDetailFragment;
+		Sphinx mSphinx;
 		
 		static <T> T getInstance(POIDetailFragment poiFragment, LinearLayout belongsLayout, DynamicPOI data, DPOIViewInitializer<T> initer, ArrayList<DynamicPOIView> DPOIPool){
 		    DynamicPOIView instance = null;
 		    if (DPOIPool.size() == 0) {
-		        instance = (DynamicPOIView) initer.init(poiFragment.mLayoutInflater, belongsLayout, data);
+		        instance = (DynamicPOIView) initer.init(poiFragment, poiFragment.mLayoutInflater, belongsLayout, data);
 		        DPOIPool.add(instance);
 		    } else {
 		       //遍历缓冲池 
@@ -258,7 +260,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		        }
 		        //遍历完发现都在用，则创建个新的
 		        if (instance == null) {
-    		        instance = (DynamicPOIView) initer.init(poiFragment.mLayoutInflater, belongsLayout, data);
+    		        instance = (DynamicPOIView) initer.init(poiFragment, poiFragment.mLayoutInflater, belongsLayout, data);
     		        DPOIPool.add(instance);
 		        }
 		    }
@@ -271,8 +273,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 			needToShow = false;
 		}
 		
-		void refresh(){
-		    
+		void query(POIDetailFragment fragment, List<BaseQuery> list){
+//		    List<BaseQuery> list = new ArrayList<BaseQuery>();
+//            list.add(dataOperation);
+            fragment.mTkAsyncTasking = fragment.mSphinx.queryStart(list);
+            fragment.mBaseQuerying = list; 
 		}
 		
 	}
