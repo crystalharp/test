@@ -8,9 +8,12 @@
 
 package com.tigerknows.model;
 
+import java.util.List;
+
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.test.DataOperationTest;
 import com.tigerknows.model.xobject.XMap;
 
@@ -21,6 +24,9 @@ public class DataOperation extends BaseQuery {
 
     // dataid string true 数据uid
     public static final String SERVER_PARAMETER_DATA_UID = "dataid";
+    
+    // orderids	 String	 true	 订单id的列表字符串，id间以下划线间隔
+    public static final String SERVER_PARAMETER_ORDER_IDS = "orderids";
 
     // entity string true key-value数组
     public static final String SERVER_PARAMETER_ENTITY = "entity";
@@ -33,6 +39,12 @@ public class DataOperation extends BaseQuery {
 
     // 订单类型
     public static final String SERVER_PARAMETER_ORDER_TYPE = "otype";
+    
+    // action	 int	 true	 更新数据的操作类型：如1标识取消该订单
+    public static final String SERVER_PARAMETER_ORDER_ACTION = "action";
+    
+    // 取消订单的操作
+    public static final String ORDER_ACTION_CANCEL = "1";
     
     // 操作码:
     // 查询 r
@@ -86,7 +98,7 @@ public class DataOperation extends BaseQuery {
             requestParameters.add(SERVER_PARAMETER_OPERATION_CODE, operationCode);
             if (OPERATION_CODE_QUERY.equals(operationCode)) {
                 if(DATA_TYPE_POI.equals(dataType)){
-                    if (criteria.containsKey(SERVER_PARAMETER_SUB_DATA_TYPE) == false) {
+                    if (criteria.containsKey(SERVER_PARAMETER_SUB_DATA_TYPE) ) {
                         requestParameters.add(SERVER_PARAMETER_SUB_DATA_TYPE, criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE));
                     } else {
                         throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SUB_DATA_TYPE); 
@@ -94,11 +106,31 @@ public class DataOperation extends BaseQuery {
                 }
                 
                 if(DATA_TYPE_DINGDAN.equals(dataType)){
-                    if (criteria.containsKey(SERVER_PARAMETER_ORDER_TYPE) == false) {
-                        requestParameters.add(SERVER_PARAMETER_ORDER_TYPE, criteria.get(SERVER_PARAMETER_ORDER_TYPE));
+                    if (criteria.containsKey(SERVER_PARAMETER_ORDER_TYPE) ) {
+                    	String orderType = criteria.get(SERVER_PARAMETER_ORDER_TYPE);
+                        requestParameters.add(SERVER_PARAMETER_ORDER_TYPE, orderType);
+                        
+                        if(criteria.contains(SERVER_PARAMETER_ORDER_ACTION)){
+                        	requestParameters.add(SERVER_PARAMETER_ORDER_ACTION, criteria.get(SERVER_PARAMETER_ORDER_ACTION));
+                        }else{
+                        	if(OPERATION_CODE_UPDATE.equals(operationCode) && ORDER_TYPE_HOTEL.equals(orderType)){
+                                throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ORDER_ACTION);
+                        	}
+                        }
+                        
+                        if(criteria.contains(SERVER_PARAMETER_ORDER_IDS)){
+                        	requestParameters.add(SERVER_PARAMETER_ORDER_IDS, criteria.get(SERVER_PARAMETER_ORDER_IDS));
+                        }else{
+                        	if(OPERATION_CODE_QUERY.equals(operationCode) && ORDER_TYPE_HOTEL.equals(orderType)){
+                                throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ORDER_IDS);
+                        	}
+                        }
+                        
                     } else {
                         throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ORDER_TYPE); 
                     }
+                    
+                    
                 }
                 
             	if (criteria.containsKey(SERVER_PARAMETER_NEED_FEILD)) {
@@ -126,7 +158,7 @@ public class DataOperation extends BaseQuery {
                 
             } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
                 if(DATA_TYPE_DINGDAN.equals(dataType)){
-                    if (criteria.containsKey(SERVER_PARAMETER_ORDER_TYPE) == false) {
+                    if (criteria.containsKey(SERVER_PARAMETER_ORDER_TYPE)) {
                         requestParameters.add(SERVER_PARAMETER_ORDER_TYPE, criteria.get(SERVER_PARAMETER_ORDER_TYPE));
                     } else {
                         throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ORDER_TYPE); 
@@ -139,7 +171,7 @@ public class DataOperation extends BaseQuery {
                 }
             } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
                 if(DATA_TYPE_DINGDAN.equals(dataType)){
-                    if (criteria.containsKey(SERVER_PARAMETER_ORDER_TYPE) == false) {
+                    if (criteria.containsKey(SERVER_PARAMETER_ORDER_TYPE) ) {
                         requestParameters.add(SERVER_PARAMETER_ORDER_TYPE, criteria.get(SERVER_PARAMETER_ORDER_TYPE));
                     } else {
                         throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ORDER_TYPE); 
@@ -214,7 +246,7 @@ public class DataOperation extends BaseQuery {
             } else if (DATA_TYPE_DINGDAN.equals(dataType)){
                 String orderType = criteria.get(SERVER_PARAMETER_ORDER_TYPE);
                 if (ORDER_TYPE_HOTEL.equals(orderType)) {
-                    // TODO
+                    response = new HotelOrderStatesResponse(responseXMap);
                 }
             }
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
@@ -225,7 +257,7 @@ public class DataOperation extends BaseQuery {
                 if (ORDER_TYPE_TUANGUO.equals(orderType)) {
                     response = new DingdanCreateResponse(responseXMap);
                 } else if (ORDER_TYPE_HOTEL.equals(orderType)) {
-                    // TODO
+                    response = new HotelOrderCreateResponse(responseXMap);
                 }
             }
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
@@ -234,10 +266,53 @@ public class DataOperation extends BaseQuery {
             } else if (DATA_TYPE_DINGDAN.equals(dataType)){
                 String orderType = criteria.get(SERVER_PARAMETER_ORDER_TYPE);
                 if (ORDER_TYPE_HOTEL.equals(orderType)) {
-                    // TODO
+                	response = new Response(responseXMap);
                 }
             }
         }
+    }
+
+    public static class HotelOrderCreateResponse extends Response {
+        
+        // 0x02 x_map   单个POI数据   
+        public static final byte FIELD_ORDER_ID = 0x02;
+        
+        private String orderId;
+        
+        public HotelOrderCreateResponse(XMap data) throws APIException {
+            super(data);
+            
+            if (this.data.containsKey(FIELD_ORDER_ID)) {
+            	orderId = this.data.getString(FIELD_ORDER_ID);
+            }            
+        }
+
+        public String getOrderId() {
+            return orderId;
+        }
+
+    }
+    
+    public static class HotelOrderStatesResponse extends Response {
+        
+        // 0x02 x_map   单个POI数据   
+        public static final byte FIELD_STATES = 0x02;
+        
+        private List<Integer> states;
+        
+        @SuppressWarnings("unchecked")
+        public HotelOrderStatesResponse(XMap data) throws APIException {
+            super(data);
+            
+            if (this.data.containsKey(FIELD_STATES)) {
+            	states = this.data.getXArray(FIELD_STATES).toIntList();
+            }            
+        }
+
+        public List<Integer> getStates() {
+            return states;
+		}
+
     }
     
     public static class POIQueryResponse extends Response {
@@ -531,7 +606,7 @@ public class DataOperation extends BaseQuery {
                     if (ORDER_TYPE_TUANGUO.equals(orderType)) {
                         responseXMap = DataOperationTest.launchDinydanCreateResponse();
                     } else if (ORDER_TYPE_HOTEL.equals(orderType)) {
-                        // TODO
+                        responseXMap = DataOperationTest.launchHotelOrderCreateResponse(context);
                     }
                 } else if (DATA_TYPE_DIANPING.equals(dataType)) {
                     responseXMap = DataOperationTest.launchDianpingCreateResponse();
@@ -561,7 +636,7 @@ public class DataOperation extends BaseQuery {
                 } else if (DATA_TYPE_DINGDAN.equals(dataType)) {
                     String orderType = criteria.get(SERVER_PARAMETER_ORDER_TYPE);
                     if (ORDER_TYPE_HOTEL.equals(orderType)) {
-                        // TODO
+                    	responseXMap = DataOperationTest.launchHotelOrderStateResponse(context, criteria.get(SERVER_PARAMETER_ORDER_IDS));
                     }
                 }
             } if (OPERATION_CODE_UPDATE.equals(operationCode)) {
@@ -570,7 +645,8 @@ public class DataOperation extends BaseQuery {
                 } else if (DATA_TYPE_DINGDAN.equals(dataType)) {
                     String orderType = criteria.get(SERVER_PARAMETER_ORDER_TYPE);
                     if (ORDER_TYPE_HOTEL.equals(orderType)) {
-                        // TODO
+                    	responseXMap = new XMap();
+                    	responseXMap = BaseQueryTest.launchResponse(responseXMap);
                     }
                 }
             }

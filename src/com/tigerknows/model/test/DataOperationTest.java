@@ -6,13 +6,17 @@ import com.tigerknows.model.DataOperation.CommentUpdateResponse;
 import com.tigerknows.model.DataOperation.DianyingQueryResponse;
 import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
 import com.tigerknows.model.DataOperation.FendianQueryResponse;
+import com.tigerknows.model.DataOperation.HotelOrderCreateResponse;
+import com.tigerknows.model.DataOperation.HotelOrderStatesResponse;
 import com.tigerknows.model.DataOperation.POIQueryResponse;
 import com.tigerknows.model.DataOperation.TuangouQueryResponse;
 import com.tigerknows.model.DataOperation.YanchuQueryResponse;
 import com.tigerknows.model.DataOperation.YingxunQueryResponse;
 import com.tigerknows.model.DataOperation.ZhanlanQueryResponse;
+import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 
+import android.R.integer;
 import android.content.Context;
 
 public class DataOperationTest {
@@ -108,4 +112,24 @@ public class DataOperationTest {
         data.put(DiaoyanQueryResponse.FIELD_URL, "http://www.tigerknows.com");
         return data;
     }
+
+	public static XMap launchHotelOrderStateResponse(Context context, String ids) {
+		int size = ids.split("_").length;
+        XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        XArray<Integer> xArray = new XArray<Integer>();
+        for (int i = 0; i < size; i++) {
+			xArray.add(i&5+1);
+		}
+        data.put(HotelOrderStatesResponse.FIELD_STATES, xArray);
+		return data;
+	}
+	
+	public static XMap launchHotelOrderCreateResponse(Context context) {
+        XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        data.put(HotelOrderCreateResponse.FIELD_ORDER_ID, "123456789");
+		return data;
+	}
+	
 }
