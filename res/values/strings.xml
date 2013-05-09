@@ -947,6 +947,7 @@
     
     <string name="choose_room_howmany">选择房间数</string>
     <string name="room_howmany_item">%1$s间/$2$s元</string>
+    <string name="choose_room_reserve">房间保留到</string>
     
     <string name="credit_assure_title">信用卡担保信息</string>
     <string name="credit_bank">发卡银行：</string>
