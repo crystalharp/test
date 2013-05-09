@@ -1,7 +1,5 @@
 package com.tigerknows.model;
 
-import java.util.Comparator;
-
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.tigerknows.model.xobject.XMap;
@@ -386,5 +384,5 @@ public class HotelOrder extends XMapData{
 	public void setMobileNum(String mobileNum) {
 		this.mobileNum = mobileNum;
 	}
-	
+
 }

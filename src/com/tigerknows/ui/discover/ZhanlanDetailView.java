@@ -276,7 +276,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
         } else {
             if (data != null && dataOperation.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_UID).equals(mData.getUid())) {
                 try {
-                    mData.init(data.getData());
+                    mData.init(data.getData(), false);
                     refreshDescription(false);
                 } catch (APIException e) {
                     // TODO Auto-generated catch block

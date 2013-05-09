@@ -750,12 +750,11 @@ public class POI extends BaseData {
 
     public POI (XMap data) throws APIException {
         super(data);
-        init(data);
     }
     
     @SuppressWarnings("unchecked")
-    public void init(XMap data) throws APIException {
-        super.init(data);
+    public void init(XMap data, boolean reset) throws APIException {
+        super.init(data, reset);
 
         if (this.data.containsKey(FIELD_UUID)) {
             this.uuid = this.data.getString(FIELD_UUID);

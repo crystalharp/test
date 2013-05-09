@@ -2,7 +2,6 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
-import com.tigerknows.TKConfig;
 import com.tigerknows.model.xobject.XMap;
 
 public class Fendian extends BaseData {
@@ -54,8 +53,6 @@ public class Fendian extends BaseData {
     private String linkUid; // 0x53 x_string 关联的poi的id link_uid
     private String adminname; // 0x54 x_string 所属一级地片名 adminname
     private String areaname; // 0x55 x_string 所属二级地片名 areaname
-    private long x; // 0x56 x_int 所在经度, 是普通的度数 × 10万 x
-    private long y; // 0x57 x_int 所在纬度, 是普通的度数 × 10万 y
     private String placeName; // 0x58 x_string 分店名称 place_name
     private String placePhone; // 0x59 x_string 分店电话 place_phone
     private String openTime; // 0x5a x_sring 团购商家营业时间 open_time
@@ -70,49 +67,22 @@ public class Fendian extends BaseData {
 
     public Fendian (XMap data) throws APIException {
         super(data);
-        init(data);
     }
     
-    public void init(XMap data) throws APIException {
-        super.init(data);
-        if (this.data.containsKey(FIELD_UID)) {
-            this.uid = this.data.getString(FIELD_UID);
-        }
-        if (this.data.containsKey(FIELD_BRC_ID)) {
-            this.brcId = this.data.getInt(FIELD_BRC_ID);
-        }
-        if (this.data.containsKey(FIELD_TUAN_ID)) {
-            this.tuanId = this.data.getString(FIELD_TUAN_ID);
-        }
-        if (this.data.containsKey(FIELD_LINK_UID)) {
-            this.linkUid = this.data.getString(FIELD_LINK_UID);
-        }
-        if (this.data.containsKey(FIELD_ADMINNAME)) {
-            this.adminname = this.data.getString(FIELD_ADMINNAME);
-        }
-        if (this.data.containsKey(FIELD_AREANAME)) {
-            this.areaname = this.data.getString(FIELD_AREANAME);
-        }
-        if (this.data.containsKey(FIELD_X) && this.data.containsKey(FIELD_Y)) {
-            this.x = this.data.getInt(FIELD_X);
-            this.y = this.data.getInt(FIELD_Y);
-            this.position = new Position(((double)this.y)/TKConfig.LON_LAT_DIVISOR, ((double)this.x)/TKConfig.LON_LAT_DIVISOR);
-        }
-        if (this.data.containsKey(FIELD_PLACE_NAME)) {
-            this.placeName = this.data.getString(FIELD_PLACE_NAME);
-        }
-        if (this.data.containsKey(FIELD_PLACE_PHONE)) {
-            this.placePhone = this.data.getString(FIELD_PLACE_PHONE);
-        }
-        if (this.data.containsKey(FIELD_OPEN_TIME)) {
-            this.openTime = this.data.getString(FIELD_OPEN_TIME);
-        }
-        if (this.data.containsKey(FIELD_ADDRESS)) {
-            this.address = this.data.getString(FIELD_ADDRESS);
-        }
-        if (this.data.containsKey(FIELD_DISTANCE)) {
-            this.distance = this.data.getString(FIELD_DISTANCE);
-        }
+    public void init(XMap data, boolean reset) throws APIException {
+        super.init(data, reset);
+        this.uid = getStringFromData(FIELD_UID, reset ? null : this.uid);
+        this.brcId = getLongFromData(FIELD_BRC_ID, reset ? 0 : this.brcId);
+        this.tuanId = getStringFromData(FIELD_TUAN_ID, reset ? null : this.tuanId);
+        this.linkUid = getStringFromData(FIELD_LINK_UID, reset ? null : this.linkUid);
+        this.adminname = getStringFromData(FIELD_ADMINNAME, reset ? null : this.adminname);
+        this.areaname = getStringFromData(FIELD_AREANAME, reset ? null : this.areaname);
+        this.position = getPositionFromData(FIELD_X, FIELD_Y, reset ? null : this.position);
+        this.placeName = getStringFromData(FIELD_PLACE_NAME, reset ? null : this.placeName);
+        this.placePhone = getStringFromData(FIELD_PLACE_PHONE, reset ? null : this.placePhone);
+        this.openTime = getStringFromData(FIELD_OPEN_TIME, reset ? null : this.openTime);
+        this.address = getStringFromData(FIELD_ADDRESS, reset ? null : this.address);
+        this.distance = getStringFromData(FIELD_DISTANCE, reset ? null : this.distance);
     }
     
     @Override
@@ -235,6 +205,13 @@ public class Fendian extends BaseData {
         }
         return poi;
 	}
-    
+
+    public static XMapInitializer<Fendian> Initializer = new XMapInitializer<Fendian>() {
+
+        @Override
+        public Fendian init(XMap data) throws APIException {
+            return new Fendian(data);
+        }
+    };
     
 }
