@@ -314,7 +314,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
         } else {
             if (target != null && dataOperation.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_UID).equals(mData.getUid())) {
                 try {
-                    mData.init(target.getData());
+                    mData.init(target.getData(), false);
                     refreshDescription(false);
                 } catch (APIException e) {
                     // TODO Auto-generated catch block
