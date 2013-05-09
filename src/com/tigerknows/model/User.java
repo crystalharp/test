@@ -1,7 +1,5 @@
 package com.tigerknows.model;
 
-import java.io.Serializable;
-
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -9,7 +7,7 @@ import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.crypto.Base64;
 
-public class User implements Serializable {
+public class User {
 
 	// 用户登录后服务器返回的用户昵称
 	private String nickName = "";

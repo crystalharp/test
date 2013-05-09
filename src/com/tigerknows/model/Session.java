@@ -1,14 +1,12 @@
 package com.tigerknows.model;
 
-import java.io.Serializable;
-
 import android.content.Context;
 import android.text.TextUtils;
 
 import com.tigerknows.TKConfig;
 import com.tigerknows.crypto.Base64;
 
-public class Session implements Serializable{
+public class Session {
 	
 	// 用户登录后获取的SessionId
 	private String mSessionId = null;
