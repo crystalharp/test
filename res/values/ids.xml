@@ -73,4 +73,8 @@
     
     <item type="id" name="view_hotel_home" />
     <item type="id" name="view_hotel_pick_location" />
+    <item type="id" name="view_hotel_order_write" />
+    <item type="id" name="view_hotel_credit_assure" />
+    <item type="id" name="view_hotel_order_detail" />
+    <item type="id" name="view_hotel_seveninn_regist" />
 </resources>
