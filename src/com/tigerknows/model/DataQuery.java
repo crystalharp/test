@@ -572,8 +572,8 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_DIANPING.equals(dataType)) {
             requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Comment.NEED_FILELD);
             requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
-            addParameter(new String[]{SERVER_PARAMETER_REFER, SERVER_PARAMETER_POI_ID});
-            addParameter(new String[]{SERVER_PARAMETER_TIME, SERVER_PARAMETER_DIRECTION}, false);
+            addParameter(new String[]{SERVER_PARAMETER_REFER});
+            addParameter(new String[]{SERVER_PARAMETER_TIME, SERVER_PARAMETER_DIRECTION, SERVER_PARAMETER_POI_ID}, false);
         } else if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
             addParameter(new String[]{SERVER_PARAMETER_LOCATION_CITY, SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE});
             addParameter(new String[]{SERVER_PARAMETER_MESSAGE_ID_LIST, SERVER_PARAMETER_LAST_PULL_DATE}, false);
@@ -586,15 +586,7 @@ public final class DataQuery extends BaseQuery {
         requestParameters.add(SERVER_PARAMETER_TIME_STAMP, TIME_STAMP_FORMAT.format(Calendar.getInstance().getTime()));
         addParameter(new String[]{SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE}, false);
         
-        String sessionId = Globals.g_Session_Id;
-        if (!TextUtils.isEmpty(sessionId)) {
-            requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
-        }
-        if (!TextUtils.isEmpty(Globals.g_ClientUID)) {
-            requestParameters.add(SERVER_PARAMETER_CLIENT_ID, Globals.g_ClientUID);
-        } else {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CLIENT_ID);
-        }
+        addSessionId(false);
     }
     
     private void addDiscoverCategoryParameters(WeiboParameters requestParameters) {
@@ -982,13 +974,8 @@ public final class DataQuery extends BaseQuery {
         public FilterOption(XMap data) throws APIException {
             super(data);
 
-            if (this.data.containsKey(FIELD_NAME)) {
-                name = this.data.getString(FIELD_NAME);
-            }
-
-            if (this.data.containsKey(FIELD_PARENT)) {
-                parent = (int)this.data.getInt(FIELD_PARENT);
-            }
+            name = getStringFromData(FIELD_NAME);
+            parent = (int)getLongFromData(FIELD_PARENT);
         }
 
         public void setId(int id) {
@@ -1063,9 +1050,7 @@ public final class DataQuery extends BaseQuery {
         public FilterArea(XMap data) throws APIException {
             super(data);
 
-            if (this.data.containsKey(FIELD_VERSION)) {
-                version = this.data.getString(FIELD_VERSION);
-            }
+            version = getStringFromData(FIELD_VERSION);
 
             areaFilterOption = new ArrayList<FilterOption>();
             if (this.data.containsKey(FIELD_LIST)) {
@@ -1113,9 +1098,7 @@ public final class DataQuery extends BaseQuery {
         public FilterCategoryOrder(XMap data) throws APIException {
             super(data);
 
-            if (this.data.containsKey(FIELD_VERSION)) {
-                version = this.data.getString(FIELD_VERSION);
-            }
+            version = getStringFromData(FIELD_VERSION);
 
             categoryFilterOption = new ArrayList<FilterOption>();
             if (this.data.containsKey(FIELD_LIST_CATEGORY)) {
@@ -1171,13 +1154,8 @@ public final class DataQuery extends BaseQuery {
         public BaseList(XMap data) throws APIException {
             super(data);
 
-            if (this.data.containsKey(FIELD_TOTAL)) {
-                this.total = this.data.getInt(FIELD_TOTAL);
-            }
-
-            if (this.data.containsKey(FIELD_MESSAGE)) {
-                this.message = this.data.getString(FIELD_MESSAGE);
-            }
+            this.total = getLongFromData(FIELD_TOTAL);
+            this.message = getStringFromData(FIELD_MESSAGE);
         }
 
         public long getTotal() {
@@ -1272,8 +1250,8 @@ public final class DataQuery extends BaseQuery {
         public DiscoverCategoreResponse(XMap data) throws APIException {
             super(data);
 
-            if (this.data.containsKey(FIELD_DATABASE_VERSION)) {
-                databaseVersion = this.data.getString(FIELD_DATABASE_VERSION);
+            databaseVersion = getStringFromData(FIELD_DATABASE_VERSION);
+            if (databaseVersion != null) {
                 String path = TKConfig.getDataPath(true) + "discoverDatabaseVersion";
                 try {
                     Utility.writeFile(path, databaseVersion.getBytes(TKConfig.getEncoding()), true);
@@ -1394,13 +1372,8 @@ public final class DataQuery extends BaseQuery {
         public DiscoverResult(XMap data) throws APIException {
             super(data);
 
-            if (this.data.containsKey(FIELD_TOTAL_NEARBY)) {
-                this.totalNearby = this.data.getInt(FIELD_TOTAL_NEARBY);
-            }
-
-            if (this.data.containsKey(FIELD_TOTAL_CITY)) {
-                this.totalCity = this.data.getInt(FIELD_TOTAL_CITY);
-            }
+            this.totalNearby = getLongFromData(FIELD_TOTAL_NEARBY);
+            this.totalCity = getLongFromData(FIELD_TOTAL_CITY);
         }
 
         public long getTotalNearby() {
@@ -1862,9 +1835,9 @@ public final class DataQuery extends BaseQuery {
                 discoverCategoryList = new DiscoverCategoryList(this.data.getXMap(FIELD_LIST));
             }
 
-            if (this.data.containsKey(FIELD_CONFIG)) {
-//              configList = new DiscoverConfigList(this.data.getXMap(FIELD_CONFIG));
-                byte[] bytes = this.data.getString(FIELD_CONFIG).getBytes();
+            String config = getStringFromData(FIELD_CONFIG);
+            if (config != null) {
+                byte[] bytes = config.getBytes();
                 configList = parseDiscoverConfigList(new ByteArrayInputStream(bytes));
                 if (configList != null) {
                     String path = TKConfig.getDataPath(false) + "discoverConfigList.xml";
@@ -1976,9 +1949,7 @@ public final class DataQuery extends BaseQuery {
                         }
                     }
                 } 
-                if (this.data.containsKey(FIELD_MESSAGE)) {
-                    this.message = this.data.getString(FIELD_MESSAGE);
-                }
+                this.message = getStringFromData(FIELD_MESSAGE);
             }
             
             public String getMessage() {
@@ -2025,19 +1996,9 @@ public final class DataQuery extends BaseQuery {
                     if (this.data == null) {
                         throw new APIException(APIException.RESPONSE_DATA_IS_EMPTY);
                     }
-                    if (this.data.containsKey(FIELD_TYPE)) {
-                        this.type = this.data.getInt(FIELD_TYPE);
-                    }
-                    if (this.data.containsKey(FIELD_NUM_CITY)) {
-                        this.numCity = this.data.getInt(FIELD_NUM_CITY);
-                    } else {
-                        this.numCity = 0;
-                    }
-                    if (this.data.containsKey(FIELD_NUM_NEARBY)) {
-                        this.numNearby = this.data.getInt(FIELD_NUM_NEARBY);
-                    } else {
-                        this.numNearby = 0;
-                    }
+                    this.type = getLongFromData(FIELD_TYPE);
+                    this.numCity = getLongFromData(FIELD_NUM_CITY, 0);
+                    this.numNearby = getLongFromData(FIELD_NUM_NEARBY, 0);
                     if (this.data.containsKey(FIELD_DATA)) {
                         this.tkDrawable = new TKDrawable(this.data.getXMap(FIELD_DATA));
                     } else {
@@ -2138,9 +2099,7 @@ public final class DataQuery extends BaseQuery {
             public DiscoverConfigList(XMap data) throws APIException {
                 super(data);
 
-                if (this.data.containsKey(FIELD_VERSION)) {
-                    version = this.data.getString(FIELD_VERSION);
-                }
+                version = getStringFromData(FIELD_VERSION);
                 
                 list = new ArrayList<DiscoverConfig>();
                 DiscoverConfig discoverConfig;
@@ -2200,9 +2159,7 @@ public final class DataQuery extends BaseQuery {
                 public DiscoverConfig(XMap data) throws APIException {
                     super(data);
 
-                    if (this.data.containsKey(FIELD_SEQ_ID)) {
-                        seqId = this.data.getInt(FIELD_SEQ_ID);
-                    }
+                    seqId = getLongFromData(FIELD_SEQ_ID);
                     
                     list = new ArrayList<Long>();
                     if (this.data.containsKey(FIELD_LIST)) {

@@ -315,19 +315,10 @@ public class POI extends BaseData {
         // 0x04 x_string 从动态poi的uid，slaveUid
         public static final byte FIELD_SLAVE_UID = 0x04;
 
-        public static final byte FIELD_DIANYING_IMAGE_URL = 0x05;
-        public static final byte FIELD_DIANYING_GRADE = 0x06;
-        public static final byte FIELD_DIANYING_TYPE = 0x07;
-        public static final byte FIELD_DIANYING_LENGTH = 0x08;
-
         private long type;
         private String masterUid;
         private String summary;
         private String slaveUid;
-        private TKDrawable dianyingImage;
-        private String dianyingGrade;
-        private String dianyingType;
-        private String dianyingLength;
         
         public DynamicPOI(XMap data) throws APIException {
             super(data);
@@ -336,14 +327,6 @@ public class POI extends BaseData {
             masterUid = getStringFromData(FIELD_MASTER_UID);
             summary = getStringFromData(FIELD_SUMMARY);
             slaveUid = getStringFromData(FIELD_SLAVE_UID);
-            String url = getStringFromData(FIELD_DIANYING_IMAGE_URL);
-            if (url != null) {
-                TKDrawable tkDrawable = new TKDrawable();
-                tkDrawable.setUrl(url);
-            }
-            dianyingGrade = getStringFromData(FIELD_DIANYING_GRADE);
-            dianyingType = getStringFromData(FIELD_DIANYING_TYPE);
-            dianyingLength = getStringFromData(FIELD_DIANYING_LENGTH);
         }
 
         public String getType() {
@@ -360,22 +343,6 @@ public class POI extends BaseData {
 
         public String getSlaveUid() {
             return slaveUid;
-        }
-
-        public TKDrawable getDianyingImage() {
-            return dianyingImage;
-        }
-
-        public String getDianyingGrade() {
-            return dianyingGrade;
-        }
-
-        public String getDianyingType() {
-            return dianyingType;
-        }
-
-        public String getDianyingLength() {
-            return dianyingLength;
         }
 
         public static XMapInitializer<DynamicPOI> Initializer = new XMapInitializer<DynamicPOI>() {
@@ -467,6 +434,8 @@ public class POI extends BaseData {
     private long status = STATUS_NONE;
     
     private List<DynamicPOI> dynamicPOIList;
+    
+    private List<Dianying> dynamicDianyingList;
     
     private DataQuery commentQuery = null;
     
@@ -762,6 +731,14 @@ public class POI extends BaseData {
 
     public List<DynamicPOI> getDynamicPOIList() {
         return dynamicPOIList;
+    }
+
+    public List<Dianying> getDynamicDianyingList() {
+        return dynamicDianyingList;
+    }
+
+    public void setDynamicDianyingList(List<Dianying> dynamicDianyingList) {
+        this.dynamicDianyingList = dynamicDianyingList;
     }
 
     public Hotel getHotel() {

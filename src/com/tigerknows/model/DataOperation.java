@@ -27,6 +27,9 @@ public class DataOperation extends BaseQuery {
     
     // orderids	 String	 true	 订单id的列表字符串，id间以下划线间隔
     public static final String SERVER_PARAMETER_ORDER_IDS = "orderids";
+    
+    // orderid  String  true    订单id
+    public static final String SERVER_PARAMETER_ORDER_ID = "orderid";
 
     // entity string true key-value数组
     public static final String SERVER_PARAMETER_ENTITY = "entity";
@@ -81,130 +84,47 @@ public class DataOperation extends BaseQuery {
         if (criteria == null) {
             throw new APIException(APIException.CRITERIA_IS_NULL);
         }
-
-        String sessionId = Globals.g_Session_Id;
-        if (!TextUtils.isEmpty(sessionId)) {
-            requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
-        } 
-
-        if (criteria.containsKey(SERVER_PARAMETER_DATA_TYPE) == false) {
-        	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_TYPE);
-        } else if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE) == false) {
-        	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_OPERATION_CODE);
-        } else {
-        	String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
-            requestParameters.add(SERVER_PARAMETER_DATA_TYPE, dataType);
-            String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
-            requestParameters.add(SERVER_PARAMETER_OPERATION_CODE, operationCode);
-            if (OPERATION_CODE_QUERY.equals(operationCode)) {
-                if(DATA_TYPE_POI.equals(dataType)){
-                    if (criteria.containsKey(SERVER_PARAMETER_SUB_DATA_TYPE) ) {
-                        requestParameters.add(SERVER_PARAMETER_SUB_DATA_TYPE, criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE));
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SUB_DATA_TYPE); 
-                    }
-                }
-                
-                if(DATA_TYPE_DINGDAN.equals(dataType)){
-                    if (criteria.containsKey(SERVER_PARAMETER_ORDER_TYPE) ) {
-                    	String orderType = criteria.get(SERVER_PARAMETER_ORDER_TYPE);
-                        requestParameters.add(SERVER_PARAMETER_ORDER_TYPE, orderType);
-                        
-                        if(criteria.contains(SERVER_PARAMETER_ORDER_ACTION)){
-                        	requestParameters.add(SERVER_PARAMETER_ORDER_ACTION, criteria.get(SERVER_PARAMETER_ORDER_ACTION));
-                        }else{
-                        	if(OPERATION_CODE_UPDATE.equals(operationCode) && ORDER_TYPE_HOTEL.equals(orderType)){
-                                throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ORDER_ACTION);
-                        	}
-                        }
-                        
-                        if(criteria.contains(SERVER_PARAMETER_ORDER_IDS)){
-                        	requestParameters.add(SERVER_PARAMETER_ORDER_IDS, criteria.get(SERVER_PARAMETER_ORDER_IDS));
-                        }else{
-                        	if(OPERATION_CODE_QUERY.equals(operationCode) && ORDER_TYPE_HOTEL.equals(orderType)){
-                                throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ORDER_IDS);
-                        	}
-                        }
-                        
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ORDER_TYPE); 
-                    }
-                    
-                    
-                }
-                
-            	if (criteria.containsKey(SERVER_PARAMETER_NEED_FEILD)) {
-                    requestParameters.add(SERVER_PARAMETER_NEED_FEILD, criteria.get(SERVER_PARAMETER_NEED_FEILD));
-                } else if(dataType.equals(DATA_TYPE_DIAOYAN)){
-                	//do nothing
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_NEED_FEILD);
-                }
-                
-                if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
-                    requestParameters.add(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID));
-                } else if(dataType.equals(DATA_TYPE_DIAOYAN)){
-                	//do nothing
-                } else {
-                	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_PICTURE)) {
-                    requestParameters.add(SERVER_PARAMETER_PICTURE, criteria.get(SERVER_PARAMETER_PICTURE));
-                }
-                
-                if(criteria.containsKey(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)){
-                	requestParameters.add(SERVER_PARAMETER_REQUSET_SOURCE_TYPE, criteria.get(SERVER_PARAMETER_REQUSET_SOURCE_TYPE));
-                }
-                
-            } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-                if(DATA_TYPE_DINGDAN.equals(dataType)){
-                    if (criteria.containsKey(SERVER_PARAMETER_ORDER_TYPE)) {
-                        requestParameters.add(SERVER_PARAMETER_ORDER_TYPE, criteria.get(SERVER_PARAMETER_ORDER_TYPE));
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ORDER_TYPE); 
-                    }
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_ENTITY)) {
-                    requestParameters.add(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ENTITY);
-                }
-            } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
-                if(DATA_TYPE_DINGDAN.equals(dataType)){
-                    if (criteria.containsKey(SERVER_PARAMETER_ORDER_TYPE) ) {
-                        requestParameters.add(SERVER_PARAMETER_ORDER_TYPE, criteria.get(SERVER_PARAMETER_ORDER_TYPE));
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ORDER_TYPE); 
-                    }
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
-                    requestParameters.add(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_ENTITY)) {
-                    requestParameters.add(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ENTITY);
-                }
-            } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
-                if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
-                    requestParameters.add(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
-                }
-            } else {
-                throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
-            }
-        }
-
-
         
-        if (!TextUtils.isEmpty(Globals.g_ClientUID)) {
-            requestParameters.add(SERVER_PARAMETER_CLIENT_ID, Globals.g_ClientUID);
+        String dataType = addParameter(SERVER_PARAMETER_DATA_TYPE);
+        String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
+        if (OPERATION_CODE_QUERY.equals(operationCode)) {
+            if(DATA_TYPE_POI.equals(dataType)){
+                addParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
+            }
+            
+            if(DATA_TYPE_DINGDAN.equals(dataType)){
+                String orderType = addParameter(SERVER_PARAMETER_ORDER_TYPE);
+                if(ORDER_TYPE_HOTEL.equals(orderType)){
+                    addParameter(SERVER_PARAMETER_ORDER_IDS);
+                }
+
+            }
+            
+        	if(dataType.equals(DATA_TYPE_DIAOYAN) == false){
+                addParameter(new String[] {SERVER_PARAMETER_NEED_FEILD, SERVER_PARAMETER_DATA_UID});
+            }
+            
+        	addParameter(new String[] {SERVER_PARAMETER_PICTURE, SERVER_PARAMETER_REQUSET_SOURCE_TYPE}, false);
+        } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
+            if(DATA_TYPE_DINGDAN.equals(dataType)){
+                addParameter(SERVER_PARAMETER_ORDER_TYPE);
+            }
+            addParameter(SERVER_PARAMETER_ENTITY);
+        } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
+            if(DATA_TYPE_DINGDAN.equals(dataType)){
+                String orderType = addParameter(SERVER_PARAMETER_ORDER_TYPE);
+                if (ORDER_TYPE_HOTEL.equals(orderType)) {
+                    addParameter(new String[] {SERVER_PARAMETER_ORDER_ACTION, SERVER_PARAMETER_ORDER_ID});
+                }
+            }
+            addParameter(new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY});
+        } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
+            addParameter(SERVER_PARAMETER_DATA_UID);
         } else {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CLIENT_ID);
+            throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
         }
+
+        addSessionId(false);
     }
 
     @Override
@@ -374,13 +294,8 @@ public class DataOperation extends BaseQuery {
         public CommentCreateResponse(XMap data) throws APIException {
             super(data);
             
-            if (this.data.containsKey(FIELD_TIME_STAMP)) {
-                timeStamp = this.data.getString(FIELD_TIME_STAMP);
-            }   
-
-            if (this.data.containsKey(FIELD_UID)) {
-                uid = this.data.getString(FIELD_UID);
-            }
+            timeStamp = getStringFromData(FIELD_TIME_STAMP);
+            uid = getStringFromData(FIELD_UID);
         }
 
         public String getTimeStamp() {
@@ -410,9 +325,7 @@ public class DataOperation extends BaseQuery {
         public CommentUpdateResponse(XMap data) throws APIException {
             super(data);
             
-            if (this.data.containsKey(FIELD_TIME_STAMP)) {
-                timeStamp = this.data.getString(FIELD_TIME_STAMP);
-            }   
+            timeStamp = getStringFromData(FIELD_TIME_STAMP);
         }
     
         public String getTimeStamp() {
@@ -565,13 +478,8 @@ public class DataOperation extends BaseQuery {
 		public DiaoyanQueryResponse(XMap data) throws APIException{
 			super(data);
 			
-			if(this.data.containsKey(FIELD_HAS_SURVEYED)){
-				hasSurveyed = this.data.getInt(FIELD_HAS_SURVEYED);
-			}
-			
-			if(this.data.containsKey(FIELD_URL)){
-				url = this.data.getString(FIELD_URL);
-			}
+			hasSurveyed = getLongFromData(FIELD_HAS_SURVEYED);
+            url = getStringFromData(FIELD_URL);
 		}
     }
     
@@ -588,9 +496,7 @@ public class DataOperation extends BaseQuery {
         public DingdanCreateResponse(XMap data) throws APIException {
             super(data);
             
-            if (this.data.containsKey(FIELD_DATA)) {
-                url = this.data.getString(FIELD_DATA);
-            }
+            url = getStringFromData(FIELD_DATA);
         } 
     }
     
