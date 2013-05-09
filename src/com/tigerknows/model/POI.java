@@ -799,7 +799,7 @@ public class POI extends BaseData {
         if (this.data.containsKey(FIELD_DESCRIPTION)) {
             this.description = this.data.getXMap(FIELD_DESCRIPTION);
             if (this.description != null) {
-                this.grade = getLongFromData(this.description, Description.FIELD_GRADE);
+                this.grade = getLongFromData(this.description, Description.FIELD_GRADE, 0);
                 if (this.description.containsKey(Description.FIELD_COOKING_STYLE)) {
                     List<String> strs = this.description.getXArray(Description.FIELD_COOKING_STYLE).toStringList();
                     StringBuilder s = new StringBuilder();
@@ -834,20 +834,20 @@ public class POI extends BaseData {
                     }
                 }
                 
-                this.taste = getStringFromData(this.description, Description.FIELD_TASTE);
+                this.taste = getStringFromData(this.description, Description.FIELD_TASTE, null);
 
-                this.service = getStringFromData(this.description, Description.FIELD_SERVICE_ATTITUDE);
+                this.service = getStringFromData(this.description, Description.FIELD_SERVICE_ATTITUDE, null);
                 if (this.service == null) {
-                    this.service = getStringFromData(this.description, Description.FIELD_SERVICE_QUALITY);
+                    this.service = getStringFromData(this.description, Description.FIELD_SERVICE_QUALITY, null);
                 }
                 
-                this.envrionment = getStringFromData(this.description, Description.FIELD_ENVIRONMENT);
+                this.envrionment = getStringFromData(this.description, Description.FIELD_ENVIRONMENT, null);
                 
                 //购物POI中的产品信息，4.30 ALPHA3中暂未添加
                 //目前暂无其他代码调用此段信息，仅作为预留
-                this.product = getStringFromData(this.description, Description.FIELD_PRODUCT);
+                this.product = getStringFromData(this.description, Description.FIELD_PRODUCT, null);
                 if (this.product == null){
-                	this.product = getStringFromData(this.description, Description.FIELD_PRODUCT_ATTITUDE);
+                	this.product = getStringFromData(this.description, Description.FIELD_PRODUCT_ATTITUDE, null);
                 }
             }
         } else {
