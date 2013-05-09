@@ -8,7 +8,6 @@
 
 package com.tigerknows.model;
 
-import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
 import com.tigerknows.map.MapEngine;
@@ -17,7 +16,6 @@ import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.xobject.XMap;
 
 import android.content.Context;
-import android.text.TextUtils;
 
 public class AccountManage extends BaseQuery {
 
@@ -77,134 +75,44 @@ public class AccountManage extends BaseQuery {
         if (criteria == null) {
             throw new APIException(APIException.CRITERIA_IS_NULL);
         }
-        String sessionId = Globals.g_Session_Id;
-        if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE)) {
-            String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
-            requestParameters.add(SERVER_PARAMETER_OPERATION_CODE, operationCode);
-            if (OPERATION_CODE_BIND_TELEPHONE.equals(operationCode)) {
-                if (criteria.containsKey(SERVER_PARAMETER_TELEPHONE)) {
-                    requestParameters.add(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_TELEPHONE);
-                }
-            } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-                if (criteria.containsKey(SERVER_PARAMETER_TELEPHONE)) {
-                    requestParameters.add(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_TELEPHONE);
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_PASSWORD)) {
-                    requestParameters.add(SERVER_PARAMETER_PASSWORD, criteria.get(SERVER_PARAMETER_PASSWORD));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_PASSWORD);
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_VALIDATE_CODE)) {
-                    requestParameters.add(SERVER_PARAMETER_VALIDATE_CODE, criteria.get(SERVER_PARAMETER_VALIDATE_CODE));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_VALIDATE_CODE);
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_NICKNAME)) {
-                    requestParameters.add(SERVER_PARAMETER_NICKNAME, criteria.get(SERVER_PARAMETER_NICKNAME));
-                }
-            } else if (OPERATION_CODE_UPDATE_NICKNAME.equals(operationCode)) {
-                if (!TextUtils.isEmpty(sessionId)) {
-                    requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_NICKNAME)) {
-                    requestParameters.add(SERVER_PARAMETER_NICKNAME, criteria.get(SERVER_PARAMETER_NICKNAME));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_NICKNAME);
-                }
-            } else if (OPERATION_CODE_UPDATE_PASSWORD.equals(operationCode)) {
-                if (!TextUtils.isEmpty(sessionId)) {
-                    requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_OLD_PASSWORD)) {
-                    requestParameters.add(SERVER_PARAMETER_OLD_PASSWORD, criteria.get(SERVER_PARAMETER_OLD_PASSWORD));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_OLD_PASSWORD);
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_PASSWORD)) {
-                    requestParameters.add(SERVER_PARAMETER_PASSWORD, criteria.get(SERVER_PARAMETER_PASSWORD));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_PASSWORD);
-                }
-            } else if (OPERATION_CODE_UPDATE_TELEPHONE.equals(operationCode)) {
-                if (!TextUtils.isEmpty(sessionId)) {
-                    requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_TELEPHONE)) {
-                    requestParameters.add(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_TELEPHONE);
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_VALIDATE_CODE)) {
-                    requestParameters.add(SERVER_PARAMETER_VALIDATE_CODE, criteria.get(SERVER_PARAMETER_VALIDATE_CODE));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_VALIDATE_CODE);
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_PASSWORD)) {
-                    requestParameters.add(SERVER_PARAMETER_PASSWORD, criteria.get(SERVER_PARAMETER_PASSWORD));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_PASSWORD);
-                }
-            } else if (OPERATION_CODE_GET_VALIDATE_CODE.equals(operationCode)) {
-                if (criteria.containsKey(SERVER_PARAMETER_TELEPHONE)) {
-                    requestParameters.add(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_TELEPHONE);
-                }
-            } else if (OPERATION_CODE_RESET_PASSWORD.equals(operationCode)) {
-                if (criteria.containsKey(SERVER_PARAMETER_TELEPHONE)) {
-                    requestParameters.add(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_TELEPHONE);
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_PASSWORD)) {
-                    requestParameters.add(SERVER_PARAMETER_PASSWORD, criteria.get(SERVER_PARAMETER_PASSWORD));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_PASSWORD);
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_VALIDATE_CODE)) {
-                    requestParameters.add(SERVER_PARAMETER_VALIDATE_CODE, criteria.get(SERVER_PARAMETER_VALIDATE_CODE));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_VALIDATE_CODE);
-                }
-            } else if (OPERATION_CODE_LOGIN.equals(operationCode)) {
-                if (criteria.containsKey(SERVER_PARAMETER_TELEPHONE)) {
-                    requestParameters.add(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_TELEPHONE);
-                }
-                if (criteria.containsKey(SERVER_PARAMETER_PASSWORD)) {
-                    requestParameters.add(SERVER_PARAMETER_PASSWORD, criteria.get(SERVER_PARAMETER_PASSWORD));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_PASSWORD);
-                }
-            } else if (OPERATION_CODE_LOGOUT.equals(operationCode)) {
-                if (!TextUtils.isEmpty(sessionId)) {
-                    requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
-                }
-            } else if ("du".equals(operationCode)) {
-                if (criteria.containsKey(SERVER_PARAMETER_TELEPHONE)) {
-                    requestParameters.add(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE));
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_TELEPHONE);
-                }
-            } else {
-                throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
-            }
+        boolean needSessionId = false;
+        String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
+        if (OPERATION_CODE_BIND_TELEPHONE.equals(operationCode)) {
+            addParameter(SERVER_PARAMETER_TELEPHONE);
+        } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
+            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
+                    SERVER_PARAMETER_PASSWORD,
+                    SERVER_PARAMETER_VALIDATE_CODE});
+            addParameter(SERVER_PARAMETER_NICKNAME, false);
+        } else if (OPERATION_CODE_UPDATE_NICKNAME.equals(operationCode)) {
+            needSessionId = true;
+            addParameter(new String[] {SERVER_PARAMETER_NICKNAME});
+        } else if (OPERATION_CODE_UPDATE_PASSWORD.equals(operationCode)) {
+            needSessionId = true;
+            addParameter(new String[] {SERVER_PARAMETER_OLD_PASSWORD,
+                    SERVER_PARAMETER_PASSWORD});
+        } else if (OPERATION_CODE_UPDATE_TELEPHONE.equals(operationCode)) {
+            needSessionId = true;
+            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
+                    SERVER_PARAMETER_VALIDATE_CODE,
+                    SERVER_PARAMETER_PASSWORD});
+        } else if (OPERATION_CODE_GET_VALIDATE_CODE.equals(operationCode)) {
+            addParameter(SERVER_PARAMETER_TELEPHONE);
+        } else if (OPERATION_CODE_RESET_PASSWORD.equals(operationCode)) {
+            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
+                    SERVER_PARAMETER_VALIDATE_CODE,
+                    SERVER_PARAMETER_PASSWORD});
+        } else if (OPERATION_CODE_LOGIN.equals(operationCode)) {
+            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
+                    SERVER_PARAMETER_PASSWORD});
+        } else if (OPERATION_CODE_LOGOUT.equals(operationCode)) {
+            needSessionId = true;
+        } else if ("du".equals(operationCode)) {
+            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE});
         } else {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_OPERATION_CODE);
+            throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
         }
+        addSessionId(needSessionId);
     }
     
     @Override
@@ -255,21 +163,10 @@ public class AccountManage extends BaseQuery {
         public UserRespnose(XMap data) throws APIException {
             super(data);
             
-            if (this.data.containsKey(FIELD_SESSION_ID)) {
-                this.sessionId = this.data.getString(FIELD_SESSION_ID);
-            }
-            
-            if (this.data.containsKey(FIELD_NICKNAME)) {
-                this.nickname = this.data.getString(FIELD_NICKNAME);
-            }
-            
-            if (this.data.containsKey(FIELD_USER_ID)) {
-                this.userId = this.data.getInt(FIELD_USER_ID);
-            }
-            
-            if (this.data.containsKey(FIELD_TIMEOUT)) {
-                this.timeout = this.data.getInt(FIELD_TIMEOUT);
-            }
+            this.sessionId = getStringFromData(FIELD_SESSION_ID);
+            this.nickname = getStringFromData(FIELD_NICKNAME);
+            this.userId = getLongFromData(FIELD_USER_ID);
+            this.timeout = getLongFromData(FIELD_TIMEOUT);
         }
 
         public String getSessionId() {

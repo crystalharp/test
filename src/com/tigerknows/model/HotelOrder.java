@@ -1,12 +1,16 @@
 package com.tigerknows.model;
 
+import java.util.Comparator;
+
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.tigerknows.model.xobject.XMap;
-import com.tigerknows.util.ByteUtil;
 
 /**
- * 
+ * This HotelOrder is different from other model in this package.
+ * It's mainly meant for local storage
+ * Additional function is passing value between different UIs
+ * 	For the second, decide yourself.
  * @author jiangshuai
  *
  */
@@ -141,13 +145,43 @@ public class HotelOrder extends XMapData{
 		mobileNum = data.getString(FIELD_MOBILE_NUM);
 	}
 	
+	public HotelOrder() {
+		super();
+	}
+	
+	public HotelOrder(String id, long createTime, int state,
+			String hotelPoiUUID, String hotelName, String hotelAddress,
+			Position position, String hotelTel, String roomType,
+			String roomNum, String totalFee, String guaranteeType,
+			long retentionTime, long checkinTime, long checkoutTime,
+			String guestName, String mobileNum) {
+		super();
+		this.id = id;
+		this.createTime = createTime;
+		this.state = state;
+		this.hotelPoiUUID = hotelPoiUUID;
+		this.hotelName = hotelName;
+		this.hotelAddress = hotelAddress;
+		this.position = position;
+		this.hotelTel = hotelTel;
+		this.roomType = roomType;
+		this.roomNum = roomNum;
+		this.totalFee = totalFee;
+		this.guaranteeType = guaranteeType;
+		this.retentionTime = retentionTime;
+		this.checkinTime = checkinTime;
+		this.checkoutTime = checkoutTime;
+		this.guestName = guestName;
+		this.mobileNum = mobileNum;
+	}
+
 	/**
 	 * 把酒店订单转化成XMap
 	 * 所有的域必须存在并合法，否则报APIExecption
 	 * @return
 	 * @throws APIException
 	 */
-	public XMap toXMap() throws APIException{
+	public XMap toXMapForStorage() throws APIException{
 		XMap map = new XMap();
 		if (id!=null) {
 			map.put(FIELD_ID, id);
@@ -352,5 +386,25 @@ public class HotelOrder extends XMapData{
 	public void setMobileNum(String mobileNum) {
 		this.mobileNum = mobileNum;
 	}
+	
+	/**
+	 * Comparator used to sort orders loaded from database
+	 */
+	private static Comparator<HotelOrder> comparator = new Comparator<HotelOrder>() {
 
+		@Override
+		public int compare(HotelOrder lhs, HotelOrder rhs) {
+			if( lhs.getCreateTime() > rhs.getCreateTime() ){
+				return -1;
+			}else if( lhs.getCreateTime() == rhs.getCreateTime() ){
+				return 0;
+			}else {
+				return 1;
+			}
+		}
+	};
+
+	public static Comparator<HotelOrder> getComparator(){
+		return comparator;
+	}
 }

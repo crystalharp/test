@@ -112,12 +112,8 @@ public class Response extends XMapData {
 
     public Response(XMap data) throws APIException {
         super(data);
-        if (this.data.containsKey(FIELD_RESPONSE_CODE)) {
-            this.responseCode = this.data.getInt(FIELD_RESPONSE_CODE);
-        }
-        if (this.data.containsKey(FIELD_DESCRIPTION)) {
-            this.description = this.data.getString(FIELD_DESCRIPTION);
-        }
+        this.responseCode = getLongFromData(FIELD_RESPONSE_CODE);
+        this.description = getStringFromData(FIELD_DESCRIPTION);
     }
     
     public XMap getData() {
