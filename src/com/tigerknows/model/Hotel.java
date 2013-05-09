@@ -163,20 +163,20 @@ public class Hotel extends XMapData {
         // 0x01 x_string 套餐id rateplan_id
         public static final byte FIELD_RATEPLAN_ID = 0x01;
 
-        // 0x02 x_string 所在楼层 floor
-        public static final byte FIELD_FLOOR = 0x02;
+        // 0x02 x_string 房型名称 room_type
+        public static final byte FIELD_ROOM_TYPE = 0x02;
+        
+        // 0x03 x_string 所在楼层 floor
+        public static final byte FIELD_FLOOR = 0x03;
 
-        // 0x03 x_string 床型 bed_type
-        public static final byte FIELD_BED_TYPE = 0x03;
+        // 0x04 x_string 床型 bed_type
+        public static final byte FIELD_BED_TYPE = 0x04;
 
-        // 0x04 x_string 房型面积 area
-        public static final byte FIELD_AREA = 0x04;
+        // 0x05 x_string 房型面积 area
+        public static final byte FIELD_AREA = 0x05;
 
-        // 0x05 x_string 宽带，{ "宽带", "无" } net_service
-        public static final byte FIELD_NET_SERVICE = 0x05;
-
-        // 0x06 x_string 宽带免费，{ "免费", "收费" } net_service_fee
-        public static final byte FIELD_NET_SERVICE_FEE = 0x06;
+        // 0x06 x_string 宽带，{ "宽带", "无", "宽带收费", "宽带免费" } net_service
+        public static final byte FIELD_NET_SERVICE = 0x06;
 
         // 0x07 x_string 含早情况 breakfast
         public static final byte FIELD_BREAKFAST = 0x07;
@@ -192,21 +192,21 @@ public class Hotel extends XMapData {
 
         // 0x01 x_string 套餐id rateplan_id
         private String rateplanId;
+        
+        // 0x02 x_string 房型名称
+        private String roomType;
 
-        // 0x02 x_string 所在楼层 floor
+        // 0x03 x_string 所在楼层 floor
         private String floor;
 
-        // 0x03 x_string 床型 bed_type
+        // 0x04 x_string 床型 bed_type
         private String bedType;
 
-        // 0x04 x_string 房型面积 area
+        // 0x05 x_string 房型面积 area
         private String area;
 
-        // 0x05 x_string 宽带，{ "宽带", "无" } net_service
+        // 0x06 x_string 宽带，{ "宽带", "无", "宽带免费", "宽带收费" } net_service
         private String netService;
-
-        // 0x06 x_string 宽带免费，{ "免费", "收费" } net_service_fee
-        private String netServiceFee;
 
         // 0x07 x_string 含早情况 breakfast
         private String breakfast;
@@ -221,11 +221,11 @@ public class Hotel extends XMapData {
             super(data);
             this.roomId = getStringFromData(FIELD_ROOM_ID);
             this.rateplanId = getStringFromData(FIELD_RATEPLAN_ID);
+            this.roomType = getStringFromData(FIELD_ROOM_TYPE);
             this.floor = getStringFromData(FIELD_FLOOR);
             this.bedType = getStringFromData(FIELD_BED_TYPE);
             this.area = getStringFromData(FIELD_AREA);
             this.netService = getStringFromData(FIELD_NET_SERVICE);
-            this.netServiceFee = getStringFromData(FIELD_NET_SERVICE_FEE);
             this.breakfast = getStringFromData(FIELD_BREAKFAST);
             this.price = getStringFromData(FIELD_PRICE);
             this.canReserve = getLongFromData(FIELD_CAN_RESERVE);
@@ -237,6 +237,10 @@ public class Hotel extends XMapData {
 
         public String getRateplanId() {
             return rateplanId;
+        }
+        
+        public String getRoomType() {
+        	return roomType;
         }
 
         public String getFloor() {
@@ -253,10 +257,6 @@ public class Hotel extends XMapData {
 
         public String getNetService() {
             return netService;
-        }
-
-        public String getNetServiceFee() {
-            return netServiceFee;
         }
 
         public String getBreakfast() {
