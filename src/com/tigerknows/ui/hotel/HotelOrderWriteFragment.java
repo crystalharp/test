@@ -177,8 +177,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         roomTypeDetail += appendContent;
         roomTypeDetail += (appendContent != null) ? " " : null;
         mRoomtypeDetailTxv.setText(roomTypeDetail);
-        mCheckIn = checkIn;
-        mCheckOut = checkOut;
         mRoomDateTxv.setText(mSphinx.getString(R.string.hotel_room_date,
         		checkIn.get(Calendar.MONTH),
         		checkIn.get(Calendar.DATE),
