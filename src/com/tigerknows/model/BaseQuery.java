@@ -16,6 +16,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
@@ -93,6 +94,9 @@ public abstract class BaseQuery {
     
     // 联想词下载
     public static final String API_TYPE_SUGGEST_LEXICON_DOWNLOAD = "is";
+    
+    // 接口代理
+    public static final String API_TYPE_TASK = "p";
     
     protected static final String VERSION = "13";
     
@@ -832,11 +836,36 @@ public abstract class BaseQuery {
         }
         if (criteria.containsKey(key)) {
             result = criteria.get(key);
-            requestParameters.add(key, result);
+            if (result != null) {
+                requestParameters.add(key, result);
+            } else {
+                throw APIException.wrapToMissingRequestParameterException(key);
+            }
         } else if (need){
             throw APIException.wrapToMissingRequestParameterException(key);
         }
         
         return result;
+    }
+    
+    /**
+     * 添加SessionId和ClientId
+     * @param need
+     * @throws APIException
+     */
+    void addSessionId(boolean need) throws APIException {
+        String sessionId = Globals.g_Session_Id;
+        if (!TextUtils.isEmpty(sessionId)) {
+            requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
+        } else if (need) {
+            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
+        }
+        
+        String clientId = Globals.g_ClientUID;
+        if (!TextUtils.isEmpty(clientId)) {
+            requestParameters.add(SERVER_PARAMETER_CLIENT_ID, clientId);
+        } else {
+            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CLIENT_ID);
+        }
     }
 }
