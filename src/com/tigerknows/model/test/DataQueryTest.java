@@ -692,10 +692,10 @@ public class DataQueryTest {
         XMap data = new XMap();
         data.put(RoomType.FIELD_ROOM_ID, "168");
         data.put(RoomType.FIELD_RATEPLAN_ID, "168");
+        data.put(RoomType.FIELD_ROOM_TYPE, "FIELD_ROOM_TYPE"+order);
         data.put(RoomType.FIELD_FLOOR, "FIELD_FLOOR"+order);
         data.put(RoomType.FIELD_BED_TYPE, "FIELD_BED_TYPE");
         data.put(RoomType.FIELD_NET_SERVICE, "FIELD_NET_SERVICE");
-        data.put(RoomType.FIELD_NET_SERVICE_FEE, "FIELD_NET_SERVICE_FEE");
         data.put(RoomType.FIELD_BREAKFAST, "FIELD_BREAKFAST");
         data.put(RoomType.FIELD_PRICE, "FIELD_PRICE");
         data.put(RoomType.FIELD_CAN_RESERVE, 1);
