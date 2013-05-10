@@ -1065,6 +1065,33 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             } else {
                 mCommentTipEdt.setVisibility(View.VISIBLE);
             }
+         
+            // 检查是否包含电影的动态信息
+            boolean isContainDianying = false;
+            List<DynamicPOI> list = poi.getDynamicPOIList();
+            if (list != null) {
+                for(int i = 0, size = list.size(); i < size; i++) {
+                    DynamicPOI dynamic = list.get(i);
+                    if (BaseQuery.DATA_TYPE_DIANYING.equals(dynamic.getType())) {
+                        isContainDianying = true;
+                        break;
+                    }
+                }
+            }
+            
+            if (isContainDianying && poi.getDynamicDianyingList() == null) {
+                Hashtable<String, String> criteria = new Hashtable<String, String>();
+                criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANYING);
+                criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
+                criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
+                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+                        Dianying.NEED_FILELD_POI_DETAIL);
+                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+                       Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]");
+                DataQuery dataQuery = new DataQuery(mSphinx);
+                dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null, false, false, poi);
+                baseQueryList.add(dataQuery);
+            }
             
             refreshDetail();
             refreshComment();

@@ -173,9 +173,7 @@ public class BuslineModel extends XMapData {
         @SuppressWarnings("unchecked")
         public void init(XMap data, boolean reset) throws APIException {
             super.init(data, reset);
-            if (this.data.containsKey(FIELD_LENGTH)) {
-                length = (int)this.data.getInt(FIELD_LENGTH);
-            }
+            length = (int)getLongFromData(FIELD_LENGTH, reset ? 0 : this.length);
 
             if (this.data.containsKey(FIELD_X) && this.data.containsKey(FIELD_Y)) {
                 this.x = this.data.getXArray(FIELD_X).toIntList();
@@ -201,27 +199,16 @@ public class BuslineModel extends XMapData {
                         i++;
                     }
                 }
-            }
-            
-            if (this.data.containsKey(FIELD_NAME)) {
-                name = this.data.getString(FIELD_NAME);
-            }
-            
-            if (this.data.containsKey(FIELD_TIME)) {
-            	time = this.data.getString(FIELD_TIME);
-            }
-            
-            XArray<XMap> xstationList;
-            XMap xstation;
-            if (this.data.containsKey(FIELD_STATION)) {
-                xstationList = (XArray<XMap>)this.data.getXArray(FIELD_STATION);
-                int size = xstationList.size();
-                this.stationList = new ArrayList<Station>(size);
-                for(int i = 0; i < size; i++) {
-                    xstation = xstationList.get(i);
-                    this.stationList.add(new Station(xstation));
+            } else if (reset) {
+                if (this.positionList != null) {
+                    this.positionList.clear();
                 }
             }
+            
+            name = getStringFromData(FIELD_NAME, reset ? null : this.name);
+            time = getStringFromData(FIELD_TIME, reset ? null : this.time);
+            
+            this.stationList = getListFromData(FIELD_STATION, Station.Initializer, reset ? null : this.stationList);
         }
 
         public XMap getData() {
@@ -492,22 +479,17 @@ public class BuslineModel extends XMapData {
         public void init(XMap data, boolean reset) throws APIException {
             super.init(data, reset);
             
-            if (this.data.containsKey(FIELD_INDEX)) {
-                index = (int)this.data.getInt(FIELD_INDEX);
-            }
-            
-            if (this.data.containsKey(FIELD_X) && this.data.containsKey(FIELD_Y)) {
-                x = (int)this.data.getInt(FIELD_X);
-                y = (int)this.data.getInt(FIELD_Y);
-                this.position = new Position(((double)this.y)/TKConfig.LON_LAT_DIVISOR, ((double)this.x)/TKConfig.LON_LAT_DIVISOR);
-            }
-                        
-            if (this.data.containsKey(FIELD_NAME)) {
-                name = this.data.getString(FIELD_NAME);
-            }
-
+            index = (int)getLongFromData(FIELD_INDEX, reset ? 0 : index);
+            x = (int)getLongFromData(FIELD_X, reset ? 0 : x);
+            y = (int)getLongFromData(FIELD_Y, reset ? 0 : y);
+            position = getPositionFromData(FIELD_X, FIELD_Y, reset ? null : position);
+            name = getStringFromData(FIELD_NAME, reset ? null : name);
             if (this.data.containsKey(FIELD_LINE)) {
                 this.lineList = this.data.getXArray(FIELD_LINE).toStringList();
+            } else if (reset) {
+                if (this.lineList != null) {
+                    this.lineList.clear();
+                }
             }
         }
 
