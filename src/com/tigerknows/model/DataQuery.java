@@ -1410,21 +1410,10 @@ public final class DataQuery extends BaseQuery {
 
             private List<Tuangou> list;
 
-            @SuppressWarnings("unchecked")
             public TuangouList(XMap data) throws APIException {
                 super(data);
 
-                this.list = new ArrayList<Tuangou>();
-                Tuangou tuangou;
-                if (this.data.containsKey(FIELD_LIST)) {
-                    XArray<XMap> xarray = (XArray<XMap>)this.data.getXArray(FIELD_LIST);
-                    if (xarray != null) {
-                        for (int i = 0; i < xarray.size(); i++) {
-                            tuangou = new Tuangou(xarray.get(i));
-                            list.add(tuangou);
-                        }
-                    }
-                }
+                this.list = getListFromData(FIELD_LIST, Tuangou.Initializer);
             }
 
             public List<Tuangou> getList() {
@@ -1458,21 +1447,10 @@ public final class DataQuery extends BaseQuery {
 
             private List<Fendian> list;
 
-            @SuppressWarnings("unchecked")
             public FendianList(XMap data) throws APIException {
                 super(data);
 
-                this.list = new ArrayList<Fendian>();
-                Fendian fendian;
-                if (this.data.containsKey(FIELD_LIST)) {
-                    XArray<XMap> xarray = (XArray<XMap>)this.data.getXArray(FIELD_LIST);
-                    if (xarray != null) {
-                        for (int i = 0; i < xarray.size(); i++) {
-                            fendian = new Fendian(xarray.get(i));
-                            list.add(fendian);
-                        }
-                    }
-                }
+                this.list = getListFromData(FIELD_LIST, Fendian.Initializer);
             }
 
             public List<Fendian> getList() {
@@ -1506,21 +1484,10 @@ public final class DataQuery extends BaseQuery {
 
             private List<Dianying> list;
 
-            @SuppressWarnings("unchecked")
             public DianyingList(XMap data) throws APIException {
                 super(data);
 
-                this.list = new ArrayList<Dianying>();
-                Dianying dianying;
-                if (this.data.containsKey(FIELD_LIST)) {
-                    XArray<XMap> xarray = (XArray<XMap>)this.data.getXArray(FIELD_LIST);
-                    if (xarray != null) {
-                        for (int i = 0; i < xarray.size(); i++) {
-                            dianying = new Dianying(xarray.get(i));
-                            list.add(dianying);
-                        }
-                    }
-                }
+                this.list = getListFromData(FIELD_LIST, Dianying.Initializer);
             }
 
             public List<Dianying> getList() {
@@ -1554,21 +1521,10 @@ public final class DataQuery extends BaseQuery {
 
             private List<Yingxun> list;
 
-            @SuppressWarnings("unchecked")
             public YingxunList(XMap data) throws APIException {
                 super(data);
 
-                list = new ArrayList<Yingxun>();
-                Yingxun yingxun;
-                if (this.data.containsKey(FIELD_LIST)) {
-                    XArray<XMap> xarray = (XArray<XMap>)this.data.getXArray(FIELD_LIST);
-                    if (xarray != null) {
-                        for (int i = 0; i < xarray.size(); i++) {
-                            yingxun = new Yingxun(xarray.get(i));
-                            list.add(yingxun);
-                        }
-                    }
-                }
+                list = getListFromData(FIELD_LIST, Yingxun.Initializer);
             }
 
             public List<Yingxun> getList() {
@@ -1602,21 +1558,10 @@ public final class DataQuery extends BaseQuery {
 
             private List<Yanchu> list;
 
-            @SuppressWarnings("unchecked")
             public YanchuList(XMap data) throws APIException {
                 super(data);
 
-                this.list = new ArrayList<Yanchu>();
-                Yanchu yanchu;
-                if (this.data.containsKey(FIELD_LIST)) {
-                    XArray<XMap> xarray = (XArray<XMap>)this.data.getXArray(FIELD_LIST);
-                    if (xarray != null) {
-                        for (int i = 0; i < xarray.size(); i++) {
-                            yanchu = new Yanchu(xarray.get(i));
-                            list.add(yanchu);
-                        }
-                    }
-                }
+                this.list = getListFromData(FIELD_LIST, Yanchu.Initializer);
             }
 
             public List<Yanchu> getList() {
@@ -1650,21 +1595,10 @@ public final class DataQuery extends BaseQuery {
             
             private List<Zhanlan> list;
 
-            @SuppressWarnings("unchecked")
             public ZhanlanList(XMap data) throws APIException {
                 super(data);
 
-                this.list = new ArrayList<Zhanlan>();
-                Zhanlan zhanlan;
-                if (this.data.containsKey(FIELD_LIST)) {
-                    XArray<XMap> xarray = (XArray<XMap>)this.data.getXArray(FIELD_LIST);
-                    if (xarray != null) {
-                        for (int i = 0; i < xarray.size(); i++) {
-                            zhanlan = new Zhanlan(xarray.get(i));
-                            list.add(zhanlan);
-                        }
-                    }
-                }
+                this.list = getListFromData(FIELD_LIST, Zhanlan.Initializer);
             }
 
             public List<Zhanlan> getList() {
@@ -1731,22 +1665,10 @@ public final class DataQuery extends BaseQuery {
                 data.put(FIELD_LIST, xarray);
             }
 
-            @SuppressWarnings("unchecked")
             public CommentList(XMap data) throws APIException {
                 super(data);
                 
-                list = new ArrayList<Comment>();
-                Comment comment;
-                if (this.data.containsKey(FIELD_LIST)) {
-                    XArray<XMap> xarray = (XArray<XMap>)this.data.getXArray(FIELD_LIST);
-                    if (xarray != null) {
-                        for(int i = 0; i < xarray.size(); i++) {
-                            comment = new Comment(xarray.get(i));
-                            list.add(comment);
-                        }
-                    }
-                }
-                
+                list = getListFromData(FIELD_LIST, Comment.Initializer);
                 this.total = 0;
             }     
             
@@ -1794,21 +1716,12 @@ public final class DataQuery extends BaseQuery {
             
             private List<Shangjia> list;
 
-            @SuppressWarnings("unchecked")
             public ShangjiaList(XMap data) throws APIException {
                 super(data);
                 
-                list = new ArrayList<Shangjia>();
-                Shangjia shangjia;
-                if (this.data.containsKey(FIELD_LIST)) {
-                    XArray<XMap> xarray = (XArray<XMap>)this.data.getXArray(FIELD_LIST);
-                    if (xarray != null) {
-                        for(int i = 0; i < xarray.size(); i++) {
-                            shangjia = new Shangjia(xarray.get(i));
-                            list.add(shangjia);
-                        }
-                        Shangjia.writeShangjiaList();
-                    }
+                list = getListFromData(FIELD_LIST, Shangjia.Initializer);
+                if (list != null) {
+                    Shangjia.writeShangjiaList();
                 }                
             }
             
@@ -1935,20 +1848,10 @@ public final class DataQuery extends BaseQuery {
             private String message;
             private List<DiscoverCategory> list;
 
-            @SuppressWarnings("unchecked")
             public DiscoverCategoryList(XMap data) throws APIException {
                 super(data);
                 
-                list = new ArrayList<DiscoverCategory>();
-                if (this.data.containsKey(FIELD_LIST)) {
-                    XArray<XMap> xarray = (XArray<XMap>)this.data.getXArray(FIELD_LIST);
-                    if (xarray != null) {
-                        for(int i = 0; i < xarray.size(); i++) {
-                            DiscoverCategory discoverCategory = new DiscoverCategory(xarray.get(i));
-                            list.add(discoverCategory);
-                        }
-                    }
-                } 
+                list = getListFromData(FIELD_LIST, DiscoverCategory.Initializer);
                 this.message = getStringFromData(FIELD_MESSAGE);
             }
             
@@ -2078,6 +1981,14 @@ public final class DataQuery extends BaseQuery {
                     }
                     return hashCode;
                 }
+
+                public static XMapInitializer<DiscoverCategory> Initializer = new XMapInitializer<DiscoverCategory>() {
+
+                    @Override
+                    public DiscoverCategory init(XMap data) throws APIException {
+                        return new DiscoverCategory(data);
+                    }
+                };
             }
         }
         
@@ -2095,23 +2006,15 @@ public final class DataQuery extends BaseQuery {
             public DiscoverConfigList() {
             }
 
-            @SuppressWarnings("unchecked")
             public DiscoverConfigList(XMap data) throws APIException {
                 super(data);
 
                 version = getStringFromData(FIELD_VERSION);
                 
-                list = new ArrayList<DiscoverConfig>();
-                DiscoverConfig discoverConfig;
-                if (this.data.containsKey(FIELD_LIST)) {
-                    XArray<XMap> xarray = (XArray<XMap>)this.data.getXArray(FIELD_LIST);
-                    if (xarray != null) {
-                        for(int i = 0; i < xarray.size(); i++) {
-                            discoverConfig = new DiscoverConfig(xarray.get(i));
-                            list.add(discoverConfig);
-                        }
-                    }
-                }                
+                list = getListFromData(FIELD_LIST, DiscoverConfig.Initializer);
+                if (list == null) {
+                    list = new ArrayList<DiscoverConfig>();
+                }
             }
             
             public String getVersion() {
@@ -2187,6 +2090,14 @@ public final class DataQuery extends BaseQuery {
                 public void setList(List<Long> list) {
                     this.list = list;
                 }
+
+                public static XMapInitializer<DiscoverConfig> Initializer = new XMapInitializer<DiscoverConfig>() {
+
+                    @Override
+                    public DiscoverConfig init(XMap data) throws APIException {
+                        return new DiscoverConfig(data);
+                    }
+                };
                 
             }
         }

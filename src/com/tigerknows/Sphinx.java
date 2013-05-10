@@ -141,6 +141,9 @@ import com.tigerknows.ui.discover.ShangjiaListActivity;
 import com.tigerknows.ui.discover.YanchuDetailFragment;
 import com.tigerknows.ui.discover.ZhanlanDetailFragment;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
+import com.tigerknows.ui.hotel.HotelOrderCreditFragment;
+import com.tigerknows.ui.hotel.HotelOrderWriteFragment;
+import com.tigerknows.ui.hotel.HotelSeveninnRegistFragment;
 import com.tigerknows.ui.hotel.PickLocationFragment;
 import com.tigerknows.ui.more.AboutUsActivity;
 import com.tigerknows.ui.more.AddMerchantActivity;
@@ -3059,6 +3062,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     private HotelHomeFragment mHotelHomeFragment;
     private PickLocationFragment mPickLocationFragment;
+    private HotelOrderWriteFragment mHotelOrderWriteFragment;
+    private HotelOrderCreditFragment mHotelOrderCreditFragment;
+    private HotelSeveninnRegistFragment mHotelSeveninnRegistFragment;
     
     public BaseFragment getFragment(int id) {
         BaseFragment baseFragment = null;
@@ -3176,6 +3182,18 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             case R.id.view_hotel_pick_location:
                 baseFragment = getPickLocationFragment();
                 break;
+
+            case R.id.view_hotel_order_write:
+                baseFragment = getHotelOrderWriteFragment();
+                break;
+
+            case R.id.view_hotel_credit_assure:
+                baseFragment = getHotelOrderCreditFragment();
+                break;
+            
+            case R.id.view_hotel_seveninn_regist:
+            	baseFragment = getHotelSeveninnRegistFragment();
+            	break;
                 
             default:
                 break;
@@ -3556,6 +3574,42 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mPickLocationFragment = fragment;
             }
             return mPickLocationFragment;
+        }
+    }
+
+    public HotelOrderWriteFragment getHotelOrderWriteFragment() {
+        synchronized (mUILock) {
+            if (mHotelOrderWriteFragment == null) {
+                HotelOrderWriteFragment fragment = new HotelOrderWriteFragment(Sphinx.this);
+                fragment.setId(R.id.view_hotel_order_write);
+                fragment.onCreate(null);
+                mHotelOrderWriteFragment = fragment;
+            }
+            return mHotelOrderWriteFragment;
+        }
+    }
+
+    public HotelOrderCreditFragment getHotelOrderCreditFragment() {
+        synchronized (mUILock) {
+            if (mHotelOrderCreditFragment == null) {
+            	HotelOrderCreditFragment fragment = new HotelOrderCreditFragment(Sphinx.this);
+                fragment.setId(R.id.view_hotel_credit_assure);
+                fragment.onCreate(null);
+                mHotelOrderCreditFragment = fragment;
+            }
+            return mHotelOrderCreditFragment;
+        }
+    }
+
+    public HotelSeveninnRegistFragment getHotelSeveninnRegistFragment() {
+        synchronized (mUILock) {
+            if (mHotelSeveninnRegistFragment == null) {
+            	HotelSeveninnRegistFragment fragment = new HotelSeveninnRegistFragment(Sphinx.this);
+                fragment.setId(R.id.view_hotel_seveninn_regist);
+                fragment.onCreate(null);
+                mHotelSeveninnRegistFragment = fragment;
+            }
+            return mHotelSeveninnRegistFragment;
         }
     }
     // TODO: get fragment end

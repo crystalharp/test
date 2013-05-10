@@ -936,14 +936,6 @@
     <string name="counting_tip">正在统计...</string>
 
 <!-- Hotel Reservation Start -->
-    <string name="hotel_condition_city">城市</string>
-    <string name="hotel_condition_date">入住时间</string>
-    <string name="hotel_condition_location">位置</string>
-    <string name="hotel_condition_more">星级/品牌/价格</string>
-    <string name="yudingjiudian">预订酒店</string>
-    <string name="chakandingdan">查看订单</string>
-    <string name="distanceli">距离</string>
-    <string name="qi">起</string>
     
     <string name="hotel_room_title">订单填写</string>
     <string name="hotel_room_howmany">房间数：</string>
@@ -951,6 +943,11 @@
     <string name="hotel_room_person_name">入住姓名：</string>
     <string name="hotel_room_mobile_nubmer">手机号：</string>
     <string name="submit_order">提交订单</string>
+    <string name="hotel_room_date">入住：%1$d月%2$d日  离店：%3$d月%4$d日</string>
+    
+    <string name="choose_room_howmany">选择房间数</string>
+    <string name="room_howmany_item">%1$s间/$2$s元</string>
+    <string name="choose_room_reserve">房间保留到</string>
     
     <string name="credit_assure_title">信用卡担保信息</string>
     <string name="credit_bank">发卡银行：</string>
