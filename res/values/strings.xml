@@ -980,5 +980,14 @@
     <string name="order_submit_success">订单提交成功</string>
     <string name="seveninn_regist_failed">注册失败，请确认所填信息并重新提交</string>
     <string name="hotel_network_bad">网络状态不好，请稍后重试</string>
+    
+    <string name="hotel_checkin">入住：</string>
+    <string name="hotel_checkout">离店：</string>
+    <string name="hotel_total_nights">共%1$s晚</string>
+    <string name="hotel_order">酒店订单</string>
+    
+    <string name="issue_comment">发表点评</string>
+    <string name="order_again">再订一单</string>
+    <string name="delete_order">删除订单</string>
 
 </resources>

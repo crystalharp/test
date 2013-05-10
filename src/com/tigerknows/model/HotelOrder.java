@@ -1,5 +1,7 @@
 package com.tigerknows.model;
 
+import android.R.integer;
+
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.tigerknows.model.xobject.XMap;
@@ -62,13 +64,13 @@ public class HotelOrder extends XMapData{
 	/**
 	 * 房间数目
 	 */
-	private String roomNum;
+	private int roomNum = -1;
 	
 	// payment info
 	/**
 	 * 总价
 	 */
-	private String totalFee;
+	private int totalFee = -1;
 	/**
 	 * 担保类型
 	 */
@@ -87,6 +89,11 @@ public class HotelOrder extends XMapData{
 	 * 离店时间
 	 */
 	private long checkoutTime;
+	
+	/**
+	 * 共住几天
+	 */
+	private int dayCount;
 
 	// guest info
 	/**
@@ -114,8 +121,9 @@ public class HotelOrder extends XMapData{
 	public static final byte FIELD_RETENTION_TIME = 0x0E;
 	public static final byte FIELD_CHECKIN_TIME = 0x0F;
 	public static final byte FIELD_CHECKOUT_TIME = 0x10;
-	public static final byte FIELD_GUEST_NAME = 0x11;
-	public static final byte FIELD_MOBILE_NUM= 0x12;
+	public static final byte FIELD_DAY_COUNT= 0x11;
+	public static final byte FIELD_GUEST_NAME = 0x12;
+	public static final byte FIELD_MOBILE_NUM= 0x13;
 	
 	/**
 	 * 使用XMap构建酒店订单
@@ -134,11 +142,13 @@ public class HotelOrder extends XMapData{
 		position = new Position(data.getDouble(FIELD_POSITION_Y), data.getDouble(FIELD_POSITION_X));
 		hotelTel = data.getString(FIELD_HOTEL_TEL);
 		roomType = data.getString(FIELD_ROOM_TYPE);
-		totalFee = data.getString(FIELD_TOTAL_FEE);
+		roomNum = (int) data.getInt(FIELD_ROOM_NUM);
+		totalFee = (int) data.getInt(FIELD_TOTAL_FEE);
 		guaranteeType = data.getString(FIELD_GARANTEE_TYPE);
 		retentionTime = data.getInt(FIELD_RETENTION_TIME);
 		checkinTime = data.getInt(FIELD_CHECKIN_TIME);
 		checkoutTime = data.getInt(FIELD_CHECKOUT_TIME);
+		dayCount = (int) data.getInt(FIELD_DAY_COUNT);
 		guestName = data.getString(FIELD_GUEST_NAME);
 		mobileNum = data.getString(FIELD_MOBILE_NUM);
 	}
@@ -150,8 +160,8 @@ public class HotelOrder extends XMapData{
 	public HotelOrder(String id, long createTime, int state,
 			String hotelPoiUUID, String hotelName, String hotelAddress,
 			Position position, String hotelTel, String roomType,
-			String roomNum, String totalFee, String guaranteeType,
-			long retentionTime, long checkinTime, long checkoutTime,
+			int roomNum, int totalFee, String guaranteeType,
+			long retentionTime, long checkinTime, long checkoutTime, int dayCount,
 			String guestName, String mobileNum) {
 		super();
 		this.id = id;
@@ -169,6 +179,7 @@ public class HotelOrder extends XMapData{
 		this.retentionTime = retentionTime;
 		this.checkinTime = checkinTime;
 		this.checkoutTime = checkoutTime;
+		this.dayCount = dayCount;
 		this.guestName = guestName;
 		this.mobileNum = mobileNum;
 	}
@@ -236,7 +247,13 @@ public class HotelOrder extends XMapData{
 			throw new APIException("FIELD_ROOM_TYPE");
 		}
 
-		if (totalFee!=null) {
+		if(roomNum >= 0 ){
+			map.put(FIELD_ROOM_NUM, roomNum);
+		}else{
+			throw new APIException("FIELD_ROOM_NUM");
+		}
+
+		if (totalFee >= 0) {
 			map.put(FIELD_TOTAL_FEE, totalFee);
 		}else{
 			throw new APIException("FIELD_TOTAL_FEE");
@@ -264,6 +281,12 @@ public class HotelOrder extends XMapData{
 			map.put(FIELD_CHECKOUT_TIME, checkoutTime);
 		}else{
 			throw new APIException("FIELD_CHECKOUT_TIME");
+		}
+		
+		if (dayCount>0) {
+			map.put(FIELD_DAY_COUNT, dayCount);
+		}else{
+			throw new APIException("FIELD_DAY_COUNT");
 		}
 
 		if (guestName!=null) {
@@ -336,18 +359,25 @@ public class HotelOrder extends XMapData{
 	public void setRoomType(String roomType) {
 		this.roomType = roomType;
 	}
-	public String getRoomNum() {
+	public int getRoomNum() {
 		return roomNum;
 	}
-	public void setRoomNum(String roomNum) {
+	public void setRoomNum(int roomNum) {
 		this.roomNum = roomNum;
 	}
-	public String getTotalFee() {
+	public int getTotalFee() {
 		return totalFee;
 	}
-	public void setTotalFee(String totalFee) {
+	public void setTotalFee(int totalFee) {
 		this.totalFee = totalFee;
 	}
+	public int getDayCount() {
+		return dayCount;
+	}
+	public void setDayCount(int dayCount) {
+		this.dayCount = dayCount;
+	}
+
 	public String getGuaranteeType() {
 		return guaranteeType;
 	}

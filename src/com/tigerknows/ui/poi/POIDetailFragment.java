@@ -993,7 +993,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 int size = (list != null ? list.size() : 0);
                 int viewCount = mDynamicDianyingListView.getChildCount();
                 for(int i = 0; i < viewCount && i < size; i++) {
-                    mDynamicDianyingListView.getChildAt(i).setVisibility(View.VISIBLE);
+                    View v = mDynamicDianyingListView.getChildAt(i);
+                    v.setVisibility(View.VISIBLE);
+                    if (i >= viewCount) {
+                        initDianyingItemView(list.get(i), v);
+                    }
                 }
                 
                 for(int i = 0; i < viewCount; i++) {

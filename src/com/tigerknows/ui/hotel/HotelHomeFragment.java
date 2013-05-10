@@ -208,6 +208,10 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 }
                 break;
                 
+            case R.id.dingdan_btn:
+                mSphinx.showView(R.id.view_hotel_order_list);
+            	break;
+                
             default:
                 break;
         }

@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg_discover"
+    >
+
+    <LinearLayout
+        android:id="@+id/panel_btns"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        
+        android:layout_alignParentBottom="true"
+        
+        android:orientation="horizontal"
+	    >
+        <Button
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="@string/issue_comment"
+            />
+        <Button
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="@string/order_again"
+            />
+        
+        <Button
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:text="@string/delete_order"
+            />
+    </LinearLayout>
+    
+    <ScrollView
+        android:id="@+id/body_scv"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scrollbars="vertical"
+        android:gravity="top"
+        android:fillViewport="true"
+        android:fadingEdge="none"
+        android:layout_above="@id/panel_btns"
+        >
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+            <RelativeLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:padding="8dp"
+                >
+                <include
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginBottom="8dp"
+                    layout="@layout/discover_tuangou_fendian_list_item"
+                    android:id="@+id/hotel_fendian_poi"/>
+             
+	             <ImageView
+                     android:background="@drawable/bg_broken_line"
+                     android:layout_width="fill_parent"
+                     android:layout_height="wrap_content"
+                     android:layout_below="@id/hotel_fendian_poi"
+                     android:layout_marginBottom="4dp"
+                     />
+             
+                <TextView
+                    android:id="@+id/order_id_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/hotel_fendian_poi"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="订  单  号"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+
+                <TextView
+                    android:id="@+id/order_state_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/order_id_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:ellipsize="end"
+                    android:focusable="false"
+                    android:maxLines="2"
+                    android:singleLine="false"
+                    android:text="订单状态"
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/order_time_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/order_state_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="预订日期"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+
+                <TextView
+                    android:id="@+id/order_gross_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/order_time_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="订单总额"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+
+                <TextView
+                    android:id="@+id/pay_type_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/order_gross_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="付款方式"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+
+                <TextView
+                    android:id="@+id/checkin_date_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/pay_type_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="入住日期"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+                
+                <TextView
+                    android:id="@+id/checkout_date_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/checkin_date_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="离店日期"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+                
+                <TextView
+                    android:id="@+id/checkin_person_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/checkout_date_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="入  住  人"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+                
+                
+            </RelativeLayout>
+
+            <ImageView 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_sawtooth"
+                />
+             
+         </LinearLayout>
+         
+    </ScrollView>
+    
+</RelativeLayout>
