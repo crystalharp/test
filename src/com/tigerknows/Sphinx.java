@@ -3611,7 +3611,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             return mHotelSeveninnRegistFragment;
         }
-    }    // TODO: get fragment end
+    }
+    // TODO: get fragment end
 
     // TODO: my location begin    
     private boolean mPreventShowChangeMyLocationDialog = false;

@@ -301,52 +301,6 @@
                 </LinearLayout>
             </LinearLayout>
                 
-            <LinearLayout android:id="@+id/dynamic_dianying_view"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:orientation="vertical"
-                >
-                <LinearLayout
-                    android:layout_width="fill_parent" 
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/list_header"
-                    >
-                    <TextView
-                        android:layout_width="fill_parent" 
-                        android:layout_height="wrap_content"
-                        android:text="@string/dianying"
-                        android:textSize="18sp"
-                        android:padding="8dp" />
-                
-                    <ImageView
-                        android:background="@drawable/bg_line_split"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
-                <LinearLayout android:id="@+id/dynamic_dianying_list_view"
-                    android:layout_width="fill_parent" 
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
-                </LinearLayout>
-                <LinearLayout android:id="@+id/dynamic_dianying_more_view"
-                    android:layout_width="fill_parent" 
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/list_footer"
-                    android:gravity="center"
-                    >
-                    <TextView
-                        android:layout_width="wrap_content" 
-                        android:layout_height="wrap_content"
-                        android:text="@string/more" />
-                </LinearLayout>
-            </LinearLayout>
-                
             <LinearLayout android:id="@+id/dynamic_tuanguo_list_view"
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
