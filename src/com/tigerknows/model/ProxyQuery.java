@@ -179,6 +179,7 @@ public class ProxyQuery extends BaseQuery {
             }
 
             public DanbaoGuize(XMap data) throws APIException {
+            	super(data);
                 num = getLongFromData(FILED_NUM);
                 lessList = getListFromData(FILED_NUM_LESS, RetentionTime.Initializer);
                 greaterList = getListFromData(FILED_NUM_LESS, RetentionTime.Initializer);
@@ -220,7 +221,8 @@ public class ProxyQuery extends BaseQuery {
                     return type;
                 }
 
-                public RetentionTime(XMap data) {
+                public RetentionTime(XMap data) throws APIException {
+                	super(data);
                     time = getStringFromData(FILED_TIME);
                     need = getLongFromData(FILED_NEED);
                     type = getLongFromData(FILED_TYPE);

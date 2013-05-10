@@ -950,7 +950,7 @@
     <string name="hotel_room_date">入住：%1$d月%2$d日  离店：%3$d月%4$d日</string>
     
     <string name="choose_room_howmany">选择房间数</string>
-    <string name="room_howmany_item">%1$s间/$2$s元</string>
+    <string name="room_howmany_item">%1$d间/$2$s元</string>
     <string name="choose_room_reserve">房间保留到</string>
     
     <string name="credit_assure_title">信用卡担保信息</string>

@@ -21,12 +21,15 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataOperation.HotelOrderCreateResponse;
+import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.HotelOrder;
@@ -65,17 +68,17 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private HotelOrder mHotelOrder;
     private RoomType mRoomType;
     private RoomTypeDynamic mRoomtypeDynamic;
+    private Calendar mCheckIn;
+    private Calendar mCheckOut;
 
     private static final long MAX_ROOM_HOWMANY = 5;
     
-    private String mHotelID;
-    private String mHotelBrand;
-    private String mRoomTypeID;
-    private String mRoomTypePkgId;
-    private String mCheckInTime;
-    private String mCheckOutTime;
+    private String mRTime = "23:59:00";
     private long mRoomHowmany = 1;
     private String mTotalPrice;
+    private String mUsername;
+    private String mMobile;
+    private boolean mNeedCreditAssure = false;
     
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -88,7 +91,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         
         findViews();
         setListener();
-        
+        //mTotalPrice = ((long)(mRoomtypeDynamic.getPrice())) + "";
+        mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, mTotalPrice));
         return mRootView;
     }
     
@@ -138,11 +142,13 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	showRoomHowmanyDialog();
             break;
         case R.id.room_reserve_btn:
+        	showRoomReserveDialog();
             break;
         case R.id.submit_order_btn:
-        	if (true) {
-        		mSphinx.getHotelOrderCreditFragment().setData(0, Calendar.getInstance());
-        		mSphinx.showView(R.id.view_hotel_credit_assure);
+        	if (mNeedCreditAssure) {
+        		//mSphinx.getHotelOrderCreditFragment().setData(0, Calendar.getInstance());
+        		//mSphinx.showView(R.id.view_hotel_credit_assure);
+        		Toast.makeText(mContext, "目前暂不支持信用卡担保功能", Toast.LENGTH_LONG).show();
         	} else {
         		submit();
         	}
@@ -153,6 +159,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
     
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
+
     	mPOI = poi;
     	mHotel = poi.getHotel();
     	mRoomType = roomtype;
@@ -178,11 +185,13 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         roomTypeDetail += (appendContent != null) ? " " : null;
         mRoomtypeDetailTxv.setText(roomTypeDetail);
         mRoomDateTxv.setText(mSphinx.getString(R.string.hotel_room_date,
-        		checkIn.get(Calendar.MONTH),
+        	    checkIn.get(Calendar.MONTH),
         		checkIn.get(Calendar.DATE),
-        		checkOut.get(Calendar.MONTH),
+        	    checkOut.get(Calendar.MONTH),
         		checkOut.get(Calendar.DATE)
         		));
+        mCheckIn = checkIn;
+        mCheckOut = checkOut;
     }
 
 	private void exit() {
@@ -190,13 +199,13 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 		
 	}
     private void showRoomHowmanyDialog(){
-        List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<String>();
         //TODO: mActionlog
         
         long listsize = (mRoomtypeDynamic.getNum() > MAX_ROOM_HOWMANY) ? MAX_ROOM_HOWMANY : mRoomtypeDynamic.getNum();
         String listitem;
         for(long i = 1; i <= listsize; i++){
-            listitem = mSphinx.getString(R.string.room_howmany_item, i + "", mRoomtypeDynamic.getPrice()*i + "");
+            listitem = mSphinx.getString(R.string.room_howmany_item, i, mRoomtypeDynamic.getPrice()*i + "");
         	list.add(listitem);
         }
         final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
@@ -212,13 +221,16 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         listView.setOnItemClickListener(new OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
-            	dialog.dismiss();	
+            	mRoomHowmany = which + 1;
+            	mTotalPrice = ((long)(mRoomHowmany * mRoomtypeDynamic.getPrice())) + "";
+            	mRoomHowmanyBtn.setText(list.get(which));
+            	dialog.dismiss();
             }
         });
     }
     private void showRoomReserveDialog(){
     	List<String> list = new ArrayList<String>();
-    	List<RetentionTime> rtList;
+    	final List<RetentionTime> rtList;
         DanbaoGuize dbgz = mRoomtypeDynamic.getDanbaoGuize();
         if(mRoomHowmany >= dbgz.getNum()){
         	rtList = dbgz.getGreaterList();
@@ -227,6 +239,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         }
         for (int i = 0, size = rtList.size();i < size; i++ ){
         	list.add(rtList.get(i).getTime());
+        }
+        if(rtList.isEmpty()){
+        	Toast.makeText(mContext, "该酒店不需要设置房间保留信息", Toast.LENGTH_LONG).show();
+        	return;
         }
         final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
         ListView listView = Utility.makeListView(mSphinx);
@@ -242,7 +258,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         listView.setOnItemClickListener(new OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
-            	dialog.dismiss();	
+            	rtList.get(which).getTime();
+            	dialog.dismiss();
             }
         });        
     }
@@ -250,8 +267,40 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     public void submit() {
     	DataOperation dataOperation = new DataOperation(mSphinx);
     	Hashtable<String, String> criteria = new Hashtable<String, String>();
+    	criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DINGDAN);
+    	criteria.put(DataOperation.SERVER_PARAMETER_ORDER_TYPE, DataOperation.ORDER_TYPE_HOTEL);
+    	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
+    	criteria.put(DataOperation.SERVER_PARAMETER_HOTEL_ID, mHotel.getUuid());
+    	if(mHotel.getBrand() != null){
+    		criteria.put(DataOperation.SERVER_PARAMETER_BRAND, mHotel.getBrand());
+    	}
+    	criteria.put(DataOperation.SERVER_PARAMETER_ROOMTYPE, mRoomType.getRoomId());
+    	criteria.put(DataOperation.SERVER_PARAMETER_PKGID, mRoomType.getRateplanId());
+    	criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN_DATE, changeDateFormat(mCheckIn));
+    	criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT_DATE, changeDateFormat(mCheckOut));
+    	criteria.put(DataOperation.SERVER_PARAMETER_RESERVE_TIME, mRTime);
+    	criteria.put(DataOperation.SERVER_PARAMETER_NUMROOMS, mRoomHowmany + "");
+    	criteria.put(DataOperation.SERVER_PARAMETER_TOTAL_PRICE, mTotalPrice);
+    	criteria.put(DataOperation.SERVER_PARAMETER_USERNAME, mUsername);
+    	criteria.put(DataOperation.SERVER_PARAMETER_MOBILE, mMobile);
     	dataOperation.setup(criteria);
     	mSphinx.queryStart(dataOperation);
+    }
+    
+    private String changeDateFormat(Calendar calendar){
+    	String newFormat = "";
+    	newFormat += (calendar.get(Calendar.YEAR) + "-");
+    	int month = calendar.get(Calendar.MONTH);
+    	if(month < 10){
+    		newFormat += "0";
+    	}
+    	newFormat += (month + "-");
+    	int date = calendar.get(Calendar.DATE);
+    	if(date < 10){
+    		newFormat += "0";
+    	}
+    	newFormat += (date + "-");
+    	return newFormat;
     }
 
 	@Override
