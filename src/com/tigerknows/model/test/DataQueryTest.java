@@ -660,7 +660,7 @@ public class DataQueryTest {
         return data;
     }
 
-    protected static XMap launchHotelPOI(String name) {
+    public static XMap launchHotelPOI(String name) {
         XMap data = launchPOI(name);
         data.put(Hotel.FIELD_UUID, "FIELD_UUID");
         data.put(Hotel.FIELD_SOURCE, "FIELD_SOURCE");
@@ -688,7 +688,7 @@ public class DataQueryTest {
         return data;
     }
 
-    protected static XMap launchRoomType(int order) {
+    public static XMap launchRoomType(int order) {
         XMap data = new XMap();
         data.put(RoomType.FIELD_ROOM_ID, "168");
         data.put(RoomType.FIELD_RATEPLAN_ID, "168");
