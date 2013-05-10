@@ -800,29 +800,10 @@ public class TrafficModel extends XMapData {
             title = null;
             lengthStr = null;
             
-            if (this.data.containsKey(FIELD_DESCRIPTION)) {
-                description = this.data.getString(FIELD_DESCRIPTION);
-            }
-            
-            if (this.data.containsKey(FIELD_LENGTH)) {
-                length = (int)this.data.getInt(FIELD_LENGTH);
-            }
-
-            XArray<XMap> xarray;
-            if (this.data.containsKey(FIELD_STEP_LIST)) {
-                xarray = (XArray<XMap>)this.data.getXArray(FIELD_STEP_LIST);
-                int size = xarray.size();
-                XMap xmap;
-                this.stepList = new ArrayList<Step>(size);
-                for(int i = 0; i < size; i++) {
-                    xmap = (XMap)xarray.get(i);
-                    this.stepList.add(new Step(xmap));
-                }
-            }
-            
-            if (this.data.containsKey(FIELD_START_OUT_ORIENTATION)) {
-                startOutOrientation = this.data.getString(FIELD_START_OUT_ORIENTATION);
-            }
+            description = getStringFromData(FIELD_DESCRIPTION, reset ? null : description);
+            length = (int)getLongFromData(FIELD_LENGTH, reset ? 0 : length);
+            stepList = getListFromData(FIELD_STEP_LIST, Step.Initializer, reset ? null : stepList);
+            startOutOrientation = getStringFromData(FIELD_START_OUT_ORIENTATION, reset ? null : startOutOrientation);
             
         }
         
@@ -885,7 +866,9 @@ public class TrafficModel extends XMapData {
             this.storeType = storeType;
             this.parentId = parentId;
             ContentValues values = new ContentValues();
-            values.put(Tigerknows.TransitPlan.TIMES, stepList.size());
+            if (stepList != null) {
+                values.put(Tigerknows.TransitPlan.TIMES, stepList.size());
+            }
             values.put(Tigerknows.TransitPlan.TOTAL_LENGTH, length);
             values.put(Tigerknows.TransitPlan.TYPE, type);
             Uri uri = start.writeToDatabases(context, -1, Tigerknows.STORE_TYPE_OTHER);

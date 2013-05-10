@@ -142,6 +142,7 @@ import com.tigerknows.ui.discover.YanchuDetailFragment;
 import com.tigerknows.ui.discover.ZhanlanDetailFragment;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.HotelOrderCreditFragment;
+import com.tigerknows.ui.hotel.HotelOrderListFragment;
 import com.tigerknows.ui.hotel.HotelOrderWriteFragment;
 import com.tigerknows.ui.hotel.HotelSeveninnRegistFragment;
 import com.tigerknows.ui.hotel.PickLocationFragment;
@@ -3066,6 +3067,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private HotelOrderCreditFragment mHotelOrderCreditFragment;
     private HotelSeveninnRegistFragment mHotelSeveninnRegistFragment;
     
+    private HotelOrderListFragment mHotelOrderListFragment;
+    
     public BaseFragment getFragment(int id) {
         BaseFragment baseFragment = null;
 
@@ -3190,9 +3193,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             case R.id.view_hotel_credit_assure:
                 baseFragment = getHotelOrderCreditFragment();
                 break;
-            
+
             case R.id.view_hotel_seveninn_regist:
             	baseFragment = getHotelSeveninnRegistFragment();
+            	break;
+            	
+            case R.id.view_hotel_order_list:
+            	baseFragment = getHotelOrderListFragment();
             	break;
                 
             default:
@@ -3611,7 +3618,21 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             return mHotelSeveninnRegistFragment;
         }
-    }    // TODO: get fragment end
+    }
+
+    public HotelOrderListFragment getHotelOrderListFragment() {
+        synchronized (mUILock) {
+            if (mHotelOrderListFragment == null) {
+            	HotelOrderListFragment fragment = new HotelOrderListFragment(Sphinx.this);
+                fragment.setId(R.id.view_hotel_order_list);
+                fragment.onCreate(null);
+                mHotelOrderListFragment = fragment;
+            }
+            return mHotelOrderListFragment;
+        }
+    }
+    
+    // TODO: get fragment end
 
     // TODO: my location begin    
     private boolean mPreventShowChangeMyLocationDialog = false;
