@@ -86,7 +86,6 @@ public class Shangjia extends BaseData implements Parcelable {
 
     public Shangjia (XMap data) throws APIException {
         super(data);
-        init(data);
         
         synchronized (shangjiaList) {
 
@@ -101,31 +100,25 @@ public class Shangjia extends BaseData implements Parcelable {
         }
     }
     
-    public void init(XMap data) throws APIException {
-        super.init(data);
-        if (this.data.containsKey(FIELD_SOURCE)) {
-            this.source = this.data.getInt(FIELD_SOURCE);
+    public void init(XMap data, boolean reset) throws APIException {
+        super.init(data, reset);
+        this.source = getLongFromData(FIELD_SOURCE, reset ? 0 : this.source);
+        this.serviceTel = getStringFromData(FIELD_SERVICE_TEL, reset ? null : this.serviceTel);
+        byte[] bytes = getBytesFromData(FIELD_MARKER, null);
+        if (bytes != null) {
+            this.marker = new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+        } else if (reset) {
+            this.marker = null;
         }
-        if (this.data.containsKey(FIELD_SERVICE_TEL)) {
-            this.serviceTel = this.data.getString(FIELD_SERVICE_TEL);
+        this.url = getStringFromData(FIELD_URL, reset ? null : this.url);
+        this.message = getStringFromData(FIELD_MESSAGE, reset ? null : this.message);
+        bytes = getBytesFromData(FIELD_LOGO, null);
+        if (bytes != null) {
+            this.logo = new BitmapDrawable(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
+        } else if (reset) {
+            this.logo = null;
         }
-        if (this.data.containsKey(FIELD_MARKER)) {
-            byte[] bitmap = this.data.getBytes(FIELD_MARKER);
-            this.marker = new BitmapDrawable(BitmapFactory.decodeByteArray(bitmap, 0, bitmap.length));
-        }
-        if (this.data.containsKey(FIELD_URL)) {
-            this.url = this.data.getString(FIELD_URL);
-        }
-        if (this.data.containsKey(FIELD_MESSAGE)) {
-            this.message = this.data.getString(FIELD_MESSAGE);
-        }
-        if (this.data.containsKey(FIELD_LOGO)) {
-            byte[] bitmap = this.data.getBytes(FIELD_LOGO);
-            this.logo = new BitmapDrawable(BitmapFactory.decodeByteArray(bitmap, 0, bitmap.length));
-        }
-        if (this.data.containsKey(FIELD_NAME)) {
-            this.name = this.data.getString(FIELD_NAME);
-        }
+        this.name = getStringFromData(FIELD_NAME, reset ? null : this.name);
     }
 
     public static final Parcelable.Creator<Shangjia> CREATOR
@@ -199,7 +192,7 @@ public class Shangjia extends BaseData implements Parcelable {
                     XArray<XMap> xarray = (XArray<XMap>)ByteUtil.byteToXObject(Utility.readFileToByte(fis));
                     for(int i = 0, size = xarray.size(); i < size; i++) {
                         Shangjia shangjia = new Shangjia();
-                        shangjia.init(xarray.get(i));
+                        shangjia.init(xarray.get(i), true);
                         shangjiaList.add(shangjia);
                     }
                 } catch (Exception e) {
@@ -234,7 +227,7 @@ public class Shangjia extends BaseData implements Parcelable {
                     xmap.put(FIELD_NAME, sphinx.getString(R.string.wowotuan_name));
                     
                     Shangjia shangjia = new Shangjia();
-                    shangjia.init(xmap);
+                    shangjia.init(xmap, true);
                     shangjiaList.add(shangjia);
                 }
                 
@@ -253,7 +246,7 @@ public class Shangjia extends BaseData implements Parcelable {
                     xmap.put(FIELD_NAME, sphinx.getString(R.string.nuomi_name));
                     
                     Shangjia shangjia = new Shangjia();
-                    shangjia.init(xmap);
+                    shangjia.init(xmap, true);
                     shangjiaList.add(shangjia);
                 }
             } catch (APIException e) {
@@ -346,4 +339,12 @@ public class Shangjia extends BaseData implements Parcelable {
     public String getName() {
         return name;
     }
+    
+    public static XMapInitializer<Shangjia> Initializer = new XMapInitializer<Shangjia>() {
+
+        @Override
+        public Shangjia init(XMap data) throws APIException {
+            return new Shangjia(data);
+        }
+    };
 }

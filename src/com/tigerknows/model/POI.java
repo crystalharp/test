@@ -481,7 +481,7 @@ public class POI extends BaseData {
     public void updateData(Context context, XMap data) {
         try {
             BaseData baseData = checkStore(context, storeType, -1, false);
-            init(data);
+            init(data, true);
             if (baseData != null) {
                 try {
                     ContentValues values = new ContentValues();
@@ -750,12 +750,11 @@ public class POI extends BaseData {
 
     public POI (XMap data) throws APIException {
         super(data);
-        init(data);
     }
     
     @SuppressWarnings("unchecked")
-    public void init(XMap data) throws APIException {
-        super.init(data);
+    public void init(XMap data, boolean reset) throws APIException {
+        super.init(data, reset);
 
         if (this.data.containsKey(FIELD_UUID)) {
             this.uuid = this.data.getString(FIELD_UUID);
@@ -1197,7 +1196,7 @@ public class POI extends BaseData {
                 if (version == 13) {
                     if (dataBytes != null && dataBytes.length > 0) {
                         try {
-                            poi.init((XMap) ByteUtil.byteToXObject(dataBytes));
+                            poi.init((XMap) ByteUtil.byteToXObject(dataBytes), true);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -1264,7 +1263,7 @@ public class POI extends BaseData {
             count = SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
         } else {
             try {
-                init(getData());
+                init(getData(), false);
             } catch (APIException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();

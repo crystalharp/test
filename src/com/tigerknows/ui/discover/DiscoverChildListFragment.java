@@ -694,7 +694,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
 
     	//Loop through the changci list to get the maximum possible width 
         List<Changci> list = yingxun.getChangciList();
-        int size = list.size();
+        int size = (list != null ? list.size() : 0);
         for(int k = 0;k < size; k++) {
 
         	// We only care about the current changci option for the yingxun
@@ -741,7 +741,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
 
     	List<Changci> list = yingxun.getChangciList();
         int RESOURCE_ID = R.layout.discover_changci_list_item;
-        int size = list.size();
+        int size = (list != null ? list.size() : 0);
         int option = yingxun.getChangciOption();
         int newvisibleChangciCount = 0;
         
@@ -830,7 +830,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         int changciListItemWidth = getChangciListItemWidth(yingxun, layoutInflater, parent);
         
         List<Changci> list = yingxun.getChangciList();
-        int size = list.size();
+        int size = (list != null ? list.size() : 0);
         int colums = (Globals.g_metrics.widthPixels-Util.dip2px(Globals.g_metrics.density, 24))/changciListItemWidth;
         int rows = size/colums + (size%colums == 0 ? 0 : 1);
         int viewChildCount = parent.getChildCount();

@@ -59,7 +59,35 @@ public class MyCommentListFragment extends BaseFragment {
     private DataQuery mDataQuery;
     private List<Comment> mCommentArrayList = new ArrayList<Comment>();
     private CommentAdapter mCommentAdapter;
-    
+    private View.OnClickListener mClickPOI = new View.OnClickListener() {
+        
+        @Override
+        public void onClick(View view) {
+            int position = (Integer) view.getTag();
+            Comment comment = mCommentArrayList.get(position);
+            mActionLog.addAction(mActionTag +  ActionLog.MyCommentPOI, position, comment.getPOIName());
+            if (comment.getPOIStatus() >= 0) {
+                POI poi = comment.getPOI();
+                if (poi.getPosition() != null) {
+                    mSphinx.getPOIDetailFragment().setData(poi);
+                    mSphinx.showView(R.id.view_poi_detail);
+                } else {
+                    Hashtable<String, String> criteria = new Hashtable<String, String>();
+                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
+                    criteria.put(DataOperation.SERVER_PARAMETER_SUB_DATA_TYPE, DataOperation.SUB_DATA_TYPE_POI);
+                    criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
+                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);
+                    DataOperation poiQuery = new DataOperation(mSphinx);
+                    poiQuery.setup(criteria, Integer.parseInt(comment.getPoiCityId()), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
+                    mSphinx.queryStart(poiQuery);
+                }
+            } else {
+                Utility.showNormalDialog(mSphinx, 
+                        mSphinx.getString(R.string.poi_invalid));
+            }
+        }
+    };
     
     private Runnable mTurnPageRun = new Runnable() {
         
@@ -191,7 +219,7 @@ public class MyCommentListFragment extends BaseFragment {
                 if (commentnew != null) {
                     try {
                         commentnew.setData(null);
-                        comment.init(commentnew.getData());
+                        comment.init(commentnew.getData(), true);
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -230,32 +258,8 @@ public class MyCommentListFragment extends BaseFragment {
                 final Comment comment = getItem(position);
                 
                 poiNameTxv.setText(comment.getPOIName());
-                poiNameTxv.setOnClickListener(new View.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(View arg0) {
-                        mActionLog.addAction(mActionTag +  ActionLog.MyCommentPOI, position, comment.getPOIName());
-                        if (comment.getPOIStatus() >= 0) {
-                            POI poi = comment.getPOI();
-                            if (poi.getPosition() != null) {
-                                mSphinx.getPOIDetailFragment().setData(poi);
-                                mSphinx.showView(R.id.view_poi_detail);
-                            } else {
-                                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                                criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
-                                criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                                criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
-                                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);
-                                DataOperation poiQuery = new DataOperation(mSphinx);
-                                poiQuery.setup(criteria, Integer.parseInt(comment.getPoiCityId()), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
-                                mSphinx.queryStart(poiQuery);
-                            }
-                        } else {
-                            Utility.showNormalDialog(mSphinx, 
-                                    mSphinx.getString(R.string.poi_invalid));
-                        }
-                    }
-                });
+                poiNameTxv.setTag(position);
+                poiNameTxv.setOnClickListener(mClickPOI);
                 
                 float grade = comment.getGrade()/2.0f;
                 gradeRtb.setRating(grade);
@@ -313,7 +317,7 @@ public class MyCommentListFragment extends BaseFragment {
                 String uuid = commentPOI.getUUID();
                 if (uuid != null && uuid.equals(poi.getUUID())) {
                     try {
-                        commentPOI.init(poi.getData());
+                        commentPOI.init(poi.getData(), false);
                         commentPOI.setMyComment(comment);
                         mSphinx.getPOIDetailFragment().setData(commentPOI);
                         mSphinx.showView(R.id.view_poi_detail);

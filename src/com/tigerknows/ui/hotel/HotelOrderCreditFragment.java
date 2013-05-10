@@ -3,6 +3,8 @@
  */
 package com.tigerknows.ui.hotel;
 
+import java.util.Calendar;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +35,9 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     private Button mCreditCertTypeBtn;
     private EditText mCreditCertCodeEdt;
     private Button mCreditConfirmBtn;
+    
+    private double mSumPrice;
+    private Calendar mDate;
     
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -91,10 +96,18 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         case R.id.credit_cert_type_btn:
         	break;
         case R.id.credit_confirm_btn:
+        	mSphinx.getHotelOrderWriteFragment().setCredit(null);
         	break;
         default:
             break;
         }
     }
+
+	public void setData(double sumPrice, Calendar date) {
+		mSumPrice = sumPrice;
+		mDate = date;
+		
+		//TODO 
+	}
     
 }
