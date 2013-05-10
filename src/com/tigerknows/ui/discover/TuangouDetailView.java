@@ -728,7 +728,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             DataOperation dataOperation = new DataOperation(mSphinx);
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_DINGDAN);
-            criteria.put(DataOperation.SERVER_PARAMETER_ORDER_TYPE, DataOperation.ORDER_TYPE_TUANGUO);
+            criteria.put(DataOperation.SERVER_PARAMETER_ORDER_TYPE, DataOperation.ORDER_TYPE_TUANGOU);
             criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
             criteria.put(DataOperation.SERVER_PARAMETER_ENTITY, s.toString());
             dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
