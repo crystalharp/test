@@ -81,6 +81,13 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private String mMobile;
     private long mNeedCreditAssure = 0;
     private long mTypeCreditAssure = 0;
+    private String mCreditCardNo;
+    private String mVerifyCode;
+    private String mValidYear;
+    private String mValidMonth;
+    private String mCardHoldName;
+    private String mIdCardType;
+    private String mIdCardNo;
     
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -149,11 +156,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             break;
         case R.id.submit_order_btn:
         	if (mNeedCreditAssure != 0) {
-        		//mSphinx.getHotelOrderCreditFragment().setData(0, Calendar.getInstance());
-        		//mSphinx.showView(R.id.view_hotel_credit_assure);
-        		Toast.makeText(mContext, "目前暂不支持信用卡担保功能", Toast.LENGTH_LONG).show();
+        		mSphinx.getHotelOrderCreditFragment().setData(mTotalPrice, Calendar.getInstance());
+        		mSphinx.showView(R.id.view_hotel_credit_assure);
+        		//Toast.makeText(mContext, "目前暂不支持信用卡担保功能", Toast.LENGTH_LONG).show();
         	} else {
-        		submit();
+        		submit(false);
         	}
             break;
         default:
@@ -271,7 +278,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         });        
     }
 
-    public void submit() {
+    public void submit(boolean HasCreditInfo) {
     	DataOperation dataOperation = new DataOperation(mSphinx);
     	Hashtable<String, String> criteria = new Hashtable<String, String>();
     	criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DINGDAN);
@@ -290,6 +297,15 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	criteria.put(DataOperation.SERVER_PARAMETER_TOTAL_PRICE, mTotalPrice);
     	criteria.put(DataOperation.SERVER_PARAMETER_USERNAME, mUsername);
     	criteria.put(DataOperation.SERVER_PARAMETER_MOBILE, mMobile);
+    	if(HasCreditInfo){
+    		criteria.put(DataOperation.SERVER_PARAMETER_CREDIT_CARD_NO, mCreditCardNo);
+    		criteria.put(DataOperation.SERVER_PARAMETER_VALID_YEAR, mVerifyCode);
+    		criteria.put(DataOperation.SERVER_PARAMETER_VALID_YEAR, mValidYear);
+    		criteria.put(DataOperation.SERVER_PARAMETER_VALID_MONTH, mValidMonth);
+    		criteria.put(DataOperation.SERVER_PARAMETER_CARD_HOLDER_NAME, mCardHoldName);
+    		criteria.put(DataOperation.SERVER_PARAMETER_IDCARD_TYPE, mIdCardType);
+    		criteria.put(DataOperation.SERVER_PARAMETER_IDCARD_NO, mIdCardNo);
+    	}
     	dataOperation.setup(criteria);
     	mSphinx.queryStart(dataOperation);
     }
@@ -336,8 +352,15 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	}
 	}
         
-	public void setCredit(Hashtable<String, String> criteria) {
-		//TODO
-		submit();
+	public void setCredit(List<String> credit) {
+		mCreditCardNo = credit.get(0);
+		mVerifyCode = credit.get(1);
+		mValidYear = credit.get(2);
+		mValidMonth = credit.get(3);
+		mCardHoldName = credit.get(4);
+		mIdCardType = credit.get(5);
+		
+		mIdCardNo = credit.get(6);
+		submit(true);
 	}
 }

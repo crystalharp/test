@@ -194,7 +194,6 @@ public class DataOperation extends BaseQuery {
                 			SERVER_PARAMETER_MOBILE
                 	});
                 	addParameter(new String[]{
-                		    SERVER_PARAMETER_MOBILE,
                 		    SERVER_PARAMETER_CREDIT_CARD_NO,
                 		    SERVER_PARAMETER_VERIFY_CODE,
                 		    SERVER_PARAMETER_VALID_YEAR,
