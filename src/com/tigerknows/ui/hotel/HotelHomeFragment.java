@@ -54,7 +54,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
 
     static final String TAG = "HotelHomeFragment";
     
-    static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     private Button mCityBtn;
     private DateWidget mCheckInDat;

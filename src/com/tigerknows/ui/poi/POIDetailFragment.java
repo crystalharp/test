@@ -5,6 +5,8 @@
 package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -43,6 +45,7 @@ import android.widget.TextView;
 
 
 import com.decarta.Globals;
+import com.decarta.android.exception.APIException;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -59,7 +62,13 @@ import com.tigerknows.model.DataOperation.DianyingQueryResponse;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
+import com.tigerknows.model.Hotel;
+import com.tigerknows.model.Hotel.HotelTKDrawable;
+import com.tigerknows.model.Hotel.RoomType;
+import com.tigerknows.model.HotelOrder;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.ProxyQuery;
+import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Tuangou;
@@ -81,6 +90,8 @@ import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.hotel.HotelHomeFragment;
+import com.tigerknows.ui.hotel.HotelOrderWriteFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ShareTextUtil;
 import com.tigerknows.util.WidgetUtils;
@@ -98,7 +109,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     public POIDetailFragment(Sphinx sphinx) {
         super(sphinx);
-        // TODO Auto-generated constructor stub
     }
     
     private ScrollView mBodyScv;
@@ -169,6 +179,22 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     private LinearLayout mDynamicDianyingListView;
     
     private LinearLayout mDynamicDianyingMoreView;
+    
+    //TODO:删掉
+    Calendar checkin = Calendar.getInstance();
+    Calendar checkout = Calendar.getInstance();
+    RoomType mClickedRoomType;
+    Button mClickedBookBtn;
+    
+    private LinearLayout mDynamicHotelUpperView;
+    
+//    private LinearLayout mDynamicHotelLowerView;
+    
+    private LinearLayout mDynamicRoomTypeListView;
+    
+//    private LinearLayout mDynamicHotelChooseTimeView;
+    
+    private LinearLayout mDynamicRoomTypeMoreView;
     
     private boolean mShowDynamicDianyingMoreView = true;
     
@@ -359,8 +385,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             
             @Override
             public void onAnimationRepeat(Animation arg0) {
-                // TODO Auto-generated method stub
-                
             }
             
             @Override
@@ -375,6 +399,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mIcAPOI = resources.getDrawable(R.drawable.ic_a_poi);
         mDistance = mSphinx.getString(R.string.distance);
         mDistanceA = mSphinx.getString(R.string.distanceA);
+        
+        //TODO:以后不要了
+        checkin.setTimeInMillis(System.currentTimeMillis());
+        checkout.setTimeInMillis(System.currentTimeMillis());
+        checkout.add(Calendar.DAY_OF_YEAR, 1);
         return mRootView;
     }
 
@@ -520,6 +549,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         refreshDynamicPOI(poi, mDynamicYanchuListView, BaseQuery.DATA_TYPE_YANCHU);
         refreshDynamicPOI(poi, mDynamicZhanlanListView, BaseQuery.DATA_TYPE_ZHANLAN);
         refreshDynamicDinaying(poi);
+        refreshDynamicHotel(poi);
     }
     
     /**
@@ -564,6 +594,86 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
+    //TODO:移走
+    BaseQuery buildHotelQuery(Calendar checkin, Calendar checkout, POI poi){
+        String checkinTime = HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkin.getTime());
+        String checkoutTime = HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkout.getTime());
+        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
+        criteria.put(DataOperation.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
+        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
+        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Hotel.NEED_FILED);
+        criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN, checkinTime);
+        criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT, checkoutTime);
+        DataOperation dataOpration = new DataOperation(mSphinx);
+        dataOpration.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId());
+        return dataOpration;
+    }
+    
+    BaseQuery buildRoomTypeDynamicQuery(String hotelId, String roomId, String pkgId, Calendar checkin, Calendar checkout){
+        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        criteria.put(ProxyQuery.SERVER_PARAMETER_CHECKIN_DATE, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkin.getTime()));
+        criteria.put(ProxyQuery.SERVER_PARAMETER_CHECKOUT_DATE, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkout.getTime()));
+        criteria.put(ProxyQuery.SERVER_PARAMETER_HOTELID, hotelId);
+        criteria.put(ProxyQuery.SERVER_PARAMETER_ROOMID, roomId);
+        criteria.put(ProxyQuery.SERVER_PARAMETER_ROOM_TYPE_TAOCANID, pkgId);
+        criteria.put(ProxyQuery.SERVER_PARAMETER_TASK, "1");
+        ProxyQuery query = new ProxyQuery(mSphinx);
+        return query;
+    }
+    
+    /**
+     * 刷新动态酒店的显示区域（仅酒店类POI）
+     * @param poi
+     */
+    void refreshDynamicHotel(POI poi) {
+       //显示 
+        if (poi == null || poi.getHotel() == null) {
+            return;
+        }
+        
+        List<RoomType> list = poi.getHotel().getRoomTypeList();
+        int size = (list != null? list.size() : 0);
+        if (size > 0) {
+            mDynamicHotelUpperView.setVisibility(View.VISIBLE);
+        } else {
+            mDynamicHotelUpperView.setVisibility(View.GONE);
+            return;
+        }
+        
+        int viewCount = initDynamicPOIListView(list, mDynamicRoomTypeListView, R.layout.poi_dynamic_hotel_room_item);
+        
+        int childCount = mDynamicRoomTypeListView.getChildCount();
+        if (size > SHOW_DYNAMIC_YINGXUN_MAX) {
+            for(int i = SHOW_DYNAMIC_YINGXUN_MAX; i < childCount; i++) {
+                mDynamicRoomTypeListView.getChildAt(i).setVisibility(View.GONE);
+            }
+            mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
+        } else {
+            mDynamicRoomTypeMoreView.setVisibility(View.GONE);
+        }
+        
+        for(int i = 0; i < viewCount; i++) {
+            View child = mDynamicRoomTypeListView.getChildAt(i);
+            if (i == (viewCount-1) && mDynamicRoomTypeMoreView.getVisibility() == View.GONE) {
+                child.setBackgroundResource(R.drawable.list_footer);
+                child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
+            } else {
+                child.setBackgroundResource(R.drawable.list_middle);
+                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
+            }
+        }
+        
+        //TODO:下面的简介和图片, 延迟做
+//        View a = mLayoutInflater.inflate(R.layout.poi_dynamic_hotel_below_feature, null);
+//        mDynamicHotelLowerView.addView(a);
+//        
+//        ImageView hotelImage = (ImageView)a.findViewById(R.id.icon_imv);
+//        TextView hotelSummary = (TextView)a.findViewById(R.id.short_summary);
+//        
+//        List<HotelTKDrawable> b = poi.getHotel().getHotelTKDrawableList();
+//        hotelSummary.setText(poi.getHotel().get);
+    }
     /**
      * 刷新动态电影的显示区域（仅电影院类POI）
      * @param poi
@@ -633,6 +743,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     initDynamicPOIItemView((DynamicPOI)data, child);
                 } else if (data instanceof Dianying) {
                     initDianyingItemView((Dianying)data, child);
+                } else if (data instanceof RoomType) {
+                    initRoomTypeItemView((RoomType)data, child);
                 }
                 viewCount++;
             }
@@ -686,6 +798,50 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         gradeTxv.setText(String.valueOf(data.getRank()));
         typeTxv.setText(data.getTag());
         lengthTxv.setText(data.getLength());
+    }
+    
+    //TODO:移走
+    /**
+     * 初始化房型列表项内容
+     * @param data
+     * @param view
+     */
+    void initRoomTypeItemView(RoomType data, View view){
+        TextView priceTxv = (TextView) view.findViewById(R.id.price_txv);
+        TextView roomTypeTxv = (TextView) view.findViewById(R.id.room_type_txv);
+        TextView roomDetailTxv = (TextView) view.findViewById(R.id.room_detail_txv);
+        Button bookBtn = (Button) view.findViewById(R.id.book_btn);
+        priceTxv.setText(mSphinx.getString(R.string.price_show, data.getPrice()));
+        roomTypeTxv.setText(data.getRoomType());
+        roomDetailTxv.setText(data.getBedType() + " " + data.getBreakfast() + " " + data.getNetService()
+                + " " + data.getFloor() + " " + data.getArea());
+        if (data.getCanReserve() == 0) {
+            bookBtn.setText(mSphinx.getString(R.string.hotel_btn_sold_out));
+            bookBtn.setClickable(false);
+        } else {
+            bookBtn.setText(mSphinx.getString(R.string.hotel_btn_book));
+            bookBtn.setClickable(true);
+            bookBtn.setOnClickListener(new roomTypeClickListener(data));
+        }
+    }
+    
+    //TODO:移走
+    class roomTypeClickListener implements View.OnClickListener{
+
+        RoomType mData;
+        public roomTypeClickListener(RoomType data) {
+            mData = data;
+        }
+        @Override
+        public void onClick(View v) {
+            mClickedBookBtn = (Button)v;
+            mClickedRoomType = mData;
+            List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
+            baseQueryList.add(buildRoomTypeDynamicQuery(mPOI.getHotel().getUuid(), mData.getRoomId(), mData.getRateplanId(), checkin, checkout));
+            mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
+            mBaseQuerying = baseQueryList;
+        }
+        
     }
     
     public void refreshStamp() {
@@ -814,6 +970,12 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mDynamicDianyingView = (LinearLayout) mRootView.findViewById(R.id.dynamic_dianying_view);
         mDynamicDianyingListView = (LinearLayout) mRootView.findViewById(R.id.dynamic_dianying_list_view);
         mDynamicDianyingMoreView = (LinearLayout) mRootView.findViewById(R.id.dynamic_dianying_more_view);
+        
+        mDynamicHotelUpperView = (LinearLayout) mRootView.findViewById(R.id.dynamic_hotel_view); 
+//        mDynamicHotelChooseTimeView = (LinearLayout) mRootView.findViewById(R.id.dynamic_hotel_choosetime_view);
+//        mDynamicHotelLowerView = (LinearLayout) mRootView.findViewById(R.id.layout_below_feature);
+        mDynamicRoomTypeListView = (LinearLayout) mRootView.findViewById(R.id.dynamic_roomtype_list_view);
+        mDynamicRoomTypeMoreView = (LinearLayout) mRootView.findViewById(R.id.dynamic_roomtype_more_view);
     }
 
     protected void setListener() {
@@ -1099,6 +1261,21 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             
             refreshDetail();
             refreshComment();
+            
+            //FIXME:如何判断？
+            //判断是否存在hotel信息
+            boolean isContainHotel = false;
+            for (DynamicPOI iter : list) {
+                if (iter.getType().equals("65537")) {
+                    isContainHotel = true;
+                    break;
+                }
+            }
+            if (isContainHotel) {
+                //如果存在，则发起hotel信息查询
+                baseQueryList.add(buildHotelQuery(checkin, checkout, poi));
+            }
+            
             if (baseQueryList.isEmpty() == false) {
                 mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
                 mBaseQuerying = baseQueryList;
@@ -1391,10 +1568,19 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     }
                     POI onlinePOI = ((POIQueryResponse)response).getPOI();
                     if (onlinePOI != null && onlinePOI.getUUID() != null && onlinePOI.getUUID().equals(poi.getUUID())) {
-                        poi.updateData(mSphinx, onlinePOI.getData());
-                        poi.setFrom(POI.FROM_ONLINE);
-                        refreshDetail();
-                        refreshComment();
+                        if (onlinePOI.getType() == 1) {
+                            try {
+                                poi.init(onlinePOI.getData(), false);
+                                refreshDynamicHotel(poi);
+                            } catch (APIException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            poi.updateData(mSphinx, onlinePOI.getData());
+                            poi.setFrom(POI.FROM_ONLINE);
+                            refreshDetail();
+                            refreshComment();
+                        }
                     }
                     
                 // 查询团购的结果
@@ -1454,6 +1640,27 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     dianying.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY&Yingxun.Changci.OPTION_DAY_TOMORROW&Yingxun.Changci.OPTION_DAY_AFTER_TOMORROW);
                     mSphinx.showView(R.id.view_discover_dianying_detail);
                     mSphinx.getDianyingDetailFragment().setData(list, 0, null);
+                }
+                
+                //TODO:看情况移走
+            } else if (baseQuery instanceof DataOperation) {
+                if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
+                    return;
+                }
+                //查询房态
+                if (response instanceof RoomTypeDynamic) {
+                    RoomTypeDynamic roomInfo = ((RoomTypeDynamic)response);
+                    if (roomInfo.getNum() > 0){
+                        //如果有房，跳转
+                        //TODO:使用实际参数
+                        mSphinx.getHotelOrderWriteFragment().setData(poi, mClickedRoomType, roomInfo, checkin, checkout);
+                        mSphinx.showView(R.id.view_hotel_order_write);
+                    } else {
+                        //更新按钮状态
+                        mClickedBookBtn.setText(mSphinx.getString(R.string.hotel_btn_sold_out));
+                        mClickedBookBtn.setClickable(false);
+                    }
+                    
                 }
             }
         }
