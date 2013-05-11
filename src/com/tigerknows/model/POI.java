@@ -11,6 +11,7 @@ package com.tigerknows.model;
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.DataQuery.CommentResponse;
@@ -691,7 +692,7 @@ public class POI extends BaseData {
      * @param type
      */
     public void setType(int type) {
-        if (type < 0 || type > 19)
+        if (type < 0 || type > 190000)
             type = 0;
 
         this.type = type;

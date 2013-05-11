@@ -97,11 +97,19 @@ public class DataOperationTest {
         data.put(CommentQueryResponse.FIELD_COMMENT, DataQueryTest.launchDianping("comment"));
         return data;
     }
+    
 
     public static XMap launchPOIQueryResponse() {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
         data.put(POIQueryResponse.FIELD_POI, DataQueryTest.launchPOI("poi"));
+        return data;
+    }
+    
+    public static XMap launchHotelPOIQueryResponse(){
+    	XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        data.put(POIQueryResponse.FIELD_POI, DataQueryTest.launchHotelPOI("HotelPOI"));
         return data;
     }
 

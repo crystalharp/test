@@ -609,6 +609,8 @@ public class DataOperation extends BaseQuery {
                     String subDataType = criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
                     if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                         responseXMap = DataOperationTest.launchPOIQueryResponse();
+                    }else if(SUB_DATA_TYPE_HOTEL.equals(subDataType)){
+                    	responseXMap = DataOperationTest.launchHotelPOIQueryResponse();
                     }
                 } else if (DATA_TYPE_TUANGOU.equals(dataType)) {
                     responseXMap = DataOperationTest.launchTuangouQueryResponse(context);
