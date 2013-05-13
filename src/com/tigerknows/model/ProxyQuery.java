@@ -116,13 +116,13 @@ public class ProxyQuery extends BaseQuery {
 
     public static class RoomTypeDynamic extends Response {
         // 0x02 x_double 房型套餐单价
-        public static final byte FILED_PRICE = 0x02;
+        public static final byte FIELD_PRICE = 0x02;
 
         // 0x03 x_int 可预订数量
-        public static final byte FILED_NUM = 0x03;
+        public static final byte FIELD_NUM = 0x03;
 
         // 0x04 xmap 参见担保规则
-        public static final byte FILED_DANBAO_GUIZE = 0x04;
+        public static final byte FIELD_DANBAO_GUIZE = 0x04;
 
         private double price;
 
@@ -145,20 +145,20 @@ public class ProxyQuery extends BaseQuery {
         public RoomTypeDynamic(XMap data) throws APIException {
             super(data);
 
-            this.price = getDoubleFromData(FILED_PRICE);
-            this.num = getLongFromData(FILED_NUM);
-            this.danbaoGuize = getObjectFromData(FILED_DANBAO_GUIZE, DanbaoGuize.Initializer);
+            this.price = getDoubleFromData(FIELD_PRICE);
+            this.num = getLongFromData(FIELD_NUM);
+            this.danbaoGuize = getObjectFromData(FIELD_DANBAO_GUIZE, DanbaoGuize.Initializer);
         }
 
         public static class DanbaoGuize extends XMapData {
             // 0x01 x_int 担保的起始房间数量T，当订房数量 >= T，需要担保
-            public static final byte FILED_NUM = 0x01;
+            public static final byte FIELD_NUM = 0x01;
 
             // 0x02 x_array<x_map> 订房数量 < T时，展示给用户的保留时间选项列表，参见保留时间选项
-            public static final byte FILED_NUM_LESS = 0x02;
+            public static final byte FIELD_NUM_LESS = 0x02;
 
             // 0x03 x_array<x_map> 订房数量 >= T时，展示给用户的保留时间选项列表，参见保留时间选项
-            public static final byte FILED_NUM_GREATER = 0x03;
+            public static final byte FIELD_NUM_GREATER = 0x03;
 
             private long num;
 
@@ -180,34 +180,40 @@ public class ProxyQuery extends BaseQuery {
 
             public DanbaoGuize(XMap data) throws APIException {
             	super(data);
-                num = getLongFromData(FILED_NUM);
-                lessList = getListFromData(FILED_NUM_LESS, RetentionTime.Initializer);
-                greaterList = getListFromData(FILED_NUM_LESS, RetentionTime.Initializer);
+                num = getLongFromData(FIELD_NUM);
+                lessList = getListFromData(FIELD_NUM_LESS, RetentionTime.Initializer);
+                greaterList = getListFromData(FIELD_NUM_LESS, RetentionTime.Initializer);
             }
 
             public static class RetentionTime extends XMapData {
-                // 0x01 x_string 保留时间（保留到XX点），格式YYYY-MM-DD hh:mm:ss
-                public static final byte FILED_TIME = 0x01;
+                // 0x01 x_string 保留时间（保留到XX点），格式“保留到hh:mm”或“保留到次日hh:mm”
+                public static final byte FIELD_TIME = 0x01;
 
                 // 0x02 x_int 是否需要信用卡担保的标志：0 - 不需要，1 - 需要
-                public static final byte FILED_NEED = 0x02;
+                public static final byte FIELD_NEED = 0x02;
 
                 public static final int NEED_NO = 0;
 
                 public static final int NEED_YES = 1;
 
                 // 0x03 x_int 担保类型（0x02为1时有效）：1 - 首晚担保，2 - 全额担保
-                public static final byte FILED_TYPE = 0x03;
+                public static final byte FIELD_TYPE = 0x03;
 
                 public static final int TYPE_FIRST_NIGHT = 1;
 
                 public static final int TYPE_ALL = 2;
+                
+                // 0x04 x_string 保留时间点所在的日期和时间，格式为YYYY-MM-DD hh:mm:ss，用于数据提交
+                
+                public static final byte FIELD_TIME_DETAIL = 0x04;
 
                 private String time;
 
                 private long need;
 
                 private long type;
+                
+                private String timeDetail;
 
                 public String getTime() {
                     return time;
@@ -220,12 +226,17 @@ public class ProxyQuery extends BaseQuery {
                 public long getType() {
                     return type;
                 }
+                
+                public String getTimeDetail(){
+                	return timeDetail;
+                }
 
                 public RetentionTime(XMap data) throws APIException {
                 	super(data);
-                    time = getStringFromData(FILED_TIME);
-                    need = getLongFromData(FILED_NEED);
-                    type = getLongFromData(FILED_TYPE);
+                    time = getStringFromData(FIELD_TIME);
+                    need = getLongFromData(FIELD_NEED);
+                    type = getLongFromData(FIELD_TYPE);
+                    timeDetail = getStringFromData(FIELD_TIME_DETAIL);
                 }
 
                 public static XMapInitializer<RetentionTime> Initializer = new XMapInitializer<RetentionTime>() {

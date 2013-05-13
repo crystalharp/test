@@ -12,33 +12,35 @@ public class ProxyQueryTest {
 
     public static XMap launchRoomTypeDynamicRespnose(Context context) {
         XMap xmap = BaseQueryTest.launchResponse();
-        xmap.put(RoomTypeDynamic.FILED_NUM, 168);
-        xmap.put(RoomTypeDynamic.FILED_PRICE, 168.168);
-        xmap.put(RoomTypeDynamic.FILED_DANBAO_GUIZE, launchDanbaoGuize());
+        xmap.put(RoomTypeDynamic.FIELD_NUM, 168);
+        xmap.put(RoomTypeDynamic.FIELD_PRICE, 168.168);
+        xmap.put(RoomTypeDynamic.FIELD_DANBAO_GUIZE, launchDanbaoGuize());
         return xmap;
     }
     
     public static XMap launchDanbaoGuize() {
         XMap xmap = new XMap();
-        xmap.put(DanbaoGuize.FILED_NUM, 1);
+        xmap.put(DanbaoGuize.FIELD_NUM, 1);
         XArray<XMap> xarray = new XArray<XMap>();
         for(int i = 0; i < 9; i++) {
             xarray.add(launchRetentionTime(i));
         }
-        xmap.put(DanbaoGuize.FILED_NUM_LESS, xarray);
+        xmap.put(DanbaoGuize.FIELD_NUM_LESS, xarray);
         xarray = new XArray<XMap>();
         for(int i = 0; i < 9; i++) {
             xarray.add(launchRetentionTime(i));
         }
-        xmap.put(DanbaoGuize.FILED_NUM_GREATER, xarray);
+        xmap.put(DanbaoGuize.FIELD_NUM_GREATER, xarray);
         return xmap;
     }
 
     public static XMap launchRetentionTime(int i) {
         XMap xmap = new XMap();
-        xmap.put(RetentionTime.FILED_TIME, "9999-13-32 25:61:1"+i);
-        xmap.put(RetentionTime.FILED_NEED, RetentionTime.NEED_YES);
-        xmap.put(RetentionTime.FILED_TYPE, RetentionTime.TYPE_ALL);
+        xmap.put(RetentionTime.FIELD_TIME, "2"+i+"点之前");
+        xmap.put(RetentionTime.FIELD_NEED, RetentionTime.NEED_YES);
+        xmap.put(RetentionTime.FIELD_TYPE, RetentionTime.TYPE_ALL);
+        xmap.put(RetentionTime.FIELD_TIME_DETAIL, "9999-13-32 2"+i+":61:00");
+        
         return xmap;
     }
     
