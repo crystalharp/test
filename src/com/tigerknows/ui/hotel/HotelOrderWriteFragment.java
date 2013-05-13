@@ -10,6 +10,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -44,6 +45,7 @@ import com.tigerknows.model.Response;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.user.ExtValidationEditText;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.StringArrayAdapter;
 
@@ -385,19 +387,31 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	Response response = baseQuery.getResponse();
     	if (response instanceof HotelOrderCreateResponse) {
     		HotelOrderCreateResponse hotelOrderCreateResponse = (HotelOrderCreateResponse) response;
-    		
+    	}
+    	switch(response.getResponseCode()){
+    	case Response.RESPONSE_CODE_OK:
+    		Toast.makeText(mContext, mSphinx.getString(R.string.order_submit_success), Toast.LENGTH_LONG).show();
+    		dismiss();
+    		mSphinx.showView(R.id.view_hotel_order_detail);
+    		break;
+    	case Response.RESPONSE_CODE_HOTEL_ORDER_CREATE_FAILED:
+    		Utility.showNormalDialog(mSphinx,mSphinx.getString(R.string.hotel_network_bad));
+    		break;
+    	case Response.RESPONSE_CODE_HOTEL_NEED_REGIST:
+    		Toast.makeText(mContext, "需要注册酒店会员，目前系统暂不支持此功能", Toast.LENGTH_LONG).show();
+    		break;
     	}
 	}
         
 	public void setCredit(List<String> credit) {
-		this.mCreditCardNo = credit.get(0);
-		this.mVerifyCode = credit.get(1);
-		this.mValidYear = credit.get(2);
-		this.mValidMonth = credit.get(3);
-		this.mCardHoldName = credit.get(4);
-		this.mIdCardType = credit.get(5);
-		this.mIdCardNo = credit.get(6);
-		this.submit(true);
+		mCreditCardNo = credit.get(0);
+		mVerifyCode = credit.get(1);
+		mValidYear = credit.get(2);
+		mValidMonth = credit.get(3);
+		mCardHoldName = credit.get(4);
+		mIdCardType = credit.get(5);
+		mIdCardNo = credit.get(6);
+		submit(true);
 	}
 	
 	public List<RetentionTime> findRTimeByRoomHowmany(long roomhowmany){
