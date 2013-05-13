@@ -37,8 +37,16 @@ public class ProxyQueryTest {
     public static XMap launchRetentionTime(int i) {
         XMap xmap = new XMap();
         xmap.put(RetentionTime.FIELD_TIME, "2"+i+"点之前");
-        xmap.put(RetentionTime.FIELD_NEED, RetentionTime.NEED_YES);
-        xmap.put(RetentionTime.FIELD_TYPE, RetentionTime.TYPE_ALL);
+        if(i < 2){
+        	xmap.put(RetentionTime.FIELD_NEED, RetentionTime.NEED_NO);
+        }else{
+        	xmap.put(RetentionTime.FIELD_NEED, RetentionTime.NEED_YES);
+        	if(i < 4){
+        		xmap.put(RetentionTime.FIELD_TYPE, RetentionTime.TYPE_FIRST_NIGHT);
+        	}else{
+        		xmap.put(RetentionTime.FIELD_TYPE, RetentionTime.TYPE_ALL);
+        	}
+        }
         xmap.put(RetentionTime.FIELD_TIME_DETAIL, "9999-13-32 2"+i+":61:00");
         
         return xmap;

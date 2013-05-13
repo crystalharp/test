@@ -390,15 +390,14 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 	}
         
 	public void setCredit(List<String> credit) {
-		mCreditCardNo = credit.get(0);
-		mVerifyCode = credit.get(1);
-		mValidYear = credit.get(2);
-		mValidMonth = credit.get(3);
-		mCardHoldName = credit.get(4);
-		mIdCardType = credit.get(5);
-		
-		mIdCardNo = credit.get(6);
-		submit(true);
+		this.mCreditCardNo = credit.get(0);
+		this.mVerifyCode = credit.get(1);
+		this.mValidYear = credit.get(2);
+		this.mValidMonth = credit.get(3);
+		this.mCardHoldName = credit.get(4);
+		this.mIdCardType = credit.get(5);
+		this.mIdCardNo = credit.get(6);
+		this.submit(true);
 	}
 	
 	public List<RetentionTime> findRTimeByRoomHowmany(long roomhowmany){
