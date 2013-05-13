@@ -14,7 +14,6 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
-import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.text.TextUtils;
 import android.view.View;
@@ -190,28 +189,23 @@ public class ShareAPI {
         }
         final Sphinx sphinx = (Sphinx)activity;
         final String[] list = activity.getResources().getStringArray(R.array.share);
-        final ResolveInfo resolveInfo = sphinx.getSmsResolveInfo();
         final TKWeixin tkWeixin = TKWeixin.getInstance(activity);
         final List<String> textList = new ArrayList<String>();
         List<Integer> leftCompoundIconList = new ArrayList<Integer>();
-        leftCompoundIconList.add(R.drawable.ic_share_sina);
-        textList.add(list[0]);
-        leftCompoundIconList.add(R.drawable.ic_share_qzone);
-        textList.add(list[1]);
-        if (data instanceof POI) {
-	        leftCompoundIconList.add(R.drawable.ic_share_sina);
-	        textList.add(list[2]);
-	        leftCompoundIconList.add(R.drawable.ic_share_qzone);
-	        textList.add(list[3]);
-        }
         leftCompoundIconList.add(R.drawable.ic_share_sms);
-        textList.add(list[4]);
-        if (resolveInfo != null) {
-            leftCompoundIconList.add(R.drawable.ic_share_mms);
-            textList.add(list[5]);
+        textList.add(list[0]);
+        if (data instanceof POI) {
+	        leftCompoundIconList.add(R.drawable.ic_share_weixin);
+	        textList.add(list[1]);
+	        leftCompoundIconList.add(R.drawable.ic_share_weixin);
+	        textList.add(list[2]);
         }
+        leftCompoundIconList.add(R.drawable.ic_share_sina);
+        textList.add(list[3]);
+        leftCompoundIconList.add(R.drawable.ic_share_qzone);
+        textList.add(list[4]);
         leftCompoundIconList.add(R.drawable.ic_share_more);
-        textList.add(list[6]);
+        textList.add(list[5]);
         int size = leftCompoundIconList.size();
         int[] leftCompoundIconArray = new int[size];
         for(int i = 0; i < size; i++) {
@@ -238,7 +232,28 @@ public class ShareAPI {
             public void onItemClick(AdapterView<?> adapterView, View arg1, int index, long arg3) {
                 actionLog.addAction(actionTag + ActionLog.Share + ActionLog.ListViewItem, index, adapterView.getAdapter().getItem(index));
                 String text = textList.get(index);
+
                 if (list[0].equals(text)) {
+                    String content = ShareTextUtil.makeText(activity, data, ShareTextUtil.SHARE_TYPE_SMS);
+                    Intent intent = new Intent(Intent.ACTION_VIEW);    
+                    intent.putExtra(Intent.EXTRA_TEXT, content);
+                    intent.putExtra("sms_body", content);
+                    intent.setType("vnd.android-dir/mms-sms");  
+                    
+                    try {
+                        activity.startActivity(intent);
+                    } catch (android.content.ActivityNotFoundException ex) {
+                        Toast.makeText(activity, R.string.no_way_to_share_message, Toast.LENGTH_SHORT).show();
+                    }                    
+                } else if (list[1].equals(text) && data instanceof POI) {
+                	if (tkWeixin.isSupportSend()) {
+                	    tkWeixin.sendReq(TKWeixin.makePOIReq(activity, (POI) data), false);
+                	}
+                } else if (list[2].equals(text) && data instanceof POI) {
+                	if (tkWeixin.isSupportTimeline()) {
+                	    tkWeixin.sendReq(TKWeixin.makePOIReq(activity, (POI) data), true);
+                	}          
+                } else if (list[3].equals(text)) {
                     sphinx.snapMapView(new SnapMap() {
                         
                         @Override
@@ -253,59 +268,12 @@ public class ShareAPI {
                         }
                     }, position, mapScene);
                         
-                } else if (list[1].equals(text)) {
-                	Intent intent = new Intent();
+                } else if (list[4].equals(text)) {
+                    Intent intent = new Intent();
                     intent.setClass(activity, QZoneSend.class);
                     intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, ShareTextUtil.makeText(activity, data, ShareTextUtil.SHARE_TYPE_QZONE));
-                    activity.startActivity(intent);
-                    
-                } else if (list[2].equals(text) && data instanceof POI) {
-                	if (tkWeixin.isSupportSend()) {
-                	    tkWeixin.sendReq(TKWeixin.makePOIReq(activity, (POI) data), false);
-                	}
-                } else if (list[3].equals(text) && data instanceof POI) {
-                	if (tkWeixin.isSupportTimeline()) {
-                	    tkWeixin.sendReq(TKWeixin.makePOIReq(activity, (POI) data), true);
-                	}
-                } else if (list[4].equals(text)) {
-                	String content = ShareTextUtil.makeText(activity, data, ShareTextUtil.SHARE_TYPE_SMS);
-                	Intent intent = new Intent(Intent.ACTION_VIEW);    
-                    intent.putExtra(Intent.EXTRA_TEXT, content);
-                    intent.putExtra("sms_body", content);
-                    intent.setType("vnd.android-dir/mms-sms");  
-                    
-                    try {
-                        activity.startActivity(intent);
-                    } catch (android.content.ActivityNotFoundException ex) {
-                        Toast.makeText(activity, R.string.no_way_to_share_message, Toast.LENGTH_SHORT).show();
-                    }
-                        
+                    activity.startActivity(intent);              
                 } else if (list[5].equals(text)) {
-                    sphinx.snapMapView(new SnapMap() {
-                        
-                        @Override
-                        public void finish(Uri uri) {
-                        	String content = ShareTextUtil.makeText(activity, data, ShareTextUtil.SHARE_TYPE_SMS);
-                            Intent intent = new Intent();
-                            intent = new Intent(Intent.ACTION_SEND, Uri.parse("mms://"));
-                            intent.setType("image/png");
-                            intent.putExtra(Intent.EXTRA_TEXT, content);
-                            if(uri != null) {
-                                intent.putExtra(Intent.EXTRA_STREAM, uri);
-                                intent.putExtra("file_name", uri.toString());
-                            }
-                            intent.putExtra("sms_body", content);
-                            intent.putExtra("exit_on_sent", true);
-                            intent.setClassName(resolveInfo.activityInfo.packageName, resolveInfo.activityInfo.name);
-                            try {
-                                activity.startActivity(intent);
-                            } catch (android.content.ActivityNotFoundException ex) {
-                                Toast.makeText(activity, R.string.no_way_to_share_message, Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    }, position, mapScene);
-                            
-                } else if (list[6].equals(text)) {
                     sphinx.snapMapView(new SnapMap() {
                         
                         @Override
