@@ -13,10 +13,12 @@
         android:layout_centerVertical="true"
         android:drawableLeft="@drawable/icon"
         android:gravity="left|center_vertical"
-        android:layout_marginBottom="0dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:drawablePadding="16dp"
         android:background="@color/transparent"
         android:textSize="18sp"
-        android:textStyle="bold"
+        android:textStyle="italic|bold"
         android:text="@string/app_name" />
         
     <ImageView 
@@ -25,9 +27,9 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/btn_category"
         android:layout_centerVertical="true"
-        android:background="@drawable/icon"/>
+        android:background="@drawable/ic_left_arrow_single"/>
     
-    <Button
+    <TextView
         android:id="@+id/btn_sub_category"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -35,7 +37,10 @@
         android:layout_centerVertical="true"
         android:gravity="center_vertical"
         android:text="@string/app_name"
+        android:textColor="@color/black_light"
+        android:textStyle="italic"
+        android:singleLine="true"
         android:background="@color/transparent"
         android:drawableRight="@drawable/btn_left_arrow"/>
-    
+
 </RelativeLayout>
