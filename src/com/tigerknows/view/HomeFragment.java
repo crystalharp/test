@@ -345,11 +345,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mInputBtn.setOnClickListener(this);
         mCityBtn.setOnClickListener(this);
         
-       mTransPaddingView.setOnTouchListener(mDragViewExpanedOnTouchListener);
+       mTransPaddingView.setOnTouchListener(mDragViewExpandOnTouchListener);
        mTransPaddingView.setOnClickListener(mTransPaddingOnClickListener);
        
        mSubCategoryGrid.setOnItemClickListener( mSubCategoryOnClickListener);
-       mSubCategoryGrid.setOnTouchListener(mDragViewExpanedOnTouchListener);
+       mSubCategoryGrid.setOnTouchListener(mDragViewExpandOnTouchListener);
        
     }
     
@@ -471,7 +471,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         	btnCategory.setCompoundDrawables(subCategoryIcon, null, null, null);
         	
         	Button btnSubCategory = (Button) convertView.findViewById(R.id.btn_sub_category);
-        	btnSubCategory.setText(mHighLightedSubs[position]);
+        	btnSubCategory.setText("woshi xietide ziti");
         	
         	btnCategory.setOnClickListener(new CategoryBtnOnClickListener(position));
         	
@@ -568,7 +568,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 		mIsSubCategoryExpanded = false;
 	}
 	
-	OnTouchListener mDragViewExpanedOnTouchListener = new OnTouchListener() {
+	OnTouchListener mDragViewExpandOnTouchListener = new OnTouchListener() {
 		
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
@@ -621,11 +621,15 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 						|| (v==mTransPaddingView && x > v.getWidth())		//the touch point has moved out of the TransPadding view range
 						|| (v instanceof GridView) && (xDown + touchedControlLoc[0] < mScreenWidth*2/3) ) //the touch point has moved more than 10 pixels
 				{
-					if(v == mSubCategoryGrid && Math.abs(yDown - y) > Util.dip2px(Globals.g_metrics.density, 10)){
+					if(( ( v instanceof Button && v!=mTransPaddingView) || v == mSubCategoryGrid)
+						&& Math.abs(yDown - y) > Util.dip2px(Globals.g_metrics.density, 10)){
+						
 						isPreventDrag = true;
+						
 						if(v instanceof Button && v!=mTransPaddingView){
 							mCategoryLsv.requestDisallowInterceptTouchEvent(false);
 						}
+						
 					}
 					
 					if(!isPreventDrag && Math.abs(xDown - x) > Util.dip2px(Globals.g_metrics.density, 10) ){
