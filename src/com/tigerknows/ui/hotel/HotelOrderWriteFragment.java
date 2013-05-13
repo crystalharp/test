@@ -3,6 +3,7 @@
  */
 package com.tigerknows.ui.hotel;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Hashtable;
@@ -10,6 +11,7 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +25,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -52,6 +55,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
     
     static final String TAG = "HotelOrderWriteFragment";
+    public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     
     private ScrollView mHotelOrderWriteScv;
     private TextView mHotelNameTxv;
@@ -74,13 +78,15 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
     private static final long MAX_ROOM_HOWMANY = 5;
     
-    private String mRTime = "23:59:00";
-    private long mRoomHowmany = 1;
+    private int mRTimeWhich;
+    private String mRTime;
+    private String mRTimeDetail;
+    private long mRoomHowmany;
     private String mTotalPrice;
     private String mUsername;
     private String mMobile;
-    private long mNeedCreditAssure = 0;
-    private long mTypeCreditAssure = 0;
+    private long mNeedCreditAssure;
+    private long mTypeCreditAssure;
     private String mCreditCardNo;
     private String mVerifyCode;
     private String mValidYear;
@@ -100,14 +106,28 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         
         findViews();
         setListener();
+        mRoomHowmany = 1;
+        mRTimeWhich = 0;
         return mRootView;
     }
     
     public void onResume(){
-        mTotalPrice = ((long)(mRoomtypeDynamic.getPrice() * mRoomHowmany)) + "";
-        mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, mTotalPrice));
-        mRoomReserveBtn.setText(mRTime);
-        super.onResume();
+    	mTotalPrice = (mRoomtypeDynamic.getPrice() * mRoomHowmany) + "";
+    	mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, mTotalPrice));
+    	final List<RetentionTime> list = findRTimeByRoomHowmany(mRoomHowmany);
+    	if(list.isEmpty()){
+    		mNeedCreditAssure = 0;
+    		mTypeCreditAssure = 0;
+    		mRTime = "24点之前";
+    		//TODO: mRTimeDetail
+    	}else{
+    		mRTime = list.get(mRTimeWhich).getTime();
+    		mRTimeDetail = list.get(mRTimeWhich).getTimeDetail();
+    		mNeedCreditAssure = list.get(mRTimeWhich).getNeed();
+    		mTypeCreditAssure = list.get(mRTimeWhich).getType();
+    	}
+    	mRoomReserveBtn.setText(mRTime);
+    	super.onResume();
     }
     
     public void onPause(){
@@ -155,17 +175,56 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	showRoomReserveDialog();
             break;
         case R.id.submit_order_btn:
+        	String str = mRoomPersonEdt.getText().toString().trim();
+        	if(TextUtils.isEmpty(str)){
+        		mRoomPersonEdt.requestFocus();
+        		Toast.makeText(mContext, mSphinx.getString(R.string.please_input)+mSphinx.getString(R.string.hotel_room_person_name)+"!", Toast.LENGTH_SHORT).show();
+        		mSphinx.showSoftInput();
+        		return;
+        	}else{
+        		mUsername = str;
+        	}
+        	str = mRoomMobileNumberEdt.getText().toString();
+        	if(TextUtils.isEmpty(str)){
+        		mRoomMobileNumberEdt.requestFocus();
+        		Toast.makeText(mContext, mSphinx.getString(R.string.please_input)+mSphinx.getString(R.string.hotel_room_mobile_nubmer)+"!", Toast.LENGTH_SHORT).show();
+        		mSphinx.showSoftInput();
+        		return;
+        	}else{
+        		mMobile = str;
+        	}
         	if (mNeedCreditAssure != 0) {
-        		mSphinx.getHotelOrderCreditFragment().setData(mTotalPrice, Calendar.getInstance());
+        		if(mTypeCreditAssure ==2){
+        			mSphinx.getHotelOrderCreditFragment().setData(mTotalPrice, Calendar.getInstance());
+        		}else {
+        			mSphinx.getHotelOrderCreditFragment().setData(mRoomtypeDynamic.getPrice()+"", Calendar.getInstance());
+        		}
         		mSphinx.showView(R.id.view_hotel_credit_assure);
-        		//Toast.makeText(mContext, "目前暂不支持信用卡担保功能", Toast.LENGTH_LONG).show();
         	} else {
         		submit(false);
         	}
             break;
         default:
+        	mSphinx.hideSoftInput();
             break;
         }
+    }
+    private void refreshData(){
+    	mTotalPrice = (mRoomtypeDynamic.getPrice() * mRoomHowmany) + "";
+    	mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, mTotalPrice));
+    	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
+    	if(rtList.isEmpty()){
+    		mNeedCreditAssure = 0;
+    		mTypeCreditAssure = 0;
+    		mRTime = "24点之前";
+    		mRTimeDetail = SIMPLE_DATE_FORMAT.format(mCheckIn.getTime()) + " 23:59:00";
+    	}else{
+    		mRTime = rtList.get(mRTimeWhich).getTime();
+    		mRTimeDetail = rtList.get(mRTimeWhich).getTimeDetail();
+    		mNeedCreditAssure = rtList.get(mRTimeWhich).getNeed();
+    		mTypeCreditAssure = rtList.get(mRTimeWhich).getType();
+    	}
+    	mRoomReserveBtn.setText(mRTime);
     }
     
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
@@ -232,27 +291,22 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
             	mRoomHowmany = which + 1;
-            	mTotalPrice = ((long)(mRoomHowmany * mRoomtypeDynamic.getPrice())) + "";
-            	mRoomHowmanyBtn.setText(list.get(which));
+            	mRTimeWhich = 0;
+            	refreshData();
             	dialog.dismiss();
             }
         });
     }
     private void showRoomReserveDialog(){
     	List<String> list = new ArrayList<String>();
-    	final List<RetentionTime> rtList;
+    	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
         DanbaoGuize dbgz = mRoomtypeDynamic.getDanbaoGuize();
-        if(mRoomHowmany >= dbgz.getNum()){
-        	rtList = dbgz.getGreaterList();
-        }else{
-        	rtList = dbgz.getLessList();
-        }
-        for (int i = 0, size = rtList.size();i < size; i++ ){
-        	list.add(rtList.get(i).getTime());
-        }
         if(rtList.isEmpty()){
         	Toast.makeText(mContext, "该酒店不需要设置房间保留信息", Toast.LENGTH_LONG).show();
         	return;
+        }
+        for (int i = 0, size = rtList.size();i < size; i++ ){
+        	list.add(rtList.get(i).getTime());
         }
         final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
         ListView listView = Utility.makeListView(mSphinx);
@@ -268,12 +322,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         listView.setOnItemClickListener(new OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
-            	mRoomReserveBtn.setText(rtList.get(which).getTime());
-            	mNeedCreditAssure = rtList.get(which).getNeed();
-            	if(mNeedCreditAssure != 0){
-            		mTypeCreditAssure = rtList.get(which).getType();
-            	}
-            	dialog.dismiss();
+            	mRTimeWhich = which;
+            	refreshData();
+                dialog.dismiss();
             }
         });        
     }
@@ -290,9 +341,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	}
     	criteria.put(DataOperation.SERVER_PARAMETER_ROOMTYPE, mRoomType.getRoomId());
     	criteria.put(DataOperation.SERVER_PARAMETER_PKGID, mRoomType.getRateplanId());
-    	criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN_DATE, changeDateFormat(mCheckIn));
-    	criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT_DATE, changeDateFormat(mCheckOut));
-    	criteria.put(DataOperation.SERVER_PARAMETER_RESERVE_TIME, mRTime);
+    	criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN_DATE, 
+    			HotelHomeFragment.SIMPLE_DATE_FORMAT.format(mCheckIn.getTime()));
+    	criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT_DATE, 
+    			HotelHomeFragment.SIMPLE_DATE_FORMAT.format(mCheckOut.getTime()));
+    	criteria.put(DataOperation.SERVER_PARAMETER_RESERVE_TIME, mRTimeDetail);
     	criteria.put(DataOperation.SERVER_PARAMETER_NUMROOMS, mRoomHowmany + "");
     	criteria.put(DataOperation.SERVER_PARAMETER_TOTAL_PRICE, mTotalPrice);
     	criteria.put(DataOperation.SERVER_PARAMETER_USERNAME, mUsername);
@@ -310,22 +363,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	mSphinx.queryStart(dataOperation);
     }
     
-    private String changeDateFormat(Calendar calendar){
-    	String newFormat = "";
-    	newFormat += (calendar.get(Calendar.YEAR) + "-");
-    	int month = calendar.get(Calendar.MONTH);
-    	if(month < 10){
-    		newFormat += "0";
-    	}
-    	newFormat += (month + "-");
-    	int date = calendar.get(Calendar.DATE);
-    	if(date < 10){
-    		newFormat += "0";
-    	}
-    	newFormat += (date + "-");
-    	return newFormat;
-    }
-
 	@Override
 	public void onCancelled(TKAsyncTask tkAsyncTask) {
 		super.onCancelled(tkAsyncTask);
@@ -362,5 +399,16 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 		
 		mIdCardNo = credit.get(6);
 		submit(true);
+	}
+	
+	public List<RetentionTime> findRTimeByRoomHowmany(long roomhowmany){
+		final List<RetentionTime> list;
+		DanbaoGuize dbgz = mRoomtypeDynamic.getDanbaoGuize();
+		if(roomhowmany > dbgz.getNum()){
+			list = dbgz.getGreaterList();
+		}else{
+			list = dbgz.getLessList();
+		}
+		return list;
 	}
 }
