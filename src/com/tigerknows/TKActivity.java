@@ -13,6 +13,7 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.map.MapActivity;
 import com.decarta.android.util.LogWrapper;
+import com.tendcloud.tenddata.TCAgent;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.maps.MapEngine;
@@ -329,6 +330,8 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(mConnectivityReceiver, intentFilter);
+        
+        TCAgent.onResume(this);
     }
 
     @Override
@@ -346,6 +349,8 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         unregisterReceiver(mConnectivityReceiver);
         
         super.onPause();
+        
+        TCAgent.onPause(this);
     }
     
     @Override
