@@ -209,7 +209,7 @@ public class TKConfig {
     /**
      * 是否显示测试选项对话框
      */
-    public static boolean ShowTestOption = false;
+    public static boolean ShowTestOption = true;
     
     /**
      * IMSI(International Mobile Subscriber Identity)，国际移动用户标识号，是TD系统分给用户的唯一标识号，它存储在SIM卡、HLR/VLR中，最多由15个数字组成

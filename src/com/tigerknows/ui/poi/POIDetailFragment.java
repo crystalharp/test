@@ -229,6 +229,13 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         public T init(POIDetailFragment poiFragment, LayoutInflater inflater, LinearLayout belongsLayout, DynamicPOI data);
     }
     
+    public interface DPOIQueryInterface {
+        //setData的时候检查是否存在该类型的动态POI信息
+		public void checkExistence();
+		//处理返回的response
+		public void msgReceived(Sphinx mSphinx, BaseQuery query, Response response);
+    }
+    
 	public abstract static class DynamicPOIView {
 
 		LinearLayout mOwnLayout;
@@ -252,7 +259,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		            LogWrapper.d("conan", "iter.needtoshow:" + iter.needToShow);
 		            if (!iter.needToShow) {
 		                instance = iter;
-		                instance.data = data;
+		                instance.refreshData(data);
 		                instance.mBelongsLayout = belongsLayout;
 		                instance.needToShow = true;
 		                break;
@@ -267,24 +274,32 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		    return (T)instance;
 		}
 		
+		public abstract void refreshData(DynamicPOI data);
 		
 		void clear(){
 		    mBelongsLayout.removeView(mOwnLayout);
 			needToShow = false;
 		}
 		
-		void query(POIDetailFragment fragment, List<BaseQuery> list){
+		static void query(POIDetailFragment fragment, List<BaseQuery> list){
 //		    List<BaseQuery> list = new ArrayList<BaseQuery>();
 //            list.add(dataOperation);
             fragment.mTkAsyncTasking = fragment.mSphinx.queryStart(list);
             fragment.mBaseQuerying = list; 
 		}
 		
+		
 		//添加这个接口是为了把同一类的对象build为一个layout显示,主要解决
 		//团购等单条但不唯一的动态POI信息需要多个POI合并显示，首尾都显示的特殊
-		public static LinearLayout layoutBuild(){};
+//		public static LinearLayout layoutBuild(){};
 		
 	}
+	
+	//用来给动态POI类提供查询接口
+//	public void query(List<BaseQuery> list){
+//        mTkAsyncTasking = mSphinx.queryStart(list);
+//        mBaseQuerying = list;
+//	}
     
 	//*************new code end*******************
     @Override
@@ -806,7 +821,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     @Override
     public void onPause() {
-        clearDynamicPOI(DPOIList);
+//        clearDynamicPOI(DPOIList);
         super.onPause();
     }
 
@@ -1069,6 +1084,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         mPOI = poi;
         if (null != poi) {
+        	clearDynamicPOI(DPOIList);
+        	
             List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
             String uuid = poi.getUUID();
             if (poi.getFrom() == POI.FROM_LOCAL && TextUtils.isEmpty(uuid) == false) {
@@ -1407,22 +1424,24 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     }
                     
                 // 查询团购的结果
-                } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
-                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
-                        return;
-                    }
-                    tuangou = ((TuangouQueryResponse) response).getTuangou();
-                    
-                // 查询团购分店的结果
-                } else if (BaseQuery.DATA_TYPE_FENDIAN.equals(dataType)) {
-                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
-                        return;
-                    }
-                    tuangou.setFendian(((FendianQueryResponse) response).getFendian());
-                    List<Tuangou> list = new ArrayList<Tuangou>();
-                    list.add(tuangou);
-                    mSphinx.showView(R.id.view_discover_tuangou_detail);
-                    mSphinx.getTuangouDetailFragment().setData(list, 0, null);
+                } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) || BaseQuery.DATA_TYPE_FENDIAN.equals(dataType)) {
+                    //xupeng comment
+//                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
+//                        return;
+//                    }
+//                    tuangou = ((TuangouQueryResponse) response).getTuangou();
+//                    
+//                // 查询团购分店的结果
+//                } else if (BaseQuery.DATA_TYPE_FENDIAN.equals(dataType)) {
+//                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
+//                        return;
+//                    }
+//                    tuangou.setFendian(((FendianQueryResponse) response).getFendian());
+//                    List<Tuangou> list = new ArrayList<Tuangou>();
+//                    list.add(tuangou);
+//                    mSphinx.showView(R.id.view_discover_tuangou_detail);
+//                    mSphinx.getTuangouDetailFragment().setData(list, 0, null);
+                    DynamicGroupbuyPOI.queryInterface.msgReceived(mSphinx, baseQuery, response);
                     
                 // 查询演出的结果
                 } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {

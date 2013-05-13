@@ -9,13 +9,19 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.POI.DynamicPOI;
+import com.tigerknows.model.Response;
 import com.tigerknows.model.Tuangou;
+import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.ui.poi.POIDetailFragment.DPOIQueryInterface;
 import com.tigerknows.ui.poi.POIDetailFragment.DPOIViewInitializer;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
+import com.tigerknows.model.DataOperation.TuangouQueryResponse;
+import com.tigerknows.model.DataOperation.FendianQueryResponse;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,21 +31,51 @@ import android.widget.TextView;
 
 public class DynamicGroupbuyPOI extends POIDetailFragment.DynamicPOIView{
     
+    ImageView iconImv;
+    TextView textTxv;
+    static Tuangou tuangou = null;
     public static ArrayList<DynamicPOIView> DPOIPool = new ArrayList<DynamicPOIView>();
+    public static DPOIQueryInterface queryInterface = new DPOIQueryInterface(){
+
+        @Override
+        public void checkExistence() {
+        }
+
+        @Override
+        public void msgReceived(Sphinx mSphinx, BaseQuery query, Response response) {
+            String dataType = query.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
+            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+                if (BaseActivity.checkResponseCode(query, mSphinx, null, true, this, false)) {
+                    return;
+                }
+                tuangou = ((TuangouQueryResponse) response).getTuangou();
+                
+            // 查询团购分店的结果
+            } else if (BaseQuery.DATA_TYPE_FENDIAN.equals(dataType)) {
+                if (BaseActivity.checkResponseCode(query, mSphinx, null, true, this, false)) {
+                    return;
+                }
+                tuangou.setFendian(((FendianQueryResponse) response).getFendian());
+                List<Tuangou> list = new ArrayList<Tuangou>();
+                list.add(tuangou);
+                mSphinx.showView(R.id.view_discover_tuangou_detail);
+                mSphinx.getTuangouDetailFragment().setData(list, 0, null);
+            }
+        }
+        
+    };
     
     private DynamicGroupbuyPOI(POIDetailFragment poiFragment, LayoutInflater inflater, LinearLayout belongsLayout, DynamicPOI poiData){
         mBelongsLayout = belongsLayout; 
         mOwnLayout = (LinearLayout) inflater.inflate(R.layout.poi_dynamic_poi_list_item, null).findViewById(R.id.dynamic_poi_list_item);
+        iconImv = (ImageView) mOwnLayout.findViewById(R.id.icon_imv);
+        textTxv = (TextView) mOwnLayout.findViewById(R.id.text_txv);
         mType = POIDetailFragment.DPOIType.GROUPBUY;
-        data = poiData;
         mPOIDetailFragment = poiFragment;
         mSphinx = mPOIDetailFragment.mSphinx;
         
+        refreshData(poiData);
         final String dataType = data.getType();
-        ImageView iconImv = (ImageView) mOwnLayout.findViewById(R.id.icon_imv);
-        TextView textTxv = (TextView) mOwnLayout.findViewById(R.id.text_txv);
-        textTxv.setText(data.getSummary());
-        iconImv.setImageResource(R.drawable.ic_dynamicpoi_tuangou);
         //TODO:del the following line
         mOwnLayout.setBackgroundResource(R.drawable.list_single);
        
@@ -54,7 +90,7 @@ public class DynamicGroupbuyPOI extends POIDetailFragment.DynamicPOIView{
                 criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
                 criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, data.getMasterUid());
                 
-//                            mActionLog.addAction(mActionTag +  ActionLog.POIDetailTuangou);
+                mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag +  ActionLog.POIDetailTuangou);
                 criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
                              Tuangou.NEED_FILELD
                                 + Util.byteToHexString(Tuangou.FIELD_NOTICED)
@@ -89,5 +125,13 @@ public class DynamicGroupbuyPOI extends POIDetailFragment.DynamicPOIView{
         }
         
     };
+
+    @Override
+    public void refreshData(DynamicPOI poiData) {
+        this.data = poiData; 
+        textTxv.setText(data.getSummary());
+        iconImv.setImageResource(R.drawable.ic_dynamicpoi_tuangou);
+    }
+    
 
 }

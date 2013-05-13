@@ -1,5 +1,7 @@
 package com.tigerknows.ui.poi;
 
+import com.tigerknows.model.POI.DynamicPOI;
+
 import android.widget.LinearLayout;
 
 public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
@@ -14,6 +16,12 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
            instance = new DynamicMoviePOI(belongsLayout);
        }
        return instance;
+    }
+
+    @Override
+    public void refreshData(DynamicPOI data) {
+        // TODO Auto-generated method stub
+        
     }
 
 //    onclick(){
