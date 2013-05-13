@@ -547,6 +547,7 @@ public abstract class BaseQuery {
                 if (TKConfig.LaunchTest) {
                     if (apiType.equals(API_TYPE_DATA_QUERY)
                             || apiType.equals(API_TYPE_DATA_OPERATION)
+                            || apiType.equals(API_TYPE_TASK)
                             || apiType.equals(API_TYPE_ACCOUNT_MANAGE)) {
                         launchTest();
                         if (responseXMap != null) {
