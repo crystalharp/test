@@ -194,7 +194,6 @@ public class DataOperation extends BaseQuery {
                 			SERVER_PARAMETER_MOBILE
                 	});
                 	addParameter(new String[]{
-                		    SERVER_PARAMETER_MOBILE,
                 		    SERVER_PARAMETER_CREDIT_CARD_NO,
                 		    SERVER_PARAMETER_VERIFY_CODE,
                 		    SERVER_PARAMETER_VALID_YEAR,
@@ -609,6 +608,8 @@ public class DataOperation extends BaseQuery {
                     String subDataType = criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
                     if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                         responseXMap = DataOperationTest.launchPOIQueryResponse();
+                    }else if(SUB_DATA_TYPE_HOTEL.equals(subDataType)){
+                    	responseXMap = DataOperationTest.launchHotelPOIQueryResponse();
                     }
                 } else if (DATA_TYPE_TUANGOU.equals(dataType)) {
                     responseXMap = DataOperationTest.launchTuangouQueryResponse(context);

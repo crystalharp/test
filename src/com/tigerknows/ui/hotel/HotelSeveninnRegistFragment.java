@@ -9,5 +9,7 @@ public class HotelSeveninnRegistFragment extends BaseFragment{
 		super(sphinx);
 		// TODO Auto-generated constructor stub
 	}
+	
+	static final String TAG = "HotelSeveninnRegistFragment";
 
 }

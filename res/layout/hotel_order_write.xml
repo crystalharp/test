@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:paddingLeft="0dp"
@@ -9,15 +8,10 @@
     android:orientation="vertical"
     android:background="@drawable/bg_discover"
     >
-    <include android:id="@+id/title_view"
-    layout="@layout/title" 
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content" />
     
     <ScrollView android:id="@+id/hotel_order_write_scv"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/title_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="8dp" >

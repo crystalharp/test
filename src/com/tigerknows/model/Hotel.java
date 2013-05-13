@@ -9,6 +9,7 @@
 package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.model.xobject.XMap;
 
 import java.util.List;

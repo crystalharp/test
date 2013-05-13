@@ -3,19 +3,29 @@
  */
 package com.tigerknows.ui.hotel;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.util.Utility;
+import com.tigerknows.widget.StringArrayAdapter;
 
 public class HotelOrderCreditFragment extends BaseFragment implements View.OnClickListener{
 
@@ -35,8 +45,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     private Button mCreditCertTypeBtn;
     private EditText mCreditCertCodeEdt;
     private Button mCreditConfirmBtn;
+    private TextView mCreditAssurePriceTxv;
+    private TextView mCreditNoteTxv;
     
-    private double mSumPrice;
+    private String mSumPrice;
     private Calendar mDate;
     
     @Override
@@ -57,6 +69,8 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     
     public void onResume(){
         super.onResume();
+        mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, mSumPrice));
+        mCreditNoteTxv.setText(mSphinx.getString(R.string.credit_note, mDate.getTime().toLocaleString()));
     }
     
     public void onPause(){
@@ -73,6 +87,8 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     	mCreditCertTypeBtn = (Button) mRootView.findViewById(R.id.credit_cert_type_btn);
     	mCreditCertCodeEdt = (EditText) mRootView.findViewById(R.id.credit_cert_code_edt);
     	mCreditConfirmBtn = (Button) mRootView.findViewById(R.id.credit_confirm_btn);
+    	mCreditAssurePriceTxv = (TextView) mRootView.findViewById(R.id.credit_assure_price_txv);
+    	mCreditNoteTxv = (TextView) mRootView.findViewById(R.id.credit_note_txv);
     }
 
     protected void setListener() {
@@ -90,20 +106,66 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         case R.id.left_btn:
             break;
         case R.id.credit_bank_btn:
+        	showCreditBankDialog();
         	break;
         case R.id.credit_validity_btn:
         	break;
         case R.id.credit_cert_type_btn:
+        	showCertTypeDialog();
         	break;
         case R.id.credit_confirm_btn:
-        	mSphinx.getHotelOrderWriteFragment().setCredit(null);
+        	List<String> list = new ArrayList<String>();
+        	list.add(mCreditCodeEdt.getText().toString());
+        	list.add(mCreditVerifyEdt.getText().toString());
+        	list.add("2013");
+        	list.add("9");
+        	list.add(mCreditOwnerEdt.getText().toString().trim());
+        	list.add(mCreditCertTypeBtn.getText().toString());
+        	list.add(mCreditCertCodeEdt.getText().toString());
+        	mSphinx.getHotelOrderWriteFragment().setCredit(list);
         	break;
         default:
             break;
         }
     }
+    public void showCreditBankDialog(){
+    	final List<String> list = new ArrayList<String>();
+    	list.add("中国银行");
+    	list.add("中国工商银行");
+    	list.add("中国农业银行");
+        final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
+        ListView listView = Utility.makeListView(mSphinx);
+        listView.setAdapter(adapter);
+        //TODO: ActionLog
+        final Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_credit_bank), null, listView, null, null, null);
+        listView.setOnItemClickListener(new OnItemClickListener() {
+        	@Override
+        	public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
+        		mCreditBankBtn.setText(list.get(which));
+        		dialog.dismiss();
+        	}
+		});
+    }
 
-	public void setData(double sumPrice, Calendar date) {
+    public void showCertTypeDialog(){
+    	final List<String> list = new ArrayList<String>();
+    	list.add("身份证");
+    	list.add("护照");
+    	list.add("其他证件");
+        final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
+        ListView listView = Utility.makeListView(mSphinx);
+        listView.setAdapter(adapter);
+        //TODO: ActionLog
+        final Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_cert_type), null, listView, null, null, null);
+        listView.setOnItemClickListener(new OnItemClickListener() {
+        	@Override
+        	public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
+        		mCreditCertTypeBtn.setText(list.get(which));
+        		dialog.dismiss();
+        	}
+		});
+    }
+	public void setData(String sumPrice, Calendar date) {
 		mSumPrice = sumPrice;
 		mDate = date;
 		
