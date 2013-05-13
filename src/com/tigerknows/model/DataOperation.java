@@ -135,7 +135,7 @@ public class DataOperation extends BaseQuery {
     @Override
     protected void createHttpClient() {
         super.createHttpClient();
-        String url = String.format(TKConfig.getQueryUrl(), TKConfig.getQueryHost());
+        String url = String.format(TKConfig.getQueryUrl(apiType, version, criteria.get(SERVER_PARAMETER_DATA_TYPE)), TKConfig.getQueryHost());
         httpClient.setURL(url);
     }
 

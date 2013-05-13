@@ -283,12 +283,12 @@ public class TKConfig {
     /**
      * 账户管理服务访问URL路径
      */
-    private static String sACCOUNT_MANAGE_URL = "http://%s/melon/user"; // http://192.168.11.174:8100/melon/user
+    private static String sACCOUNT_MANAGE_URL = "http://%s/melon/user/u/13"; // http://192.168.11.174:8100/melon/user
     
     /**
      * 软件登录服务访问URL路径
      */
-    private static String BOOTSTRAP_URL = "http://%s/bootstrap/local";
+    private static String BOOTSTRAP_URL = "http://%s/bootstrap/local/l/13";
 
     /**
      * 默认下载服务器Host
@@ -857,8 +857,21 @@ public class TKConfig {
      * 获取查询服务访问的URL
      * @return
      */
-    public static String getQueryUrl() {
-        return sQUERY_URL;
+    public static String getQueryUrl(String at, String version, String dataType) {
+        String url = sQUERY_URL;
+        if (at != null) {
+            url += "/";
+            url += at;
+        }
+        if (version != null) {
+            url += "/";
+            url += version;
+        }
+        if (dataType != null) {
+            url += "/";
+            url += dataType;
+        }
+        return url;
     }
     
     /**

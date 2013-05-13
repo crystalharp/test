@@ -138,7 +138,7 @@ public final class TrafficQuery extends BaseQuery {
     @Override
     protected void createHttpClient() {
         super.createHttpClient();
-        String url = String.format(TKConfig.getQueryUrl(), TKConfig.getQueryHost());
+        String url = String.format(TKConfig.getQueryUrl(apiType, version, null), TKConfig.getQueryHost());
         httpClient.setURL(url);
     }
 
