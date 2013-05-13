@@ -11,6 +11,7 @@
     <string name="input_valid_border">Please input valid integer border</string>
     <string name="input_valid_tile_thread_count">Please input valid integer tile thread num</string>
 	
+    <string name="all">全部</string>
     <string name="app_name">老虎宝典</string>
     <string name="send_sms">发短信</string>
     <string name="send_mms">发彩信</string>

@@ -216,6 +216,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private int mTitleViewHeight;
     private int mMenuViewHeiht;
     private int mCityViewHeight;
+    
+	private View mDragHintView;
 	
 	private TouchMode touchMode=TouchMode.NORMAL;
 	public enum TouchMode{
@@ -1255,6 +1257,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     return true;
                 }
                 
+                if (mDragHintView.getVisibility() == View.VISIBLE) {
+                	hideHomeDragHint();
+                	return true;
+                }
+                
                 if (!uiStackBack()) {
                     CommonUtils.showNormalDialog(Sphinx.this,
                             mContext.getString(R.string.prompt), 
@@ -1302,6 +1309,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mDownloadView = (TextView)findViewById(R.id.download_txv);
         mCompassView = findViewById(R.id.compass_imv);
         mOverlayView = (ViewGroup) findViewById(R.id.overlay_view);
+        mDragHintView = findViewById(R.id.hint_root_view);
     }
 
     private void setListener() {
@@ -1313,6 +1321,16 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 return true;
             }
         });
+    	
+    	mDragHintView.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				hideHomeDragHint();
+				return true;
+			}
+		});
+    	
     }
     
     boolean checkFromThirdParty(Intent intent, boolean onlyCheck) {
@@ -2506,9 +2524,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         showLocationDialog(R.id.dialog_prompt_setting_location);
     }
     
+    int dialogId = -1;
     public boolean showLocationDialog(int id) {
         if (mFromThirdParty > 0 && mFromThirdParty != THIRD_PARTY_WENXIN_REQUET) {
             return false;
+        }
+        
+        if (mDragHintView.getVisibility() == View.VISIBLE) {
+        	dialogId = id;
+        	return false;
         }
         
         if (uiStackSize() <= 0) {
@@ -2828,6 +2852,23 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             TKConfig.setPref(mThis, key, "1");
         }
         return showView;
+    }
+    
+    public boolean showHomeDragHint(){
+
+        if (TKConfig.getPref(this, TKConfig.PREFS_HINT_HOME_DRAG) == null) {
+        	mDragHintView.setVisibility(View.VISIBLE);
+        	TKConfig.setPref(mThis, TKConfig.PREFS_HINT_HOME_DRAG, "1");
+        }
+        return true;
+    }
+    
+    void hideHomeDragHint() {
+    	mDragHintView.setVisibility(View.GONE);
+		if (dialogId != -1) {
+			showLocationDialog(dialogId);
+			dialogId = -1;
+		}
     }
     
     public boolean showView(int viewId) {

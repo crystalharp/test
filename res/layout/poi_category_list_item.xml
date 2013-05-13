@@ -3,16 +3,39 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent" 
     android:layout_height="wrap_content"
-    android:gravity="left|center_vertical">
-    
-    <TextView
-        android:id="@+id/text_txv" 
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content" 
-        android:padding="10dp"
-        android:textColor="@color/black"
-        android:text="@string/app_name"
+    android:gravity="left|center_vertical"
+    android:background="@drawable/list_selector_background_transparent_gray_light">
+	    
+    <Button
+        android:id="@+id/btn_category"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:drawableLeft="@drawable/icon"
+        android:gravity="left|center_vertical"
+        android:layout_marginBottom="0dp"
+        android:background="@color/transparent"
         android:textSize="18sp"
-        android:focusable="false" />
-
+        android:textStyle="bold"
+        android:text="@string/app_name" />
+        
+    <ImageView 
+        android:id="@+id/split_imv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/btn_category"
+        android:layout_centerVertical="true"
+        android:background="@drawable/icon"/>
+    
+    <Button
+        android:id="@+id/btn_sub_category"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/split_imv"
+        android:layout_centerVertical="true"
+        android:gravity="center_vertical"
+        android:text="@string/app_name"
+        android:background="@color/transparent"
+        android:drawableRight="@drawable/btn_left_arrow"/>
+    
 </RelativeLayout>

@@ -134,7 +134,11 @@ public class ActionLog {
     public static final String POIHome = "AA";
     public static final String POIHomeChangeCityBtn = "BA";
     public static final String POIHomeInputEdt = "BB";
-    public static final String POIHomeCategory = "BC";
+    public static final String POIHomeCategory = "BC";    
+    public static final String POIHomeSubcategoryPressed = "BD";
+    public static final String POIHomeSubcategoryOpened = "BE";
+    public static final String POIHomeSubcategoryClosed = "BF";
+
     
     // POI输入查询页
     public static final String POIHomeInputQuery = "AB";
@@ -153,6 +157,7 @@ public class ActionLog {
     public static final String POIDetailYanchu = "BK";
     public static final String POIDetailZhanlan = "BL";
     public static final String POIDetailTuangou = "BM";
+    public static final String POIDetailPullFailed = "BN";
 
     // POI点评列表页
     public static final String POICommentList = "AE";

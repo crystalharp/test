@@ -455,6 +455,11 @@ public class TKConfig {
      * 最近浏览过的RegionId列表
      */
     public static final String PREFS_LAST_REGION_ID_LIST = "last_region_id_list";
+
+    /**
+     * 是否已显示POI主页界面的用户引导
+     */
+    public static final String PREFS_HINT_HOME_DRAG = "prefs_hint_home_drag";
     
     /**
      * 是否已显示POI详情界面的用户引导
