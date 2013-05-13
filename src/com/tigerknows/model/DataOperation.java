@@ -163,7 +163,7 @@ public class DataOperation extends BaseQuery {
 
             }
             
-        	if(dataType.equals(DATA_TYPE_DIAOYAN) == false){
+        	if(dataType.equals(DATA_TYPE_DIAOYAN)){
         		add_NF_UID = false;
             }
         	

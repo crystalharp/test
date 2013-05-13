@@ -113,6 +113,7 @@ public class Tuangou extends BaseData {
 
     public Tuangou (XMap data) throws APIException {
         super(data);
+        init(data, true);
     }
     
     public void init(XMap data, boolean reset) throws APIException {

@@ -116,6 +116,7 @@ public class Yanchu extends BaseData implements Parcelable{
 
     public Yanchu (XMap data) throws APIException {
         super(data);
+        init(data, true);
     }
     
     public void init(XMap data, boolean reset) throws APIException {

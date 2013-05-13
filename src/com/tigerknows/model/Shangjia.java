@@ -86,6 +86,7 @@ public class Shangjia extends BaseData implements Parcelable {
 
     public Shangjia (XMap data) throws APIException {
         super(data);
+        init(data, true);
         
         synchronized (shangjiaList) {
 

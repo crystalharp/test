@@ -85,6 +85,7 @@ public class Yingxun extends BaseData implements Parcelable {
 
     public Yingxun (XMap data) throws APIException {
         super(data);
+        init(data, true);
     }
     
     public void init(XMap data, boolean reset) throws APIException {
@@ -187,6 +188,7 @@ public class Yingxun extends BaseData implements Parcelable {
 
         public Changci (XMap data) throws APIException {
             super(data);
+            init(data, true);
         }
         
         public void init(XMap data, boolean reset) throws APIException {

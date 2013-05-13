@@ -93,6 +93,7 @@ public class Dianying extends BaseData implements Parcelable{
 
     public Dianying (XMap data) throws APIException {
         super(data);
+        init(data, true);
     }
     
     public void init(XMap data, boolean reset) throws APIException {

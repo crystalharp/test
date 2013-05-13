@@ -168,6 +168,7 @@ public class BuslineModel extends XMapData {
         
         public Line(XMap data) throws APIException {
             super(data);
+            init(data, true);
         }
 
         @SuppressWarnings("unchecked")
@@ -473,6 +474,7 @@ public class BuslineModel extends XMapData {
 
         public Station(XMap data) throws APIException {
             super(data);
+            init(data, true);
         }
 
         @SuppressWarnings("unchecked")

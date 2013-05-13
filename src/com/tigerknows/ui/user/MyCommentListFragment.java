@@ -214,12 +214,13 @@ public class MyCommentListFragment extends BaseFragment {
             if (mCommentLsv.isFooterSpringback()) {
                 mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
             }
-            for(Comment comment : mCommentArrayList) {
+            for(int i  = 0, size = mCommentArrayList.size(); i < size; i++) {
+                Comment comment = mCommentArrayList.get(i);
                 Comment commentnew = comment.getPOI().getMyComment();
-                if (commentnew != null) {
+                if (commentnew != null && commentnew != comment) {
                     try {
                         commentnew.setData(null);
-                        comment.init(commentnew.getData(), true);
+                        comment.init(commentnew.getData(), false);   //TODO 需要将false改为true
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();

@@ -11,7 +11,6 @@ package com.tigerknows.model;
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.DataQuery.CommentResponse;
@@ -408,7 +407,7 @@ public class POI extends BaseData {
     
     private String uuid;
     
-    private int type;
+    private long type;
     
     private Position position = null;
 
@@ -642,7 +641,7 @@ public class POI extends BaseData {
         this.telephone = telephone;
     }
 
-    public int getType() {
+    public long getType() {
         return type;
     }
     
@@ -692,7 +691,7 @@ public class POI extends BaseData {
      * @param type
      */
     public void setType(int type) {
-        if (type < 0 || type > 190000)
+        if (type < 0 || type > 19)
             type = 0;
 
         this.type = type;
@@ -751,32 +750,28 @@ public class POI extends BaseData {
 
     public POI (XMap data) throws APIException {
         super(data);
+        init(data, true);
     }
     
     @SuppressWarnings("unchecked")
     public void init(XMap data, boolean reset) throws APIException {
         super.init(data, reset);
 
-        if (this.data.containsKey(FIELD_UUID)) {
-            this.uuid = this.data.getString(FIELD_UUID);
-        }
-        this.uuid = getStringFromData(FIELD_UUID);
+        this.uuid = getStringFromData(FIELD_UUID, reset ? null : this.uuid);
         
-        if (this.data.containsKey(FIELD_TYPE)) {
-            int type = (int)this.data.getInt(FIELD_TYPE);
-            if (type < 0) {
-                type = 0;
-            } else if (type > 10) {
-                type = 10;
-            }
-            this.type = type;
+        long type = getLongFromData(FIELD_TYPE, reset ? 0 : this.type);
+        if (type < 0) {
+            type = 0;
+        } else if (type > 10) {
+            type = 10;
         }
-        this.position = getPositionFromData(FIELD_LONGITUDE, FIELD_LATITUDE);
-        this.name = getStringFromData(FIELD_NAME);
+        this.type = type;
+        this.position = getPositionFromData(FIELD_LONGITUDE, FIELD_LATITUDE, reset ? null : this.position);
+        this.name = getStringFromData(FIELD_NAME, reset ? null : this.name);
         if (this.data.containsKey(FIELD_DESCRIPTION)) {
             this.description = this.data.getXMap(FIELD_DESCRIPTION);
             if (this.description != null) {
-                this.grade = getLongFromData(this.description, Description.FIELD_GRADE, 0);
+                this.grade = getLongFromData(this.description, Description.FIELD_GRADE, reset ? 0 : this.grade);
                 if (this.description.containsKey(Description.FIELD_COOKING_STYLE)) {
                     List<String> strs = this.description.getXArray(Description.FIELD_COOKING_STYLE).toStringList();
                     StringBuilder s = new StringBuilder();
@@ -787,6 +782,8 @@ public class POI extends BaseData {
                     if (s.length() > 0) {
                         this.cookingStyle = s.substring(1);
                     }
+                } else if (reset) {
+                    this.cookingStyle = null;
                 }
                 if (this.description.containsKey(Description.FIELD_RECOMMEND_COOK)) {
                     List<String> strs = this.description.getXArray(Description.FIELD_RECOMMEND_COOK).toStringList();
@@ -798,6 +795,8 @@ public class POI extends BaseData {
                     if (s.length() > 0) {
                         this.recommendCook = s.substring(1);
                     }
+                } else if (reset) {
+                    this.recommendCook = null;
                 }
                 if (this.description.containsKey(Description.FIELD_FEATURE)) {
                     List<String> strs = this.description.getXArray(Description.FIELD_FEATURE).toStringList();
@@ -809,40 +808,54 @@ public class POI extends BaseData {
                     if (s.length() > 0) {
                         this.feature = s.substring(1);
                     }
+                } else if (reset) {
+                    this.feature = null;
                 }
                 
-                this.taste = getStringFromData(this.description, Description.FIELD_TASTE, null);
+                this.taste = getStringFromData(this.description, Description.FIELD_TASTE, reset ? null : this.taste);
 
-                this.service = getStringFromData(this.description, Description.FIELD_SERVICE_ATTITUDE, null);
-                if (this.service == null) {
-                    this.service = getStringFromData(this.description, Description.FIELD_SERVICE_QUALITY, null);
+                String service = getStringFromData(this.description, Description.FIELD_SERVICE_ATTITUDE, reset ? null : this.service);
+                if (service == null) {
+                    service = getStringFromData(this.description, Description.FIELD_SERVICE_QUALITY, reset ? null : this.service);
                 }
+                this.service = service;
                 
-                this.envrionment = getStringFromData(this.description, Description.FIELD_ENVIRONMENT, null);
+                this.envrionment = getStringFromData(this.description, Description.FIELD_ENVIRONMENT, reset ? null : this.envrionment);
                 
                 //购物POI中的产品信息，4.30 ALPHA3中暂未添加
                 //目前暂无其他代码调用此段信息，仅作为预留
-                this.product = getStringFromData(this.description, Description.FIELD_PRODUCT, null);
-                if (this.product == null){
-                	this.product = getStringFromData(this.description, Description.FIELD_PRODUCT_ATTITUDE, null);
+                String product = getStringFromData(this.description, Description.FIELD_PRODUCT, reset ? null : this.product);
+                if (product == null){
+                	product = getStringFromData(this.description, Description.FIELD_PRODUCT_ATTITUDE, reset ? null : this.product);
                 }
+                this.product = product;
             }
-        } else {
+        } else if (reset) {
             this.description = null;
+            this.grade = 0;
+            this.cookingStyle = null;
+            this.recommendCook = null;
+            this.feature = null;
+            this.taste = null;
+            this.service = null;
+            this.envrionment = null;
+            this.product = null;
         }
-        this.telephone = getStringFromData(FIELD_TELEPHONE);
-        this.reserveTel = getStringFromData(FIELD_RESERVE_TEL);
-        this.address = getStringFromData(FIELD_ADDRESS);
-        this.url = getStringFromData(FIELD_URL);
-        this.toCenterDistance = getStringFromData(FIELD_TO_CENTER_DISTANCE);
-        this.commentPattern = getLongFromData(FIELD_COMMENT_PATTERN);
-        this.attribute = getLongFromData(FIELD_ATTRIBUTE);
-        this.status = getLongFromData(FIELD_STATUS);
-        dynamicPOIList = getListFromData(FIELD_DYNAMIC_POI, DynamicPOI.Initializer);
-        this.lastComment = getObjectFromData(FIELD_LAST_COMMENT, Comment.Initializer);
-        this.perCapity = getStringFromData(FIELD_PERCAPITY);
+        this.telephone = getStringFromData(FIELD_TELEPHONE, reset ? null : this.telephone);
+        this.reserveTel = getStringFromData(FIELD_RESERVE_TEL, reset ? null : this.reserveTel);
+        this.address = getStringFromData(FIELD_ADDRESS, reset ? null : this.address);
+        this.url = getStringFromData(FIELD_URL, reset ? null : this.url);
+        this.toCenterDistance = getStringFromData(FIELD_TO_CENTER_DISTANCE, reset ? null : this.toCenterDistance);
+        this.commentPattern = getLongFromData(FIELD_COMMENT_PATTERN, reset ? 0 : this.commentPattern);
+        this.attribute = getLongFromData(FIELD_ATTRIBUTE, reset ? 0 : this.attribute);
+        this.status = getLongFromData(FIELD_STATUS, reset ? 0 : this.status);
+        this.dynamicPOIList = getListFromData(FIELD_DYNAMIC_POI, DynamicPOI.Initializer, reset ? null : this.dynamicPOIList);
+        this.lastComment = getObjectFromData(FIELD_LAST_COMMENT, Comment.Initializer, reset ? null : this.lastComment);
+        this.perCapity = getStringFromData(FIELD_PERCAPITY, reset ? null : this.perCapity);
         if (this.data.containsKey(Hotel.FIELD_UUID)) {
             this.hotel = new Hotel(this.data);
+        } else if (reset) {
+            this.hotel = null;
         }
     }
     

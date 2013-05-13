@@ -22,11 +22,14 @@ public class XMapData {
     }
     
     public XMapData(XMap data) throws APIException {
-        init(data, true);
+        this.data = data;
+        if (this.data == null) {
+            throw new APIException(APIException.RESPONSE_DATA_IS_EMPTY);
+        }
     }
     
     public void init(XMap data, boolean reset) throws APIException {
-        setData(data);
+        this.data = data;
         if (this.data == null) {
             throw new APIException(APIException.RESPONSE_DATA_IS_EMPTY);
         }

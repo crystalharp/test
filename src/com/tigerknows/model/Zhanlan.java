@@ -112,6 +112,7 @@ public class Zhanlan extends BaseData implements Parcelable{
 
     public Zhanlan (XMap data) throws APIException {
         super(data);
+        init(data, true);
     }
     
     public void init(XMap data, boolean reset) throws APIException {

@@ -793,6 +793,7 @@ public class TrafficModel extends XMapData {
 
         public Plan(XMap data) throws APIException {            
             super(data);
+            init(data, true);
         }
         
         public void init(XMap data, boolean reset) throws APIException {

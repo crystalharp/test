@@ -67,6 +67,7 @@ public class Fendian extends BaseData {
 
     public Fendian (XMap data) throws APIException {
         super(data);
+        init(data, true);
     }
     
     public void init(XMap data, boolean reset) throws APIException {

@@ -118,76 +118,33 @@ public class Comment extends BaseData {
 
     public Comment (XMap data) throws APIException {
         super(data);
+        init(data, true);
     }
     
     public void init(XMap data, boolean reset) throws APIException {
         super.init(data, reset);
-        if (this.data.containsKey(FIELD_UID)) {
-            this.uid = this.data.getString(FIELD_UID);
-        }
-        if (this.data.containsKey(FIELD_CONTENT)) {
-            this.content = this.data.getString(FIELD_CONTENT);
-        }
-        if (this.data.containsKey(FIELD_USER)) {
-            this.user = this.data.getString(FIELD_USER);
-        }
-        if (this.data.containsKey(FIELD_TIME)) {
-            this.time = this.data.getString(FIELD_TIME);
-        }
-        if (this.data.containsKey(FIELD_GRADE)) {
-            this.grade = this.data.getInt(FIELD_GRADE);
-        }
-        if (this.data.containsKey(FIELD_PUID)) {
-            this.puid = this.data.getString(FIELD_PUID);
-        }
-        if (this.data.containsKey(FIELD_AVG)) {
-            this.avg = this.data.getInt(FIELD_AVG);
-        }
-        if (this.data.containsKey(FIELD_TASTE)) {
-            this.taste = this.data.getInt(FIELD_TASTE);
-        }
-        if (this.data.containsKey(FIELD_QOS)) {
-            this.qos = this.data.getInt(FIELD_QOS);
-        }
-        if (this.data.containsKey(FIELD_ENVIRONMENT)) {
-            this.environment = this.data.getInt(FIELD_ENVIRONMENT);
-        }
-        if (this.data.containsKey(FIELD_RECOMMEND)) {
-            this.recommend = this.data.getString(FIELD_RECOMMEND);
-        }
-        if (this.data.containsKey(FIELD_LEVEL)) {
-            this.level = this.data.getInt(FIELD_LEVEL);
-        }
-        if (this.data.containsKey(FIELD_EFFECT)) {
-            this.effect = this.data.getInt(FIELD_EFFECT);
-        }
-        if (this.data.containsKey(FIELD_RESTAIR)) {
-            this.restair = this.data.getString(FIELD_RESTAIR);
-        }
-        if (this.data.containsKey(FIELD_POI_STATUS)) {
-            this.poiStatus = this.data.getInt(FIELD_POI_STATUS);
-        }
-        if (this.data.containsKey(FIELD_PATTERN)) {
-            this.pattern = this.data.getInt(FIELD_PATTERN);
-        }
-        if (this.data.containsKey(FIELD_POI_NAME)) {
-            this.poiName = this.data.getString(FIELD_POI_NAME);
-        }
-        if (this.data.containsKey(FIELD_USER_ID)) {
-            this.userId = this.data.getInt(FIELD_USER_ID);
-        }
-        if (this.data.containsKey(FIELD_POI_CITY_ID)) {
-            this.poiCityId = this.data.getString(FIELD_POI_CITY_ID);
-        }
-        if (this.data.containsKey(FIELD_URL)) {
-            this.url = this.data.getString(FIELD_URL);
-        }
-        if (this.data.containsKey(FIELD_CLIENT_UID)) {
-            this.clientUid = this.data.getString(FIELD_CLIENT_UID);
-        }
-        if (this.data.containsKey(FIELD_SOURCE)) {
-            this.source = this.data.getString(FIELD_SOURCE);
-        }
+        this.uid = getStringFromData(FIELD_UID, reset ? null : this.uid);
+        this.content = getStringFromData(FIELD_CONTENT, reset ? null : this.content);
+        this.user = getStringFromData(FIELD_USER, reset ? null : this.user);
+        this.time = getStringFromData(FIELD_TIME, reset ? null : this.time);
+        this.grade = getLongFromData(FIELD_GRADE, reset ? 6 : this.grade);
+        this.puid = getStringFromData(FIELD_PUID, reset ? null : this.puid);
+        this.avg = getLongFromData(FIELD_AVG, reset ? -1 : this.avg);
+        this.taste = getLongFromData(FIELD_TASTE, reset ? 3 : this.taste);
+        this.qos = getLongFromData(FIELD_QOS, reset ? 3 : this.qos);
+        this.environment = getLongFromData(FIELD_ENVIRONMENT, reset ? 3 : this.environment);
+        this.recommend = getStringFromData(FIELD_RECOMMEND, reset ? null : this.recommend);
+        this.level = getLongFromData(FIELD_LEVEL, reset ? 3 : this.level);
+        this.effect = getLongFromData(FIELD_EFFECT, reset ? 3 : this.effect);
+        this.restair = getStringFromData(FIELD_RESTAIR, reset ? null : this.restair);
+        this.poiStatus = getLongFromData(FIELD_POI_STATUS, reset ? 0 : this.poiStatus);
+        this.pattern = getLongFromData(FIELD_PATTERN, reset ? 0 : this.pattern);
+        this.poiName = getStringFromData(FIELD_POI_NAME, reset ? null : this.poiName);
+        this.userId = getLongFromData(FIELD_USER_ID, reset ? -1 : this.userId);
+        this.poiCityId = getStringFromData(FIELD_POI_CITY_ID, reset ? null : this.poiCityId);
+        this.url = getStringFromData(FIELD_URL, reset ? null : this.url);
+        this.clientUid = getStringFromData(FIELD_CLIENT_UID, reset ? null : this.clientUid);
+        this.source = getStringFromData(FIELD_SOURCE, reset ? null : this.source);
     }
     
     public XMap getData() {
