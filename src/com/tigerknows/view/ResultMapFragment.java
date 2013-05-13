@@ -130,7 +130,9 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
         mTitleBtn.setText(mTitle);
         mRightBtn.setVisibility(View.INVISIBLE);
         mRootView.setOnTouchListener(null);
-        if (mSphinx.mRequstSnapMap) {
+        int fromThirdPartye = mSphinx.getFromThirdParty();
+        if (fromThirdPartye == Sphinx.THIRD_PARTY_SONY_MY_LOCATION ||
+                fromThirdPartye == Sphinx.THIRD_PARTY_SONY_MY_LOCATION) {
             mSnapView.setVisibility(View.VISIBLE);
         } else {
             mSnapView.setVisibility(View.GONE);
@@ -268,10 +270,10 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
 	        					description.replace('\'', ' ')+"'>" +
 	        					description + "</a>"); // address 是选定位置(当前定位的位置或者search后选择的某个地址)的详细地址描述 加上 该地址的 URL link，最终要插入MMS的内容中
 	        			mSphinx.setResult(Activity.RESULT_OK, intent);
+	        			mSphinx.finish();
 	        		}
 	        	}
 	        }, mSphinx.getMapView().getCenterPosition(), null);
-	        mSphinx.finish();
 	        break;
         case R.id.right_btn:
             mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);

@@ -96,12 +96,6 @@ public class PullService extends Service {
                 
                 Context context = getApplicationContext();
                 
-                // 收集定位信息
-                String locationData = queryCollectionLocation(context);
-                if (TextUtils.isEmpty(locationData)) {
-                    uploadLocationData(context, locationData);
-                }
-                
                 try {
                     String s = TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_FAILED_TIMES, "0");
                     fail = Integer.parseInt(s);

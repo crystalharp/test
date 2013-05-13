@@ -210,7 +210,7 @@ public class HttpUtils {
                         post.addHeader(CONTENT_TYPE, MULTIPART_FORM_CONTENT_TYPE);
                         postParam = buf.toString();
                         data = postParam.getBytes(TKConfig.getEncoding());
-                        data = DataEncryptor.encrypt(data);
+                        DataEncryptor.encrypt(data);
                         
                     } else {
                         post.addHeader(CONTENT_TYPE, APPLICATION_FORM_CONTENT_TYPE_VALUE);

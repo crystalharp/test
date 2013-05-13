@@ -298,34 +298,42 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 }
             } else if (object instanceof Dianying) {
                 Dianying dynamic = (Dianying) object;
-                List<BaseQuery> list = new ArrayList<BaseQuery>();
-
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIANYING);
-                criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getUid());
-                
-                dataOperation = new DataOperation(mSphinx);
-                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
-                        Dianying.NEED_FILELD_ONLY_DIANYING
-                        + Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
-                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-                        Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
-                        Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
-                dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-                list.add(dataOperation);
-                
-                dataOperation = new DataOperation(mSphinx);
-                criteria = new Hashtable<String, String>();
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_YINGXUN);
-                criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getYingxun().getUid());
-                
-                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Yingxun.NEED_FILELD);
-                dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-                list.add(dataOperation);
-                
-                mTkAsyncTasking = mSphinx.queryStart(list);
-                mBaseQuerying = list;
+                if (dynamic.getPictures() != null) {
+                    List<Dianying> list = new ArrayList<Dianying>();
+                    list.add(dynamic);
+                    dynamic.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY | Yingxun.Changci.OPTION_DAY_TOMORROW | Yingxun.Changci.OPTION_DAY_AFTER_TOMORROW);
+                    mSphinx.showView(R.id.view_dianying_detail);
+                    mSphinx.getDianyingDetailFragment().setData(list, 0, null);
+                } else {
+                    List<BaseQuery> list = new ArrayList<BaseQuery>();
+    
+                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIANYING);
+                    criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getUid());
+                    
+                    dataOperation = new DataOperation(mSphinx);
+                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+                            Dianying.NEED_FILELD_ONLY_DIANYING
+                            + Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
+                    criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+                            Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
+                            Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
+                    dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+                    list.add(dataOperation);
+                    
+                    dataOperation = new DataOperation(mSphinx);
+                    criteria = new Hashtable<String, String>();
+                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_YINGXUN);
+                    criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getYingxun().getUid());
+                    
+                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Yingxun.NEED_FILELD);
+                    dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+                    list.add(dataOperation);
+                    
+                    mTkAsyncTasking = mSphinx.queryStart(list);
+                    mBaseQuerying = list;
+                }
             }
             
         }
@@ -395,7 +403,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mRightBtn.setOnClickListener(this); 
         
         TKWeixin tkWeixin = TKWeixin.getInstance(mSphinx);
-        if (tkWeixin.isWXAppInstalled() && mSphinx.isFromWeiXin()) {
+        if (tkWeixin.isWXAppInstalled() && mSphinx.getFromThirdParty() == Sphinx.THIRD_PARTY_WENXIN_REQUET) {
             mToolsView.setVisibility(View.GONE);
             mWeixinView.setVisibility(View.VISIBLE);
         } else {
@@ -698,22 +706,37 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * @param view
      */
     void initDianyingItemView(Dianying data, View view) {
-        ImageView iconImv = (ImageView) view.findViewById(R.id.icon_imv);
+        ImageView pictureImv = (ImageView) view.findViewById(R.id.picture_imv);
         TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
-        TextView gradeTxv = (TextView) view.findViewById(R.id.grade_txv);
-        TextView typeTxv = (TextView) view.findViewById(R.id.type_txv);
-        TextView lengthTxv = (TextView) view.findViewById(R.id.length_txv);
-        TKDrawable tkDrawable = data.getPictures();
-        if (tkDrawable != null) {
-            Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, POIDetailFragment.this.toString());
-            iconImv.setBackgroundDrawable(drawable);
+        RatingBar starsRtb = (RatingBar) view.findViewById(R.id.stars_rtb);
+        TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
+        TextView addressTxv = (TextView) view.findViewById(R.id.category_txv);
+        TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
+        
+        view.findViewById(R.id.body_view).setBackgroundDrawable(null);
+
+        Drawable drawable = data.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, POIDetailFragment.this.toString());
+        if(drawable != null) {
+            //To prevent the problem of size change of the same pic 
+            //After it is used at a different place with smaller size
+            if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+                pictureImv.setBackgroundDrawable(null);
+            }
+            pictureImv.setBackgroundDrawable(drawable);
         } else {
-            iconImv.setBackgroundDrawable(null);
+            pictureImv.setBackgroundDrawable(null);
         }
+        
         nameTxv.setText(data.getName());
-        gradeTxv.setText(String.valueOf(data.getRank()));
-        typeTxv.setText(data.getTag());
-        lengthTxv.setText(data.getLength());
+        starsRtb.setProgress((int) data.getRank());
+        distanceTxv.setVisibility(View.GONE);
+        
+        addressTxv.setText(data.getTag());
+        if (TextUtils.isEmpty(data.getLength())) {
+            dateTxv.setText(R.string.dianying_no_length_now);
+        } else {
+            dateTxv.setText(String.valueOf(data.getLength()));
+        }
     }
     
     public void refreshStamp() {
@@ -990,7 +1013,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             	int size = (list != null ? list.size() : 0);
                 int viewCount = mDynamicDianyingListView.getChildCount();
                 for(int i = 0; i < viewCount && i < size; i++) {
-                    mDynamicDianyingListView.getChildAt(i).setVisibility(View.VISIBLE);
+                    View v = mDynamicDianyingListView.getChildAt(i);
+                    v.setVisibility(View.VISIBLE);
+                    if (i >= viewCount) {
+                        initDianyingItemView(list.get(i), v);
+                    }
                 }
                 
                 for(int i = 0; i < viewCount; i++) {
@@ -1540,7 +1567,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     dianying.setYingxun(((YingxunQueryResponse) response).getYingxun());
                     List<Dianying> list = new ArrayList<Dianying>();
                     list.add(dianying);
-                    dianying.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY&Yingxun.Changci.OPTION_DAY_TOMORROW&Yingxun.Changci.OPTION_DAY_AFTER_TOMORROW);
+                    dianying.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY | Yingxun.Changci.OPTION_DAY_TOMORROW | Yingxun.Changci.OPTION_DAY_AFTER_TOMORROW);
                     mSphinx.showView(R.id.view_dianying_detail);
                     mSphinx.getDianyingDetailFragment().setData(list, 0, null);
                 }

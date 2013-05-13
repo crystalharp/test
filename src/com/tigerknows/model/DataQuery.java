@@ -490,6 +490,9 @@ public final class DataQuery extends BaseQuery {
                 if (criteria.containsKey(SERVER_PARAMETER_DIANYING_UUID)) {
                     requestParameters.add(SERVER_PARAMETER_DIANYING_UUID, criteria.get(SERVER_PARAMETER_DIANYING_UUID));
                 }
+                if (criteria.containsKey(SERVER_PARAMETER_POI_ID)) {
+                    requestParameters.add(SERVER_PARAMETER_POI_ID, criteria.get(SERVER_PARAMETER_POI_ID));
+                }
                 requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Dianying.NEED_FILELD);
                 requestParameters.add(SERVER_PARAMETER_PICTURE, 
                         Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
