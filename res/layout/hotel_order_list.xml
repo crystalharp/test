@@ -19,16 +19,37 @@
         android:textColor="#ff6c6c6c"
         android:background="#ffeaeaea">
     </TextView>
-    <com.tigerknows.widget.SpringbackListView android:id="@+id/result_lsv"
-        android:layout_width="fill_parent" 
-        android:layout_height="fill_parent"
-        android:layout_below="@id/result_txv"
-        android:divider="@color/transparent"
-        android:dividerHeight="0dp"
-        android:listSelector="@color/transparent"
-        android:drawSelectorOnTop="false"
-        android:scrollingCache="false"
-        android:fadingEdge="none" />
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+            <include
+                layout="@layout/empty_view"
+                android:id="@+id/empty_view"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                />
+            
+            <com.tigerknows.widget.QueryingView
+                android:id="@+id/querying_view"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:visibility="gone"
+                >
+            </com.tigerknows.widget.QueryingView>
+                
+            <com.tigerknows.widget.SpringbackListView
+                android:id="@+id/result_lsv"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:divider="@drawable/bg_line_split"
+                android:footerDividersEnabled="false"
+                android:fadingEdge="none"
+                android:scrollingCache="false"
+                />
+            
+        </FrameLayout>
 	    
     <include layout="@layout/empty_view"
         android:id="@+id/empty_view"
