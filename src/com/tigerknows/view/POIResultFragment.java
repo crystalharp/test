@@ -521,9 +521,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 categoryTxv.setText("");
             }
             
-            String perCapity = poi.getPerCapity();
-            if (perCapity != null) {
-                moneyTxv.setText(perCapity);
+            int money = poi.getPerCapity();
+            if (money > -1) {
+                moneyTxv.setText(context.getString(R.string.yuan, money));
             } else {
                 moneyTxv.setText("");
             }

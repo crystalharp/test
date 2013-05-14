@@ -292,9 +292,6 @@ public class POI extends BaseData {
     // 0x16 x_map  最近的一条点评 
     public static final byte FIELD_LAST_COMMENT = 0x16;
     
-    // 0x17    x_string    价格描述，格式为"960元" 
-    public static final byte FIELD_PERCAPITY = 0x17;
-    
     public static class DynamicPOI extends XMapData {
         // 0x01 x_int 动态poi的类型
         public static final byte FIELD_TYPE = 0x01;
@@ -447,7 +444,7 @@ public class POI extends BaseData {
     // 菜系
     private String cookingStyle;
     
-    private String perCapity;
+    private int perCapity = -1;
     
     private String recommendCook;
     
@@ -652,8 +649,7 @@ public class POI extends BaseData {
         return cookingStyle;
     }
     
-    
-    public String getPerCapity() {
+    public int getPerCapity() {
         return perCapity;
     }
     
@@ -783,6 +779,9 @@ public class POI extends BaseData {
                         this.cookingStyle = s.substring(1);
                     }
                 }
+                if (this.description.containsKey(Description.FIELD_PER_CAPITA)) {
+                    this.perCapity = (int) this.description.getInt(Description.FIELD_PER_CAPITA);
+                }
                 if (this.description.containsKey(Description.FIELD_RECOMMEND_COOK)) {
                     List<String> strs = this.description.getXArray(Description.FIELD_RECOMMEND_COOK).toStringList();
                     StringBuilder s = new StringBuilder();
@@ -869,10 +868,6 @@ public class POI extends BaseData {
         } else {
             this.lastComment = null;
         }
-        this.perCapity = null;
-        if (this.data.containsKey(FIELD_PERCAPITY)) {
-            this.perCapity = this.data.getString(FIELD_PERCAPITY);
-        }
     }
     
     public XMap getData() {
@@ -923,7 +918,6 @@ public class POI extends BaseData {
                 }
                 this.data.put(FIELD_DYNAMIC_POI, xarray);
             }
-            this.data.put(FIELD_PERCAPITY, this.perCapity);
         }
         return this.data;
     }

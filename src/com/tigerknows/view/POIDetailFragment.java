@@ -470,9 +470,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             mCategoryTxv.setText("");
         }
         
-        String perCapity = poi.getPerCapity();
-        if (perCapity != null) {
-            mMoneyTxv.setText(perCapity);
+        int money = poi.getPerCapity();
+        if (money > -1) {
+            mMoneyTxv.setText(mContext.getString(R.string.yuan, money));
             mMoneyTxv.setVisibility(View.VISIBLE);
         } else {
             mMoneyTxv.setVisibility(View.GONE);
