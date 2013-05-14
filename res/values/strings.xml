@@ -944,11 +944,13 @@
     <string name="hotel_room_title">订单填写</string>
     <string name="hotel_room_howmany">房间数</string>
     <string name="hotel_room_reserve">房间保留到</string>
-    <string name="hotel_room_person_name">入住人</string>
-    <string name="hotel_room_mobile_nubmer">手机号</string>
+    <string name="hotel_room_person_name">入住人：</string>
+    <string name="hotel_room_mobile_nubmer">手机号：</string>
     <string name="submit_order">提交订单</string>
     <string name="hotel_room_date">入住：%1$d月%2$d日  离店：%3$d月%4$d日</string>
     <string name="hotel_room_credit_note">因酒店房间紧张，需信用卡担保，以便保留房间</string>
+    <string name="hotel_room_person_empty_tip">请填写入住人!</string>
+    <string name="hotel_room_mobile_empty_tip">请填写手机号!</string>
     
     <string name="choose_room_howmany">选择房间数</string>
     <string name="room_howmany_item">%1$d间/%2$s元</string>

@@ -10,7 +10,6 @@ import java.util.Hashtable;
 import java.util.List;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -26,7 +25,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -45,7 +43,6 @@ import com.tigerknows.model.Response;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.user.ExtValidationEditText;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.StringArrayAdapter;
 
@@ -180,7 +177,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	String str = mRoomPersonEdt.getText().toString().trim();
         	if(TextUtils.isEmpty(str)){
         		mRoomPersonEdt.requestFocus();
-        		Toast.makeText(mContext, mSphinx.getString(R.string.please_input)+mSphinx.getString(R.string.hotel_room_person_name)+"!", Toast.LENGTH_SHORT).show();
+        		Toast.makeText(mContext, mSphinx.getString(R.string.hotel_room_person_empty_tip), Toast.LENGTH_SHORT).show();
         		mSphinx.showSoftInput();
         		return;
         	}else{
@@ -189,7 +186,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	str = mRoomMobileNumberEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
         		mRoomMobileNumberEdt.requestFocus();
-        		Toast.makeText(mContext, mSphinx.getString(R.string.please_input)+mSphinx.getString(R.string.hotel_room_mobile_nubmer)+"!", Toast.LENGTH_SHORT).show();
+        		Toast.makeText(mContext, mSphinx.getString(R.string.hotel_room_mobile_empty_tip), Toast.LENGTH_SHORT).show();
         		mSphinx.showSoftInput();
         		return;
         	}else{
