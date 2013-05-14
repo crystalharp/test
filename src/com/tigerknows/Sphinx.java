@@ -486,7 +486,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             LogWrapper.d(TAG, "onCreate() uiStack="+uiStack);
 
-            checkFromThirdParty(getIntent(), true);
+            checkFromThirdParty(true);
             if (uiStack != null) {
                 initView();
             } else {
@@ -916,7 +916,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         Sphinx.this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
         mMapView.refreshMap();
         
-        checkFromThirdParty(getIntent(), false);
+        checkFromThirdParty(false);
     }
 
     @Override
@@ -1333,8 +1333,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     	
     }
     
-    boolean checkFromThirdParty(Intent intent, boolean onlyCheck) {
+    boolean checkFromThirdParty(boolean onlyCheck) {
         boolean result = false;
+        Intent intent = getIntent();
         if (intent == null) {
             return result;
         }
@@ -1635,7 +1636,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        if (checkFromThirdParty(intent, false)) {
+        setIntent(intent);
+        if (checkFromThirdParty(false)) {
             return;
         }
         
@@ -2855,7 +2857,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     
     public boolean showHomeDragHint(){
-
+        if (mFromThirdParty > 0) {
+            return false;
+        }
         if (TKConfig.getPref(this, TKConfig.PREFS_HINT_HOME_DRAG) == null) {
         	mDragHintView.setVisibility(View.VISIBLE);
         	TKConfig.setPref(mThis, TKConfig.PREFS_HINT_HOME_DRAG, "1");

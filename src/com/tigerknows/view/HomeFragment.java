@@ -11,12 +11,10 @@ import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
-import com.tigerknows.view.SpringbackListView.OnRefreshListener;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -25,18 +23,13 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Transformation;
 import android.view.animation.Animation.AnimationListener;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
@@ -47,7 +40,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView.ScaleType;
@@ -122,9 +114,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     List<Category> mCategorylist = new ArrayList<Category>();
     private final int[] mCategoryResIdList = {
             R.drawable.category_food,
+            R.drawable.category_hotel,
             R.drawable.category_play,
             R.drawable.category_shopping,
-            R.drawable.category_hotel,
             R.drawable.category_travel,
             R.drawable.category_beauty,
             R.drawable.category_sports,
@@ -134,9 +126,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
             };
     private final int[] mCategoryTagResIdList = {
             R.drawable.category_tag_food,
+            R.drawable.category_tag_hotel,
             R.drawable.category_tag_play,
             R.drawable.category_tag_shopping,
-            R.drawable.category_tag_hotel,
             R.drawable.category_tag_travel,
             R.drawable.category_tag_beauty,
             R.drawable.category_tag_sports,
@@ -177,20 +169,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 				curIndex++;
 				subCategories.add(new ArrayList<String>());
 				subCategories.get(curIndex).add(attributes.getValue(ELEMENT_VALUE_ATTR));
-				
+				mHighLightedSubs[curIndex] = attributes.getValue(ELEMENT_HIGH_LIGHT_ATTR);
 			}else if(localName.equals(ELEMENT_SUB_CATEGORY)){
-				subCategories.get(curIndex).add( attributes.getValue(ELEMENT_VALUE_ATTR));
-				
-				String hightLight = attributes.getValue(ELEMENT_HIGH_LIGHT_ATTR); 
-				if(hightLight != null && hightLight.equals("true")){
-					
-					if(mHighLightedSubs[curIndex] != null){
-						mHighLightedSubs[curIndex] = mHighLightedSubs[curIndex] + " \\ " + attributes.getValue(ELEMENT_VALUE_ATTR);
-					}else{
-						mHighLightedSubs[curIndex] = attributes.getValue(ELEMENT_VALUE_ATTR);
-					}
-				}
-				
+				subCategories.get(curIndex).add( attributes.getValue(ELEMENT_VALUE_ATTR));				
 			}
 		}
     	
@@ -345,11 +326,11 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         mInputBtn.setOnClickListener(this);
         mCityBtn.setOnClickListener(this);
         
-       mTransPaddingView.setOnTouchListener(mDragViewExpandOnTouchListener);
+       mTransPaddingView.setOnTouchListener(mDragViewExpanedOnTouchListener);
        mTransPaddingView.setOnClickListener(mTransPaddingOnClickListener);
        
        mSubCategoryGrid.setOnItemClickListener( mSubCategoryOnClickListener);
-       mSubCategoryGrid.setOnTouchListener(mDragViewExpandOnTouchListener);
+       mSubCategoryGrid.setOnTouchListener(mDragViewExpanedOnTouchListener);
        
     }
     
@@ -457,12 +438,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         		convertView = mLayoutInflater.inflate(R.layout.poi_category_list_item, parent, false);
         	}
         	
-        	if (position%2 == 0) {
-        	    convertView.setBackgroundResource(R.drawable.list_selector_background_gray_light);
-        	} else {
-                convertView.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
-        	}
-        	
         	//Setup category button
         	Button btnCategory = (Button) convertView.findViewById(R.id.btn_category);
         	btnCategory.setText(getItem(position).name);
@@ -471,14 +446,20 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         	btnCategory.setCompoundDrawables(subCategoryIcon, null, null, null);
         	
         	Button btnSubCategory = (Button) convertView.findViewById(R.id.btn_sub_category);
-        	btnSubCategory.setText("woshi xietide ziti");
+        	btnSubCategory.setText(mHighLightedSubs[position]);
         	
         	btnCategory.setOnClickListener(new CategoryBtnOnClickListener(position));
         	
         	//setup sub-category button
         	btnSubCategory.setOnClickListener(new SubCategoryOnclickListener(position));
         	btnSubCategory.setOnTouchListener(new SubCategoryBtnOnTouchListener(position));
-        	
+        	if (position == 0) {
+        	    convertView.setPadding(0, 0, 0, 0);
+            } else if (position == getCount()-1){
+                convertView.setPadding(0, 0, 0, mMyLocationViewHeight);
+            } else {
+                convertView.setPadding(0, 0, 0, 0);
+            }
         	return convertView;
         }
     }
@@ -568,7 +549,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 		mIsSubCategoryExpanded = false;
 	}
 	
-	OnTouchListener mDragViewExpandOnTouchListener = new OnTouchListener() {
+	OnTouchListener mDragViewExpanedOnTouchListener = new OnTouchListener() {
 		
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
@@ -657,7 +638,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 			break;
 
 		case MotionEvent.ACTION_UP:
-			
+			v.setPressed(false);
+			v.invalidate();
 			if(!isDragStarts){
 				break;
 			}

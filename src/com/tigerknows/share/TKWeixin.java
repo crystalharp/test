@@ -1,16 +1,13 @@
 package com.tigerknows.share;
 
 import net.sourceforge.simcpux.Constants;
-import net.sourceforge.simcpux.Util;
 
 import com.tencent.mm.sdk.openapi.GetMessageFromWX;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.SendMessageToWX;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
-import com.tencent.mm.sdk.openapi.WXTextObject;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
-import com.tigerknows.R;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.POI;
 import com.tigerknows.util.CommonUtils;
@@ -18,10 +15,12 @@ import com.tigerknows.util.CommonUtils;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * 封装对微信的操作
@@ -151,47 +150,56 @@ public class TKWeixin {
         api.sendResp(resp);
     }
     
-	public static SendMessageToWX.Req makePOIReq(Activity activity, POI poi) {
-		WXWebpageObject webpage = new WXWebpageObject();
+
+    public static SendMessageToWX.Req makePOIReq(Activity activity, POI poi) {        
+        SendMessageToWX.Req req = new SendMessageToWX.Req();
+        req.transaction = buildTransaction("webpage");
+        req.message = makeWXWebpageObject(activity, poi);
+        return req;
+    }
+    
+    private static WXMediaMessage makeWXWebpageObject(Activity activity, POI poi) {
+        WXWebpageObject webpage = new WXWebpageObject();
         webpage.webpageUrl = String.format(POI_URL, MapEngine.getInstance().getCityId(poi.getPosition()), poi.getUUID());
         WXMediaMessage msg = new WXMediaMessage(webpage);
         msg.title = poi.getName();
         msg.description = poi.getAddress();
-        Bitmap thumb = BitmapFactory.decodeResource(activity.getResources(), R.drawable.icon);
-        msg.thumbData = Util.bmpToByteArray(thumb, true);
-        
-        SendMessageToWX.Req req = new SendMessageToWX.Req();
-        req.transaction = buildTransaction("webpage");
-        req.message = msg;
-        return req;
-	}
+        InputStream is;
+        try {
+            is = activity.getAssets().open("icon.png");
+            ByteArrayOutputStream fout = new ByteArrayOutputStream();
+            byte buf[]=new byte[1024];
+            int len;
+            while((len=is.read(buf))>0)
+                fout.write(buf,0,len);
+            fout.flush();
+            fout.close();
+            is.close();
+            msg.thumbData = fout.toByteArray();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return msg;
+    }
 
     private static String buildTransaction(final String type) {
         return (type == null) ? String.valueOf(System.currentTimeMillis()) : type + System.currentTimeMillis();
     }
     
-	public static GetMessageFromWX.Resp makePOIResp(Activity activity, POI poi, Bundle bundle) {
-		// 初始化一个WXTextObject对象
-		WXTextObject textObj = new WXTextObject();
-		textObj.text = poi.getName();
-
-		// 用WXTextObject对象初始化一个WXMediaMessage对象
-		WXMediaMessage msg = new WXMediaMessage(textObj);
-		msg.description = poi.getAddress();
-		
-		// 构造一个Resp
-		GetMessageFromWX.Resp resp = new GetMessageFromWX.Resp();
-		// 将req的transaction设置到resp对象中，其中bundle为微信传递过来的intent所带的内容，通过getExtras方法获取
-		resp.transaction = getTransaction(bundle);
-		resp.message = msg;
+    public static GetMessageFromWX.Resp makePOIResp(Activity activity, POI poi, Bundle bundle) {
+        // 构造一个Resp
+        GetMessageFromWX.Resp resp = new GetMessageFromWX.Resp();
+        // 将req的transaction设置到resp对象中，其中bundle为微信传递过来的intent所带的内容，通过getExtras方法获取
+        resp.transaction = getTransaction(bundle);
+        resp.message = makeWXWebpageObject(activity, poi);
         return resp;
-	}
+    }
 
-	private static String getTransaction(Bundle bundle) {
-		final GetMessageFromWX.Req req = new GetMessageFromWX.Req(bundle);
-		return req.transaction;
-	}
-	
+    private static String getTransaction(Bundle bundle) {
+        final GetMessageFromWX.Req req = new GetMessageFromWX.Req(bundle);
+        return req.transaction;
+    }
 	public void onDestory() {
 		instance = null;
 		activity = null;

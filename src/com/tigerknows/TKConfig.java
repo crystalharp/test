@@ -288,7 +288,7 @@ public class TKConfig {
     /**
      * 软件登录服务访问URL路径
      */
-    private static String BOOTSTRAP_URL = "http://%s/bootstrap/local/";
+    private static String BOOTSTRAP_URL = "http://%s/bootstrap/local";
 
     /**
      * 默认下载服务器Host
