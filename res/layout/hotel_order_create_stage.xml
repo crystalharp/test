@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view" 
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    
+	<ImageView 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="2dp"
+	    android:background="@color/orange"/>
+        
+    <LinearLayout 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="28dp"
+	    android:weightSum="4"
+	    android:orientation="horizontal"
+	    android:background="@color/white">
+	    
+	    <RelativeLayout
+	        android:id="@+id/stage_choose_hotel_view"
+	        android:layout_width="fill_parent" 
+	        android:layout_height="fill_parent"
+	        android:gravity="center"
+	        android:background="@color/white"
+	        android:layout_weight="1">
+	        <TextView
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:gravity="center"
+	            android:layout_centerInParent="true"
+	            android:text="@string/choose_hotel"
+	            />
+	    </RelativeLayout>
+	           
+	    <RelativeLayout
+	        android:id="@+id/stage_choose_room_type_view"
+	        android:layout_width="fill_parent" 
+	        android:layout_height="fill_parent"
+	        android:background="@color/white"
+	        android:layout_weight="1"> 
+	        <TextView
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:gravity="center"
+	            android:layout_centerInParent="true"
+	            android:text="@string/choose_hotel"
+	            />
+	    </RelativeLayout>
+	           
+	    <RelativeLayout
+	        android:id="@+id/stage_fill_order_view"
+	        android:layout_width="fill_parent" 
+	        android:layout_height="fill_parent"
+	        android:background="@color/white"
+	        android:layout_weight="1"> 
+	        <TextView
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:gravity="center"
+	            android:layout_centerInParent="true"
+	            android:text="@string/choose_hotel"
+	            />
+	    </RelativeLayout>
+	        
+	    <RelativeLayout
+	        android:id="@+id/stage_reserve_success_view"
+	        android:layout_width="fill_parent" 
+	        android:layout_height="fill_parent"
+	        android:background="@color/white"
+	        android:layout_weight="1">
+	        <TextView
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:gravity="center"
+	            android:layout_centerInParent="true"
+	            android:text="@string/choose_hotel"
+	            />
+	    </RelativeLayout>
+	    
+    </LinearLayout>
+</LinearLayout>

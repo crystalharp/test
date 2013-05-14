@@ -942,12 +942,15 @@
     <string name="summary">简介</string>
     <string name="price_show">￥%1$s</string>
     <string name="hotel_room_title">订单填写</string>
-    <string name="hotel_room_howmany">房间数：</string>
-    <string name="hotel_room_reserve">房间保留到：</string>
-    <string name="hotel_room_person_name">入住姓名：</string>
+    <string name="hotel_room_howmany">房间数</string>
+    <string name="hotel_room_reserve">房间保留到</string>
+    <string name="hotel_room_person_name">入住人：</string>
     <string name="hotel_room_mobile_nubmer">手机号：</string>
     <string name="submit_order">提交订单</string>
     <string name="hotel_room_date">入住：%1$d月%2$d日  离店：%3$d月%4$d日</string>
+    <string name="hotel_room_credit_note">因酒店房间紧张，需信用卡担保，以便保留房间</string>
+    <string name="hotel_room_person_empty_tip">请填写入住人!</string>
+    <string name="hotel_room_mobile_empty_tip">请填写手机号!</string>
     
     <string name="choose_room_howmany">选择房间数</string>
     <string name="room_howmany_item">%1$d间/%2$s元</string>
@@ -992,5 +995,21 @@
     <string name="issue_comment">发表点评</string>
     <string name="order_again">再订一单</string>
     <string name="delete_order">删除订单</string>
+    
+    <string name="choose_hotel">选择酒店</string>
+    <string name="choose_room_type">选择房型</string>
+    <string name="fill_order">填写订单</string>
+    <string name="reserve_success">预订成功</string>
 
+    <string name="hotel_order_id">订  单  号：</string>
+    <string name="hotel_order_state">订单状态：</string>
+    <string name="hotel_order_time">预订时间：</string>
+    <string name="hotel_order_gross">预订总额：</string>
+    <string name="hotel_pay_type">付款方式：</string>
+    <string name="checkin_date">入住日期：</string>
+    <string name="checkout_date">离店日期：</string>
+    <string name="retention_date">保留日期：</string>
+    <string name="room_type">入住房型：</string>
+    <string name="checkin_person">入  住  人：</string>
+    
 </resources>

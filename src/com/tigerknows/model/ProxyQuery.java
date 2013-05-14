@@ -206,6 +206,10 @@ public class ProxyQuery extends BaseQuery {
                 // 0x04 x_string 保留时间点所在的日期和时间，格式为YYYY-MM-DD hh:mm:ss，用于数据提交
                 
                 public static final byte FIELD_TIME_DETAIL = 0x04;
+                
+                private static final String defaultTime = "24点之前";
+                private static final long defaultNeed = 0;
+                private static final long defaultType = 0;
 
                 private String time;
 
@@ -230,13 +234,24 @@ public class ProxyQuery extends BaseQuery {
                 public String getTimeDetail(){
                 	return timeDetail;
                 }
-
+                
+                public void setTimeDeatil(String td){
+                	this.timeDetail = td;
+                }
+                
                 public RetentionTime(XMap data) throws APIException {
                 	super(data);
                     time = getStringFromData(FIELD_TIME);
                     need = getLongFromData(FIELD_NEED);
                     type = getLongFromData(FIELD_TYPE);
                     timeDetail = getStringFromData(FIELD_TIME_DETAIL);
+                }
+                
+                public RetentionTime() throws APIException{
+            		time = defaultTime;
+            		need = defaultNeed;
+            		type = defaultType;
+            		timeDetail = null;
                 }
 
                 public static XMapInitializer<RetentionTime> Initializer = new XMapInitializer<RetentionTime>() {

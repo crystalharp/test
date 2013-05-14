@@ -46,6 +46,7 @@ import android.widget.TextView;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -619,6 +620,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         criteria.put(ProxyQuery.SERVER_PARAMETER_ROOM_TYPE_TAOCANID, pkgId);
         criteria.put(ProxyQuery.SERVER_PARAMETER_TASK, "1");
         ProxyQuery query = new ProxyQuery(mSphinx);
+        query.setup(criteria, Globals.getCurrentCityId(), getId(), getId());
         return query;
     }
     
@@ -1643,7 +1645,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 }
                 
                 //TODO:看情况移走
-            } else if (baseQuery instanceof DataOperation) {
+            } else if (baseQuery instanceof ProxyQuery) {
                 if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
                     return;
                 }
