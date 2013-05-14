@@ -693,7 +693,6 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                         mSphinx.getHandler().postDelayed(mTurnPageRunTraffic, 1000);
                     }
                 } else {
-                	System.out.println("Set footer false");
                     mTrafficLsv.setFooterSpringback(false);
                 }
                 refreshContent();
@@ -721,12 +720,6 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 type = 1;
                 msg.obj = trafficList;
             }
-            try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
             msg.what = type;
             mHandler.sendMessage(msg);
         }

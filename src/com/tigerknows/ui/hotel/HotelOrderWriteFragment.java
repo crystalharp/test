@@ -30,8 +30,8 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.DataOperation;
-import com.tigerknows.model.DataOperation.HotelOrderCreateResponse;
+import com.tigerknows.model.HotelOrderOperation;
+import com.tigerknows.model.HotelOrderOperation.HotelOrderCreateResponse;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.Hotel.RoomType;
@@ -329,34 +329,33 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
 
     public void submit(boolean HasCreditInfo) {
-    	DataOperation dataOperation = new DataOperation(mSphinx);
+    	HotelOrderOperation dataOperation = new HotelOrderOperation(mSphinx);
     	Hashtable<String, String> criteria = new Hashtable<String, String>();
     	criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DINGDAN);
-    	criteria.put(DataOperation.SERVER_PARAMETER_ORDER_TYPE, DataOperation.ORDER_TYPE_HOTEL);
-    	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
-    	criteria.put(DataOperation.SERVER_PARAMETER_HOTEL_ID, mHotel.getUuid());
+    	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_CREATE);
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_HOTEL_ID, mHotel.getUuid());
     	if(mHotel.getBrand() != null){
-    		criteria.put(DataOperation.SERVER_PARAMETER_BRAND, mHotel.getBrand());
+    		criteria.put(HotelOrderOperation.SERVER_PARAMETER_BRAND, mHotel.getBrand());
     	}
-    	criteria.put(DataOperation.SERVER_PARAMETER_ROOMTYPE, mRoomType.getRoomId());
-    	criteria.put(DataOperation.SERVER_PARAMETER_PKGID, mRoomType.getRateplanId());
-    	criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN_DATE, 
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ROOMTYPE, mRoomType.getRoomId());
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_PKGID, mRoomType.getRateplanId());
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_CHECKIN_DATE, 
     			HotelHomeFragment.SIMPLE_DATE_FORMAT.format(mCheckIn.getTime()));
-    	criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT_DATE, 
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_CHECKOUT_DATE, 
     			HotelHomeFragment.SIMPLE_DATE_FORMAT.format(mCheckOut.getTime()));
-    	criteria.put(DataOperation.SERVER_PARAMETER_RESERVE_TIME, mRTimeDetail);
-    	criteria.put(DataOperation.SERVER_PARAMETER_NUMROOMS, mRoomHowmany + "");
-    	criteria.put(DataOperation.SERVER_PARAMETER_TOTAL_PRICE, mTotalPrice);
-    	criteria.put(DataOperation.SERVER_PARAMETER_USERNAME, mUsername);
-    	criteria.put(DataOperation.SERVER_PARAMETER_MOBILE, mMobile);
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_RESERVE_TIME, mRTimeDetail);
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_NUMROOMS, mRoomHowmany + "");
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_TOTAL_PRICE, mTotalPrice);
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_USERNAME, mUsername);
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_MOBILE, mMobile);
     	if(HasCreditInfo){
-    		criteria.put(DataOperation.SERVER_PARAMETER_CREDIT_CARD_NO, mCreditCardNo);
-    		criteria.put(DataOperation.SERVER_PARAMETER_VALID_YEAR, mVerifyCode);
-    		criteria.put(DataOperation.SERVER_PARAMETER_VALID_YEAR, mValidYear);
-    		criteria.put(DataOperation.SERVER_PARAMETER_VALID_MONTH, mValidMonth);
-    		criteria.put(DataOperation.SERVER_PARAMETER_CARD_HOLDER_NAME, mCardHoldName);
-    		criteria.put(DataOperation.SERVER_PARAMETER_IDCARD_TYPE, mIdCardType);
-    		criteria.put(DataOperation.SERVER_PARAMETER_IDCARD_NO, mIdCardNo);
+    		criteria.put(HotelOrderOperation.SERVER_PARAMETER_CREDIT_CARD_NO, mCreditCardNo);
+    		criteria.put(HotelOrderOperation.SERVER_PARAMETER_VALID_YEAR, mVerifyCode);
+    		criteria.put(HotelOrderOperation.SERVER_PARAMETER_VALID_YEAR, mValidYear);
+    		criteria.put(HotelOrderOperation.SERVER_PARAMETER_VALID_MONTH, mValidMonth);
+    		criteria.put(HotelOrderOperation.SERVER_PARAMETER_CARD_HOLDER_NAME, mCardHoldName);
+    		criteria.put(HotelOrderOperation.SERVER_PARAMETER_IDCARD_TYPE, mIdCardType);
+    		criteria.put(HotelOrderOperation.SERVER_PARAMETER_IDCARD_NO, mIdCardNo);
     	}
     	dataOperation.setup(criteria);
     	mSphinx.queryStart(dataOperation);

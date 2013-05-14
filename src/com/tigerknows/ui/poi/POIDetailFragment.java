@@ -46,7 +46,6 @@ import android.widget.TextView;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
