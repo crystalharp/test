@@ -30,6 +30,7 @@ import com.tigerknows.util.Utility;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
+import android.R.integer;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -61,12 +62,14 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         super(sphinx);
         // TODO Auto-generated constructor stub
     }
-    
+
     private TextView mResultTxv;
 
     private SpringbackListView mResultLsv = null;
-    
+
     private View mEmptyView = null;
+    
+    private View mQueryingView = null;
     
     private TextView mEmptyTxv = null;
 
@@ -76,13 +79,14 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 
 	private HotelOrderAdapter hotelOrderAdapter;
     
-    private Tuangou mTuangou;
-    
-    private Dianying mDianying;
-    
     private BaseList mBaseList;
     
-    private String mDataType;
+    private int state;
+    
+    private static final int STATE_LOADING = 1;
+    private static final int STATE_LIST = 2;
+    private static final int STATE_EMPTY = 3;
+    private static final int STATE_LOADING_MORE = 4;
     
     private Runnable mTurnPageRun = new Runnable() {
         
@@ -114,6 +118,11 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         orders.add(new HotelOrder());
         hotelOrderAdapter = new HotelOrderAdapter(mContext, orders);
         mResultLsv.setAdapter(hotelOrderAdapter);
+
+        mQueryingView.setVisibility(View.INVISIBLE);
+        mEmptyView.setVisibility(View.INVISIBLE);
+        mResultLsv.setVisibility(View.VISIBLE);
+        
         return mRootView;
     }
     
@@ -136,6 +145,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
+        mQueryingView = mRootView.findViewById(R.id.querying_view);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(v);
     }

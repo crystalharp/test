@@ -74,10 +74,28 @@
                      />
              
                 <TextView
+                    android:id="@+id/order_id"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/hotel_fendian_poi"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="@string/hotel_order_id"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+                
+                <TextView
                     android:id="@+id/order_id_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     
+                    android:layout_toRightOf="@id/order_id"
                     android:layout_below="@id/hotel_fendian_poi"
                     android:layout_marginTop="8dp"
                     android:layout_marginLeft="10dp"
@@ -91,10 +109,28 @@
                     />
 
                 <TextView
+                    android:id="@+id/order_state"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/order_id_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:ellipsize="end"
+                    android:focusable="false"
+                    android:maxLines="2"
+                    android:singleLine="false"
+                    android:text="@string/hotel_order_state"
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp" />
+                
+                <TextView
                     android:id="@+id/order_state_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     
+                    android:layout_toRightOf="@id/order_state"
                     android:layout_below="@id/order_id_txv"
                     android:layout_marginLeft="10dp"
                     android:layout_marginBottom="8dp"
@@ -108,10 +144,27 @@
                     android:textSize="14sp" />
 
                 <TextView
+                    android:id="@+id/order_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/order_state_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="@string/hotel_order_time"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+
+                <TextView
                     android:id="@+id/order_time_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     
+                    android:layout_toRightOf="@id/order_time"
                     android:layout_below="@id/order_state_txv"
                     android:layout_marginLeft="10dp"
                     android:layout_marginBottom="8dp"
@@ -122,12 +175,29 @@
                     android:singleLine="true"
                     android:focusable="false"
                     />
-
+                
+                <TextView
+                    android:id="@+id/order_gross"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/order_time_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="@string/hotel_order_gross"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+                
                 <TextView
                     android:id="@+id/order_gross_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     
+                    android:layout_toRightOf="@id/order_gross"
                     android:layout_below="@id/order_time_txv"
                     android:layout_marginLeft="10dp"
                     android:layout_marginBottom="8dp"
@@ -140,10 +210,27 @@
                     />
 
                 <TextView
+                    android:id="@+id/pay_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/order_gross_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="@string/hotel_pay_type"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+
+                <TextView
                     android:id="@+id/pay_type_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     
+                    android:layout_toRightOf="@id/pay_type"
                     android:layout_below="@id/order_gross_txv"
                     android:layout_marginLeft="10dp"
                     android:layout_marginBottom="8dp"
@@ -156,10 +243,27 @@
                     />
 
                 <TextView
+                    android:id="@+id/checkin_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/pay_type_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="@string/checkin_date"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+
+                <TextView
                     android:id="@+id/checkin_date_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     
+                    android:layout_toRightOf="@+id/checkin_date"
                     android:layout_below="@id/pay_type_txv"
                     android:layout_marginLeft="10dp"
                     android:layout_marginBottom="8dp"
@@ -172,10 +276,27 @@
                     />
                 
                 <TextView
+                    android:id="@+id/checkout_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/checkin_date_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="@string/checkout_date"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+                
+                <TextView
                     android:id="@+id/checkout_date_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     
+                    android:layout_toRightOf="@id/checkout_date"
                     android:layout_below="@id/checkin_date_txv"
                     android:layout_marginLeft="10dp"
                     android:layout_marginBottom="8dp"
@@ -188,11 +309,94 @@
                     />
                 
                 <TextView
-                    android:id="@+id/checkin_person_txv"
+                    android:id="@+id/retention_date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     
                     android:layout_below="@id/checkout_date_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="@string/retention_date"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+                
+                <TextView
+                    android:id="@+id/retention_date_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_toRightOf="@id/checkout_date"
+                    android:layout_below="@id/checkout_date_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="保留日期"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+                
+                <TextView
+                    android:id="@+id/room_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/retention_date_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="@string/room_type"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+                
+                <TextView
+                    android:id="@+id/room_type_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_toRightOf="@id/room_type"
+                    android:layout_below="@id/retention_date_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="入住房型"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+                
+                <TextView
+                    android:id="@+id/checkin_person"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_below="@id/room_type_txv"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginBottom="8dp"
+                    
+                    android:textColor="@color/black_light"
+                    android:textSize="14sp"
+                    android:text="@string/checkin_person"
+                    android:singleLine="true"
+                    android:focusable="false"
+                    />
+                
+                <TextView
+                    android:id="@+id/checkin_person_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    
+                    android:layout_toRightOf="@id/checkin_person"
+                    android:layout_below="@id/room_type_txv"
                     android:layout_marginLeft="10dp"
                     android:layout_marginBottom="8dp"
                     
@@ -203,17 +407,17 @@
                     android:focusable="false"
                     />
                 
-                
             </RelativeLayout>
-
-            <ImageView 
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_sawtooth"
-                />
              
          </LinearLayout>
          
     </ScrollView>
     
+	<include
+	    layout="@layout/hotel_order_create_stage"
+	    android:id="@+id/order_stage_view"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_above="@id/panel_btns"/>
+	
 </RelativeLayout>
