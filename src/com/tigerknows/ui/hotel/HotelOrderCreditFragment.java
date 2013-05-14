@@ -50,6 +50,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     
     private String mSumPrice;
     private Calendar mDate;
+    private String mOrderModifyDeadline;
     
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -165,9 +166,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	}
 		});
     }
-	public void setData(String sumPrice, Calendar date) {
+	public void setData(String sumPrice, Calendar date, String orderModifyDeadline) {
 		mSumPrice = sumPrice;
 		mDate = date;
+		mOrderModifyDeadline = orderModifyDeadline;
 		
 		//TODO 
 	}

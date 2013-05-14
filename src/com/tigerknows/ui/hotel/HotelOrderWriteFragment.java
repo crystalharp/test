@@ -179,16 +179,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	}else{
         		mMobile = str;
         	}
-        	if (mNeedCreditAssure != 0) {
-        		if(mTypeCreditAssure ==2){
-        			mSphinx.getHotelOrderCreditFragment().setData(mTotalPrice, Calendar.getInstance());
-        		}else {
-        			mSphinx.getHotelOrderCreditFragment().setData(mRoomtypeDynamic.getPrice()+"", Calendar.getInstance());
-        		}
-        		mSphinx.showView(R.id.view_hotel_credit_assure);
-        	} else {
-        		submit(false);
-        	}
+        	submit(false);
+
             break;
         default:
         	mSphinx.hideSoftInput();
@@ -337,7 +329,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_MOBILE, mMobile);
     	if(HasCreditInfo){
     		criteria.put(HotelOrderOperation.SERVER_PARAMETER_CREDIT_CARD_NO, mCreditCardNo);
-    		criteria.put(HotelOrderOperation.SERVER_PARAMETER_VALID_YEAR, mVerifyCode);
+    		criteria.put(HotelOrderOperation.SERVER_PARAMETER_VERIFY_CODE, mVerifyCode);
     		criteria.put(HotelOrderOperation.SERVER_PARAMETER_VALID_YEAR, mValidYear);
     		criteria.put(HotelOrderOperation.SERVER_PARAMETER_VALID_MONTH, mValidMonth);
     		criteria.put(HotelOrderOperation.SERVER_PARAMETER_CARD_HOLDER_NAME, mCardHoldName);
@@ -383,6 +375,13 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	case Response.RESPONSE_CODE_HOTEL_NEED_REGIST:
     		Toast.makeText(mContext, "需要注册酒店会员，目前系统暂不支持此功能", Toast.LENGTH_LONG).show();
     		break;
+    	case Response.RESPONSE_CODE_HOTEL_NEED_CREDIT_ASSURE:
+       		if(mTypeCreditAssure ==2){
+       			mSphinx.getHotelOrderCreditFragment().setData(mTotalPrice, Calendar.getInstance(), response.getDescription());
+       		}else {
+        		mSphinx.getHotelOrderCreditFragment().setData(mRoomtypeDynamic.getPrice()+"", Calendar.getInstance(), response.getDescription());
+       		}
+       		mSphinx.showView(R.id.view_hotel_credit_assure);
     	}
 	}
         
