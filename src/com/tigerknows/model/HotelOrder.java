@@ -1,6 +1,5 @@
 package com.tigerknows.model;
 
-import android.R.integer;
 
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;

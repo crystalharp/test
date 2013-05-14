@@ -1,0 +1,232 @@
+/*
+ * @(#)POI.java 5:30:43 PM Aug 26, 2007 2007
+ * 
+ * Copyright (C) 2007 Beijing TigerKnows Science and Technology Ltd. All rights
+ * reserved.
+ * 
+ */
+
+package com.tigerknows.model;
+
+import com.decarta.android.exception.APIException;
+import com.tigerknows.TKConfig;
+import com.tigerknows.model.test.BaseQueryTest;
+import com.tigerknows.model.test.HotelOrderOperationTest;
+import com.tigerknows.model.xobject.XMap;
+
+import android.content.Context;
+
+import java.util.List;
+
+public class HotelOrderOperation extends BaseQuery {
+
+    // orderids	 String	 true	 订单id的列表字符串，id间以下划线间隔
+    public static final String SERVER_PARAMETER_ORDER_IDS = "orderids";
+    
+    // orderid  String  true    订单id
+    public static final String SERVER_PARAMETER_ORDER_ID = "orderid";
+    
+    // 酒店ID
+    public static final String SERVER_PARAMETER_HOTEL_ID = "hotelid";
+
+    // 酒店品牌标识，来自酒店POI
+    public static final String SERVER_PARAMETER_BRAND = "brand";
+
+    // 房型ID
+    public static final String SERVER_PARAMETER_ROOMTYPE = "roomtype";
+
+    // 房型套餐id
+    public static final String SERVER_PARAMETER_PKGID = "pkgid";
+    
+    // 入住日期，格式YYYY-MM-DD
+    public static final String SERVER_PARAMETER_CHECKIN_DATE = "checkindate";
+    
+    // 离开日期，格式YYYY-MM-DD
+    public static final String SERVER_PARAMETER_CHECKOUT_DATE = "checkoutdate";
+    
+    // 用户所选的保留时间，格式YYYY-MM-DD hh:mm:ss
+    public static final String SERVER_PARAMETER_RESERVE_TIME = "rtime";
+    
+    // 预订房间数
+    public static final String SERVER_PARAMETER_NUMROOMS = "numrooms";
+    
+    // 总价
+    public static final String SERVER_PARAMETER_TOTAL_PRICE = "totalprice";
+    
+    // 用户姓名
+    public static final String SERVER_PARAMETER_USERNAME = "username";
+    
+    // 用户手机号
+    public static final String SERVER_PARAMETER_MOBILE = "mobile";
+    
+    // 信用卡号
+    public static final String SERVER_PARAMETER_CREDIT_CARD_NO = "creditcardno";
+
+    // 信用卡背面的验证码，由三位数字构成
+    public static final String SERVER_PARAMETER_VERIFY_CODE = "verifycode";
+
+    // 有效期，年
+    public static final String SERVER_PARAMETER_VALID_YEAR = "validyear";
+
+    // 有效期，月
+    public static final String SERVER_PARAMETER_VALID_MONTH = "validmonth";
+
+    // 持卡人姓名
+    public static final String SERVER_PARAMETER_CARD_HOLDER_NAME = "cardholdername";
+
+    // 证件类别代码
+    public static final String SERVER_PARAMETER_IDCARD_TYPE = "idcardtype";
+
+    // 证件号码
+    public static final String SERVER_PARAMETER_IDCARD_NO = "idcardno";
+
+    // action	 int	 true	 更新数据的操作类型：如1标识取消该订单
+    public static final String SERVER_PARAMETER_ORDER_ACTION = "action";
+    
+    // 取消订单的操作
+    public static final String ORDER_ACTION_CANCEL = "1";
+    
+    // 操作码:
+    // 查询 r
+    public static final String OPERATION_CODE_QUERY = "r";
+
+    // 新建 c
+    public static final String OPERATION_CODE_CREATE = "c";
+
+    // 更新 u
+    public static final String OPERATION_CODE_UPDATE = "u";
+
+    // 删除 d
+    public static final String OPERATION_CODE_DELETE = "d";
+    
+    public HotelOrderOperation(Context context) {
+        super(context, null);
+    }
+
+    @Override
+    protected void makeRequestParameters() throws APIException {
+        super.makeRequestParameters();
+        addCommonParameters(requestParameters, cityId);
+        
+        if (criteria == null) {
+            throw new APIException(APIException.CRITERIA_IS_NULL);
+        }
+        
+        String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
+        if (OPERATION_CODE_QUERY.equals(operationCode)) {
+            addParameter(SERVER_PARAMETER_ORDER_IDS);
+        } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
+            addParameter(SERVER_PARAMETER_HOTEL_ID);
+            addParameter(SERVER_PARAMETER_BRAND,false);
+            addParameter(new String[]{
+                    SERVER_PARAMETER_ROOMTYPE,
+                    SERVER_PARAMETER_PKGID,
+                    SERVER_PARAMETER_CHECKIN_DATE,
+                    SERVER_PARAMETER_CHECKOUT_DATE,
+                    SERVER_PARAMETER_RESERVE_TIME,
+                    SERVER_PARAMETER_NUMROOMS,
+                    SERVER_PARAMETER_TOTAL_PRICE,
+                    SERVER_PARAMETER_USERNAME,
+                    SERVER_PARAMETER_MOBILE
+            });
+            String creditCardNo = addParameter(SERVER_PARAMETER_CREDIT_CARD_NO, false);
+            if (creditCardNo != null) {
+                addParameter(new String[]{
+                        SERVER_PARAMETER_VERIFY_CODE,
+                        SERVER_PARAMETER_VALID_YEAR,
+                        SERVER_PARAMETER_VALID_MONTH,
+                        SERVER_PARAMETER_CARD_HOLDER_NAME,
+                        SERVER_PARAMETER_IDCARD_TYPE,
+                        SERVER_PARAMETER_IDCARD_NO
+                });
+            }
+        } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
+            addParameter(new String[] {SERVER_PARAMETER_ORDER_ACTION, SERVER_PARAMETER_ORDER_ID});
+        } else {
+            throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
+        }
+
+        addSessionId(false);
+    }
+
+    @Override
+    protected void createHttpClient() {
+        super.createHttpClient();
+        String url = String.format(TKConfig.getHotelOrderUrl(), TKConfig.getQueryHost());
+        httpClient.setURL(url);
+    }
+
+    @Override
+    protected void translateResponse(byte[] data) throws APIException {
+        super.translateResponse(data);
+
+        String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+        
+        if (OPERATION_CODE_QUERY.equals(operationCode)) {
+            response = new HotelOrderStatesResponse(responseXMap);
+        } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
+            response = new HotelOrderCreateResponse(responseXMap);
+        } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
+            response = new Response(responseXMap);
+        }
+    }
+
+    public static class HotelOrderCreateResponse extends Response {
+        
+        // 0x02 x_map   单个POI数据   
+        public static final byte FIELD_ORDER_ID = 0x02;
+        
+        private String orderId;
+        
+        public HotelOrderCreateResponse(XMap data) throws APIException {
+            super(data);
+            
+            if (this.data.containsKey(FIELD_ORDER_ID)) {
+            	orderId = this.data.getString(FIELD_ORDER_ID);
+            }            
+        }
+
+        public String getOrderId() {
+            return orderId;
+        }
+
+    }
+    
+    public static class HotelOrderStatesResponse extends Response {
+        
+        // 0x02 x_map   单个POI数据   
+        public static final byte FIELD_STATES = 0x02;
+        
+        private List<Integer> states;
+        
+        @SuppressWarnings("unchecked")
+        public HotelOrderStatesResponse(XMap data) throws APIException {
+            super(data);
+            
+            if (this.data.containsKey(FIELD_STATES)) {
+            	states = this.data.getXArray(FIELD_STATES).toIntList();
+            }            
+        }
+
+        public List<Integer> getStates() {
+            return states;
+		}
+
+    }
+    
+    protected void launchTest() {
+        super.launchTest();
+        if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE)) {
+            String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+            
+            if (OPERATION_CODE_CREATE.equals(operationCode)) {
+                responseXMap = HotelOrderOperationTest.launchHotelOrderCreateResponse(context);
+            } if (OPERATION_CODE_QUERY.equals(operationCode)) {
+                responseXMap = HotelOrderOperationTest.launchHotelOrderStateResponse(context, criteria.get(SERVER_PARAMETER_ORDER_IDS));
+            } if (OPERATION_CODE_UPDATE.equals(operationCode)) {
+                responseXMap = new XMap();
+                responseXMap = BaseQueryTest.launchResponse(responseXMap);
+            }
+        }
+    }
+}

@@ -127,12 +127,6 @@ public final class DataQuery extends BaseQuery {
     // appendaction    string  false   目前支持nosearch（表示不做搜索，只返回筛选项） 
     public static final String SERVER_PARAMETER_APPENDACTION = "appendaction";
     
-    // checkin     String  true    入住酒店时间，格式"yyyy-MM-dd"
-    public static final String SERVER_PARAMETER_CHECKIN = "checkin";
-    
-    // checkout    String  true    离开酒店时间，格式"yyyy-MM-dd" 
-    public static final String SERVER_PARAMETER_CHECKOUT = "checkout";
-
     // 评论版本 
     public static final String COMMENT_VERSION = "1";
     

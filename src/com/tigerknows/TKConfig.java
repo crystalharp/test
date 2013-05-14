@@ -277,6 +277,16 @@ public class TKConfig {
     private static String sQUERY_URL = "http://%s/cormorant/local";
     
     /**
+     * 第三方接口代理服务访问URL路径
+     */
+    private static String sPROXY_URL = "http://%s//thirdparty/13";
+    
+    /**
+     * 酒店订单服务访问URL路径
+     */
+    private static String sHOTEL_ORDER_URL = "http://%s//thirdparty/13";
+    
+    /**
      * 定位服务访问URL路径
      */
     private static String sLOCATION_URL = "http://%s/tk_locate_me";
@@ -863,6 +873,22 @@ public class TKConfig {
     }
     
     /**
+     * 获取第三方接口代理服务访问的URL
+     * @return
+     */
+    public static String getProxyUrl() {
+        return sPROXY_URL;
+    }
+    
+    /**
+     * 获取酒店订单服务访问的URL
+     * @return
+     */
+    public static String getHotelOrderUrl() {
+        return sHOTEL_ORDER_URL;
+    }
+    
+    /**
      * 获取定位服务访问的URL
      * @return
      */
@@ -1297,6 +1323,18 @@ public class TKConfig {
                 if (start > -1 && end > -1) {
                     start += "alarmCheckDelayTime=".length();
                     AlarmCheckDelayTime = Integer.parseInt(text.substring(start, end));
+                }
+                start = text.indexOf("proxyUrl=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "proxyUrl=".length();
+                    TKConfig.sPROXY_URL = text.substring(start, end);
+                }
+                start = text.indexOf("hotelOrderUrl=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "hotelOrderUrl=".length();
+                    TKConfig.sHOTEL_ORDER_URL = text.substring(start, end);
                 }
                 
                 BaseQuery.initCommonParameters();
