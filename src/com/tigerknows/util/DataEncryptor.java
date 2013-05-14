@@ -2,7 +2,40 @@
 package com.tigerknows.util;
 
 public class DataEncryptor {
-    private static byte[] key;
+    
+    private static DataEncryptor sDataEncryptor = null;
+    public static DataEncryptor getInstance() {
+        if (sDataEncryptor == null) {
+            DataEncryptor dataEncryptor = new DataEncryptor(true);
+            sDataEncryptor = dataEncryptor;
+        }
+        return sDataEncryptor;
+    }
+    
+    private byte[] key;
+
+    public DataEncryptor() {
+        this.key = defaultKey;
+    }
+
+    public DataEncryptor(byte[] k) {
+        this.key = k.clone();
+    }
+
+    public DataEncryptor(boolean confus) {
+        if (confus == true)
+            this.key = cnfKey;
+        else 
+            this.key = defaultKey;
+    }
+
+    public byte[] GetKey() {
+        return key;
+    }
+
+    public void SetKey(byte[] k) {
+        this.key = k.clone();
+    }
 
     public void encrypt(byte[] data, int offset, int len) {
         translate(data, offset, len);
@@ -20,15 +53,15 @@ public class DataEncryptor {
         translate(data, offset, data.length - offset);
     }
 
-    public static void encrypt(byte[] data) {
+    public void encrypt(byte[] data) {
         translate(data, 0, data.length);
     }
 
-    public static void decrypt(byte[] data) {
+    public void decrypt(byte[] data) {
         translate(data, 0, data.length);
     }
 
-    private static void translate(byte[] data, int offset, int len) {
+    private void translate(byte[] data, int offset, int len) {
         if (data == null)
             return;
         if (key == null)

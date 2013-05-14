@@ -1132,11 +1132,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
+        mDoingView.setVisibility(View.VISIBLE);
         if (poi.getName() == null && poi.getUUID() != null) {
-            mDoingView.setVisibility(View.VISIBLE);
             return;
         }
-        mDoingView.setVisibility(View.GONE);
         mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL, R.layout.hint_poi_detail);
         mShowDynamicDianyingMoreView = true;
         mRootView.setVisibility(View.VISIBLE);
@@ -1145,78 +1144,77 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             mStampAnimation.reset();
             mStampBigImv.setAnimation(null);
         }
-        if (null != poi) {
-            List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
-            String uuid = poi.getUUID();
-            if (poi.getFrom() == POI.FROM_LOCAL && TextUtils.isEmpty(uuid) == false) {
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
-                criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, uuid);
-                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);
-                int cityId = Globals.g_Current_City_Info.getId();
-                if (poi.ciytId != 0) {
-                    cityId = poi.ciytId;
-                } else if (poi.getPosition() != null){
-                    cityId = MapEngine.getInstance().getCityId(poi.getPosition());
-                }
-                DataOperation poiQuery = new DataOperation(mSphinx);
-                poiQuery.setup(criteria, cityId, getId(), getId(), null);
-                baseQueryList.add(poiQuery);
+        List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
+        String uuid = poi.getUUID();
+        if (poi.getFrom() == POI.FROM_LOCAL && TextUtils.isEmpty(uuid) == false) {
+            Hashtable<String, String> criteria = new Hashtable<String, String>();
+            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
+            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, uuid);
+            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);
+            int cityId = Globals.g_Current_City_Info.getId();
+            if (poi.ciytId != 0) {
+                cityId = poi.ciytId;
+            } else if (poi.getPosition() != null){
+                cityId = MapEngine.getInstance().getCityId(poi.getPosition());
             }
-            
-            if (poi.getCommentQuery() == null || poi.getFrom() == POI.FROM_LOCAL) {
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
-                criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
-                criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
-                DataQuery commentQuery = new DataQuery(mSphinx);
-                commentQuery.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null, false, false, poi);
-                baseQueryList.add(commentQuery);
-                mCommentTipEdt.setVisibility(View.GONE);
-            } else {
-                mCommentTipEdt.setVisibility(View.VISIBLE);
-            }
-            
-            // 检查是否包含电影的动态信息
-            boolean isContainDianying = false;
-            List<DynamicPOI> list = poi.getDynamicPOIList();
-            if (list != null) {
-                for(int i = 0, size = list.size(); i < size; i++) {
-                    DynamicPOI dynamic = list.get(i);
-                    if (BaseQuery.DATA_TYPE_DIANYING.equals(dynamic.getType())) {
-                        isContainDianying = true;
-                        break;
-                    }
-                }
-            }
-            
-            if (isContainDianying && poi.getDynamicDianyingList() == null) {
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANYING);
-                criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
-                criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
-                        Dianying.NEED_FILELD_POI_DETAIL);
-                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-                       Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]");
-                DataQuery dataQuery = new DataQuery(mSphinx);
-                dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null, false, false, poi);
-                baseQueryList.add(dataQuery);
-            }
-            refreshDetail();
-            if (baseQueryList.isEmpty() == false) {
-                mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
-                mBaseQuerying = baseQueryList;
-                mLoadingView.setVisibility(View.VISIBLE);
-            } else {
-                mLoadingView.setVisibility(View.GONE);
-            }
-            
-            String category = poi.getCategory().trim();
-            poi.updateHistory(mSphinx);
-            mActionLog.addAction(ActionLog.POIDetailShow, poi.getUUID(), poi.getName(), TextUtils.isEmpty(category) ? "NULL" : category.split(" ")[0]);
+            DataOperation poiQuery = new DataOperation(mSphinx);
+            poiQuery.setup(criteria, cityId, getId(), getId(), null);
+            baseQueryList.add(poiQuery);
         }
+        
+        if (poi.getCommentQuery() == null || poi.getFrom() == POI.FROM_LOCAL) {
+            Hashtable<String, String> criteria = new Hashtable<String, String>();
+            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
+            criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
+            DataQuery commentQuery = new DataQuery(mSphinx);
+            commentQuery.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null, false, false, poi);
+            baseQueryList.add(commentQuery);
+            mCommentTipEdt.setVisibility(View.GONE);
+        } else {
+            mCommentTipEdt.setVisibility(View.VISIBLE);
+        }
+        
+        // 检查是否包含电影的动态信息
+        boolean isContainDianying = false;
+        List<DynamicPOI> list = poi.getDynamicPOIList();
+        if (list != null) {
+            for(int i = 0, size = list.size(); i < size; i++) {
+                DynamicPOI dynamic = list.get(i);
+                if (BaseQuery.DATA_TYPE_DIANYING.equals(dynamic.getType())) {
+                    isContainDianying = true;
+                    break;
+                }
+            }
+        }
+        
+        if (isContainDianying && poi.getDynamicDianyingList() == null) {
+            Hashtable<String, String> criteria = new Hashtable<String, String>();
+            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANYING);
+            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
+            criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
+            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+                    Dianying.NEED_FILELD_POI_DETAIL);
+            criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+                   Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]");
+            DataQuery dataQuery = new DataQuery(mSphinx);
+            dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null, false, false, poi);
+            baseQueryList.add(dataQuery);
+        }
+        refreshDetail();
+        if (baseQueryList.isEmpty() == false) {
+            mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
+            mBaseQuerying = baseQueryList;
+            mLoadingView.setVisibility(View.VISIBLE);
+        } else {
+            mLoadingView.setVisibility(View.GONE);
+        }
+        
+        String category = poi.getCategory().trim();
+        poi.updateHistory(mSphinx);
+        mActionLog.addAction(ActionLog.POIDetailShow, poi.getUUID(), poi.getName(), TextUtils.isEmpty(category) ? "NULL" : category.split(" ")[0]);
+        mDoingView.setVisibility(View.GONE);
     }
     
     private void makeFeature(ViewGroup viewGroup) {

@@ -1574,24 +1574,25 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (uri != null) {
                 String uriStr = uri.toString();
                 String[] parms = uriStr.substring(uriStr.indexOf("?")+1).split("&");
-                if (parms.length == 2) {
+                if (parms.length >= 2) {
                     String[] keyValue = parms[0].split("=");
                     int cityId = MapEngine.CITY_ID_INVALID;
                     if (keyValue.length == 2) {
                         if (keyValue[0].equals("c")) {
                             cityId = Integer.parseInt(keyValue[1]);
-                        }
-                    }
-                    keyValue = parms[1].split("=");
-                    if (cityId != MapEngine.CITY_ID_INVALID && keyValue.length == 2) {
-                        if (keyValue[0].equals("uid")) {
-                            String poiuid = keyValue[1];
-                            if (poiuid != null) {
-                                POI poi = new POI();
-                                poi.setUUID(poiuid);
-                                poi.ciytId =  cityId;
-                                getPOIDetailFragment().setData(poi);
-                                showView(R.id.view_poi_detail);
+                            
+                            keyValue = parms[1].split("=");
+                            if (keyValue.length == 2) {
+                                if (keyValue[0].equals("uid")) {
+                                    String poiuid = keyValue[1];
+                                    if (poiuid != null) {
+                                        POI poi = new POI();
+                                        poi.setUUID(poiuid);
+                                        poi.ciytId =  cityId;
+                                        getPOIDetailFragment().setData(poi);
+                                        showView(R.id.view_poi_detail);
+                                    }
+                                }
                             }
                         }
                     }

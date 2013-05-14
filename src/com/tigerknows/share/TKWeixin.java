@@ -31,14 +31,14 @@ public class TKWeixin {
 	
 	static final String TAG = "TKWeixin";
 	
-	static final String POI_URL = "http://192.168.11.8:7071/tk_spread?v=1&c=%s&uid=%s&from=message";
+	static final String POI_URL = "http://propagate.tigerknows.net/tk_spread?v=1&c=%s&uid=%s&from=message";
     
 	/**
 	 * 支持朋友圈的最小版本值
 	 */
     private static final int TIMELINE_SUPPORTED_VERSION = 0x21020001;
     
-    private static final String URL = "http://weixin.qq.com/";
+    private static final String URL = "http://weixin.qq.com/m";
     
     private static TKWeixin instance = null;
     
