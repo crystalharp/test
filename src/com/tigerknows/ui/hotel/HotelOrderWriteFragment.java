@@ -111,22 +111,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
     
     public void onResume(){
-    	mTotalPrice = (mRoomtypeDynamic.getPrice() * mRoomHowmany) + "";
-    	mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, mTotalPrice));
-    	final List<RetentionTime> list = findRTimeByRoomHowmany(mRoomHowmany);
-    	if(list.isEmpty()){
-    		mNeedCreditAssure = 0;
-    		mTypeCreditAssure = 0;
-    		mRTime = "24点之前";
-    		//TODO: mRTimeDetail
-    	}else{
-    		mRTime = list.get(mRTimeWhich).getTime();
-    		mRTimeDetail = list.get(mRTimeWhich).getTimeDetail();
-    		mNeedCreditAssure = list.get(mRTimeWhich).getNeed();
-    		mTypeCreditAssure = list.get(mRTimeWhich).getType();
-    	}
-    	mRoomReserveBtn.setText(mRTime);
     	super.onResume();
+    	refreshData();
+
     }
     
     public void onPause(){

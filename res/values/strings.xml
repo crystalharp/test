@@ -982,6 +982,7 @@
     <string name="seveninn_mobile_number">手机号：</string>
     <string name="seveninn_idcard_code">身份证号：</string>
     <string name="seveninn_regist_confirm">注册7天会员</string>
+    <string name="seveninn_idcard_code_empty_error">请填写身份证号!</string>
     
     <string name="order_submit_success">订单提交成功</string>
     <string name="seveninn_regist_failed">注册失败，请确认所填信息并重新提交</string>
