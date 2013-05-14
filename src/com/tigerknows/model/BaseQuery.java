@@ -96,7 +96,10 @@ public abstract class BaseQuery {
     public static final String API_TYPE_SUGGEST_LEXICON_DOWNLOAD = "is";
     
     // 接口代理
-    public static final String API_TYPE_TASK = "p";
+    public static final String API_TYPE_PROXY = "proxy";
+    
+    // 酒店订单
+    public static final String API_TYPE_HOTEL_ORDER = "hotelOrder";
     
     protected static final String VERSION = "13";
     
@@ -167,6 +170,12 @@ public abstract class BaseQuery {
     
     // subty   int     false   子数据类型，当dty=1时，可有取值，取值范围{0,1} 
     public static final String SERVER_PARAMETER_SUB_DATA_TYPE = "subty";
+
+    // checkin     String  true    入住酒店时间，格式"yyyy-MM-dd"
+    public static final String SERVER_PARAMETER_CHECKIN = "checkin";
+    
+    // checkout    String  true    离开酒店时间，格式"yyyy-MM-dd" 
+    public static final String SERVER_PARAMETER_CHECKOUT = "checkout";
     
     /**
      * 检查是否为推送动态POI的查询
@@ -523,8 +532,10 @@ public abstract class BaseQuery {
     
     protected void makeRequestParameters() throws APIException {
         requestParameters.clear();
-        requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
-        requestParameters.add(SERVER_PARAMETER_VERSION, version);
+        if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false) {
+            requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
+            requestParameters.add(SERVER_PARAMETER_VERSION, version);
+        }
         addMyLocationParameters();
     }
     
@@ -547,8 +558,9 @@ public abstract class BaseQuery {
                 if (TKConfig.LaunchTest) {
                     if (apiType.equals(API_TYPE_DATA_QUERY)
                             || apiType.equals(API_TYPE_DATA_OPERATION)
-                            || apiType.equals(API_TYPE_TASK)
-                            || apiType.equals(API_TYPE_ACCOUNT_MANAGE)) {
+                            || apiType.equals(API_TYPE_ACCOUNT_MANAGE)
+                            || apiType.equals(API_TYPE_PROXY)
+                            || apiType.equals(API_TYPE_HOTEL_ORDER)) {
                         launchTest();
                         if (responseXMap != null) {
                             httpClient.launchTest(ByteUtil.xobjectToByte(responseXMap), STATUS_CODE_NETWORK_OK);
@@ -587,7 +599,9 @@ public abstract class BaseQuery {
                 } else if (API_TYPE_BUSLINE_QUERY.equals(apiType) ||
                         API_TYPE_TRAFFIC_QUERY.equals(apiType) ||
                         API_TYPE_DATA_QUERY.equals(apiType) ||
-                        API_TYPE_DATA_OPERATION.equals(apiType)) {
+                        API_TYPE_DATA_OPERATION.equals(apiType) ||
+                        API_TYPE_PROXY.equals(apiType) ||
+                        API_TYPE_HOTEL_ORDER.equals(apiType)) {
                     if (TKConfig.getDynamicQueryHost() != null) {
                         TKConfig.setDynamicQueryHost(null);
                         createHttpClient();

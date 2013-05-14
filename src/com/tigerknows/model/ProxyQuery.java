@@ -53,7 +53,7 @@ public class ProxyQuery extends BaseQuery {
     static final String TAG = "TaskQuery";
 
     public ProxyQuery(Context context) {
-        super(context, API_TYPE_TASK);
+        super(context, API_TYPE_PROXY);
     }
 
     @Override
@@ -86,7 +86,7 @@ public class ProxyQuery extends BaseQuery {
     @Override
     protected void createHttpClient() {
         super.createHttpClient();
-        String url = String.format(TKConfig.getQueryUrl(), TKConfig.getQueryHost());
+        String url = String.format(TKConfig.getProxyUrl(), TKConfig.getQueryHost());
         httpClient.setURL(url);
     }
 

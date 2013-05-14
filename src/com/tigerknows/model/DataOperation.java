@@ -10,25 +10,16 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
-import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.test.DataOperationTest;
 import com.tigerknows.model.xobject.XMap;
 
 import android.content.Context;
-
-import java.util.List;
 
 public class DataOperation extends BaseQuery {
 
     // dataid string true 数据uid
     public static final String SERVER_PARAMETER_DATA_UID = "dataid";
     
-    // orderids	 String	 true	 订单id的列表字符串，id间以下划线间隔
-    public static final String SERVER_PARAMETER_ORDER_IDS = "orderids";
-    
-    // orderid  String  true    订单id
-    public static final String SERVER_PARAMETER_ORDER_ID = "orderid";
-
     // entity string true key-value数组
     public static final String SERVER_PARAMETER_ENTITY = "entity";
 
@@ -37,75 +28,6 @@ public class DataOperation extends BaseQuery {
 
     // 分享到QQ
     public static final String SERVER_PARAMETER_SHARE_QZONE = "qzone";
-
-    // checkin     String  true    入住酒店时间，格式"yyyy-MM-dd"
-    public static final String SERVER_PARAMETER_CHECKIN = "checkin";
-    
-    // checkout    String  true    离开酒店时间，格式"yyyy-MM-dd" 
-    public static final String SERVER_PARAMETER_CHECKOUT = "checkout";
-    
-    // 订单类型
-    public static final String SERVER_PARAMETER_ORDER_TYPE = "otype";
-    
-    // 酒店ID
-    public static final String SERVER_PARAMETER_HOTEL_ID = "hotelid";
-
-    // 酒店品牌标识，来自酒店POI
-    public static final String SERVER_PARAMETER_BRAND = "brand";
-
-    // 房型ID
-    public static final String SERVER_PARAMETER_ROOMTYPE = "roomtype";
-
-    // 房型套餐id
-    public static final String SERVER_PARAMETER_PKGID = "pkgid";
-    
-    // 入住日期，格式YYYY-MM-DD
-    public static final String SERVER_PARAMETER_CHECKIN_DATE = "checkindate";
-    
-    // 离开日期，格式YYYY-MM-DD
-    public static final String SERVER_PARAMETER_CHECKOUT_DATE = "checkoutdate";
-    
-    // 用户所选的保留时间，格式YYYY-MM-DD hh:mm:ss
-    public static final String SERVER_PARAMETER_RESERVE_TIME = "rtime";
-    
-    // 预订房间数
-    public static final String SERVER_PARAMETER_NUMROOMS = "numrooms";
-    
-    // 总价
-    public static final String SERVER_PARAMETER_TOTAL_PRICE = "totalprice";
-    
-    // 用户姓名
-    public static final String SERVER_PARAMETER_USERNAME = "username";
-    
-    // 用户手机号
-    public static final String SERVER_PARAMETER_MOBILE = "mobile";
-    
-    // 信用卡号
-    public static final String SERVER_PARAMETER_CREDIT_CARD_NO = "creditcardno";
-
-    // 信用卡背面的验证码，由三位数字构成
-    public static final String SERVER_PARAMETER_VERIFY_CODE = "verifycode";
-
-    // 有效期，年
-    public static final String SERVER_PARAMETER_VALID_YEAR = "validyear";
-
-    // 有效期，月
-    public static final String SERVER_PARAMETER_VALID_MONTH = "validmonth";
-
-    // 持卡人姓名
-    public static final String SERVER_PARAMETER_CARD_HOLDER_NAME = "cardholdername";
-
-    // 证件类别代码
-    public static final String SERVER_PARAMETER_IDCARD_TYPE = "idcardtype";
-
-    // 证件号码
-    public static final String SERVER_PARAMETER_IDCARD_NO = "idcardno";
-
-    // action	 int	 true	 更新数据的操作类型：如1标识取消该订单
-    public static final String SERVER_PARAMETER_ORDER_ACTION = "action";
-    
-    // 取消订单的操作
-    public static final String ORDER_ACTION_CANCEL = "1";
     
     // 操作码:
     // 查询 r
@@ -146,77 +68,20 @@ public class DataOperation extends BaseQuery {
         String dataType = addParameter(SERVER_PARAMETER_DATA_TYPE);
         String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
         if (OPERATION_CODE_QUERY.equals(operationCode)) {
-        	boolean add_NF_UID = true;
             if(DATA_TYPE_POI.equals(dataType)){
-                String subDataType = addParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
-                if(SUB_DATA_TYPE_HOTEL.equals(subDataType)){
-                	addParameter(new String[]{SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
-                }
+                addParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
             }
             
-            if(DATA_TYPE_DINGDAN.equals(dataType)){
-                String orderType = addParameter(SERVER_PARAMETER_ORDER_TYPE);
-                if(ORDER_TYPE_HOTEL.equals(orderType)){
-                    addParameter(SERVER_PARAMETER_ORDER_IDS);
-                    add_NF_UID = false;
-                }
-
-            }
-            
-        	if(dataType.equals(DATA_TYPE_DIAOYAN)){
-        		add_NF_UID = false;
+        	if(dataType.equals(DATA_TYPE_DIAOYAN) == false){
+        		addParameter(new String[] {SERVER_PARAMETER_NEED_FEILD, SERVER_PARAMETER_DATA_UID});
             }
         	
-        	if(add_NF_UID == true){
-        		addParameter(new String[] {SERVER_PARAMETER_NEED_FEILD, SERVER_PARAMETER_DATA_UID});
-        	}
-            
         	// 部分查询需要提交pic信息和dsrc信息，据说上一个写这行代码的人懒得用一堆if判断于是就直接用这行代码了
         	// fengtianxiao 2013.05.10
         	addParameter(new String[] {SERVER_PARAMETER_PICTURE, SERVER_PARAMETER_REQUSET_SOURCE_TYPE}, false);
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-            if(DATA_TYPE_DINGDAN.equals(dataType)){
-            	// 酒店订单、团购订单、点评，共3种
-                String orderType = addParameter(SERVER_PARAMETER_ORDER_TYPE);
-                if(ORDER_TYPE_HOTEL.equals(orderType)){
-                	// 酒店订单
-                	addParameter(SERVER_PARAMETER_HOTEL_ID);
-                	addParameter(SERVER_PARAMETER_BRAND,false);
-                	addParameter(new String[]{
-                			SERVER_PARAMETER_ROOMTYPE,
-                			SERVER_PARAMETER_PKGID,
-                			SERVER_PARAMETER_CHECKIN_DATE,
-                			SERVER_PARAMETER_CHECKOUT_DATE,
-                			SERVER_PARAMETER_RESERVE_TIME,
-                			SERVER_PARAMETER_NUMROOMS,
-                			SERVER_PARAMETER_TOTAL_PRICE,
-                			SERVER_PARAMETER_USERNAME,
-                			SERVER_PARAMETER_MOBILE
-                	});
-                	addParameter(new String[]{
-                		    SERVER_PARAMETER_CREDIT_CARD_NO,
-                		    SERVER_PARAMETER_VERIFY_CODE,
-                		    SERVER_PARAMETER_VALID_YEAR,
-                		    SERVER_PARAMETER_VALID_MONTH,
-                		    SERVER_PARAMETER_CARD_HOLDER_NAME,
-                		    SERVER_PARAMETER_IDCARD_TYPE,
-                		    SERVER_PARAMETER_IDCARD_NO
-                	},false);
-                }else{
-                	// 团购订单
-                	addParameter(SERVER_PARAMETER_ENTITY);
-                }
-            }else{
-            	// 点评
-            	addParameter(SERVER_PARAMETER_ENTITY);
-            }
+            addParameter(SERVER_PARAMETER_ENTITY);
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
-            if(DATA_TYPE_DINGDAN.equals(dataType)){
-                String orderType = addParameter(SERVER_PARAMETER_ORDER_TYPE);
-                if (ORDER_TYPE_HOTEL.equals(orderType)) {
-                    addParameter(new String[] {SERVER_PARAMETER_ORDER_ACTION, SERVER_PARAMETER_ORDER_ID});
-                }
-            }
             addParameter(new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY});
         } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
             addParameter(SERVER_PARAMETER_DATA_UID);
@@ -263,76 +128,18 @@ public class DataOperation extends BaseQuery {
                 response = new ZhanlanQueryResponse(responseXMap);
             } else if (DATA_TYPE_DIAOYAN.equals(dataType)){
             	response = new DiaoyanQueryResponse(responseXMap);
-            } else if (DATA_TYPE_DINGDAN.equals(dataType)){
-                String orderType = criteria.get(SERVER_PARAMETER_ORDER_TYPE);
-                if (ORDER_TYPE_HOTEL.equals(orderType)) {
-                    response = new HotelOrderStatesResponse(responseXMap);
-                }
             }
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
             if (DATA_TYPE_DIANPING.equals(dataType)) {
                 response = new CommentCreateResponse(responseXMap);
             } else if (DATA_TYPE_DINGDAN.equals(dataType)) {
-                String orderType = criteria.get(SERVER_PARAMETER_ORDER_TYPE);
-                if (ORDER_TYPE_TUANGOU.equals(orderType)) {
-                    response = new DingdanCreateResponse(responseXMap);
-                } else if (ORDER_TYPE_HOTEL.equals(orderType)) {
-                    response = new HotelOrderCreateResponse(responseXMap);
-                }
+                response = new DingdanCreateResponse(responseXMap);
             }
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
             if (DATA_TYPE_DIANPING.equals(dataType)) {
                 response = new CommentUpdateResponse(responseXMap);
-            } else if (DATA_TYPE_DINGDAN.equals(dataType)){
-                String orderType = criteria.get(SERVER_PARAMETER_ORDER_TYPE);
-                if (ORDER_TYPE_HOTEL.equals(orderType)) {
-                	response = new Response(responseXMap);
-                }
             }
         }
-    }
-
-    public static class HotelOrderCreateResponse extends Response {
-        
-        // 0x02 x_map   单个POI数据   
-        public static final byte FIELD_ORDER_ID = 0x02;
-        
-        private String orderId;
-        
-        public HotelOrderCreateResponse(XMap data) throws APIException {
-            super(data);
-            
-            if (this.data.containsKey(FIELD_ORDER_ID)) {
-            	orderId = this.data.getString(FIELD_ORDER_ID);
-            }            
-        }
-
-        public String getOrderId() {
-            return orderId;
-        }
-
-    }
-    
-    public static class HotelOrderStatesResponse extends Response {
-        
-        // 0x02 x_map   单个POI数据   
-        public static final byte FIELD_STATES = 0x02;
-        
-        private List<Integer> states;
-        
-        @SuppressWarnings("unchecked")
-        public HotelOrderStatesResponse(XMap data) throws APIException {
-            super(data);
-            
-            if (this.data.containsKey(FIELD_STATES)) {
-            	states = this.data.getXArray(FIELD_STATES).toIntList();
-            }            
-        }
-
-        public List<Integer> getStates() {
-            return states;
-		}
-
     }
     
     public static class POIQueryResponse extends Response {
@@ -594,12 +401,7 @@ public class DataOperation extends BaseQuery {
             
             if (OPERATION_CODE_CREATE.equals(operationCode)) {
                 if (DATA_TYPE_DINGDAN.equals(dataType)) {
-                    String orderType = criteria.get(SERVER_PARAMETER_ORDER_TYPE);
-                    if (ORDER_TYPE_TUANGOU.equals(orderType)) {
-                        responseXMap = DataOperationTest.launchDinydanCreateResponse();
-                    } else if (ORDER_TYPE_HOTEL.equals(orderType)) {
-                        responseXMap = DataOperationTest.launchHotelOrderCreateResponse(context);
-                    }
+                    responseXMap = DataOperationTest.launchDinydanCreateResponse();
                 } else if (DATA_TYPE_DIANPING.equals(dataType)) {
                     responseXMap = DataOperationTest.launchDianpingCreateResponse();
                 }
@@ -627,21 +429,10 @@ public class DataOperation extends BaseQuery {
                     responseXMap = DataOperationTest.launchDianpingQueryResponse();
                 } else if (DATA_TYPE_DIAOYAN.equals(dataType)) {
                 	responseXMap = DataOperationTest.launchDiaoyanQueryResponse(context);
-                } else if (DATA_TYPE_DINGDAN.equals(dataType)) {
-                    String orderType = criteria.get(SERVER_PARAMETER_ORDER_TYPE);
-                    if (ORDER_TYPE_HOTEL.equals(orderType)) {
-                    	responseXMap = DataOperationTest.launchHotelOrderStateResponse(context, criteria.get(SERVER_PARAMETER_ORDER_IDS));
-                    }
                 }
             } if (OPERATION_CODE_UPDATE.equals(operationCode)) {
                 if (DATA_TYPE_DIANPING.equals(dataType)) {
                     responseXMap = DataOperationTest.launchDianpingUpdateResponse();
-                } else if (DATA_TYPE_DINGDAN.equals(dataType)) {
-                    String orderType = criteria.get(SERVER_PARAMETER_ORDER_TYPE);
-                    if (ORDER_TYPE_HOTEL.equals(orderType)) {
-                    	responseXMap = new XMap();
-                    	responseXMap = BaseQueryTest.launchResponse(responseXMap);
-                    }
                 }
             }
         }
