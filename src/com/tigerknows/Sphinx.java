@@ -3203,6 +3203,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             case R.id.view_hotel_order_list:
             	baseFragment = getHotelOrderListFragment();
             	break;
+            	
+            case R.id.view_hotel_order_detail:
+            	baseFragment = getHotelOrderDetailFragment();
+            	break;
                 
             default:
                 break;

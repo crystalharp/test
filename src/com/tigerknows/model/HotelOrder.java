@@ -15,6 +15,13 @@ import com.tigerknows.model.xobject.XMap;
  */
 public class HotelOrder extends XMapData{
 	
+	
+	public static final int STATE_PROCESSING = 1;
+	public static final int STATE_SUCCESS = 2;
+	public static final int STATE_CANCELED = 3;
+	public static final int STATE_POST_DUE = 4;
+	public static final int STATE_CHECKED_IN = 5;
+	
 	// identification info
 	/**
 	 * 订单的id。
@@ -112,7 +119,6 @@ public class HotelOrder extends XMapData{
 	public static final byte FIELD_ROOM_TYPE = 0x0A;
 	public static final byte FIELD_ROOM_NUM = 0x0B;
 	public static final byte FIELD_TOTAL_FEE = 0x0C;
-	public static final byte FIELD_GARANTEE_TYPE = 0x0D;
 	public static final byte FIELD_RETENTION_TIME = 0x0E;
 	public static final byte FIELD_CHECKIN_TIME = 0x0F;
 	public static final byte FIELD_CHECKOUT_TIME = 0x10;
@@ -154,7 +160,8 @@ public class HotelOrder extends XMapData{
 	public HotelOrder(String id, long createTime, int state,
 			String hotelPoiUUID, String hotelName, String hotelAddress,
 			Position position, String hotelTel, String roomType,
-			long roomNum, double totalFee, long retentionTime, long checkinTime, long checkoutTime, int dayCount,
+			long roomNum, double totalFee,
+			long retentionTime, long checkinTime, long checkoutTime, int dayCount,
 			String guestName, String mobileNum) {
 		super();
 		this.id = id;
