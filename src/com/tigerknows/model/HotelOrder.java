@@ -63,17 +63,13 @@ public class HotelOrder extends XMapData{
 	/**
 	 * 房间数目
 	 */
-	private int roomNum = -1;
+	private long roomNum = -1;
 	
 	// payment info
 	/**
 	 * 总价
 	 */
-	private int totalFee = -1;
-	/**
-	 * 担保类型
-	 */
-	private String guaranteeType;
+	private double totalFee = -1;
 
 	// time info
 	/**
@@ -143,7 +139,6 @@ public class HotelOrder extends XMapData{
 		roomType = data.getString(FIELD_ROOM_TYPE);
 		roomNum = (int) data.getInt(FIELD_ROOM_NUM);
 		totalFee = (int) data.getInt(FIELD_TOTAL_FEE);
-		guaranteeType = data.getString(FIELD_GARANTEE_TYPE);
 		retentionTime = data.getInt(FIELD_RETENTION_TIME);
 		checkinTime = data.getInt(FIELD_CHECKIN_TIME);
 		checkoutTime = data.getInt(FIELD_CHECKOUT_TIME);
@@ -174,7 +169,6 @@ public class HotelOrder extends XMapData{
 		this.roomType = roomType;
 		this.roomNum = roomNum;
 		this.totalFee = totalFee;
-		this.guaranteeType = guaranteeType;
 		this.retentionTime = retentionTime;
 		this.checkinTime = checkinTime;
 		this.checkoutTime = checkoutTime;
@@ -258,11 +252,6 @@ public class HotelOrder extends XMapData{
 			throw new APIException("FIELD_TOTAL_FEE");
 		}
 
-		if (guaranteeType!=null) {
-			map.put(FIELD_GARANTEE_TYPE, guaranteeType);
-		}else{
-			throw new APIException("FIELD_GARANTEE_TYPE");
-		}
 
 		if (retentionTime>0) {
 			map.put(FIELD_RETENTION_TIME, retentionTime);
@@ -358,15 +347,22 @@ public class HotelOrder extends XMapData{
 	public void setRoomType(String roomType) {
 		this.roomType = roomType;
 	}
-	public int getRoomNum() {
+	public long getRoomNum() {
 		return roomNum;
 	}
-	public void setRoomNum(int roomNum) {
+
+	public void setRoomNum(long roomNum) {
 		this.roomNum = roomNum;
 	}
-	public int getTotalFee() {
+
+	public double getTotalFee() {
 		return totalFee;
 	}
+
+	public void setTotalFee(double totalFee) {
+		this.totalFee = totalFee;
+	}
+
 	public void setTotalFee(int totalFee) {
 		this.totalFee = totalFee;
 	}
@@ -375,13 +371,6 @@ public class HotelOrder extends XMapData{
 	}
 	public void setDayCount(int dayCount) {
 		this.dayCount = dayCount;
-	}
-
-	public String getGuaranteeType() {
-		return guaranteeType;
-	}
-	public void setGuaranteeType(String guaranteeType) {
-		this.guaranteeType = guaranteeType;
 	}
 	public long getRetentionTime() {
 		return retentionTime;
