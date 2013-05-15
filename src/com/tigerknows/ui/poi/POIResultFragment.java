@@ -17,6 +17,7 @@ import com.tigerknows.model.Hotel;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Response;
+import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.POIResponse;
 import com.tigerknows.model.DataQuery.POIResponse.POIList;
@@ -146,10 +147,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
 
         POI poi = lastDataQuerying.getPOI();
+        int sourceType = poi.getSourceType();
         String str;
-        if (poi.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
+        if (sourceType == POI.SOURCE_TYPE_MY_LOCATION) {
             str = mContext.getString(R.string.searching);
-        } else if (poi.getSourceType() == POI.SOURCE_TYPE_CITY_CENTER) {
+        } else if (sourceType == POI.SOURCE_TYPE_CITY_CENTER) {
             str = mContext.getString(R.string.at_city_searching, mSphinx.getMapEngine().getCityInfo(lastDataQuerying.getCityId()).getCName());
         } else {
             str = mContext.getString(R.string.at_location_searching);
@@ -516,9 +518,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
             
             Hotel hotel = poi.getHotel();
-            if (hotel != null) {
+            if (hotel != null && hotel.getImageThumb() != null) {
                 pictureView.setVisibility(View.VISIBLE);
-                Drawable drawable = hotel.getImageThumb().loadDrawable(activity, loadedDrawableRun, viewToken);
+                TKDrawable tkDrawable = hotel.getImageThumb();
+                Drawable drawable = tkDrawable.loadDrawable(activity, loadedDrawableRun, viewToken);
                 if(drawable != null) {
                     //To prevent the problem of size change of the same pic 
                     //After it is used at a different place with smaller size

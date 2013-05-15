@@ -142,6 +142,7 @@ import com.tigerknows.ui.discover.YanchuDetailFragment;
 import com.tigerknows.ui.discover.ZhanlanDetailFragment;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.HotelOrderCreditFragment;
+import com.tigerknows.ui.hotel.HotelOrderDetailFragment;
 import com.tigerknows.ui.hotel.HotelOrderListFragment;
 import com.tigerknows.ui.hotel.HotelOrderWriteFragment;
 import com.tigerknows.ui.hotel.HotelSeveninnRegistFragment;
@@ -3067,6 +3068,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private HotelOrderCreditFragment mHotelOrderCreditFragment;
     private HotelSeveninnRegistFragment mHotelSeveninnRegistFragment;
     
+    private HotelOrderDetailFragment mHotelOrderDetailFragment;
     private HotelOrderListFragment mHotelOrderListFragment;
     
     public BaseFragment getFragment(int id) {
@@ -3629,6 +3631,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mHotelOrderListFragment = fragment;
             }
             return mHotelOrderListFragment;
+        }
+    }
+    
+    public HotelOrderDetailFragment getHotelOrderDetailFragment(){
+    	
+        synchronized (mUILock) {
+            if (mHotelOrderDetailFragment == null) {
+            	HotelOrderDetailFragment fragment = new HotelOrderDetailFragment(Sphinx.this);
+                fragment.setId(R.id.view_hotel_order_detail);
+                fragment.onCreate(null);
+                mHotelOrderDetailFragment = fragment;
+            }
+            return mHotelOrderDetailFragment;
         }
     }
     

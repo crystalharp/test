@@ -9,6 +9,7 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -115,14 +117,47 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	showCertTypeDialog();
         	break;
         case R.id.credit_confirm_btn:
+        	String str = mCreditBankBtn.getText().toString();
         	List<String> list = new ArrayList<String>();
-        	list.add(mCreditCodeEdt.getText().toString());
-        	list.add(mCreditVerifyEdt.getText().toString());
+        	if(TextUtils.isEmpty(str)){
+        		Toast.makeText(mContext, mSphinx.getString(R.string.credit_bank_empty_tip), Toast.LENGTH_SHORT).show();
+        		return;
+        	}
+        	
+        	str = mCreditCodeEdt.getText().toString();
+        	if(TextUtils.isEmpty(str)){
+        		Toast.makeText(mContext, mSphinx.getString(R.string.credit_code_empty_tip), Toast.LENGTH_SHORT).show();
+        		return;
+        	}
+        	list.add(str);
+        	
+        	str = mCreditOwnerEdt.getText().toString().trim();
+        	if(TextUtils.isEmpty(str)){
+        		Toast.makeText(mContext, mSphinx.getString(R.string.credit_owner_empty_tip), Toast.LENGTH_SHORT).show();
+        		return;
+        	}
+        	list.add(str);
+        	
+        	str = mCreditVerifyEdt.getText().toString();
+        	if(TextUtils.isEmpty(str)){
+        		Toast.makeText(mContext, mSphinx.getString(R.string.credit_verify_empty_tip), Toast.LENGTH_SHORT).show();
+        		return;
+        	}
+        	list.add(str);
+ 
         	list.add("2013");
         	list.add("9");
-        	list.add(mCreditOwnerEdt.getText().toString().trim());
-        	list.add(mCreditCertTypeBtn.getText().toString());
-        	list.add(mCreditCertCodeEdt.getText().toString());
+        	str = mCreditCertTypeBtn.getText().toString();
+        	if(TextUtils.isEmpty(str)){
+        		Toast.makeText(mContext, mSphinx.getString(R.string.credit_cert_type_empty_tip), Toast.LENGTH_SHORT).show();
+        		return;
+        	}
+        	list.add(str);
+        	str = mCreditCertCodeEdt.getText().toString();
+        	if(TextUtils.isEmpty(str)){
+        		Toast.makeText(mContext, mSphinx.getString(R.string.credit_cert_code_empty_tip), Toast.LENGTH_SHORT).show();
+        		return;
+        	}
         	mSphinx.getHotelOrderWriteFragment().setCredit(list);
         	break;
         default:
@@ -152,7 +187,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     	final List<String> list = new ArrayList<String>();
     	list.add("身份证");
     	list.add("护照");
-    	list.add("其他证件");
+    	list.add("其他");
         final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
         ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(adapter);

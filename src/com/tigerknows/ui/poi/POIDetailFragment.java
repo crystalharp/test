@@ -595,14 +595,15 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     }
     
     //TODO:移走
-    BaseQuery buildHotelQuery(Calendar checkin, Calendar checkout, POI poi){
+    BaseQuery buildHotelQuery(Calendar checkin, Calendar checkout, POI poi, String needFiled){
         String checkinTime = HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkin.getTime());
         String checkoutTime = HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkout.getTime());
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
         criteria.put(DataOperation.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
+        criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
-        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Hotel.NEED_FILED);
+        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, needFiled+"01");   // 01表示poi的uuid
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN, checkinTime);
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT, checkoutTime);
         DataOperation dataOpration = new DataOperation(mSphinx);
@@ -1266,15 +1267,21 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             //FIXME:如何判断？
             //判断是否存在hotel信息
             boolean isContainHotel = false;
-            for (DynamicPOI iter : list) {
-                if (iter.getType().equals("65537")) {
+            for (int i = 0, size = list.size(); i < size; i++) {
+                DynamicPOI iter = list.get(i);
+                if (iter.getType().equals(DynamicPOI.TYPE_HOTEL)) {
                     isContainHotel = true;
                     break;
                 }
             }
-            if (isContainHotel) {
-                //如果存在，则发起hotel信息查询
-                baseQueryList.add(buildHotelQuery(checkin, checkout, poi));
+            
+            Hotel hotel = poi.getHotel();
+            if (isContainHotel && hotel == null) {
+                BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Hotel.NEED_FILED_LIST);
+                baseQueryList.add(baseQuery);
+            } else if (hotel != null && hotel.getRoomTypeList() == null) {
+                BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL);
+                baseQueryList.add(baseQuery);
             }
             
             if (baseQueryList.isEmpty() == false) {
@@ -1569,9 +1576,15 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     }
                     POI onlinePOI = ((POIQueryResponse)response).getPOI();
                     if (onlinePOI != null && onlinePOI.getUUID() != null && onlinePOI.getUUID().equals(poi.getUUID())) {
-                        if (onlinePOI.getType() == 1) {
+                        String subDataType = baseQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
+                        if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+                            Hotel hotel = poi.getHotel();
                             try {
-                                poi.init(onlinePOI.getData(), false);
+                                if (hotel == null) {
+                                    poi.init(onlinePOI.getData(), false);
+                                } else {
+                                    hotel.init(onlinePOI.getData(), false);
+                                }
                                 refreshDynamicHotel(poi);
                             } catch (APIException e) {
                                 e.printStackTrace();

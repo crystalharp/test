@@ -3,6 +3,7 @@
  */
 package com.tigerknows.ui.hotel;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -360,14 +361,40 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             return;
         }
     	Response response = baseQuery.getResponse();
-    	if (response instanceof HotelOrderCreateResponse) {
-    		HotelOrderCreateResponse hotelOrderCreateResponse = (HotelOrderCreateResponse) response;
-    	}
     	switch(response.getResponseCode()){
     	case Response.RESPONSE_CODE_OK:
     		Toast.makeText(mContext, mSphinx.getString(R.string.order_submit_success), Toast.LENGTH_LONG).show();
-    		dismiss();
-    		mSphinx.showView(R.id.view_hotel_order_detail);
+//    		if (response instanceof HotelOrderCreateResponse) {
+			HotelOrderCreateResponse hotelOrderCreateResponse = (HotelOrderCreateResponse) response;
+			Calendar cld = Calendar.getInstance();
+			try {
+				cld.setTime(SIMPLE_DATE_FORMAT.parse(mRTimeDetail));
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			mHotelOrder = new HotelOrder(
+					hotelOrderCreateResponse.getOrderId(),
+					Calendar.getInstance().getTimeInMillis(),
+					1,
+					mHotel.getUuid(),
+					mPOI.getName(),
+					mPOI.getAddress(),
+					mPOI.getPosition(),
+					mPOI.getTelephone(),
+					mRoomType.getRoomType(),
+					mRoomHowmany,
+					Double.parseDouble(mTotalPrice),
+					cld.getTimeInMillis(),
+					mCheckIn.getTimeInMillis(),
+					mCheckOut.getTimeInMillis(),
+					-1,
+					mUsername,
+					mMobile
+					);
+			dismiss();
+			mSphinx.getHotelOrderDetailFragment().setData(mHotelOrder);
+			mSphinx.showView(R.id.view_hotel_order_detail);
     		break;
     	case Response.RESPONSE_CODE_HOTEL_ORDER_CREATE_FAILED:
     		Utility.showNormalDialog(mSphinx,mSphinx.getString(R.string.hotel_network_bad));
@@ -387,10 +414,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         
 	public void setCredit(List<String> credit) {
 		mCreditCardNo = credit.get(0);
-		mVerifyCode = credit.get(1);
-		mValidYear = credit.get(2);
-		mValidMonth = credit.get(3);
-		mCardHoldName = credit.get(4);
+		mVerifyCode = credit.get(2);
+		mValidYear = credit.get(3);
+		mValidMonth = credit.get(4);
+		mCardHoldName = credit.get(1);
 		mIdCardType = credit.get(5);
 		mIdCardNo = credit.get(6);
 		submit(true);

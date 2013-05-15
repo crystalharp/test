@@ -159,6 +159,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);
         
         mFilterListView = new FilterListView(mSphinx);
+        mFilterListView.findViewById(R.id.body_view).setPadding(0, 0, 0, 0);
         mViewList.add(mFilterListView);
         mSuggestLsv = Utility.makeListView(mSphinx, R.drawable.bg_line_split);
         mViewList.add(mSuggestLsv);
