@@ -4,52 +4,21 @@
 
 package com.tigerknows.ui.hotel;
 
-import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
-import com.decarta.android.util.Util;
-import com.tigerknows.R;
-import com.tigerknows.Sphinx;
-import com.tigerknows.android.os.TKAsyncTask;
-import com.tigerknows.common.ActionLog;
-import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.Dianying;
-import com.tigerknows.model.Fendian;
-import com.tigerknows.model.HotelOrder;
-import com.tigerknows.model.POI;
-import com.tigerknows.model.DataQuery;
-import com.tigerknows.model.Response;
-import com.tigerknows.model.Tuangou;
-import com.tigerknows.model.Yingxun;
-import com.tigerknows.model.DataQuery.BaseList;
-import com.tigerknows.model.DataQuery.FendianResponse;
-import com.tigerknows.model.DataQuery.YingxunResponse;
-import com.tigerknows.model.Yingxun.Changci;
-import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.util.Utility;
-import com.tigerknows.widget.SpringbackListView;
-import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-import android.R.integer;
-import android.content.Context;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.lang.ref.SoftReference;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import com.decarta.android.util.LogWrapper;
+import com.tigerknows.R;
+import com.tigerknows.Sphinx;
+import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.model.HotelOrder;
+import com.tigerknows.ui.BaseFragment;
 
 /**
  * @author Peng Wenyue
@@ -65,41 +34,27 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     
     private HotelOrder mHotelOrder;
 
-    private TextView mResultTxv;
-
-    private SpringbackListView mResultLsv = null;
-
-    private View mEmptyView = null;
-    
-    private View mQueryingView = null;
-    
-    private TextView mEmptyTxv = null;
-
-    private List<HotelOrder> hotelOrders = new ArrayList<HotelOrder>();
-    
-    private DataQuery mDataQuery;
-
-	private HotelOrderAdapter hotelOrderAdapter;
-    
-    private BaseList mBaseList;
-    
     private int state;
     
     private static final int STATE_LOADING = 1;
     private static final int STATE_LIST = 2;
     private static final int STATE_EMPTY = 3;
     private static final int STATE_LOADING_MORE = 4;
-    
-    private Runnable mTurnPageRun = new Runnable() {
-        
-        @Override
-        public void run() {
-            if (mResultLsv.getLastVisiblePosition() >= mResultLsv.getCount()-2 &&
-                    mResultLsv.getFirstVisiblePosition() == 0) {
-                mResultLsv.getView(false).performClick();
-            }
-        }
-    };
+
+    private TextView mHotelNameTxv;
+    private TextView mDistanceTxv;
+    private TextView mHotelAddressTxv;
+    private TextView mHotelTelTxv;
+    private TextView mOrderIdTxv;
+    private TextView mOrderStateTxv;
+    private TextView mOrderTimeTxv;
+    private TextView mTotalFeeTxv;
+    private TextView mPayTypeTxv;
+    private TextView mCheckinDateTxv;
+    private TextView mCheckoutDateTxv;
+    private TextView mRetentionDateTxv;
+    private TextView mRoomTypeTxv;
+    private TextView mCheckinPersonTxv;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -111,19 +66,11 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             Bundle savedInstanceState) {  
         LogWrapper.d(TAG, "onCreateView()"+mActionTag);
         
-        mRootView = mLayoutInflater.inflate(R.layout.hotel_order_list, container, false);
+        mRootView = mLayoutInflater.inflate(R.layout.hotel_order_detail, container, false);
 
         findViews();
         setListener();
-        List<HotelOrder> orders = new ArrayList<HotelOrder>();
-        orders.add(new HotelOrder());
-        orders.add(new HotelOrder());
-        hotelOrderAdapter = new HotelOrderAdapter(mContext, orders);
-        mResultLsv.setAdapter(hotelOrderAdapter);
-
-        mQueryingView.setVisibility(View.INVISIBLE);
-        mEmptyView.setVisibility(View.INVISIBLE);
-        mResultLsv.setVisibility(View.VISIBLE);
+        mDistanceTxv.setVisibility(View.INVISIBLE);
         return mRootView;
     }
     
@@ -131,34 +78,28 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     @Override
     public void dismiss() {
         super.dismiss();
-        if (hotelOrders != null) {
-            hotelOrders.clear();
-            if (hotelOrderAdapter != null) {
-                hotelOrderAdapter.notifyDataSetChanged();
-            }
-        }
-        mDataQuery = null;
-        mBaseList = null;
     }
     
     protected void findViews() {
-        mResultTxv = (TextView) mRootView.findViewById(R.id.result_txv);
-        mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
-        mEmptyView = mRootView.findViewById(R.id.empty_view);
-        mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
-        mQueryingView = mRootView.findViewById(R.id.querying_view);
-        View v = mLayoutInflater.inflate(R.layout.loading, null);
-        mResultLsv.addFooterView(v);
+
+		mHotelNameTxv = (TextView) mRootView.findViewById(R.id.name_txv);
+		mDistanceTxv = (TextView) mRootView.findViewById(R.id.distance_txv);
+		mHotelAddressTxv = (TextView) mRootView.findViewById(R.id.address_txv);
+		mHotelTelTxv = (TextView) mRootView.findViewById(R.id.telephone_txv);
+		mOrderIdTxv = (TextView) mRootView.findViewById(R.id.order_id_txv);
+		mOrderStateTxv = (TextView) mRootView.findViewById(R.id.order_state_txv);
+		mOrderTimeTxv = (TextView) mRootView.findViewById(R.id.order_time_txv);
+		mTotalFeeTxv = (TextView) mRootView.findViewById(R.id.order_total_fee_txv);
+		mPayTypeTxv = (TextView) mRootView.findViewById(R.id.pay_type_txv);
+		mCheckinDateTxv = (TextView) mRootView.findViewById(R.id.checkin_date_txv);
+		mCheckoutDateTxv = (TextView) mRootView.findViewById(R.id.checkout_date_txv);
+		mRetentionDateTxv = (TextView) mRootView.findViewById(R.id.retention_date_txv);
+		mRoomTypeTxv = (TextView) mRootView.findViewById(R.id.room_type_txv);
+		mCheckinPersonTxv = (TextView) mRootView.findViewById(R.id.checkin_person_txv);
+
     }
 
     protected void setListener() {
-        mResultLsv.setOnRefreshListener(new OnRefreshListener() {
-            
-            @Override
-            public void onRefresh(boolean isHeader) {
-                turnPage();
-            }
-        });
     }
     
     @Override
@@ -167,16 +108,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(mContext.getString(R.string.hotel_order));
         
-        if (mResultLsv.isFooterSpringback()) {
-            mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
-        }
     }
     
-    private void turnPage(){
-        synchronized (this) {
-        	
-        }
-    }
 
     @Override
     public void onClick(final View view) {
@@ -188,34 +121,6 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         }
     }
 
-    public class HotelOrderAdapter extends ArrayAdapter<HotelOrder>{
-        private static final int RESOURCE_ID = R.layout.hotel_order_list_item;
-        
-        public HotelOrderAdapter(Context context, List<HotelOrder> list) {
-            super(context, RESOURCE_ID, list);
-        }
-        
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-
-            View view;
-            if (convertView == null) {
-                view = mLayoutInflater.inflate(RESOURCE_ID, parent, false);
-            } else {
-                view = convertView;
-            }
-
-            HotelOrder hotelOrder = new HotelOrder();
-            TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
-            TextView priceTxv = (TextView) view.findViewById(R.id.price_txv);
-            TextView roomTypeTxv = (TextView) view.findViewById(R.id.room_type_txv);
-            TextView checkinDateTxv = (TextView) view.findViewById(R.id.checkin_date_txv);
-            TextView checkoutDateTxv = (TextView) view.findViewById(R.id.checkout_date_txv);
-            TextView dayCountView = (TextView) view.findViewById(R.id.day_count_txv);
-
-            return view;
-        }
-    }
 
     @Override
     public void onCancelled(TKAsyncTask tkAsyncTask) {
@@ -228,7 +133,45 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         
     }
     
-    public void setData(HotelOrder hotelOrder){
-    	mHotelOrder = hotelOrder;
+    public void setData(HotelOrder order){
+    	mHotelOrder = order;
+    	if(mHotelOrder==null){
+    		return;
+    	}
+    	
+    	mHotelNameTxv.setText(order.getHotelName());
+    	mHotelAddressTxv.setText(order.getHotelAddress());
+    	mHotelTelTxv.setText(order.getHotelTel());
+    	mOrderIdTxv.setText(order.getId());
+    	mOrderStateTxv.setText(getOrderStateDesc(order.getState()));
+    	mOrderTimeTxv.setText(formatOrderTime(order.getCreateTime()));
+    	mTotalFeeTxv.setText( "" + order.getTotalFee());
+    	mPayTypeTxv.setText(mContext.getString(R.string.hotel_order_default_pay_type));
+    	mCheckinDateTxv.setText(formatOrderTime(order.getCheckinTime()));
+    	mCheckoutDateTxv.setText(formatOrderTime(order.getCheckoutTime()));
+    	mRetentionDateTxv.setText(formatOrderTime(order.getRetentionTime()));
+    	mRoomTypeTxv.setText(order.getRoomType());
+    	mCheckinPersonTxv.setText(order.getGuestName());
+
+    	
     }
+    
+    private static int[] orderStateDescResId = new int[]{
+    	R.string.order_state_processing,
+    	R.string.order_state_success,
+    	R.string.order_state_canceled,
+    	R.string.order_state_post_due,
+    	R.string.order_state_checked_in
+    };
+    
+    public String getOrderStateDesc(int state){
+		return mContext.getString(orderStateDescResId[state]);
+    }
+    
+    public String formatOrderTime(long millis){
+    	Date date = new Date(millis);
+    	SimpleDateFormat dateformat=new SimpleDateFormat("yyyy-MM-dd");
+		return dateformat.format(date);
+    }
+    
 }

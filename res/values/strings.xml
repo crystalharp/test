@@ -1020,4 +1020,12 @@
     <string name="room_type">入住房型：</string>
     <string name="checkin_person">入  住  人：</string>
     
+    <string name="order_state_processing">处理中</string>
+    <string name="order_state_success">预订成功</string>
+    <string name="order_state_canceled">已取消</string>
+    <string name="order_state_post_due">已过期</string>
+    <string name="order_state_checked_in">已入住</string>
+    
+    <string name="hotel_order_default_pay_type">前台自付</string>
+    
 </resources>

@@ -15,6 +15,13 @@ import com.tigerknows.model.xobject.XMap;
  */
 public class HotelOrder extends XMapData{
 	
+	
+	public static final int STATE_PROCESSING = 1;
+	public static final int STATE_SUCCESS = 2;
+	public static final int STATE_CANCELED = 3;
+	public static final int STATE_POST_DUE = 4;
+	public static final int STATE_CHECKED_IN = 5;
+	
 	// identification info
 	/**
 	 * 订单的id。

@@ -38,6 +38,9 @@
         android:id="@+id/body_scv"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        
+        android:layout_alignParentTop="true"
+        
         android:scrollbars="vertical"
         android:gravity="top"
         android:fillViewport="true"
@@ -50,29 +53,22 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             >
+            <include
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="16dp"
+                layout="@layout/discover_tuangou_fendian_list_item"
+                android:id="@+id/hotel_fendian_poi"/>
+             
             <RelativeLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_margin="16dp"
                 android:background="@color/white"
-                android:padding="8dp"
-                >
-                <include
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginBottom="8dp"
-                    layout="@layout/discover_tuangou_fendian_list_item"
-                    android:id="@+id/hotel_fendian_poi"/>
-             
-	             <ImageView
-                     android:background="@drawable/bg_broken_line"
-                     android:layout_width="fill_parent"
-                     android:layout_height="wrap_content"
-                     android:layout_below="@id/hotel_fendian_poi"
-                     android:layout_marginBottom="4dp"
-                     />
-             
+                android:padding="8dp">
+                
                 <TextView
                     android:id="@+id/order_id"
                     android:layout_width="wrap_content"
@@ -177,7 +173,7 @@
                     />
                 
                 <TextView
-                    android:id="@+id/order_gross"
+                    android:id="@+id/order_total_fee"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     
@@ -193,11 +189,11 @@
                     />
                 
                 <TextView
-                    android:id="@+id/order_gross_txv"
+                    android:id="@+id/order_total_fee_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     
-                    android:layout_toRightOf="@id/order_gross"
+                    android:layout_toRightOf="@id/order_total_fee"
                     android:layout_below="@id/order_time_txv"
                     android:layout_marginLeft="10dp"
                     android:layout_marginBottom="8dp"
@@ -214,7 +210,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     
-                    android:layout_below="@id/order_gross_txv"
+                    android:layout_below="@id/order_total_fee"
                     android:layout_marginLeft="10dp"
                     android:layout_marginBottom="8dp"
                     
@@ -231,7 +227,7 @@
                     android:layout_height="wrap_content"
                     
                     android:layout_toRightOf="@id/pay_type"
-                    android:layout_below="@id/order_gross_txv"
+                    android:layout_below="@id/order_total_fee"
                     android:layout_marginLeft="10dp"
                     android:layout_marginBottom="8dp"
                     

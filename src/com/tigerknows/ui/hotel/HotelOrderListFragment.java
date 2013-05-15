@@ -4,52 +4,34 @@
 
 package com.tigerknows.ui.hotel;
 
-import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
-import com.decarta.android.util.Util;
-import com.tigerknows.R;
-import com.tigerknows.Sphinx;
-import com.tigerknows.android.os.TKAsyncTask;
-import com.tigerknows.common.ActionLog;
-import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.Dianying;
-import com.tigerknows.model.Fendian;
-import com.tigerknows.model.HotelOrder;
-import com.tigerknows.model.POI;
-import com.tigerknows.model.DataQuery;
-import com.tigerknows.model.Response;
-import com.tigerknows.model.Tuangou;
-import com.tigerknows.model.Yingxun;
-import com.tigerknows.model.DataQuery.BaseList;
-import com.tigerknows.model.DataQuery.FendianResponse;
-import com.tigerknows.model.DataQuery.YingxunResponse;
-import com.tigerknows.model.Yingxun.Changci;
-import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.util.Utility;
-import com.tigerknows.widget.SpringbackListView;
-import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import android.R.integer;
 import android.content.Context;
 import android.os.Bundle;
-import android.text.TextUtils;
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.lang.ref.SoftReference;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import com.decarta.android.exception.APIException;
+import com.decarta.android.location.Position;
+import com.decarta.android.util.LogWrapper;
+import com.tigerknows.R;
+import com.tigerknows.Sphinx;
+import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.HotelOrder;
+import com.tigerknows.provider.HotelOrderTable;
+import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.widget.SpringbackListView;
+import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
 /**
  * @author Peng Wenyue
@@ -79,9 +61,13 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 
 	private HotelOrderAdapter hotelOrderAdapter;
     
-    private BaseList mBaseList;
+	private int orderTotal = 0;
+	
+	private List<HotelOrder> orders = new ArrayList<HotelOrder>();
     
     private int state;
+    
+    
     
     private static final int STATE_LOADING = 1;
     private static final int STATE_LIST = 2;
@@ -113,9 +99,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 
         findViews();
         setListener();
-        List<HotelOrder> orders = new ArrayList<HotelOrder>();
-        orders.add(new HotelOrder());
-        orders.add(new HotelOrder());
         hotelOrderAdapter = new HotelOrderAdapter(mContext, orders);
         mResultLsv.setAdapter(hotelOrderAdapter);
 
@@ -137,7 +120,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
             }
         }
         mDataQuery = null;
-        mBaseList = null;
     }
     
     protected void findViews() {
@@ -158,6 +140,18 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
                 turnPage();
             }
         });
+        
+        mResultLsv.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view,
+					int position, long id) {
+				mSphinx.showView(R.id.view_hotel_order_detail);
+				mSphinx.getHotelOrderDetailFragment().setData(orders.get(position));
+			}
+        	
+		});
+        
     }
     
     @Override
@@ -169,6 +163,39 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
         }
+        //fillOrderDb();
+        new LoadThread(0, 1000).start();
+    }
+    
+    public void fillOrderDb(){
+    	HotelOrderTable table = new HotelOrderTable(mContext);
+    	try {
+    		long start = System.currentTimeMillis();
+    		List<HotelOrder> list = table.read(0, 100);
+    		System.out.println("Time used for read: " + (System.currentTimeMillis()-start)/1000.0);
+    		System.out.println("OrderDB count: " + list.size());
+    		
+    		if(list.size() < 100){
+    			HotelOrder order = new HotelOrder("11111", System.currentTimeMillis(), 1, "ssss", "HotelName", "hotelAddress", new Position(111,111), "13581704277", 
+    					mContext.getString(R.string.app_name), 3, 390, 
+    					System.currentTimeMillis(), System.currentTimeMillis(), System.currentTimeMillis(),2, 
+    					"GuestName", "13581704277");
+    			for (int i = list.size(); i < 100; i++) {
+    				order.setId("" + i + i + i + i);
+    				table.write(order);
+    			}
+    		}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (APIException e) {
+			e.printStackTrace();
+		}finally{
+			
+			if(table != null){
+				table.close();
+			}
+			
+		}
     }
     
     private void turnPage(){
@@ -226,4 +253,86 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         super.onPostExecute(tkAsyncTask);
         
     }
+    
+    Handler mHandler = new Handler(){
+
+		@Override
+		public void handleMessage(Message msg) {
+			super.handleMessage(msg);
+			List<HotelOrder> ordersLoaded = (List<HotelOrder>) msg.obj;
+			if( ordersLoaded != null ){
+				System.out.println("Orders loaded: " + ordersLoaded.size());
+				orders.addAll(ordersLoaded);
+				hotelOrderAdapter.notifyDataSetChanged();
+			}
+			
+		}
+    	
+    };
+
+    /**
+     * Thread used to load HotelOrder from database.
+     * @author jiangshaui
+     *
+     */
+    class LoadThread extends Thread{
+
+    	int startIndex = 0;
+    	int loadCount = 100;
+    	
+        public LoadThread(int startIndex, int loadCount) {
+			super();
+			this.startIndex = startIndex;
+			this.loadCount = loadCount;
+		}
+
+
+		@Override
+        public void run(){
+            Message msg = Message.obtain();
+            List<HotelOrder> orderList = null;
+            HotelOrderTable table = null;
+    		try {
+    			table = new HotelOrderTable(mContext);
+    			long startTime = System.currentTimeMillis();
+    			orderTotal = table.count();
+    			System.out.println("Count time: " + (System.currentTimeMillis()-startTime));
+    			startTime = System.currentTimeMillis();
+				orderList = table.read(startIndex, loadCount);
+    			System.out.println("Read time: " + (System.currentTimeMillis()-startTime));
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (APIException e) {
+				e.printStackTrace();
+			}finally{
+				if(table!=null){
+					table.close();
+				}
+			}
+        		
+            msg.obj = orderList;
+            mHandler.sendMessage(msg);
+        }
+		
+
+		public int getStartIndex() {
+			return startIndex;
+		}
+
+		public void setStartIndex(int startIndex) {
+			this.startIndex = startIndex;
+		}
+
+		public int getLoadCount() {
+			return loadCount;
+		}
+
+		public void setLoadCount(int loadCount) {
+			this.loadCount = loadCount;
+		}
+		
+    }// end LoadThread class
+    
+    
+    
 }
