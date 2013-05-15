@@ -18,7 +18,9 @@ import java.util.List;
  */
 public class Hotel extends XMapData {
     
-    public static final String NEED_FILED = "50515253545657";
+    public static final String NEED_FILED_LIST = "5051525357";
+    
+    public static final String NEED_FILED_DETAIL = "545556";
     
     // 0x50 x_string 酒店ID
     public static final byte FIELD_UUID = 0x50;
