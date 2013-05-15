@@ -227,6 +227,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                     if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistory, position, tkWord.word);
                     } else {
+                        tkWord.position = mSphinx.getMapEngine().getwordslistStringWithPosition(tkWord.word, 0);
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItemSuggest, position, tkWord.word);
                     }
                     mTKWord = tkWord;

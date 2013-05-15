@@ -72,20 +72,29 @@ public class Hotel extends XMapData {
 
     public Hotel(XMap data) throws APIException {
         super(data);
-        this.uuid = getStringFromData(FIELD_UUID);
-        this.source = getStringFromData(FIELD_SOURCE);
-        this.brand = getStringFromData(FIELD_BRAND);
+        init(data, true);
+    }
+    
+    @Override
+    public void init(XMap data, boolean reset) throws APIException {
+        super.init(data, reset);
+        
+        this.uuid = getStringFromData(FIELD_UUID, reset ? null : this.uuid);
+        this.source = getStringFromData(FIELD_SOURCE, reset ? null : this.source);
+        this.brand = getStringFromData(FIELD_BRAND, reset ? null : this.brand);
         
         String imageThumb = getStringFromData(FIELD_IMAGE_THUMB);
         if (imageThumb != null) {
             TKDrawable tkDrawable = new TKDrawable();
             tkDrawable.setUrl(imageThumb);
             this.imageThumb = tkDrawable;
+        } else if (reset) {
+            this.imageThumb = null;
         }
-        this.hotelTKDrawableList = getListFromData(FIELD_IMAGE_LIST, HotelTKDrawable.Initializer);
-        this.roomTypeList = getListFromData(FIELD_ROOM_TYPE_LIST, RoomType.Initializer);
-        this.service = getStringFromData(FIELD_SERVICE);
-        this.canReserve = getLongFromData(FIELD_CAN_RESERVE);
+        this.hotelTKDrawableList = getListFromData(FIELD_IMAGE_LIST, HotelTKDrawable.Initializer, reset ? null : this.hotelTKDrawableList);
+        this.roomTypeList = getListFromData(FIELD_ROOM_TYPE_LIST, RoomType.Initializer, reset ? null : this.roomTypeList);
+        this.service = getStringFromData(FIELD_SERVICE, reset ? null : this.service);
+        this.canReserve = getLongFromData(FIELD_CAN_RESERVE, reset ? 0 : this.canReserve);
     }
     
     public String getUuid() {
