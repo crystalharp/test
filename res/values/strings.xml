@@ -975,6 +975,13 @@
     <string name="choose_credit_bank">选择银行</string>
     <string name="choose_credit_validity">选择信用卡有效期</string>
     <string name="choose_cert_type">选择证件类型</string>
+    <string name="credit_bank_empty_tip">请填写发卡银行!</string>
+    <string name="credit_code_empty_tip">请输入卡号!</string>
+    <string name="credit_owner_empty_tip">请输入持卡人姓名!</string>
+    <string name="credit_verify_empty_tip">请输入信用卡验证码!</string>
+    <string name="credit_validity_empty_tip">请选择信用卡有效期!</string>
+    <string name="credit_cert_type_empty_tip">请选择证件类型!</string>
+    <string name="credit_cert_code_empty_tip">请输入证件号码!</string>
     
     <string name="seveninn_regist_title">注册7天会员</string>
     <string name="seveninn_note">发现您的手机号%1$s非7天会员号，如继续预定需要准确填写以下信息进行验证，该号码会自动注册为7天会员手机号。</string>

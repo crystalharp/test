@@ -154,8 +154,7 @@ public class HotelOrder extends XMapData{
 	public HotelOrder(String id, long createTime, int state,
 			String hotelPoiUUID, String hotelName, String hotelAddress,
 			Position position, String hotelTel, String roomType,
-			long roomNum, double totalFee, String guaranteeType,
-			long retentionTime, long checkinTime, long checkoutTime, int dayCount,
+			long roomNum, double totalFee, long retentionTime, long checkinTime, long checkoutTime, int dayCount,
 			String guestName, String mobileNum) {
 		super();
 		this.id = id;

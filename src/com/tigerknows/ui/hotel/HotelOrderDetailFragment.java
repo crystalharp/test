@@ -62,6 +62,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         super(sphinx);
         // TODO Auto-generated constructor stub
     }
+    
+    private HotelOrder mHotelOrder;
 
     private TextView mResultTxv;
 
@@ -224,5 +226,9 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         
+    }
+    
+    public void setData(HotelOrder hotelOrder){
+    	mHotelOrder = hotelOrder;
     }
 }

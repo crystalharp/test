@@ -59,6 +59,9 @@ public class HotelOrderOperation extends BaseQuery {
     // 用户手机号
     public static final String SERVER_PARAMETER_MOBILE = "mobile";
     
+    // 7天酒店会员卡号
+    public static final String SERVER_PARAMETER_MEMBERNUM = "membernum";
+    
     // 信用卡号
     public static final String SERVER_PARAMETER_CREDIT_CARD_NO = "creditcardno";
 
@@ -129,6 +132,7 @@ public class HotelOrderOperation extends BaseQuery {
                     SERVER_PARAMETER_USERNAME,
                     SERVER_PARAMETER_MOBILE
             });
+            addParameter(SERVER_PARAMETER_MEMBERNUM, false);
             String creditCardNo = addParameter(SERVER_PARAMETER_CREDIT_CARD_NO, false);
             if (creditCardNo != null) {
                 addParameter(new String[]{
