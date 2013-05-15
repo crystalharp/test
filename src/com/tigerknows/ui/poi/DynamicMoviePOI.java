@@ -1,6 +1,9 @@
 package com.tigerknows.ui.poi;
 
+import java.util.List;
+
 import com.tigerknows.model.POI.DynamicPOI;
+import com.tigerknows.model.XMapData;
 
 import android.widget.LinearLayout;
 
@@ -8,7 +11,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
     
     DynamicMoviePOI instance = null;
     private DynamicMoviePOI(LinearLayout belongsLayout){
-       mBelongsLayout = belongsLayout; 
+//       mBelongsLayout = belongsLayout; 
     }
     
     public DynamicMoviePOI getInstance(LinearLayout belongsLayout){
@@ -18,8 +21,20 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
        return instance;
     }
 
+//    @Override
+//    public void refreshData(XMapData data) {
+//        // TODO Auto-generated method stub
+//        
+//    }
+
     @Override
-    public void refreshData(DynamicPOI data) {
+    public List getViewList(List dataList) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void addDynamicPOIViewBlock(LinearLayout belongsLayout) {
         // TODO Auto-generated method stub
         
     }

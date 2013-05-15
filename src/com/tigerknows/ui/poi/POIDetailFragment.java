@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.content.DialogInterface;
@@ -80,6 +81,7 @@ import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.poi.POIDetailFragment.DPOIType;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ShareTextUtil;
 import com.tigerknows.util.WidgetUtils;
@@ -131,9 +133,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 
     private LinearLayout mFeatureTxv;
     
-    private LinearLayout mBelowAddressLayout;
+    //如下两个layout用来添加动态POI内容到该页
+    public LinearLayout mBelowAddressLayout;
     
-    private LinearLayout mBelowCommentLayout;
+    public LinearLayout mBelowCommentLayout;
 
     // Error Fix Button
     private Button mErrorFixBtn = null;
@@ -197,29 +200,27 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     }	
     //*******************new code start*************************
     
-    ArrayList<DynamicPOIView> DPOIList = new ArrayList<DynamicPOIView>();
+    ArrayList<DynamicPOIViewBlock> DPOIViewBlockList = new ArrayList<DynamicPOIViewBlock>();
     
-    private class DPOICompare implements Comparator<DynamicPOIView> {
+    private class DPOICompare implements Comparator<DynamicPOIViewBlock> {
 
         @Override
-        public int compare(DynamicPOIView lhs, DynamicPOIView rhs) {
+        public int compare(DynamicPOIViewBlock lhs, DynamicPOIViewBlock rhs) {
             return lhs.mType.ordinal() - rhs.mType.ordinal();
         }
     }
 
-    private void showDynamicPOI(List<DynamicPOIView> POIList){
+    private void showDynamicPOI(List<DynamicPOIViewBlock> POIList){
         Collections.sort(POIList, new DPOICompare());
         LogWrapper.d("conan", "showPOIList:" + POIList);
-        for (DynamicPOIView iter : POIList){
-            if (iter.needToShow) {
-                iter.mBelongsLayout.addView(iter.mOwnLayout);
-            }
+        for (DynamicPOIViewBlock iter : POIList){
+            iter.show();
         }
     }
     
-    private void clearDynamicPOI(List<DynamicPOIView> POIList){
+    private void clearDynamicPOI(List<DynamicPOIViewBlock> POIList){
         LogWrapper.d("conan", "clearPOIList:" + POIList);
-        for (DynamicPOIView iter : POIList) {
+        for (DynamicPOIViewBlock iter : POIList) {
             iter.clear();
         }
         POIList.clear();
@@ -236,62 +237,71 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		public void msgReceived(Sphinx mSphinx, BaseQuery query, Response response);
     }
     
-	public abstract static class DynamicPOIView {
-
+    public static class DynamicPOIViewBlock {
 		LinearLayout mOwnLayout;
 		LinearLayout mBelongsLayout;
 		DPOIType mType;
-		DynamicPOI data;
-//		static ArrayList<DynamicPOIView> DPOIPool = new ArrayList<DynamicPOIView>();
 		boolean needToShow = true;
-		POIDetailFragment mPOIDetailFragment;
-		Sphinx mSphinx;
 		
-		static <T> T getInstance(POIDetailFragment poiFragment, LinearLayout belongsLayout, DynamicPOI data, DPOIViewInitializer<T> initer, ArrayList<DynamicPOIView> DPOIPool){
-		    DynamicPOIView instance = null;
-		    if (DPOIPool.size() == 0) {
-		        instance = (DynamicPOIView) initer.init(poiFragment, poiFragment.mLayoutInflater, belongsLayout, data);
-		        DPOIPool.add(instance);
-		    } else {
-		       //遍历缓冲池 
-		        for (DynamicPOIView iter : DPOIPool) {
-		            //如果有不用的，则使用它
-		            LogWrapper.d("conan", "iter.needtoshow:" + iter.needToShow);
-		            if (!iter.needToShow) {
-		                instance = iter;
-		                instance.refreshData(data);
-		                instance.mBelongsLayout = belongsLayout;
-		                instance.needToShow = true;
-		                break;
-		            }
-		        }
-		        //遍历完发现都在用，则创建个新的
-		        if (instance == null) {
-    		        instance = (DynamicPOIView) initer.init(poiFragment, poiFragment.mLayoutInflater, belongsLayout, data);
-    		        DPOIPool.add(instance);
-		        }
+		public DynamicPOIViewBlock(LinearLayout belongsLayout, DPOIType type) {
+		    mBelongsLayout = belongsLayout;
+		    mType = type;
+        }
+		
+		void show(){
+		    if (needToShow){
+		        mBelongsLayout.addView(mOwnLayout);
 		    }
-		    return (T)instance;
 		}
-		
-		public abstract void refreshData(DynamicPOI data);
-		
-		void clear(){
+
+        void clear(){
 		    mBelongsLayout.removeView(mOwnLayout);
 			needToShow = false;
 		}
+    }
+    
+	public abstract static class DynamicPOIView <T>{
+
+		POIDetailFragment mPOIDetailFragment;
+		Sphinx mSphinx;
 		
 		static void query(POIDetailFragment fragment, List<BaseQuery> list){
-//		    List<BaseQuery> list = new ArrayList<BaseQuery>();
-//            list.add(dataOperation);
-            fragment.mTkAsyncTasking = fragment.mSphinx.queryStart(list);
-            fragment.mBaseQuerying = list; 
+		    fragment.mTkAsyncTasking = fragment.mSphinx.queryStart(list);
+		    fragment.mBaseQuerying = list; 
 		}
 		
+		protected abstract void addDynamicPOIViewBlock(LinearLayout belongsLayout);
 		
-		//添加这个接口是为了把同一类的对象build为一个layout显示,主要解决
-		//团购等单条但不唯一的动态POI信息需要多个POI合并显示，首尾都显示的特殊
-//		public static LinearLayout layoutBuild(){};
+		public abstract List<DynamicPOIViewBlock> getViewList(List<T> dataList);
+		
+//		static <T> T getInstance(POIDetailFragment poiFragment, LinearLayout belongsLayout, DynamicPOI data, DPOIViewInitializer<T> initer, ArrayList<DynamicPOIView> DPOIPool){
+//		    DynamicPOIView instance = null;
+//		    if (DPOIPool.size() == 0) {
+//		        instance = (DynamicPOIView) initer.init(poiFragment, poiFragment.mLayoutInflater, belongsLayout, data);
+//		        DPOIPool.add(instance);
+//		    } else {
+//		       //遍历缓冲池 
+//		        for (DynamicPOIView iter : DPOIPool) {
+//		            //如果有不用的，则使用它
+//		            LogWrapper.d("conan", "iter.needtoshow:" + iter.needToShow);
+//		            if (!iter.needToShow) {
+//		                instance = iter;
+//		                instance.refreshData(data);
+//		                instance.mBelongsLayout = belongsLayout;
+//		                instance.needToShow = true;
+//		                break;
+//		            }
+//		        }
+//		        //遍历完发现都在用，则创建个新的
+//		        if (instance == null) {
+//    		        instance = (DynamicPOIView) initer.init(poiFragment, poiFragment.mLayoutInflater, belongsLayout, data);
+//    		        DPOIPool.add(instance);
+//		        }
+//		    }
+//		    return (T)instance;
+//		}
+		
+//		public abstract void refreshData(DynamicPOI data);
 		
 	}
 	
@@ -496,135 +506,135 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     		return;
     	}
     	LogWrapper.d("conan", "refreshDynamicPOI");
-    	clearDynamicPOI(DPOIList);
+    	clearDynamicPOI(DPOIViewBlockList);
 
         List<DynamicPOI> list = poi.getDynamicPOIList();
-        int viewCount = mDynamicPOIListView.getChildCount();
-        int viewIndex = 0;
+        List<DynamicPOI> normalDynamicPOIList = new LinkedList<DynamicPOI>();
+//        int viewCount = mDynamicPOIListView.getChildCount();
+//        int viewIndex = 0;
         int size = (list != null ? list.size() : 0);
-        if(size==0){
-        	mDynamicPOIListView.setVisibility(View.GONE);
-        }else{
-        	mDynamicPOIListView.setVisibility(View.VISIBLE);
-        }
+//        if(size==0){
+//        	mDynamicPOIListView.setVisibility(View.GONE);
+//        }else{
+//        	mDynamicPOIListView.setVisibility(View.VISIBLE);
+//        }
         for(int i = 0; i < size; i++) {
             final DynamicPOI dynamicPOI = list.get(i);
             final String dataType = dynamicPOI.getType();
-            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
-                DPOIList.add(DynamicGroupbuyPOI.getInstance(POIDetailFragment.this, mBelowAddressLayout, dynamicPOI, DynamicGroupbuyPOI.Initializer, DynamicGroupbuyPOI.DPOIPool));
-                showDynamicPOI(DPOIList);
-                return;
-            } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
+            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
                     BaseQuery.DATA_TYPE_YANCHU.equals(dataType) ||
                     BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-                View child;
-                if (viewIndex < viewCount) {
-                    child = mDynamicPOIListView.getChildAt(viewIndex);
-                    child.setVisibility(View.VISIBLE);
-                } else {
-                    child = mLayoutInflater.inflate(R.layout.poi_dynamic_poi_list_item, mDynamicPOIListView, false);
-                    mDynamicPOIListView.addView(child, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-                }
-                child.setOnClickListener(new View.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(View view) {
-                        DataOperation dataOperation = new DataOperation(mSphinx);
-                        Hashtable<String, String> criteria = new Hashtable<String, String>();
-                        criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, dataType);
-                        criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUid());
-                        
-                        if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
-                            mActionLog.addAction(mActionTag +  ActionLog.POIDetailTuangou);
-                            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
-                                         Tuangou.NEED_FILELD
-                                            + Util.byteToHexString(Tuangou.FIELD_NOTICED)
-                                            + Util.byteToHexString(Tuangou.FIELD_CONTENT_TEXT)
-                                            + Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC));
-                            criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-                                    Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[0]" + ";" +
-                                    Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[0]" + ";" +
-                                    Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_TAOCAN)+"_[0]");
-                            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-                            List<BaseQuery> list = new ArrayList<BaseQuery>();
-                            list.add(dataOperation);
-                            dataOperation = new DataOperation(mSphinx);
-                            criteria = new Hashtable<String, String>();
-                            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_FENDIAN);
-                            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getSlaveUid());
-                            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Fendian.NEED_FILELD);
-                            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-                            list.add(dataOperation);
-                            mTkAsyncTasking = mSphinx.queryStart(list);
-                            mBaseQuerying = list;
-                        } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
-                            mActionLog.addAction(mActionTag +  ActionLog.POIDetailYanchu);
-                            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
-                                         Yanchu.NEED_FILELD + Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
-                            criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-                                    Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
-                                    Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
-                            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-                            List<BaseQuery> list = new ArrayList<BaseQuery>();
-                            list.add(dataOperation);
-                            mTkAsyncTasking = mSphinx.queryStart(list);
-                            mBaseQuerying = list;
-                        } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-                            mActionLog.addAction(mActionTag +  ActionLog.POIDetailZhanlan);
-                            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
-                                    Zhanlan.NEED_FILELD + Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
-                            criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-                                    Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
-                                    Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
-                            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-                            List<BaseQuery> list = new ArrayList<BaseQuery>();
-                            list.add(dataOperation);
-                            mTkAsyncTasking = mSphinx.queryStart(list);
-                            mBaseQuerying = list;
-                        }
-                    }
-                });
-                ImageView iconImv = (ImageView) child.findViewById(R.id.icon_imv);
-                TextView textTxv = (TextView) child.findViewById(R.id.text_txv);
-                if (BaseQuery.DATA_TYPE_TUANGOU.equals(dynamicPOI.getType())) {
-                    iconImv.setImageResource(R.drawable.ic_dynamicpoi_tuangou);
-                } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dynamicPOI.getType())) {
-                    iconImv.setImageResource(R.drawable.ic_dynamicpoi_yanchu);
-                } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dynamicPOI.getType())) {
-                    iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
-                }
-                textTxv.setText(dynamicPOI.getSummary());
-                viewIndex++;
+                normalDynamicPOIList.add(dynamicPOI);
+                //xupeng comment
+//                View child;
+//                if (viewIndex < viewCount) {
+//                    child = mDynamicPOIListView.getChildAt(viewIndex);
+//                    child.setVisibility(View.VISIBLE);
+//                } else {
+//                    child = mLayoutInflater.inflate(R.layout.poi_dynamic_poi_list_item, mDynamicPOIListView, false);
+//                    mDynamicPOIListView.addView(child, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+//                }
+//                child.setOnClickListener(new View.OnClickListener() {
+//                    
+//                    @Override
+//                    public void onClick(View view) {
+//                        DataOperation dataOperation = new DataOperation(mSphinx);
+//                        Hashtable<String, String> criteria = new Hashtable<String, String>();
+//                        criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, dataType);
+//                        criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+//                        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUid());
+//                        
+//                        if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+//                            mActionLog.addAction(mActionTag +  ActionLog.POIDetailTuangou);
+//                            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+//                                         Tuangou.NEED_FILELD
+//                                            + Util.byteToHexString(Tuangou.FIELD_NOTICED)
+//                                            + Util.byteToHexString(Tuangou.FIELD_CONTENT_TEXT)
+//                                            + Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC));
+//                            criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+//                                    Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[0]" + ";" +
+//                                    Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[0]" + ";" +
+//                                    Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_TAOCAN)+"_[0]");
+//                            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+//                            List<BaseQuery> list = new ArrayList<BaseQuery>();
+//                            list.add(dataOperation);
+//                            dataOperation = new DataOperation(mSphinx);
+//                            criteria = new Hashtable<String, String>();
+//                            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+//                            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_FENDIAN);
+//                            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getSlaveUid());
+//                            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Fendian.NEED_FILELD);
+//                            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+//                            list.add(dataOperation);
+//                            mTkAsyncTasking = mSphinx.queryStart(list);
+//                            mBaseQuerying = list;
+//                        } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
+//                            mActionLog.addAction(mActionTag +  ActionLog.POIDetailYanchu);
+//                            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+//                                         Yanchu.NEED_FILELD + Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
+//                            criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+//                                    Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
+//                                    Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
+//                            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+//                            List<BaseQuery> list = new ArrayList<BaseQuery>();
+//                            list.add(dataOperation);
+//                            mTkAsyncTasking = mSphinx.queryStart(list);
+//                            mBaseQuerying = list;
+//                        } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+//                            mActionLog.addAction(mActionTag +  ActionLog.POIDetailZhanlan);
+//                            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+//                                    Zhanlan.NEED_FILELD + Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
+//                            criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+//                                    Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
+//                                    Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
+//                            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+//                            List<BaseQuery> list = new ArrayList<BaseQuery>();
+//                            list.add(dataOperation);
+//                            mTkAsyncTasking = mSphinx.queryStart(list);
+//                            mBaseQuerying = list;
+//                        }
+//                    }
+//                });
+//                ImageView iconImv = (ImageView) child.findViewById(R.id.icon_imv);
+//                TextView textTxv = (TextView) child.findViewById(R.id.text_txv);
+//                if (BaseQuery.DATA_TYPE_TUANGOU.equals(dynamicPOI.getType())) {
+//                    iconImv.setImageResource(R.drawable.ic_dynamicpoi_tuangou);
+//                } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dynamicPOI.getType())) {
+//                    iconImv.setImageResource(R.drawable.ic_dynamicpoi_yanchu);
+//                } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dynamicPOI.getType())) {
+//                    iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
+//                }
+//                textTxv.setText(dynamicPOI.getSummary());
+//                viewIndex++;
             }
         }
         
-        viewCount = mDynamicPOIListView.getChildCount();
-        for(int i = viewIndex; i < viewCount; i++) {
-            mDynamicPOIListView.getChildAt(i).setVisibility(View.GONE);
-        }
+//        viewCount = mDynamicPOIListView.getChildCount();
+//        for(int i = viewIndex; i < viewCount; i++) {
+//            mDynamicPOIListView.getChildAt(i).setVisibility(View.GONE);
+//        }
         
         //这个循环放到showDynamicPOI中去
-        for(int i = 0; i < viewIndex; i++) {
-            View child = mDynamicPOIListView.getChildAt(i);
-            if (i == 0) {
-                if (viewIndex == 1) {
-                    child.setBackgroundResource(R.drawable.list_single);
-                    child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
-                } else {
-                    child.setBackgroundResource(R.drawable.list_header);
-                    child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
-                }
-            } else if (i == (viewIndex-1)) {
-                child.setBackgroundResource(R.drawable.list_footer);
-                child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
-            } else {
-                child.setBackgroundResource(R.drawable.list_middle);
-                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
-            }
-        }
-//        showDynamicPOI(DPOIList);
+//        for(int i = 0; i < viewIndex; i++) {
+//            View child = mDynamicPOIListView.getChildAt(i);
+//            if (i == 0) {
+//                if (viewIndex == 1) {
+//                    child.setBackgroundResource(R.drawable.list_single);
+//                    child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
+//                } else {
+//                    child.setBackgroundResource(R.drawable.list_header);
+//                    child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
+//                }
+//            } else if (i == (viewIndex-1)) {
+//                child.setBackgroundResource(R.drawable.list_footer);
+//                child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
+//            } else {
+//                child.setBackgroundResource(R.drawable.list_middle);
+//                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
+//            }
+//        }
+        DPOIViewBlockList.add(DynamicNormalPOI.getInstance(this, mLayoutInflater).getViewList(normalDynamicPOIList).get(0));
+        showDynamicPOI(DPOIViewBlockList);
     }
     
     /**
@@ -1084,7 +1094,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         mPOI = poi;
         if (null != poi) {
-        	clearDynamicPOI(DPOIList);
+        	clearDynamicPOI(DPOIViewBlockList);
         	
             List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
             String uuid = poi.getUUID();
@@ -1424,7 +1434,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     }
                     
                 // 查询团购的结果
-                } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) || BaseQuery.DATA_TYPE_FENDIAN.equals(dataType)) {
+                } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) || BaseQuery.DATA_TYPE_FENDIAN.equals(dataType)
+                        || BaseQuery.DATA_TYPE_YANCHU.equals(dataType) || BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+                    DynamicNormalPOI.queryInterface.msgReceived(mSphinx, baseQuery, response);
                     //xupeng comment
 //                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
 //                        return;
@@ -1441,29 +1453,29 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 //                    list.add(tuangou);
 //                    mSphinx.showView(R.id.view_discover_tuangou_detail);
 //                    mSphinx.getTuangouDetailFragment().setData(list, 0, null);
-                    DynamicGroupbuyPOI.queryInterface.msgReceived(mSphinx, baseQuery, response);
                     
-                // 查询演出的结果
-                } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
-                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
-                        return;
-                    }
-                    Yanchu yanchu = ((YanchuQueryResponse) response).getYanchu();
-                    List<Yanchu> list = new ArrayList<Yanchu>();
-                    list.add(yanchu);
-                    mSphinx.showView(R.id.view_discover_yanchu_detail);
-                    mSphinx.getYanchuDetailFragment().setData(list, 0, null);
                     
-                // 查询展览的结果
-                } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
-                        return;
-                    }
-                    Zhanlan zhanlan = ((ZhanlanQueryResponse) response).getZhanlan();
-                    List<Zhanlan> list = new ArrayList<Zhanlan>();
-                    list.add(zhanlan);
-                    mSphinx.showView(R.id.view_discover_zhanlan_detail);
-                    mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
+//                // 查询演出的结果
+//                } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
+//                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
+//                        return;
+//                    }
+//                    Yanchu yanchu = ((YanchuQueryResponse) response).getYanchu();
+//                    List<Yanchu> list = new ArrayList<Yanchu>();
+//                    list.add(yanchu);
+//                    mSphinx.showView(R.id.view_discover_yanchu_detail);
+//                    mSphinx.getYanchuDetailFragment().setData(list, 0, null);
+//                    
+//                // 查询展览的结果
+//                } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+//                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
+//                        return;
+//                    }
+//                    Zhanlan zhanlan = ((ZhanlanQueryResponse) response).getZhanlan();
+//                    List<Zhanlan> list = new ArrayList<Zhanlan>();
+//                    list.add(zhanlan);
+//                    mSphinx.showView(R.id.view_discover_zhanlan_detail);
+//                    mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
                     
                 // 电影
                 } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {
