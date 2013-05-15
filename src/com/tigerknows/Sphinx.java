@@ -3647,6 +3647,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
     
+    public void destroyHotelOrderWriteFragment(){
+    	mHotelOrderWriteFragment = null;
+    }
+    
     // TODO: get fragment end
 
     // TODO: my location begin    

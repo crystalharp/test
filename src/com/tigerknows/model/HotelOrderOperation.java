@@ -103,7 +103,7 @@ public class HotelOrderOperation extends BaseQuery {
     public static final String OPERATION_CODE_DELETE = "d";
     
     public HotelOrderOperation(Context context) {
-        super(context, null);
+        super(context, API_TYPE_HOTEL_ORDER);
     }
 
     @Override
