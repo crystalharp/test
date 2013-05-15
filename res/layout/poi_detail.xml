@@ -255,7 +255,6 @@
                 </LinearLayout>
 
             </LinearLayout>
-                
             <LinearLayout android:id="@+id/dynamic_hotel_view"
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
@@ -332,6 +331,7 @@
                 </LinearLayout>
             </LinearLayout>
             
+            
             <LinearLayout android:id="@+id/dynamic_dianying_view"
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
@@ -376,29 +376,9 @@
                         android:layout_height="wrap_content"
                         android:text="@string/more" />
                 </LinearLayout>
-            </LinearLayout>
+            </LinearLayout>                
                 
-            <LinearLayout android:id="@+id/dynamic_tuanguo_list_view"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:orientation="vertical"
-                >
-            </LinearLayout>
-                
-            <LinearLayout android:id="@+id/dynamic_yanchu_list_view"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:orientation="vertical"
-                >
-            </LinearLayout>
-                
-            <LinearLayout android:id="@+id/dynamic_zhanlan_list_view"
+            <LinearLayout android:id="@+id/below_address"
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
@@ -468,6 +448,16 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
                 />
+            
+            <LinearLayout android:id="@+id/below_comment"
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                >
+            </LinearLayout>
                 
             <LinearLayout 
                 android:id="@+id/feature_txv" 
