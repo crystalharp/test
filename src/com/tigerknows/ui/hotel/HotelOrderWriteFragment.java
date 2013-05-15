@@ -394,6 +394,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 			mSphinx.getHotelOrderDetailFragment().setData(mHotelOrder);
 			mSphinx.showView(R.id.view_hotel_order_detail);
 			dismiss();
+			mSphinx.uiStackRemove(R.id.view_hotel_order_write);
 			mSphinx.destroyHotelOrderWriteFragment();
 			
     		break;
