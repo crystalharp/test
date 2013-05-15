@@ -11,6 +11,8 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:text="13月"
+        android:textStyle="bold"
+        android:textSize="18sp"
         />
     <TextView
         android:id="@+id/day_txv"
@@ -19,6 +21,8 @@
         android:layout_toRightOf="@id/month_txv"
         android:layout_alignParentBottom="true"
         android:text="32"
+        android:textStyle="bold"
+        android:textSize="32sp"
         />
     <TextView
         android:id="@+id/week_txv"
@@ -33,6 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/day_txv"
         android:layout_below="@id/week_txv"
+        android:textColor="@color/orange"
         android:text="入住"
         />
 </RelativeLayout>

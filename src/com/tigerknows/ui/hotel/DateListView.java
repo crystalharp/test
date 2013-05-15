@@ -55,7 +55,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     private Button confirmBtn;
     
-    private Button cancelBtn;
+    private TextView titleTxv;
     
     private ListView checkinLsv;
     private ListView checkoutLsv;
@@ -108,6 +108,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     void refreshCheckout() {
         checkoutList.clear();
         today.add(Calendar.DAY_OF_MONTH, checkinPosition);
+        titleTxv.setText((today.get(Calendar.MONTH)+1)+"月"+(today.get(Calendar.DAY_OF_MONTH))+"日入住1晚");
         for(int i = 1, count = CHECKOUT_MAX+1; i < count; i++) {
             checkoutList.add(makeCheckoutDateString(today, i));
         }
@@ -163,7 +164,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
 
     protected void findViews() {
         confirmBtn = (Button) findViewById(R.id.confirm_btn);
-        cancelBtn = (Button) findViewById(R.id.cancel_btn);
+        titleTxv = (TextView) findViewById(R.id.title_txv);
         checkinLsv = (ListView) findViewById(R.id.parent_lsv);
         checkoutLsv = (ListView) findViewById(R.id.child_lsv);
     }
@@ -207,10 +208,12 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 checkoutPosition = position;
                 checkoutAdapter.notifyDataSetChanged();
+                today.add(Calendar.DAY_OF_MONTH, checkinPosition);
+                titleTxv.setText((today.get(Calendar.MONTH)+1)+"月"+(today.get(Calendar.DAY_OF_MONTH))+"日入住"+(checkoutPosition+1)+"晚");
+                today.add(Calendar.DAY_OF_MONTH, -checkinPosition);
             }
         });
         confirmBtn.setOnClickListener(this);
-        cancelBtn.setOnClickListener(this);
     }
     
     private void confirm() {

@@ -421,10 +421,10 @@ public final class DataQuery extends BaseQuery {
             } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                 String appendaction = addParameter(SERVER_PARAMETER_APPENDACTION, false);
                 if (appendaction == null) {
-                    requestParameters.add(SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);
+                    requestParameters.add(SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD+Hotel.NEED_FILED_LIST);
                     requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
-                    addParameter(new String[]{SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
                 }
+                addParameter(new String[]{SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
             }
             
             String cfv = null;
@@ -572,7 +572,7 @@ public final class DataQuery extends BaseQuery {
             addParameter(new String[]{SERVER_PARAMETER_LOCATION_CITY, SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE});
             addParameter(new String[]{SERVER_PARAMETER_MESSAGE_ID_LIST, SERVER_PARAMETER_LAST_PULL_DATE}, false);
         } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
-            
+            addParameter(new String[]{SERVER_PARAMETER_KEYWORD});
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }

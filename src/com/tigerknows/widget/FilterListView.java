@@ -101,8 +101,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         }
         if (showFilterButton) {
             refreshFilterButton(controlView, filterList, getContext(), this);
-        } else {
-            bodyView.setPadding(0, 0, 0, 0);
         }
         this.filterList = filterList;
         this.callBack = callBack;

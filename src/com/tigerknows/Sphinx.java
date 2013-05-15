@@ -3624,7 +3624,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     public HotelOrderListFragment getHotelOrderListFragment() {
         synchronized (mUILock) {
-            if (mHotelOrderDetailFragment == null) {
+            if (mHotelOrderListFragment == null) {
             	HotelOrderListFragment fragment = new HotelOrderListFragment(Sphinx.this);
                 fragment.setId(R.id.view_hotel_order_list);
                 fragment.onCreate(null);

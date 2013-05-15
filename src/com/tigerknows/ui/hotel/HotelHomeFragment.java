@@ -4,6 +4,7 @@
 
 package com.tigerknows.ui.hotel;
 
+import com.decarta.Globals;
 import com.decarta.android.location.Position;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -18,6 +19,7 @@ import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.ChangeCityActivity;
+import com.tigerknows.ui.poi.POIResultFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 
@@ -67,6 +69,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     
     private FilterListView mFilterListView = null;
     
+    private Button mCategoryConfirmBtn;
+    
     private DateListView mDateListView = null;
     
     private ViewGroup mPopupWindowContain = null;
@@ -111,6 +115,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
+        mTitleBtn.setText("酒店预订");
         refreshDate();
         if (mFilterList == null) {
             queryFilter();
@@ -136,6 +141,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
         criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
         criteria.put(DataQuery.SERVER_PARAMETER_APPENDACTION, DataQuery.APPENDACTION_NOSEARCH);
+        criteria.put(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(mCheckInDat.getCalendar().getTime()));
+        criteria.put(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(mCheckOutDat.getCalendar().getTime()));
         criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
         dataQuery.setup(criteria, mCityInfo.getId(), getId(), getId(), null, true);
         mSphinx.queryStart(dataQuery);
@@ -211,6 +218,10 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             case R.id.dingdan_btn:
                 mSphinx.showView(R.id.view_hotel_order_list);
             	break;
+                
+            case R.id.confirm_btn:
+                dismissPopupWindow();
+                break;
                 
             default:
                 break;
@@ -358,6 +369,11 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     FilterListView getFilterListView() {
         if (mFilterListView == null) {
             FilterListView view = new FilterListView(mSphinx);
+            view.findViewById(R.id.body_view).setPadding(0, Globals.g_metrics.heightPixels-((int) (320*Globals.g_metrics.density)), 0, 0);
+            View titleView = mLayoutInflater.inflate(R.layout.hotel_category_list_header, view, false);
+            ((ViewGroup) view.findViewById(R.id.title_view)).addView(titleView);
+            mCategoryConfirmBtn = (Button) titleView.findViewById(R.id.confirm_btn);
+            mCategoryConfirmBtn.setOnClickListener(this);
             mFilterListView = view;
         }
         return mFilterListView;
@@ -404,22 +420,37 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         criteria.put(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(getDateListView().getCheckout().getTime()));
         
         POI poi = mSphinx.getPickLocationFragment().getPOI();
-        byte key = Byte.MIN_VALUE;
+        byte key = FilterResponse.FIELD_FILTER_AREA;
         if (poi != null) {
             Position position = poi.getPosition();
             if (position != null) {
                 criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
                 criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
-                key = FilterResponse.FIELD_FILTER_AREA;
+                key = Byte.MIN_VALUE;
             }
         }
-        criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList, key));
+        if (key == FilterResponse.FIELD_FILTER_AREA) {
+            criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList, key));
+            Filter filterArea = null;
+            for(int i = this.mFilterList.size()-1; i >= 0; i--) {
+                Filter filter = this.mFilterList.get(i);
+                if (filter.getKey() == key) {
+                    filterArea = filter;
+                }
+            }
+            poi = new POI();
+            poi.setName(FilterListView.getFilterTitle(mSphinx, filterArea));
+        }
                 
         int targetViewId = mSphinx.getPOIResultFragmentID();
         DataQuery dataQuery = new DataQuery(mSphinx);
-        dataQuery.setup(criteria, mCityInfo.getId(), getId(), targetViewId, null);
-        mSphinx.queryStart(dataQuery);
-        mSphinx.showView(targetViewId);
+        dataQuery.setup(criteria, mCityInfo.getId(), getId(), targetViewId, null, false, false, poi);
+        BaseFragment baseFragment = mSphinx.getFragment(targetViewId);
+        if (baseFragment != null && baseFragment instanceof POIResultFragment) {
+            mSphinx.queryStart(dataQuery);
+            ((POIResultFragment)mSphinx.getFragment(targetViewId)).setup();
+            mSphinx.showView(targetViewId);
+        }
     }
     
     public List<Filter> getFilterList() {
