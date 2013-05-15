@@ -137,8 +137,8 @@ public class HotelOrder extends XMapData{
 		position = new Position(data.getDouble(FIELD_POSITION_Y), data.getDouble(FIELD_POSITION_X));
 		hotelTel = data.getString(FIELD_HOTEL_TEL);
 		roomType = data.getString(FIELD_ROOM_TYPE);
-		roomNum = (int) data.getInt(FIELD_ROOM_NUM);
-		totalFee = (int) data.getInt(FIELD_TOTAL_FEE);
+		roomNum = data.getInt(FIELD_ROOM_NUM);
+		totalFee = data.getDouble(FIELD_TOTAL_FEE);
 		retentionTime = data.getInt(FIELD_RETENTION_TIME);
 		checkinTime = data.getInt(FIELD_CHECKIN_TIME);
 		checkoutTime = data.getInt(FIELD_CHECKOUT_TIME);
@@ -154,7 +154,7 @@ public class HotelOrder extends XMapData{
 	public HotelOrder(String id, long createTime, int state,
 			String hotelPoiUUID, String hotelName, String hotelAddress,
 			Position position, String hotelTel, String roomType,
-			int roomNum, int totalFee, String guaranteeType,
+			long roomNum, double totalFee, String guaranteeType,
 			long retentionTime, long checkinTime, long checkoutTime, int dayCount,
 			String guestName, String mobileNum) {
 		super();
@@ -363,9 +363,6 @@ public class HotelOrder extends XMapData{
 		this.totalFee = totalFee;
 	}
 
-	public void setTotalFee(int totalFee) {
-		this.totalFee = totalFee;
-	}
 	public int getDayCount() {
 		return dayCount;
 	}
