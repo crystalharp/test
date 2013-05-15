@@ -311,7 +311,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     public void submit(boolean HasCreditInfo) {
     	HotelOrderOperation dataOperation = new HotelOrderOperation(mSphinx);
     	Hashtable<String, String> criteria = new Hashtable<String, String>();
-    	criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DINGDAN);
     	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_CREATE);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_HOTEL_ID, mHotel.getUuid());
     	if(mHotel.getBrand() != null){
@@ -337,7 +336,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     		criteria.put(HotelOrderOperation.SERVER_PARAMETER_IDCARD_TYPE, mIdCardType);
     		criteria.put(HotelOrderOperation.SERVER_PARAMETER_IDCARD_NO, mIdCardNo);
     	}
-    	dataOperation.setup(criteria);
+    	dataOperation.setup(criteria, mSphinx.getHotelHomeFragment().getCityInfo().getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
     	mSphinx.queryStart(dataOperation);
     }
     
@@ -392,9 +391,12 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 					mUsername,
 					mMobile
 					);
-			dismiss();
 			mSphinx.getHotelOrderDetailFragment().setData(mHotelOrder);
 			mSphinx.showView(R.id.view_hotel_order_detail);
+			dismiss();
+			mSphinx.uiStackRemove(R.id.view_hotel_order_write);
+			mSphinx.destroyHotelOrderWriteFragment();
+			
     		break;
     	case Response.RESPONSE_CODE_HOTEL_ORDER_CREATE_FAILED:
     		Utility.showNormalDialog(mSphinx,mSphinx.getString(R.string.hotel_network_bad));

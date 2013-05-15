@@ -6,7 +6,6 @@ package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -63,9 +62,7 @@ import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.Hotel;
-import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.model.Hotel.RoomType;
-import com.tigerknows.model.HotelOrder;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.ProxyQuery;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
@@ -630,6 +627,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      */
     void refreshDynamicHotel(POI poi) {
        //显示 
+        mDynamicHotelUpperView.setVisibility(View.GONE);
         if (poi == null || poi.getHotel() == null) {
             return;
         }
@@ -639,10 +637,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (size > 0) {
             mDynamicHotelUpperView.setVisibility(View.VISIBLE);
         } else {
-            mDynamicHotelUpperView.setVisibility(View.GONE);
             return;
         }
-        
         int viewCount = initDynamicPOIListView(list, mDynamicRoomTypeListView, R.layout.poi_dynamic_hotel_room_item);
         
         int childCount = mDynamicRoomTypeListView.getChildCount();
