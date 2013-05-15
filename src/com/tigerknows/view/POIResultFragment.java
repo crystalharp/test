@@ -607,7 +607,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dynamicPOI.getType())) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
                     } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dynamicPOI.getType())) {
-                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
+                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_dianying);
                     }
                     dynamicPOIWidth += iconImv.getDrawable().getIntrinsicWidth();
                     viewIndex++;

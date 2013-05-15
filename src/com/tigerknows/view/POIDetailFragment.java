@@ -64,7 +64,6 @@ import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
-import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Yingxun;
@@ -187,49 +186,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     private Animation mStampAnimation;
     
-    private Runnable mLoadedDrawableRun = new Runnable() {
-        
-        @Override
-        public void run() {
-            mSphinx.getHandler().removeCallbacks(mActualLoadedDrawableRun);
-            mSphinx.getHandler().post(mActualLoadedDrawableRun);
-        }
-    };
-    
-    private Runnable mActualLoadedDrawableRun = new Runnable() {
-        
-        @Override
-        public void run() {
-            if (mSphinx.uiStackPeek() == getId() && mSphinx.isFinishing() == false) {
-                POI poi = mPOI;
-                if (poi == null) {
-                    return;
-                }
-                List<Dianying> list = poi.getDynamicDianyingList();
-                if (list == null) {
-                    return;
-                }
-                int childCount = mDynamicDianyingListView.getChildCount();
-                for(int i = 0, size = list.size(); i < childCount && i < size; i++) {
-                    final Dianying dynamic = list.get(i);
-                    View child = mDynamicDianyingListView.getChildAt(i);
-                    if (child.getVisibility() == View.VISIBLE) {
-                        ImageView iconImv = (ImageView) child.findViewById(R.id.icon_imv);
-                        TKDrawable tkDrawable = dynamic.getPictures();
-                        if (tkDrawable != null) {
-                            Drawable drawable = tkDrawable.loadDrawable(mSphinx, null, POIDetailFragment.this.toString());
-                            iconImv.setBackgroundDrawable(drawable);
-                        } else {
-                            iconImv.setBackgroundDrawable(null);
-                        }
-                    } else {
-                        break;
-                    }
-                }
-            }
-        }
-    };
-    
     private OnClickListener mDynamicPOIListener = new View.OnClickListener() {
         
         @Override
@@ -298,7 +254,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 }
             } else if (object instanceof Dianying) {
                 Dianying dynamic = (Dianying) object;
-                if (dynamic.getPictures() != null) {
+                if (dynamic.getYingxun().getName() != null) {
                     List<Dianying> list = new ArrayList<Dianying>();
                     list.add(dynamic);
                     dynamic.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY | Yingxun.Changci.OPTION_DAY_TOMORROW | Yingxun.Changci.OPTION_DAY_AFTER_TOMORROW);
@@ -306,7 +262,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     mSphinx.getDianyingDetailFragment().setData(list, 0, null);
                 } else {
                     List<BaseQuery> list = new ArrayList<BaseQuery>();
-    
+
                     criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIANYING);
                     criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
                     criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getUid());
@@ -705,8 +661,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * @param data
      * @param view
      */
-    void initDianyingItemView(Dianying data, View view) {
-        ImageView pictureImv = (ImageView) view.findViewById(R.id.picture_imv);
+    void initDianyingItemView(final Dianying data, View view) {
+        final ImageView pictureImv = (ImageView) view.findViewById(R.id.picture_imv);
         TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
         RatingBar starsRtb = (RatingBar) view.findViewById(R.id.stars_rtb);
         TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
@@ -715,7 +671,17 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         view.findViewById(R.id.body_view).setBackgroundDrawable(null);
 
-        Drawable drawable = data.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, POIDetailFragment.this.toString());
+        Drawable drawable = data.getPictures().loadDrawable(mSphinx, new Runnable() {
+            
+            @Override
+            public void run() {
+                Drawable drawableLoaded = data.getPictures().loadDrawable(null, null, null);
+                if(drawableLoaded.getBounds().width() != pictureImv.getWidth() || drawableLoaded.getBounds().height() != pictureImv.getHeight() ){
+                    pictureImv.setBackgroundDrawable(null);
+                }
+                pictureImv.setBackgroundDrawable(drawableLoaded);
+            }
+        }, POIDetailFragment.this.toString());
         if(drawable != null) {
             //To prevent the problem of size change of the same pic 
             //After it is used at a different place with smaller size

@@ -56,9 +56,9 @@
     
     <string-array name="home_category">
         <item>美食</item>
+        <item>酒店</item>
         <item>娱乐</item>
         <item>购物</item>
-        <item>酒店</item>
         <item>旅游</item>
         <item>丽人</item>
         <item>运动</item>

@@ -938,6 +938,8 @@
 	<string name="errcode_deny">发送被拒绝</string>
 	<string name="errcode_unknown">发送返回</string>
 	<string name="send_weixin_friend">发给微信好友</string>
+	<string name="uninstall_weixin_tip">尚未安装微信，是否现在下载最新版微信？</string>
+	<string name="upgarde_weixin_tip">当前微信版本不支持朋友圈功能，是否现在去下载最新版微信？</string>
 	<!-- 微信 end -->
 	
 	<string name="play_dianying">在映电影</string>
