@@ -79,13 +79,13 @@
         <ListView
             android:id="@+id/category_lsv"
             android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="fill_parent"
             android:drawSelectorOnTop="false"
             android:scrollingCache="false"
             android:fadingEdge="none"
             android:listSelector="@color/transparent"
             android:gravity="left|center_vertical"
-            android:background="@drawable/bg_home_lsv"
+            android:background="@drawable/list_selector_background_transparent_gray_light"
             android:divider="@drawable/bg_line_home"/>
         
         <RelativeLayout

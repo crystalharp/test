@@ -1169,6 +1169,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             baseQueryList.add(dataQuery);
         }
         refreshDetail();
+        refreshComment();
         if (baseQueryList.isEmpty() == false) {
             mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
             mBaseQuerying = baseQueryList;
