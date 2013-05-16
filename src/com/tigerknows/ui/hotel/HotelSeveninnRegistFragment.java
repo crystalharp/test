@@ -21,6 +21,7 @@ import com.tigerknows.model.Response;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.Utility;
+import com.tigerknows.util.ValidateUtil;
 
 public class HotelSeveninnRegistFragment extends BaseFragment implements View.OnClickListener{
 
@@ -90,27 +91,36 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 			String str = mSeveninnNameEdt.getText().toString().trim();
 			if(TextUtils.isEmpty(str)){
 				mSeveninnNameEdt.requestFocus();
-				Toast.makeText(mContext, mSphinx.getString(R.string.hotel_room_person_empty_tip), Toast.LENGTH_SHORT).show();
+				Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_room_person_empty_tip));
 				mSphinx.showSoftInput();
 				return;
+        	}else if(!ValidateUtil.isValidElongName(str)){
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format));
+        		return;
 			}else{
 				mPersonName = str;
 			}
 			str = mSeveninnPhoneEdt.getText().toString();
 			if(TextUtils.isEmpty(str)){
 				mSeveninnPhoneEdt.requestFocus();
-				Toast.makeText(mContext, mSphinx.getString(R.string.hotel_room_mobile_empty_tip), Toast.LENGTH_SHORT).show();
+				Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_room_mobile_empty_tip));
 				mSphinx.showSoftInput();
 				return;
+        	}else if(!ValidateUtil.isValidPhone(str)){
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.phone_format_error_tip));
+        		return;
 			}else{
 				mMobile = str;
 			}
 			str = mSeveninnIdcardCodeEdt.getText().toString().trim();
 			if(TextUtils.isEmpty(str)){
 				mSeveninnIdcardCodeEdt.requestFocus();
-				Toast.makeText(mContext, mSphinx.getString(R.string.seveninn_idcard_code_empty_error), Toast.LENGTH_SHORT).show();
+				Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.seveninn_idcard_code_empty_error));
 				mSphinx.showSoftInput();
 				return;
+        	}else if(!ValidateUtil.isValidCertCode(str)){
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_idcard_number_format));
+        		return;
 			}else{
 				mIdcardNo = str;
 			}
