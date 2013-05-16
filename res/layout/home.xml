@@ -74,7 +74,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal|top"
-        android:background="@color/white">
+        android:background="@color/gray_light">
     
         <ListView
             android:id="@+id/category_lsv"
@@ -85,7 +85,6 @@
             android:fadingEdge="none"
             android:listSelector="@color/transparent"
             android:gravity="left|center_vertical"
-            android:background="@drawable/list_selector_background_transparent_gray_light"
             android:divider="@drawable/bg_line_home"/>
         
         <RelativeLayout

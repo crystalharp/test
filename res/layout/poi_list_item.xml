@@ -8,22 +8,13 @@
     android:paddingBottom="8dp"
     android:background="@drawable/list_selector_background_gray_light">
     
-    <ImageView 
-        android:id="@+id/bubble_imv" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        android:layout_marginTop="14dp"
-        android:layout_marginRight="4dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
-        android:src="@drawable/ic_a_poi" />    
     <LinearLayout
         android:id="@+id/name_view" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:orientation="horizontal"
-        android:layout_toRightOf="@id/bubble_imv" 
+        android:layout_alignParentLeft="true"
         android:paddingBottom="5dp"  >
     <TextView 
         android:id="@+id/name_txv" 
@@ -104,7 +95,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
         android:layout_alignParentRight="true" 
-        android:layout_below="@id/category_txv" 
+        android:layout_below="@id/distance_txv" 
         android:layout_marginTop="4dp"
         android:layout_marginLeft="8dp"
         android:paddingBottom="2dp"

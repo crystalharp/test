@@ -466,7 +466,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 view = convertView;
             }
             
-            ImageView bubbleImv = (ImageView) view.findViewById(R.id.bubble_imv);
             TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
             TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
             TextView distanceFromTxv = (TextView) view.findViewById(R.id.distance_from_txv);
@@ -487,10 +486,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
             
             if (position == 0 && poi.getResultType() == POIResponse.FIELD_A_POI_LIST && aTotal == 1) {
-                bubbleImv.setVisibility(View.VISIBLE);
                 nameTxv.setTextColor(aColor);
+                icAPOI.setBounds(0, 0, icAPOI.getIntrinsicWidth(), icAPOI.getIntrinsicHeight());
+                nameTxv.setCompoundDrawables(icAPOI, null, null, null);
+                nameTxv.setCompoundDrawablePadding(Util.dip2px(Globals.g_metrics.density, 4));
             } else {
-                bubbleImv.setVisibility(View.GONE);
+                nameTxv.setCompoundDrawables(null, null, null, null);
                 nameTxv.setTextColor(bColor);
             }
             
@@ -616,14 +617,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 dynamicPOIListView.getChildAt(i).setVisibility(View.GONE);
             }
             if (dynamicPOIWidth > 0) {
-                int bubbleImvWidth = 0;
-                if (bubbleImv.getVisibility() == View.VISIBLE) {
-                    bubbleImv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-                    bubbleImvWidth = bubbleImv.getMeasuredWidth();
-                }
                 nameTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 int nameTxvWidth = nameTxv.getMeasuredWidth();
-                int width = Globals.g_metrics.widthPixels-bubbleImvWidth-(4*Util.dip2px(Globals.g_metrics.density, 8));
+                int width = Globals.g_metrics.widthPixels-(4*Util.dip2px(Globals.g_metrics.density, 8));
                 if (nameTxvWidth > width-dynamicPOIWidth) {
                     nameTxv.getLayoutParams().width = (width-dynamicPOIWidth);
                 } else {

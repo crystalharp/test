@@ -641,6 +641,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 
 		case MotionEvent.ACTION_UP:
 			v.setPressed(false);
+			v.clearFocus();
 			v.invalidate();
 			if(!isDragStarts){
 				break;
