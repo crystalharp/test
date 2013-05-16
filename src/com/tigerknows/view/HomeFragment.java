@@ -140,7 +140,9 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 	ArrayList< ArrayList<String> > subCategories = new ArrayList< ArrayList<String> >();
 	String[] mHighLightedSubs;
 	
-	//String[][] 
+	public ListView getCategoryLsv() {
+        return mCategoryLsv;
+	}
 	
     class CategoryXMLHandler extends DefaultHandler{
     	

@@ -3082,9 +3082,16 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                                 if (baseFragment != null) {
                                                     baseFragment.dismissPopupWindow();
                                                 }
-                                                uiStackClose(null);
+                                                uiStackClose(new int[]{R.id.view_home});
                                                 showView(R.id.view_home);
                                                 changeCity(locationCity);
+                                                mHandler.post(new Runnable() {
+                                                    
+                                                    @Override
+                                                    public void run() {
+                                                        getHomeFragment().getCategoryLsv().setSelectionFromTop(0, 0);
+                                                    }
+                                                });
                                                 mActionLog.addAction(ActionLog.LifecycleSelectCity, Globals.g_Current_City_Info.getCName());
                                             }
                                             break;
