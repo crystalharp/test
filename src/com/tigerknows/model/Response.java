@@ -117,6 +117,9 @@ public class Response extends XMapData {
     // 825 需要信用卡担保
     public static final int RESPONSE_CODE_HOTEL_NEED_CREDIT_ASSURE = 825;
     
+    // 826 艺龙返回其他错误信息
+    public static final int RESPONSE_CODE_HOTEL_OTHER_ERROR = 826;
+    
     // 831 取消订单失败（得到了艺龙的回复，但是因为某些原因失败了）
     public static final int RESPONSE_CODE_HOTEL_ORDER_CANCEL_FAILED = 831;
     

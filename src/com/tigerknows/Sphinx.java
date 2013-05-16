@@ -3651,8 +3651,28 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
     
+    public HotelSeveninnRegistFragment checkHotelSeveninnRegistFragment(){
+    	return mHotelSeveninnRegistFragment;
+    }
+
+    public HotelOrderCreditFragment checkHotelOrderCreditFragment() {
+    	return mHotelOrderCreditFragment;
+    }
+
+    public HotelOrderWriteFragment checkHotelOrderWriteFragment() {
+    	return mHotelOrderWriteFragment;
+    }
+
     public void destroyHotelOrderWriteFragment(){
     	mHotelOrderWriteFragment = null;
+    }
+    
+    public void destroyHotelOrderCreditFragment(){
+    	mHotelOrderCreditFragment = null;
+    }
+    
+    public void destroyHotelSeveninnRegistFragment(){
+    	mHotelSeveninnRegistFragment = null;
     }
     
     // TODO: get fragment end
