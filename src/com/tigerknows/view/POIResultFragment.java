@@ -586,8 +586,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 final String dataType = dynamicPOI.getType();
                 if ((BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
                         BaseQuery.DATA_TYPE_YANCHU.equals(dataType) ||
-                        BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType) ||
-                        BaseQuery.DATA_TYPE_DIANYING.equals(dataType))
+                        BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType))
                         && types.contains(dataType) == false) {
                     types.add(dataType);
                     View child;
@@ -606,8 +605,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_yanchu);
                     } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dynamicPOI.getType())) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
-                    } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dynamicPOI.getType())) {
-                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_dianying);
                     }
                     dynamicPOIWidth += iconImv.getDrawable().getIntrinsicWidth();
                     viewIndex++;
