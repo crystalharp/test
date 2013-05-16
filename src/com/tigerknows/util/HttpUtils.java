@@ -23,6 +23,8 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.http.AndroidHttpClient;
 import android.text.TextUtils;
 
@@ -335,7 +337,13 @@ public class HttpUtils {
                 throw e;
             } finally {
                 if (!TextUtils.isEmpty(apiType)) {
-                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail);
+                    ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                    String networkInfoDetail = "none";
+                    if (networkInfo != null) {
+                        networkInfoDetail = networkInfo.getDetailedState().toString();
+                    }
+                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getRadioType());
                 }
                 if (!keepAlive) {
                     close();
