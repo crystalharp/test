@@ -419,6 +419,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         TKConfig.sMap_Padding = (int)(56*Globals.g_metrics.density);
         TKConfig.readConfig();
         Globals.init(mThis);
+        MoreFragment.CurrentDownloadCity = null;
         
         mContext = getBaseContext();
         mSensorManager = (SensorManager)getSystemService(Context.SENSOR_SERVICE);

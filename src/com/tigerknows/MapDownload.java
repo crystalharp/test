@@ -50,6 +50,7 @@ import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.service.MapDownloadService;
 import com.tigerknows.service.MapStatsService;
 import com.tigerknows.util.CommonUtils;
+import com.tigerknows.view.MoreFragment;
 import com.tigerknows.view.StringArrayAdapter;
 import com.tigerknows.view.TKEditText;
 
@@ -735,6 +736,14 @@ public class MapDownload extends BaseActivity implements View.OnClickListener {
             s.append(downloadCity.downloadedSize); 
             s.append(","); 
             s.append(downloadCity.state); 
+            DownloadCity current = MoreFragment.CurrentDownloadCity;
+            if (current != null) {
+                if (current.cityInfo != null && current.cityInfo.getId() == cityInfo.getId()) {
+                    if (downloadCity.state != DownloadCity.STATE_CAN_BE_UPGRADE) {
+                        MoreFragment.CurrentDownloadCity = null;
+                    }
+                }
+            }
         }
     }
     
