@@ -73,7 +73,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     public void onResume(){
         super.onResume();
         mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, mSumPrice));
-        mCreditNoteTxv.setText(mSphinx.getString(R.string.credit_note, mDate.getTime().toLocaleString()));
+        mCreditNoteTxv.setText(mSphinx.getString(R.string.credit_note, mOrderModifyDeadline));
     }
     
     public void onPause(){

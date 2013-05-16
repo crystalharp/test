@@ -1,5 +1,7 @@
 package com.tigerknows.ui.hotel;
 
+import java.util.Hashtable;
+
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -12,7 +14,13 @@ import android.widget.Toast;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.ProxyQuery;
+import com.tigerknows.model.Response;
+import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.util.Utility;
 
 public class HotelSeveninnRegistFragment extends BaseFragment implements View.OnClickListener{
 
@@ -106,8 +114,21 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 			}else{
 				mIdcardNo = str;
 			}
+			submit();
 			break;
 		}
+	}
+
+	private void submit() {
+		// TODO Auto-generated method stub
+		ProxyQuery proxyQuery = new ProxyQuery(mSphinx);
+		Hashtable<String, String> criteria = new Hashtable<String, String>();
+		criteria.put(ProxyQuery.SERVER_PARAMETER_TASK, ProxyQuery.TASK_REGISTER_7_DAY_MEMBER);
+		criteria.put(ProxyQuery.SERVER_PARAMETER_USERNAME, mPersonName);
+		criteria.put(ProxyQuery.SERVER_PARAMETER_MOBILE, mMobile);
+		criteria.put(ProxyQuery.SERVER_PARAMETER_IDCARDNO, mIdcardNo);
+		proxyQuery.setup(criteria, mSphinx.getHotelHomeFragment().getCityInfo().getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
+		mSphinx.queryStart(proxyQuery);
 	}
 
 	private void exit() {
@@ -115,7 +136,30 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 		
 	}
 	
-	public void setDate(String mobile){
+	@Override
+	public void onPostExecute(TKAsyncTask tkAsyncTask){
+		super.onPostExecute(tkAsyncTask);
+		BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+		if(baseQuery.isStop()){
+			return;
+		}
+        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+            isReLogin = true;
+            return;
+        } else if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, HotelSeveninnRegistFragment.this, true)) {
+            return;
+        }
+    	Response response = baseQuery.getResponse();
+    	switch(response.getResponseCode()){
+    	case Response.RESPONSE_CODE_OK:
+    		break;
+    	case Response.RESPONSE_CODE_HOTEL_REGIST_MEMBER_FAILED:
+    		Utility.showNormalDialog(mSphinx,mSphinx.getString(R.string.seveninn_regist_failed));
+    		break;
+    	}
+	}
+	
+	public void setData(String mobile){
 		mGotMobile = mobile;
 	}
 }
