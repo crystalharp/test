@@ -2,8 +2,13 @@ package com.tigerknows.ui.poi;
 
 import java.util.List;
 
+import com.tigerknows.Sphinx;
+import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.POI;
 import com.tigerknows.model.POI.DynamicPOI;
+import com.tigerknows.model.Response;
 import com.tigerknows.model.XMapData;
+import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 
 import android.widget.LinearLayout;
 
@@ -21,14 +26,8 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
        return instance;
     }
 
-//    @Override
-//    public void refreshData(XMapData data) {
-//        // TODO Auto-generated method stub
-//        
-//    }
-
     @Override
-    public List getViewList(List dataList) {
+    public List<DynamicPOIViewBlock> getViewList(List dataList) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -37,6 +36,18 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
     public void addDynamicPOIViewBlock(LinearLayout belongsLayout) {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public void msgReceived(Sphinx mSphinx, BaseQuery query, Response response) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public boolean checkExistence(POI poi) {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 //    onclick(){
