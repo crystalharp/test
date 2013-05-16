@@ -430,7 +430,7 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
     	float roundRadius=InfoWindow.INFO_ROUND_RADIUS*Globals.g_metrics.density;
 		
 		if(type.equals(InfoWindow.InfoWindowType.VIEWGROUP) && viewGroup!=null){
-			Bitmap.Config config = Bitmap.Config.ARGB_4444;
+			Bitmap.Config config = Bitmap.Config.ARGB_8888;
 			Bitmap vgBitmap=Bitmap.createBitmap((int)(infoWindowRect.width()-2*InfoWindow.INFO_BORDER_SIZE), (int)(infoWindowRect.height()-2*InfoWindow.INFO_BORDER_SIZE), config);
 			Canvas infoImageCanvas= new Canvas(vgBitmap);
 			
@@ -530,7 +530,7 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
 									
 		if(changed){
 			//Log.i("MapRender","infoWindow bind texture image start");
-			Bitmap.Config config = Bitmap.Config.ARGB_4444;
+			Bitmap.Config config = Bitmap.Config.ARGB_8888;
 			Bitmap infoBitmap=Bitmap.createBitmap(infoWindowCanvasSizeX, infoWindowCanvasSizeY, config);
 			Canvas infoImageCanvas= new Canvas(infoBitmap);
     		

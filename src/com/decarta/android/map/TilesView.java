@@ -3508,7 +3508,7 @@ public class TilesView extends GLSurfaceView {
     				borderPaint.setStrokeWidth(borderSize);
     				borderPaint.setAntiAlias(ItemizedOverlay.OVERLAY_CLUSTER_BORDER_ANTIALIAS);
     				
-    				Bitmap.Config config=Config.ARGB_4444;
+    				Bitmap.Config config=Config.ARGB_8888;
 					Bitmap bm=Bitmap.createBitmap(bmSizeX,bmSizeY,config);
 					Canvas canvas=new Canvas(bm);
 					bm.eraseColor(0);
@@ -3591,7 +3591,7 @@ public class TilesView extends GLSurfaceView {
 				textureRef=genTextureRef(gl);
 				gl.glBindTexture(GL_TEXTURE_2D, textureRef);
 				try{
-					Bitmap.Config config=Config.ARGB_4444;
+					Bitmap.Config config=Config.ARGB_8888;
 					Bitmap bm=Bitmap.createBitmap(bmSizeX,bmSizeY,config);
 					Canvas canvas=new Canvas(bm);
 					bm.eraseColor(0);
