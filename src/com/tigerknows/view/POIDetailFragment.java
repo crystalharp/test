@@ -257,7 +257,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 if (dynamic.getYingxun().getName() != null) {
                     List<Dianying> list = new ArrayList<Dianying>();
                     list.add(dynamic);
-                    dynamic.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY | Yingxun.Changci.OPTION_DAY_TOMORROW | Yingxun.Changci.OPTION_DAY_AFTER_TOMORROW);
+                    dynamic.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY);
                     mSphinx.showView(R.id.view_dianying_detail);
                     mSphinx.getDianyingDetailFragment().setData(list, 0, null);
                 } else {
@@ -1533,7 +1533,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     dianying.setYingxun(((YingxunQueryResponse) response).getYingxun());
                     List<Dianying> list = new ArrayList<Dianying>();
                     list.add(dianying);
-                    dianying.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY | Yingxun.Changci.OPTION_DAY_TOMORROW | Yingxun.Changci.OPTION_DAY_AFTER_TOMORROW);
+                    dianying.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY);
                     mSphinx.showView(R.id.view_dianying_detail);
                     mSphinx.getDianyingDetailFragment().setData(list, 0, null);
                 }
