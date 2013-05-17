@@ -94,9 +94,7 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 				Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_room_person_empty_tip));
 				mSphinx.showSoftInput();
 				return;
-        	}else if(!ValidateUtil.isValidElongName(str)){
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format));
-        		return;
+				// 注册7天酒店时，不校验姓名格式
 			}else{
 				mPersonName = str;
 			}
@@ -118,8 +116,8 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 				Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.seveninn_idcard_code_empty_error));
 				mSphinx.showSoftInput();
 				return;
-        	}else if(!ValidateUtil.isValidCertCode(str)){
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_idcard_number_format));
+        	}else if(!ValidateUtil.isValidIdCardCode(str)){
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_idcard_code_format));
         		return;
 			}else{
 				mIdcardNo = str;

@@ -168,7 +168,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_cert_code_empty_tip));
         		return;
         	}else if(!ValidateUtil.isValidCertCode(str)){
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_idcard_number_format));
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_certcard_number_format));
         		return;
         	}
         	mSphinx.getHotelOrderWriteFragment().setCredit(list);

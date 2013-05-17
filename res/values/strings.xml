@@ -956,9 +956,10 @@
     <string name="choose_room_reserve">房间保留到</string>
     
     <string name="hotel_person_name_format">姓名只能输入英文和汉字，空格用"/"替代</string>
-    <string name="hotel_idcard_number_format">证件号码格式不正确</string>
-    <string name="credit_code_format">卡号格式不正确，请重新输入14-16位信用卡号</string>
+    <string name="hotel_certcard_number_format">证件号码格式不正确</string>
+    <string name="credit_code_format">卡号格式不正确，请重新输入</string>
     <string name="credit_verify_format">验证码格式不正确，请重新输入3位验证码</string>
+    <string name="hotel_idcard_code_format">身份证号码格式不正确</string>
 
     <string name="credit_assure_title">信用卡担保信息</string>
     <string name="credit_bank">发卡银行：</string>
