@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.decarta.Globals;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.model.BaseQuery;
@@ -28,6 +29,8 @@ import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
+import com.tigerknows.widget.LinearListView;
+import com.tigerknows.widget.LinearListView.ItemInitializer;
 
 public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
 
@@ -41,11 +44,42 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
     Button mClickedBookBtn;
     RoomType mClickedRoomType;
     POI mPOI;
+    List<RoomType> mShowingRoomList = new ArrayList<RoomType>();
+    List<RoomType> mAllRoomList = new ArrayList<RoomType>();
     final int SHOW_DYNAMIC_HOTEL_MAX = 3;
     
     private LinearLayout mDynamicRoomTypeListView;
     
     private LinearLayout mDynamicRoomTypeMoreView;
+    
+    LinearListView roomTypeList;
+    
+    ItemInitializer i = new ItemInitializer(){
+
+        @Override
+        public void initItem(Object data, View v) {
+            // TODO Auto-generated method stub
+            RoomType roomType = (RoomType)data;
+            TextView priceTxv = (TextView) v.findViewById(R.id.price_txv);
+            TextView roomTypeTxv = (TextView) v.findViewById(R.id.room_type_txv);
+            TextView roomDetailTxv = (TextView) v.findViewById(R.id.room_detail_txv);
+            Button bookBtn = (Button) v.findViewById(R.id.book_btn);
+            priceTxv.setText(mSphinx.getString(R.string.price_show, roomType.getPrice()));
+            roomTypeTxv.setText(roomType.getRoomType());
+            roomDetailTxv.setText(roomType.getBedType() + " " + roomType.getBreakfast() + " " + roomType.getNetService()
+                    + " " + roomType.getFloor() + " " + roomType.getArea());
+            if (roomType.getCanReserve() == 0) {
+                bookBtn.setText(mSphinx.getString(R.string.hotel_btn_sold_out));
+                bookBtn.setClickable(false);
+            } else {
+                bookBtn.setText(mSphinx.getString(R.string.hotel_btn_book));
+                bookBtn.setClickable(true);
+                bookBtn.setTag(roomType);
+                bookBtn.setOnClickListener(new roomTypeClickListener());
+            }
+        }
+            
+    };
     
     
     public static DynamicHotelPOI getInstance(POIDetailFragment poiFragment, LayoutInflater inflater){
@@ -61,8 +95,10 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         mInflater = inflater;
         mUpperBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, POIDetailFragment.DPOIType.HOTEL);
         mLowerBlock = new DynamicPOIViewBlock(poiFragment.mBelowCommentLayout, POIDetailFragment.DPOIType.HOTEL);
-        mUpperBlock.mOwnLayout = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_hotel_upper, null);
-        mLowerBlock.mOwnLayout = null;
+        mUpperBlock.mOwnLayout = mInflater.inflate(R.layout.poi_dynamic_hotel_upper, null);
+        mLowerBlock.mOwnLayout = mInflater.inflate(R.layout.poi_dynamic_hotel_below_feature, null);
+        findViews();
+        roomTypeList = new LinearListView(mSphinx, mDynamicRoomTypeListView, i, R.layout.poi_dynamic_hotel_room_item);
     }
     
     void findViews(){
@@ -89,64 +125,34 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         }
         mHotel = dataList.get(0);
 
-        List<RoomType> list = mHotel.getRoomTypeList();
-        int size = (list != null? list.size() : 0);
-        if (size < 0) {
+        mAllRoomList.clear();
+        mAllRoomList.addAll(mHotel.getRoomTypeList());
+        int size = (mAllRoomList != null? mAllRoomList.size() : 0);
+        if (size == 0) {
             return null;
-        }
-        
-        int viewCount = initDynamicPOIListView(list, mDynamicRoomTypeListView, R.layout.poi_dynamic_hotel_room_item);
-        
-        int childCount = mDynamicRoomTypeListView.getChildCount();
-        if (size > SHOW_DYNAMIC_HOTEL_MAX) {
-            for(int i = SHOW_DYNAMIC_HOTEL_MAX; i < childCount; i++) {
-                mDynamicRoomTypeListView.getChildAt(i).setVisibility(View.GONE);
+        } else if (size > SHOW_DYNAMIC_HOTEL_MAX) {
+            for(int i = 0; i < SHOW_DYNAMIC_HOTEL_MAX; i++) {
+                mShowingRoomList.add(mAllRoomList.get(i));
             }
-            mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
         } else {
-            mDynamicRoomTypeMoreView.setVisibility(View.GONE);
+            mShowingRoomList.addAll(mAllRoomList);
         }
+        roomTypeList.refreshList(mShowingRoomList);
         
-        for(int i = 0; i < viewCount; i++) {
-            View child = mDynamicRoomTypeListView.getChildAt(i);
-            if (i == (viewCount-1) && mDynamicRoomTypeMoreView.getVisibility() == View.GONE) {
-                child.setBackgroundResource(R.drawable.list_footer);
-                child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
-            } else {
-                child.setBackgroundResource(R.drawable.list_middle);
-                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
-            }
-        }
+//        for(int i = 0; i < viewCount; i++) {
+//            View child = mDynamicRoomTypeListView.getChildAt(i);
+//            if (i == (viewCount-1) && mDynamicRoomTypeMoreView.getVisibility() == View.GONE) {
+//                child.setBackgroundResource(R.drawable.list_footer);
+//                child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
+//            } else {
+//                child.setBackgroundResource(R.drawable.list_middle);
+//                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
+//            }
+//        }
         
         List<DynamicPOIViewBlock> blockList = new LinkedList<DynamicPOIViewBlock>();
         blockList.add(mUpperBlock);
         return blockList;
-    }
-
-    //TODO:移走
-    /**
-     * 初始化房型列表项内容
-     * @param data
-     * @param view
-     */
-    void initRoomTypeItemView(RoomType data, View view){
-        TextView priceTxv = (TextView) view.findViewById(R.id.price_txv);
-        TextView roomTypeTxv = (TextView) view.findViewById(R.id.room_type_txv);
-        TextView roomDetailTxv = (TextView) view.findViewById(R.id.room_detail_txv);
-        Button bookBtn = (Button) view.findViewById(R.id.book_btn);
-        priceTxv.setText(mSphinx.getString(R.string.price_show, data.getPrice()));
-        roomTypeTxv.setText(data.getRoomType());
-        roomDetailTxv.setText(data.getBedType() + " " + data.getBreakfast() + " " + data.getNetService()
-                + " " + data.getFloor() + " " + data.getArea());
-        if (data.getCanReserve() == 0) {
-            bookBtn.setText(mSphinx.getString(R.string.hotel_btn_sold_out));
-            bookBtn.setClickable(false);
-        } else {
-            bookBtn.setText(mSphinx.getString(R.string.hotel_btn_book));
-            bookBtn.setClickable(true);
-            bookBtn.setTag(data);
-            bookBtn.setOnClickListener(new roomTypeClickListener());
-        }
     }
 
     //TODO:移走
@@ -177,6 +183,7 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, needFiled+"01");   // 01表示poi的uuid
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN, checkinTime);
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT, checkoutTime);
+        LogWrapper.d("conan", "buildingHotelQuery:" + criteria);
         DataOperation dataOpration = new DataOperation(mSphinx);
         dataOpration.setup(criteria, Globals.g_Current_City_Info.getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId());
         return dataOpration;
@@ -234,6 +241,7 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
             BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL);
             baseQueryList.add(baseQuery);
         }
+        LogWrapper.d("conan", "query in hotel:" + baseQueryList);
         return baseQueryList;
     }
     

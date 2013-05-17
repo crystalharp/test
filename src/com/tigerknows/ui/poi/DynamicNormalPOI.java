@@ -80,8 +80,9 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView<DynamicPO
         mSphinx = mPOIDetailFragment.mSphinx;
         mInflater = inflater;
         addDynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout);
-        lsv = new LinearListView(mSphinx, initer, R.layout.poi_dynamic_poi_list_item);
-        mViewBlock.mOwnLayout = lsv.getParentView();
+        LinearLayout poiListView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_normal_poi, null);
+        lsv = new LinearListView(mSphinx, poiListView, initer, R.layout.poi_dynamic_poi_list_item);
+        mViewBlock.mOwnLayout = poiListView;
         
     }
     
@@ -114,7 +115,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView<DynamicPO
                 child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
             }
         }
-        mViewBlock.needToShow = true;
+//        mViewBlock.needToShow = true;
         blockList.add(mViewBlock);
         return blockList;
     }

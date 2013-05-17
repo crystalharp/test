@@ -30,15 +30,14 @@ public class LinearListView {
 
     ItemInitializer initer;
     Sphinx mSphinx;
-    LinearLayout parent;
+    LinearLayout parentLayout;
     LayoutInflater mLayoutInflater;
     int mItemResId;
     
-    public LinearListView(Sphinx sphinx, ItemInitializer i, int itemResId){
+    public LinearListView(Sphinx sphinx, LinearLayout parent, ItemInitializer i, int itemResId){
         this.initer = i;
         mSphinx = sphinx;
-        parent = new LinearLayout(mSphinx);
-        parent.setOrientation(LinearLayout.VERTICAL);
+        parentLayout = parent;
         mLayoutInflater = mSphinx.getLayoutInflater();
         mItemResId = itemResId;
     }
@@ -48,15 +47,12 @@ public class LinearListView {
         void initItem(Object data, View v);
     }
     
-    public LinearLayout getParentView(){
-        return parent;
-    }
-    
     public void refreshList(List list) {
-        int dataSize = (list != null ? list.size() : 0);
 //        int childCount = contains.getChildCount();
 //        int viewCount = 0;
-        parent.removeAllViews();
+        int dataSize = (list != null ? list.size() : 0);
+        parentLayout.removeAllViews();
+        LogWrapper.d("conan", "LinearListView.refresh:" + list);
         if(dataSize == 0){
             return;
         }else{
@@ -71,7 +67,7 @@ public class LinearListView {
 //                    child = mLayoutInflater.inflate(mItemResId, parent, false);
                 child = mLayoutInflater.inflate(mItemResId, null);
                     initer.initItem(data, child);
-                    parent.addView(child, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+                    parentLayout.addView(child, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
                     child.setVisibility(View.VISIBLE);
 //                parent.addView(child);
 //                }
@@ -98,10 +94,10 @@ public class LinearListView {
     
     //TODO:再提供个foreach功能
     public int getSize(){
-        return parent.getChildCount();
+        return parentLayout.getChildCount();
     }
     
     public View getChildView(int pos){
-        return parent.getChildAt(pos);
+        return parentLayout.getChildAt(pos);
     }
 }

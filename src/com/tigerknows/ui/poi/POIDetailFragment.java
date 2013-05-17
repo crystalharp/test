@@ -413,10 +413,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 //    }
     
     public static class DynamicPOIViewBlock {
-		LinearLayout mOwnLayout;
+		View mOwnLayout;
 		LinearLayout mBelongsLayout;
 		DPOIType mType;
-		boolean needToShow = true;
+//		boolean needToShow = true;
 		
 		public DynamicPOIViewBlock(LinearLayout belongsLayout, DPOIType type) {
 		    mBelongsLayout = belongsLayout;
@@ -424,14 +424,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
 		
 		void show(){
-		    if (needToShow){
+		    if (mBelongsLayout.indexOfChild(mOwnLayout) == -1){
 		        mBelongsLayout.addView(mOwnLayout);
 		    }
 		}
 
         void clear(){
 		    mBelongsLayout.removeView(mOwnLayout);
-			needToShow = false;
+//			needToShow = false;
 		}
     }
     
@@ -682,8 +682,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         refreshDynamicPOI(poi);
         
         refreshDynamicDinaying(poi);
-        refreshDynamicHotel(poi);
-        showDynamicPOI(DPOIViewBlockList);
+//        refreshDynamicHotel(poi);
     }
     
     /**
@@ -694,7 +693,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     	if (poi == null) {
     		return;
     	}
-    	clearDynamicPOI(DPOIViewBlockList);
+//    	clearDynamicPOI(DPOIViewBlockList);
 
         List<DynamicPOI> list = poi.getDynamicPOIList();
         List<DynamicPOI> normalDynamicPOIList = new LinkedList<DynamicPOI>();
@@ -1307,6 +1306,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             
             refreshDetail();
             refreshComment();
+            showDynamicPOI(DPOIViewBlockList);
             
             //FIXME:如何判断？
             //判断是否存在hotel信息
@@ -1314,6 +1314,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 mDynamicHotelPOI.setData(mPOI.getHotel(), checkin, checkout);
                 baseQueryList.addAll(mDynamicHotelPOI.generateQuery(mPOI));
             }
+            LogWrapper.d("conan", "POIDetailFragment.baseQueryList:" + baseQueryList);
             
             if (baseQueryList.isEmpty() == false) {
                 mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
@@ -1593,6 +1594,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 
             } else if (baseQuery instanceof DataOperation) {
                 // 查询POI的结果
+                LogWrapper.d("conan", "postExecute in dataOperation");
                 if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
                     mLoadingView.setVisibility(View.GONE);
                     if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[]{603}, false, this, false)) {
@@ -1611,6 +1613,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                             //FIXME:移走
                             Hotel hotel = poi.getHotel();
+                            LogWrapper.d("conan", "PostExecute: in hotel." + hotel);
                             try {
                                 if (hotel == null) {
                                     poi.init(onlinePOI.getData(), false);
@@ -1621,9 +1624,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             } catch (APIException e) {
                                 e.printStackTrace();
                             }
-                            List<Hotel> dataList = new LinkedList<Hotel>();
-                            dataList.add(hotel);
-                            DPOIViewBlockList.addAll(mDynamicHotelPOI.getViewList(dataList));
+//                            List<Hotel> dataList = new LinkedList<Hotel>();
+//                            dataList.add(hotel);
+//                            DPOIViewBlockList.addAll(mDynamicHotelPOI.getViewList(dataList));
                             showDynamicPOI(DPOIViewBlockList);
                         } else {
                             poi.updateData(mSphinx, onlinePOI.getData());
