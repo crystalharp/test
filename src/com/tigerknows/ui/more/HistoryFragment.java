@@ -63,7 +63,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         // TODO Auto-generated constructor stub
     }
 
-    public static final int MENU_DELETE             = 0;
+    public static final int MENU_DELETE = 0;
     
     private POIAdapter mPOIAdapter = null;
 

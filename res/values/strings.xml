@@ -1001,7 +1001,7 @@
     
     <string name="hotel_checkin">入住：</string>
     <string name="hotel_checkout">离店：</string>
-    <string name="hotel_total_nights">共%1$s晚</string>
+    <string name="hotel_total_nights">共%1$d晚</string>
     <string name="hotel_order">酒店订单</string>
     
     <string name="issue_comment">发表点评</string>
@@ -1031,7 +1031,10 @@
     <string name="order_state_checked_in">已入住</string>
     
     <string name="hotel_order_default_pay_type">前台自付</string>
-    
     <string name="cancel_order">取消订单</string>
+    
+    <string name="simple_month_day_format">M月d日</string>
+    
+    <string name="no_order">暂无订单，\n快去预订酒店把！</string>
     
 </resources>

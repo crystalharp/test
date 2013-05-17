@@ -5,34 +5,45 @@
     android:layout_height="fill_parent"
     android:background="@drawable/bg_discover"
     >
-
-    <LinearLayout
-        android:id="@+id/panel_btns"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        
-        android:layout_alignParentBottom="true"
-        
-        android:orientation="horizontal"
-	    >
-        <Button
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:text="@string/issue_comment"
-            />
-        <Button
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:text="@string/order_again"
-            />
-        
-        <Button
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:text="@string/delete_order"
-            />
-    </LinearLayout>
+	<LinearLayout 
+	        android:id="@+id/panel_btns"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentBottom="true"
+	        android:orientation="vertical"
+	        >
+	    
+		<ImageView 
+		    android:layout_width="fill_parent" 
+		    android:layout_height="2dp"
+		    android:background="@color/orange"/>
+		
+	    <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        
+	        android:gravity="center"
+	        
+	        android:orientation="horizontal"
+		    >
+	        <Button
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="@string/issue_comment"
+	            />
+	        <Button
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="@string/order_again"
+	            />
+	        
+	        <Button
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    android:text="@string/delete_order"
+	            />
+	    </LinearLayout>
+	</LinearLayout>
     
     <RelativeLayout 
         android:layout_width="fill_parent"
