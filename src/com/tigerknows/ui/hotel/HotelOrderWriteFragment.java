@@ -45,6 +45,7 @@ import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.Utility;
+import com.tigerknows.util.ValidateUtil;
 import com.tigerknows.widget.StringArrayAdapter;
 
 public class HotelOrderWriteFragment extends BaseFragment implements View.OnClickListener{
@@ -56,6 +57,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     
     static final String TAG = "HotelOrderWriteFragment";
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat SIMPLE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
     private ScrollView mHotelOrderWriteScv;
     private TextView mHotelNameTxv;
@@ -78,6 +80,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
     private static final long MAX_ROOM_HOWMANY = 5;
     
+    // 酒店订单相关数据
     private int mRTimeWhich;
     private String mRTime;
     private String mRTimeDetail;
@@ -85,6 +88,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private String mTotalPrice;
     private String mUsername;
     private String mMobile;
+    
+    // 7天酒店会员号
+    private String mMemberNum = "";
+    
+    // 信用卡担保相关数据
     private long mNeedCreditAssure;
     private long mTypeCreditAssure;
     private String mCreditCardNo;
@@ -165,8 +173,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	String str = mRoomPersonEdt.getText().toString().trim();
         	if(TextUtils.isEmpty(str)){
         		mRoomPersonEdt.requestFocus();
-        		Toast.makeText(mContext, mSphinx.getString(R.string.hotel_room_person_empty_tip), Toast.LENGTH_SHORT).show();
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_room_person_empty_tip));
         		mSphinx.showSoftInput();
+        		return;
+        	}else if(!ValidateUtil.isValidElongName(str)){
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format));
         		return;
         	}else{
         		mUsername = str;
@@ -176,6 +187,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         		mRoomMobileNumberEdt.requestFocus();
         		Toast.makeText(mContext, mSphinx.getString(R.string.hotel_room_mobile_empty_tip), Toast.LENGTH_SHORT).show();
         		mSphinx.showSoftInput();
+        		return;
+        	}else if(!ValidateUtil.isValidPhone(str)){
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.phone_format_error_tip));
         		return;
         	}else{
         		mMobile = str;
@@ -195,7 +209,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	if(rtList.isEmpty()){
     		mNeedCreditAssure = 0;
     		mTypeCreditAssure = 0;
-    		mRTime = "24点之前";
+    		mRTime = "23:59之前";
     		mRTimeDetail = SIMPLE_DATE_FORMAT.format(mCheckIn.getTime()) + " 23:59:00";
     	}else{
     		mRTime = rtList.get(mRTimeWhich).getTime();
@@ -233,9 +247,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         roomTypeDetail += (appendContent != null) ? " " : null;
         mRoomtypeDetailTxv.setText(roomTypeDetail);
         mRoomDateTxv.setText(mSphinx.getString(R.string.hotel_room_date,
-        	    checkIn.get(Calendar.MONTH),
+        	    checkIn.get(Calendar.MONTH+1),
         		checkIn.get(Calendar.DATE),
-        	    checkOut.get(Calendar.MONTH),
+        	    checkOut.get(Calendar.MONTH+1),
         		checkOut.get(Calendar.DATE)
         		));
         mCheckIn = checkIn;
@@ -309,9 +323,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
 
     public void submit(boolean HasCreditInfo) {
-    	HotelOrderOperation dataOperation = new HotelOrderOperation(mSphinx);
+    	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
     	Hashtable<String, String> criteria = new Hashtable<String, String>();
-    	criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DINGDAN);
     	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_CREATE);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_HOTEL_ID, mHotel.getUuid());
     	if(mHotel.getBrand() != null){
@@ -328,6 +341,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_TOTAL_PRICE, mTotalPrice);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_USERNAME, mUsername);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_MOBILE, mMobile);
+    	if(!TextUtils.isEmpty(mMemberNum)){
+    		criteria.put(HotelOrderOperation.SERVER_PARAMETER_MEMBERNUM, mMemberNum);
+    	}
     	if(HasCreditInfo){
     		criteria.put(HotelOrderOperation.SERVER_PARAMETER_CREDIT_CARD_NO, mCreditCardNo);
     		criteria.put(HotelOrderOperation.SERVER_PARAMETER_VERIFY_CODE, mVerifyCode);
@@ -337,8 +353,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     		criteria.put(HotelOrderOperation.SERVER_PARAMETER_IDCARD_TYPE, mIdCardType);
     		criteria.put(HotelOrderOperation.SERVER_PARAMETER_IDCARD_NO, mIdCardNo);
     	}
-    	dataOperation.setup(criteria);
-    	mSphinx.queryStart(dataOperation);
+    	hotelOrderOperation.setup(criteria, mSphinx.getHotelHomeFragment().getCityInfo().getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
+    	mSphinx.queryStart(hotelOrderOperation);
     }
     
 	@Override
@@ -361,18 +377,17 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             return;
         }
     	Response response = baseQuery.getResponse();
+    	HotelOrderCreateResponse hotelOrderCreateResponse = null;
+    	if (response instanceof HotelOrderCreateResponse) {
+    		hotelOrderCreateResponse = (HotelOrderCreateResponse) response;
+    	}
     	switch(response.getResponseCode()){
     	case Response.RESPONSE_CODE_OK:
     		Toast.makeText(mContext, mSphinx.getString(R.string.order_submit_success), Toast.LENGTH_LONG).show();
-//    		if (response instanceof HotelOrderCreateResponse) {
-			HotelOrderCreateResponse hotelOrderCreateResponse = (HotelOrderCreateResponse) response;
-			Calendar cld = Calendar.getInstance();
-			try {
-				cld.setTime(SIMPLE_DATE_FORMAT.parse(mRTimeDetail));
-			} catch (ParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			if (hotelOrderCreateResponse == null){
+				return;
 			}
+
 			mHotelOrder = new HotelOrder(
 					hotelOrderCreateResponse.getOrderId(),
 					Calendar.getInstance().getTimeInMillis(),
@@ -385,22 +400,27 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 					mRoomType.getRoomType(),
 					mRoomHowmany,
 					Double.parseDouble(mTotalPrice),
-					cld.getTimeInMillis(),
+					Utility.strDateToLong(SIMPLE_TIME_FORMAT, mRTimeDetail),
 					mCheckIn.getTimeInMillis(),
 					mCheckOut.getTimeInMillis(),
-					-1,
+					Utility.dateInterval(mCheckIn, mCheckOut),
 					mUsername,
 					mMobile
 					);
-			dismiss();
 			mSphinx.getHotelOrderDetailFragment().setData(mHotelOrder);
 			mSphinx.showView(R.id.view_hotel_order_detail);
+			destroyFragments(true, true);
+			dismiss();
+			mSphinx.uiStackRemove(R.id.view_hotel_order_write);
+			mSphinx.destroyHotelOrderWriteFragment();
+			
     		break;
     	case Response.RESPONSE_CODE_HOTEL_ORDER_CREATE_FAILED:
-    		Utility.showNormalDialog(mSphinx,mSphinx.getString(R.string.hotel_network_bad));
+    		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_network_bad));
     		break;
     	case Response.RESPONSE_CODE_HOTEL_NEED_REGIST:
-    		Toast.makeText(mContext, "需要注册酒店会员，目前系统暂不支持此功能", Toast.LENGTH_LONG).show();
+    		mSphinx.getHotelSeveninnRegistFragment().setData(mMobile);
+    		mSphinx.showView(R.id.view_hotel_seveninn_regist);
     		break;
     	case Response.RESPONSE_CODE_HOTEL_NEED_CREDIT_ASSURE:
        		if(mTypeCreditAssure ==2){
@@ -409,9 +429,26 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         		mSphinx.getHotelOrderCreditFragment().setData(mRoomtypeDynamic.getPrice()+"", Calendar.getInstance(), response.getDescription());
        		}
        		mSphinx.showView(R.id.view_hotel_credit_assure);
+       		break;
+    	case Response.RESPONSE_CODE_HOTEL_OTHER_ERROR:
+    		Utility.showNormalDialog(mSphinx, response.getDescription());
+    		break;
     	}
 	}
-        
+
+	private void destroyFragments(boolean seven, boolean credit){
+		
+		if(seven == true && mSphinx.checkHotelSeveninnRegistFragment() != null){
+			mSphinx.getHotelSeveninnRegistFragment().dismiss();
+			mSphinx.uiStackRemove(R.id.view_hotel_seveninn_regist);
+			mSphinx.destroyHotelSeveninnRegistFragment();
+		}
+		if(credit == true && mSphinx.checkHotelOrderCreditFragment() != null){
+			mSphinx.getHotelOrderCreditFragment().dismiss();
+			mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
+			mSphinx.destroyHotelOrderCreditFragment();
+		}
+	}
 	public void setCredit(List<String> credit) {
 		mCreditCardNo = credit.get(0);
 		mVerifyCode = credit.get(2);
@@ -422,7 +459,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 		mIdCardNo = credit.get(6);
 		submit(true);
 	}
-	
+	public void setMember(String memberNum){
+		mMemberNum = memberNum;
+		submit(false);
+	}
+		
 	public List<RetentionTime> findRTimeByRoomHowmany(long roomhowmany){
 		final List<RetentionTime> list;
 		DanbaoGuize dbgz = mRoomtypeDynamic.getDanbaoGuize();
@@ -433,4 +474,5 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 		}
 		return list;
 	}
+
 }

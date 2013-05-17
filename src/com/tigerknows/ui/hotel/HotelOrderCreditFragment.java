@@ -27,6 +27,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.Utility;
+import com.tigerknows.util.ValidateUtil;
 import com.tigerknows.widget.StringArrayAdapter;
 
 public class HotelOrderCreditFragment extends BaseFragment implements View.OnClickListener{
@@ -73,7 +74,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     public void onResume(){
         super.onResume();
         mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, mSumPrice));
-        mCreditNoteTxv.setText(mSphinx.getString(R.string.credit_note, mDate.getTime().toLocaleString()));
+        mCreditNoteTxv.setText(mSphinx.getString(R.string.credit_note, mOrderModifyDeadline));
     }
     
     public void onPause(){
@@ -120,27 +121,36 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	String str = mCreditBankBtn.getText().toString();
         	List<String> list = new ArrayList<String>();
         	if(TextUtils.isEmpty(str)){
-        		Toast.makeText(mContext, mSphinx.getString(R.string.credit_bank_empty_tip), Toast.LENGTH_SHORT).show();
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_bank_empty_tip));
         		return;
         	}
         	
         	str = mCreditCodeEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
-        		Toast.makeText(mContext, mSphinx.getString(R.string.credit_code_empty_tip), Toast.LENGTH_SHORT).show();
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_code_empty_tip));
+        		return;
+        	}else if(!ValidateUtil.isValidCreditCard(str)){
+        		Utility.showDialogAcitvity(mSphinx, mSphinx.getString(R.string.credit_code_format));
         		return;
         	}
         	list.add(str);
         	
         	str = mCreditOwnerEdt.getText().toString().trim();
         	if(TextUtils.isEmpty(str)){
-        		Toast.makeText(mContext, mSphinx.getString(R.string.credit_owner_empty_tip), Toast.LENGTH_SHORT).show();
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_owner_empty_tip));
+        		return;
+        	}else if(!ValidateUtil.isValidElongName(str)){
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format));
         		return;
         	}
         	list.add(str);
         	
         	str = mCreditVerifyEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
-        		Toast.makeText(mContext, mSphinx.getString(R.string.credit_verify_empty_tip), Toast.LENGTH_SHORT).show();
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_verify_empty_tip));
+        		return;
+        	}else if(!ValidateUtil.isValidCreditCardVerify(str)){
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_verify_format));
         		return;
         	}
         	list.add(str);
@@ -149,13 +159,16 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	list.add("9");
         	str = mCreditCertTypeBtn.getText().toString();
         	if(TextUtils.isEmpty(str)){
-        		Toast.makeText(mContext, mSphinx.getString(R.string.credit_cert_type_empty_tip), Toast.LENGTH_SHORT).show();
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_cert_type_empty_tip));
         		return;
         	}
         	list.add(str);
         	str = mCreditCertCodeEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
-        		Toast.makeText(mContext, mSphinx.getString(R.string.credit_cert_code_empty_tip), Toast.LENGTH_SHORT).show();
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_cert_code_empty_tip));
+        		return;
+        	}else if(!ValidateUtil.isValidCertCode(str)){
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_idcard_number_format));
         		return;
         	}
         	mSphinx.getHotelOrderWriteFragment().setCredit(list);

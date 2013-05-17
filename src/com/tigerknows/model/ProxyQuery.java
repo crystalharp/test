@@ -110,7 +110,7 @@ public class ProxyQuery extends BaseQuery {
         if (task.equals(TASK_ROOM_TYPE_DYNAMIC)) {
             responseXMap = ProxyQueryTest.launchRoomTypeDynamicRespnose(context);
         } else if (task.equals(TASK_REGISTER_7_DAY_MEMBER)) {
-            responseXMap = BaseQueryTest.launchResponse();
+            responseXMap = BaseQueryTest.launchResponse("123456890");
         }
     }
 

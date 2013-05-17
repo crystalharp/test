@@ -66,10 +66,20 @@ public class BaseQueryTest {
     public static XMap launchResponse() {
         return launchResponse(new XMap());
     }
+    
+    public static XMap launchResponse(String fieldDescription) {
+    	return launchResponse(new XMap(),fieldDescription);
+    }
 
     public static XMap launchResponse(XMap data) {
         data.put(DiscoverResponse.FIELD_RESPONSE_CODE, RESPONSE_CODE);
         data.put(DiscoverResponse.FIELD_DESCRIPTION, "FIELD_DESCRIPTION");
+        return  data;
+    }
+    
+    public static XMap launchResponse(XMap data, String fieldDescription){
+        data.put(DiscoverResponse.FIELD_RESPONSE_CODE, RESPONSE_CODE);
+        data.put(DiscoverResponse.FIELD_DESCRIPTION, fieldDescription);
         return  data;
     }
     

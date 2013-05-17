@@ -69,7 +69,10 @@ public class DataOperation extends BaseQuery {
         String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
         if (OPERATION_CODE_QUERY.equals(operationCode)) {
             if(DATA_TYPE_POI.equals(dataType)){
-                addParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
+                String subDataType = addParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
+                if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+                    addParameter(new String[] {SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
+                }
             }
             
         	if(dataType.equals(DATA_TYPE_DIAOYAN) == false){
@@ -108,10 +111,7 @@ public class DataOperation extends BaseQuery {
         
         if (OPERATION_CODE_QUERY.equals(operationCode)) {
             if (DATA_TYPE_POI.equals(dataType)) {
-                String subDataType = criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
-                if (SUB_DATA_TYPE_POI.equals(subDataType)) {
-                    response = new POIQueryResponse(responseXMap);
-                }
+                response = new POIQueryResponse(responseXMap);
             } else if (DATA_TYPE_DIANPING.equals(dataType)) {
                 response = new CommentQueryResponse(responseXMap);
             } else if (DATA_TYPE_TUANGOU.equals(dataType)) {

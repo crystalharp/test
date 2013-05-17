@@ -3203,6 +3203,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             case R.id.view_hotel_order_list:
             	baseFragment = getHotelOrderListFragment();
             	break;
+            	
+            case R.id.view_hotel_order_detail:
+            	baseFragment = getHotelOrderDetailFragment();
+            	break;
                 
             default:
                 break;
@@ -3645,6 +3649,30 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             return mHotelOrderDetailFragment;
         }
+    }
+    
+    public HotelSeveninnRegistFragment checkHotelSeveninnRegistFragment(){
+    	return mHotelSeveninnRegistFragment;
+    }
+
+    public HotelOrderCreditFragment checkHotelOrderCreditFragment() {
+    	return mHotelOrderCreditFragment;
+    }
+
+    public HotelOrderWriteFragment checkHotelOrderWriteFragment() {
+    	return mHotelOrderWriteFragment;
+    }
+
+    public void destroyHotelOrderWriteFragment(){
+    	mHotelOrderWriteFragment = null;
+    }
+    
+    public void destroyHotelOrderCreditFragment(){
+    	mHotelOrderCreditFragment = null;
+    }
+    
+    public void destroyHotelSeveninnRegistFragment(){
+    	mHotelSeveninnRegistFragment = null;
     }
     
     // TODO: get fragment end

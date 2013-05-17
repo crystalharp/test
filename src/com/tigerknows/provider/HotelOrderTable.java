@@ -135,10 +135,8 @@ public class HotelOrderTable {
 		
 		List<HotelOrder> results = new ArrayList<HotelOrder>();
 		Cursor cursor = mDb.query(TABLE_NAME, new String[]{ORDER_CONTENT}, null, null, null, null, ORDER_CREATE_TIME, start + "," + (start + count));
-		System.out.println("Read count: " + cursor.getCount());
 		int contentIndex = cursor.getColumnIndex(ORDER_CONTENT); 
 		while (cursor.moveToNext()) {
-			System.out.println("cursor position: " + cursor.getPosition());
 			byte[] decrypted = DataEncryptor.decrypt(cursor.getBlob(contentIndex));
 			XMap orderXMap = (XMap) ByteUtil.byteToXObject(decrypted);
 			results.add(new HotelOrder(orderXMap));
@@ -182,6 +180,18 @@ public class HotelOrderTable {
 		result = mDb.delete(TABLE_NAME, ORDER_ID + "=?", new String[]{orderId});
 		
 		return result;
+	}
+	
+	public int count(){
+
+		if(!mDb.isOpen())
+			return 0;
+
+		Cursor cursor = mDb.query(TABLE_NAME, new String[]{"count(*)"}, null, null, null, null, null, null);
+		int count = cursor.getCount();
+		cursor.close();
+        return count;
 		
 	}
+	
 }

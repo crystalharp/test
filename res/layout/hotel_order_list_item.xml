@@ -1,147 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent" 
+    android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
     android:background="@drawable/list_selector_background_gray_light"
-    android:layout_marginBottom="8dp">
-        
-    <TextView 
-        android:id="@+id/name_txv" 
+    android:padding="8dp" >
+
+    <!-- android:background="@drawable/list_selector_background_gray_light" -->
+
+    <TextView
+        android:id="@+id/name_txv"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" 
+        android:layout_height="wrap_content"
         
         android:layout_alignParentTop="true"
-        
-        android:gravity="center_vertical"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:text="@string/app_name"
         android:drawableRight="@drawable/ic_goto_here"
-        android:singleLine="true"
-        android:lineSpacingExtra="0dp"
+        
+        android:focusable="false"
+        android:gravity="center_vertical"
         android:includeFontPadding="false"
-        android:focusable="false"/>
-        
-    <TextView 
-        android:id="@+id/price_txv" 
+        android:lineSpacingExtra="0dp"
+        android:singleLine="true"
+        android:text="@string/app_name"
+        android:textColor="@color/black"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/price_txv"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/name_txv"
-        
-        android:textColor="@color/orange"
-        android:textSize="18sp"
+        android:layout_marginTop="8dp"
+        android:focusable="false"
+        android:singleLine="true"
         android:text="158"
-        android:singleLine="true"
-        android:focusable="false" />  
-    
-    <TextView 
-        android:id="@+id/yuan_txv" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        
-        android:layout_toRightOf="@id/price_txv"
-        android:layout_alignBaseline="@id/price_txv"
-        
-        android:textSize="12sp"
-        android:text="@string/rmb_text"
-        android:singleLine="true"
-        android:focusable="false" />
-        
-    <TextView 
-        android:id="@+id/room_type_txv" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        
-        android:layout_alignBaseline="@id/price_txv"
-        android:layout_toRightOf="@id/yuan_txv"
-        android:layout_marginLeft="16dp"
-         
-        android:drawablePadding="4dp"
         android:textColor="@color/orange"
-        android:textSize="18sp"
-        android:text="多媒体标准间"
-        android:singleLine="true"
-        android:focusable="false" />   
-    
-    <TextView 
-        android:id="@+id/checkin_txv" 
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/yuan_txv"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/price_txv"
+        android:layout_toRightOf="@id/price_txv"
+        android:focusable="false"
+        android:singleLine="true"
+        android:text="@string/rmb_text"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/room_type_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/price_txv"
+        android:layout_marginLeft="16dp"
+        android:layout_toRightOf="@id/yuan_txv"
+        android:drawablePadding="4dp"
+        android:focusable="false"
+        android:singleLine="true"
+        android:text="多媒体标准间"
+        android:textColor="@color/orange"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/checkin_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/price_txv"
         android:layout_marginTop="8dp"
-         
         android:drawableLeft="@drawable/ic_discover_clock"
         android:drawablePadding="4dp"
-        android:textColor="@color/bright_foreground_light"
-        android:textSize="14sp"
-        android:text="@string/hotel_checkin"
+        android:focusable="false"
         android:singleLine="true"
-        android:focusable="false"/>
-        
-    <TextView 
-        android:id="@+id/checkin_date_txv" 
+        android:text="@string/hotel_checkin"
+        android:textColor="@color/bright_foreground_light"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/checkin_date_txv"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        
+        android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/checkin_txv"
         android:layout_toRightOf="@id/checkin_txv"
-         
         android:drawablePadding="4dp"
-        android:textColor="@color/bright_foreground_light"
-        android:textSize="14sp"
-        android:text="3.13"
+        android:focusable="false"
         android:singleLine="true"
-        android:focusable="false" />   
-        
-    <TextView 
-        android:id="@+id/checkout_txv" 
+        android:text="3.13"
+        android:textColor="@color/bright_foreground_light"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/checkout_txv"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        
-        android:layout_toRightOf="@id/checkin_date_txv"
+        android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/checkin_txv"
         android:layout_marginLeft="16dp"
-         
+        android:layout_toRightOf="@id/checkin_date_txv"
         android:drawableLeft="@drawable/ic_discover_clock"
         android:drawablePadding="4dp"
-        android:textColor="@color/bright_foreground_light"
-        android:textSize="14sp"
-        android:text="@string/hotel_checkout"
+        android:focusable="false"
         android:singleLine="true"
-        android:focusable="false"/>
-    
-    <TextView 
-        android:id="@+id/checkout_date_txv" 
+        android:text="@string/hotel_checkout"
+        android:textColor="@color/bright_foreground_light"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/checkout_date_txv"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        
+        android:layout_height="wrap_content"
         android:layout_alignBaseline="@id/checkin_txv"
         android:layout_toRightOf="@id/checkout_txv"
-        
         android:drawablePadding="4dp"
-        android:textColor="@color/bright_foreground_light"
-        android:textSize="14sp"
+        android:focusable="false"
+        android:singleLine="true"
         android:text="3.33"
-        android:singleLine="true"
-        android:focusable="false" />   
-        
-    <TextView 
-        android:id="@+id/day_count_txv" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" 
-        
-        android:layout_alignParentRight="true"
-        android:layout_alignBaseline="@id/checkout_date_txv" 
-        
         android:textColor="@color/bright_foreground_light"
-        android:textSize="14sp"
-        android:text="共住2晚"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/day_count_txv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/checkout_date_txv"
+        android:layout_alignParentRight="true"
+        android:focusable="false"
         android:singleLine="true"
-        android:focusable="false" />
-    
+        android:text="共住2晚"
+        android:textColor="@color/bright_foreground_light"
+        android:textSize="14sp" />
+
 </RelativeLayout>

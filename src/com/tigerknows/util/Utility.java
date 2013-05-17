@@ -14,6 +14,8 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
@@ -1187,4 +1189,31 @@ public class Utility {
         intent.putExtra(ErrorDialogActivity.ERROR_MSG, msg);
         activity.startActivity(intent);
     }
+    
+	public static long strDateToLong(SimpleDateFormat dateFormat, String str){
+		Calendar cld = Calendar.getInstance();
+		try {
+			cld.setTime(dateFormat.parse(str));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return cld.getTimeInMillis();
+	}
+	
+	public static int dateInterval(Calendar start, Calendar end){
+		if(start.after(end)){
+			return -1;
+		}
+		int days = end.get(Calendar.DAY_OF_YEAR) - start.get(Calendar.DAY_OF_YEAR);
+		int y2 = end.get(Calendar.YEAR);
+		if(start.get(Calendar.YEAR) != y2){
+			start = (Calendar) start.clone();
+			do{
+				days += start.getActualMaximum(Calendar.DAY_OF_YEAR);
+				start.add(Calendar.YEAR, 1);
+			}while(start.get(Calendar.YEAR) != y2);
+		}
+		return days;
+	}
 }
