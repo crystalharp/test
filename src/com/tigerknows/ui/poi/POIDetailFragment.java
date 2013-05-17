@@ -679,7 +679,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         refreshDynamicPOI(poi);
         
         refreshDynamicDinaying(poi);
-//        refreshDynamicHotel(poi);
+        refreshDynamicHotel(poi);
     }
     
     /**
@@ -714,47 +714,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      */
     void refreshDynamicHotel(POI poi) {
        //显示 
-        mDynamicHotelUpperView.setVisibility(View.GONE);
-        if (poi == null || poi.getHotel() == null) {
+        if (poi == null || poi.getHotel() == null || poi.getHotel().getRoomTypeList() == null) {
             return;
         }
         
         List<Hotel> list = new LinkedList<Hotel>();
         list.add(poi.getHotel());
         DPOIViewBlockList.addAll(mDynamicHotelPOI.getViewList(list));
-        
-//        List<RoomType> list = poi.getHotel().getRoomTypeList();
-//        int size = (list != null? list.size() : 0);
-//        if (size > 0) {
-//            mDynamicHotelUpperView.setVisibility(View.VISIBLE);
-//        } else {
-//            mDynamicHotelUpperView.setVisibility(View.GONE);
-//            return;
-//        }
-//        
-//        int viewCount = initDynamicPOIListView(list, mDynamicRoomTypeListView, R.layout.poi_dynamic_hotel_room_item);
-//        
-//        int childCount = mDynamicRoomTypeListView.getChildCount();
-//        if (size > SHOW_DYNAMIC_YINGXUN_MAX) {
-//            for(int i = SHOW_DYNAMIC_YINGXUN_MAX; i < childCount; i++) {
-//                mDynamicRoomTypeListView.getChildAt(i).setVisibility(View.GONE);
-//            }
-//            mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
-//        } else {
-//            mDynamicRoomTypeMoreView.setVisibility(View.GONE);
-//        }
-//        
-//        for(int i = 0; i < viewCount; i++) {
-//            View child = mDynamicRoomTypeListView.getChildAt(i);
-//            if (i == (viewCount-1) && mDynamicRoomTypeMoreView.getVisibility() == View.GONE) {
-//                child.setBackgroundResource(R.drawable.list_footer);
-//                child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
-//            } else {
-//                child.setBackgroundResource(R.drawable.list_middle);
-//                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
-//            }
-//        }
-        
+                
         //TODO:下面的简介和图片, 延迟做
 //        View a = mLayoutInflater.inflate(R.layout.poi_dynamic_hotel_below_feature, null);
 //        mDynamicHotelLowerView.addView(a);
@@ -1312,7 +1279,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 mDynamicHotelPOI.setData(mPOI.getHotel(), checkin, checkout);
                 baseQueryList.addAll(mDynamicHotelPOI.generateQuery(mPOI));
             }
-            LogWrapper.d("conan", "POIDetailFragment.baseQueryList:" + baseQueryList);
+//            LogWrapper.d("conan", "POIDetailFragment.baseQueryList:" + baseQueryList);
             
             if (baseQueryList.isEmpty() == false) {
                 mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
@@ -1592,7 +1559,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 
             } else if (baseQuery instanceof DataOperation) {
                 // 查询POI的结果
-                LogWrapper.d("conan", "postExecute in dataOperation");
                 if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
                     mLoadingView.setVisibility(View.GONE);
                     if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[]{603}, false, this, false)) {
@@ -1611,7 +1577,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                             //FIXME:移走
                             Hotel hotel = poi.getHotel();
-                            LogWrapper.d("conan", "PostExecute: in hotel." + hotel);
+                            clearDynamicPOI(DPOIViewBlockList);
                             try {
                                 if (hotel == null) {
                                     poi.init(onlinePOI.getData(), false);

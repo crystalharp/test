@@ -52,7 +52,7 @@ public class LinearListView {
 //        int viewCount = 0;
         int dataSize = (list != null ? list.size() : 0);
         parentLayout.removeAllViews();
-        LogWrapper.d("conan", "LinearListView.refresh:" + list);
+//        LogWrapper.d("conan", "LinearListView.refresh:" + list);
         if(dataSize == 0){
             return;
         }else{

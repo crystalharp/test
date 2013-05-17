@@ -126,6 +126,7 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         mHotel = dataList.get(0);
 
         mAllRoomList.clear();
+        mShowingRoomList.clear();
         mAllRoomList.addAll(mHotel.getRoomTypeList());
         int size = (mAllRoomList != null? mAllRoomList.size() : 0);
         if (size == 0) {
@@ -183,7 +184,6 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, needFiled+"01");   // 01表示poi的uuid
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN, checkinTime);
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT, checkoutTime);
-        LogWrapper.d("conan", "buildingHotelQuery:" + criteria);
         DataOperation dataOpration = new DataOperation(mSphinx);
         dataOpration.setup(criteria, Globals.g_Current_City_Info.getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId());
         return dataOpration;
