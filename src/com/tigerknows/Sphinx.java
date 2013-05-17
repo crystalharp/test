@@ -33,6 +33,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Process;
 import android.provider.ContactsContract;
 import android.support.v4.view.ViewPager.LayoutParams;
 import android.text.TextUtils;
@@ -1168,9 +1169,16 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         service = new Intent(Sphinx.this, MapDownloadService.class);
         stopService(service);
         super.onDestroy();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         ActivityManager am = (ActivityManager)getSystemService(
                 Context.ACTIVITY_SERVICE);
         am.restartPackage("com.tigerknows");
+        Process.killProcess(Process.myPid());
 //        Debug.stopMethodTracing();
 	}
 	/**
