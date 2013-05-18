@@ -43,6 +43,7 @@ import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.ui.more.MapDownloadActivity.DownloadCity;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserLoginActivity;
+import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 
 /**
@@ -174,7 +175,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             Calendar calendar = Calendar.getInstance();
             String[] strs = upgradeMapTip.split("-");
             calendar.set(Integer.parseInt(strs[0]), Integer.parseInt(strs[1])-1, Integer.parseInt(strs[2]));
-            out = Utility.compareDate(calendar, Calendar.getInstance(), 0);
+            out = CalendarUtil.compareDate(calendar, Calendar.getInstance(), 0);
             } catch (Exception e) {
                 // TODO: handle exception
             }

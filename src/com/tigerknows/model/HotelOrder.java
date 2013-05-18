@@ -15,7 +15,8 @@ import com.tigerknows.model.xobject.XMap;
  */
 public class HotelOrder extends XMapData{
 	
-	
+
+	public static final int STATE_NONE = -1;
 	public static final int STATE_PROCESSING = 1;
 	public static final int STATE_SUCCESS = 2;
 	public static final int STATE_CANCELED = 3;
@@ -37,7 +38,11 @@ public class HotelOrder extends XMapData{
 	 * range(1-5)
 	 */
 	private int state = -1;
-
+	/**
+	 * 订单状态的最后更新时间
+	 */
+	private long stateUpdateTime = 0;
+	
 	// hotel info
 	/**
 	 * 酒店的poi的uuid
@@ -125,6 +130,7 @@ public class HotelOrder extends XMapData{
 	public static final byte FIELD_DAY_COUNT= 0x11;
 	public static final byte FIELD_GUEST_NAME = 0x12;
 	public static final byte FIELD_MOBILE_NUM= 0x13;
+	public static final byte FIELD_STATE_UPDATE_TIME = 0x20;
 	
 	/**
 	 * 使用XMap构建酒店订单
@@ -137,6 +143,7 @@ public class HotelOrder extends XMapData{
 		id = data.getString(FIELD_ID);
 		createTime = data.getInt(FIELD_CREATE_TIME);
 		state = (int) data.getInt(FIELD_STATE);
+		stateUpdateTime = data.getInt(FIELD_STATE_UPDATE_TIME);
 		hotelPoiUUID = data.getString(FIELD_POIUUID);
 		hotelName = data.getString(FIELD_HOTEL_NAME);
 		hotelAddress = data.getString(FIELD_HOTEL_ADDRESS);
@@ -208,6 +215,11 @@ public class HotelOrder extends XMapData{
 		}else{
 			throw new APIException("FIELD_STATE");
 		}
+		
+		if(stateUpdateTime<0){
+			stateUpdateTime = 0;
+		}
+		map.put(FIELD_STATE_UPDATE_TIME, stateUpdateTime);
 
 		if (hotelPoiUUID!=null) {
 			map.put(FIELD_POIUUID, hotelPoiUUID);
@@ -356,19 +368,15 @@ public class HotelOrder extends XMapData{
 	public long getRoomNum() {
 		return roomNum;
 	}
-
 	public void setRoomNum(long roomNum) {
 		this.roomNum = roomNum;
 	}
-
 	public double getTotalFee() {
 		return totalFee;
 	}
-
 	public void setTotalFee(double totalFee) {
 		this.totalFee = totalFee;
 	}
-
 	public int getDayCount() {
 		return dayCount;
 	}
@@ -404,6 +412,12 @@ public class HotelOrder extends XMapData{
 	}
 	public void setMobileNum(String mobileNum) {
 		this.mobileNum = mobileNum;
+	}
+	public long getStateUpdateTime() {
+		return stateUpdateTime;
+	}
+	public void setStateUpdateTime(long stateUpdateTime) {
+		this.stateUpdateTime = stateUpdateTime;
 	}
 
 }

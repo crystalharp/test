@@ -697,7 +697,7 @@ public class DataQueryTest {
         data.put(RoomType.FIELD_BED_TYPE, "FIELD_BED_TYPE");
         data.put(RoomType.FIELD_NET_SERVICE, "FIELD_NET_SERVICE");
         data.put(RoomType.FIELD_BREAKFAST, "FIELD_BREAKFAST");
-        data.put(RoomType.FIELD_PRICE, "FIELD_PRICE");
+        data.put(RoomType.FIELD_PRICE, 168+order*100+"");
         data.put(RoomType.FIELD_CAN_RESERVE, 1);
         return data;
     }

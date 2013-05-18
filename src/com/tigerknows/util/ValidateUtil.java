@@ -88,23 +88,37 @@ public class ValidateUtil {
 		 */
 		
 		// 依产品需求，按艺龙酒店的限制操作
-		Pattern pattern = Pattern.compile("[\\u002fA-Za-z\\u4e00-\\u9fbf]");
-        Matcher matcher = pattern.matcher(name);
-        while (!matcher.find()) {  
-        	return false;
-        }
-        return true;
+		return Pattern.compile("^[\\u002fA-Za-z\\u4e00-\\u9fbf]+$").matcher(name).matches();
 	}
 	
 	public static boolean isValidCertCode(String code){
-		return Pattern.compile("^\\w{1,18}$").matcher(code).matches();
+		return Pattern.compile("^\\w{1,30}$").matcher(code).matches();
 	}
 	
 	public static boolean isValidCreditCard(String code){
-		return Pattern.compile("^\\d{14,16}$").matcher(code).matches();
+		return Pattern.compile("^\\d{14,30}$").matcher(code).matches();
 	}
 	
 	public static boolean isValidCreditCardVerify(String code){
 		return Pattern.compile("^\\d{3}$").matcher(code).matches();
+	}
+	
+	public static boolean isValidIdCardCode(String code){
+		if(Pattern.compile("^\\d{17}[0-9Xx]$").matcher(code).matches() == false){
+			return false;
+		}else{
+			int tempInt = 0;
+			int factor = 1;
+			if(code.charAt(17) == 'X' || code.charAt(17) == 'x')tempInt += 10;
+			else tempInt += code.charAt(17) - '0';
+			for (int i = 16; i >= 0 ; i++){
+				factor *= 2;
+				if (factor > 11) factor -= 11;
+				tempInt += (code.charAt(i) - '0') * factor;
+			}
+			while(tempInt >= 11) tempInt -= 11;
+			if (tempInt == 1) return true;
+			else return false;
+		}
 	}
 }

@@ -44,6 +44,7 @@ import com.tigerknows.model.Response;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ValidateUtil;
 import com.tigerknows.widget.StringArrayAdapter;
@@ -400,10 +401,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 					mRoomType.getRoomType(),
 					mRoomHowmany,
 					Double.parseDouble(mTotalPrice),
-					Utility.strDateToLong(SIMPLE_TIME_FORMAT, mRTimeDetail),
+					CalendarUtil.strDateToLong(SIMPLE_TIME_FORMAT, mRTimeDetail),
 					mCheckIn.getTimeInMillis(),
 					mCheckOut.getTimeInMillis(),
-					Utility.dateInterval(mCheckIn, mCheckOut),
+					CalendarUtil.dateInterval(mCheckIn, mCheckOut),
 					mUsername,
 					mMobile
 					);
@@ -438,12 +439,12 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
 	private void destroyFragments(boolean seven, boolean credit){
 		
-		if(seven == true && mSphinx.checkHotelSeveninnRegistFragment() != null){
+		if(seven == true && mSphinx.uiStackContains(R.id.view_hotel_seveninn_regist)){
 			mSphinx.getHotelSeveninnRegistFragment().dismiss();
 			mSphinx.uiStackRemove(R.id.view_hotel_seveninn_regist);
 			mSphinx.destroyHotelSeveninnRegistFragment();
 		}
-		if(credit == true && mSphinx.checkHotelOrderCreditFragment() != null){
+		if(credit == true && mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){
 			mSphinx.getHotelOrderCreditFragment().dismiss();
 			mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
 			mSphinx.destroyHotelOrderCreditFragment();

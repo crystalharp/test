@@ -154,6 +154,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	mCheckinPersonTxv.setText(order.getGuestName());
 
     	
+    	
     }
     
     private static int[] orderStateDescResId = new int[]{
@@ -168,7 +169,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		return mContext.getString(orderStateDescResId[state]);
     }
     
-    public String formatOrderTime(long millis){
+    public static String formatOrderTime(long millis){
     	Date date = new Date(millis);
     	SimpleDateFormat dateformat=new SimpleDateFormat("yyyy-MM-dd");
 		return dateformat.format(date);

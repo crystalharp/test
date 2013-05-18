@@ -5,30 +5,42 @@
 package com.tigerknows.ui.hotel;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.HotelOrder;
+import com.tigerknows.model.HotelOrderOperation;
+import com.tigerknows.model.HotelOrderOperation.HotelOrderStatesResponse;
 import com.tigerknows.provider.HotelOrderTable;
+import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
@@ -38,7 +50,7 @@ import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
  */
 public class HotelOrderListFragment extends BaseFragment implements View.OnClickListener {
     
-    static final String TAG = "DiscoverChildListFragment";
+    static final String TAG = "HotelOrderListFragment";
 
     public HotelOrderListFragment(Sphinx sphinx) {
         super(sphinx);
@@ -52,11 +64,11 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     private View mEmptyView = null;
     
     private View mQueryingView = null;
-    
-    private TextView mEmptyTxv = null;
 
-    private List<HotelOrder> hotelOrders = new ArrayList<HotelOrder>();
+    private TextView mEmptyTxv = null;
     
+    private ImageView mEmptyImv = null;
+
     private DataQuery mDataQuery;
 
 	private HotelOrderAdapter hotelOrderAdapter;
@@ -65,9 +77,17 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 	
 	private List<HotelOrder> orders = new ArrayList<HotelOrder>();
     
-    private int state;
+    private int fragmentState;
     
+    /**
+     * 需要查询状态的订单的buffer
+     */
+    private LinkedList<HotelOrder> ordersToQuery = new LinkedList<HotelOrder>();
     
+    /**
+     * 正在查询状态的订单列表
+     */
+    private LinkedList<HotelOrder> ordersQuerying = new LinkedList<HotelOrder>();
     
     private static final int STATE_LOADING = 1;
     private static final int STATE_LIST = 2;
@@ -101,10 +121,9 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         setListener();
         hotelOrderAdapter = new HotelOrderAdapter(mContext, orders);
         mResultLsv.setAdapter(hotelOrderAdapter);
-
-        mQueryingView.setVisibility(View.INVISIBLE);
-        mEmptyView.setVisibility(View.INVISIBLE);
-        mResultLsv.setVisibility(View.VISIBLE);
+        
+        mEmptyTxv.setText( mContext.getString(R.string.no_order) );
+        mEmptyImv.setBackgroundResource(R.drawable.bg_order_empty);
         
         return mRootView;
     }
@@ -113,8 +132,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     @Override
     public void dismiss() {
         super.dismiss();
-        if (hotelOrders != null) {
-            hotelOrders.clear();
+        if (orders != null) {
+        	orders.clear();
             if (hotelOrderAdapter != null) {
                 hotelOrderAdapter.notifyDataSetChanged();
             }
@@ -127,6 +146,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
+        mEmptyImv = (ImageView)mEmptyView.findViewById(R.id.icon_imv);
         mQueryingView = mRootView.findViewById(R.id.querying_view);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(v);
@@ -137,6 +157,9 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
             
             @Override
             public void onRefresh(boolean isHeader) {
+				if(isHeader){
+					return;
+				}
                 turnPage();
             }
         });
@@ -154,24 +177,37 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         
     }
     
+    private void loadOrdersIfEmpty(){
+        /**
+         * if fragment is previously closed, size of orders will be 0
+         * if fragment is opened and in stack
+         */
+        if(orders.size() == 0){
+            mQueryingView.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.INVISIBLE);
+            mResultLsv.setVisibility(View.INVISIBLE);
+        	new LoadThread(0, TKConfig.getPageSize()).start();
+        }
+    }
+    
     @Override
     public void onResume() {
         super.onResume();
         mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(mContext.getString(R.string.hotel_order));
         
-        if (mResultLsv.isFooterSpringback()) {
-            mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
-        }
+//       if (mResultLsv.isFooterSpringback()) {
+//       	mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
+//       }
         //fillOrderDb();
-        new LoadThread(0, 1000).start();
+        loadOrdersIfEmpty();
     }
     
-    public void fillOrderDb(){
+    private void fillOrderDb(){
     	HotelOrderTable table = new HotelOrderTable(mContext);
     	try {
     		long start = System.currentTimeMillis();
-    		List<HotelOrder> list = table.read(0, 100);
+    		List<HotelOrder> list = table.read(0, 30);
     		System.out.println("Time used for read: " + (System.currentTimeMillis()-start)/1000.0);
     		System.out.println("OrderDB count: " + list.size());
     		
@@ -200,7 +236,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     
     private void turnPage(){
         synchronized (this) {
-        	
+        	new LoadThread(orders.size(), TKConfig.getPageSize()).start();
         }
     }
 
@@ -231,7 +267,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
                 view = convertView;
             }
 
-            HotelOrder hotelOrder = new HotelOrder();
+            HotelOrder order = getItem(position);
             TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
             TextView priceTxv = (TextView) view.findViewById(R.id.price_txv);
             TextView roomTypeTxv = (TextView) view.findViewById(R.id.room_type_txv);
@@ -239,37 +275,131 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
             TextView checkoutDateTxv = (TextView) view.findViewById(R.id.checkout_date_txv);
             TextView dayCountView = (TextView) view.findViewById(R.id.day_count_txv);
 
+            nameTxv.setText(order.getHotelName());
+            priceTxv.setText("" + order.getTotalFee());
+            roomTypeTxv.setText(order.getRoomType());
+            checkinDateTxv.setText(formatOrderListItemMonthDay(order.getCheckinTime() ) );
+            checkoutDateTxv.setText(formatOrderListItemMonthDay(order.getCheckoutTime() ) );
+            dayCountView.setText(mContext.getString(R.string.hotel_total_nights, Integer.valueOf(order.getDayCount())));
+
             return view;
         }
+        
     }
 
+    private String formatOrderListItemMonthDay(long millis){
+    	Date date = new Date(millis);
+    	SimpleDateFormat dateformat=new SimpleDateFormat(mContext.getString(R.string.simple_month_day_format));
+		return dateformat.format(date);
+    }
+    
     @Override
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
-    }
-
-    @Override
-    public void onPostExecute(TKAsyncTask tkAsyncTask) {
-        super.onPostExecute(tkAsyncTask);
-        
+        LogWrapper.i(TAG, "onCancelled");
     }
     
-    Handler mHandler = new Handler(){
+    Handler mLoadOrderHandler = new Handler(){
 
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
+			System.out.println("Handle msg");
+			mResultLsv.onRefreshComplete(false);
+			
 			List<HotelOrder> ordersLoaded = (List<HotelOrder>) msg.obj;
-			if( ordersLoaded != null ){
-				System.out.println("Orders loaded: " + ordersLoaded.size());
+			int ordersSize = 0;
+			
+			synchronized (orders) {
 				orders.addAll(ordersLoaded);
+				ordersSize = orders.size();
+			}
+			
+			if(orderTotal > ordersSize){
+				mResultLsv.changeHeaderViewByState(false, SpringbackListView.PULL_TO_REFRESH);
+			}else{
+				mResultLsv.setFooterSpringback(false);
+			}
+			
+			if(ordersSize > 0){
+				mResultLsv.setVisibility(View.VISIBLE);
+				mQueryingView.setVisibility(View.INVISIBLE);
+				mEmptyView.setVisibility(View.INVISIBLE);
 				hotelOrderAdapter.notifyDataSetChanged();
+				launchStateQuery();
+			}else{
+				System.out.println("No orders");
+				mResultLsv.setVisibility(View.INVISIBLE);
+				mQueryingView.setVisibility(View.INVISIBLE);
+				mEmptyView.setVisibility(View.VISIBLE);
 			}
 			
 		}
     	
     };
+    
+    private static final int ORDER_STATE_QUREY_SIZE = 10;
+    
+    
+    /**
+     *  Get first at most {@code ORDER_STATE_QUREY_SIZE} orders from the list, put them into the query buffer
+     *  concate their ids
+     * @param ordersToStorage
+     * @return
+     */
+    private String prepareIds(){
+    	
+    	StringBuffer sb = new StringBuffer();
+    	
+    	synchronized (ordersToQuery) {
+    		synchronized (ordersQuerying) {
+    			
+    			for (int i=ordersQuerying.size(); 
+    					i<ORDER_STATE_QUREY_SIZE && ordersToQuery.size()>0; 
+    					i++) {
+    				HotelOrder order = ordersToQuery.removeFirst();
+    				ordersQuerying.add(order);
+    				if(i>0){
+    					sb.append("_");
+    				}
+    				sb.append(order.getId());
+    			}
+    		}
+    	}
+		return sb.toString();
+    	
+    }
+    
+    /**
+     * Set up state query
+     * @param ids
+     */
+    private void sendStateQuery(String ids){
+    	if(TextUtils.isEmpty(ids)){
+    		return;
+    	}
+    	HotelOrderOperation dataOperation = new HotelOrderOperation(mSphinx);
+    	Hashtable<String, String> criteria = new Hashtable<String, String>();
+    	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_QUERY);
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS, ids);
+    	dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null);
+    	mTkAsyncTasking = mSphinx.queryStart(dataOperation);
+    	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
+    }
+    
+    /**
+     * Launch make and launch state query from list {@code ordersQuerying}
+     */
+    private void launchStateQuery(){
 
+    	System.out.println("launchStateQuery");
+    	
+    	String ids = prepareIds();
+    	
+    	sendStateQuery(ids);
+        
+    }
+    
     /**
      * Thread used to load HotelOrder from database.
      * @author jiangshaui
@@ -290,16 +420,17 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 		@Override
         public void run(){
             Message msg = Message.obtain();
-            List<HotelOrder> orderList = null;
+            List<HotelOrder> ordersLoaded = null;
             HotelOrderTable table = null;
     		try {
     			table = new HotelOrderTable(mContext);
-    			long startTime = System.currentTimeMillis();
+    			
     			orderTotal = table.count();
-    			System.out.println("Count time: " + (System.currentTimeMillis()-startTime));
-    			startTime = System.currentTimeMillis();
-				orderList = table.read(startIndex, loadCount);
-    			System.out.println("Read time: " + (System.currentTimeMillis()-startTime));
+    			
+				ordersLoaded = table.read(startIndex, loadCount);
+    			
+    			checkOrderStateForQuery(ordersLoaded);
+ 
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (APIException e) {
@@ -310,8 +441,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 				}
 			}
         		
-            msg.obj = orderList;
-            mHandler.sendMessage(msg);
+            msg.obj = ordersLoaded;
+            mLoadOrderHandler.sendMessage(msg);
         }
 		
 
@@ -333,6 +464,159 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 		
     }// end LoadThread class
     
+    /**
+     * Add orders whoes state need querying to list {@code ordersToQuery}
+     * @param ordersLoaded
+     */
+    private void checkOrderStateForQuery(List<HotelOrder> ordersLoaded){
+    	
+		for (HotelOrder hotelOrder : ordersLoaded) {
+			int state = hotelOrder.getState();
+			switch (state) {
+				case HotelOrder.STATE_PROCESSING:	//订单处理中
+				case HotelOrder.STATE_SUCCESS:	//预订成功哦你
+					ordersToQuery.addLast(hotelOrder);
+					break;
+			}
+		}
+		System.out.println("OrdersToQuery size: " + ordersToQuery.size());
+    }
     
+	@Override
+	public void onPause() {
+		super.onPause();
+		if(mTkAsyncTasking != null){
+			mTkAsyncTasking.stop();
+		}
+	}
+
+    @Override
+    public void onPostExecute(TKAsyncTask tkAsyncTask) {
+        super.onPostExecute(tkAsyncTask);
+        System.out.println("onPostExecute");
+        
+        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+        
+
+        if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_NO, this, true)) {
+            return;
+        }
+        
+        final HotelOrderOperation hotelOrderOperation = (HotelOrderOperation)(tkAsyncTask.getBaseQuery());
+        HotelOrderStatesResponse response = (HotelOrderStatesResponse) hotelOrderOperation.getResponse();
+        List<Integer> states = response.getStates();
+        
+        LogWrapper.i(TAG, "Number of states get: " + states.size());
+        
+        String ids = baseQuery.getCriteria().get(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS);
+        updateOrderState(states, ids, ordersQuerying);
+        
+        /**
+         * Query remaining orders～
+         */
+        launchStateQuery();
+        
+    }
+    
+    private LinkedList<HotelOrder> ordersToUpdateToDB = new LinkedList<HotelOrder>();
+    
+    /**
+     * Update the states of the orders using states
+     * @param states
+     * @param ids
+     * @param orders
+     */
+    public void updateOrderState(List<Integer> states, String ids, List<HotelOrder> orders){
+    	
+    	updateOrderInMemory(states, ids, orders);
+    	
+    	new DBUpdateThread(ordersToUpdateToDB).start();
+    }
+	
+    /**
+     * Update orders in memory
+     * Put orders updated to {@code ordersToUpdateToDB} 
+     * @param states
+     * @param ids
+     * @param orders
+     */
+    private void updateOrderInMemory(List<Integer> states, String ids, List<HotelOrder> orders){
+
+        long stateUpdateTime = System.currentTimeMillis();
+    	String[] idArray = ids.split("_");
+
+    	// for each order get the its id position 
+    	// set the state and update time, put it into db thread
+    	synchronized (ordersQuerying) {
+    		synchronized (ordersToUpdateToDB) {
+    			
+    			for(int i=orders.size(); i>=0; i++){
+    				
+    				HotelOrder order = orders.get(i);
+    				
+    				//Get order id index and update order
+    				for (int j = 0, size=idArray.length; j < size; j++) {
+    					if(idArray[j].equals( order.getId()) ){
+    						if(states.get(j)!=HotelOrder.STATE_NONE && j<states.size()){
+    							order.setState(states.get(j));
+    							order.setStateUpdateTime(stateUpdateTime);
+    							ordersToUpdateToDB.addLast(order);
+    							ordersQuerying.remove(order);
+    						}
+    						break;
+    					}
+    					
+    				}//end j for
+    				
+    			}// end i for
+    			
+    		}//end sync
+		}
+    	
+    }// end updateOrderMemory
+    
+    /**
+     * Update the storage for orders whoes state is updated
+     * @param ordersToUpdateToDB
+     */
+    static public void updateOrderStorage(Context context, List<HotelOrder> ordersToUpdateToDB){
+    	
+    	HotelOrderTable table = null;
+    	try {
+    		table = new HotelOrderTable(context);
+    		for (HotelOrder order : ordersToUpdateToDB) {
+    			table.update(order);
+    		}
+    	} catch (Exception e) {
+    	}finally{
+    		if(table!=null){
+    			table.close();
+    		}
+    	}
+    }// end updateOrderStorage
+    
+    private class DBUpdateThread extends Thread{
+
+    	private List<HotelOrder> ordersToStorage;
+    	
+		public DBUpdateThread(List<HotelOrder> ordersToUpdateToDB) {
+			super();
+			this.ordersToStorage = ordersToUpdateToDB;
+		}
+
+		@Override
+		public void run() {
+			
+			if(ordersToStorage !=null){
+				LogWrapper.i(TAG, "Update thread");
+				synchronized (ordersToStorage) {
+					updateOrderStorage(mContext, ordersToStorage);
+					ordersToStorage.clear();
+				}
+			}
+			
+		}//end run
+    	
+    }//end DBUpdateThread
     
 }
