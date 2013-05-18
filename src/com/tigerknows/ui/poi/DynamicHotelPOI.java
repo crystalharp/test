@@ -141,8 +141,8 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
     //FIXME:这个函数用不到了
     public void setDate() {
         if (mSphinx.uiStackContains(R.id.view_hotel_home)) {
-            this.checkin = mSphinx.getHotelHomeFragment().getCheckin();
-            this.checkout = mSphinx.getHotelHomeFragment().getCheckout();
+            checkin = mSphinx.getHotelHomeFragment().getCheckin();
+            checkout = mSphinx.getHotelHomeFragment().getCheckout();
         } else {
             checkin = Calendar.getInstance();
             checkin.setTimeInMillis(System.currentTimeMillis());
@@ -200,8 +200,8 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         
         
         List<HotelTKDrawable> b = mHotel.getHotelTKDrawableList();
-        LogWrapper.d("conan", "HotelTKDrawable:" + b);
         hotelSummary.setText(mHotel.getService());
+        //FIXME:如何获取这个Image?
         Drawable hotelImageDraw = b.get(0).getTKDrawable().loadDrawable(mSphinx, null, mPOIDetailFragment.toString());
         hotelImage.setBackgroundDrawable(hotelImageDraw);
         
@@ -275,6 +275,7 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
     @Override
     public boolean checkExistence(POI poi) {
         List<DynamicPOI> list = poi.getDynamicPOIList();
+        mHotel = poi.getHotel();
         for (int i = 0, size = list.size(); i < size; i++) {
             DynamicPOI iter = list.get(i);
             if (iter.getType().equals(DynamicPOI.TYPE_HOTEL)) {
@@ -287,6 +288,7 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
     public List<BaseQuery> generateQuery(POI poi) {
         mPOI = poi;
         List<BaseQuery> baseQueryList = new LinkedList<BaseQuery>();
+        setDate();
         if (mHotel == null) {
             LogWrapper.d("conan", "hotel is null.");
             BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Hotel.NEED_FILED_LIST);

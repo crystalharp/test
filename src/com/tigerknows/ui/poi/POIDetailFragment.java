@@ -385,6 +385,17 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         POIList.clear();
     }
     
+    private void refreshDynamicPOI(List<DynamicPOIViewBlock> POIList){
+        for (DynamicPOIViewBlock iter : POIList) {
+            iter.clear();
+        }
+        Collections.sort(POIList, new DPOICompare());
+        LogWrapper.d("conan", "refreshPOIList:" + POIList);
+        for (DynamicPOIViewBlock iter : POIList){
+            iter.show();
+        }
+    }
+    
     public interface DPOIViewInitializer<T> {
         public T init(POIDetailFragment poiFragment, LayoutInflater inflater, LinearLayout belongsLayout, DynamicPOI data);
     }
@@ -414,7 +425,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		}
 
         void clear(){
-		    mBelongsLayout.removeView(mOwnLayout);
+            if (mBelongsLayout.indexOfChild(mOwnLayout) != -1) {
+                mBelongsLayout.removeView(mOwnLayout);
+            }
 //			needToShow = false;
 		}
     }
@@ -1248,7 +1261,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             
             //判断是否存在hotel信息
             if (mDynamicHotelPOI.checkExistence(mPOI)) {
-                mDynamicHotelPOI.setDate();
                 baseQueryList.addAll(mDynamicHotelPOI.generateQuery(mPOI));
             }
 //            LogWrapper.d("conan", "POIDetailFragment.baseQueryList:" + baseQueryList);
@@ -1549,7 +1561,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                             //FIXME:移走
                             Hotel hotel = poi.getHotel();
-                            clearDynamicPOI(DPOIViewBlockList);
                             try {
                                 if (hotel == null) {
                                     poi.init(onlinePOI.getData(), false);
@@ -1563,7 +1574,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 //                            List<Hotel> dataList = new LinkedList<Hotel>();
 //                            dataList.add(hotel);
 //                            DPOIViewBlockList.addAll(mDynamicHotelPOI.getViewList(dataList));
-                            showDynamicPOI(DPOIViewBlockList);
+                            refreshDynamicPOI(DPOIViewBlockList);
                         } else {
                             poi.updateData(mSphinx, onlinePOI.getData());
                             poi.setFrom(POI.FROM_ONLINE);
