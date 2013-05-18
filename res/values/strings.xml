@@ -939,6 +939,7 @@
     
     <string name="hotel_btn_book">预订</string>
     <string name="hotel_btn_sold_out">售完</string>
+    <string name="fold">收起</string>
     <string name="summary">简介</string>
     <string name="price_show">￥%1$s</string>
     <string name="hotel_room_title">订单填写</string>

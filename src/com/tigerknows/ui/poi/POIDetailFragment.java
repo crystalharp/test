@@ -76,12 +76,8 @@ import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Yingxun;
 import com.tigerknows.model.Zhanlan;
-import com.tigerknows.model.DataOperation.FendianQueryResponse;
 import com.tigerknows.model.DataOperation.POIQueryResponse;
-import com.tigerknows.model.DataOperation.TuangouQueryResponse;
-import com.tigerknows.model.DataOperation.YanchuQueryResponse;
 import com.tigerknows.model.DataOperation.YingxunQueryResponse;
-import com.tigerknows.model.DataOperation.ZhanlanQueryResponse;
 import com.tigerknows.model.DataQuery.CommentResponse;
 import com.tigerknows.model.DataQuery.DianyingResponse;
 import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
@@ -91,9 +87,6 @@ import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.hotel.HotelHomeFragment;
-import com.tigerknows.ui.hotel.HotelOrderWriteFragment;
-import com.tigerknows.ui.poi.POIDetailFragment.DPOIType;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ShareTextUtil;
 import com.tigerknows.util.WidgetUtils;
@@ -178,12 +171,12 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     private TextView mTelephoneTxv = null;
     
     private View mCommentTipView;
-    
-    private LinearLayout mDynamicTuanguoListView;
-    
-    private LinearLayout mDynamicYanchuListView;
-    
-    private LinearLayout mDynamicZhanlanListView;
+//    
+//    private LinearLayout mDynamicTuanguoListView;
+//    
+//    private LinearLayout mDynamicYanchuListView;
+//    
+//    private LinearLayout mDynamicZhanlanListView;
     
     private LinearLayout mDynamicDianyingView;
     
@@ -193,17 +186,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     private LinearLayout mDynamicDianyingMoreView;
     
-    //TODO:删掉
-    Calendar checkin = Calendar.getInstance();
-    Calendar checkout = Calendar.getInstance();
-    RoomType mClickedRoomType;
-    Button mClickedBookBtn;
-    
     DynamicNormalPOI mDynamicNormalPOI;
     
     DynamicHotelPOI mDynamicHotelPOI;
     
-    private LinearLayout mDynamicHotelUpperView;
+//    private LinearLayout mDynamicHotelUpperView;
     
     private boolean mShowDynamicDianyingMoreView = true;
     
@@ -531,10 +518,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         mDynamicHotelPOI = DynamicHotelPOI.getInstance(this, mLayoutInflater);
         
-        //TODO:以后不要了
-        checkin.setTimeInMillis(System.currentTimeMillis());
-        checkout.setTimeInMillis(System.currentTimeMillis());
-        checkout.add(Calendar.DAY_OF_YEAR, 1);
         return mRootView;
     }
 
@@ -1265,7 +1248,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             
             //判断是否存在hotel信息
             if (mDynamicHotelPOI.checkExistence(mPOI)) {
-                mDynamicHotelPOI.setData(mPOI.getHotel(), checkin, checkout);
+                mDynamicHotelPOI.setDate();
                 baseQueryList.addAll(mDynamicHotelPOI.generateQuery(mPOI));
             }
 //            LogWrapper.d("conan", "POIDetailFragment.baseQueryList:" + baseQueryList);

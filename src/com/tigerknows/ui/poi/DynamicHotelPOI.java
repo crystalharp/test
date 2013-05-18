@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -106,6 +107,24 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         mLowerBlock.mOwnLayout = mInflater.inflate(R.layout.poi_dynamic_hotel_below_feature, null);
         findViews();
         roomTypeList = new LinearListView(mSphinx, mDynamicRoomTypeListView, i, R.layout.poi_dynamic_hotel_room_item);
+        
+        mDynamicRoomTypeMoreView.setOnClickListener(new View.OnClickListener() {
+            
+            boolean mShowingAll = false;
+            @Override
+            public void onClick(View v) {
+                TextView txv = (TextView) mDynamicRoomTypeMoreView.findViewById(R.id.more_txv);
+                if (mShowingAll) {
+                    roomTypeList.refreshList(mShowingRoomList);
+                    txv.setText(mSphinx.getString(R.string.more));
+                    mShowingAll = false;
+                } else {
+                    roomTypeList.refreshList(mAllRoomList);
+                    txv.setText(mSphinx.getString(R.string.fold));
+                    mShowingAll = true;
+                }
+            }
+        });
     }
     
     void findViews(){
@@ -113,17 +132,23 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         mDynamicRoomTypeMoreView = (LinearLayout) mUpperBlock.mOwnLayout.findViewById(R.id.dynamic_roomtype_more_view);
         hotelImage = (ImageView)mLowerBlock.mOwnLayout.findViewById(R.id.icon_imv);
         hotelSummary = (TextView)mLowerBlock.mOwnLayout.findViewById(R.id.short_summary);
+        mDynamicRoomTypeMoreView = (LinearLayout) mUpperBlock.mOwnLayout.findViewById(R.id.dynamic_roomtype_more_view);
 //        mDynamicHotelChooseTimeView = (LinearLayout) mRootView.findViewById(R.id.dynamic_hotel_choosetime_view);
         mCheckInDat = (DateWidget) mUpperBlock.mOwnLayout.findViewById(R.id.checkin_dat);
         mCheckOutDat = (DateWidget) mUpperBlock.mOwnLayout.findViewById(R.id.checkout_dat);
     }
     
-    public void setData(Hotel hotel, Calendar in, Calendar out){
-        //FIXME:如何正确的设置这个时间?
-        this.checkin = mSphinx.getHotelHomeFragment().getCheckin();
-        this.checkout = mSphinx.getHotelHomeFragment().getCheckout();
-        mHotel = hotel;
-        refreshDate();
+    //FIXME:这个函数用不到了
+    public void setDate() {
+        if (mSphinx.uiStackContains(R.id.view_hotel_home)) {
+            this.checkin = mSphinx.getHotelHomeFragment().getCheckin();
+            this.checkout = mSphinx.getHotelHomeFragment().getCheckout();
+        } else {
+            checkin = Calendar.getInstance();
+            checkin.setTimeInMillis(System.currentTimeMillis());
+            checkout = (Calendar) checkin.clone();
+            checkout.add(Calendar.DAY_OF_YEAR, 1);
+        }
     }
     
     public void refreshDate() {
@@ -142,6 +167,7 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
             return null;
         }
         mHotel = dataList.get(0);
+        refreshDate();
 
         mAllRoomList.clear();
         mShowingRoomList.clear();
@@ -153,8 +179,10 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
             for(int i = 0; i < SHOW_DYNAMIC_HOTEL_MAX; i++) {
                 mShowingRoomList.add(mAllRoomList.get(i));
             }
+            mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
         } else {
             mShowingRoomList.addAll(mAllRoomList);
+            mDynamicRoomTypeMoreView.setVisibility(View.GONE);
         }
         roomTypeList.refreshList(mShowingRoomList);
         
@@ -172,10 +200,14 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         
         
         List<HotelTKDrawable> b = mHotel.getHotelTKDrawableList();
-//        hotelSummary.setText(mHotel.get);
+        LogWrapper.d("conan", "HotelTKDrawable:" + b);
+        hotelSummary.setText(mHotel.getService());
+        Drawable hotelImageDraw = b.get(0).getTKDrawable().loadDrawable(mSphinx, null, mPOIDetailFragment.toString());
+        hotelImage.setBackgroundDrawable(hotelImageDraw);
         
         List<DynamicPOIViewBlock> blockList = new LinkedList<DynamicPOIViewBlock>();
         blockList.add(mUpperBlock);
+        blockList.add(mLowerBlock);
         return blockList;
     }
 
@@ -256,9 +288,11 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         mPOI = poi;
         List<BaseQuery> baseQueryList = new LinkedList<BaseQuery>();
         if (mHotel == null) {
+            LogWrapper.d("conan", "hotel is null.");
             BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Hotel.NEED_FILED_LIST);
             baseQueryList.add(baseQuery);
         } else if (mHotel != null && mHotel.getRoomTypeList() == null) {
+            LogWrapper.d("conan", "hotel.roomtype is null.");
             BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL);
             baseQueryList.add(baseQuery);
         }
