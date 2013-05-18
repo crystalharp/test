@@ -130,7 +130,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_code_empty_tip));
         		return;
         	}else if(!ValidateUtil.isValidCreditCard(str)){
-        		Utility.showDialogAcitvity(mSphinx, mSphinx.getString(R.string.credit_code_format));
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_code_format));
         		return;
         	}
         	list.add(str);
@@ -171,6 +171,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_certcard_number_format));
         		return;
         	}
+        	list.add(str);
         	mSphinx.getHotelOrderWriteFragment().setCredit(list);
         	break;
         default:

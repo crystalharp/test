@@ -88,12 +88,7 @@ public class ValidateUtil {
 		 */
 		
 		// 依产品需求，按艺龙酒店的限制操作
-		Pattern pattern = Pattern.compile("[\\u002fA-Za-z\\u4e00-\\u9fbf]");
-        Matcher matcher = pattern.matcher(name);
-        while (!matcher.find()) {  
-        	return false;
-        }
-        return true;
+		return Pattern.compile("^[\\u002fA-Za-z\\u4e00-\\u9fbf]+$").matcher(name).matches();
 	}
 	
 	public static boolean isValidCertCode(String code){
