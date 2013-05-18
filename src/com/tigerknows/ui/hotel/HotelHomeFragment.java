@@ -39,6 +39,7 @@ import android.widget.Toast;
 import android.widget.PopupWindow.OnDismissListener;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -472,5 +473,13 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         DateListView dateListView = getDateListView();
         mCheckInDat.setCalendar(dateListView.getCheckin());
         mCheckOutDat.setCalendar(dateListView.getCheckout());
+    }
+    
+    public Calendar getCheckin(){
+        return mCheckInDat.getCalendar();
+    }
+    
+    public Calendar getCheckout(){
+        return mCheckOutDat.getCalendar();
     }
 }

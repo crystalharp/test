@@ -721,16 +721,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         List<Hotel> list = new LinkedList<Hotel>();
         list.add(poi.getHotel());
         DPOIViewBlockList.addAll(mDynamicHotelPOI.getViewList(list));
-                
-        //TODO:下面的简介和图片, 延迟做
-//        View a = mLayoutInflater.inflate(R.layout.poi_dynamic_hotel_below_feature, null);
-//        mDynamicHotelLowerView.addView(a);
-//        
-//        ImageView hotelImage = (ImageView)a.findViewById(R.id.icon_imv);
-//        TextView hotelSummary = (TextView)a.findViewById(R.id.short_summary);
-//        
-//        List<HotelTKDrawable> b = poi.getHotel().getHotelTKDrawableList();
-//        hotelSummary.setText(poi.getHotel().get);
     }
     /**
      * 刷新动态电影的显示区域（仅电影院类POI）
@@ -798,7 +788,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 child.setTag(data);
                 child.setOnClickListener(mDynamicPOIListener);
                 if (data instanceof DynamicPOI) {
-                    initDynamicPOIItemView((DynamicPOI)data, child);
+//                    initDynamicPOIItemView((DynamicPOI)data, child);
                 } else if (data instanceof Dianying) {
                     initDianyingItemView((Dianying)data, child);
                 }
@@ -819,18 +809,18 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * @param data
      * @param view
      */
-    void initDynamicPOIItemView(DynamicPOI data, View view) {
-        ImageView iconImv = (ImageView) view.findViewById(R.id.icon_imv);
-        TextView textTxv = (TextView) view.findViewById(R.id.text_txv);
-        if (BaseQuery.DATA_TYPE_TUANGOU.equals(data.getType())) {
-            iconImv.setImageResource(R.drawable.ic_dynamicpoi_tuangou);
-        } else if (BaseQuery.DATA_TYPE_YANCHU.equals(data.getType())) {
-            iconImv.setImageResource(R.drawable.ic_dynamicpoi_yanchu);
-        } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(data.getType())) {
-            iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
-        }
-        textTxv.setText(data.getSummary());
-    }
+//    void initDynamicPOIItemView(DynamicPOI data, View view) {
+//        ImageView iconImv = (ImageView) view.findViewById(R.id.icon_imv);
+//        TextView textTxv = (TextView) view.findViewById(R.id.text_txv);
+//        if (BaseQuery.DATA_TYPE_TUANGOU.equals(data.getType())) {
+//            iconImv.setImageResource(R.drawable.ic_dynamicpoi_tuangou);
+//        } else if (BaseQuery.DATA_TYPE_YANCHU.equals(data.getType())) {
+//            iconImv.setImageResource(R.drawable.ic_dynamicpoi_yanchu);
+//        } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(data.getType())) {
+//            iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
+//        }
+//        textTxv.setText(data.getSummary());
+//    }
     
     /**
      * 初始化电影列表项的内容
@@ -1273,7 +1263,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             refreshComment();
             showDynamicPOI(DPOIViewBlockList);
             
-            //FIXME:如何判断？
             //判断是否存在hotel信息
             if (mDynamicHotelPOI.checkExistence(mPOI)) {
                 mDynamicHotelPOI.setData(mPOI.getHotel(), checkin, checkout);

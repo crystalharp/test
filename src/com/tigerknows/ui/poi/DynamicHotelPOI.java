@@ -9,6 +9,7 @@ import java.util.List;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,12 +21,15 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Hotel;
+import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
 import com.tigerknows.model.ProxyQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Hotel.RoomType;
+import com.tigerknows.ui.hotel.DateListView;
+import com.tigerknows.ui.hotel.DateWidget;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
@@ -53,12 +57,15 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
     private LinearLayout mDynamicRoomTypeMoreView;
     
     LinearListView roomTypeList;
+    ImageView hotelImage;
+    TextView hotelSummary;
+    private DateWidget mCheckInDat;
+    private DateWidget mCheckOutDat;
     
     ItemInitializer i = new ItemInitializer(){
 
         @Override
         public void initItem(Object data, View v) {
-            // TODO Auto-generated method stub
             RoomType roomType = (RoomType)data;
             TextView priceTxv = (TextView) v.findViewById(R.id.price_txv);
             TextView roomTypeTxv = (TextView) v.findViewById(R.id.room_type_txv);
@@ -104,14 +111,25 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
     void findViews(){
         mDynamicRoomTypeListView = (LinearLayout) mUpperBlock.mOwnLayout.findViewById(R.id.dynamic_roomtype_list_view);
         mDynamicRoomTypeMoreView = (LinearLayout) mUpperBlock.mOwnLayout.findViewById(R.id.dynamic_roomtype_more_view);
+        hotelImage = (ImageView)mLowerBlock.mOwnLayout.findViewById(R.id.icon_imv);
+        hotelSummary = (TextView)mLowerBlock.mOwnLayout.findViewById(R.id.short_summary);
 //        mDynamicHotelChooseTimeView = (LinearLayout) mRootView.findViewById(R.id.dynamic_hotel_choosetime_view);
-//        mDynamicHotelLowerView = (LinearLayout) mRootView.findViewById(R.id.layout_below_feature);
+        mCheckInDat = (DateWidget) mUpperBlock.mOwnLayout.findViewById(R.id.checkin_dat);
+        mCheckOutDat = (DateWidget) mUpperBlock.mOwnLayout.findViewById(R.id.checkout_dat);
     }
     
     public void setData(Hotel hotel, Calendar in, Calendar out){
-        this.checkin = in;
-        this.checkout = out;
+        //FIXME:如何正确的设置这个时间?
+        this.checkin = mSphinx.getHotelHomeFragment().getCheckin();
+        this.checkout = mSphinx.getHotelHomeFragment().getCheckout();
         mHotel = hotel;
+        refreshDate();
+    }
+    
+    public void refreshDate() {
+//        DateListView dateListView = getDateListView();
+        mCheckInDat.setCalendar(checkin);
+        mCheckOutDat.setCalendar(checkout);
     }
     
     @Override
@@ -151,12 +169,16 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
 //            }
 //        }
         
+        
+        
+        List<HotelTKDrawable> b = mHotel.getHotelTKDrawableList();
+//        hotelSummary.setText(mHotel.get);
+        
         List<DynamicPOIViewBlock> blockList = new LinkedList<DynamicPOIViewBlock>();
         blockList.add(mUpperBlock);
         return blockList;
     }
 
-    //TODO:移走
     class roomTypeClickListener implements View.OnClickListener{
         
         @Override
@@ -203,7 +225,6 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
     }
     @Override
     public void msgReceived(Sphinx mSphinx, BaseQuery query, Response response) {
-        // TODO Auto-generated method stub
         if (response instanceof RoomTypeDynamic) {
             RoomTypeDynamic roomInfo = ((RoomTypeDynamic)response);
             if (roomInfo.getNum() > 0){
