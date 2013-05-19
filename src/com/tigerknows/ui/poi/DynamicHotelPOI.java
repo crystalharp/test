@@ -32,6 +32,8 @@ import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.ui.hotel.DateListView;
 import com.tigerknows.ui.hotel.DateWidget;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
+import com.tigerknows.ui.hotel.HotelImageGridFragment;
+import com.tigerknows.ui.hotel.HotelIntroFragment;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.widget.LinearListView;
@@ -201,9 +203,28 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         
         List<HotelTKDrawable> b = mHotel.getHotelTKDrawableList();
         hotelSummary.setText(mHotel.getService());
+        hotelSummary.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				LogWrapper.d("conan", "hotelSummary clicked");
+//				HotelIntroFragment hotelIntro = mSphinx.getHotelIntroFragment();
+				mSphinx.showView(R.id.view_hotel_intro);
+			}
+		});
         //FIXME:如何获取这个Image?
-        Drawable hotelImageDraw = b.get(0).getTKDrawable().loadDrawable(mSphinx, null, mPOIDetailFragment.toString());
-        hotelImage.setBackgroundDrawable(hotelImageDraw);
+//        Drawable hotelImageDraw = b.get(0).getTKDrawable().loadDrawable(mSphinx, null, mPOIDetailFragment.toString());
+//        hotelImage.setBackgroundDrawable(hotelImageDraw);
+        hotelImage.setImageResource(R.drawable.icon);
+        hotelImage.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				LogWrapper.d("conan", "hotelImage clicked");
+//				HotelImageGridFragment hotelImageGrid = mSphinx.getHotelImageGridFragment();
+				mSphinx.showView(R.id.view_hotel_image_grid);
+			}
+		});
         
         List<DynamicPOIViewBlock> blockList = new LinkedList<DynamicPOIViewBlock>();
         blockList.add(mUpperBlock);

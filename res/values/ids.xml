@@ -78,4 +78,6 @@
     <item type="id" name="view_hotel_order_detail" />
     <item type="id" name="view_hotel_seveninn_regist"/>
     <item type="id" name="view_hotel_order_list"/>
+    <item type="id" name="view_hotel_image_grid"/>
+    <item type="id" name="view_hotel_intro"/>
 </resources>
