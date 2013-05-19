@@ -164,13 +164,13 @@ public class TKConfig {
     /**
      * 网络请求参数中的客户端软件版本
      */
-    private static String sCLIENT_SOFT_VERSION = "4.50.20130515A";
+    private static String sCLIENT_SOFT_VERSION = "5.00.20130515A";
     
     /**
      * 关于我们界面中的客户端软件发布版本
      */
     
-    public static final String CLIENT_SOFT_VERSION = "4.50.alpha1";
+    public static final String CLIENT_SOFT_VERSION = "5.00.rc1";
     /**
      * 关于我们界面中的客户端软件发布日期
      */
