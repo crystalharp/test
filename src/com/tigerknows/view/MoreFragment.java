@@ -91,6 +91,8 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     public static final int MESSAGE_TYPE_COMMENT = 4;
     private int mMessageType = MESSAGE_TYPE_NONE;
     
+    private boolean addedGoCommentTimes = false;
+    
     private DiaoyanQueryResponse mDiaoyanQueryResponse;
     
     public static DownloadCity CurrentDownloadCity;
@@ -147,11 +149,11 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         mMenuFragment.display();
         
         refreshUserEntrance();
-        refreshMoreBtn(false);
+        refreshMoreBtn();
         refreshCity(Globals.g_Current_City_Info.getCName());
     }
     
-    public void refreshMoreBtn(boolean isCreate) {
+    public void refreshMoreBtn() {
         
         setFragmentMessage(MESSAGE_TYPE_NONE);
         
@@ -204,12 +206,14 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         String commentTip = TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP);
         if (!TextUtils.isEmpty(commentTip)) {
             showCommentTipTimes = Integer.parseInt(commentTip);
-            if (isCreate) {
+            if (addedGoCommentTimes == false) {
+                addedGoCommentTimes = true;
                 showCommentTipTimes++;
                 TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(showCommentTipTimes));
             }
         } else {
-            if (isCreate) {
+            if (addedGoCommentTimes == false) {
+                addedGoCommentTimes = true;
                 TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(0));
             }
         }

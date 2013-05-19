@@ -282,7 +282,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         filter.setSelected(true);
         
         if (callBack != null) {
-            ActionLog.getInstance(getContext()).addAction(actionTag, ActionLog.FilterDo, filter.getFilterOption().getName(), DataQuery.makeFilterRequest(this.filterList));
+            ActionLog.getInstance(getContext()).addAction(actionTag + ActionLog.FilterDo, filter.getFilterOption().getName(), DataQuery.makeFilterRequest(this.filterList));
             callBack.doFilter(filter.getFilterOption().getName());
         }
     }

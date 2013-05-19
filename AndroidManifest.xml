@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.tigerknows" android:installLocation="auto"
-      android:versionName="4.50.20130515A" android:versionCode="450">
+      android:versionName="5.00.20130515A" android:versionCode="500">
       <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"></uses-permission>
       <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
       <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
@@ -312,7 +312,10 @@
         </activity>
 
         <meta-data android:name="TD_APP_ID" android:value="01311C44FE74E468F73E72C43CD1B60D"/>
+        <!--老虎宝典测试 68DDE7CB7E1AC79BA446D291FFAB79B0 -->
+        <!--老虎宝典 01311C44FE74E468F73E72C43CD1B60D -->
         <meta-data android:name="TD_CHANNEL_ID" android:value="ANDTKWWW"/>
+        <!-- ANDTKWWW tieshusai jiangzhenzhen lidaobei edeni dongjuan peiguojuan liujiahe -->
     </application>
     <supports-screens android:anyDensity="true" android:resizeable="true" android:largeScreens="true" android:smallScreens="true"></supports-screens>
     <uses-sdk android:minSdkVersion="5" />

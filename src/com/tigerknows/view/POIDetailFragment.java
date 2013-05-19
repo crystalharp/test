@@ -1143,6 +1143,32 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         
         // 检查是否包含电影的动态信息
+        DataQuery dataQuery = checkDianying(poi);
+        if (dataQuery != null) {
+            baseQueryList.add(dataQuery);
+        }
+        refreshDetail();
+        refreshComment();
+        if (baseQueryList.isEmpty() == false) {
+            mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
+            mBaseQuerying = baseQueryList;
+            mLoadingView.setVisibility(View.VISIBLE);
+        } else {
+            mLoadingView.setVisibility(View.GONE);
+        }
+        
+        String category = poi.getCategory().trim();
+        poi.updateHistory(mSphinx);
+        mActionLog.addAction(ActionLog.POIDetailShow, poi.getUUID(), poi.getName(), TextUtils.isEmpty(category) ? "NULL" : category.split(" ")[0]);
+        mDoingView.setVisibility(View.GONE);
+    }
+    
+    private DataQuery checkDianying(POI poi) {
+        DataQuery dataQuery = null;
+        if (poi == null) {
+            return dataQuery;
+        }
+        // 检查是否包含电影的动态信息
         boolean isContainDianying = false;
         List<DynamicPOI> list = poi.getDynamicPOIList();
         if (list != null) {
@@ -1164,24 +1190,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     Dianying.NEED_FILELD_POI_DETAIL);
             criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
                    Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]");
-            DataQuery dataQuery = new DataQuery(mSphinx);
+            dataQuery = new DataQuery(mSphinx);
             dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null, false, false, poi);
-            baseQueryList.add(dataQuery);
-        }
-        refreshDetail();
-        refreshComment();
-        if (baseQueryList.isEmpty() == false) {
-            mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
-            mBaseQuerying = baseQueryList;
-            mLoadingView.setVisibility(View.VISIBLE);
-        } else {
-            mLoadingView.setVisibility(View.GONE);
         }
         
-        String category = poi.getCategory().trim();
-        poi.updateHistory(mSphinx);
-        mActionLog.addAction(ActionLog.POIDetailShow, poi.getUUID(), poi.getName(), TextUtils.isEmpty(category) ? "NULL" : category.split(" ")[0]);
-        mDoingView.setVisibility(View.GONE);
+        return dataQuery;
     }
     
     private void makeFeature(ViewGroup viewGroup) {
@@ -1476,6 +1489,15 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             poi.setFrom(POI.FROM_ONLINE);
                             refreshDetail();
                             refreshComment();
+                            
+                            DataQuery dataQuery = checkDianying(poi);
+                            if (dataQuery != null) {
+                                List<BaseQuery> list = new ArrayList<BaseQuery>();
+                                list.add(dataQuery);
+                                mLoadingView.setVisibility(View.VISIBLE);
+                                mTkAsyncTasking = mSphinx.queryStart(list);
+                                mBaseQuerying = list;
+                            }
                         }
                     }
                     

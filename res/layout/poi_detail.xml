@@ -75,7 +75,9 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" 
             android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:background="@drawable/bg_weixin_send"
+            android:padding="8dp">
             
             <Button android:id="@+id/weixin_btn" 
                 android:layout_width="fill_parent" 
@@ -114,7 +116,10 @@
             <LinearLayout
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:paddingLeft="20dp"
+                android:paddingTop="8dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="8dp"
                 android:orientation="vertical"
                 android:gravity="left|top"
                 android:background="@color/white"
@@ -325,7 +330,7 @@
                         android:text="@string/more_dianying"
                         android:textSize="16sp"
                         android:textColor="@color/black_middle"
-                        android:drawableRight="@drawable/icon_arrow_right" />
+                        android:drawableRight="@drawable/icon_arrow_down" />
                 </LinearLayout>
             </LinearLayout>
                 

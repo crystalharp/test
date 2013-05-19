@@ -899,7 +899,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mUIStack.clear();
         getTitleFragment();
         getMenuFragment();
-        getMoreFragment().refreshMoreBtn(true);
+        getMoreFragment().refreshMoreBtn();
         showView(R.id.view_home);
         
         mMenuView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -1178,7 +1178,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         ActivityManager am = (ActivityManager)getSystemService(
                 Context.ACTIVITY_SERVICE);
         am.restartPackage("com.tigerknows");
-        Process.killProcess(Process.myPid());
+//        Process.killProcess(Process.myPid());
 //        Debug.stopMethodTracing();
 	}
 	/**
@@ -1209,7 +1209,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         public void onReceive(Context context, Intent intent) { 
             if (intent != null
                     && intent.hasExtra(MapStatsService.EXTRA_DOWNLOAD_CITY)) {
-                getMoreFragment().refreshMoreBtn(false);
+                getMoreFragment().refreshMoreBtn();
             }
         }
     };
@@ -1655,7 +1655,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             int sourceViewId = intent.getIntExtra(BaseActivity.SOURCE_VIEW_ID, R.id.view_invalid);
             if (sourceViewId == R.id.activity_poi_comment) {
                 TKConfig.setPref(this, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(MoreFragment.SHOW_COMMENT_TIP_TIMES));
-                getMoreFragment().refreshMoreBtn(false);
+                getMoreFragment().refreshMoreBtn();
                 mHandler.post(mOnNewIntentStamp);
             
             // 登录之后的返回
@@ -1924,14 +1924,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 if (bootstrapModel != null) {
                     Globals.g_Bootstrap_Model = bootstrapModel;
                 }
-                getMoreFragment().refreshMoreBtn(false);
+                getMoreFragment().refreshMoreBtn();
             } else if (baseQuery instanceof DataOperation) {
             	Response response = baseQuery.getResponse();
             	if (response instanceof DiaoyanQueryResponse) {
             		DiaoyanQueryResponse diaoyanQueryResponse = (DiaoyanQueryResponse) response;
             		if (diaoyanQueryResponse.getHasSurveyed() != 1) {
             			getMoreFragment().setDiaoyanQueryResponse(diaoyanQueryResponse);
-            			getMoreFragment().refreshMoreBtn(false);
+            			getMoreFragment().refreshMoreBtn();
             		}
             	}
             }
@@ -3091,7 +3091,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                                 if (baseFragment != null) {
                                                     baseFragment.dismissPopupWindow();
                                                 }
-                                                uiStackClose(new int[]{R.id.view_home});
+                                                uiStackClose(null);
                                                 showView(R.id.view_home);
                                                 changeCity(locationCity);
                                                 mHandler.post(new Runnable() {

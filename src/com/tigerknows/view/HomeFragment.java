@@ -310,6 +310,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onPause() {
         super.onPause();
+        mDragView.setVisibility(View.GONE);
     }
 
     protected void findViews() {
