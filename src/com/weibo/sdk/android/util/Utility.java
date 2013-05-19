@@ -495,13 +495,13 @@ public class Utility {
 					}
                     break;
                 }
-                catch( OutOfMemoryError e ) {
+                catch( OutOfMemoryError e1 ) {
                     e.printStackTrace();
                     optsTmp.inSampleSize *= 2;
                     try {
 						input.close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
                 }
                 catch (FileNotFoundException e) {
