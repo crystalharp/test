@@ -1,5 +1,6 @@
 package com.tigerknows.widget;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import android.view.LayoutInflater;
@@ -24,7 +25,7 @@ import com.tigerknows.model.POI.DynamicPOI;
  * 会不会导致什么问题.
  * refreshList相当于ListView中修改了数据,然后notifyChanged.
  * 
- * 待优化,用对象缓冲池来解决child重复创建的问题.
+ * CackeableView是带有标记的View，目的是用对象缓冲池来解决child重复创建的问题.
  */
 public class LinearListView {
 
@@ -33,6 +34,8 @@ public class LinearListView {
     LinearLayout parentLayout;
     LayoutInflater mLayoutInflater;
     int mItemResId;
+    //每个LinearListView对象配有一个缓冲池，用来缓冲item的view对象
+    List<CacheableView> viewPool = new LinkedList<CacheableView>();
     
     public LinearListView(Sphinx sphinx, LinearLayout parent, ItemInitializer i, int itemResId){
         this.initer = i;
@@ -48,46 +51,28 @@ public class LinearListView {
     }
     
     public void refreshList(List list) {
-//        int childCount = contains.getChildCount();
-//        int viewCount = 0;
         int dataSize = (list != null ? list.size() : 0);
         parentLayout.removeAllViews();
-//        LogWrapper.d("conan", "LinearListView.refresh:" + list);
+//        List<View> tmp = new LinkedList<View>();
+//        tmp.clear();
+        for (CacheableView iter : viewPool) {
+        	iter.showing = false;
+        }
         if(dataSize == 0){
             return;
         }else{
-//            contains.setVisibility(View.VISIBLE);
             for(int i = 0; i < dataSize; i++) {
                 Object data = list.get(i);
                 View child;
-//                if (viewCount < childCount) {
-//                    child = contains.getChildAt(viewCount);
-//                    child.setVisibility(View.VISIBLE);
-//                } else {
-//                    child = mLayoutInflater.inflate(mItemResId, parent, false);
-                child = mLayoutInflater.inflate(mItemResId, null);
-                    initer.initItem(data, child);
-                    parentLayout.addView(child, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-                    child.setVisibility(View.VISIBLE);
-//                parent.addView(child);
-//                }
-//                child.setTag(data);
-//                child.setOnClickListener(mDynamicPOIListener);
-//                if (data instanceof DynamicPOI) {
-//                    initDynamicPOIItemView((DynamicPOI)data, child);
-//                } else if (data instanceof Dianying) {
-//                    initDianyingItemView((Dianying)data, child);
-//                } else if (data instanceof RoomType) {
-//                    initRoomTypeItemView((RoomType)data, child);
-//                }
-//                viewCount++;
+                child = getInstance();
+//                tmp.add(child);
+                initer.initItem(data, child);
+                parentLayout.addView(child, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+                child.setVisibility(View.VISIBLE);
             }
             
-//            childCount = contains.getChildCount();
-//            for(int i = viewCount; i < childCount; i++) {
-//                contains.getChildAt(i).setVisibility(View.GONE);
-//            }
         }
+//        LogWrapper.d("conan", "LinearListView.refresh:" + tmp);
         
         return;
     }
@@ -100,4 +85,37 @@ public class LinearListView {
     public View getChildView(int pos){
         return parentLayout.getChildAt(pos);
     }
+    
+    private class CacheableView {
+    	View v;
+    	boolean showing = true;
+    	
+    	public CacheableView(int resId) {
+    		v = mLayoutInflater.inflate(resId, null);
+    	}
+    }
+    
+	View getInstance() {
+	    CacheableView instance = null;
+	    if (viewPool.size() == 0) {
+	        instance = new CacheableView(mItemResId);
+	        viewPool.add(instance);
+	    } else {
+	       //遍历缓冲池 
+	        for (CacheableView iter : viewPool) {
+	            //如果有不用的，则使用它
+	            if (!iter.showing) {
+	                instance = iter;
+	                instance.showing = true;
+	                break;
+	            }
+	        }
+	        //遍历完发现都在用，则创建个新的
+	        if (instance == null) {
+		        instance = new CacheableView(mItemResId);
+		        viewPool.add(instance);
+	        }
+	    }
+	    return instance.v;
+	}
 }
