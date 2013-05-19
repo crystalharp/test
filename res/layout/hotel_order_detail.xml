@@ -27,17 +27,20 @@
 	        android:orientation="horizontal"
 		    >
 	        <Button
+	            android:id="@+id/btn_issue_comment"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
 			    android:text="@string/issue_comment"
 	            />
 	        <Button
+	            android:id="@+id/btn_order_again"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
 			    android:text="@string/order_again"
 	            />
 	        
 	        <Button
+	            android:id="@+id/btn_delete_order"
 			    android:layout_width="wrap_content"
 			    android:layout_height="wrap_content"
 			    android:text="@string/delete_order"

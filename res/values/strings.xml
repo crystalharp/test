@@ -1005,6 +1005,7 @@
     <string name="hotel_checkout">离店：</string>
     <string name="hotel_total_nights">共%1$d晚</string>
     <string name="hotel_order">酒店订单</string>
+    <string name="hotel_order_detail">订单详情</string>
     
     <string name="issue_comment">发表点评</string>
     <string name="order_again">再订一单</string>
@@ -1037,6 +1038,6 @@
     
     <string name="simple_month_day_format">M月d日</string>
     
-    <string name="no_order">暂无订单，\n快去预订酒店把！</string>
+    <string name="no_order">暂无订单，\n快去预订酒店吧！</string>
     
 </resources>

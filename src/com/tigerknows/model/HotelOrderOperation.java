@@ -84,10 +84,10 @@ public class HotelOrderOperation extends BaseQuery {
     public static final String SERVER_PARAMETER_IDCARD_NO = "idcardno";
 
     // action	 int	 true	 更新数据的操作类型：如1标识取消该订单
-    public static final String SERVER_PARAMETER_ORDER_ACTION = "action";
+    public static final String SERVER_PARAMETER_UPDATE_ACTION = "action";
     
     // 取消订单的操作
-    public static final String ORDER_ACTION_CANCEL = "1";
+    public static final String ORDER_UPDATE_ACTION_CANCEL = "1";
     
     // 操作码:
     // 查询 r
@@ -145,7 +145,7 @@ public class HotelOrderOperation extends BaseQuery {
                 });
             }
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
-            addParameter(new String[] {SERVER_PARAMETER_ORDER_ACTION, SERVER_PARAMETER_ORDER_ID});
+            addParameter(new String[] {SERVER_PARAMETER_UPDATE_ACTION, SERVER_PARAMETER_ORDER_ID});
         } else {
             throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
         }
@@ -209,7 +209,7 @@ public class HotelOrderOperation extends BaseQuery {
             
             if (this.data.containsKey(FIELD_STATES)) {
             	states = this.data.getXArray(FIELD_STATES).toIntList();
-            }            
+            }
         }
 
         public List<Integer> getStates() {
