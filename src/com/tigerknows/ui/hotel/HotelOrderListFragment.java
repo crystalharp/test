@@ -105,7 +105,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         }
     };
     
-    @Override
+	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -169,25 +169,19 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				mSphinx.showView(R.id.view_hotel_order_detail);
 				mSphinx.getHotelOrderDetailFragment().setData(orders.get(position));
+				mSphinx.showView(R.id.view_hotel_order_detail);
 			}
         	
 		});
         
     }
     
-    private void loadOrdersIfEmpty(){
-        /**
-         * if fragment is previously closed, size of orders will be 0
-         * if fragment is opened and in stack
-         */
-        if(orders.size() == 0){
+    private void reloadOrders(){
             mQueryingView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.INVISIBLE);
             mResultLsv.setVisibility(View.INVISIBLE);
         	new LoadThread(0, TKConfig.getPageSize()).start();
-        }
     }
     
     @Override
@@ -199,8 +193,24 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 //       if (mResultLsv.isFooterSpringback()) {
 //       	mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
 //       }
-        //fillOrderDb();
-        loadOrdersIfEmpty();
+        
+        fillOrderDb();
+
+        /**
+         * if fragment is previously closed, size of orders will be 0
+         * if fragment is opened and in stack
+         */
+        if(orders.size() == 0 ){
+        	reloadOrders();
+        }
+        
+    }
+    
+    public void removeOrder(HotelOrder order){
+    	orders.remove(order);
+    	if(hotelOrderAdapter!=null){
+    		hotelOrderAdapter.notifyDataSetChanged();
+    	}
     }
     
     private void fillOrderDb(){
@@ -212,7 +222,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     		System.out.println("OrderDB count: " + list.size());
     		
     		if(list.size() < 100){
-    			HotelOrder order = new HotelOrder("11111", System.currentTimeMillis(), 1, "ssss", "HotelName", "hotelAddress", new Position(111,111), "13581704277", 
+    			HotelOrder order = new HotelOrder("11111", System.currentTimeMillis(), 1, "ssss", "HotelName", "hotelAddress", new Position(39.88, 116.3), "13581704277", 
     					mContext.getString(R.string.app_name), 3, 390, 
     					System.currentTimeMillis(), System.currentTimeMillis(), System.currentTimeMillis(),2, 
     					"GuestName", "13581704277");
@@ -370,22 +380,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	
     }
     
-    /**
-     * Set up state query
-     * @param ids
-     */
-    private void sendStateQuery(String ids){
-    	if(TextUtils.isEmpty(ids)){
-    		return;
-    	}
-    	HotelOrderOperation dataOperation = new HotelOrderOperation(mSphinx);
-    	Hashtable<String, String> criteria = new Hashtable<String, String>();
-    	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_QUERY);
-    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS, ids);
-    	dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null);
-    	mTkAsyncTasking = mSphinx.queryStart(dataOperation);
-    	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
-    }
     
     /**
      * Launch make and launch state query from list {@code ordersQuerying}
@@ -398,6 +392,24 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	
     	sendStateQuery(ids);
         
+    }
+
+    /**
+     * Set up state query
+     * @param ids
+     */
+    protected void sendStateQuery(String ids){
+    	if(TextUtils.isEmpty(ids)){
+    		return;
+    	}
+    	LogWrapper.i(TAG, "send state query for: " + ids);
+    	Hashtable<String, String> criteria = new Hashtable<String, String>();
+    	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_QUERY);
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS, ids);
+    	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
+    	hotelOrderOperation.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null);
+    	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
+    	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
     }
     
     /**
@@ -575,15 +587,16 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	
     }// end updateOrderMemory
     
+
     /**
      * Update the storage for orders whoes state is updated
      * @param ordersToUpdateToDB
      */
-    static public void updateOrderStorage(Context context, List<HotelOrder> ordersToUpdateToDB){
+    protected void updateOrderStorage(List<HotelOrder> ordersToUpdateToDB){
     	
     	HotelOrderTable table = null;
     	try {
-    		table = new HotelOrderTable(context);
+    		table = new HotelOrderTable(mContext);
     		for (HotelOrder order : ordersToUpdateToDB) {
     			table.update(order);
     		}
@@ -594,6 +607,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     		}
     	}
     }// end updateOrderStorage
+    
     
     private class DBUpdateThread extends Thread{
 
@@ -610,7 +624,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 			if(ordersToStorage !=null){
 				LogWrapper.i(TAG, "Update thread");
 				synchronized (ordersToStorage) {
-					updateOrderStorage(mContext, ordersToStorage);
+					updateOrderStorage(ordersToStorage);
 					ordersToStorage.clear();
 				}
 			}
@@ -618,5 +632,10 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 		}//end run
     	
     }//end DBUpdateThread
+
+	@Override
+	public String getTag() {
+		return TAG;
+	}
     
 }

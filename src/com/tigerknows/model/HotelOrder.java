@@ -420,4 +420,20 @@ public class HotelOrder extends XMapData{
 		this.stateUpdateTime = stateUpdateTime;
 	}
 
+	private POI mPoi = null;
+	
+	/**
+	 * Only used for traffic query in Order detail fragment
+	 * @return
+	 */
+	public POI getPoi() {
+		if(mPoi == null){
+			mPoi = new POI();
+			mPoi.setName(hotelName);
+			mPoi.setPosition(position);
+		}
+		return mPoi;
+	}
+
+	
 }
