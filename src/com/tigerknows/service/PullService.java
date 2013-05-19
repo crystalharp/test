@@ -140,8 +140,8 @@ public class PullService extends Service {
                         position = mapEngine.latlonTransform(new Position(location.getLatitude(), location.getLongitude()));
                         int cityId = mapEngine.getCityId(position);
                         locationCityInfo = mapEngine.getCityInfo(cityId);
-                    } catch (APIException exception) {
-                        exception.printStackTrace();
+                    } catch (APIException e) {
+                        e.printStackTrace();
                     }
                 } else {
                     fail += 1;

@@ -429,8 +429,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mMapEngine = MapEngine.getInstance();
         try {
             mMapEngine.initMapDataPath(getApplicationContext());
-        } catch (APIException exception) {
-            exception.printStackTrace();
+        } catch (APIException e) {
+            e.printStackTrace();
             CommonUtils.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
             finish();
             return;
@@ -549,9 +549,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     Shangjia.readShangjiaList(Sphinx.this);
                     try {
                         Globals.getImageCache().init(Sphinx.this);
-                    } catch (APIException e1) {
+                    } catch (APIException e) {
                         // TODO Auto-generated catch block
-                        e1.printStackTrace();
+                        e.printStackTrace();
                     }
                     Globals.initOptimalAdaptiveScreenSize();
                 }
@@ -3984,8 +3984,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 					
 					int mapviewPaddingTop = mMapView.getPadding().top;
 					
-					LogWrapper.d(TAG, "rect.left: " + rect.left + "rect.right: " + rect.right 
-		        			+ "rect.top: " + rect.top + "rect.bottom: " + rect.bottom);
+					LogWrapper.d(TAG, "rect.left: " + rect.left + "rect.right: " + rect.right + "rect.top: " + rect.top + "rect.bottom: " + rect.bottom);
 					// 若气泡的上下左右四边不能完全显示在屏幕内, 则移动地图
 					// TODO:  1 MapView的Padding
 			        if (rect.left < 0 || rect.right > Globals.g_metrics.widthPixels 

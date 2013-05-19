@@ -303,8 +303,8 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         super.onResume();
         try {
             mMapEngine.initMapDataPath(getApplicationContext());
-        } catch (Exception exception){
-            exception.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
             CommonUtils.showDialogAcitvity(mThis, getString(R.string.not_enough_space_and_please_clear));
             finish();
             return;

@@ -261,8 +261,8 @@ public class Globals {
                     cityInfo = mapEngine.getCityInfo(cityId);
                     cityInfo.setPosition(lastPosition);
                     cityInfo.setLevel(lastZoomLevel);
-                } catch (APIException exception) {
-                    exception.printStackTrace();
+                } catch (APIException e) {
+                    e.printStackTrace();
                 }
             }
         }
