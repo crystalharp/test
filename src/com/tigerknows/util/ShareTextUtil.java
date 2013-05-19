@@ -665,8 +665,7 @@ public class ShareTextUtil {
     
     private static int weiboTextAppendDescriptionWithLimit(Context context, final int limit, StringBuilder text, final int descResId, 
     		final String append, final String prePunction) {
-    	LogWrapper.d("weiboTextAppendDescriptionWithLimit", "limit:" + limit + "text:" + text + "description:" + descResId + "append:" + 
-    			append + "prePunction:" +prePunction);
+    	LogWrapper.d("weiboTextAppendDescriptionWithLimit", "limit:" + limit + "text:" + text + "description:" + descResId + "append:" + append + "prePunction:" +prePunction);
     	
     	int remind = limit;
     	String negativeValue = "-1";
@@ -688,8 +687,7 @@ public class ShareTextUtil {
     
     private static void weiboTextAppendDescription(Context context, StringBuilder text, final int descResId, 
     		final String append, final String prePunction) {
-    	LogWrapper.d("weiboTextAppendDescription", "text:" + text + "description:" + descResId + "append:" + 
-    			append + "prePunction:" +prePunction);
+    	LogWrapper.d("weiboTextAppendDescription", "text:" + text + "description:" + descResId + "append:" + append + "prePunction:" +prePunction);
 
     	String negativeValue = "-1";
     	if (TextUtils.isEmpty(append)|| negativeValue.equals(append)) {

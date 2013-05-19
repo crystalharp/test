@@ -86,8 +86,7 @@ public class TigerknowsProvider extends ContentProvider {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             assert (newVersion == DATABASE_VERSION);
-            LogWrapper.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion
-                    + "...");
+            LogWrapper.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + "...");
             switch (oldVersion) {
                 case 1:
                     if (newVersion <= 1) {

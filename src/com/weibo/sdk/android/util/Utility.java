@@ -328,9 +328,9 @@ public class Utility {
              BitmapFactory.decodeStream(input, null, opts);
             try {
  			input.close();
- 		} catch (Exception e1) {
+ 		} catch (Exception e) {
  			// TODO Auto-generated catch block
- 			e1.printStackTrace();
+ 			e.printStackTrace();
  		}
              
              int rate = 0;
@@ -495,13 +495,13 @@ public class Utility {
 					}
                     break;
                 }
-                catch( OutOfMemoryError e ) {
+                catch( OutOfMemoryError e1 ) {
                     e.printStackTrace();
                     optsTmp.inSampleSize *= 2;
                     try {
 						input.close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
 					}
                 }
                 catch (FileNotFoundException e) {

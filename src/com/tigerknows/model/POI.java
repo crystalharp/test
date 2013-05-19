@@ -487,8 +487,8 @@ public class POI extends BaseData {
             } else {
                 writeToDatabases(context, -1, com.tigerknows.provider.Tigerknows.STORE_TYPE_HISTORY);
             }
-        } catch (APIException e1) {
-            e1.printStackTrace();
+        } catch (APIException e) {
+            e.printStackTrace();
         }
     }
     
