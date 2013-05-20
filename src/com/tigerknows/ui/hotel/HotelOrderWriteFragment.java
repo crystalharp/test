@@ -302,7 +302,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         }
         for (int i = 0, size = rtList.size();i < size; i++ ){
         	String str = rtList.get(i).getTime();
-        	LogWrapper.d("Trap", str +"  " + rtList.get(i).getNeed());
         	if(rtList.get(i).getNeed() == 1){
         		str += " 担保";
         	}
@@ -469,13 +468,14 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 	}
 		
 	public List<RetentionTime> findRTimeByRoomHowmany(long roomhowmany){
-		final List<RetentionTime> list;
+		List<RetentionTime> list;
 		DanbaoGuize dbgz = mRoomtypeDynamic.getDanbaoGuize();
-		LogWrapper.d("Trap", dbgz.getNum() + "");
 		if(roomhowmany >= dbgz.getNum()){
 			list = dbgz.getGreaterList();
+			if(list.isEmpty()) list = dbgz.getLessList();
 		}else{
 			list = dbgz.getLessList();
+			if(list.isEmpty()) list = dbgz.getGreaterList();
 		}
 		return list;
 	}
