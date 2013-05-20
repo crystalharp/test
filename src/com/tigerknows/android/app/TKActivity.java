@@ -586,6 +586,9 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
      * @return
      */
     public static boolean checkResponseCode(final BaseQuery baseQuery, final Activity activity, int[] filterResponseCodes, int showErrorType, final Object sourceView, boolean exit) {
+    	return checkResponseCode(baseQuery, activity, filterResponseCodes, showErrorType, sourceView, exit, false);
+    }
+    public static boolean checkResponseCode(final BaseQuery baseQuery, final Activity activity, int[] filterResponseCodes, int showErrorType, final Object sourceView, boolean exit, boolean fakeSuccess) {
         boolean result = true;
         if (baseQuery == null || activity == null || sourceView == null) {
             return result;
@@ -614,7 +617,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         		showErrorToast(activity, activity.getString(resId), sourceView, exit);
         	}
         }
-        return result;
+        return result && !(fakeSuccess && filter);
     }
     
     public static int getResponseResId(BaseQuery baseQuery) {

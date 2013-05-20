@@ -255,6 +255,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         		));
         mCheckIn = checkIn;
         mCheckOut = checkOut;
+        mRoomHowmany = 1;
+        mRTimeWhich = 0;
     }
 
 	private void exit() {
@@ -294,13 +296,17 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private void showRoomReserveDialog(){
     	List<String> list = new ArrayList<String>();
     	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
-        DanbaoGuize dbgz = mRoomtypeDynamic.getDanbaoGuize();
         if(rtList.isEmpty()){
         	Toast.makeText(mContext, "该酒店不需要设置房间保留信息", Toast.LENGTH_LONG).show();
         	return;
         }
         for (int i = 0, size = rtList.size();i < size; i++ ){
-        	list.add(rtList.get(i).getTime());
+        	String str = rtList.get(i).getTime();
+        	LogWrapper.d("Trap", str +"  " + rtList.get(i).getNeed());
+        	if(rtList.get(i).getNeed() == 1){
+        		str += " 担保";
+        	}
+        	list.add(str);
         }
         final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
         ListView listView = Utility.makeListView(mSphinx);
@@ -374,7 +380,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, HotelOrderWriteFragment.this, true)) {
+        } else if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[] {822, 825, 826}, BaseActivity.SHOW_ERROR_MSG_DIALOG, HotelOrderWriteFragment.this, false, true)) {
             return;
         }
     	Response response = baseQuery.getResponse();
@@ -415,9 +421,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 			mSphinx.uiStackRemove(R.id.view_hotel_order_write);
 			mSphinx.destroyHotelOrderWriteFragment();
 			
-    		break;
-    	case Response.RESPONSE_CODE_HOTEL_ORDER_CREATE_FAILED:
-    		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_network_bad));
     		break;
     	case Response.RESPONSE_CODE_HOTEL_NEED_REGIST:
     		mSphinx.getHotelSeveninnRegistFragment().setData(mMobile);
@@ -468,7 +471,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 	public List<RetentionTime> findRTimeByRoomHowmany(long roomhowmany){
 		final List<RetentionTime> list;
 		DanbaoGuize dbgz = mRoomtypeDynamic.getDanbaoGuize();
-		if(roomhowmany > dbgz.getNum()){
+		LogWrapper.d("Trap", dbgz.getNum() + "");
+		if(roomhowmany >= dbgz.getNum()){
 			list = dbgz.getGreaterList();
 		}else{
 			list = dbgz.getLessList();
