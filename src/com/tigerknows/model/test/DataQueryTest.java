@@ -684,7 +684,7 @@ public class DataQueryTest {
     protected static XMap launchHotelTKDrawable(int order) {
         XMap data = new XMap();
         data.put(HotelTKDrawable.FIELD_NAME, "FIELD_NAME"+order);
-        data.put(HotelTKDrawable.FIELD_URL, "FIELD_URL");
+        data.put(HotelTKDrawable.FIELD_URL, "http://www.tigerknows.com/wp-content/themes/tiger/images/logo.jpg");
         return data;
     }
 
