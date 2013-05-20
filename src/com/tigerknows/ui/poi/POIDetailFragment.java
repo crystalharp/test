@@ -432,7 +432,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		}
     }
     
-	public abstract static class DynamicPOIView <T>{
+	public abstract static class DynamicPOIView {
 
 		POIDetailFragment mPOIDetailFragment;
 		Sphinx mSphinx;
@@ -445,7 +445,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		
 		protected abstract void addDynamicPOIViewBlock(LinearLayout belongsLayout);
 		
-		public abstract List<DynamicPOIViewBlock> getViewList(List<T> dataList);
+		public abstract List<DynamicPOIViewBlock> getViewList(POI poi);
 		
 		public abstract void msgReceived(Sphinx mSphinx, BaseQuery query, Response response);
 		
@@ -688,35 +688,36 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     	}
 //    	clearDynamicPOI(DPOIViewBlockList);
 
-        List<DynamicPOI> list = poi.getDynamicPOIList();
-        List<DynamicPOI> normalDynamicPOIList = new LinkedList<DynamicPOI>();
-        int size = (list != null ? list.size() : 0);
-        for(int i = 0; i < size; i++) {
-            final DynamicPOI dynamicPOI = list.get(i);
-            final String dataType = dynamicPOI.getType();
-            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
-                    BaseQuery.DATA_TYPE_YANCHU.equals(dataType) ||
-                    BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-                normalDynamicPOIList.add(dynamicPOI);
-            }
-        }
+//        List<DynamicPOI> list = poi.getDynamicPOIList();
+//        List<DynamicPOI> normalDynamicPOIList = new LinkedList<DynamicPOI>();
+//        int size = (list != null ? list.size() : 0);
+//        for(int i = 0; i < size; i++) {
+//            final DynamicPOI dynamicPOI = list.get(i);
+//            final String dataType = dynamicPOI.getType();
+//            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
+//                    BaseQuery.DATA_TYPE_YANCHU.equals(dataType) ||
+//                    BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+//                normalDynamicPOIList.add(dynamicPOI);
+//            }
+//        }
         
-        DPOIViewBlockList.add(mDynamicNormalPOI.getViewList(normalDynamicPOIList).get(0));
+        DPOIViewBlockList.addAll(mDynamicNormalPOI.getViewList(poi));
     }
     
     /**
      * 刷新动态酒店的显示区域（仅酒店类POI）
      * @param poi
      */
-    void refreshDynamicHotel(POI poi) {
+    final void refreshDynamicHotel(POI poi) {
        //显示 
-        if (poi == null || poi.getHotel() == null || poi.getHotel().getRoomTypeList() == null) {
-            return;
-        }
+//        if (poi == null || poi.getHotel() == null || poi.getHotel().getRoomTypeList() == null) {
+//            return;
+//        }
         
-        List<Hotel> list = new LinkedList<Hotel>();
-        list.add(poi.getHotel());
-        DPOIViewBlockList.addAll(mDynamicHotelPOI.getViewList(list));
+//        List<Hotel> list = new LinkedList<Hotel>();
+//        list.add(poi.getHotel());
+        DPOIViewBlockList.addAll(mDynamicHotelPOI.getViewList(poi));
+//        DPOIViewBlockList.addAll(mDynamicHotelPOI.getViewList(list));
     }
     /**
      * 刷新动态电影的显示区域（仅电影院类POI）

@@ -40,11 +40,12 @@ import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.widget.LinearListView;
 import com.tigerknows.widget.LinearListView.ItemInitializer;
 
-public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
+public class DynamicHotelPOI extends DynamicPOIView {
 
     static DynamicHotelPOI instance = null;
     DynamicPOIViewBlock mUpperBlock;
     DynamicPOIViewBlock mLowerBlock;
+    List<DynamicPOIViewBlock> blockList = new LinkedList<DynamicPOIViewBlock>();
     
     Hotel mHotel;
     Calendar checkin;
@@ -146,7 +147,7 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         
     }
     
-    public void setDate() {
+    final public void setDate() {
         if (mSphinx.uiStackContains(R.id.view_hotel_home)) {
             checkin = mSphinx.getHotelHomeFragment().getCheckin();
             checkout = mSphinx.getHotelHomeFragment().getCheckout();
@@ -158,7 +159,7 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         }
     }
     
-    public void refreshDate() {
+    final public void refreshDate() {
 //        DateListView dateListView = getDateListView();
         mCheckInDat.setCalendar(checkin);
         mCheckOutDat.setCalendar(checkout);
@@ -169,11 +170,12 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
     }
 
     @Override
-    public List<DynamicPOIViewBlock> getViewList(List<Hotel> dataList) {
-        if (dataList == null || dataList.size() == 0) {
-            return null;
+    public List<DynamicPOIViewBlock> getViewList(POI poi) {
+        blockList.clear();
+        if (poi == null || poi.getHotel() == null || poi.getHotel().getRoomTypeList() == null) {
+            return blockList;
         }
-        mHotel = dataList.get(0);
+        mHotel = poi.getHotel();
         refreshDate();
         
         moreTxv.setText(mSphinx.getString(R.string.more));
@@ -184,7 +186,7 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         mAllRoomList.addAll(mHotel.getRoomTypeList());
         int size = (mAllRoomList != null? mAllRoomList.size() : 0);
         if (size == 0) {
-            return null;
+            return blockList;
         } else if (size > SHOW_DYNAMIC_HOTEL_MAX) {
             for(int i = 0; i < SHOW_DYNAMIC_HOTEL_MAX; i++) {
                 mShowingRoomList.add(mAllRoomList.get(i));
@@ -236,7 +238,6 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
 			}
 		});
         
-        List<DynamicPOIViewBlock> blockList = new LinkedList<DynamicPOIViewBlock>();
         blockList.add(mUpperBlock);
         blockList.add(mLowerBlock);
         return blockList;
