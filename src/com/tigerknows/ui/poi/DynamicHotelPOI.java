@@ -221,8 +221,11 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
 			@Override
 			public void onClick(View v) {
 				LogWrapper.d("conan", "hotelImage clicked");
-//				HotelImageGridFragment hotelImageGrid = mSphinx.getHotelImageGridFragment();
-				mSphinx.showView(R.id.view_hotel_image_grid);
+				Hotel hotel = mPOI.getHotel();
+				if (hotel != null) {
+				    mSphinx.getHotelImageGridFragment().setData(hotel.getHotelTKDrawableList());
+				    mSphinx.showView(R.id.view_hotel_image_grid);
+				}
 			}
 		});
         
