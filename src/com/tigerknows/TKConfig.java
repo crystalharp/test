@@ -284,7 +284,7 @@ public class TKConfig {
     /**
      * 酒店订单服务访问URL路径
      */
-    private static String sHOTEL_ORDER_URL = "http://%s//thirdparty/13";
+    private static String sHOTEL_ORDER_URL = "http://%s//hotelorder/13";
     
     /**
      * 定位服务访问URL路径
