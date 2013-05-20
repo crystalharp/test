@@ -1,6 +1,7 @@
 package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.test.ProxyQueryTest;
@@ -182,7 +183,7 @@ public class ProxyQuery extends BaseQuery {
             	super(data);
                 num = getLongFromData(FIELD_NUM);
                 lessList = getListFromData(FIELD_NUM_LESS, RetentionTime.Initializer);
-                greaterList = getListFromData(FIELD_NUM_LESS, RetentionTime.Initializer);
+                greaterList = getListFromData(FIELD_NUM_GREATER, RetentionTime.Initializer);
             }
 
             public static class RetentionTime extends XMapData {
@@ -245,13 +246,6 @@ public class ProxyQuery extends BaseQuery {
                     need = getLongFromData(FIELD_NEED);
                     type = getLongFromData(FIELD_TYPE);
                     timeDetail = getStringFromData(FIELD_TIME_DETAIL);
-                }
-                
-                public RetentionTime() throws APIException{
-            		time = defaultTime;
-            		need = defaultNeed;
-            		type = defaultType;
-            		timeDetail = null;
                 }
 
                 public static XMapInitializer<RetentionTime> Initializer = new XMapInitializer<RetentionTime>() {

@@ -162,7 +162,7 @@
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:hint="@string/credit_verify_number_hint"
-                    android:inputType="none"
+                    android:inputType="phone"
                     android:maxLength="3"
                     android:singleLine="true"
                     android:textSize="16sp" />
