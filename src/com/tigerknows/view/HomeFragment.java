@@ -503,7 +503,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 			
 			//if user is not dragging the view and dragView not expanded already, expand it.
 			if(!isDragStarts && !mIsSubCategoryExpanded){
-			    mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryOpened, ACTION_SUBCATEGORY_OP_BUTTON);
+			    mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryOpened, ACTION_SUBCATEGORY_OP_BUTTON, mCategorylist.get(mCurrentCategoryIndex));
 			    
 				//set it visible to guard first show of the drag view
 				setUpDragView(position);
@@ -539,7 +539,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 		@Override
 		public void onClick(View v) {
 			if(!isDragStarts){
-				mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryClosed, ACTION_SUBCATEGORY_OP_BUTTON);
+				mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryClosed, ACTION_SUBCATEGORY_OP_BUTTON, mCategorylist.get(mCurrentCategoryIndex));
 				closeDragView();
 			}
 		}
@@ -666,14 +666,14 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 				mDragView.setVisibility(View.VISIBLE);
 				animateTranspadding(0, 1);
 				if(mIsSubCategoryExpanded == false){
-					mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryOpened, ACTION_SUBCATEGORY_OP_TOUCH);
+					mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryOpened, ACTION_SUBCATEGORY_OP_TOUCH, mCategorylist.get(mCurrentCategoryIndex));
 				}
 				mIsSubCategoryExpanded= true;
 			}else{
 				mDragView.setVisibility(View.INVISIBLE);
 				mTransPaddingView.setBackgroundResource(R.color.transparent);
 				if(mIsSubCategoryExpanded == true){
-					mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryClosed, ACTION_SUBCATEGORY_OP_TOUCH);
+					mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryClosed, ACTION_SUBCATEGORY_OP_TOUCH, mCategorylist.get(mCurrentCategoryIndex));
 				}
 				mIsSubCategoryExpanded = false;
 			}
@@ -855,7 +855,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK &&
                 isSubCategoryExpanded()) {
-            mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryClosed, ACTION_SUBCATEGORY_OP_BACK);
+            mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryClosed, ACTION_SUBCATEGORY_OP_BACK, mCategorylist.get(mCurrentCategoryIndex));
             closeDragView();
             return true;
         }
