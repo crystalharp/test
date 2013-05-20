@@ -571,6 +571,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 	boolean isDragging = false;
 	boolean isPreventDrag = false;
 	long lastTouchUpTimeMillis = 0;
+	int minDragDistance = Util.dip2px(Globals.g_metrics.density, 10);
 	
 	private boolean onDragViewCloseTouchEvent(View v, MotionEvent event){
 		
@@ -599,6 +600,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 			if(isPreventDrag){
 				break;
 			}
+
+			if(v instanceof Button && v!=mTransPaddingView){
+				v.setPressed(false);
+				v.clearFocus();
+				v.invalidate();
+			}
 			
 			if( !isDragStarts){
 				if( (v instanceof Button && v != mTransPaddingView)
@@ -606,7 +613,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 						|| (v instanceof GridView) && (xDown + touchedControlLoc[0] < mScreenWidth*2/3) ) //the touch point has moved more than 10 pixels
 				{
 					if(( ( v instanceof Button && v!=mTransPaddingView) || v == mSubCategoryGrid)
-						&& Math.abs(yDown - y) > Util.dip2px(Globals.g_metrics.density, 10)){
+						&& Math.abs(yDown - y) > minDragDistance){
 						
 						isPreventDrag = true;
 						
@@ -615,8 +622,12 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 						}
 						
 					}
-					
-					if(!isPreventDrag && Math.abs(xDown - x) > Util.dip2px(Globals.g_metrics.density, 10) ){
+					System.out.println("mIsSubCategoryExpanded: " + mIsSubCategoryExpanded);
+					System.out.println("x,xDown: " + x + "," + xDown);
+					if(!isPreventDrag && 
+							( (!mIsSubCategoryExpanded && xDown - x > minDragDistance) 
+								|| (mIsSubCategoryExpanded && x -xDown > minDragDistance)) ){
+
 						isDragStarts = true;
 						isDragging = true;
 						mTransPaddingView.setBackgroundResource(R.color.transparent);
@@ -628,9 +639,8 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 						}
 					}
 					
-				}else{
-					break;
 				}
+				
 			}else {	//put dragging in else to prevent a flash of the dragView when the drag starts
 				mDragView.setVisibility(View.VISIBLE);
 				moveDragView(x,y);
@@ -641,9 +651,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 			break;
 
 		case MotionEvent.ACTION_UP:
-			v.setPressed(false);
-			v.clearFocus();
-			v.invalidate();
+			
 			if(!isDragStarts){
 				break;
 			}
@@ -817,7 +825,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 		
 		mTransPaddingView.setBackgroundResource(R.color.black_transparent_half);
 		Animation ani = new AlphaAnimation(fromAlpha, toAlpha);
-		ani.setDuration(100);
+		ani.setDuration(200);
 		ani.setAnimationListener(new AnimationListener() {
 			
 			@Override
