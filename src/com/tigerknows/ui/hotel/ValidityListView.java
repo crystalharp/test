@@ -1,0 +1,262 @@
+/*
+ * Copyright (C) 2008 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.tigerknows.ui.hotel;
+
+import com.decarta.Globals;
+import com.decarta.android.util.Util;
+import com.tigerknows.R;
+import com.tigerknows.TKConfig;
+import com.tigerknows.common.ActionLog;
+import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.DataQuery.Filter;
+import com.tigerknows.model.DataQuery.POIResponse;
+
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
+import android.util.AttributeSet;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+
+/**
+ * Custom Filter listview. */
+public class ValidityListView extends LinearLayout {
+    
+    public interface CallBack {
+        public void selected(Calendar calendar);
+    }
+    
+    private Calendar calendar = Calendar.getInstance();
+    
+    private ListView parentLsv;
+    private ListView childLsv;
+    
+    private CallBack callBack;
+    private int selectedParentPosition = -1;
+    private int selectedChildPosition = -1;
+    
+    private List<String> parentFilterList = new ArrayList<String>();
+    private List<String> childFilterList = new ArrayList<String>();
+    
+    private MyAdapter parentAdapter;
+    private MyAdapter childAdapter;
+    
+    String actionTag;
+
+    public void setData(Calendar calendar, CallBack callBack, String actionTag) {
+        this.calendar = calendar;
+        if (this.calendar == null) {
+            return;
+        }
+        
+        Calendar now = Calendar.getInstance();
+        
+        this.callBack = callBack;
+        this.selectedParentPosition = -1;
+        this.selectedChildPosition = -1;
+        this.parentFilterList.clear();
+        this.childFilterList.clear();
+
+        for(int i = 0; i < 10; i++) {
+            parentFilterList.add((now.get(Calendar.YEAR)+i)+"年");
+        }
+
+        
+        this.selectedParentPosition = (this.calendar.get(Calendar.YEAR)-now.get(Calendar.YEAR));
+        
+        for(int i = (this.selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0); i < 12; i++) {
+            childFilterList.add((now.get(Calendar.MONTH)+i+1)+"月");
+        }
+        
+        this.selectedChildPosition = this.calendar.get(Calendar.MONTH) - (this.selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0);
+        
+        parentAdapter.notifyDataSetChanged();
+        childAdapter.notifyDataSetChanged();
+        if (selectedParentPosition > -1) {
+            parentLsv.setSelectionFromTop(selectedParentPosition, 0);
+        } else {
+            parentLsv.setSelectionFromTop(0, 0);
+        }
+        
+        if (this.selectedChildPosition > -1) {
+            childLsv.setSelectionFromTop(selectedChildPosition, 0);
+        } else {
+            childLsv.setSelectionFromTop(0, 0);
+        }
+    }
+        
+    public ValidityListView(Context context) {
+        this(context, null);
+    }
+
+    public ValidityListView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        setFocusable(false);
+        
+        LayoutInflater inflater = (LayoutInflater) context
+                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        inflater.inflate(R.layout.hotel_validity_list, this, // we are the parent
+                true);
+        
+        findViews();
+        setListener();
+        
+        parentAdapter = new MyAdapter(context, parentFilterList);
+        parentAdapter.isParent = true;
+        childAdapter = new MyAdapter(context, childFilterList);
+        childAdapter.isParent = false;
+        
+        parentLsv.setAdapter(parentAdapter);
+        childLsv.setAdapter(childAdapter);
+    }
+
+    protected void findViews() {
+        parentLsv = (ListView) findViewById(R.id.parent_lsv);
+        childLsv = (ListView) findViewById(R.id.child_lsv);
+    }
+    
+    protected void setListener() {
+        findViewById(R.id.parent_view).setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+        findViewById(R.id.child_view).setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+        setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return false;
+            }
+        });
+        parentLsv.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
+                if (position >= parentFilterList.size()) {
+                    return;
+                }
+                String filter = parentFilterList.get(position);
+                selectedParentPosition = position;
+                parentAdapter.notifyDataSetChanged();
+                
+                // TODO 更新月份列表
+            }
+        });
+        childLsv.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                if (position >= childFilterList.size()) {
+                    return;
+                }
+                selectedChildPosition = position;
+                selected();
+            }
+        });
+    }
+    
+    private void selected() {
+        // TODO 计算被选择的日期
+        this.callBack.selected(calendar);
+    }
+    
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        
+        /* Consume all touch events so they don't get dispatched to the view
+         * beneath this view.
+         */
+        return true;
+    }
+    
+    @Override
+    public boolean hasFocus() {
+        if (parentLsv == null || childLsv == null) {
+            return false;
+        }
+        return parentLsv.hasFocus() || childLsv.hasFocus();
+    }
+    
+    class MyAdapter extends ArrayAdapter<String> {
+        
+        private static final int TEXTVIEW_RESOURCE_ID = R.layout.filter_list_item;
+        
+        private LayoutInflater mLayoutInflater;
+        
+        boolean isParent = false;
+
+        public MyAdapter(Context context, List<String> list) {
+            super(context, TEXTVIEW_RESOURCE_ID, list);
+            mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view;
+            if (convertView == null) {
+                view = mLayoutInflater.inflate(TEXTVIEW_RESOURCE_ID, parent, false);
+            } else {
+                view = convertView;
+            }
+            
+            TextView textTxv = (TextView)view.findViewById(R.id.text_txv);
+            
+            String date = getItem(position);
+            
+            if (isParent) {
+                if (position == selectedParentPosition) {
+                    view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+                } else {
+                    view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+                }
+            } else {
+                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+            }
+            
+            textTxv.setText(date);
+            
+            return view;
+        }
+    }
+}

@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -30,7 +31,7 @@ import com.tigerknows.util.Utility;
 import com.tigerknows.util.ValidateUtil;
 import com.tigerknows.widget.StringArrayAdapter;
 
-public class HotelOrderCreditFragment extends BaseFragment implements View.OnClickListener{
+public class HotelOrderCreditFragment extends BaseFragment implements View.OnClickListener, ValidityListView.CallBack {
 
     public HotelOrderCreditFragment(Sphinx sphinx) {
         super(sphinx);
@@ -50,6 +51,9 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     private Button mCreditConfirmBtn;
     private TextView mCreditAssurePriceTxv;
     private TextView mCreditNoteTxv;
+    
+    private Dialog mValidityDialog = null;
+    private ValidityListView mValidityListView = null;
     
     private String mSumPrice;
     private Calendar mDate;
@@ -197,6 +201,20 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
 		});
     }
 
+    public void showValidDialog() {
+        if (mValidityListView == null) {
+            mValidityListView = new ValidityListView(mSphinx);
+        }
+        
+        if (mValidityDialog == null) {
+            mValidityDialog = Utility.showNormalDialog(mSphinx, "title", null, mValidityListView, null, null, null);
+            mValidityDialog.setCancelable(true);
+            mValidityDialog.setCanceledOnTouchOutside(false);
+        }
+        
+        mValidityListView.setData(mDate, this, mActionTag);
+    }
+    
     public void showCertTypeDialog(){
     	final List<String> list = new ArrayList<String>();
     	list.add("身份证");
@@ -222,5 +240,13 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
 		
 		//TODO 
 	}
+
+    @Override
+    public void selected(Calendar calendar) {
+        // TODO 设置选择的日期
+        if (mValidityDialog != null && mValidityDialog.isShowing()) {
+            mValidityDialog.dismiss();
+        }
+    }
     
 }
