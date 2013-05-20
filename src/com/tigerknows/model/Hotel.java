@@ -284,6 +284,10 @@ public class Hotel extends XMapData {
         public long getCanReserve() {
             return canReserve;
         }
+        
+        public void setCanReserve(long can) {
+            canReserve = can;
+        }
 
         public static XMapInitializer<RoomType> Initializer = new XMapInitializer<RoomType>() {
 

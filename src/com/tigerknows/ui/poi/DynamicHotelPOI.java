@@ -34,6 +34,7 @@ import com.tigerknows.ui.hotel.DateWidget;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.HotelImageGridFragment;
 import com.tigerknows.ui.hotel.HotelIntroFragment;
+import com.tigerknows.ui.poi.DynamicHotelPOI.MoreRoomTypeClickListener;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.widget.LinearListView;
@@ -54,6 +55,7 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
     List<RoomType> mShowingRoomList = new ArrayList<RoomType>();
     List<RoomType> mAllRoomList = new ArrayList<RoomType>();
     final int SHOW_DYNAMIC_HOTEL_MAX = 3;
+    MoreRoomTypeClickListener moreRoomTypeClickListener;
     
     private LinearLayout mDynamicRoomTypeListView;
     
@@ -64,6 +66,7 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
     TextView hotelSummary;
     private DateWidget mCheckInDat;
     private DateWidget mCheckOutDat;
+    TextView moreTxv;
     
     ItemInitializer i = new ItemInitializer(){
 
@@ -110,23 +113,8 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         findViews();
         roomTypeList = new LinearListView(mSphinx, mDynamicRoomTypeListView, i, R.layout.poi_dynamic_hotel_room_item);
         
-        mDynamicRoomTypeMoreView.setOnClickListener(new View.OnClickListener() {
-            
-            boolean mShowingAll = false;
-            @Override
-            public void onClick(View v) {
-                TextView txv = (TextView) mDynamicRoomTypeMoreView.findViewById(R.id.more_txv);
-                if (mShowingAll) {
-                    roomTypeList.refreshList(mShowingRoomList);
-                    txv.setText(mSphinx.getString(R.string.more));
-                    mShowingAll = false;
-                } else {
-                    roomTypeList.refreshList(mAllRoomList);
-                    txv.setText(mSphinx.getString(R.string.fold));
-                    mShowingAll = true;
-                }
-            }
-        });
+        moreRoomTypeClickListener = new MoreRoomTypeClickListener();
+        mDynamicRoomTypeMoreView.setOnClickListener(moreRoomTypeClickListener);
     }
     
     void findViews(){
@@ -138,9 +126,26 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
 //        mDynamicHotelChooseTimeView = (LinearLayout) mRootView.findViewById(R.id.dynamic_hotel_choosetime_view);
         mCheckInDat = (DateWidget) mUpperBlock.mOwnLayout.findViewById(R.id.checkin_dat);
         mCheckOutDat = (DateWidget) mUpperBlock.mOwnLayout.findViewById(R.id.checkout_dat);
+        moreTxv = (TextView) mDynamicRoomTypeMoreView.findViewById(R.id.more_txv);
     }
     
-    //FIXME:这个函数用不到了
+    class MoreRoomTypeClickListener implements View.OnClickListener{
+        boolean mShowingAll = false;
+        @Override
+        public void onClick(View v) {
+            if (mShowingAll) {
+                roomTypeList.refreshList(mShowingRoomList);
+                moreTxv.setText(mSphinx.getString(R.string.more));
+                mShowingAll = false;
+            } else {
+                roomTypeList.refreshList(mAllRoomList);
+                moreTxv.setText(mSphinx.getString(R.string.fold));
+                mShowingAll = true;
+            }
+        }
+        
+    }
+    
     public void setDate() {
         if (mSphinx.uiStackContains(R.id.view_hotel_home)) {
             checkin = mSphinx.getHotelHomeFragment().getCheckin();
@@ -170,6 +175,9 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
         }
         mHotel = dataList.get(0);
         refreshDate();
+        
+        moreTxv.setText(mSphinx.getString(R.string.more));
+        moreRoomTypeClickListener.mShowingAll = false;
 
         mAllRoomList.clear();
         mShowingRoomList.clear();
@@ -198,7 +206,6 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
 //                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
 //            }
 //        }
-        
         
         
         List<HotelTKDrawable> b = mHotel.getHotelTKDrawableList();
@@ -287,6 +294,7 @@ public class DynamicHotelPOI extends DynamicPOIView<Hotel> {
                 mSphinx.showView(R.id.view_hotel_order_write);
             } else {
                 //更新按钮状态
+                mClickedRoomType.setCanReserve(0);
                 mClickedBookBtn.setText(mSphinx.getString(R.string.hotel_btn_sold_out));
                 mClickedBookBtn.setClickable(false);
             }
