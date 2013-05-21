@@ -8,7 +8,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.app.Dialog;
-import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -22,11 +22,12 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ValidateUtil;
 import com.tigerknows.widget.StringArrayAdapter;
@@ -117,6 +118,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	showCreditBankDialog();
         	break;
         case R.id.credit_validity_btn:
+        	showValidDialog();
         	break;
         case R.id.credit_cert_type_btn:
         	showCertTypeDialog();
@@ -158,9 +160,9 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         		return;
         	}
         	list.add(str);
- 
-        	list.add("2013");
-        	list.add("9");
+        	list.add(mDate.get(Calendar.YEAR) + "");
+        	list.add(1+mDate.get(Calendar.MONTH) + "");
+        	LogWrapper.d("Trap", CalendarUtil.ym6h.format(mDate.getTime()));
         	str = mCreditCertTypeBtn.getText().toString();
         	if(TextUtils.isEmpty(str)){
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_cert_type_empty_tip));
@@ -196,6 +198,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	@Override
         	public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
         		mCreditBankBtn.setText(list.get(which));
+        		mCreditValidityBtn.setTextColor(Color.BLACK);
         		dialog.dismiss();
         	}
 		});
@@ -210,6 +213,8 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             mValidityDialog = Utility.showNormalDialog(mSphinx, "title", null, mValidityListView, null, null, null);
             mValidityDialog.setCancelable(true);
             mValidityDialog.setCanceledOnTouchOutside(false);
+        }else if(mValidityDialog.isShowing() == false){
+        	mValidityDialog.show();
         }
         
         mValidityListView.setData(mDate, this, mActionTag);
@@ -229,6 +234,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	@Override
         	public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
         		mCreditCertTypeBtn.setText(list.get(which));
+        		mCreditValidityBtn.setTextColor(Color.BLACK);
         		dialog.dismiss();
         	}
 		});
@@ -244,6 +250,9 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     @Override
     public void selected(Calendar calendar) {
         // TODO 设置选择的日期
+    	mDate = calendar;
+    	mCreditValidityBtn.setText(CalendarUtil.y4mc.format(mDate.getTime()));
+    	mCreditValidityBtn.setTextColor(Color.BLACK);
         if (mValidityDialog != null && mValidityDialog.isShowing()) {
             mValidityDialog.dismiss();
         }

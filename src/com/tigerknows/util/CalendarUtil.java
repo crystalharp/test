@@ -13,6 +13,14 @@ public class CalendarUtil {
      * @param stype 返回值类型   0为多少天，1为多少个月，2为多少年  
      * @return  
      */ 
+	
+	// 格式ymd代表有y m d，8代表8位， h,s,c代表分隔符为-,/,中文字。
+	public static final SimpleDateFormat ymd8 = new SimpleDateFormat("yyyyMMdd");
+	public static final SimpleDateFormat ymd8h = new SimpleDateFormat("yyyy-MM-dd");
+	public static final SimpleDateFormat ym6h = new SimpleDateFormat("yyyy-MM");
+	public static final SimpleDateFormat ymd8s = new SimpleDateFormat("yyyy/MM/dd");
+	public static final SimpleDateFormat y4mc = new SimpleDateFormat("yyyy年M月");
+	
     public static int compareDate(Calendar c1,Calendar c2,int stype){  
         int n = 0;  
           
