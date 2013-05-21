@@ -154,15 +154,16 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
         if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, HotelSeveninnRegistFragment.this, true)) {
+        } else if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[]{825}, BaseActivity.SHOW_ERROR_MSG_DIALOG, HotelSeveninnRegistFragment.this, false, true)) {
             return;
         }
     	Response response = baseQuery.getResponse();
     	switch(response.getResponseCode()){
     	case Response.RESPONSE_CODE_OK:
+    		mSphinx.getHotelOrderWriteFragment().setMember(response.getDescription());
     		break;
-    	case Response.RESPONSE_CODE_HOTEL_REGIST_MEMBER_FAILED:
-    		Utility.showNormalDialog(mSphinx,mSphinx.getString(R.string.seveninn_regist_failed));
+    	default:
+    		mSphinx.getHotelOrderWriteFragment().setMember(response.getDescription());
     		break;
     	}
 	}
