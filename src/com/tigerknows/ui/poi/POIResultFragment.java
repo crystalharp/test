@@ -464,9 +464,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         private boolean showStamp = true;
         private Runnable loadedDrawableRun;
         private String viewToken;
+        private String subDataType = BaseQuery.SUB_DATA_TYPE_POI;
         
         public void setShowStamp(boolean showStamp) {
             this.showStamp = showStamp;
+        }
+        
+        public void setSubDataType(String subDataType) {
+            this.subDataType = subDataType;
         }
 
         public POIAdapter(Activity activity, List<POI> list, Runnable loadedDrawableRun, String viewToken) {
@@ -496,7 +501,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
             View pictureView = view.findViewById(R.id.picture_view);
             ImageView pictureImv = (ImageView) view.findViewById(R.id.picture_imv);
-            ImageView markerImv = (ImageView) view.findViewById(R.id.marker_imv);
+            TextView canReserveTxv = (TextView) view.findViewById(R.id.can_reserve_txv);
             ImageView bubbleImv = (ImageView) view.findViewById(R.id.bubble_imv);
             TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
             TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
@@ -517,27 +522,31 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
             }
             
-            Hotel hotel = poi.getHotel();
-            if (hotel != null && hotel.getImageThumb() != null) {
-                pictureView.setVisibility(View.VISIBLE);
-                TKDrawable tkDrawable = hotel.getImageThumb();
-                Drawable drawable = tkDrawable.loadDrawable(activity, loadedDrawableRun, viewToken);
-                if(drawable != null) {
-                    //To prevent the problem of size change of the same pic 
-                    //After it is used at a different place with smaller size
-                    if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+            if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+                Hotel hotel = poi.getHotel();
+                if (hotel != null && hotel.getImageThumb() != null) {
+                    TKDrawable tkDrawable = hotel.getImageThumb();
+                    Drawable drawable = tkDrawable.loadDrawable(activity, loadedDrawableRun, viewToken);
+                    if(drawable != null) {
+                        //To prevent the problem of size change of the same pic 
+                        //After it is used at a different place with smaller size
+                        if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+                            pictureImv.setBackgroundDrawable(null);
+                        }
+                        pictureImv.setBackgroundDrawable(drawable);
+                    } else {
                         pictureImv.setBackgroundDrawable(null);
                     }
-                    pictureImv.setBackgroundDrawable(drawable);
+                    
+                    if (hotel.getCanReserve() > 0) {
+                        canReserveTxv.setVisibility(View.VISIBLE);
+                    } else {
+                        canReserveTxv.setVisibility(View.GONE);
+                    }
                 } else {
                     pictureImv.setBackgroundDrawable(null);
                 }
-                
-                if (hotel.getCanReserve() > 0) {
-                    markerImv.setVisibility(View.VISIBLE);
-                } else {
-                    markerImv.setVisibility(View.GONE);
-                }
+                pictureView.setVisibility(View.VISIBLE);
             } else {
                 pictureView.setVisibility(View.GONE);
             }
@@ -706,6 +715,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
+        mResultAdapter.setSubDataType(dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE));
         
         mResultLsv.onRefreshComplete(false);
         if (dataQuery.isStop()) {

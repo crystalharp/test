@@ -333,9 +333,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	Hashtable<String, String> criteria = new Hashtable<String, String>();
     	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_CREATE);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_HOTEL_ID, mHotel.getUuid());
-    	if(mHotel.getBrand() != null){
-    		criteria.put(HotelOrderOperation.SERVER_PARAMETER_BRAND, mHotel.getBrand());
-    	}
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_BRAND, String.valueOf(mHotel.getBrand()));
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ROOMTYPE, mRoomType.getRoomId());
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_PKGID, mRoomType.getRateplanId());
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_CHECKIN_DATE, 
