@@ -769,8 +769,6 @@ public class MapEngine {
             
             CommonUtils.unZipFile(am, "tigerres.zip", TKConfig.getDataPath(false));
             CommonUtils.unZipFile(am, "tigermap.zip", mapPath);
-            
-            TKConfig.setPref(context, TKConfig.PREFS_VERSION_NAME, TKConfig.getClientSoftVersion());
         }
     }
     

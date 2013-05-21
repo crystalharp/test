@@ -622,8 +622,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 						}
 						
 					}
-					System.out.println("mIsSubCategoryExpanded: " + mIsSubCategoryExpanded);
-					System.out.println("x,xDown: " + x + "," + xDown);
 					if(!isPreventDrag && 
 							( (!mIsSubCategoryExpanded && xDown - x > minDragDistance) 
 								|| (mIsSubCategoryExpanded && x -xDown > minDragDistance)) ){

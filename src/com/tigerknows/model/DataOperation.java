@@ -91,10 +91,6 @@ public class DataOperation extends BaseQuery {
                     requestParameters.add(SERVER_PARAMETER_PICTURE, criteria.get(SERVER_PARAMETER_PICTURE));
                 }
                 
-                if(criteria.containsKey(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)){
-                	requestParameters.add(SERVER_PARAMETER_REQUSET_SOURCE_TYPE, criteria.get(SERVER_PARAMETER_REQUSET_SOURCE_TYPE));
-                }
-                
             } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
                 if (criteria.containsKey(SERVER_PARAMETER_ENTITY)) {
                     requestParameters.add(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY));

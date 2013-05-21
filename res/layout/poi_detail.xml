@@ -75,9 +75,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" 
             android:orientation="horizontal"
-            android:gravity="center"
-            android:background="@drawable/bg_weixin_send"
-            android:padding="8dp">
+            android:gravity="center">
             
             <Button android:id="@+id/weixin_btn" 
                 android:layout_width="fill_parent" 
@@ -86,7 +84,8 @@
                 android:text="@string/send_weixin_friend"
                 android:textColor="@color/white"
                 android:textSize="18sp"
-                android:gravity="center" />
+                android:gravity="center"
+                android:padding="12dp" />
         </LinearLayout>
     </LinearLayout>
     
@@ -399,7 +398,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginRight="8dp"
                         android:gravity="right|center_vertical"
-                        android:drawableRight="@drawable/ic_view_all_comment"
+                        android:drawableRight="@drawable/icon_arrow_right"
                         android:textColor="@color/text_gray"
                         android:text="@string/look_all_comment"
                         android:textSize="14sp"

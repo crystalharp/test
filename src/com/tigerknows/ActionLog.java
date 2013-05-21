@@ -158,6 +158,11 @@ public class ActionLog {
     public static final String POIDetailZhanlan = "BL";
     public static final String POIDetailTuangou = "BM";
     public static final String POIDetailPullFailed = "BN";
+    public static final String POIDetailDianying = "BO";
+    public static final String POIDetailDianyingMore = "BP";
+    public static final String POIDetailFromWeixin = "BQ";
+    public static final String POIDetailWeixinRequest = "BR";
+    public static final String POIDetailWeixinSend = "BS";
 
     // POI点评列表页
     public static final String POICommentList = "AE";
@@ -299,6 +304,8 @@ public class ActionLog {
     public static final String LifecycleSelectCity = Lifecycle + "BF";
     public static final String LifecycleUserReadSuccess = Lifecycle + "BG";
     public static final String LifecycleFirstLocationSuccess = Lifecycle + "BH";
+    public static final String LifecycleWeixinWeb = Lifecycle + "BI";
+    public static final String LifecycleWeixinRequest = Lifecycle + "BJ";
     
     // 地图
     public static final String Map = "FB";

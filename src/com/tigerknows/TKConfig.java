@@ -467,6 +467,11 @@ public class TKConfig {
     public static final String PREFS_HINT_POI_DETAIL = "prefs_hint_poi_detail";
     
     /**
+     * 是否已显示POI详情界面的微信用户引导
+     */
+    public static final String PREFS_HINT_POI_DETAIL_WEIXIN = "prefs_hint_poi_detail_weixin";
+    
+    /**
      * 是否已显示发现首页界面的用户引导
      */
     public static final String PREFS_HINT_DISCOVER_HOME = "prefs_discover";

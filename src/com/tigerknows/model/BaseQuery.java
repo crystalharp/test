@@ -149,14 +149,26 @@ public abstract class BaseQuery {
 
 	public static final String RESPONSE_CODE_ERROR_MSG_PREFIX = "resp_code_err_msg";
 
-	// dsrc	 string	 true	 data request source，该请求的来源（指客户端的不同“频道”
+	// dsrc	 string	 false	 data request source，该请求的来源（指客户端的不同“频道”
     public static final String SERVER_PARAMETER_REQUSET_SOURCE_TYPE = "dsrc";
 
     // dsrc=dpmsg，表示雷达频道，通过解析推送消息获得动态poi的uid之后，根据uid取完整的动态poi 
     public static final String REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI = "dpmsg";
+
+    // dsrc=weixin，表示从附件栏启动客户端，仅在引导服务(at=l, Bootstrap)时使用
+    public static final String REQUSET_SOURCE_TYPE_WEIXIN = "weixin";
+
+    // dsrc=cinemadetail，表示点击POI中的电影院列表进入电影详情页
+    public static final String REQUSET_SOURCE_TYPE_POI_TO_CINEMA = "cinemadetail";
+
+    // cstatus  string  false   上传客户端状态信息,字段为cstatus,打开时为0(可以省略),关闭时为1
+    public static final String SERVER_PARAMETER_CLIENT_STATUS = "cstatus";
     
-    // dsrc=dpoi，表示发现频道，通过搜索得到的动态poi的uid之后，根据uid取完整的动态poi
-    public static final String REQUSET_SOURCE_TYPE_DISCOVER = "dpoi";
+    public static final String CLIENT_STATUS_START = "0";
+    
+    public static final String CLIENT_STATUS_STOP = "1";
+    
+    public static String sClentStatus = CLIENT_STATUS_START;
     
     /**
      * 检查是否为推送动态POI的查询
@@ -508,7 +520,13 @@ public abstract class BaseQuery {
         requestParameters.clear();
         requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
         requestParameters.add(SERVER_PARAMETER_VERSION, version);
+        
+        if(criteria != null && criteria.containsKey(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)){
+            requestParameters.add(SERVER_PARAMETER_REQUSET_SOURCE_TYPE, criteria.get(SERVER_PARAMETER_REQUSET_SOURCE_TYPE));
+        }
         addMyLocationParameters();
+        
+        requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
     }
     
     protected void createHttpClient() {

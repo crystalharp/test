@@ -368,6 +368,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_START;
 //        Debug.startMethodTracing("spinxTracing");
         
         mHandler=new Handler(){
@@ -834,10 +835,22 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         list.add(locationQuery);
         
         Bootstrap bootstrap = new Bootstrap(mContext);
+        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        if (mFromThirdParty == THIRD_PARTY_WENXIN_REQUET) {
+            criteria.put(BaseQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_WEIXIN);
+        }
+        String versionName = TKConfig.getPref(mThis, TKConfig.PREFS_VERSION_NAME, null);
+        if (TextUtils.isEmpty(versionName)) {
+            criteria.put(Bootstrap.SERVER_PARAMETER_FIRST_LOGIN, Bootstrap.FIRST_LOGIN_NEW);
+        } else if (!TKConfig.getClientSoftVersion().equals(versionName)) {
+            criteria.put(Bootstrap.SERVER_PARAMETER_FIRST_LOGIN, Bootstrap.FIRST_LOGIN_UPGRADE);
+        }
+        TKConfig.setPref(mContext, TKConfig.PREFS_VERSION_NAME, TKConfig.getClientSoftVersion());
+        bootstrap.setup(criteria);
         list.add(bootstrap);
 
         DataOperation diaoyanQuery = new DataOperation(mContext);
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        criteria = new Hashtable<String, String>();
         criteria.put(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIAOYAN);
         criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         diaoyanQuery.setup(criteria, Globals.g_Current_City_Info.getId());	//
@@ -1012,6 +1025,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 				getPOIDetailFragment().refreshDetail();
 				getPOIDetailFragment().refreshComment();
 			}
+        } else if (R.id.activity_hint == requestCode) {
+
+            if (data != null) {
+                int nextHitResId = data.getIntExtra(Hint.NEXT_LAYOUT_RES_ID, R.id.view_invalid);
+                String key = data.getStringExtra(Hint.NEXT_KEY);
+                if (nextHitResId != R.id.view_invalid && TextUtils.isEmpty(key) == false) {
+                    showHint(key, nextHitResId);
+                }
+            }
         }
 		
         if (REQUEST_CODE_LOCATION_SETTINGS == requestCode) {
@@ -1102,6 +1124,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	@Override
 	protected void onStart() {
 		super.onStart();
+		BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_START;
 		mZoomView.setVisibility(View.VISIBLE);
         
         IntentFilter intentFilter= new IntentFilter(MapEngine.ACTION_REMOVE_CITY_MAP_DATA);
@@ -1545,6 +1568,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (onlyCheck) {
                 return true;
             }
+            mActionLog.addAction(ActionLog.LifecycleWeixinRequest);
         	mBundle = intent.getExtras();
             uiStackClose(new int[]{R.id.view_home});
             showView(R.id.view_home);
@@ -1578,6 +1602,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (onlyCheck) {
                 return true;
             }
+            mActionLog.addAction(ActionLog.LifecycleWeixinWeb);
             uiStackClose(new int[]{R.id.view_home});
             showView(R.id.view_home);
             if (uri != null) {
@@ -1785,6 +1810,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     @Override
     protected void onStop() {
         super.onStop();
+        BaseQuery.sClentStatus = BaseQuery.CLIENT_STATUS_STOP;
         LogWrapper.i(TAG, "onStop");
         
         mActionLog.onStop();
@@ -2856,9 +2882,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     
     public boolean showHint(String key, int layoutResId) {
+        return showHint(key, layoutResId, null);
+    }
+    
+    public boolean showHint(String key, int layoutResId, Intent intent) {
         boolean showView = false;
         if (TKConfig.getPref(this, key) == null) {
-            Intent intent = new Intent();
+            if (intent == null) {
+                intent = new Intent();
+            }
             intent.putExtra(Hint.LAYOUT_RES_ID, layoutResId);
             showView = showView(R.id.activity_hint, intent);
             TKConfig.setPref(mThis, key, "1");
