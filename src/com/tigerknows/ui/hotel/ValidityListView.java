@@ -16,30 +16,15 @@
 
 package com.tigerknows.ui.hotel;
 
-import com.decarta.Globals;
-import com.decarta.android.util.Util;
 import com.tigerknows.R;
-import com.tigerknows.TKConfig;
-import com.tigerknows.common.ActionLog;
-import com.tigerknows.model.DataQuery;
-import com.tigerknows.model.DataQuery.Filter;
-import com.tigerknows.model.DataQuery.POIResponse;
-
 import android.content.Context;
-import android.content.res.Resources;
-import android.graphics.drawable.Drawable;
-import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -72,6 +57,7 @@ public class ValidityListView extends LinearLayout {
     
     private MyAdapter parentAdapter;
     private MyAdapter childAdapter;
+    private Calendar now;
     
     String actionTag;
 
@@ -81,7 +67,7 @@ public class ValidityListView extends LinearLayout {
             return;
         }
         
-        Calendar now = Calendar.getInstance();
+        now = Calendar.getInstance();
         
         this.callBack = callBack;
         this.selectedParentPosition = -1;
@@ -96,8 +82,8 @@ public class ValidityListView extends LinearLayout {
         
         this.selectedParentPosition = (this.calendar.get(Calendar.YEAR)-now.get(Calendar.YEAR));
         
-        for(int i = (this.selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0); i < 12; i++) {
-            childFilterList.add((now.get(Calendar.MONTH)+i+1)+"月");
+        for(int i = (this.selectedParentPosition <= 0 ? now.get(Calendar.MONTH) : 0); i < 12; i++) {
+            childFilterList.add((i+1)+"月");
         }
         
         this.selectedChildPosition = this.calendar.get(Calendar.MONTH) - (this.selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0);
@@ -176,11 +162,15 @@ public class ValidityListView extends LinearLayout {
                 if (position >= parentFilterList.size()) {
                     return;
                 }
-                String filter = parentFilterList.get(position);
                 selectedParentPosition = position;
                 parentAdapter.notifyDataSetChanged();
                 
-                // TODO 更新月份列表
+                Calendar now = Calendar.getInstance();
+                
+                childFilterList.clear();
+                for(int i = (selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0); i < 12; i++) {
+                    childFilterList.add((i+1)+"月");
+                }
             }
         });
         childLsv.setOnItemClickListener(new OnItemClickListener() {
@@ -197,7 +187,8 @@ public class ValidityListView extends LinearLayout {
     }
     
     private void selected() {
-        // TODO 计算被选择的日期
+    	calendar.set(Calendar.YEAR, now.get(Calendar.YEAR) + selectedParentPosition);
+    	calendar.set(Calendar.MONTH, (selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0) + selectedChildPosition);
         this.callBack.selected(calendar);
     }
     
