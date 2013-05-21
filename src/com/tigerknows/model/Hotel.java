@@ -46,6 +46,12 @@ public class Hotel extends XMapData {
     // 0x57 x_int 是否可预订，0为否，大于0为是
     public static final byte FIELD_CAN_RESERVE = 0x57;
     
+    // 0x58 x_string 房间服务设施
+    public static final byte FIELD_ROOM_DESCRIPTION = 0x58;
+    
+    // 0x59 x_string 长简介
+    public static final byte FIELD_LONG_DESCRIPTION = 0x59;
+    
     // 0x50 x_string 酒店ID
     private String uuid;
 
@@ -69,6 +75,12 @@ public class Hotel extends XMapData {
 
     // 0x57 x_int 是否可预订，0为否，大于0为是
     private long canReserve;
+    
+    // 0x58 x_string 房间服务设施
+    private String roomDescription;
+    
+    // 0x59 x_string 长简介
+    private String longDescription;
 
     public Hotel(XMap data) throws APIException {
         super(data);
@@ -95,6 +107,8 @@ public class Hotel extends XMapData {
         this.roomTypeList = getListFromData(FIELD_ROOM_TYPE_LIST, RoomType.Initializer, reset ? null : this.roomTypeList);
         this.service = getStringFromData(FIELD_SERVICE, reset ? null : this.service);
         this.canReserve = getLongFromData(FIELD_CAN_RESERVE, reset ? 0 : this.canReserve);
+        this.longDescription = getStringFromData(FIELD_LONG_DESCRIPTION, reset ? null : this.longDescription);
+        this.roomDescription = getStringFromData(FIELD_ROOM_DESCRIPTION, reset ? null : this.roomDescription);
     }
     
     public String getUuid() {
@@ -127,6 +141,14 @@ public class Hotel extends XMapData {
 
     public long getCanReserve() {
         return canReserve;
+    }
+    
+    public String getRoomDescription(){
+        return roomDescription;
+    }
+    
+    public String getLongDescription(){
+        return longDescription;
     }
 
     public static class HotelTKDrawable extends XMapData {

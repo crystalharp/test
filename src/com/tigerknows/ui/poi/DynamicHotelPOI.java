@@ -24,11 +24,13 @@ import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
 import com.tigerknows.model.ProxyQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Hotel.RoomType;
+import com.tigerknows.model.TKDrawable;
 import com.tigerknows.ui.hotel.DateListView;
 import com.tigerknows.ui.hotel.DateWidget;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
@@ -211,20 +213,37 @@ public class DynamicHotelPOI extends DynamicPOIView {
         
         
         List<HotelTKDrawable> b = mHotel.getHotelTKDrawableList();
-        hotelSummary.setText(mHotel.getService());
-        hotelSummary.setOnClickListener(new View.OnClickListener() {
+        
+        String value = mPOI.getDescriptionValue(Description.FIELD_SYNOPSIS);
+        hotelSummary.setText(value);
+        LinearLayout hotelSummaryBlock = (LinearLayout) mLowerBlock.mOwnLayout.findViewById(R.id.hotel_summary);
+        hotelSummaryBlock.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				LogWrapper.d("conan", "hotelSummary clicked");
-//				HotelIntroFragment hotelIntro = mSphinx.getHotelIntroFragment();
+				HotelIntroFragment hotelIntro = mSphinx.getHotelIntroFragment();
+				hotelIntro.setData(mHotel);
 				mSphinx.showView(R.id.view_hotel_intro);
 			}
 		});
         //FIXME:如何获取这个Image?
-//        Drawable hotelImageDraw = b.get(0).getTKDrawable().loadDrawable(mSphinx, null, mPOIDetailFragment.toString());
-//        hotelImage.setBackgroundDrawable(hotelImageDraw);
-        hotelImage.setImageResource(R.drawable.icon);
+        final TKDrawable tkDrawable = mHotel.getImageThumb();
+        if (tkDrawable != null) {
+            Drawable hotelImageDraw = tkDrawable.loadDrawable(mSphinx, new Runnable() {
+
+                @Override
+                public void run() {
+                    hotelImage.setBackgroundDrawable(tkDrawable.loadDrawable(null, null, null));
+                }
+                
+            }, mPOIDetailFragment.toString());
+            if (hotelImageDraw != null) {
+                hotelImage.setBackgroundDrawable(hotelImageDraw);
+            } else {
+                hotelImage.setImageResource(R.drawable.icon);
+            }
+        }
         hotelImage.setOnClickListener(new View.OnClickListener() {
 			
 			@Override

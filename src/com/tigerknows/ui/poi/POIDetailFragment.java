@@ -1285,6 +1285,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
+        
+        if (mDynamicHotelPOI.checkExistence(mPOI)) {
+            mFeatureTxv.setVisibility(View.GONE);
+            return;
+        } else {
+            mFeatureTxv.setVisibility(View.VISIBLE);
+        }
+        
         int count = viewGroup.getChildCount();
         for(int i = 0; i < count; i++) {
             viewGroup.getChildAt(i).setVisibility(View.GONE);
