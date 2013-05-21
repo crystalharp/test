@@ -29,16 +29,21 @@
             android:layout_centerInParent="true"
             android:background="@drawable/icon"
             />
-        <ImageView
-            android:id="@+id/marker_imv"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:layout_alignRight="@id/bg_imv"
-            android:layout_alignParentTop="true"
-            android:layout_margin="4dp"
-            android:scaleType="fitXY"
-            android:background="@drawable/icon"
-            />
+
+         <TextView 
+             android:id="@+id/can_reserve_txv"
+             android:layout_width="100dp"
+             android:layout_height="wrap_content"
+             android:layout_centerHorizontal="true"
+             android:layout_alignBottom="@id/picture_imv"
+             android:background="#99000000"
+             android:textColor="@color/white"
+             android:textSize="16sp"
+             android:text="订满"
+             android:gravity="center"
+             android:focusable="false"
+             android:maxLines="6"
+             />
     </RelativeLayout>
     
     <ImageView 

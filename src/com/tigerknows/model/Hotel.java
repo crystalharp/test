@@ -53,7 +53,7 @@ public class Hotel extends XMapData {
     private String source;
 
     // 0x52 x_string 酒店品牌，{ "如家", ... "其它" }
-    private String brand;
+    private long brand;
 
     // 0x53 x_string 列表页图片的url
     private TKDrawable imageThumb;
@@ -81,7 +81,7 @@ public class Hotel extends XMapData {
         
         this.uuid = getStringFromData(FIELD_UUID, reset ? null : this.uuid);
         this.source = getStringFromData(FIELD_SOURCE, reset ? null : this.source);
-        this.brand = getStringFromData(FIELD_BRAND, reset ? null : this.brand);
+        this.brand = getLongFromData(FIELD_BRAND, reset ? 0 : this.brand);
         
         String imageThumb = getStringFromData(FIELD_IMAGE_THUMB);
         if (imageThumb != null) {
@@ -105,7 +105,7 @@ public class Hotel extends XMapData {
         return source;
     }
 
-    public String getBrand() {
+    public long getBrand() {
         return brand;
     }
 
