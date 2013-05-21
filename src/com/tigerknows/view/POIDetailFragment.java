@@ -267,6 +267,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIANYING);
                     criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
                     criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getUid());
+                    criteria.put(BaseQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_POI_TO_CINEMA);
                     
                     dataOperation = new DataOperation(mSphinx);
                     criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,

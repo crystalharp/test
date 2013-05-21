@@ -136,8 +136,11 @@ public class ActionLog {
     public static final String POIHomeInputEdt = "BB";
     public static final String POIHomeCategory = "BC";    
     public static final String POIHomeSubcategoryPressed = "BD";
-    public static final String POIHomeSubcategoryOpened = "BE";
-    public static final String POIHomeSubcategoryClosed = "BF";
+    public static final String POIHomeSubcategoryOpenedOnFling = "BE";
+    public static final String POIHomeSubcategoryOpenedOnClick = "BF";
+    public static final String POIHomeSubcategoryClosedOnFling = "BG";
+    public static final String POIHomeSubcategoryClosedOnClick = "BH";
+    public static final String POIHomeSubcategoryClosedOnBack = "BI";
 
     
     // POI输入查询页
