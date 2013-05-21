@@ -343,7 +343,7 @@ public class HttpUtils {
                     if (networkInfo != null) {
                         networkInfoDetail = networkInfo.getDetailedState().toString();
                     }
-                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getRadioType());
+                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getRadioType(), isStop);
                 }
                 if (!keepAlive) {
                     close();
