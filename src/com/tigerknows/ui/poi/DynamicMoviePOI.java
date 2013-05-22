@@ -27,12 +27,6 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
     }
 
     @Override
-    public List<DynamicPOIViewBlock> getViewList(List dataList) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public void addDynamicPOIViewBlock(LinearLayout belongsLayout) {
         // TODO Auto-generated method stub
         
@@ -48,6 +42,12 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
     public boolean checkExistence(POI poi) {
         // TODO Auto-generated method stub
         return false;
+    }
+
+    @Override
+    public List<DynamicPOIViewBlock> getViewList(POI poi) {
+        // TODO Auto-generated method stub
+        return null;
     }
 
 //    onclick(){

@@ -2,6 +2,7 @@ package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.decarta.Globals;
@@ -37,13 +38,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView<DynamicPOI>{
+public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
     
     static DynamicNormalPOI instance = null;
     DynamicPOIViewBlock mViewBlock;
     static Tuangou tuangou = null;
     NormalDPOIClickListener clickListener = new NormalDPOIClickListener();
     LinearListView lsv;
+    List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
     
     ItemInitializer initer = new ItemInitializer(){
 
@@ -92,9 +94,30 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView<DynamicPO
     }
 
     @Override
-    public List<DynamicPOIViewBlock> getViewList(List<DynamicPOI> dataList) {
+    public List<DynamicPOIViewBlock> getViewList(POI poi) {
+        blockList.clear();
+        if (poi == null) {
+            return blockList;
+        }
+        
+        List<DynamicPOI> list = poi.getDynamicPOIList();
+        List<DynamicPOI> dataList = new LinkedList<DynamicPOI>();
+        int dPOIsize = (list != null ? list.size() : 0);
+        for(int i = 0; i < dPOIsize; i++) {
+            final DynamicPOI dynamicPOI = list.get(i);
+            final String dataType = dynamicPOI.getType();
+            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
+                    BaseQuery.DATA_TYPE_YANCHU.equals(dataType) ||
+                    BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+                dataList.add(dynamicPOI);
+            }
+        }
+        
         int size = dataList.size();
-        List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
+        if (size == 0) {
+            return blockList;
+        }
+        
         lsv.refreshList(dataList);
         
         for (int i = 0; i < size; i++){
@@ -115,7 +138,6 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView<DynamicPO
                 child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
             }
         }
-//        mViewBlock.needToShow = true;
         blockList.add(mViewBlock);
         return blockList;
     }
