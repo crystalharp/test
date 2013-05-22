@@ -71,6 +71,8 @@ public class DynamicHotelPOI extends DynamicPOIView {
     private DateWidget mCheckOutDat;
     TextView moreTxv;
     
+    final static String TAG = "DynamicHotelPOI";
+    
     ItemInitializer i = new ItemInitializer(){
 
         @Override
@@ -175,8 +177,10 @@ public class DynamicHotelPOI extends DynamicPOIView {
     public List<DynamicPOIViewBlock> getViewList(POI poi) {
         blockList.clear();
         if (poi == null || poi.getHotel() == null || poi.getHotel().getRoomTypeList() == null) {
+            LogWrapper.i(TAG, "poi or hotel or roomTypeList is null, nothing to show for DynamicHotel");
             return blockList;
         }
+        mPOI = poi;
         mHotel = poi.getHotel();
         refreshDate();
         
@@ -188,6 +192,7 @@ public class DynamicHotelPOI extends DynamicPOIView {
         mAllRoomList.addAll(mHotel.getRoomTypeList());
         int size = (mAllRoomList != null? mAllRoomList.size() : 0);
         if (size == 0) {
+            LogWrapper.i(TAG, "size of roomTypeList is 0, nothing to show for DynamicHotel.");
             return blockList;
         } else if (size > SHOW_DYNAMIC_HOTEL_MAX) {
             for(int i = 0; i < SHOW_DYNAMIC_HOTEL_MAX; i++) {
@@ -221,7 +226,6 @@ public class DynamicHotelPOI extends DynamicPOIView {
 			
 			@Override
 			public void onClick(View v) {
-				LogWrapper.d("conan", "hotelSummary clicked");
 				HotelIntroFragment hotelIntro = mSphinx.getHotelIntroFragment();
 				hotelIntro.setData(mHotel);
 				mSphinx.showView(R.id.view_hotel_intro);
@@ -248,7 +252,6 @@ public class DynamicHotelPOI extends DynamicPOIView {
 			
 			@Override
 			public void onClick(View v) {
-				LogWrapper.d("conan", "hotelImage clicked");
 				Hotel hotel = mPOI.getHotel();
 				if (hotel != null) {
 				    mSphinx.getHotelImageGridFragment().setData(hotel.getHotelTKDrawableList());
@@ -259,6 +262,7 @@ public class DynamicHotelPOI extends DynamicPOIView {
         
         blockList.add(mUpperBlock);
         blockList.add(mLowerBlock);
+        LogWrapper.i(TAG, "Hotel viewBlock is:" + blockList);
         return blockList;
     }
 
@@ -331,6 +335,7 @@ public class DynamicHotelPOI extends DynamicPOIView {
         for (int i = 0, size = list.size(); i < size; i++) {
             DynamicPOI iter = list.get(i);
             if (iter.getType().equals(DynamicPOI.TYPE_HOTEL)) {
+                LogWrapper.i(TAG, "Dynamic Hotel info exists.");
                 return true;
             }
         }
@@ -342,15 +347,15 @@ public class DynamicHotelPOI extends DynamicPOIView {
         List<BaseQuery> baseQueryList = new LinkedList<BaseQuery>();
         setDate();
         if (mHotel == null) {
-            LogWrapper.d("conan", "hotel is null.");
+            LogWrapper.i(TAG, "hotel is null, generate Query.");
             BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Hotel.NEED_FILED_LIST);
             baseQueryList.add(baseQuery);
         } else if (mHotel != null && mHotel.getRoomTypeList() == null) {
-            LogWrapper.d("conan", "hotel.roomtype is null.");
+            LogWrapper.i(TAG, "hotel.roomtype is null, generate Query.");
             BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL);
             baseQueryList.add(baseQuery);
         }
-        LogWrapper.d("conan", "query in hotel:" + baseQueryList);
+        LogWrapper.i(TAG, "Generated query in hotel:" + baseQueryList);
         return baseQueryList;
     }
     
