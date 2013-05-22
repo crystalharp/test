@@ -664,7 +664,7 @@ public class DataQueryTest {
         XMap data = launchPOI(name);
         data.put(Hotel.FIELD_UUID, "FIELD_UUID");
         data.put(Hotel.FIELD_SOURCE, "FIELD_SOURCE");
-        data.put(Hotel.FIELD_BRAND, "FIELD_BRAND");
+        data.put(Hotel.FIELD_BRAND, 8);
         data.put(Hotel.FIELD_IMAGE_THUMB, "FIELD_IMAGE_THUMB");
         XArray<XMap> xarray = new XArray<XMap>();
         for(int i = 0; i < 16; i ++) {
