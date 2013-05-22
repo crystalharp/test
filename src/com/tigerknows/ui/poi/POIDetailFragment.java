@@ -190,8 +190,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     DynamicHotelPOI mDynamicHotelPOI;
     
-//    private LinearLayout mDynamicHotelUpperView;
-    
     private boolean mShowDynamicDianyingMoreView = true;
     
     private Button mCommentTipEdt;
@@ -400,18 +398,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         public T init(POIDetailFragment poiFragment, LayoutInflater inflater, LinearLayout belongsLayout, DynamicPOI data);
     }
     
-//    public interface DPOIQueryInterface {
-//        //setData的时候检查是否存在该类型的动态POI信息
-//		public List<BaseQuery> checkExistence(POI poi);
-//		//处理返回的response
-//		public void msgReceived(Sphinx mSphinx, BaseQuery query, Response response);
-//    }
-    
     public static class DynamicPOIViewBlock {
 		View mOwnLayout;
 		LinearLayout mBelongsLayout;
 		DPOIType mType;
-//		boolean needToShow = true;
 		
 		public DynamicPOIViewBlock(LinearLayout belongsLayout, DPOIType type) {
 		    mBelongsLayout = belongsLayout;
@@ -428,8 +418,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             if (mBelongsLayout.indexOfChild(mOwnLayout) != -1) {
                 mBelongsLayout.removeView(mOwnLayout);
             }
-//			needToShow = false;
 		}
+        
+        public String toString(){
+            return "ViewBlock, type:" + mType.toString();
+        }
     }
     
 	public abstract static class DynamicPOIView {
@@ -451,43 +444,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		
 		public abstract boolean checkExistence(POI poi);
 		
-//		static <T> T getInstance(POIDetailFragment poiFragment, LinearLayout belongsLayout, DynamicPOI data, DPOIViewInitializer<T> initer, ArrayList<DynamicPOIView> DPOIPool){
-//		    DynamicPOIView instance = null;
-//		    if (DPOIPool.size() == 0) {
-//		        instance = (DynamicPOIView) initer.init(poiFragment, poiFragment.mLayoutInflater, belongsLayout, data);
-//		        DPOIPool.add(instance);
-//		    } else {
-//		       //遍历缓冲池 
-//		        for (DynamicPOIView iter : DPOIPool) {
-//		            //如果有不用的，则使用它
-//		            LogWrapper.d("conan", "iter.needtoshow:" + iter.needToShow);
-//		            if (!iter.needToShow) {
-//		                instance = iter;
-//		                instance.refreshData(data);
-//		                instance.mBelongsLayout = belongsLayout;
-//		                instance.needToShow = true;
-//		                break;
-//		            }
-//		        }
-//		        //遍历完发现都在用，则创建个新的
-//		        if (instance == null) {
-//    		        instance = (DynamicPOIView) initer.init(poiFragment, poiFragment.mLayoutInflater, belongsLayout, data);
-//    		        DPOIPool.add(instance);
-//		        }
-//		    }
-//		    return (T)instance;
-//		}
-		
-//		public abstract void refreshData(DynamicPOI data);
-		
 	}
 	
-	//用来给动态POI类提供查询接口
-//	public void query(List<BaseQuery> list){
-//        mTkAsyncTasking = mSphinx.queryStart(list);
-//        mBaseQuerying = list;
-//	}
-    
 	//*************new code end*******************
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -682,25 +640,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * 刷新动态POI（团购、演出、展览）的显示区域
      * @param poi
      */
-    void refreshDynamicPOI(POI poi) {
+    final void refreshDynamicPOI(POI poi) {
     	if (poi == null) {
     		return;
     	}
-//    	clearDynamicPOI(DPOIViewBlockList);
 
-//        List<DynamicPOI> list = poi.getDynamicPOIList();
-//        List<DynamicPOI> normalDynamicPOIList = new LinkedList<DynamicPOI>();
-//        int size = (list != null ? list.size() : 0);
-//        for(int i = 0; i < size; i++) {
-//            final DynamicPOI dynamicPOI = list.get(i);
-//            final String dataType = dynamicPOI.getType();
-//            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
-//                    BaseQuery.DATA_TYPE_YANCHU.equals(dataType) ||
-//                    BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-//                normalDynamicPOIList.add(dynamicPOI);
-//            }
-//        }
-        
         DPOIViewBlockList.addAll(mDynamicNormalPOI.getViewList(poi));
     }
     
@@ -709,15 +653,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * @param poi
      */
     final void refreshDynamicHotel(POI poi) {
-       //显示 
-//        if (poi == null || poi.getHotel() == null || poi.getHotel().getRoomTypeList() == null) {
-//            return;
-//        }
-        
-//        List<Hotel> list = new LinkedList<Hotel>();
-//        list.add(poi.getHotel());
         DPOIViewBlockList.addAll(mDynamicHotelPOI.getViewList(poi));
-//        DPOIViewBlockList.addAll(mDynamicHotelPOI.getViewList(list));
     }
     /**
      * 刷新动态电影的显示区域（仅电影院类POI）
