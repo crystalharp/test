@@ -254,6 +254,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     mBaseQuerying = list;
                 }
             } else if (object instanceof Dianying) {
+                mActionLog.addAction(mActionTag + ActionLog.POIDetailDianying);
                 Dianying dynamic = (Dianying) object;
                 if (dynamic.getYingxun().getName() != null) {
                     List<Dianying> list = new ArrayList<Dianying>();
@@ -924,6 +925,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 break;
                 
             case R.id.dynamic_dianying_more_view:
+                mActionLog.addAction(mActionTag + ActionLog.POIDetailDianyingMore);
                 mShowDynamicDianyingMoreView = false;
                 mDynamicDianyingMoreView.setVisibility(View.GONE);
                 
