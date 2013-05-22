@@ -170,6 +170,8 @@ public class HotelImageGridFragment extends BaseFragment {
                 ViewGroup viewGroup = new LinearLayout(getContext());
                 ImageView iconImv = new ImageView(getContext());
                 iconImv.setId(R.id.icon_imv);
+                iconImv.setScaleType(ImageView.ScaleType.FIT_XY);
+                iconImv.setBackgroundResource(R.drawable.icon);
                 viewGroup.addView(iconImv);
                 view = viewGroup;
             } else {
@@ -186,9 +188,9 @@ public class HotelImageGridFragment extends BaseFragment {
             if (image != null) {
                 float scale = ((float) newWidth) / image.getIntrinsicWidth();
                 layoutParams.height = (int) (scale*image.getIntrinsicHeight());
-                iconImv.setBackgroundDrawable(image);
+                iconImv.setImageDrawable(image);
             } else {
-                iconImv.setBackgroundDrawable(null);
+                iconImv.setImageDrawable(null);
             }
             return view;
         }
