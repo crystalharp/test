@@ -80,4 +80,9 @@
     <item type="id" name="view_hotel_order_list"/>
     <item type="id" name="view_hotel_image_grid"/>
     <item type="id" name="view_hotel_intro"/>
+    
+    <item type="id" name="room_person_edt_2"/>
+    <item type="id" name="room_person_edt_3"/>
+    <item type="id" name="room_person_edt_4"/>
+    <item type="id" name="room_person_edt_5"/>
 </resources>

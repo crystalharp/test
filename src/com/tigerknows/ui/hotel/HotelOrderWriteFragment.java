@@ -3,7 +3,6 @@
  */
 package com.tigerknows.ui.hotel;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,7 +11,9 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -33,7 +35,6 @@ import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.HotelOrderOperation;
 import com.tigerknows.model.HotelOrderOperation.HotelOrderCreateResponse;
-import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.HotelOrder;
@@ -60,7 +61,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     public static final SimpleDateFormat SIMPLE_TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     
+    private static final int[] idArray = {R.id.room_person_edt, R.id.room_person_edt_2, R.id.room_person_edt_3, R.id.room_person_edt_4, R.id.room_person_edt_5};
+    
     private ScrollView mHotelOrderWriteScv;
+    private LinearLayout mPersonNameLly;
     private TextView mHotelNameTxv;
     private TextView mRoomtypeTxv;
     private TextView mRoomtypeDetailTxv;
@@ -132,6 +136,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
     protected void findViews() {
         mHotelOrderWriteScv = (ScrollView) mRootView.findViewById(R.id.hotel_order_write_scv);
+        mPersonNameLly = (LinearLayout) mRootView.findViewById(R.id.person_name_lly);
         mHotelNameTxv = (TextView) mRootView.findViewById(R.id.hotel_name_txv);
         mRoomtypeTxv = (TextView) mRootView.findViewById(R.id.roomtype_txv);
         mRoomtypeDetailTxv = (TextView) mRootView.findViewById(R.id.roomtype_detail_txv);
@@ -171,22 +176,27 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	showRoomReserveDialog();
             break;
         case R.id.submit_order_btn:
-        	String str = mRoomPersonEdt.getText().toString().trim();
-        	if(TextUtils.isEmpty(str)){
-        		mRoomPersonEdt.requestFocus();
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_room_person_empty_tip));
-        		mSphinx.showSoftInput();
-        		return;
-        	}else if(!ValidateUtil.isValidElongName(str)){
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format));
-        		return;
-        	}else{
-        		mUsername = str;
+        	String str = "";
+        	for (int i = 1; i <= mRoomHowmany; i++){
+        		if(i != 1) str += ",";
+        		EditText thisPersonEdt = (EditText) mRootView.findViewById(idArray[i-1]);
+        		String tempStr = thisPersonEdt.getText().toString();
+        		if(TextUtils.isEmpty(tempStr)){
+        			thisPersonEdt.requestFocus();
+        			Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_room_person_empty_tip));
+        			mSphinx.showSoftInput();
+        			return;
+        		}else if(!ValidateUtil.isValidElongName(tempStr)){
+        			Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format));
+        			return;
+        		}
+        		str += tempStr;
         	}
+        	mUsername = str;
         	str = mRoomMobileNumberEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
         		mRoomMobileNumberEdt.requestFocus();
-        		Toast.makeText(mContext, mSphinx.getString(R.string.hotel_room_mobile_empty_tip), Toast.LENGTH_SHORT).show();
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_room_mobile_empty_tip));
         		mSphinx.showSoftInput();
         		return;
         	}else if(!ValidateUtil.isValidPhone(str)){
@@ -206,6 +216,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private void refreshData(){
     	mTotalPrice = (mRoomtypeDynamic.getPrice() * mRoomHowmany) + "";
     	mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, mTotalPrice));
+    	RefreshPersonView();
     	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
     	if(rtList.isEmpty()){
     		mNeedCreditAssure = 0;
@@ -263,6 +274,50 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 		// TODO Auto-generated method stub
 		
 	}
+	
+	protected View createPerson(int id){
+		LinearLayout person2 = new LinearLayout(mContext);
+		person2.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+		person2.setOrientation(LinearLayout.HORIZONTAL);
+		person2.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
+		person2.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.list_header));
+		
+		TextView txv = new TextView(mSphinx);
+		txv.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		txv.setPadding(4, 4, 4, 4);
+		txv.setTextColor(getResources().getColor(R.color.black_dark));
+		txv.setTextSize(16);
+		txv.setText(mSphinx.getString(R.string.hotel_room_person_name) + id);
+		txv.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
+		
+		EditText edt = new EditText(mContext);
+		edt.setId(id);
+		edt.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+		edt.setFilters(new InputFilter[]{new InputFilter.LengthFilter(50)});
+		edt.setTextSize(16);
+		edt.setFocusable(true);
+		edt.setFocusableInTouchMode(true);
+		edt.setSingleLine(true);
+		edt.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
+		edt.setBackgroundColor(mContext.getResources().getColor(R.color.transparent));
+		
+		person2.addView(txv);
+		person2.addView(edt);
+		return person2;
+	}
+	
+	private void RefreshPersonView(){
+		int count = mPersonNameLly.getChildCount();
+		if(count > mRoomHowmany){
+			for (int i = count-1; i >= mRoomHowmany; i--){
+				mPersonNameLly.removeViewAt(i);
+			}
+		}else if(count < mRoomHowmany){
+			for (int i = count+1; i <= mRoomHowmany; i++){
+				mPersonNameLly.addView(createPerson(idArray[i-1]));
+			}
+		}
+	}
     private void showRoomHowmanyDialog(){
         final List<String> list = new ArrayList<String>();
         //TODO: mActionlog
@@ -288,6 +343,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
             	mRoomHowmany = which + 1;
             	mRTimeWhich = 0;
+//            	if(mRoomHowmany > 1){
+//            		mPersonNameLly.addView(createPerson(R.id.room_person_edt_2));
+//            	}
+//            	LogWrapper.d("Trap", "num"+mPersonNameLly.getChildCount());
             	refreshData();
             	dialog.dismiss();
             }
