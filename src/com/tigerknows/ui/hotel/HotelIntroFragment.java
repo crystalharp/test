@@ -25,6 +25,7 @@ import com.tigerknows.ui.BaseFragment;
 
 public class HotelIntroFragment extends BaseFragment {
 
+    TextView hotelNameTxv;
     TextView longDescriptionTxv;
     TextView roomDescriptionTxv;
     TextView hotelServiceTxv;
@@ -33,6 +34,7 @@ public class HotelIntroFragment extends BaseFragment {
     View hotelServiceBlock;
     
     Hotel mHotel;
+    POI mPOI;
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -42,6 +44,7 @@ public class HotelIntroFragment extends BaseFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		mRootView = mLayoutInflater.inflate(R.layout.hotel_intro, container, false);
+		hotelNameTxv = (TextView) mRootView.findViewById(R.id.hotel_head);
 		longDescriptionTxv = (TextView) mRootView.findViewById(R.id.hotel_long_description);
 		roomDescriptionTxv = (TextView) mRootView.findViewById(R.id.hotel_room_description);
 		hotelServiceTxv = (TextView) mRootView.findViewById(R.id.hotel_service);
@@ -54,7 +57,8 @@ public class HotelIntroFragment extends BaseFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		mTitleBtn.setText("hotel introduction");
+		mTitleBtn.setText(mSphinx.getString(R.string.hotel_description));
+		hotelNameTxv.setText(mPOI.getName());
 		String longDescription = mHotel.getLongDescription();
 		String roomDescription = mHotel.getRoomDescription();
 		String hotelService = mHotel.getService();
@@ -83,6 +87,7 @@ public class HotelIntroFragment extends BaseFragment {
 	}
 	
 	public void setData(POI poi) {
+	    mPOI = poi;
 	    mHotel = poi.getHotel();
 	    if (mHotel.getLongDescription() == null &&
 	            mHotel.getService() == null &&

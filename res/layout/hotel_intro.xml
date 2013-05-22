@@ -7,6 +7,7 @@
     
     <TextView
         android:id="@+id/hotel_head"
+        android:textSize="24sp"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="酒店名称" >
@@ -29,6 +30,7 @@
 	    <TextView
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+	        android:textSize="21sp"
 	        android:text="酒店服务" >
 	        
 	    </TextView>
@@ -37,6 +39,7 @@
 	        android:id="@+id/hotel_service"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+	        android:textSize="18sp"
 	        android:text="hotel introduction page" >
 	        
 	    </TextView>
@@ -50,6 +53,7 @@
 	    <TextView
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+	        android:textSize="21sp"
 	        android:text="房间设施" >
 	        
 	    </TextView>
@@ -58,6 +62,7 @@
 	        android:id="@+id/hotel_room_description"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+	        android:textSize="18sp"
 	        android:text="hotel introduction page" >
 	        
 	    </TextView>
@@ -72,6 +77,7 @@
 	    <TextView
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+	        android:textSize="21sp"
 	        android:text="酒店介绍" >
 	        
 	    </TextView>
@@ -80,6 +86,7 @@
 	        android:id="@+id/hotel_long_description"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
+	        android:textSize="18sp"
 	        android:text="hotel introduction page" >
 	        
 	    </TextView>

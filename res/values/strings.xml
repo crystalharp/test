@@ -941,9 +941,11 @@
     
     <string name="hotel_btn_book">预订</string>
     <string name="hotel_btn_sold_out">售完</string>
+    <string name="hotel_description">酒店简介</string>
+    <string name="hotel_expand_roomtype">展开全部房型</string>
+    <string name="pictures">%1$s张</string>
     <string name="fold">收起</string>
     <string name="summary">简介</string>
-    <string name="price_show">￥%1$s</string>
     <string name="hotel_room_title">订单填写</string>
     <string name="hotel_room_howmany">房间数</string>
     <string name="hotel_room_reserve">房间保留到</string>
