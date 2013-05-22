@@ -182,6 +182,7 @@ public class HotelImageGridFragment extends BaseFragment {
             
             HotelTKDrawable hotelTKDrawable = getItem(position);
             Drawable image = hotelTKDrawable.getTKDrawable().loadDrawable(mSphinx, mLoadedDrawableRun, HotelImageGridFragment.this.toString());
+            
             int newWidth = (int) (Globals.g_metrics.density*WIDTH);
             ViewGroup.LayoutParams layoutParams = iconImv.getLayoutParams();
             layoutParams.width = newWidth;
@@ -190,6 +191,9 @@ public class HotelImageGridFragment extends BaseFragment {
                 layoutParams.height = (int) (scale*image.getIntrinsicHeight());
                 iconImv.setImageDrawable(image);
             } else {
+                Drawable drawable = iconImv.getBackground();
+                float scale = ((float) newWidth) / drawable.getIntrinsicWidth();
+                layoutParams.height = (int) (scale*drawable.getIntrinsicHeight());
                 iconImv.setImageDrawable(null);
             }
             return view;
@@ -217,17 +221,23 @@ public class HotelImageGridFragment extends BaseFragment {
             ImageView iconImv = (ImageView)view.findViewById(R.id.icon_imv);
             TextView textTxv = (TextView)view.findViewById(R.id.text_txv);
             
+            iconImv.setScaleType(ImageView.ScaleType.FIT_XY);
+            iconImv.setBackgroundResource(R.drawable.icon);
+            
             HotelTKDrawable hotelTKDrawable = getItem(position);
             
             Drawable image = hotelTKDrawable.getTKDrawable().loadDrawable(mSphinx, mLoadedDrawableRun, HotelImageGridFragment.this.toString());
+            ViewGroup.LayoutParams layoutParams = iconImv.getLayoutParams();
+            layoutParams.width = Globals.g_metrics.widthPixels;
             if (image != null) {
                 float scale = ((float) Globals.g_metrics.widthPixels) / image.getIntrinsicWidth();
-                ViewGroup.LayoutParams layoutParams = iconImv.getLayoutParams();
-                layoutParams.width = Globals.g_metrics.widthPixels;
                 layoutParams.height = (int) (scale*image.getIntrinsicHeight());
-                iconImv.setBackgroundDrawable(image);
+                iconImv.setImageDrawable(image);
             } else {
-                iconImv.setBackgroundDrawable(null);
+                Drawable drawable = iconImv.getBackground();
+                float scale = ((float) Globals.g_metrics.widthPixels) / drawable.getIntrinsicWidth();
+                layoutParams.height = (int) (scale*drawable.getIntrinsicHeight());
+                iconImv.setImageDrawable(null);
             }
             textTxv.setText(hotelTKDrawable.getName()+" "+(position+1)+"/"+(getCount()));
             return view;
