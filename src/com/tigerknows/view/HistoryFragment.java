@@ -140,7 +140,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
 
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             if (info.position > -1 && info.position < (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? mPOIAdapter.getCount() : mTrafficAdapter.getCount())) {
-            	mActionLog.addAction(mActionTag + ActionLog.ListViewItemLong + mLayerType, String.valueOf(info.position));
+            	mActionLog.addAction(mActionTag + ActionLog.ListViewItemLong + getActionLogType(), String.valueOf(info.position));
                 mSelectIndex = info.position;
                 menu.add(0, MENU_DELETE, 0, R.string.delete);
             }
@@ -151,6 +151,17 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.History;
+    }
+    
+    String getActionLogType() {
+        String result =  null;
+        if (ItemizedOverlay.POI_OVERLAY.equals(mLayerType)) {
+            result = ActionLog.HistoryPOI;
+        } else if (ItemizedOverlay.TRAFFIC_OVERLAY.equals(mLayerType)) {
+            result = ActionLog.HistoryTraffic;
+        }
+        
+        return result;
     }
 
     @Override
@@ -297,7 +308,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 if (position < adapterView.getCount()) {
                     History traffic = (History) adapterView.getAdapter().getItem(position);
                     if (traffic != null) {
-                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem + mLayerType, position);
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem + ActionLog.HistoryTraffic, position);
                         showTrafficDetail(traffic);
                     }
                 }
@@ -312,7 +323,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 if (position < adapterView.getCount()) {
                     POI poi = (POI) adapterView.getAdapter().getItem(position);
                     if (poi != null) {
-                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem + mLayerType, position);
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem + ActionLog.HistoryPOI, position);
                         mSphinx.showView(R.id.view_poi_detail);
                         mSphinx.getPOIDetailFragment().setData(poi);
                     }
@@ -359,7 +370,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         loadThread.layerType = ItemizedOverlay.POI_OVERLAY;
         loadThread.maxId = maxId;
         loadThread.start();
-        mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore + mLayerType);
+        mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore + ActionLog.HistoryPOI);
         }
     }
 
@@ -379,7 +390,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             loadThread.layerType = ItemizedOverlay.TRAFFIC_OVERLAY;
             loadThread.maxId = maxId;
             loadThread.start();
-            mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore + mLayerType);
+            mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore + ActionLog.HistoryTraffic);
         }
     }
     
@@ -388,7 +399,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         if (mSelectIndex > -1) {
             switch (item.getItemId()) {
                 case MENU_DELETE:
-                    mActionLog.addAction(mActionTag+ActionLog.HistoryMenuDelete + mLayerType);
+                    mActionLog.addAction(mActionTag+ActionLog.HistoryMenuDelete + getActionLogType());
                     CommonUtils.showNormalDialog(mSphinx,
                             mContext.getString(R.string.prompt),
                             mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_a_history_poi : R.string.delete_a_history_traffic),
@@ -439,7 +450,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     public void onClick(View view) {
         switch (view.getId()) {                
             case R.id.right_btn:
-                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton + mLayerType);
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton + getActionLogType());
 
                 int count = 0;
                 if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
@@ -474,12 +485,12 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 }
                 break;
             case R.id.poi_btn:
-                mActionLog.addAction(mActionTag +  mLayerType);
+                mActionLog.addAction(mActionTag +  ActionLog.HistoryPOI);
                 mViewPager.setCurrentItem(0);
                 break;
                 
             case R.id.traffic_btn:
-                mActionLog.addAction(mActionTag +  mLayerType);
+                mActionLog.addAction(mActionTag +  ActionLog.HistoryTraffic);
                 mViewPager.setCurrentItem(1);
                 break;
                 
@@ -827,10 +838,10 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         @Override
         public void onPageSelected(int position) {
             if (position == 0) {
-                mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, ItemizedOverlay.POI_OVERLAY);
+                mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, ActionLog.HistoryPOI);
                 changeTab(ItemizedOverlay.POI_OVERLAY);
             } else {
-                mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, ItemizedOverlay.TRAFFIC_OVERLAY);
+                mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, ActionLog.HistoryTraffic);
                 changeTab(ItemizedOverlay.TRAFFIC_OVERLAY);
             }
         }

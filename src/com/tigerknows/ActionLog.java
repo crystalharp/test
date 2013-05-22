@@ -258,10 +258,14 @@ public class ActionLog {
     public static final String Favorite = "CD";
     public static final String FavoriteMenuDelete = "BA";
     public static final String FavoriteMenuRename = "BB";
+    public static final String FavoritePOI = "BC";
+    public static final String FavoriteTraffic = "BD";
 
     // 历史浏览页
     public static final String History = "CE";
     public static final String HistoryMenuDelete = "BA";
+    public static final String HistoryPOI = "BC";
+    public static final String HistoryTraffic = "BD";
 
     // 系统设置页
     public static final String Setting = "CF";
