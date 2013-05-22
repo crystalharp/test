@@ -303,7 +303,7 @@ public class DynamicHotelPOI extends DynamicPOIView {
         criteria.put(ProxyQuery.SERVER_PARAMETER_ROOM_TYPE_TAOCANID, pkgId);
         criteria.put(ProxyQuery.SERVER_PARAMETER_TASK, "1");
         ProxyQuery query = new ProxyQuery(mSphinx);
-        query.setup(criteria, Globals.getCurrentCityId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId());
+        query.setup(criteria, Globals.getCurrentCityId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
         return query;
     }
     @Override
