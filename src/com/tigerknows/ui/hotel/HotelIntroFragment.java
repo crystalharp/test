@@ -1,14 +1,26 @@
 package com.tigerknows.ui.hotel;
 
+import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.decarta.Globals;
+import com.decarta.android.exception.APIException;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.DataOperation;
+import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Hotel;
+import com.tigerknows.model.POI;
+import com.tigerknows.model.Response;
 import com.tigerknows.ui.BaseFragment;
 
 public class HotelIntroFragment extends BaseFragment {
@@ -70,8 +82,36 @@ public class HotelIntroFragment extends BaseFragment {
 		super(sphinx);
 	}
 	
-	public void setData(Hotel hotel) {
-	    mHotel = hotel;
+	public void setData(POI poi) {
+	    mHotel = poi.getHotel();
+	    if (mHotel.getLongDescription() == null &&
+	            mHotel.getService() == null &&
+	            mHotel.getRoomDescription() == null) {
+	        Hashtable<String, String> criteria = new Hashtable<String, String>();
+	        criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
+	        criteria.put(DataOperation.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
+	        criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+	        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
+	        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Hotel.NEED_FILED_DESCRIPTION+"01");   // 01表示poi的uuid
+	        DataOperation dataOpration = new DataOperation(mSphinx);
+	        dataOpration.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId());
+	        this.mTkAsyncTasking = mSphinx.queryStart(dataOpration);
+	    }
+	}
+	
+	@Override
+	public void onPostExecute(TKAsyncTask tkAsyncTask){
+	    super.onPostExecute(tkAsyncTask);
+	    List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
+	    BaseQuery baseQuery = baseQueryList.get(0);
+	    Response response = baseQuery.getResponse();
+	    try {
+            mHotel.init(response.getData(), false);
+        } catch (APIException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+	    onResume();
 	}
 
 }

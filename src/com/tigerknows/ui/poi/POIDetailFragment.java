@@ -1516,9 +1516,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             } catch (APIException e) {
                                 e.printStackTrace();
                             }
-//                            List<Hotel> dataList = new LinkedList<Hotel>();
-//                            dataList.add(hotel);
-//                            DPOIViewBlockList.addAll(mDynamicHotelPOI.getViewList(dataList));
                             refreshDynamicPOI(DPOIViewBlockList);
                         } else {
                             poi.updateData(mSphinx, onlinePOI.getData());

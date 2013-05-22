@@ -87,10 +87,10 @@ public class DynamicHotelPOI extends DynamicPOIView {
             roomDetailTxv.setText(roomType.getBedType() + " " + roomType.getBreakfast() + " " + roomType.getNetService()
                     + " " + roomType.getFloor() + " " + roomType.getArea());
             if (roomType.getCanReserve() == 0) {
-                bookBtn.setText(mSphinx.getString(R.string.hotel_btn_sold_out));
+//                bookBtn.setText(mSphinx.getString(R.string.hotel_btn_sold_out));
                 bookBtn.setClickable(false);
             } else {
-                bookBtn.setText(mSphinx.getString(R.string.hotel_btn_book));
+//                bookBtn.setText(mSphinx.getString(R.string.hotel_btn_book));
                 bookBtn.setClickable(true);
                 bookBtn.setTag(roomType);
                 bookBtn.setOnClickListener(new roomTypeClickListener());
@@ -227,7 +227,7 @@ public class DynamicHotelPOI extends DynamicPOIView {
 			@Override
 			public void onClick(View v) {
 				HotelIntroFragment hotelIntro = mSphinx.getHotelIntroFragment();
-				hotelIntro.setData(mHotel);
+				hotelIntro.setData(mPOI);
 				mSphinx.showView(R.id.view_hotel_intro);
 			}
 		});
@@ -322,7 +322,7 @@ public class DynamicHotelPOI extends DynamicPOIView {
             } else {
                 //更新按钮状态
                 mClickedRoomType.setCanReserve(0);
-                mClickedBookBtn.setText(mSphinx.getString(R.string.hotel_btn_sold_out));
+//                mClickedBookBtn.setText(mSphinx.getString(R.string.hotel_btn_sold_out));
                 mClickedBookBtn.setClickable(false);
             }
             
