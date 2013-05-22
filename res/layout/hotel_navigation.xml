@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_hotel_navigation"
+    android:weightSum="4"
+    >
+    <TextView 
+        android:id="@+id/select_hotel_txv"
+        android:layout_weight="1"
+        android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:text="选择酒店"
+	    android:textColor="@color/gray_dark"
+	    android:background="@color/transparent"/>
+    <TextView 
+        android:id="@+id/select_room_type_txv"
+        android:layout_weight="1"
+        android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:text="选择房型"
+	    android:textColor="@color/gray_dark"
+	    android:background="@color/transparent"/>
+    <TextView 
+        android:id="@+id/write_order_txv"
+        android:layout_weight="1"
+        android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:text="填写订单"
+	    android:textColor="@color/gray_dark"
+	    android:background="@color/transparent"/>
+    <TextView 
+        android:id="@+id/reserve_success_txv"
+        android:layout_weight="1"
+        android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:gravity="center"
+	    android:text="预订成功"
+	    android:textColor="@color/gray_dark"
+	    android:background="@color/transparent"/>
+</LinearLayout>

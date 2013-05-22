@@ -22,7 +22,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="32dp"
             >
             <Button
                 android:id="@+id/city_btn"
@@ -71,22 +71,19 @@
 	                tkandroid:checkin="入住"
 	                >
 	                </com.tigerknows.ui.hotel.DateWidget>
-	            <TextView
-	                android:id="@+id/split_txv"
+	            <ImageView
+	                android:id="@+id/split_imv"
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:layout_toRightOf="@id/checkin_dat"
 	                android:layout_centerVertical="true"
-	                android:textColor="@color/black_dark"
-	                android:textSize="28sp"
-	                android:gravity="center"
-	                android:text="/"
+	                android:background="@drawable/ic_split_hotel_date"
 	                />
 	            <com.tigerknows.ui.hotel.DateWidget
 	                android:id="@+id/checkout_dat"
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
-	                android:layout_toRightOf="@id/split_txv"
+	                android:layout_toRightOf="@id/split_imv"
 	                tkandroid:checkin="离店"
 	                >
 	                </com.tigerknows.ui.hotel.DateWidget>
@@ -166,7 +163,7 @@
 	                android:id="@+id/query_btn"
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
-	                android:background="@drawable/btn_buy"
+	                android:background="@drawable/btn_query_hotel_normal"
 	                android:padding="8dp"
 	                android:textColor="@color/white"
 	                android:textSize="18sp"
@@ -191,4 +188,14 @@
         </LinearLayout>
         
     </ScrollView>
+        
+    <com.tigerknows.ui.hotel.NavigationWidget
+        android:id="@+id/navigation_widget"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        tkandroid:navigationState="0"
+        >
+    </com.tigerknows.ui.hotel.NavigationWidget>
 </RelativeLayout>
