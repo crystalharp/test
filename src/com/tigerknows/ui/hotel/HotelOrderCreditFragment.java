@@ -57,8 +57,9 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     private ValidityListView mValidityListView = null;
     
     private String mSumPrice;
-    private Calendar mDate;
+    private Calendar mDate = null;
     private String mOrderModifyDeadline;
+    private List<String> mBankList;
     
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -160,6 +161,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         		return;
         	}
         	list.add(str);
+        	if(mDate == null){
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_validity_empty_tip));
+        		return;
+        	}
         	list.add(mDate.get(Calendar.YEAR) + "");
         	list.add(1+mDate.get(Calendar.MONTH) + "");
         	LogWrapper.d("Trap", CalendarUtil.ym6h.format(mDate.getTime()));
@@ -185,11 +190,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         }
     }
     public void showCreditBankDialog(){
-    	final List<String> list = new ArrayList<String>();
-    	list.add("中国银行");
-    	list.add("中国工商银行");
-    	list.add("中国农业银行");
-        final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
+        final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, mBankList);
         ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(adapter);
         //TODO: ActionLog
@@ -197,8 +198,8 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         listView.setOnItemClickListener(new OnItemClickListener() {
         	@Override
         	public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
-        		mCreditBankBtn.setText(list.get(which));
-        		mCreditValidityBtn.setTextColor(Color.BLACK);
+        		mCreditBankBtn.setText(mBankList.get(which));
+        		mCreditBankBtn.setTextColor(Color.BLACK);
         		dialog.dismiss();
         	}
 		});
@@ -234,23 +235,29 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	@Override
         	public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
         		mCreditCertTypeBtn.setText(list.get(which));
-        		mCreditValidityBtn.setTextColor(Color.BLACK);
+        		mCreditCertTypeBtn.setTextColor(Color.BLACK);
         		dialog.dismiss();
         	}
 		});
     }
-	public void setData(String sumPrice, Calendar date, String orderModifyDeadline) {
+	public void setData(String sumPrice, String additionMessage) {
 		mSumPrice = sumPrice;
-		mDate = date;
-		mOrderModifyDeadline = orderModifyDeadline;
-		
-		//TODO 
+		String[] sArray = additionMessage.split("#");
+		mOrderModifyDeadline = sArray[0];
+		mBankList = new ArrayList<String>();
+		for (int i = 1; i < sArray.length; i++){
+			mBankList.add(sArray[i]);
+		}
+		if(mBankList.isEmpty()){
+			mBankList.add("服务器错误：银行列表为空");
+		}
 	}
 
     @Override
     public void selected(Calendar calendar) {
         // TODO 设置选择的日期
-    	mDate = calendar;
+    	mDate = Calendar.getInstance();
+    	mDate.setTime(calendar.getTime());
     	mCreditValidityBtn.setText(CalendarUtil.y4mc.format(mDate.getTime()));
     	mCreditValidityBtn.setTextColor(Color.BLACK);
         if (mValidityDialog != null && mValidityDialog.isShowing()) {
