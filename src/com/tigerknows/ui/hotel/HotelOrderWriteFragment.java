@@ -90,9 +90,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private String mRTime;
     private String mRTimeDetail;
     private long mRoomHowmany;
-    private String mTotalPrice;
+    private double mOneNightPrice;
     private String mUsername;
     private String mMobile;
+    private int mNights;
+    private double mTotalPrice;
     
     // 7天酒店会员号
     private String mMemberNum = "";
@@ -178,7 +180,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         case R.id.submit_order_btn:
         	String str = "";
         	for (int i = 1; i <= mRoomHowmany; i++){
-        		if(i != 1) str += ",";
+        		if(i != 1) str += ";";
         		EditText thisPersonEdt = (EditText) mRootView.findViewById(idArray[i-1]);
         		String tempStr = thisPersonEdt.getText().toString();
         		if(TextUtils.isEmpty(tempStr)){
@@ -214,8 +216,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         }
     }
     private void refreshData(){
-    	mTotalPrice = (mRoomtypeDynamic.getPrice() * mRoomHowmany) + "";
-    	mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, mTotalPrice));
+    	mOneNightPrice = mRoomtypeDynamic.getPrice() * mRoomHowmany;
+    	mTotalPrice = mOneNightPrice * mNights;
+    	mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, mTotalPrice+""));
     	RefreshPersonView();
     	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
     	if(rtList.isEmpty()){
@@ -259,13 +262,14 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         roomTypeDetail += (appendContent != null) ? " " : null;
         mRoomtypeDetailTxv.setText(roomTypeDetail);
         mRoomDateTxv.setText(mSphinx.getString(R.string.hotel_room_date,
-        	    checkIn.get(Calendar.MONTH+1),
+        	    checkIn.get(Calendar.MONTH)+1,
         		checkIn.get(Calendar.DATE),
-        	    checkOut.get(Calendar.MONTH+1),
+        	    checkOut.get(Calendar.MONTH)+1,
         		checkOut.get(Calendar.DATE)
         		));
         mCheckIn = checkIn;
         mCheckOut = checkOut;
+        mNights = CalendarUtil.dateInterval(mCheckIn, mCheckOut);
         mRoomHowmany = 1;
         mRTimeWhich = 0;
     }
@@ -284,10 +288,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 		
 		TextView txv = new TextView(mSphinx);
 		txv.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-		txv.setPadding(4, 4, 4, 4);
+		txv.setPadding(Utility.dip2px(mContext, 8), Utility.dip2px(mContext, 8), Utility.dip2px(mContext, 8), Utility.dip2px(mContext, 8));
 		txv.setTextColor(getResources().getColor(R.color.black_dark));
 		txv.setTextSize(16);
-		txv.setText(mSphinx.getString(R.string.hotel_room_person_name) + id);
+		txv.setText(mSphinx.getString(R.string.hotel_room_person_name));
 		txv.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
 		
 		EditText edt = new EditText(mContext);
@@ -307,6 +311,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 	}
 	
 	private void RefreshPersonView(){
+		// 这个函数用于在房间数变化时，入住人的编辑框数量相应变化
 		int count = mPersonNameLly.getChildCount();
 		if(count > mRoomHowmany){
 			for (int i = count-1; i >= mRoomHowmany; i--){
@@ -325,7 +330,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         long listsize = (mRoomtypeDynamic.getNum() > MAX_ROOM_HOWMANY) ? MAX_ROOM_HOWMANY : mRoomtypeDynamic.getNum();
         String listitem;
         for(long i = 1; i <= listsize; i++){
-            listitem = mSphinx.getString(R.string.room_howmany_item, i, mRoomtypeDynamic.getPrice()*i + "");
+            listitem = mSphinx.getString(R.string.room_howmany_item, i, mRoomtypeDynamic.getPrice()*mNights*i + "");
         	list.add(listitem);
         }
         final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
@@ -343,10 +348,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
             	mRoomHowmany = which + 1;
             	mRTimeWhich = 0;
-//            	if(mRoomHowmany > 1){
-//            		mPersonNameLly.addView(createPerson(R.id.room_person_edt_2));
-//            	}
-//            	LogWrapper.d("Trap", "num"+mPersonNameLly.getChildCount());
             	refreshData();
             	dialog.dismiss();
             }
@@ -401,7 +402,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     			HotelHomeFragment.SIMPLE_DATE_FORMAT.format(mCheckOut.getTime()));
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_RESERVE_TIME, mRTimeDetail);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_NUMROOMS, mRoomHowmany + "");
-    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_TOTAL_PRICE, mTotalPrice);
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_TOTAL_PRICE, mTotalPrice + "");
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_USERNAME, mUsername);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_MOBILE, mMobile);
     	if(!TextUtils.isEmpty(mMemberNum)){
@@ -462,11 +463,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 					mPOI.getTelephone(),
 					mRoomType.getRoomType(),
 					mRoomHowmany,
-					Double.parseDouble(mTotalPrice),
+					mTotalPrice,
 					CalendarUtil.strDateToLong(SIMPLE_TIME_FORMAT, mRTimeDetail),
 					mCheckIn.getTimeInMillis(),
 					mCheckOut.getTimeInMillis(),
-					CalendarUtil.dateInterval(mCheckIn, mCheckOut),
+					mNights,
 					mUsername,
 					mMobile
 					);
@@ -484,9 +485,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     		break;
     	case Response.RESPONSE_CODE_HOTEL_NEED_CREDIT_ASSURE:
        		if(mTypeCreditAssure ==2){
-       			mSphinx.getHotelOrderCreditFragment().setData(mTotalPrice, Calendar.getInstance(), response.getDescription());
+       			mSphinx.getHotelOrderCreditFragment().setData(mTotalPrice+"", response.getDescription());
        		}else {
-        		mSphinx.getHotelOrderCreditFragment().setData(mRoomtypeDynamic.getPrice()+"", Calendar.getInstance(), response.getDescription());
+        		mSphinx.getHotelOrderCreditFragment().setData(mOneNightPrice+"", response.getDescription());
        		}
        		mSphinx.showView(R.id.view_hotel_credit_assure);
        		break;

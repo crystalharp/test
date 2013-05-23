@@ -254,7 +254,7 @@ public class DynamicHotelPOI extends DynamicPOIView {
 			public void onClick(View v) {
 				Hotel hotel = mPOI.getHotel();
 				if (hotel != null) {
-				    mSphinx.getHotelImageGridFragment().setData(hotel.getHotelTKDrawableList());
+				    mSphinx.getHotelImageGridFragment().setData(hotel);
 				    mSphinx.showView(R.id.view_hotel_image_grid);
 				}
 			}

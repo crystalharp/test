@@ -13,8 +13,7 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"
-        android:orientation="vertical"
-        android:padding="8dp" >
+        android:orientation="vertical">
        
         <LinearLayout
             android:layout_width="fill_parent"
@@ -31,24 +30,25 @@
                 <TextView android:id="@+id/hotel_name_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="8dp"
-                    android:paddingLeft="8dp"
+                    android:paddingTop="12dp"
+                    android:paddingLeft="16dp"
                     android:textSize="18sp"
                     android:text="@string/app_name"
                     />
                 <TextView android:id="@+id/roomtype_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="4dp"
-                    android:paddingLeft="8dp"
-                    android:textSize="18sp"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="16dp"
+                    android:textSize="16sp"
                     android:text="@string/app_name"
+                    android:textColor="@color/orange"
                     />
                 <TextView android:id="@+id/roomtype_detail_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="4dp"
-                    android:paddingLeft="8dp"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="16dp"
                     android:textColor="@color/black_light"
                     android:textSize="14sp"
                     android:text="@string/app_name"
@@ -56,23 +56,31 @@
                 <TextView android:id="@+id/room_date_txv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="4dp"
-                    android:paddingLeft="8dp"
+                    android:paddingTop="8dp"
+                    android:paddingLeft="16dp"
+                    android:paddingBottom="12dp"
                     android:textSize="14sp"
                     android:text="@string/app_name"
                     />
             </LinearLayout>
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+            	android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_sawtooth" /> 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
                 android:background="@drawable/list_header"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="4dp"
+                    android:padding="8dp"
                     android:textColor="@color/black_dark"
                     android:textSize="16sp"
                     android:text="@string/hotel_room_howmany"
@@ -82,30 +90,28 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
-                    android:padding="4dp"
+                    android:padding="8dp"
                     android:drawableRight="@drawable/ic_view_all_comment"
-                    android:textColor="@color/black_dark"
+                    android:textColor="@color/orange"
                     android:textSize="16sp"
                     android:text="@string/app_name"
                     android:gravity="right|center_vertical"
                     />
             </LinearLayout>
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                />
+
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
                 android:background="@drawable/list_header"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="4dp"
+                    android:padding="8dp"
                     android:textColor="@color/black_dark"
                     android:textSize="16sp"
                     android:text="@string/hotel_room_reserve"
@@ -115,23 +121,21 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
-                    android:padding="4dp"
+                    android:padding="8dp"
                     android:drawableRight="@drawable/ic_view_all_comment"
-                    android:textColor="@color/black_dark"
+                    android:textColor="@color/orange"
                     android:textSize="16sp"
                     android:text="@string/app_name"
                     android:gravity="right|center_vertical"
                     />
             </LinearLayout>
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                />
+
             <LinearLayout android:id="@+id/person_name_lly"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 >
 	            <LinearLayout
 	                android:layout_width="fill_parent"
@@ -143,7 +147,7 @@
 	                <TextView
 	                    android:layout_width="wrap_content"
 	                    android:layout_height="wrap_content"
-	                    android:padding="4dp"
+	                    android:padding="8dp"
 	                    android:textColor="@color/black_dark"
 	                    android:textSize="16sp"
 	                    android:text="@string/hotel_room_person_name"
@@ -164,22 +168,19 @@
 	            </LinearLayout>
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
                 android:background="@drawable/list_header"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:padding="4dp"
+                    android:padding="8dp"
                     android:textColor="@color/black_dark"
                     android:textSize="16sp"
                     android:text="@string/hotel_room_mobile_nubmer"
@@ -203,31 +204,20 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
+                android:contentDescription="@string/app_name"
                 />
-            <LinearLayout
+            <Button android:id="@+id/submit_order_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:background="@drawable/list_footer"
-                android:padding="8dp"
-                android:drawablePadding="8dp"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
+                android:background="@drawable/btn_query_hotel_normal"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:text="@string/submit_order"
                 android:gravity="center"
-                >
-                <Button android:id="@+id/submit_order_btn"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/btn_default"
-                    android:padding="8dp"
-                    android:textColor="@color/black_dark"
-                    android:textSize="16sp"
-                    android:text="@string/submit_order"
-                    android:gravity="center"
+                android:layout_marginTop="18dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                     />
-            </LinearLayout>
-                
-
         </LinearLayout>
         
     </ScrollView>

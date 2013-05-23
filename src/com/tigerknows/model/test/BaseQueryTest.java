@@ -13,6 +13,7 @@ import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery;
+import com.tigerknows.model.Response;
 import com.tigerknows.model.TKWord;
 import com.tigerknows.model.DataQuery.DiscoverResponse;
 import com.tigerknows.model.xobject.XMap;
@@ -72,14 +73,23 @@ public class BaseQueryTest {
     }
 
     public static XMap launchResponse(XMap data) {
-        data.put(DiscoverResponse.FIELD_RESPONSE_CODE, RESPONSE_CODE);
-        data.put(DiscoverResponse.FIELD_DESCRIPTION, "FIELD_DESCRIPTION");
-        return  data;
+        data.put(Response.FIELD_RESPONSE_CODE, RESPONSE_CODE);
+        switch(RESPONSE_CODE){
+        case 825:
+        	data.put(Response.FIELD_DESCRIPTION, "2013-13-32 25:00#中国银行#中国工商银行#交通银行");
+        	break;
+        case 826:
+        	data.put(Response.FIELD_DESCRIPTION, "Error Message from ELONG");
+        default:
+        	data.put(Response.FIELD_DESCRIPTION, "FIELD_DESCRIPTION"+RESPONSE_CODE);
+        	break;
+        }
+        return data;
     }
     
     public static XMap launchResponse(XMap data, String fieldDescription){
-        data.put(DiscoverResponse.FIELD_RESPONSE_CODE, RESPONSE_CODE);
-        data.put(DiscoverResponse.FIELD_DESCRIPTION, fieldDescription);
+        data.put(Response.FIELD_RESPONSE_CODE, RESPONSE_CODE);
+        data.put(Response.FIELD_DESCRIPTION, fieldDescription);
         return  data;
     }
     
