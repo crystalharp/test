@@ -4,6 +4,7 @@
 package com.tigerknows.ui.hotel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -60,6 +61,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     private Calendar mDate = null;
     private String mOrderModifyDeadline;
     private List<String> mBankList;
+    private List<String> mCertTypeList;
     
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -80,7 +82,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     public void onResume(){
         super.onResume();
         mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, mSumPrice));
-        mCreditNoteTxv.setText(mSphinx.getString(R.string.credit_note, mOrderModifyDeadline));
+        mCreditNoteTxv.setText(mSphinx.getString(R.string.credit_note_detail, mOrderModifyDeadline.trim()));
     }
     
     public void onPause(){
@@ -127,11 +129,13 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         case R.id.credit_confirm_btn:
         	String str = mCreditBankBtn.getText().toString();
         	List<String> list = new ArrayList<String>();
+        	// 判断选择银行
         	if(TextUtils.isEmpty(str)){
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_bank_empty_tip));
         		return;
         	}
         	
+        	// 判断银行卡号
         	str = mCreditCodeEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_code_empty_tip));
@@ -142,6 +146,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	}
         	list.add(str);
         	
+        	// 判断持卡人姓名
         	str = mCreditOwnerEdt.getText().toString().trim();
         	if(TextUtils.isEmpty(str)){
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_owner_empty_tip));
@@ -152,6 +157,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	}
         	list.add(str);
         	
+        	// 判断信用卡验证码
         	str = mCreditVerifyEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_verify_empty_tip));
@@ -161,19 +167,20 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         		return;
         	}
         	list.add(str);
+        	
+        	// 判断信用卡有效期
         	if(mDate == null){
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_validity_empty_tip));
         		return;
         	}
         	list.add(mDate.get(Calendar.YEAR) + "");
         	list.add(1+mDate.get(Calendar.MONTH) + "");
-        	LogWrapper.d("Trap", CalendarUtil.ym6h.format(mDate.getTime()));
+        	
+        	// 判断证件类型(这个不用判断)
         	str = mCreditCertTypeBtn.getText().toString();
-        	if(TextUtils.isEmpty(str)){
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_cert_type_empty_tip));
-        		return;
-        	}
         	list.add(str);
+        	
+        	// 判断证件号码
         	str = mCreditCertCodeEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_cert_code_empty_tip));
@@ -183,6 +190,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         		return;
         	}
         	list.add(str);
+        	
         	mSphinx.getHotelOrderWriteFragment().setCredit(list);
         	break;
         default:
@@ -222,10 +230,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     }
     
     public void showCertTypeDialog(){
-    	final List<String> list = new ArrayList<String>();
-    	list.add("身份证");
-    	list.add("护照");
-    	list.add("其他");
+    	final List<String> list = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
         final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
         ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(adapter);
@@ -251,6 +256,8 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
 		if(mBankList.isEmpty()){
 			mBankList.add("服务器错误：银行列表为空");
 		}
+		mCertTypeList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
+		mCreditCertTypeBtn.setText(mCertTypeList.get(0));
 	}
 
     @Override
