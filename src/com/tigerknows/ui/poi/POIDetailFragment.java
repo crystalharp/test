@@ -438,8 +438,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		    fragment.mBaseQuerying = list; 
 		}
 		
-		protected abstract void addDynamicPOIViewBlock(LinearLayout belongsLayout);
-		
 		public abstract List<DynamicPOIViewBlock> getViewList(POI poi);
 		
 		public abstract void msgReceived(Sphinx mSphinx, BaseQuery query, Response response);

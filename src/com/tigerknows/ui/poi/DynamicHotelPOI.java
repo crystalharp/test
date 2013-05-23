@@ -171,10 +171,6 @@ public class DynamicHotelPOI extends DynamicPOIView {
         mCheckInDat.setCalendar(checkin);
         mCheckOutDat.setCalendar(checkout);
     }
-    
-    @Override
-    protected void addDynamicPOIViewBlock(LinearLayout belongsLayout) {
-    }
 
     @Override
     public List<DynamicPOIViewBlock> getViewList(POI poi) {
