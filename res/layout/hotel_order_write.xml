@@ -205,31 +205,19 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
                 android:contentDescription="@string/app_name"
-                android:paddingBottom="18dp"
                 />
-            <LinearLayout
+            <Button android:id="@+id/submit_order_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="4dp"
-                android:background="@drawable/list_footer"
+                android:background="@drawable/btn_query_hotel_normal"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:text="@string/submit_order"
+                android:gravity="center"
+                android:layout_marginTop="18dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
-                android:gravity="center"
-                >
-                <Button android:id="@+id/submit_order_btn"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/btn_query_hotel_normal"
-                    android:textColor="@color/white"
-                    android:textSize="18sp"
-                    android:text="@string/submit_order"
-                    android:gravity="center"
                     />
-            </LinearLayout>
-                
-
         </LinearLayout>
         
     </ScrollView>
