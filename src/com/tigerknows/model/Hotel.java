@@ -8,9 +8,13 @@
 
 package com.tigerknows.model;
 
+import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.util.Utility;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -66,6 +70,8 @@ public class Hotel extends XMapData {
 
     // 0x54 x_array<x_map> 酒店相关的所有x_array<图片>
     private List<HotelTKDrawable> hotelTKDrawableList;
+    
+    private List<HotelTKDrawable> originalHotelTKDrawableList;
 
     // 0x55 x_array<x_map> x_array<房型套餐>
     private List<RoomType> roomTypeList;
@@ -98,12 +104,28 @@ public class Hotel extends XMapData {
         String imageThumb = getStringFromData(FIELD_IMAGE_THUMB);
         if (imageThumb != null) {
             TKDrawable tkDrawable = new TKDrawable();
-            tkDrawable.setUrl(imageThumb);
+            tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(imageThumb, Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)));
             this.imageThumb = tkDrawable;
         } else if (reset) {
             this.imageThumb = null;
         }
-        this.hotelTKDrawableList = getListFromData(FIELD_IMAGE_LIST, HotelTKDrawable.Initializer, reset ? null : this.hotelTKDrawableList);
+        this.originalHotelTKDrawableList = getListFromData(FIELD_IMAGE_LIST, HotelTKDrawable.Initializer, reset ? null : this.hotelTKDrawableList);
+        if (originalHotelTKDrawableList == null) {
+            hotelTKDrawableList = null;
+        } else {
+            hotelTKDrawableList = new ArrayList<Hotel.HotelTKDrawable>();
+            for(int i = 0, size = originalHotelTKDrawableList.size(); i < size; i++) {
+                HotelTKDrawable originalHotelTKDrawable = originalHotelTKDrawableList.get(i);
+                HotelTKDrawable hotelTKDrawable = new HotelTKDrawable();
+                hotelTKDrawable.name = originalHotelTKDrawable.name;
+                if (originalHotelTKDrawable.tkDrawable != null) {
+                    TKDrawable tkDrawable = new TKDrawable();
+                    tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(originalHotelTKDrawable.tkDrawable.getUrl(), Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)));
+                    hotelTKDrawable.tkDrawable = tkDrawable;
+                }
+                hotelTKDrawableList.add(hotelTKDrawable);
+            }
+        }
         this.roomTypeList = getListFromData(FIELD_ROOM_TYPE_LIST, RoomType.Initializer, reset ? null : this.roomTypeList);
         this.service = getStringFromData(FIELD_SERVICE, reset ? null : this.service);
         this.canReserve = getLongFromData(FIELD_CAN_RESERVE, reset ? 0 : this.canReserve);
@@ -129,6 +151,10 @@ public class Hotel extends XMapData {
 
     public List<HotelTKDrawable> getHotelTKDrawableList() {
         return hotelTKDrawableList;
+    }
+
+    public List<HotelTKDrawable> getOriginalHotelTKDrawableList() {
+        return originalHotelTKDrawableList;
     }
 
     public List<RoomType> getRoomTypeList() {
@@ -162,6 +188,10 @@ public class Hotel extends XMapData {
         private String name;
 
         private TKDrawable tkDrawable;
+        
+        public HotelTKDrawable() {
+            // TODO Auto-generated constructor stub
+        }
 
         public HotelTKDrawable(XMap data) throws APIException {
             super(data);
@@ -179,6 +209,14 @@ public class Hotel extends XMapData {
 
         public TKDrawable getTKDrawable() {
             return tkDrawable;
+        }
+
+        public void setTkDrawable(TKDrawable tkDrawable) {
+            this.tkDrawable = tkDrawable;
+        }
+
+        public void setName(String name) {
+            this.name = name;
         }
 
         public static XMapInitializer<HotelTKDrawable> Initializer = new XMapInitializer<Hotel.HotelTKDrawable>() {
