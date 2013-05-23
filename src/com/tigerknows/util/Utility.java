@@ -67,6 +67,7 @@ import android.widget.TextView;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
+import com.decarta.android.util.XYInteger;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -1161,4 +1162,23 @@ public class Utility {
         activity.startActivity(intent);
     }
     
+    /**
+     * 根据指定的高宽生成图片文件名的访问路径
+     * 例如:
+     * 输入： http://www.tigerknows.com/logo.jpg
+     * 输出： http://www.tigerknows.com/logo_320_480.jpg    
+     * @param url
+     * @param widthHeight
+     * @return
+     */
+    public static String getPictureUrlByWidthHeight(String url, String widthHeight) {
+        String result = url;
+        if (TextUtils.isEmpty(url) == false && widthHeight != null) {
+            int lastIndex = url.lastIndexOf(".");
+            if (lastIndex > 0 && lastIndex < url.length()) {
+                result = url.substring(0, lastIndex) + "_" + widthHeight + url.substring(lastIndex);
+            }
+        }
+        return result;
+    }
 }

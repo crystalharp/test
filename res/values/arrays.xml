@@ -232,4 +232,10 @@
         <item>周日</item>
     </string-array>
     
+    <string-array name="cert_type">
+        <item>身份证</item>
+        <item>护照</item>
+        <item>其他</item>
+    </string-array>
+    
 </resources>

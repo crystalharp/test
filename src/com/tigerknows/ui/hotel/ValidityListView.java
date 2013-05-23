@@ -63,12 +63,10 @@ public class ValidityListView extends LinearLayout {
 
     public void setData(Calendar calendar, CallBack callBack, String actionTag) {
         this.calendar = calendar;
-        if (this.calendar == null) {
-            return;
-        }
-        
         now = Calendar.getInstance();
-        
+        if (this.calendar == null) {
+            this.calendar = now;
+        }
         this.callBack = callBack;
         this.selectedParentPosition = -1;
         this.selectedChildPosition = -1;

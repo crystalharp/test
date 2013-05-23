@@ -112,8 +112,6 @@ public class ValidateUtil {
 			if(code.charAt(17) == 'X' || code.charAt(17) == 'x')tempInt += 10;
 			else tempInt += (int)(code.charAt(17) - '0');
 			for (int i = 16; i >= 0 ; i--){
-				LogWrapper.d("Trap", "TempInt="+tempInt);
-				LogWrapper.d("Trap", "factor="+factor);
 				factor *= 2;
 				if (factor >= 11) factor -= 11;
 				tempInt += (int)(code.charAt(i) - '0') * factor;
