@@ -626,9 +626,9 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         Response response = baseQuery.getResponse();
         if (response != null) {
             int responseCode = response.getResponseCode();
-            String responseString = baseQuery.getCriteria().get(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + (responseCode));
-            if(responseString!=null){
-            	return Integer.parseInt(responseString);
+            String responseStringRes = baseQuery.getCriteria().get(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + (responseCode));
+            if(responseStringRes!=null){
+            	return Integer.parseInt(responseStringRes);
             }
 
             switch (responseCode) {
@@ -688,6 +688,9 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                 case 801:
                 case 802:
                     resId = R.string.response_code_801;
+                    break;
+                case 803:
+                    resId = R.string.response_code_831;
                     break;
                 case 821:
                 	resId = R.string.response_code_821;

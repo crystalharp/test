@@ -896,6 +896,7 @@
     <string name="response_code_801">创建订单失败，请重试。</string>
     <string name="response_code_821">网络状态不好，请稍候重试。</string>
     <string name="response_code_823">注册失败，请确认所填信息后重新提交。</string>
+    <string name="response_code_831">取消失败。</string>
     
     <string name="response_code_410_pulled">抱歉,原信息已过期\n欢迎发现更多身边的精彩!</string>
     
@@ -1039,5 +1040,11 @@
     <string name="simple_month_day_format">M月d日</string>
     
     <string name="no_order">暂无订单，\n快去预订酒店吧！</string>
+    
+    <string name="hotel_order_cancel_confirm">是否取消订单？\n取消后本次预订将失效</string>
+    <string name="hotel_order_cancel_failed">订单取消失败</string>
+    <string name="hotel_order_cancel_success">订单取消成功</string>
+    
+    <string name="hotel_order_delete_confirm">是否删除订单？\n删除后订单不再显示，但本次预约有效</string>
     
 </resources>
