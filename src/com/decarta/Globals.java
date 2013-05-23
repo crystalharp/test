@@ -90,6 +90,8 @@ public class Globals {
         pic.put(TKConfig.PICTURE_TUANGOU_DETAIL, new XYInteger(688, 416));
         pic.put(TKConfig.PICTURE_TUANGOU_TAOCAN, new XYInteger(688, 0));
         pic.put(TKConfig.PICTURE_DIANYING_DETAIL, new XYInteger(312, 416));
+        pic.put(TKConfig.PICTURE_HOTEL_LIST, new XYInteger(180, 180));
+        pic.put(TKConfig.PICTURE_HOTEL_DETAIL, new XYInteger(150, 150));
     	sScreenAdaptPic.put(new XYInteger(800, 1280), pic);
 
         sOptimalAdaptive.put(TKConfig.PICTURE_DISCOVER_HOME, new XYInteger(322, 286));
@@ -98,6 +100,8 @@ public class Globals {
         sOptimalAdaptive.put(TKConfig.PICTURE_TUANGOU_DETAIL, new XYInteger(412, 250));
         sOptimalAdaptive.put(TKConfig.PICTURE_TUANGOU_TAOCAN, new XYInteger(412, 0));
         sOptimalAdaptive.put(TKConfig.PICTURE_DIANYING_DETAIL, new XYInteger(188, 250));
+        sOptimalAdaptive.put(TKConfig.PICTURE_HOTEL_LIST, new XYInteger(108, 108));
+        sOptimalAdaptive.put(TKConfig.PICTURE_HOTEL_DETAIL, new XYInteger(90, 90));
         sScreenAdaptPic.put(new XYInteger(480, 800), sOptimalAdaptive);
         
         pic = new HashMap<Integer, XYInteger>();
@@ -107,6 +111,8 @@ public class Globals {
         pic.put(TKConfig.PICTURE_TUANGOU_DETAIL, new XYInteger(276, 168));
         pic.put(TKConfig.PICTURE_TUANGOU_TAOCAN, new XYInteger(276, 0));
         pic.put(TKConfig.PICTURE_DIANYING_DETAIL, new XYInteger(126, 168));
+        pic.put(TKConfig.PICTURE_HOTEL_LIST, new XYInteger(72, 72));
+        pic.put(TKConfig.PICTURE_HOTEL_DETAIL, new XYInteger(60, 60));
         sScreenAdaptPic.put(new XYInteger(320, 480), pic);
     }
     

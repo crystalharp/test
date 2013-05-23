@@ -572,6 +572,16 @@ public class TKConfig {
      * 电影详情图片尺寸的Key
      */
     public static final int PICTURE_DIANYING_DETAIL = 6;
+    
+    /**
+     * 酒店列表图片尺寸的Key
+     */
+    public static final int PICTURE_HOTEL_LIST = 7;
+    
+    /**
+     * 酒店详情图片尺寸的Key
+     */
+    public static final int PICTURE_HOTEL_DETAIL = 8;
 
     /**
      * 黑色
