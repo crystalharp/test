@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/bg_discover"
@@ -56,21 +57,23 @@
         android:layout_above="@id/panel_btns"
         
         android:orientation="vertical">
-        
-		<include
-		    layout="@layout/hotel_order_create_stage"
-		    android:id="@+id/order_stage_view"
-		    android:layout_width="wrap_content"
-		    android:layout_height="wrap_content"
-		    android:layout_alignParentBottom="true"
-		    />
+	    
+	    <com.tigerknows.ui.hotel.NavigationWidget
+	        android:id="@+id/navigation_widget"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentBottom="true"
+	        tkandroid:navigationState="3"
+	        >
+	    </com.tigerknows.ui.hotel.NavigationWidget>
 		
 	    <ScrollView
 	        android:id="@+id/body_scv"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        
-	        android:layout_above="@id/order_stage_view"
+	        android:layout_above="@id/navigation_widget"
 	        
 	        android:scrollbars="vertical"
 	        android:gravity="top"

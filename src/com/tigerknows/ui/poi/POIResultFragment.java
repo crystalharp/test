@@ -24,6 +24,7 @@ import com.tigerknows.model.DataQuery.POIResponse.POIList;
 import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.hotel.NavigationWidget;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 import com.tigerknows.widget.QueryingView;
@@ -82,6 +83,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     private TextView mEmptyTxv = null;
     
     private RetryView mRetryView;
+    
+    private NavigationWidget mNavigationWidget;
     
     private POIAdapter mResultAdapter = null;
     
@@ -204,6 +207,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
         mQueryingTxv = (TextView) mQueryingView.findViewById(R.id.loading_txv);
         mRetryView = (RetryView) mRootView.findViewById(R.id.retry_view);
+        mNavigationWidget = (NavigationWidget) mRootView.findViewById(R.id.navigation_widget);
     }
 
     protected void setListener() {
@@ -335,6 +339,17 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             if (mRightBtn != null)
                 mRightBtn.setVisibility(View.GONE);
         } else {
+            DataQuery dataQuery = mDataQuery;
+            if (dataQuery != null &&
+                    BaseQuery.SUB_DATA_TYPE_HOTEL.equals(dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE)) &&
+                    mPOIList.size() > 0) {
+                int bottom = Util.dip2px(Globals.g_metrics.density, 32);
+                mResultLsv.setPadding(0, 0, 0, bottom);
+                mNavigationWidget.setVisibility(View.VISIBLE);
+            } else {
+                mResultLsv.setPadding(0, 0, 0, 0);
+                mNavigationWidget.setVisibility(View.GONE);
+            }
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
             mEmptyView.setVisibility(View.GONE);
@@ -549,6 +564,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         canReserveTxv.setVisibility(View.GONE);
                     }
                 } else {
+                    pictureImv.setBackgroundDrawable(null);
                     canReserveTxv.setVisibility(View.GONE);
                 }
                 pictureView.setVisibility(View.VISIBLE);
@@ -721,7 +737,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
-        mResultAdapter.setSubDataType(dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE));
+        String subDataType = dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
+        mResultAdapter.setSubDataType(subDataType);
         
         mResultLsv.onRefreshComplete(false);
         if (dataQuery.isStop()) {

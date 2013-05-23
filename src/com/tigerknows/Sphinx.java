@@ -2580,12 +2580,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     public boolean uiStackContains(int id) {
         synchronized (mUILock) {
-            boolean result = false;
-            for(int i : mUIStack) {
-                if (i == id) {
-                    result = true;
-                }
-            }
+            boolean result = mUIStack.contains(id);
             return result;
         }
     }
@@ -2634,6 +2629,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             id == R.id.view_discover_yanchu_detail ||
                             id == R.id.view_discover_zhanlan_detail) {
                         uiStackRemove(R.id.view_result_map);
+                    }
+                } else if (uiStackPeek() == R.id.view_poi_detail) {
+                    if (id == R.id.view_hotel_order_detail) {
+                        uiStackClearTop(R.id.view_hotel_order_detail);
+                    }
+                } else if (uiStackPeek() == R.id.view_hotel_order_detail) {
+                    if (id == R.id.view_hotel_order_list) {
+                        uiStackClearTop(R.id.view_hotel_order_list);
                     }
                 }
 
