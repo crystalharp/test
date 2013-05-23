@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.model.Hotel;
 import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.discover.TKGallery;
@@ -40,6 +41,7 @@ public class HotelImageGridFragment extends BaseFragment {
     int mState =  STATE_GRID;
 
 	List<HotelTKDrawable> mImageList = new ArrayList<HotelTKDrawable>();
+    List<HotelTKDrawable> mOriginalImageList = new ArrayList<HotelTKDrawable>();
 	GridView mGridView;
 	GridAdapter mGridAdapter;
     TKGallery mTKGallery;
@@ -109,7 +111,7 @@ public class HotelImageGridFragment extends BaseFragment {
         mGridAdapter = new GridAdapter(mSphinx, mImageList);
         mGridView.setAdapter(mGridAdapter);
         
-        mGalleryAdapter = new GalleryAdapter(mSphinx, mImageList);
+        mGalleryAdapter = new GalleryAdapter(mSphinx, mOriginalImageList);
         mTKGallery.setAdapter(mGalleryAdapter);
         
 		setListener();
@@ -137,10 +139,14 @@ public class HotelImageGridFragment extends BaseFragment {
 		super(sphinx);
 	}
 
-	public void setData(List<HotelTKDrawable> imageList) {
+	public void setData(Hotel hotel) {
 	    mImageList.clear();
-	    if (imageList != null) {
-		    mImageList.addAll(imageList);
+	    mOriginalImageList.clear();
+	    if (hotel != null
+	            && hotel.getHotelTKDrawableList() != null
+                && hotel.getOriginalHotelTKDrawableList() != null) {
+		    mImageList.addAll(hotel.getHotelTKDrawableList());
+            mOriginalImageList.addAll(hotel.getOriginalHotelTKDrawableList());
 	    }
 	    setState(STATE_GRID);
 	}
