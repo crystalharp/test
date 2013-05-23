@@ -3,93 +3,138 @@
     android:background="@color/white"
     android:orientation="vertical"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+    android:layout_height="fill_parent" > 
     
-    <TextView
-        android:id="@+id/hotel_head"
-        android:textSize="24sp"
+    <ScrollView 
+        android:id="@+id/scrollView1"
+	    android:background="@color/white"
+	    android:padding="8dp"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:text="酒店名称" >
-        
-    </TextView>
-    
-    <ImageView 
-        android:id="@+id/hotel_split_imv"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        />
-    
-    <LinearLayout
-        android:id="@+id/hotel_service_block"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-         >
-        
-	    <TextView
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:textSize="21sp"
-	        android:text="酒店服务" >
-	        
-	    </TextView>
-	    
-	    <TextView
-	        android:id="@+id/hotel_service"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:textSize="18sp"
-	        android:text="hotel introduction page" >
-	        
-	    </TextView>
-    </LinearLayout>
-    
-    <LinearLayout
-        android:id="@+id/hotel_room_desc_block"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-	    <TextView
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:textSize="21sp"
-	        android:text="房间设施" >
-	        
-	    </TextView>
-	    
-	    <TextView
-	        android:id="@+id/hotel_room_description"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:textSize="18sp"
-	        android:text="hotel introduction page" >
-	        
-	    </TextView>
-    </LinearLayout>
+        android:layout_height="fill_parent" >
 
-    <LinearLayout
-        android:id="@+id/hotel_long_desc_block"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical" >
-    
-	    <TextView
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:textSize="21sp"
-	        android:text="酒店介绍" >
-	        
-	    </TextView>
-	    
-	    <TextView
-	        android:id="@+id/hotel_long_description"
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        android:textSize="18sp"
-	        android:text="hotel introduction page" >
-	        
-	    </TextView>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+		    <TextView
+		        android:id="@+id/hotel_head"
+		        android:textSize="16sp"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        >
+		        
+		    </TextView>
+		    
+		    <LinearLayout
+		        android:id="@+id/hotel_service_block"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical"
+		         >
+		    
+			    <ImageView 
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="8dp"
+			        android:layout_marginBottom="8dp"
+			        android:background="@drawable/bg_broken_line"
+			        />
+		        
+			    <TextView
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:textSize="14sp"
+			        android:drawableLeft="@drawable/text_title_head"
+			        android:drawablePadding="8dp"
+			        android:layout_marginBottom="10dp"
+			        android:text="@string/hotel_service_title" >
+			        
+			    </TextView>
+			    
+			    <TextView
+			        android:id="@+id/hotel_service"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:textSize="12sp"
+			        android:textColor="@color/text_gray"
+			        >
+			        
+			    </TextView>
+		    </LinearLayout>
+		    
+		    <LinearLayout
+		        android:id="@+id/hotel_room_desc_block"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical" >
+		    
+			    <ImageView 
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="8dp"
+			        android:layout_marginBottom="8dp"
+			        android:background="@drawable/bg_broken_line"
+			        />
+			    <TextView
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:textSize="14sp"
+			        android:drawableLeft="@drawable/text_title_head"
+			        android:drawablePadding="8dp"
+			        android:layout_marginBottom="10dp"
+			        android:text="@string/hotel_room_description_title" >
+			        
+			    </TextView>
+			    
+			    <TextView
+			        android:id="@+id/hotel_room_description"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:textSize="12sp"
+			        android:textColor="@color/text_gray"
+			        >
+			        
+			    </TextView>
+		    </LinearLayout>
+		
+		    <LinearLayout
+		        android:id="@+id/hotel_long_desc_block"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:orientation="vertical" >
+		    
+			    <ImageView 
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:layout_marginTop="8dp"
+			        android:layout_marginBottom="8dp"
+			        android:background="@drawable/bg_broken_line"
+			        />
+		    
+			    <TextView
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:textSize="14sp"
+			        android:drawableLeft="@drawable/text_title_head"
+			        android:drawablePadding="8dp"
+			        android:layout_marginBottom="10dp"
+			        android:text="@string/hotel_description_title" >
+			        
+			    </TextView>
+			    
+			    <TextView
+			        android:id="@+id/hotel_long_description"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:textSize="12sp"
+			        android:textColor="@color/text_gray"
+			        >
+			        
+			    </TextView>
+		
+		    </LinearLayout>
 
-    </LinearLayout>
-</LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout> 

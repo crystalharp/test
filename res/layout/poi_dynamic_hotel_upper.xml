@@ -17,7 +17,7 @@
          android:layout_width="fill_parent"
          android:layout_height="wrap_content"
          android:orientation="horizontal"
-         android:background="@drawable/list_header"
+         android:background="@drawable/list_single"
          android:padding="8dp"
          android:textColor="@color/black_dark"
          android:textSize="16sp"

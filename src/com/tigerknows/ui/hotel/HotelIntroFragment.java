@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
@@ -21,6 +22,7 @@ import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
+import com.tigerknows.model.DataOperation.POIQueryResponse;
 import com.tigerknows.ui.BaseFragment;
 
 public class HotelIntroFragment extends BaseFragment {
@@ -62,6 +64,7 @@ public class HotelIntroFragment extends BaseFragment {
 		String longDescription = mHotel.getLongDescription();
 		String roomDescription = mHotel.getRoomDescription();
 		String hotelService = mHotel.getService();
+		LogWrapper.d("conan", mHotel.toString());
 		if (longDescription == null){
 		    longDescriptionBlock.setVisibility(View.GONE);
 		} else {
@@ -98,8 +101,11 @@ public class HotelIntroFragment extends BaseFragment {
 	        criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
 	        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
 	        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Hotel.NEED_FILED_DESCRIPTION+"01");   // 01表示poi的uuid
+	        //FIXME:服务器说这里可以不用checkin和checkout,等他们修改
+            criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN, "2013-05-25");
+            criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT, "2013-05-26");
 	        DataOperation dataOpration = new DataOperation(mSphinx);
-	        dataOpration.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId());
+	        dataOpration.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
 	        this.mTkAsyncTasking = mSphinx.queryStart(dataOpration);
 	    }
 	}
@@ -110,12 +116,19 @@ public class HotelIntroFragment extends BaseFragment {
 	    List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
 	    BaseQuery baseQuery = baseQueryList.get(0);
 	    Response response = baseQuery.getResponse();
-	    try {
-            mHotel.init(response.getData(), false);
-        } catch (APIException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+	    POI onlinePOI = ((POIQueryResponse)response).getPOI();
+        if (onlinePOI != null && onlinePOI.getUUID() != null && onlinePOI.getUUID().equals(mPOI.getUUID())) {
+    	    try {
+    	        if (mHotel == null) {
+                    mPOI.init(onlinePOI.getData(), false);
+                } else {
+                    mHotel.init(onlinePOI.getData(), false);
+                }
+            } catch (APIException e) {
+                e.printStackTrace();
+            }
         }
+        //TODO:如果三项数据都没有则显示暂无简介
 	    onResume();
 	}
 
