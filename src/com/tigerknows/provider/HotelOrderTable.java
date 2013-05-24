@@ -113,7 +113,9 @@ public class HotelOrderTable {
 		ContentValues cv = new ContentValues();
         cv.put(ORDER_ID, order.getId());
         cv.put(ORDER_CREATE_TIME, order.getCreateTime());
-        byte[] encrypted = DataEncryptor.encrypt(ByteUtil.xobjectToByte(order.toXMapForStorage()));
+        DataEncryptor dataEncryptor = DataEncryptor.getInstance();
+        byte[] encrypted = ByteUtil.xobjectToByte(order.toXMapForStorage());
+        dataEncryptor.encrypt(encrypted);
         cv.put(ORDER_CONTENT, encrypted);
         result = mDb.insert(TABLE_NAME, null, cv);
         
@@ -137,7 +139,9 @@ public class HotelOrderTable {
 		Cursor cursor = mDb.query(TABLE_NAME, new String[]{ORDER_CONTENT}, null, null, null, null, ORDER_CREATE_TIME, start + "," + (start + count));
 		int contentIndex = cursor.getColumnIndex(ORDER_CONTENT); 
 		while (cursor.moveToNext()) {
-			byte[] decrypted = DataEncryptor.decrypt(cursor.getBlob(contentIndex));
+			DataEncryptor dataEncryptor = DataEncryptor.getInstance();
+			byte[] decrypted = cursor.getBlob(contentIndex);
+			dataEncryptor.decrypt(decrypted);
 			XMap orderXMap = (XMap) ByteUtil.byteToXObject(decrypted);
 			results.add(new HotelOrder(orderXMap));
 		}
@@ -159,7 +163,9 @@ public class HotelOrderTable {
 			return result;
 		
 		ContentValues cv = new ContentValues();
-        byte[] encrypted = DataEncryptor.encrypt(ByteUtil.xobjectToByte(order.toXMapForStorage()));
+        DataEncryptor dataEncryptor = DataEncryptor.getInstance();
+        byte[] encrypted = ByteUtil.xobjectToByte(order.toXMapForStorage());
+        dataEncryptor.encrypt(encrypted);
         cv.put(ORDER_CONTENT, encrypted);
         result = mDb.update(TABLE_NAME, cv, ORDER_ID + "=?", new String[]{order.getId()});
 		
