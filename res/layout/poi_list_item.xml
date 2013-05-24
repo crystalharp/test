@@ -40,6 +40,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="0dp"
+        android:layout_marginTop="2dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/name_view" 
         android:progressDrawable="@drawable/ratingbar_small"
@@ -73,22 +74,21 @@
         android:singleLine="true"
         android:focusable="false" />   
     
-    <TextView 
-        android:id="@+id/category_txv" 
+    <TextView
+        android:id="@+id/category_txv"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content" 
-        android:layout_toRightOf="@id/stars_rtb" 
-        android:layout_toLeftOf="@id/distance_from_txv" 
-        android:layout_below="@id/name_view" 
-        android:textSize="14sp"
-        android:paddingLeft="5dp"
-        android:paddingTop="2dp"
-        android:textColor="@color/black_light"
-        android:text="@string/app_name"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name_view"
+        android:layout_toLeftOf="@id/distance_from_txv"
+        android:layout_toRightOf="@id/stars_rtb"
+        android:focusable="false"
+        android:gravity="left|top"
         android:includeFontPadding="false"
+        android:paddingLeft="5dp"
         android:singleLine="true"
-        android:focusable="false" 
-        android:gravity="left|top"/>   
+        android:text="@string/app_name"
+        android:textColor="@color/black_light"
+        android:textSize="14sp" />
         
     <TextView 
         android:id="@+id/money_txv" 
@@ -96,9 +96,8 @@
         android:layout_height="wrap_content" 
         android:layout_alignParentRight="true" 
         android:layout_below="@id/distance_txv" 
-        android:layout_marginTop="4dp"
         android:layout_marginLeft="8dp"
-        android:paddingBottom="2dp"
+        android:layout_marginTop="3dp"
         android:textColor="@color/orange"
         android:textSize="16sp"
         android:text="@string/app_name"
@@ -114,8 +113,7 @@
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@id/money_txv"
         android:layout_below="@id/stars_rtb" 
-        android:layout_marginTop="6dp"
-        android:paddingBottom="2dp"
+        android:layout_marginTop="8dp"
         android:textColor="@color/black_light"
         android:textSize="14sp"
         android:text="@string/app_name"

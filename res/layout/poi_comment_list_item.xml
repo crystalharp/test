@@ -7,7 +7,10 @@
 	<RelativeLayout
 	    android:layout_width="fill_parent" 
 	    android:layout_height="wrap_content"
-	    android:padding="8dp">
+	    android:paddingLeft="8dp"
+	    android:paddingTop="10dp"
+	    android:paddingRight="8dp"
+	    android:paddingBottom="6dp">
 	    <TextView
 	        android:id="@+id/author_txv" 
 	        android:layout_width="wrap_content"

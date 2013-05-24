@@ -300,6 +300,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
         }
         mSphinx.showHomeDragHint();
 
+        refreshSubCategoryListView();
 		mDragView.setVisibility(View.INVISIBLE);
 		mIsSubCategoryExpanded = false;
     }
@@ -654,7 +655,6 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 			break;
 
 		case MotionEvent.ACTION_UP:
-		    refreshSubCategoryListView();
 			if(!isDragStarts){
 				break;
 			}
@@ -673,6 +673,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 				}
 				mIsSubCategoryExpanded= true;
 			}else{
+			    refreshSubCategoryListView();
 				mDragView.setVisibility(View.INVISIBLE);
 				mTransPaddingView.setBackgroundResource(R.color.transparent);
 				if(mIsSubCategoryExpanded == true){
@@ -814,6 +815,7 @@ public class HomeFragment extends BaseFragment implements View.OnClickListener {
 		@Override
 		public void onAnimationEnd(Animation animation) {
 			if ( !mIsSubCategoryExpanded){
+			    refreshSubCategoryListView();
 				mDragView.setVisibility(View.INVISIBLE);
 			}else{
 				mDragView.setVisibility(View.VISIBLE);
