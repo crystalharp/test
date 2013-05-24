@@ -30,9 +30,6 @@
 		<sub word="四星级酒店" />
 		<sub word="五星级酒店" />
 		<sub word="旅馆" />
-		<sub word="假日酒店" />
-		<sub word="青年旅社" />
-		<sub word="度假村" />
 		<sub word="公寓式酒店" />
   	</category>
   	<category word="娱乐" highLight="影院 / KTV / 洗浴按摩">
@@ -72,12 +69,11 @@
 		<sub word="品牌折扣店" />
 		<sub word="珠宝饰品" />
   	</category>
-  	<category word="旅游" highLight="景点 / 动物园 / 博物馆">	    
+  	<category word="旅游" highLight="景点 / 植物园 / 博物馆">	    
 		<sub word="景点" />
 		<sub word="公园" />
 		<sub word="寺庙" />
 		<sub word="广场" />
-		<sub word="动物园" />
 		<sub word="博物馆" />
 		<sub word="展览馆" />
 		<sub word="艺术馆" />
