@@ -317,8 +317,7 @@ public class DynamicHotelPOI extends DynamicPOIView {
             } else {
                 //更新按钮状态
                 mClickedRoomType.setCanReserve(0);
-//                mClickedBookBtn.setText(mSphinx.getString(R.string.hotel_btn_sold_out));
-                mClickedBookBtn.setClickable(false);
+                mClickedBookBtn.setEnabled(false);
             }
             
         }
