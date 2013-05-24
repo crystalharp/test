@@ -5,15 +5,22 @@
     android:layout_height="fill_parent"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
-    android:gravity="center"
-    android:orientation="vertical"
     android:background="@drawable/bg_discover"
     >
     
-    <ScrollView android:id="@+id/hotel_order_write_scv"
+    <com.tigerknows.ui.hotel.NavigationWidget
+        android:id="@+id/navigation_widget"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        tkandroid:navigationState="2"
+        >
+    </com.tigerknows.ui.hotel.NavigationWidget>    <ScrollView android:id="@+id/hotel_order_write_scv"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"
+        android:layout_above="@id/navigation_widget"
         android:orientation="vertical">
        
         <LinearLayout
@@ -33,6 +40,7 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="12dp"
                     android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
                     android:textSize="18sp"
                     android:text="@string/app_name"
                     />
@@ -41,6 +49,7 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="8dp"
                     android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
                     android:textSize="16sp"
                     android:text="@string/app_name"
                     android:textColor="@color/orange"
@@ -50,25 +59,50 @@
                     android:layout_height="wrap_content"
                     android:paddingTop="8dp"
                     android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
                     android:textColor="@color/black_light"
-                    android:textSize="14sp"
+                    android:textSize="16sp"
                     android:text="@string/app_name"
                     />
-                <TextView android:id="@+id/room_date_txv"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:paddingTop="8dp"
-                    android:paddingLeft="16dp"
-                    android:paddingBottom="12dp"
-                    android:textSize="14sp"
-                    android:text="@string/app_name"
-                    />
+                    android:orientation="horizontal"
+                    >
+	                <TextView android:id="@+id/room_date_txv"
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content"
+	                    android:layout_weight="1"
+	                    android:paddingTop="8dp"
+	                    android:paddingLeft="16dp"
+	                    android:paddingBottom="12dp"
+	                    android:gravity="left"
+	                    android:singleLine="true"
+	                    android:ellipsize="marquee"
+	                    android:textSize="16sp"
+	                    android:text="@string/hotel_room_date"
+	                    />
+	                <TextView android:id="@+id/room_nights_txv"
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content"
+	                    android:layout_weight="4"
+	                    android:gravity="right"
+	                    android:singleLine="true"
+	                    android:text="@string/hotel_total_nights"
+	                    android:paddingTop="8dp"
+	                    android:paddingRight="16dp"
+	                    android:paddingBottom="12dp"
+	                    android:textSize="16sp"
+	                    />
+                </LinearLayout>
             </LinearLayout>
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
             	android:layout_marginBottom="12dp"
-                android:background="@drawable/bg_sawtooth" /> 
+                android:background="@drawable/bg_sawtooth" 
+                android:contentDescription="@string/app_name"
+                /> 
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -93,6 +127,7 @@
                     android:background="@color/transparent"
                     android:padding="8dp"
                     android:drawableRight="@drawable/ic_view_all_comment"
+                    android:drawablePadding="8dp"
                     android:textColor="@color/orange"
                     android:textSize="16sp"
                     android:text="@string/app_name"
@@ -100,12 +135,18 @@
                     />
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                android:contentDescription="@string/app_name"
+                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
-                android:background="@drawable/list_header"
+                android:background="@drawable/list_middle"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 >
@@ -124,6 +165,7 @@
                     android:background="@color/transparent"
                     android:padding="8dp"
                     android:drawableRight="@drawable/ic_view_all_comment"
+                    android:drawablePadding="8dp"
                     android:textColor="@color/orange"
                     android:textSize="16sp"
                     android:text="@string/app_name"
@@ -131,6 +173,12 @@
                     />
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                android:contentDescription="@string/app_name"
+                />
             <LinearLayout android:id="@+id/person_name_lly"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -143,7 +191,7 @@
 	                android:layout_height="wrap_content"
 	                android:orientation="horizontal"
 	                android:gravity="left|center_vertical"
-	                android:background="@drawable/list_header"
+	                android:background="@drawable/list_middle"
 	                >
 	                <TextView
 	                    android:layout_width="wrap_content"
@@ -161,6 +209,8 @@
 	                    android:textSize="16sp"
 	                    android:focusable="true"
 	                    android:focusableInTouchMode="true"
+	                    android:hint="@string/hotel_room_person_name_hint"
+	                    android:padding="8dp"
 	                    android:singleLine="true"
 	                    android:ellipsize="end"
 	                    android:background="@color/transparent"
@@ -169,12 +219,18 @@
 	            </LinearLayout>
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                android:contentDescription="@string/app_name"
+                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
-                android:background="@drawable/list_header"
+                android:background="@drawable/list_footer"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 >
@@ -194,6 +250,7 @@
                     android:textSize="16sp"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
+                    android:hint="@string/hotel_room_mobile_nubmer_hint"                    
                     android:singleLine="true"
                     android:ellipsize="end"
                     android:background="@color/transparent"
@@ -201,12 +258,6 @@
                     />
             </LinearLayout>
 
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                android:contentDescription="@string/app_name"
-                />
             <Button android:id="@+id/submit_order_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -215,20 +266,16 @@
                 android:textSize="18sp"
                 android:text="@string/submit_order"
                 android:gravity="center"
-                android:layout_marginTop="18dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                    />
+		        android:shadowDx="0"
+		        android:shadowDy="1"
+		        android:shadowColor="#a77a00"
+		        android:shadowRadius="1"
+                />
         </LinearLayout>
         
     </ScrollView>
-    <com.tigerknows.ui.hotel.NavigationWidget
-        android:id="@+id/navigation_widget"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        tkandroid:navigationState="2"
-        >
-    </com.tigerknows.ui.hotel.NavigationWidget>
+
 </RelativeLayout>
