@@ -18,9 +18,11 @@
             android:orientation="vertical" >
 		    <TextView
 		        android:id="@+id/hotel_head"
-		        android:textSize="16sp"
+		        android:textSize="18sp"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
+		        android:paddingBottom="2dp"
+		        android:paddingTop="2dp"
 		        >
 		        
 		    </TextView>
@@ -55,7 +57,7 @@
 			        android:id="@+id/hotel_service"
 			        android:layout_width="fill_parent"
 			        android:layout_height="wrap_content"
-			        android:textSize="12sp"
+			        android:textSize="14sp"
 			        android:textColor="@color/text_gray"
 			        >
 			        
@@ -90,7 +92,7 @@
 			        android:id="@+id/hotel_room_description"
 			        android:layout_width="fill_parent"
 			        android:layout_height="wrap_content"
-			        android:textSize="12sp"
+			        android:textSize="14sp"
 			        android:textColor="@color/text_gray"
 			        >
 			        
@@ -126,7 +128,7 @@
 			        android:id="@+id/hotel_long_description"
 			        android:layout_width="fill_parent"
 			        android:layout_height="wrap_content"
-			        android:textSize="12sp"
+			        android:textSize="14sp"
 			        android:textColor="@color/text_gray"
 			        >
 			        
