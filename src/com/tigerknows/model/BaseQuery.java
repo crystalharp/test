@@ -756,7 +756,7 @@ public abstract class BaseQuery {
         try {
             if (TKConfig.LaunchTest == false) { // 如果是自动测试分填充的数据，则没有加密
             // 解密数据
-            data = DataEncryptor.decrypt(data);
+            DataEncryptor.getInstance().decrypt(data);
             // 解压数据
             if (compress) {
                 try {
