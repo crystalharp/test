@@ -327,7 +327,8 @@ public class DynamicHotelPOI extends DynamicPOIView {
     public boolean checkExistence(POI poi) {
         List<DynamicPOI> list = poi.getDynamicPOIList();
         mHotel = poi.getHotel();
-        for (int i = 0, size = list.size(); i < size; i++) {
+        int size = (list == null ? 0 : list.size()); 
+        for (int i = 0; i < size; i++) {
             DynamicPOI iter = list.get(i);
             if (iter.getType().equals(DynamicPOI.TYPE_HOTEL)) {
                 LogWrapper.i(TAG, "Dynamic Hotel info exists.");
