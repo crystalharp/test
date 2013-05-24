@@ -13,6 +13,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
+            android:layout_marginLeft="2dp"
             style="@style/Widget.ProgressBar"
             />
     </RelativeLayout>

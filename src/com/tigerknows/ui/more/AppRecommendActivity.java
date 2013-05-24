@@ -5,7 +5,6 @@
 package com.tigerknows.ui.more;
 
 import com.decarta.Globals;
-import com.snda.recommend.api.RecommendAPI;
 import com.tigerknows.R;
 import com.tigerknows.R.drawable;
 import com.tigerknows.R.id;
@@ -187,16 +186,6 @@ public class AppRecommendActivity extends BaseActivity implements View.OnClickLi
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.snda_btn:
-                mActionLog.addAction(mActionTag +  ActionLog.AppRecommendSnda);
-                boolean bRet = RecommendAPI.init(mThis, "800109436", "ANDsnda");
-                RecommendAPI.setSdid("");
-                RecommendAPI.setPhoneNum("");
-                RecommendAPI.setFromPos(mThis, RecommendAPI.MAIN_TOP);
-                if (bRet == true) {
-                    RecommendAPI.openRecommendActivity(mThis);
-                }
-                break;
-
             default:
                 break;
         }

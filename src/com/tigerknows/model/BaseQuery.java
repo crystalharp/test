@@ -156,17 +156,26 @@ public abstract class BaseQuery {
 
 	public static final String RESPONSE_CODE_ERROR_MSG_PREFIX = "resp_code_err_msg";
 
-	// dsrc	 string	 true	 data request source，该请求的来源（指客户端的不同“频道”
+	// dsrc	 string	 false	 data request source，该请求的来源（指客户端的不同“频道”
     public static final String SERVER_PARAMETER_REQUSET_SOURCE_TYPE = "dsrc";
 
     // dsrc=dpmsg，表示雷达频道，通过解析推送消息获得动态poi的uid之后，根据uid取完整的动态poi 
     public static final String REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI = "dpmsg";
+
+    // dsrc=weixin，表示从附件栏启动客户端，仅在引导服务(at=l, Bootstrap)时使用
+    public static final String REQUSET_SOURCE_TYPE_WEIXIN = "weixin";
+
+    // dsrc=cinemadetail，表示点击POI中的电影院列表进入电影详情页
+    public static final String REQUSET_SOURCE_TYPE_POI_TO_CINEMA = "cinemadetail";
+
+    // cstatus  string  false   上传客户端状态信息,字段为cstatus,打开时为0(可以省略),关闭时为1
+    public static final String SERVER_PARAMETER_CLIENT_STATUS = "cstatus";
     
-    // dsrc=dpoi，表示发现频道，通过搜索得到的动态poi的uid之后，根据uid取完整的动态poi
-    public static final String REQUSET_SOURCE_TYPE_DISCOVER = "dpoi";
+    public static final String CLIENT_STATUS_START = "0";
     
-    // ddst    string  false   door request destination，可取值为客户端页面标识 数据挖掘用，服务器业务不关心
-    public static final String SERVER_PARAMETER_DOOR_REQUEST_DESTINATION = "ddst";
+    public static final String CLIENT_STATUS_STOP = "1";
+    
+    public static String sClentStatus = CLIENT_STATUS_START;
     
     // subty   int     false   子数据类型，当dty=1时，可有取值，取值范围{0,1} 
     public static final String SERVER_PARAMETER_SUB_DATA_TYPE = "subty";
@@ -536,7 +545,11 @@ public abstract class BaseQuery {
             requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
             requestParameters.add(SERVER_PARAMETER_VERSION, version);
         }
+
+        addParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE, false);
         addMyLocationParameters();
+        
+        requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
     }
     
     protected void createHttpClient() {
@@ -849,7 +862,7 @@ public abstract class BaseQuery {
         if (key == null) {
             return result;
         }
-        if (criteria.containsKey(key)) {
+        if (criteria != null && criteria.containsKey(key)) {
             result = criteria.get(key);
             if (result != null) {
                 requestParameters.add(key, result);

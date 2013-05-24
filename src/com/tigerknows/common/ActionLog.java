@@ -59,7 +59,7 @@ public class ActionLog {
     
     /**
      * 网络查询
-     * 例如 _324-ZC-s-324733-324833-324900-serverrefuse
+     * 例如 _324-ZG-s-324733-324833-324900-serverrefuse
      * 发起http请求 的毫秒时刻
      * 收到服务器的数据 的毫秒时刻
      * 收完服务器的数据 的毫秒时刻
@@ -135,7 +135,14 @@ public class ActionLog {
     public static final String POIHome = "AA";
     public static final String POIHomeChangeCityBtn = "BA";
     public static final String POIHomeInputEdt = "BB";
-    public static final String POIHomeCategory = "BC";
+    public static final String POIHomeCategory = "BC";    
+    public static final String POIHomeSubcategoryPressed = "BD";
+    public static final String POIHomeSubcategoryOpenedOnFling = "BE";
+    public static final String POIHomeSubcategoryOpenedOnClick = "BF";
+    public static final String POIHomeSubcategoryClosedOnFling = "BG";
+    public static final String POIHomeSubcategoryClosedOnClick = "BH";
+    public static final String POIHomeSubcategoryClosedOnBack = "BI";
+
     
     // POI输入查询页
     public static final String POIHomeInputQuery = "AB";
@@ -154,6 +161,12 @@ public class ActionLog {
     public static final String POIDetailYanchu = "BK";
     public static final String POIDetailZhanlan = "BL";
     public static final String POIDetailTuangou = "BM";
+    public static final String POIDetailPullFailed = "BN";
+    public static final String POIDetailDianying = "BO";
+    public static final String POIDetailDianyingMore = "BP";
+    public static final String POIDetailFromWeixin = "BQ";
+    public static final String POIDetailWeixinRequest = "BR";
+    public static final String POIDetailWeixinSend = "BS";
 
     // POI点评列表页
     public static final String POICommentList = "AE";
@@ -246,10 +259,14 @@ public class ActionLog {
     public static final String Favorite = "CD";
     public static final String FavoriteMenuDelete = "BA";
     public static final String FavoriteMenuRename = "BB";
+    public static final String FavoritePOI = "BC";
+    public static final String FavoriteTraffic = "BD";
 
     // 历史浏览页
     public static final String History = "CE";
     public static final String HistoryMenuDelete = "BA";
+    public static final String HistoryPOI = "BC";
+    public static final String HistoryTraffic = "BD";
 
     // 系统设置页
     public static final String Setting = "CF";
@@ -295,6 +312,8 @@ public class ActionLog {
     public static final String LifecycleSelectCity = Lifecycle + "BF";
     public static final String LifecycleUserReadSuccess = Lifecycle + "BG";
     public static final String LifecycleFirstLocationSuccess = Lifecycle + "BH";
+    public static final String LifecycleWeixinWeb = Lifecycle + "BI";
+    public static final String LifecycleWeixinRequest = Lifecycle + "BJ";
     
     // 地图
     public static final String Map = "FB";
@@ -539,14 +558,6 @@ public class ActionLog {
     public void addAction(String actionLog, Object... args) {
         synchronized (mLock) {
         try {
-        	if (actionLog.equals("BPZA")) {
-        		Object l = null;
-        		try {
-        			l.toString();
-        		} catch (Exception e) {
-					e.printStackTrace();
-				}
-        	}
             Object[] str = new String[args.length];
             int i = 0;
             for(Object object : args) {
@@ -656,9 +667,9 @@ public class ActionLog {
         }
     }
     
-    public void addNetworkAction(String apiType, long reqTime, long revTime, long resTime, String fail) {
+    public void addNetworkAction(String apiType, long reqTime, long revTime, long resTime, String fail, String detail, int signal, String radioType, boolean isStop) {
         try {
-            addAction(NetworkAction, apiType, String.valueOf(reqTime - mStartMillis), String.valueOf(revTime - mStartMillis), String.valueOf(resTime-mStartMillis), fail);
+            addAction(NetworkAction, apiType, String.valueOf(reqTime - mStartMillis), String.valueOf(revTime - mStartMillis), String.valueOf(resTime-mStartMillis), fail, detail, signal, radioType, isStop);
         } catch (Exception e) {
             LogWrapper.e("ActionLog", "addNetworkAction() e="+e.getMessage());
         }

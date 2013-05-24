@@ -2,11 +2,13 @@ package com.tigerknows.util;
 
 import java.util.List;
 
+
 import android.content.Context;
 import android.text.TextUtils;
 
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
+import com.tigerknows.model.BaseData;
 import com.tigerknows.model.BuslineModel.Line;
 import com.tigerknows.model.BuslineModel.Station;
 import com.tigerknows.model.POI;
@@ -16,7 +18,76 @@ import com.tigerknows.share.WeiboSendActivity;
 
 public class ShareTextUtil {
 	
-	public static final int WEIBO_MAX_LENGTH = 140;
+	static final int WEIBO_MAX_LENGTH = 140;
+
+	public static final int SHARE_TYPE_WEIBO = 1;
+	public static final int SHARE_TYPE_QZONE = 2;
+	public static final int SHARE_TYPE_SMS = 3;
+	
+	/**
+	 * 根据不同的数据和分享目的生成具体的字符串
+	 * @param context
+	 * @param data
+	 * @param shareType
+	 * @return
+	 */
+	public static String makeText(Context context, BaseData data, int shareType) {
+		String content = null;
+		if (data == null) {
+			return content;
+		}
+		
+		if (data instanceof POI) {
+			POI poi = (POI) data;
+			if (shareType == SHARE_TYPE_WEIBO) {
+				content = makePOIWeiboText(poi, context);
+			} else if (shareType == SHARE_TYPE_QZONE) {
+				content = makePOIQzoneText(poi, context);
+			} else if (shareType == SHARE_TYPE_SMS) {
+				content = makePOISmsText(poi, context);
+			}
+		} else if (data instanceof Line) {
+			Line line = (Line) data;
+			if (shareType == SHARE_TYPE_WEIBO) {
+				content = makeBuslineWeiboText(line, context);
+			} else if (shareType == SHARE_TYPE_QZONE) {
+				content = makeBuslineQzoneText(line, context);
+			} else if (shareType == SHARE_TYPE_SMS) {
+				content = makeBuslineSmsText(line, context);
+			}
+		} else if (data instanceof Plan) {
+			Plan plan = (Plan) data;
+			int planType = plan.getType();
+			if (planType == Step.TYPE_TRANSFER) {
+				if (shareType == SHARE_TYPE_WEIBO) {
+					content = makeTransferWeiboText(plan, context);
+				} else if (shareType == SHARE_TYPE_QZONE) {
+					content = makeTransferQzoneText(plan, context);
+				} else if (shareType == SHARE_TYPE_SMS) {
+					content = makeTransferSmsText(plan, context);
+				}
+			} else if (planType == Step.TYPE_DRIVE) {
+				if (shareType == SHARE_TYPE_WEIBO) {
+					content = makeDriveWeiboText(plan, context);
+				} else if (shareType == SHARE_TYPE_QZONE) {
+					content = makeDriveQzoneText(plan, context);
+				} else if (shareType == SHARE_TYPE_SMS) {
+					content = makeDriveSmsText(plan, context);
+				}
+			} else if (planType == Step.TYPE_WALK) {
+				if (shareType == SHARE_TYPE_WEIBO) {
+					content = makeWalkWeiboText(plan, context);
+				} else if (shareType == SHARE_TYPE_QZONE) {
+					content = makeWalkQzoneText(plan, context);
+				} else if (shareType == SHARE_TYPE_SMS) {
+					content = makeWalkSmsText(plan, context);
+				}
+			}
+		}
+		
+		return content;
+	}
+	
 	/*
 	 * 
 	 *  当前分享文本规则:
@@ -63,7 +134,7 @@ public class ShareTextUtil {
 	 * @param context
 	 * @return
 	 */
-	public static String shareTrafficTransferWeiboContent(Plan plan, Context context) {
+	static String makeTransferWeiboText(Plan plan, Context context) {
 		
 		String topic = context.getString(R.string.share_weibo_poi_topic) + context.getString(R.string.space);
 		String start = plan.getStart().getName();
@@ -126,7 +197,7 @@ public class ShareTextUtil {
 	 * @param context
 	 * @return
 	 */
-	public static String shareTrafficTransferQzoneContent(Plan plan, Context context) {
+	static String makeTransferQzoneText(Plan plan, Context context) {
 		
 		String start = plan.getStart().getName();
 		String end = plan.getEnd().getName();
@@ -173,7 +244,7 @@ public class ShareTextUtil {
 	 * @param context
 	 * @return
 	 */
-	public static String shareTrafficTransferSmsContent(Plan plan, Context context) {
+	static String makeTransferSmsText(Plan plan, Context context) {
 		String start = plan.getStart().getName();
 		String end = plan.getEnd().getName();
 		
@@ -219,7 +290,7 @@ public class ShareTextUtil {
 	 * @param context
 	 * @return
 	 */
-	public static String shareTrafficDriveWeiboContent(Plan plan, Context context) {
+	static String makeDriveWeiboText(Plan plan, Context context) {
 		String topic = context.getString(R.string.share_weibo_poi_topic) + context.getString(R.string.space);
 		String start = plan.getStart().getName();
 		String end = plan.getEnd().getName();
@@ -237,7 +308,7 @@ public class ShareTextUtil {
 	 * @param context
 	 * @return
 	 */
-	public static String shareTrafficDriveQzoneContent(Plan plan, Context context) {
+	static String makeDriveQzoneText(Plan plan, Context context) {
 		String start = plan.getStart().getName();
 		String end = plan.getEnd().getName();
 		
@@ -254,7 +325,7 @@ public class ShareTextUtil {
 	 * @param context
 	 * @return
 	 */
-	public static String shareTrafficDriveSmsContent(Plan plan, Context context) {
+	static String makeDriveSmsText(Plan plan, Context context) {
 		String start = plan.getStart().getName();
 		String end = plan.getEnd().getName();
 		
@@ -282,7 +353,7 @@ public class ShareTextUtil {
 	 * @param context
 	 * @return
 	 */
-	public static String shareTrafficWalkWeiboContnet(Plan plan, Context context) {
+	static String makeWalkWeiboText(Plan plan, Context context) {
 		String topic = context.getString(R.string.share_weibo_poi_topic) + context.getString(R.string.space);
 		String start = plan.getStart().getName();
 		String end = plan.getEnd().getName();
@@ -300,7 +371,7 @@ public class ShareTextUtil {
 	 * @param context
 	 * @return
 	 */
-	public static String shareTrafficWalkQzoneContnet(Plan plan, Context context) {
+	static String makeWalkQzoneText(Plan plan, Context context) {
 		String start = plan.getStart().getName();
 		String end = plan.getEnd().getName();
 //		String tail = context.getString(R.string.share_weibo_text_tail);
@@ -317,7 +388,7 @@ public class ShareTextUtil {
 	 * @param context
 	 * @return
 	 */
-	public static String shareTrafficWalkSmsContnet(Plan plan, Context context) {
+	static String makeWalkSmsText(Plan plan, Context context) {
 		String start = plan.getStart().getName();
 		String end = plan.getEnd().getName();
 		
@@ -342,7 +413,7 @@ public class ShareTextUtil {
 	 * @param context
 	 * @return
 	 */
-	public static String shareBuslineWeiboContent(Line line, Context context) {
+	static String makeBuslineWeiboText(Line line, Context context) {
 		String topic = context.getString(R.string.share_weibo_poi_topic) + context.getString(R.string.space);
 		int size = line.getStationList().size();
 //		String tail = context.getString(R.string.share_weibo_text_tail);
@@ -359,7 +430,7 @@ public class ShareTextUtil {
 	 * @param context
 	 * @return
 	 */
-	public static String shareBuslineQzoneContent(Line line, Context context) {
+	static String makeBuslineQzoneText(Line line, Context context) {
 		int size = line.getStationList().size();
 //		String tail = context.getString(R.string.share_weibo_text_tail);
 		String tail = context.getString(R.string.share_from_at_tigerknows) + context.getString(R.string.space)
@@ -375,7 +446,7 @@ public class ShareTextUtil {
 	 * @param context
 	 * @return
 	 */
-	public static String shareBuslineSmsContent(Line line, Context context) {
+	static String makeBuslineSmsText(Line line, Context context) {
         int size = line.getStationList().size();
 		String tail = context.getString(R.string.share_from_tigerknows);
 		String length = getPlanLength(context, line.getLength());
@@ -402,7 +473,7 @@ public class ShareTextUtil {
 	 * @param context
 	 * @return
 	 */
-    public static String sharePOIWeiboContent(POI poi, Context context) {
+    static String makePOIWeiboText(POI poi, Context context) {
 		
 		if (poi == null ) {
 			return "";
@@ -471,7 +542,7 @@ public class ShareTextUtil {
      * @param context
      * @return
      */
-    public static String sharePOIQzoneContent(POI poi, Context context) {
+    static String makePOIQzoneText(POI poi, Context context) {
 		
 		if (poi == null ) {
 			return "";
@@ -537,7 +608,7 @@ public class ShareTextUtil {
      * @param context
      * @return
      */
-    public static String sharePOISmsContent(POI poi, Context context) {
+    static String makePOISmsText(POI poi, Context context) {
     	if (poi == null ) {
 			return "";
 		}
@@ -594,8 +665,7 @@ public class ShareTextUtil {
     
     private static int weiboTextAppendDescriptionWithLimit(Context context, final int limit, StringBuilder text, final int descResId, 
     		final String append, final String prePunction) {
-    	LogWrapper.d("weiboTextAppendDescriptionWithLimit", "limit:" + limit + "text:" + text + "description:" + descResId + "append:" + 
-    			append + "prePunction:" +prePunction);
+    	LogWrapper.d("weiboTextAppendDescriptionWithLimit", "limit:" + limit + "text:" + text + "description:" + descResId + "append:" + append + "prePunction:" +prePunction);
     	
     	int remind = limit;
     	String negativeValue = "-1";
@@ -617,8 +687,7 @@ public class ShareTextUtil {
     
     private static void weiboTextAppendDescription(Context context, StringBuilder text, final int descResId, 
     		final String append, final String prePunction) {
-    	LogWrapper.d("weiboTextAppendDescription", "text:" + text + "description:" + descResId + "append:" + 
-    			append + "prePunction:" +prePunction);
+    	LogWrapper.d("weiboTextAppendDescription", "text:" + text + "description:" + descResId + "append:" + append + "prePunction:" +prePunction);
 
     	String negativeValue = "-1";
     	if (TextUtils.isEmpty(append)|| negativeValue.equals(append)) {

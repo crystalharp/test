@@ -1,0 +1,155 @@
+﻿<root version="1.2.7">
+	<category word="美食" highLight="火锅 / 小吃快餐 / 烧烤">
+		<sub word="小吃快餐" />
+		<sub word="火锅" />
+		<sub word="甜品饮品" />
+		<sub word="烧烤" />
+		<sub word="川菜"/>
+		<sub word="粤菜" />
+		<sub word="湘菜" />
+		<sub word="西餐" />
+		<sub word="自助餐" />
+		<sub word="海鲜" />
+		<sub word="日本料理" />
+		<sub word="韩国料理" />
+		<sub word="东北菜" />
+		<sub word="江浙菜" />
+		<sub word="东南亚菜" />
+		<sub word="清真" />
+		<sub word="云贵菜" />
+		<sub word="鲁菜" />
+		<sub word="家常菜" />
+		<sub word="新疆菜" />
+		<sub word="素菜" />
+		<sub word="潮汕菜" />
+		<sub word="湖北菜" />
+	</category>
+  	<category word="酒店" highLight="快捷酒店 / 五星级酒店">
+		<sub word="快捷酒店" />
+		<sub word="三星级酒店" />
+		<sub word="四星级酒店" />
+		<sub word="五星级酒店" />
+		<sub word="旅馆" />
+		<sub word="公寓式酒店" />
+  	</category>
+  	<category word="娱乐" highLight="影院 / KTV / 洗浴按摩">
+		<sub word="电影院" />
+		<sub word="KTV" />
+		<sub word="洗浴按摩" />
+		<sub word="足疗" />
+		<sub word="网吧" />
+		<sub word="酒吧" />
+		<sub word="咖啡馆" />
+		<sub word="茶楼" />
+		<sub word="商务会馆" />
+		<sub word="夜总会" />
+		<sub word="游乐游艺" />
+		<sub word="游乐园" />
+		<sub word="桌面游戏" />
+		<sub word="温泉" />
+		<sub word="活动中心" />
+		<sub word="棋牌" />
+		<sub word="剧场" />
+		<sub word="音乐厅" />
+		<sub word="戏院" />
+  	</category>
+  	<category word="购物" highLight="超市 / 商场 / 批发市场">
+		<sub word="超市" />
+		<sub word="商场" />
+		<sub word="服饰鞋包" />
+		<sub word="数码家电" />
+		<sub word="书店" />
+		<sub word="便利店" />
+		<sub word="家居" />
+		<sub word="化妆品" />
+		<sub word="运动户外" />
+		<sub word="眼镜店" />
+		<sub word="农贸市场" />
+		<sub word="批发市场" />
+		<sub word="品牌折扣店" />
+		<sub word="珠宝饰品" />
+  	</category>
+  	<category word="旅游" highLight="景点 / 植物园 / 博物馆">	    
+		<sub word="景点" />
+		<sub word="公园" />
+		<sub word="寺庙" />
+		<sub word="广场" />
+		<sub word="博物馆" />
+		<sub word="展览馆" />
+		<sub word="艺术馆" />
+		<sub word="水族馆" />
+		<sub word="植物园" />
+		<sub word="农家院" />
+  	</category>
+  	<category word="丽人" highLight="美发 / 美容 / 婚礼服务">
+		<sub word="美发" />
+		<sub word="美容" />
+		<sub word="摄影" />
+		<sub word="SPA" />
+		<sub word="工作室" />
+		<sub word="美甲" />
+		<sub word="瘦身" />
+		<sub word="写真" />
+		<sub word="婚礼服务" />
+		<sub word="婚纱礼服" />
+  	</category>
+  	<category word="运动" highLight="体育馆 / 健身 / 游泳馆">
+		<sub word="体育场馆" />
+		<sub word="健身中心" />
+		<sub word="游泳馆" />
+		<sub word="台球馆" />
+		<sub word="羽毛球馆" />
+		<sub word="溜冰场" />
+		<sub word="瑜伽" />
+		<sub word="舞蹈" />
+		<sub word="高尔夫" />
+		<sub word="篮球馆" />
+		<sub word="网球场" />
+		<sub word="保龄球馆" />
+		<sub word="乒乓球馆" />
+		<sub word="足球场" />
+  	</category>
+  	<category word="银行" highLight="ATM / 工行 / 民生银行">
+		<sub word="ATM" />
+		<sub word="工商银行" />
+		<sub word="建设银行" />
+		<sub word="农业银行" />
+		<sub word="中国银行" />
+		<sub word="交通银行" />
+		<sub word="招商银行" />
+		<sub word="邮政储蓄银行" />
+		<sub word="中信银行" />
+		<sub word="光大银行" />
+		<sub word="浦发银行" />
+		<sub word="民生银行" />
+		<sub word="广发银行" />
+		<sub word="兴业银行" />
+		<sub word="华夏银行" />
+  	</category>
+  	<category word="交通" highLight="公交站 / 加油站 / 机场">
+		<sub word="公交站" />
+		<sub word="地铁站" />
+		<sub word="火车站" />
+		<sub word="长途车站" />
+		<sub word="停车场" />
+		<sub word="加油站" />
+		<sub word="火车票代售点" />
+		<sub word="高速" />
+		<sub word="机场" />
+		<sub word="收费站" />
+  	</category>
+	<category word="医疗" highLight="医院 / 药店 / 妇幼医院">
+		<sub word="医院" />
+		<sub word="药店" />
+		<sub word="社区医院" />
+		<sub word="中医院" />
+		<sub word="妇幼医院" />
+		<sub word="齿科" />
+		<sub word="儿童医院" />
+		<sub word="体检" />
+		<sub word="防疫站" />
+		<sub word="卫生院" />
+		<sub word="眼科医院" />
+		<sub word="美容医院" />
+	</category>
+</root>

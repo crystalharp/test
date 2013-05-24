@@ -450,7 +450,7 @@ public class POI extends BaseData {
     // 菜系
     private String cookingStyle;
     
-    private String perCapity;
+    private long perCapity;
     
     private String recommendCook;
     
@@ -658,7 +658,7 @@ public class POI extends BaseData {
     }
     
     
-    public String getPerCapity() {
+    public long getPerCapity() {
         return perCapity;
     }
     
@@ -812,6 +812,8 @@ public class POI extends BaseData {
                     this.feature = null;
                 }
                 
+                this.perCapity = getLongFromData(this.description, Description.FIELD_PER_CAPITA, reset ? 0 : this.perCapity);
+                
                 this.taste = getStringFromData(this.description, Description.FIELD_TASTE, reset ? null : this.taste);
 
                 String service = getStringFromData(this.description, Description.FIELD_SERVICE_ATTITUDE, reset ? null : this.service);
@@ -851,7 +853,6 @@ public class POI extends BaseData {
         this.status = getLongFromData(FIELD_STATUS, reset ? 0 : this.status);
         this.dynamicPOIList = getListFromData(FIELD_DYNAMIC_POI, DynamicPOI.Initializer, reset ? null : this.dynamicPOIList);
         this.lastComment = getObjectFromData(FIELD_LAST_COMMENT, Comment.Initializer, reset ? null : this.lastComment);
-        this.perCapity = getStringFromData(FIELD_PERCAPITY, reset ? null : this.perCapity);
         if (this.data.containsKey(Hotel.FIELD_UUID)) {
             this.hotel = new Hotel(this.data);
         } else if (reset) {

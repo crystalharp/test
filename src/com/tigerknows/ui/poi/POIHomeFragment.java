@@ -6,6 +6,7 @@ package com.tigerknows.ui.poi;
 
 import com.decarta.Globals;
 import com.decarta.android.location.Position;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -15,32 +16,52 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.widget.SpringbackListView;
-import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView.ScaleType;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
+
 /**
  * @author Peng Wenyue
  */
+@SuppressLint("ValidFragment")
 public class POIHomeFragment extends BaseFragment implements View.OnClickListener {
 
     public POIHomeFragment(Sphinx sphinx) {
@@ -49,14 +70,35 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     }
 
     static final String TAG = "HomeFragment";
+    static final String CATEGORY_FILE_NAME = "poi_category.xml";
+    static final String ELEMENT_CATEGORY = "category";
+    static final String ELEMENT_SUB_CATEGORY = "sub";
+    static final String ELEMENT_VALUE_ATTR = "word";
+    static final String ELEMENT_HIGH_LIGHT_ATTR = "highLight";
 
     private Button mCityBtn;
     private Button mInputBtn;
     private TextView mMyLoactionTxv;
+    
+    private View mDragViewParent;
+    private View mDragView;
+    private GridView mSubCategoryGrid;
+    private View mTransPaddingView;
+    private ImageView mCategoryTagImv;
+    private int mScreenWidth;
+    private int mScreenHeight;
+    private int mDragViewWidth;
+    private int mDragViewHeight;
+    private int mDragViewParentX;
+    private int mDragViewParentY;
+    private int mTransPaddingWidth;
+    
+    private ArrayAdapter<String> mSubCategoryAdapter;
+    
     private Position mLastPosition;
     private String mLocationName;
     private long mLastTime = 0;
-    private SpringbackListView mCategoryLsv;
+    private ListView mCategoryLsv;
     private CategoryAdapter mCategoryAdapter;
     private int mCategoryTop;
     private int mMyLocationViewHeight;
@@ -67,18 +109,95 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     private View mFooterView;
     
     private String[] mCategoryNameList;
-    private final int[] mCategoryResIdList = {R.drawable.category_eat,
-        R.drawable.category_play,
-        R.drawable.category_buy,
-        R.drawable.category_hotel,
-        R.drawable.category_tour,
-        R.drawable.category_beauty,
-        R.drawable.category_sport,
-        R.drawable.category_bank,
-        R.drawable.category_traffic,
-        R.drawable.category_hospital
-        };
+    List<Category> mCategorylist = new ArrayList<Category>();
+    private final int[] mCategoryResIdList = {
+            R.drawable.category_food,
+            R.drawable.category_hotel,
+            R.drawable.category_play,
+            R.drawable.category_shopping,
+            R.drawable.category_travel,
+            R.drawable.category_beauty,
+            R.drawable.category_sports,
+            R.drawable.category_bank,
+            R.drawable.category_traffic,
+            R.drawable.category_hospital
+            };
+    private final int[] mCategoryTagResIdList = {
+            R.drawable.category_tag_food,
+            R.drawable.category_tag_hotel,
+            R.drawable.category_tag_play,
+            R.drawable.category_tag_shopping,
+            R.drawable.category_tag_travel,
+            R.drawable.category_tag_beauty,
+            R.drawable.category_tag_sports,
+            R.drawable.category_tag_bank,
+            R.drawable.category_tag_traffic,
+            R.drawable.category_tag_hospital
+            };
 
+	ArrayList< ArrayList<String> > subCategories = new ArrayList< ArrayList<String> >();
+	String[] mHighLightedSubs;
+	
+	public ListView getCategoryLsv() {
+        return mCategoryLsv;
+	}
+	
+    class CategoryXMLHandler extends DefaultHandler{
+    	
+    	private int curIndex = -1;
+    	
+		@Override
+		public void startDocument() throws SAXException {
+			super.startDocument();
+			mHighLightedSubs = new String[mCategoryResIdList.length];
+			subCategories.clear();
+			curIndex = -1;
+		}
+
+		@Override
+		public void endDocument() throws SAXException {
+			// TODO Auto-generated method stub
+			super.endDocument();
+		}
+
+		@Override
+		public void startElement(String uri, String localName, String qName,
+				Attributes attributes) throws SAXException {
+			super.startElement(uri, localName, qName, attributes);
+			
+			if(localName.equals(ELEMENT_CATEGORY)){
+				curIndex++;
+				subCategories.add(new ArrayList<String>());
+				subCategories.get(curIndex).add(attributes.getValue(ELEMENT_VALUE_ATTR));
+				mHighLightedSubs[curIndex] = attributes.getValue(ELEMENT_HIGH_LIGHT_ATTR);
+			}else if(localName.equals(ELEMENT_SUB_CATEGORY)){
+				subCategories.get(curIndex).add( attributes.getValue(ELEMENT_VALUE_ATTR));				
+			}
+		}
+    	
+    	
+    }
+    
+    private void loadCategories(){
+    	try {
+			SAXParser sp = SAXParserFactory.newInstance().newSAXParser();
+			CategoryXMLHandler handler = new CategoryXMLHandler();
+			
+			sp.parse(mContext.getAssets().open(CATEGORY_FILE_NAME), handler);
+			
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    }
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,11 +207,20 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
+        LogWrapper.d(TAG, "onCreateView()"+mActionTag);
+        
+        loadCategories();
         
         mRootView = mLayoutInflater.inflate(R.layout.poi_home, container, false);
         
         findViews();
         setListener();
+        
+        mScreenWidth = Globals.g_metrics.widthPixels;
+        mScreenHeight = Globals.g_metrics.heightPixels;
+
+        mSubCategoryAdapter = new ArrayAdapter<String>(mContext, R.layout.poi_home_drag_view_item, new ArrayList<String>());
+        mSubCategoryGrid.setAdapter(mSubCategoryAdapter);
         
         mCategoryNameList = getResources().getStringArray(R.array.home_category);
 
@@ -108,25 +236,18 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         if (columnWidth > 2) {
             columnWidth = 2;
         }
-        List<List<Category>> categoryList = new ArrayList<List<Category>>();
-        for(int i = 0, length = mCategoryResIdList.length; (i*columnWidth) < length; i++) {
-            int index = (i*columnWidth);
-            List<Category> categorylist = new ArrayList<Category>();
-            for(int j = 0; j < columnWidth && index+j < length; j++) {
+
+        for(int i = 0, length = mCategoryResIdList.length; i < length; i++) {
                 Category category = new Category();
-                category.resId = mCategoryResIdList[index+j];
-                category.name = mCategoryNameList[index+j];
-                categorylist.add(category);
-            }
-            categoryList.add(categorylist);
+                category.resId = mCategoryResIdList[i];
+                category.name = mCategoryNameList[i];
+                mCategorylist.add(category);
         }
         
         mHeaderView = new LinearLayout(mContext);
         mFooterView = new LinearLayout(mContext);
-        mCategoryLsv.addHeaderView(mHeaderView);
-        mCategoryLsv.addFooterView(mFooterView);
         
-        mCategoryAdapter = new CategoryAdapter(mContext, categoryList);
+        mCategoryAdapter = new CategoryAdapter(mContext, mCategorylist);
         mCategoryLsv.setAdapter(mCategoryAdapter);
         
         mMyLoactionTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -135,9 +256,13 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
         mCategoryAdapter.notifyDataSetChanged();
         
+
+        
         return mRootView;
     }
 
+    private boolean mIsResumeCalled = false;
+    
     @Override
     public void onResume() {
         super.onResume();
@@ -149,42 +274,76 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 
         refreshLocationView();
         // 将mCategoryLsv滚动到最顶
-        mCategoryLsv.changeHeaderViewByState(true, SpringbackListView.DONE);
         mCategoryLsv.setSelectionFromTop(0, 0);
-    }
+        
+        //If resume hasn't been called
+        if(!mIsResumeCalled){
+        	mIsResumeCalled = true;
+        	mRootView.post(new Runnable() {
+	        	
+				@Override
+				public void run() {
+					
+					int[] loc = new int[2];
+					mDragViewParent.getLocationInWindow(loc);
+					mDragViewParentX = loc[0];
+					mDragViewParentY = loc[1];
+					
+					mDragViewWidth = mDragViewParent.getRight() - mDragViewParent.getLeft();
+					mDragViewHeight = mDragViewParent.getBottom() - mDragViewParent.getTop();
+					
+					mTransPaddingWidth = mTransPaddingView.getRight() - mTransPaddingView.getLeft();
+					
+				}//end run
+				
+			});
+        }else{
+        }
+        mSphinx.showHomeDragHint();
 
+        refreshSubCategoryListView();
+		mDragView.setVisibility(View.INVISIBLE);
+		mIsSubCategoryExpanded = false;
+    }
+    
     @Override
     public void onPause() {
         super.onPause();
+        mDragView.setVisibility(View.GONE);
     }
 
     protected void findViews() {
-        mCategoryLsv = (SpringbackListView) mRootView.findViewById(R.id.category_lsv);
+        mCategoryLsv = (ListView) mRootView.findViewById(R.id.category_lsv);
         mInputBtn = (Button) mRootView.findViewById(R.id.input_btn);
         mCityBtn = (Button) mRootView.findViewById(R.id.city_btn);
         mMyLoactionTxv = (TextView) mRootView.findViewById(R.id.my_location_txv);
+        mSubCategoryGrid = (GridView) mRootView.findViewById(R.id.sub_category_grid);
+        mTransPaddingView = mRootView.findViewById(R.id.trans_padding);
+        mDragView = mRootView.findViewById(R.id.drag_view);
+        mDragViewParent = mRootView.findViewById(R.id.drag_view_parent);
+        mCategoryTagImv = (ImageView) mRootView.findViewById(R.id.imv_category_tag);
     }
 
     protected void setListener() {
         mInputBtn.setOnClickListener(this);
         mCityBtn.setOnClickListener(this);
-        mCategoryLsv.setOnRefreshListener(new OnRefreshListener() {
-            
-            @Override
-            public void onRefresh(boolean isHeader) {
-                mCategoryLsv.onRefreshComplete(isHeader);
-            }
-        });  
-    }
         
+       mTransPaddingView.setOnTouchListener(mDragViewExpanedOnTouchListener);
+       mTransPaddingView.setOnClickListener(mTransPaddingOnClickListener);
+       
+       mSubCategoryGrid.setOnItemClickListener( mSubCategoryOnClickListener);
+       mSubCategoryGrid.setOnTouchListener(mDragViewExpanedOnTouchListener);
+       
+    }
+    
     @Override
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.city_btn) {
-            mActionLog.addAction(mActionTag +  ActionLog.POIHomeChangeCityBtn, Globals.g_Current_City_Info.getCName());
+            mActionLog.addAction(mActionTag + ActionLog.POIHomeChangeCityBtn, Globals.g_Current_City_Info.getCName());
             mSphinx.showView(R.id.activity_more_change_city);
         } else if (id == R.id.input_btn) {
-            mActionLog.addAction(mActionTag +  ActionLog.POIHomeInputEdt);
+            mActionLog.addAction(mActionTag + ActionLog.POIHomeInputEdt);
             mSphinx.showView(R.id.view_poi_input_search);
         }
     }
@@ -268,88 +427,451 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         String name;
     }
     
-    public class CategoryAdapter extends ArrayAdapter<List<Category>> {
+    public class CategoryAdapter extends ArrayAdapter<Category> {
 
-        public CategoryAdapter(Context context, List<List<Category>> list) {
+        public CategoryAdapter(Context context, List<Category> list) {
             super(context, 0, list);
         }
 
         @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            LinearLayout view;
-            if (convertView == null) {
-                int size = getItem(0).size();
-                view = new LinearLayout(mContext);
-                view.setOrientation(LinearLayout.HORIZONTAL);
-                view.setGravity(Gravity.CENTER);
-                LinearLayout.LayoutParams layoutParamsNormalRow = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-                layoutParamsNormalRow.leftMargin = mCategoryBtnPadding;
-                layoutParamsNormalRow.topMargin = mCategoryBtnPadding;
-                layoutParamsNormalRow.rightMargin = mCategoryBtnPadding;
-                layoutParamsNormalRow.gravity = Gravity.LEFT;
-                for(int i = 0; i < size; i++) {
-                    view.addView(getImageButton(), layoutParamsNormalRow);
-                }
-            } else {
-                view = (LinearLayout)convertView;
-            }
-
-            final List<Category> categoryList = getItem(position);
-            int categorySize = categoryList.size();
-            int size = view.getChildCount();
-            for(int i = 0; i < size; i++) {
-                if (i < categorySize) {
-                    final Category category = categoryList.get(i);
-                    ImageButton categoryImb = (ImageButton)view.getChildAt(i);
-                    categoryImb.setVisibility(View.VISIBLE);
-                    categoryImb.setBackgroundResource(category.resId);
-                    categoryImb.setOnClickListener(new View.OnClickListener() {
-
-                        @Override
-                        public void onClick(View v) {
-                            if (category.resId == R.drawable.category_hotel) {
-                                mSphinx.getHotelHomeFragment().setCityInfo(Globals.g_Current_City_Info);
-                                mSphinx.showView(R.id.view_hotel_home);
-                                return;
-                            }
-                            mActionLog.addAction(mActionTag +  ActionLog.POIHomeCategory, category.name);
-
-                            DataQuery poiQuery = new DataQuery(mContext);
-                            POI requestPOI = mSphinx.getPOI();
-                            int cityId = Globals.g_Current_City_Info.getId();
-                            Hashtable<String, String> criteria = new Hashtable<String, String>();
-                            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
-                            criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
-                            criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-                            criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, category.name);
-                            Position position = requestPOI.getPosition();
-                            if (position != null) {
-                                criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-                                criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
-                            }
-                            criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD_TYPE, DataQuery.KEYWORD_TYPE_TAG);
-                            poiQuery.setup(criteria, cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
-                            BaseFragment baseFragment = mSphinx.getFragment(poiQuery.getTargetViewId());
-                            if (baseFragment != null && baseFragment instanceof POIResultFragment) {
-                                mSphinx.queryStart(poiQuery);
-                                ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup();
-                                mSphinx.showView(poiQuery.getTargetViewId());
-                            }
-                        }
-                    });
-                } else {
-                    view.getChildAt(i).setVisibility(View.INVISIBLE);
-                }
-            }
-
-            if (position == 0) {
-                view.setPadding(0, mCategoryPadding, 0, 0);
+        public View getView(int position, View convertView, ViewGroup parent) {
+        	
+        	if(convertView == null){
+        		convertView = mLayoutInflater.inflate(R.layout.poi_category_list_item, parent, false);
+        	}
+        	
+        	//Setup category button
+        	Button btnCategory = (Button) convertView.findViewById(R.id.btn_category);
+        	btnCategory.setText(getItem(position).name);
+        	Drawable subCategoryIcon = getContext().getResources().getDrawable(mCategoryResIdList[position]);
+        	subCategoryIcon.setBounds(0, 0, subCategoryIcon.getIntrinsicWidth(), subCategoryIcon.getIntrinsicHeight());
+        	btnCategory.setCompoundDrawables(subCategoryIcon, null, null, null);
+        	
+        	Button btnSubCategory = (Button) convertView.findViewById(R.id.btn_sub_category);
+        	btnSubCategory.setText(mHighLightedSubs[position]);
+        	
+        	btnCategory.setOnClickListener(new CategoryBtnOnClickListener(position));
+        	
+        	//setup sub-category button
+        	btnSubCategory.setOnClickListener(new SubCategoryOnclickListener(position));
+        	btnSubCategory.setOnTouchListener(new SubCategoryBtnOnTouchListener(position));
+        	if (position == 0) {
+        	    convertView.setPadding(0, 0, 0, 0);
             } else if (position == getCount()-1){
-                view.setPadding(0, 0, 0, mCategoryTop);
+                convertView.setPadding(0, 0, 0, mMyLocationViewHeight);
             } else {
-                view.setPadding(0, 0, 0, 0);
+                convertView.setPadding(0, 0, 0, 0);
             }
-            return view;
+        	if (mSubCategoryListView.contains(btnSubCategory) == false) {
+        	    mSubCategoryListView.add(btnSubCategory);
+        	}
+        	return convertView;
         }
     }
+    
+
+    private boolean mIsSubCategoryExpanded = false;
+    
+    public boolean isSubCategoryExpanded(){
+    	return mIsSubCategoryExpanded;
+    }
+    
+    class CategoryBtnOnClickListener implements OnClickListener {
+    	
+		private int position;
+		
+		public CategoryBtnOnClickListener(int position) {
+			this.position = position;
+		}
+
+		@Override
+		public void onClick(View v) {
+			String keyWord = subCategories.get(position).get(0);
+			mActionLog.addAction(mActionTag + ActionLog.POIHomeCategory, keyWord);
+			jumpToPOIResult(keyWord);
+		}
+	};
+    
+	class SubCategoryOnclickListener implements OnClickListener{
+
+		private int position;
+		
+		public SubCategoryOnclickListener(int position) {
+			this.position = position;
+		}
+		
+		@Override
+		public void onClick(View v) {
+		    
+		    if (position == 1) {
+		        mSphinx.getHotelHomeFragment().setCityInfo(Globals.g_Current_City_Info);
+		        mSphinx.showView(R.id.view_hotel_home);
+		        return;
+		    }
+			
+			//if user is not dragging the view and dragView not expanded already, expand it.
+			if(!isDragStarts && !mIsSubCategoryExpanded){
+			    mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryOpenedOnClick, mCategorylist.get(mCurrentCategoryIndex));
+			    
+				//set it visible to guard first show of the drag view
+				setUpDragView(position);
+
+				mDragView.setVisibility(View.VISIBLE);
+				
+				//mTransPaddingView.setBackgroundResource(R.color.black_transparent_half);
+				
+				//animate the drag view
+				animateDragView(true);
+				
+				//set expanded flag
+				mIsSubCategoryExpanded = true;
+			}
+			
+		}
+	};
+	
+	private void animateDragView(boolean toLeft)
+	{
+		Animation animation = new TranslateAnimation(toLeft?mDragViewWidth:0, toLeft?0:mDragViewWidth, 0, 0);
+		//animation.setInterpolator(new AccelerateDecelerateInterpolator());
+		//animation.setInterpolator(new );
+		animation.setStartOffset(0);
+		animation.setDuration(toLeft?300:500);
+		animation.setFillAfter(false);
+		animation.setAnimationListener(mDragOpenAnimationListener);
+		mDragView.startAnimation(animation);
+	}
+	
+	OnClickListener mTransPaddingOnClickListener = new OnClickListener() {
+		
+		@Override
+		public void onClick(View v) {
+			if(!isDragStarts){
+				mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryClosedOnClick, mCategorylist.get(mCurrentCategoryIndex));
+				closeDragView();
+			}
+		}
+	};
+	
+	public void closeDragView(){
+		//Animate close the drag view
+		animateDragView(false);
+		mTransPaddingView.setBackgroundResource(R.color.transparent);
+		mIsSubCategoryExpanded = false;
+		refreshSubCategoryListView();
+	}
+	
+	void refreshSubCategoryListView() {
+        for(int i = 0, size = mSubCategoryListView.size(); i < size; i++) {
+            View view = mSubCategoryListView.get(i);
+            view.setPressed(false);
+            view.clearFocus();
+            view.postInvalidate();
+        }
+	}
+	
+	OnTouchListener mDragViewExpanedOnTouchListener = new OnTouchListener() {
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			onDragViewCloseTouchEvent(v, event);
+			return isDragging;
+			
+		}
+	};
+	
+	private int[] touchedControlLoc = new int[2];
+	
+	private int xDown;
+	private int yDown;
+
+	boolean isDragStarts = false;
+	boolean isDragging = false;
+	boolean isPreventDrag = false;
+	long lastTouchUpTimeMillis = 0;
+	int minDragDistance = Util.dip2px(Globals.g_metrics.density, 10);
+	List<View> mSubCategoryListView = new ArrayList<View>();
+	
+	private boolean onDragViewCloseTouchEvent(View v, MotionEvent event){
+		
+		int x = (int) event.getX();
+		int y = (int) event.getY();
+
+		v.getLocationInWindow( touchedControlLoc );
+		
+		switch (event.getAction() & MotionEvent.ACTION_MASK) {
+
+		case MotionEvent.ACTION_DOWN:
+			//To prevent Category from intercept touch event
+			//When down is for sub-cate button
+			if( v instanceof Button && v!=mTransPaddingView){
+				mCategoryLsv.requestDisallowInterceptTouchEvent(true);
+			}
+			
+			xDown = x;
+			yDown = y;
+			
+			isPreventDrag = isDragging = isDragStarts = false;
+			
+			break;
+
+		case MotionEvent.ACTION_MOVE:
+			if(isPreventDrag){
+				break;
+			}
+			
+			if( !isDragStarts){
+				if( (v instanceof Button && v != mTransPaddingView)
+						|| (v==mTransPaddingView && x > v.getWidth())		//the touch point has moved out of the TransPadding view range
+						|| (v instanceof GridView) && (xDown + touchedControlLoc[0] < mScreenWidth*2/3) ) //the touch point has moved more than 10 pixels
+				{
+					if(( ( v instanceof Button && v!=mTransPaddingView) || v == mSubCategoryGrid)
+						&& Math.abs(yDown - y) > minDragDistance){
+						
+						isPreventDrag = true;
+						
+						if(v instanceof Button && v!=mTransPaddingView){
+							mCategoryLsv.requestDisallowInterceptTouchEvent(false);
+						}
+						
+					}
+					if(!isPreventDrag && 
+							( (!mIsSubCategoryExpanded && xDown - x > minDragDistance) 
+								|| (mIsSubCategoryExpanded && x -xDown > minDragDistance)) ){
+
+						isDragStarts = true;
+						isDragging = true;
+						mTransPaddingView.setBackgroundResource(R.color.transparent);
+						moveDragView(x, y);
+						if(v == mSubCategoryGrid){
+							mSubCategoryGrid.onTouchEvent(
+									MotionEvent.obtain(event.getDownTime(), event.getEventTime(), 
+											MotionEvent.ACTION_UP, 0, 0, event.getMetaState()));
+						}
+					}
+					
+				}
+				
+			}else {	//put dragging in else to prevent a flash of the dragView when the drag starts
+				mDragView.setVisibility(View.VISIBLE);
+				moveDragView(x,y);
+			}
+			
+			
+
+			break;
+
+		case MotionEvent.ACTION_UP:
+			if(!isDragStarts){
+				break;
+			}
+			
+			lastTouchUpTimeMillis = System.currentTimeMillis();
+			x += touchedControlLoc[0];
+
+			mDragView.layout(0, 0, mDragViewWidth, mDragViewHeight);
+			
+			if(mIsSubCategoryExpanded && x < mScreenWidth/3 
+					|| !mIsSubCategoryExpanded && x < mScreenWidth*2/3 ){
+				mDragView.setVisibility(View.VISIBLE);
+				animateTranspadding(0, 1);
+				if(mIsSubCategoryExpanded == false){
+					mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryOpenedOnFling, mCategorylist.get(mCurrentCategoryIndex));
+				}
+				mIsSubCategoryExpanded= true;
+			}else{
+			    refreshSubCategoryListView();
+				mDragView.setVisibility(View.INVISIBLE);
+				mTransPaddingView.setBackgroundResource(R.color.transparent);
+				if(mIsSubCategoryExpanded == true){
+					mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryClosedOnFling, mCategorylist.get(mCurrentCategoryIndex));
+				}
+				mIsSubCategoryExpanded = false;
+			}
+			
+			mCategoryLsv.setBackgroundResource(R.color.home_list_bg);
+			isDragging = false;
+			
+			break;
+			
+			default:
+				break;
+		}
+
+		return isDragStarts;
+	}
+    
+	private void moveDragView(int x, int y){
+		int dragViewLeft = 0;
+		
+		x += touchedControlLoc[0] - mDragViewParentX ;
+		
+		if(x>mTransPaddingWidth){
+			dragViewLeft = x - mTransPaddingWidth;
+		}else{
+			dragViewLeft = 0;
+		}
+		mDragView.layout(dragViewLeft, 0, dragViewLeft + mDragViewWidth, mDragViewHeight);	
+		isDragging = true;
+	}
+	
+	class SubCategoryBtnOnTouchListener implements OnTouchListener {
+
+		private int position;
+		
+		public SubCategoryBtnOnTouchListener(int position) {
+			this.position = position;
+		}
+		
+		
+		@Override
+		public boolean onTouch(View v, MotionEvent event) {
+			
+			boolean oldIsDragStart=isDragging;
+			
+			
+			boolean result = onDragViewCloseTouchEvent(v, event);
+			
+			if(!oldIsDragStart && isDragging){
+				setUpDragView(position);
+			}
+			
+			return mIsSubCategoryExpanded;
+			
+		}
+	};
+
+	private int mCurrentCategoryIndex = 0;
+
+	void setUpDragView(int position)
+	{
+
+		mCurrentCategoryIndex = position;
+		
+		mSubCategoryAdapter.clear();
+		ArrayList<String> subs = subCategories.get(position);
+		mSubCategoryAdapter.add(subs.get(0) + mContext.getString(R.string.all));
+		for(int i=1, size=subs.size(); i<size; i++){
+			mSubCategoryAdapter.add(subs.get(i));
+		}
+		mSubCategoryGrid.setAdapter(mSubCategoryAdapter);
+		mCategoryTagImv.setImageResource(mCategoryTagResIdList[position]);
+	}
+    
+	OnItemClickListener mSubCategoryOnClickListener = new OnItemClickListener() {
+
+		@Override
+		public void onItemClick(AdapterView<?> parent, View view, int position,
+				long id) {
+			if (animation || isDragging) {
+				return;
+			}
+			if(isDragStarts && System.currentTimeMillis() < lastTouchUpTimeMillis + 200){
+				return;
+			}
+			String keyWord=null;
+			if(position==0){
+				keyWord = subCategories.get(mCurrentCategoryIndex).get(0);
+			}else{
+				keyWord = mSubCategoryAdapter.getItem(position);
+			}
+			mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryPressed, keyWord);
+			jumpToPOIResult(keyWord);
+		}
+		
+	};
+	
+	private void jumpToPOIResult(String keyWord){
+       DataQuery poiQuery = new DataQuery(mContext);
+       POI requestPOI = mSphinx.getPOI();
+       int cityId = Globals.g_Current_City_Info.getId();
+       Hashtable<String, String> criteria = new Hashtable<String, String>();
+       criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+       criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+       criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
+       criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, keyWord);
+       Position position = requestPOI.getPosition();
+       if (position != null) {
+    	   criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+    	   criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+        }
+       criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD_TYPE, DataQuery.KEYWORD_TYPE_TAG);
+       poiQuery.setup(criteria, cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
+       BaseFragment baseFragment = mSphinx.getFragment(poiQuery.getTargetViewId());
+       
+       if (baseFragment != null && baseFragment instanceof POIResultFragment) {
+    	   mSphinx.queryStart(poiQuery);
+    	   ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup();
+    	   mSphinx.showView(poiQuery.getTargetViewId());
+       	}
+	}
+	
+	boolean animation = false;
+	AnimationListener mDragOpenAnimationListener = new AnimationListener() {
+		
+		@Override
+		public void onAnimationStart(Animation animation) {
+			POIHomeFragment.this.animation = true;
+		}
+		
+		@Override
+		public void onAnimationRepeat(Animation animation) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void onAnimationEnd(Animation animation) {
+			if ( !mIsSubCategoryExpanded){
+			    refreshSubCategoryListView();
+				mDragView.setVisibility(View.INVISIBLE);
+			}else{
+				mDragView.setVisibility(View.VISIBLE);
+				animateTranspadding(0,1);
+			}
+			POIHomeFragment.this.animation = false;
+		}
+	};
+    
+	
+	private void animateTranspadding(final float fromAlpha, final float toAlpha){
+		
+		mTransPaddingView.setBackgroundResource(R.color.black_transparent_half);
+		Animation ani = new AlphaAnimation(fromAlpha, toAlpha);
+		ani.setDuration(200);
+		ani.setAnimationListener(new AnimationListener() {
+			
+			@Override
+			public void onAnimationStart(Animation animation) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				if(toAlpha > fromAlpha){
+					mTransPaddingView.setBackgroundResource(R.color.black_transparent_half);
+				}
+			}
+		});
+		mTransPaddingView.startAnimation(ani);
+		
+	}
+	
+	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK &&
+                isSubCategoryExpanded()) {
+            mActionLog.addAction(mActionTag + ActionLog.POIHomeSubcategoryClosedOnBack, mCategorylist.get(mCurrentCategoryIndex));
+            closeDragView();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+	}
 }

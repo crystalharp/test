@@ -5,8 +5,11 @@
 package com.tigerknows.ui;
 
 import com.tigerknows.R;
+import com.tigerknows.common.ActionLog;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
@@ -17,8 +20,16 @@ import android.view.View.OnTouchListener;
 public class HintActivity extends BaseActivity implements View.OnClickListener {
     
     public static final String LAYOUT_RES_ID = "layoutResID";
+    
+    public static final String NEXT_KEY = "nextKey";
+    
+    public static final String NEXT_LAYOUT_RES_ID = "nextLayoutResID";
 
     private int mLayoutResID;
+    
+    private int mNextResID = R.id.view_invalid;
+    
+    private String mNextKey;
     
     private View mRootView;
     
@@ -27,6 +38,8 @@ public class HintActivity extends BaseActivity implements View.OnClickListener {
         
         if (mIntent != null) {
             mLayoutResID = mIntent.getIntExtra(LAYOUT_RES_ID, R.id.view_invalid);
+            mNextKey = mIntent.getStringExtra(NEXT_KEY);
+            mNextResID = mIntent.getIntExtra(NEXT_LAYOUT_RES_ID, R.id.view_invalid);
             if (mLayoutResID == R.id.view_invalid) {
                 finish();
             } else {
@@ -51,6 +64,10 @@ public class HintActivity extends BaseActivity implements View.OnClickListener {
             
             @Override
             public boolean onTouch(View arg0, MotionEvent arg1) {
+                Intent data = new Intent();
+                data.putExtra(NEXT_KEY, mNextKey);
+                data.putExtra(NEXT_LAYOUT_RES_ID, mNextResID);
+                setResult(RESULT_OK, data);
                 finish();
                 return false;
             }
@@ -60,4 +77,20 @@ public class HintActivity extends BaseActivity implements View.OnClickListener {
     @Override
     public void onClick(View view) {
     }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {                
+            case KeyEvent.KEYCODE_BACK:
+                mActionLog.addAction(ActionLog.KeyCodeBack);
+                Intent data = new Intent();
+                data.putExtra(NEXT_KEY, mNextKey);
+                data.putExtra(NEXT_LAYOUT_RES_ID, mNextResID);
+                setResult(RESULT_OK, data);
+                finish();
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    
 }

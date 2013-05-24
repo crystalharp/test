@@ -220,8 +220,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     POI poi = (POI) adapterView.getAdapter().getItem(position);
                     if (poi != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, poi.getUUID(), poi.getName());
-                        mSphinx.getPOIDetailFragment().setData(poi);
                         mSphinx.showView(R.id.view_poi_detail);
+                        mSphinx.getPOIDetailFragment().setData(poi);
                     }
                 }
             }
@@ -559,25 +559,27 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     }
                     
                     if (hotel.getCanReserve() > 0) {
-                        canReserveTxv.setVisibility(View.VISIBLE);
-                    } else {
                         canReserveTxv.setVisibility(View.GONE);
+                    } else {
+                        canReserveTxv.setVisibility(View.VISIBLE);
                     }
                 } else {
                     pictureImv.setBackgroundDrawable(null);
-                    canReserveTxv.setVisibility(View.GONE);
+                    canReserveTxv.setVisibility(View.VISIBLE);
                 }
                 pictureView.setVisibility(View.VISIBLE);
             } else {
                 pictureView.setVisibility(View.GONE);
-                canReserveTxv.setVisibility(View.GONE);
+                canReserveTxv.setVisibility(View.VISIBLE);
             }
             
             if (position == 0 && poi.getResultType() == POIResponse.FIELD_A_POI_LIST && aTotal == 1) {
-                bubbleImv.setVisibility(View.VISIBLE);
                 nameTxv.setTextColor(aColor);
+                icAPOI.setBounds(0, 0, icAPOI.getIntrinsicWidth(), icAPOI.getIntrinsicHeight());
+                nameTxv.setCompoundDrawables(icAPOI, null, null, null);
+                nameTxv.setCompoundDrawablePadding(Util.dip2px(Globals.g_metrics.density, 4));
             } else {
-                bubbleImv.setVisibility(View.GONE);
+                nameTxv.setCompoundDrawables(null, null, null, null);
                 nameTxv.setTextColor(bColor);
             }
             
@@ -608,9 +610,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 categoryTxv.setText("");
             }
             
-            String perCapity = poi.getPerCapity();
-            if (perCapity != null) {
-                moneyTxv.setText(perCapity);
+            long perCapity = poi.getPerCapity();
+            if (perCapity > 0) {
+                moneyTxv.setText(activity.getString(R.string.yuan, perCapity));
             } else {
                 moneyTxv.setText("");
             }
@@ -706,14 +708,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 dynamicPOIListView.getChildAt(i).setVisibility(View.GONE);
             }
             if (dynamicPOIWidth > 0) {
-                int bubbleImvWidth = 0;
-                if (bubbleImv.getVisibility() == View.VISIBLE) {
-                    bubbleImv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-                    bubbleImvWidth = bubbleImv.getMeasuredWidth();
-                }
                 nameTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 int nameTxvWidth = nameTxv.getMeasuredWidth();
-                int width = Globals.g_metrics.widthPixels-bubbleImvWidth-(4*Util.dip2px(Globals.g_metrics.density, 8));
+                int width = Globals.g_metrics.widthPixels-(4*Util.dip2px(Globals.g_metrics.density, 8));
                 if (nameTxvWidth > width-dynamicPOIWidth) {
                     nameTxv.getLayoutParams().width = (width-dynamicPOIWidth);
                 } else {

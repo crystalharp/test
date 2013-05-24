@@ -60,7 +60,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     
     private ViewGroup controlView;
     
-    private LinearLayout bodyView;
     private ListView parentLsv;
     private ListView childLsv;
     
@@ -193,7 +192,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
 
     protected void findViews() {
         controlView = (ViewGroup) findViewById(R.id.control_view);
-        bodyView = (LinearLayout) findViewById(R.id.body_view);
         parentLsv = (ListView) findViewById(R.id.parent_lsv);
         childLsv = (ListView) findViewById(R.id.child_lsv);
     }
@@ -276,7 +274,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         selectedFilter(this.filter, filter);
         
         if (callBack != null) {
-            ActionLog.getInstance(getContext()).addAction(actionTag, ActionLog.FilterDo, filter.getFilterOption().getName(), DataQuery.makeFilterRequest(this.filterList));
+            ActionLog.getInstance(getContext()).addAction(actionTag + ActionLog.FilterDo, filter.getFilterOption().getName(), DataQuery.makeFilterRequest(this.filterList));
             callBack.doFilter(filter.getFilterOption().getName());
         }
     }

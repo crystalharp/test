@@ -581,7 +581,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                     String lenStr = String.valueOf(len);
                     mTextNumTxv.setText(mThis.getString(R.string.poi_comment_sum, lenStr));
                 } else {
-                    String lenStr = String.valueOf(30-len);
+                    String lenStr = String.valueOf(MIN_CHAR-len);
                     SpannableStringBuilder style = new SpannableStringBuilder(mThis.getString(R.string.poi_comment_must, lenStr));
                     style.setSpan(new ForegroundColorSpan(0xffff0000),2,2+lenStr.length(),Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     mTextNumTxv.setText(style);
@@ -1192,7 +1192,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             }
         }
         
-        if (commentArrayList == null || commentArrayList.isEmpty()) {
+        if ((commentArrayList == null || commentArrayList.isEmpty()) && mFromViewId != R.id.view_user_my_comment_list) {
             try {
                 XMap data = new XMap();
                 CommentList commentList = new CommentList(data);

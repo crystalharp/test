@@ -43,12 +43,12 @@ import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.Tigerknows;
+import com.tigerknows.share.ShareAPI;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.ResultMapFragment.TitlePopupArrayAdapter;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.NavigationSplitJointRule;
 import com.tigerknows.util.ShareTextUtil;
-import com.tigerknows.util.WidgetUtils;
 
 public class TrafficDetailFragment extends BaseFragment implements View.OnClickListener{
     
@@ -440,32 +440,13 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     public void share(final Plan plan) {
         if(plan == null)
             return;
-                
-    	String smsContent = "";
-    	String weiboContent = "";
-    	String qzoneContent = "";
-    	if (plan != null) {
-    		if (SHOW_TYPE_TRANSFER == mShowType) {
-                weiboContent = ShareTextUtil.shareTrafficTransferWeiboContent(plan, mContext);
-                smsContent = ShareTextUtil.shareTrafficTransferSmsContent(plan, mContext);
-                qzoneContent = ShareTextUtil.shareTrafficTransferQzoneContent(plan, mContext);
-            } else if (SHOW_TYPE_DRVIE == mShowType) {
-                weiboContent = ShareTextUtil.shareTrafficDriveWeiboContent(plan, mContext);
-                smsContent = ShareTextUtil.shareTrafficDriveSmsContent(plan, mContext);
-                qzoneContent = ShareTextUtil.shareTrafficDriveQzoneContent(plan, mContext);
-            } else if (SHOW_TYPE_WALK == mShowType) {
-                weiboContent = ShareTextUtil.shareTrafficWalkWeiboContnet(plan, mContext);
-                smsContent = ShareTextUtil.shareTrafficWalkSmsContnet(plan, mContext);
-                qzoneContent = ShareTextUtil.shareTrafficWalkQzoneContnet(plan, mContext);
-            }
-    	}
     	
     	MapScene mapScene = mSphinx.getMapView().getCurrentMapScene();
     	mSphinx.clearMap();
     	TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), plan, mShowType);
     	Position position = TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
     	
-    	WidgetUtils.share(mSphinx, smsContent, weiboContent, qzoneContent, position, mapScene, mActionTag);
+    	ShareAPI.share(mSphinx, plan, position, mapScene, mActionTag);
     }
 
     private void setFavoriteState(View v, boolean favoriteYet) {
