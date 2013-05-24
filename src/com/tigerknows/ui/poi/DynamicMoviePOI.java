@@ -27,12 +27,6 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
     }
 
     @Override
-    public void addDynamicPOIViewBlock(LinearLayout belongsLayout) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
     public void msgReceived(Sphinx mSphinx, BaseQuery query, Response response) {
         // TODO Auto-generated method stub
         
