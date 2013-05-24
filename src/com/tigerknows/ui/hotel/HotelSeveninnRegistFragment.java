@@ -59,6 +59,7 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 	
 	public void onResume(){
 		super.onResume();
+		mTitleBtn.setText(mSphinx.getString(R.string.seveninn_regist_title));
 	}
 
 	protected void findViews() {
@@ -170,5 +171,9 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 	
 	public void setData(String mobile){
 		mGotMobile = mobile;
+		mSeveninnNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
+				R.color.orange,
+				mSphinx.getString(R.string.seveninn_note, mobile),
+				mobile));
 	}
 }

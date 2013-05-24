@@ -81,8 +81,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     
     public void onResume(){
         super.onResume();
-        mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, mSumPrice));
-        mCreditNoteTxv.setText(mSphinx.getString(R.string.credit_note_detail, mOrderModifyDeadline.trim()));
+        mTitleBtn.setText(mSphinx.getString(R.string.credit_assure_title));
     }
     
     public void onPause(){
@@ -219,7 +218,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         }
         
         if (mValidityDialog == null) {
-            mValidityDialog = Utility.showNormalDialog(mSphinx, "title", null, mValidityListView, null, null, null);
+            mValidityDialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_credit_validity), null, mValidityListView, null, null, null);
             mValidityDialog.setCancelable(true);
             mValidityDialog.setCanceledOnTouchOutside(false);
         }else if(mValidityDialog.isShowing() == false){
@@ -258,6 +257,11 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
 		}
 		mCertTypeList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
 		mCreditCertTypeBtn.setText(mCertTypeList.get(0));
+        mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, mSumPrice));
+        mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
+        		R.color.orange,
+        		mSphinx.getString(R.string.credit_note_detail, mOrderModifyDeadline).trim(),
+        		mOrderModifyDeadline));
 	}
 
     @Override
