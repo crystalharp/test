@@ -40,7 +40,7 @@
              android:textColor="@color/white"
              android:textSize="16sp"
              android:text="订满"
-             android:gravity="center"
+             android:gravity="left"
              android:focusable="false"
              android:maxLines="6"
              />

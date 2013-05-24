@@ -177,7 +177,7 @@ public class HotelImageGridFragment extends BaseFragment {
                 ImageView iconImv = new ImageView(getContext());
                 iconImv.setId(R.id.icon_imv);
                 iconImv.setScaleType(ImageView.ScaleType.FIT_XY);
-                iconImv.setBackgroundResource(R.drawable.icon);
+                iconImv.setBackgroundResource(R.drawable.bg_picture_tuangou);
                 viewGroup.addView(iconImv);
                 view = viewGroup;
             } else {
@@ -228,7 +228,6 @@ public class HotelImageGridFragment extends BaseFragment {
             TextView textTxv = (TextView)view.findViewById(R.id.text_txv);
             
             iconImv.setScaleType(ImageView.ScaleType.FIT_XY);
-            iconImv.setBackgroundResource(R.drawable.icon);
             
             HotelTKDrawable hotelTKDrawable = getItem(position);
             
