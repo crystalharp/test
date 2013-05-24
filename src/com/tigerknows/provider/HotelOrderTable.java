@@ -187,8 +187,11 @@ public class HotelOrderTable {
 		if(!mDb.isOpen())
 			return 0;
 
+		int count=0;
 		Cursor cursor = mDb.query(TABLE_NAME, new String[]{"count(*)"}, null, null, null, null, null, null);
-		int count = cursor.getCount();
+		if( cursor.moveToNext()){
+			count = cursor.getInt(0);
+		}
 		cursor.close();
         return count;
 		

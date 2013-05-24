@@ -83,6 +83,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     private Button mBtnIssueComment;
     private Button mBtnDeleteOrder;
 
+    private View mNavigationBar;
+    
 	private View mHotelTelView;
 
 	private View mHotelAddressView;
@@ -139,6 +141,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		mBtnIssueComment = (Button) mRootView.findViewById(R.id.btn_issue_comment);
 		mBtnOrderAgain = (Button) mRootView.findViewById(R.id.btn_order_again);
 		mBtnDeleteOrder = (Button) mRootView.findViewById(R.id.btn_delete_order);
+		
+		mNavigationBar = mRootView.findViewById(R.id.navigation_widget);
 
     }
 
@@ -232,7 +236,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		
 		@Override
 		public void onClick(View v) {
-			System.out.println("Delete order action");
+			LogWrapper.i(TAG, "Delete order action");
 
 			Utility.showNormalDialog(mSphinx, mContext.getString(R.string.hotel_order_delete_confirm), new DialogInterface.OnClickListener() {
 
@@ -397,16 +401,16 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
         
-        System.out.println("On cancel.");
+        LogWrapper.i(TAG, "On cancel.");
         
     }
 
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
-        System.out.println("On postExecute");
+        LogWrapper.i(TAG, "On postExecute");
         List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
-        System.out.println("Response: " + tkAsyncTask.getBaseQuery().getResponse());
+        LogWrapper.i(TAG, "Response: " + tkAsyncTask.getBaseQuery().getResponse());
         for (BaseQuery baseQuery : baseQueryList) {
         	// TODO: if query is state query, don't show dialogs?
 	        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
@@ -418,7 +422,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	        	if(BaseQuery.API_TYPE_HOTEL_ORDER.equals(tkAsyncTask.getBaseQuery().getAPIType()) &&
 	        			HotelOrderOperation.OPERATION_CODE_QUERY.equals(tkAsyncTask.getBaseQuery().getCriteria().get(HotelOrderOperation.SERVER_PARAMETER_OPERATION_CODE))){
 	        		msgType = TKActivity.SHOW_ERROR_MSG_NO;					// 状态查询不需要提示。
-	        		System.out.println("State query returned: " + tkAsyncTask.getBaseQuery().getResponse() );
+	        		LogWrapper.i(TAG, "State query returned: " + tkAsyncTask.getBaseQuery().getResponse() );
 	        	}
 	        	
 	            if(BaseActivity.checkResponseCode(baseQuery, mSphinx, null, msgType, this, false)) {
@@ -470,7 +474,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	            	}
 	
 	            }else if(BaseQuery.API_TYPE_DATA_OPERATION.equals(at)){			//数据操作, 对应酒店poi
-            		System.out.println("Hotel response");
+	            	LogWrapper.i(TAG, "Hotel response");
             		if (BaseQuery.DATA_TYPE_POI.equals(dty)) {
                     	POIQueryResponse response = (POIQueryResponse) baseQuery.getResponse();
                     	onlinePOI = response.getPOI();
@@ -562,6 +566,10 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         DataOperation poiQuery = new DataOperation(mSphinx);
         poiQuery.setup(criteria, cityId, getId(), getId(), mContext.getString(R.string.query_loading_tip));
         return poiQuery;
+    }
+    
+    public void setStageIndicatorVisible(boolean visible){
+   		mNavigationBar.setVisibility( visible? View.VISIBLE:View.GONE );
     }
     
 	@Override
