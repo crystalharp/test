@@ -66,7 +66,7 @@ public class NavigationWidget extends LinearLayout {
         findViews();
         setListener();
         
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.hotelDateWidget);
+        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.hotelNavigationWidget);
         if (a != null) {
             int state = a.getInt(R.styleable.hotelNavigationWidget_navigationState, 0);
             

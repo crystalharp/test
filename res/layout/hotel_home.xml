@@ -56,6 +56,7 @@
 	            <TextView
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
+	                android:layout_centerVertical="true"
 	                android:drawablePadding="8dp"
 	                android:drawableLeft="@drawable/ic_date_hotel"
 	                android:background="@color/transparent"
@@ -67,7 +68,7 @@
 	                android:id="@+id/checkin_dat"
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
-	                android:layout_marginLeft="60dp"
+	                android:layout_marginLeft="38dp"
 	                tkandroid:checkin="入住"
 	                >
 	                </com.tigerknows.ui.hotel.DateWidget>
@@ -98,10 +99,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/list_middle"
-                android:padding="8dp"
+                android:padding="10dp"
                 android:drawablePadding="8dp"
                 android:drawableLeft="@drawable/ic_location_hotel"
-                android:textColor="@color/black_light"
+                android:textColor="@color/black_dark"
                 android:textSize="16sp"
                 android:text="选择位置"
                 android:gravity="left|center_vertical"
@@ -137,7 +138,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:padding="8dp"
-	                android:textColor="@color/black_light"
+	                android:textColor="@color/orange"
 	                android:textSize="16sp"
 	                android:text="不限"
 	                android:gravity="center"
@@ -169,6 +170,10 @@
 	                android:textSize="18sp"
 	                android:text="查找酒店"
 	                android:gravity="center"
+			        android:shadowDx="0"
+			        android:shadowDy="1"
+			        android:shadowColor="#a77a00"
+			        android:shadowRadius="1"
 	                />
             </LinearLayout>
                 
