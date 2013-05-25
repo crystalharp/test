@@ -412,12 +412,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		
 		void show(){
 		    if (mBelongsLayout.indexOfChild(mOwnLayout) == -1){
+		        LogWrapper.d("conan", mBelongsLayout.toString() + " add to " + mOwnLayout.toString());
 		        mBelongsLayout.addView(mOwnLayout);
 		    }
 		}
 
         void clear(){
             if (mBelongsLayout.indexOfChild(mOwnLayout) != -1) {
+                LogWrapper.d("conan", mBelongsLayout.toString() + " clear from " + mOwnLayout.toString());
                 mBelongsLayout.removeView(mOwnLayout);
             }
 		}

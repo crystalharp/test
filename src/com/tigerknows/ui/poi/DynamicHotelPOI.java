@@ -193,11 +193,13 @@ public class DynamicHotelPOI extends DynamicPOIView {
         if (size == 0) {
             LogWrapper.i(TAG, "size of roomTypeList is 0.");
             moreTxv.setText(mSphinx.getString(R.string.hotel_no_roomtype));
-            mDynamicRoomTypeMoreView.setOnClickListener(null);
+            mDynamicRoomTypeMoreView.setClickable(false);
+            mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
         } else if (size > SHOW_DYNAMIC_HOTEL_MAX) {
             for(int i = 0; i < SHOW_DYNAMIC_HOTEL_MAX; i++) {
                 mShowingRoomList.add(mAllRoomList.get(i));
             }
+            mDynamicRoomTypeMoreView.setClickable(true);
             mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
         } else {
             mShowingRoomList.addAll(mAllRoomList);
@@ -216,7 +218,7 @@ public class DynamicHotelPOI extends DynamicPOIView {
 			@Override
 			public void onClick(View v) {
 				HotelIntroFragment hotelIntro = mSphinx.getHotelIntroFragment();
-				hotelIntro.setData(mPOI);
+				hotelIntro.setData(mPOI, checkin, checkout);
 				mSphinx.showView(R.id.view_hotel_intro);
 			}
 		});
