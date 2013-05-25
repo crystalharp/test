@@ -14,9 +14,15 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
 import android.text.TextUtils;
+import android.view.ViewGroup;
+import android.widget.ScrollView;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
@@ -38,6 +44,7 @@ import com.tigerknows.model.response.ResponseCode;
 import com.tigerknows.model.response.UUIDInfo;
 import com.tigerknows.model.response.UpdateVersionData;
 import com.tigerknows.model.response.UserActionTrackSwitch;
+import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
@@ -185,6 +192,14 @@ public abstract class BaseQuery {
     
     // checkout    String  true    离开酒店时间，格式"yyyy-MM-dd" 
     public static final String SERVER_PARAMETER_CHECKOUT = "checkout";
+    
+    private static Activity sActivity;
+    
+    public static void setActivity(Activity activity) {
+        if (TKConfig.ModifyData) {
+            sActivity = activity;
+        }
+    }
     
     /**
      * 检查是否为推送动态POI的查询
@@ -768,19 +783,47 @@ public abstract class BaseQuery {
     protected void translateResponse(byte[] data) throws APIException {
         try {
             if (TKConfig.LaunchTest == false) { // 如果是自动测试分填充的数据，则没有加密
-            // 解密数据
-            DataEncryptor.getInstance().decrypt(data);
-            // 解压数据
-            if (compress) {
-                try {
-                    data = DataDecode.decode(data, 0);
-                } catch (Exception cause) {
-                    throw new APIException("decode data error");
+                // 解密数据
+                DataEncryptor.getInstance().decrypt(data);
+                // 解压数据
+                if (compress) {
+                    try {
+                        data = DataDecode.decode(data, 0);
+                    } catch (Exception cause) {
+                        throw new APIException("decode data error");
+                    }
                 }
-            }
             }
             try {
                 responseXMap = (XMap) ByteUtil.byteToXObject(data);
+
+                final Activity activity = sActivity;
+                if (TKConfig.ModifyData && activity != null) {
+                    activity.runOnUiThread(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            ViewGroup viewGroup = BaseQueryTest.getViewByXObject(activity, (byte)0, responseXMap, 0);
+                            
+                            ScrollView scrollView = new ScrollView(activity);
+                            scrollView.addView(viewGroup);
+                            Dialog dialog = Utility.showNormalDialog(activity, scrollView);
+                            dialog.setOnDismissListener(new OnDismissListener() {
+                                
+                                @Override
+                                public void onDismiss(DialogInterface dialog) {
+                                    responseXMap.put((byte)250, 250);
+                                }
+                            });
+                        }
+                    });
+                    while (true) {
+                        Thread.sleep(3000);
+                        if (responseXMap.containsKey((byte)250)) {
+                            break;
+                        }
+                    }
+                }
             } catch (Exception cause) {
                 throw new APIException("byte to xmap error");
             }

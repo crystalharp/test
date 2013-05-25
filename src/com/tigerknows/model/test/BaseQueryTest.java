@@ -3,6 +3,7 @@ package com.tigerknows.model.test;
 import com.decarta.Globals;
 import com.decarta.android.map.MapView;
 import com.decarta.android.util.LogWrapper;
+import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -15,8 +16,11 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.TKWord;
-import com.tigerknows.model.DataQuery.DiscoverResponse;
+import com.tigerknows.model.xobject.XArray;
+import com.tigerknows.model.xobject.XInt;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.model.xobject.XObject;
+import com.tigerknows.model.xobject.XString;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.service.PullService;
@@ -40,6 +44,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -93,6 +98,214 @@ public class BaseQueryTest {
         return  data;
     }
     
+    public static ViewGroup getViewByXObject(final Activity activty, final byte key, final XObject value, final int level) {
+        final LinearLayout layout = new LinearLayout(activty);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setBackgroundResource(R.drawable.list_single);
+        TextView keyTxv = new TextView(activty);
+        keyTxv.setBackgroundResource(R.drawable.btn_default);
+        keyTxv.setPadding(level*32, 0, 0, 0);
+        layout.addView(keyTxv);
+        if (level > 1) {
+            return null;
+        }
+        String type = null;
+        if (value instanceof XInt ||
+                value instanceof XString) {
+            final EditText valueEdt = new EditText(activty);
+            if (value instanceof XInt) {
+                type = "XInt";
+                valueEdt.setInputType(InputType.TYPE_CLASS_NUMBER);
+            } else if (value instanceof XString) {
+                type = "XString";
+            }
+            
+            valueEdt.setText(value.toString());
+            valueEdt.setPadding(level*32, 0, 0, 0);
+            keyTxv.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    if (value instanceof XInt) {
+                        ((XInt) value).setValue(Integer.parseInt(valueEdt.getEditableText().toString()));
+                    } else if (value instanceof XString) {
+                        ((XString) value).setValue(valueEdt.getEditableText().toString());
+                    }
+                }
+            });
+            layout.addView(valueEdt);
+        } else if (value instanceof XArray) {
+            type = "XArray";
+            final XArray xArray = (XArray)value;
+            for(int i = 0, size = xArray.size(); i < size; i++) {
+                View view = getViewByXObject(activty, (byte)i, (XObject) xArray.get(i), level+1);
+                if (view != null) {
+                    layout.addView(view);
+                }
+            }
+            keyTxv.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    ViewGroup viewGroup = getViewByXObject(activty, (byte)0, xArray, 0);
+                    ScrollView scrollView = new ScrollView(activty);
+                    scrollView.addView(viewGroup);
+                    Utility.showNormalDialog(activty, scrollView);
+                }
+            });
+
+            if (layout.getChildCount() > 1) {
+                TextView removeTxv = new TextView(activty);
+                removeTxv.setText("remove");
+                removeTxv.setBackgroundResource(R.drawable.btn_default);
+                layout.addView(removeTxv);
+                final EditText removeEdt = new EditText(activty);
+                layout.addView(removeEdt);
+                removeTxv.setOnClickListener(new View.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(View v) {
+                        int index = Integer.parseInt(removeEdt.getEditableText().toString());
+                        if (index >= 0 && index < xArray.size()) {
+                            xArray.remove(index);
+                            layout.removeAllViews();
+                            layout.addView(getViewByXObject(activty, key, xArray, level));
+                        }
+                    }
+                });
+
+                
+                TextView addTxv = new TextView(activty);
+                addTxv.setText("add");
+                addTxv.setBackgroundResource(R.drawable.btn_default);
+                layout.addView(addTxv);
+                final EditText addEdt = new EditText(activty);
+                layout.addView(addEdt);
+                addTxv.setOnClickListener(new View.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(View v) {
+                        String input = addEdt.getEditableText().toString();
+                        if (input.startsWith("int")) {
+                            String s = input.substring(3);
+                            xArray.add(XInt.valueOf(Integer.parseInt(s)));
+                        } else if (input.startsWith("string")) {
+                            String s = input.substring(6);
+                            xArray.add(XString.valueOf(s));
+                        } else if (input.startsWith("array")) {
+                            String s = input.substring(5);
+                            if (s.startsWith("int")) {
+                                XArray<XInt> x = new XArray<XInt>();
+                                x.add(XInt.valueOf(0));
+                                xArray.add(x);
+                            } else if (s.startsWith("string")) {
+                                XArray<XString> x = new XArray<XString>();
+                                x.add(XString.valueOf("0"));
+                                xArray.add(x);                                
+                            }
+                        } else if (input.startsWith("map")) {
+                            XMap xMap1 = new XMap();
+                            xMap1.put((byte)255, XInt.valueOf((byte)255));
+                            xArray.add(xMap1);
+                        }
+                        layout.removeAllViews();
+                        layout.addView(getViewByXObject(activty, key, xArray, level));
+                    }
+                });
+            }
+        } else if (value instanceof XMap) {
+            type = "XMap";
+            final XMap xMap = (XMap)value;
+            List<Byte> keyList = xMap.getKeyList();
+            for(int i = 0, size = keyList.size(); i < size; i++) {
+                XObject xObject = xMap.getXObject(keyList.get(i));
+                View view = getViewByXObject(activty, keyList.get(i), xObject, level+1);
+                if (view != null) {
+                    layout.addView(view);
+                }
+            }
+            keyTxv.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    final ViewGroup viewGroup = getViewByXObject(activty, (byte)0, xMap, 0);
+                    ScrollView scrollView = new ScrollView(activty);
+                    scrollView.addView(viewGroup);
+                    Utility.showNormalDialog(activty, scrollView);
+                }
+            });
+            
+            if (layout.getChildCount() > 1) {
+                TextView removeTxv = new TextView(activty);
+                removeTxv.setText("remove");
+                removeTxv.setBackgroundResource(R.drawable.btn_default);
+                layout.addView(removeTxv);
+                final EditText removeEdt = new EditText(activty);
+                layout.addView(removeEdt);
+                removeTxv.setOnClickListener(new View.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(View v) {
+                        byte key1 = (byte)Integer.parseInt(removeEdt.getEditableText().toString());
+                        xMap.remove(key1);
+                        layout.removeAllViews();
+                        layout.addView(getViewByXObject(activty, key, xMap, level));
+                    }
+                });
+                
+                TextView addTxv = new TextView(activty);
+                addTxv.setText("add");
+                addTxv.setBackgroundResource(R.drawable.btn_default);
+                layout.addView(addTxv);
+                final EditText addEdt = new EditText(activty);
+                layout.addView(addEdt);
+                addTxv.setOnClickListener(new View.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(View v) {
+                        String input = addEdt.getEditableText().toString();
+                        if (input.startsWith("int")) {
+                            String s = input.substring(3);
+                            String[] arr = s.split("-");
+                            byte key1 = (byte)Integer.parseInt(arr[0]);
+                            xMap.put(key1, Integer.parseInt(arr[1]));
+                        } else if (input.startsWith("string")) {
+                            String s = input.substring(6);
+                            String[] arr = s.split("-");
+                            byte key1 = (byte)Integer.parseInt(arr[0]);
+                            xMap.put(key1, arr[1]);
+                        } else if (input.startsWith("array")) {
+                            String s = input.substring(5);
+                            String[] arr = s.split("-");
+                            byte key1 = (byte)Integer.parseInt(arr[0]);
+                            if (arr[1].startsWith("int")) {
+                                XArray<XInt> xArray = new XArray<XInt>();
+                                xArray.add(XInt.valueOf(0));
+                                xMap.put(key1, xArray);
+                            } else if (arr[1].startsWith("string")) {
+                                XArray<XString> xArray = new XArray<XString>();
+                                xArray.add(XString.valueOf("0"));
+                                xMap.put(key1, xArray);                                
+                            }
+                        } else if (input.startsWith("map")) {
+                            String s = input.substring(3);
+                            String[] arr = s.split("-");
+                            byte key1 = (byte)Integer.parseInt(arr[0]);
+                            XMap xMap1 = new XMap();
+                            xMap1.put((byte)255, XInt.valueOf((byte)255));
+                            xMap.put(key1, xMap1);
+                        }
+                        layout.removeAllViews();
+                        layout.addView(getViewByXObject(activty, key, xMap, level));
+                    }
+                });
+            }
+            
+        }
+        keyTxv.setText(Util.byteToHexString(key)+"    ("+key+")    " + type);
+        return layout;
+    }
+    
     public static void showSetResponseCode(LayoutInflater layoutInflater, final Activity activity) {
         if (TKConfig.ShowTestOption == false) {
             return;
@@ -113,6 +326,8 @@ public class BaseQueryTest {
         deleteMobileNumLayout.addView(deleteMobileNumEdt, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
         layout.addView(deleteMobileNumLayout);
 
+        final CheckBox modifyData = new CheckBox(activity);
+        layout.addView(modifyData);
         final CheckBox launchTestChb = new CheckBox(activity);
         layout.addView(launchTestChb);
         final LinearLayout lunchTestLayout = new LinearLayout(activity);
@@ -254,7 +469,17 @@ public class BaseQueryTest {
                 TKLocationManager.UnallowedLocation = unallowedLocationChb.isChecked();
             }
         });
-        launchTestChb.setText("Launch fake data(DataQuery, DataOperation, AccountManage");
+        modifyData.setText("Modify data(Bootstrap, FeedbackUpload, DataQuery, DataOperation, AccountManage, ProxyQuery, HoteOrderOperation)");
+        modifyData.setTextColor(0xffffffff);
+        modifyData.setChecked(TKConfig.ModifyData);
+        modifyData.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                TKConfig.ModifyData = modifyData.isChecked();
+            }
+        });
+        launchTestChb.setText("Launch fake data(Bootstrap, FeedbackUpload, DataQuery, DataOperation, AccountManage, ProxyQuery, HoteOrderOperation)");
         launchTestChb.setTextColor(0xffffffff);
         launchTestChb.setChecked(TKConfig.LaunchTest);
         launchTestChb.setOnClickListener(new OnClickListener() {
@@ -397,6 +622,7 @@ public class BaseQueryTest {
                             }
                         }
                         TKConfig.readConfig();
+                        BaseQuery.setActivity(activity);
                     } catch (Exception e) {
                         Toast.makeText(activity, "Parse Error!", Toast.LENGTH_LONG).show();
                     }

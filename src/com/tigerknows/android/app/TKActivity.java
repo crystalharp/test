@@ -334,6 +334,8 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         registerReceiver(mConnectivityReceiver, intentFilter);
         
         TCAgent.onResume(this);
+        
+        BaseQuery.setActivity(mThis);
     }
 
     @Override
@@ -486,9 +488,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
             }
             
             if (resId != -1
-                    && activity.isFinishing() == false
-                    && Globals.g_Session_Id != null
-                    && Globals.g_User != null) {
+                    && activity.isFinishing() == false) {
                 Globals.clearSessionAndUser(activity);
                 Dialog dialog;
                 if (sourceUserHome == false) {
