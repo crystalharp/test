@@ -85,11 +85,13 @@ import com.tigerknows.model.DataQuery.DianyingResponse.DianyingList;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.provider.Tigerknows;
+import com.tigerknows.share.ShareAPI;
+import com.tigerknows.share.TKWeixin;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.HintActivity;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ShareTextUtil;
-import com.tigerknows.util.WidgetUtils;
 
 /**
  * @author Peng Wenyue
@@ -200,48 +202,13 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     private Animation mStampAnimation;
     
-    private Runnable mLoadedDrawableRun = new Runnable() {
-        
-        @Override
-        public void run() {
-            mSphinx.getHandler().removeCallbacks(mActualLoadedDrawableRun);
-            mSphinx.getHandler().post(mActualLoadedDrawableRun);
-        }
-    };
+    private View mDoingView;
+
+    private View mToolsView;
     
-    private Runnable mActualLoadedDrawableRun = new Runnable() {
-        
-        @Override
-        public void run() {
-            if (mSphinx.uiStackPeek() == getId() && mSphinx.isFinishing() == false) {
-                POI poi = mPOI;
-                if (poi == null) {
-                    return;
-                }
-                List<Dianying> list = poi.getDynamicDianyingList();
-                if (list == null) {
-                    return;
-                }
-                int childCount = mDynamicDianyingListView.getChildCount();
-                for(int i = 0, size = list.size(); i < childCount && i < size; i++) {
-                    final Dianying dynamic = list.get(i);
-                    View child = mDynamicDianyingListView.getChildAt(i);
-                    if (child.getVisibility() == View.VISIBLE) {
-                        ImageView iconImv = (ImageView) child.findViewById(R.id.icon_imv);
-                        TKDrawable tkDrawable = dynamic.getPictures();
-                        if (tkDrawable != null) {
-                            Drawable drawable = tkDrawable.loadDrawable(mSphinx, null, POIDetailFragment.this.toString());
-                            iconImv.setBackgroundDrawable(drawable);
-                        } else {
-                            iconImv.setBackgroundDrawable(null);
-                        }
-                    } else {
-                        break;
-                    }
-                }
-            }
-        }
-    };
+    private View mWeixinView;
+    
+    private Button mWeixinBtn;
     
     private OnClickListener mDynamicPOIListener = new View.OnClickListener() {
         
@@ -497,25 +464,59 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
-        mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL, R.layout.hint_poi_detail);
         mTitleBtn.setText(R.string.detail_info);
         mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
         mRightBtn.setOnClickListener(this); 
         
-        if (isReLogin()) {
+        TKWeixin tkWeixin = TKWeixin.getInstance(mSphinx);
+        if (tkWeixin.isWXAppInstalled() && mSphinx.getFromThirdParty() == Sphinx.THIRD_PARTY_WENXIN_REQUET) {
+            mActionLog.addAction(mActionTag + ActionLog.POIDetailWeixinRequest);
+            mToolsView.setVisibility(View.GONE);
+            mWeixinView.setVisibility(View.VISIBLE);
+        } else {
+            mToolsView.setVisibility(View.VISIBLE);
+            mWeixinView.setVisibility(View.GONE);
+        }
+        
+        POI poi = mPOI;
+        if (poi == null) {
             return;
         }
-        POI poi = mPOI;
-        if (poi != null) {
+        if (poi.getName() == null && poi.getUUID() != null) {
+            mActionLog.addAction(mActionTag + ActionLog.POIDetailFromWeixin);
+            List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
+            Hashtable<String, String> criteria = new Hashtable<String, String>();
+            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
+            criteria.put(DataOperation.SERVER_PARAMETER_SUB_DATA_TYPE, DataOperation.SUB_DATA_TYPE_POI);
+            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
+            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);
+            int cityId = Globals.g_Current_City_Info.getId();
+            if (poi.ciytId != 0) {
+                cityId = poi.ciytId;
+            } else if (poi.getPosition() != null){
+                cityId = MapEngine.getInstance().getCityId(poi.getPosition());
+            }
+            DataOperation poiQuery = new DataOperation(mSphinx);
+            poiQuery.setup(criteria, cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
+            baseQueryList.add(poiQuery);
+            mSphinx.queryStart(baseQueryList);
+                mNavigationWidget.setVisibility(View.GONE);
+        } else {
             if (poi.getHotel() != null) {
                 mNavigationWidget.setVisibility(View.VISIBLE);
             } else {
                 mNavigationWidget.setVisibility(View.GONE);
             }
-        }  
+            refreshComment();
+        }
+        
+        if (isReLogin()) {
+            return;
+        }
         mBodyScv.smoothScrollTo(0, 0);
     }
-
+    
     @Override
     public void dismiss() {
         super.dismiss();
@@ -530,19 +531,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         setFavoriteState(mFavoriteBtn, poi.checkFavorite(mContext));
         mNameTxt.setText(poi.getName());
 
-        if (poi.isGoldStamp()) {
-            mStampImv.setBackgroundResource(R.drawable.ic_stamp_gold);
-            mStampImv.setVisibility(View.VISIBLE);
-            mCommentTipEdt.setHint(R.string.comment_tip_hit1);
-        } else if (poi.isSilverStamp()) {
-            mStampImv.setBackgroundResource(R.drawable.ic_stamp_silver);
-            mStampImv.setVisibility(View.VISIBLE);
-            mCommentTipEdt.setHint(R.string.comment_tip_hit1);
-        } else {
-            mStampImv.setVisibility(View.GONE);
-            mCommentTipEdt.setHint(R.string.comment_tip_hit0);
-        }
-
         float star = poi.getGrade();
         mStartsRtb.setRating(star/2.0f);
         
@@ -552,9 +540,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             mCategoryTxv.setText("");
         }
         
-        String perCapity = poi.getPerCapity();
-        if (perCapity != null) {
-            mMoneyTxv.setText(perCapity);
+        long money = poi.getPerCapity();
+        if (money > 0) {
+            mMoneyTxv.setText(mContext.getString(R.string.yuan, money));
             mMoneyTxv.setVisibility(View.VISIBLE);
         } else {
             mMoneyTxv.setVisibility(View.GONE);
@@ -764,23 +752,48 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * @param data
      * @param view
      */
-    void initDianyingItemView(Dianying data, View view) {
-        ImageView iconImv = (ImageView) view.findViewById(R.id.icon_imv);
+    void initDianyingItemView(final Dianying data, View view) {
+        final ImageView pictureImv = (ImageView) view.findViewById(R.id.picture_imv);
         TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
-        TextView gradeTxv = (TextView) view.findViewById(R.id.grade_txv);
-        TextView typeTxv = (TextView) view.findViewById(R.id.type_txv);
-        TextView lengthTxv = (TextView) view.findViewById(R.id.length_txv);
-        TKDrawable tkDrawable = data.getPictures();
-        if (tkDrawable != null) {
-            Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, POIDetailFragment.this.toString());
-            iconImv.setBackgroundDrawable(drawable);
+        RatingBar starsRtb = (RatingBar) view.findViewById(R.id.stars_rtb);
+        TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
+        TextView addressTxv = (TextView) view.findViewById(R.id.category_txv);
+        TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
+        
+        view.findViewById(R.id.body_view).setBackgroundDrawable(null);
+
+        Drawable drawable = data.getPictures().loadDrawable(mSphinx, new Runnable() {
+            
+            @Override
+            public void run() {
+                Drawable drawableLoaded = data.getPictures().loadDrawable(null, null, null);
+                if(drawableLoaded.getBounds().width() != pictureImv.getWidth() || drawableLoaded.getBounds().height() != pictureImv.getHeight() ){
+                    pictureImv.setBackgroundDrawable(null);
+                }
+                pictureImv.setBackgroundDrawable(drawableLoaded);
+            }
+        }, POIDetailFragment.this.toString());
+        if(drawable != null) {
+            //To prevent the problem of size change of the same pic 
+            //After it is used at a different place with smaller size
+            if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+                pictureImv.setBackgroundDrawable(null);
+            }
+            pictureImv.setBackgroundDrawable(drawable);
         } else {
-            iconImv.setBackgroundDrawable(null);
+            pictureImv.setBackgroundDrawable(null);
         }
+        
         nameTxv.setText(data.getName());
-        gradeTxv.setText(String.valueOf(data.getRank()));
-        typeTxv.setText(data.getTag());
-        lengthTxv.setText(data.getLength());
+        starsRtb.setProgress((int) data.getRank());
+        distanceTxv.setVisibility(View.GONE);
+        
+        addressTxv.setText(data.getTag());
+        if (TextUtils.isEmpty(data.getLength())) {
+            dateTxv.setText(R.string.dianying_no_length_now);
+        } else {
+            dateTxv.setText(String.valueOf(data.getLength()));
+        }
     }
     
     public void refreshStamp() {
@@ -813,46 +826,60 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mCommentListView.setVisibility(View.GONE);
         
         POI poi = mPOI;
-        Comment lastComment = null;
-        Comment myComment = null;
-        if (poi != null && poi.getCommentQuery() != null) {
 
-            CommentResponse commentResponse = (CommentResponse) poi.getCommentQuery().getResponse();
-            CommentList commentList = commentResponse.getList();
-            if (commentList != null) {
-                List<Comment> list = commentList.getList();
-                if (list != null) {
-                    for(int i = 0, size = list.size(); i < size; i++) {
-                        Comment comment = list.get(i);
-                        if (Comment.isAuthorMe(comment) > 0) {
-                            poi.setMyComment(comment);
-                            myComment = comment;
-                        } else if (lastComment == null){
-                            lastComment = comment;
+        if (poi != null) {
+            if (poi.isGoldStamp()) {
+                mStampImv.setBackgroundResource(R.drawable.ic_stamp_gold);
+                mStampImv.setVisibility(View.VISIBLE);
+                mCommentTipEdt.setHint(R.string.comment_tip_hit1);
+            } else if (poi.isSilverStamp()) {
+                mStampImv.setBackgroundResource(R.drawable.ic_stamp_silver);
+                mStampImv.setVisibility(View.VISIBLE);
+                mCommentTipEdt.setHint(R.string.comment_tip_hit1);
+            } else {
+                mStampImv.setVisibility(View.GONE);
+                mCommentTipEdt.setHint(R.string.comment_tip_hit0);
+            }
+            
+            if (poi.getCommentQuery() != null) {
+
+                Comment lastComment = null;
+                CommentResponse commentResponse = (CommentResponse) poi.getCommentQuery().getResponse();
+                CommentList commentList = commentResponse.getList();
+                if (commentList != null) {
+                    List<Comment> list = commentList.getList();
+                    if (list != null) {
+                        for(int i = 0, size = list.size(); i < size; i++) {
+                            Comment comment = list.get(i);
+                            if (Comment.isAuthorMe(comment) > 0) {
+                                poi.setMyComment(comment);
+                            } else if (lastComment == null){
+                                lastComment = comment;
+                                break;
+                            }
                         }
                     }
                 }
+                mCommentTipView.setVisibility(View.VISIBLE);
+                if (lastComment == null) {
+                    lastComment = poi.getMyComment();
+                }
+                
+                if (lastComment != null) {
+                    result = true;
+                    mCommentListView.setVisibility(View.VISIBLE);
+                    View commentView = null;
+                    if (count == 3) {
+                        View view = mCommentListView.getChildAt(2);
+                        view.setVisibility(View.VISIBLE);
+                        commentView = getCommentItemView(view, mCommentListView, lastComment, poi);
+                    } else {
+                        commentView = getCommentItemView(null, mCommentListView, lastComment, poi);
+                        mCommentListView.addView(commentView);
+                    }
+                    commentView.setBackgroundResource(R.drawable.list_middle);
+                }
             }
-            mCommentTipView.setVisibility(View.VISIBLE);
-        }
-        
-        if (lastComment == null) {
-            lastComment = myComment;
-        }
-        
-        if (lastComment != null) {
-            result = true;
-            mCommentListView.setVisibility(View.VISIBLE);
-            View commentView = null;
-            if (count == 3) {
-                View view = mCommentListView.getChildAt(2);
-                view.setVisibility(View.VISIBLE);
-                commentView = getCommentItemView(view, mCommentListView, lastComment, poi);
-            } else {
-                commentView = getCommentItemView(null, mCommentListView, lastComment, poi);
-                mCommentListView.addView(commentView);
-            }
-            commentView.setBackgroundResource(R.drawable.list_middle);
         }
         
         if (mCommentListView.getVisibility() == View.VISIBLE) {
@@ -865,11 +892,16 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     @Override
     public void onPause() {
-//        clearDynamicPOI(DPOIList);
         super.onPause();
+        if (mStampAnimation != null) {
+            mStampBigImv.setVisibility(View.GONE);
+            mStampAnimation.reset();
+            mStampBigImv.setAnimation(null);
+        }
     }
 
     protected void findViews() {
+        mDoingView = mRootView.findViewById(R.id.doing_view);
         mBodyScv = (ScrollView) mRootView.findViewById(R.id.body_scv);
         mNameTxt = (TextView)mRootView.findViewById(R.id.name_txv);
         mStampImv = (ImageView) mRootView.findViewById(R.id.stamp_imv);
@@ -906,6 +938,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mCommentTipView = mRootView.findViewById(R.id.comment_tip_view);
         mCommentTipEdt = (Button) mRootView.findViewById(R.id.comment_tip_btn);
         mLoadingView = mRootView.findViewById(R.id.loading_view);
+        
+        mToolsView = mRootView.findViewById(R.id.tools_view);
+        mWeixinView = mRootView.findViewById(R.id.weixin_view);
+        mWeixinBtn = (Button)mRootView.findViewById(R.id.weixin_btn);
 
         mDynamicDianyingView = (LinearLayout) mRootView.findViewById(R.id.dynamic_dianying_view);
         mDynamicDianyingListView = (LinearLayout) mRootView.findViewById(R.id.dynamic_dianying_list_view);
@@ -923,36 +959,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mErrorFixBtn.setOnClickListener(this);
         mCommentSumTotalView.setOnClickListener(this);
         mCommentTipView.setOnTouchListener(this);
+        mWeixinBtn.setOnClickListener(this);
         mDynamicDianyingMoreView.setOnClickListener(this);
-        mCommentTipEdt.setOnTouchListener(new OnTouchListener() {
-            
-            @Override
-            public boolean onTouch(View arg0, MotionEvent event) {
-                POI poi = mPOI;
-                if (poi == null) {
-                    return false;
-                }
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    mActionLog.addAction(mActionTag +  ActionLog.POIDetailInput);
-                    boolean isMe = (poi.isGoldStamp() || poi.isSilverStamp());
-                    if (poi.getStatus() < 0) {
-                        int resId;
-                        if (isMe) {
-                            resId = R.string.poi_comment_poi_invalid_not_update;
-                        } else {
-                            resId = R.string.poi_comment_poi_invalid_not_create;
-                        }
-
-                        Utility.showNormalDialog(mSphinx, 
-                                mSphinx.getString(resId));
-                    } else {
-                        EditCommentActivity.setPOI(poi, getId(), poi.getMyComment() != null ? EditCommentActivity.STATUS_MODIFY : EditCommentActivity.STATUS_NEW);
-                        mSphinx.showView(R.id.activity_poi_edit_comment);
-                    }
-                }
-                return false;
-            }
-        });
+        mCommentTipEdt.setOnClickListener(this);
     }
 
     public void onClick(View view) {
@@ -999,13 +1008,21 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 mActionLog.addAction(mActionTag +  ActionLog.POIDetailAllComment);
                 showMoreComment();
                 break;
-
+                
+            case R.id.weixin_btn:
+                mActionLog.addAction(mActionTag + ActionLog.POIDetailWeixinSend);
+                TKWeixin tkWeixin = TKWeixin.getInstance(mSphinx);
+                tkWeixin.sendResp(TKWeixin.makePOIResp(mSphinx, poi, mSphinx.getBundle()));
+                mSphinx.finish();
+                break;
+                
             case R.id.dynamic_dianying_more_view:
+                mActionLog.addAction(mActionTag + ActionLog.POIDetailDianyingMore);
                 mShowDynamicDianyingMoreView = false;
                 mDynamicDianyingMoreView.setVisibility(View.GONE);
                 
                 List<Dianying> list = poi.getDynamicDianyingList();
-                int size = (list != null ? list.size() : 0);
+            	int size = (list != null ? list.size() : 0);
                 int viewCount = mDynamicDianyingListView.getChildCount();
                 for(int i = 0; i < viewCount && i < size; i++) {
                     View v = mDynamicDianyingListView.getChildAt(i);
@@ -1024,6 +1041,25 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         child.setBackgroundResource(R.drawable.list_middle);
                         child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
                     }
+                }
+                break;
+                
+            case R.id.comment_tip_btn:
+                mActionLog.addAction(mActionTag +  ActionLog.POIDetailInput);
+                boolean isMe = (poi.isGoldStamp() || poi.isSilverStamp());
+                if (poi.getStatus() < 0) {
+                    int resId;
+                    if (isMe) {
+                        resId = R.string.poi_comment_poi_invalid_not_update;
+                    } else {
+                        resId = R.string.poi_comment_poi_invalid_not_create;
+                    }
+
+                    Utility.showNormalDialog(mSphinx, 
+                            mSphinx.getString(resId));
+                } else {
+                    EditCommentActivity.setPOI(poi, getId(), poi.getMyComment() != null ? EditCommentActivity.STATUS_MODIFY : EditCommentActivity.STATUS_NEW);
+                    mSphinx.showView(R.id.activity_poi_edit_comment);
                 }
                 break;
                 
@@ -1085,11 +1121,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * @param favoriteYet
      */
     private void setFavoriteState(Button button, boolean favoriteYet) {
-    	if (favoriteYet) {
-    		mFavoriteBtn.setBackgroundResource(R.drawable.btn_cancel_favorite);
-    	} else {
+        if (favoriteYet) {
+            mFavoriteBtn.setBackgroundResource(R.drawable.btn_cancel_favorite);
+        } else {
             mFavoriteBtn.setBackgroundResource(R.drawable.btn_favorite);
-    	}
+        }
     }
     
     public void errorRecovery() {
@@ -1115,110 +1151,119 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if(poi == null)
             return;
 
-        String smsContent = ShareTextUtil.sharePOISmsContent(poi,mContext);
-    	String weiboContent = ShareTextUtil.sharePOIWeiboContent(poi, mContext);
-    	String qzoneContent = ShareTextUtil.sharePOIQzoneContent(poi, mContext);
-    	
-    	List<POI> pois = new ArrayList<POI>();
-    	pois.add(poi);
+        List<POI> pois = new ArrayList<POI>();
+        pois.add(poi);
 
-    	mSphinx.showPOI(pois, 0);
-    	WidgetUtils.share(mSphinx, smsContent, weiboContent, qzoneContent, poi.getPosition(), mActionTag);
+        mSphinx.showPOI(pois, 0);
+        ShareAPI.share(mSphinx, poi, poi.getPosition(), mActionTag);
     }
     
     public void setData(POI poi) {
-    	mShowDynamicDianyingMoreView = true;
+        mPOI = poi;
+        if (poi == null) {
+            return;
+        }
+        mDoingView.setVisibility(View.VISIBLE);
+        if (poi.getName() == null && poi.getUUID() != null) {
+            return;
+        }
+        Intent intent = new Intent();
+        intent.putExtra(HintActivity.NEXT_KEY, TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN);
+        intent.putExtra(HintActivity.NEXT_LAYOUT_RES_ID, R.layout.hint_poi_detail_weixin);
+        mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL, R.layout.hint_poi_detail, intent);
+        mShowDynamicDianyingMoreView = true;
+        mRootView.setVisibility(View.VISIBLE);
         if (mStampAnimation != null) {
             mStampBigImv.setVisibility(View.GONE);
             mStampAnimation.reset();
             mStampBigImv.setAnimation(null);
         }
-        mPOI = poi;
-        if (null != poi) {
-        	clearDynamicPOI(DPOIViewBlockList);
-        	
-            List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
-            String uuid = poi.getUUID();
-            if (poi.getFrom() == POI.FROM_LOCAL && TextUtils.isEmpty(uuid) == false) {
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
-                criteria.put(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
-                criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, uuid);
-                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);
-                int cityId = Globals.g_Current_City_Info.getId();
-                if (poi.ciytId != 0) {
-                    cityId = poi.ciytId;
-                } else if (poi.getPosition() != null){
-                    cityId = MapEngine.getInstance().getCityId(poi.getPosition());
-                }
-                DataOperation poiQuery = new DataOperation(mSphinx);
-                poiQuery.setup(criteria, cityId, getId(), getId(), null);
-                baseQueryList.add(poiQuery);
+        List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
+        String uuid = poi.getUUID();
+        if (poi.getFrom() == POI.FROM_LOCAL && TextUtils.isEmpty(uuid) == false) {
+            Hashtable<String, String> criteria = new Hashtable<String, String>();
+            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
+            criteria.put(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, uuid);
+            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);
+            int cityId = Globals.g_Current_City_Info.getId();
+            if (poi.ciytId != 0) {
+                cityId = poi.ciytId;
+            } else if (poi.getPosition() != null){
+                cityId = MapEngine.getInstance().getCityId(poi.getPosition());
             }
-            
-            if (poi.getCommentQuery() == null) {
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
-                criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
-                criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
-                DataQuery commentQuery = new DataQuery(mSphinx);
-                commentQuery.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null, false, false, poi);
-                baseQueryList.add(commentQuery);
-                mCommentTipEdt.setVisibility(View.GONE);
-            } else {
-                mCommentTipEdt.setVisibility(View.VISIBLE);
-            }
-         
-            // 检查是否包含电影的动态信息
-            boolean isContainDianying = false;
-            List<DynamicPOI> list = poi.getDynamicPOIList();
-            if (list != null) {
-                for(int i = 0, size = list.size(); i < size; i++) {
-                    DynamicPOI dynamic = list.get(i);
-                    if (BaseQuery.DATA_TYPE_DIANYING.equals(dynamic.getType())) {
-                        isContainDianying = true;
-                        break;
-                    }
-                }
-            }
-            
-            if (isContainDianying && poi.getDynamicDianyingList() == null) {
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANYING);
-                criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
-                criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
-                        Dianying.NEED_FILELD_POI_DETAIL);
-                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-                       Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]");
-                DataQuery dataQuery = new DataQuery(mSphinx);
-                dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null, false, false, poi);
-                baseQueryList.add(dataQuery);
-            }
-            
-            refreshDetail();
-            refreshComment();
-            showDynamicPOI(DPOIViewBlockList);
-            
-            //判断是否存在hotel信息
-            if (mDynamicHotelPOI.checkExistence(mPOI)) {
-                baseQueryList.addAll(mDynamicHotelPOI.generateQuery(mPOI));
-            }
-//            LogWrapper.d("conan", "POIDetailFragment.baseQueryList:" + baseQueryList);
-            
-            if (baseQueryList.isEmpty() == false) {
-                mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
-                mBaseQuerying = baseQueryList;
-                mLoadingView.setVisibility(View.VISIBLE);
-            } else {
-                mLoadingView.setVisibility(View.GONE);
-            }
-            
-            String category = poi.getCategory().trim();
-            poi.updateHistory(mSphinx);
-            mActionLog.addAction(ActionLog.POIDetailShow, poi.getUUID(), poi.getName(), TextUtils.isEmpty(category) ? "NULL" : category.split(" ")[0]);
+            DataOperation poiQuery = new DataOperation(mSphinx);
+            poiQuery.setup(criteria, cityId, getId(), getId(), null);
+            baseQueryList.add(poiQuery);
         }
+        
+        if (poi.getCommentQuery() == null || poi.getFrom() == POI.FROM_LOCAL) {
+            Hashtable<String, String> criteria = new Hashtable<String, String>();
+            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
+            criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
+            DataQuery commentQuery = new DataQuery(mSphinx);
+            commentQuery.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null, false, false, poi);
+            baseQueryList.add(commentQuery);
+            mCommentTipView.setVisibility(View.GONE);
+        } else {
+            mCommentTipView.setVisibility(View.VISIBLE);
+        }
+        
+        // 检查是否包含电影的动态信息
+        DataQuery dataQuery = checkDianying(poi);
+        if (dataQuery != null) {
+            baseQueryList.add(dataQuery);
+        }
+        refreshDetail();
+        refreshComment();
+        if (baseQueryList.isEmpty() == false) {
+            mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
+            mBaseQuerying = baseQueryList;
+            mLoadingView.setVisibility(View.VISIBLE);
+        } else {
+            mLoadingView.setVisibility(View.GONE);
+        }
+        
+        String category = poi.getCategory().trim();
+        poi.updateHistory(mSphinx);
+        mActionLog.addAction(ActionLog.POIDetailShow, poi.getUUID(), poi.getName(), TextUtils.isEmpty(category) ? "NULL" : category.split(" ")[0]);
+        mDoingView.setVisibility(View.GONE);
+    }
+    
+    private DataQuery checkDianying(POI poi) {
+        DataQuery dataQuery = null;
+        if (poi == null) {
+            return dataQuery;
+        }
+        // 检查是否包含电影的动态信息
+        boolean isContainDianying = false;
+        List<DynamicPOI> list = poi.getDynamicPOIList();
+        if (list != null) {
+            for(int i = 0, size = list.size(); i < size; i++) {
+                DynamicPOI dynamic = list.get(i);
+                if (BaseQuery.DATA_TYPE_DIANYING.equals(dynamic.getType())) {
+                    isContainDianying = true;
+                    break;
+                }
+            }
+        }
+        
+        if (isContainDianying && poi.getDynamicDianyingList() == null) {
+            Hashtable<String, String> criteria = new Hashtable<String, String>();
+            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANYING);
+            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
+            criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
+            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+                    Dianying.NEED_FILELD_POI_DETAIL);
+            criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+                   Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]");
+            dataQuery = new DataQuery(mSphinx);
+            dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null, false, false, poi);
+        }
+        
+        return dataQuery;
     }
     
     private void makeFeature(ViewGroup viewGroup) {
@@ -1469,8 +1514,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             String dataType = criteria.get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
             Response response = baseQuery.getResponse();
             
-            // 查询我的点评的结果
-            if (baseQuery instanceof DataQuery && response instanceof CommentResponse) {
+            // 查询点评的结果
+            if (baseQuery instanceof DataQuery) {
                 if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, this, false)) {
                     return;
                 }
@@ -1481,7 +1526,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     refreshDetail();
                     refreshComment();
                     requestPOI.updateComment(mSphinx);
-                    mCommentTipEdt.setVisibility(View.VISIBLE);
                 } else if (response instanceof DianyingResponse) {
                     DianyingResponse dianyingResponse = (DianyingResponse) response;
                     DianyingList dianyingList = dianyingResponse.getList();
@@ -1494,39 +1538,59 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             } else if (baseQuery instanceof DataOperation) {
                 // 查询POI的结果
                 if (BaseQuery.DATA_TYPE_POI.equals(dataType)) {
-                    mLoadingView.setVisibility(View.GONE);
-                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[]{603}, false, this, false)) {
-                        if (response != null) {
-                            int responseCode = response.getResponseCode();
-                            if (responseCode == 603) {
-                                poi.setStatus(POI.STATUS_INVALID);
-                                BaseActivity.showErrorDialog(mSphinx, mSphinx.getString(R.string.response_code_603), this, true);
-                            }
+                    if (poi.getName() == null && poi.getUUID() != null) {
+                        if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, POIDetailFragment.this, true)) {
+                            mActionLog.addAction(mActionTag+ActionLog.POIDetailPullFailed);
+                            return;
                         }
-                        return;
-                    }
-                    POI onlinePOI = ((POIQueryResponse)response).getPOI();
-                    if (onlinePOI != null && onlinePOI.getUUID() != null && onlinePOI.getUUID().equals(poi.getUUID())) {
-                        String subDataType = baseQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
-                        if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
-                            //FIXME:移走
-                            Hotel hotel = poi.getHotel();
-                            try {
-                                if (hotel == null) {
-                                    poi.init(onlinePOI.getData(), false);
-                                } else {
-                                    hotel.init(onlinePOI.getData(), false);
+                        POI onlinePOI = ((POIQueryResponse)response).getPOI();
+                        if (onlinePOI != null && onlinePOI.getUUID() != null && onlinePOI.getUUID().equals(poi.getUUID())) {
+                            setData(onlinePOI);
+                        }
+                    } else {
+                        mLoadingView.setVisibility(View.GONE);
+                        if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[]{603}, false, this, false)) {
+                            if (response != null) {
+                                int responseCode = response.getResponseCode();
+                                if (responseCode == 603) {
+                                    poi.setStatus(POI.STATUS_INVALID);
+                                    BaseActivity.showErrorDialog(mSphinx, mSphinx.getString(R.string.response_code_603), this, true);
                                 }
-                                refreshDynamicHotel(poi);
-                            } catch (APIException e) {
-                                e.printStackTrace();
                             }
-                            refreshDynamicPOI(DPOIViewBlockList);
-                        } else {
-                            poi.updateData(mSphinx, onlinePOI.getData());
-                            poi.setFrom(POI.FROM_ONLINE);
-                            refreshDetail();
-                            refreshComment();
+                            return;
+                        }
+                        POI onlinePOI = ((POIQueryResponse)response).getPOI();
+                        if (onlinePOI != null && onlinePOI.getUUID() != null && onlinePOI.getUUID().equals(poi.getUUID())) {
+                            String subDataType = baseQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
+                            if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+                                //FIXME:移走
+                                Hotel hotel = poi.getHotel();
+                                try {
+                                    if (hotel == null) {
+                                        poi.init(onlinePOI.getData(), false);
+                                    } else {
+                                        hotel.init(onlinePOI.getData(), false);
+                                    }
+                                    refreshDynamicHotel(poi);
+                                } catch (APIException e) {
+                                    e.printStackTrace();
+                                }
+                                refreshDynamicPOI(DPOIViewBlockList);
+                            } else {
+                                poi.updateData(mSphinx, onlinePOI.getData());
+                                poi.setFrom(POI.FROM_ONLINE);
+                                refreshDetail();
+                                refreshComment();
+                                
+                                DataQuery dataQuery = checkDianying(poi);
+                                if (dataQuery != null) {
+                                    List<BaseQuery> list = new ArrayList<BaseQuery>();
+                                    list.add(dataQuery);
+                                    mLoadingView.setVisibility(View.VISIBLE);
+                                    mTkAsyncTasking = mSphinx.queryStart(list);
+                                    mBaseQuerying = list;
+                                }
+                            }
                         }
                     }
                     
@@ -1549,7 +1613,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     dianying.setYingxun(((YingxunQueryResponse) response).getYingxun());
                     List<Dianying> list = new ArrayList<Dianying>();
                     list.add(dianying);
-                    dianying.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY&Yingxun.Changci.OPTION_DAY_TOMORROW&Yingxun.Changci.OPTION_DAY_AFTER_TOMORROW);
+                    dianying.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY);
                     mSphinx.showView(R.id.view_discover_dianying_detail);
                     mSphinx.getDianyingDetailFragment().setData(list, 0, null);
                 }
@@ -1570,6 +1634,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
+        POI poi = mPOI;
+        if (poi.getName() == null) {
+            dismiss();
+        }
     }
 
     @Override

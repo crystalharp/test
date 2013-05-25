@@ -16,6 +16,15 @@ import android.text.TextUtils;
  */
 public final class Bootstrap extends BaseQuery {
 
+    // firstlogin  string  false   表示客户端是否为下载后第一次启动， 仅在引导服务(at=l, Bootstrap)时使用
+    public static final String SERVER_PARAMETER_FIRST_LOGIN = "firstlogin";
+    
+    // 0时为本机第一次启动
+    public static final String FIRST_LOGIN_NEW = "0";
+    
+    // 1时为软件升级后第一次启动
+    public static final String FIRST_LOGIN_UPGRADE = "1";
+
     private BootstrapModel bootstrapModel;
     
     public BootstrapModel getBootstrapModel() {
@@ -40,6 +49,7 @@ public final class Bootstrap extends BaseQuery {
         addCommonParameters(requestParameters);
         // TODO 这个参数必须要，那怕是空？！
         requestParameters.add("fe", "");
+        addParameter(SERVER_PARAMETER_FIRST_LOGIN, false);
     }
 
     @Override

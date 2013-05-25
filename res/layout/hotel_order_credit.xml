@@ -53,12 +53,18 @@
 
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                android:contentDescription="@string/app_name"
+                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
-                android:background="@drawable/list_header"
+                android:background="@drawable/list_middle"
                 >
 
                 <TextView
@@ -86,12 +92,18 @@
 
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                android:contentDescription="@string/app_name"
+                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
-                android:background="@drawable/list_header"
+                android:background="@drawable/list_middle"
                 >
 
                 <TextView
@@ -119,12 +131,18 @@
 
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                android:contentDescription="@string/app_name"
+                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
-                android:background="@drawable/list_header"
+                android:background="@drawable/list_middle"
                 >
                 <TextView
                     android:layout_width="wrap_content"
@@ -152,13 +170,19 @@
 
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                android:contentDescription="@string/app_name"
+                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
-                android:background="@drawable/list_header"
-                android:layout_marginBottom="16dp"
+                android:background="@drawable/list_footer"
+                android:layout_marginBottom="12dp"
                 >
 
                 <TextView
@@ -214,12 +238,18 @@
                     />
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                android:contentDescription="@string/app_name"
+                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
-                android:background="@drawable/list_header"
+                android:background="@drawable/list_middle"
                 >
 
                 <TextView
@@ -246,12 +276,18 @@
                     />
             </LinearLayout>
 
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                android:contentDescription="@string/app_name"
+                />
             <LinearLayout
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
-                android:background="@drawable/list_header"
+                android:background="@drawable/list_middle"
                 >
 
                 <TextView
@@ -273,12 +309,18 @@
                     android:textSize="16sp" />
                 </LinearLayout>
 
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                android:contentDescription="@string/app_name"
+                />
             <LinearLayout 
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:gravity="left|center_vertical"
-                android:background="@drawable/list_header"
+                android:background="@drawable/list_footer"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:paddingTop="12dp"
@@ -306,14 +348,19 @@
                 android:id="@+id/credit_confirm_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="12dp"
                 android:background="@drawable/btn_query_hotel_normal"
                 android:gravity="center"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
                 android:text="@string/credit_confirm"
                 android:textColor="@color/white"
-                android:textSize="18sp" />
+                android:textSize="18sp" 
+		        android:shadowDx="0"
+		        android:shadowDy="1"
+		        android:shadowColor="#a77a00"
+		        android:shadowRadius="1"
+                />
 
         </LinearLayout>
         

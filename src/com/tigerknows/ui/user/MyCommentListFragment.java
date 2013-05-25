@@ -69,8 +69,8 @@ public class MyCommentListFragment extends BaseFragment {
             if (comment.getPOIStatus() >= 0) {
                 POI poi = comment.getPOI();
                 if (poi.getPosition() != null) {
-                    mSphinx.getPOIDetailFragment().setData(poi);
                     mSphinx.showView(R.id.view_poi_detail);
+                    mSphinx.getPOIDetailFragment().setData(poi);
                 } else {
                     Hashtable<String, String> criteria = new Hashtable<String, String>();
                     criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
@@ -320,8 +320,8 @@ public class MyCommentListFragment extends BaseFragment {
                     try {
                         commentPOI.init(poi.getData(), false);
                         commentPOI.setMyComment(comment);
-                        mSphinx.getPOIDetailFragment().setData(commentPOI);
                         mSphinx.showView(R.id.view_poi_detail);
+                        mSphinx.getPOIDetailFragment().setData(commentPOI);
                         return;
                     } catch (APIException e) {
                         e.printStackTrace();

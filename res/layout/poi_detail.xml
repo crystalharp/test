@@ -79,6 +79,25 @@
                 android:gravity="center"/>
             </LinearLayout>
         </LinearLayout>
+                
+        <LinearLayout 
+            android:id="@+id/weixin_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" 
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:visibility="gone">
+            
+            <Button android:id="@+id/weixin_btn" 
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_weixin_send"
+                android:text="@string/send_weixin_friend"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:padding="12dp" />
+        </LinearLayout>
     </LinearLayout>
     
     <ScrollView
@@ -464,4 +483,13 @@
         android:layout_marginBottom="8dp"
         >
     </include> 
+                
+    <LinearLayout 
+        android:id="@+id/doing_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" 
+        android:orientation="horizontal"
+        android:background="@drawable/bg_discover"
+        >
+        </LinearLayout>
 </RelativeLayout>

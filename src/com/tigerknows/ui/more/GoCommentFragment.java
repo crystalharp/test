@@ -154,8 +154,8 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                 if (position < mPOIList.size()) {
                     POI poi = mPOIList.get(position);
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, poi.getUUID(), poi.getName());
-                    mSphinx.getPOIDetailFragment().setData(poi);
                     mSphinx.showView(R.id.view_poi_detail);
+                    mSphinx.getPOIDetailFragment().setData(poi);
                 }
             }
         });

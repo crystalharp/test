@@ -745,6 +745,14 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             s.append(downloadCity.downloadedSize); 
             s.append(","); 
             s.append(downloadCity.state); 
+            DownloadCity current = MoreHomeFragment.CurrentDownloadCity;
+            if (current != null) {
+                if (current.cityInfo != null && current.cityInfo.getId() == cityInfo.getId()) {
+                    if (downloadCity.state != DownloadCity.STATE_CAN_BE_UPGRADE) {
+                        MoreHomeFragment.CurrentDownloadCity = null;
+                    }
+                }
+            }
         }
     }
     

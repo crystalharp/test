@@ -13,6 +13,7 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.map.MapActivity;
 import com.decarta.android.util.LogWrapper;
+import com.tendcloud.tenddata.TCAgent;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -331,6 +332,8 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         intentFilter = new IntentFilter();
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(mConnectivityReceiver, intentFilter);
+        
+        TCAgent.onResume(this);
     }
 
     @Override
@@ -348,6 +351,8 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         unregisterReceiver(mConnectivityReceiver);
         
         super.onPause();
+        
+        TCAgent.onPause(this);
     }
     
     @Override
@@ -473,14 +478,14 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         final Response response = baseQuery.getResponse();
         if (response != null) {
             int responseCode = response.getResponseCode();
-            int resId = R.id.app_name;
+            int resId = -1;
             if (responseCode == Response.RESPONSE_CODE_SESSION_INVALID) {
                 resId = R.string.response_code_300;
             } else if (responseCode == Response.RESPONSE_CODE_LOGON_EXIST) {
                 resId = R.string.response_code_301;
             }
             
-            if (resId != R.id.app_name
+            if (resId != -1
                     && activity.isFinishing() == false
                     && Globals.g_Session_Id != null
                     && Globals.g_User != null) {
@@ -543,7 +548,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                     }
                 });
             }
-            return resId != R.id.app_name;
+            return resId != -1;
         }
         
         return false;
@@ -626,9 +631,9 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         Response response = baseQuery.getResponse();
         if (response != null) {
             int responseCode = response.getResponseCode();
-            String responseString = baseQuery.getCriteria().get(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + (responseCode));
-            if(responseString!=null){
-            	return Integer.parseInt(responseString);
+            String responseStringRes = baseQuery.getCriteria().get(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + (responseCode));
+            if(responseStringRes!=null){
+            	return Integer.parseInt(responseStringRes);
             }
 
             switch (responseCode) {
@@ -688,6 +693,9 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                 case 801:
                 case 802:
                     resId = R.string.response_code_801;
+                    break;
+                case 803:
+                    resId = R.string.response_code_831;
                     break;
                 case 821:
                 	resId = R.string.response_code_821;

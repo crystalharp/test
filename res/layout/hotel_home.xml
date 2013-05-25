@@ -6,13 +6,23 @@
     android:layout_height="fill_parent"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
-    android:gravity="center"
-    android:orientation="vertical"
     android:background="@drawable/bg_discover"
     >
+        
+    <com.tigerknows.ui.hotel.NavigationWidget
+        android:id="@+id/navigation_widget"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        tkandroid:navigationState="0"
+        >
+    </com.tigerknows.ui.hotel.NavigationWidget>
+    
     <ScrollView 
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
+        android:layout_above="@id/navigation_widget"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="8dp"
@@ -193,14 +203,4 @@
         </LinearLayout>
         
     </ScrollView>
-        
-    <com.tigerknows.ui.hotel.NavigationWidget
-        android:id="@+id/navigation_widget"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true"
-        tkandroid:navigationState="0"
-        >
-    </com.tigerknows.ui.hotel.NavigationWidget>
 </RelativeLayout>

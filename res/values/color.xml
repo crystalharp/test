@@ -48,4 +48,6 @@
     <color name="blue_light">#cdedff</color>
     
     <color name="infowindow_split_line">#e6e6e6</color>
+    <color name="home_list_bg">#f8f6ff</color>
+    
 </resources>

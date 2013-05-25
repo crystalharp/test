@@ -29,16 +29,14 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 
-                
-                android:layout_marginTop="16dp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 
                 android:divider="@color/transparent"
+                android:dividerHeight="16dp"
                 android:footerDividersEnabled="false"
                 android:fadingEdge="none"
                 android:scrollingCache="false"
-                android:dividerHeight="16dp"
                 />
             
         </FrameLayout>

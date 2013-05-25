@@ -32,40 +32,49 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
             <intent-filter android:label="@string/app_name" >
-				<action android:name="android.intent.action.VIEW">
-				</action>
-				<category android:name="android.intent.category.DEFAULT">
-				</category>
-				<data android:mimeType="vnd.android.cursor.item/postal-address">
-				</data>
-			</intent-filter>
-			<intent-filter android:label="@string/app_name">
-				<action android:name="android.intent.action.VIEW"></action>
-				<category android:name="android.intent.category.DEFAULT"></category>
-				<data android:mimeType="vnd.android.cursor.item/postal-address_v2"></data>
-			</intent-filter>
-			<intent-filter android:label="@string/app_name" >
-				<action android:name="android.intent.action.VIEW"></action>
-				<category android:name="android.intent.category.DEFAULT"></category>
-				<category android:name="android.intent.category.BROWSABLE"></category>
-				<data android:scheme="geo"></data>
-			</intent-filter>
-			<intent-filter android:label="@string/app_name">
-				<action android:name="android.intent.action.VIEW"></action>
-				<category android:name="android.intent.category.DEFAULT"></category>
-				<category android:name="android.intent.category.BROWSABLE"></category>
-				<data android:scheme="latitude"></data>
-			</intent-filter>
-			<intent-filter>
-				<action android:name="android.intent.action.VIEW"></action>
-				<category android:name="android.intent.category.DEFAULT"></category>
-				<category android:name="android.intent.category.BROWSABLE"></category>
-				<data android:scheme="http"
-					android:host="maps.tigerknows.com"
-					android:pathPrefix="/"
-					>
-				</data>
-			</intent-filter>
+                <action android:name="android.intent.action.VIEW">
+                </action>
+                <category android:name="android.intent.category.DEFAULT">
+                </category>
+                <data android:mimeType="vnd.android.cursor.item/postal-address">
+                </data>
+            </intent-filter>
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <data android:mimeType="vnd.android.cursor.item/postal-address_v2"></data>
+            </intent-filter>
+            <intent-filter android:label="@string/app_name" >
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>
+                <data android:scheme="geo"></data>
+            </intent-filter>
+            <intent-filter android:label="@string/app_name">
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>
+                <data android:scheme="latitude"></data>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>
+                <data android:scheme="http"
+                    android:host="maps.tigerknows.com"
+                    android:pathPrefix="/"
+                    >
+                </data>
+            </intent-filter>
+            
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"></action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+                <category android:name="android.intent.category.BROWSABLE"></category>
+                <data android:scheme="tigerknows"
+                    >
+                </data>
+            </intent-filter>
         </activity>
         
         <service android:name="com.tigerknows.service.LocationService" android:enabled="true"></service>
@@ -239,22 +248,14 @@
             android:configChanges="keyboardHidden|navigation|orientation"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait" >
-			<intent-filter>  
-			    <action android:name="android.intent.action.VIEW" />  
-			    <category android:name="android.intent.category.DEFAULT" />  
-			    <category android:name="android.intent.category.BROWSABLE" />
-			    <data android:scheme="tencent500000002"/>
-			</intent-filter>  
+            <intent-filter>  
+                <action android:name="android.intent.action.VIEW" />  
+                <category android:name="android.intent.category.DEFAULT" />  
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="tencent500000002"/>
+            </intent-filter>  
         </activity>
         
-		<activity android:name="com.snda.recommend.ui.AppListActivity"
-            android:theme="@style/Theme.NoTitleBar"  />
-		<activity android:name="com.snda.recommend.ui.AppHtmlActivity"
-            android:theme="@style/Theme.NoTitleBar"  />
-		<activity android:name="com.snda.recommend.ui.AppDetailActivity"
-            android:theme="@style/Theme.NoTitleBar"  />
-		<activity android:name="com.snda.recommend.ui.DownloadActivity"
-            android:theme="@style/Theme.NoTitleBar"  />
 
 		<activity android:configChanges="orientation" android:name="com.decarta.example.ExceptionDialogActivity" />
 		<activity android:configChanges="orientation" android:name="com.decarta.example.ProfileResultActivity" />
@@ -278,22 +279,39 @@
             </intent-filter>
         </receiver>
         <!-- 
-		<receiver android:name="com.tigerknows.radar.ConnectivityChangeReceiver">
-		    <intent-filter>
-	           <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-		    </intent-filter>
-		</receiver>
+        <receiver android:name="com.tigerknows.radar.ConnectivityChangeReceiver">
+            <intent-filter>
+               <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
          -->
-		<receiver android:name="com.tigerknows.radar.RadarReceiver">
-		    <intent-filter>
-	           <action android:name="action.com.tigerknows.radar.PullReceiver" />
-		    </intent-filter>
-		</receiver>
+        <receiver android:name="com.tigerknows.radar.RadarReceiver">
+            <intent-filter>
+               <action android:name="action.com.tigerknows.radar.PullReceiver" />
+            </intent-filter>
+        </receiver>
         
         <service android:name="com.tigerknows.service.PullService">
         </service>
         
+        <activity
+            android:theme="@style/Theme.NoTitleBar" 
+            android:name=".wxapi.WXEntryActivity"
+            android:label="@string/app_name"
+            android:exported="true">
+            
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <data android:scheme="sdksample"/>
+            </intent-filter>
+        </activity>
 
+        <meta-data android:name="TD_APP_ID" android:value="01311C44FE74E468F73E72C43CD1B60D"/>
+        <!--老虎宝典测试 68DDE7CB7E1AC79BA446D291FFAB79B0 -->
+        <!--老虎宝典 01311C44FE74E468F73E72C43CD1B60D -->
+        <meta-data android:name="TD_CHANNEL_ID" android:value="TigerMapTest"/>
+        <!-- TigerMapTest tieshusai jiangzhenzhen lidaobei edeni dongjuan peiguojuan liujiahe baoyinjuan -->
     </application>
     <supports-screens android:anyDensity="true" android:resizeable="true" android:largeScreens="true" android:smallScreens="true"></supports-screens>
     <uses-sdk android:minSdkVersion="5" />

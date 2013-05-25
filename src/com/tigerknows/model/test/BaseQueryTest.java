@@ -174,9 +174,9 @@ public class BaseQueryTest {
                 Class<?> iPackageDataObserverClass = null;
                 try {
                     iPackageDataObserverClass = Class.forName("android.content.pm.IPackageDataObserver");
-                } catch (ClassNotFoundException e1) {
+                } catch (ClassNotFoundException e) {
                     // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    e.printStackTrace();
                 }
 
                 Class<ActivityManager> activityManagerClass=ActivityManager.class;
@@ -460,9 +460,9 @@ public class BaseQueryTest {
                               }
                           });
                           Thread.sleep(5*1000);
-                      } catch (InterruptedException e2) {
+                      } catch (InterruptedException e) {
                           // TODO Auto-generated catch block
-                          e2.printStackTrace();
+                          e.printStackTrace();
                       }
                       
                   }
@@ -505,9 +505,9 @@ public class BaseQueryTest {
                           }
                       });
                       Thread.sleep(5 * 1000);
-                  } catch (InterruptedException e2) {
+                  } catch (InterruptedException e) {
                       // TODO Auto-generated catch block
-                      e2.printStackTrace();
+                      e.printStackTrace();
                   }
               }
           }

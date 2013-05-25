@@ -22,6 +22,8 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.http.AndroidHttpClient;
 import android.text.TextUtils;
 
@@ -52,7 +54,7 @@ public class HttpUtils {
     public static final String TK_SERVICE_TYPE = "tkServiceType";
     
     /** Tigerknows服务器接口定义的用于s的v13的Header */
-    public static final String AT_S_V_13_TK_SERVICE_TYPE = "at=s&v=13";
+    public static final String TK_SERVICE_TYPE_VALUE = "blade";
     
     private static final String PARAMETER_SEPARATOR = "&";
     private static final String NAME_VALUE_SEPARATOR = "=";
@@ -205,11 +207,11 @@ public class HttpUtils {
                             j++;
                         }
                         /* A flag to indicate the interface version. */
-                        post.addHeader(TK_SERVICE_TYPE, AT_S_V_13_TK_SERVICE_TYPE);
+                        post.addHeader(TK_SERVICE_TYPE, TK_SERVICE_TYPE_VALUE);
                         post.addHeader(CONTENT_TYPE, MULTIPART_FORM_CONTENT_TYPE);
                         postParam = buf.toString();
                         data = postParam.getBytes(TKConfig.getEncoding());
-                        data = DataEncryptor.encrypt(data);
+                        DataEncryptor.getInstance().encrypt(data);
                         
                     } else {
                         post.addHeader(CONTENT_TYPE, APPLICATION_FORM_CONTENT_TYPE_VALUE);
@@ -334,7 +336,13 @@ public class HttpUtils {
                 throw e;
             } finally {
                 if (!TextUtils.isEmpty(apiType)) {
-                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail);
+                    ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                    String networkInfoDetail = "none";
+                    if (networkInfo != null) {
+                        networkInfoDetail = networkInfo.getDetailedState().toString();
+                    }
+                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getRadioType(), isStop);
                 }
                 if (!keepAlive) {
                     close();

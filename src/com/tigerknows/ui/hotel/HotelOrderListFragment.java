@@ -132,13 +132,17 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     @Override
     public void dismiss() {
         super.dismiss();
+        clearOrders();
+        mDataQuery = null;
+    }
+    
+    public void clearOrders(){
         if (orders != null) {
         	orders.clear();
             if (hotelOrderAdapter != null) {
                 hotelOrderAdapter.notifyDataSetChanged();
             }
         }
-        mDataQuery = null;
     }
     
     protected void findViews() {
@@ -150,6 +154,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         mQueryingView = mRootView.findViewById(R.id.querying_view);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(v);
+        v = mLayoutInflater.inflate(R.layout.hotel_order_list_header, null);
+        mResultLsv.addHeaderView(v);
     }
 
     protected void setListener() {
@@ -170,6 +176,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
 				mSphinx.getHotelOrderDetailFragment().setData(orders.get(position));
+				mSphinx.getHotelOrderDetailFragment().setStageIndicatorVisible(false);
 				mSphinx.showView(R.id.view_hotel_order_detail);
 			}
         	
@@ -194,7 +201,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 //       	mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
 //       }
         
-        fillOrderDb();
+//        fillOrderDb();
 
         /**
          * if fragment is previously closed, size of orders will be 0
@@ -214,20 +221,22 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     }
     
     private void fillOrderDb(){
+    	int maxDbSize = 30;
     	HotelOrderTable table = new HotelOrderTable(mContext);
     	try {
     		long start = System.currentTimeMillis();
-    		List<HotelOrder> list = table.read(0, 30);
+    		List<HotelOrder> list = table.read(0, maxDbSize);
     		System.out.println("Time used for read: " + (System.currentTimeMillis()-start)/1000.0);
     		System.out.println("OrderDB count: " + list.size());
     		
-    		if(list.size() < 100){
-    			HotelOrder order = new HotelOrder("11111", System.currentTimeMillis(), 1, "ssss", "HotelName", "hotelAddress", new Position(39.88, 116.3), "13581704277", 
+    		if(list.size() < maxDbSize){
+    			HotelOrder order = new HotelOrder("11111", System.currentTimeMillis(), 1, "0F2B4330-906A-11E2-A511-06973B18DA73", "HotelName", "hotelAddress", new Position(39.88, 116.3), "13581704277", 
     					mContext.getString(R.string.app_name), 3, 390, 
     					System.currentTimeMillis(), System.currentTimeMillis(), System.currentTimeMillis(),2, 
     					"GuestName", "13581704277");
-    			for (int i = list.size(); i < 100; i++) {
+    			for (int i = list.size(); i < maxDbSize; i++) {
     				order.setId("" + i + i + i + i);
+    				order.setHotelPoiUUID("0F2B4330-906A-11E2-A511-06973B18DA73");
     				table.write(order);
     			}
     		}
@@ -336,7 +345,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 				mQueryingView.setVisibility(View.INVISIBLE);
 				mEmptyView.setVisibility(View.INVISIBLE);
 				hotelOrderAdapter.notifyDataSetChanged();
-				launchStateQuery();
+//				launchStateQuery();
 			}else{
 				System.out.println("No orders");
 				mResultLsv.setVisibility(View.INVISIBLE);
@@ -360,19 +369,29 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     private String prepareIds(){
     	
     	StringBuffer sb = new StringBuffer();
-    	
+    	int ordersAdded = 0;
     	synchronized (ordersToQuery) {
     		synchronized (ordersQuerying) {
+    			for (int i=ordersQuerying.size()-1; i >= 0; i--) {
+    				HotelOrder order = ordersQuerying.get(i);
+    				if(ordersAdded>0){
+    					sb.append("_");
+    				}
+    				sb.append(order.getId());
+    				ordersAdded++;
+				}
     			
     			for (int i=ordersQuerying.size(); 
     					i<ORDER_STATE_QUREY_SIZE && ordersToQuery.size()>0; 
     					i++) {
     				HotelOrder order = ordersToQuery.removeFirst();
     				ordersQuerying.add(order);
-    				if(i>0){
+    				
+    				if(ordersAdded>0){
     					sb.append("_");
     				}
     				sb.append(order.getId());
+    				ordersAdded++;
     			}
     		}
     	}
@@ -389,7 +408,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	System.out.println("launchStateQuery");
     	
     	String ids = prepareIds();
-    	
+    	LogWrapper.i(TAG, "Ids: " + ids);
     	sendStateQuery(ids);
         
     }
@@ -440,7 +459,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     			orderTotal = table.count();
     			
 				ordersLoaded = table.read(startIndex, loadCount);
-    			
+    			LogWrapper.i(TAG, "Order total: " + orderTotal);
+    			LogWrapper.i(TAG, "Orders loaded: " + ordersLoaded.size());
     			checkOrderStateForQuery(ordersLoaded);
  
 			} catch (IOException e) {
@@ -526,7 +546,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         /**
          * Query remaining orders～
          */
-        launchStateQuery();
+//        launchStateQuery();
         
     }
     
@@ -562,12 +582,12 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	synchronized (ordersQuerying) {
     		synchronized (ordersToUpdateToDB) {
     			
-    			for(int i=orders.size(); i>=0; i++){
+    			for(int i=orders.size()-1; i>=0; i--){
     				
     				HotelOrder order = orders.get(i);
     				
     				//Get order id index and update order
-    				for (int j = 0, size=idArray.length; j < size; j++) {
+    				for (int j = idArray.length-1; j >= 0; j--) {
     					if(idArray[j].equals( order.getId()) ){
     						if(states.get(j)!=HotelOrder.STATE_NONE && j<states.size()){
     							order.setState(states.get(j));

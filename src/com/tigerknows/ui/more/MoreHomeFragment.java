@@ -6,12 +6,9 @@ package com.tigerknows.ui.more;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Hashtable;
-
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -27,15 +24,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.decarta.Globals;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BootstrapModel;
-import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
 import com.tigerknows.model.BootstrapModel.SoftwareUpdate;
 import com.tigerknows.ui.BaseFragment;
@@ -59,9 +55,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     static final String TAG = "MoreFragment";
     
     public static final int SHOW_COMMENT_TIP_TIMES = 3;
-    public static final int SHOW_NICKNAME_MAX_WIDTH = 150;
-    //三个点的宽度为9
-    public static final int SHOW_NICKNAME_OMIT_WIDTH = 9;
     
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -92,6 +85,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     public static final int MESSAGE_TYPE_COMMENT = 4;
     private int mMessageType = MESSAGE_TYPE_NONE;
     
+    private boolean addedGoCommentTimes = false;
+    
     private DiaoyanQueryResponse mDiaoyanQueryResponse;
     
     public static DownloadCity CurrentDownloadCity;
@@ -118,6 +113,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mListLsv.setAdapter(null);
         
         findViews();        
+
         setListener();
         
         if (TKConfig.sSPREADER.startsWith(TKConfig.SPREADER_TENCENT)) {
@@ -149,11 +145,11 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mMenuFragment.display();
         
         refreshUserEntrance();
-        refreshMoreBtn(false);
+        refreshMoreBtn();
         refreshCity(Globals.g_Current_City_Info.getCName());
     }
     
-    public void refreshMoreBtn(boolean isCreate) {
+    public void refreshMoreBtn() {
         
         setFragmentMessage(MESSAGE_TYPE_NONE);
         
@@ -206,12 +202,14 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         String commentTip = TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP);
         if (!TextUtils.isEmpty(commentTip)) {
             showCommentTipTimes = Integer.parseInt(commentTip);
-            if (isCreate) {
+            if (addedGoCommentTimes == false) {
+                addedGoCommentTimes = true;
                 showCommentTipTimes++;
                 TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(showCommentTipTimes));
             }
         } else {
-            if (isCreate) {
+            if (addedGoCommentTimes == false) {
+                addedGoCommentTimes = true;
                 TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(0));
             }
         }
@@ -232,6 +230,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mUserNameTxv = (TextView) mRootView.findViewById(R.id.user_name_txv);
         mMessageBtn = (Button)mRootView.findViewById(R.id.message_btn);
         mUserBtn = (Button)mRootView.findViewById(R.id.user_btn);
+
         mChangeCityBtn = (Button)mRootView.findViewById(R.id.change_city_btn);
         mDownloadMapBtn = (Button)mRootView.findViewById(R.id.download_map_btn);
         mAppRecommendBtn = (Button)mRootView.findViewById(R.id.app_recommend_btn);
@@ -379,26 +378,14 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	drawables[0].setBounds(0, 0, drawables[0].getIntrinsicWidth(), drawables[0].getIntrinsicHeight());
         	mUserBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
         	mUserBtn.setCompoundDrawablePadding(Utility.dip2px(mContext, 10));
+        	mUserNameTxv.setMaxWidth(mContext.getResources().getDisplayMetrics().widthPixels -
+        			mUserBtn.getPaddingLeft() -
+        			mUserBtn.getPaddingRight() -
+        			drawables[0].getIntrinsicWidth() - 
+        			(int)mUserBtn.getTextSize() * 4 -
+        			Utility.dip2px(mContext, 26));
         	if (Globals.g_User != null) {
-        		/*
-        		 * 下面一段代码衡量显示的昵称会否超出范围，如果超出，则显示时会截断并添加三个点
-        		 * 目前可显示的范围为150个宽度，这相当于12+2/3个"@"的宽度
-        		 * 截断后仍然可以显示11个"@"的宽度
-        		 * 注：这不是最佳的方法，对于屏幕较窄的手机可能仍然并不奏效，但已经优于产品部于
-        		 * 	   2013年03月29日(4.30版)所提出的依据字符数决定的办法，并报产品部通过
-        		 * 注2：若该方法将来在N多地方使用，可能需要单独放在一个Utils里以便调用
-        		 * fengtianxiao@tigerknows 2013/03/29
-        		 */
-        		Paint paint=new Paint();
         		String nickNameText = Globals.g_User.getNickName();
-        		int strwid = (int)paint.measureText(nickNameText);
-        		if(strwid > SHOW_NICKNAME_MAX_WIDTH){
-        			while(strwid > SHOW_NICKNAME_MAX_WIDTH - SHOW_NICKNAME_OMIT_WIDTH){
-        				nickNameText = nickNameText.substring(0 , nickNameText.length()-1);
-        				strwid = (int)paint.measureText(nickNameText);
-        			}
-        			nickNameText = nickNameText + "...";
-        		}
             	mUserNameTxv.setText(nickNameText);
             	mUserNameTxv.setVisibility(View.VISIBLE);
         	}

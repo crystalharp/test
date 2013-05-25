@@ -11,6 +11,7 @@
     <string name="input_valid_border">Please input valid integer border</string>
     <string name="input_valid_tile_thread_count">Please input valid integer tile thread num</string>
 	
+    <string name="all">全部</string>
     <string name="app_name">老虎宝典</string>
     <string name="send_sms">发短信</string>
     <string name="send_mms">发彩信</string>
@@ -896,6 +897,7 @@
     <string name="response_code_801">创建订单失败，请重试。</string>
     <string name="response_code_821">网络状态不好，请稍候重试。</string>
     <string name="response_code_823">注册失败，请确认所填信息后重新提交。</string>
+    <string name="response_code_831">取消失败。</string>
     
     <string name="response_code_410_pulled">抱歉,原信息已过期\n欢迎发现更多身边的精彩!</string>
     
@@ -937,6 +939,19 @@
     
     <string name="counting_tip">正在统计...</string>
 
+    <!-- 微信 begin -->
+	<string name="errcode_success">发送成功</string>
+	<string name="errcode_cancel">发送取消</string>
+	<string name="errcode_deny">发送被拒绝</string>
+	<string name="errcode_unknown">发送返回</string>
+	<string name="send_weixin_friend">发给微信好友</string>
+	<string name="uninstall_weixin_tip">尚未安装微信，是否现在下载最新版微信？</string>
+	<string name="upgarde_weixin_tip">当前微信版本不支持朋友圈功能，是否现在去下载最新版微信？</string>
+	<!-- 微信 end -->
+	
+	<string name="play_dianying">在映电影</string>
+	<string name="more_dianying">更多电影</string>
+
 <!-- Hotel Reservation Start -->
     
     <string name="hotel_btn_book">预订</string>
@@ -951,9 +966,11 @@
     <string name="hotel_room_howmany">房间数</string>
     <string name="hotel_room_reserve">房间保留到</string>
     <string name="hotel_room_person_name">入住人：</string>
+    <string name="hotel_room_person_name_hint">入住人的姓名</string>
     <string name="hotel_room_mobile_nubmer">手机号：</string>
+    <string name="hotel_room_mobile_nubmer_hint">用于短信确认</string>
     <string name="submit_order">提交订单</string>
-    <string name="hotel_room_date">入住：%1$d月%2$d日  离店：%3$d月%4$d日</string>
+    <string name="hotel_room_date">入住：%1$d月%2$d日&#8195;离店：%3$d月%4$d日</string>
     <string name="hotel_room_credit_note">因酒店房间紧张，需信用卡担保，以便保留房间</string>
     <string name="hotel_room_person_empty_tip">请填写入住人!</string>
     <string name="hotel_room_mobile_empty_tip">请填写手机号!</string>
@@ -977,18 +994,18 @@
     <string name="credit_bank_hint">选择银行</string>
     <string name="credit_code">卡　　号：</string>
     <string name="credit_code_hint">输入卡号</string>
-    <string name="credit_owner">持  卡  人：</string>
+    <string name="credit_owner">持&#8194;卡&#8194;人：</string>
     <string name="credit_owner_hint">输入姓名</string>
-    <string name="credit_verify_number">验  证  码：</string>
+    <string name="credit_verify_number">验&#8194;证&#8194;码：</string>
     <string name="credit_verify_number_hint">输入信用卡背后三位数</string>
-    <string name="credit_validity">有  效  期：</string>
+    <string name="credit_validity">有&#8194;效&#8194;期：</string>
     <string name="credit_validity_hint">选择有效期</string>
     <string name="credit_cert_type">证件类型：</string>
     <string name="credit_cert_code">证件号码：</string>
     <string name="credit_cert_code_hint">输入号码</string>
     <string name="credit_assure_pricetitle">担保价格：</string>
     <string name="credit_assure_price">%1$s元</string>
-    <string name="credit_note">信用担保说明：</string>
+    <string name="credit_note">信用担保说明</string>
     <string name="credit_note_detail">本订单您可以在%1$s之前取消，如果您到时候没有入住，将按照担保金额扣除房费。请在填写担保前慎重考虑您是否可能会修改行程，以免造成不必要的损失。</string>
     <string name="credit_confirm">确认无误，提交</string>
     <string name="choose_credit_bank">选择银行</string>
@@ -1005,8 +1022,11 @@
     <string name="seveninn_regist_title">注册7天会员</string>
     <string name="seveninn_note">发现您的手机号%1$s非7天会员号，如继续预定需要准确填写以下信息进行验证，该号码会自动注册为7天会员手机号。</string>
     <string name="seveninn_person_name">入住姓名：</string>
-    <string name="seveninn_mobile_number">手机号：</string>
+    <string name="seveninn_person_name_hint">输入姓名</string>
+    <string name="seveninn_mobile_number">手&#8194;机&#8194;号：</string>
+    <string name="seveninn_mobile_number_hint">输入手机号</string>
     <string name="seveninn_idcard_code">身份证号：</string>
+    <string name="seveninn_idcard_code_hint">输入身份证号</string>
     <string name="seveninn_regist_confirm">注册7天会员</string>
     <string name="seveninn_idcard_code_empty_error">请填写身份证号!</string>
     
@@ -1050,5 +1070,11 @@
     <string name="simple_month_day_format">M月d日</string>
     
     <string name="no_order">暂无订单，\n快去预订酒店吧！</string>
+    
+    <string name="hotel_order_cancel_confirm">是否取消订单？\n取消后本次预订将失效</string>
+    <string name="hotel_order_cancel_failed">订单取消失败</string>
+    <string name="hotel_order_cancel_success">订单取消成功</string>
+    
+    <string name="hotel_order_delete_confirm">是否删除订单？\n删除后订单不再显示，但本次预约有效</string>
     
 </resources>

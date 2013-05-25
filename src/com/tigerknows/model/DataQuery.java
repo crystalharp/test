@@ -504,6 +504,7 @@ public final class DataQuery extends BaseQuery {
             }
             addFilterParameters(criteria, requestParameters, cfv, nfv);
         } else if (DATA_TYPE_DIANYING.equals(dataType)) { 
+            addParameter(new String[]{SERVER_PARAMETER_DIANYING_UUID, SERVER_PARAMETER_POI_ID}, false);
             requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Dianying.NEED_FILELD);
             requestParameters.add(SERVER_PARAMETER_PICTURE, 
                     Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +

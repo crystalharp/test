@@ -1,5 +1,6 @@
 package com.tigerknows.radar;
 
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
@@ -14,10 +15,13 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.widget.RemoteViews;
 
 public class TKNotificationManager {
 
+	private static final String TAG = "TKNotificationManager";
+	
 	/**
 	 * Check the integrity of the product upgrade info
 	 * @param msg
@@ -26,9 +30,10 @@ public class TKNotificationManager {
 	private static boolean checkProdcutUpgrade(Message msg){
 		PulledProductMessage productMsg;
 		if((productMsg = msg.getProductMsg())!=null 
-				&& productMsg.getDownloadUrl()!=null ){
+				&& !TextUtils.isEmpty( productMsg.getDownloadUrl() ) ){
 			return true;
 		}else{
+			LogWrapper.e(TAG, "Upgrade msg is corrupted!");
 			return false;
 		}
 	}
@@ -43,6 +48,7 @@ public class TKNotificationManager {
 		if(productMsg!=null && productMsg.getDescription()!=null ){
 			return true;
 		}else{
+			LogWrapper.e(TAG, "ProdcutInfo msg is corrupted!");
 			return false;
 		}
 	}
@@ -59,8 +65,10 @@ public class TKNotificationManager {
     					|| BaseQuery.DATA_TYPE_YANCHU.equals(""+dynamicPOI.getMasterType()) ) 
     			&& dynamicPOI.getMasterUID() != null){
     		return true;
+    	}else{
+    		LogWrapper.e(TAG, "ZhanlanYanchu msg is corrupted!");
+    		return false;
     	}
-		return false;
 	}
     
 	/**
@@ -76,8 +84,10 @@ public class TKNotificationManager {
                 && BaseQuery.DATA_TYPE_YINGXUN.equals(""+dynamicPOI.getSlaveType())
     			&& dynamicPOI.getSlaveUID() != null){
     		return true;
+    	}else{
+    		LogWrapper.e(TAG, "ZhanlanYanchu msg is corrupted!");
+    		return false;
     	}
-		return false;
 	}
 
 	/**
@@ -92,8 +102,10 @@ public class TKNotificationManager {
     					|| checkZhanlanYanchu(msg) )
     			){
     		return true;
+    	}else{
+    		LogWrapper.e(TAG, "ZhanlanYanchu msg is corrupted!");
+    		return false;
     	}
-		return false;
 	}
 
     /**

@@ -81,7 +81,7 @@ public class DataOperation extends BaseQuery {
         	
         	// 部分查询需要提交pic信息和dsrc信息，据说上一个写这行代码的人懒得用一堆if判断于是就直接用这行代码了
         	// fengtianxiao 2013.05.10
-        	addParameter(new String[] {SERVER_PARAMETER_PICTURE, SERVER_PARAMETER_REQUSET_SOURCE_TYPE}, false);
+        	addParameter(new String[] {SERVER_PARAMETER_PICTURE}, false);
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
             addParameter(SERVER_PARAMETER_ENTITY);
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
