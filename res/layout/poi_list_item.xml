@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:orientation="horizontal"
-        android:layout_alignParentLeft="true"
+        android:layout_toRightOf="@id/picture_view"
         android:paddingBottom="5dp"  >
     <TextView 
         android:id="@+id/name_txv" 
@@ -79,7 +79,7 @@
         android:layout_height="wrap_content"
         android:padding="0dp"
         android:layout_marginTop="2dp"
-        android:layout_alignParentLeft="true"
+        android:layout_toRightOf="@id/picture_view"
         android:layout_below="@id/name_view" 
         android:progressDrawable="@drawable/ratingbar_small"
         style="@style/RatingBar.Small"
@@ -148,7 +148,7 @@
         android:id="@+id/comment_txv" 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" 
-        android:layout_alignParentLeft="true"
+        android:layout_toRightOf="@id/picture_view"
         android:layout_toLeftOf="@id/money_txv"
         android:layout_below="@id/stars_rtb" 
         android:layout_marginTop="8dp"

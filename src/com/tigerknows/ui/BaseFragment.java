@@ -75,6 +75,14 @@ public class BaseFragment extends LinearLayout {
     
     protected PopupWindow mPopupWindow;
     
+    public PopupWindow getPopupWindow() {
+        return mPopupWindow;
+    }
+
+    public void setPopupWindow(PopupWindow popupWindow) {
+        this.mPopupWindow = popupWindow;
+    }
+
     public DialogInterface.OnClickListener mCancelLoginListener = new DialogInterface.OnClickListener() {
         
         @Override

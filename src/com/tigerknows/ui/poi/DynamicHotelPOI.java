@@ -6,19 +6,25 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.LinearLayout.LayoutParams;
+import android.widget.PopupWindow.OnDismissListener;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataQuery;
@@ -35,15 +41,13 @@ import com.tigerknows.model.TKDrawable;
 import com.tigerknows.ui.hotel.DateListView;
 import com.tigerknows.ui.hotel.DateWidget;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
-import com.tigerknows.ui.hotel.HotelImageGridFragment;
 import com.tigerknows.ui.hotel.HotelIntroFragment;
-import com.tigerknows.ui.poi.DynamicHotelPOI.MoreRoomTypeClickListener;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.widget.LinearListView;
 import com.tigerknows.widget.LinearListView.ItemInitializer;
 
-public class DynamicHotelPOI extends DynamicPOIView {
+public class DynamicHotelPOI extends DynamicPOIView implements DateListView.CallBack {
 
     static DynamicHotelPOI instance = null;
     DynamicPOIViewBlock mUpperBlock;
@@ -72,6 +76,43 @@ public class DynamicHotelPOI extends DynamicPOIView {
     private DateWidget mCheckOutDat;
     TextView moreTxv;
     TextView imageNumTxv;
+    
+    private DateListView mDateListView = null;
+    
+    DateListView getDateListView() {
+        if (mDateListView == null) {
+            DateListView view = new DateListView(mSphinx);
+            view.setData(this, mPOIDetailFragment.mActionTag);
+            mDateListView = view;
+        }
+        return mDateListView;
+    }
+    
+    private void showDateListView(View parent) {
+        mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.PopupWindowFilter);
+        DateListView view = getDateListView();
+        PopupWindow popupWindow = mPOIDetailFragment.getPopupWindow();
+        if (popupWindow == null) {
+            popupWindow = new PopupWindow(view);
+            popupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+            popupWindow.setFocusable(true);
+            // 设置允许在外点击消失
+            popupWindow.setOutsideTouchable(true);
+
+            // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
+            popupWindow.setBackgroundDrawable(new BitmapDrawable());
+            popupWindow.setOnDismissListener(new OnDismissListener() {
+                
+                @Override
+                public void onDismiss() {
+                    mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.PopupWindowFilter + ActionLog.Dismiss);
+                }
+            });
+            mPOIDetailFragment.setPopupWindow(popupWindow);
+        }
+        popupWindow.showAsDropDown(parent, 0, 0);
+        view.onResume();
+    }
     
     final static String TAG = "DynamicHotelPOI";
     
@@ -120,6 +161,16 @@ public class DynamicHotelPOI extends DynamicPOIView {
         
         moreRoomTypeClickListener = new MoreRoomTypeClickListener();
         mDynamicRoomTypeMoreView.setOnClickListener(moreRoomTypeClickListener);
+        
+        View.OnClickListener dateListener = new OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                showDateListView(mPOIDetailFragment.mTitleFragment);
+            }
+        };
+        mCheckInDat.setOnClickListener(dateListener);
+        mCheckOutDat.setOnClickListener(dateListener);
     }
     
     void findViews(){
@@ -152,6 +203,22 @@ public class DynamicHotelPOI extends DynamicPOIView {
             }
         }
         
+    }
+
+    @Override
+    public void confirm() {
+        checkin = getDateListView().getCheckin();
+        checkout = getDateListView().getCheckout();
+        refreshDate();
+        BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_DETAIL);
+        baseQuery.setTipText(mSphinx.getString(R.string.doing_and_wait));
+        mPOIDetailFragment.mSphinx.queryStart(baseQuery);
+        mPOIDetailFragment.dismissPopupWindow();
+    }
+
+    @Override
+    public void cancel() {
+        mPOIDetailFragment.dismissPopupWindow();
     }
     
     final public void setDate() {

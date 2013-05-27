@@ -107,12 +107,12 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     void refreshCheckout() {
         checkoutList.clear();
-        today.add(Calendar.DAY_OF_MONTH, checkinPosition);
+        today.add(Calendar.DAY_OF_YEAR, checkinPosition);
         titleTxv.setText((today.get(Calendar.MONTH)+1)+"月"+(today.get(Calendar.DAY_OF_MONTH))+"日入住1晚");
         for(int i = 1, count = CHECKOUT_MAX+1; i < count; i++) {
             checkoutList.add(makeCheckoutDateString(today, i));
         }
-        today.add(Calendar.DAY_OF_MONTH, -checkinPosition);
+        today.add(Calendar.DAY_OF_YEAR, -checkinPosition);
         checkoutAdapter.notifyDataSetChanged();
     }
 
@@ -208,9 +208,9 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 checkoutPosition = position;
                 checkoutAdapter.notifyDataSetChanged();
-                today.add(Calendar.DAY_OF_MONTH, checkinPosition);
+                today.add(Calendar.DAY_OF_YEAR, checkinPosition);
                 titleTxv.setText((today.get(Calendar.MONTH)+1)+"月"+(today.get(Calendar.DAY_OF_MONTH))+"日入住"+(checkoutPosition+1)+"晚");
-                today.add(Calendar.DAY_OF_MONTH, -checkinPosition);
+                today.add(Calendar.DAY_OF_YEAR, -checkinPosition);
             }
         });
         confirmBtn.setOnClickListener(this);
@@ -319,37 +319,37 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     String makeCheckinDateString(Calendar calendar, int add) {
         String result = null;
-        calendar.add(Calendar.DAY_OF_MONTH, add);
-        result = calendar.get(Calendar.MONTH) + "月" + calendar.get(Calendar.DAY_OF_MONTH);
+        calendar.add(Calendar.DAY_OF_YEAR, add);
+        result = (calendar.get(Calendar.MONTH)+1) + "月" + calendar.get(Calendar.DAY_OF_MONTH);
         if (add < 3) {
             result += days[add];
         } else {
             result += weedDays[calendar.get(Calendar.DAY_OF_WEEK)-1];
         }
-        calendar.add(Calendar.DAY_OF_MONTH, -add);
+        calendar.add(Calendar.DAY_OF_YEAR, -add);
         return result;
     }
     
     String makeCheckoutDateString(Calendar calendar, int add) {
         String result = null;
         int month = calendar.get(Calendar.MONTH);
-        calendar.add(Calendar.DAY_OF_MONTH, add);
-        result = (month == calendar.get(Calendar.MONTH) ? "" : month + "月" ) + calendar.get(Calendar.DAY_OF_MONTH) + "日离店";
+        calendar.add(Calendar.DAY_OF_YEAR, add);
+        result = (month == calendar.get(Calendar.MONTH) ? "" : ((month+1)%12 +1) + "月" ) + calendar.get(Calendar.DAY_OF_MONTH) + "日离店";
         result += add;
         result += "晚";
-        calendar.add(Calendar.DAY_OF_MONTH, -add);
+        calendar.add(Calendar.DAY_OF_YEAR, -add);
         return result;
     }
     
     public Calendar getCheckin() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, confirmCheckinPosition);
+        calendar.add(Calendar.DAY_OF_YEAR, confirmCheckinPosition);
         return calendar;
     }
     
     public Calendar getCheckout() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_MONTH, confirmCheckinPosition+1+confirmCheckoutPosition);
+        calendar.add(Calendar.DAY_OF_YEAR, confirmCheckinPosition+1+confirmCheckoutPosition);
         return calendar;
     }
 }
