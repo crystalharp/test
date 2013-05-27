@@ -626,6 +626,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         refreshDynamicDinaying(poi);
         refreshDynamicHotel(poi);
+        showDynamicPOI(DPOIViewBlockList);
     }
     
     /**
@@ -1167,6 +1168,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi.getName() == null && poi.getUUID() != null) {
             return;
         }
+        clearDynamicPOI(DPOIViewBlockList);
         Intent intent = new Intent();
         intent.putExtra(HintActivity.NEXT_KEY, TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN);
         intent.putExtra(HintActivity.NEXT_LAYOUT_RES_ID, R.layout.hint_poi_detail_weixin);
