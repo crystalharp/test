@@ -244,12 +244,17 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	}
 		});
     }
-	public void setData(String sumPrice, String additionMessage) {
+	public void setData(String additionMessage, String oneNightPrice, String sumPrice, int assureType) {
 		mSumPrice = sumPrice;
+		int assureTypeFromServer = 0;
 		String[] sArray = additionMessage.split("#");
-		mOrderModifyDeadline = sArray[0];
+		if(sArray[0].length() < 2){
+			assureType = Integer.parseInt(sArray[0]);
+			assureTypeFromServer = 1;
+		}
+		mOrderModifyDeadline = sArray[assureTypeFromServer];
 		mBankList = new ArrayList<String>();
-		for (int i = 1; i < sArray.length; i++){
+		for (int i = assureTypeFromServer + 1; i < sArray.length; i++){
 			mBankList.add(sArray[i]);
 		}
 		if(mBankList.isEmpty()){
@@ -257,7 +262,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
 		}
 		mCertTypeList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
 		mCreditCertTypeBtn.setText(mCertTypeList.get(0));
-        mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, mSumPrice));
+        mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, (assureType == 2 ) ? mSumPrice : oneNightPrice));
         mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
         		R.color.orange,
         		mSphinx.getString(R.string.credit_note_detail, mOrderModifyDeadline).trim(),

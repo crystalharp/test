@@ -10,6 +10,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.TextUtils;
@@ -22,9 +23,11 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,6 +51,7 @@ import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ValidateUtil;
+import com.tigerknows.widget.SingleChoiceArrayAdapter;
 import com.tigerknows.widget.StringArrayAdapter;
 
 public class HotelOrderWriteFragment extends BaseFragment implements View.OnClickListener{
@@ -289,7 +293,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 		person2.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
 		person2.setOrientation(LinearLayout.HORIZONTAL);
 		person2.setGravity(Gravity.LEFT|Gravity.CENTER_VERTICAL);
-		person2.setBackgroundDrawable(getResources().getDrawable(R.drawable.list_header));
+		person2.setBackgroundDrawable(getResources().getDrawable(R.drawable.list_middle));
 		
 		TextView txv = new TextView(mSphinx);
 		txv.setLayoutParams(new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
@@ -313,6 +317,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 		edt.setEllipsize(TextUtils.TruncateAt.valueOf("END"));
 		edt.setBackgroundColor(getResources().getColor(R.color.transparent));
 		
+		
 		person2.addView(txv);
 		person2.addView(edt);
 		return person2;
@@ -321,16 +326,77 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 	private void RefreshPersonView(){
 		// 这个函数用于在房间数变化时，入住人的编辑框数量相应变化
 		int count = mPersonNameLly.getChildCount();
-		if(count > mRoomHowmany){
-			for (int i = count-1; i >= mRoomHowmany; i--){
+		LogWrapper.d("Trap", count+"");
+		if(count > mRoomHowmany*2-1){
+			for (int i = count-1; i >= mRoomHowmany*2-1; i--){
 				mPersonNameLly.removeViewAt(i);
 			}
-		}else if(count < mRoomHowmany){
-			for (int i = count+1; i <= mRoomHowmany; i++){
-				mPersonNameLly.addView(createPerson(idArray[i-1]));
+		}else if(count < mRoomHowmany*2-1){
+			for (int i = (count+1)/2; i < mRoomHowmany; i++){
+				ImageView imv = new ImageView(mContext);
+				imv.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+				imv.setBackgroundDrawable(getResources().getDrawable(R.drawable.bg_line_split));
+				mPersonNameLly.addView(imv);
+				mPersonNameLly.addView(createPerson(idArray[i]));
 			}
 		}
 	}
+	public class HotelRoomHowmanyAdapter extends SingleChoiceArrayAdapter{
+
+		public HotelRoomHowmanyAdapter(Context context, List<String> list) {
+			super(context, list);
+			// TODO Auto-generated constructor stub
+		}
+		@Override
+		public View getView(final int position, View convertView, ViewGroup parent){
+			View view = super.getView(position, convertView, parent);
+			ImageView singleIconImv = (ImageView)view.findViewById(R.id.single_icon_imv);
+			if(position == (int)mRoomHowmany - 1){
+				singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_checked));
+			}else{
+				singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_default));
+			}
+			return view;
+		}
+		
+	}
+    public class HotelReserveListAdapter extends ArrayAdapter<RetentionTime>{
+        private static final int RESOURCE_ID = R.layout.hotel_room_reserve_list_item;
+        
+        public HotelReserveListAdapter(Context context, List<RetentionTime> list) {
+            super(context, RESOURCE_ID, list);
+        }
+        
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent) {
+
+            View view;
+            if (convertView == null) {
+                view = mLayoutInflater.inflate(RESOURCE_ID, parent, false);
+            } else {
+                view = convertView;
+            }
+
+            ImageView roomHowmanyIconImv = (ImageView) view.findViewById(R.id.room_reserve_icon_imv);
+            TextView roomReserveTxv = (TextView) view.findViewById(R.id.room_reserve_txv);
+            TextView needCreditTxv = (TextView) view.findViewById(R.id.need_credit_txv);
+            
+            RetentionTime rt = getItem(position);
+            roomReserveTxv.setText(rt.getTime());
+            if(rt.getNeed() == 1){
+            	needCreditTxv.setVisibility(VISIBLE);
+            }else{
+            	needCreditTxv.setVisibility(GONE);
+            }
+            if(position == mRTimeWhich){
+            	roomHowmanyIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_checked));
+            }else{
+            	roomHowmanyIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_default));
+            }
+            return view;
+        }
+        
+    }
     private void showRoomHowmanyDialog(){
         final List<String> list = new ArrayList<String>();
         //TODO: mActionlog
@@ -341,7 +407,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             listitem = mSphinx.getString(R.string.room_howmany_item, i, Utility.doubleKeep(mRoomtypeDynamic.getPrice()*mNights*i, 2) + "");
         	list.add(listitem);
         }
-        final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
+        final ArrayAdapter<String> adapter = new HotelRoomHowmanyAdapter(mSphinx, list);
         ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(adapter);
         final Dialog dialog = Utility.showNormalDialog(mSphinx, 
@@ -362,22 +428,14 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         });
     }
     private void showRoomReserveDialog(){
-    	List<String> list = new ArrayList<String>();
     	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
         if(rtList.isEmpty()){
         	Toast.makeText(mContext, "该酒店不需要设置房间保留信息", Toast.LENGTH_LONG).show();
         	return;
         }
-        for (int i = 0, size = rtList.size();i < size; i++ ){
-        	String str = rtList.get(i).getTime();
-        	if(rtList.get(i).getNeed() == 1){
-        		str += " 担保";
-        	}
-        	list.add(str);
-        }
-        final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
+        HotelReserveListAdapter hotelReserveListAdapter = new HotelReserveListAdapter(mContext, rtList);
         ListView listView = Utility.makeListView(mSphinx);
-        listView.setAdapter(adapter);
+        listView.setAdapter(hotelReserveListAdapter);
         //TODO: ActionLog
         final Dialog dialog = Utility.showNormalDialog(mSphinx, 
         		mSphinx.getString(R.string.choose_room_reserve), 
@@ -493,11 +551,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     		mSphinx.showView(R.id.view_hotel_seveninn_regist);
     		break;
     	case Response.RESPONSE_CODE_HOTEL_NEED_CREDIT_ASSURE:
-       		if(mTypeCreditAssure ==2){
-       			mSphinx.getHotelOrderCreditFragment().setData(Utility.doubleKeep(mTotalPrice, 2)+"", response.getDescription());
-       		}else {
-        		mSphinx.getHotelOrderCreditFragment().setData(Utility.doubleKeep(mOneNightPrice, 2)+"", response.getDescription());
-       		}
+
+       		mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),Utility.doubleKeep(mOneNightPrice, 2)+"", Utility.doubleKeep(mTotalPrice, 2)+"", (int)mTypeCreditAssure);
        		mSphinx.showView(R.id.view_hotel_credit_assure);
        		break;
     	case Response.RESPONSE_CODE_HOTEL_OTHER_ERROR:

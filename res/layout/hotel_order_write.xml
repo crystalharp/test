@@ -16,7 +16,8 @@
         android:layout_alignParentBottom="true"
         tkandroid:navigationState="2"
         >
-    </com.tigerknows.ui.hotel.NavigationWidget>    <ScrollView android:id="@+id/hotel_order_write_scv"
+    </com.tigerknows.ui.hotel.NavigationWidget>
+    <ScrollView android:id="@+id/hotel_order_write_scv"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:gravity="center"
@@ -108,9 +109,9 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
-                android:background="@drawable/list_header"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
+                android:background="@drawable/list_header"
                 >
                 <TextView
                     android:layout_width="wrap_content"
@@ -140,6 +141,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
                 android:contentDescription="@string/app_name"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 />
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -178,6 +181,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
                 android:contentDescription="@string/app_name"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 />
             <LinearLayout android:id="@+id/person_name_lly"
                 android:layout_width="fill_parent"
@@ -224,6 +229,8 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
                 android:contentDescription="@string/app_name"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
                 />
             <LinearLayout
                 android:layout_width="fill_parent"

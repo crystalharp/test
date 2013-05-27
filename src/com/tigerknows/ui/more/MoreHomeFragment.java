@@ -383,7 +383,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         			mUserBtn.getPaddingRight() -
         			drawables[0].getIntrinsicWidth() - 
         			(int)mUserBtn.getTextSize() * 4 -
-        			Utility.dip2px(mContext, 26));
+        			Utility.dip2px(mContext, 28));
         	if (Globals.g_User != null) {
         		String nickNameText = Globals.g_User.getNickName();
             	mUserNameTxv.setText(nickNameText);
