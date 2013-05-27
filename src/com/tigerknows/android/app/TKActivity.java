@@ -298,6 +298,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         mTKLocationManager = new TKLocationManager(TKApplication.getInstance());
         
         mActionLog = ActionLog.getInstance(mThis);
+        BaseQueryTest.setActivity(mThis);
     }
 
     @Override
@@ -335,7 +336,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         
         TCAgent.onResume(this);
         
-        BaseQuery.setActivity(mThis);
+        BaseQueryTest.setActivity(mThis);
     }
 
     @Override
