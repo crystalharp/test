@@ -1218,6 +1218,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (dataQuery != null) {
             baseQueryList.add(dataQuery);
         }
+        //判断是否存在hotel信息
+        if (mDynamicHotelPOI.checkExistence(mPOI)) {
+            baseQueryList.addAll(mDynamicHotelPOI.generateQuery(mPOI));
+        }
         refreshDetail();
         refreshComment();
         if (baseQueryList.isEmpty() == false) {
