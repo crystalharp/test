@@ -268,7 +268,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         super.onResume();
         mMenuFragment.updateMenuStatus(R.id.poi_btn);
         mTitleFragment.hide();
-        mCityBtn.setText(Globals.g_Current_City_Info.getCName());
+        mCityBtn.setText(Globals.getCurrentCityInfo().getCName());
         
         mMenuFragment.display();
 
@@ -340,7 +340,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     public void onClick(View view) {
         int id = view.getId();
         if (id == R.id.city_btn) {
-            mActionLog.addAction(mActionTag + ActionLog.POIHomeChangeCityBtn, Globals.g_Current_City_Info.getCName());
+            mActionLog.addAction(mActionTag + ActionLog.POIHomeChangeCityBtn, Globals.getCurrentCityInfo().getCName());
             mSphinx.showView(R.id.activity_more_change_city);
         } else if (id == R.id.input_btn) {
             mActionLog.addAction(mActionTag + ActionLog.POIHomeInputEdt);
@@ -356,7 +356,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     }
     
     public void refreshLocationView() {
-        CityInfo currentCityInfo = Globals.g_Current_City_Info;
+        CityInfo currentCityInfo = Globals.getCurrentCityInfo();
         CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
         int categoryTop = mCategoryTop;
         if (myLocationCityInfo != null) {
@@ -504,7 +504,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 		public void onClick(View v) {
 		    
 		    if (position == 1) {
-		        mSphinx.getHotelHomeFragment().setCityInfo(Globals.g_Current_City_Info);
+		        mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo());
 		        mSphinx.showView(R.id.view_hotel_home);
 		        return;
 		    }
@@ -784,7 +784,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 	private void jumpToPOIResult(String keyWord){
        DataQuery poiQuery = new DataQuery(mContext);
        POI requestPOI = mSphinx.getPOI();
-       int cityId = Globals.g_Current_City_Info.getId();
+       int cityId = Globals.getCurrentCityInfo().getId();
        Hashtable<String, String> criteria = new Hashtable<String, String>();
        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
        criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);

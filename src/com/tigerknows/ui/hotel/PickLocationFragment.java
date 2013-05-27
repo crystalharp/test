@@ -221,7 +221,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 TKWord tkWord = (TKWord) arg0.getAdapter().getItem(position);
                 if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistoryClear);
-                    HistoryWordTable.clearHistoryWord(mSphinx, Globals.g_Current_City_Info.getId(), HistoryWordTable.TYPE_POI);
+                    HistoryWordTable.clearHistoryWord(mSphinx, Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_POI);
                     mSuggestWordListManager.refresh();
                 } else {
                     if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
@@ -278,7 +278,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         } else if (tkWord.position == null) {
             mSphinx.hideSoftInput(mKeywordEdt.getInput());
             DataQuery poiQuery = new DataQuery(mContext);
-            int cityId = mSphinx.getHotelHomeFragment().getCityInfo().getId();
+            int cityId = Globals.getCurrentCityInfo().getId();
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_ALTERNATIVE);
             criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
@@ -466,10 +466,8 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 AlternativeList alternativeList = mAlternativeResponse.getList();
                 if (alternativeList != null) {
                     List<Alternative> list = alternativeList.getList();
-                    if (list != null && list.size() > 0) {
-                        for(int i = 0, size = list.size(); i < size; i++) {
-                            mPOI = list.get(i).toPOI();
-                        }
+                    if (list != null && list.size() > 0 && which < list.size()) {
+                        mPOI = list.get(which).toPOI();
                     }
                 }
                 if (mPOI == null) {

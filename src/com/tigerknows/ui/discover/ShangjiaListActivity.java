@@ -121,7 +121,7 @@ public class ShangjiaListActivity extends BaseActivity {
             DataQuery dataQuery = new DataQuery(mThis);
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_SHANGJIA);
-            dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(), mId, mId, mThis.getString(R.string.doing_and_wait));
+            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), mId, mId, mThis.getString(R.string.doing_and_wait));
             queryStart(dataQuery);
         } else {
             setData(mDataQuery);

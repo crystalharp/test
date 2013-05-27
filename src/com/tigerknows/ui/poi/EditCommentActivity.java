@@ -1005,7 +1005,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         }
         criteria.put(DataOperation.SERVER_PARAMETER_ENTITY, s.toString());
         DataOperation dataOperation = new DataOperation(mThis);
-        dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), -1, mFromViewId, mThis.getString(R.string.comment_publishing_and_wait));
+        dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, mFromViewId, mThis.getString(R.string.comment_publishing_and_wait));
 
         if (mSyncSinaChb.isChecked()) {
             // http://open.weibo.com/wiki/2/statuses/update
@@ -1116,7 +1116,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                             criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_UPDATE);
                             criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mComment.getUid());
                             DataOperation dataOperation = new DataOperation(mThis);
-                            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), -1, mFromViewId, mThis.getString(R.string.doing_and_wait));
+                            dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, mFromViewId, mThis.getString(R.string.doing_and_wait));
                             queryStart(dataOperation);
                         }
                     });
@@ -1126,7 +1126,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                     Hashtable<String, String> criteria = commentOperation.getCriteria();
                     criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
                     DataOperation dataOperation = new DataOperation(mThis);
-                    dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), -1, mFromViewId, mThis.getString(R.string.doing_and_wait));
+                    dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, mFromViewId, mThis.getString(R.string.doing_and_wait));
                     queryStart(dataOperation);
                 } else if (response.getResponseCode() == 603) {
                     BaseActivity.showErrorDialog(mThis, mThis.getString(R.string.response_code_603), mThis, true);

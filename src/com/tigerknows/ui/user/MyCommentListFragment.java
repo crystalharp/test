@@ -172,7 +172,7 @@ public class MyCommentListFragment extends BaseFragment {
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
             criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_USER);
-            dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null);
+            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
             mSphinx.queryStart(dataQuery);
             return;
         }

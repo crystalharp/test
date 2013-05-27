@@ -581,6 +581,11 @@ public abstract class BaseQuery {
                             || apiType.equals(API_TYPE_ACCOUNT_MANAGE)
                             || apiType.equals(API_TYPE_PROXY)
                             || apiType.equals(API_TYPE_HOTEL_ORDER)) {
+                        try {
+                            httpClient.execute(context);
+                        } catch (Exception e) {
+                            
+                        }
                         launchTest();
                         if (responseXMap != null) {
                             httpClient.launchTest(ByteUtil.xobjectToByte(responseXMap), STATUS_CODE_NETWORK_OK);

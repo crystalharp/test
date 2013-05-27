@@ -150,7 +150,7 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
 
-        DataQuery.initStaticField(DataQuery.DATA_TYPE_DISCOVER, null, Globals.g_Current_City_Info.getId());
+        DataQuery.initStaticField(DataQuery.DATA_TYPE_DISCOVER, null, Globals.getCurrentCityInfo().getId());
         mRootView = mLayoutInflater.inflate(R.layout.discover_home, container, false);
         screenWidth = (Globals.g_metrics.widthPixels > Globals.g_metrics.heightPixels ? Globals.g_metrics.heightPixels : Globals.g_metrics.widthPixels);
         
@@ -169,7 +169,7 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
         mTitleFragment.hide();
         mMenuFragment.display();
         mSphinx.getPOIHomeFragment().refreshLocationView();
-        if (mCityId != Globals.g_Current_City_Info.getId()) {
+        if (mCityId != Globals.getCurrentCityInfo().getId()) {
             initViews();
         }
         
@@ -318,7 +318,7 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
                         Hashtable<String, String> criteria = new Hashtable<String, String>();
                         criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, discoverCategory.getType());
                         criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-                        dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(),
+                        dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(),
                                 R.id.view_discover_home, R.id.view_discover_list, null, false, false,
                                 mSphinx.getPOI());
                         mSphinx.queryStart(dataQuery);
@@ -420,7 +420,7 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
 //                Hashtable<String, String> criteria = new Hashtable<String, String>();
 //                criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, discoverCategory.getType());
 //                criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-//                dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(), R.id.view_discover,
+//                dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), R.id.view_discover,
 //                        R.id.view_discover_list, null, false, false, mSphinx.getPOI());
 //                mSphinx.queryStart(dataQuery);
 //                mSphinx.getDiscoverListFragment().setup();
@@ -461,7 +461,7 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
      * @param myLocatedCityInfo	the city where the device is located
      */
     public void refreshLocationView(String locationName, CityInfo myLocatedCityInfo) {
-        CityInfo currentCityInfo = Globals.g_Current_City_Info;
+        CityInfo currentCityInfo = Globals.getCurrentCityInfo();
         if (myLocatedCityInfo != null) {
         	
             if (myLocatedCityInfo.getId() == currentCityInfo.getId()) {
@@ -550,7 +550,7 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
         mDataQuery = null;
         DiscoverConfigList discoverConfigList = DataQuery.getDiscoverConfigList();
 
-        CityInfo cityInfo = Globals.g_Current_City_Info;
+        CityInfo cityInfo = Globals.getCurrentCityInfo();
         mCityId = cityInfo.getId();
         if (discoverConfigList != null) {
             List<DiscoverConfig> list = discoverConfigList.getList();
@@ -619,7 +619,7 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
      */
     private void noSupportDiscover() {
         mSupport = false;
-        CityInfo cityInfo = Globals.g_Current_City_Info;
+        CityInfo cityInfo = Globals.getCurrentCityInfo();
         mDiscoverTopIndicator.setVisibility(View.GONE);
         mCategoryGallery.setVisibility(View.GONE);
         mNoSupportTitleTxv.setVisibility(View.VISIBLE);
@@ -710,7 +710,7 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DISCOVER);
             criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(), R.id.view_discover_home, R.id.view_discover_home, null, false, true, mSphinx.getPOI());
+            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), R.id.view_discover_home, R.id.view_discover_home, null, false, true, mSphinx.getPOI());
             mSphinx.queryStart(dataQuery);
         }
     }

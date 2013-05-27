@@ -490,7 +490,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
 	            if (pic.length() > 0) {
 	                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE, pic.toString());
 	            }
-	            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
+	            dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
 	            mAsyncTaskExecuting = true;
 	            mTKAsyncTasking = mSphinx.queryStart(dataOperation);
 	            mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
@@ -730,7 +730,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_DINGDAN);
             criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
             criteria.put(DataOperation.SERVER_PARAMETER_ENTITY, s.toString());
-            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+            dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
             mTKAsyncTasking = mSphinx.queryStart(dataOperation);
             mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
         }

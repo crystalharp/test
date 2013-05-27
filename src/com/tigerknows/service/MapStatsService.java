@@ -360,7 +360,7 @@ public class MapStatsService extends Service {
      * 统计当前城市的地图信息及状态
      */
     private DownloadCity statsCurrentCity() {
-        CityInfo cityInfo = Globals.g_Current_City_Info;
+        CityInfo cityInfo = Globals.getCurrentCityInfo(false);
         if (cityInfo != null) {
             MapVersionQuery mapVersionQuery = new MapVersionQuery(getBaseContext());
             mapVersionQuery.setup(MapEngine.getInstance().getRegionIdList(cityInfo.getCName()));

@@ -650,7 +650,7 @@ public class ActionLog {
                                 FeedbackUpload feedbackUpload = new FeedbackUpload(mContext);
                                 Hashtable<String, String> criteria = new Hashtable<String, String>();
                                 criteria.put(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG, str);
-                                CityInfo cityInfo = Globals.g_Current_City_Info;
+                                CityInfo cityInfo = Globals.getCurrentCityInfo();
                                 int cityId = MapEngine.CITY_ID_BEIJING;
                                 if (cityInfo != null) {
                                     cityId = cityInfo.getId();

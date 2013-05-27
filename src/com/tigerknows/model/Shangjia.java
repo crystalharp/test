@@ -288,7 +288,7 @@ public class Shangjia extends BaseData implements Parcelable {
                 Hashtable<String, String> criteria = new Hashtable<String, String>();
                 criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_SHANGJIA);
                 criteria.put(DataQuery.SERVER_PARAMETER_SHANGJIA_IDS, String.valueOf(source));
-                dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(), -1, -1, null, false, true, null);
+                dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, null, false, true, null);
                 new Thread(new Runnable() {
                     
                     @Override

@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
@@ -136,7 +137,7 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 		criteria.put(ProxyQuery.SERVER_PARAMETER_USERNAME, mPersonName);
 		criteria.put(ProxyQuery.SERVER_PARAMETER_MOBILE, mMobile);
 		criteria.put(ProxyQuery.SERVER_PARAMETER_IDCARDNO, mIdcardNo);
-		proxyQuery.setup(criteria, mSphinx.getHotelHomeFragment().getCityInfo().getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
+		proxyQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
 		mSphinx.queryStart(proxyQuery);
 	}
 

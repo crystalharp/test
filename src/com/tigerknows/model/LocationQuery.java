@@ -160,7 +160,7 @@ public class LocationQuery extends BaseQuery {
     @Override
     protected void makeRequestParameters() throws APIException {
         super.makeRequestParameters();
-        addCommonParameters(requestParameters, Globals.getCurrentCityId(), true);
+        addCommonParameters(requestParameters, Globals.getCurrentCityInfo(false).getId(), true);
         
         if (wifiManager != null) {
             List<ScanResult> scanResults = wifiManager.getScanResults();

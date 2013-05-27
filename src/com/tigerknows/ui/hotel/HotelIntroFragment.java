@@ -134,7 +134,7 @@ public class HotelIntroFragment extends BaseFragment {
 	        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Hotel.NEED_FILED_DESCRIPTION+"01");   // 01表示poi的uuid
             criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(in.getTime()));
             criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(out.getTime()));
-	        dataOpration.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null);
+	        dataOpration.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
 	        this.mTkAsyncTasking = mSphinx.queryStart(dataOpration);
 	        mState = STATE_QUERYING;
 	        updateView();

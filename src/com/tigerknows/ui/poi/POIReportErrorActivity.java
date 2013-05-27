@@ -206,7 +206,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
                 Hashtable<String, String> criteria = new Hashtable<String, String>();
                 criteria.put(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, s.toString());
                 FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
-                feedbackUpload.setup(criteria, Globals.g_Current_City_Info.getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+                feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
                 queryStart(feedbackUpload);
                 break;
                 

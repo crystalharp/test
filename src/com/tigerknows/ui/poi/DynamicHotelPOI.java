@@ -358,7 +358,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN, checkinTime);
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT, checkoutTime);
         DataOperation dataOpration = new DataOperation(mSphinx);
-        dataOpration.setup(criteria, Globals.g_Current_City_Info.getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId());
+        dataOpration.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId());
         return dataOpration;
     }
     
@@ -371,7 +371,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         criteria.put(ProxyQuery.SERVER_PARAMETER_ROOM_TYPE_TAOCANID, pkgId);
         criteria.put(ProxyQuery.SERVER_PARAMETER_TASK, "1");
         ProxyQuery query = new ProxyQuery(mSphinx);
-        query.setup(criteria, Globals.getCurrentCityId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+        query.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
         return query;
     }
     @Override

@@ -28,6 +28,7 @@ import android.widget.TextView;
 
 import com.decarta.Globals;
 import com.decarta.android.location.Position;
+import com.decarta.android.map.MapView;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
@@ -316,7 +317,9 @@ public class TrafficQueryFragment extends BaseFragment {
                 mActionLog.addAction(mActionTag);
             }
 		}
-        mSphinx.getMapView().setStopRefreshMyLocation(false);
+		
+		MapView mapView = mSphinx.getMapView();
+        mapView.setStopRefreshMyLocation(false);
       
         LogWrapper.d("eric", "TrafficQueryView.show() currentState: " + currentState);
 
@@ -357,6 +360,16 @@ public class TrafficQueryFragment extends BaseFragment {
             mDismissed = false;
         }
         
+        // 若之前是在酒店查询的逻辑里，那么查询交通时地图中心移动到酒店查询城市的中心
+        CityInfo hotelCityInfo = Globals.getHotelCityInfo();
+        CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
+        if (hotelCityInfo != null && (locationCityInfo == null || locationCityInfo.getId() != hotelCityInfo.getId())) {
+            int cityId = mapView.getCenterCityId();
+            CityInfo cityInfo = Globals.getCurrentCityInfo();
+            if (cityId != cityInfo.getId()) {
+                mapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
+            }
+        }
 	}
 
 	
@@ -613,7 +626,7 @@ public class TrafficQueryFragment extends BaseFragment {
 		}
 
 		int cityId = mMapLocationHelper.getQueryCityInfo().getId();
-//        int cityId = Globals.g_Current_City_Info.getId();
+//        int cityId = Globals.getCurrentCityInfo().getId();
         addHistoryWord(mBusline, HistoryWordTable.TYPE_BUSLINE);
         BuslineQuery buslineQuery = new BuslineQuery(mContext);
         buslineQuery.setup(cityId, searchword, 0, false, getId(), mContext.getString(R.string.doing_and_wait));
@@ -648,7 +661,7 @@ public class TrafficQueryFragment extends BaseFragment {
         
         //和产品确认所查询的换乘所属的城市是当前所设置的城市，而不是地图所在的城市
         int cityId = mMapLocationHelper.getQueryCityInfo().getId();
-//        int cityId = Globals.g_Current_City_Info.getId();
+//        int cityId = Globals.getCurrentCityInfo().getId();
         
         addHistoryWord(mStart, HistoryWordTable.TYPE_TRAFFIC);
         addHistoryWord(mEnd, HistoryWordTable.TYPE_TRAFFIC);
@@ -692,7 +705,7 @@ public class TrafficQueryFragment extends BaseFragment {
         
         TrafficQuery trafficQuery = new TrafficQuery(sphinx);
             
-        trafficQuery.setup(Globals.g_Current_City_Info.getId(), start, end, queryType, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
+        trafficQuery.setup(Globals.getCurrentCityInfo().getId(), start, end, queryType, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
         
         sphinx.queryStart(trafficQuery);
     }
