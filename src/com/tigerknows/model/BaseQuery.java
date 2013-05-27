@@ -193,14 +193,6 @@ public abstract class BaseQuery {
     // checkout    String  true    离开酒店时间，格式"yyyy-MM-dd" 
     public static final String SERVER_PARAMETER_CHECKOUT = "checkout";
     
-    private static Activity sActivity;
-    
-    public static void setActivity(Activity activity) {
-        if (TKConfig.ModifyData) {
-            sActivity = activity;
-        }
-    }
-    
     /**
      * 检查是否为推送动态POI的查询
      * @return
@@ -797,8 +789,8 @@ public abstract class BaseQuery {
             try {
                 responseXMap = (XMap) ByteUtil.byteToXObject(data);
 
-                final Activity activity = sActivity;
-                if (TKConfig.ModifyData && activity != null) {
+                final Activity activity = BaseQueryTest.getActivity();
+                if (TKConfig.ModifyResponseData && activity != null) {
                     activity.runOnUiThread(new Runnable() {
                         
                         @Override

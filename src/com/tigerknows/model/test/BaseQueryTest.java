@@ -29,6 +29,7 @@ import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.more.MoreHomeFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.StringArrayAdapter;
+import com.weibo.sdk.android.WeiboParameters;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -67,6 +68,18 @@ public class BaseQueryTest {
     
     static final String TAG = "BaseQueryTest";
     
+    private static Activity sActivity;
+    
+    public static void setActivity(Activity activity) {
+        if (TKConfig.ModifyRequestData || TKConfig.ModifyResponseData) {
+            sActivity = activity;
+        }
+    }
+    
+    public static Activity getActivity() {
+        return sActivity;
+    }
+    
     static int RESPONSE_CODE = BaseQuery.STATUS_CODE_NETWORK_OK;
 
     public static XMap launchResponse() {
@@ -96,6 +109,32 @@ public class BaseQueryTest {
         data.put(Response.FIELD_RESPONSE_CODE, RESPONSE_CODE);
         data.put(Response.FIELD_DESCRIPTION, fieldDescription);
         return  data;
+    }
+    
+    public static ViewGroup getViewByWeiboParameters(final Activity activity, final WeiboParameters parameters) {
+        final LinearLayout layout = new LinearLayout(activity);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setBackgroundResource(R.drawable.list_single);
+        for (int loc = 0; loc < parameters.size(); loc++) {
+            final String key = parameters.getKey(loc);
+            TextView keyTxv = new TextView(activity);
+            layout.addView(keyTxv);
+            keyTxv.setBackgroundResource(R.drawable.btn_default);
+            keyTxv.setText(key);
+            final EditText valueEdt = new EditText(activity);
+            layout.addView(valueEdt);
+            valueEdt.setText(parameters.getValue(key));
+            keyTxv.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    parameters.remove(key);
+                    parameters.add(key, valueEdt.getEditableText().toString());
+                }
+            });
+        }
+        
+        return layout;
     }
     
     public static ViewGroup getViewByXObject(final Activity activty, final byte key, final XObject value, final int level) {
@@ -186,30 +225,34 @@ public class BaseQueryTest {
                     @Override
                     public void onClick(View v) {
                         String input = addEdt.getEditableText().toString();
-                        if (input.startsWith("int")) {
-                            String s = input.substring(3);
-                            xArray.add(XInt.valueOf(Integer.parseInt(s)));
-                        } else if (input.startsWith("string")) {
-                            String s = input.substring(6);
-                            xArray.add(XString.valueOf(s));
-                        } else if (input.startsWith("array")) {
-                            String s = input.substring(5);
-                            if (s.startsWith("int")) {
-                                XArray<XInt> x = new XArray<XInt>();
-                                x.add(XInt.valueOf(0));
-                                xArray.add(x);
-                            } else if (s.startsWith("string")) {
-                                XArray<XString> x = new XArray<XString>();
-                                x.add(XString.valueOf("0"));
-                                xArray.add(x);                                
+                        try {
+                            if (input.startsWith("int")) {
+                                String s = input.substring(3);
+                                xArray.add(XInt.valueOf(Integer.parseInt(s)));
+                            } else if (input.startsWith("string")) {
+                                String s = input.substring(6);
+                                xArray.add(XString.valueOf(s));
+                            } else if (input.startsWith("array")) {
+                                String s = input.substring(5);
+                                if (s.startsWith("int")) {
+                                    XArray<XInt> x = new XArray<XInt>();
+                                    x.add(XInt.valueOf(0));
+                                    xArray.add(x);
+                                } else if (s.startsWith("string")) {
+                                    XArray<XString> x = new XArray<XString>();
+                                    x.add(XString.valueOf("0"));
+                                    xArray.add(x);                                
+                                }
+                            } else if (input.startsWith("map")) {
+                                XMap xMap1 = new XMap();
+                                xMap1.put((byte)255, XInt.valueOf((byte)255));
+                                xArray.add(xMap1);
                             }
-                        } else if (input.startsWith("map")) {
-                            XMap xMap1 = new XMap();
-                            xMap1.put((byte)255, XInt.valueOf((byte)255));
-                            xArray.add(xMap1);
+                            layout.removeAllViews();
+                            layout.addView(getViewByXObject(activty, key, xArray, level));
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        layout.removeAllViews();
-                        layout.addView(getViewByXObject(activty, key, xArray, level));
                     }
                 });
             }
@@ -264,39 +307,43 @@ public class BaseQueryTest {
                     @Override
                     public void onClick(View v) {
                         String input = addEdt.getEditableText().toString();
-                        if (input.startsWith("int")) {
-                            String s = input.substring(3);
-                            String[] arr = s.split("-");
-                            byte key1 = (byte)Integer.parseInt(arr[0]);
-                            xMap.put(key1, Integer.parseInt(arr[1]));
-                        } else if (input.startsWith("string")) {
-                            String s = input.substring(6);
-                            String[] arr = s.split("-");
-                            byte key1 = (byte)Integer.parseInt(arr[0]);
-                            xMap.put(key1, arr[1]);
-                        } else if (input.startsWith("array")) {
-                            String s = input.substring(5);
-                            String[] arr = s.split("-");
-                            byte key1 = (byte)Integer.parseInt(arr[0]);
-                            if (arr[1].startsWith("int")) {
-                                XArray<XInt> xArray = new XArray<XInt>();
-                                xArray.add(XInt.valueOf(0));
-                                xMap.put(key1, xArray);
-                            } else if (arr[1].startsWith("string")) {
-                                XArray<XString> xArray = new XArray<XString>();
-                                xArray.add(XString.valueOf("0"));
-                                xMap.put(key1, xArray);                                
+                        try {
+                            if (input.startsWith("int")) {
+                                String s = input.substring(3);
+                                String[] arr = s.split("-");
+                                byte key1 = (byte)Integer.parseInt(arr[0]);
+                                xMap.put(key1, Integer.parseInt(arr[1]));
+                            } else if (input.startsWith("string")) {
+                                String s = input.substring(6);
+                                String[] arr = s.split("-");
+                                byte key1 = (byte)Integer.parseInt(arr[0]);
+                                xMap.put(key1, arr[1]);
+                            } else if (input.startsWith("array")) {
+                                String s = input.substring(5);
+                                if (s.startsWith("int")) {
+                                    XArray<XInt> xArray = new XArray<XInt>();
+                                    xArray.add(XInt.valueOf(0));
+                                    byte key1 = (byte)Integer.parseInt(s.substring(3));
+                                    xMap.put(key1, xArray);
+                                } else if (s.startsWith("string")) {
+                                    XArray<XString> xArray = new XArray<XString>();
+                                    xArray.add(XString.valueOf("0"));
+                                    byte key1 = (byte)Integer.parseInt(s.substring(6));
+                                    xMap.put(key1, xArray);                                
+                                }
+                            } else if (input.startsWith("map")) {
+                                String s = input.substring(3);
+                                byte key1 = (byte)Integer.parseInt(s);
+                                XMap xMap1 = new XMap();
+                                xMap1.put((byte)255, XInt.valueOf((byte)255));
+                                xMap.put(key1, xMap1);
                             }
-                        } else if (input.startsWith("map")) {
-                            String s = input.substring(3);
-                            String[] arr = s.split("-");
-                            byte key1 = (byte)Integer.parseInt(arr[0]);
-                            XMap xMap1 = new XMap();
-                            xMap1.put((byte)255, XInt.valueOf((byte)255));
-                            xMap.put(key1, xMap1);
+                            layout.removeAllViews();
+                            layout.addView(getViewByXObject(activty, key, xMap, level));
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        layout.removeAllViews();
-                        layout.addView(getViewByXObject(activty, key, xMap, level));
                     }
                 });
             }
@@ -326,8 +373,10 @@ public class BaseQueryTest {
         deleteMobileNumLayout.addView(deleteMobileNumEdt, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
         layout.addView(deleteMobileNumLayout);
 
-        final CheckBox modifyData = new CheckBox(activity);
-        layout.addView(modifyData);
+        final CheckBox modifyRequestData = new CheckBox(activity);
+        layout.addView(modifyRequestData);
+        final CheckBox modifyResponseData = new CheckBox(activity);
+        layout.addView(modifyResponseData);
         final CheckBox launchTestChb = new CheckBox(activity);
         layout.addView(launchTestChb);
         final LinearLayout lunchTestLayout = new LinearLayout(activity);
@@ -469,14 +518,24 @@ public class BaseQueryTest {
                 TKLocationManager.UnallowedLocation = unallowedLocationChb.isChecked();
             }
         });
-        modifyData.setText("Modify data(Bootstrap, FeedbackUpload, DataQuery, DataOperation, AccountManage, ProxyQuery, HoteOrderOperation)");
-        modifyData.setTextColor(0xffffffff);
-        modifyData.setChecked(TKConfig.ModifyData);
-        modifyData.setOnClickListener(new OnClickListener() {
+        modifyRequestData.setText("Modify request data");
+        modifyRequestData.setTextColor(0xffffffff);
+        modifyRequestData.setChecked(TKConfig.ModifyRequestData);
+        modifyRequestData.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View arg0) {
-                TKConfig.ModifyData = modifyData.isChecked();
+                TKConfig.ModifyRequestData = modifyRequestData.isChecked();
+            }
+        });
+        modifyResponseData.setText("Modify response data(v13 service)");
+        modifyResponseData.setTextColor(0xffffffff);
+        modifyResponseData.setChecked(TKConfig.ModifyResponseData);
+        modifyResponseData.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                TKConfig.ModifyResponseData = modifyResponseData.isChecked();
             }
         });
         launchTestChb.setText("Launch fake data(Bootstrap, FeedbackUpload, DataQuery, DataOperation, AccountManage, ProxyQuery, HoteOrderOperation)");
@@ -622,7 +681,7 @@ public class BaseQueryTest {
                             }
                         }
                         TKConfig.readConfig();
-                        BaseQuery.setActivity(activity);
+                        setActivity(activity);
                     } catch (Exception e) {
                         Toast.makeText(activity, "Parse Error!", Toast.LENGTH_LONG).show();
                     }

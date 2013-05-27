@@ -8,6 +8,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.crypto.DataEncryptor;
+import com.tigerknows.model.test.BaseQueryTest;
 import com.weibo.sdk.android.WeiboParameters;
 
 import org.apache.http.HttpEntity;
@@ -21,11 +22,17 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.http.AndroidHttpClient;
 import android.text.TextUtils;
+import android.view.ViewGroup;
+import android.widget.ScrollView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -163,6 +170,41 @@ public class HttpUtils {
         }
         
         public void execute(Context context) throws IOException {
+            final Activity activity = BaseQueryTest.getActivity();
+            if (TKConfig.ModifyRequestData && activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+
+                        ViewGroup viewGroup = BaseQueryTest.getViewByWeiboParameters(activity, parameters);
+                        ScrollView scrollView = new ScrollView(activity);
+                        scrollView.addView(viewGroup);
+                        
+                        Dialog dialog = Utility.showNormalDialog(activity, scrollView);
+                        dialog.setOnDismissListener(new OnDismissListener() {
+                            
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                parameters.remove("test");
+                                parameters.add("test", "test");
+                            }
+                        });
+                    }
+                });
+                while (true) {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    if (parameters.getValue("test") != null) {
+                        break;
+                    }
+                }
+            }
+            
             receivedAllData = false;
             statusCode = 0;
             if (url == null) {

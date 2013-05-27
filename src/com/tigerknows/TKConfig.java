@@ -202,9 +202,14 @@ public class TKConfig {
     public static String sCommentSource = "test";
     
     /**
-     * 是否使用可以修改返回的数据
+     * 是否可以修改请求的数据
      */    
-    public static boolean ModifyData = false;
+    public static boolean ModifyRequestData = false;
+    
+    /**
+     * 是否可以修改返回的数据
+     */    
+    public static boolean ModifyResponseData = false;
     
     /**
      * 是否使用假数据
