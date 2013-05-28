@@ -407,7 +407,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         long listsize = (mRoomtypeDynamic.getNum() > MAX_ROOM_HOWMANY) ? MAX_ROOM_HOWMANY : mRoomtypeDynamic.getNum();
         String listitem;
         for(long i = 1; i <= listsize; i++){
-            listitem = mSphinx.getString(R.string.room_howmany_item, i, Utility.doubleKeep(mRoomtypeDynamic.getPrice()*mNights*i, 2) + "");
+            listitem = mSphinx.getString(R.string.room_howmany_item, i, Utility.doubleKeep(mRoomtypeDynamic.getPrice()*i, 2) + "");
         	list.add(listitem);
         }
         final ArrayAdapter<String> adapter = new HotelRoomHowmanyAdapter(mSphinx, list);
