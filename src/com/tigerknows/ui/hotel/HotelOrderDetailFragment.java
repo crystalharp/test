@@ -268,8 +268,10 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 			table.close();
 			mSphinx.getHotelOrderListFragment().removeOrder(mOrder);
 			dismiss();
+			Toast.makeText(mContext, R.string.hotel_order_delete_success, Toast.LENGTH_LONG).show();
 		} catch (Exception e) {
 			e.printStackTrace();
+			Toast.makeText(mContext, R.string.hotel_order_delete_success, Toast.LENGTH_SHORT).show();
 		}
 	}
     

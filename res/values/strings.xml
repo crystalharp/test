@@ -1076,5 +1076,7 @@
     <string name="hotel_order_cancel_success">订单取消成功</string>
     
     <string name="hotel_order_delete_confirm">是否删除订单？\n删除后订单不再显示，但本次预约有效</string>
+    <string name="hotel_order_delete_success">删除订单成功</string>
+    <string name="hotel_order_delete_fail">删除订单失败</string>
     
 </resources>
