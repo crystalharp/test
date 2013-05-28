@@ -2241,7 +2241,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 //              if (mInfoWindowHotel == null) {
                 mInfoWindowHotel = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_hotel, null);
 //            }
-                ImageView pictureImv = (ImageView)mInfoWindowHotel.findViewById(R.id.icon_imv);
+                ImageView pictureImv = (ImageView)mInfoWindowHotel.findViewById(R.id.picture_imv);
                 TextView nameTxv=(TextView)mInfoWindowHotel.findViewById(R.id.name_txv);
                 TextView canReserveTxv = (TextView) mInfoWindowHotel.findViewById(R.id.can_reserve_txv);
                 TextView priceTxv = (TextView) mInfoWindowHotel.findViewById(R.id.price_txv);

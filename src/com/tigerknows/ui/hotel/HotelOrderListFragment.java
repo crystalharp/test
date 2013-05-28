@@ -38,10 +38,12 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.HotelOrder;
 import com.tigerknows.model.HotelOrderOperation;
+import com.tigerknows.model.POI;
 import com.tigerknows.model.HotelOrderOperation.HotelOrderStatesResponse;
 import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.util.Utility;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
@@ -195,7 +197,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     public void onResume() {
         super.onResume();
         mRightBtn.setVisibility(View.GONE);
-        mTitleBtn.setText(mContext.getString(R.string.hotel_order));
+        mTitleBtn.setText(mContext.getString(R.string.hotel_ordered));
         
 //       if (mResultLsv.isFooterSpringback()) {
 //       	mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
@@ -295,17 +297,36 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
             TextView dayCountView = (TextView) view.findViewById(R.id.day_count_txv);
 
             nameTxv.setText(order.getHotelName());
-            priceTxv.setText("" + order.getTotalFee());
+            priceTxv.setText("" + ((int)order.getTotalFee()) );
             roomTypeTxv.setText(order.getRoomType());
             checkinDateTxv.setText(formatOrderListItemMonthDay(order.getCheckinTime() ) );
             checkoutDateTxv.setText(formatOrderListItemMonthDay(order.getCheckoutTime() ) );
             dayCountView.setText(mContext.getString(R.string.hotel_total_nights, Integer.valueOf(order.getDayCount())));
-
+            view.findViewById(R.id.name_view).setOnClickListener(new GoThereListener(order));
+            
             return view;
         }
         
     }
+    
+    class GoThereListener implements OnClickListener{
 
+    	private HotelOrder mOrder;
+    	
+    	public GoThereListener(HotelOrder order){
+    		mOrder = order;
+    	}
+    	
+		@Override
+		public void onClick(View v) {
+	    	POI poi = mOrder.getPoi();
+	        Utility.queryTraffic(mSphinx, poi, mActionTag);
+		}
+    	
+    	
+    	
+    }
+    
     private String formatOrderListItemMonthDay(long millis){
     	Date date = new Date(millis);
     	SimpleDateFormat dateformat=new SimpleDateFormat(mContext.getString(R.string.simple_month_day_format));

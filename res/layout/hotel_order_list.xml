@@ -8,6 +8,8 @@
         <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             >
             <include
                 layout="@layout/empty_view"
@@ -29,11 +31,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                
                 android:divider="@color/transparent"
-                android:dividerHeight="16dp"
+                android:dividerHeight="12dp"
                 android:footerDividersEnabled="false"
                 android:fadingEdge="none"
                 android:scrollingCache="false"
