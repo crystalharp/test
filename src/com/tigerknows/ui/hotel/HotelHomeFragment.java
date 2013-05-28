@@ -10,6 +10,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
@@ -60,6 +61,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
 
     private Button mCityBtn;
+    private View mCheckView;
     private DateWidget mCheckInDat;
     private DateWidget mCheckOutDat;
     private Button mLocationBtn;
@@ -69,8 +71,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private Button mDingdanBtn;
     
     private FilterListView mFilterListView = null;
-    
-    private Button mCategoryConfirmBtn;
     
     private DateListView mDateListView = null;
     
@@ -83,6 +83,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
      * 然后再显示选择位置或价格的页面
      */
     private List<Filter> mFilterList;
+    
+    private int mCityId = MapEngine.CITY_ID_INVALID;
     
     private Dialog mProgressDialog = null;
 
@@ -112,13 +114,11 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mTitleBtn.setText("酒店预订");
         refreshDate();
         if (mFilterList == null ||
-                (mBaseQuerying != null && mBaseQuerying.size() > 0 &&
-                mBaseQuerying.get(0).getCityId() != Globals.getCurrentCityInfo().getId())) {
-            queryFilter();
-        } else {
+                mCityId != Globals.getCurrentCityInfo().getId()) {
             mFilterList = null;
             mLocationBtn.setText("选择位置");
             mPriceTxv.setText("不限");
+            queryFilter();
         }
     }
     
@@ -156,6 +156,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     protected void findViews() {
         mPopupWindowContain = new LinearLayout(mSphinx);
         mCityBtn = (Button) mRootView.findViewById(R.id.city_btn);
+        mCheckView = (ViewGroup) mRootView.findViewById(R.id.check_view);
         mCheckInDat = (DateWidget) mRootView.findViewById(R.id.checkin_dat);
         mCheckOutDat = (DateWidget) mRootView.findViewById(R.id.checkout_dat);
         mLocationBtn = (Button) mRootView.findViewById(R.id.location_btn);
@@ -167,8 +168,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
 
     protected void setListener() {
         mCityBtn.setOnClickListener(this);
-        mCheckInDat.setOnClickListener(this);
-        mCheckOutDat.setOnClickListener(this);
+        mCheckView.setOnClickListener(this);
         mLocationBtn.setOnClickListener(this);
         mPriceView.setOnClickListener(this);
         mQueryBtn.setOnClickListener(this);
@@ -177,6 +177,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         
     @Override
     public void onClick(View view) {
+        List<Filter> filterList = mFilterList;
         int id = view.getId();
         switch (id) {
             case R.id.city_btn:
@@ -186,7 +187,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 break;
                 
             case R.id.location_btn:
-                if (mFilterList == null) {
+                if (filterList == null) {
                     showProgressDialog(id);
                 } else {
                     mSphinx.showView(R.id.view_hotel_pick_location);
@@ -194,21 +195,20 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 break;
                 
             case R.id.price_view:
-                if (mFilterList == null) {
+                if (filterList == null) {
                     showProgressDialog(id);
                 } else {
                     showFilterCategory(mTitleFragment);
-                    getFilterListView().setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+                    getFilterListView().setData(filterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
                 }
                 break;
                 
-            case R.id.checkin_dat:
-            case R.id.checkout_dat:
+            case R.id.check_view:
                 showDateListView(mTitleFragment);
                 break;
                 
             case R.id.query_btn:
-                if (mFilterList == null) {
+                if (filterList == null) {
                     Toast.makeText(mSphinx, "请填写位置", Toast.LENGTH_LONG).show();
                 } else {
                     submit();
@@ -229,12 +229,20 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
+    public void resetDate() {
+        Calendar checkOut = Calendar.getInstance();
+        checkOut.add(Calendar.DAY_OF_YEAR, 1);
+        getDateListView().onResume(Calendar.getInstance(), checkOut);
+    }
+    
     public void setCityInfo(CityInfo cityInfo) {
         Globals.setHotelCityInfo(cityInfo);
         mCityBtn.setText(cityInfo.getCName());
-        mFilterList = null;
-        mLocationBtn.setText("选择位置");
-        mPriceTxv.setText("不限");
+        if (cityInfo.getId() != mCityId) {
+            mFilterList = null;
+            mLocationBtn.setText("选择位置");
+            mPriceTxv.setText("不限");
+        }
     }
     
     /**
@@ -281,8 +289,10 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         Response response = baseQuery.getResponse();
         if (response != null && response.getResponseCode() == Response.RESPONSE_CODE_OK) {
             mFilterList = ((DataQuery) baseQuery).getFilterList();
-            if (mFilterList != null) {
-                mSphinx.getPickLocationFragment().setData(mFilterList);
+            List<Filter> filterList = mFilterList;
+            if (filterList != null) {
+                mCityId = Globals.getCurrentCityInfo().getId();
+                mSphinx.getPickLocationFragment().setData(filterList);
                 refreshFilterArea();
                 refreshFilterCategory();
                 
@@ -291,7 +301,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                         mSphinx.showView(R.id.view_hotel_pick_location);
                     } else if (mClickedViewId == R.id.price_view) {
                         showFilterCategory(mTitleFragment);
-                        mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+                        mFilterListView.setData(filterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
                     }
                     dismissProgressDialog();
                 }
@@ -303,17 +313,26 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
      * 刷新位置栏的内容
      */
     public void refreshFilterArea() {
+
+        boolean result = false;
+        List<Filter> filterList = mFilterList;
         POI poi = mSphinx.getPickLocationFragment().getPOI();
         if (poi != null) {
             mLocationBtn.setText(poi.getName());
-        } else {
-            for(int i = 0, size = mFilterList.size(); i < size; i++) {
-                Filter filter = mFilterList.get(i);
+            result = true;
+        } else if (filterList != null){
+            for(int i = 0, size = filterList.size(); i < size; i++) {
+                Filter filter = filterList.get(i);
                 if (filter.getKey() == FilterResponse.FIELD_FILTER_AREA_INDEX) {
                     mLocationBtn.setText(FilterListView.getFilterTitle(mSphinx, filter));
+                    result = true;
                     break;
                 }
             }
+        }
+        
+        if (result == false) {
+            mLocationBtn.setText("选择位置");
         }
     }
     
@@ -321,12 +340,21 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
      * 刷新星级/品牌/价格栏的内容
      */
     public void refreshFilterCategory() {
-        for(int i = 0, size = mFilterList.size(); i < size; i++) {
-            Filter filter = mFilterList.get(i);
-            if (filter.getKey() == FilterResponse.FIELD_FILTER_CATEGORY_INDEX) {
-                mPriceTxv.setText(FilterListView.getFilterTitle(mSphinx, filter));
-                break;
+        boolean result = false;
+        List<Filter> filterList = mFilterList;
+        if (filterList != null) {
+            for(int i = 0, size = filterList.size(); i < size; i++) {
+                Filter filter = filterList.get(i);
+                if (filter.getKey() == FilterResponse.FIELD_FILTER_CATEGORY_INDEX) {
+                    mPriceTxv.setText(FilterListView.getFilterTitle(mSphinx, filter));
+                    result = true;
+                    break;
+                }
             }
+        }
+        
+        if (result == false) {
+            mPriceTxv.setText("不限");
         }
     }
     
@@ -366,11 +394,10 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     FilterListView getFilterListView() {
         if (mFilterListView == null) {
             FilterListView view = new FilterListView(mSphinx);
+            view.setDeleteFirstChild(true);
             view.findViewById(R.id.body_view).setPadding(0, Globals.g_metrics.heightPixels-((int) (320*Globals.g_metrics.density)), 0, 0);
             View titleView = mLayoutInflater.inflate(R.layout.hotel_category_list_header, view, false);
             ((ViewGroup) view.findViewById(R.id.title_view)).addView(titleView);
-            mCategoryConfirmBtn = (Button) titleView.findViewById(R.id.confirm_btn);
-            mCategoryConfirmBtn.setOnClickListener(this);
             mFilterListView = view;
         }
         return mFilterListView;
@@ -383,7 +410,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mPopupWindowContain.removeAllViews();
         mPopupWindowContain.addView(getDateListView());
         mPopupWindow.showAsDropDown(parent, 0, 0);
-        view.onResume();
+        view.onResume(getCheckin(), getCheckout());
     }
     
     DateListView getDateListView() {

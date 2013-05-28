@@ -480,6 +480,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         private Runnable loadedDrawableRun;
         private String viewToken;
         private int hotelPicWidth = 0;
+        private String subDataType = BaseQuery.SUB_DATA_TYPE_POI;
+        
+        public void setSubDataType(String subDataType) {
+            this.subDataType = subDataType;
+        }
         
         public void setShowStamp(boolean showStamp) {
             this.showStamp = showStamp;
@@ -498,7 +503,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             aColor = resources.getColor(R.color.blue);
             bColor = resources.getColor(R.color.black_dark);
             distanceA = activity.getString(R.string.distanceA);
-            hotelPicWidth = Util.dip2px(Globals.g_metrics.density, 118);
+            hotelPicWidth = Util.dip2px(Globals.g_metrics.density, 98);
         }
         
         @Override
@@ -535,7 +540,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             
             int hotelPicWidth = 0;
             Hotel hotel = poi.getHotel();
-            if (hotel != null) {
+            if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType) && hotel != null) {
                 if (hotel.getImageThumb() != null) {
                     TKDrawable tkDrawable = hotel.getImageThumb();
                     Drawable drawable = tkDrawable.loadDrawable(activity, loadedDrawableRun, viewToken);
@@ -662,7 +667,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             ViewGroup dynamicPOIListView = (ViewGroup) view.findViewById(R.id.dynamic_poi_list_view);
             List<DynamicPOI> list = poi.getDynamicPOIList();
             int viewIndex = 0;
-            viewIndex = refresDynamicPOI(DynamicPOI.TYPE_HOTEL, list, dynamicPOIListView, viewIndex);
+            if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType) == false) {
+                viewIndex = refresDynamicPOI(DynamicPOI.TYPE_HOTEL, list, dynamicPOIListView, viewIndex);
+            }
             viewIndex = refresDynamicPOI(BaseQuery.DATA_TYPE_TUANGOU, list, dynamicPOIListView, viewIndex);
             viewIndex = refresDynamicPOI(BaseQuery.DATA_TYPE_YANCHU, list, dynamicPOIListView, viewIndex);
             viewIndex = refresDynamicPOI(BaseQuery.DATA_TYPE_ZHANLAN, list, dynamicPOIListView, viewIndex);
@@ -676,7 +683,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             if (dynamicPOIWidth > 0) {
                 nameTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 int nameTxvWidth = nameTxv.getMeasuredWidth();
-                int width = Globals.g_metrics.widthPixels-(5*Util.dip2px(Globals.g_metrics.density, 8));
+                int width = Globals.g_metrics.widthPixels-(4*Util.dip2px(Globals.g_metrics.density, 8));
                 if (nameTxvWidth > width-dynamicPOIWidth-hotelPicWidth) {
                     nameTxv.getLayoutParams().width = (width-dynamicPOIWidth-hotelPicWidth);
                 } else {
@@ -709,7 +716,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         listView.addView(child, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
                     }
                     ImageView iconImv = (ImageView) child;
-                    iconImv.setPadding(Util.dip2px(Globals.g_metrics.density, 4), 0, 0, 0);
+                    iconImv.setPadding(Util.dip2px(Globals.g_metrics.density, 2), 0, 0, 0);
                     if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_tuangou);
                     } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
@@ -740,6 +747,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
+        String subDataType = dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
+        mResultAdapter.setSubDataType(subDataType);
         
         mResultLsv.onRefreshComplete(false);
         if (dataQuery.isStop()) {

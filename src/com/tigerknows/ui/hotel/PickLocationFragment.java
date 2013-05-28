@@ -392,18 +392,20 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 if (filterList != null && filterList.size() == 1) {
                     long id = mAlternativeResponse.getPosition();
                     
-                    List<Filter> filterListInHotelHome = mSphinx.getHotelHomeFragment().getFilterList();
                     Filter areaFilter = filterList.get(0);
-                    for(int i = 0, size = filterListInHotelHome.size(); i < size; i++) {
-                        Filter filter = filterListInHotelHome.get(i);
-                        if (filter.getKey() == FilterResponse.FIELD_FILTER_AREA_INDEX) {
-                            if (areaFilter != null) {
-                                filterListInHotelHome.remove(i);
-                                filterListInHotelHome.add(i, areaFilter);
-                            } else {
-                                areaFilter = filter;
+                    List<Filter> filterListInHotelHome = mSphinx.getHotelHomeFragment().getFilterList();
+                    if (filterListInHotelHome != null) {
+                        for(int i = 0, size = filterListInHotelHome.size(); i < size; i++) {
+                            Filter filter = filterListInHotelHome.get(i);
+                            if (filter.getKey() == FilterResponse.FIELD_FILTER_AREA_INDEX) {
+                                if (areaFilter != null) {
+                                    filterListInHotelHome.remove(i);
+                                    filterListInHotelHome.add(i, areaFilter);
+                                } else {
+                                    areaFilter = filter;
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
                     
@@ -473,15 +475,17 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 if (mPOI == null) {
                     Filter areaFilter = null;
                     List<Filter> filterListInHotelHome = mSphinx.getHotelHomeFragment().getFilterList();
-                    for(int i = 0, size = filterListInHotelHome.size(); i < size; i++) {
-                        Filter filter = filterListInHotelHome.get(i);
-                        if (filter.getKey() == FilterResponse.FIELD_FILTER_AREA_INDEX) {
-                            areaFilter = filter;
-                            break;
+                    if (filterListInHotelHome != null) {
+                        for(int i = 0, size = filterListInHotelHome.size(); i < size; i++) {
+                            Filter filter = filterListInHotelHome.get(i);
+                            if (filter.getKey() == FilterResponse.FIELD_FILTER_AREA_INDEX) {
+                                areaFilter = filter;
+                                break;
+                            }
                         }
+                        
+                        FilterListView.selectedFilter(areaFilter, mAlternativeFilter);
                     }
-                    
-                    FilterListView.selectedFilter(areaFilter, mAlternativeFilter);
                 }
                 dialog.dismiss();
                 dismiss();

@@ -18,6 +18,7 @@ package com.tigerknows.ui.hotel;
 
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.util.CalendarUtil;
 
 import android.content.Context;
 import android.content.res.Resources;
@@ -46,7 +47,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     static final int CHECKIN_MAX = 30;
     
-    static final int CHECKOUT_MAX = 5;
+    static final int CHECKOUT_MAX = 10;
     
     public interface CallBack {
         public void confirm();
@@ -84,16 +85,15 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     String[] weedDays;
     
-    public void onResume() {
-        Calendar now = Calendar.getInstance();
+    public void onResume(Calendar checkIn, Calendar checkOut) {
         checkinPosition = confirmCheckinPosition;
         checkoutPosition = confirmCheckoutPosition;
-        if (today == null || now.get(Calendar.DAY_OF_YEAR) != today.get(Calendar.DAY_OF_YEAR)) {
+        if (today == null || checkIn.get(Calendar.DAY_OF_YEAR) != today.get(Calendar.DAY_OF_YEAR)) {
             checkinPosition = 0;
             checkoutPosition = 0;
             confirmCheckinPosition = 0;
-            confirmCheckoutPosition = 0;
-            today = now;
+            confirmCheckoutPosition = CalendarUtil.dateInterval(checkIn, checkOut)-1;
+            today = checkIn;
             checkinList.clear();
             checkoutList.clear();
             for(int i = 0; i < CHECKIN_MAX; i++) {
@@ -159,7 +159,9 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         
         checkinLsv.setAdapter(checkinAdapter);
         checkoutLsv.setAdapter(checkoutAdapter);
-        onResume();
+        Calendar checkOut = Calendar.getInstance();
+        checkOut.add(Calendar.DAY_OF_YEAR, 1);
+        onResume(Calendar.getInstance(), checkOut);
     }
 
     protected void findViews() {
@@ -197,6 +199,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
                 checkinPosition = position;
+                checkoutPosition = 0;
                 checkinAdapter.notifyDataSetChanged();
 
                 refreshCheckout();
@@ -282,7 +285,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
                     textTxv.setTextColor(TKConfig.COLOR_ORANGE);
                 } else {
                     view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
-                    textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+                    textTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
                 }
             } else {
                 if (position == checkoutPosition) {

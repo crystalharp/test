@@ -75,6 +75,11 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     private MyAdapter childAdapter;
     
     private boolean isTurnPaging = false;
+    private boolean deleteFirstChild = false;
+    
+    public void setDeleteFirstChild(boolean deleteFirstChild) {
+        this.deleteFirstChild = deleteFirstChild;
+    }
     
     String actionTag;
     
@@ -149,6 +154,9 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                     }
                 }
             }
+        }
+        if (deleteFirstChild && this.childFilterList.size() > 0) {
+            this.childFilterList.remove(0);
         }
         parentAdapter.notifyDataSetChanged();
         childAdapter.notifyDataSetChanged();
@@ -238,6 +246,9 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                     parentAdapter.notifyDataSetChanged();
                     childFilterList.clear();
                     childFilterList.addAll(filterList);
+                    if (deleteFirstChild && childFilterList.size() > 0) {
+                        childFilterList.remove(0);
+                    }
                     childAdapter.notifyDataSetChanged();
                     int selectedChiledPosition = -1;
                     for(int j = childFilterList.size()-1; j >= 0; j--) {
