@@ -88,7 +88,9 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     public void onResume(Calendar checkIn, Calendar checkOut) {
         checkinPosition = confirmCheckinPosition;
         checkoutPosition = confirmCheckoutPosition;
-        if (today == null || checkIn.get(Calendar.DAY_OF_YEAR) != today.get(Calendar.DAY_OF_YEAR)) {
+        if (today == null ||
+                getCheckin().get(Calendar.DAY_OF_YEAR) != checkIn.get(Calendar.DAY_OF_YEAR) ||
+                getCheckout().get(Calendar.DAY_OF_YEAR) != checkOut.get(Calendar.DAY_OF_YEAR)) {
             checkinPosition = 0;
             checkoutPosition = 0;
             confirmCheckinPosition = 0;

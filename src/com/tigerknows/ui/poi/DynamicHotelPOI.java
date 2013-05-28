@@ -79,6 +79,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     TextView hotelSummary;
     private DateWidget mCheckInDat;
     private DateWidget mCheckOutDat;
+    View mCheckView;
     TextView moreTxv;
     TextView imageNumTxv;
     
