@@ -61,7 +61,7 @@ public class HttpUtils {
     public static final String TK_SERVICE_TYPE = "tkServiceType";
     
     /** Tigerknows服务器接口定义的用于s的v13的Header */
-    public static final String TK_SERVICE_TYPE_VALUE = "blade";
+    public static final String TK_SERVICE_TYPE_VALUE = "lakers";
     
     private static final String PARAMETER_SEPARATOR = "&";
     private static final String NAME_VALUE_SEPARATOR = "=";
@@ -253,6 +253,7 @@ public class HttpUtils {
                         post.addHeader(CONTENT_TYPE, MULTIPART_FORM_CONTENT_TYPE);
                         postParam = buf.toString();
                         data = postParam.getBytes(TKConfig.getEncoding());
+                        data = ZLibUtils.compress(data);
                         DataEncryptor.getInstance().encrypt(data);
                         
                     } else {

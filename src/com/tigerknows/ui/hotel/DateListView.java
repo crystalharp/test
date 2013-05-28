@@ -103,6 +103,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
             }
             
             checkinAdapter.notifyDataSetChanged();
+            checkinLsv.setSelectionFromTop(checkinPosition, 0);
             refreshCheckout();
         }
     }
@@ -116,6 +117,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         }
         today.add(Calendar.DAY_OF_YEAR, -checkinPosition);
         checkoutAdapter.notifyDataSetChanged();
+        checkoutLsv.setSelectionFromTop(checkoutPosition, 0);
     }
 
     public void setData(CallBack callBack, String actionTag) {
@@ -230,6 +232,11 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     }
     
     private void cancel() {
+        checkinPosition = confirmCheckinPosition;
+        checkoutPosition = confirmCheckoutPosition;
+        checkinAdapter.notifyDataSetChanged();
+        checkinLsv.setSelectionFromTop(checkinPosition, 0);
+        refreshCheckout();
         if (callBack != null) {
             callBack.cancel();
         }

@@ -50,6 +50,7 @@ import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.HttpUtils;
 import com.tigerknows.util.ParserUtil;
+import com.tigerknows.util.ZLibUtils;
 import com.tigerknows.util.HttpUtils.TKHttpClient.ProgressUpdate;
 import com.weibo.sdk.android.WeiboParameters;
 
@@ -785,7 +786,7 @@ public abstract class BaseQuery {
                 // 解压数据
                 if (compress) {
                     try {
-                        data = DataDecode.decode(data, 0);
+                        data = ZLibUtils.decompress(data);
                     } catch (Exception cause) {
                         throw new APIException("decode data error");
                     }

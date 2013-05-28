@@ -336,7 +336,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
     }
 
-    private void showDynamicPOI(List<DynamicPOIViewBlock> POIList){
+    private void showDynamicPOI(List<DynamicPOIViewBlock> POIList) {
         Collections.sort(POIList, new DPOICompare());
         LogWrapper.d("conan", "showPOIList:" + POIList);
         for (DynamicPOIViewBlock iter : POIList){
@@ -344,7 +344,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
-    private void clearDynamicPOI(List<DynamicPOIViewBlock> POIList){
+    private void clearDynamicPOI(List<DynamicPOIViewBlock> POIList) {
         LogWrapper.d("conan", "clearPOIList:" + POIList);
         for (DynamicPOIViewBlock iter : POIList) {
             iter.clear();
@@ -377,21 +377,19 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		    mType = type;
         }
 		
-		void show(){
-		    if (mBelongsLayout.indexOfChild(mOwnLayout) == -1){
-		        LogWrapper.d("conan", mBelongsLayout.toString() + " add to " + mOwnLayout.toString());
-		        mBelongsLayout.addView(mOwnLayout);
+		void show() {
+		    if (mBelongsLayout.indexOfChild(mOwnLayout) == -1) {
+		        mBelongsLayout.addView(mOwnLayout, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
 		    }
 		}
 
-        void clear(){
+        void clear() {
             if (mBelongsLayout.indexOfChild(mOwnLayout) != -1) {
-                LogWrapper.d("conan", mBelongsLayout.toString() + " clear from " + mOwnLayout.toString());
                 mBelongsLayout.removeView(mOwnLayout);
             }
 		}
         
-        public String toString(){
+        public String toString() {
             return "ViewBlock, type:" + mType.toString();
         }
     }
@@ -454,9 +452,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mDistance = mSphinx.getString(R.string.distance);
         mDistanceA = mSphinx.getString(R.string.distanceA);
         
-        mDynamicNormalPOI = DynamicNormalPOI.getInstance(this, mLayoutInflater);
+        mDynamicNormalPOI = new DynamicNormalPOI(this, mLayoutInflater);
         
-        mDynamicHotelPOI = DynamicHotelPOI.getInstance(this, mLayoutInflater);
+        mDynamicHotelPOI = new DynamicHotelPOI(this, mLayoutInflater);
         
         return mRootView;
     }
@@ -501,7 +499,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             poiQuery.setup(criteria, cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
             baseQueryList.add(poiQuery);
             mSphinx.queryStart(baseQueryList);
-                mNavigationWidget.setVisibility(View.GONE);
+            mNavigationWidget.setVisibility(View.GONE);
         } else {
             if (poi.getHotel() != null) {
                 mNavigationWidget.setVisibility(View.VISIBLE);
@@ -1163,6 +1161,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mPOI = poi;
         if (poi == null) {
             return;
+        }
+        if (poi.getHotel() != null) {
+            mNavigationWidget.setVisibility(View.VISIBLE);
+        } else {
+            mNavigationWidget.setVisibility(View.GONE);
         }
         mDoingView.setVisibility(View.VISIBLE);
         if (poi.getName() == null && poi.getUUID() != null) {

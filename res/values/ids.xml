@@ -81,6 +81,8 @@
     <item type="id" name="view_hotel_image_grid"/>
     <item type="id" name="view_hotel_intro"/>
     
+    <item type="id" name="tag_hotel_room_child_view" />
+    <item type="id" name="tag_hotel_room_type_data" />
     <item type="id" name="room_person_edt_2"/>
     <item type="id" name="room_person_edt_3"/>
     <item type="id" name="room_person_edt_4"/>

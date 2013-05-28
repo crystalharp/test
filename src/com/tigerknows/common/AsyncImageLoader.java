@@ -2,6 +2,7 @@
 package com.tigerknows.common;
 
 import com.decarta.Globals;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.net.HttpManager;
 import com.weibo.sdk.android.WeiboParameters;
@@ -203,6 +204,7 @@ public class AsyncImageLoader {
                     imageCache1.putImage(name, data);
                     return (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(data), "image.png");
                 } catch (Exception e) {
+                    LogWrapper.d("AsyncImageLoader", "imageUrl.url="+imageUrl.url);
                     mHttpClient = null;
                     e.printStackTrace();
                 }

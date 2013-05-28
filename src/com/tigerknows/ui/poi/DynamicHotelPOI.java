@@ -138,9 +138,12 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 bookBtn.setEnabled(false);
             } else {
                 bookBtn.setEnabled(true);
-//                bookBtn.setTag(DATA, roomType);
-//                bookBtn.setTag(PARENT_VIEW, v);
-                bookBtn.setTag(roomType);
+                try {
+                    bookBtn.setTag(R.id.tag_hotel_room_type_data, roomType);
+                    bookBtn.setTag(R.id.tag_hotel_room_child_view, v);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 bookBtn.setOnClickListener(mItemClickListener);
                 v.setTag(roomType);
                 v.setOnClickListener(mItemClickListener);
@@ -149,15 +152,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             
     };
     
-    
-    public static DynamicHotelPOI getInstance(POIDetailFragment poiFragment, LayoutInflater inflater){
-        if (instance == null) {
-            instance = new DynamicHotelPOI(poiFragment, inflater);
-        }
-        return instance;
-    }
-    
-    private DynamicHotelPOI(POIDetailFragment poiFragment, LayoutInflater inflater){
+    public DynamicHotelPOI(POIDetailFragment poiFragment, LayoutInflater inflater){
         mPOIDetailFragment = poiFragment;
         mSphinx = poiFragment.mSphinx;
         mInflater = inflater;
@@ -187,7 +182,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         hotelImage = (ImageView)mLowerBlock.mOwnLayout.findViewById(R.id.icon_imv);
         hotelSummary = (TextView)mLowerBlock.mOwnLayout.findViewById(R.id.short_summary);
         mDynamicRoomTypeMoreView = (LinearLayout) mUpperBlock.mOwnLayout.findViewById(R.id.dynamic_roomtype_more_view);
-//        mDynamicHotelChooseTimeView = (LinearLayout) mRootView.findViewById(R.id.dynamic_hotel_choosetime_view);
         mCheckInDat = (DateWidget) mUpperBlock.mOwnLayout.findViewById(R.id.checkin_dat);
         mCheckOutDat = (DateWidget) mUpperBlock.mOwnLayout.findViewById(R.id.checkout_dat);
         imageNumTxv = (TextView) mLowerBlock.mOwnLayout.findViewById(R.id.image_num_txv);
@@ -348,15 +342,12 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             RoomType mData;
             if (v instanceof Button) {
                 mClickedBookBtn = (Button)v;
-//                mClickedChild = (View) v.getTag(PARENT_VIEW);
-//                mData = (RoomType) v.getTag(DATA);
-                mData = (RoomType) v.getTag();
-                mClickedChild = (View) v.getParent().getParent().getParent();
+                mClickedChild = (View) v.getTag(R.id.tag_hotel_room_child_view);
             } else {
                 mClickedBookBtn = (Button) v.findViewById(R.id.book_btn);
                 mClickedChild = v;
-                mData = (RoomType) v.getTag();
             }
+            mData = (RoomType) mClickedBookBtn.getTag(R.id.tag_hotel_room_type_data);
             mClickedRoomType = mData;
             List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
             baseQueryList.add(buildRoomTypeDynamicQuery(mHotel.getUuid(), mData.getRoomId(), mData.getRateplanId(), checkin, checkout));
