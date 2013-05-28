@@ -465,6 +465,13 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         	if (mSubCategoryListView.contains(btnSubCategory) == false) {
         	    mSubCategoryListView.add(btnSubCategory);
         	}
+        	
+        	ImageView icon = (ImageView) convertView.findViewById(R.id.hotel_tip_reserve_imv);
+        	if (position == 1) {
+        	    icon.setVisibility(View.VISIBLE);
+        	} else {
+        	    icon.setVisibility(View.GONE);
+        	}
         	return convertView;
         }
     }

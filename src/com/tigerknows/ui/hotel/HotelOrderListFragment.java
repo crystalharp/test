@@ -91,11 +91,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
      */
     private LinkedList<HotelOrder> ordersQuerying = new LinkedList<HotelOrder>();
     
-    private static final int STATE_LOADING = 1;
-    private static final int STATE_LIST = 2;
-    private static final int STATE_EMPTY = 3;
-    private static final int STATE_LOADING_MORE = 4;
-    
     private Runnable mTurnPageRun = new Runnable() {
         
         @Override
