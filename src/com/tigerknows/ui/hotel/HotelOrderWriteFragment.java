@@ -97,6 +97,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private String mRTimeDetail;
     private long mRoomHowmany;
     private double mOneNightPrice;
+    private String mBookUsername;
     private String mUsername;
     private String mMobile;
     private int mNights;
@@ -152,7 +153,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomNightsTxv = (TextView) mRootView.findViewById(R.id.room_nights_txv);
         mRoomHowmanyBtn = (Button) mRootView.findViewById(R.id.room_howmany_btn);
         mRoomReserveBtn = (Button) mRootView.findViewById(R.id.room_reserve_btn);
-        mRoomPersonEdt = (EditText) mRootView.findViewById(R.id.room_person_edt);
         mRoomMobileNumberEdt = (EditText) mRootView.findViewById(R.id.room_mobile_number_edt);
         mSubmitOrderBtn = (Button) mRootView.findViewById(R.id.submit_order_btn);
     }
@@ -167,8 +167,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomNightsTxv.setOnClickListener(this);
         mRoomHowmanyBtn.setOnClickListener(this);
         mRoomReserveBtn.setOnClickListener(this);
-        mRoomPersonEdt.setOnClickListener(this);
-        mRoomMobileNumberEdt.setOnClickListener(this);
         mSubmitOrderBtn.setOnClickListener(this);
     }
     
@@ -188,9 +186,14 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         case R.id.submit_order_btn:
         	String str = "";
         	for (int i = 1; i <= mRoomHowmany; i++){
-        		if(i != 1) str += ";";
         		EditText thisPersonEdt = (EditText) mRootView.findViewById(idArray[i-1]);
         		String tempStr = thisPersonEdt.getText().toString();
+        		if(i != 1){
+        			str += ";";
+        		}
+        		else{
+        			mBookUsername = tempStr;
+        		}
         		if(TextUtils.isEmpty(tempStr)){
         			thisPersonEdt.requestFocus();
         			Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_room_person_empty_tip));
@@ -228,6 +231,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	mTotalPrice = mOneNightPrice * mNights;
     	mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, Utility.doubleKeep(mTotalPrice, 2)+""));
     	RefreshPersonView();
+        clearFocus();
     	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
     	if(rtList.isEmpty()){
     		mTypeCreditAssure = 0;
@@ -468,8 +472,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_RESERVE_TIME, mRTimeDetail);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_NUMROOMS, mRoomHowmany + "");
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_TOTAL_PRICE, Utility.doubleKeep(mTotalPrice, 2)+ "");
-    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_USERNAME, mUsername);
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_USERNAME, mBookUsername);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_MOBILE, mMobile);
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_GUESTS, mUsername);
     	if(!TextUtils.isEmpty(mMemberNum)){
     		criteria.put(HotelOrderOperation.SERVER_PARAMETER_MEMBERNUM, mMemberNum);
     	}

@@ -896,7 +896,7 @@
     <string name="response_code_603">抱歉，该地址不存在或已失效。</string>
     <string name="response_code_801">创建订单失败，请重试。</string>
     <string name="response_code_821">网络状态不好，请稍候重试。</string>
-    <string name="response_code_823">注册失败，请确认所填信息后重新提交。</string>
+    <string name="response_code_823">用户身份证与姓名不匹配。</string>
     <string name="response_code_831">取消失败。</string>
     
     <string name="response_code_410_pulled">抱歉,原信息已过期\n欢迎发现更多身边的精彩!</string>

@@ -53,11 +53,14 @@ public class HotelOrderOperation extends BaseQuery {
     // 总价
     public static final String SERVER_PARAMETER_TOTAL_PRICE = "totalprice";
     
-    // 用户姓名
+    // 预订人姓名
     public static final String SERVER_PARAMETER_USERNAME = "username";
     
     // 用户手机号
     public static final String SERVER_PARAMETER_MOBILE = "mobile";
+    
+    // 入住人姓名，若有多人，以分号间隔
+    public static final String SERVER_PARAMETER_GUESTS = "guests";
     
     // 7天酒店会员卡号
     public static final String SERVER_PARAMETER_MEMBERNUM = "membernum";
@@ -130,7 +133,8 @@ public class HotelOrderOperation extends BaseQuery {
                     SERVER_PARAMETER_NUMROOMS,
                     SERVER_PARAMETER_TOTAL_PRICE,
                     SERVER_PARAMETER_USERNAME,
-                    SERVER_PARAMETER_MOBILE
+                    SERVER_PARAMETER_MOBILE,
+                    SERVER_PARAMETER_GUESTS
             });
             addParameter(SERVER_PARAMETER_MEMBERNUM, false);
             String creditCardNo = addParameter(SERVER_PARAMETER_CREDIT_CARD_NO, false);
