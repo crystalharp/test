@@ -92,6 +92,7 @@
             android:text="起"
             android:singleLine="true"
             android:focusable="false"
+            android:visibility="gone"
             />
             
     </RelativeLayout>
