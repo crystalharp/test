@@ -52,5 +52,15 @@
         android:singleLine="true"
         android:background="@drawable/list_selector_background_transparent_gray_light"
         android:drawableRight="@drawable/btn_left_arrow"/>
+        
+    <ImageView 
+        android:id="@+id/hotel_tip_reserve_imv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="8dp"
+        android:layout_marginRight="40dp"
+        android:background="@drawable/ic_hotel_tip_reserve"/>
 
 </RelativeLayout>
