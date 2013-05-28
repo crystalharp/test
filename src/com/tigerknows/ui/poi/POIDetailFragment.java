@@ -538,13 +538,15 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         } else {
             mCategoryTxv.setText("");
         }
-        
+
+        String price = poi.getPrice();
         long money = poi.getPerCapity();
-        if (money > 0) {
+        if (TextUtils.isEmpty(price) == false) {
+            mMoneyTxv.setText(price);
+        } else if (money > 0) {
             mMoneyTxv.setText(mContext.getString(R.string.yuan, money));
-            mMoneyTxv.setVisibility(View.VISIBLE);
         } else {
-            mMoneyTxv.setVisibility(View.GONE);
+            mMoneyTxv.setText("");
         }
         
         String distance = poi.getToCenterDistance();
@@ -1024,12 +1026,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 List<Dianying> list = poi.getDynamicDianyingList();
             	int size = (list != null ? list.size() : 0);
                 int viewCount = mDynamicDianyingListView.getChildCount();
-                for(int i = 0; i < viewCount && i < size; i++) {
+                for(int i = SHOW_DYNAMIC_YINGXUN_MAX; i < viewCount && i < size; i++) {
                     View v = mDynamicDianyingListView.getChildAt(i);
                     v.setVisibility(View.VISIBLE);
-                    if (i >= viewCount) {
-                        initDianyingItemView(list.get(i), v);
-                    }
                 }
                 
                 for(int i = 0; i < viewCount; i++) {
@@ -1508,7 +1507,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         mLoadingView.setVisibility(View.GONE);
         List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
-        Tuangou tuangou = null;
         Dianying dianying = null;
         for(BaseQuery baseQuery : baseQueryList) {
             if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {

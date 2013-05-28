@@ -292,7 +292,7 @@ public class POI extends BaseData {
     public static final byte FIELD_LAST_COMMENT = 0x16;
     
     // 0x17    x_string    价格描述，格式为"960元" 
-    public static final byte FIELD_PERCAPITY = 0x17;
+    public static final byte FIELD_PRICE = 0x17;
     
     public static class DynamicPOI extends XMapData {
         
@@ -451,6 +451,16 @@ public class POI extends BaseData {
     private String cookingStyle;
     
     private long perCapity;
+    
+    private String price;
+    
+    public void setPrice(String price) {
+        this.price = price;
+    }
+    
+    public String getPrice() {
+        return this.price;
+    }
     
     private String recommendCook;
     
@@ -858,6 +868,7 @@ public class POI extends BaseData {
         } else if (reset) {
             this.hotel = null;
         }
+        this.price = getStringFromData(FIELD_PRICE, reset ? null : this.price);
     }
     
     public XMap getData() {
@@ -908,7 +919,7 @@ public class POI extends BaseData {
                 }
                 this.data.put(FIELD_DYNAMIC_POI, xarray);
             }
-            this.data.put(FIELD_PERCAPITY, this.perCapity);
+            this.data.put(FIELD_PRICE, this.price);
         }
         return this.data;
     }

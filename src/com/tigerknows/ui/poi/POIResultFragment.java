@@ -480,6 +480,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         private Runnable loadedDrawableRun;
         private String viewToken;
         private String subDataType = BaseQuery.SUB_DATA_TYPE_POI;
+        private int hotelPicWidth = 0;
         
         public void setShowStamp(boolean showStamp) {
             this.showStamp = showStamp;
@@ -502,6 +503,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             aColor = resources.getColor(R.color.blue);
             bColor = resources.getColor(R.color.black_dark);
             distanceA = activity.getString(R.string.distanceA);
+            hotelPicWidth = Util.dip2px(Globals.g_metrics.density, 118);
         }
         
         @Override
@@ -517,7 +519,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             View pictureView = view.findViewById(R.id.picture_view);
             ImageView pictureImv = (ImageView) view.findViewById(R.id.picture_imv);
             TextView canReserveTxv = (TextView) view.findViewById(R.id.can_reserve_txv);
-            ImageView bubbleImv = (ImageView) view.findViewById(R.id.bubble_imv);
             TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
             TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
             TextView distanceFromTxv = (TextView) view.findViewById(R.id.distance_from_txv);
@@ -537,6 +538,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
             }
             
+            int hotelPicWidth = 0;
             if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                 Hotel hotel = poi.getHotel();
                 if (hotel != null) {
@@ -568,6 +570,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     canReserveTxv.setVisibility(View.VISIBLE);
                 }
                 pictureView.setVisibility(View.VISIBLE);
+                hotelPicWidth = this.hotelPicWidth;
             } else {
                 pictureView.setVisibility(View.GONE);
                 canReserveTxv.setVisibility(View.VISIBLE);
@@ -610,9 +613,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 categoryTxv.setText("");
             }
             
-            long perCapity = poi.getPerCapity();
-            if (perCapity > 0) {
-                moneyTxv.setText(activity.getString(R.string.yuan, perCapity));
+            String price = poi.getPrice();
+            long money = poi.getPerCapity();
+            if (TextUtils.isEmpty(price) == false) {
+                moneyTxv.setText(price);
+            } else if (money > 0) {
+                moneyTxv.setText(activity.getString(R.string.yuan, money));
             } else {
                 moneyTxv.setText("");
             }
@@ -665,54 +671,24 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             
             ViewGroup dynamicPOIListView = (ViewGroup) view.findViewById(R.id.dynamic_poi_list_view);
             List<DynamicPOI> list = poi.getDynamicPOIList();
-            int viewCount = dynamicPOIListView.getChildCount();
             int viewIndex = 0;
-            int size = (list != null ? list.size() : 0);
-            int dynamicPOIWidth = 0;
-            List<String> types = new ArrayList<String>();
-            for(int i = 0; i < size; i++) {
-                final DynamicPOI dynamicPOI = list.get(i);
-                final String dataType = dynamicPOI.getType();
-                if ((BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
-                        BaseQuery.DATA_TYPE_YANCHU.equals(dataType) ||
-                        DynamicPOI.TYPE_HOTEL.equals(dataType) ||
-                        BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType))
-                        && types.contains(dataType) == false) {
-                    types.add(dataType);
-                    View child;
-                    if (viewIndex < viewCount) {
-                        child = dynamicPOIListView.getChildAt(viewIndex);
-                        child.setVisibility(View.VISIBLE);
-                    } else {
-                        child = new ImageView(activity);
-                        dynamicPOIListView.addView(child, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-                    }
-                    ImageView iconImv = (ImageView) child;
-                    iconImv.setPadding(Util.dip2px(Globals.g_metrics.density, 4), 0, 0, 0);
-                    if (BaseQuery.DATA_TYPE_TUANGOU.equals(dynamicPOI.getType())) {
-                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_tuangou);
-                    } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dynamicPOI.getType())) {
-                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_yanchu);
-                    } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dynamicPOI.getType())) {
-                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
-                    } else if (DynamicPOI.TYPE_HOTEL.equals(dynamicPOI.getType())) {
-                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
-                    }
-                    dynamicPOIWidth += iconImv.getDrawable().getIntrinsicWidth();
-                    viewIndex++;
-                }
-            }
+            viewIndex = refresDynamicPOI(DynamicPOI.TYPE_HOTEL, list, dynamicPOIListView, viewIndex);
+            viewIndex = refresDynamicPOI(BaseQuery.DATA_TYPE_TUANGOU, list, dynamicPOIListView, viewIndex);
+            viewIndex = refresDynamicPOI(BaseQuery.DATA_TYPE_YANCHU, list, dynamicPOIListView, viewIndex);
+            viewIndex = refresDynamicPOI(BaseQuery.DATA_TYPE_ZHANLAN, list, dynamicPOIListView, viewIndex);
+            viewIndex = refresDynamicPOI(BaseQuery.DATA_TYPE_DIANYING, list, dynamicPOIListView, viewIndex);
+            int dynamicPOIWidth = viewIndex * activity.getResources().getDrawable(R.drawable.ic_dynamicpoi_tuangou).getIntrinsicWidth();
             
-            viewCount = dynamicPOIListView.getChildCount();
+            int viewCount = dynamicPOIListView.getChildCount();
             for(int i = viewIndex; i < viewCount; i++) {
                 dynamicPOIListView.getChildAt(i).setVisibility(View.GONE);
             }
             if (dynamicPOIWidth > 0) {
                 nameTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 int nameTxvWidth = nameTxv.getMeasuredWidth();
-                int width = Globals.g_metrics.widthPixels-(4*Util.dip2px(Globals.g_metrics.density, 8));
-                if (nameTxvWidth > width-dynamicPOIWidth) {
-                    nameTxv.getLayoutParams().width = (width-dynamicPOIWidth);
+                int width = Globals.g_metrics.widthPixels-(5*Util.dip2px(Globals.g_metrics.density, 8));
+                if (nameTxvWidth > width-dynamicPOIWidth-hotelPicWidth) {
+                    nameTxv.getLayoutParams().width = (width-dynamicPOIWidth-hotelPicWidth);
                 } else {
                     nameTxv.getLayoutParams().width = LinearLayout.LayoutParams.WRAP_CONTENT;
                 }
@@ -721,6 +697,46 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
             
             return view;
+        }
+        
+        int refresDynamicPOI(String type, List<DynamicPOI> list, ViewGroup listView, int viewIndex) {
+
+            if (list == null || list.isEmpty() || type == null) {
+                return viewIndex;
+            }
+            
+            int viewCount = listView.getChildCount();
+            for(int i = 0, size = list.size(); i < size; i++) {
+                final DynamicPOI dynamicPOI = list.get(i);
+                final String dataType = dynamicPOI.getType();
+                if (type.equals(dataType)) {
+                    View child;
+                    if (viewIndex < viewCount) {
+                        child = listView.getChildAt(viewIndex);
+                        child.setVisibility(View.VISIBLE);
+                    } else {
+                        child = new ImageView(activity);
+                        listView.addView(child, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+                    }
+                    ImageView iconImv = (ImageView) child;
+                    iconImv.setPadding(Util.dip2px(Globals.g_metrics.density, 4), 0, 0, 0);
+                    if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_tuangou);
+                    } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
+                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_yanchu);
+                    } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
+                    } else if (DynamicPOI.TYPE_HOTEL.equals(dataType)) {
+                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_hotel);
+                    } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {
+                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_dianying);
+                    }
+                    viewIndex++;
+                    break;
+                }
+            }
+            
+            return viewIndex;
         }
     }
 

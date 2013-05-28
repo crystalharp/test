@@ -99,6 +99,7 @@ import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Dianying;
+import com.tigerknows.model.Hotel;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.model.LocationQuery;
@@ -280,6 +281,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private ViewGroup mInfoWindowTuangouList = null;
     private ViewGroup mInfoWindowTuangouDetail = null;
     private ViewGroup mInfoWindowYanchuList = null;
+    private ViewGroup mInfoWindowHotel = null;
     private ViewGroup mInfoWindowMessage = null;
     
     private Dialog mDialog = null;
@@ -2235,6 +2237,55 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 endBtn.setOnTouchListener(mInfoWindowLongEndListener);
                 
                 infoWindow.setViewGroup(mInfoWindowLongClick);
+            } else if (poi.getHotel() != null) {
+//              if (mInfoWindowHotel == null) {
+                mInfoWindowHotel = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_hotel, null);
+//            }
+                ImageView pictureImv = (ImageView)mInfoWindowHotel.findViewById(R.id.picture_imv);
+                TextView nameTxv=(TextView)mInfoWindowHotel.findViewById(R.id.name_txv);
+                TextView canReserveTxv = (TextView) mInfoWindowHotel.findViewById(R.id.can_reserve_txv);
+                TextView moneyTxv = (TextView) mInfoWindowHotel.findViewById(R.id.money_txv);
+                Button trafficBtn=(Button)mInfoWindowHotel.findViewById(R.id.traffic_btn);
+
+                Hotel hotel = poi.getHotel();
+                nameTxv.setText(poi.getName());
+                moneyTxv.setText(poi.getPrice());
+                
+                int max = Globals.g_metrics.widthPixels - (int)(Globals.g_metrics.density*(148));
+                layoutInfoWindow(nameTxv, max);
+                if (hotel.getImageThumb() != null) {
+                    TKDrawable tkDrawable = hotel.getImageThumb();
+                    Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, getResultMapFragment().toString());
+                    if(drawable != null) {
+                        //To prevent the problem of size change of the same pic 
+                        //After it is used at a different place with smaller size
+                        if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+                            pictureImv.setBackgroundDrawable(null);
+                        }
+                        pictureImv.setBackgroundDrawable(drawable);
+                    } else {
+                        pictureImv.setBackgroundDrawable(null);
+                    }
+                    
+                } else {
+                    pictureImv.setBackgroundDrawable(null);
+                }
+                
+                if (hotel.getCanReserve() > 0) {
+                    canReserveTxv.setVisibility(View.GONE);
+                } else {
+                    canReserveTxv.setVisibility(View.VISIBLE);
+                }
+                
+                ViewGroup bodyView=(ViewGroup)mInfoWindowHotel.findViewById(R.id.body_view);
+                bodyView.setOnTouchListener(mInfoWindowBodyViewListener);
+                pictureImv.setOnTouchListener(mInfoWindowBodyViewListener);
+                
+                mInfoWindowTrafficButtonListener.poi = poi;
+                mInfoWindowTrafficButtonListener.actionLog = ActionLog.MapInfoWindowTraffic;
+                trafficBtn.setOnTouchListener(mInfoWindowTrafficButtonListener);
+                
+                infoWindow.setViewGroup(mInfoWindowHotel);
             } else if (sourceType != POI.SOURCE_TYPE_CLICK_SELECT_POINT
                     && sourceType != POI.SOURCE_TYPE_MY_LOCATION) {
 //                if (mInfoWindowPOI == null) {
