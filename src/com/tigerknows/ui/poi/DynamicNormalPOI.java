@@ -74,14 +74,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         
     };
     
-    public static DynamicNormalPOI getInstance(POIDetailFragment poiFragment, LayoutInflater inflater){
-        if (instance == null) {
-            instance = new DynamicNormalPOI(poiFragment, inflater);
-        }
-        return instance;
-    }
-    
-    private DynamicNormalPOI(POIDetailFragment poiFragment, LayoutInflater inflater){
+    public DynamicNormalPOI(POIDetailFragment poiFragment, LayoutInflater inflater){
         mPOIDetailFragment = poiFragment;
         mSphinx = mPOIDetailFragment.mSphinx;
         mInflater = inflater;
