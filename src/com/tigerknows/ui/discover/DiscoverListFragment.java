@@ -186,7 +186,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, discoverCategory.getType());
             criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(),
+            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(),
                     R.id.view_discover_home, R.id.view_discover_list, null, false, false,
                     mSphinx.getPOI());
             mSphinx.queryStart(dataQuery);

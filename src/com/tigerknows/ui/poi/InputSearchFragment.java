@@ -161,7 +161,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
                 TKWord tkWord = (TKWord) arg0.getAdapter().getItem(position);
                 if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistoryClear);
-                    HistoryWordTable.clearHistoryWord(mSphinx, Globals.g_Current_City_Info.getId(), HistoryWordTable.TYPE_POI);
+                    HistoryWordTable.clearHistoryWord(mSphinx, Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_POI);
                     mSuggestWordListManager.refresh();
                 } else {
                     if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
@@ -201,7 +201,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         String keyword = mKeywordEdt.getText().toString().trim();
         if (!TextUtils.isEmpty(keyword)) {
             mSphinx.hideSoftInput(mKeywordEdt.getInput());
-            int cityId = Globals.g_Current_City_Info.getId();
+            int cityId = Globals.getCurrentCityInfo().getId();
             HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), cityId, HistoryWordTable.TYPE_POI);
             mActionLog.addAction(mActionTag +  ActionLog.POIHomeInputQueryBtn, keyword);
 

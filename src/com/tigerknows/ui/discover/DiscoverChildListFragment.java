@@ -104,7 +104,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         mActionTag = actionTag;
         
         DataQuery dataQuery = new DataQuery(mContext);
-        int cityId = Globals.g_Current_City_Info.getId();
+        int cityId = Globals.getCurrentCityInfo().getId();
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         
         if (object instanceof Tuangou) {

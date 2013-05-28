@@ -302,7 +302,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 Hashtable<String, String> criteria = new Hashtable<String, String>();
                 criteria.put(FeedbackUpload.SERVER_PARAMETER_ADD_MERCHANT, s.toString());
                 FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
-                feedbackUpload.setup(criteria, Globals.g_Current_City_Info.getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+                feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
                 queryStart(feedbackUpload);
                 break;
                 

@@ -187,7 +187,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_ID, mOrder.getId());
 		criteria.put(HotelOrderOperation.SERVER_PARAMETER_UPDATE_ACTION, HotelOrderOperation.ORDER_UPDATE_ACTION_CANCEL);
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
-    	hotelOrderOperation.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), mContext.getString(R.string.query_loading_tip));
+    	hotelOrderOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.query_loading_tip));
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
     	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
 
@@ -201,7 +201,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
         criteria.put(DataQuery.SERVER_PARAMETER_SIZE, "1");
         DataQuery commentQuery = new DataQuery(mSphinx);
-        commentQuery.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), mContext.getString(R.string.query_loading_tip), false);
+        commentQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.query_loading_tip), false);
         
 		return commentQuery;
         
@@ -306,7 +306,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_QUERY);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS, ids);
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
-    	hotelOrderOperation.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null);
+    	hotelOrderOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
     	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
     }

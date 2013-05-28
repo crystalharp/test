@@ -116,7 +116,7 @@ public class CommentListActivity extends BaseActivity {
                 criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
                 criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
                 dataQuery = new DataQuery(mThis);
-                dataQuery.setup(criteria, Globals.g_Current_City_Info.getId(), mId, mId, null, false, false, mPOI);
+                dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
                 mCommentLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
                 queryStart(dataQuery);
             } else {

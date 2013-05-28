@@ -22,12 +22,12 @@ public class ProxyQueryTest {
         XMap xmap = new XMap();
         xmap.put(DanbaoGuize.FIELD_NUM, 1);
         XArray<XMap> xarray = new XArray<XMap>();
-        for(int i = 0; i < 9; i++) {
+        for(int i = 0; i < 5; i++) {
             xarray.add(launchRetentionTime(i));
         }
         xmap.put(DanbaoGuize.FIELD_NUM_LESS, xarray);
         xarray = new XArray<XMap>();
-        for(int i = 0; i < 9; i++) {
+        for(int i = 0; i < 5; i++) {
             xarray.add(launchRetentionTime(i));
         }
         xmap.put(DanbaoGuize.FIELD_NUM_GREATER, xarray);

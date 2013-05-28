@@ -496,7 +496,7 @@ public class Comment extends BaseData {
         criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
         criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
         DataQuery commentQuery = new DataQuery(context);
-        commentQuery.setup(criteria, Globals.g_Current_City_Info.getId(), sourceViewId, targerViewId, null, false, false, poi);
+        commentQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), sourceViewId, targerViewId, null, false, false, poi);
         return commentQuery;
     }
     

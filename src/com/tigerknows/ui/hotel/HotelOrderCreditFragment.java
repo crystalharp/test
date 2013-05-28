@@ -9,6 +9,7 @@ import java.util.Calendar;
 import java.util.List;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -20,6 +21,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -31,6 +33,7 @@ import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ValidateUtil;
+import com.tigerknows.widget.SingleChoiceArrayAdapter;
 import com.tigerknows.widget.StringArrayAdapter;
 
 public class HotelOrderCreditFragment extends BaseFragment implements View.OnClickListener, ValidityListView.CallBack {
@@ -63,6 +66,8 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     private List<String> mBankList;
     private List<String> mCertTypeList;
     
+    private int mGetBankPosition;
+    private int mGetCreditCertPosition;
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -196,8 +201,48 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             break;
         }
     }
+    
+    public class CreditBankAdapter extends SingleChoiceArrayAdapter{
+    	
+		public CreditBankAdapter(Context context, List<String> list) {
+			super(context, list);
+			// TODO Auto-generated constructor stub
+		}
+		@Override
+		public View getView(final int position, View convertView, ViewGroup parent){
+			View view = super.getView(position, convertView, parent);
+			ImageView singleIconImv = (ImageView)view.findViewById(R.id.single_icon_imv);
+			if(position == (int)mGetBankPosition){
+				singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_checked));
+			}else{
+				singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_default));
+			}
+			return view;
+		}
+		
+    }
+    
+    public class CertTypeAdapter extends SingleChoiceArrayAdapter{
+    	
+		public CertTypeAdapter(Context context, List<String> list) {
+			super(context, list);
+			// TODO Auto-generated constructor stub
+		}
+		@Override
+		public View getView(final int position, View convertView, ViewGroup parent){
+			View view = super.getView(position, convertView, parent);
+			ImageView singleIconImv = (ImageView)view.findViewById(R.id.single_icon_imv);
+			if(position == (int)mGetCreditCertPosition){
+				singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_checked));
+			}else{
+				singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_default));
+			}
+			return view;
+		}
+    }
+    
     public void showCreditBankDialog(){
-        final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, mBankList);
+        final ArrayAdapter<String> adapter = new CreditBankAdapter(mSphinx, mBankList);
         ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(adapter);
         //TODO: ActionLog
@@ -205,8 +250,9 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         listView.setOnItemClickListener(new OnItemClickListener() {
         	@Override
         	public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
+        		mGetBankPosition = which;
         		mCreditBankBtn.setText(mBankList.get(which));
-        		mCreditBankBtn.setTextColor(Color.BLACK);
+        		mCreditBankBtn.setTextColor(getResources().getColor(R.color.black_dark));
         		dialog.dismiss();
         	}
 		});
@@ -230,7 +276,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     
     public void showCertTypeDialog(){
     	final List<String> list = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
-        final ArrayAdapter<String> adapter = new StringArrayAdapter(mSphinx, list);
+        final ArrayAdapter<String> adapter = new CertTypeAdapter(mSphinx, list);
         ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(adapter);
         //TODO: ActionLog
@@ -238,26 +284,34 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         listView.setOnItemClickListener(new OnItemClickListener() {
         	@Override
         	public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
+        		mGetCreditCertPosition = which;
         		mCreditCertTypeBtn.setText(list.get(which));
-        		mCreditCertTypeBtn.setTextColor(Color.BLACK);
+        		mCreditCertTypeBtn.setTextColor(getResources().getColor(R.color.black_dark));
         		dialog.dismiss();
         	}
 		});
     }
-	public void setData(String sumPrice, String additionMessage) {
+	public void setData(String additionMessage, String oneNightPrice, String sumPrice, int assureType) {
 		mSumPrice = sumPrice;
+		int assureTypeFromServer = 0;
 		String[] sArray = additionMessage.split("#");
-		mOrderModifyDeadline = sArray[0];
+		if(sArray[0].length() < 2){
+			assureType = Integer.parseInt(sArray[0]);
+			assureTypeFromServer = 1;
+		}
+		mOrderModifyDeadline = sArray[assureTypeFromServer];
 		mBankList = new ArrayList<String>();
-		for (int i = 1; i < sArray.length; i++){
+		for (int i = assureTypeFromServer + 1; i < sArray.length; i++){
 			mBankList.add(sArray[i]);
 		}
 		if(mBankList.isEmpty()){
 			mBankList.add("服务器错误：银行列表为空");
 		}
+		mGetBankPosition = -1;
 		mCertTypeList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
 		mCreditCertTypeBtn.setText(mCertTypeList.get(0));
-        mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, mSumPrice));
+		mGetCreditCertPosition = 0;
+        mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, (assureType == 2 ) ? mSumPrice : oneNightPrice));
         mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
         		R.color.orange,
         		mSphinx.getString(R.string.credit_note_detail, mOrderModifyDeadline).trim(),
@@ -270,7 +324,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     	mDate = Calendar.getInstance();
     	mDate.setTime(calendar.getTime());
     	mCreditValidityBtn.setText(CalendarUtil.y4mc.format(mDate.getTime()));
-    	mCreditValidityBtn.setTextColor(Color.BLACK);
+    	mCreditValidityBtn.setTextColor(getResources().getColor(R.color.black_dark));
         if (mValidityDialog != null && mValidityDialog.isShowing()) {
             mValidityDialog.dismiss();
         }

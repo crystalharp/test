@@ -77,13 +77,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private ViewGroup mPopupWindowContain = null;
     
     /**
-     * 酒店查询的目标城市
-     * 打开此页面时，默认设为当前所选城市
-     * 用户在此页面切换酒店查询的目标城市时并不影响当前所选城市
-     */
-    private CityInfo mCityInfo;
-    
-    /**
      * 筛选数据
      * 每次进入打开此页面时，检查筛选数据是否为空，若为空则发起查询以获取筛选数据，此查询会重试
      * 点击位置或价格时，若此时无筛选数据，则弹出进度对话框，直到筛选数据返回时取消进度对话框，
@@ -118,8 +111,14 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         super.onResume();
         mTitleBtn.setText("酒店预订");
         refreshDate();
-        if (mFilterList == null) {
+        if (mFilterList == null ||
+                (mBaseQuerying != null && mBaseQuerying.size() > 0 &&
+                mBaseQuerying.get(0).getCityId() != Globals.getCurrentCityInfo().getId())) {
             queryFilter();
+        } else {
+            mFilterList = null;
+            mLocationBtn.setText("选择位置");
+            mPriceTxv.setText("不限");
         }
     }
     
@@ -145,7 +144,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         criteria.put(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(mCheckInDat.getCalendar().getTime()));
         criteria.put(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(mCheckOutDat.getCalendar().getTime()));
         criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        dataQuery.setup(criteria, mCityInfo.getId(), getId(), getId(), null, true);
+        dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null, true);
         mSphinx.queryStart(dataQuery);
     }
 
@@ -231,15 +230,11 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     }
     
     public void setCityInfo(CityInfo cityInfo) {
-        if (cityInfo == null) {
-            return;
-        }
-        mCityInfo = cityInfo;
+        Globals.setHotelCityInfo(cityInfo);
         mCityBtn.setText(cityInfo.getCName());
-    }
-    
-    public CityInfo getCityInfo() {
-        return mCityInfo;
+        mFilterList = null;
+        mLocationBtn.setText("选择位置");
+        mPriceTxv.setText("不限");
     }
     
     /**
@@ -446,7 +441,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 
         int targetViewId = mSphinx.getPOIResultFragmentID();
         DataQuery dataQuery = new DataQuery(mSphinx);
-        dataQuery.setup(criteria, mCityInfo.getId(), getId(), targetViewId, null, false, false, poi);
+        dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), targetViewId, null, false, false, poi);
         BaseFragment baseFragment = mSphinx.getFragment(targetViewId);
         if (baseFragment != null && baseFragment instanceof POIResultFragment) {
             mSphinx.queryStart(dataQuery);

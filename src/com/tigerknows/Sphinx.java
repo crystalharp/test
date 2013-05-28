@@ -99,6 +99,7 @@ import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Dianying;
+import com.tigerknows.model.Hotel;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.model.LocationQuery;
@@ -280,6 +281,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private ViewGroup mInfoWindowTuangouList = null;
     private ViewGroup mInfoWindowTuangouDetail = null;
     private ViewGroup mInfoWindowYanchuList = null;
+    private ViewGroup mInfoWindowHotel = null;
     private ViewGroup mInfoWindowMessage = null;
     
     private Dialog mDialog = null;
@@ -871,12 +873,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         criteria = new Hashtable<String, String>();
         criteria.put(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIAOYAN);
         criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-        diaoyanQuery.setup(criteria, Globals.g_Current_City_Info.getId());	//
+        diaoyanQuery.setup(criteria, Globals.getCurrentCityInfo().getId());	//
         list.add(diaoyanQuery);
         
         queryStart(list);
         
-        checkCitySupportDiscover(Globals.g_Current_City_Info.getId());
+        checkCitySupportDiscover(Globals.getCurrentCityInfo().getId());
 	}
 	
 	private void sendFirstStartupBroadcast() {
@@ -962,7 +964,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	    super.onPrepareDialog(id, dialog);
 	    if (id == R.id.dialog_prompt_change_to_my_location_city) {
 	        TextView messageTxv =(TextView)dialog.findViewById(R.id.message);
-	        String currentCityName = Globals.g_Current_City_Info.getCName();
+	        String currentCityName = Globals.getCurrentCityInfo().getCName();
 	        String locationCityName;
 	        CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
 	        if (myLocationCityInfo != null) {
@@ -1130,7 +1132,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	}
 	
 	private void checkLocationCity() {
-	    CityInfo cityInfo = Globals.g_Current_City_Info;
+	    CityInfo cityInfo = Globals.getCurrentCityInfo(false);
         CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
         final boolean gps = Utility.checkGpsStatus(mContext);
         
@@ -1268,7 +1270,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             if (intent != null
                     && intent.hasExtra(MapEngine.EXTRA_CITY_ID)) {
                 int cityId = intent.getIntExtra(MapEngine.EXTRA_CITY_ID, MapEngine.CITY_ID_INVALID);
-                if (Globals.g_Current_City_Info.getId()==cityId || mViewedCityInfoList.contains(cityId)) {
+                if (Globals.getCurrentCityInfo().getId()==cityId || mViewedCityInfoList.contains(cityId)) {
                     if (mMapView != null) {
                         mMapView.clearTileImages();
                         mMapView.refreshMap();
@@ -1664,7 +1666,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private DataQuery getPOIQuery(String keyword) {
         DataQuery poiQuery = new DataQuery(mContext);
         POI requestPOI = getPOI();
-        int cityId = Globals.g_Current_City_Info.getId();
+        int cityId = Globals.getCurrentCityInfo().getId();
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
         criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
@@ -1815,7 +1817,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (null != mMapView && null != mMapEngine) {
             Position position = mMapView.getCenterPosition();
             // 地图显示的位置在当前城市范围内才更新最后一次位置信息
-            CityInfo cityInfo = Globals.g_Current_City_Info;
+            CityInfo cityInfo = Globals.getCurrentCityInfo();
             if (cityInfo != null
                     && mMapEngine.getCityId(position) == cityInfo.getId()) {
                 int zoom = (int)mMapView.getZoomLevel();
@@ -1854,14 +1856,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     public void changeCity(CityInfo cityInfo) {
         if (cityInfo.isAvailably()) {
-            CityInfo currentCityInfo = Globals.g_Current_City_Info;
-            Globals.g_Current_City_Info = cityInfo;
+            CityInfo currentCityInfo = Globals.getCurrentCityInfo();
+            Globals.setCurrentCityInfo(cityInfo);
+            Globals.setHotelCityInfo(null);
             
             int cityId = cityInfo.getId();
             if (currentCityInfo != null
                     && currentCityInfo.isAvailably()
                     && cityId == currentCityInfo.getId()) {
-                mMapView.zoomTo(cityInfo.getLevel(), cityInfo.getPosition(), -1, null);
+                mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel());
             } else {
                 mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
                 updateCityInfo(cityInfo);
@@ -1910,14 +1913,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     public POI getPOI(boolean needPosition) {
         POI poi = new POI();
         CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
-        if (myLocationCityInfo != null && myLocationCityInfo.getId() == Globals.g_Current_City_Info.getId()) {
+        if (myLocationCityInfo != null && myLocationCityInfo.getId() == Globals.getCurrentCityInfo().getId()) {
             poi.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
             if (needPosition) {
                 poi.setPosition(myLocationCityInfo.getPosition());
             }
             poi.setName(mContext.getString(R.string.my_location));
         } else {
-            CityInfo cityInfo = Globals.g_Current_City_Info;
+            CityInfo cityInfo = Globals.getCurrentCityInfo();
             poi.setSourceType(POI.SOURCE_TYPE_CITY_CENTER);
             poi.setName(cityInfo.getCName());
         }
@@ -2234,6 +2237,55 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 endBtn.setOnTouchListener(mInfoWindowLongEndListener);
                 
                 infoWindow.setViewGroup(mInfoWindowLongClick);
+            } else if (poi.getHotel() != null) {
+//              if (mInfoWindowHotel == null) {
+                mInfoWindowHotel = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_hotel, null);
+//            }
+                ImageView pictureImv = (ImageView)mInfoWindowHotel.findViewById(R.id.picture_imv);
+                TextView nameTxv=(TextView)mInfoWindowHotel.findViewById(R.id.name_txv);
+                TextView canReserveTxv = (TextView) mInfoWindowHotel.findViewById(R.id.can_reserve_txv);
+                TextView moneyTxv = (TextView) mInfoWindowHotel.findViewById(R.id.money_txv);
+                Button trafficBtn=(Button)mInfoWindowHotel.findViewById(R.id.traffic_btn);
+
+                Hotel hotel = poi.getHotel();
+                nameTxv.setText(poi.getName());
+                moneyTxv.setText(poi.getPrice());
+                
+                int max = Globals.g_metrics.widthPixels - (int)(Globals.g_metrics.density*(148));
+                layoutInfoWindow(nameTxv, max);
+                if (hotel.getImageThumb() != null) {
+                    TKDrawable tkDrawable = hotel.getImageThumb();
+                    Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, getResultMapFragment().toString());
+                    if(drawable != null) {
+                        //To prevent the problem of size change of the same pic 
+                        //After it is used at a different place with smaller size
+                        if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+                            pictureImv.setBackgroundDrawable(null);
+                        }
+                        pictureImv.setBackgroundDrawable(drawable);
+                    } else {
+                        pictureImv.setBackgroundDrawable(null);
+                    }
+                    
+                } else {
+                    pictureImv.setBackgroundDrawable(null);
+                }
+                
+                if (hotel.getCanReserve() > 0) {
+                    canReserveTxv.setVisibility(View.GONE);
+                } else {
+                    canReserveTxv.setVisibility(View.VISIBLE);
+                }
+                
+                ViewGroup bodyView=(ViewGroup)mInfoWindowHotel.findViewById(R.id.body_view);
+                bodyView.setOnTouchListener(mInfoWindowBodyViewListener);
+                pictureImv.setOnTouchListener(mInfoWindowBodyViewListener);
+                
+                mInfoWindowTrafficButtonListener.poi = poi;
+                mInfoWindowTrafficButtonListener.actionLog = ActionLog.MapInfoWindowTraffic;
+                trafficBtn.setOnTouchListener(mInfoWindowTrafficButtonListener);
+                
+                infoWindow.setViewGroup(mInfoWindowHotel);
             } else if (sourceType != POI.SOURCE_TYPE_CLICK_SELECT_POINT
                     && sourceType != POI.SOURCE_TYPE_MY_LOCATION) {
 //                if (mInfoWindowPOI == null) {
@@ -2765,6 +2817,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     if (id == R.id.view_hotel_order_list) {
                         uiStackClearTop(R.id.view_hotel_order_list);
                     }
+                } else if (uiStackPeek() == R.id.view_poi_home) {
+                    if (id == R.id.view_poi_result || 
+                            id == R.id.view_poi_result2 ||
+                            id == R.id.view_hotel_home) {
+                        Globals.setHotelCityInfo(null);
+                    }
                 }
 
                 id = uiStackPeek();
@@ -3095,7 +3153,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                                         getPOIHomeFragment().getCategoryLsv().setSelectionFromTop(0, 0);
                                                     }
                                                 });
-                                                mActionLog.addAction(ActionLog.LifecycleSelectCity, Globals.g_Current_City_Info.getCName());
+                                                mActionLog.addAction(ActionLog.LifecycleSelectCity, Globals.getCurrentCityInfo(false).getCName());
                                             }
                                             break;
                                             
@@ -3896,7 +3954,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             
             if (Globals.g_My_Location_State == Globals.LOCATION_STATE_FIRST_SUCCESS
                     && myLocationCityInfo != null) {
-                CityInfo currentCity = Globals.g_Current_City_Info;
+                CityInfo currentCity = Globals.getCurrentCityInfo(false);
                 if (currentCity.getId() != myLocationCityInfo.getId()) {
                     showPromptChangeToMyLocationCityDialog(myLocationCityInfo);
                 }
