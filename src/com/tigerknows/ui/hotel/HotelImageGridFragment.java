@@ -192,14 +192,15 @@ public class HotelImageGridFragment extends BaseFragment {
             int newWidth = (int) (Globals.g_metrics.density*WIDTH);
             ViewGroup.LayoutParams layoutParams = iconImv.getLayoutParams();
             layoutParams.width = newWidth;
+            layoutParams.height = newWidth;
             if (image != null) {
-                float scale = ((float) newWidth) / image.getIntrinsicWidth();
-                layoutParams.height = (int) (scale*image.getIntrinsicHeight());
+//                float scale = ((float) newWidth) / image.getIntrinsicWidth();
+//                layoutParams.height = (int) (scale*image.getIntrinsicHeight());
                 iconImv.setImageDrawable(image);
             } else {
                 Drawable drawable = iconImv.getBackground();
-                float scale = ((float) newWidth) / drawable.getIntrinsicWidth();
-                layoutParams.height = (int) (scale*drawable.getIntrinsicHeight());
+//                float scale = ((float) newWidth) / drawable.getIntrinsicWidth();
+//                layoutParams.height = (int) (scale*drawable.getIntrinsicHeight());
                 iconImv.setImageDrawable(null);
             }
             return view;

@@ -542,7 +542,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         String price = poi.getPrice();
         long money = poi.getPerCapity();
         if (TextUtils.isEmpty(price) == false) {
-            mMoneyTxv.setText(price);
+            mMoneyTxv.setText(price+"起");
         } else if (money > 0) {
             mMoneyTxv.setText(mContext.getString(R.string.yuan, money));
         } else {
