@@ -13,11 +13,6 @@
 	        android:layout_alignParentBottom="true"
 	        android:orientation="vertical"
 	        >
-	    
-		<ImageView 
-		    android:layout_width="fill_parent" 
-		    android:layout_height="2dp"
-		    android:background="@color/orange"/>
 		
 	    <LinearLayout
 	        android:layout_width="fill_parent"
@@ -25,6 +20,7 @@
 	        android:gravity="center_vertical"
 	        android:orientation="horizontal"
 	        android:weightSum="3"
+            android:background="@drawable/bg_bottom_control"
 		    >
 		    <LinearLayout
 		        android:layout_width="wrap_content"
@@ -172,7 +168,7 @@
 	                    
 	                    android:layout_alignParentRight="true"
 	                    android:layout_marginRight="8dp"
-	                    android:layout_alignBaseline="@id/order_id"
+	                    android:layout_below="@id/hotel_fendian_poi"
 	                    
 	                    android:gravity="center"
 	                    android:text="@string/cancel_order"

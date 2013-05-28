@@ -49,7 +49,52 @@ public class Globals {
 	/**
 	 * 当前所选城市信息
 	 */
-    public static CityInfo g_Current_City_Info = new CityInfo();
+	private static CityInfo g_Current_City_Info = null;
+    
+    public static void setCurrentCityInfo(CityInfo cityInfo) {
+        g_Current_City_Info = cityInfo;
+    }
+    
+    public static CityInfo getCurrentCityInfo() {
+        return getCurrentCityInfo(true);
+    }
+    
+    public static CityInfo getCurrentCityInfo(boolean query) {
+        CityInfo currentCityInfo = g_Current_City_Info;
+        CityInfo hotelCityInfo = g_Hotel_City_Info;
+        CityInfo cityInfo = null;
+        if (query && hotelCityInfo != null && hotelCityInfo.isAvailably()) {
+            cityInfo = hotelCityInfo;
+        } else if (currentCityInfo != null && currentCityInfo.isAvailably()){
+            cityInfo = currentCityInfo;
+        } else {
+            // "北京,beijing,39.90415599,116.397772995,11, 北京,beijing"
+            cityInfo = new CityInfo();
+            cityInfo.setCName("beijing");
+            cityInfo.setCProvinceName("beijing");
+            cityInfo.setEName("beijing");
+            cityInfo.setEProvinceName("beijing");
+            cityInfo.setId(1);
+            cityInfo.setPosition(new Position(39.90415599,116.397772995));
+            cityInfo.setLevel(11);
+        }
+        return cityInfo;
+    }
+    
+    /**
+     * 酒店查询的目标城市
+     * 打开酒店页面时，默认设为当前所选城市
+     * 用户在此页面切换酒店查询的目标城市时并不影响当前所选城市
+     */
+    private static CityInfo g_Hotel_City_Info = null;
+    
+    public static void setHotelCityInfo(CityInfo cityInfo) {
+        g_Hotel_City_Info = cityInfo;
+    }
+    
+    public static CityInfo getHotelCityInfo() {
+        return g_Hotel_City_Info;
+    }
     
     /**
      * 定位信息
@@ -232,20 +277,7 @@ public class Globals {
             Globals.g_User = null;
         }
     }
-    
-    /**
-     * 获取当前城市Id
-     * @return
-     */
-    public static int getCurrentCityId() {
-        int cityId = MapEngine.CITY_ID_INVALID;
-        CityInfo cityInfo = g_Current_City_Info;
-        if (cityInfo != null) {
-            cityId = cityInfo.getId(); 
-        }
-        return cityId;
-    }
-    
+        
     /**
      * 获取最近所选的城市信息
      * @param context

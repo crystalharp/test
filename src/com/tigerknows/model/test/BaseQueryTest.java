@@ -134,6 +134,47 @@ public class BaseQueryTest {
             });
         }
         
+        TextView removeTxv = new TextView(activity);
+        removeTxv.setText("remove");
+        removeTxv.setBackgroundResource(R.drawable.btn_default);
+        layout.addView(removeTxv);
+        final EditText removeEdt = new EditText(activity);
+        layout.addView(removeEdt);
+        removeTxv.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                parameters.remove(removeEdt.getEditableText().toString().trim());
+                layout.removeAllViews();
+                layout.addView(getViewByWeiboParameters(activity, parameters));
+            }
+        });
+        
+        TextView addTxv = new TextView(activity);
+        addTxv.setText("add");
+        addTxv.setBackgroundResource(R.drawable.btn_default);
+        layout.addView(addTxv);
+        final EditText addEdt = new EditText(activity);
+        layout.addView(addEdt);
+        addTxv.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                String input = addEdt.getEditableText().toString();
+                try {
+                    int index = input.indexOf("=");
+                    if (index > 0 && index < input.length()) {
+                        parameters.add(input.substring(0, index), input.substring(index+1));
+                    }
+                    layout.removeAllViews();
+                    layout.addView(getViewByWeiboParameters(activity, parameters));
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        
         return layout;
     }
     
@@ -485,7 +526,7 @@ public class BaseQueryTest {
                 Hashtable<String, String> criteria = new Hashtable<String, String>();
                 criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, "du");
                 criteria.put(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
-                accountManage.setup(criteria, Globals.g_Current_City_Info.getId());
+                accountManage.setup(criteria, Globals.getCurrentCityInfo().getId());
                 accountManage.setTipText(activity.getString(R.string.query_loading_tip));
                 if (activity instanceof BaseActivity) {
                     ((BaseActivity)(activity)).queryStart(accountManage, false);

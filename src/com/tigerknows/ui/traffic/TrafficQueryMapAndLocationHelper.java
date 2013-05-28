@@ -54,7 +54,7 @@ public class TrafficQueryMapAndLocationHelper {
 	private CityInfo mQueryCityInfo = new CityInfo();
 
 	public CityInfo getQueryCityInfo() {
-        return Globals.g_Current_City_Info;
+        return Globals.getCurrentCityInfo();
         //产品确定查询城市是系统设置城市，而不是地图所在城市。
 //      return mQueryCityInfo;
 	}
@@ -67,8 +67,8 @@ public class TrafficQueryMapAndLocationHelper {
     		myPositionCityId = Globals.g_My_Location_City_Info.getId();
     	}
     	
-    	if (Globals.g_Current_City_Info != null) {
-    		currentCityId = Globals.g_Current_City_Info.getId();
+    	if (Globals.getCurrentCityInfo() != null) {
+    		currentCityId = Globals.getCurrentCityInfo().getId();
     	}
     	
     	LogWrapper.d(TAG, "currentCityId: " + currentCityId + "myPositionCityId: " + myPositionCityId);

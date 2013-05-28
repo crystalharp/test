@@ -583,7 +583,7 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
             mTipProgressDialog.dismiss();
         }
         
-        CityInfo cityInfo = Globals.g_Current_City_Info;
+        CityInfo cityInfo = Globals.getCurrentCityInfo();
         if (cityInfo != null) {
             if (cityInfo.getId() != sAllAddCityInfoList.get(1).getId()) {
                 sAllAddCityInfoList.remove(1);

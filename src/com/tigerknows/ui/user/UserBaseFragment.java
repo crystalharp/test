@@ -148,7 +148,7 @@ public abstract class UserBaseFragment extends BaseFragment {
 			cityId = mylocaCityInfo.getId();
 		}
 		
-		CityInfo myCurrentCityInfo = Globals.g_Current_City_Info;
+		CityInfo myCurrentCityInfo = Globals.getCurrentCityInfo();
 		if (cityId == MapEngine.CITY_ID_INVALID && myCurrentCityInfo != null) {
 			cityId = myCurrentCityInfo.getId();
 		}

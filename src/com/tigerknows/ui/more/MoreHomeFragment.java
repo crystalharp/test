@@ -146,7 +146,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         
         refreshUserEntrance();
         refreshMoreBtn();
-        refreshCity(Globals.g_Current_City_Info.getCName());
+        refreshCity(Globals.getCurrentCityInfo().getCName());
     }
     
     public void refreshMoreBtn() {

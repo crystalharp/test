@@ -201,7 +201,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 //       	mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
 //       }
         
-//        fillOrderDb();
+        fillOrderDb();
 
         /**
          * if fragment is previously closed, size of orders will be 0
@@ -426,7 +426,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_QUERY);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS, ids);
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
-    	hotelOrderOperation.setup(criteria, Globals.g_Current_City_Info.getId(), getId(), getId(), null);
+    	hotelOrderOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
     	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
     }

@@ -31,6 +31,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -481,7 +482,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     		criteria.put(HotelOrderOperation.SERVER_PARAMETER_IDCARD_TYPE, mIdCardType);
     		criteria.put(HotelOrderOperation.SERVER_PARAMETER_IDCARD_NO, mIdCardNo);
     	}
-    	hotelOrderOperation.setup(criteria, mSphinx.getHotelHomeFragment().getCityInfo().getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
+    	hotelOrderOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
     	mSphinx.queryStart(hotelOrderOperation);
     }
     
