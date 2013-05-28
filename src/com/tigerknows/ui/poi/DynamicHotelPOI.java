@@ -116,7 +116,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             mPOIDetailFragment.setPopupWindow(popupWindow);
         }
         popupWindow.showAsDropDown(parent, 0, 0);
-        view.onResume();
     }
     
     final static String TAG = "DynamicHotelPOI";
@@ -178,8 +177,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 showDateListView(mPOIDetailFragment.mTitleFragment);
             }
         };
-        mCheckInDat.setOnClickListener(dateListener);
-        mCheckOutDat.setOnClickListener(dateListener);
+        mCheckView.setOnClickListener(dateListener);
     }
     
     void findViews(){
@@ -194,6 +192,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         imageNumTxv = (TextView) mLowerBlock.mOwnLayout.findViewById(R.id.image_num_txv);
         moreTxv = (TextView) mDynamicRoomTypeMoreView.findViewById(R.id.more_txv);
         moreRoomTypeArrow = (ImageView) mDynamicRoomTypeMoreView.findViewById(R.id.more_imv);
+        mCheckView = mUpperBlock.mOwnLayout.findViewById(R.id.check_view);
     }
     
     class MoreRoomTypeClickListener implements View.OnClickListener{
@@ -240,6 +239,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             checkout = (Calendar) checkin.clone();
             checkout.add(Calendar.DAY_OF_YEAR, 1);
         }
+        getDateListView().onResume(checkin, checkout);
     }
     
     final public void refreshDate() {

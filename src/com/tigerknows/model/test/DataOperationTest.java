@@ -107,7 +107,7 @@ public class DataOperationTest {
     public static XMap launchHotelPOIQueryResponse(){
     	XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
-        data.put(POIQueryResponse.FIELD_POI, DataQueryTest.launchHotelPOI("HotelPOI"));
+        data.put(POIQueryResponse.FIELD_POI, DataQueryTest.launchHotelPOI("HotelPOI", 1));
         return data;
     }
 

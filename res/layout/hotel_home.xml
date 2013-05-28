@@ -40,7 +40,10 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/list_header"
                 android:drawablePadding="8dp"
-                android:padding="8dp"
+                android:paddingLeft="10dp"
+                android:paddingTop="8dp"
+                android:paddingRight="8dp"
+                android:paddingBottom="8dp"
                 android:drawableLeft="@drawable/ic_city_hotel"
                 android:textColor="@color/black_dark"
                 android:textSize="18sp"
@@ -53,12 +56,34 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
                 />
+            <Button
+                android:id="@+id/location_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_middle"
+                android:padding="10dp"
+                android:drawablePadding="8dp"
+                android:drawableLeft="@drawable/ic_location_hotel"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="选择位置"
+                android:gravity="left|center_vertical"
+                />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                />
             <RelativeLayout
+                android:id="@+id/check_view"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:background="@drawable/list_middle"
-                android:padding="8dp"
+                android:paddingLeft="8dp"
+                android:paddingTop="14dp"
+                android:paddingRight="8dp"
+                android:paddingBottom="8dp"
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"
                 android:gravity="left|center_vertical"
@@ -78,7 +103,7 @@
 	                android:id="@+id/checkin_dat"
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
-	                android:layout_marginLeft="38dp"
+	                android:layout_marginLeft="40dp"
 	                tkandroid:checkin="入住"
 	                >
 	                </com.tigerknows.ui.hotel.DateWidget>
@@ -99,24 +124,6 @@
 	                >
 	                </com.tigerknows.ui.hotel.DateWidget>
             </RelativeLayout>
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                />
-            <Button
-                android:id="@+id/location_btn"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_middle"
-                android:padding="10dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_location_hotel"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
-                android:text="选择位置"
-                android:gravity="left|center_vertical"
-                />
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -191,13 +198,14 @@
                 android:id="@+id/dingdan_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:drawableLeft="@drawable/ic_order_hotel"
                 android:background="@drawable/list_single"
                 android:drawablePadding="8dp"
                 android:padding="8dp"
                 android:textColor="@color/black_dark"
                 android:textSize="18sp"
-                android:text="酒店订单"
+                android:text="已订酒店"
                 android:gravity="left|center_vertical"
                 />
         </LinearLayout>

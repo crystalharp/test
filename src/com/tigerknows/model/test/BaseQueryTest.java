@@ -216,6 +216,7 @@ public class BaseQueryTest {
             layout.addView(valueEdt);
         } else if (value instanceof XArray) {
             type = "XArray";
+            @SuppressWarnings("rawtypes")
             final XArray xArray = (XArray)value;
             for(int i = 0, size = xArray.size(); i < size; i++) {
                 View view = getViewByXObject(activty, (byte)i, (XObject) xArray.get(i), level+1);
@@ -263,6 +264,7 @@ public class BaseQueryTest {
                 layout.addView(addEdt);
                 addTxv.setOnClickListener(new View.OnClickListener() {
                     
+                    @SuppressWarnings("unchecked")
                     @Override
                     public void onClick(View v) {
                         String input = addEdt.getEditableText().toString();

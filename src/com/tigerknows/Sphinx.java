@@ -2249,7 +2249,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
                 Hotel hotel = poi.getHotel();
                 nameTxv.setText(poi.getName());
-                priceTxv.setText(poi.getPrice()+"起");
+                priceTxv.setText(poi.getPrice());
                 
                 int max = Globals.g_metrics.widthPixels - (int)(Globals.g_metrics.density*(188));
                 layoutInfoWindow(nameTxv, max);

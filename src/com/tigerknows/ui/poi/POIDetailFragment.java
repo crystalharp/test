@@ -543,10 +543,12 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         long money = poi.getPerCapity();
         if (TextUtils.isEmpty(price) == false) {
             mMoneyTxv.setText(price);
+            mMoneyTxv.setVisibility(View.VISIBLE);
         } else if (money > 0) {
             mMoneyTxv.setText(mContext.getString(R.string.yuan, money));
+            mMoneyTxv.setVisibility(View.VISIBLE);
         } else {
-            mMoneyTxv.setText("");
+            mMoneyTxv.setVisibility(View.GONE);
         }
         
         String distance = poi.getToCenterDistance();

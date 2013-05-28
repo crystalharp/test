@@ -504,6 +504,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 		public void onClick(View v) {
 		    
 		    if (position == 1) {
+		        mSphinx.getHotelHomeFragment().resetDate();
 		        mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo());
 		        mSphinx.showView(R.id.view_hotel_home);
 		        return;

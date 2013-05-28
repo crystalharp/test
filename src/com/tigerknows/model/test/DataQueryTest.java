@@ -641,7 +641,7 @@ public class DataQueryTest {
     public static XMap launchHotelPOIResponse(int total, String message) {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
-        data.put(POIResponse.FIELD_A_POI_LIST, launchHotelPOIList(total, message, TKConfig.getPageSize()));
+        data.put(POIResponse.FIELD_B_POI_LIST, launchHotelPOIList(total, message, TKConfig.getPageSize()));
         data.put(POIResponse.FIELD_FILTER_AREA_INDEX, launchFilterIndex(1, 168));
         data.put(POIResponse.FIELD_FILTER_CATEGORY_INDEX, launchFilterIndex(2, 168));
         data.put(POIResponse.FIELD_FILTER_ORDER_INDEX, launchFilterIndex(3, 168));
@@ -655,13 +655,13 @@ public class DataQueryTest {
         launchBaseList(data, total, message);
         XArray<XMap> list = new XArray<XMap>();
         for(int i = 0 ; i < size; i ++) {
-            list.add(launchHotelPOI("Hotel"+i+"HotelHotelHotelHotelHotelHotelHotel"));
+            list.add(launchHotelPOI("Hotel"+i+"HotelHotelHotelHotelHotelHotelHotel", i % 2));
         }
         data.put(POIList.FIELD_LIST, list);
         return data;
     }
 
-    public static XMap launchHotelPOI(String name) {
+    public static XMap launchHotelPOI(String name, int canReserve) {
         XMap data = launchPOI(name);
         data.put(Hotel.FIELD_UUID, "FIELD_UUID");
         data.put(Hotel.FIELD_SOURCE, "FIELD_SOURCE");
@@ -678,7 +678,7 @@ public class DataQueryTest {
         }
         data.put(Hotel.FIELD_ROOM_TYPE_LIST, xarray);
         data.put(Hotel.FIELD_SERVICE, "FIELD_SERVICE");
-        data.put(Hotel.FIELD_CAN_RESERVE, 1);
+        data.put(Hotel.FIELD_CAN_RESERVE, canReserve);
         return data;
     }
 
