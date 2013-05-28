@@ -136,6 +136,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                     + " " + roomType.getFloor() + " " + roomType.getArea());
             if (roomType.getCanReserve() == 0) {
                 bookBtn.setEnabled(false);
+                v.setClickable(false);
             } else {
                 bookBtn.setEnabled(true);
                 try {
