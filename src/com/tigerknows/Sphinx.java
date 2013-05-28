@@ -2241,17 +2241,17 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 //              if (mInfoWindowHotel == null) {
                 mInfoWindowHotel = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_hotel, null);
 //            }
-                ImageView pictureImv = (ImageView)mInfoWindowHotel.findViewById(R.id.picture_imv);
+                ImageView pictureImv = (ImageView)mInfoWindowHotel.findViewById(R.id.icon_imv);
                 TextView nameTxv=(TextView)mInfoWindowHotel.findViewById(R.id.name_txv);
                 TextView canReserveTxv = (TextView) mInfoWindowHotel.findViewById(R.id.can_reserve_txv);
-                TextView moneyTxv = (TextView) mInfoWindowHotel.findViewById(R.id.money_txv);
+                TextView priceTxv = (TextView) mInfoWindowHotel.findViewById(R.id.price_txv);
                 Button trafficBtn=(Button)mInfoWindowHotel.findViewById(R.id.traffic_btn);
 
                 Hotel hotel = poi.getHotel();
                 nameTxv.setText(poi.getName());
-                moneyTxv.setText(poi.getPrice());
+                priceTxv.setText(poi.getPrice()+"起");
                 
-                int max = Globals.g_metrics.widthPixels - (int)(Globals.g_metrics.density*(148));
+                int max = Globals.g_metrics.widthPixels - (int)(Globals.g_metrics.density*(188));
                 layoutInfoWindow(nameTxv, max);
                 if (hotel.getImageThumb() != null) {
                     TKDrawable tkDrawable = hotel.getImageThumb();
@@ -2264,11 +2264,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         }
                         pictureImv.setBackgroundDrawable(drawable);
                     } else {
-                        pictureImv.setBackgroundDrawable(null);
+                        pictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou);
                     }
                     
                 } else {
-                    pictureImv.setBackgroundDrawable(null);
+                    pictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou);
                 }
                 
                 if (hotel.getCanReserve() > 0) {
