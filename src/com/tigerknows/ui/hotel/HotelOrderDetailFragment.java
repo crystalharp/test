@@ -91,6 +91,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	private View mHotelAddressView;
 	
 	private ScrollView mScrollView;
+
+	private View mNameView;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -107,7 +109,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         findViews();
         setListener();
         mDistanceTxv.setVisibility(View.INVISIBLE);
-        
+        mNameView.setBackgroundResource(R.drawable.list_header);
         // TODO
         //mActionTag = "";
         
@@ -148,18 +150,21 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		mNavigationBar = mRootView.findViewById(R.id.navigation_widget);
 		
 		mScrollView = (ScrollView) mRootView.findViewById(R.id.body_scv);
+		mNameView = mRootView.findViewById(R.id.name_view);
+		
     }
 
     protected void setListener() {
     	
     	mBtnCancel.setOnClickListener(mCancelOnClickListener);
     	mBtnIssueComment.setOnClickListener(mIssueCommentOnClickListener);
-    	mBtnOrderAgain.setOnClickListener(mOrderAgainClickListener);
+    	mBtnOrderAgain.setOnClickListener(mJumpToPOIClickListener);
     	mBtnDeleteOrder.setOnClickListener(mDeleteOrderOnClickListener);
     	
     	mHotelAddressView.setOnClickListener(this);
     	mHotelTelView.setOnClickListener(this);
     	
+    	mNameView.setOnClickListener(mJumpToPOIClickListener);
     }
     
     private OnClickListener mCancelOnClickListener = new OnClickListener() {
@@ -226,7 +231,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		}
 	};
     
-    private OnClickListener mOrderAgainClickListener = new OnClickListener() {
+    private OnClickListener mJumpToPOIClickListener = new OnClickListener() {
 		
 		@Override
 		public void onClick(View v) {
