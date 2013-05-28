@@ -1894,7 +1894,7 @@ public final class DataQuery extends BaseQuery {
                     if (this.data == null) {
                         throw new APIException(APIException.RESPONSE_DATA_IS_EMPTY);
                     }
-                    this.type = getLongFromData(FIELD_TYPE);
+                    this.type = getLongFromData(FIELD_TYPE, this.type);
                     this.numCity = getLongFromData(FIELD_NUM_CITY, 0);
                     this.numNearby = getLongFromData(FIELD_NUM_NEARBY, 0);
                     if (this.data.containsKey(FIELD_DATA)) {
