@@ -501,7 +501,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             poiQuery.setup(criteria, cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
             baseQueryList.add(poiQuery);
             mSphinx.queryStart(baseQueryList);
-                mNavigationWidget.setVisibility(View.GONE);
+            mNavigationWidget.setVisibility(View.GONE);
         } else {
             if (poi.getHotel() != null) {
                 mNavigationWidget.setVisibility(View.VISIBLE);
@@ -1163,6 +1163,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mPOI = poi;
         if (poi == null) {
             return;
+        }
+        if (poi.getHotel() != null) {
+            mNavigationWidget.setVisibility(View.VISIBLE);
+        } else {
+            mNavigationWidget.setVisibility(View.GONE);
         }
         mDoingView.setVisibility(View.VISIBLE);
         if (poi.getName() == null && poi.getUUID() != null) {

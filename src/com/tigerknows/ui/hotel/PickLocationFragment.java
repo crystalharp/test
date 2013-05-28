@@ -301,6 +301,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mViewPager.setCurrentItem(0);
         mQueryBtn.setEnabled(false);
         mViewPager.requestFocus();
+        mFilterListView.setData(mSphinx.getHotelHomeFragment().getFilterList(), FilterResponse.FIELD_FILTER_AREA_INDEX, this, false, false, mActionTag);
     }
     
     class MyAdapter extends PagerAdapter {
