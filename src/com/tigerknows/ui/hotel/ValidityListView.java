@@ -161,6 +161,9 @@ public class ValidityListView extends LinearLayout {
                     return;
                 }
                 selectedParentPosition = position;
+                if(position != selectedParentPosition){
+                	selectedChildPosition = 0;
+                }
                 parentAdapter.notifyDataSetChanged();
                 
                 Calendar now = Calendar.getInstance();
@@ -209,7 +212,7 @@ public class ValidityListView extends LinearLayout {
     
     class MyAdapter extends ArrayAdapter<String> {
         
-        private static final int TEXTVIEW_RESOURCE_ID = R.layout.filter_list_item;
+        private static final int TEXTVIEW_RESOURCE_ID = R.layout.hotel_validity_list_item;
         
         private LayoutInflater mLayoutInflater;
         
@@ -236,11 +239,17 @@ public class ValidityListView extends LinearLayout {
             if (isParent) {
                 if (position == selectedParentPosition) {
                     view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+                    textTxv.setTextColor(getResources().getColor(R.color.orange));
                 } else {
                     view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+                    textTxv.setTextColor(getResources().getColor(R.color.black_dark));
                 }
+            } else if(position == selectedChildPosition){
+                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+                textTxv.setTextColor(getResources().getColor(R.color.orange));
             } else {
                 view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+                textTxv.setTextColor(getResources().getColor(R.color.black_dark));
             }
             
             textTxv.setText(date);

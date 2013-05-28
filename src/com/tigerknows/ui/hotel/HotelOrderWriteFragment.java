@@ -105,7 +105,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private String mMemberNum = "";
     
     // 信用卡担保相关数据
-    private long mNeedCreditAssure;
     private long mTypeCreditAssure;
     private String mCreditCardNo;
     private String mVerifyCode;
@@ -230,14 +229,13 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	RefreshPersonView();
     	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
     	if(rtList.isEmpty()){
-    		mNeedCreditAssure = 0;
     		mTypeCreditAssure = 0;
     		mRTime = "23:59之前";
     		mRTimeDetail = SIMPLE_DATE_FORMAT.format(mCheckIn.getTime()) + " 23:59:00";
     	}else{
     		mRTime = rtList.get(mRTimeWhich).getTime();
     		mRTimeDetail = rtList.get(mRTimeWhich).getTimeDetail();
-    		mNeedCreditAssure = rtList.get(mRTimeWhich).getNeed();
+    		rtList.get(mRTimeWhich).getNeed();
     		mTypeCreditAssure = rtList.get(mRTimeWhich).getType();
     	}
     	mRoomReserveBtn.setText(mRTime);
