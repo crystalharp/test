@@ -8,6 +8,8 @@
         <FrameLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             >
             <include
                 layout="@layout/empty_view"
@@ -28,9 +30,6 @@
                 android:id="@+id/result_lsv"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
-                
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
                 
                 android:divider="@color/transparent"
                 android:dividerHeight="12dp"
