@@ -3,6 +3,7 @@
  */
 package com.tigerknows.ui.hotel;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -32,6 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.decarta.Globals;
+import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -47,6 +49,7 @@ import com.tigerknows.model.ProxyQuery.RoomTypeDynamic.DanbaoGuize;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic.DanbaoGuize.RetentionTime;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
+import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.CalendarUtil;
@@ -543,6 +546,18 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 					);
 			mSphinx.getHotelOrderDetailFragment().setData(mHotelOrder);
 			mSphinx.getHotelOrderDetailFragment().setStageIndicatorVisible(true);
+			HotelOrderTable hotelOrderTable = new HotelOrderTable(mSphinx);
+			try {
+				hotelOrderTable.write(mHotelOrder);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (APIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				hotelOrderTable.close();
+			}
 			mSphinx.showView(R.id.view_hotel_order_detail);
 			destroyFragments(true, true);
 			dismiss();
