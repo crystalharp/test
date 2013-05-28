@@ -292,7 +292,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         int picNum = (b == null ? 0 : b.size());
         imageNumTxv.setText(mSphinx.getString(R.string.pictures, picNum));
         //FIXME:如何获取这个Image?
-//        final TKDrawable tkDrawable = mHotel.getImageThumb();
         if (b != null) {
             final TKDrawable tkDrawable = b.get(0).getTKDrawable();
             if (tkDrawable != null) {
@@ -300,7 +299,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     
                     @Override
                     public void run() {
-    //                    hotelImage.setMaxHeight(Util.dip2px(, dpValue))
+                        hotelImage.setMaxHeight(Util.dip2px(Globals.g_metrics.density, 90));
+                        hotelImage.setMaxWidth(Util.dip2px(Globals.g_metrics.density, 90));
                         hotelImage.setBackgroundDrawable(tkDrawable.loadDrawable(null, null, null));
                     }
                     
@@ -380,7 +380,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             RoomTypeDynamic roomInfo = ((RoomTypeDynamic)response);
             if (roomInfo.getNum() > 0){
                 //如果有房，跳转
-                //TODO:使用实际参数
                 mSphinx.getHotelOrderWriteFragment().setData(mPOI, mClickedRoomType, roomInfo, checkin, checkout);
                 mSphinx.showView(R.id.view_hotel_order_write);
             } else {
@@ -439,3 +438,4 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
  
     }
 }
+

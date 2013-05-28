@@ -1,6 +1,8 @@
 package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,6 +24,7 @@ import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
 import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.ui.poi.POIDetailFragment.DPOIType;
 import com.tigerknows.ui.poi.POIDetailFragment.DPOIViewInitializer;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
@@ -32,6 +35,7 @@ import com.tigerknows.model.DataOperation.FendianQueryResponse;
 import com.tigerknows.model.DataOperation.YanchuQueryResponse;
 import com.tigerknows.model.DataOperation.ZhanlanQueryResponse;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -51,7 +55,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
 
         @Override
         public void initItem(Object data, View v) {
-            DynamicPOI dynamicPOI = (DynamicPOI)data;
+            DynamicPOI dynamicPOI = ((SortDynamicPOI)data).dynamicPOI;
             ImageView iconImv = (ImageView) v.findViewById(R.id.icon_imv);
             TextView textTxv = (TextView) v.findViewById(R.id.text_txv);
             if (BaseQuery.DATA_TYPE_TUANGOU.equals(dynamicPOI.getType())) {
@@ -87,6 +91,24 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         mViewBlock.mOwnLayout = poiListView;
         
     }
+    
+    private class SortDynamicPOI{
+        DynamicPOI dynamicPOI;
+        DPOIType type;
+        
+        public SortDynamicPOI(DynamicPOI dPOI, DPOIType t){
+            dynamicPOI = dPOI;
+            type = t;
+        }
+    }
+    
+    private class DPOICompare implements Comparator<SortDynamicPOI> {
+
+        @Override
+        public int compare(SortDynamicPOI lhs, SortDynamicPOI rhs) {
+            return lhs.type.ordinal() - rhs.type.ordinal();
+        }
+    }
 
     @Override
     public List<DynamicPOIViewBlock> getViewList(POI poi) {
@@ -96,17 +118,21 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         }
         
         List<DynamicPOI> list = poi.getDynamicPOIList();
-        List<DynamicPOI> dataList = new LinkedList<DynamicPOI>();
+        List<SortDynamicPOI> dataList = new LinkedList<SortDynamicPOI>();
         int dPOIsize = (list != null ? list.size() : 0);
         for(int i = 0; i < dPOIsize; i++) {
             final DynamicPOI dynamicPOI = list.get(i);
             final String dataType = dynamicPOI.getType();
-            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) ||
-                    BaseQuery.DATA_TYPE_YANCHU.equals(dataType) ||
-                    BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-                dataList.add(dynamicPOI);
+            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+                dataList.add(new SortDynamicPOI(dynamicPOI, DPOIType.GROUPBUY));
+            } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
+                dataList.add(new SortDynamicPOI(dynamicPOI, DPOIType.SHOW));
+            } else if  (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+                dataList.add(new SortDynamicPOI(dynamicPOI, DPOIType.EXHIBITION));
             }
         }
+        
+        Collections.sort(dataList, new DPOICompare());
         
         int size = dataList.size();
         if (size == 0) {
@@ -117,6 +143,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         
         for (int i = 0; i < size; i++){
             View child = lsv.getChildView(i);
+            int c = 0x77;
             if (size != 1) {
                 if (i == 0) {
                     child.setBackgroundResource(R.drawable.list_header);
@@ -132,6 +159,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                 child.setBackgroundResource(R.drawable.list_single);
                 child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
             }
+//            child.setBackgroundColor(0xff000000 | (c << (i % 6 * 2)));
         }
         blockList.add(mViewBlock);
         return blockList;
