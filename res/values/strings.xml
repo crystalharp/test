@@ -1035,7 +1035,7 @@
     <string name="hotel_checkin">入住：</string>
     <string name="hotel_checkout">离店：</string>
     <string name="hotel_total_nights">共%1$d晚</string>
-    <string name="hotel_order">酒店订单</string>
+    <string name="hotel_ordered">已订酒店</string>
     <string name="hotel_order_detail">订单详情</string>
     
     <string name="issue_comment">发表点评</string>
