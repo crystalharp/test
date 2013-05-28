@@ -2,25 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:paddingTop="18dp"
-    android:paddingBottom="16dp"
-    android:paddingLeft="12dp"
-    android:paddingRight="12dp"
-    android:background="@drawable/list_selector_background_gray_light">
+    android:orientation="vertical"
+    android:background="@drawable/list_single">
     
-	<RelativeLayout 
+    <LinearLayout
+        android:id="@+id/name_view"
 	    android:layout_width="fill_parent"
-	    android:layout_height="wrap_content">
-	
+	    android:layout_height="wrap_content"
+	    android:paddingTop="8dp"
+	    android:paddingLeft="8dp"
+	    android:orientation="horizontal"
+	    android:background="@drawable/list_header" >
+        
 	    <TextView
 	        android:id="@+id/name_txv"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        
-	        android:layout_alignParentTop="true"
 	        android:drawableRight="@drawable/ic_goto_here"
-	        android:layout_marginRight="4dp"
-	        android:layout_marginLeft="4dp"
 	        
 	        android:focusable="false"
 	        android:gravity="center_vertical"
@@ -29,17 +28,21 @@
 	        android:singleLine="true"
 	        android:text="@string/app_name"
 	        android:textColor="@color/black"
-	        android:textSize="18sp" />
+	        android:textSize="18sp"/>
+        
+    </LinearLayout>
 	
+    <LinearLayout 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:paddingTop="8dp"
+	    android:paddingLeft="8dp"
+	    android:background="@drawable/list_middle">
+        
 	    <TextView
 	        android:id="@+id/price_txv"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        
-	        android:layout_alignParentLeft="true"
-	        android:layout_below="@+id/name_txv"
-	        android:layout_marginTop="10dp"
-	        android:layout_marginLeft="4dp"
 	        
 	        android:focusable="false"
 	        android:singleLine="true"
@@ -52,9 +55,6 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        
-	        android:layout_alignBaseline="@id/price_txv"
-	        android:layout_toRightOf="@id/price_txv"
-	        
 	        android:focusable="false"
 	        android:singleLine="true"
 	        android:text="@string/rmb_text"
@@ -65,9 +65,7 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        
-	        android:layout_alignBaseline="@id/price_txv"
 	        android:layout_marginLeft="16dp"
-	        android:layout_toRightOf="@id/yuan_txv"
 	        android:drawablePadding="4dp"
 	        
 	        android:focusable="false"
@@ -75,16 +73,23 @@
 	        android:text="多媒体标准间"
 	        android:textColor="@color/orange"
 	        android:textSize="16sp" />
+	    
+    </LinearLayout>
+    
 	
+    <LinearLayout 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:paddingTop="8dp"
+	    android:paddingLeft="8dp"
+	    android:paddingBottom="8dp"
+	    android:background="@drawable/list_footer">
+	    
 	    <TextView
 	        android:id="@+id/checkin_txv"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        
-	        android:layout_alignParentLeft="true"
-	        android:layout_below="@id/price_txv"
-	        android:layout_marginTop="10dp"
-	        android:layout_marginLeft="4dp"
 	        android:drawablePadding="4dp"
 	        
 	        android:focusable="false"
@@ -98,8 +103,6 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        
-	        android:layout_alignBaseline="@id/checkin_txv"
-	        android:layout_toRightOf="@id/checkin_txv"
 	        android:drawablePadding="4dp"
 	        
 	        android:focusable="false"
@@ -113,9 +116,7 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        
-	        android:layout_alignBaseline="@id/checkin_txv"
 	        android:layout_marginLeft="16dp"
-	        android:layout_toRightOf="@id/checkin_date_txv"
 	        android:drawablePadding="4dp"
 	        
 	        android:focusable="false"
@@ -129,8 +130,6 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        
-	        android:layout_alignBaseline="@id/checkin_txv"
-	        android:layout_toRightOf="@id/checkout_txv"
 	        android:drawablePadding="4dp"
 	        
 	        android:focusable="false"
@@ -144,8 +143,6 @@
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        
-	        android:layout_alignBaseline="@id/checkout_date_txv"
-	        android:layout_alignParentRight="true"
 	        android:layout_marginRight="4dp"
 	        
 	        android:focusable="false"
@@ -154,6 +151,6 @@
 	        android:textColor="@color/black"
 	        android:textSize="16sp" />
 	
-	</RelativeLayout>
+	    </LinearLayout>
 
 </LinearLayout>
