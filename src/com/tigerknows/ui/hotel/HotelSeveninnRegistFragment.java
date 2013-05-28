@@ -74,10 +74,6 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 
 	protected void setListener() {
 		// TODO Auto-generated method stub
-		
-		mSeveninnNameEdt.setOnClickListener(this);
-		mSeveninnPhoneEdt.setOnClickListener(this);
-		mSeveninnIdcardCodeEdt.setOnClickListener(this);
 		mSeveninnRegistBtn.setOnClickListener(this);
 	}
 
