@@ -193,7 +193,7 @@ public class ValidityListView extends LinearLayout {
                 childLsv.post(new Runnable() {
 					@Override
 					public void run() {
-		                childLsv.smoothScrollToPositionFromTop(0, 0);
+		                childLsv.smoothScrollToPosition(0, 0);
 					}
 				});
             }
