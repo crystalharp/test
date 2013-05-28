@@ -71,6 +71,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     
     LinearListView roomTypeList;
     ImageView hotelImage;
+    ImageView moreRoomTypeArrow;
     TextView hotelSummary;
     private DateWidget mCheckInDat;
     private DateWidget mCheckOutDat;
@@ -184,31 +185,31 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mCheckOutDat = (DateWidget) mUpperBlock.mOwnLayout.findViewById(R.id.checkout_dat);
         imageNumTxv = (TextView) mLowerBlock.mOwnLayout.findViewById(R.id.image_num_txv);
         moreTxv = (TextView) mDynamicRoomTypeMoreView.findViewById(R.id.more_txv);
+        moreRoomTypeArrow = (ImageView) mDynamicRoomTypeMoreView.findViewById(R.id.more_imv);
     }
     
     class MoreRoomTypeClickListener implements View.OnClickListener{
-        boolean mShowingAll = false;
         @Override
         public void onClick(View v) {
-            if (mShowingAll) {
-                roomTypeList.refreshList(mShowingRoomList);
-                refreshBackground(roomTypeList, mShowingRoomList);
-                moreTxv.setText(mSphinx.getString(R.string.hotel_expand_roomtype));
-                mShowingAll = false;
-            } else {
-                roomTypeList.refreshList(mAllRoomList);
-                refreshBackground(roomTypeList, mAllRoomList);
-                moreTxv.setText(mSphinx.getString(R.string.fold));
-                mShowingAll = true;
-            }
+            roomTypeList.refreshList(mAllRoomList);
+            refreshBackground(roomTypeList, mAllRoomList);
+            mDynamicRoomTypeMoreView.setVisibility(View.GONE);
         }
         
     }
 
     @Override
     public void confirm() {
-        checkin = getDateListView().getCheckin();
-        checkout = getDateListView().getCheckout();
+        Calendar in = getDateListView().getCheckin();
+        Calendar out = getDateListView().getCheckout();
+        if (out.get(Calendar.DAY_OF_YEAR) == checkout.get(Calendar.DAY_OF_YEAR)
+                && in.get(Calendar.DAY_OF_YEAR ) == checkin.get(Calendar.DAY_OF_YEAR)) {
+            mPOIDetailFragment.dismissPopupWindow();
+            return;
+        } else {
+            checkin = in;
+            checkout = out;
+        }
         refreshDate();
         BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_DETAIL);
         baseQuery.setTipText(mSphinx.getString(R.string.doing_and_wait));
@@ -250,8 +251,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mHotel = poi.getHotel();
         refreshDate();
         
-        moreTxv.setText(mSphinx.getString(R.string.hotel_expand_roomtype));
-        moreRoomTypeClickListener.mShowingAll = false;
 
         mAllRoomList.clear();
         mShowingRoomList.clear();
@@ -260,12 +259,15 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         if (size == 0) {
             LogWrapper.i(TAG, "size of roomTypeList is 0.");
             moreTxv.setText(mSphinx.getString(R.string.hotel_no_roomtype));
+            moreRoomTypeArrow.setVisibility(View.GONE);
             mDynamicRoomTypeMoreView.setClickable(false);
             mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
         } else if (size > SHOW_DYNAMIC_HOTEL_MAX) {
             for(int i = 0; i < SHOW_DYNAMIC_HOTEL_MAX; i++) {
                 mShowingRoomList.add(mAllRoomList.get(i));
             }
+            moreRoomTypeArrow.setVisibility(View.VISIBLE);
+            moreTxv.setText(mSphinx.getString(R.string.hotel_expand_roomtype));
             mDynamicRoomTypeMoreView.setClickable(true);
             mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
         } else {

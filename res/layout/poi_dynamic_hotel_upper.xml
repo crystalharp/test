@@ -69,7 +69,7 @@
         <LinearLayout android:id="@+id/dynamic_roomtype_more_view"
             android:layout_width="fill_parent" 
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:background="@drawable/list_footer"
             android:gravity="center"
             >
@@ -78,6 +78,14 @@
                 android:layout_width="wrap_content" 
                 android:layout_height="wrap_content"
                 android:text="@string/more" />
+
+            <ImageView
+                android:id="@+id/more_imv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:background="@drawable/icon_arrow_down" />
+
         </LinearLayout>
     </LinearLayout>
 
