@@ -201,7 +201,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 //       	mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
 //       }
         
-//        fillOrderDb();
+        fillOrderDb();
 
         /**
          * if fragment is previously closed, size of orders will be 0
