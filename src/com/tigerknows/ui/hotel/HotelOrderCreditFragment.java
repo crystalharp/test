@@ -134,7 +134,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	String str = mCreditBankBtn.getText().toString();
         	List<String> list = new ArrayList<String>();
         	// 判断选择银行
-        	if(TextUtils.isEmpty(str)){
+        	if(TextUtils.isEmpty(str) || TextUtils.equals(str, mSphinx.getString(R.string.credit_bank_hint))){
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_bank_empty_tip));
         		return;
         	}
@@ -142,10 +142,14 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	// 判断银行卡号
         	str = mCreditCodeEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
+        		mCreditCodeEdt.requestFocus();
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_code_empty_tip));
+        		mSphinx.showSoftInput();
         		return;
         	}else if(!ValidateUtil.isValidCreditCard(str)){
+        		mCreditCodeEdt.requestFocus();
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_code_format));
+        		mSphinx.showSoftInput();
         		return;
         	}
         	list.add(str);
@@ -153,10 +157,14 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	// 判断持卡人姓名
         	str = mCreditOwnerEdt.getText().toString().trim();
         	if(TextUtils.isEmpty(str)){
+        		mCreditOwnerEdt.requestFocus();
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_owner_empty_tip));
+        		mSphinx.showSoftInput();
         		return;
         	}else if(!ValidateUtil.isValidElongName(str)){
+        		mCreditOwnerEdt.requestFocus();
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format));
+        		mSphinx.showSoftInput();
         		return;
         	}
         	list.add(str);
@@ -164,10 +172,14 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	// 判断信用卡验证码
         	str = mCreditVerifyEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
+        		mCreditVerifyEdt.requestFocus();
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_verify_empty_tip));
+        		mSphinx.showSoftInput();
         		return;
         	}else if(!ValidateUtil.isValidCreditCardVerify(str)){
+        		mCreditVerifyEdt.requestFocus();
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_verify_format));
+        		mSphinx.showSoftInput();
         		return;
         	}
         	list.add(str);
@@ -187,10 +199,14 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	// 判断证件号码
         	str = mCreditCertCodeEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
+        		mCreditCertCodeEdt.requestFocus();
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_cert_code_empty_tip));
+        		mSphinx.showSoftInput();
         		return;
         	}else if(!ValidateUtil.isValidCertCode(str)){
+        		mCreditCertCodeEdt.requestFocus();
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_certcard_number_format));
+        		mSphinx.showSoftInput();
         		return;
         	}
         	list.add(str);
