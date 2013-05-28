@@ -154,7 +154,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         mQueryingView = mRootView.findViewById(R.id.querying_view);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(v);
-        v = mLayoutInflater.inflate(R.layout.hotel_order_list_header, null);
+        v = mLayoutInflater.inflate(R.layout.hotel_order_list_empty_header_or_footer, null);
         mResultLsv.addHeaderView(v);
     }
 

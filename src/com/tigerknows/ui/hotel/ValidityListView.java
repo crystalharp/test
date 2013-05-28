@@ -16,7 +16,10 @@
 
 package com.tigerknows.ui.hotel;
 
-import com.tigerknows.R;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -24,15 +27,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import com.tigerknows.R;
+import com.tigerknows.Sphinx;
 
 
 /**
@@ -77,7 +79,6 @@ public class ValidityListView extends LinearLayout {
             parentFilterList.add((now.get(Calendar.YEAR)+i)+"年");
         }
 
-        
         this.selectedParentPosition = (this.calendar.get(Calendar.YEAR)-now.get(Calendar.YEAR));
         
         for(int i = (this.selectedParentPosition <= 0 ? now.get(Calendar.MONTH) : 0); i < 12; i++) {
@@ -100,16 +101,17 @@ public class ValidityListView extends LinearLayout {
             childLsv.setSelectionFromTop(0, 0);
         }
     }
-        
-    public ValidityListView(Context context) {
-        this(context, null);
+    private Sphinx mSphinx;
+    public ValidityListView(Sphinx sphinx) {
+        this(sphinx, null);
     }
 
-    public ValidityListView(Context context, AttributeSet attrs) {
-        super(context, attrs);
+    public ValidityListView(Sphinx sphinx, AttributeSet attrs) {
+        super(sphinx, attrs);
+        mSphinx = sphinx;
         setFocusable(false);
         
-        LayoutInflater inflater = (LayoutInflater) context
+        LayoutInflater inflater = (LayoutInflater) sphinx
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.hotel_validity_list, this, // we are the parent
                 true);
@@ -117,15 +119,28 @@ public class ValidityListView extends LinearLayout {
         findViews();
         setListener();
         
-        parentAdapter = new MyAdapter(context, parentFilterList);
+        parentAdapter = new MyAdapter(sphinx, parentFilterList);
         parentAdapter.isParent = true;
-        childAdapter = new MyAdapter(context, childFilterList);
+        childAdapter = new MyAdapter(sphinx, childFilterList);
         childAdapter.isParent = false;
         
         parentLsv.setAdapter(parentAdapter);
         childLsv.setAdapter(childAdapter);
+
+        resizeLsv();
     }
 
+    private void resizeLsv(){
+        parentLsv.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				setLsvHeigth(parentLsv, R.layout.hotel_validity_list_item, 5);
+				setLsvHeigth(childLsv, R.layout.hotel_validity_list_item, 5);
+			}
+		});
+    }
+    
     protected void findViews() {
         parentLsv = (ListView) findViewById(R.id.parent_lsv);
         childLsv = (ListView) findViewById(R.id.child_lsv);
@@ -172,6 +187,15 @@ public class ValidityListView extends LinearLayout {
                 for(int i = (selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0); i < 12; i++) {
                     childFilterList.add((i+1)+"月");
                 }
+                selectedChildPosition = 0;
+                childAdapter.notifyDataSetChanged();
+                resizeLsv();
+                childLsv.post(new Runnable() {
+					@Override
+					public void run() {
+		                childLsv.smoothScrollToPositionFromTop(0, 0);
+					}
+				});
             }
         });
         childLsv.setOnItemClickListener(new OnItemClickListener() {
@@ -208,6 +232,30 @@ public class ValidityListView extends LinearLayout {
             return false;
         }
         return parentLsv.hasFocus() || childLsv.hasFocus();
+    }
+    
+    public void setLsvHeigth(ListView lsv, int itemResId, int maxCount){
+    	if(maxCount<1){
+    		return;
+    	}
+    	int itemHeight = getLsvItemHeight(lsv, R.layout.hotel_validity_list_item);
+    	int count = lsv.getCount()>maxCount? maxCount:lsv.getCount();
+    	int lsvHeigth = (itemHeight + lsv.getDividerHeight())*count;
+//    	System.out.println("itemHeight: " + itemHeight);
+//    	System.out.println("lsvHeigth: " + lsvHeigth);
+    	ViewGroup.LayoutParams params = lsv.getLayoutParams();
+    	params.height = lsvHeigth;
+    	lsv.setLayoutParams(params);
+    	
+    }
+    
+    public int getLsvItemHeight(ListView parent, int itemResId){
+    	ViewGroup templateView;
+		// Inflate a new view for it.
+       	templateView = (ViewGroup)mSphinx.getLayoutInflater().inflate(itemResId, parent, false);
+    	((TextView)templateView.findViewById(R.id.text_txv)).setText("xx");
+    	templateView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+    	return templateView.getMeasuredHeight();
     }
     
     class MyAdapter extends ArrayAdapter<String> {
