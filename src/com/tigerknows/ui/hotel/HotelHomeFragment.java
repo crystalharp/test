@@ -187,6 +187,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 break;
                 
             case R.id.location_btn:
+                mSphinx.getPickLocationFragment().reset();
                 if (filterList == null) {
                     showProgressDialog(id);
                 } else {
