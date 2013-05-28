@@ -172,7 +172,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				mSphinx.getHotelOrderDetailFragment().setData(orders.get(position));
+				mSphinx.getHotelOrderDetailFragment().setData(orders.get(position-1));
 				mSphinx.getHotelOrderDetailFragment().setStageIndicatorVisible(false);
 				mSphinx.showView(R.id.view_hotel_order_detail);
 			}
