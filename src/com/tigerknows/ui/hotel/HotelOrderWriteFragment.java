@@ -560,7 +560,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
        		mSphinx.showView(R.id.view_hotel_credit_assure);
        		break;
     	case Response.RESPONSE_CODE_HOTEL_OTHER_ERROR:
-    		Utility.showNormalDialog(mSphinx, response.getDescription());
+    		Utility.showNormalDialog(mSphinx, "来自艺龙的消息："+response.getDescription());
     		break;
     	}
 	}
