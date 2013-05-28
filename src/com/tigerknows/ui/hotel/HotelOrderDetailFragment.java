@@ -18,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -88,6 +89,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	private View mHotelTelView;
 
 	private View mHotelAddressView;
+	
+	private ScrollView mScrollView;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -143,7 +146,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		mBtnDeleteOrder = (Button) mRootView.findViewById(R.id.btn_delete_order);
 		
 		mNavigationBar = mRootView.findViewById(R.id.navigation_widget);
-
+		
+		mScrollView = (ScrollView) mRootView.findViewById(R.id.body_scv);
     }
 
     protected void setListener() {
@@ -290,7 +294,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         if(( curTime - mOrder.getStateUpdateTime() ) > ORDER_UPDATE_INTEVAL){
         	sendStateQuery(""+mOrder.getId());
         }
-        
+
+        mScrollView.smoothScrollTo(0, 0);
     }
 
     /**
