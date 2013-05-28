@@ -345,7 +345,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	mOrderIdTxv.setText(order.getId());
     	mOrderStateTxv.setText(getOrderStateDesc(order.getState()));
     	mOrderTimeTxv.setText(formatOrderTime(order.getCreateTime()));
-    	mTotalFeeTxv.setText( "" + order.getTotalFee());
+    	mTotalFeeTxv.setText("" + ((int)order.getTotalFee()) );
     	mPayTypeTxv.setText(mContext.getString(R.string.hotel_order_default_pay_type));
     	mCheckinDateTxv.setText(formatOrderTime(order.getCheckinTime()));
     	mCheckoutDateTxv.setText(formatOrderTime(order.getCheckoutTime()));
