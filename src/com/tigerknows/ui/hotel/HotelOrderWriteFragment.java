@@ -17,6 +17,7 @@ import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,7 +29,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,7 +56,6 @@ import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ValidateUtil;
 import com.tigerknows.widget.SingleChoiceArrayAdapter;
-import com.tigerknows.widget.StringArrayAdapter;
 
 public class HotelOrderWriteFragment extends BaseFragment implements View.OnClickListener{
 
@@ -119,6 +118,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private String mIdCardType;
     private String mIdCardNo;
     
+    private int mSubmitted;
+    
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -161,8 +162,17 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
 
     protected void setListener() {
-        // TODO Auto-generated method stub
-        mHotelOrderWriteScv.setOnClickListener(this);
+    	mHotelOrderWriteScv.setOnTouchListener(new OnTouchListener(){
+    	
+	        @Override
+	        public boolean onTouch(View v, MotionEvent event) {
+	            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+	                mSphinx.hideSoftInput();
+	            }
+	            return true;
+	        }
+	    });
+        //mHotelOrderWriteScv.setOnClickListener(this);
         mHotelNameTxv.setOnClickListener(this);
         mRoomtypeTxv.setOnClickListener(this);
         mRoomtypeDetailTxv.setOnClickListener(this);
@@ -287,6 +297,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomNightsTxv.setText(mSphinx.getString(R.string.hotel_total_nights, mNights));
         mRoomHowmany = 1;
         mRTimeWhich = 0;
+        mSubmitted = 0;
     }
 
 	private void exit() {
@@ -462,6 +473,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     public void submit(boolean HasCreditInfo) {
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
     	Hashtable<String, String> criteria = new Hashtable<String, String>();
+    	if(mSubmitted > 6){
+    		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.network_failed));
+    		return;
+    	}
+    	mSubmitted++;
     	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_CREATE);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_HOTEL_ID, mHotel.getUuid());
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_BRAND, String.valueOf(mHotel.getBrand()));
@@ -580,9 +596,29 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
        		mSphinx.showView(R.id.view_hotel_credit_assure);
        		break;
     	case Response.RESPONSE_CODE_HOTEL_OTHER_ERROR:
-    		Utility.showNormalDialog(mSphinx, "来自艺龙的消息："+((response.getDescription().split("!"))[0].split("！"))[0]);
+    		String[] a = analysisElongRequest(response.getDescription()).split("#");
+    		LogWrapper.d("Trap", a[0]);
+    		switch(Integer.parseInt(a[0])){
+    		case 1:
+    			mTotalPrice = Double.parseDouble(a[1]);
+    			submit(false);
+    			break;
+    		default:
+    			Utility.showNormalDialog(mSphinx, "来自艺龙的消息："+a[1]);
+    			break;
+    		}
     		break;
     	}
+	}
+	private String analysisElongRequest(String description){
+		String ResponseStr = description.split("!")[0].split("！")[0];
+		int ResponseInt = 0;
+		String[] strArray = description.split("订单总价应为");
+		if(strArray.length > 1){
+			ResponseInt = 1;
+			ResponseStr = strArray[1];
+		}		
+		return ResponseInt+"#"+ResponseStr;
 	}
 
 	private void destroyFragments(boolean seven, boolean credit){
