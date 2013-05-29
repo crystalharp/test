@@ -13,7 +13,7 @@
 	    android:layout_height="wrap_content"
 	    android:gravity="center"
 	    android:text="选择酒店"
-	    android:textColor="@color/gray_dark"
+	    android:textColor="@color/black_light"
 	    android:textSize="12sp"
 	    android:background="@color/transparent"/>
     <TextView 
