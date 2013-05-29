@@ -29,7 +29,6 @@ import com.tigerknows.model.User;
 import com.tigerknows.ui.poi.EditCommentActivity;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
-import com.tigerknows.util.MaxLengthWatcher;
 
 public class UserUpdateNickNameActivity extends UserBaseActivity {
 	
