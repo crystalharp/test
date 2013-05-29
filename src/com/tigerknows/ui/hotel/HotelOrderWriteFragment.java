@@ -576,7 +576,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 				mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
 			}
     		mSphinx.destroyHotelOrderCreditFragment();
-       		mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),Utility.formatHotelPrice(mOneNightPrice), Utility.formatHotelPrice(mTotalPrice, (int)mTypeCreditAssure);
+       		mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),Utility.formatHotelPrice(mOneNightPrice), Utility.formatHotelPrice(mTotalPrice), (int)mTypeCreditAssure);
        		mSphinx.showView(R.id.view_hotel_credit_assure);
        		break;
     	case Response.RESPONSE_CODE_HOTEL_OTHER_ERROR:
