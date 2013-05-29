@@ -8,6 +8,7 @@ import java.util.List;
 
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -51,9 +52,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 
     final static int PARENT_VIEW = 1;
     final static int DATA = 0;
-    final static int LOAD_SUCCEED = 0;
-    final static int LOAD_FAILED = 1;
-    boolean mLoadSucceed = true;
+    public boolean mLoadSucceed = true;
     DynamicPOIViewBlock mUpperBlock;
     DynamicPOIViewBlock mLowerBlock;
     List<DynamicPOIViewBlock> blockList = new LinkedList<DynamicPOIViewBlock>();
@@ -306,6 +305,9 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         
         //FIXME:暂无简介
         String value = mPOI.getDescriptionValue(Description.FIELD_SYNOPSIS);
+        if (TextUtils.isEmpty(value)) {
+            value = mSphinx.getString(R.string.hotel_no_summary);
+        }
         hotelSummary.setText(value);
         LinearLayout hotelSummaryBlock = (LinearLayout) mLowerBlock.mOwnLayout.findViewById(R.id.hotel_summary);
         hotelSummaryBlock.setOnClickListener(new View.OnClickListener() {
@@ -335,8 +337,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 }, mPOIDetailFragment.toString());
                 if (hotelImageDraw != null) {
                     hotelImage.setBackgroundDrawable(hotelImageDraw);
-                } else {
-                    hotelImage.setImageResource(R.drawable.icon);
                 }
             }
         }
