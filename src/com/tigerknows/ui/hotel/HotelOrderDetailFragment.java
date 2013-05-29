@@ -532,6 +532,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             				 */
             				mOrder.setState(HotelOrder.STATE_CANCELED);
             				mOrderStateTxv.setText(getOrderStateDesc(mOrder.getState()));
+            				mBtnCancel.setVisibility(View.GONE);
             				Toast.makeText(mContext, R.string.hotel_order_cancel_success, Toast.LENGTH_LONG).show(); 
             				
             			}else{

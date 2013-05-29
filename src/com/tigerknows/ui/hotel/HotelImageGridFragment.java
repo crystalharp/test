@@ -73,7 +73,7 @@ public class HotelImageGridFragment extends BaseFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-        mTitleBtn.setText("酒店图片（"+ mImageList.size()+"）张");
+        mTitleBtn.setText("酒店图片（"+ mImageList.size()+"张）");
 		setState(mState);
 	}
 	
@@ -198,7 +198,7 @@ public class HotelImageGridFragment extends BaseFragment {
 //                layoutParams.height = (int) (scale*image.getIntrinsicHeight());
                 iconImv.setImageDrawable(image);
             } else {
-                Drawable drawable = iconImv.getBackground();
+//                Drawable drawable = iconImv.getBackground();
 //                float scale = ((float) newWidth) / drawable.getIntrinsicWidth();
 //                layoutParams.height = (int) (scale*drawable.getIntrinsicHeight());
                 iconImv.setImageDrawable(null);

@@ -58,7 +58,7 @@ public class CalendarUtil {
 	
 	public static int dateInterval(Calendar start, Calendar end){
 		if(start.after(end)){
-			return -1;
+			return 0;
 		}
 		int days = end.get(Calendar.DAY_OF_YEAR) - start.get(Calendar.DAY_OF_YEAR);
 		int y2 = end.get(Calendar.YEAR);

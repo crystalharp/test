@@ -10,6 +10,7 @@ import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
@@ -137,6 +138,10 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 
 	ArrayList< ArrayList<String> > subCategories = new ArrayList< ArrayList<String> >();
 	String[] mHighLightedSubs;
+	
+	public CategoryAdapter getCategoryAdapter() {
+	    return mCategoryAdapter;
+	}
 	
 	public ListView getCategoryLsv() {
         return mCategoryLsv;
@@ -467,7 +472,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         	}
         	
         	ImageView icon = (ImageView) convertView.findViewById(R.id.hotel_tip_reserve_imv);
-        	if (position == 1) {
+        	if (position == 1 && TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE) == null) {
         	    icon.setVisibility(View.VISIBLE);
         	} else {
         	    icon.setVisibility(View.GONE);
