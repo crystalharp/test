@@ -8,6 +8,7 @@ import com.decarta.Globals;
 import com.decarta.android.location.Position;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
@@ -120,6 +121,10 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             mPriceTxv.setText("不限");
             queryFilter();
         }
+        if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE) == null) {
+            TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE, "1");
+            mSphinx.getPOIHomeFragment().getCategoryAdapter().notifyDataSetChanged();
+        }
     }
     
     /**
@@ -231,9 +236,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     }
     
     public void resetDate() {
-        Calendar checkOut = Calendar.getInstance();
-        checkOut.add(Calendar.DAY_OF_YEAR, 1);
-        getDateListView().onResume(Calendar.getInstance(), checkOut);
+        getDateListView().refresh(null, null);
     }
     
     public void setCityInfo(CityInfo cityInfo) {
@@ -411,7 +414,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mPopupWindowContain.removeAllViews();
         mPopupWindowContain.addView(getDateListView());
         mPopupWindow.showAsDropDown(parent, 0, 0);
-        view.onResume(getCheckin(), getCheckout());
+        view.refresh(getCheckin(), getCheckout());
     }
     
     DateListView getDateListView() {

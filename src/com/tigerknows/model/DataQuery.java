@@ -423,6 +423,9 @@ public final class DataQuery extends BaseQuery {
                 if (appendaction == null) {
                     requestParameters.add(SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD+Util.byteToHexString(POI.FIELD_PRICE)+Hotel.NEED_FILED_LIST);
                     requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
+                    requestParameters.add(SERVER_PARAMETER_PICTURE, 
+                            Util.byteToHexString(Hotel.FIELD_IMAGE_THUMB)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)+"_[10000000000000000000]" + ";" +
+                            Util.byteToHexString(Hotel.FIELD_IMAGE_LIST)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_DETAIL)+"_[00000000000000000000]");
                 }
                 addParameter(new String[]{SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
             }

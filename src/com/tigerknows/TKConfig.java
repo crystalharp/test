@@ -518,6 +518,11 @@ public class TKConfig {
     public static final String PREFS_HINT_LOCATION = "prefs_hint_location";
     
     /**
+     * 是否已显示搜索首页界面的酒店预订引导
+     */
+    public static final String PREFS_HINT_POI_HOME_HOTEL_RESERVE = "prefs_hint_poi_home_hotel_reserve";
+    
+    /**
      * 推送服务绝对启动时间
      */
     public static final String PREFS_RADAR_PULL_ALARM_ABSOLUTE = "prefs_radar_pull_alarm_absolute";

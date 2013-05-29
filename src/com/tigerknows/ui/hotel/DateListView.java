@@ -85,27 +85,28 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     String[] weedDays;
     
-    public void onResume(Calendar checkIn, Calendar checkOut) {
+    public void refresh(Calendar checkIn, Calendar checkOut) {
+        if (checkIn == null ||
+                checkOut == null ||
+                CalendarUtil.dateInterval(checkIn, checkOut) < 1) {
+            checkIn = Calendar.getInstance();
+            checkOut = Calendar.getInstance();
+            checkOut.add(Calendar.DAY_OF_YEAR, 1);
+        }
+        today = Calendar.getInstance();
+        confirmCheckinPosition = CalendarUtil.dateInterval(today, checkIn);
+        confirmCheckoutPosition = CalendarUtil.dateInterval(checkIn, checkOut)-1;
         checkinPosition = confirmCheckinPosition;
         checkoutPosition = confirmCheckoutPosition;
-        if (today == null ||
-                getCheckin().get(Calendar.DAY_OF_YEAR) != checkIn.get(Calendar.DAY_OF_YEAR) ||
-                getCheckout().get(Calendar.DAY_OF_YEAR) != checkOut.get(Calendar.DAY_OF_YEAR)) {
-            checkinPosition = 0;
-            checkoutPosition = 0;
-            confirmCheckinPosition = 0;
-            confirmCheckoutPosition = CalendarUtil.dateInterval(checkIn, checkOut)-1;
-            today = checkIn;
-            checkinList.clear();
-            checkoutList.clear();
-            for(int i = 0; i < CHECKIN_MAX; i++) {
-                checkinList.add(makeCheckinDateString(today, i));
-            }
-            
-            checkinAdapter.notifyDataSetChanged();
-            checkinLsv.setSelectionFromTop(checkinPosition, 0);
-            refreshCheckout();
+        checkinList.clear();
+        checkoutList.clear();
+        for(int i = 0; i < CHECKIN_MAX; i++) {
+            checkinList.add(makeCheckinDateString(today, i));
         }
+        
+        checkinAdapter.notifyDataSetChanged();
+        checkinLsv.setSelectionFromTop(checkinPosition, 0);
+        refreshCheckout();
     }
     
     void refreshCheckout() {
@@ -163,9 +164,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         
         checkinLsv.setAdapter(checkinAdapter);
         checkoutLsv.setAdapter(checkoutAdapter);
-        Calendar checkOut = Calendar.getInstance();
-        checkOut.add(Calendar.DAY_OF_YEAR, 1);
-        onResume(Calendar.getInstance(), checkOut);
+        refresh(null, null);
     }
 
     protected void findViews() {
