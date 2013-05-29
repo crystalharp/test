@@ -484,7 +484,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 
         @Override
         public int compare(RoomType lhs, RoomType rhs) {
-            return (int) (lhs.getCanReserve() - rhs.getCanReserve());
+            return (int) (rhs.getCanReserve() - lhs.getCanReserve());
         }
     }
        
