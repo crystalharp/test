@@ -2,6 +2,8 @@ package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -279,6 +281,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mAllRoomList.clear();
         mShowingRoomList.clear();
         mAllRoomList.addAll(mHotel.getRoomTypeList());
+        Collections.sort(mAllRoomList, new RoomTypeCMP());
         int size = (mAllRoomList != null? mAllRoomList.size() : 0);
         if (size == 0) {
             LogWrapper.i(TAG, "size of roomTypeList is 0.");
@@ -303,7 +306,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         
         List<HotelTKDrawable> b = mHotel.getHotelTKDrawableList();
         
-        //FIXME:暂无简介
         String value = mPOI.getDescriptionValue(Description.FIELD_SYNOPSIS);
         if (TextUtils.isEmpty(value)) {
             value = mSphinx.getString(R.string.hotel_no_summary);
@@ -476,5 +478,14 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     final public void loadSucceed(boolean s) {
         mLoadSucceed = s;
     }
+    
+    private class RoomTypeCMP implements Comparator<RoomType> {
+
+        @Override
+        public int compare(RoomType lhs, RoomType rhs) {
+            return (int) (lhs.getCanReserve() - rhs.getCanReserve());
+        }
+    }
+       
 }
 
