@@ -352,6 +352,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 			
 			if(orderTotal > ordersSize){
 				mResultLsv.changeHeaderViewByState(false, SpringbackListView.PULL_TO_REFRESH);
+				mResultLsv.setFooterSpringback(true);
 			}else{
 				mResultLsv.setFooterSpringback(false);
 			}
