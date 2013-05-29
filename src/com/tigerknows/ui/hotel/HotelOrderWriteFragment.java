@@ -544,6 +544,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 					mUsername,
 					mMobile
 					);
+			if(mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){
+				mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
+			}
+			mSphinx.destroyHotelOrderCreditFragment();
 			mSphinx.getHotelOrderDetailFragment().setData(mHotelOrder);
 			mSphinx.getHotelOrderDetailFragment().setStageIndicatorVisible(true);
 			HotelOrderTable hotelOrderTable = new HotelOrderTable(mSphinx);
@@ -562,7 +566,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 			destroyFragments(true, true);
 			dismiss();
 			mSphinx.uiStackRemove(R.id.view_hotel_order_write);
-			mSphinx.destroyHotelOrderWriteFragment();
 			
     		break;
     	case Response.RESPONSE_CODE_HOTEL_NEED_REGIST:
@@ -570,12 +573,15 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     		mSphinx.showView(R.id.view_hotel_seveninn_regist);
     		break;
     	case Response.RESPONSE_CODE_HOTEL_NEED_CREDIT_ASSURE:
-
+			if(mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){
+				mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
+			}
+    		mSphinx.destroyHotelOrderCreditFragment();
        		mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),Utility.doubleKeep(mOneNightPrice, 2)+"", Utility.doubleKeep(mTotalPrice, 2)+"", (int)mTypeCreditAssure);
        		mSphinx.showView(R.id.view_hotel_credit_assure);
        		break;
     	case Response.RESPONSE_CODE_HOTEL_OTHER_ERROR:
-    		Utility.showNormalDialog(mSphinx, "来自艺龙的消息："+response.getDescription());
+    		Utility.showNormalDialog(mSphinx, "来自艺龙的消息："+((response.getDescription().split("!"))[0].split("！"))[0]);
     		break;
     	}
 	}

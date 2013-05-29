@@ -8,6 +8,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Selection;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -26,8 +27,8 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.User;
 import com.tigerknows.ui.poi.EditCommentActivity;
+import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.Utility;
-import com.tigerknows.util.MaxLengthWatcher;
 
 public class UserUpdateNickNameActivity extends UserBaseActivity {
 	
@@ -135,7 +136,24 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				// TODO Auto-generated method stub
-			}
+		        Editable editable = nickNameEdt.getText();  
+		        int len = ByteUtil.getCharArrayLength(editable.toString());
+		        if(len > NickNameMaxLength){
+		        	int selEndIndex = Selection.getSelectionEnd(editable); 
+		        	String str = editable.toString();
+		        	while(len > NickNameMaxLength){  
+		        		//截取新字符串
+		        		str = str.substring(0,selEndIndex-1) + str.substring(selEndIndex,str.length());
+		        		//新字符串的长度
+		        		len = ByteUtil.getCharArrayLength(str);
+		        		selEndIndex--;
+		        	}  
+		        	nickNameEdt.setText(str);  
+		        	editable = nickNameEdt.getText();  
+		    		//设置新光标所在的位置
+		        	Selection.setSelection(editable, selEndIndex);  
+		        }
+		    }
 			
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
@@ -159,8 +177,6 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 				});
 			}
 		});
-		
-		nickNameEdt.addTextChangedListener(new MaxLengthWatcher(NickNameMaxLength,nickNameEdt));
 		
 		nickNameImg.setOnClickListener(new View.OnClickListener() {
 			

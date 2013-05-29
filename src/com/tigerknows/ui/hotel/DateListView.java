@@ -22,6 +22,9 @@ import com.tigerknows.util.CalendarUtil;
 
 import android.content.Context;
 import android.content.res.Resources;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.ForegroundColorSpan;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -111,14 +114,28 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     void refreshCheckout() {
         checkoutList.clear();
+        checkoutAdapter.notifyDataSetChanged();
+        checkoutLsv.setSelectionFromTop(checkoutPosition, 0);
+        refreshTitle();
+    }
+    
+    void refreshTitle() {
         today.add(Calendar.DAY_OF_YEAR, checkinPosition);
-        titleTxv.setText((today.get(Calendar.MONTH)+1)+"月"+(today.get(Calendar.DAY_OF_MONTH))+"日入住1晚");
+        StringBuilder s = new StringBuilder();
+        s.append((today.get(Calendar.MONTH)+1)+"月"+(today.get(Calendar.DAY_OF_MONTH))+"日入住");
+        int indexDay = s.length()-2;
+        s.append(checkoutPosition+1);
+        int indexN = s.length();
+        s.append("晚");
+        SpannableStringBuilder style = new SpannableStringBuilder(s.toString());
+        int orange = getContext().getResources().getColor(R.color.orange);
+        style.setSpan(new ForegroundColorSpan(orange),0,indexDay,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        style.setSpan(new ForegroundColorSpan(orange),indexDay+2,indexN,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         for(int i = 1, count = CHECKOUT_MAX+1; i < count; i++) {
             checkoutList.add(makeCheckoutDateString(today, i));
         }
+        titleTxv.setText(style);
         today.add(Calendar.DAY_OF_YEAR, -checkinPosition);
-        checkoutAdapter.notifyDataSetChanged();
-        checkoutLsv.setSelectionFromTop(checkoutPosition, 0);
     }
 
     public void setData(CallBack callBack, String actionTag) {
@@ -214,9 +231,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 checkoutPosition = position;
                 checkoutAdapter.notifyDataSetChanged();
-                today.add(Calendar.DAY_OF_YEAR, checkinPosition);
-                titleTxv.setText((today.get(Calendar.MONTH)+1)+"月"+(today.get(Calendar.DAY_OF_MONTH))+"日入住"+(checkoutPosition+1)+"晚");
-                today.add(Calendar.DAY_OF_YEAR, -checkinPosition);
+                refreshTitle();
             }
         });
         confirmBtn.setOnClickListener(this);
