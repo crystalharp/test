@@ -264,6 +264,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             moreTxv.setText(mSphinx.getString(R.string.hotel_click_to_reload));
             moreRoomTypeArrow.setVisibility(View.GONE);
             mDynamicRoomTypeMoreView.setClickable(true);
+            roomTypeList.refreshList(null);
             blockList.add(mUpperBlock);
             blockList.add(mLowerBlock);
             LogWrapper.i(TAG, "Hotel viewBlock is:" + blockList);
