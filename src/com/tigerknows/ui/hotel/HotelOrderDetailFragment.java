@@ -292,7 +292,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 			break;
 
 		default:
-			mBtnCancel.setVisibility(View.VISIBLE);
+			mBtnCancel.setVisibility(View.GONE);
 			break;
 		}
         
