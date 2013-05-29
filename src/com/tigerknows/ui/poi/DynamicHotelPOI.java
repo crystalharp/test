@@ -136,6 +136,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                     + " " + roomType.getFloor() + " " + roomType.getArea());
             if (roomType.getCanReserve() == 0) {
                 bookBtn.setEnabled(false);
+                v.setClickable(false);
             } else {
                 bookBtn.setEnabled(true);
                 try {
@@ -234,7 +235,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             checkout = (Calendar) checkin.clone();
             checkout.add(Calendar.DAY_OF_YEAR, 1);
         }
-        getDateListView().onResume(checkin, checkout);
+        getDateListView().refresh(checkin, checkout);
     }
     
     final public void refreshDate() {
@@ -253,7 +254,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mPOI = poi;
         mHotel = poi.getHotel();
         refreshDate();
-        
+        getDateListView().refresh(checkin, checkout);
 
         mAllRoomList.clear();
         mShowingRoomList.clear();
