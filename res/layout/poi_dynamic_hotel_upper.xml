@@ -18,7 +18,7 @@
              android:layout_width="fill_parent"
              android:layout_height="64dp"
              android:orientation="horizontal"
-             android:background="@drawable/list_middle"
+             android:background="@drawable/list_single"
              android:paddingLeft="8dp"
              android:paddingTop="14dp"
              android:paddingRight="8dp"
