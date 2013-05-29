@@ -198,7 +198,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 //       	mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
 //       }
         
-        fillOrderDb();
+//        fillOrderDb();
 
         /**
          * if fragment is previously closed, size of orders will be 0
@@ -352,6 +352,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 			
 			if(orderTotal > ordersSize){
 				mResultLsv.changeHeaderViewByState(false, SpringbackListView.PULL_TO_REFRESH);
+				mResultLsv.setFooterSpringback(true);
 			}else{
 				mResultLsv.setFooterSpringback(false);
 			}

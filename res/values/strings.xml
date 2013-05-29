@@ -961,6 +961,7 @@
     <string name="hotel_no_roomtype">暂无房型信息</string>
     <string name="pictures">%1$s张</string>
     <string name="fold">收起</string>
+    <string name="hotel_click_to_reload">网络状况不好,点击此处重新加载</string>
     <string name="summary">简介</string>
     <string name="hotel_room_title">订单填写</string>
     <string name="hotel_room_howmany">房间数</string>

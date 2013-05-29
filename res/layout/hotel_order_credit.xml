@@ -272,7 +272,8 @@
                     android:ellipsize="end"
                     android:hint="@string/credit_cert_code_hint"
                     android:background="@color/transparent"
-                    android:inputType="none"
+                    android:inputType="number"
+                    android:digits="1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
                     />
             </LinearLayout>
 

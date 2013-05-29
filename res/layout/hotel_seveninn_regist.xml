@@ -147,12 +147,12 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
+                    android:inputType="number"
                     android:digits="1234567890Xx"
                     android:ellipsize="end"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:hint="@string/seveninn_idcard_code_hint"
-                    android:inputType="none"
                     android:maxLength="18"
                     android:singleLine="true"
                     android:textSize="16sp" />
