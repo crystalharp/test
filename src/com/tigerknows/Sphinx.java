@@ -3908,10 +3908,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             return mHotelIntroFragment;
         }
     }
-    public void destroyHotelOrderWriteFragment(){
-    	mHotelOrderWriteFragment = null;
-    }
-    
+
     public void destroyHotelOrderCreditFragment(){
     	mHotelOrderCreditFragment = null;
     }
