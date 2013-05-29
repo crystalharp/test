@@ -78,7 +78,7 @@ public final class TrafficQuery extends BaseQuery {
     }
 
     public TrafficQuery(Context context) {
-        super(context, API_TYPE_TRAFFIC_QUERY, VERSION, false);
+        super(context, API_TYPE_TRAFFIC_QUERY, VERSION);
     }
     
     public void setup(int cityId, POI startPOI, POI endPOI, int queryType, int targetViewId, String tipText) {
