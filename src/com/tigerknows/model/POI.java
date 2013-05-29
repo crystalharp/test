@@ -491,7 +491,7 @@ public class POI extends BaseData {
     public void updateData(Context context, XMap data) {
         try {
             BaseData baseData = checkStore(context, storeType, -1, false);
-            init(data, true);
+            init(data, false);
             if (baseData != null) {
                 try {
                     ContentValues values = new ContentValues();
