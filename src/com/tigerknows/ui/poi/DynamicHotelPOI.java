@@ -337,8 +337,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 }, mPOIDetailFragment.toString());
                 if (hotelImageDraw != null) {
                     hotelImage.setBackgroundDrawable(hotelImageDraw);
-                } else {
-                    hotelImage.setImageResource(R.drawable.icon);
                 }
             }
         }
