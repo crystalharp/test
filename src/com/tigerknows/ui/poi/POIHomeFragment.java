@@ -76,6 +76,11 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     static final String ELEMENT_SUB_CATEGORY = "sub";
     static final String ELEMENT_VALUE_ATTR = "word";
     static final String ELEMENT_HIGH_LIGHT_ATTR = "highLight";
+    
+    /**
+     * 酒店在列表中的下标
+     */
+    static final int HOTEL_INDEX = 1;
 
     private Button mCityBtn;
     private Button mInputBtn;
@@ -472,7 +477,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         	}
         	
         	ImageView icon = (ImageView) convertView.findViewById(R.id.hotel_tip_reserve_imv);
-        	if (position == 1 && TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE) == null) {
+        	if (position == HOTEL_INDEX && TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE) == null) {
         	    icon.setVisibility(View.VISIBLE);
         	} else {
         	    icon.setVisibility(View.GONE);
@@ -515,7 +520,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 		@Override
 		public void onClick(View v) {
 		    
-		    if (position == 1) {
+		    if (position == HOTEL_INDEX) {
 		        mSphinx.getHotelHomeFragment().resetDate();
 		        mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo());
 		        mSphinx.showView(R.id.view_hotel_home);
@@ -587,7 +592,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 		
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-			onDragViewCloseTouchEvent(v, event);
+			onDragViewCloseTouchEvent(v, event, -1);
 			return isDragging;
 			
 		}
@@ -605,7 +610,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 	int minDragDistance = Util.dip2px(Globals.g_metrics.density, 10);
 	List<View> mSubCategoryListView = new ArrayList<View>();
 	
-	private boolean onDragViewCloseTouchEvent(View v, MotionEvent event){
+	private boolean onDragViewCloseTouchEvent(View v, MotionEvent event, int position){
 		
 		int x = (int) event.getX();
 		int y = (int) event.getY();
@@ -653,6 +658,13 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 								|| (mIsSubCategoryExpanded && x -xDown > minDragDistance)) ){
 
 						isDragStarts = true;
+
+		                if (position == HOTEL_INDEX) {
+		                    mSphinx.getHotelHomeFragment().resetDate();
+		                    mSphinx.getHotelHomeFragment().setCityInfo(Globals.getCurrentCityInfo());
+		                    mSphinx.showView(R.id.view_hotel_home);
+		                    return true;
+		                }
 						isDragging = true;
 						mTransPaddingView.setBackgroundResource(R.color.transparent);
 						moveDragView(x, y);
@@ -743,7 +755,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 			boolean oldIsDragStart=isDragging;
 			
 			
-			boolean result = onDragViewCloseTouchEvent(v, event);
+			boolean result = onDragViewCloseTouchEvent(v, event, position);
 			
 			if(!oldIsDragStart && isDragging){
 				setUpDragView(position);
