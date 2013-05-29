@@ -17,6 +17,7 @@ import android.text.InputFilter;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,7 +29,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,7 +56,6 @@ import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ValidateUtil;
 import com.tigerknows.widget.SingleChoiceArrayAdapter;
-import com.tigerknows.widget.StringArrayAdapter;
 
 public class HotelOrderWriteFragment extends BaseFragment implements View.OnClickListener{
 
@@ -119,6 +118,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private String mIdCardType;
     private String mIdCardNo;
     
+    private int mSubmitted;
+    
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
@@ -161,8 +162,17 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
 
     protected void setListener() {
-        // TODO Auto-generated method stub
-        mHotelOrderWriteScv.setOnClickListener(this);
+    	mHotelOrderWriteScv.setOnTouchListener(new OnTouchListener(){
+    	
+	        @Override
+	        public boolean onTouch(View v, MotionEvent event) {
+	            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+	                mSphinx.hideSoftInput();
+	            }
+	            return true;
+	        }
+	    });
+        //mHotelOrderWriteScv.setOnClickListener(this);
         mHotelNameTxv.setOnClickListener(this);
         mRoomtypeTxv.setOnClickListener(this);
         mRoomtypeDetailTxv.setOnClickListener(this);
@@ -232,7 +242,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private void refreshData(){
     	mTotalPrice = mRoomtypeDynamic.getPrice() * mRoomHowmany;
     	mOneNightPrice = mTotalPrice / mNights;
-    	mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, Utility.doubleKeep(mTotalPrice, 2)+""));
+    	mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, Utility.formatHotelPrice(mTotalPrice)));
     	RefreshPersonView();
         clearFocus();
     	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
@@ -287,6 +297,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomNightsTxv.setText(mSphinx.getString(R.string.hotel_total_nights, mNights));
         mRoomHowmany = 1;
         mRTimeWhich = 0;
+        mSubmitted = 0;
     }
 
 	private void exit() {
@@ -332,7 +343,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 	private void RefreshPersonView(){
 		// 这个函数用于在房间数变化时，入住人的编辑框数量相应变化
 		int count = mPersonNameLly.getChildCount();
-		LogWrapper.d("Trap", count+"");
 		if(count > mRoomHowmany*2-1){
 			for (int i = count-1; i >= mRoomHowmany*2-1; i--){
 				mPersonNameLly.removeViewAt(i);
@@ -410,7 +420,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         long listsize = (mRoomtypeDynamic.getNum() > MAX_ROOM_HOWMANY) ? MAX_ROOM_HOWMANY : mRoomtypeDynamic.getNum();
         String listitem;
         for(long i = 1; i <= listsize; i++){
-            listitem = mSphinx.getString(R.string.room_howmany_item, i, Utility.doubleKeep(mRoomtypeDynamic.getPrice()*i, 2) + "");
+            listitem = mSphinx.getString(R.string.room_howmany_item, i, Utility.formatHotelPrice(mRoomtypeDynamic.getPrice()*i));
         	list.add(listitem);
         }
         final ArrayAdapter<String> adapter = new HotelRoomHowmanyAdapter(mSphinx, list);
@@ -463,6 +473,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     public void submit(boolean HasCreditInfo) {
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
     	Hashtable<String, String> criteria = new Hashtable<String, String>();
+    	if(mSubmitted > 6){
+    		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.network_failed));
+    		return;
+    	}
+    	mSubmitted++;
     	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_CREATE);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_HOTEL_ID, mHotel.getUuid());
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_BRAND, String.valueOf(mHotel.getBrand()));
@@ -474,7 +489,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     			HotelHomeFragment.SIMPLE_DATE_FORMAT.format(mCheckOut.getTime()));
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_RESERVE_TIME, mRTimeDetail);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_NUMROOMS, mRoomHowmany + "");
-    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_TOTAL_PRICE, Utility.doubleKeep(mTotalPrice, 2)+ "");
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_TOTAL_PRICE, Utility.formatHotelPrice(mTotalPrice));
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_USERNAME, mBookUsername);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_MOBILE, mMobile);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_GUESTS, mUsername);
@@ -529,7 +544,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 					hotelOrderCreateResponse.getOrderId(),
 					Calendar.getInstance().getTimeInMillis(),
 					1,
-					mHotel.getUuid(),
+					mPOI.getUUID(),
 					mPOI.getName(),
 					mPOI.getAddress(),
 					mPOI.getPosition(),
@@ -577,13 +592,33 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 				mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
 			}
     		mSphinx.destroyHotelOrderCreditFragment();
-       		mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),Utility.doubleKeep(mOneNightPrice, 2)+"", Utility.doubleKeep(mTotalPrice, 2)+"", (int)mTypeCreditAssure);
+       		mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),Utility.formatHotelPrice(mOneNightPrice), Utility.formatHotelPrice(mTotalPrice), (int)mTypeCreditAssure);
        		mSphinx.showView(R.id.view_hotel_credit_assure);
        		break;
     	case Response.RESPONSE_CODE_HOTEL_OTHER_ERROR:
-    		Utility.showNormalDialog(mSphinx, "来自艺龙的消息："+((response.getDescription().split("!"))[0].split("！"))[0]);
+    		String[] a = analysisElongRequest(response.getDescription()).split("#");
+    		LogWrapper.d("Trap", a[0]);
+    		switch(Integer.parseInt(a[0])){
+    		case 1:
+    			mTotalPrice = Double.parseDouble(a[1]);
+    			submit(false);
+    			break;
+    		default:
+    			Utility.showNormalDialog(mSphinx, "来自艺龙的消息："+a[1]);
+    			break;
+    		}
     		break;
     	}
+	}
+	private String analysisElongRequest(String description){
+		String ResponseStr = description.split("!")[0].split("！")[0];
+		int ResponseInt = 0;
+		String[] strArray = description.split("订单总价应为");
+		if(strArray.length > 1){
+			ResponseInt = 1;
+			ResponseStr = strArray[1];
+		}		
+		return ResponseInt+"#"+ResponseStr;
 	}
 
 	private void destroyFragments(boolean seven, boolean credit){

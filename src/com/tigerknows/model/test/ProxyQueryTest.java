@@ -13,7 +13,7 @@ public class ProxyQueryTest {
     public static XMap launchRoomTypeDynamicRespnose(Context context) {
         XMap xmap = BaseQueryTest.launchResponse();
         xmap.put(RoomTypeDynamic.FIELD_NUM, 168);
-        xmap.put(RoomTypeDynamic.FIELD_PRICE, 168.168);
+        xmap.put(RoomTypeDynamic.FIELD_PRICE, 168.75);
         xmap.put(RoomTypeDynamic.FIELD_DANBAO_GUIZE, launchDanbaoGuize());
         return xmap;
     }

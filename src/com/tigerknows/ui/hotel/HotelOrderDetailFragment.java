@@ -292,7 +292,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 			break;
 
 		default:
-			mBtnCancel.setVisibility(View.VISIBLE);
+			mBtnCancel.setVisibility(View.GONE);
 			break;
 		}
         
@@ -357,7 +357,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	mOrderIdTxv.setText(order.getId());
     	mOrderStateTxv.setText(getOrderStateDesc(order.getState()));
     	mOrderTimeTxv.setText(formatOrderTime(order.getCreateTime()));
-    	mTotalFeeTxv.setText(mContext.getString(R.string.yuan, ((int)order.getTotalFee())) );
+    	mTotalFeeTxv.setText(Utility.formatHotelPrice(order.getTotalFee()) + mContext.getString(R.string.rmb_text) );
     	mPayTypeTxv.setText(mContext.getString(R.string.hotel_order_default_pay_type));
     	mCheckinDateTxv.setText(formatOrderTime(order.getCheckinTime()));
     	mCheckoutDateTxv.setText(formatOrderTime(order.getCheckoutTime()));
