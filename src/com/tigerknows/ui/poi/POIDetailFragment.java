@@ -326,7 +326,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     }	
     //*******************new code start*************************
     
-    ArrayList<DynamicPOIViewBlock> DPOIViewBlockList = new ArrayList<DynamicPOIViewBlock>();
+    List<DynamicPOIViewBlock> DPOIViewBlockList = new LinkedList<DynamicPOIViewBlock>();
     
     private class DPOICompare implements Comparator<DynamicPOIViewBlock> {
 
@@ -647,6 +647,15 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * @param poi
      */
     final void refreshDynamicHotel(POI poi) {
+        int size = DPOIViewBlockList.size();
+        for (int i = 0; i < size; i++) {
+            DynamicPOIViewBlock a = DPOIViewBlockList.get(i);
+            if (a.mType == DPOIType.HOTEL) {
+                DPOIViewBlockList.remove(a);
+                i--;
+                size--;
+            }
+        }
         DPOIViewBlockList.addAll(mDynamicHotelPOI.getViewList(poi));
     }
     /**
@@ -1580,6 +1589,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                         } else {
                                             hotel.init(onlinePOI.getData(), false);
                                         }
+                                        mDynamicHotelPOI.loadSucceed(true);
                                         refreshDynamicHotel(poi);
                                     } catch (APIException e) {
                                         e.printStackTrace();
@@ -1601,6 +1611,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                     }
                                 }
                             }
+                        } else {
+                            mDynamicHotelPOI.loadSucceed(false);
+                            refreshDynamicHotel(poi);
+                            refreshDynamicPOI(DPOIViewBlockList);
                         }
                     }
                     

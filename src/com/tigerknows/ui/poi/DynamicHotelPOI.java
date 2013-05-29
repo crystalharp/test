@@ -51,7 +51,9 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 
     final static int PARENT_VIEW = 1;
     final static int DATA = 0;
-    static DynamicHotelPOI instance = null;
+    final static int LOAD_SUCCEED = 0;
+    final static int LOAD_FAILED = 1;
+    boolean mLoadSucceed = true;
     DynamicPOIViewBlock mUpperBlock;
     DynamicPOIViewBlock mLowerBlock;
     List<DynamicPOIViewBlock> blockList = new LinkedList<DynamicPOIViewBlock>();
@@ -194,9 +196,17 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     class MoreRoomTypeClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            roomTypeList.refreshList(mAllRoomList);
-            refreshBackground(roomTypeList, mAllRoomList);
-            mDynamicRoomTypeMoreView.setVisibility(View.GONE);
+            if (mLoadSucceed) {
+                roomTypeList.refreshList(mAllRoomList);
+                refreshBackground(roomTypeList, mAllRoomList);
+                mDynamicRoomTypeMoreView.setVisibility(View.GONE);
+            } else {
+                BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_DETAIL);
+                baseQuery.setTipText(mSphinx.getString(R.string.doing_and_wait));
+                List<BaseQuery> list = new ArrayList<BaseQuery>();
+                list.add(baseQuery);
+                query(mPOIDetailFragment, list);
+            }
         }
         
     }
@@ -247,6 +257,17 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     @Override
     public List<DynamicPOIViewBlock> getViewList(POI poi) {
         blockList.clear();
+        if (!mLoadSucceed) {
+            String value = mPOI.getDescriptionValue(Description.FIELD_SYNOPSIS);
+            hotelSummary.setText(value);
+            moreTxv.setText(mSphinx.getString(R.string.hotel_click_to_reload));
+            moreRoomTypeArrow.setVisibility(View.GONE);
+            mDynamicRoomTypeMoreView.setClickable(true);
+            blockList.add(mUpperBlock);
+            blockList.add(mLowerBlock);
+            LogWrapper.i(TAG, "Hotel viewBlock is:" + blockList);
+            return blockList;
+        }
         if (poi == null || poi.getHotel() == null || poi.getHotel().getRoomTypeList() == null) {
             LogWrapper.i(TAG, "poi or hotel or roomTypeList is null, nothing to show for DynamicHotel");
             return blockList;
@@ -283,6 +304,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         
         List<HotelTKDrawable> b = mHotel.getHotelTKDrawableList();
         
+        //FIXME:暂无简介
         String value = mPOI.getDescriptionValue(Description.FIELD_SYNOPSIS);
         hotelSummary.setText(value);
         LinearLayout hotelSummaryBlock = (LinearLayout) mLowerBlock.mOwnLayout.findViewById(R.id.hotel_summary);
@@ -305,8 +327,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     
                     @Override
                     public void run() {
-                        hotelImage.setMaxHeight(Util.dip2px(Globals.g_metrics.density, 90));
-                        hotelImage.setMaxWidth(Util.dip2px(Globals.g_metrics.density, 90));
+                        hotelImage.setMaxHeight(Util.dip2px(Globals.g_metrics.density, 80));
+                        hotelImage.setMaxWidth(Util.dip2px(Globals.g_metrics.density, 80));
                         hotelImage.setBackgroundDrawable(tkDrawable.loadDrawable(null, null, null));
                     }
                     
@@ -449,6 +471,10 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             child.setPadding(Util.dip2px(Globals.g_metrics.density, 8), 0, Util.dip2px(Globals.g_metrics.density, 8), 0);
         }
  
+    }
+    
+    final public void loadSucceed(boolean s) {
+        mLoadSucceed = s;
     }
 }
 
