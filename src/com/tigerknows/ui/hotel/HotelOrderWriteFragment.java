@@ -232,7 +232,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private void refreshData(){
     	mTotalPrice = mRoomtypeDynamic.getPrice() * mRoomHowmany;
     	mOneNightPrice = mTotalPrice / mNights;
-    	mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, Utility.doubleKeep(mTotalPrice, 2)+""));
+    	mRoomHowmanyBtn.setText(mSphinx.getString(R.string.room_howmany_item, mRoomHowmany, Utility.formatHotelPrice(mTotalPrice)));
     	RefreshPersonView();
         clearFocus();
     	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
@@ -332,7 +332,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 	private void RefreshPersonView(){
 		// 这个函数用于在房间数变化时，入住人的编辑框数量相应变化
 		int count = mPersonNameLly.getChildCount();
-		LogWrapper.d("Trap", count+"");
 		if(count > mRoomHowmany*2-1){
 			for (int i = count-1; i >= mRoomHowmany*2-1; i--){
 				mPersonNameLly.removeViewAt(i);
@@ -410,7 +409,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         long listsize = (mRoomtypeDynamic.getNum() > MAX_ROOM_HOWMANY) ? MAX_ROOM_HOWMANY : mRoomtypeDynamic.getNum();
         String listitem;
         for(long i = 1; i <= listsize; i++){
-            listitem = mSphinx.getString(R.string.room_howmany_item, i, Utility.doubleKeep(mRoomtypeDynamic.getPrice()*i, 2) + "");
+            listitem = mSphinx.getString(R.string.room_howmany_item, i, Utility.formatHotelPrice(mRoomtypeDynamic.getPrice()*i));
         	list.add(listitem);
         }
         final ArrayAdapter<String> adapter = new HotelRoomHowmanyAdapter(mSphinx, list);
@@ -474,7 +473,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     			HotelHomeFragment.SIMPLE_DATE_FORMAT.format(mCheckOut.getTime()));
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_RESERVE_TIME, mRTimeDetail);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_NUMROOMS, mRoomHowmany + "");
-    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_TOTAL_PRICE, Utility.doubleKeep(mTotalPrice, 2)+ "");
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_TOTAL_PRICE, Utility.formatHotelPrice(mTotalPrice));
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_USERNAME, mBookUsername);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_MOBILE, mMobile);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_GUESTS, mUsername);
@@ -577,7 +576,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 				mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
 			}
     		mSphinx.destroyHotelOrderCreditFragment();
-       		mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),Utility.doubleKeep(mOneNightPrice, 2)+"", Utility.doubleKeep(mTotalPrice, 2)+"", (int)mTypeCreditAssure);
+       		mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),Utility.formatHotelPrice(mOneNightPrice), Utility.formatHotelPrice(mTotalPrice, (int)mTypeCreditAssure);
        		mSphinx.showView(R.id.view_hotel_credit_assure);
        		break;
     	case Response.RESPONSE_CODE_HOTEL_OTHER_ERROR:
