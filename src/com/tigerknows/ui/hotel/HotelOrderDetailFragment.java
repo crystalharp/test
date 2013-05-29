@@ -268,8 +268,10 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 			table.close();
 			mSphinx.getHotelOrderListFragment().removeOrder(mOrder);
 			dismiss();
+			Toast.makeText(mContext, R.string.hotel_order_delete_success, Toast.LENGTH_LONG).show();
 		} catch (Exception e) {
 			e.printStackTrace();
+			Toast.makeText(mContext, R.string.hotel_order_delete_success, Toast.LENGTH_SHORT).show();
 		}
 	}
     
@@ -355,7 +357,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	mOrderIdTxv.setText(order.getId());
     	mOrderStateTxv.setText(getOrderStateDesc(order.getState()));
     	mOrderTimeTxv.setText(formatOrderTime(order.getCreateTime()));
-    	mTotalFeeTxv.setText("" + ((int)order.getTotalFee()) );
+    	mTotalFeeTxv.setText(mContext.getString(R.string.yuan, ((int)order.getTotalFee())) );
     	mPayTypeTxv.setText(mContext.getString(R.string.hotel_order_default_pay_type));
     	mCheckinDateTxv.setText(formatOrderTime(order.getCheckinTime()));
     	mCheckoutDateTxv.setText(formatOrderTime(order.getCheckoutTime()));
@@ -530,13 +532,12 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             				 */
             				mOrder.setState(HotelOrder.STATE_CANCELED);
             				mOrderStateTxv.setText(getOrderStateDesc(mOrder.getState()));
-            				// TODO: 显示提示
-            				Toast.makeText(mContext, "Cancel succeeds!", Toast.LENGTH_SHORT).show();
+            				mBtnCancel.setVisibility(View.GONE);
+            				Toast.makeText(mContext, R.string.hotel_order_cancel_success, Toast.LENGTH_LONG).show(); 
             				
             			}else{
             				// 取消失败
-            				// TODO: 显示提示
-            				Toast.makeText(mContext, "Cancel order failed!", Toast.LENGTH_SHORT).show();
+            				Toast.makeText(mContext, R.string.hotel_order_cancel_failed, Toast.LENGTH_LONG).show(); 
             			}
             			
             		}// end if

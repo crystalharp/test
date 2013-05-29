@@ -421,7 +421,7 @@ public final class DataQuery extends BaseQuery {
             } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                 String appendaction = addParameter(SERVER_PARAMETER_APPENDACTION, false);
                 if (appendaction == null) {
-                    requestParameters.add(SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD+POI.FIELD_PRICE+Hotel.NEED_FILED_LIST);
+                    requestParameters.add(SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD+Util.byteToHexString(POI.FIELD_PRICE)+Hotel.NEED_FILED_LIST);
                     requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
                 }
                 addParameter(new String[]{SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
@@ -1894,7 +1894,7 @@ public final class DataQuery extends BaseQuery {
                     if (this.data == null) {
                         throw new APIException(APIException.RESPONSE_DATA_IS_EMPTY);
                     }
-                    this.type = getLongFromData(FIELD_TYPE);
+                    this.type = getLongFromData(FIELD_TYPE, this.type);
                     this.numCity = getLongFromData(FIELD_NUM_CITY, 0);
                     this.numNearby = getLongFromData(FIELD_NUM_NEARBY, 0);
                     if (this.data.containsKey(FIELD_DATA)) {
