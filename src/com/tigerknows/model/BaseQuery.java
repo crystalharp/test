@@ -401,8 +401,6 @@ public abstract class BaseQuery {
 
     protected ProgressUpdate progressUpdate;
 
-    protected boolean compress = false;
-    
     protected XMap responseXMap;
     
     protected Response response;
@@ -412,14 +410,9 @@ public abstract class BaseQuery {
     }
     
     public BaseQuery(Context context, String apiType, String version) {
-        this(context, apiType, version, true);
-    }
-    
-    public BaseQuery(Context context, String apiType, String version, boolean compress) {
         this.context = context;
         this.apiType = apiType;
         this.version = version;
-        this.compress = compress;
     }
     
     public int getTargetViewId() {
@@ -784,12 +777,10 @@ public abstract class BaseQuery {
                 // 解密数据
                 DataEncryptor.getInstance().decrypt(data);
                 // 解压数据
-                if (compress) {
-                    try {
-                        data = ZLibUtils.decompress(data);
-                    } catch (Exception cause) {
-                        throw new APIException("decode data error");
-                    }
+                try {
+                    data = ZLibUtils.decompress(data);
+                } catch (Exception cause) {
+                    throw new APIException("decode data error");
                 }
             }
             try {

@@ -28,7 +28,7 @@ public class FeedbackUpload extends BaseQuery {
 
     
     public FeedbackUpload(Context context) {
-        super(context, API_TYPE_FEEDBACK_UPLOAD, VERSION, false);
+        super(context, API_TYPE_FEEDBACK_UPLOAD, VERSION);
     }
 
     @Override
