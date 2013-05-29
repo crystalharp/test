@@ -35,7 +35,7 @@ public class AsyncImageLoader {
     /*
      * 网络异常时，建立HttpClient的时间间隔
      */
-    static final int NEW_HTTP_CLIENT_TIME_INTERVAL = 15000;
+    static final int NEW_HTTP_CLIENT_TIME_INTERVAL = 6000;
     
     /*
      * 最近建立HttpClient的时间截

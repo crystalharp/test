@@ -281,14 +281,16 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     private void refreshFilter(List<Filter> filterList) {
-        if (mFilterList != filterList) {
-            mFilterList.clear();
-            if (filterList != null) {
-                for(Filter filter : filterList) {
-                    mFilterList.add(filter.clone());
+        synchronized (mFilterList) {
+            if (mFilterList != filterList) {
+                mFilterList.clear();
+                if (filterList != null) {
+                    for(Filter filter : filterList) {
+                        mFilterList.add(filter.clone());
+                    }
                 }
+                FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
             }
-            FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         }
     }
 

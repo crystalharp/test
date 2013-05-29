@@ -3,7 +3,6 @@
  */
 package com.tigerknows.android.os;
 
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -31,7 +30,8 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
     
     static final String TAG = "TKAsyncTask";
     
-//    boolean isCancel = false;
+    private boolean finish = false;
+    
     private EventListener eventListener;
     
     private Activity activity;
@@ -49,17 +49,16 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
     }
 
     public void stop() {
-        LogWrapper.d(TAG, "stop()");
-        for(BaseQuery baseQuery : baseQueryList) {
-            baseQuery.stop();
+        if (finish == false) {
+            finish = true;
+            if (this.eventListener != null) {
+                eventListener.onCancelled(this);
+            }
+            for(BaseQuery baseQuery : baseQueryList) {
+                baseQuery.stop();
+            }
+            cancel(true);
         }
-        cancel(true);
-//        if (isCancel == false) {
-//            isCancel = true;
-//            if (this.eventListener != null) {
-//                eventListener.onCancelled(this);
-//            }
-//        }
     }
     
     public TKAsyncTask(Activity activity, List<BaseQuery> baseQueryList, EventListener eventListener, Runnable cancelTask) {
@@ -146,13 +145,14 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
     @Override
     protected void onPostExecute(Void result) {
         super.onPostExecute(result);
-//        if (isCancel) {
-//            return;
-//        }
+        if (finish) {
+            return;
+        }
 
         if (tipProgressDialog != null && tipProgressDialog.isShowing()) {
             tipProgressDialog.dismiss();
         }
+        finish = true;
         if (this.eventListener != null) {
             this.eventListener.onPostExecute(this);
         }
@@ -164,12 +164,12 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
         if (tipProgressDialog != null && tipProgressDialog.isShowing()) {
             tipProgressDialog.dismiss();
         }
-//        if (isCancel == false) {
-//            isCancel = true;
+        if (finish == false) {
+            finish = true;
             if (this.eventListener != null) {
                 this.eventListener.onCancelled(this);
             }
-//        }
+        }
     }
     
     public BaseQuery getBaseQuery() {
