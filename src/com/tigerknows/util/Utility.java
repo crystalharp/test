@@ -22,6 +22,7 @@ import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -557,6 +558,13 @@ public class Utility {
         return b.setScale(keep, BigDecimal.ROUND_HALF_UP).doubleValue();
     }
     
+    public static String formatHotelPrice(double value){
+    	String str = Double.toString(doubleKeep(value, 2));
+    	String[] a = str.split("\\.");
+    	if(a.length > 1 && Pattern.compile("^0+$").matcher(a[1]).matches()){
+    		return a[0];
+    	}else return str;
+    }
     /**
      * 中国国内运营商MCC为460，MNC中国移动为00 02 07，中国联通是01  电信 03 05
      * @param mcc
