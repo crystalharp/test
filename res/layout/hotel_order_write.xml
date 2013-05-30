@@ -24,7 +24,7 @@
         android:layout_above="@id/navigation_widget"
         android:orientation="vertical">
        
-        <LinearLayout
+        <LinearLayout android:id="@+id/hotel_order_write_lly"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"

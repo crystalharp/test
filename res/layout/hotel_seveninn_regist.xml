@@ -16,7 +16,7 @@
         android:orientation="vertical"
         >
        
-        <LinearLayout
+        <LinearLayout android:id="@+id/seveninn_regist_lly"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
