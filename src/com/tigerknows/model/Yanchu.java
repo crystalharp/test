@@ -140,7 +140,7 @@ public class Yanchu extends BaseData implements Parcelable{
         this.adminname = getStringFromData(FIELD_ADMINNAME, reset ? null : this.adminname);
         this.areaname = getStringFromData(FIELD_AREANAME, reset ? null : this.areaname);
         this.source = getStringFromData(FIELD_SOURCE, reset ? null : this.source);
-        this.orderTel = getStringFromData(FIELD_ORDER_TEL, reset ? null : this.distance);
+        this.orderTel = getStringFromData(FIELD_ORDER_TEL, reset ? null : this.orderTel);
         this.distance = getStringFromData(FIELD_DISTANCE, reset ? null : this.distance);
     }
 
