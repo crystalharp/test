@@ -19,6 +19,7 @@ import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
+import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.ChangeCityActivity;
 import com.tigerknows.ui.poi.POIResultFragment;
@@ -246,6 +247,10 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mLocationBtn.setText("选择位置");
         mPriceTxv.setText("不限");
         mSphinx.getPickLocationFragment().resetPOI();
+
+        int cityId = Globals.getCurrentCityInfo().getId();
+        MapEngine.getInstance().suggestwordCheck(mSphinx, cityId);
+        HistoryWordTable.readHistoryWord(mSphinx, cityId, HistoryWordTable.TYPE_TRAFFIC);
     }
     
     /**
