@@ -617,7 +617,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             
             String price = poi.getPrice();
             long money = poi.getPerCapity();
-            if (TextUtils.isEmpty(price) == false) {
+            if (TextUtils.isEmpty(price) == false && poi.getHotel() != null) {
                 moneyTxv.setText(price);
             } else if (money > -1) {
                 moneyTxv.setText(activity.getString(R.string.yuan, money));

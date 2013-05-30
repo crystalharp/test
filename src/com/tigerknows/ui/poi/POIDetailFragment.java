@@ -635,7 +635,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 
         String price = poi.getPrice();
         long money = poi.getPerCapity();
-        if (TextUtils.isEmpty(price) == false) {
+        if (TextUtils.isEmpty(price) == false && poi.getHotel() != null) {
             mMoneyTxv.setText(price);
             mMoneyTxv.setVisibility(View.VISIBLE);
         } else if (money > -1) {
@@ -1661,6 +1661,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                         }
                                         mDynamicHotelPOI.loadSucceed(true);
                                         refreshDynamicHotel(poi);
+                                        refreshDetail();
                                     } catch (APIException e) {
                                         e.printStackTrace();
                                     }
