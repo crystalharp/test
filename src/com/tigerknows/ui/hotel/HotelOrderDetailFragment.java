@@ -376,7 +376,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     };
     
     public String getOrderStateDesc(int state){
-		return mContext.getString(orderStateDescResId[state]);
+		return mContext.getString(orderStateDescResId[state-1]);
     }
     
     public static String formatOrderTime(long millis){
@@ -582,11 +582,10 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     public void setStageIndicatorVisible(boolean visible){
    		mNavigationBar.setVisibility( visible? View.VISIBLE:View.GONE );
     }
-    
+
 	@Override
-	public String getTag() {
+	public String getLogTag() throws Exception {
 		return TAG;
 	}
-    
     
 }

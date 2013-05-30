@@ -671,7 +671,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     }//end DBUpdateThread
 
 	@Override
-	public String getTag() {
+	public String getLogTag() throws Exception {
 		return TAG;
 	}
     
