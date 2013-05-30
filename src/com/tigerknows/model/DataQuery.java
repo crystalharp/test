@@ -417,6 +417,7 @@ public final class DataQuery extends BaseQuery {
                     if (bias == null) {
                         addParameter(new String[]{SERVER_PARAMETER_KEYWORD, SERVER_PARAMETER_KEYWORD_TYPE});
                     }
+                    addParameter(SERVER_PARAMETER_POI_ID, false);
                 }
             } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                 String appendaction = addParameter(SERVER_PARAMETER_APPENDACTION, false);
