@@ -86,6 +86,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
      */
     private List<Filter> mFilterList;
     
+    private Hashtable<String, String> mCriteria;
+    
     private int mCityId = MapEngine.CITY_ID_INVALID;
     
     private Dialog mProgressDialog = null;
@@ -118,6 +120,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         if (mFilterList == null ||
                 mCityId != Globals.getCurrentCityInfo().getId()) {
             mFilterList = null;
+            mCriteria = null;
             mLocationBtn.setText("选择位置");
             mPriceTxv.setText("不限");
             queryFilter();
@@ -244,6 +247,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         Globals.setHotelCityInfo(cityInfo);
         mCityBtn.setText(cityInfo.getCName());
         mFilterList = null;
+        mCriteria = null;
         mLocationBtn.setText("选择位置");
         mPriceTxv.setText("不限");
         mSphinx.getPickLocationFragment().resetPOI();
@@ -297,8 +301,11 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         Response response = baseQuery.getResponse();
         if (response != null && response.getResponseCode() == Response.RESPONSE_CODE_OK) {
             mFilterList = ((DataQuery) baseQuery).getFilterList();
+            mCriteria = null;
             List<Filter> filterList = mFilterList;
             if (filterList != null) {
+                mCriteria = baseQuery.getCriteria();
+                
                 mCityId = Globals.getCurrentCityInfo().getId();
                 mSphinx.getPickLocationFragment().setData(filterList);
                 refreshFilterArea();
@@ -464,10 +471,19 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         List<Filter> filterList = mFilterList;
         if (filterList != null) {
             byte key;
-            if (criteria.containsKey(DataQuery.SERVER_PARAMETER_LONGITUDE) == false) {
-                key = FilterResponse.FIELD_FILTER_AREA;
+            if (criteria.containsKey(DataQuery.SERVER_PARAMETER_LONGITUDE)) {
+                key = FilterResponse.FIELD_FILTER_AREA_INDEX;
             } else {
                 key = Byte.MIN_VALUE;
+                Hashtable<String, String> oldCriteria = mCriteria;
+                if (oldCriteria != null &&
+                        oldCriteria.containsKey(DataQuery.SERVER_PARAMETER_LOCATION_CITY) &&
+                        oldCriteria.containsKey(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE) &&
+                        oldCriteria.containsKey(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE)) {
+                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_CITY, oldCriteria.get(DataQuery.SERVER_PARAMETER_LOCATION_CITY));
+                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, oldCriteria.get(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE));
+                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, oldCriteria.get(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE));
+                }
             }
             criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(filterList, key));
         }

@@ -485,6 +485,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         private int hotelPicWidth = 0;
         private String subDataType = BaseQuery.SUB_DATA_TYPE_POI;
         
+        public String getSubDataType() {
+            return this.subDataType;
+        }
+        
         public void setSubDataType(String subDataType) {
             this.subDataType = subDataType;
         }
@@ -752,6 +756,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
         String subDataType = dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
         mResultAdapter.setSubDataType(subDataType);
+        if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+            mRetryView.setText(R.string.can_not_found_result_and_retry);
+        } else {
+            mRetryView.setText(R.string.touch_screen_and_retry);
+        }
         
         mResultLsv.onRefreshComplete(false);
         if (dataQuery.isStop()) {
@@ -770,8 +779,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     if (dataQuery.isTurnPage()) {
                         return;
                     }
-                    int resid = BaseActivity.getResponseResId(dataQuery);
-                    mRetryView.setText(resid);
+                    if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType) == false) {
+                        int resid = BaseActivity.getResponseResId(dataQuery);
+                        mRetryView.setText(resid);
+                    }
                     mState = STATE_ERROR;
                     updateView();
                     return;
@@ -924,6 +935,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
     @Override
     public void retry() {
+        if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType())) {
+            return;
+        }
         if (mBaseQuerying != null) {
         	for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
                 mBaseQuerying.get(i).setResponse(null);

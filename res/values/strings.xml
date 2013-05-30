@@ -18,11 +18,8 @@
     <string name="send_weibo">发微博</string>
     <string name="quit">退出</string>
     <string name="clean_history_message">你要清除所有记录？</string>
-    <string name="location_failed_and_jump_settings">定位失败，请确认是否开启了‘设置>位置’中的GPS功能。</string>
+    <string name="location_failed_and_jump_settings">为了提高定位精度，请确认是否开启了‘设置>位置’中的GPS功能。</string>
     <string name="location_failed_and_change_city">定位失败，无法找到所在城市，是否直接选择城市？</string>
-    <string name="location_failed_cause">定位失败，请参见下面建议：</string>
-    <string name="location_failed_gps">%1$s、启用GPS，并到户外开阔的地方。</string>
-    <string name="location_failed_network">%1$s、启用Wifi或移动网络。</string>
     <string name="location_doing">正在定位…</string>
 
     <string name="yuan">%1$d元</string>
@@ -983,7 +980,6 @@
     <string name="hotel_service_title">酒店服务</string>
     <string name="hotel_room_description_title">房间设施</string>
     <string name="hotel_description_title">酒店介绍</string>
-    <string name="hotel_no_description">该酒店暂无简介</string>
     <string name="hotel_no_summary">暂无简介</string>
     
     <string name="hotel_person_name_format">姓名只能输入英文和汉字，空格用"/"替代</string>
@@ -1085,4 +1081,6 @@
     <string name="hotel_order_delete_fail">删除订单失败</string>
     
     <string name="select_city">选择城市</string>
+    <string name="can_not_found_target_location">找不到目标位置</string>
+    <string name="can_not_found_result_and_retry">找不到你要的结果，建议尝试更改条件试试</string>
 </resources>

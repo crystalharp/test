@@ -297,6 +297,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
             criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
             criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, requestPOI.getUUID());
             Position position = requestPOI.getPosition();
             if (position != null) {
                 criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));

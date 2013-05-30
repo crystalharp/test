@@ -375,6 +375,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         super.onPostExecute(tkAsyncTask);
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
         Response response = dataQuery.getResponse();
+        boolean result = false;
         if (response != null && response.getResponseCode() == Response.RESPONSE_CODE_OK && response instanceof AlternativeResponse) {
             mAlternativeResponse = (AlternativeResponse) response;
             AlternativeList alternativeList = mAlternativeResponse.getList();
@@ -424,6 +425,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 }
                 
                 if (selected != null) {
+                    result = true;
                     mPOI = null;
                     HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, selected.getFilterOption().getName(), null), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
                     dismiss();
@@ -432,9 +434,13 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             
             if (nameList.size() > 0) {
                 showAlternativeDialog(nameList);
+                result = true;
             }
         }
         
+        if (result == false) {
+            Toast.makeText(mSphinx, R.string.can_not_found_target_location, Toast.LENGTH_LONG).show();
+        }
     }
     
     private void showAlternativeDialog(final List<String> alternativeList) {
