@@ -70,7 +70,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     
     private static final int[] idArray = {R.id.room_person_edt, R.id.room_person_edt_2, R.id.room_person_edt_3, R.id.room_person_edt_4, R.id.room_person_edt_5};
     
-    private ScrollView mHotelOrderWriteScv;
+    private LinearLayout mHotelOrderWriteLly;
     private LinearLayout mPersonNameLly;
     private TextView mHotelNameTxv;
     private TextView mRoomtypeTxv;
@@ -148,7 +148,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
 
     protected void findViews() {
-        mHotelOrderWriteScv = (ScrollView) mRootView.findViewById(R.id.hotel_order_write_scv);
+        mHotelOrderWriteLly = (LinearLayout)  mRootView.findViewById(R.id.person_name_lly);
         mPersonNameLly = (LinearLayout) mRootView.findViewById(R.id.person_name_lly);
         mHotelNameTxv = (TextView) mRootView.findViewById(R.id.hotel_name_txv);
         mRoomtypeTxv = (TextView) mRootView.findViewById(R.id.roomtype_txv);
@@ -162,7 +162,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
 
     protected void setListener() {
-    	mHotelOrderWriteScv.setOnTouchListener(new OnTouchListener(){
+    	mHotelOrderWriteLly.setOnTouchListener(new OnTouchListener(){
     	
 	        @Override
 	        public boolean onTouch(View v, MotionEvent event) {
@@ -225,8 +225,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_room_mobile_empty_tip));
         		mSphinx.showSoftInput();
         		return;
-        	}else if(!ValidateUtil.isValidPhone(str)){
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.phone_format_error_tip));
+        	}else if(!ValidateUtil.isValidHotelMobile(str)){
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_mobile_format));
         		return;
         	}else{
         		mMobile = str;

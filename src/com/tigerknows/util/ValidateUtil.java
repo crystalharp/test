@@ -3,10 +3,6 @@ package com.tigerknows.util;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.decarta.android.util.LogWrapper;
-
-import android.text.TextUtils;
-
 public class ValidateUtil {
 
 	private static final String TAG = "ValidateUtil";
@@ -120,5 +116,9 @@ public class ValidateUtil {
 			if (tempInt == 1) return true;
 			else return false;
 		}
+	}
+	
+	public static boolean isValidHotelMobile(String code){
+		return Pattern.compile("^1\\d{10}$").matcher(code).matches();
 	}
 }
