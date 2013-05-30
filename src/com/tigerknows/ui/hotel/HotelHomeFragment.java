@@ -452,26 +452,24 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         criteria.put(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(getDateListView().getCheckout().getTime()));
         
         POI poi = mSphinx.getPickLocationFragment().getPOI();
-        byte key = FilterResponse.FIELD_FILTER_AREA;
         if (poi != null) {
             Position position = poi.getPosition();
             if (position != null) {
                 criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
                 criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+            }
+        } else {
+            poi = new POI();
+        }
+        List<Filter> filterList = mFilterList;
+        if (filterList != null) {
+            byte key;
+            if (criteria.containsKey(DataQuery.SERVER_PARAMETER_LONGITUDE) == false) {
+                key = FilterResponse.FIELD_FILTER_AREA;
+            } else {
                 key = Byte.MIN_VALUE;
             }
-        }
-        if (key == FilterResponse.FIELD_FILTER_AREA) {
-            criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList, key));
-            Filter filterArea = null;
-            for(int i = this.mFilterList.size()-1; i >= 0; i--) {
-                Filter filter = this.mFilterList.get(i);
-                if (filter.getKey() == key) {
-                    filterArea = filter;
-                }
-            }
-            poi = new POI();
-            poi.setName(FilterListView.getFilterTitle(mSphinx, filterArea));
+            criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(filterList, key));
         }
                 
         int targetViewId = mSphinx.getPOIResultFragmentID();
