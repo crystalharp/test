@@ -196,6 +196,9 @@ public class HotelImageGridFragment extends BaseFragment {
             if (image != null) {
 //                float scale = ((float) newWidth) / image.getIntrinsicWidth();
 //                layoutParams.height = (int) (scale*image.getIntrinsicHeight());
+                if( image.getBounds().width() != iconImv.getWidth() || image.getBounds().height() != iconImv.getHeight() ){
+                    iconImv.setBackgroundDrawable(null);
+                }
                 iconImv.setImageDrawable(image);
             } else {
 //                Drawable drawable = iconImv.getBackground();

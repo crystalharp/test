@@ -332,14 +332,18 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     
                     @Override
                     public void run() {
-                        hotelImage.setMaxHeight(Util.dip2px(Globals.g_metrics.density, 80));
-                        hotelImage.setMaxWidth(Util.dip2px(Globals.g_metrics.density, 80));
-                        hotelImage.setBackgroundDrawable(tkDrawable.loadDrawable(null, null, null));
+                        Drawable drawable = tkDrawable.loadDrawable(null, null, null);
+                        if( drawable.getBounds().width() != hotelImage.getWidth() || drawable.getBounds().height() != hotelImage.getHeight() ){
+                            hotelImage.setBackgroundDrawable(null);
+                        }
+                        hotelImage.setBackgroundDrawable(drawable);
                     }
                     
                 }, mPOIDetailFragment.toString());
                 if (hotelImageDraw != null) {
-                    hotelImage.setBackgroundDrawable(hotelImageDraw);
+                    if( hotelImageDraw.getBounds().width() != hotelImage.getWidth() || hotelImageDraw.getBounds().height() != hotelImage.getHeight() ){
+                        hotelImage.setBackgroundDrawable(hotelImageDraw);
+                    }
                 }
             }
         }
