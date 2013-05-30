@@ -25,7 +25,6 @@ import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.DPOIType;
-import com.tigerknows.ui.poi.POIDetailFragment.DPOIViewInitializer;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.widget.LinearListView;
