@@ -20,6 +20,7 @@ public class CalendarUtil {
 	public static final SimpleDateFormat ym6h = new SimpleDateFormat("yyyy-MM");
 	public static final SimpleDateFormat ymd8s = new SimpleDateFormat("yyyy/MM/dd");
 	public static final SimpleDateFormat y4mc = new SimpleDateFormat("yyyy年M月");
+	public static final SimpleDateFormat ymd8c_hm4 = new SimpleDateFormat("yyyy年MM月dd日 hh:mm");
 	
     public static int compareDate(Calendar c1,Calendar c2,int stype){  
         int n = 0;  

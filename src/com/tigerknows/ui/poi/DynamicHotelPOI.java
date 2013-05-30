@@ -305,8 +305,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         roomTypeList.refreshList(mShowingRoomList);
         refreshBackground(roomTypeList, mShowingRoomList);
         
-        List<HotelTKDrawable> b = mHotel.getHotelTKDrawableList();
-        
         String value = mPOI.getDescriptionValue(Description.FIELD_SYNOPSIS);
         if (TextUtils.isEmpty(value)) {
             value = mSphinx.getString(R.string.hotel_no_summary);
@@ -322,27 +320,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 				mSphinx.showView(R.id.view_hotel_intro);
 			}
 		});
-        int picNum = (b == null ? 0 : b.size());
-        imageNumTxv.setText(mSphinx.getString(R.string.pictures, picNum));
-        //FIXME:如何获取这个Image?
-        if (b != null) {
-            final TKDrawable tkDrawable = b.get(0).getTKDrawable();
-            if (tkDrawable != null) {
-                Drawable hotelImageDraw = tkDrawable.loadDrawable(mSphinx, new Runnable() {
-    
-                    @Override
-                    public void run() {
-                        hotelImage.setMaxHeight(Util.dip2px(Globals.g_metrics.density, 80));
-                        hotelImage.setMaxWidth(Util.dip2px(Globals.g_metrics.density, 80));
-                        hotelImage.setBackgroundDrawable(tkDrawable.loadDrawable(null, null, null));
-                    }
-                    
-                }, mPOIDetailFragment.toString());
-                if (hotelImageDraw != null) {
-                    hotelImage.setBackgroundDrawable(hotelImageDraw);
-                }
-            }
-        }
+        
+        refreshPicture();
         hotelImage.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
@@ -359,6 +338,44 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         blockList.add(mLowerBlock);
         LogWrapper.i(TAG, "Hotel viewBlock is:" + blockList);
         return blockList;
+    }
+    
+    public void refresh() {
+        refreshPicture();
+    }
+    
+    public void refreshPicture() {
+        List<HotelTKDrawable> picList = mHotel.getHotelTKDrawableList();
+        int picNum = (picList == null ? 0 : picList.size());
+        imageNumTxv.setText(mSphinx.getString(R.string.pictures, picNum));
+        //FIXME:如何获取这个Image?
+        if (picList != null) {
+            final TKDrawable tkDrawable = picList.get(0).getTKDrawable();
+            if (tkDrawable != null) {
+                Drawable hotelImageDraw = tkDrawable.loadDrawable(mSphinx, new Runnable() {
+    
+                    @Override
+                    public void run() {
+                        Drawable drawable = tkDrawable.loadDrawable(null, null, null);
+                        if (drawable != null) {
+                            if(drawable.getBounds().width() != hotelImage.getWidth() || drawable.getBounds().height() != hotelImage.getHeight() ){
+                                hotelImage.setBackgroundDrawable(null);
+                            }
+                            hotelImage.setBackgroundDrawable(drawable);
+                        } else {
+                            hotelImage.setBackgroundDrawable(null);
+                        }
+                    }
+                    
+                }, mPOIDetailFragment.toString());
+                if (hotelImageDraw != null) {
+                    if(hotelImageDraw.getBounds().width() != hotelImage.getWidth() || hotelImageDraw.getBounds().height() != hotelImage.getHeight() ){
+                        hotelImage.setBackgroundDrawable(null);
+                    }
+                    hotelImage.setBackgroundDrawable(hotelImageDraw);
+                }
+            }
+        }
     }
 
     class roomTypeClickListener implements View.OnClickListener{

@@ -24,7 +24,7 @@
         android:layout_above="@id/navigation_widget"
         android:orientation="vertical">
        
-        <LinearLayout
+        <LinearLayout android:id="@+id/hotel_order_write_lly"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -62,7 +62,7 @@
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
                     android:textColor="@color/black_light"
-                    android:textSize="16sp"
+                    android:textSize="14sp"
                     android:text="@string/app_name"
                     />
                 <LinearLayout
@@ -73,27 +73,27 @@
 	                <TextView android:id="@+id/room_date_txv"
 	                    android:layout_width="fill_parent"
 	                    android:layout_height="wrap_content"
-	                    android:layout_weight="1"
+	                    android:layout_weight="2"
 	                    android:paddingTop="8dp"
 	                    android:paddingLeft="16dp"
 	                    android:paddingBottom="12dp"
 	                    android:gravity="left"
 	                    android:singleLine="true"
 	                    android:ellipsize="marquee"
-	                    android:textSize="16sp"
+	                    android:textSize="14sp"
 	                    android:text="@string/hotel_room_date"
 	                    />
 	                <TextView android:id="@+id/room_nights_txv"
 	                    android:layout_width="fill_parent"
 	                    android:layout_height="wrap_content"
-	                    android:layout_weight="4"
+	                    android:layout_weight="7"
 	                    android:gravity="right"
 	                    android:singleLine="true"
 	                    android:text="@string/hotel_total_nights"
 	                    android:paddingTop="8dp"
 	                    android:paddingRight="16dp"
 	                    android:paddingBottom="12dp"
-	                    android:textSize="16sp"
+	                    android:textSize="14sp"
 	                    />
                 </LinearLayout>
             </LinearLayout>

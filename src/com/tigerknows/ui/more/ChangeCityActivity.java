@@ -144,6 +144,7 @@ public class ChangeCityActivity extends BaseActivity {
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra(EXTRA_ONLY_CHANGE_HOTEL_CITY)) {
             mChangeHotelCity = intent.getBooleanExtra(EXTRA_ONLY_CHANGE_HOTEL_CITY, false);
+            mTitleBtn.setText(R.string.select_city);
         }
     }
 

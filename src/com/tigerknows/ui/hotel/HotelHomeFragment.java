@@ -19,6 +19,7 @@ import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
+import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.ChangeCityActivity;
 import com.tigerknows.ui.poi.POIResultFragment;
@@ -242,11 +243,14 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     public void setCityInfo(CityInfo cityInfo) {
         Globals.setHotelCityInfo(cityInfo);
         mCityBtn.setText(cityInfo.getCName());
-        if (cityInfo.getId() != mCityId) {
-            mFilterList = null;
-            mLocationBtn.setText("选择位置");
-            mPriceTxv.setText("不限");
-        }
+        mFilterList = null;
+        mLocationBtn.setText("选择位置");
+        mPriceTxv.setText("不限");
+        mSphinx.getPickLocationFragment().resetPOI();
+
+        int cityId = Globals.getCurrentCityInfo().getId();
+        MapEngine.getInstance().suggestwordCheck(mSphinx, cityId);
+        HistoryWordTable.readHistoryWord(mSphinx, cityId, HistoryWordTable.TYPE_TRAFFIC);
     }
     
     /**
@@ -448,26 +452,24 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         criteria.put(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(getDateListView().getCheckout().getTime()));
         
         POI poi = mSphinx.getPickLocationFragment().getPOI();
-        byte key = FilterResponse.FIELD_FILTER_AREA;
         if (poi != null) {
             Position position = poi.getPosition();
             if (position != null) {
                 criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
                 criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+            }
+        } else {
+            poi = new POI();
+        }
+        List<Filter> filterList = mFilterList;
+        if (filterList != null) {
+            byte key;
+            if (criteria.containsKey(DataQuery.SERVER_PARAMETER_LONGITUDE) == false) {
+                key = FilterResponse.FIELD_FILTER_AREA;
+            } else {
                 key = Byte.MIN_VALUE;
             }
-        }
-        if (key == FilterResponse.FIELD_FILTER_AREA) {
-            criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList, key));
-            Filter filterArea = null;
-            for(int i = this.mFilterList.size()-1; i >= 0; i--) {
-                Filter filter = this.mFilterList.get(i);
-                if (filter.getKey() == key) {
-                    filterArea = filter;
-                }
-            }
-            poi = new POI();
-            poi.setName(FilterListView.getFilterTitle(mSphinx, filterArea));
+            criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(filterList, key));
         }
                 
         int targetViewId = mSphinx.getPOIResultFragmentID();

@@ -377,4 +377,40 @@ public class BaseFragment extends LinearLayout {
     public void setBaseQuerying(List<BaseQuery> baseQuerying) {
     	this.mBaseQuerying = baseQuerying;
     }
+    
+    public String getLogTag() throws Exception{
+    	throw new Exception("getTag must be overrided by subclasss to use log*!");
+    }
+
+    public void logi(String msg){
+    	try {
+			LogWrapper.i(getLogTag(), msg);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+
+    public void logd(String msg){
+    	try {
+			LogWrapper.d(getLogTag(), msg);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+
+    public void logw(String msg){
+    	try {
+			LogWrapper.w(getLogTag(), msg);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+
+    public void loge(String msg){
+    	try {
+			LogWrapper.e(getLogTag(), msg);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
 }

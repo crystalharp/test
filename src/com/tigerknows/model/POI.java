@@ -822,7 +822,7 @@ public class POI extends BaseData {
                     this.feature = null;
                 }
                 
-                this.perCapity = getLongFromData(this.description, Description.FIELD_PER_CAPITA, reset ? 0 : this.perCapity);
+                this.perCapity = getLongFromData(this.description, Description.FIELD_PER_CAPITA, reset ? -1 : this.perCapity);
                 
                 this.taste = getStringFromData(this.description, Description.FIELD_TASTE, reset ? null : this.taste);
 

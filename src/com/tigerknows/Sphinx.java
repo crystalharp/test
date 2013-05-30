@@ -964,7 +964,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	    super.onPrepareDialog(id, dialog);
 	    if (id == R.id.dialog_prompt_change_to_my_location_city) {
 	        TextView messageTxv =(TextView)dialog.findViewById(R.id.message);
-	        String currentCityName = Globals.getCurrentCityInfo().getCName();
+	        String currentCityName = Globals.getCurrentCityInfo(false).getCName();
 	        String locationCityName;
 	        CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
 	        if (myLocationCityInfo != null) {
@@ -1128,7 +1128,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (Globals.g_My_Location_State == Globals.LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG) {
             Globals.g_My_Location_State = Globals.LOCATION_STATE_FIRST_SUCCESS;
         }
-        checkLocationCity();
+        
+        if (uiStackSize() > 0) {
+            checkLocationCity();
+        }
 	}
 	
 	private void checkLocationCity() {
@@ -2822,6 +2825,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             id == R.id.view_poi_result2 ||
                             id == R.id.view_hotel_home) {
                         Globals.setHotelCityInfo(null);
+                        int cityId = Globals.getCurrentCityInfo().getId();
+                        mMapEngine.suggestwordCheck(this, cityId);
+                        HistoryWordTable.readHistoryWord(this, cityId, HistoryWordTable.TYPE_TRAFFIC);
                     }
                 }
 

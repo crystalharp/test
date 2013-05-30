@@ -3,6 +3,7 @@
  */
 package com.tigerknows.ui.hotel;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -10,12 +11,8 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.Selection;
 import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +26,6 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.ui.BaseFragment;
@@ -37,7 +33,6 @@ import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ValidateUtil;
 import com.tigerknows.widget.SingleChoiceArrayAdapter;
-import com.tigerknows.widget.StringArrayAdapter;
 
 public class HotelOrderCreditFragment extends BaseFragment implements View.OnClickListener, ValidityListView.CallBack {
 
@@ -227,6 +222,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
 		public CreditBankAdapter(Context context, List<String> list) {
 			super(context, list);
 			// TODO Auto-generated constructor stub
+			// 招商银行 中国建设银行 中国工商银行 中国银行 交通银行 中信银行 广发银行 中国民生银行 兴业银行 上海浦东发展银行 中国光大银行     中国农业银行 平安银行 深圳发展银行 北京银行 上海银行 华夏银行 中国邮政储蓄银行 宁波银行
 		}
 		@Override
 		public View getView(final int position, View convertView, ViewGroup parent){
@@ -332,10 +328,26 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
 		mCreditCertTypeBtn.setText(mCertTypeList.get(0));
 		mGetCreditCertPosition = 0;
         mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, (assureType == 2 ) ? mSumPrice : oneNightPrice));
-        mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
-        		R.color.orange,
-        		mSphinx.getString(R.string.credit_note_detail, mOrderModifyDeadline).trim(),
-        		mOrderModifyDeadline));
+        Calendar c1 = Calendar.getInstance();
+        try {
+			c1.setTime(CalendarUtil.ymd8c_hm4.parse(mOrderModifyDeadline));
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			// do nothing
+		}
+        Calendar c2 = Calendar.getInstance();
+        c2.set(2013, 0, 1);
+        if(c1.after(c2) == false){
+        	mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
+        			R.color.orange,
+        			mSphinx.getString(R.string.credit_note_detail_2, mSphinx.getString(R.string.credit_cannot_cancel)),
+        			mSphinx.getString(R.string.credit_cannot_cancel)));
+        }else{
+        	mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
+        			R.color.orange,
+        			mSphinx.getString(R.string.credit_note_detail, mOrderModifyDeadline).trim(),
+        			mOrderModifyDeadline));
+        }
 	}
 
     @Override
