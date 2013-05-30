@@ -275,15 +275,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		}
 	}
     
-    @Override
-    public void onResume() {
-        super.onResume();
-        
-        // set title fragment content
-        mRightBtn.setVisibility(View.GONE);
-        mTitleBtn.setText(mContext.getString(R.string.hotel_order_detail));
-        
-        // show or hide cancel order button according to order state
+	private void updateCancelBtn(){
+		// show or hide cancel order button according to order state
         int state = mOrder.getState();
         switch (state) {
 		case 1:
@@ -295,6 +288,17 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 			mBtnCancel.setVisibility(View.GONE);
 			break;
 		}
+	}
+	
+    @Override
+    public void onResume() {
+        super.onResume();
+        
+        // set title fragment content
+        mRightBtn.setVisibility(View.GONE);
+        mTitleBtn.setText(mContext.getString(R.string.hotel_order_detail));
+        
+        updateCancelBtn();
         
         // If order state if out-of-date, query the state of the current order
         long curTime = System.currentTimeMillis();
@@ -434,7 +438,6 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	        	if(BaseQuery.API_TYPE_HOTEL_ORDER.equals(tkAsyncTask.getBaseQuery().getAPIType()) &&
 	        			HotelOrderOperation.OPERATION_CODE_QUERY.equals(tkAsyncTask.getBaseQuery().getCriteria().get(HotelOrderOperation.SERVER_PARAMETER_OPERATION_CODE))){
 	        		msgType = TKActivity.SHOW_ERROR_MSG_NO;					// 状态查询不需要提示。
-	        		LogWrapper.i(TAG, "State query returned: " + tkAsyncTask.getBaseQuery().getResponse() );
 	        	}
 	        	
 	            if(BaseActivity.checkResponseCode(baseQuery, mSphinx, null, msgType, this, false)) {
@@ -517,6 +520,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             			mOrder.setState(states.get(0));
             			mOrder.setStateUpdateTime(System.currentTimeMillis());
             			updateOrderStorage(mOrder);
+            	        updateCancelBtn();
             		}
             		
             	}else if( HotelOrderOperation.OPERATION_CODE_UPDATE.equals(opCode) ){
@@ -533,6 +537,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             				mOrder.setState(HotelOrder.STATE_CANCELED);
             				mOrderStateTxv.setText(getOrderStateDesc(mOrder.getState()));
             				mBtnCancel.setVisibility(View.GONE);
+                			updateOrderStorage(mOrder);
             				Toast.makeText(mContext, R.string.hotel_order_cancel_success, Toast.LENGTH_LONG).show(); 
             				
             			}else{
