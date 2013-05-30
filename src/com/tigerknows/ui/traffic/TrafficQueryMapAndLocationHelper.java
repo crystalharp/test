@@ -68,7 +68,7 @@ public class TrafficQueryMapAndLocationHelper {
     	}
     	
     	if (Globals.getCurrentCityInfo() != null) {
-    		currentCityId = Globals.getCurrentCityInfo().getId();
+    		currentCityId = Globals.getCurrentCityInfo(false).getId();
     	}
     	
     	LogWrapper.d(TAG, "currentCityId: " + currentCityId + "myPositionCityId: " + myPositionCityId);
