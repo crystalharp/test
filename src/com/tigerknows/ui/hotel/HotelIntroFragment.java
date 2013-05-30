@@ -88,7 +88,6 @@ public class HotelIntroFragment extends BaseFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-		mState = STATE_SHOWING;
 		updateView();
 		mTitleBtn.setText(mSphinx.getString(R.string.hotel_description));
 		hotelNameTxv.setText(mPOI.getName());
@@ -136,6 +135,9 @@ public class HotelIntroFragment extends BaseFragment {
             criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(out.getTime()));
 	        dataOpration.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
 	        this.mTkAsyncTasking = mSphinx.queryStart(dataOpration);
+	        List<BaseQuery> list = new LinkedList<BaseQuery>();
+	        list.add(dataOpration);
+	        this.mBaseQuerying = list;
 	        mState = STATE_QUERYING;
 	        updateView();
 	    }
@@ -171,6 +173,7 @@ public class HotelIntroFragment extends BaseFragment {
             }
         }
         if (mHotel.getLongDescription() != null || mHotel.getRoomDescription() != null || mHotel.getService() != null) {
+            mState = STATE_SHOWING;
             onResume();
         } else {
             mState = STATE_EMPTY;

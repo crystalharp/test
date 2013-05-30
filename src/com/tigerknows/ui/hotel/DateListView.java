@@ -109,11 +109,17 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         
         checkinAdapter.notifyDataSetChanged();
         checkinLsv.setSelectionFromTop(checkinPosition, 0);
+        checkoutLsv.setSelectionFromTop(checkoutPosition, 0);
         refreshCheckout();
     }
     
     void refreshCheckout() {
         checkoutList.clear();
+        today.add(Calendar.DAY_OF_YEAR, checkinPosition);
+        for(int i = 1, count = CHECKOUT_MAX+1; i < count; i++) {
+            checkoutList.add(makeCheckoutDateString(today, i));
+        }
+        today.add(Calendar.DAY_OF_YEAR, -checkinPosition);
         checkoutAdapter.notifyDataSetChanged();
         checkoutLsv.setSelectionFromTop(checkoutPosition, 0);
         refreshTitle();
@@ -131,9 +137,6 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         int orange = getContext().getResources().getColor(R.color.orange);
         style.setSpan(new ForegroundColorSpan(orange),0,indexDay,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         style.setSpan(new ForegroundColorSpan(orange),indexDay+2,indexN,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        for(int i = 1, count = CHECKOUT_MAX+1; i < count; i++) {
-            checkoutList.add(makeCheckoutDateString(today, i));
-        }
         titleTxv.setText(style);
         today.add(Calendar.DAY_OF_YEAR, -checkinPosition);
     }
@@ -346,7 +349,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     String makeCheckinDateString(Calendar calendar, int add) {
         String result = null;
         calendar.add(Calendar.DAY_OF_YEAR, add);
-        result = (calendar.get(Calendar.MONTH)+1) + "月" + calendar.get(Calendar.DAY_OF_MONTH);
+        result = (calendar.get(Calendar.MONTH)+1) + "月" + calendar.get(Calendar.DAY_OF_MONTH) + "日";
         if (add < 3) {
             result += days[add];
         } else {

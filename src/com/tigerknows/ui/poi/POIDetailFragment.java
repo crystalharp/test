@@ -480,6 +480,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
+        
+        mDynamicHotelPOI.refresh();
+        
         if (poi.getName() == null && poi.getUUID() != null) {
             mActionLog.addAction(mActionTag + ActionLog.POIDetailFromWeixin);
             List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
@@ -542,7 +545,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (TextUtils.isEmpty(price) == false) {
             mMoneyTxv.setText(price);
             mMoneyTxv.setVisibility(View.VISIBLE);
-        } else if (money > 0) {
+        } else if (money > -1) {
             mMoneyTxv.setText(mContext.getString(R.string.yuan, money));
             mMoneyTxv.setVisibility(View.VISIBLE);
         } else {

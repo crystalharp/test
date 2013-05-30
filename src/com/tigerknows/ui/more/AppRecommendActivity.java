@@ -6,10 +6,6 @@ package com.tigerknows.ui.more;
 
 import com.decarta.Globals;
 import com.tigerknows.R;
-import com.tigerknows.R.drawable;
-import com.tigerknows.R.id;
-import com.tigerknows.R.layout;
-import com.tigerknows.R.string;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
@@ -33,7 +29,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -45,10 +40,9 @@ import java.util.List;
 /**
  * @author Peng Wenyue
  */
-public class AppRecommendActivity extends BaseActivity implements View.OnClickListener {
+public class AppRecommendActivity extends BaseActivity {
 
     private ListView mAppRecommendLsv = null;
-    private Button mSndaBtn;
 
     private RecommdAppAdapter mRecommdAppAdapter;
     private List<RecommendApp> mRecommendAppList = new ArrayList<RecommendApp>();
@@ -103,13 +97,11 @@ public class AppRecommendActivity extends BaseActivity implements View.OnClickLi
 
     protected void findViews() {
         super.findViews();
-        mSndaBtn = (Button) findViewById(R.id.snda_btn);
         mAppRecommendLsv = (ListView)findViewById(R.id.app_recommend_lsv);
     }
     
     public void setListener() {
         super.setListener();
-        mSndaBtn.setOnClickListener(this);
         mAppRecommendLsv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
@@ -179,15 +171,6 @@ public class AppRecommendActivity extends BaseActivity implements View.OnClickLi
             }
             iconImv.setImageDrawable(drawable);
             return view;
-        }
-    }
-
-    @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.snda_btn:
-            default:
-                break;
         }
     }
     

@@ -5,13 +5,13 @@ import java.util.Hashtable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -33,6 +33,7 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 	
 	static final String TAG = "HotelSeveninnRegistFragment";
 	
+	private LinearLayout mSeveninnRegistLly;
 	private TextView mSeveninnNoteTxv;
 	private EditText mSeveninnNameEdt;
 	private EditText mSeveninnPhoneEdt;
@@ -65,6 +66,7 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 
 	protected void findViews() {
 		// TODO Auto-generated method stub
+    	mSeveninnRegistLly = (LinearLayout) mRootView.findViewById(R.id.seveninn_regist_lly);
 		mSeveninnNoteTxv = (TextView) mRootView.findViewById(R.id.seveninn_note_txv);
 		mSeveninnNameEdt = (EditText) mRootView.findViewById(R.id.seveninn_name_edt);
 		mSeveninnPhoneEdt = (EditText) mRootView.findViewById(R.id.seveninn_phone_edt);
@@ -75,6 +77,16 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 	protected void setListener() {
 		// TODO Auto-generated method stub
 		mSeveninnRegistBtn.setOnClickListener(this);
+		mSeveninnRegistLly.setOnTouchListener(new OnTouchListener(){
+        	
+	        @Override
+	        public boolean onTouch(View v, MotionEvent event) {
+	            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+	                mSphinx.hideSoftInput();
+	            }
+	            return true;
+	        }
+	    });
 	}
 
 	@Override
@@ -102,8 +114,10 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 				Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_room_mobile_empty_tip));
 				mSphinx.showSoftInput();
 				return;
-        	}else if(!ValidateUtil.isValidPhone(str)){
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.phone_format_error_tip));
+        	}else if(!ValidateUtil.isValidHotelMobile(str)){
+				mSeveninnPhoneEdt.requestFocus();
+        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_mobile_format));
+				mSphinx.showSoftInput();
         		return;
 			}else{
 				mMobile = str;
@@ -115,7 +129,9 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 				mSphinx.showSoftInput();
 				return;
         	}else if(!ValidateUtil.isValidIdCardCode(str)){
+				mSeveninnIdcardCodeEdt.requestFocus();
         		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_idcard_code_format));
+				mSphinx.showSoftInput();
         		return;
 			}else{
 				mIdcardNo = str;

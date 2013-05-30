@@ -615,7 +615,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             long money = poi.getPerCapity();
             if (TextUtils.isEmpty(price) == false) {
                 moneyTxv.setText(price);
-            } else if (money > 0) {
+            } else if (money > -1) {
                 moneyTxv.setText(activity.getString(R.string.yuan, money));
             } else {
                 moneyTxv.setText("");
@@ -827,7 +827,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
                 
                 POI poi = dataQuery.getPOI();
-                if (mATotal == 0 && TextUtils.isEmpty(poi.getAddress()) == false) { // 来自周边搜索界面
+                if (mATotal == 0 && TextUtils.isEmpty(poi.getAddress()) == false &&
+                        BaseQuery.SUB_DATA_TYPE_POI.equals(subDataType)) { // 若POI存在地址且搜索结果的子类型为普通POI则将其列为A类POI
                     mATotal = 1;
                     poi.setResultType(POIResponse.FIELD_A_POI_LIST);
                     aPOIList = new ArrayList<POI>();

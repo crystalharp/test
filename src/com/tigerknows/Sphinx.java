@@ -2822,6 +2822,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                             id == R.id.view_poi_result2 ||
                             id == R.id.view_hotel_home) {
                         Globals.setHotelCityInfo(null);
+                        int cityId = Globals.getCurrentCityInfo().getId();
+                        mMapEngine.suggestwordCheck(this, cityId);
+                        HistoryWordTable.readHistoryWord(this, cityId, HistoryWordTable.TYPE_TRAFFIC);
                     }
                 }
 

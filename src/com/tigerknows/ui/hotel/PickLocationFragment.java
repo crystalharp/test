@@ -88,8 +88,6 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     
     private POI mPOI;
     
-    private Filter mAlternativeFilter;
-    
     private AlternativeResponse mAlternativeResponse;
     
     private TKWord mTKWord = new TKWord();
@@ -112,6 +110,10 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             }
         }
     };
+    
+    public void resetPOI() {
+        mPOI = null;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -136,6 +138,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             }
         };
         mSuggestWordListManager = new SuggestWordListManager(mSphinx, mSuggestLsv, mKeywordEdt, a, HistoryWordTable.TYPE_TRAFFIC);
+        mQueryBtn.setBackgroundResource(R.drawable.btn_confirm_hotel_normal);
         
         return mRootView;
     }
@@ -270,12 +273,11 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
      * 确认
      */
     private void submit() {
-        mAlternativeFilter = null;
         TKWord tkWord = mTKWord;
         String word = tkWord.word;
         if (TextUtils.isEmpty(word)) {
             return;
-        } else if (tkWord.position == null) {
+        } else {
             mSphinx.hideSoftInput(mKeywordEdt.getInput());
             DataQuery poiQuery = new DataQuery(mContext);
             int cityId = Globals.getCurrentCityInfo().getId();
@@ -285,8 +287,6 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, word);
             poiQuery.setup(criteria, cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait), false, false, null);
             mSphinx.queryStart(poiQuery);
-        } else {
-            mPOI = tkWord.toPOI();
         }
     }
     
@@ -388,55 +388,45 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 }
             }
             if (nameList.isEmpty()) {
-                List<Filter> filterList = dataQuery.getFilterList();
-
-                if (filterList != null && filterList.size() == 1) {
-                    long id = mAlternativeResponse.getPosition();
-                    
-                    Filter areaFilter = filterList.get(0);
-                    List<Filter> filterListInHotelHome = mSphinx.getHotelHomeFragment().getFilterList();
-                    if (filterListInHotelHome != null) {
-                        for(int i = 0, size = filterListInHotelHome.size(); i < size; i++) {
-                            Filter filter = filterListInHotelHome.get(i);
-                            if (filter.getKey() == FilterResponse.FIELD_FILTER_AREA_INDEX) {
-                                if (areaFilter != null) {
-                                    filterListInHotelHome.remove(i);
-                                    filterListInHotelHome.add(i, areaFilter);
-                                } else {
-                                    areaFilter = filter;
+                long id = mAlternativeResponse.getPosition();
+                
+                List<Filter> filterListInHotelHome = mSphinx.getHotelHomeFragment().getFilterList();
+                Filter selected = null;
+                if (filterListInHotelHome != null) {
+                    for(int i = 0, size = filterListInHotelHome.size(); i < size; i++) {
+                        Filter filter = filterListInHotelHome.get(i);
+                        if (filter.getKey() == FilterResponse.FIELD_FILTER_AREA_INDEX) {
+                            List<Filter> list1 = filter.getChidrenFilterList();
+                            for(int j = 0, count = list1.size(); j < count; j++) {
+                                Filter filter1 = list1.get(j);
+                                if (filter1.getFilterOption().getId() == id) {
+                                    FilterListView.selectedFilter(filter, filter1);
+                                    selected = filter1;
+                                    break;
                                 }
-                                break;
-                            }
-                        }
-                    }
-                    
-                    if (areaFilter != null) {
-                        List<Filter> list = areaFilter.getChidrenFilterList();
-                        for(int i = 0, size = list.size(); i < size; i++) {
-                            Filter filter = list.get(i);
-                            if (filter.getFilterOption().getId() == id) {
-                                mAlternativeFilter = filter;
-                                break;
-                            }
-                            
-                            List<Filter> childlist = areaFilter.getChidrenFilterList();
-                            for(int j = 0, count = list.size(); j < count; j++) {
-                                Filter chidrenFilter = childlist.get(j);
-                                if (chidrenFilter.getFilterOption().getId() == id) {
-                                    mAlternativeFilter = filter;
+                                List<Filter> list2 = filter1.getChidrenFilterList();
+                                for(int m = 0, total = list2.size(); m < total; m++) {
+                                    Filter filter2 = list2.get(m);
+                                    if (filter2.getFilterOption().getId() == id) {
+                                        FilterListView.selectedFilter(filter, filter2);
+                                        selected = filter2;
+                                        break;
+                                    }
+                                }
+                                
+                                if (selected != null) {
                                     break;
                                 }
                             }
-                            
-                            if (mAlternativeFilter != null) {
-                                break;
-                            }
-                        } 
+                            break;
+                        }
                     }
                 }
                 
-                if (mAlternativeFilter != null) {
-                    nameList.add(mAlternativeFilter.getFilterOption().getName());
+                if (selected != null) {
+                    mPOI = null;
+                    HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, selected.getFilterOption().getName(), null), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
+                    dismiss();
                 }
             }
             
@@ -454,7 +444,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
 
         mActionLog.addAction(ActionLog.TrafficAlternative);
         final Dialog dialog = Utility.showNormalDialog(mSphinx,
-                mSphinx.getString(R.string.app_name),
+                "请选择位置",
                 null,
                 listView,
                 null,
@@ -471,21 +461,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                     List<Alternative> list = alternativeList.getList();
                     if (list != null && list.size() > 0 && which < list.size()) {
                         mPOI = list.get(which).toPOI();
-                    }
-                }
-                if (mPOI == null) {
-                    Filter areaFilter = null;
-                    List<Filter> filterListInHotelHome = mSphinx.getHotelHomeFragment().getFilterList();
-                    if (filterListInHotelHome != null) {
-                        for(int i = 0, size = filterListInHotelHome.size(); i < size; i++) {
-                            Filter filter = filterListInHotelHome.get(i);
-                            if (filter.getKey() == FilterResponse.FIELD_FILTER_AREA_INDEX) {
-                                areaFilter = filter;
-                                break;
-                            }
-                        }
-                        
-                        FilterListView.selectedFilter(areaFilter, mAlternativeFilter);
+                        HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, mPOI.getName(), mPOI.getPosition()), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
                     }
                 }
                 dialog.dismiss();
