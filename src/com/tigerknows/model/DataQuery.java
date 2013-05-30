@@ -368,7 +368,8 @@ public final class DataQuery extends BaseQuery {
     protected void addMyLocationParameters() {
         if (isTurnPage == false) {
             String dataType = this.criteria.get(SERVER_PARAMETER_DATA_TYPE);
-            if (DATA_TYPE_FENDIAN.equals(dataType) || DATA_TYPE_YINGXUN.equals(dataType)) {
+            if (DATA_TYPE_FENDIAN.equals(dataType) || DATA_TYPE_YINGXUN.equals(dataType) ||
+                    (SUB_DATA_TYPE_HOTEL.equals(this.criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE)) && criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY))) {
                 if (criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY)
                         && criteria.containsKey(SERVER_PARAMETER_LOCATION_LONGITUDE)
                         && criteria.containsKey(SERVER_PARAMETER_LOCATION_LATITUDE)) {
