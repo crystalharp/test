@@ -393,7 +393,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 long id = mAlternativeResponse.getPosition();
                 
                 List<Filter> filterListInHotelHome = mSphinx.getHotelHomeFragment().getFilterList();
-                boolean result = false;
+                Filter selected = null;
                 if (filterListInHotelHome != null) {
                     for(int i = 0, size = filterListInHotelHome.size(); i < size; i++) {
                         Filter filter = filterListInHotelHome.get(i);
@@ -403,7 +403,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                                 Filter filter1 = list1.get(j);
                                 if (filter1.getFilterOption().getId() == id) {
                                     FilterListView.selectedFilter(filter, filter1);
-                                    result = true;
+                                    selected = filter1;
                                     break;
                                 }
                                 List<Filter> list2 = filter1.getChidrenFilterList();
@@ -411,12 +411,12 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                                     Filter filter2 = list2.get(m);
                                     if (filter2.getFilterOption().getId() == id) {
                                         FilterListView.selectedFilter(filter, filter2);
-                                        result = true;
+                                        selected = filter2;
                                         break;
                                     }
                                 }
                                 
-                                if (result) {
+                                if (selected != null) {
                                     break;
                                 }
                             }
@@ -425,7 +425,8 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                     }
                 }
                 
-                if (result) {
+                if (selected != null) {
+                    HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, selected.getFilterOption().getName(), null), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
                     dismiss();
                 }
             }
@@ -461,6 +462,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                     List<Alternative> list = alternativeList.getList();
                     if (list != null && list.size() > 0 && which < list.size()) {
                         mPOI = list.get(which).toPOI();
+                        HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, mPOI.getName(), mPOI.getPosition()), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
                     }
                 }
                 dialog.dismiss();
