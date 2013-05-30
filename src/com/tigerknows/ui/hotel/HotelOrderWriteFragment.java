@@ -148,7 +148,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
 
     protected void findViews() {
-        (ScrollView) mRootView.findViewById(R.id.hotel_order_write_scv);
         mHotelOrderWriteLly = (LinearLayout)  mRootView.findViewById(R.id.person_name_lly);
         mPersonNameLly = (LinearLayout) mRootView.findViewById(R.id.person_name_lly);
         mHotelNameTxv = (TextView) mRootView.findViewById(R.id.hotel_name_txv);
