@@ -98,7 +98,10 @@ import com.tigerknows.util.ShareTextUtil;
  * <ul>
  * 类型 价格 人气 口味 环境 服务 推荐菜
  * </ul>
- * 
+ * 动态POI添加说明:
+ *   由于动态POI在这页添加的越来越多,于是决定给这页添加一个机制,让这一页不再
+ * 随着动态POI类型的增加而迅速的膨胀下去.
+ * TODO:完成这个说明
  */
 public class POIDetailFragment extends BaseFragment implements View.OnClickListener, OnTouchListener {
     
@@ -363,6 +366,19 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
+    void removeDPOIViewBlock(DPOIType t) {
+        int size = DPOIViewBlockList.size();
+        if (size == 0) {
+            return;
+        }
+        for (int i = size - 1; i <= 0; i++) {
+            DynamicPOIViewBlock a = DPOIViewBlockList.get(i);
+            if (a.mType == t) {
+                DPOIViewBlockList.remove(a);
+            }
+        }
+    }
+    
     public interface DPOIViewInitializer<T> {
         public T init(POIDetailFragment poiFragment, LayoutInflater inflater, LinearLayout belongsLayout, DynamicPOI data);
     }
@@ -371,6 +387,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		View mOwnLayout;
 		LinearLayout mBelongsLayout;
 		DPOIType mType;
+		boolean mLoadSucceed = true;
 		
 		public DynamicPOIViewBlock(LinearLayout belongsLayout, DPOIType type) {
 		    mBelongsLayout = belongsLayout;
@@ -411,6 +428,19 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		
 		public abstract boolean checkExistence(POI poi);
 		
+	}
+	
+	private void clearFailedBlock(List<DynamicPOIViewBlock> POIList) {
+	    int size = (POIList == null ? 0 : POIList.size());
+	    if (size == 0) {
+	        return;
+	    }
+	    for (int i = size - 1; i >= 0; i--) {
+	        DynamicPOIViewBlock block = POIList.get(i);
+	        if (!block.mLoadSucceed) {
+	            POIList.remove(i);
+	        }
+	    }
 	}
 	
 	//*************new code end*******************
@@ -626,10 +656,13 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         makeFeature(mFeatureTxv);
         
-        refreshDynamicPOI(poi);
-        
+    }
+    
+    final void showAllDynamicPOI(POI poi) {
         refreshDynamicDinaying(poi);
+        refreshDynamicNormalPOI(poi);
         refreshDynamicHotel(poi);
+        clearFailedBlock(DPOIViewBlockList);
         showDynamicPOI(DPOIViewBlockList);
     }
     
@@ -637,7 +670,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * 刷新动态POI（团购、演出、展览）的显示区域
      * @param poi
      */
-    final void refreshDynamicPOI(POI poi) {
+    final void refreshDynamicNormalPOI(POI poi) {
     	if (poi == null) {
     		return;
     	}
@@ -650,15 +683,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * @param poi
      */
     final void refreshDynamicHotel(POI poi) {
-        int size = DPOIViewBlockList.size();
-        for (int i = 0; i < size; i++) {
-            DynamicPOIViewBlock a = DPOIViewBlockList.get(i);
-            if (a.mType == DPOIType.HOTEL) {
-                DPOIViewBlockList.remove(a);
-                i--;
-                size--;
-            }
-        }
+        removeDPOIViewBlock(DPOIType.HOTEL);
         DPOIViewBlockList.addAll(mDynamicHotelPOI.getViewList(poi));
     }
     /**
@@ -1239,6 +1264,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         refreshDetail();
         refreshComment();
+        showAllDynamicPOI(mPOI);
         if (baseQueryList.isEmpty() == false) {
             mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
             mBaseQuerying = baseQueryList;

@@ -1010,6 +1010,8 @@
     <string name="credit_assure_price">%1$s元</string>
     <string name="credit_note">信用担保说明</string>
     <string name="credit_note_detail">本订单您可以在%1$s之前取消，如果您到时候没有入住，将按照担保金额扣除房费。请在填写担保前慎重考虑您是否可能会修改行程，以免造成不必要的损失。</string>
+    <string name="credit_note_detail_2">本订单您%1$s，如果您到时候没有入住，将按照担保金额扣除房费。请在填写担保前慎重考虑您是否可能会修改行程，以免造成不必要的损失。</string>
+    <string name="credit_cannot_cancel">提交成功之后将无法取消</string>
     <string name="credit_confirm">确认无误，提交</string>
     <string name="choose_credit_bank">选择银行</string>
     <string name="choose_credit_validity">选择信用卡有效期</string>
