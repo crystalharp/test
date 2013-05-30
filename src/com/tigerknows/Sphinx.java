@@ -1652,8 +1652,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                         POI poi = new POI();
                                         poi.setUUID(poiuid);
                                         poi.ciytId =  cityId;
-                                        showView(R.id.view_poi_detail);
                                         getPOIDetailFragment().setData(poi);
+                                        showView(R.id.view_poi_detail);
                                     }
                                 }
                             }
