@@ -118,7 +118,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private String mIdCardType;
     private String mIdCardNo;
     
-    private int mSubmitted;
     
     @Override
     public void onCreate(Bundle savedInstanceState){
@@ -297,7 +296,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomNightsTxv.setText(mSphinx.getString(R.string.hotel_total_nights, mNights));
         mRoomHowmany = 1;
         mRTimeWhich = 0;
-        mSubmitted = 0;
     }
 
 	private void exit() {
@@ -473,11 +471,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     public void submit(boolean HasCreditInfo) {
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
     	Hashtable<String, String> criteria = new Hashtable<String, String>();
-    	if(mSubmitted > 6){
-    		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.network_failed));
-    		return;
-    	}
-    	mSubmitted++;
     	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_CREATE);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_HOTEL_ID, mHotel.getUuid());
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_BRAND, String.valueOf(mHotel.getBrand()));
@@ -613,11 +606,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 	private String analysisElongRequest(String description){
 		String ResponseStr = description.split("!")[0].split("！")[0];
 		int ResponseInt = 0;
-		String[] strArray = description.split("订单总价应为");
+		String[] strArray = description.split("订单总价应为wwwwwwwwwwwwwwwwww");
 		if(strArray.length > 1){
 			ResponseInt = 1;
 			ResponseStr = strArray[1];
-		}		
+		}
 		return ResponseInt+"#"+ResponseStr;
 	}
 

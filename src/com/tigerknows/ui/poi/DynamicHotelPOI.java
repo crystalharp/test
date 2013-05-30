@@ -54,7 +54,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 
     final static int PARENT_VIEW = 1;
     final static int DATA = 0;
-    public boolean mLoadSucceed = true;
     DynamicPOIViewBlock mUpperBlock;
     DynamicPOIViewBlock mLowerBlock;
     List<DynamicPOIViewBlock> blockList = new LinkedList<DynamicPOIViewBlock>();
@@ -197,7 +196,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     class MoreRoomTypeClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            if (mLoadSucceed) {
+            if (mUpperBlock.mLoadSucceed) {
                 roomTypeList.refreshList(mAllRoomList);
                 refreshBackground(roomTypeList, mAllRoomList);
                 mDynamicRoomTypeMoreView.setVisibility(View.GONE);
@@ -258,12 +257,13 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     @Override
     public List<DynamicPOIViewBlock> getViewList(POI poi) {
         blockList.clear();
-        if (!mLoadSucceed) {
+        if (!mUpperBlock.mLoadSucceed) {
             String value = mPOI.getDescriptionValue(Description.FIELD_SYNOPSIS);
             hotelSummary.setText(value);
             moreTxv.setText(mSphinx.getString(R.string.hotel_click_to_reload));
             moreRoomTypeArrow.setVisibility(View.GONE);
             mDynamicRoomTypeMoreView.setClickable(true);
+            mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
             roomTypeList.refreshList(null);
             blockList.add(mUpperBlock);
             blockList.add(mLowerBlock);
@@ -438,6 +438,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 mSphinx.showView(R.id.view_hotel_order_write);
             } else {
                 //更新按钮状态
+                //FIXME:提示已定满
                 mClickedRoomType.setCanReserve(0);
                 mClickedBookBtn.setEnabled(false);
                 mClickedChild.setClickable(false);
@@ -494,7 +495,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     final public void loadSucceed(boolean s) {
-        mLoadSucceed = s;
+        mUpperBlock.mLoadSucceed = s;
+        mLowerBlock.mLoadSucceed = s;
     }
     
     private class RoomTypeCMP implements Comparator<RoomType> {
