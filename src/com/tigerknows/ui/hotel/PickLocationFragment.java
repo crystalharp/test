@@ -277,7 +277,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         String word = tkWord.word;
         if (TextUtils.isEmpty(word)) {
             return;
-        } else if (tkWord.position == null) {
+        } else {
             mSphinx.hideSoftInput(mKeywordEdt.getInput());
             DataQuery poiQuery = new DataQuery(mContext);
             int cityId = Globals.getCurrentCityInfo().getId();
@@ -287,8 +287,6 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, word);
             poiQuery.setup(criteria, cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait), false, false, null);
             mSphinx.queryStart(poiQuery);
-        } else {
-            mPOI = tkWord.toPOI();
         }
     }
     
@@ -426,6 +424,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 }
                 
                 if (selected != null) {
+                    mPOI = null;
                     HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, selected.getFilterOption().getName(), null), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
                     dismiss();
                 }
