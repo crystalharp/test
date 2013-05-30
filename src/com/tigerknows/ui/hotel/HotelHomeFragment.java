@@ -242,11 +242,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     public void setCityInfo(CityInfo cityInfo) {
         Globals.setHotelCityInfo(cityInfo);
         mCityBtn.setText(cityInfo.getCName());
-        if (cityInfo.getId() != mCityId) {
-            mFilterList = null;
-            mLocationBtn.setText("选择位置");
-            mPriceTxv.setText("不限");
-        }
+        mFilterList = null;
+        mLocationBtn.setText("选择位置");
+        mPriceTxv.setText("不限");
         mSphinx.getPickLocationFragment().resetPOI();
     }
     
