@@ -445,14 +445,16 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     }
     
     private void refreshFilter(List<Filter> filterList) {
-        if (mFilterList != filterList) {
-            mFilterList.clear();
-            if (filterList != null) {
-                for(Filter filter : filterList) {
-                    mFilterList.add(filter.clone());
+        synchronized (mFilterList) {
+            if (mFilterList != filterList) {
+                mFilterList.clear();
+                if (filterList != null) {
+                    for(Filter filter : filterList) {
+                        mFilterList.add(filter.clone());
+                    }
                 }
+                FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
             }
-            FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         }
     }
 
