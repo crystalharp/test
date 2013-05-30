@@ -480,6 +480,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
+        
+        mDynamicHotelPOI.refresh();
+        
         if (poi.getName() == null && poi.getUUID() != null) {
             mActionLog.addAction(mActionTag + ActionLog.POIDetailFromWeixin);
             List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();

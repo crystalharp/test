@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.decarta.Globals;
+import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.model.Hotel;
@@ -178,6 +179,8 @@ public class HotelImageGridFragment extends BaseFragment {
                 iconImv.setId(R.id.icon_imv);
                 iconImv.setScaleType(ImageView.ScaleType.FIT_XY);
                 iconImv.setBackgroundResource(R.drawable.bg_picture_tuangou);
+                int padding = Util.dip2px(Globals.g_metrics.density, 4);
+                iconImv.setPadding(padding, padding, padding, padding);
                 viewGroup.addView(iconImv);
                 view = viewGroup;
             } else {
@@ -196,9 +199,7 @@ public class HotelImageGridFragment extends BaseFragment {
             if (image != null) {
 //                float scale = ((float) newWidth) / image.getIntrinsicWidth();
 //                layoutParams.height = (int) (scale*image.getIntrinsicHeight());
-                if( image.getBounds().width() != iconImv.getWidth() || image.getBounds().height() != iconImv.getHeight() ){
-                    iconImv.setBackgroundDrawable(null);
-                }
+                iconImv.setImageDrawable(null);
                 iconImv.setImageDrawable(image);
             } else {
 //                Drawable drawable = iconImv.getBackground();

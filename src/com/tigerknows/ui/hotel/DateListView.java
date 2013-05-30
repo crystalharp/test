@@ -346,7 +346,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     String makeCheckinDateString(Calendar calendar, int add) {
         String result = null;
         calendar.add(Calendar.DAY_OF_YEAR, add);
-        result = (calendar.get(Calendar.MONTH)+1) + "月" + calendar.get(Calendar.DAY_OF_MONTH);
+        result = (calendar.get(Calendar.MONTH)+1) + "月" + calendar.get(Calendar.DAY_OF_MONTH) + "日";
         if (add < 3) {
             result += days[add];
         } else {
