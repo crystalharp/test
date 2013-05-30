@@ -110,6 +110,10 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             }
         }
     };
+    
+    public void resetPOI() {
+        mPOI = null;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

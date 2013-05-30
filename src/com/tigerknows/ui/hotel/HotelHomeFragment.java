@@ -247,6 +247,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             mLocationBtn.setText("选择位置");
             mPriceTxv.setText("不限");
         }
+        mSphinx.getPickLocationFragment().resetPOI();
     }
     
     /**
