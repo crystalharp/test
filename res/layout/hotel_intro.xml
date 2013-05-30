@@ -138,48 +138,5 @@
 
         </LinearLayout>
     </ScrollView>
-    
-		    <com.tigerknows.widget.RetryView
-               android:id="@+id/hotel_retry_view"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:visibility="gone"
-                >
-            </com.tigerknows.widget.RetryView>
-            
-            <com.tigerknows.widget.QueryingView
-                android:id="@+id/querying_view"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:visibility="gone"
-                >
-            </com.tigerknows.widget.QueryingView>
-		    
-		    <RelativeLayout 
-		        android:id="@+id/hotel_no_description"
-		        android:layout_width="fill_parent"
-		        android:layout_height="fill_parent"
-		        android:visibility="gone"
-		        android:layout_gravity="center_vertical"
-		        >
-		
-			    <TextView
-			        android:id="@+id/hotel_no_desc_txv"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_centerHorizontal="true"
-			        android:layout_centerVertical="true"
-			        android:layout_marginTop="10dp"
-			        android:textColor="@color/text_gray"
-			        android:text="@string/hotel_no_description" />
-		
-			    <ImageView
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_centerHorizontal="true"
-			        android:layout_above="@id/hotel_no_desc_txv"
-			        android:background="@drawable/hotel_no_description" />
-		
-		    </RelativeLayout>
 
 </LinearLayout> 

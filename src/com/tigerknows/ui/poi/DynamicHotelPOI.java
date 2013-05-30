@@ -305,21 +305,23 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         roomTypeList.refreshList(mShowingRoomList);
         refreshBackground(roomTypeList, mShowingRoomList);
         
-        String value = mPOI.getDescriptionValue(Description.FIELD_SYNOPSIS);
+        String value = mHotel.getLongDescription();
+        LinearLayout hotelSummaryBlock = (LinearLayout) mLowerBlock.mOwnLayout.findViewById(R.id.hotel_summary);
         if (TextUtils.isEmpty(value)) {
             value = mSphinx.getString(R.string.hotel_no_summary);
+            hotelSummaryBlock.setOnClickListener(null);
+        } else {
+            hotelSummaryBlock.setOnClickListener(new View.OnClickListener() {
+    			
+    			@Override
+    			public void onClick(View v) {
+    				HotelIntroFragment hotelIntro = mSphinx.getHotelIntroFragment();
+    				hotelIntro.setData(mPOI);
+    				mSphinx.showView(R.id.view_hotel_intro);
+    			}
+    		});
         }
         hotelSummary.setText(value);
-        LinearLayout hotelSummaryBlock = (LinearLayout) mLowerBlock.mOwnLayout.findViewById(R.id.hotel_summary);
-        hotelSummaryBlock.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				HotelIntroFragment hotelIntro = mSphinx.getHotelIntroFragment();
-				hotelIntro.setData(mPOI, checkin, checkout);
-				mSphinx.showView(R.id.view_hotel_intro);
-			}
-		});
         
         refreshPicture();
         hotelImage.setOnClickListener(new View.OnClickListener() {
