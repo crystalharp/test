@@ -368,7 +368,8 @@ public final class DataQuery extends BaseQuery {
     protected void addMyLocationParameters() {
         if (isTurnPage == false) {
             String dataType = this.criteria.get(SERVER_PARAMETER_DATA_TYPE);
-            if (DATA_TYPE_FENDIAN.equals(dataType) || DATA_TYPE_YINGXUN.equals(dataType)) {
+            if (DATA_TYPE_FENDIAN.equals(dataType) || DATA_TYPE_YINGXUN.equals(dataType) ||
+                    (SUB_DATA_TYPE_HOTEL.equals(this.criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE)) && criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY))) {
                 if (criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY)
                         && criteria.containsKey(SERVER_PARAMETER_LOCATION_LONGITUDE)
                         && criteria.containsKey(SERVER_PARAMETER_LOCATION_LATITUDE)) {
@@ -417,6 +418,7 @@ public final class DataQuery extends BaseQuery {
                     if (bias == null) {
                         addParameter(new String[]{SERVER_PARAMETER_KEYWORD, SERVER_PARAMETER_KEYWORD_TYPE});
                     }
+                    addParameter(SERVER_PARAMETER_POI_ID, false);
                 }
             } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                 String appendaction = addParameter(SERVER_PARAMETER_APPENDACTION, false);
@@ -2109,7 +2111,7 @@ public final class DataQuery extends BaseQuery {
         // 0x03    x_int   关键字命中的地片筛选下标 
         public static final byte FIELD_POSITION = 0x03;
 
-        protected long position = -1;
+        protected long position = Long.MIN_VALUE;
         
         protected AlternativeList list;
 
@@ -2125,7 +2127,7 @@ public final class DataQuery extends BaseQuery {
             super(data);
 
             this.list = getObjectFromData(FIELD_LIST, AlternativeList.Initializer);
-            this.position = getLongFromData(FIELD_POSITION);
+            this.position = getLongFromData(FIELD_POSITION, Long.MIN_VALUE);
         }
 
         public static class AlternativeList extends BaseList {
