@@ -54,6 +54,8 @@ import com.tigerknows.widget.LinearListView.ItemInitializer;
 
 public class DynamicHotelPOI extends DynamicPOIView implements DateListView.CallBack {
 
+    final static String TAG = "DynamicHotelPOI";
+    
     final static int PARENT_VIEW = 1;
     final static int DATA = 0;
     DynamicPOIViewBlock mUpperBlock;
@@ -75,15 +77,11 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     roomTypeClickListener mItemClickListener = new roomTypeClickListener();
     
     private LinearLayout mDynamicRoomTypeListView;
-    
     private LinearLayout mDynamicRoomTypeMoreView;
-    
     LinearListView roomTypeList;
     ImageView hotelImage;
     ImageView moreRoomTypeArrow;
     TextView hotelSummary;
-    private DateWidget mCheckInDat;
-    private DateWidget mCheckOutDat;
     View mCheckView;
     TextView moreTxv;
     TextView imageNumTxv;
@@ -124,9 +122,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         popupWindow.showAsDropDown(parent, 0, 0);
     }
     
-    final static String TAG = "DynamicHotelPOI";
-    
-    ItemInitializer i = new ItemInitializer(){
+    ItemInitializer init = new ItemInitializer(){
 
         @Override
         public void initItem(Object data, View v) {
@@ -167,7 +163,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mUpperBlock.mOwnLayout = mInflater.inflate(R.layout.poi_dynamic_hotel_upper, null);
         mLowerBlock.mOwnLayout = mInflater.inflate(R.layout.poi_dynamic_hotel_below_feature, null);
         findViews();
-        roomTypeList = new LinearListView(mSphinx, mDynamicRoomTypeListView, i, R.layout.poi_dynamic_hotel_room_item);
+        roomTypeList = new LinearListView(mSphinx, mDynamicRoomTypeListView, init, R.layout.poi_dynamic_hotel_room_item);
         
         moreRoomTypeClickListener = new MoreRoomTypeClickListener();
         mDynamicRoomTypeMoreView.setOnClickListener(moreRoomTypeClickListener);
@@ -188,8 +184,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         hotelImage = (ImageView)mLowerBlock.mOwnLayout.findViewById(R.id.icon_imv);
         hotelSummary = (TextView)mLowerBlock.mOwnLayout.findViewById(R.id.short_summary);
         mDynamicRoomTypeMoreView = (LinearLayout) mUpperBlock.mOwnLayout.findViewById(R.id.dynamic_roomtype_more_view);
-        mCheckInDat = (DateWidget) mUpperBlock.mOwnLayout.findViewById(R.id.checkin_dat);
-        mCheckOutDat = (DateWidget) mUpperBlock.mOwnLayout.findViewById(R.id.checkout_dat);
         imageNumTxv = (TextView) mLowerBlock.mOwnLayout.findViewById(R.id.image_num_txv);
         moreTxv = (TextView) mDynamicRoomTypeMoreView.findViewById(R.id.more_txv);
         moreRoomTypeArrow = (ImageView) mDynamicRoomTypeMoreView.findViewById(R.id.more_imv);
@@ -253,23 +247,19 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     
     final public void refreshDate() {
 //        DateListView dateListView = getDateListView();
-        mCheckInDat.setCalendar(checkin);
-        mCheckOutDat.setCalendar(checkout);
+        getDateListView().refresh(checkin, checkout);
     }
 
     @Override
     public List<DynamicPOIViewBlock> getViewList(POI poi) {
         blockList.clear();
         if (!mUpperBlock.mLoadSucceed) {
-            String value = mPOI.getDescriptionValue(Description.FIELD_SYNOPSIS);
-            hotelSummary.setText(value);
             moreTxv.setText(mSphinx.getString(R.string.hotel_click_to_reload));
             moreRoomTypeArrow.setVisibility(View.GONE);
             mDynamicRoomTypeMoreView.setClickable(true);
             mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
             roomTypeList.refreshList(null);
             blockList.add(mUpperBlock);
-            blockList.add(mLowerBlock);
             LogWrapper.i(TAG, "Hotel viewBlock is:" + blockList);
             return blockList;
         }
@@ -280,7 +270,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mPOI = poi;
         mHotel = poi.getHotel();
         refreshDate();
-        getDateListView().refresh(checkin, checkout);
 
         mAllRoomList.clear();
         mShowingRoomList.clear();
@@ -419,7 +408,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         criteria.put(DataOperation.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
         criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
-        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, needFiled+"01");   // 01表示poi的uuid
+        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, "0150" + needFiled);   // 01表示poi的uuid
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN, checkinTime);
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT, checkoutTime);
         DataOperation dataOpration = new DataOperation(mSphinx);
