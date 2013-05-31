@@ -124,12 +124,17 @@ public class ProxyQuery extends BaseQuery {
 
         // 0x04 xmap 参见担保规则
         public static final byte FIELD_DANBAO_GUIZE = 0x04;
+        
+        // 0x05 x_string 宾客类型代码
+        public static final byte FIELD_GUEST_TYPE = 0x05;
 
         private double price;
 
         private long num;
 
         private DanbaoGuize danbaoGuize;
+        
+        private String guestType;
 
         public double getPrice() {
             return price;
@@ -142,6 +147,10 @@ public class ProxyQuery extends BaseQuery {
         public DanbaoGuize getDanbaoGuize() {
             return danbaoGuize;
         }
+        
+        public String getGuesttype() {
+        	return guestType;
+        }
 
         public RoomTypeDynamic(XMap data) throws APIException {
             super(data);
@@ -149,6 +158,7 @@ public class ProxyQuery extends BaseQuery {
             this.price = getDoubleFromData(FIELD_PRICE);
             this.num = getLongFromData(FIELD_NUM);
             this.danbaoGuize = getObjectFromData(FIELD_DANBAO_GUIZE, DanbaoGuize.Initializer);
+            this.guestType = getStringFromData(FIELD_GUEST_TYPE);
         }
 
         public static class DanbaoGuize extends XMapData {

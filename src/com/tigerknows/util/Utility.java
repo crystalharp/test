@@ -648,7 +648,7 @@ public class Utility {
     public static Dialog showNormalDialog(Activity activity, String message) {
         return showNormalDialog(activity, activity.getString(R.string.prompt), message, activity.getString(R.string.confirm), null, null);
     }
-
+    
     public static Dialog showNormalDialog(Activity activity, String message, DialogInterface.OnClickListener onClickListener) {
         return showNormalDialog(activity, activity.getString(R.string.prompt), message, activity.getString(R.string.confirm), activity.getString(R.string.cancel), onClickListener);
     }

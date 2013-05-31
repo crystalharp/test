@@ -2,6 +2,7 @@ package com.tigerknows.ui.hotel;
 
 import java.util.Hashtable;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -88,6 +89,22 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 	        }
 	    });
 	}
+    private void showSeveninnErrorDialog(String message, final View source){
+    	Utility.showNormalDialog(mSphinx, 
+    			mSphinx.getString(R.string.prompt), 
+    			message, 
+    			mSphinx.getString(R.string.confirm),
+    			null,
+    			new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						source.requestFocus();
+						mSphinx.showSoftInput(source);
+					}
+    		});
+    }
 
 	@Override
 	public void onClick(View view) {
@@ -100,9 +117,7 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 		case R.id.seveninn_regist_btn:
 			String str = mSeveninnNameEdt.getText().toString().trim();
 			if(TextUtils.isEmpty(str)){
-				mSeveninnNameEdt.requestFocus();
-				Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_room_person_empty_tip));
-				mSphinx.showSoftInput();
+				showSeveninnErrorDialog(mSphinx.getString(R.string.hotel_room_person_empty_tip), mSeveninnNameEdt);
 				return;
 				// 注册7天酒店时，不校验姓名格式
 			}else{
@@ -110,28 +125,20 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 			}
 			str = mSeveninnPhoneEdt.getText().toString();
 			if(TextUtils.isEmpty(str)){
-				mSeveninnPhoneEdt.requestFocus();
-				Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_room_mobile_empty_tip));
-				mSphinx.showSoftInput();
+				showSeveninnErrorDialog(mSphinx.getString(R.string.hotel_room_mobile_empty_tip), mSeveninnPhoneEdt);
 				return;
         	}else if(!ValidateUtil.isValidHotelMobile(str)){
-				mSeveninnPhoneEdt.requestFocus();
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_mobile_format));
-				mSphinx.showSoftInput();
+				showSeveninnErrorDialog(mSphinx.getString(R.string.hotel_mobile_format), mSeveninnPhoneEdt);
         		return;
 			}else{
 				mMobile = str;
 			}
 			str = mSeveninnIdcardCodeEdt.getText().toString().trim();
 			if(TextUtils.isEmpty(str)){
-				mSeveninnIdcardCodeEdt.requestFocus();
-				Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.seveninn_idcard_code_empty_error));
-				mSphinx.showSoftInput();
+				showSeveninnErrorDialog(mSphinx.getString(R.string.seveninn_idcard_code_empty_error), mSeveninnIdcardCodeEdt);
 				return;
         	}else if(!ValidateUtil.isValidIdCardCode(str)){
-				mSeveninnIdcardCodeEdt.requestFocus();
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_idcard_code_format));
-				mSphinx.showSoftInput();
+				showSeveninnErrorDialog(mSphinx.getString(R.string.hotel_idcard_code_format), mSeveninnIdcardCodeEdt);
         		return;
 			}else{
 				mIdcardNo = str;

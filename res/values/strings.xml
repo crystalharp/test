@@ -982,7 +982,7 @@
     <string name="hotel_description_title">酒店介绍</string>
     <string name="hotel_no_summary">暂无简介</string>
     
-    <string name="hotel_person_name_format">姓名只能输入英文和汉字，空格用"/"替代</string>
+    <string name="hotel_person_name_format">姓名只能输入英文和汉字</string>
     <string name="hotel_certcard_number_format">证件号码格式不正确</string>
     <string name="credit_code_format">卡号格式不正确，请重新输入</string>
     <string name="credit_verify_format">验证码格式不正确，请重新输入3位验证码</string>

@@ -15,6 +15,7 @@ public class ProxyQueryTest {
         xmap.put(RoomTypeDynamic.FIELD_NUM, 168);
         xmap.put(RoomTypeDynamic.FIELD_PRICE, 168.75);
         xmap.put(RoomTypeDynamic.FIELD_DANBAO_GUIZE, launchDanbaoGuize());
+        xmap.put(RoomTypeDynamic.FIELD_GUEST_TYPE, "FIELD_GUEST_TYPE");
         return xmap;
     }
     
