@@ -198,7 +198,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 refreshBackground(roomTypeList, mAllRoomList);
                 mDynamicRoomTypeMoreView.setVisibility(View.GONE);
             } else {
-                BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_DETAIL);
+                BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_DETAIL+Util.byteToHexString(Hotel.FIELD_CAN_RESERVE));
                 baseQuery.setTipText(mSphinx.getString(R.string.doing_and_wait));
                 List<BaseQuery> list = new ArrayList<BaseQuery>();
                 list.add(baseQuery);
@@ -221,7 +221,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             checkout = out;
         }
         refreshDate();
-        BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_DETAIL);
+        BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_DETAIL+Util.byteToHexString(Hotel.FIELD_CAN_RESERVE));
         baseQuery.setTipText(mSphinx.getString(R.string.doing_and_wait));
         mPOIDetailFragment.mSphinx.queryStart(baseQuery);
         mPOIDetailFragment.dismissPopupWindow();
@@ -473,7 +473,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             baseQueryList.add(baseQuery);
         } else if (mHotel.getRoomTypeList() == null) {
             LogWrapper.i(TAG, "hotel.roomtype is null, generate Query.");
-            BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL);
+            BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Util.byteToHexString(Hotel.FIELD_CAN_RESERVE));
             baseQueryList.add(baseQuery);
         }
         LogWrapper.i(TAG, "Generated query in hotel:" + baseQueryList);

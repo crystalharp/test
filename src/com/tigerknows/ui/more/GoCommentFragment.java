@@ -381,6 +381,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
             criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+            criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
             int cityId = Globals.getCurrentCityInfo().getId();
             DataQuery poiQuery = new DataQuery(mContext);
             criteria.put(DataQuery.SERVER_PARAMETER_ID_LIST, idList.toString());

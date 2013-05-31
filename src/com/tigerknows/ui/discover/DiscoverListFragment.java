@@ -992,7 +992,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                             return;
                         }
                         int resid = BaseActivity.getResponseResId(dataQuery);
-                        mRetryView.setText(resid);
+                        mRetryView.setText(resid, true);
                         mState = STATE_ERROR;
                         updateView();
                     }
@@ -1005,7 +1005,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     invokeIPagerListCallBack();
                     return;
                 }
-                mRetryView.setText(R.string.touch_screen_and_retry);
+                mRetryView.setText(R.string.touch_screen_and_retry, true);
                 mState = STATE_ERROR;
                 updateView();
                 invokeIPagerListCallBack();
