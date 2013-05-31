@@ -691,6 +691,12 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                 case 603:
                     resId = R.string.response_code_603;
                     break;
+                case 702:
+                    resId = R.string.response_code_702;
+                    break;
+                case 703:
+                    resId = R.string.response_code_703;
+                    break;
                 case 801:
                 case 802:
                     resId = R.string.response_code_801;

@@ -20,6 +20,7 @@ import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.provider.HistoryWordTable;
+import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.ChangeCityActivity;
 import com.tigerknows.ui.poi.POIResultFragment;
@@ -128,6 +129,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE) == null) {
             TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE, "1");
             mSphinx.getPOIHomeFragment().getCategoryAdapter().notifyDataSetChanged();
+        }
+        if (isReLogin()) {
+            return;
         }
     }
     
@@ -298,8 +302,13 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         super.onPostExecute(tkAsyncTask);
         
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
-        Response response = baseQuery.getResponse();
-        if (response != null && response.getResponseCode() == Response.RESPONSE_CODE_OK) {
+        if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
+            isReLogin = true;
+            return;
+        } else {
+            if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
+                return;
+            }
             mFilterList = ((DataQuery) baseQuery).getFilterList();
             mCriteria = null;
             List<Filter> filterList = mFilterList;
