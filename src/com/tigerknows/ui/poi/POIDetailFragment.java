@@ -1666,15 +1666,22 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                     }
                                     refreshDynamicPOI(DPOIViewBlockList);
                                 } else {
+                                    //收藏夹和历史记录进入的时候刷新POI,发现有动态信息则刷新整个POI的动态信息
                                     poi.updateData(mSphinx, onlinePOI.getData());
                                     poi.setFrom(POI.FROM_ONLINE);
                                     refreshDetail();
                                     refreshComment();
+                                    showAllDynamicPOI(mPOI);
                                     
+                                    List<BaseQuery> list = new ArrayList<BaseQuery>();
+                                    if (mDynamicHotelPOI.checkExistence(mPOI)) {
+                                        list.addAll(mDynamicHotelPOI.generateQuery(mPOI));
+                                    }
                                     DataQuery dataQuery = checkDianying(poi);
                                     if (dataQuery != null) {
-                                        List<BaseQuery> list = new ArrayList<BaseQuery>();
                                         list.add(dataQuery);
+                                    }
+                                    if (list.size() > 0) {
                                         mLoadingView.setVisibility(View.VISIBLE);
                                         mTkAsyncTasking = mSphinx.queryStart(list);
                                         mBaseQuerying = list;
