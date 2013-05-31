@@ -11,6 +11,7 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -114,6 +115,23 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     	mCreditConfirmBtn.setOnClickListener(this);
     }
     
+    private void showCreditErrorDialog(String message, final View source){
+    	Utility.showNormalDialog(mSphinx, 
+    			mSphinx.getString(R.string.prompt), 
+    			message, 
+    			mSphinx.getString(R.string.confirm),
+    			null,
+    			new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						source.requestFocus();
+						mSphinx.showSoftInput(source);
+					}
+    		});
+    }
+    
     @Override
     public void onClick(View view){
         int id = view.getId();
@@ -141,14 +159,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	// 判断银行卡号
         	str = mCreditCodeEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
-        		mCreditCodeEdt.requestFocus();
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_code_empty_tip));
-        		mSphinx.showSoftInput();
+        		showCreditErrorDialog(mSphinx.getString(R.string.credit_code_empty_tip), mCreditCodeEdt);
         		return;
         	}else if(!ValidateUtil.isValidCreditCard(str)){
-        		mCreditCodeEdt.requestFocus();
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_code_format));
-        		mSphinx.showSoftInput();
+        		showCreditErrorDialog(mSphinx.getString(R.string.credit_code_format), mCreditCodeEdt);
         		return;
         	}
         	list.add(str);
@@ -156,14 +170,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	// 判断持卡人姓名
         	str = mCreditOwnerEdt.getText().toString().trim();
         	if(TextUtils.isEmpty(str)){
-        		mCreditOwnerEdt.requestFocus();
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_owner_empty_tip));
-        		mSphinx.showSoftInput();
+        		showCreditErrorDialog(mSphinx.getString(R.string.credit_owner_empty_tip), mCreditOwnerEdt);
         		return;
         	}else if(!ValidateUtil.isValidElongName(str)){
-        		mCreditOwnerEdt.requestFocus();
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format));
-        		mSphinx.showSoftInput();
+        		showCreditErrorDialog(mSphinx.getString(R.string.hotel_person_name_format), mCreditOwnerEdt);
         		return;
         	}
         	list.add(str);
@@ -171,14 +181,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	// 判断信用卡验证码
         	str = mCreditVerifyEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
-        		mCreditVerifyEdt.requestFocus();
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_verify_empty_tip));
-        		mSphinx.showSoftInput();
+        		showCreditErrorDialog(mSphinx.getString(R.string.credit_verify_empty_tip), mCreditVerifyEdt);
         		return;
         	}else if(!ValidateUtil.isValidCreditCardVerify(str)){
-        		mCreditVerifyEdt.requestFocus();
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_verify_format));
-        		mSphinx.showSoftInput();
+        		showCreditErrorDialog(mSphinx.getString(R.string.credit_verify_format), mCreditVerifyEdt);
         		return;
         	}
         	list.add(str);
@@ -198,14 +204,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	// 判断证件号码
         	str = mCreditCertCodeEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
-        		mCreditCertCodeEdt.requestFocus();
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_cert_code_empty_tip));
-        		mSphinx.showSoftInput();
+        		showCreditErrorDialog(mSphinx.getString(R.string.credit_cert_code_empty_tip), mCreditCertCodeEdt);
         		return;
         	}else if(!ValidateUtil.isValidCertCode(str)){
-        		mCreditCertCodeEdt.requestFocus();
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_certcard_number_format));
-        		mSphinx.showSoftInput();
+        		showCreditErrorDialog(mSphinx.getString(R.string.hotel_certcard_number_format), mCreditCertCodeEdt);
         		return;
         	}
         	list.add(str);
@@ -307,7 +309,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	}
 		});
     }
-	public void setData(String additionMessage, String oneNightPrice, String sumPrice, int assureType) {
+	public void setData(String additionMessage, String oneNightPrice, String sumPrice, int assureType, String name) {
 		mSumPrice = sumPrice;
 		int assureTypeFromServer = 0;
 		String[] sArray = additionMessage.split("#");
@@ -348,6 +350,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         			mSphinx.getString(R.string.credit_note_detail, mOrderModifyDeadline).trim(),
         			mOrderModifyDeadline));
         }
+        mCreditOwnerEdt.setText(name);
 	}
 
     @Override

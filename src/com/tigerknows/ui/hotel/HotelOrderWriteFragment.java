@@ -12,8 +12,10 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.text.Selection;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -37,6 +39,7 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.HotelOrderOperation;
@@ -52,6 +55,7 @@ import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
 import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.user.UserLoginActivity;
 import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ValidateUtil;
@@ -79,7 +83,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private TextView mRoomNightsTxv;
     private Button mRoomHowmanyBtn;
     private Button mRoomReserveBtn;
-    private EditText mRoomPersonEdt;
     private EditText mRoomMobileNumberEdt;
     private Button mSubmitOrderBtn;
     
@@ -139,11 +142,13 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	super.onResume();
     	mTitleBtn.setText(mSphinx.getString(R.string.hotel_room_title));
     	refreshData();
+        LogWrapper.d("Trap",mSphinx.uiStackPeek()+"");
 
     }
     
     public void onPause(){
         super.onPause();
+        LogWrapper.d("Trap",mSphinx.uiStackPeek()+"");
     }
 
     protected void findViews() {
@@ -181,6 +186,23 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomReserveBtn.setOnClickListener(this);
         mSubmitOrderBtn.setOnClickListener(this);
     }
+
+    private void showHotelErrorDialog(String message, final View source){
+    	Utility.showNormalDialog(mSphinx, 
+    			mSphinx.getString(R.string.prompt), 
+    			message, 
+    			mSphinx.getString(R.string.confirm),
+    			null,
+    			new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						source.requestFocus();
+						mSphinx.showSoftInput(source);
+					}
+    		});
+    }
     
     @Override
     public void onClick(View view){
@@ -198,7 +220,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         case R.id.submit_order_btn:
         	String str = "";
         	for (int i = 1; i <= mRoomHowmany; i++){
-        		EditText thisPersonEdt = (EditText) mRootView.findViewById(idArray[i-1]);
+        		final EditText thisPersonEdt = (EditText) mRootView.findViewById(idArray[i-1]);
         		String tempStr = thisPersonEdt.getText().toString();
         		if(i != 1){
         			str += ";";
@@ -207,12 +229,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         			mBookUsername = tempStr;
         		}
         		if(TextUtils.isEmpty(tempStr)){
-        			thisPersonEdt.requestFocus();
-        			Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_room_person_empty_tip));
-        			mSphinx.showSoftInput();
+        			showHotelErrorDialog(mSphinx.getString(R.string.hotel_room_person_empty_tip), thisPersonEdt);
         			return;
         		}else if(!ValidateUtil.isValidElongName(tempStr)){
-        			Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format));
+        			showHotelErrorDialog(mSphinx.getString(R.string.hotel_person_name_format), thisPersonEdt);
         			return;
         		}
         		str += tempStr;
@@ -220,12 +240,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	mUsername = str;
         	str = mRoomMobileNumberEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
-        		mRoomMobileNumberEdt.requestFocus();
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_room_mobile_empty_tip));
-        		mSphinx.showSoftInput();
-        		return;
+    			showHotelErrorDialog(mSphinx.getString(R.string.hotel_room_mobile_empty_tip), mRoomMobileNumberEdt);
+         		return;
         	}else if(!ValidateUtil.isValidHotelMobile(str)){
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_mobile_format));
+    			showHotelErrorDialog(mSphinx.getString(R.string.hotel_mobile_format), mRoomMobileNumberEdt);
         		return;
         	}else{
         		mMobile = str;
@@ -260,6 +278,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
 
+    	mRoomMobileNumberEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_PHONENUM, ""));
+    	mRoomMobileNumberEdt.requestFocus();
+    	Selection.setSelection(mRoomMobileNumberEdt.getText(), mRoomMobileNumberEdt.length());
     	mPOI = poi;
     	mHotel = poi.getHotel();
     	mRoomType = roomtype;
@@ -486,6 +507,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_USERNAME, mBookUsername);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_MOBILE, mMobile);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_GUESTS, mUsername);
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_GUESTTYPE, mRoomtypeDynamic.getGuesttype());
     	if(!TextUtils.isEmpty(mMemberNum)){
     		criteria.put(HotelOrderOperation.SERVER_PARAMETER_MEMBERNUM, mMemberNum);
     	}
@@ -577,7 +599,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 			
     		break;
     	case Response.RESPONSE_CODE_HOTEL_NEED_REGIST:
-    		mSphinx.getHotelSeveninnRegistFragment().setData(mMobile);
+    		mSphinx.getHotelSeveninnRegistFragment().setData(mBookUsername, mMobile);
     		mSphinx.showView(R.id.view_hotel_seveninn_regist);
     		break;
     	case Response.RESPONSE_CODE_HOTEL_NEED_CREDIT_ASSURE:
@@ -585,7 +607,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 				mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
 			}
     		mSphinx.destroyHotelOrderCreditFragment();
-       		mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),Utility.formatHotelPrice(mOneNightPrice), Utility.formatHotelPrice(mTotalPrice), (int)mTypeCreditAssure);
+       		mSphinx.getHotelOrderCreditFragment().setData(response.getDescription(),
+       				Utility.formatHotelPrice(mOneNightPrice),
+       				Utility.formatHotelPrice(mTotalPrice),
+       				(int)mTypeCreditAssure,
+       				mBookUsername);
        		mSphinx.showView(R.id.view_hotel_credit_assure);
        		break;
     	case Response.RESPONSE_CODE_HOTEL_OTHER_ERROR:
