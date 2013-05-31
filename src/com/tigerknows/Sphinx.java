@@ -2240,7 +2240,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 endBtn.setOnTouchListener(mInfoWindowLongEndListener);
                 
                 infoWindow.setViewGroup(mInfoWindowLongClick);
-            } else if (poi.getHotel() != null) {
+            } else if (poi.getHotel().getUuid() != null) {
 //              if (mInfoWindowHotel == null) {
                 mInfoWindowHotel = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_hotel, null);
 //            }

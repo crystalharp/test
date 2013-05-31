@@ -271,7 +271,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             LogWrapper.i(TAG, "Hotel viewBlock is:" + blockList);
             return blockList;
         }
-        if (poi == null || poi.getHotel() == null || poi.getHotel().getRoomTypeList() == null) {
+        if (poi == null || poi.getHotel().getUuid() == null || poi.getHotel().getRoomTypeList() == null) {
             LogWrapper.i(TAG, "poi or hotel or roomTypeList is null, nothing to show for DynamicHotel");
             return blockList;
         }
@@ -316,9 +316,11 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     			
     			@Override
     			public void onClick(View v) {
-    				HotelIntroFragment hotelIntro = mSphinx.getHotelIntroFragment();
-    				hotelIntro.setData(mPOI);
-    				mSphinx.showView(R.id.view_hotel_intro);
+    			    if (mPOI.getHotel().getUuid() != null) {
+        				HotelIntroFragment hotelIntro = mSphinx.getHotelIntroFragment();
+        				hotelIntro.setData(mPOI);
+        				mSphinx.showView(R.id.view_hotel_intro);
+    			    }
     			}
     		});
         }
@@ -335,7 +337,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     			@Override
     			public void onClick(View v) {
     				Hotel hotel = mPOI.getHotel();
-    				if (hotel != null) {
+    				if (hotel.getUuid() != null && hotel.getHotelTKDrawableList() != null && hotel.getHotelTKDrawableList().size() > 0) {
     				    mSphinx.getHotelImageGridFragment().setData(hotel);
     				    mSphinx.showView(R.id.view_hotel_image_grid);
     				}
@@ -473,11 +475,11 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mPOI = poi;
         List<BaseQuery> baseQueryList = new LinkedList<BaseQuery>();
         setDate();
-        if (mHotel == null) {
+        if (mHotel.getUuid() == null) {
             LogWrapper.i(TAG, "hotel is null, generate Query.");
             BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Hotel.NEED_FILED_LIST);
             baseQueryList.add(baseQuery);
-        } else if (mHotel != null && mHotel.getRoomTypeList() == null) {
+        } else if (mHotel.getRoomTypeList() == null) {
             LogWrapper.i(TAG, "hotel.roomtype is null, generate Query.");
             BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL);
             baseQueryList.add(baseQuery);

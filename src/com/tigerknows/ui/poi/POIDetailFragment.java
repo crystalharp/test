@@ -572,7 +572,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         
         // Ugly
-        if (mPOI.getHotel() != null) {
+        if (mPOI.getHotel().getUuid() != null) {
             mDynamicHotelPOI.refresh();
         }
         
@@ -597,7 +597,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             mSphinx.queryStart(baseQueryList);
             mNavigationWidget.setVisibility(View.GONE);
         } else {
-            if (poi.getHotel() != null) {
+            if (poi.getHotel().getUuid() != null) {
                 mNavigationWidget.setVisibility(View.VISIBLE);
             } else {
                 mNavigationWidget.setVisibility(View.GONE);
@@ -633,11 +633,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             mCategoryTxv.setText("");
         }
 
-        String price = poi.getPrice();
         long money = poi.getPerCapity();
-        if (TextUtils.isEmpty(price) == false && poi.getHotel() != null) {
-            mMoneyTxv.setText(price);
-            mMoneyTxv.setVisibility(View.VISIBLE);
+        if (mDynamicHotelPOI.checkExistence(poi) || poi.getHotel().getUuid() != null) {
+            mMoneyTxv.setVisibility(View.GONE);
         } else if (money > -1) {
             mMoneyTxv.setText(mContext.getString(R.string.yuan, money));
             mMoneyTxv.setVisibility(View.VISIBLE);
@@ -1237,7 +1235,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
-        if (poi.getHotel() != null) {
+        if (poi.getHotel().getUuid() != null) {
             mNavigationWidget.setVisibility(View.VISIBLE);
         } else {
             mNavigationWidget.setVisibility(View.GONE);
@@ -1247,10 +1245,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             return;
         }
         clearDynamicPOI(DPOIViewBlockList);
-        Intent intent = new Intent();
-        intent.putExtra(HintActivity.NEXT_KEY, TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN);
-        intent.putExtra(HintActivity.NEXT_LAYOUT_RES_ID, R.layout.hint_poi_detail_weixin);
-        mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL, R.layout.hint_poi_detail, intent);
+        if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_DETAIL) == null) {
+            Intent intent = new Intent();
+            intent.putExtra(HintActivity.NEXT_KEY, TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN);
+            intent.putExtra(HintActivity.NEXT_LAYOUT_RES_ID, R.layout.hint_poi_detail_weixin);
+            mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL, R.layout.hint_poi_detail, intent);
+        } else {
+            mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN, R.layout.hint_poi_detail_weixin);
+        }
         mShowDynamicDianyingMoreView = true;
         mRootView.setVisibility(View.VISIBLE);
         if (mStampAnimation != null) {
@@ -1652,13 +1654,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                 String subDataType = baseQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
                                 if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                                     //FIXME:移走
-                                    Hotel hotel = poi.getHotel();
                                     try {
-                                        if (hotel == null) {
-                                            poi.init(onlinePOI.getData(), false);
-                                        } else {
-                                            hotel.init(onlinePOI.getData(), false);
-                                        }
+                                        poi.init(onlinePOI.getData(), false);
                                         mDynamicHotelPOI.loadSucceed(true);
                                         refreshDynamicHotel(poi);
                                         refreshDetail();

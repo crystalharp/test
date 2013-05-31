@@ -423,7 +423,7 @@ public final class DataQuery extends BaseQuery {
             } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                 String appendaction = addParameter(SERVER_PARAMETER_APPENDACTION, false);
                 if (appendaction == null) {
-                    requestParameters.add(SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD+Util.byteToHexString(POI.FIELD_PRICE)+Hotel.NEED_FILED_LIST);
+                    requestParameters.add(SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD+Hotel.NEED_FILED_LIST);
                     requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
                     requestParameters.add(SERVER_PARAMETER_PICTURE, 
                             Util.byteToHexString(Hotel.FIELD_IMAGE_THUMB)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)+"_[10000000000000000000]" + ";" +

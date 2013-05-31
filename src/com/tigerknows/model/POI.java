@@ -403,7 +403,7 @@ public class POI extends BaseData {
 
     public static final int FROM_LOCAL = 1;
     
-    public static final String NEED_FILELD = "0102030405060708090a0b1213141516";
+    public static final String NEED_FILELD = "0102030405060708090a0b121314151617";
     
     private String uuid;
     
@@ -450,7 +450,7 @@ public class POI extends BaseData {
     // 菜系
     private String cookingStyle;
     
-    private long perCapity;
+    private long perCapity = -1;
     
     private String price;
     
@@ -486,7 +486,7 @@ public class POI extends BaseData {
     
     public int ciytId = 0;
     
-    private Hotel hotel = null;
+    private Hotel hotel = new Hotel();
     
     public void updateData(Context context, XMap data) {
         try {
@@ -769,13 +769,7 @@ public class POI extends BaseData {
 
         this.uuid = getStringFromData(FIELD_UUID, reset ? null : this.uuid);
         
-        long type = getLongFromData(FIELD_TYPE, reset ? 0 : this.type);
-        if (type < 0) {
-            type = 0;
-        } else if (type > 10) {
-            type = 10;
-        }
-        this.type = type;
+        this.type = getLongFromData(FIELD_TYPE, reset ? 0 : this.type);
         this.position = getPositionFromData(FIELD_LONGITUDE, FIELD_LATITUDE, reset ? null : this.position);
         this.name = getStringFromData(FIELD_NAME, reset ? null : this.name);
         if (this.data.containsKey(FIELD_DESCRIPTION)) {
@@ -863,11 +857,7 @@ public class POI extends BaseData {
         this.status = getLongFromData(FIELD_STATUS, reset ? 0 : this.status);
         this.dynamicPOIList = getListFromData(FIELD_DYNAMIC_POI, DynamicPOI.Initializer, reset ? null : this.dynamicPOIList);
         this.lastComment = getObjectFromData(FIELD_LAST_COMMENT, Comment.Initializer, reset ? null : this.lastComment);
-        if (this.data.containsKey(Hotel.FIELD_UUID)) {
-            this.hotel = new Hotel(this.data);
-        } else if (reset) {
-            this.hotel = null;
-        }
+        this.hotel.init(this.data, reset);
         this.price = getStringFromData(FIELD_PRICE, reset ? null : this.price);
     }
     
@@ -1222,7 +1212,8 @@ public class POI extends BaseData {
                 if (version == 13) {
                     if (dataBytes != null && dataBytes.length > 0) {
                         try {
-                            poi.init((XMap) ByteUtil.byteToXObject(dataBytes), true);
+                            poi.init((XMap) ByteUtil.byteToXObject(dataBytes), false);
+                            poi.hotel.init(new XMap(), true);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -1242,7 +1233,6 @@ public class POI extends BaseData {
                 poi.from = FROM_LOCAL;
                 poi.dynamicPOIList = null;
                 poi.toCenterDistance = null;
-                poi.hotel = null;
             }
         }
 

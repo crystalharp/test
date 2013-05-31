@@ -87,6 +87,10 @@ public class Hotel extends XMapData {
     
     // 0x59 x_string 长简介
     private String longDescription;
+    
+    Hotel() {
+        
+    }
 
     public Hotel(XMap data) throws APIException {
         super(data);
