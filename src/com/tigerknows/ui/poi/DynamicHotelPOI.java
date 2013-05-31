@@ -47,6 +47,7 @@ import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.HotelIntroFragment;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
+import com.tigerknows.util.Utility;
 import com.tigerknows.widget.LinearListView;
 import com.tigerknows.widget.LinearListView.ItemInitializer;
 
@@ -448,6 +449,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 mClickedRoomType.setCanReserve(0);
                 mClickedBookBtn.setEnabled(false);
                 mClickedChild.setClickable(false);
+                Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.hotel_no_room_left));
             }
             
         }
