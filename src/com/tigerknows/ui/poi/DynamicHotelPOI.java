@@ -322,19 +322,25 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     		});
         }
         hotelSummary.setText(value);
-        
-        refreshPicture();
-        hotelImage.setOnClickListener(new View.OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Hotel hotel = mPOI.getHotel();
-				if (hotel != null) {
-				    mSphinx.getHotelImageGridFragment().setData(hotel);
-				    mSphinx.showView(R.id.view_hotel_image_grid);
-				}
-			}
-		});
+
+        List<HotelTKDrawable> picList = mHotel.getHotelTKDrawableList();
+        int picNum = (picList == null ? 0 : picList.size());
+        refreshPicture(picList);
+        if (picNum == 0) {
+            hotelImage.setOnClickListener(null);
+        } else {
+            hotelImage.setOnClickListener(new View.OnClickListener() {
+    			
+    			@Override
+    			public void onClick(View v) {
+    				Hotel hotel = mPOI.getHotel();
+    				if (hotel != null) {
+    				    mSphinx.getHotelImageGridFragment().setData(hotel);
+    				    mSphinx.showView(R.id.view_hotel_image_grid);
+    				}
+    			}
+    		});
+        }
         
         blockList.add(mUpperBlock);
         blockList.add(mLowerBlock);
@@ -343,14 +349,12 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     public void refresh() {
-        refreshPicture();
+        refreshPicture(mHotel.getHotelTKDrawableList());
     }
     
-    public void refreshPicture() {
-        List<HotelTKDrawable> picList = mHotel.getHotelTKDrawableList();
+    public void refreshPicture(List<HotelTKDrawable> picList) {
         int picNum = (picList == null ? 0 : picList.size());
         imageNumTxv.setText(mSphinx.getString(R.string.pictures, picNum));
-        //FIXME:如何获取这个Image?
         if (picList != null) {
             final TKDrawable tkDrawable = picList.get(0).getTKDrawable();
             if (tkDrawable != null) {
