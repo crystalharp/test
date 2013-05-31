@@ -23,6 +23,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -33,11 +34,15 @@ public class RetryView extends LinearLayout {
         public void retry();
     }
     
+    private View mRootView;
+    
     private TextView mTextTxv;
     
     CallBack mCallBack;
     
     String mActionTag;
+    
+    private boolean mCanRetry = true;
         
     public RetryView(Context context) {
         this(context, null);
@@ -60,17 +65,26 @@ public class RetryView extends LinearLayout {
 
     protected void findViews() {
         mTextTxv = (TextView) findViewById(R.id.text_txv);
+        mRootView = findViewById(R.id.root_view);
     }
     
     protected void setListener() {
+        mRootView.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                if (mCanRetry) {
+                    if (mCallBack != null) {
+                        ActionLog.getInstance(getContext()).addAction(mActionTag+ActionLog.TouchRetry);
+                        mCallBack.retry();
+                    }
+                }
+            }
+        });
     }
     
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        if (mCallBack != null) {
-            ActionLog.getInstance(getContext()).addAction(mActionTag+ActionLog.TouchRetry);
-            mCallBack.retry();
-        }
         return true;
     }
     
@@ -87,11 +101,8 @@ public class RetryView extends LinearLayout {
         mActionTag = actionTag;
     }
     
-    public void setText(int resid) {
-        mTextTxv.setText(resid);
-    }
-    
-    public void setText(String text) {
-        mTextTxv.setText(text);
+    public void setText(int resId, boolean canRetry) {
+        mTextTxv.setText(resId);
+        mCanRetry = canRetry;
     }
 }
