@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -44,6 +45,7 @@ import com.tigerknows.model.Response;
 import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.discover.DiscoverChildListFragment;
 import com.tigerknows.ui.poi.EditCommentActivity;
 import com.tigerknows.util.Utility;
 
@@ -344,7 +346,6 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         }
     }
 
-
     /**
      * Before showing the view, {@code setData()} first. 
      * @param order
@@ -355,9 +356,10 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     		return;
     	}
     	
-    	mHotelNameTxv.setText(order.getHotelName());
-    	mHotelAddressTxv.setText(order.getHotelAddress());
-    	mHotelTelTxv.setText(order.getHotelTel());
+    	DiscoverChildListFragment.showPOI(mContext, order.getHotelName(), null, order.getHotelAddress(), mOrder.getHotelTel(), mHotelNameTxv, mDistanceTxv, 
+    			mRootView.findViewById(R.id.address_view), mRootView.findViewById(R.id.divider_imv), mRootView.findViewById(R.id.telephone_view)
+    			, mHotelAddressTxv, mHotelTelTxv, R.drawable.list_header, R.drawable.list_footer, R.drawable.list_footer);
+    	
     	mOrderIdTxv.setText(order.getId());
     	mOrderStateTxv.setText(getOrderStateDesc(order.getState()));
     	mOrderTimeTxv.setText(formatOrderTime(order.getCreateTime()));
