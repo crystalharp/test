@@ -41,7 +41,6 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 	private EditText mSeveninnIdcardCodeEdt;
 	private Button mSeveninnRegistBtn;
 	
-	private String mGotMobile;
 	private String mPersonName;
 	private String mMobile;
 	private String mIdcardNo;
@@ -189,8 +188,9 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
     	}
 	}
 	
-	public void setData(String mobile){
-		mGotMobile = mobile;
+	public void setData(String name, String mobile){
+		mSeveninnNameEdt.setText(name);
+		mSeveninnPhoneEdt.setText(mobile);
 		mSeveninnNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
 				R.color.orange,
 				mSphinx.getString(R.string.seveninn_note, mobile),

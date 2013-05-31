@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputFilter;
+import android.text.Selection;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -38,6 +39,7 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.HotelOrderOperation;
@@ -53,6 +55,7 @@ import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
 import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.user.UserLoginActivity;
 import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ValidateUtil;
@@ -275,6 +278,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
 
+    	mRoomMobileNumberEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_PHONENUM, ""));
+    	mRoomMobileNumberEdt.requestFocus();
+    	Selection.setSelection(mRoomMobileNumberEdt.getText(), mRoomMobileNumberEdt.length());
     	mPOI = poi;
     	mHotel = poi.getHotel();
     	mRoomType = roomtype;
@@ -593,7 +599,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 			
     		break;
     	case Response.RESPONSE_CODE_HOTEL_NEED_REGIST:
-    		mSphinx.getHotelSeveninnRegistFragment().setData(mMobile);
+    		mSphinx.getHotelSeveninnRegistFragment().setData(mBookUsername, mMobile);
     		mSphinx.showView(R.id.view_hotel_seveninn_regist);
     		break;
     	case Response.RESPONSE_CODE_HOTEL_NEED_CREDIT_ASSURE:
@@ -605,7 +611,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
        				Utility.formatHotelPrice(mOneNightPrice),
        				Utility.formatHotelPrice(mTotalPrice),
        				(int)mTypeCreditAssure,
-       				((EditText)mRootView.findViewById(idArray[0])).getText().toString());
+       				mBookUsername);
        		mSphinx.showView(R.id.view_hotel_credit_assure);
        		break;
     	case Response.RESPONSE_CODE_HOTEL_OTHER_ERROR:
