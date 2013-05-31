@@ -28,6 +28,7 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataQuery;
@@ -59,6 +60,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     DynamicPOIViewBlock mLowerBlock;
     List<DynamicPOIViewBlock> blockList = new LinkedList<DynamicPOIViewBlock>();
     
+    int mHotelCityId;
     Hotel mHotel;
     Calendar checkin;
     Calendar checkout;
@@ -421,7 +423,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN, checkinTime);
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT, checkoutTime);
         DataOperation dataOpration = new DataOperation(mSphinx);
-        dataOpration.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId());
+        dataOpration.setup(criteria, mHotelCityId, mPOIDetailFragment.getId(), mPOIDetailFragment.getId());
         return dataOpration;
     }
     
@@ -434,7 +436,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         criteria.put(ProxyQuery.SERVER_PARAMETER_ROOM_TYPE_TAOCANID, pkgId);
         criteria.put(ProxyQuery.SERVER_PARAMETER_TASK, "1");
         ProxyQuery query = new ProxyQuery(mSphinx);
-        query.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+        query.setup(criteria, mHotelCityId, mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
         return query;
     }
     @Override
@@ -475,6 +477,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mPOI = poi;
         List<BaseQuery> baseQueryList = new LinkedList<BaseQuery>();
         setDate();
+        mHotelCityId = MapEngine.getInstance().getCityId(poi.getPosition());
         if (mHotel.getUuid() == null) {
             LogWrapper.i(TAG, "hotel is null, generate Query.");
             BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Hotel.NEED_FILED_LIST);
