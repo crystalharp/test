@@ -42,6 +42,7 @@ import com.tigerknows.model.Response;
 import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.ui.hotel.DateListView;
+import com.tigerknows.ui.hotel.DateWidget;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.HotelIntroFragment;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
@@ -62,8 +63,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     
     int mHotelCityId;
     Hotel mHotel;
-    Calendar checkin;
-    Calendar checkout;
+    Calendar checkin = null;
+    Calendar checkout = null;
     Button mClickedBookBtn;
     View mClickedChild;
     RoomType mClickedRoomType;
@@ -84,6 +85,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     View mCheckView;
     TextView moreTxv;
     TextView imageNumTxv;
+    private DateWidget mCheckInDat;
+    private DateWidget mCheckOutDat;
     
     private DateListView mDateListView = null;
     
@@ -211,6 +214,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         moreRoomTypeArrow = (ImageView) mDynamicRoomTypeMoreView.findViewById(R.id.more_imv);
         mCheckView = mUpperBlock.mOwnLayout.findViewById(R.id.check_view);
         hotelSummaryBlock = (LinearLayout) mLowerBlock.mOwnLayout.findViewById(R.id.hotel_summary);
+        mCheckInDat = (DateWidget) mUpperBlock.mOwnLayout.findViewById(R.id.checkin_dat);
+        mCheckOutDat = (DateWidget) mUpperBlock.mOwnLayout.findViewById(R.id.checkout_dat);
     }
     
     class MoreRoomTypeClickListener implements View.OnClickListener{
@@ -254,6 +259,9 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     final public void setDate() {
+        if (checkin != null && checkout != null) {
+            return;
+        }
         if (mSphinx.uiStackContains(R.id.view_hotel_home)) {
             checkin = mSphinx.getHotelHomeFragment().getCheckin();
             checkout = mSphinx.getHotelHomeFragment().getCheckout();
@@ -268,7 +276,10 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     
     final public void refreshDate() {
 //        DateListView dateListView = getDateListView();
-        getDateListView().refresh(checkin, checkout);
+//        getDateListView().refresh(checkin, checkout);
+        mCheckInDat.setCalendar(checkin);
+        mCheckOutDat.setCalendar(checkout);
+
     }
 
     @Override
@@ -473,13 +484,13 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         List<BaseQuery> baseQueryList = new LinkedList<BaseQuery>();
         setDate();
         mHotelCityId = MapEngine.getInstance().getCityId(poi.getPosition());
-        if (mHotel.getUuid() == null) {
-            LogWrapper.i(TAG, "hotel is null, generate Query.");
-            BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Hotel.NEED_FILED_LIST);
-            baseQueryList.add(baseQuery);
-        } else if (mHotel.getRoomTypeList() == null) {
+        if (mHotel.getUuid() != null && mHotel.getRoomTypeList() == null) {
             LogWrapper.i(TAG, "hotel.roomtype is null, generate Query.");
             BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Util.byteToHexString(Hotel.FIELD_CAN_RESERVE));
+            baseQueryList.add(baseQuery);
+        } else {
+            LogWrapper.i(TAG, "hotel is null, generate Query.");
+            BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Hotel.NEED_FILED_LIST);
             baseQueryList.add(baseQuery);
         }
         LogWrapper.i(TAG, "Generated query in hotel:" + baseQueryList);
