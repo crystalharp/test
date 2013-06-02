@@ -152,7 +152,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
 
     protected void findViews() {
-        mHotelOrderWriteLly = (LinearLayout)  mRootView.findViewById(R.id.person_name_lly);
+        mHotelOrderWriteLly = (LinearLayout)  mRootView.findViewById(R.id.hotel_order_write_lly);
         mPersonNameLly = (LinearLayout) mRootView.findViewById(R.id.person_name_lly);
         mHotelNameTxv = (TextView) mRootView.findViewById(R.id.hotel_name_txv);
         mRoomtypeTxv = (TextView) mRootView.findViewById(R.id.roomtype_txv);
@@ -176,7 +176,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 	            return true;
 	        }
 	    });
-        //mHotelOrderWriteScv.setOnClickListener(this);
         mHotelNameTxv.setOnClickListener(this);
         mRoomtypeTxv.setOnClickListener(this);
         mRoomtypeDetailTxv.setOnClickListener(this);
