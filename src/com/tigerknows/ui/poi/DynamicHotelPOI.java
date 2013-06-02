@@ -198,10 +198,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 refreshBackground(roomTypeList, mAllRoomList);
                 mDynamicRoomTypeMoreView.setVisibility(View.GONE);
             } else {
-                BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_DETAIL+Util.byteToHexString(Hotel.FIELD_CAN_RESERVE));
-                baseQuery.setTipText(mSphinx.getString(R.string.doing_and_wait));
-                List<BaseQuery> list = new ArrayList<BaseQuery>();
-                list.add(baseQuery);
+                List<BaseQuery> list = generateQuery(mPOI);
+                list.get(0).setTipText(mSphinx.getString(R.string.doing_and_wait));
                 query(mPOIDetailFragment, list);
             }
         }
@@ -408,7 +406,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         criteria.put(DataOperation.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
         criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
-        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, "0150" + needFiled);   // 01表示poi的uuid
+        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, "01" + needFiled);   // 01表示poi的uuid
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN, checkinTime);
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT, checkoutTime);
         DataOperation dataOpration = new DataOperation(mSphinx);
