@@ -63,8 +63,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     
     int mHotelCityId;
     Hotel mHotel;
-    Calendar checkin = null;
-    Calendar checkout = null;
+    Calendar checkin;
+    Calendar checkout;
     Button mClickedBookBtn;
     View mClickedChild;
     RoomType mClickedRoomType;
@@ -226,7 +226,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 refreshBackground(roomTypeList, mAllRoomList);
                 mDynamicRoomTypeMoreView.setVisibility(View.GONE);
             } else {
-                List<BaseQuery> list = generateQuery(mPOI);
+                List<BaseQuery> list = generateQuery(mPOI, false);
                 list.get(0).setTipText(mSphinx.getString(R.string.doing_and_wait));
                 query(mPOIDetailFragment, list);
             }
@@ -247,7 +247,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             checkout = out;
         }
         refreshDate();
-        List<BaseQuery> list = generateQuery(mPOI);
+        List<BaseQuery> list = generateQuery(mPOI, false);
         list.get(0).setTipText(mSphinx.getString(R.string.doing_and_wait));
         query(mPOIDetailFragment, list);
         mPOIDetailFragment.dismissPopupWindow();
@@ -258,10 +258,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mPOIDetailFragment.dismissPopupWindow();
     }
     
-    final public void setDate() {
-        if (checkin != null && checkout != null) {
-            return;
-        }
+    final public void initDate() {
         if (mSphinx.uiStackContains(R.id.view_hotel_home)) {
             checkin = mSphinx.getHotelHomeFragment().getCheckin();
             checkout = mSphinx.getHotelHomeFragment().getCheckout();
@@ -478,11 +475,17 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         }
         return false;
     }
-        
+    
     public List<BaseQuery> generateQuery(POI poi) {
+        return generateQuery(poi, true);
+    }
+        
+    private List<BaseQuery> generateQuery(POI poi, boolean fromOut) {
         mPOI = poi;
         List<BaseQuery> baseQueryList = new LinkedList<BaseQuery>();
-        setDate();
+        if (fromOut) {
+            initDate();
+        }
         mHotelCityId = MapEngine.getInstance().getCityId(poi.getPosition());
         if (mHotel.getUuid() != null && mHotel.getRoomTypeList() == null) {
             LogWrapper.i(TAG, "hotel.roomtype is null, generate Query.");
