@@ -479,25 +479,57 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         setData(filterList, key, callBack, isTurnPaging, this.actionTag);
     }
     
-    public static void selectedFilter(Filter filter, Filter selected) {
-        List<Filter> chidrenFilterList = filter.getChidrenFilterList();
-        for(int i = 0, size = chidrenFilterList.size(); i < size; i++) {
-            Filter chidrenFilter = chidrenFilterList.get(i);
-            if (chidrenFilter.equals(selected)) {
-                chidrenFilter.setSelected(true);       
-            } else {
-                chidrenFilter.setSelected(false);
-            }
-            List<Filter> chidrenFilterList1 = chidrenFilter.getChidrenFilterList();
-            for(int j = 0, count = chidrenFilterList1.size(); j < count; j++) {
-                Filter chidrenFilter1 = chidrenFilterList1.get(j);
-                if (chidrenFilter1.equals(selected)) {
-                    chidrenFilter1.setSelected(true);       
+    public static boolean selectedFilter(Filter filter, Filter selected) {
+        return selectedFilter(filter, selected.getFilterOption().getId());
+    }
+    
+    public static boolean selectedFilter(Filter filter, int id) {
+    	boolean result = false;
+    	if (filter != null) {
+            List<Filter> chidrenFilterList = filter.getChidrenFilterList();
+            for(int i = 0, size = chidrenFilterList.size(); i < size; i++) {
+                Filter chidrenFilter = chidrenFilterList.get(i);
+                if (chidrenFilter.getFilterOption().getId() == id) {
+                    chidrenFilter.setSelected(true);
+                    result = true;
                 } else {
-                    chidrenFilter1.setSelected(false);
+                    chidrenFilter.setSelected(false);
+                }
+                List<Filter> chidrenFilterList1 = chidrenFilter.getChidrenFilterList();
+                for(int j = 0, count = chidrenFilterList1.size(); j < count; j++) {
+                    Filter chidrenFilter1 = chidrenFilterList1.get(j);
+                    if (chidrenFilter1.getFilterOption().getId() == id) {
+                        chidrenFilter1.setSelected(true);
+                        result = true;   
+                    } else {
+                        chidrenFilter1.setSelected(false);
+                    }
                 }
             }
-        }
-        
+    	}
+        return result;
+    }
+    
+    public static int getSelectedIdByFilter(Filter filter) {
+    	int result = 0;
+    	if (filter != null) {
+	        List<Filter> chidrenFilterList = filter.getChidrenFilterList();
+	        if (chidrenFilterList != null) {
+		        for(int i = 0, size = chidrenFilterList.size(); i < size; i++) {
+		            Filter chidrenFilter = chidrenFilterList.get(i);
+		            if (chidrenFilter.isSelected()) {
+		            	result = chidrenFilter.getFilterOption().getId();
+		            }
+		            List<Filter> chidrenFilterList1 = chidrenFilter.getChidrenFilterList();
+		            for(int j = 0, count = chidrenFilterList1.size(); j < count; j++) {
+		                Filter chidrenFilter1 = chidrenFilterList1.get(j);
+		                if (chidrenFilter1.isSelected()) {
+		                	result = chidrenFilter1.getFilterOption().getId();
+		                }
+		            }
+		        }
+	        }
+    	}
+        return result;
     }
 }

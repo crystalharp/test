@@ -168,11 +168,51 @@ public final class DataQuery extends BaseQuery {
     
     private static FilterCategoryOrder Filter_Category_Order_Hotel;
     
+    public static FilterCategoryOrder getHoteFilterCategoryOrder() {
+        return Filter_Category_Order_Hotel;
+    }
+    
+    private static FilterArea Quanguo_Filter_Area;
+    
+    public static FilterArea getQuanguoFilterArea(Context context) {
+        if (Quanguo_Filter_Area == null) {
+//            XMap xmap = new XMap();
+//            xmap.put(FilterArea.FIELD_VERSION, "0.0.0");
+//            XArray<XMap> xArray = new XArray<XMap>();
+//            String[] presetName = context.getResources().getStringArray(R.array.preset_filter_area);
+//            for(int i = 0; i < presetName.length; i++) {
+//                XMap fitler = new XMap();
+//                fitler.put(FilterOption.FIELD_NAME, presetName[i]);
+//                if (i == 0) {
+//                    fitler.put(FilterOption.FIELD_PARENT, -1);
+//                } else if (i == 1) {
+//                    fitler.put(FilterOption.FIELD_PARENT, -1);
+//                } else if (i > 1 && i < 6) {
+//                    fitler.put(FilterOption.FIELD_PARENT, 1);
+//                } else if (i > 5 && i < 11) {
+//                    fitler.put(FilterOption.FIELD_PARENT, 6);
+//                }
+//            }
+//            xmap.put(FilterArea.FIELD_LIST, xArray);
+//            try {
+//                Quanguo_Filter_Area = new FilterArea(xmap);
+//            } catch (APIException e) {
+//                // TODO Auto-generated catch block
+//                e.printStackTrace();
+//            }
+            
+        }
+        return Quanguo_Filter_Area;
+    }
     
     /**
      * POI、发现、酒店搜索都共用区域筛选数据
      */
     private static FilterArea Filter_Area;
+    
+    public static FilterArea getFilterArea() {
+        return Filter_Area;
+    }
     
     private static FilterCategoryOrder Filter_Category_Order_Tuangou;
     
@@ -268,7 +308,11 @@ public final class DataQuery extends BaseQuery {
                 FilterCategoryOrder filterDataCategoryOrder = null;
                 String filterFileKey = dataType;
                 if (DATA_TYPE_POI.equals(dataType)) {
-                    filterDataArea = Filter_Area;
+                	if (cityId == MapEngine.SW_ID_QUANGUO) {
+                		filterDataArea = Quanguo_Filter_Area;
+                	} else {
+                        filterDataArea = Filter_Area;
+                	}
                     if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                         filterDataCategoryOrder = Filter_Category_Order_POI;
                     } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
@@ -303,6 +347,11 @@ public final class DataQuery extends BaseQuery {
                         try {
                             XMap xmap = (XMap)XMap.readFrom(new ByteReader(fis, TKConfig.getEncoding()));
                             filterDataCategoryOrder = new FilterCategoryOrder(xmap);
+                            if (filterDataCategoryOrder.getVersion() == null ||
+                                    filterDataCategoryOrder.getCategoryFilterOption().isEmpty() ||
+                                    filterDataCategoryOrder.getOrderFilterOption().isEmpty()) {
+                                filterDataCategoryOrder = null;
+                            }
                         } finally {
                             if (null != fis) {
                                 try {
@@ -317,7 +366,12 @@ public final class DataQuery extends BaseQuery {
                 }
                 
                 if (filterDataArea == null || filterDataArea.cityId != cityId){
-                    String path = MapEngine.cityId2Floder(cityId) + String.format(TKConfig.FILTER_FILE, DATA_TYPE_POI, cityId);
+                    String path;
+                	if (cityId == MapEngine.SW_ID_QUANGUO) {
+                		path = MapEngine.cityId2Floder(cityId) + String.format(TKConfig.FILTER_FILE, "0", cityId);
+                	} else {
+                		path = MapEngine.cityId2Floder(cityId) + String.format(TKConfig.FILTER_FILE, DATA_TYPE_POI, cityId);
+                	}
                     File file = new File(path);
                     if (file.exists()) {
                         FileInputStream fis = new FileInputStream(file);
@@ -325,6 +379,20 @@ public final class DataQuery extends BaseQuery {
                             XMap xmap = (XMap)XMap.readFrom(new ByteReader(fis, TKConfig.getEncoding()));
                             filterDataArea = new FilterArea(xmap);
                             filterDataArea.cityId = cityId;
+                            if (filterDataArea.getVersion() == null ||
+                                    filterDataArea.getAreaFilterOption().isEmpty()) {
+                                filterDataArea = null;
+                            }
+                            // 生成客户端预置的区域筛选项数据文件
+//                            String resetPath = MapEngine.cityId2Floder(9999) + String.format(TKConfig.FILTER_FILE, "0", 9999);
+//                            if (filterDataArea != null) {
+//                                if (!TextUtils.isEmpty(resetPath)) {
+//                                    XMap resetXMap = filterDataArea.getPresetData();
+//                                    byte[] resetData = ByteUtil.xobjectToByte(resetXMap);
+//                                    
+//                                    Utility.writeFile(resetPath, resetData, true);
+//                                }
+//                            }
                         } finally {
                             if (null != fis) {
                                 try {
@@ -339,7 +407,11 @@ public final class DataQuery extends BaseQuery {
                 }
                 
                 if (DATA_TYPE_POI.equals(dataType)) {
-                    Filter_Area = filterDataArea;
+                	if (cityId == MapEngine.SW_ID_QUANGUO) {
+                        Quanguo_Filter_Area = filterDataArea;
+                	} else {
+                		Filter_Area = filterDataArea;
+                	}
                     if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                         Filter_Category_Order_POI = filterDataCategoryOrder;
                     } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
@@ -721,7 +793,7 @@ public final class DataQuery extends BaseQuery {
                 if (staticFilterDataArea != null && staticFilterDataArea.cityId == cityId) {
                     List<Integer> list = baseResponse.getFilterAreaIndex();
                     if (list != null && list.size() > 0) {
-                        filterList.add(makeFilterResponse(list, staticFilterDataArea.getVersion(), staticFilterDataArea.getAreaFilterOption(), FilterArea.FIELD_LIST));
+                        filterList.add(makeFilterResponse(context, list, staticFilterDataArea.getVersion(), staticFilterDataArea.getAreaFilterOption(), FilterArea.FIELD_LIST));
                     }
                 }
                 
@@ -743,11 +815,11 @@ public final class DataQuery extends BaseQuery {
         
                     List<Integer> list = baseResponse.getFilterCategoryIndex();
                     if (list != null && list.size() > 0) {
-                        filterList.add(makeFilterResponse(list, staticFilterDataCategoryOrder.getVersion(), staticFilterDataCategoryOrder.getCategoryFilterOption(), FilterCategoryOrder.FIELD_LIST_CATEGORY));
+                        filterList.add(makeFilterResponse(context, list, staticFilterDataCategoryOrder.getVersion(), staticFilterDataCategoryOrder.getCategoryFilterOption(), FilterCategoryOrder.FIELD_LIST_CATEGORY));
                     }
                     list = baseResponse.getFilterOrderIndex();
                     if (list != null && list.size() > 0) {
-                        filterList.add(makeFilterResponse(list, staticFilterDataCategoryOrder.getVersion(), staticFilterDataCategoryOrder.getOrderFilterOption(), FilterCategoryOrder.FIELD_LIST_ORDER));
+                        filterList.add(makeFilterResponse(context, list, staticFilterDataCategoryOrder.getVersion(), staticFilterDataCategoryOrder.getOrderFilterOption(), FilterCategoryOrder.FIELD_LIST_ORDER));
                     }
                 }  
 
@@ -827,7 +899,7 @@ public final class DataQuery extends BaseQuery {
         return s.toString();
     }
     
-    private Filter makeFilterResponse(List<Integer> indexList, String version, List<FilterOption> filterOptionList, byte key) {
+    public static Filter makeFilterResponse(Context context, List<Integer> indexList, String version, List<FilterOption> filterOptionList, byte key) {
 
         Filter filter = new Filter();
         filter.version = version;
@@ -839,20 +911,23 @@ public final class DataQuery extends BaseQuery {
             int selectedId = indexList.get(0);
             
             for(int i = 1, size = indexList.size(); i < size; i++) {
-                filterOption = filterOptionList.get(indexList.get(i));
-
-                Filter tempFilter = new Filter();
-                tempFilter.filterOption = filterOption;
-                
-                if (selectedId == filterOption.getId()) {
-                    tempFilter.selected = true;
-                }
-                
-                if (filterOption.getParent() == -1 || filterOption.getParent() == -2) {
-                    filter.chidrenFilterList.add(tempFilter);
-                    parentFilter = tempFilter;
-                } else if (parentFilter != null){
-                    parentFilter.chidrenFilterList.add(tempFilter);
+                int index = indexList.get(i);
+                if (index < filterOptionList.size()) {
+                    filterOption = filterOptionList.get(indexList.get(i));
+    
+                    Filter tempFilter = new Filter();
+                    tempFilter.filterOption = filterOption;
+                    
+                    if (selectedId == filterOption.getId()) {
+                        tempFilter.selected = true;
+                    }
+                    
+                    if (filterOption.getParent() == -1 || filterOption.getParent() == -2) {
+                        filter.chidrenFilterList.add(tempFilter);
+                        parentFilter = tempFilter;
+                    } else if (parentFilter != null){
+                        parentFilter.chidrenFilterList.add(tempFilter);
+                    }
                 }
             }
             
@@ -1061,6 +1136,25 @@ public final class DataQuery extends BaseQuery {
                     areaFilterOption.add(filterOption);
                 }
             }
+        }
+        
+        /**
+         * 生成客户端预置的区域筛选项数据
+         * @return
+         */
+        @SuppressWarnings("unchecked")
+		public XMap getPresetData() {
+        	XMap xmap = new XMap();
+        	xmap.put(FIELD_VERSION, "0.0.0");
+        	if (this.data.containsKey(FIELD_LIST)) {
+        		XArray<XMap> xArray1 = new XArray<XMap>();
+                XArray<XMap> xArray = this.data.getXArray(FIELD_LIST);
+                for (int i = 0; i < 11; i++) {
+                	xArray1.add(xArray.get(i));
+                }
+                xmap.put(FIELD_LIST, xArray1);
+            }
+        	return xmap;
         }
 
         public XMap getData() {

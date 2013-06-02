@@ -23,6 +23,7 @@ import com.tigerknows.model.xobject.XObject;
 import com.tigerknows.model.xobject.XString;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.radar.Alarms;
+import com.tigerknows.service.LocationService;
 import com.tigerknows.service.PullService;
 import com.tigerknows.service.TigerknowsLocationManager;
 import com.tigerknows.ui.BaseActivity;
@@ -718,10 +719,9 @@ public class BaseQueryTest {
                             location.setLatitude(Float.parseFloat(str[0]));
                             location.setLongitude(Float.parseFloat(str[1]));
                             location.setAccuracy(Float.parseFloat(str[2]));
-                            if (activity instanceof Sphinx) {
-                                Sphinx sphinx = (Sphinx) activity;
-                                sphinx.mLocationListener.onLocationChanged(location);
-                            }
+                            LocationService.LOCATION_FOR_TEST = location;
+                        } else {
+                            LocationService.LOCATION_FOR_TEST = null;
                         }
                         TKConfig.readConfig();
                         setActivity(activity);

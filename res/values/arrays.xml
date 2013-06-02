@@ -239,4 +239,17 @@
         <item>其他</item>
     </string-array>
     
+    <string-array name="preset_filter_area">
+        <item>全部区域</item>
+        <item>指定地点</item>
+        <item>附近500米</item>
+        <item>附近1000米</item>
+        <item>附近2000米</item>
+        <item>附近5000米</item>
+        <item>我的当前位置</item>
+        <item>附近500米</item>
+        <item>附近1000米</item>
+        <item>附近2000米</item>
+        <item>附近5000米</item>
+    </string-array>
 </resources>

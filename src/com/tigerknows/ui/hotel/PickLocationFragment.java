@@ -42,6 +42,7 @@ import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery.AlternativeResponse;
+import com.tigerknows.model.DataQuery.FilterArea;
 import com.tigerknows.model.DataQuery.AlternativeResponse.AlternativeList;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery;
@@ -361,6 +362,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
 
     @Override
     public void doFilter(String name) {
+        mSphinx.getHotelHomeFragment().setSelectedLocation(true);
         mPOI = null;
         dismiss();
     }
@@ -466,6 +468,10 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 if (alternativeList != null) {
                     List<Alternative> list = alternativeList.getList();
                     if (list != null && list.size() > 0 && which < list.size()) {
+                        Filter filter = HotelHomeFragment.getFilter(mSphinx.getHotelHomeFragment().getFilterList(), FilterArea.FIELD_LIST);
+                        if (filter != null) {
+                            FilterListView.selectedFilter(filter, -1);
+                        }
                         mPOI = list.get(which).toPOI();
                         HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, mPOI.getName(), mPOI.getPosition()), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
                     }
@@ -487,7 +493,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void dismiss() {
         super.dismiss();
-        mSphinx.getHotelHomeFragment().refreshFilterArea();
+        mSphinx.getHotelHomeFragment().refreshFilterAreaView();
     }
     
     public POI getPOI() {
