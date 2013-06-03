@@ -615,14 +615,20 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 categoryTxv.setText("");
             }
             
-            String price = poi.getPrice();
-            long money = poi.getPerCapity();
-            if (TextUtils.isEmpty(price) == false && poi.getHotel() != null) {
-                moneyTxv.setText(price);
-            } else if (money > -1) {
-                moneyTxv.setText(activity.getString(R.string.yuan, money));
+            if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+                String price = poi.getPrice();
+                if (TextUtils.isEmpty(price)) {
+                    moneyTxv.setText("");
+                } else {
+                    moneyTxv.setText(price);
+                }
             } else {
-                moneyTxv.setText("");
+                long money = poi.getPerCapity();
+                if (money > -1) {
+                    moneyTxv.setText(activity.getString(R.string.yuan, money));
+                } else {
+                    moneyTxv.setText("");
+                }
             }
 
             str = null;

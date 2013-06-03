@@ -4,47 +4,46 @@
 
 package com.tigerknows.ui;
 
-import com.tigerknows.R;
+import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnTouchListener;
+import android.widget.LinearLayout;
 
 /**
  * @author Peng Wenyue
  */
 public class HintActivity extends BaseActivity implements View.OnClickListener {
     
-    public static final String LAYOUT_RES_ID = "layoutResID";
+    public static final String EXTRA_KEY_LIST = "extra_key_list";
     
-    public static final String NEXT_KEY = "nextKey";
-    
-    public static final String NEXT_LAYOUT_RES_ID = "nextLayoutResID";
+    public static final String EXTRA_LAYOUT_RES_ID_LIST = "extra_layout_res_id_list";
 
-    private int mLayoutResID;
+    private int[] mLayoutResIdList;
     
-    private int mNextResID = R.id.view_invalid;
+    private String[] mKeyList;
     
-    private String mNextKey;
+    private int mIndex = 0;
     
-    private View mRootView;
+    private ViewGroup mRootView;
     
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mRootView = new LinearLayout(mThis);
+        setContentView(mRootView);
         
         if (mIntent != null) {
-            mLayoutResID = mIntent.getIntExtra(LAYOUT_RES_ID, R.id.view_invalid);
-            mNextKey = mIntent.getStringExtra(NEXT_KEY);
-            mNextResID = mIntent.getIntExtra(NEXT_LAYOUT_RES_ID, R.id.view_invalid);
-            if (mLayoutResID == R.id.view_invalid) {
-                finish();
-            } else {
-                setContentView(mLayoutResID);
-            }
+            mKeyList = mIntent.getStringArrayExtra(EXTRA_KEY_LIST);
+            mLayoutResIdList = mIntent.getIntArrayExtra(EXTRA_LAYOUT_RES_ID_LIST);
+            mIndex = 0;
+            
+            showHint();
         } else {
             finish();
         }
@@ -52,10 +51,26 @@ public class HintActivity extends BaseActivity implements View.OnClickListener {
         findViews();
         setListener();
     }
+    
+    void showHint() {
+        if (mKeyList == null ||
+                mLayoutResIdList == null ||
+                mKeyList.length == 0 ||
+                mKeyList.length != mLayoutResIdList.length ||
+                mIndex+1 > mKeyList.length) {
+            finish();
+        } else {
+            String key = mKeyList[mIndex];
+            int resId = mLayoutResIdList[mIndex];
+            mIndex++;
+            TKConfig.setPref(mThis, key, "1");
+            mRootView.removeAllViews();
+            mLayoutInflater.inflate(resId, mRootView, true);
+        }
+    }
 
     protected void findViews() {
         super.findViews();
-        mRootView = findViewById(R.id.root_view);
     }
     
     protected void setListener() {
@@ -64,11 +79,7 @@ public class HintActivity extends BaseActivity implements View.OnClickListener {
             
             @Override
             public boolean onTouch(View arg0, MotionEvent arg1) {
-                Intent data = new Intent();
-                data.putExtra(NEXT_KEY, mNextKey);
-                data.putExtra(NEXT_LAYOUT_RES_ID, mNextResID);
-                setResult(RESULT_OK, data);
-                finish();
+                showHint();
                 return false;
             }
         });
@@ -83,11 +94,7 @@ public class HintActivity extends BaseActivity implements View.OnClickListener {
         switch (keyCode) {                
             case KeyEvent.KEYCODE_BACK:
                 mActionLog.addAction(ActionLog.KeyCodeBack);
-                Intent data = new Intent();
-                data.putExtra(NEXT_KEY, mNextKey);
-                data.putExtra(NEXT_LAYOUT_RES_ID, mNextResID);
-                setResult(RESULT_OK, data);
-                finish();
+                showHint();
                 return true;
         }
         return super.onKeyDown(keyCode, event);

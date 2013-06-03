@@ -1053,13 +1053,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 			}
         } else if (R.id.activity_hint == requestCode) {
 
-            if (data != null) {
-                int nextHitResId = data.getIntExtra(HintActivity.NEXT_LAYOUT_RES_ID, R.id.view_invalid);
-                String key = data.getStringExtra(HintActivity.NEXT_KEY);
-                if (nextHitResId != R.id.view_invalid && TextUtils.isEmpty(key) == false) {
-                    showHint(key, nextHitResId);
-                }
-            }
         }
 		
         if (REQUEST_CODE_LOCATION_SETTINGS == requestCode) {
@@ -2940,18 +2933,24 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     
     public boolean showHint(String key, int layoutResId) {
-        return showHint(key, layoutResId, null);
+        boolean showView = false;
+        if (TKConfig.getPref(mContext, key) != null) {
+            showView = false;
+        } else {
+            showView = showHint(new String[] {key}, new int[] {layoutResId});
+        }
+        return showView;
     }
     
-    public boolean showHint(String key, int layoutResId, Intent intent) {
+    public boolean showHint(String[] keyList, int[] layoutResIdList) {
         boolean showView = false;
-        if (TKConfig.getPref(this, key) == null) {
-            if (intent == null) {
-                intent = new Intent();
-            }
-            intent.putExtra(HintActivity.LAYOUT_RES_ID, layoutResId);
+        if (TKConfig.getPref(mContext, keyList[0]) != null) {
+            showView = false;
+        } else {
+            Intent intent = new Intent();
+            intent.putExtra(HintActivity.EXTRA_KEY_LIST, keyList);
+            intent.putExtra(HintActivity.EXTRA_LAYOUT_RES_ID_LIST, layoutResIdList);
             showView = showView(R.id.activity_hint, intent);
-            TKConfig.setPref(mThis, key, "1");
         }
         return showView;
     }
