@@ -354,6 +354,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             mSphinx.showView(R.id.activity_more_change_city);
         } else if (id == R.id.input_btn) {
             mActionLog.addAction(mActionTag + ActionLog.POIHomeInputEdt);
+            mSphinx.getPOIQueryFragment().reset();
             mSphinx.showView(R.id.view_poi_input_search);
         }
     }
