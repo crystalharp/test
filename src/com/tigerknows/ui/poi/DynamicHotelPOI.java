@@ -77,6 +77,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     
     private LinearLayout mDynamicRoomTypeListView;
     private LinearLayout mDynamicRoomTypeMoreView;
+    LinearLayout mRetryView;
     LinearLayout hotelSummaryBlock;
     LinearListView roomTypeList;
     ImageView hotelImage;
@@ -85,6 +86,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     View mCheckView;
     TextView moreTxv;
     TextView imageNumTxv;
+    TextView retryTxv;
     private DateWidget mCheckInDat;
     private DateWidget mCheckOutDat;
     
@@ -97,6 +99,26 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             mDateListView = view;
         }
         return mDateListView;
+    }
+    
+    int STATE_OK = 0;
+    int STATE_LOAD_FAILED = 1;
+    int STATE_NO_DATA = 2;
+    void setState(int s) {
+        if (s == STATE_OK) {
+            mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
+            mRetryView.setVisibility(View.GONE);
+        } else if (s == STATE_LOAD_FAILED) {
+            retryTxv.setText(mSphinx.getString(R.string.hotel_click_to_reload));
+            mDynamicRoomTypeMoreView.setVisibility(View.GONE);
+            mRetryView.setVisibility(View.VISIBLE);
+            mRetryView.setClickable(true);
+        } else if (s == STATE_NO_DATA) {
+            retryTxv.setText(mSphinx.getString(R.string.hotel_no_roomtype));
+            mDynamicRoomTypeMoreView.setVisibility(View.GONE);
+            mRetryView.setVisibility(View.VISIBLE);
+            mRetryView.setClickable(false);
+        }
     }
     
     private void showDateListView(View parent) {
@@ -179,6 +201,17 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         };
         mCheckView.setOnClickListener(dateListener);
         
+        View.OnClickListener retryListener = new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                List<BaseQuery> list = generateQuery(mPOI);
+                list.get(0).setTipText(mSphinx.getString(R.string.doing_and_wait));
+                query(mPOIDetailFragment, list);
+            }
+        };
+        mRetryView.setOnClickListener(retryListener);
+        
         hotelSummaryBlock.setOnClickListener(new View.OnClickListener() {
             
             @Override
@@ -209,8 +242,10 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         hotelImage = (ImageView)mLowerBlock.mOwnLayout.findViewById(R.id.icon_imv);
         hotelSummary = (TextView)mLowerBlock.mOwnLayout.findViewById(R.id.short_summary);
         mDynamicRoomTypeMoreView = (LinearLayout) mUpperBlock.mOwnLayout.findViewById(R.id.dynamic_roomtype_more_view);
+        mRetryView = (LinearLayout) mUpperBlock.mOwnLayout.findViewById(R.id.dynamic_roomtype_retry_view);
         imageNumTxv = (TextView) mLowerBlock.mOwnLayout.findViewById(R.id.image_num_txv);
         moreTxv = (TextView) mDynamicRoomTypeMoreView.findViewById(R.id.more_txv);
+        retryTxv = (TextView)mRetryView.findViewById(R.id.retry_txv);
         moreRoomTypeArrow = (ImageView) mDynamicRoomTypeMoreView.findViewById(R.id.more_imv);
         mCheckView = mUpperBlock.mOwnLayout.findViewById(R.id.check_view);
         hotelSummaryBlock = (LinearLayout) mLowerBlock.mOwnLayout.findViewById(R.id.hotel_summary);
@@ -221,15 +256,9 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     class MoreRoomTypeClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
-            if (mUpperBlock.mLoadSucceed) {
-                roomTypeList.refreshList(mAllRoomList);
-                refreshBackground(roomTypeList, mAllRoomList);
-                mDynamicRoomTypeMoreView.setVisibility(View.GONE);
-            } else {
-                List<BaseQuery> list = generateQuery(mPOI, false);
-                list.get(0).setTipText(mSphinx.getString(R.string.doing_and_wait));
-                query(mPOIDetailFragment, list);
-            }
+            roomTypeList.refreshList(mAllRoomList);
+            refreshBackground(roomTypeList, mAllRoomList);
+            mDynamicRoomTypeMoreView.setVisibility(View.GONE);
         }
         
     }
@@ -247,7 +276,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             checkout = out;
         }
         refreshDate();
-        List<BaseQuery> list = generateQuery(mPOI, false);
+        getDateListView().refresh(checkin, checkout);
+        List<BaseQuery> list = generateQuery(mPOI);
         list.get(0).setTipText(mSphinx.getString(R.string.doing_and_wait));
         query(mPOIDetailFragment, list);
         mPOIDetailFragment.dismissPopupWindow();
@@ -285,10 +315,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         
         //加载失败，只显示上面部分
         if (!mUpperBlock.mLoadSucceed) {
-            moreTxv.setText(mSphinx.getString(R.string.hotel_click_to_reload));
-            moreRoomTypeArrow.setVisibility(View.GONE);
-            mDynamicRoomTypeMoreView.setClickable(true);
-            mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
+            setState(STATE_LOAD_FAILED);
             roomTypeList.refreshList(null);
             blockList.add(mUpperBlock);
             LogWrapper.i(TAG, "Hotel viewBlock is:" + blockList);
@@ -311,21 +338,16 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         int size = (mAllRoomList != null? mAllRoomList.size() : 0);
         if (size == 0) {
             LogWrapper.i(TAG, "size of roomTypeList is 0.");
-            moreTxv.setText(mSphinx.getString(R.string.hotel_no_roomtype));
-            moreRoomTypeArrow.setVisibility(View.GONE);
-            mDynamicRoomTypeMoreView.setClickable(false);
-            mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
+            setState(STATE_NO_DATA);
         } else if (size > SHOW_DYNAMIC_HOTEL_MAX) {
             for(int i = 0; i < SHOW_DYNAMIC_HOTEL_MAX; i++) {
                 mShowingRoomList.add(mAllRoomList.get(i));
             }
-            moreRoomTypeArrow.setVisibility(View.VISIBLE);
-            moreTxv.setText(mSphinx.getString(R.string.hotel_expand_roomtype));
-            mDynamicRoomTypeMoreView.setClickable(true);
-            mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
+            setState(STATE_OK);
         } else {
             mShowingRoomList.addAll(mAllRoomList);
             mDynamicRoomTypeMoreView.setVisibility(View.GONE);
+            mRetryView.setVisibility(View.GONE);
         }
         roomTypeList.refreshList(mShowingRoomList);
         refreshBackground(roomTypeList, mShowingRoomList);
@@ -477,26 +499,18 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     public List<BaseQuery> generateQuery(POI poi) {
-        return generateQuery(poi, true);
-    }
-        
-    private List<BaseQuery> generateQuery(POI poi, boolean fromOut) {
         mPOI = poi;
         List<BaseQuery> baseQueryList = new LinkedList<BaseQuery>();
-        if (fromOut) {
-            initDate();
-        }
         mHotelCityId = MapEngine.getInstance().getCityId(poi.getPosition());
         if (mHotel.getUuid() != null && mHotel.getRoomTypeList() == null) {
-            LogWrapper.i(TAG, "hotel.roomtype is null, generate Query.");
             BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Util.byteToHexString(Hotel.FIELD_CAN_RESERVE));
             baseQueryList.add(baseQuery);
+            LogWrapper.i(TAG, "hotel.roomtype is null, generate Query:" + baseQueryList);
         } else {
-            LogWrapper.i(TAG, "hotel is null, generate Query.");
             BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Hotel.NEED_FILED_LIST);
             baseQueryList.add(baseQuery);
+            LogWrapper.i(TAG, "hotel is null, generate Query:" + baseQueryList);
         }
-        LogWrapper.i(TAG, "Generated query in hotel:" + baseQueryList);
         return baseQueryList;
     }
     

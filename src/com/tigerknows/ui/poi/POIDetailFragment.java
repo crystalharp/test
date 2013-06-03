@@ -1303,6 +1303,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         //判断是否存在hotel信息
         if (mDynamicHotelPOI.checkExistence(mPOI)) {
+            mDynamicHotelPOI.initDate();
             baseQueryList.addAll(mDynamicHotelPOI.generateQuery(mPOI));
         }
         showAllDynamicPOI(mPOI);
@@ -1673,6 +1674,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                     
                                     List<BaseQuery> list = new ArrayList<BaseQuery>();
                                     if (mDynamicHotelPOI.checkExistence(mPOI)) {
+                                        mDynamicHotelPOI.initDate();
                                         list.addAll(mDynamicHotelPOI.generateQuery(mPOI));
                                     }
                                     DataQuery dataQuery = checkDianying(poi);
