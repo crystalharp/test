@@ -569,6 +569,16 @@ public class TKConfig {
 
     
     /**
+     * 最近一次成功提交订单所保留的姓名
+     */
+    public static final String PREFS_HOTEL_LAST_BOOKNAME="prefs_hotel_last_bookname";
+    
+    /**
+     * 最近一次成功提交订单所保留的手机号
+     */
+    public static final String PREFS_HOTEL_LAST_MOBILE="prefs_hotel_last_mobile";
+    
+    /**
      * 发现分类图片尺寸的Key
      */
     public static final int PICTURE_DISCOVER_HOME = 1;
