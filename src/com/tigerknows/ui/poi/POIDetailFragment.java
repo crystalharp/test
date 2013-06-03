@@ -1246,10 +1246,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         clearDynamicPOI(DPOIViewBlockList);
         if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_DETAIL) == null) {
-            Intent intent = new Intent();
-            intent.putExtra(HintActivity.NEXT_KEY, TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN);
-            intent.putExtra(HintActivity.NEXT_LAYOUT_RES_ID, R.layout.hint_poi_detail_weixin);
-            mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL, R.layout.hint_poi_detail, intent);
+            mSphinx.showHint(new String[]{TKConfig.PREFS_HINT_POI_DETAIL, TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN}, new int[] {R.layout.hint_poi_detail, R.layout.hint_poi_detail_weixin});
         } else {
             mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN, R.layout.hint_poi_detail_weixin);
         }
