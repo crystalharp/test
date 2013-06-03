@@ -468,6 +468,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 if (alternativeList != null) {
                     List<Alternative> list = alternativeList.getList();
                     if (list != null && list.size() > 0 && which < list.size()) {
+                        mSphinx.getHotelHomeFragment().setSelectedLocation(true);
                         Filter filter = HotelHomeFragment.getFilter(mSphinx.getHotelHomeFragment().getFilterList(), FilterArea.FIELD_LIST);
                         if (filter != null) {
                             FilterListView.selectedFilter(filter, -1);

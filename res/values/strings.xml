@@ -1084,7 +1084,7 @@
     <string name="hotel_order_delete_fail">删除订单失败</string>
     
     <string name="select_city">选择城市</string>
-    <string name="can_not_found_target_location">找不到目标位置。</string>
-    <string name="can_not_found_result_and_retry">找不到你要的结果，建议尝试更改条件试试。</string>
+    <string name="can_not_found_target_location">找不到目标位置</string>
+    <string name="can_not_found_result_and_retry">找不到你要的结果\n建议尝试更改条件试试</string>
     <string name="other_hotel">其他酒店</string>
 </resources>

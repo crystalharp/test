@@ -122,6 +122,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         if (mRefreshFilterArea) {
             mRefreshFilterArea = false;
             refreshFilterArea(false);
+            if (mSphinx.getPickLocationFragment().getPOI() != null) {
+                FilterListView.selectedFilter(getFilter(getFilterList(), FilterArea.FIELD_LIST), -1);
+            }
         	queryFilter();
         }
         
@@ -482,34 +485,24 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 	Filter presetFilter = getFilter(mFilterList, FilterArea.FIELD_LIST);
                 	if (presetFilter != null) {
 	                	if (presetFilter.getVersion().equals(filter.getVersion())) {
-	                	    if (mSelectedLocation == false) {
-    	                		int id = FilterListView.getSelectedIdByFilter(filter);
-    	                		if (id > 0) {
-    		                		int selectId = FilterListView.getSelectedIdByFilter(presetFilter);
-    		                		if (selectId == 0) {
-    		                			FilterListView.selectedFilter(presetFilter, id);
-    		                    		refresh = true;
-    		                		}
-    	                		}
-	                		}
+                            int id = FilterListView.getSelectedIdByFilter(filter);
+                            int presetId = FilterListView.getSelectedIdByFilter(presetFilter);
+                            if (id != presetId) {
+                                refresh = true;
+                            }
 	                	} else {
-                			deleteFilter(mFilterList, FilterArea.FIELD_LIST);
-	                		mFilterList.add(filter);
 	                		refresh = true;
 	                	}
                 	} else {
-                		mFilterList.add(filter);
                 		refresh = true;
                 	}
                 }
                 
+                if (refresh) {
+                    refreshFilterArea(false);
+                }
                 if (mSphinx.getPickLocationFragment().getPOI() != null) {
                     FilterListView.selectedFilter(getFilter(getFilterList(), FilterArea.FIELD_LIST), -1);
-                }
-                
-                if (refresh) {
-	                mSphinx.getPickLocationFragment().setData(mFilterList);
-	                refreshFilterAreaView();
                 }
                 
                 if (mProgressDialog != null && mProgressDialog.isShowing()) {
