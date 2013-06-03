@@ -52,6 +52,7 @@ import com.tigerknows.model.ProxyQuery.RoomTypeDynamic.DanbaoGuize;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic.DanbaoGuize.RetentionTime;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
+import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
@@ -262,16 +263,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	RefreshPersonView();
         clearFocus();
     	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
-    	if(rtList.isEmpty()){
-    		mTypeCreditAssure = 0;
-    		mRTime = "23:59之前";
-    		mRTimeDetail = SIMPLE_DATE_FORMAT.format(mCheckIn.getTime()) + " 23:59:00";
-    	}else{
-    		mRTime = rtList.get(mRTimeWhich).getTime();
-    		mRTimeDetail = rtList.get(mRTimeWhich).getTimeDetail();
-    		rtList.get(mRTimeWhich).getNeed();
-    		mTypeCreditAssure = rtList.get(mRTimeWhich).getType();
-    	}
+		mRTime = rtList.get(mRTimeWhich).getTime();
+		mRTimeDetail = rtList.get(mRTimeWhich).getTimeDetail();
+		rtList.get(mRTimeWhich).getNeed();
+		mTypeCreditAssure = rtList.get(mRTimeWhich).getType();
     	mRoomReserveBtn.setText(mRTime);
     }
     
@@ -474,10 +469,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
     private void showRoomReserveDialog(){
     	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
-        if(rtList.isEmpty()){
-        	Toast.makeText(mContext, "该酒店不需要设置房间保留信息", Toast.LENGTH_LONG).show();
-        	return;
-        }
         HotelReserveListAdapter hotelReserveListAdapter = new HotelReserveListAdapter(mContext, rtList);
         ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(hotelReserveListAdapter);
@@ -635,7 +626,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     			submit(false);
     			break;
     		default:
-    			Utility.showNormalDialog(mSphinx, "来自艺龙的消息："+a[1]);
+    			Utility.showNormalDialog(mSphinx, a[1]);
     			break;
     		}
     		break;
@@ -690,7 +681,20 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 			list = dbgz.getLessList();
 			if(list.isEmpty()) list = dbgz.getGreaterList();
 		}
+		if(list.isEmpty()){
+        	XMap data = new XMap();
+        	data.put(RetentionTime.FIELD_TIME, "23:59之前");
+        	data.put(RetentionTime.FIELD_NEED, 0);
+        	data.put(RetentionTime.FIELD_TYPE, 0);
+        	data.put(RetentionTime.FIELD_TIME_DETAIL, SIMPLE_DATE_FORMAT.format(mCheckIn.getTime()) + " 23:59:00");
+			try {
+				RetentionTime rt = new RetentionTime(data);
+				list.add(rt);
+			} catch (APIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
 		return list;
-	}
-
+    }
 }
