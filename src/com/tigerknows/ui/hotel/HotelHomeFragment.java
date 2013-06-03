@@ -119,6 +119,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mTitleBtn.setText("酒店预订");
         refreshDate();
         
+        mSphinx.showHint(TKConfig.PREFS_HINT_HOTEL_HOME, R.layout.hint_hotel_home);
+        
         if (mRefreshFilterArea) {
             mRefreshFilterArea = false;
             refreshFilterArea(false);

@@ -156,8 +156,6 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
         super.onResume();
         mTitleBtn.setText(mSphinx.getString(R.string.at_where_search, Utility.substring(mPOI.getName(), 6)));
         mRightBtn.setVisibility(View.INVISIBLE);
-        
-        reset();
     }
 
     @Override
@@ -319,6 +317,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
     }
 
     public void setData(POI poi) {
+        reset();
         mPOI = poi;
     }
     

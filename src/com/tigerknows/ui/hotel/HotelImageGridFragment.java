@@ -150,6 +150,11 @@ public class HotelImageGridFragment extends BaseFragment {
             mOriginalImageList.addAll(hotel.getOriginalHotelTKDrawableList());
 	    }
 	    setState(STATE_GRID);
+	    
+	    /*
+	     * 为了让GridView回滚到顶端。
+	     */
+	    mGridView.setAdapter(mGridAdapter);
 	}
 	
 	public boolean onKeyDown(int keyCode, KeyEvent event) {

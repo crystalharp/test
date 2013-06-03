@@ -112,8 +112,8 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         super.onResume();
         mTitleBtn.setText(R.string.search);
         mRightBtn.setVisibility(View.INVISIBLE);
-
-        reset();
+        mSphinx.showSoftInput(mKeywordEdt.getInput());
+        mKeywordEdt.getInput().requestFocus();
     }
 
     @Override
@@ -201,6 +201,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         String keyword = mKeywordEdt.getText().toString().trim();
         if (!TextUtils.isEmpty(keyword)) {
             mSphinx.hideSoftInput(mKeywordEdt.getInput());
+            mKeywordEdt.setText(null);
             int cityId = Globals.getCurrentCityInfo().getId();
             HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), cityId, HistoryWordTable.TYPE_POI);
             mActionLog.addAction(mActionTag +  ActionLog.POIHomeInputQueryBtn, keyword);
@@ -230,8 +231,6 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
     //还原为第一次进入的状态
     public void reset() {
         mKeywordEdt.setText(null);
-        mSphinx.showSoftInput(mKeywordEdt.getInput());
-        mKeywordEdt.getInput().requestFocus();
         mQueryBtn.setEnabled(false);
     }
     
