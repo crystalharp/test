@@ -481,6 +481,16 @@ public class TKConfig {
      * 是否已显示POI主页界面的用户引导
      */
     public static final String PREFS_HINT_HOME_DRAG = "prefs_hint_home_drag";
+
+    /**
+     * 是否已显示POI主页界面的酒店预订用户引导
+     */
+    public static final String PREFS_HINT_POI_HOME_HOTEL = "prefs_hint_poi_home_hotel";
+
+    /**
+     * 是否已显示酒店主页界面的用户引导
+     */
+    public static final String PREFS_HINT_HOTEL_HOME = "prefs_hint_hotel_home";
     
     /**
      * 是否已显示POI详情界面的用户引导
@@ -567,6 +577,16 @@ public class TKConfig {
      */
     public static final String PREFS_RADAR_PULL_FAILED_TIMES = "prefs_radar_pull_failed_times";
 
+    
+    /**
+     * 最近一次成功提交订单所保留的姓名
+     */
+    public static final String PREFS_HOTEL_LAST_BOOKNAME="prefs_hotel_last_bookname";
+    
+    /**
+     * 最近一次成功提交订单所保留的手机号
+     */
+    public static final String PREFS_HOTEL_LAST_MOBILE="prefs_hotel_last_mobile";
     
     /**
      * 发现分类图片尺寸的Key

@@ -63,6 +63,7 @@
 			        android:singleLine="true"
 			        android:ellipsize="end"
 			        android:textSize="14sp"
+			        android:maxLength="16"
 	                android:background="@drawable/list_footer_normal"
 			        emptyErrorTip="@string/password_empty_tip"
 			        validateType="password"

@@ -52,6 +52,7 @@ import com.tigerknows.model.ProxyQuery.RoomTypeDynamic.DanbaoGuize;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic.DanbaoGuize.RetentionTime;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
+import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
@@ -85,6 +86,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private Button mRoomReserveBtn;
     private EditText mRoomMobileNumberEdt;
     private Button mSubmitOrderBtn;
+    private EditText mBookUsernameEdt;
     
     private POI mPOI;
     private Hotel mHotel;
@@ -142,13 +144,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	super.onResume();
     	mTitleBtn.setText(mSphinx.getString(R.string.hotel_room_title));
     	refreshData();
-        LogWrapper.d("Trap",mSphinx.uiStackPeek()+"");
 
     }
     
     public void onPause(){
         super.onPause();
-        LogWrapper.d("Trap",mSphinx.uiStackPeek()+"");
     }
 
     protected void findViews() {
@@ -163,6 +163,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomReserveBtn = (Button) mRootView.findViewById(R.id.room_reserve_btn);
         mRoomMobileNumberEdt = (EditText) mRootView.findViewById(R.id.room_mobile_number_edt);
         mSubmitOrderBtn = (Button) mRootView.findViewById(R.id.submit_order_btn);
+        mBookUsernameEdt = (EditText) mRootView.findViewById(idArray[0]);
     }
 
     protected void setListener() {
@@ -262,24 +263,29 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	RefreshPersonView();
         clearFocus();
     	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
-    	if(rtList.isEmpty()){
-    		mTypeCreditAssure = 0;
-    		mRTime = "23:59之前";
-    		mRTimeDetail = SIMPLE_DATE_FORMAT.format(mCheckIn.getTime()) + " 23:59:00";
-    	}else{
-    		mRTime = rtList.get(mRTimeWhich).getTime();
-    		mRTimeDetail = rtList.get(mRTimeWhich).getTimeDetail();
-    		rtList.get(mRTimeWhich).getNeed();
-    		mTypeCreditAssure = rtList.get(mRTimeWhich).getType();
-    	}
+		mRTime = rtList.get(mRTimeWhich).getTime();
+		mRTimeDetail = rtList.get(mRTimeWhich).getTimeDetail();
+		rtList.get(mRTimeWhich).getNeed();
+		mTypeCreditAssure = rtList.get(mRTimeWhich).getType();
     	mRoomReserveBtn.setText(mRTime);
     }
     
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
+    	String tempStr;
 
-    	mRoomMobileNumberEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_PHONENUM, ""));
-    	mRoomMobileNumberEdt.requestFocus();
-    	Selection.setSelection(mRoomMobileNumberEdt.getText(), mRoomMobileNumberEdt.length());
+    	mBookUsernameEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, ""));
+    	tempStr = TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, "");
+    	if(TextUtils.isEmpty(tempStr)){
+    		if(Globals.g_User != null){
+    			mRoomMobileNumberEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_PHONENUM, ""));
+    		}
+    		else mRoomMobileNumberEdt.setText("");
+    		mBookUsernameEdt.requestFocus();
+    	}else{
+    		mRoomMobileNumberEdt.setText(tempStr);
+    		mRoomMobileNumberEdt.requestFocus();
+    		Selection.setSelection(mRoomMobileNumberEdt.getText(), mRoomMobileNumberEdt.length());
+    	}
     	mPOI = poi;
     	mHotel = poi.getHotel();
     	mRoomType = roomtype;
@@ -463,10 +469,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
     private void showRoomReserveDialog(){
     	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
-        if(rtList.isEmpty()){
-        	Toast.makeText(mContext, "该酒店不需要设置房间保留信息", Toast.LENGTH_LONG).show();
-        	return;
-        }
         HotelReserveListAdapter hotelReserveListAdapter = new HotelReserveListAdapter(mContext, rtList);
         ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(hotelReserveListAdapter);
@@ -573,6 +575,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 					mUsername,
 					mMobile
 					);
+			TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, mBookUsername);
+			TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, mMobile);
 			if(mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){
 				mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
 			}
@@ -622,7 +626,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     			submit(false);
     			break;
     		default:
-    			Utility.showNormalDialog(mSphinx, "来自艺龙的消息："+a[1]);
+    			Utility.showNormalDialog(mSphinx, a[1]);
     			break;
     		}
     		break;
@@ -677,7 +681,20 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 			list = dbgz.getLessList();
 			if(list.isEmpty()) list = dbgz.getGreaterList();
 		}
+		if(list.isEmpty()){
+        	XMap data = new XMap();
+        	data.put(RetentionTime.FIELD_TIME, "23:59之前");
+        	data.put(RetentionTime.FIELD_NEED, 0);
+        	data.put(RetentionTime.FIELD_TYPE, 0);
+        	data.put(RetentionTime.FIELD_TIME_DETAIL, SIMPLE_DATE_FORMAT.format(mCheckIn.getTime()) + " 23:59:00");
+			try {
+				RetentionTime rt = new RetentionTime(data);
+				list.add(rt);
+			} catch (APIException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
 		return list;
-	}
-
+    }
 }

@@ -237,7 +237,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private int mMenuViewHeiht;
     private int mCityViewHeight;
     
-	private View mDragHintView;
+	private ViewGroup mDragHintView;
 	
 	private TouchMode touchMode=TouchMode.NORMAL;
 	public enum TouchMode{
@@ -1053,13 +1053,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 			}
         } else if (R.id.activity_hint == requestCode) {
 
-            if (data != null) {
-                int nextHitResId = data.getIntExtra(HintActivity.NEXT_LAYOUT_RES_ID, R.id.view_invalid);
-                String key = data.getStringExtra(HintActivity.NEXT_KEY);
-                if (nextHitResId != R.id.view_invalid && TextUtils.isEmpty(key) == false) {
-                    showHint(key, nextHitResId);
-                }
-            }
         }
 		
         if (REQUEST_CODE_LOCATION_SETTINGS == requestCode) {
@@ -1319,7 +1312,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 }
                 
                 if (mDragHintView.getVisibility() == View.VISIBLE) {
-                	hideHomeDragHint();
+                    hideHomeDragHint();
                 	return true;
                 }
                 
@@ -1370,7 +1363,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mDownloadView = (TextView)findViewById(R.id.download_txv);
         mCompassView = findViewById(R.id.compass_imv);
         mDisableTouchView = (ViewGroup) findViewById(R.id.disable_touch_view);
-        mDragHintView = findViewById(R.id.hint_root_view);
+        mDragHintView = (ViewGroup) findViewById(R.id.hint_root_view);
     }
 
     private void setListener() {
@@ -1387,7 +1380,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 			
 			@Override
 			public boolean onTouch(View v, MotionEvent event) {
-				hideHomeDragHint();
+			    if (event.getAction() == MotionEvent.ACTION_UP) {
+			        hideHomeDragHint();
+			    }
 				return true;
 			}
 		});
@@ -2940,18 +2935,24 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     }
     
     public boolean showHint(String key, int layoutResId) {
-        return showHint(key, layoutResId, null);
+        boolean showView = false;
+        if (TKConfig.getPref(mContext, key) != null) {
+            showView = false;
+        } else {
+            showView = showHint(new String[] {key}, new int[] {layoutResId});
+        }
+        return showView;
     }
     
-    public boolean showHint(String key, int layoutResId, Intent intent) {
+    public boolean showHint(String[] keyList, int[] layoutResIdList) {
         boolean showView = false;
-        if (TKConfig.getPref(this, key) == null) {
-            if (intent == null) {
-                intent = new Intent();
-            }
-            intent.putExtra(HintActivity.LAYOUT_RES_ID, layoutResId);
+        if (TKConfig.getPref(mContext, keyList[0]) != null) {
+            showView = false;
+        } else {
+            Intent intent = new Intent();
+            intent.putExtra(HintActivity.EXTRA_KEY_LIST, keyList);
+            intent.putExtra(HintActivity.EXTRA_LAYOUT_RES_ID_LIST, layoutResIdList);
             showView = showView(R.id.activity_hint, intent);
-            TKConfig.setPref(mThis, key, "1");
         }
         return showView;
     }
@@ -2963,16 +2964,28 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (TKConfig.getPref(this, TKConfig.PREFS_HINT_HOME_DRAG) == null) {
         	mDragHintView.setVisibility(View.VISIBLE);
         	TKConfig.setPref(mThis, TKConfig.PREFS_HINT_HOME_DRAG, "1");
+        } else if (TKConfig.getPref(this, TKConfig.PREFS_HINT_POI_HOME_HOTEL) == null &&
+                mDragHintView.getVisibility() != View.VISIBLE) {
+            TKConfig.setPref(mThis, TKConfig.PREFS_HINT_POI_HOME_HOTEL, "1");
+            mDragHintView.removeAllViews();
+            mDragHintView.setVisibility(View.VISIBLE);
+            mLayoutInflater.inflate(R.layout.hint_poi_home_hotel, mDragHintView, true);
         }
         return true;
     }
     
     void hideHomeDragHint() {
-    	mDragHintView.setVisibility(View.GONE);
-		if (dialogId != -1) {
-			showLocationDialog(dialogId);
-			dialogId = -1;
-		}
+        if (TKConfig.getPref(mThis, TKConfig.PREFS_HINT_POI_HOME_HOTEL) == null) {
+            TKConfig.setPref(mThis, TKConfig.PREFS_HINT_POI_HOME_HOTEL, "1");
+            mDragHintView.removeAllViews();
+            mLayoutInflater.inflate(R.layout.hint_poi_home_hotel, mDragHintView, true);
+        } else {
+        	mDragHintView.setVisibility(View.GONE);
+    		if (dialogId != -1) {
+    			showLocationDialog(dialogId);
+    			dialogId = -1;
+    		}
+        }
     }
     
     public boolean showView(int viewId) {

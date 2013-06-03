@@ -119,9 +119,14 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mTitleBtn.setText("酒店预订");
         refreshDate();
         
+        mSphinx.showHint(TKConfig.PREFS_HINT_HOTEL_HOME, R.layout.hint_hotel_home);
+        
         if (mRefreshFilterArea) {
             mRefreshFilterArea = false;
-        	refreshFilterArea();
+            refreshFilterArea(false);
+            if (mSphinx.getPickLocationFragment().getPOI() != null) {
+                FilterListView.selectedFilter(getFilter(getFilterList(), FilterArea.FIELD_LIST), -1);
+            }
         	queryFilter();
         }
         
@@ -285,7 +290,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         refreshFilterCategory();
         
         mSelectedLocation = false;
-        mRefreshFilterArea = true;
+        mRefreshFilterArea = false;
+        refreshFilterArea(true);
         mSphinx.getPickLocationFragment().resetPOI();
 
         int cityId = Globals.getCurrentCityInfo().getId();
@@ -309,11 +315,12 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 mFilterList.add(filter);
             }
         }  
-        getFilterCategoryListView().setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, mActionTag);
+    	FilterListView.selectedFilter(getFilter(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY), 0);
+        getFilterCategoryListView().setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, false, mActionTag);
         refreshFilterCategoryView();
     }
     
-    void refreshFilterArea() {
+    void refreshFilterArea(boolean reset) {
         int filterAreaState;
         CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
         if (locationCityInfo != null &&
@@ -330,9 +337,30 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             List<FilterOption> filterOptionList = filterArea.getAreaFilterOption();
             List<Integer> indexList = new ArrayList<Integer>();
             if (filterAreaState == 0) {
-                indexList.add(0);
+                int id = 0;
+                if (reset || mSelectedLocation == false) {
+                    
+                } else {
+                    Filter filter = getFilter(mFilterList, FilterArea.FIELD_LIST);
+                    if (filter != null) {
+                        id = FilterListView.getSelectedIdByFilter(filter);
+                    }
+                    if (id <= 10) {
+                        id = 0;
+                    }
+                }
+                indexList.add(id);
             } else if (filterAreaState == 1) {
-                indexList.add(10);
+                int id = 10;
+                if (reset || mSelectedLocation == false) {
+                    
+                } else {
+                    Filter filter = getFilter(mFilterList, FilterArea.FIELD_LIST);
+                    if (filter != null) {
+                        id = FilterListView.getSelectedIdByFilter(filter);
+                    }
+                }
+                indexList.add(id);
             }
             for(int i = 0, size = filterOptionList.size(); i < size; i++) {
                 int id = filterOptionList.get(i).getId();
@@ -360,7 +388,16 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                     indexList.add(0);
                     indexList.add(0);
                 } else if (filterAreaState == 1) {
-                    indexList.add(10);
+                    int id = 10;
+                    if (reset || mSelectedLocation == false) {
+                        
+                    } else {
+                        Filter filter = getFilter(mFilterList, FilterArea.FIELD_LIST);
+                        if (filter != null) {
+                            id = FilterListView.getSelectedIdByFilter(filter);
+                        }
+                    }
+                    indexList.add(id);
                     indexList.add(0);
                     indexList.add(6);
                     indexList.add(7);
@@ -440,7 +477,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 }
                 
                 if (refresh) {
-                	getFilterCategoryListView().setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, mActionTag);
+                	getFilterCategoryListView().setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, false, mActionTag);
                 	refreshFilterCategoryView();
                 }
                 
@@ -450,34 +487,24 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 	Filter presetFilter = getFilter(mFilterList, FilterArea.FIELD_LIST);
                 	if (presetFilter != null) {
 	                	if (presetFilter.getVersion().equals(filter.getVersion())) {
-	                	    if (mSelectedLocation == false) {
-    	                		int id = FilterListView.getSelectedIdByFilter(filter);
-    	                		if (id > 0) {
-    		                		int selectId = FilterListView.getSelectedIdByFilter(presetFilter);
-    		                		if (selectId == 0) {
-    		                			FilterListView.selectedFilter(presetFilter, id);
-    		                    		refresh = true;
-    		                		}
-    	                		}
-	                		}
+                            int id = FilterListView.getSelectedIdByFilter(filter);
+                            int presetId = FilterListView.getSelectedIdByFilter(presetFilter);
+                            if (id != presetId) {
+                                refresh = true;
+                            }
 	                	} else {
-                			deleteFilter(mFilterList, FilterArea.FIELD_LIST);
-	                		mFilterList.add(filter);
 	                		refresh = true;
 	                	}
                 	} else {
-                		mFilterList.add(filter);
                 		refresh = true;
                 	}
                 }
                 
+                if (refresh) {
+                    refreshFilterArea(false);
+                }
                 if (mSphinx.getPickLocationFragment().getPOI() != null) {
                     FilterListView.selectedFilter(getFilter(getFilterList(), FilterArea.FIELD_LIST), -1);
-                }
-                
-                if (refresh) {
-	                mSphinx.getPickLocationFragment().setData(mFilterList);
-	                refreshFilterAreaView();
                 }
                 
                 if (mProgressDialog != null && mProgressDialog.isShowing()) {
