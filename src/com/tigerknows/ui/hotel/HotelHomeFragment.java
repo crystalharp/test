@@ -309,7 +309,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 mFilterList.add(filter);
             }
         }  
-        getFilterCategoryListView().setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, mActionTag);
+        getFilterCategoryListView().setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, false, mActionTag);
         refreshFilterCategoryView();
     }
     
@@ -440,7 +440,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 }
                 
                 if (refresh) {
-                	getFilterCategoryListView().setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, mActionTag);
+                	getFilterCategoryListView().setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, false, mActionTag);
                 	refreshFilterCategoryView();
                 }
                 
