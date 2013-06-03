@@ -475,7 +475,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private void showRoomReserveDialog(){
     	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
         if(rtList.isEmpty()){
-        	Toast.makeText(mContext, "该酒店不需要设置房间保留信息", Toast.LENGTH_LONG).show();
+        	// Toast.makeText(mContext, "该酒店不需要设置房间保留信息", Toast.LENGTH_LONG).show();
         	return;
         }
         HotelReserveListAdapter hotelReserveListAdapter = new HotelReserveListAdapter(mContext, rtList);
@@ -635,7 +635,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     			submit(false);
     			break;
     		default:
-    			Utility.showNormalDialog(mSphinx, "来自艺龙的消息："+a[1]);
+    			Utility.showNormalDialog(mSphinx, a[1]);
     			break;
     		}
     		break;
