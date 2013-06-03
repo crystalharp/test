@@ -85,6 +85,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private Button mRoomReserveBtn;
     private EditText mRoomMobileNumberEdt;
     private Button mSubmitOrderBtn;
+    private EditText mBookUsernameEdt;
     
     private POI mPOI;
     private Hotel mHotel;
@@ -142,13 +143,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	super.onResume();
     	mTitleBtn.setText(mSphinx.getString(R.string.hotel_room_title));
     	refreshData();
-        LogWrapper.d("Trap",mSphinx.uiStackPeek()+"");
 
     }
     
     public void onPause(){
         super.onPause();
-        LogWrapper.d("Trap",mSphinx.uiStackPeek()+"");
     }
 
     protected void findViews() {
@@ -163,6 +162,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomReserveBtn = (Button) mRootView.findViewById(R.id.room_reserve_btn);
         mRoomMobileNumberEdt = (EditText) mRootView.findViewById(R.id.room_mobile_number_edt);
         mSubmitOrderBtn = (Button) mRootView.findViewById(R.id.submit_order_btn);
+        mBookUsernameEdt = (EditText) mRootView.findViewById(idArray[0]);
     }
 
     protected void setListener() {
@@ -276,10 +276,21 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
     
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
+    	String tempStr;
 
-    	mRoomMobileNumberEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_PHONENUM, ""));
-    	mRoomMobileNumberEdt.requestFocus();
-    	Selection.setSelection(mRoomMobileNumberEdt.getText(), mRoomMobileNumberEdt.length());
+    	mBookUsernameEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, ""));
+    	tempStr = TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, "");
+    	if(TextUtils.isEmpty(tempStr)){
+    		if(Globals.g_User != null){
+    			mRoomMobileNumberEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_PHONENUM, ""));
+    		}
+    		else mRoomMobileNumberEdt.setText("");
+    		mBookUsernameEdt.requestFocus();
+    	}else{
+    		mRoomMobileNumberEdt.setText(tempStr);
+    		mRoomMobileNumberEdt.requestFocus();
+    		Selection.setSelection(mRoomMobileNumberEdt.getText(), mRoomMobileNumberEdt.length());
+    	}
     	mPOI = poi;
     	mHotel = poi.getHotel();
     	mRoomType = roomtype;
@@ -573,6 +584,8 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 					mUsername,
 					mMobile
 					);
+			TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, mBookUsername);
+			TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, mMobile);
 			if(mSphinx.uiStackContains(R.id.view_hotel_credit_assure)){
 				mSphinx.uiStackRemove(R.id.view_hotel_credit_assure);
 			}
