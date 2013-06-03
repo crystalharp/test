@@ -366,6 +366,7 @@ public final class DataQuery extends BaseQuery {
                 }
                 
                 if (filterDataArea == null || filterDataArea.cityId != cityId){
+                    filterDataArea = null;
                     String path;
                 	if (cityId == MapEngine.SW_ID_QUANGUO) {
                 		path = MapEngine.cityId2Floder(cityId) + String.format(TKConfig.FILTER_FILE, "0", cityId);
@@ -378,10 +379,11 @@ public final class DataQuery extends BaseQuery {
                         try {
                             XMap xmap = (XMap)XMap.readFrom(new ByteReader(fis, TKConfig.getEncoding()));
                             filterDataArea = new FilterArea(xmap);
-                            filterDataArea.cityId = cityId;
                             if (filterDataArea.getVersion() == null ||
                                     filterDataArea.getAreaFilterOption().isEmpty()) {
                                 filterDataArea = null;
+                            } else {
+                                filterDataArea.cityId = cityId;
                             }
                             // 生成客户端预置的区域筛选项数据文件
 //                            String resetPath = MapEngine.cityId2Floder(9999) + String.format(TKConfig.FILTER_FILE, "0", 9999);
