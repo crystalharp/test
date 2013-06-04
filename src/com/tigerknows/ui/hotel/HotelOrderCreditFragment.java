@@ -261,13 +261,14 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     
     public void showCreditBankDialog(){
         final ArrayAdapter<String> adapter = new CreditBankAdapter(mSphinx, mBankList);
-        ListView listView = Utility.makeListView(mSphinx);
+        final ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(adapter);
         //TODO: ActionLog
         final Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_credit_bank), null, listView, null, null, null);
         listView.setOnItemClickListener(new OnItemClickListener() {
         	@Override
         	public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
+            	listView.setAdapter(adapter);
         		mGetBankPosition = which;
         		mCreditBankBtn.setText(mBankList.get(which));
         		mCreditBankBtn.setTextColor(getResources().getColor(R.color.black_dark));
@@ -295,13 +296,14 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     public void showCertTypeDialog(){
     	final List<String> list = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
         final ArrayAdapter<String> adapter = new CertTypeAdapter(mSphinx, list);
-        ListView listView = Utility.makeListView(mSphinx);
+        final ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(adapter);
         //TODO: ActionLog
         final Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_cert_type), null, listView, null, null, null);
         listView.setOnItemClickListener(new OnItemClickListener() {
         	@Override
         	public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
+            	listView.setAdapter(adapter);
         		mGetCreditCertPosition = which;
         		mCreditCertTypeBtn.setText(list.get(which));
         		mCreditCertTypeBtn.setTextColor(getResources().getColor(R.color.black_dark));
