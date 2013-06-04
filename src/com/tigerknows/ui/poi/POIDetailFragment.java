@@ -1655,6 +1655,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                     try {
                                         poi.init(onlinePOI.getData(), false);
                                         mDynamicHotelPOI.loadSucceed(true);
+                                        removeDPOIViewBlock(DPOIType.HOTEL);
                                         refreshDynamicHotel(poi);
                                         refreshDetail();
                                     } catch (APIException e) {
