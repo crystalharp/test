@@ -133,6 +133,9 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         mDataQuery = null;
     }
     
+    /**
+     * 清除列表界面的内容，列表页onResume时会重新加载订单。
+     */
     public void clearOrders(){
         if (orders != null) {
         	orders.clear();
