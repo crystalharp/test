@@ -388,12 +388,26 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (size == 0) {
             return;
         }
-        for (int i = size - 1; i <= 0; i++) {
+        for (int i = size - 1; i >= 0; i--) {
             DynamicPOIViewBlock a = DPOIViewBlockList.get(i);
             if (a.mType == t) {
                 DPOIViewBlockList.remove(a);
             }
         }
+    }
+    
+    private boolean containsDPOIType(DPOIType t) {
+        int size = DPOIViewBlockList.size();
+        if (size == 0) {
+            return false;
+        }
+        for (int i = size - 1; i >= 0; i--) {
+            DynamicPOIViewBlock a = DPOIViewBlockList.get(i);
+            if (a.mType == t) {
+                return true;
+            }
+        }
+        return false;
     }
     
 //    public interface DPOIViewInitializer<T> {
@@ -1655,6 +1669,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                     try {
                                         poi.init(onlinePOI.getData(), false);
                                         mDynamicHotelPOI.loadSucceed(true);
+//                                        removeDPOIViewBlock(DPOIType.HOTEL);
                                         refreshDynamicHotel(poi);
                                         refreshDetail();
                                     } catch (APIException e) {
@@ -1686,9 +1701,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                 }
                             }
                         } else {
-                            mDynamicHotelPOI.loadSucceed(false);
-                            refreshDynamicHotel(poi);
-                            refreshDynamicPOI(DPOIViewBlockList);
+                            if (!containsDPOIType(DPOIType.HOTEL)) {
+                                mDynamicHotelPOI.loadSucceed(false);
+                                refreshDynamicHotel(poi);
+                                refreshDynamicPOI(DPOIViewBlockList);
+                            }
                         }
                     }
                     

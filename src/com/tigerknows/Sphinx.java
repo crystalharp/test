@@ -2200,7 +2200,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 TextView nameTxv=(TextView)mInfoWindowTuangouDetail.findViewById(R.id.name_txv);
                 TextView addressTxv= (TextView)mInfoWindowTuangouDetail.findViewById(R.id.address_txv);
-                Button trafficBtn=(Button)mInfoWindowTuangouDetail.findViewById(R.id.traffic_btn);
+                ImageButton trafficBtn=(ImageButton)mInfoWindowTuangouDetail.findViewById(R.id.traffic_btn);
 
                 nameTxv.setText(poi.getName());
                 addressTxv.setText(poi.getAddress());
@@ -2222,8 +2222,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 //                }
                 
                 TextView nameTxv=(TextView)mInfoWindowLongClick.findViewById(R.id.name_txv);
-                Button startBtn= (Button)mInfoWindowLongClick.findViewById(R.id.start_btn);
-                Button endBtn=(Button)mInfoWindowLongClick.findViewById(R.id.end_btn);
+                ImageButton startBtn= (ImageButton)mInfoWindowLongClick.findViewById(R.id.start_btn);
+                ImageButton endBtn=(ImageButton)mInfoWindowLongClick.findViewById(R.id.end_btn);
                 
                 nameTxv.setText(poi.getName());
                 
@@ -2252,7 +2252,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 TextView nameTxv=(TextView)mInfoWindowHotel.findViewById(R.id.name_txv);
                 TextView canReserveTxv = (TextView) mInfoWindowHotel.findViewById(R.id.can_reserve_txv);
                 TextView priceTxv = (TextView) mInfoWindowHotel.findViewById(R.id.price_txv);
-                Button trafficBtn=(Button)mInfoWindowHotel.findViewById(R.id.traffic_btn);
+                ImageButton trafficBtn=(ImageButton)mInfoWindowHotel.findViewById(R.id.traffic_btn);
 
                 Hotel hotel = poi.getHotel();
                 nameTxv.setText(poi.getName());
@@ -2286,7 +2286,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 
                 ViewGroup bodyView=(ViewGroup)mInfoWindowHotel.findViewById(R.id.body_view);
                 bodyView.setOnTouchListener(mInfoWindowBodyViewListener);
-                pictureImv.setOnTouchListener(mInfoWindowBodyViewListener);
                 
                 mInfoWindowTrafficButtonListener.poi = poi;
                 mInfoWindowTrafficButtonListener.actionLog = ActionLog.MapInfoWindowTraffic;
@@ -2302,7 +2301,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 TextView nameTxv=(TextView)mInfoWindowPOI.findViewById(R.id.name_txv);
                 RatingBar starsRtb = (RatingBar) mInfoWindowPOI.findViewById(R.id.stars_rtb);
                 TextView priceTxv= (TextView)mInfoWindowPOI.findViewById(R.id.price_txv);
-                Button trafficBtn=(Button)mInfoWindowPOI.findViewById(R.id.traffic_btn);
+                ImageButton trafficBtn=(ImageButton)mInfoWindowPOI.findViewById(R.id.traffic_btn);
                 
                 nameTxv.setText(poi.getName());
                 starsRtb.setRating(poi.getGrade()/2.0f);
@@ -2354,7 +2353,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             ImageView pictureImv = (ImageView)mInfoWindowYanchuList.findViewById(R.id.icon_imv);
             TextView nameTxv=(TextView)mInfoWindowYanchuList.findViewById(R.id.name_txv);
             RatingBar starsRtb = (RatingBar) mInfoWindowYanchuList.findViewById(R.id.stars_rtb);
-            Button trafficBtn=(Button)mInfoWindowYanchuList.findViewById(R.id.traffic_btn);
+            ImageButton trafficBtn=(ImageButton)mInfoWindowYanchuList.findViewById(R.id.traffic_btn);
             
             nameTxv.setText(name);
             starsRtb.setProgress((int)rating);
@@ -2378,7 +2377,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             
             ViewGroup bodyView=(ViewGroup)mInfoWindowYanchuList.findViewById(R.id.body_view);
             bodyView.setOnTouchListener(mInfoWindowBodyViewListener);
-            pictureImv.setOnTouchListener(mInfoWindowBodyViewListener);
             
             mInfoWindowTrafficButtonListener.poi = poi;
             mInfoWindowTrafficButtonListener.actionLog = ActionLog.MapInfoWindowTraffic;
@@ -2400,7 +2398,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             ImageView pictureImv = (ImageView)mInfoWindowTuangouList.findViewById(R.id.icon_imv);
             TextView nameTxv=(TextView)mInfoWindowTuangouList.findViewById(R.id.name_txv);
             TextView priceTxv= (TextView)mInfoWindowTuangouList.findViewById(R.id.price_txv);
-            Button trafficBtn=(Button)mInfoWindowTuangouList.findViewById(R.id.traffic_btn);
+            ImageButton trafficBtn=(ImageButton)mInfoWindowTuangouList.findViewById(R.id.traffic_btn);
             
             nameTxv.setText(target.getShortDesc());
             priceTxv.setText(price);
@@ -2424,7 +2422,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             
             ViewGroup bodyView=(ViewGroup)mInfoWindowTuangouList.findViewById(R.id.body_view);
             bodyView.setOnTouchListener(mInfoWindowBodyViewListener);
-            pictureImv.setOnTouchListener(mInfoWindowBodyViewListener);
             
             mInfoWindowTrafficButtonListener.poi = poi;
             mInfoWindowTrafficButtonListener.actionLog = ActionLog.MapInfoWindowTraffic;

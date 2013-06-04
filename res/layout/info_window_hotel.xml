@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/body_view"
     android:orientation="horizontal"
     android:layout_height="wrap_content"
     android:layout_width="wrap_content"
@@ -49,7 +50,6 @@
     </RelativeLayout>
         
     <RelativeLayout
-        android:id="@+id/body_view"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:orientation="vertical"
@@ -107,18 +107,18 @@
         android:layout_width="1dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="6dp"
-        android:layout_marginRight="8dp"
         android:layout_marginBottom="12dp"
         >
     </View>
-    <Button 
+    <ImageButton 
         android:id="@+id/traffic_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_goto_here"
+        android:src="@drawable/ic_goto_here"
+        android:background="@color/transparent"
         android:contentDescription="@string/app_name"
-        android:layout_marginTop="2dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingBottom="8dp"
         />
 </LinearLayout>

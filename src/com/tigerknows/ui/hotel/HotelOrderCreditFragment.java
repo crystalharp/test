@@ -13,6 +13,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Selection;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -115,23 +116,6 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     	mCreditConfirmBtn.setOnClickListener(this);
     }
     
-    private void showCreditErrorDialog(String message, final View source){
-    	Utility.showNormalDialog(mSphinx, 
-    			mSphinx.getString(R.string.prompt), 
-    			message, 
-    			mSphinx.getString(R.string.confirm),
-    			null,
-    			new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						source.requestFocus();
-						mSphinx.showSoftInput(source);
-					}
-    		});
-    }
-    
     @Override
     public void onClick(View view){
         int id = view.getId();
@@ -159,10 +143,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	// 判断银行卡号
         	str = mCreditCodeEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
-        		showCreditErrorDialog(mSphinx.getString(R.string.credit_code_empty_tip), mCreditCodeEdt);
+        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_code_empty_tip), mCreditCodeEdt);
         		return;
         	}else if(!ValidateUtil.isValidCreditCard(str)){
-        		showCreditErrorDialog(mSphinx.getString(R.string.credit_code_format), mCreditCodeEdt);
+        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_code_format), mCreditCodeEdt);
         		return;
         	}
         	list.add(str);
@@ -170,10 +154,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	// 判断持卡人姓名
         	str = mCreditOwnerEdt.getText().toString().trim();
         	if(TextUtils.isEmpty(str)){
-        		showCreditErrorDialog(mSphinx.getString(R.string.credit_owner_empty_tip), mCreditOwnerEdt);
+        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_owner_empty_tip), mCreditOwnerEdt);
         		return;
         	}else if(!ValidateUtil.isValidElongName(str)){
-        		showCreditErrorDialog(mSphinx.getString(R.string.hotel_person_name_format), mCreditOwnerEdt);
+        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format), mCreditOwnerEdt);
         		return;
         	}
         	list.add(str);
@@ -181,10 +165,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	// 判断信用卡验证码
         	str = mCreditVerifyEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
-        		showCreditErrorDialog(mSphinx.getString(R.string.credit_verify_empty_tip), mCreditVerifyEdt);
+        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_verify_empty_tip), mCreditVerifyEdt);
         		return;
         	}else if(!ValidateUtil.isValidCreditCardVerify(str)){
-        		showCreditErrorDialog(mSphinx.getString(R.string.credit_verify_format), mCreditVerifyEdt);
+        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_verify_format), mCreditVerifyEdt);
         		return;
         	}
         	list.add(str);
@@ -204,10 +188,10 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	// 判断证件号码
         	str = mCreditCertCodeEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
-        		showCreditErrorDialog(mSphinx.getString(R.string.credit_cert_code_empty_tip), mCreditCertCodeEdt);
+        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_cert_code_empty_tip), mCreditCertCodeEdt);
         		return;
         	}else if(!ValidateUtil.isValidCertCode(str)){
-        		showCreditErrorDialog(mSphinx.getString(R.string.hotel_certcard_number_format), mCreditCertCodeEdt);
+        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_certcard_number_format), mCreditCertCodeEdt);
         		return;
         	}
         	list.add(str);
@@ -353,6 +337,9 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         			mOrderModifyDeadline));
         }
         mCreditOwnerEdt.setText(name);
+        mCreditOwnerEdt.requestFocus();
+        Selection.setSelection(mCreditOwnerEdt.getText(), mCreditOwnerEdt.length());
+        mCreditAssureScv.smoothScrollTo(0, 0);
 	}
 
     @Override
