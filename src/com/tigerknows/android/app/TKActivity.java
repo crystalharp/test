@@ -334,7 +334,9 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(mConnectivityReceiver, intentFilter);
         
-        TCAgent.onResume(this);
+        if (TKConfig.ENABLE_TALKINGDATA) {
+            TCAgent.onResume(this);
+        }
         
         BaseQueryTest.setActivity(mThis);
     }
@@ -354,8 +356,9 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         unregisterReceiver(mConnectivityReceiver);
         
         super.onPause();
-        
-        TCAgent.onPause(this);
+        if (TKConfig.ENABLE_TALKINGDATA) {
+            TCAgent.onPause(this);
+        }
     }
     
     @Override

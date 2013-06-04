@@ -280,6 +280,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             return;
         } else {
             mSphinx.hideSoftInput(mKeywordEdt.getInput());
+            HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, word, null), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
             DataQuery poiQuery = new DataQuery(mContext);
             int cityId = Globals.getCurrentCityInfo().getId();
             Hashtable<String, String> criteria = new Hashtable<String, String>();
