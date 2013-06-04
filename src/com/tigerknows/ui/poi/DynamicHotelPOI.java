@@ -101,11 +101,12 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         return mDateListView;
     }
     
-    int STATE_OK = 0;
-    int STATE_LOAD_FAILED = 1;
-    int STATE_NO_DATA = 2;
+    final int STATE_LOAD_FAILED = 1;
+    final int STATE_NO_DATA = 2;
+    final int STATE_DATA_LT_MAX = 3;
+    final int STATE_DATA_GT_MAX = 4;
     void setState(int s) {
-        if (s == STATE_OK) {
+        if (s == STATE_DATA_GT_MAX) {
             mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
             mRetryView.setVisibility(View.GONE);
         } else if (s == STATE_LOAD_FAILED) {
@@ -118,6 +119,9 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             mDynamicRoomTypeMoreView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);
             mRetryView.setClickable(false);
+        } else if (s == STATE_DATA_LT_MAX) {
+            mDynamicRoomTypeMoreView.setVisibility(View.GONE);
+            mRetryView.setVisibility(View.GONE);
         }
     }
     
@@ -343,11 +347,10 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             for(int i = 0; i < SHOW_DYNAMIC_HOTEL_MAX; i++) {
                 mShowingRoomList.add(mAllRoomList.get(i));
             }
-            setState(STATE_OK);
+            setState(STATE_DATA_GT_MAX);
         } else {
             mShowingRoomList.addAll(mAllRoomList);
-            mDynamicRoomTypeMoreView.setVisibility(View.GONE);
-            mRetryView.setVisibility(View.GONE);
+            setState(STATE_DATA_LT_MAX);
         }
         roomTypeList.refreshList(mShowingRoomList);
         refreshBackground(roomTypeList, mShowingRoomList);
