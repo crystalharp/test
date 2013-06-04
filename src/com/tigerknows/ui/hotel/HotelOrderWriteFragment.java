@@ -111,7 +111,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private double mTotalPrice;
     
     // 7天酒店会员号
-    private String mMemberNum = "";
+    private String mMemberNum;
     
     // 信用卡担保相关数据
     private long mTypeCreditAssure;
@@ -273,19 +273,21 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
     	String tempStr;
 
+    	mMemberNum = "";
     	mBookUsernameEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, ""));
+    	mBookUsernameEdt.requestFocus();
+    	Selection.setSelection(mBookUsernameEdt.getText(), mBookUsernameEdt.length());
     	tempStr = TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_MOBILE, "");
     	if(TextUtils.isEmpty(tempStr)){
     		if(Globals.g_User != null){
     			mRoomMobileNumberEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_PHONENUM, ""));
     		}
     		else mRoomMobileNumberEdt.setText("");
-    		mBookUsernameEdt.requestFocus();
     	}else{
     		mRoomMobileNumberEdt.setText(tempStr);
-    		mRoomMobileNumberEdt.requestFocus();
-    		Selection.setSelection(mRoomMobileNumberEdt.getText(), mRoomMobileNumberEdt.length());
     	}
+    	mRoomMobileNumberEdt.requestFocus();
+    	Selection.setSelection(mRoomMobileNumberEdt.getText(), mRoomMobileNumberEdt.length());
     	mPOI = poi;
     	mHotel = poi.getHotel();
     	mRoomType = roomtype;
@@ -396,6 +398,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 			}else{
 				singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_default));
 			}
+
 			return view;
 		}
 		
@@ -448,7 +451,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	list.add(listitem);
         }
         final ArrayAdapter<String> adapter = new HotelRoomHowmanyAdapter(mSphinx, list);
-        ListView listView = Utility.makeListView(mSphinx);
+        final ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(adapter);
         final Dialog dialog = Utility.showNormalDialog(mSphinx, 
         		mSphinx.getString(R.string.choose_room_howmany), 
@@ -460,12 +463,14 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         listView.setOnItemClickListener(new OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
+            	listView.setAdapter(adapter);
             	mRoomHowmany = which + 1;
             	mRTimeWhich = 0;
             	refreshData();
             	dialog.dismiss();
             }
         });
+
     }
     private void showRoomReserveDialog(){
     	final List<RetentionTime> rtList = findRTimeByRoomHowmany(mRoomHowmany);
@@ -487,7 +492,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             	refreshData();
                 dialog.dismiss();
             }
-        });        
+        });
     }
 
     public void submit(boolean HasCreditInfo) {
