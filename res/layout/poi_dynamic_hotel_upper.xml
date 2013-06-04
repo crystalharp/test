@@ -85,7 +85,7 @@
                 android:id="@+id/more_txv"
                 android:layout_width="wrap_content" 
                 android:layout_height="wrap_content"
-                android:text="@string/more" />
+                android:text="@string/hotel_expand_roomtype" />
 
             <ImageView
                 android:id="@+id/more_imv"
@@ -94,6 +94,20 @@
                 android:padding="8dp"
                 android:background="@drawable/icon_arrow_down" />
 
+        </LinearLayout>
+        <LinearLayout android:id="@+id/dynamic_roomtype_retry_view"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:background="@drawable/list_footer"
+            android:gravity="center"
+            android:visibility="gone"
+            >
+            <TextView
+                android:id="@+id/retry_txv"
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content"
+                 />
         </LinearLayout>
     </LinearLayout>
 
