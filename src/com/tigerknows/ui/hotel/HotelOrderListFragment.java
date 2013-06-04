@@ -133,6 +133,9 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         mDataQuery = null;
     }
     
+    /**
+     * 清除列表界面的内容，列表页onResume时会重新加载订单。
+     */
     public void clearOrders(){
         if (orders != null) {
         	orders.clear();
@@ -292,7 +295,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
             TextView dayCountView = (TextView) view.findViewById(R.id.day_count_txv);
 
             nameTxv.setText(order.getHotelName());
-            priceTxv.setText(Utility.formatHotelPrice(order.getTotalFee()) + mContext.getString(R.string.rmb_text) );
+            priceTxv.setText(Utility.formatHotelPrice(order.getTotalFee()));
             roomTypeTxv.setText(order.getRoomType());
             checkinDateTxv.setText(formatOrderListItemMonthDay(order.getCheckinTime() ) );
             checkoutDateTxv.setText(formatOrderListItemMonthDay(order.getCheckoutTime() ) );

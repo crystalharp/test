@@ -145,6 +145,8 @@ public class Comment extends BaseData {
         this.url = getStringFromData(FIELD_URL, reset ? null : this.url);
         this.clientUid = getStringFromData(FIELD_CLIENT_UID, reset ? null : this.clientUid);
         this.source = getStringFromData(FIELD_SOURCE, reset ? null : this.source);
+        
+        this.data = null;
     }
     
     public XMap getData() {

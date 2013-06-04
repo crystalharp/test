@@ -143,16 +143,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
      * 查询筛选数据，在查询之前需要将之前的查询停止
      */
     private void queryFilter() {
-        List<BaseQuery> list = mBaseQuerying;
-        if (list != null && list.size() > 0) {
-            for(int i = 0, size = list.size(); i < size; i++) {
-                list.get(i).stop();
-            }
-        }
-        TKAsyncTask tkAsyncTask = mTkAsyncTasking;
-        if (tkAsyncTask != null) {
-            tkAsyncTask.stop();
-        }
+        stopQuery();
         DataQuery dataQuery = new DataQuery(mSphinx);
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
@@ -163,6 +154,19 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
         dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null, true);
         mSphinx.queryStart(dataQuery);
+    }
+    
+    void stopQuery() {
+        List<BaseQuery> list = mBaseQuerying;
+        if (list != null && list.size() > 0) {
+            for(int i = 0, size = list.size(); i < size; i++) {
+                list.get(i).stop();
+            }
+        }
+        TKAsyncTask tkAsyncTask = mTkAsyncTasking;
+        if (tkAsyncTask != null) {
+            tkAsyncTask.stop();
+        }
     }
 
     @Override
@@ -284,6 +288,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     public void setCityInfo(CityInfo cityInfo) {
         Globals.setHotelCityInfo(cityInfo);
         mCityBtn.setText(cityInfo.getCName());
+        stopQuery();
 
         DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_HOTEL, cityInfo.getId());
         
@@ -595,6 +600,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         mPopupWindowContain.addView(getFilterCategoryListView());
         mPopupWindow.showAsDropDown(parent, 0, 0);
 
+        mFilterCategoryListView.setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, false, mActionTag);
     }
     
     FilterListView getFilterCategoryListView() {
