@@ -75,6 +75,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     
     private static final int[] idArray = {R.id.room_person_edt, R.id.room_person_edt_2, R.id.room_person_edt_3, R.id.room_person_edt_4, R.id.room_person_edt_5};
     
+    private ScrollView mHotelOrderWriteScv;
     private LinearLayout mHotelOrderWriteLly;
     private LinearLayout mPersonNameLly;
     private TextView mHotelNameTxv;
@@ -152,6 +153,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
 
     protected void findViews() {
+    	mHotelOrderWriteScv = (ScrollView) mRootView.findViewById(R.id.hotel_order_write_scv);
         mHotelOrderWriteLly = (LinearLayout)  mRootView.findViewById(R.id.hotel_order_write_lly);
         mPersonNameLly = (LinearLayout) mRootView.findViewById(R.id.person_name_lly);
         mHotelNameTxv = (TextView) mRootView.findViewById(R.id.hotel_name_txv);
@@ -324,6 +326,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomNightsTxv.setText(mSphinx.getString(R.string.hotel_total_nights, mNights));
         mRoomHowmany = 1;
         mRTimeWhich = 0;
+        mHotelOrderWriteScv.smoothScrollTo(0, 0);
     }
 
 	private void exit() {
