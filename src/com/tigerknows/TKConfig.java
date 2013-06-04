@@ -54,9 +54,14 @@ public class TKConfig {
     public static boolean CACHE_BITMAP_TO_MEMORY = true;
     
     /**
-     * 缓存内存图片的最大数目
+     * 缓存在内存的图片最大数目
      */
-    public static int CACHE_SIZE = 32;
+    public static int IMAGE_CACHE_SIZE_MEMORY = 32;
+    
+    /**
+     * 缓存在扩展存储卡的图片最大数目
+     */
+    public static int IMAGE_CACHE_SIZE_SDCARD = 1024;
     
     /**
      * 默认地图显示级别
