@@ -859,61 +859,57 @@ public class POI extends BaseData {
         this.lastComment = getObjectFromData(FIELD_LAST_COMMENT, Comment.Initializer, reset ? null : this.lastComment);
         this.hotel.init(this.data, reset);
         this.price = getStringFromData(FIELD_PRICE, reset ? null : this.price);
-        
-        this.data = null;
     }
     
     public XMap getData() {
-        if (this.data == null) {
-            this.data = new XMap();
+        XMap data = this.hotel.getData();
 
-            if (this.uuid != null) {
-                this.data.put(FIELD_UUID, this.uuid);
-            }
-            
-            this.data.put(FIELD_TYPE, this.type);
-            
-            if (this.position != null) {
-                this.data.put(FIELD_LONGITUDE, (int)(this.position.getLon()*TKConfig.LON_LAT_DIVISOR));
-                this.data.put(FIELD_LATITUDE, (int)(this.position.getLat()*TKConfig.LON_LAT_DIVISOR));
-            }
-            
-            if (!TextUtils.isEmpty(this.name)) {
-                this.data.put(FIELD_NAME, this.name);
-            }
-            
-            if (description != null) {
-                this.data.put(FIELD_DESCRIPTION, description);
-            }
-            if (!TextUtils.isEmpty(this.telephone)) {
-                this.data.put(FIELD_TELEPHONE, this.telephone);
-            }
-            if (!TextUtils.isEmpty(this.reserveTel)) {
-                this.data.put(FIELD_RESERVE_TEL, this.reserveTel);
-            }
-            if (!TextUtils.isEmpty(this.address)) {
-                this.data.put(FIELD_ADDRESS, this.address);
-            }
-            if (!TextUtils.isEmpty(this.url)) {
-                this.data.put(FIELD_URL, this.url);
-            }
-            this.data.put(FIELD_TO_CENTER_DISTANCE, this.toCenterDistance);
-            this.data.put(FIELD_COMMENT_PATTERN, this.commentPattern);
-            this.data.put(FIELD_ATTRIBUTE, this.attribute);
-            this.data.put(FIELD_STATUS, this.status);
-            if (lastComment != null) {
-                this.data.put(FIELD_LAST_COMMENT, lastComment.getData());
-            }
-            if (dynamicPOIList != null && dynamicPOIList.size() > 0) {
-                XArray<XMap> xarray = new XArray<XMap>();
-                for(int i = 0, size = dynamicPOIList.size(); i < size; i++) {
-                    xarray.add(dynamicPOIList.get(i).getData());
-                }
-                this.data.put(FIELD_DYNAMIC_POI, xarray);
-            }
-            this.data.put(FIELD_PRICE, this.price);
+        if (this.uuid != null) {
+            data.put(FIELD_UUID, this.uuid);
         }
-        return this.data;
+        
+        data.put(FIELD_TYPE, this.type);
+        
+        if (this.position != null) {
+            data.put(FIELD_LONGITUDE, (int)(this.position.getLon()*TKConfig.LON_LAT_DIVISOR));
+            data.put(FIELD_LATITUDE, (int)(this.position.getLat()*TKConfig.LON_LAT_DIVISOR));
+        }
+        
+        if (!TextUtils.isEmpty(this.name)) {
+            data.put(FIELD_NAME, this.name);
+        }
+        
+        if (description != null) {
+            data.put(FIELD_DESCRIPTION, description);
+        }
+        if (!TextUtils.isEmpty(this.telephone)) {
+            data.put(FIELD_TELEPHONE, this.telephone);
+        }
+        if (!TextUtils.isEmpty(this.reserveTel)) {
+            data.put(FIELD_RESERVE_TEL, this.reserveTel);
+        }
+        if (!TextUtils.isEmpty(this.address)) {
+            data.put(FIELD_ADDRESS, this.address);
+        }
+        if (!TextUtils.isEmpty(this.url)) {
+            data.put(FIELD_URL, this.url);
+        }
+        data.put(FIELD_TO_CENTER_DISTANCE, this.toCenterDistance);
+        data.put(FIELD_COMMENT_PATTERN, this.commentPattern);
+        data.put(FIELD_ATTRIBUTE, this.attribute);
+        data.put(FIELD_STATUS, this.status);
+        if (lastComment != null) {
+            data.put(FIELD_LAST_COMMENT, lastComment.getData());
+        }
+        if (dynamicPOIList != null && dynamicPOIList.size() > 0) {
+            XArray<XMap> xarray = new XArray<XMap>();
+            for(int i = 0, size = dynamicPOIList.size(); i < size; i++) {
+                xarray.add(dynamicPOIList.get(i).getData());
+            }
+            data.put(FIELD_DYNAMIC_POI, xarray);
+        }
+        data.put(FIELD_PRICE, this.price);
+        return data;
     }
 
     public String getSMSString(Context context) {

@@ -21,6 +21,7 @@ import com.tigerknows.model.DataQuery.FilterCategoryOrder;
 import com.tigerknows.model.DataQuery.FilterOption;
 import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.Response;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
@@ -121,9 +122,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         
         mSphinx.showHint(TKConfig.PREFS_HINT_HOTEL_HOME, R.layout.hint_hotel_home);
         
+        refreshFilterArea(false);
         if (mRefreshFilterArea) {
             mRefreshFilterArea = false;
-            refreshFilterArea(false);
             if (mSphinx.getPickLocationFragment().getPOI() != null) {
                 FilterListView.selectedFilter(getFilter(getFilterList(), FilterArea.FIELD_LIST), -1);
             }
@@ -247,55 +248,60 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     }
     
     static Filter getFilter(List<Filter> list, byte key) {
-        Filter result = null;
-        if (list != null)  {
-	        for(int i = 0, size = list.size(); i < size; i++) {
-	            if (list.get(i).getKey() == key) {
-	                result = list.get(i);
-	                break;
-	            }
-	        }
+        synchronized (list) {
+            Filter result = null;
+            if (list != null)  {
+                for(int i = list.size()-1; i >= 0; i--) {
+                    if (list.get(i).getKey() == key) {
+                        result = list.get(i);
+                        break;
+                    }
+                }
+            }
+            return result;
         }
-        return result;
     }
     
     boolean checkFilter(List<Filter> list, byte key) {
-        boolean result = false;
-        if (list != null)  {
-	        for(int i = 0, size = list.size(); i < size; i++) {
-	            if (list.get(i).getKey() == key) {
-	                result = true;
-	                break;
-	            }
-	        }
+        synchronized (list) {
+            boolean result = false;
+            if (list != null)  {
+                for(int i = list.size()-1; i >= 0; i--) {
+                    if (list.get(i).getKey() == key) {
+                        result = true;
+                        break;
+                    }
+                }
+            }
+            return result;
         }
-        return result;
     }
     
     boolean deleteFilter(List<Filter> list, byte key) {
-        boolean result = false;
-        if (list != null)  {
-	        for(int i = 0, size = list.size(); i < size; i++) {
-	            if (list.get(i).getKey() == key) {
-	            	list.remove(i);
-	                result = true;
-	            }
-	        }
+        synchronized (list) {
+            boolean result = false;
+            if (list != null)  {
+                for(int i = list.size()-1; i >= 0; i--) {
+                    if (list.get(i).getKey() == key) {
+                        list.remove(i);
+                        result = true;
+                    }
+                }
+            }
+            return result;
         }
-        return result;
     }
     
     public void setCityInfo(CityInfo cityInfo) {
         Globals.setHotelCityInfo(cityInfo);
         mCityBtn.setText(cityInfo.getCName());
-        stopQuery();
 
         DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_HOTEL, cityInfo.getId());
         
         refreshFilterCategory();
         
         mSelectedLocation = false;
-        mRefreshFilterArea = false;
+        mRefreshFilterArea = true;
         refreshFilterArea(true);
         mSphinx.getPickLocationFragment().resetPOI();
 
@@ -306,92 +312,58 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     }
     
     void refreshFilterCategory() {
-    	if (checkFilter(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY) == false) {
-            FilterCategoryOrder filterCategory = DataQuery.getHoteFilterCategoryOrder();
-            if (filterCategory != null) {
-                List<FilterOption> filterOptionList = filterCategory.getCategoryFilterOption();
-                List<Integer> indexList = new ArrayList<Integer>();
-                indexList.add(0);
-                for(int i = 0, size = filterOptionList.size(); i < size; i++) {
-                    int id = filterOptionList.get(i).getId();
-                    indexList.add(id);
+        synchronized (mFilterList) {
+            if (checkFilter(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY) == false) {
+                FilterCategoryOrder filterCategory = DataQuery.getHoteFilterCategoryOrder();
+                if (filterCategory != null) {
+                    List<FilterOption> filterOptionList = filterCategory.getCategoryFilterOption();
+                    List<Integer> indexList = new ArrayList<Integer>();
+                    indexList.add(0);
+                    for(int i = 0, size = filterOptionList.size(); i < size; i++) {
+                        int id = filterOptionList.get(i).getId();
+                        indexList.add(id);
+                    }
+                    Filter filter = DataQuery.makeFilterResponse(mSphinx, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY);
+                    mFilterList.add(filter);
                 }
-                Filter filter = DataQuery.makeFilterResponse(mSphinx, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY);
-                mFilterList.add(filter);
-            }
-        }  
+            }  
+        }
     	FilterListView.selectedFilter(getFilter(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY), 0);
         getFilterCategoryListView().setData(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY, this, false, false, mActionTag);
         refreshFilterCategoryView();
     }
     
     void refreshFilterArea(boolean reset) {
-        int filterAreaState;
-        CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
-        if (locationCityInfo != null &&
-        		locationCityInfo.getId() == Globals.getCurrentCityInfo().getId()) {
-            filterAreaState = 1;
-            mLocationCityInfo = locationCityInfo;
-        } else {
-        	filterAreaState = 0;
-        	mLocationCityInfo = null;
-        }
-                
-        FilterArea filterArea = DataQuery.getFilterArea();
-        if (filterArea != null && filterArea.getAreaFilterOption().size() > 0) {
-            List<FilterOption> filterOptionList = filterArea.getAreaFilterOption();
-            List<Integer> indexList = new ArrayList<Integer>();
-            if (filterAreaState == 0) {
-                int id = 0;
-                if (reset || mSelectedLocation == false) {
-                    
-                } else {
-                    Filter filter = getFilter(mFilterList, FilterArea.FIELD_LIST);
-                    if (filter != null) {
-                        id = FilterListView.getSelectedIdByFilter(filter);
-                    }
-                    if (id <= 10) {
-                        id = 0;
-                    }
-                }
-                indexList.add(id);
-            } else if (filterAreaState == 1) {
-                int id = 10;
-                if (reset || mSelectedLocation == false) {
-                    
-                } else {
-                    Filter filter = getFilter(mFilterList, FilterArea.FIELD_LIST);
-                    if (filter != null) {
-                        id = FilterListView.getSelectedIdByFilter(filter);
-                    }
-                }
-                indexList.add(id);
+        synchronized (mFilterList) {
+            int filterAreaState;
+            CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
+            if (locationCityInfo != null &&
+            		locationCityInfo.getId() == Globals.getCurrentCityInfo().getId()) {
+                filterAreaState = 1;
+                mLocationCityInfo = locationCityInfo;
+            } else {
+            	filterAreaState = 0;
+            	mLocationCityInfo = null;
             }
-            for(int i = 0, size = filterOptionList.size(); i < size; i++) {
-                int id = filterOptionList.get(i).getId();
-                if (filterAreaState == 0) {
-                    if (id >= 1 && id <= 10) {
-                        continue;
-                    }
-                } else if (filterAreaState == 1) {
-                    if (id >= 1 && id <= 5) {
-                        continue;
-                    }
-                }
-                indexList.add(id);
-            }
-
-            deleteFilter(mFilterList, FilterArea.FIELD_LIST);
-            Filter filter = DataQuery.makeFilterResponse(mSphinx, indexList, filterArea.getVersion(), filterOptionList, FilterArea.FIELD_LIST);
-            mFilterList.add(filter);
-        } else {
-            FilterArea quanguoFilterArea = DataQuery.getQuanguoFilterArea(mSphinx);
-            if (quanguoFilterArea != null && quanguoFilterArea.getAreaFilterOption().size() > 0) {
-            	List<FilterOption> filterOptionList = quanguoFilterArea.getAreaFilterOption();
+                    
+            FilterArea filterArea = DataQuery.getFilterArea();
+            if (filterArea != null && filterArea.getAreaFilterOption().size() > 0) {
+                List<FilterOption> filterOptionList = filterArea.getAreaFilterOption();
                 List<Integer> indexList = new ArrayList<Integer>();
                 if (filterAreaState == 0) {
-                    indexList.add(0);
-                    indexList.add(0);
+                    int id = 0;
+                    if (reset || mSelectedLocation == false) {
+                        
+                    } else {
+                        Filter filter = getFilter(mFilterList, FilterArea.FIELD_LIST);
+                        if (filter != null) {
+                            id = FilterListView.getSelectedIdByFilter(filter);
+                        }
+                        if (id <= 10) {
+                            id = 0;
+                        }
+                    }
+                    indexList.add(id);
                 } else if (filterAreaState == 1) {
                     int id = 10;
                     if (reset || mSelectedLocation == false) {
@@ -403,17 +375,55 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                         }
                     }
                     indexList.add(id);
-                    indexList.add(0);
-                    indexList.add(6);
-                    indexList.add(7);
-                    indexList.add(8);
-                    indexList.add(9);
-                    indexList.add(10);
                 }
-                
+                for(int i = 0, size = filterOptionList.size(); i < size; i++) {
+                    int id = filterOptionList.get(i).getId();
+                    if (filterAreaState == 0) {
+                        if (id >= 1 && id <= 10) {
+                            continue;
+                        }
+                    } else if (filterAreaState == 1) {
+                        if (id >= 1 && id <= 5) {
+                            continue;
+                        }
+                    }
+                    indexList.add(id);
+                }
+    
                 deleteFilter(mFilterList, FilterArea.FIELD_LIST);
-                Filter filter = DataQuery.makeFilterResponse(mSphinx, indexList, quanguoFilterArea.getVersion(), filterOptionList, FilterArea.FIELD_LIST);
+                Filter filter = DataQuery.makeFilterResponse(mSphinx, indexList, filterArea.getVersion(), filterOptionList, FilterArea.FIELD_LIST);
                 mFilterList.add(filter);
+            } else {
+                FilterArea quanguoFilterArea = DataQuery.getQuanguoFilterArea(mSphinx);
+                if (quanguoFilterArea != null && quanguoFilterArea.getAreaFilterOption().size() > 0) {
+                	List<FilterOption> filterOptionList = quanguoFilterArea.getAreaFilterOption();
+                    List<Integer> indexList = new ArrayList<Integer>();
+                    if (filterAreaState == 0) {
+                        indexList.add(0);
+                        indexList.add(0);
+                    } else if (filterAreaState == 1) {
+                        int id = 10;
+                        if (reset || mSelectedLocation == false) {
+                            
+                        } else {
+                            Filter filter = getFilter(mFilterList, FilterArea.FIELD_LIST);
+                            if (filter != null) {
+                                id = FilterListView.getSelectedIdByFilter(filter);
+                            }
+                        }
+                        indexList.add(id);
+                        indexList.add(0);
+                        indexList.add(6);
+                        indexList.add(7);
+                        indexList.add(8);
+                        indexList.add(9);
+                        indexList.add(10);
+                    }
+                    
+                    deleteFilter(mFilterList, FilterArea.FIELD_LIST);
+                    Filter filter = DataQuery.makeFilterResponse(mSphinx, indexList, quanguoFilterArea.getVersion(), filterOptionList, FilterArea.FIELD_LIST);
+                    mFilterList.add(filter);
+                }
             }
         }
         
@@ -458,7 +468,17 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             isReLogin = true;
             return;
         } else {
-            if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
+            Response response = baseQuery.getResponse();
+            if (response == null) {
+                queryFilter();
+                return;
+            } else if (response.getResponseCode() != Response.RESPONSE_CODE_OK) {
+                int responseCode = response.getResponseCode();
+                if (responseCode == 702) {
+                    Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.response_code_702));
+                } else if (responseCode == 703) {
+                    Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.response_code_703));
+                }
                 return;
             }
             List<Filter> filterList = ((DataQuery) baseQuery).getFilterList();
@@ -467,18 +487,20 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 boolean refresh = false;
                 Filter filter = getFilter(filterList, FilterCategoryOrder.FIELD_LIST_CATEGORY);
                 if (filter != null) {
-                	Filter presetFilter = getFilter(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY);
-                	if (presetFilter != null) {
-                		// TODO:这里是否需要比较两个筛选里面的各个子项，因为可能每个城市的筛选子项不一定全部相同
-	                	if (presetFilter.getVersion().equals(filter.getVersion()) == false) {
-                			deleteFilter(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY);
-	                		mFilterList.add(filter);
-	                		refresh = true;
-	                	}
-                	} else {
-                		mFilterList.add(filter);
-                		refresh = true;
-                	}
+                    synchronized (mFilterList) {
+                        Filter presetFilter = getFilter(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY);
+                        if (presetFilter != null) {
+                            // TODO:这里是否需要比较两个筛选里面的各个子项，因为可能每个城市的筛选子项不一定全部相同
+                            if (presetFilter.getVersion().equals(filter.getVersion()) == false) {
+                                deleteFilter(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY);
+                                mFilterList.add(filter);
+                                refresh = true;
+                            }
+                        } else {
+                            mFilterList.add(filter);
+                            refresh = true;
+                        }
+                    }
                 }
                 
                 if (refresh) {

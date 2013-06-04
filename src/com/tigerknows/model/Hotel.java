@@ -11,6 +11,7 @@ package com.tigerknows.model;
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.Utility;
 
@@ -67,6 +68,7 @@ public class Hotel extends XMapData {
 
     // 0x53 x_string 列表页图片的url
     private TKDrawable imageThumb;
+    private String imageThumbUrl;
 
     // 0x54 x_array<x_map> 酒店相关的所有x_array<图片>
     private List<HotelTKDrawable> hotelTKDrawableList;
@@ -105,10 +107,10 @@ public class Hotel extends XMapData {
         this.source = getStringFromData(FIELD_SOURCE, reset ? null : this.source);
         this.brand = getLongFromData(FIELD_BRAND, reset ? 0 : this.brand);
         
-        String imageThumb = getStringFromData(FIELD_IMAGE_THUMB);
-        if (imageThumb != null) {
+        imageThumbUrl = getStringFromData(FIELD_IMAGE_THUMB);
+        if (imageThumbUrl != null) {
             TKDrawable tkDrawable = new TKDrawable();
-            tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(imageThumb, Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)));
+            tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(imageThumbUrl, Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)));
             this.imageThumb = tkDrawable;
         } else if (reset) {
             this.imageThumb = null;
@@ -135,6 +137,45 @@ public class Hotel extends XMapData {
         this.canReserve = getLongFromData(FIELD_CAN_RESERVE, reset ? 0 : this.canReserve);
         this.longDescription = getStringFromData(FIELD_LONG_DESCRIPTION, reset ? null : this.longDescription);
         this.roomDescription = getStringFromData(FIELD_ROOM_DESCRIPTION, reset ? null : this.roomDescription);
+    }
+    
+    public XMap getData() {
+        XMap data = new XMap();
+        if (uuid != null) {
+            data.put(FIELD_UUID, uuid);
+        }
+        if (source != null) {
+            data.put(FIELD_SOURCE, source);
+        }
+        data.put(FIELD_BRAND, brand);
+        if (imageThumbUrl != null) {
+            data.put(FIELD_IMAGE_THUMB, imageThumbUrl);
+        }
+        if (originalHotelTKDrawableList != null && originalHotelTKDrawableList.size() > 0) {
+            XArray<XMap> xArray = new XArray<XMap>();
+            for(int i = 0, size = originalHotelTKDrawableList.size(); i < size; i++) {
+                xArray.add(originalHotelTKDrawableList.get(i).getData());
+            }
+            data.put(FIELD_IMAGE_LIST, xArray);
+        }
+        if (this.roomTypeList != null && this.roomTypeList.size() > 0) {
+            XArray<XMap> xArray = new XArray<XMap>();
+            for(int i = 0, size = roomTypeList.size(); i < size; i++) {
+                xArray.add(roomTypeList.get(i).getData());
+            }
+            data.put(FIELD_ROOM_TYPE_LIST, xArray);
+        }
+        if (service != null) {
+            data.put(FIELD_SERVICE, service);
+        }
+        data.put(FIELD_CAN_RESERVE, canReserve);
+        if (longDescription != null) {
+            data.put(FIELD_LONG_DESCRIPTION, longDescription);
+        }
+        if (roomDescription != null) {
+            data.put(FIELD_ROOM_DESCRIPTION, roomDescription);
+        }
+        return data;
     }
     
     public String getUuid() {

@@ -33,7 +33,9 @@ import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -783,9 +785,31 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     if (dataQuery.isTurnPage()) {
                         return;
                     }
-                    if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType) == false) {
+                    int resId = R.id.view_invalid;
+                    if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+                        int responseCode = response.getResponseCode();
+                        if (responseCode == 702) {
+                            resId = R.string.response_code_702;
+                        } else if (responseCode == 703) {
+                            resId = R.string.response_code_703;
+                        }
+                        
+                    }
+                    
+                    if (resId == R.id.view_invalid) {
                         int resid = BaseActivity.getResponseResId(dataQuery);
                         mRetryView.setText(resid, true);
+                    } else {
+
+                        Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(resId));
+                        mRetryView.setText(resId, false);
+                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                            
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                POIResultFragment.this.dismiss();
+                            }
+                        });
                     }
                     mState = STATE_ERROR;
                     updateView();

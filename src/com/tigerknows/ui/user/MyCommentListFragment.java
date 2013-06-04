@@ -220,7 +220,7 @@ public class MyCommentListFragment extends BaseFragment {
                 if (commentnew != null && commentnew != comment) {
                     try {
                         commentnew.setData(null);
-                        comment.init(commentnew.getData(), false);   //TODO 需要将false改为true
+                        comment.init(commentnew.getData(), true);   //TODO 需要将false改为true
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
