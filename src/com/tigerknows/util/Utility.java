@@ -927,6 +927,10 @@ public class Utility {
 //                minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
 //            }
 //        }
+        if (maxIndex > lastVisiblePosition && (minIndex-10) >= 0) {
+            minIndex -= 10;
+            maxIndex -= 10;
+        }
         return new int[]{minIndex, maxIndex, (firstVisiblePosition-(isShowAPOI ? 1 : 0)+(startPage%2 != 0 ? pageSize : 0)) % TKConfig.getPageSize()};
     }
     
