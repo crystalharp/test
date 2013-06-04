@@ -167,7 +167,7 @@
 	                    android:layout_height="wrap_content"
 	                    
 	                    android:layout_alignParentRight="true"
-	                    android:layout_marginRight="8dp"
+	                    android:layout_marginRight="4dp"
 	                    android:layout_below="@id/hotel_fendian_poi"
 	                    
 	                    android:gravity="center"

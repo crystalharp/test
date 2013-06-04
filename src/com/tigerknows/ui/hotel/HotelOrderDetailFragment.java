@@ -524,6 +524,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             			mOrder.setState(states.get(0));
             			mOrder.setStateUpdateTime(System.currentTimeMillis());
             			updateOrderStorage(mOrder);
+            			mOrderStateTxv.setText(getOrderStateDesc(mOrder.getState()));
             	        updateCancelBtn();
             		}
             		
