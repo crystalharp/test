@@ -49,6 +49,11 @@ public class TKConfig {
     private static final String TAG = "TKConfig";
     
     /**
+     * 是否开启TalkingData数据统计
+     */
+    public static boolean ENABLE_TALKINGDATA = false;
+    
+    /**
      * 是否开启缓存图片到内存
      */
     public static boolean CACHE_BITMAP_TO_MEMORY = true;
