@@ -59,7 +59,7 @@ public class PinOverlayHelper {
 		}
 	}
 	
-	public static void drawLongClickOverlay(final Context context, Handler mainThreadHandler, final MapView mapView, final String name, final Position position) {
+	public static void drawLongClickOverlay(final Sphinx sphinx, Handler mainThreadHandler, final MapView mapView, final String name, final Position position) {
 		try {
 	        if(position != null){
 	        	// 长按选点图层
@@ -70,7 +70,7 @@ public class PinOverlayHelper {
                 
 	            ItemizedOverlay overlay = new ItemizedOverlay(ItemizedOverlay.PIN_OVERLAY);
 	            RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
-	            OverlayItem overlayItem = new OverlayItem(position, Icon.getIcon(context.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
+	            OverlayItem overlayItem = new OverlayItem(position, Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
 	            		name, rt);
 		        overlayItem.setAssociatedObject(poi);
 		        
@@ -79,7 +79,7 @@ public class PinOverlayHelper {
 				    public void onTouchEvent(EventSource eventSource) {
 				        OverlayItem overlayItem=(OverlayItem) eventSource;
 				        try{
-				            mapView.getInfoWindow().setPosition(overlayItem.getPosition());
+	                        sphinx.showInfoWindow(overlayItem);
 				        }catch(Exception e){
 				            e.printStackTrace();
 				        }
