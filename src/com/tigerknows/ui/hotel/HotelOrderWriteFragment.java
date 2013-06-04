@@ -189,23 +189,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mSubmitOrderBtn.setOnClickListener(this);
     }
 
-    private void showHotelErrorDialog(String message, final View source){
-    	Utility.showNormalDialog(mSphinx, 
-    			mSphinx.getString(R.string.prompt), 
-    			message, 
-    			mSphinx.getString(R.string.confirm),
-    			null,
-    			new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						source.requestFocus();
-						mSphinx.showSoftInput(source);
-					}
-    		});
-    }
-    
     @Override
     public void onClick(View view){
         int id = view.getId();
@@ -231,10 +214,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         			mBookUsername = tempStr;
         		}
         		if(TextUtils.isEmpty(tempStr)){
-        			showHotelErrorDialog(mSphinx.getString(R.string.hotel_room_person_empty_tip), thisPersonEdt);
+        			Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_room_person_empty_tip), thisPersonEdt);
         			return;
         		}else if(!ValidateUtil.isValidElongName(tempStr)){
-        			showHotelErrorDialog(mSphinx.getString(R.string.hotel_person_name_format), thisPersonEdt);
+        			Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format), thisPersonEdt);
         			return;
         		}
         		str += tempStr;
@@ -242,10 +225,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	mUsername = str;
         	str = mRoomMobileNumberEdt.getText().toString();
         	if(TextUtils.isEmpty(str)){
-    			showHotelErrorDialog(mSphinx.getString(R.string.hotel_room_mobile_empty_tip), mRoomMobileNumberEdt);
+        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_room_mobile_empty_tip), mRoomMobileNumberEdt);
          		return;
         	}else if(!ValidateUtil.isValidHotelMobile(str)){
-    			showHotelErrorDialog(mSphinx.getString(R.string.hotel_mobile_format), mRoomMobileNumberEdt);
+        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_mobile_format), mRoomMobileNumberEdt);
         		return;
         	}else{
         		mMobile = str;
