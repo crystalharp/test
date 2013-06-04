@@ -859,6 +859,8 @@ public class POI extends BaseData {
         this.lastComment = getObjectFromData(FIELD_LAST_COMMENT, Comment.Initializer, reset ? null : this.lastComment);
         this.hotel.init(this.data, reset);
         this.price = getStringFromData(FIELD_PRICE, reset ? null : this.price);
+        
+        this.data = null;
     }
     
     public XMap getData() {
