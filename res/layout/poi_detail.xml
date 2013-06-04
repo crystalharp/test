@@ -156,7 +156,7 @@
 	        
 	                    <RatingBar android:id="@+id/stars_rtb"
 	                        android:layout_width="wrap_content"
-	                        android:layout_height="18dp"
+	                        android:layout_height="wrap_content"
 	                        android:layout_alignParentLeft="true"
 	                        android:layout_below="@id/name_txv" 
 	                        android:progressDrawable="@drawable/ratingbar_small"

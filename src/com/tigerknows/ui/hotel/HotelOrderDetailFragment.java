@@ -256,6 +256,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 
                     if (which == DialogInterface.BUTTON_POSITIVE) {
             			deleteOrder();
+            			mSphinx.getHotelOrderListFragment().clearOrders();
                     }
 				}
 				
@@ -356,6 +357,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     		return;
     	}
     	
+    	mHotelAddressTxv.setSingleLine(false);
     	DiscoverChildListFragment.showPOI(mContext, order.getHotelName(), null, order.getHotelAddress(), mOrder.getHotelTel(), mHotelNameTxv, mDistanceTxv, 
     			mRootView.findViewById(R.id.address_view), mRootView.findViewById(R.id.divider_imv), mRootView.findViewById(R.id.telephone_view)
     			, mHotelAddressTxv, mHotelTelTxv, R.drawable.list_header, R.drawable.list_footer, R.drawable.list_footer);

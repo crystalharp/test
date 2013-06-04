@@ -18,6 +18,7 @@ import android.os.Environment;
 import com.decarta.CONFIG;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.TKConfig;
 
 /**
  * 此类实现缓存图片到扩展存储卡的功能
@@ -43,7 +44,7 @@ public class ImageCache {
 	private LinkedList<ImageData> writingList=new LinkedList<ImageData>();
 	private final int MAX_WRITING_LIST_SIZE=300;
 	
-	private LinkedHashMap<String,Boolean> cacheTileFileNames=new LinkedHashMap<String,Boolean>(CONFIG.CACHE_SIZE,0.75f,true);
+	private LinkedHashMap<String,Boolean> cacheTileFileNames=new LinkedHashMap<String,Boolean>(TKConfig.IMAGE_CACHE_SIZE_SDCARD,0.75f,true);
 	
 	public ImageCache(){
 	}
@@ -164,7 +165,7 @@ public class ImageCache {
 								//LogWrapper.i("TileTable", "startWritingThread write stage put:"+fileName);
 							}
 							
-							if(cacheTileFileNames.size()>CONFIG.CACHE_SIZE){
+							if(cacheTileFileNames.size()>TKConfig.IMAGE_CACHE_SIZE_SDCARD){
 								if(stopWriting){
 									LogWrapper.i("TileTable","writing thread break after drawingLock remove stage");
 									break;
@@ -202,7 +203,7 @@ public class ImageCache {
 	 * @throws Exception
 	 */
 	public Bitmap getImage(String name) throws Exception {
-		if (CONFIG.CACHE_SIZE<=0 || !externalStorage)
+		if (TKConfig.IMAGE_CACHE_SIZE_SDCARD<=0 || !externalStorage)
 			return null;
 		Bitmap bm = null;
 		
@@ -235,7 +236,7 @@ public class ImageCache {
 	 * @throws Exception
 	 */
 	public void putImage(String name, byte[] bmBytes) throws Exception {
-		if (CONFIG.CACHE_SIZE<=0 || !externalStorage)
+		if (TKConfig.IMAGE_CACHE_SIZE_SDCARD<=0 || !externalStorage)
 			return;
 
 		synchronized(writingList){
@@ -298,7 +299,7 @@ public class ImageCache {
 			public void run() {
 				try {
 					LogWrapper.i("TileTable", "stopWritingAndRemoveOldTiles thread start, cache length:"+cacheTileFileNames.size());
-					while(cacheTileFileNames.size()>CONFIG.CACHE_SIZE){
+					while(cacheTileFileNames.size()>TKConfig.IMAGE_CACHE_SIZE_SDCARD){
 						if(stopRemoveCache){
 							LogWrapper.i("TileTable", "stopWritingAndRemoveOldTiles break, cache length:"+cacheTileFileNames.size());
 							break;

@@ -145,59 +145,58 @@ public class Comment extends BaseData {
         this.url = getStringFromData(FIELD_URL, reset ? null : this.url);
         this.clientUid = getStringFromData(FIELD_CLIENT_UID, reset ? null : this.clientUid);
         this.source = getStringFromData(FIELD_SOURCE, reset ? null : this.source);
+        
     }
     
     public XMap getData() {
-        if (this.data == null) {
-            this.data = new XMap();            
-            if (!TextUtils.isEmpty(this.uid)) {
-                this.data.put(FIELD_UID, this.uid);
-            }
-            if (!TextUtils.isEmpty(this.content)) {
-                this.data.put(FIELD_CONTENT, this.content);
-            }
-            if (!TextUtils.isEmpty(this.user)) {
-                this.data.put(FIELD_USER, this.user);
-            }
-            if (!TextUtils.isEmpty(this.time)) {
-                this.data.put(FIELD_TIME, this.time);
-            }
-            this.data.put(FIELD_GRADE, this.grade);
-            if (!TextUtils.isEmpty(this.puid)) {
-                this.data.put(FIELD_PUID, this.puid);
-            }
-            this.data.put(FIELD_AVG, this.avg);
-            this.data.put(FIELD_TASTE, this.taste);
-            this.data.put(FIELD_QOS, this.qos);
-            this.data.put(FIELD_ENVIRONMENT, this.environment);
-            if (!TextUtils.isEmpty(this.recommend)) {
-                this.data.put(FIELD_RECOMMEND, this.recommend);
-            }
-            this.data.put(FIELD_LEVEL, this.level);
-            this.data.put(FIELD_EFFECT, this.effect);
-            if (!TextUtils.isEmpty(this.restair)) {
-                this.data.put(FIELD_RESTAIR, this.restair);
-            }
-            this.data.put(FIELD_POI_STATUS, this.poiStatus);
-            this.data.put(FIELD_PATTERN, this.pattern);
-            if (!TextUtils.isEmpty(this.poiName)) {
-                this.data.put(FIELD_POI_NAME, this.poiName);
-            }
-            this.data.put(FIELD_USER_ID, this.userId);
-            if (!TextUtils.isEmpty(this.poiCityId)) {
-                this.data.put(FIELD_POI_CITY_ID, this.poiCityId);
-            }
-            if (!TextUtils.isEmpty(this.url)) {
-                this.data.put(FIELD_URL, this.url);
-            }
-            if (!TextUtils.isEmpty(this.clientUid)) {
-                this.data.put(FIELD_CLIENT_UID, this.clientUid);
-            }
-            if (!TextUtils.isEmpty(this.source)) {
-                this.data.put(FIELD_SOURCE, this.source);
-            }
+        XMap data = new XMap();   
+        if (!TextUtils.isEmpty(this.uid)) {
+            data.put(FIELD_UID, this.uid);
         }
-        return this.data;
+        if (!TextUtils.isEmpty(this.content)) {
+            data.put(FIELD_CONTENT, this.content);
+        }
+        if (!TextUtils.isEmpty(this.user)) {
+            data.put(FIELD_USER, this.user);
+        }
+        if (!TextUtils.isEmpty(this.time)) {
+            data.put(FIELD_TIME, this.time);
+        }
+        data.put(FIELD_GRADE, this.grade);
+        if (!TextUtils.isEmpty(this.puid)) {
+            data.put(FIELD_PUID, this.puid);
+        }
+        data.put(FIELD_AVG, this.avg);
+        data.put(FIELD_TASTE, this.taste);
+        data.put(FIELD_QOS, this.qos);
+        data.put(FIELD_ENVIRONMENT, this.environment);
+        if (!TextUtils.isEmpty(this.recommend)) {
+            data.put(FIELD_RECOMMEND, this.recommend);
+        }
+        data.put(FIELD_LEVEL, this.level);
+        data.put(FIELD_EFFECT, this.effect);
+        if (!TextUtils.isEmpty(this.restair)) {
+            data.put(FIELD_RESTAIR, this.restair);
+        }
+        data.put(FIELD_POI_STATUS, this.poiStatus);
+        data.put(FIELD_PATTERN, this.pattern);
+        if (!TextUtils.isEmpty(this.poiName)) {
+            data.put(FIELD_POI_NAME, this.poiName);
+        }
+        data.put(FIELD_USER_ID, this.userId);
+        if (!TextUtils.isEmpty(this.poiCityId)) {
+            data.put(FIELD_POI_CITY_ID, this.poiCityId);
+        }
+        if (!TextUtils.isEmpty(this.url)) {
+            data.put(FIELD_URL, this.url);
+        }
+        if (!TextUtils.isEmpty(this.clientUid)) {
+            data.put(FIELD_CLIENT_UID, this.clientUid);
+        }
+        if (!TextUtils.isEmpty(this.source)) {
+            data.put(FIELD_SOURCE, this.source);
+        }
+        return data;
     }
 
     public String getUid() {
