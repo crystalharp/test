@@ -256,6 +256,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 
                     if (which == DialogInterface.BUTTON_POSITIVE) {
             			deleteOrder();
+            			mSphinx.getHotelOrderListFragment().clearOrders();
                     }
 				}
 				
