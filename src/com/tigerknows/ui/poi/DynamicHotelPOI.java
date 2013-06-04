@@ -334,7 +334,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         
             return blockList;
         }
-        LogWrapper.d("conan", "hotel.roomtypelist is:" + poi.getHotel().getRoomTypeList());
         mPOI = poi;
         mHotel = poi.getHotel();
         refreshDate();

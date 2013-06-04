@@ -4,6 +4,7 @@ import java.util.Hashtable;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Selection;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -88,24 +89,7 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 	        }
 	    });
 	}
-    private void showSeveninnErrorDialog(String message, final View source){
-    	Utility.showNormalDialog(mSphinx, 
-    			mSphinx.getString(R.string.prompt), 
-    			message, 
-    			mSphinx.getString(R.string.confirm),
-    			null,
-    			new DialogInterface.OnClickListener() {
-					
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						// TODO Auto-generated method stub
-						source.requestFocus();
-						mSphinx.showSoftInput(source);
-					}
-    		});
-    }
-
-	@Override
+    @Override
 	public void onClick(View view) {
 		// TODO Auto-generated method stub
 		int id = view.getId();
@@ -116,7 +100,7 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 		case R.id.seveninn_regist_btn:
 			String str = mSeveninnNameEdt.getText().toString().trim();
 			if(TextUtils.isEmpty(str)){
-				showSeveninnErrorDialog(mSphinx.getString(R.string.hotel_room_person_empty_tip), mSeveninnNameEdt);
+				Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_room_person_empty_tip), mSeveninnNameEdt);
 				return;
 				// 注册7天酒店时，不校验姓名格式
 			}else{
@@ -124,20 +108,20 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 			}
 			str = mSeveninnPhoneEdt.getText().toString();
 			if(TextUtils.isEmpty(str)){
-				showSeveninnErrorDialog(mSphinx.getString(R.string.hotel_room_mobile_empty_tip), mSeveninnPhoneEdt);
+				Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_room_mobile_empty_tip), mSeveninnPhoneEdt);
 				return;
         	}else if(!ValidateUtil.isValidHotelMobile(str)){
-				showSeveninnErrorDialog(mSphinx.getString(R.string.hotel_mobile_format), mSeveninnPhoneEdt);
+        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_mobile_format), mSeveninnPhoneEdt);
         		return;
 			}else{
 				mMobile = str;
 			}
 			str = mSeveninnIdcardCodeEdt.getText().toString().trim();
 			if(TextUtils.isEmpty(str)){
-				showSeveninnErrorDialog(mSphinx.getString(R.string.seveninn_idcard_code_empty_error), mSeveninnIdcardCodeEdt);
+				Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.seveninn_idcard_code_empty_error), mSeveninnIdcardCodeEdt);
 				return;
         	}else if(!ValidateUtil.isValidIdCardCode(str)){
-				showSeveninnErrorDialog(mSphinx.getString(R.string.hotel_idcard_code_format), mSeveninnIdcardCodeEdt);
+        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_idcard_code_format), mSeveninnIdcardCodeEdt);
         		return;
 			}else{
 				mIdcardNo = str;
@@ -190,7 +174,11 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 	
 	public void setData(String name, String mobile){
 		mSeveninnNameEdt.setText(name);
+		mSeveninnNameEdt.requestFocus();
+		Selection.setSelection(mSeveninnNameEdt.getText(), mSeveninnNameEdt.length());
 		mSeveninnPhoneEdt.setText(mobile);
+		mSeveninnPhoneEdt.requestFocus();
+		Selection.setSelection(mSeveninnPhoneEdt.getText(), mSeveninnPhoneEdt.length());
 		mSeveninnNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
 				R.color.orange,
 				mSphinx.getString(R.string.seveninn_note, mobile),

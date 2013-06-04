@@ -73,6 +73,8 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import android.widget.Toast;
+
+import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TrafficQuery;
@@ -1188,5 +1190,25 @@ public class Utility {
             }
         }
         return result;
+    }
+    
+    /**
+     * 对于编辑框为空或格式错出现提示的时候，需要弹出软键盘
+     */
+    public static void showEdittextErrorDialog(final TKActivity activity, String message, final View source){
+    	showNormalDialog(activity, 
+    			activity.getString(R.string.prompt),
+    			message,
+    			activity.getString(R.string.confirm),
+    			null,
+    			new DialogInterface.OnClickListener(){
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						source.requestFocus();
+						activity.showSoftInput(source);
+					}
+    	});
     }
 }
