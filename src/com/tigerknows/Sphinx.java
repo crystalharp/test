@@ -949,6 +949,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mMenuView.setVisibility(View.VISIBLE);
         mControlView.setVisibility(View.VISIBLE);
         Sphinx.this.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Sphinx.this.getWindow().setBackgroundDrawableResource(android.R.drawable.screen_background_light);
         mMapView.refreshMap();
         
         checkFromThirdParty(false);
@@ -1125,6 +1126,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (uiStackSize() > 0) {
             checkLocationCity();
         }
+        mMapView.post(new Runnable() {
+			
+			@Override
+			public void run() {
+				Sphinx.this.findViewById(R.id.startup_imv).setVisibility(View.GONE);	
+			}
+		});
+        
 	}
 	
 	private void checkLocationCity() {
