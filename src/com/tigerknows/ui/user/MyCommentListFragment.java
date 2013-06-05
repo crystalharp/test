@@ -77,7 +77,7 @@ public class MyCommentListFragment extends BaseFragment {
                     criteria.put(DataOperation.SERVER_PARAMETER_SUB_DATA_TYPE, DataOperation.SUB_DATA_TYPE_POI);
                     criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
                     criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
-                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);
+                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
                     DataOperation poiQuery = new DataOperation(mSphinx);
                     poiQuery.setup(criteria, Integer.parseInt(comment.getPoiCityId()), getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
                     mSphinx.queryStart(poiQuery);

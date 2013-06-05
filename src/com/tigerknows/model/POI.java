@@ -403,7 +403,7 @@ public class POI extends BaseData {
 
     public static final int FROM_LOCAL = 1;
     
-    public static final String NEED_FILELD = "0102030405060708090a0b121314151617";
+    public static final String NEED_FIELD = "0102030405060708090a0b121314151617";
     
     private String uuid;
     

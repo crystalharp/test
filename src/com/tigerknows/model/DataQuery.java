@@ -486,7 +486,7 @@ public final class DataQuery extends BaseQuery {
             if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                 String idList = addParameter(SERVER_PARAMETER_ID_LIST, false);
                 if (idList == null) {
-                    requestParameters.add(SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);
+                    requestParameters.add(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
                     requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
                     String bias = addParameter(SERVER_PARAMETER_BIAS, false);
                     if (bias == null) {
@@ -497,7 +497,7 @@ public final class DataQuery extends BaseQuery {
             } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                 String appendaction = addParameter(SERVER_PARAMETER_APPENDACTION, false);
                 if (appendaction == null) {
-                    requestParameters.add(SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD+Hotel.NEED_FILED_LIST);
+                    requestParameters.add(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD+Hotel.NEED_FILED_LIST);
                     requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
                     requestParameters.add(SERVER_PARAMETER_PICTURE, 
                             Util.byteToHexString(Hotel.FIELD_IMAGE_THUMB)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)+"_[10000000000000000000]" + ";" +
@@ -517,7 +517,7 @@ public final class DataQuery extends BaseQuery {
             addFilterParameters(criteria, requestParameters, cfv, nfv);
 
         } else if (DATA_TYPE_DISCOVER.equals(dataType)) { 
-            requestParameters.add(SERVER_PARAMETER_NEED_FEILD, DiscoverCategory.NEED_FILED);
+            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, DiscoverCategory.NEED_FILED);
             String pic = "";
             String cdv = "";
             if (Discover_Config_List != null) {
@@ -555,7 +555,7 @@ public final class DataQuery extends BaseQuery {
                         Util.byteToHexString(DiscoverCategory.FIELD_DATA)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DISCOVER_HOME)+"_["+pic+"]");
             }
         } else if (DATA_TYPE_TUANGOU.equals(dataType)) { 
-            requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Tuangou.NEED_FILELD);
+            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Tuangou.NEED_FIELD);
             requestParameters.add(SERVER_PARAMETER_PICTURE, 
                     Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[10000000000000000000]" + ";" +
                     Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[00000000000000000000]");
@@ -570,7 +570,7 @@ public final class DataQuery extends BaseQuery {
             }
             addFilterParameters(criteria, requestParameters, cfv, nfv);
         } else if (DATA_TYPE_FENDIAN.equals(dataType)) { 
-            requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Fendian.NEED_FILELD);
+            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Fendian.NEED_FIELD);
             addDiscoverCategoryParameters(requestParameters);
             addParameter(SERVER_PARAMETER_TUANGOU_UUID);
             String cfv = null;
@@ -584,7 +584,7 @@ public final class DataQuery extends BaseQuery {
             addFilterParameters(criteria, requestParameters, cfv, nfv);
         } else if (DATA_TYPE_DIANYING.equals(dataType)) { 
             addParameter(new String[]{SERVER_PARAMETER_DIANYING_UUID, SERVER_PARAMETER_POI_ID}, false);
-            requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Dianying.NEED_FILELD);
+            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Dianying.NEED_FIELD);
             requestParameters.add(SERVER_PARAMETER_PICTURE, 
                     Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
                     Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
@@ -599,7 +599,7 @@ public final class DataQuery extends BaseQuery {
             }
             addFilterParameters(criteria, requestParameters, cfv, nfv);
         } else if (DATA_TYPE_YINGXUN.equals(dataType)) { 
-            requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Yingxun.NEED_FILELD);
+            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Yingxun.NEED_FIELD);
             addDiscoverCategoryParameters(requestParameters);
             addParameter(SERVER_PARAMETER_DIANYING_UUID);
             String cfv = null;
@@ -612,7 +612,7 @@ public final class DataQuery extends BaseQuery {
             }
             addFilterParameters(criteria, requestParameters, cfv, nfv);
         } else if (DATA_TYPE_YANCHU.equals(dataType)) { 
-            requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Yanchu.NEED_FILELD);
+            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Yanchu.NEED_FIELD);
             requestParameters.add(SERVER_PARAMETER_PICTURE, 
                     Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
                     Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
@@ -627,9 +627,9 @@ public final class DataQuery extends BaseQuery {
             }
             addFilterParameters(criteria, requestParameters, cfv, nfv);
         } else if (DATA_TYPE_SHANGJIA.equals(dataType)) { 
-            requestParameters.add(SERVER_PARAMETER_NEED_FEILD, TextUtils.isEmpty(Globals.g_Session_Id) ? Shangjia.NEED_FILELD_NO_LOGON : Shangjia.NEED_FILELD);
+            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, TextUtils.isEmpty(Globals.g_Session_Id) ? Shangjia.NEED_FIELD_NO_LOGON : Shangjia.NEED_FIELD);
         } else if (DATA_TYPE_ZHANLAN.equals(dataType)) { 
-            requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Zhanlan.NEED_FILELD);
+            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Zhanlan.NEED_FIELD);
             requestParameters.add(SERVER_PARAMETER_PICTURE, 
                     Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
                     Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
@@ -644,7 +644,7 @@ public final class DataQuery extends BaseQuery {
             }
             addFilterParameters(criteria, requestParameters, cfv, nfv);
         } else if (DATA_TYPE_DIANPING.equals(dataType)) {
-            requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Comment.NEED_FILELD);
+            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Comment.NEED_FIELD);
             requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
             addParameter(new String[]{SERVER_PARAMETER_REFER});
             addParameter(new String[]{SERVER_PARAMETER_TIME, SERVER_PARAMETER_DIRECTION, SERVER_PARAMETER_POI_ID}, false);

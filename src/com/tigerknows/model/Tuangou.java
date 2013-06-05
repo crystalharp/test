@@ -13,7 +13,7 @@ import com.tigerknows.model.xobject.XMap;
 
 public class Tuangou extends BaseData {
     
-    public static final String NEED_FILELD = "00010405140b0c0d0e10191f20222350565758595b5c";
+    public static final String NEED_FIELD = "00010405140b0c0d0e10191f20222350565758595b5c";
     
     // 0x00 x_string uid uid
     public static final byte FIELD_UID = 0x00;

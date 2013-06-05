@@ -16,12 +16,12 @@ import com.tigerknows.model.xobject.XMap;
 
 public class Dianying extends BaseData implements Parcelable{
 
-    public static final String NEED_FILELD = "000102030414060708090a0b0c0d" +
+    public static final String NEED_FIELD = "000102030414060708090a0b0c0d" +
     		"20262728292a2b2c";
 
-    public static final String NEED_FILELD_ONLY_DIANYING = "000102030414060708090a0b0c0d";
+    public static final String NEED_FIELD_ONLY_DIANYING = "000102030414060708090a0b0c0d";
     
-    public static final String NEED_FILELD_POI_DETAIL = "00010304070920";
+    public static final String NEED_FIELD_POI_DETAIL = "00010304070920";
     
     // 0x00 x_string UUID uid
     public static final byte FIELD_UID = 0x00;

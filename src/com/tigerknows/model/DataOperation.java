@@ -76,7 +76,7 @@ public class DataOperation extends BaseQuery {
             }
             
         	if(dataType.equals(DATA_TYPE_DIAOYAN) == false){
-        		addParameter(new String[] {SERVER_PARAMETER_NEED_FEILD, SERVER_PARAMETER_DATA_UID});
+        		addParameter(new String[] {SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_DATA_UID});
             }
         	
         	// 部分查询需要提交pic信息和dsrc信息，据说上一个写这行代码的人懒得用一堆if判断于是就直接用这行代码了
@@ -391,6 +391,22 @@ public class DataOperation extends BaseQuery {
             
             url = getStringFromData(FIELD_DATA);
         } 
+    }
+    
+    public static class CouponQueryResponse extends Response {
+    	public static final byte FIELD_DATA = 0x02;
+    	
+    	private CouponResult couponresult;
+        
+        public CouponResult getCouponResult() {
+            return couponresult;
+        }
+
+        public CouponQueryResponse(XMap data) throws APIException {
+            super(data);
+            
+            couponresult = getObjectFromData(FIELD_DATA, CouponResult.Initializer);
+        }
     }
     
     protected void launchTest() {

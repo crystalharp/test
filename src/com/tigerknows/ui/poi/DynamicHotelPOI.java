@@ -453,7 +453,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         criteria.put(DataOperation.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
         criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
-        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, "01" + needFiled);   // 01表示poi的uuid
+        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, "01" + needFiled);   // 01表示poi的uuid
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKIN, checkinTime);
         criteria.put(DataOperation.SERVER_PARAMETER_CHECKOUT, checkoutTime);
         DataOperation dataOpration = new DataOperation(mSphinx);

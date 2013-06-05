@@ -576,7 +576,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
         criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mOrder.getHotelPoiUUID());
-        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);
+        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
         Calendar today = Calendar.getInstance();
         Calendar tomorrow = Calendar.getInstance();
         tomorrow.add(Calendar.DAY_OF_YEAR, 1);

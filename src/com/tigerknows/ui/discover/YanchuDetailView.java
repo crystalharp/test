@@ -179,7 +179,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
         		criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_YANCHU);
         		criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         		criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
-        		criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
+        		criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
         		dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
         		mAsyncTaskExecuting = true;
         		mTKAsyncTasking = mSphinx.queryStart(dataOperation);
@@ -203,8 +203,8 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_YANCHU);
         criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUID());
-        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
-                Yanchu.NEED_FILELD + Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
+        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD,
+                Yanchu.NEED_FIELD + Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
         criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
                Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
                Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");

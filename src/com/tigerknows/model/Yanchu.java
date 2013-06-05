@@ -17,7 +17,7 @@ import com.tigerknows.model.xobject.XMap;
 
 public class Yanchu extends BaseData implements Parcelable{
 
-    public static final String NEED_FILELD = "0001041407080a0b0c0f1012191a";
+    public static final String NEED_FIELD = "0001041407080a0b0c0f1012191a";
     
     // 0x00 x_string uid uid
     public static final byte FIELD_UID = 0x00;

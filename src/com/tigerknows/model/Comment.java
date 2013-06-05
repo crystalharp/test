@@ -86,7 +86,7 @@ public class Comment extends BaseData {
     // 0x1f    x_string    source  点评来源    是，详细定义见点评数据表中source字段 
     public static final byte FIELD_SOURCE = 0x1f;
 
-    protected static final String NEED_FILELD = "0001020304060708090a0b0c0d0e0f1011121314151f";
+    protected static final String NEED_FIELD = "0001020304060708090a0b0c0d0e0f1011121314151f";
 
     private String uid; // 0x00    x_string    uid 点评uid   否
     private String content; // 0x01    x_string    content 点评内容    是

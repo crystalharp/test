@@ -169,7 +169,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
         		criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_ZHANLAN);
         		criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         		criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
-        		criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
+        		criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
         		dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
         		mTKAsyncTasking = mSphinx.queryStart(dataOperation);
         		mAsyncTaskExecuting = true;
@@ -301,8 +301,8 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_ZHANLAN);
         criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUID());
-        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
-                Zhanlan.NEED_FILELD + Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
+        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD,
+                Zhanlan.NEED_FIELD + Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
         criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
                 Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
                 Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");

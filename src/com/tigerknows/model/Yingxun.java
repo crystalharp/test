@@ -20,7 +20,7 @@ import java.util.List;
 
 public class Yingxun extends BaseData implements Parcelable {
 
-    public static final String NEED_FILELD = "20262728292a2b2c";
+    public static final String NEED_FIELD = "20262728292a2b2c";
         
     // 0x20 x_string UUID uid
     public static final byte FIELD_UID = 0x20;
@@ -149,7 +149,7 @@ public class Yingxun extends BaseData implements Parcelable {
     
     public static class Changci extends BaseData implements Parcelable{
 
-        public static final String NEED_FILELD = "40414243";
+        public static final String NEED_FIELD = "40414243";
         
         // 0x40 x_string uid uid
         public static final byte FIELD_UID = 0x40;

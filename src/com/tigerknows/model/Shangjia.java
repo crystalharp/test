@@ -36,9 +36,9 @@ import java.util.List;
 
 public class Shangjia extends BaseData implements Parcelable {
     
-    public static final String NEED_FILELD = "1f707172737475";
+    public static final String NEED_FIELD = "1f707172737475";
     
-    public static final String NEED_FILELD_NO_LOGON = "1f707175";
+    public static final String NEED_FIELD_NO_LOGON = "1f707175";
     
     // 测试 999
     public static final int SOURCE_TEST = 999;

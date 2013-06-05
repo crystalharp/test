@@ -124,7 +124,7 @@ public abstract class BaseQuery {
     public static final String SERVER_PARAMETER_DATA_TYPE = "dty";
 
     // nf string true 所需字段, key的16进制数的拼接, 例如010a0b
-    public static final String SERVER_PARAMETER_NEED_FEILD = "nf";
+    public static final String SERVER_PARAMETER_NEED_FIELD = "nf";
 
     // op string true operation code, 操作码
     public static final String SERVER_PARAMETER_OPERATION_CODE = "op";
@@ -260,6 +260,9 @@ public abstract class BaseQuery {
     
     // 用户调研 21
     public static final String DATA_TYPE_DIAOYAN = "21";
+    
+    // 优惠券 22
+    public static final String DATA_TYPE_COUPON = "22";
 
     // 发现首页动态数据统计 100
     public static final String DATA_TYPE_DISCOVER = "100";

@@ -6,7 +6,7 @@ import com.tigerknows.model.xobject.XMap;
 
 public class Fendian extends BaseData {
     
-    public static final String NEED_FILELD = "50565758595b5c";
+    public static final String NEED_FIELD = "50565758595b5c";
     
     // 0x50 x_string uid uid
     public static final byte FIELD_UID = 0x50;

@@ -486,7 +486,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
 	            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_TUANGOU);
 	            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
 	            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
-	            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, needFiled.toString());
+	            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, needFiled.toString());
 	            if (pic.length() > 0) {
 	                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE, pic.toString());
 	            }

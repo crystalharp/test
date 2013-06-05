@@ -282,7 +282,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         		criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_DIANYING);
         		criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         		criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
-        		criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
+        		criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
         		dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
         		mTKAsyncTasking = mSphinx.queryStart(dataOperation);
         		mAsyncTaskExecuting = true;
@@ -489,8 +489,8 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIANYING);
         criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUID());
-        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
-                Dianying.NEED_FILELD_ONLY_DIANYING + Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
+        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD,
+                Dianying.NEED_FIELD_ONLY_DIANYING + Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
         criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
                 Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
                 Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
@@ -506,7 +506,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_YINGXUN);
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getSlaveUID());
-        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Yingxun.NEED_FILELD);
+        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, Yingxun.NEED_FIELD);
         dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
         list.add(dataOperation);
 
