@@ -1701,7 +1701,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                 }
                             }
                         } else {
-                            if (!containsDPOIType(DPOIType.HOTEL)) {
+                            if (!containsDPOIType(DPOIType.HOTEL) && mDynamicHotelPOI.checkExistence(mPOI)) {
                                 mDynamicHotelPOI.loadSucceed(false);
                                 refreshDynamicHotel(poi);
                                 refreshDynamicPOI(DPOIViewBlockList);
