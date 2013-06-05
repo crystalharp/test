@@ -663,6 +663,7 @@ public class TilesView extends GLSurfaceView {
 // tigerknows modify begin		
 //		tileThreadPool.stopAllThreads();
 //		tileCache.stopWritingAndRemoveOldTiles();
+		TileThread.stopAllThreads();
         DownloadThread.stopAllThreads();
         MapTextThread.stopThread();
 // tigerknows modify end

@@ -826,7 +826,7 @@ public class TrafficModel extends XMapData {
                 
                 data.put(FIELD_LENGTH, XObject.valueOf(length));
 
-                if (stepList != null && stepList.size() > 0) {
+                if (stepList != null) {
                     XArray<XMap> xarray = new XArray<XMap>();
                     for(Step step : stepList) {
                         xarray.add(step.getData());
