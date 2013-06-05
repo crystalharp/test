@@ -13,12 +13,13 @@
         android:orientation="vertical"
          >
         
+             <!-- android:background="@drawable/list_single" -->
          <RelativeLayout
              android:id="@+id/check_view"
              android:layout_width="fill_parent"
              android:layout_height="64dp"
              android:orientation="horizontal"
-             android:background="@drawable/list_single"
+             android:background="@drawable/list_header"
              android:paddingLeft="8dp"
              android:paddingTop="14dp"
              android:paddingRight="8dp"
