@@ -49,7 +49,7 @@
                 android:textColor="@color/black_dark"
                 android:textSize="18sp"
                 android:textStyle="bold"
-                android:text="北京"
+                android:text="@string/app_name"
                 android:gravity="left|center_vertical"
                 />
             <ImageView
@@ -68,7 +68,7 @@
                 android:drawableRight="@drawable/icon_arrow_right"
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"
-                android:text="选择位置"
+                android:text="@string/hotel_select_location"
                 android:gravity="left|center_vertical"
                 />
             <ImageView
@@ -108,7 +108,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:layout_marginLeft="40dp"
-	                tkandroid:checkin="入住"
+	                tkandroid:checkin="@string/hotel_checkin_"
 	                >
 	                </com.tigerknows.ui.hotel.DateWidget>
 	            <ImageView
@@ -124,7 +124,7 @@
 	                android:layout_width="wrap_content"
 	                android:layout_height="wrap_content"
 	                android:layout_toRightOf="@id/split_imv"
-	                tkandroid:checkin="离店"
+	                tkandroid:checkin="@string/hotel_checkout_"
 	                >
 	                </com.tigerknows.ui.hotel.DateWidget>
             </RelativeLayout>
@@ -151,7 +151,7 @@
 	                android:padding="8dp"
 	                android:textColor="@color/black_dark"
 	                android:textSize="16sp"
-	                android:text="星级/品牌/价格"
+	                android:text="@string/hotel_category_title"
 	                android:gravity="center"
 	                />
 	            <TextView
@@ -165,7 +165,7 @@
 	                android:paddingBottom="8dp"
 	                android:textColor="@color/orange"
 	                android:textSize="16sp"
-	                android:text="不限"
+	                android:text="@string/hotel_not_limit"
 	                android:gravity="center"
 	                />
             </LinearLayout>
@@ -193,7 +193,7 @@
 	                android:padding="8dp"
 	                android:textColor="@color/white"
 	                android:textSize="18sp"
-	                android:text="查找酒店"
+	                android:text="@string/hotel_query"
 	                android:gravity="center"
 			        android:shadowDx="0"
 			        android:shadowDy="1"
@@ -214,7 +214,7 @@
                 android:padding="8dp"
                 android:textColor="@color/black_dark"
                 android:textSize="18sp"
-                android:text="已订酒店"
+                android:text="@string/hotel_ordered"
                 android:gravity="left|center_vertical"
                 />
         </LinearLayout>

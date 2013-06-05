@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 public class DateWidget extends LinearLayout {
@@ -23,6 +24,8 @@ public class DateWidget extends LinearLayout {
     
     private Calendar mCalendar;
     
+    private SimpleDateFormat mMonthFormat;
+    
     public DateWidget(Context context) {
         this(context, null);
     }
@@ -35,6 +38,8 @@ public class DateWidget extends LinearLayout {
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.hotel_date_widget, this, // we are the parent
                 true);
+        
+        mMonthFormat = new SimpleDateFormat(context.getString(R.string.simple_month_format));
         
         findViews();
         
@@ -58,7 +63,7 @@ public class DateWidget extends LinearLayout {
         if (mCalendar == null) {
             return;
         }
-        mMonthTxv.setText(String.valueOf(mCalendar.get(Calendar.MONTH)+1)+"月");
+        mMonthTxv.setText(mMonthFormat.format(mCalendar.getTime()));
         mDayTxv.setText(String.valueOf(mCalendar.get(Calendar.DAY_OF_MONTH)));
         mWeekTxv.setText(getContext().getResources().getStringArray(R.array.week_days)[mCalendar.get(Calendar.DAY_OF_WEEK)-1]);
     }

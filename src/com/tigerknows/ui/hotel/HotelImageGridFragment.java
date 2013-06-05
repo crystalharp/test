@@ -74,7 +74,7 @@ public class HotelImageGridFragment extends BaseFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
-        mTitleBtn.setText("酒店图片（"+ mImageList.size()+"张）");
+        mTitleBtn.setText(mSphinx.getString(R.string.hotel_picture_title, mImageList.size()));
 		setState(mState);
 	}
 	

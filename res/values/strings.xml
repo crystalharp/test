@@ -1072,6 +1072,8 @@
     <string name="cancel_order">取消订单</string>
     
     <string name="simple_month_day_format">M月d日</string>
+    <string name="simple_day_format">d日</string>
+    <string name="simple_month_format">M月</string>
     
     <string name="no_order">暂无订单，\n快去预订酒店吧！</string>
     
@@ -1087,4 +1089,14 @@
     <string name="can_not_found_target_location">找不到目标位置</string>
     <string name="can_not_found_result_and_retry">找不到你要的结果\n建议尝试更改条件试试</string>
     <string name="other_hotel">其他酒店</string>
+    <string name="hotel_picture_title">酒店图片（%1$d张）</string>
+    <string name="hotel_reserve">酒店预订</string>
+    <string name="hotel_select_location">选择位置</string>
+    <string name="hotel_please_select_location">请选择位置</string>
+    <string name="hotel_not_limit">不限</string>
+    <string name="hotel_query">查找酒店</string>
+    <string name="hotel_category_title">星级/品牌/价格</string>
+    <string name="hotel_checkin_">入住</string>
+    <string name="hotel_checkout_">离店</string>
+    <string name="night">晚</string>
 </resources>

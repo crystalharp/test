@@ -117,7 +117,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText("酒店预订");
+        mTitleBtn.setText(R.string.hotel_reserve);
         refreshDate();
         
         mSphinx.showHint(TKConfig.PREFS_HINT_HOTEL_HOME, R.layout.hint_hotel_home);
@@ -565,7 +565,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         }
         
         if (result == false) {
-            mLocationBtn.setText("选择位置");
+            mLocationBtn.setText(R.string.hotel_select_location);
         }
     }
     
@@ -587,7 +587,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         }
         
         if (result == false) {
-            mPriceTxv.setText("不限");
+            mPriceTxv.setText(R.string.hotel_not_limit);
         }
     }
     
