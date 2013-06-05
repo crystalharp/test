@@ -151,14 +151,14 @@ public class Hotel extends XMapData {
         if (imageThumbUrl != null) {
             data.put(FIELD_IMAGE_THUMB, imageThumbUrl);
         }
-        if (originalHotelTKDrawableList != null && originalHotelTKDrawableList.size() > 0) {
+        if (originalHotelTKDrawableList != null) {
             XArray<XMap> xArray = new XArray<XMap>();
             for(int i = 0, size = originalHotelTKDrawableList.size(); i < size; i++) {
                 xArray.add(originalHotelTKDrawableList.get(i).getData());
             }
             data.put(FIELD_IMAGE_LIST, xArray);
         }
-        if (this.roomTypeList != null && this.roomTypeList.size() > 0) {
+        if (this.roomTypeList != null) {
             XArray<XMap> xArray = new XArray<XMap>();
             for(int i = 0, size = roomTypeList.size(); i < size; i++) {
                 xArray.add(roomTypeList.get(i).getData());
