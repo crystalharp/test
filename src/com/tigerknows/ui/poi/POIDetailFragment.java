@@ -5,6 +5,7 @@
 package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -63,11 +64,18 @@ import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataOperation.DianyingQueryResponse;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Dianying;
+import com.tigerknows.model.Fendian;
+import com.tigerknows.model.Hotel;
+import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.ProxyQuery;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
 import com.tigerknows.model.Response;
+import com.tigerknows.model.TKDrawable;
+import com.tigerknows.model.Tuangou;
+import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Yingxun;
+import com.tigerknows.model.Zhanlan;
 import com.tigerknows.model.DataOperation.POIQueryResponse;
 import com.tigerknows.model.DataOperation.YingxunQueryResponse;
 import com.tigerknows.model.DataQuery.CommentResponse;
@@ -81,7 +89,9 @@ import com.tigerknows.share.ShareAPI;
 import com.tigerknows.share.TKWeixin;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.HintActivity;
 import com.tigerknows.util.Utility;
+import com.tigerknows.util.ShareTextUtil;
 
 /**
  * @author Peng Wenyue
@@ -214,7 +224,63 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             }
             DataOperation dataOperation = new DataOperation(mSphinx);
             Hashtable<String, String> criteria = new Hashtable<String, String>();
-            if (object instanceof Dianying) {
+            if (object instanceof DynamicPOI) {
+//                DynamicPOI dynamic = (DynamicPOI) object;
+//                String dataType = dynamic.getType();
+//                criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, dataType);
+//                criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+//                criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getMasterUid());
+//                
+//                if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+//                    mActionLog.addAction(mActionTag +  ActionLog.POIDetailTuangou);
+//                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+//                            Tuangou.NEED_FILELD
+//                            + Util.byteToHexString(Tuangou.FIELD_NOTICED)
+//                            + Util.byteToHexString(Tuangou.FIELD_CONTENT_TEXT)
+//                            + Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC));
+//                    criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+//                            Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[0]" + ";" +
+//                                    Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[0]" + ";" +
+//                                    Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_TAOCAN)+"_[0]");
+//                    dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+//                    List<BaseQuery> list = new ArrayList<BaseQuery>();
+//                    list.add(dataOperation);
+//                    dataOperation = new DataOperation(mSphinx);
+//                    criteria = new Hashtable<String, String>();
+//                    criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+//                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_FENDIAN);
+//                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getSlaveUid());
+//                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Fendian.NEED_FILELD);
+//                    dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+//                    list.add(dataOperation);
+//                    mTkAsyncTasking = mSphinx.queryStart(list);
+//                    mBaseQuerying = list;
+//                } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
+//                    mActionLog.addAction(mActionTag +  ActionLog.POIDetailYanchu);
+//                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+//                            Yanchu.NEED_FILELD + Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
+//                    criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+//                            Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
+//                                    Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
+//                    dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+//                    List<BaseQuery> list = new ArrayList<BaseQuery>();
+//                    list.add(dataOperation);
+//                    mTkAsyncTasking = mSphinx.queryStart(list);
+//                    mBaseQuerying = list;
+//                } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+//                    mActionLog.addAction(mActionTag +  ActionLog.POIDetailZhanlan);
+//                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+//                            Zhanlan.NEED_FILELD + Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
+//                    criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+//                            Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
+//                                    Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
+//                    dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
+//                    List<BaseQuery> list = new ArrayList<BaseQuery>();
+//                    list.add(dataOperation);
+//                    mTkAsyncTasking = mSphinx.queryStart(list);
+//                    mBaseQuerying = list;
+//                }
+            } else if (object instanceof Dianying) {
                 Dianying dynamic = (Dianying) object;
                 List<BaseQuery> list = new ArrayList<BaseQuery>();
 
@@ -387,12 +453,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		POIDetailFragment mPOIDetailFragment;
 		Sphinx mSphinx;
 		LayoutInflater mInflater;
-        protected List<BaseQuery> mBaseQuerying;
-        protected TKAsyncTask mTkAsyncTasking;
 		
-		void query(List<BaseQuery> list){
-		    mTkAsyncTasking = mSphinx.queryStart(list);
-		    mBaseQuerying = list; 
+		static void query(POIDetailFragment fragment, List<BaseQuery> list){
+		    fragment.mTkAsyncTasking = fragment.mSphinx.queryStart(list);
+		    fragment.mBaseQuerying = list; 
 		}
 		
 		public abstract List<DynamicPOIViewBlock> getViewList(POI poi);
