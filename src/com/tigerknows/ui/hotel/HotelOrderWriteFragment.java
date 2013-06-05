@@ -88,6 +88,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private EditText mRoomMobileNumberEdt;
     private Button mSubmitOrderBtn;
     private EditText mBookUsernameEdt;
+    private ImageView mHotelBgImv;
+    private LinearLayout mHotelMobileLly;
+    private LinearLayout mHotelIdcardLly;
+    private EditText mRoomIdcardEdt;
     
     private POI mPOI;
     private Hotel mHotel;
@@ -96,6 +100,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private RoomTypeDynamic mRoomtypeDynamic;
     private Calendar mCheckIn;
     private Calendar mCheckOut;
+    
+    private boolean mIsSevenInn;
+    private String mIdCardNumber;	//预订7天酒店要填的身份证号，与信用卡担保页不同
 
     private static final long MAX_ROOM_HOWMANY = 5;
     
@@ -166,6 +173,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomMobileNumberEdt = (EditText) mRootView.findViewById(R.id.room_mobile_number_edt);
         mSubmitOrderBtn = (Button) mRootView.findViewById(R.id.submit_order_btn);
         mBookUsernameEdt = (EditText) mRootView.findViewById(idArray[0]);
+        mHotelMobileLly = (LinearLayout) mRootView.findViewById(R.id.hotel_mobile_lly);
+        mHotelBgImv = (ImageView) mRootView.findViewById(R.id.hotel_bg_imv);
+        mHotelIdcardLly = (LinearLayout) mRootView.findViewById(R.id.hotel_idcard_lly);
+        mRoomIdcardEdt = (EditText) mRootView.findViewById(R.id.room_idcard_edt);
     }
 
     protected void setListener() {
@@ -233,6 +244,16 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	}else{
         		mMobile = str;
         	}
+        	str = mRoomIdcardEdt.getText().toString();
+        	if(mIsSevenInn && TextUtils.isEmpty(str)){
+        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.seveninn_idcard_code_empty_error), mRoomIdcardEdt);
+         		return;
+        	}else if(mIsSevenInn && !ValidateUtil.isValidIdCardCode(str)){
+        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_idcard_code_format), mRoomIdcardEdt);
+        		return;
+        	}else if(mIsSevenInn){
+        		mIdCardNumber = str;
+        	}
         	submit(false);
 
             break;
@@ -253,6 +274,17 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 		rtList.get(mRTimeWhich).getNeed();
 		mTypeCreditAssure = rtList.get(mRTimeWhich).getType();
     	mRoomReserveBtn.setText(mRTime);
+    	if(mIsSevenInn){
+    		mHotelMobileLly.setBackgroundDrawable(getResources().getDrawable(R.drawable.list_middle));
+    		mHotelBgImv.setVisibility(VISIBLE);
+    		mHotelIdcardLly.setVisibility(VISIBLE);
+    	}else{
+    		mHotelMobileLly.setBackgroundDrawable(getResources().getDrawable(R.drawable.list_footer));
+    		mHotelBgImv.setVisibility(GONE);
+    		mHotelIdcardLly.setVisibility(GONE);
+    		mRoomIdcardEdt.setText("");
+    		mIdCardNumber="";
+    	}
     }
     
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
@@ -278,6 +310,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	mRoomType = roomtype;
     	mRoomtypeDynamic = roomTypeDynamic;
     	mHotelNameTxv.setText(mPOI.getName());
+    	mIsSevenInn = mPOI.getName().contains("7天");
     	mRoomtypeTxv.setText(mRoomType.getRoomType());
     	String roomTypeDetail="";
     	String appendContent;
@@ -595,7 +628,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 			
     		break;
     	case Response.RESPONSE_CODE_HOTEL_NEED_REGIST:
-    		mSphinx.getHotelSeveninnRegistFragment().setData(mBookUsername, mMobile);
+    		mSphinx.getHotelSeveninnRegistFragment().setData(mBookUsername, mMobile, mIdCardNumber);
     		mSphinx.showView(R.id.view_hotel_seveninn_regist);
     		break;
     	case Response.RESPONSE_CODE_HOTEL_NEED_CREDIT_ASSURE:
