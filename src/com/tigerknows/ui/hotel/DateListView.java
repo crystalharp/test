@@ -60,6 +60,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     private Button confirmBtn;
     
     private TextView titleTxv;
+    private View titleView;
     
     private ListView checkinLsv;
     private ListView checkoutLsv;
@@ -192,6 +193,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         titleTxv = (TextView) findViewById(R.id.title_txv);
         checkinLsv = (ListView) findViewById(R.id.parent_lsv);
         checkoutLsv = (ListView) findViewById(R.id.child_lsv);
+        titleView = findViewById(R.id.control_view);
     }
     
     protected void setListener() {
@@ -238,6 +240,12 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
             }
         });
         confirmBtn.setOnClickListener(this);
+        titleView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
     }
     
     private void confirm() {

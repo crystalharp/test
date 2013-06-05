@@ -17,6 +17,7 @@
         tkandroid:navigationState="2"
         >
     </com.tigerknows.ui.hotel.NavigationWidget>
+    
     <ScrollView android:id="@+id/hotel_order_write_scv"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
