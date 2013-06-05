@@ -280,7 +280,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             checkout = out;
         }
         refreshDate();
-        getDateListView().refresh(checkin, checkout);
+//        getDateListView().refresh(checkin, checkout);
         List<BaseQuery> list = generateQuery(mPOI);
         list.get(0).setTipText(mSphinx.getString(R.string.doing_and_wait));
         query(mPOIDetailFragment, list);
@@ -302,12 +302,12 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             checkout = (Calendar) checkin.clone();
             checkout.add(Calendar.DAY_OF_YEAR, 1);
         }
-        getDateListView().refresh(checkin, checkout);
+        refreshDate();
+//        getDateListView().refresh(checkin, checkout);
     }
     
     final public void refreshDate() {
-//        DateListView dateListView = getDateListView();
-//        getDateListView().refresh(checkin, checkout);
+        getDateListView().refresh(checkin, checkout);
         mCheckInDat.setCalendar(checkin);
         mCheckOutDat.setCalendar(checkout);
 
@@ -336,7 +336,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         }
         mPOI = poi;
         mHotel = poi.getHotel();
-        refreshDate();
+//        refreshDate();
 
         mAllRoomList.clear();
         mShowingRoomList.clear();

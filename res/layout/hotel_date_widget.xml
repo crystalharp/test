@@ -11,7 +11,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:paddingBottom="6dp"
-        android:text="13月"
+        android:text="@string/app_name"
         android:textStyle="bold"
         android:textSize="18sp"
         />
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/month_txv"
         android:layout_alignParentBottom="true"
-        android:text="32"
+        android:text="@string/app_name"
         android:textStyle="bold"
         android:textSize="32sp"
         />
@@ -30,7 +30,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/day_txv"
-        android:text="周八"
+        android:text="@string/app_name"
         android:textSize="14sp"
         />
     <TextView
@@ -40,7 +40,7 @@
         android:layout_toRightOf="@id/day_txv"
         android:layout_below="@id/week_txv"
         android:textColor="@color/orange"
-        android:text="入住"
+        android:text="@string/hotel_checkin_"
         android:textSize="14sp"
         />
 </RelativeLayout>

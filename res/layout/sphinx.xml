@@ -149,10 +149,5 @@
         />
 	</RelativeLayout>
 
-    <ImageView 
-        android:id="@+id/startup_imv"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:background="@drawable/startup"/>
     
 </RelativeLayout>

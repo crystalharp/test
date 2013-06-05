@@ -39,6 +39,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -72,6 +73,12 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     
     private MyAdapter checkinAdapter;
     private MyAdapter checkoutAdapter;
+    
+    Context context;
+    
+    SimpleDateFormat monthDayFormat;
+    
+    SimpleDateFormat dayFormat;
     
     String actionTag;
     
@@ -129,11 +136,11 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     void refreshTitle() {
         today.add(Calendar.DAY_OF_YEAR, checkinPosition);
         StringBuilder s = new StringBuilder();
-        s.append((today.get(Calendar.MONTH)+1)+"月"+(today.get(Calendar.DAY_OF_MONTH))+"日入住");
+        s.append(monthDayFormat.format(today.getTime())+context.getString(R.string.hotel_checkin_));
         int indexDay = s.length()-2;
         s.append(checkoutPosition+1);
         int indexN = s.length();
-        s.append("晚");
+        s.append(context.getString(R.string.night));
         SpannableStringBuilder style = new SpannableStringBuilder(s.toString());
         int orange = getContext().getResources().getColor(R.color.orange);
         style.setSpan(new ForegroundColorSpan(orange),0,indexDay,Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
@@ -171,9 +178,13 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         inflater.inflate(R.layout.hotel_date_list, this, // we are the parent
                 true);
         
+        this.context = context;
         Resources resources = context.getResources();
         days = resources.getStringArray(R.array.days);
         weedDays = resources.getStringArray(R.array.week_days);
+        
+        monthDayFormat =new SimpleDateFormat(context.getString(R.string.simple_month_day_format));
+        dayFormat =new SimpleDateFormat(context.getString(R.string.simple_day_format));
         
         findViews();
         setListener();
@@ -357,7 +368,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     String makeCheckinDateString(Calendar calendar, int add) {
         String result = null;
         calendar.add(Calendar.DAY_OF_YEAR, add);
-        result = (calendar.get(Calendar.MONTH)+1) + "月" + calendar.get(Calendar.DAY_OF_MONTH) + "日";
+        result = monthDayFormat.format(calendar.getTime());
         if (add < 3) {
             result += days[add];
         } else {
@@ -371,9 +382,9 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         String result = null;
         int month = calendar.get(Calendar.MONTH);
         calendar.add(Calendar.DAY_OF_YEAR, add);
-        result = (month == calendar.get(Calendar.MONTH) ? "" : ((month+1)%12 +1) + "月" ) + calendar.get(Calendar.DAY_OF_MONTH) + "日离店";
+        result = (month == calendar.get(Calendar.MONTH) ? dayFormat.format(calendar.getTime()) : monthDayFormat.format(calendar.getTime()) ) + context.getString(R.string.hotel_checkout_);
         result += add;
-        result += "晚";
+        result += context.getString(R.string.night);
         calendar.add(Calendar.DAY_OF_YEAR, -add);
         return result;
     }

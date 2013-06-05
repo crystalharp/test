@@ -76,6 +76,8 @@ import android.widget.Toast;
 
 import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.HistoryWordTable;
@@ -929,6 +931,10 @@ public class Utility {
 //                minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
 //            }
 //        }
+        if (maxIndex > lastVisiblePosition && (minIndex-10) >= 0) {
+            minIndex -= 10;
+            maxIndex -= 10;
+        }
         return new int[]{minIndex, maxIndex, (firstVisiblePosition-(isShowAPOI ? 1 : 0)+(startPage%2 != 0 ? pageSize : 0)) % TKConfig.getPageSize()};
     }
     
@@ -1001,7 +1007,7 @@ public class Utility {
         queryTraffic(sphinx, poi, TrafficQueryFragment.END, actionTag);
     }
     
-    public static void queryTraffic(final Sphinx sphinx, POI poi, final int location, final String actionTag) {
+    public static void queryTraffic(final Sphinx sphinx, final POI poi, final int location, final String actionTag) {
         
         final POI poiForTraffic = poi.clone();
         final String[] list = sphinx.getResources().getStringArray(R.array.goto_here);
@@ -1044,17 +1050,23 @@ public class Utility {
                         break;
                 }
                 
-                POI myLocationPOI = sphinx.getPOI(true);
+                CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
                 TrafficQueryFragment trafficQueryFragment = sphinx.getTrafficQueryFragment();
+                MapEngine mapEngine = MapEngine.getInstance();
                 if (queryType != -1
-                        && myLocationPOI.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
+                        && locationCityInfo != null
+                        && mapEngine.getCityId(poi.getPosition()) == mapEngine.getCityId(locationCityInfo.getPosition())) {
+                    POI locationPOI = new POI();
+                    locationPOI.setSourceType(POI.SOURCE_TYPE_MY_LOCATION);
+                    locationPOI.setPosition(locationCityInfo.getPosition());
+                    locationPOI.setName(sphinx.getString(R.string.my_location));
                     POI start;
                     POI end;
                     if (location == TrafficQueryFragment.START) {
                         start = poiForTraffic;
-                        end = myLocationPOI;
+                        end = locationPOI;
                     } else {
-                        start = myLocationPOI;
+                        start = locationPOI;
                         end = poiForTraffic;
                     }
                     

@@ -147,7 +147,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText("选择位置");
+        mTitleBtn.setText(R.string.hotel_select_location);
         mRightBtn.setVisibility(View.INVISIBLE);
     }
 
@@ -453,7 +453,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
 
         mActionLog.addAction(ActionLog.TrafficAlternative);
         final Dialog dialog = Utility.showNormalDialog(mSphinx,
-                "请选择位置",
+                mSphinx.getString(R.string.hotel_please_select_location),
                 null,
                 listView,
                 null,
