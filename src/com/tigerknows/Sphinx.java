@@ -1529,7 +1529,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             uiStackClose(new int[]{R.id.view_poi_home});
             showView(R.id.view_poi_home);
-            POI poi = getPOI();
+            POI poi = getPOI(true);
             if (poi.getSourceType() == POI.SOURCE_TYPE_MY_LOCATION) {
                 poi.setName(mMapEngine.getPositionName(poi.getPosition(), (int)mMapView.getZoomLevel()));
                 List<POI> list = new ArrayList<POI>();
