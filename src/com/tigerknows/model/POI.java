@@ -901,7 +901,7 @@ public class POI extends BaseData {
         if (lastComment != null) {
             data.put(FIELD_LAST_COMMENT, lastComment.getData());
         }
-        if (dynamicPOIList != null && dynamicPOIList.size() > 0) {
+        if (dynamicPOIList != null) {
             XArray<XMap> xarray = new XArray<XMap>();
             for(int i = 0, size = dynamicPOIList.size(); i < size; i++) {
                 xarray.add(dynamicPOIList.get(i).getData());
