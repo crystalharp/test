@@ -111,17 +111,17 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
         ZhanlanDetailView view;
 
         view = (ZhanlanDetailView) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
-        view.setData(mDataList.get(position));
+        view.setData(mDataList.get(position), position);
         view.onResume();
         
         if (position - 1 >= 0) {
             view = (ZhanlanDetailView) mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-            view.setData(mDataList.get(position-1));
+            view.setData(mDataList.get(position-1), position);
             view.onResume();
         }
         if (position + 1 < mDataList.size()) {
             view = (ZhanlanDetailView) mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-            view.setData(mDataList.get(position+1));
+            view.setData(mDataList.get(position+1), position);
             view.onResume();
         }
     }    
