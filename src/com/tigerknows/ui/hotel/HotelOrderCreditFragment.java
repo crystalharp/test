@@ -156,9 +156,9 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	if(TextUtils.isEmpty(str)){
         		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_owner_empty_tip), mCreditOwnerEdt);
         		return;
-        	}else if(!ValidateUtil.isValidElongName(str)){
-        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format), mCreditOwnerEdt);
-        		return;
+    		}else if(!ValidateUtil.isValidElongName(str)){
+    			Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format), mCreditOwnerEdt);
+    			return;
         	}
         	list.add(str);
         	
