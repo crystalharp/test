@@ -320,20 +320,19 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         blockList.clear();
         
         /**
-         * 产品要求无网络的时候加载过的可以显示且不刷新，未加载过的显示点击加载。
-         * 写成这样就可以有数据就去生成Hotel显示Block，无数据返回加载失败的Block
+         * 失败就显示失败，不再根据数据生成可能是好的内容
          */
+        //加载失败，只显示上面部分
+        if (!mUpperBlock.mLoadSucceed) {
+        	setState(STATE_LOAD_FAILED);
+        	roomTypeList.refreshList(null);
+        	blockList.add(mUpperBlock);
+        	LogWrapper.i(TAG, "Hotel viewBlock is:" + blockList);
+        	return blockList;
+        }
         //数据全空，可能是加载失败，也可能是还未加载
         if (poi == null || poi.getHotel().getUuid() == null || poi.getHotel().getRoomTypeList() == null) {
             LogWrapper.i(TAG, "poi or hotel or roomTypeList is null, nothing to show for DynamicHotel");
-            //加载失败，只显示上面部分
-            if (!mUpperBlock.mLoadSucceed) {
-                setState(STATE_LOAD_FAILED);
-                roomTypeList.refreshList(null);
-                blockList.add(mUpperBlock);
-                LogWrapper.i(TAG, "Hotel viewBlock is:" + blockList);
-            }
-        
             return blockList;
         }
         mPOI = poi;
