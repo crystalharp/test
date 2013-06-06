@@ -1102,4 +1102,5 @@
     <string name="hotel_checkin_">入住</string>
     <string name="hotel_checkout_">离店</string>
     <string name="night">晚</string>
+    <string name="can_not_reserve">订满</string>
 </resources>

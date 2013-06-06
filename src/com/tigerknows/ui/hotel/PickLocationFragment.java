@@ -13,6 +13,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -138,6 +139,8 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 mKeywordEdt.setText(tkWord.word);
             }
         };
+
+        mKeywordEdt.getInput().setFilters(new InputFilter[] { new InputFilter.LengthFilter(Integer.MAX_VALUE) });
         mSuggestWordListManager = new SuggestWordListManager(mSphinx, mSuggestLsv, mKeywordEdt, a, HistoryWordTable.TYPE_TRAFFIC);
         mQueryBtn.setBackgroundResource(R.drawable.btn_confirm_hotel_normal);
         
@@ -297,7 +300,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
      */
     public void reset() {
         mSuggestLsv.setSelectionFromTop(0, 0);
-        mTKWord.word = null;
+        mTKWord = new TKWord();
         mKeywordEdt.setText(null);
         mKeywordEdt.clearFocus();
         mViewPager.setCurrentItem(0);
