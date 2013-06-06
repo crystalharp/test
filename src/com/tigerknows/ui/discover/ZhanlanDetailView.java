@@ -101,8 +101,8 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
     }
     
     @Override
-    public void setData(BaseData data) {
-        super.setData(data);
+    public void setData(BaseData data, int position) {
+        super.setData(data, position);
         if (data == null || (data instanceof Zhanlan) == false || mData == data) {
             return;
         }
@@ -247,7 +247,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
         }
         final DataOperation dataOperation = (DataOperation)(tkAsyncTask.getBaseQuery());
         boolean isPulledDynamicPOIRequest = dataOperation.isPulledDynamicPOIRequest();
-        if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener, super.mParentFragment.mViewPager.getCurrentItem()==mPosition)) {
             mParentFragment.isReLogin = true;
             return true;
         } else {

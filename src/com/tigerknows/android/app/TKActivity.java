@@ -477,10 +477,15 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         mTkAsyncTasking = null;
     }
+    public static boolean checkReLogin(BaseQuery baseQuery, final Activity activity, boolean sourceUserHome,
+            final int sourceViewIdLogin, final int targetViewIdLoginSuccess, final int targetViewIdLoginFailed,
+            final DialogInterface.OnClickListener cancelOnClickListener){
+    	return checkReLogin(baseQuery, activity, sourceUserHome, sourceViewIdLogin, targetViewIdLoginSuccess, targetViewIdLoginFailed, cancelOnClickListener, true);
+    }
     
     public static boolean checkReLogin(BaseQuery baseQuery, final Activity activity, boolean sourceUserHome,
             final int sourceViewIdLogin, final int targetViewIdLoginSuccess, final int targetViewIdLoginFailed,
-            final DialogInterface.OnClickListener cancelOnClickListener) {
+            final DialogInterface.OnClickListener cancelOnClickListener, boolean showDialog) {
         final Response response = baseQuery.getResponse();
         if (response != null) {
             int responseCode = response.getResponseCode();
@@ -492,8 +497,11 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
             }
             
             if (resId != -1
-                    && activity.isFinishing() == false) {
+                    && activity.isFinishing() == false ) {
                 Globals.clearSessionAndUser(activity);
+                if(!showDialog){
+                	return true;
+                }
                 Dialog dialog;
                 if (sourceUserHome == false) {
                     dialog = Utility.showNormalDialog(activity, 
