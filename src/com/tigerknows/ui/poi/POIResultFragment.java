@@ -279,7 +279,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         if (mTitleBtn != null) {
             mTitleBtn.setText(mTitleText);
         }
-        mEmptyTxv.setText(str);
+
+        if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType())) {
+            mEmptyTxv.setText(R.string.can_not_found_result_and_retry);
+        } else {
+            mEmptyTxv.setText(str);
+        }
     }
     
     private void refreshFilter(List<Filter> filterList) {

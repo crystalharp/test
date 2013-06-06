@@ -817,7 +817,7 @@ public final class DataQuery extends BaseQuery {
         
                     List<Integer> list = baseResponse.getFilterCategoryIndex();
                     if (list != null && list.size() > 0) {
-                        filterList.add(makeFilterResponse(context, list, staticFilterDataCategoryOrder.getVersion(), staticFilterDataCategoryOrder.getCategoryFilterOption(), FilterCategoryOrder.FIELD_LIST_CATEGORY));
+                        filterList.add(makeFilterResponse(context, list, staticFilterDataCategoryOrder.getVersion(), staticFilterDataCategoryOrder.getCategoryFilterOption(), FilterCategoryOrder.FIELD_LIST_CATEGORY, BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType) == false));
                     }
                     list = baseResponse.getFilterOrderIndex();
                     if (list != null && list.size() > 0) {
@@ -900,8 +900,12 @@ public final class DataQuery extends BaseQuery {
 
         return s.toString();
     }
-    
+
     public static Filter makeFilterResponse(Context context, List<Integer> indexList, String version, List<FilterOption> filterOptionList, byte key) {
+        return makeFilterResponse(context, indexList, version, filterOptionList, key, true);
+    }
+    
+    public static Filter makeFilterResponse(Context context, List<Integer> indexList, String version, List<FilterOption> filterOptionList, byte key, boolean addAllAnyone) {
 
         Filter filter = new Filter();
         filter.version = version;
@@ -933,23 +937,25 @@ public final class DataQuery extends BaseQuery {
                 }
             }
             
-            // 增加全部
-            List<Filter> chidrenFilterList = filter.getChidrenFilterList();
-            for(Filter chidrenFilter : chidrenFilterList) {
-                if (chidrenFilter.getChidrenFilterList().size() > 0 &&
-                        chidrenFilter.getFilterOption().getParent() == -1) {
-                    FilterOption filterOption1 = new FilterOption();
-                    filterOption1.setName(context.getString(R.string.all_anyone, ""));
-                    
-                    int id = chidrenFilter.getFilterOption().getId();
-                    filterOption1.setId(id);
-                    filterOption1.setParent(id);
-                    
-                    Filter filter1 = new Filter();
-                    filter1.filterOption = filterOption1;
-                    filter1.selected = chidrenFilter.selected;
-                    chidrenFilter.getChidrenFilterList().add(0, filter1);
-                    chidrenFilter.selected = false;
+            if (addAllAnyone) {
+                // 增加全部
+                List<Filter> chidrenFilterList = filter.getChidrenFilterList();
+                for(Filter chidrenFilter : chidrenFilterList) {
+                    if (chidrenFilter.getChidrenFilterList().size() > 0 &&
+                            chidrenFilter.getFilterOption().getParent() == -1) {
+                        FilterOption filterOption1 = new FilterOption();
+                        filterOption1.setName(context.getString(R.string.all_anyone, ""));
+                        
+                        int id = chidrenFilter.getFilterOption().getId();
+                        filterOption1.setId(id);
+                        filterOption1.setParent(id);
+                        
+                        Filter filter1 = new Filter();
+                        filter1.filterOption = filterOption1;
+                        filter1.selected = chidrenFilter.selected;
+                        chidrenFilter.getChidrenFilterList().add(0, filter1);
+                        chidrenFilter.selected = false;
+                    }
                 }
             }
         }
