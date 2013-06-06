@@ -211,6 +211,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 mSphinx.getPickLocationFragment().reset();
                 Filter filter = getFilter(mFilterList, FilterArea.FIELD_LIST);
                 if (filter == null || filter.getVersion().equals("0.0.0")) {
+                    queryFilter();
                     showProgressDialog();
                 } else {
                     mSphinx.showView(R.id.view_hotel_pick_location);
