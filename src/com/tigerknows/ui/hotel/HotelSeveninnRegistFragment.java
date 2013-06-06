@@ -102,7 +102,9 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 			if(TextUtils.isEmpty(str)){
 				Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_room_person_empty_tip), mSeveninnNameEdt);
 				return;
-				// 注册7天酒店时，不校验姓名格式
+    		}else if(!ValidateUtil.isValidElongName(str)){
+    			Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format), mSeveninnNameEdt);
+    			return;
 			}else{
 				mPersonName = str;
 			}
@@ -172,13 +174,16 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
     	}
 	}
 	
-	public void setData(String name, String mobile){
+	public void setData(String name, String mobile, String idcard){
 		mSeveninnNameEdt.setText(name);
 		mSeveninnNameEdt.requestFocus();
 		Selection.setSelection(mSeveninnNameEdt.getText(), mSeveninnNameEdt.length());
 		mSeveninnPhoneEdt.setText(mobile);
 		mSeveninnPhoneEdt.requestFocus();
 		Selection.setSelection(mSeveninnPhoneEdt.getText(), mSeveninnPhoneEdt.length());
+		mSeveninnIdcardCodeEdt.setText(idcard);
+		mSeveninnIdcardCodeEdt.requestFocus();
+		Selection.setSelection(mSeveninnIdcardCodeEdt.getText(), mSeveninnIdcardCodeEdt.length());
 		mSeveninnNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
 				R.color.orange,
 				mSphinx.getString(R.string.seveninn_note, mobile),
