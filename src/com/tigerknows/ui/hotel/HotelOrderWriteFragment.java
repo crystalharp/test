@@ -250,9 +250,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         		if(TextUtils.isEmpty(tempStr)){
         			Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_room_person_empty_tip), thisPersonEdt);
         			return;
-        		}else if(!ValidateUtil.isValidElongName(tempStr)){
-        			Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format), thisPersonEdt);
-        			return;
         		}
         		str += tempStr;
         	}
