@@ -281,8 +281,10 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         }
         refreshDate();
 //        getDateListView().refresh(checkin, checkout);
-        List<BaseQuery> list = generateQuery(mPOI);
-        list.get(0).setTipText(mSphinx.getString(R.string.doing_and_wait));
+        List<BaseQuery> list = new ArrayList<BaseQuery>(); 
+        BaseQuery query = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_DETAIL);
+        query.setTipText(mSphinx.getString(R.string.doing_and_wait));
+        list.add(query);
         query(mPOIDetailFragment, list);
         mPOIDetailFragment.dismissPopupWindow();
     }
@@ -446,6 +448,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
 
     BaseQuery buildHotelQuery(Calendar checkin, Calendar checkout, POI poi, String needFiled){
+        mHotelCityId = MapEngine.getInstance().getCityId(mPOI.getPosition());
         String checkinTime = HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkin.getTime());
         String checkoutTime = HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkout.getTime());
         Hashtable<String, String> criteria = new Hashtable<String, String>();
@@ -462,6 +465,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     BaseQuery buildRoomTypeDynamicQuery(String hotelId, String roomId, String pkgId, Calendar checkin, Calendar checkout){
+        mHotelCityId = MapEngine.getInstance().getCityId(mPOI.getPosition());
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(ProxyQuery.SERVER_PARAMETER_CHECKIN_DATE, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkin.getTime()));
         criteria.put(ProxyQuery.SERVER_PARAMETER_CHECKOUT_DATE, HotelHomeFragment.SIMPLE_DATE_FORMAT.format(checkout.getTime()));
@@ -509,7 +513,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     public List<BaseQuery> generateQuery(POI poi) {
         mPOI = poi;
         List<BaseQuery> baseQueryList = new LinkedList<BaseQuery>();
-        mHotelCityId = MapEngine.getInstance().getCityId(poi.getPosition());
         if (mHotel.getUuid() != null && mHotel.getRoomTypeList() == null) {
             BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Util.byteToHexString(Hotel.FIELD_CAN_RESERVE));
             baseQueryList.add(baseQuery);
