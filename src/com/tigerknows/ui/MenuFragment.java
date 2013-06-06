@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager.LayoutParams;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
@@ -97,13 +96,11 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.poi_btn:
-            	setSoftInpuModeIsResize(true);
             	mActionLog.addAction(ActionLog.MenuPOI);
                 mSphinx.uiStackClose(new int[]{R.id.view_poi_home});
                 mSphinx.showView(R.id.view_poi_home);
                 break;
             case R.id.discover_btn:
-            	setSoftInpuModeIsResize(true);
                 mActionLog.addAction(ActionLog.MenuDiscover);
                 mSphinx.uiStackClose(new int[]{R.id.view_discover_home});
                 mSphinx.showView(R.id.view_discover_home);
@@ -127,7 +124,6 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
 				
                 break;
             case R.id.traffic_btn:
-            	setSoftInpuModeIsResize(true);
                 mActionLog.addAction(ActionLog.MenuTraffic);
                 mSphinx.uiStackClose(new int[]{R.id.view_traffic_home});
             	mSphinx.getTrafficQueryFragment().setState(TrafficViewSTT.State.Normal);
@@ -136,7 +132,6 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 mSphinx.showView(R.id.view_traffic_home);
                 break;
             case R.id.more_btn:
-            	setSoftInpuModeIsResize(false);
                 mActionLog.addAction(ActionLog.MenuMore);
                 mSphinx.uiStackClose(new int[]{R.id.view_more_home});
                 mSphinx.showView(R.id.view_more_home);
@@ -145,13 +140,6 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             default:
                 break;
         }
-    }
-    
-    void setSoftInpuModeIsResize(boolean isResize){
-        android.view.WindowManager.LayoutParams param = mSphinx.getWindow().getAttributes();
-        param.softInputMode = android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN |
-        		(isResize? android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE : android.view.WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
-        mSphinx.getWindow().setAttributes(param);
     }
     
     public void updateMenuStatus(int id) {
