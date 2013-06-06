@@ -233,7 +233,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 />
-            <LinearLayout
+            <LinearLayout android:id="@+id/hotel_mobile_lly"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -266,6 +266,49 @@
                     />
             </LinearLayout>
 
+            <ImageView android:id = "@+id/hotel_bg_imv"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                android:contentDescription="@string/app_name"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:visibility="gone"
+                />
+            <LinearLayout android:id = "@+id/hotel_idcard_lly"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="left|center_vertical"
+                android:background="@drawable/list_footer"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:visibility="gone"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="8dp"
+                    android:textColor="@color/black_dark"
+                    android:textSize="16sp"
+                    android:text="@string/hotel_room_idcard"
+                    android:gravity="left|center_vertical"
+                    />
+                <EditText android:id="@+id/room_idcard_edt"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLength="18"
+                    android:textSize="16sp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/hotel_room_idcard_hint"                    
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:background="@color/transparent"
+                    android:inputType="number"
+                    android:digits="1234567890Xx"
+                    />
+            </LinearLayout>
             <Button android:id="@+id/submit_order_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

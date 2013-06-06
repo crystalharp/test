@@ -172,13 +172,16 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
     	}
 	}
 	
-	public void setData(String name, String mobile){
+	public void setData(String name, String mobile, String idcard){
 		mSeveninnNameEdt.setText(name);
 		mSeveninnNameEdt.requestFocus();
 		Selection.setSelection(mSeveninnNameEdt.getText(), mSeveninnNameEdt.length());
 		mSeveninnPhoneEdt.setText(mobile);
 		mSeveninnPhoneEdt.requestFocus();
 		Selection.setSelection(mSeveninnPhoneEdt.getText(), mSeveninnPhoneEdt.length());
+		mSeveninnIdcardCodeEdt.setText(idcard);
+		mSeveninnIdcardCodeEdt.requestFocus();
+		Selection.setSelection(mSeveninnIdcardCodeEdt.getText(), mSeveninnIdcardCodeEdt.length());
 		mSeveninnNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
 				R.color.orange,
 				mSphinx.getString(R.string.seveninn_note, mobile),

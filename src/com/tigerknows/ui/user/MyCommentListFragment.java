@@ -149,8 +149,7 @@ public class MyCommentListFragment extends BaseFragment {
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
                     Comment comment = (Comment) adapterView.getAdapter().getItem(position);
                     if (comment != null) {
-                        long status = comment.getPOIStatus();
-                        if (status < 0) {
+                        if (comment.getPOI().getStatus() <= 0) {
                             Utility.showNormalDialog(mSphinx, 
                                     mSphinx.getString(R.string.poi_comment_poi_invalid_not_update));
                         } else {
@@ -258,7 +257,7 @@ public class MyCommentListFragment extends BaseFragment {
                 
                 final Comment comment = getItem(position);
                 
-                poiNameTxv.setText(comment.getPOIName());
+                poiNameTxv.setText(comment.getPOI().getName());
                 poiNameTxv.setTag(position);
                 poiNameTxv.setOnClickListener(mClickPOI);
                 
