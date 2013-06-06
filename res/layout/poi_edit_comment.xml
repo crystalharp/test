@@ -33,7 +33,7 @@
 				    android:id="@+id/content_edt"
 				    android:layout_width="fill_parent"
 				    android:layout_height="wrap_content"
-				    android:lines="5"
+				    android:minLines="5"
 				    android:singleLine="false"
 				    android:gravity="top|left"
 				    android:isScrollContainer="true"
