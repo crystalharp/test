@@ -83,8 +83,8 @@ public class ValidateUtil {
 		 * 补充		U2F800	U2FA1F	544
 		 */
 		
-		// 依产品需求，按艺龙酒店的限制操作（据说13年6月5号之后又改成不判定了）
-		return Pattern.compile("^[\\u002fA-Za-z\\u4e00-\\u9fbf]+$").matcher(name).matches();
+		// 依产品需求，按艺龙酒店的限制操作
+		return Pattern.compile("^[\\A-Za-z\\u4e00-\\u9fbf]+$").matcher(name).matches();
 	}
 	
 	public static boolean isValidCertCode(String code){
