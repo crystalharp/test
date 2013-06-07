@@ -415,7 +415,7 @@ public class TKConfig {
     /**
      * 是否为升级后使用本软件
      */
-    public static final String PREFS_UPGRADE = "prefs_learn_4.20";    
+    public static final String PREFS_UPGRADE = "prefs_learn_5.10";    
     
     /**
      * 是否为第一次安装使用本软件

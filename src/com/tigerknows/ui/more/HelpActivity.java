@@ -2,9 +2,6 @@
 package com.tigerknows.ui.more;
 
 import com.tigerknows.R;
-import com.tigerknows.R.drawable;
-import com.tigerknows.R.id;
-import com.tigerknows.R.layout;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.ui.BaseActivity;
 
@@ -30,7 +27,7 @@ public class HelpActivity extends BaseActivity {
     
     public static final String APP_UPGRADE = "AppUpgrade";
     
-    static final int PAGE_COUNT = 3;
+    private int mPagecount = 1;
 
     private boolean mAppFirstStart = false;
     
@@ -49,6 +46,12 @@ public class HelpActivity extends BaseActivity {
             mAppUpgrade = mIntent.getBooleanExtra(APP_UPGRADE, false); 
         }
         
+        if (mAppUpgrade) {
+            mPagecount = 1;
+        } else {
+            mPagecount = 4;
+        }
+        
         mViewPager = new ViewPager(mThis);
         
         mViewPager.setAdapter(new MyAdapter());
@@ -62,23 +65,11 @@ public class HelpActivity extends BaseActivity {
         }
         
         if (position == 0) {
-            ImageView view = new ImageView(mThis);
-            view.setImageResource(R.drawable.ic_learn1);
-            view.setScaleType(ScaleType.FIT_XY);
-            viewMap.put(position, view);
-            return view;
-        } else if (position == 1) {
-            ImageView view = new ImageView(mThis);
-            view.setImageResource(R.drawable.ic_learn2);
-            view.setScaleType(ScaleType.FIT_XY);
-            viewMap.put(position, view);
-            return view;
-        } else {
-            if (mAppUpgrade || mAppFirstStart) {
+            if (mAppUpgrade) {
                 LayoutInflater layoutInflater = (LayoutInflater)mThis.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View view = layoutInflater.inflate(R.layout.more_help_end, null, false);
                 ImageView imageView = (ImageView) view.findViewById(R.id.image_imv);
-                imageView.setImageResource(R.drawable.ic_learn3);
+                imageView.setImageResource(R.drawable.ic_learn4);
                 imageView.setScaleType(ScaleType.FIT_XY);
                 Button button = (Button) view.findViewById(R.id.enter_btn);
                 button.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +83,43 @@ public class HelpActivity extends BaseActivity {
                 return view;
             } else {
                 ImageView view = new ImageView(mThis);
-                view.setImageResource(R.drawable.ic_learn3);
+                view.setImageResource(R.drawable.ic_learn1);
+                view.setScaleType(ScaleType.FIT_XY);
+                viewMap.put(position, view);
+                return view;
+            }
+        } else if (position == 1) {
+            ImageView view = new ImageView(mThis);
+            view.setImageResource(R.drawable.ic_learn2);
+            view.setScaleType(ScaleType.FIT_XY);
+            viewMap.put(position, view);
+            return view;
+        } else if (position == 2) {
+            ImageView view = new ImageView(mThis);
+            view.setImageResource(R.drawable.ic_learn3);
+            view.setScaleType(ScaleType.FIT_XY);
+            viewMap.put(position, view);
+            return view;
+        } else {
+            if (mAppFirstStart) {
+                LayoutInflater layoutInflater = (LayoutInflater)mThis.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View view = layoutInflater.inflate(R.layout.more_help_end, null, false);
+                ImageView imageView = (ImageView) view.findViewById(R.id.image_imv);
+                imageView.setImageResource(R.drawable.ic_learn4);
+                imageView.setScaleType(ScaleType.FIT_XY);
+                Button button = (Button) view.findViewById(R.id.enter_btn);
+                button.setOnClickListener(new View.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(View arg0) {
+                        finish();
+                    }
+                });
+                viewMap.put(position, view);
+                return view;
+            } else {
+                ImageView view = new ImageView(mThis);
+                view.setImageResource(R.drawable.ic_learn4);
                 view.setScaleType(ScaleType.FIT_XY);
                 viewMap.put(position, view);
                 return view; 
@@ -116,7 +143,7 @@ public class HelpActivity extends BaseActivity {
         
         @Override
         public int getCount() {
-            return PAGE_COUNT;
+            return mPagecount;
         }
 
         @Override

@@ -2264,11 +2264,11 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         }
                         pictureImv.setBackgroundDrawable(drawable);
                     } else {
-                        pictureImv.setBackgroundDrawable(null);
+                        pictureImv.setBackgroundResource(R.drawable.bg_picture_hotel);
                     }
                     
                 } else {
-                    pictureImv.setBackgroundDrawable(null);
+                    pictureImv.setBackgroundResource(R.drawable.bg_picture_hotel);
                 }
                 
                 if (hotel.getCanReserve() > 0) {
