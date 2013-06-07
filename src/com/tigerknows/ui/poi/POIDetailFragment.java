@@ -102,6 +102,11 @@ import com.tigerknows.util.ShareTextUtil;
  *   由于动态POI在这页添加的越来越多,于是决定给这页添加一个机制,让这一页不再
  * 随着动态POI类型的增加而迅速的膨胀下去.
  * TODO:完成这个说明
+ * 布局：
+ *   为了让服务器可以控制动态POI的显示顺序，给服务器预留了排序接口，可以动态
+ * 调整不同POI的顺序。为了动态调整的时候不同block的间隔不会出问题，现约定每个
+ * block下面留8dp的padding，用来放动态Block的容器LinearLayout本身不带高度，这
+ * 样调整顺序和不存在数据的时候都不会导致上下间距出问题
  */
 public class POIDetailFragment extends BaseFragment implements View.OnClickListener, OnTouchListener {
     

@@ -128,6 +128,8 @@ public class DataOperation extends BaseQuery {
                 response = new ZhanlanQueryResponse(responseXMap);
             } else if (DATA_TYPE_DIAOYAN.equals(dataType)){
             	response = new DiaoyanQueryResponse(responseXMap);
+            } else if (DATA_TYPE_COUPON.equals(dataType)){
+            	response = new CouponQueryResponse(responseXMap);
             }
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
             if (DATA_TYPE_DIANPING.equals(dataType)) {
@@ -396,16 +398,16 @@ public class DataOperation extends BaseQuery {
     public static class CouponQueryResponse extends Response {
     	public static final byte FIELD_DATA = 0x02;
     	
-    	private CouponResult couponresult;
+    	private Coupon coupon;
         
-        public CouponResult getCouponResult() {
-            return couponresult;
+        public Coupon getCoupon() {
+            return coupon;
         }
 
         public CouponQueryResponse(XMap data) throws APIException {
             super(data);
             
-            couponresult = getObjectFromData(FIELD_DATA, CouponResult.Initializer);
+            coupon = getObjectFromData(FIELD_DATA, Coupon.Initializer);
         }
     }
     
@@ -445,6 +447,8 @@ public class DataOperation extends BaseQuery {
                     responseXMap = DataOperationTest.launchDianpingQueryResponse();
                 } else if (DATA_TYPE_DIAOYAN.equals(dataType)) {
                 	responseXMap = DataOperationTest.launchDiaoyanQueryResponse(context);
+                } else if (DATA_TYPE_COUPON.equals(dataType)) {
+                	responseXMap = DataOperationTest.launchCouponQueryResponse();
                 }
             } if (OPERATION_CODE_UPDATE.equals(operationCode)) {
                 if (DATA_TYPE_DIANPING.equals(dataType)) {
