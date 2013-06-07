@@ -13,7 +13,6 @@
         android:orientation="vertical"
          >
         
-             <!-- android:background="@drawable/list_single" -->
          <RelativeLayout
              android:id="@+id/check_view"
              android:layout_width="fill_parent"
