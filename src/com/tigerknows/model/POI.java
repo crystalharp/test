@@ -454,10 +454,6 @@ public class POI extends BaseData {
     
     private String price;
     
-    public void setPrice(String price) {
-        this.price = price;
-    }
-    
     public String getPrice() {
         return this.price;
     }
@@ -548,25 +544,13 @@ public class POI extends BaseData {
 
     public void setMyComment(Comment myComment) {
         this.myComment = myComment;
-        this.attribute = Comment.isAuthorMe(myComment);
-        XMap data = getData();
-        if (data != null) {
-            data.put(FIELD_ATTRIBUTE, this.attribute);
-        }
+        setAttribute(Comment.isAuthorMe(myComment));
     }
 
     public Comment getLastComment() {
         return this.lastComment;
     }
-    
-    public void setLastComment(Comment lastComment) {
-        this.lastComment = lastComment;
-        XMap data = getData();
-        if (data != null) {
-            data.put(FIELD_LAST_COMMENT, lastComment.getData());
-        }
-    }
-    
+        
     public boolean isOnlyAPOI() {
         return onlyAPOI;
     }
@@ -597,14 +581,11 @@ public class POI extends BaseData {
 
     public void setAddress(String address) {
         this.address = address;
+        getData().put(FIELD_ADDRESS, this.address);
     }
 
     public String getUrl() {
         return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
     
     public void setCommentQuery(DataQuery commentQuery) {
@@ -621,6 +602,7 @@ public class POI extends BaseData {
 
     public void setName(String name) {
         this.name = name;
+        getData().put(FIELD_NAME, this.name);
     }
 
     public String getAlise() {
@@ -637,6 +619,14 @@ public class POI extends BaseData {
 
     public void setPosition(Position position) {
         this.position = position;
+        XMap data = getData();
+        if (this.position != null) {
+            data.put(FIELD_LONGITUDE, (int)(this.position.getLon()*TKConfig.LON_LAT_DIVISOR));
+            data.put(FIELD_LATITUDE, (int)(this.position.getLat()*TKConfig.LON_LAT_DIVISOR));
+        } else {
+            data.remove(FIELD_LONGITUDE);
+            data.remove(FIELD_LATITUDE);
+        }
     }
 
     public String getTelephone() {
@@ -645,10 +635,6 @@ public class POI extends BaseData {
     
     public XMap getXDescription() {
         return description;
-    }
-
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
     }
 
     public long getType() {
@@ -695,20 +681,10 @@ public class POI extends BaseData {
     public String getProduct() {
     	return product;
     }
-    /**
-     * 设置POI类型.如果类型不合法，设为全部类型.
-     * 
-     * @param type
-     */
-    public void setType(int type) {
-        if (type < 0 || type > 19)
-            type = 0;
-
-        this.type = type;
-    }
     
     public void setUUID(String uuid) {
         this.uuid = uuid;
+        getData().put(FIELD_UUID, this.uuid);
     }
     
     public String getUUID() {
@@ -721,6 +697,7 @@ public class POI extends BaseData {
 
     public void setCommentPattern(long commentPattern) {
         this.commentPattern = commentPattern;
+        getData().put(FIELD_COMMENT_PATTERN, this.commentPattern);
     }
 
     public long getAttribute() {
@@ -733,10 +710,12 @@ public class POI extends BaseData {
 
     public void setAttribute(long attribute) {
         this.attribute = attribute;
+        getData().put(FIELD_ATTRIBUTE, this.attribute);
     }
 
     public void setStatus(long status) {
         this.status = status;
+        getData().put(FIELD_STATUS, this.status);
     }
 
     public List<DynamicPOI> getDynamicPOIList() {
@@ -859,56 +838,74 @@ public class POI extends BaseData {
         this.lastComment = getObjectFromData(FIELD_LAST_COMMENT, Comment.Initializer, reset ? null : this.lastComment);
         this.hotel.init(this.data, reset);
         this.price = getStringFromData(FIELD_PRICE, reset ? null : this.price);
+        
+        if (reset == false) {
+            this.data = null;
+        }
     }
     
     public XMap getData() {
-        XMap data = this.hotel.getData();
-
-        if (this.uuid != null) {
-            data.put(FIELD_UUID, this.uuid);
-        }
-        
-        data.put(FIELD_TYPE, this.type);
-        
-        if (this.position != null) {
-            data.put(FIELD_LONGITUDE, (int)(this.position.getLon()*TKConfig.LON_LAT_DIVISOR));
-            data.put(FIELD_LATITUDE, (int)(this.position.getLat()*TKConfig.LON_LAT_DIVISOR));
-        }
-        
-        if (!TextUtils.isEmpty(this.name)) {
-            data.put(FIELD_NAME, this.name);
-        }
-        
-        if (description != null) {
-            data.put(FIELD_DESCRIPTION, description);
-        }
-        if (!TextUtils.isEmpty(this.telephone)) {
-            data.put(FIELD_TELEPHONE, this.telephone);
-        }
-        if (!TextUtils.isEmpty(this.reserveTel)) {
-            data.put(FIELD_RESERVE_TEL, this.reserveTel);
-        }
-        if (!TextUtils.isEmpty(this.address)) {
-            data.put(FIELD_ADDRESS, this.address);
-        }
-        if (!TextUtils.isEmpty(this.url)) {
-            data.put(FIELD_URL, this.url);
-        }
-        data.put(FIELD_TO_CENTER_DISTANCE, this.toCenterDistance);
-        data.put(FIELD_COMMENT_PATTERN, this.commentPattern);
-        data.put(FIELD_ATTRIBUTE, this.attribute);
-        data.put(FIELD_STATUS, this.status);
-        if (lastComment != null) {
-            data.put(FIELD_LAST_COMMENT, lastComment.getData());
-        }
-        if (dynamicPOIList != null) {
-            XArray<XMap> xarray = new XArray<XMap>();
-            for(int i = 0, size = dynamicPOIList.size(); i < size; i++) {
-                xarray.add(dynamicPOIList.get(i).getData());
+        if (this.data == null) {
+            XMap data = this.hotel.getData();
+    
+            if (this.uuid != null) {
+                data.put(FIELD_UUID, this.uuid);
             }
-            data.put(FIELD_DYNAMIC_POI, xarray);
+            
+            data.put(FIELD_TYPE, this.type);
+            
+            if (this.position != null) {
+                data.put(FIELD_LONGITUDE, (int)(this.position.getLon()*TKConfig.LON_LAT_DIVISOR));
+                data.put(FIELD_LATITUDE, (int)(this.position.getLat()*TKConfig.LON_LAT_DIVISOR));
+            }
+            
+            if (!TextUtils.isEmpty(this.name)) {
+                data.put(FIELD_NAME, this.name);
+            }
+            
+            if (description != null) {
+                data.put(FIELD_DESCRIPTION, description);
+            }
+            if (!TextUtils.isEmpty(this.telephone)) {
+                data.put(FIELD_TELEPHONE, this.telephone);
+            }
+            if (!TextUtils.isEmpty(this.reserveTel)) {
+                data.put(FIELD_RESERVE_TEL, this.reserveTel);
+            }
+            if (!TextUtils.isEmpty(this.address)) {
+                data.put(FIELD_ADDRESS, this.address);
+            }
+            if (!TextUtils.isEmpty(this.url)) {
+                data.put(FIELD_URL, this.url);
+            }
+            if (!TextUtils.isEmpty(this.toCenterDistance)) {
+                data.put(FIELD_TO_CENTER_DISTANCE, this.toCenterDistance);
+            }
+            if (commentPattern != 0) {
+                data.put(FIELD_COMMENT_PATTERN, this.commentPattern);
+            }
+            if (attribute != 0) {
+                data.put(FIELD_ATTRIBUTE, this.attribute);
+            }
+            if (status != 0) {
+                data.put(FIELD_STATUS, this.status);
+            }
+            if (lastComment != null) {
+                data.put(FIELD_LAST_COMMENT, lastComment.getData());
+            }
+            if (dynamicPOIList != null) {
+                XArray<XMap> xarray = new XArray<XMap>();
+                for(int i = 0, size = dynamicPOIList.size(); i < size; i++) {
+                    xarray.add(dynamicPOIList.get(i).getData());
+                }
+                data.put(FIELD_DYNAMIC_POI, xarray);
+            }
+            if (!TextUtils.isEmpty(this.price)) {
+                data.put(FIELD_PRICE, this.price);
+            }
+            
+            this.data = data;
         }
-        data.put(FIELD_PRICE, this.price);
         return data;
     }
 
