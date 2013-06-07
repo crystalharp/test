@@ -135,7 +135,6 @@ public class DiscoverTopIndicator extends View {
         leftOffset = 0;
         rightOffset = 0;
         updateColor(0);
-        System.out.println("On page selected: " + toString());
         invalidate();
     }
 
