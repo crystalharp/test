@@ -68,7 +68,7 @@ public class TrafficQueryStateHelper {
 			mQueryFragment.mEnd.mEdt.mActionTag = ActionLog.TrafficHomeMap;
 			mQueryFragment.mBusline.mEdt.mActionTag = ActionLog.TrafficHomeMap;
             mQueryFragment.mEventHelper.applyListenersInMapState();
-            mQueryFragment.mMapLocationHelper.checkMapCenterInCity();
+//            mQueryFragment.mMapLocationHelper.checkMapCenterInCity();
         }
 
         @Override

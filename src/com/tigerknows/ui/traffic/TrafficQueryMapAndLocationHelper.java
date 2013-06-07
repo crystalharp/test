@@ -143,7 +143,11 @@ public class TrafficQueryMapAndLocationHelper {
             }
         }
     	
-    	mQueryFragment.mSphinx.getMapView().zoomTo(result.getLevel(), result.getPosition());
+        if (result.getId() == lastCityInfo.getId()) {
+            mQueryFragment.mSphinx.getMapView().zoomTo(result.getLevel(), result.getPosition());
+        } else {
+            mQueryFragment.mSphinx.getMapView().centerOnPosition(result.getPosition(), result.getLevel());
+        }
     	resetCurrentMapInfo(result.getPosition(), result.getLevel());
     }
     
@@ -207,7 +211,7 @@ public class TrafficQueryMapAndLocationHelper {
 		int curCityId = mQueryFragment.mSphinx.getMapView().getCenterCityId();
     	if (mMapCityInfo.getId() != curCityId) {
     		LogWrapper.d(TAG, "Return from city " + curCityId + " to " + mMapCityInfo.getId());
-    		mQueryFragment.mSphinx.getMapView().zoomTo(mMapCityInfo.getLevel(), getCityCenterPosition(mMapCityInfo));
+    		mQueryFragment.mSphinx.getMapView().centerOnPosition(mMapCityInfo.getPosition(), mMapCityInfo.getLevel());
     	} else {
     		LogWrapper.d(TAG, "Stay same city");
     		mMapCityInfo.setPosition(mQueryFragment.mSphinx.getMapView().getCenterPosition());
