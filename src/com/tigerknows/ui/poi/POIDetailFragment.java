@@ -491,7 +491,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     final void showAllDynamicPOI(POI poi) {
         refreshDynamicDinaying(poi);
         refreshDynamicNormalPOI(poi);
-        refreshDynamicHotel(poi);
+//        refreshDynamicHotel(poi);
         clearFailedBlock(DPOIViewBlockList);
         showDynamicPOI(DPOIViewBlockList);
     }
@@ -1702,7 +1702,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                 }
                             }
                         } else {
-                            if (!containsDPOIType(DPOIType.HOTEL) && mDynamicHotelPOI.checkExistence(mPOI)) {
+                            if (mDynamicHotelPOI.checkExistence(mPOI)) {
                                 mDynamicHotelPOI.loadSucceed(false);
                                 refreshDynamicHotel(poi);
                                 refreshDynamicPOI(DPOIViewBlockList);
