@@ -404,7 +404,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                             }
                             hotelImage.setBackgroundDrawable(drawable);
 //                        } else {
-//                            hotelImage.setBackgroundResource(R.drawable.bg_picture_tuangou_detail);
+//                            hotelImage.setBackgroundResource(R.drawable.bg_picture_hotel);
                         }
                     }
                     
@@ -419,7 +419,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             }
         }
         if (setDefault)  {
-            hotelImage.setBackgroundResource(R.drawable.bg_picture_tuangou_detail);
+            hotelImage.setBackgroundResource(R.drawable.bg_picture_hotel);
         }
     }
 

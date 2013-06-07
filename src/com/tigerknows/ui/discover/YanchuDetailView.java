@@ -101,8 +101,8 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
     }
     
     @Override
-    public void setData(BaseData data) {
-        super.setData(data);
+    public void setData(BaseData data, int position) {
+        super.setData(data, position);
         if (data == null || (data instanceof Yanchu) == false || mData == data) {
             return;
         }
@@ -285,7 +285,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
         }
         final DataOperation dataOperation = (DataOperation)(tkAsyncTask.getBaseQuery());
         boolean isPulledDynamicPOIRequest = dataOperation.isPulledDynamicPOIRequest();
-        if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener, super.mParentFragment.mViewPager.getCurrentItem()==mPosition)) {
             mParentFragment.isReLogin = true;
             return true;
         } else {

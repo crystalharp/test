@@ -240,7 +240,7 @@
     <string name="my_location_failure">无法获取当前位置</string>
     <string name="select_has_point">选定的位置</string>
 
-    <string name="no_result">找不到你要的结果！</string>
+    <string name="no_result">&#8194;找不到你要的结果！</string>
 
     <string name="confirm_start_station">你要找的起点是</string>
     <string name="confirm_end_station">你要找的终点是</string>
@@ -966,16 +966,19 @@
     <string name="hotel_room_title">订单填写</string>
     <string name="hotel_room_howmany">房间数</string>
     <string name="hotel_room_reserve">房间保留到</string>
-    <string name="hotel_room_person_name">入住人：</string>
+    <string name="hotel_room_person_name">入&#8194;住&#8194;人：</string>
     <string name="hotel_room_person_name_hint">入住人的姓名</string>
-    <string name="hotel_room_mobile_nubmer">手机号：</string>
+    <string name="hotel_room_mobile_nubmer">手&#8194;机&#8194;号：</string>
     <string name="hotel_room_mobile_nubmer_hint">用于短信确认</string>
+    <string name="hotel_room_idcard">身份证号：</string>
+    <string name="hotel_room_idcard_hint">输入身份证号</string>
     <string name="hotel_mobile_format">请正确输入手机号，手机号为1开头的11位数字</string>
     <string name="submit_order">提交订单</string>
     <string name="hotel_room_date">入住：%1$d月%2$d日&#8195;离店：%3$d月%4$d日</string>
     <string name="hotel_room_credit_note">因酒店房间紧张，需信用卡担保，以便保留房间</string>
     <string name="hotel_room_person_empty_tip">请填写入住人</string>
     <string name="hotel_room_mobile_empty_tip">请填写手机号</string>
+    <string name="hotel_room_idcard_empty_tip">请填写身份证号</string>
     <string name="choose_room_howmany">选择房间数</string>
     <string name="room_howmany_item">%1$d间/%2$s元</string>
     <string name="choose_room_reserve">房间保留到</string>
@@ -989,7 +992,7 @@
     <string name="hotel_certcard_number_format">证件号码格式不正确</string>
     <string name="credit_code_format">卡号格式不正确，请重新输入</string>
     <string name="credit_verify_format">验证码格式不正确，请重新输入3位验证码</string>
-    <string name="hotel_idcard_code_format">身份证号码格式不正确</string>
+    <string name="hotel_idcard_code_format">输入的身份证号码格式不正确</string>
 
     <string name="credit_assure_title">信用卡担保信息</string>
     <string name="credit_bank">发卡银行：</string>
@@ -1010,7 +1013,7 @@
     <string name="credit_note">信用担保说明</string>
     <string name="credit_note_detail">本订单您可以在%1$s之前取消，如果您到时候没有入住，将按照担保金额扣除房费。请在填写担保前慎重考虑您是否可能会修改行程，以免造成不必要的损失。</string>
     <string name="credit_note_detail_2">本订单您%1$s，如果您到时候没有入住，将按照担保金额扣除房费。请在填写担保前慎重考虑您是否可能会修改行程，以免造成不必要的损失。</string>
-    <string name="credit_cannot_cancel">提交成功之后将无法取消</string>
+    <string name="credit_cannot_cancel">预定后无法取消</string>
     <string name="credit_confirm">确认无误，提交</string>
     <string name="choose_credit_bank">选择银行</string>
     <string name="choose_credit_validity">选择信用卡有效期</string>
@@ -1075,7 +1078,7 @@
     <string name="simple_day_format">d日</string>
     <string name="simple_month_format">M月</string>
     
-    <string name="no_order">暂无订单，\n快去预订酒店吧！</string>
+    <string name="no_order">暂无订单\n&#8194;快去预订酒店吧！</string>
     
     <string name="hotel_order_cancel_confirm">是否取消订单？\n取消后本次预订将失效</string>
     <string name="hotel_order_cancel_failed">订单取消失败</string>
@@ -1099,4 +1102,5 @@
     <string name="hotel_checkin_">入住</string>
     <string name="hotel_checkout_">离店</string>
     <string name="night">晚</string>
+    <string name="can_not_reserve">订满</string>
 </resources>

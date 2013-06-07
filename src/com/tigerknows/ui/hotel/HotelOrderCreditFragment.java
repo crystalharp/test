@@ -156,9 +156,9 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	if(TextUtils.isEmpty(str)){
         		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_owner_empty_tip), mCreditOwnerEdt);
         		return;
-        	}else if(!ValidateUtil.isValidElongName(str)){
-        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format), mCreditOwnerEdt);
-        		return;
+    		}else if(!ValidateUtil.isValidElongName(str)){
+    			Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format), mCreditOwnerEdt);
+    			return;
         	}
         	list.add(str);
         	
@@ -190,8 +190,8 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         	if(TextUtils.isEmpty(str)){
         		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_cert_code_empty_tip), mCreditCertCodeEdt);
         		return;
-        	}else if(!ValidateUtil.isValidCertCode(str)){
-        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_certcard_number_format), mCreditCertCodeEdt);
+        	}else if(mCreditCertTypeBtn.getText().toString().contains("身份证") && !ValidateUtil.isValidIdCardCode(str)){
+        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_idcard_code_format), mCreditCertCodeEdt);
         		return;
         	}
         	list.add(str);

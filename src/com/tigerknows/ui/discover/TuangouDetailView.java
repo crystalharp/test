@@ -318,8 +318,8 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     }
     
     @Override
-    public void setData(BaseData data) {
-        super.setData(data);
+    public void setData(BaseData data, int position) {
+        super.setData(data, position);
         if (data == null || (data instanceof Tuangou) == false || mData == data) {
             return;
         }
@@ -741,8 +741,9 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         if (super.onPostExecute(tkAsyncTask) == false) {
             return false;
         }
+        
         final DataOperation dataOperation = (DataOperation)(tkAsyncTask.getBaseQuery());
-        if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mCancelLoginListener, super.mParentFragment.mViewPager.getCurrentItem()==mPosition)) {
             mParentFragment.isReLogin = true;
             return true;
         }

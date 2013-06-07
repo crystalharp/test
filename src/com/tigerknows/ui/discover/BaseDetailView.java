@@ -58,6 +58,8 @@ public class BaseDetailView extends LinearLayout {
     
     protected List<BaseQuery> mBaseQuerying;
     private BaseData mData;
+
+    protected int mPosition;
     
     public BaseDetailView(Sphinx sphinx, BaseDetailFragment parentFragment, int layoutResId) {
         super(sphinx);
@@ -85,11 +87,12 @@ public class BaseDetailView extends LinearLayout {
      * 
      * @param data
      */
-    public void setData(BaseData data) {
+    public void setData(BaseData data, int position) {
         if (mData != data) {
             stopQuery();
         }
         mData = data;
+        mPosition=position;
     }
 
     public void onResume() {

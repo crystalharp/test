@@ -201,9 +201,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         String keyword = mKeywordEdt.getText().toString().trim();
         if (!TextUtils.isEmpty(keyword)) {
             mSphinx.hideSoftInput(mKeywordEdt.getInput());
-            mKeywordEdt.setText(null);
             int cityId = Globals.getCurrentCityInfo().getId();
             HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), cityId, HistoryWordTable.TYPE_POI);
+            mKeywordEdt.setText(null);
             mActionLog.addAction(mActionTag +  ActionLog.POIHomeInputQueryBtn, keyword);
 
             DataQuery poiQuery = new DataQuery(mContext);

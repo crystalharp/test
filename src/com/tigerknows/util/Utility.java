@@ -931,11 +931,17 @@ public class Utility {
 //                minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
 //            }
 //        }
+        int firstPosition = (firstVisiblePosition-(isShowAPOI ? 1 : 0)+(startPage%2 != 0 ? pageSize : 0)) % TKConfig.getPageSize();
         if (maxIndex > lastVisiblePosition && (minIndex-10) >= 0) {
             minIndex -= 10;
             maxIndex -= 10;
+            if (firstPosition + 10 < lastVisiblePosition) {
+                firstPosition += 10;
+            }
         }
-        return new int[]{minIndex, maxIndex, (firstVisiblePosition-(isShowAPOI ? 1 : 0)+(startPage%2 != 0 ? pageSize : 0)) % TKConfig.getPageSize()};
+        
+        
+        return new int[]{minIndex, maxIndex, firstPosition};
     }
     
     public static void pageIndicatorInit(Context context, ViewGroup viewPoints, int size) {
