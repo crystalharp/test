@@ -1606,6 +1606,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mLoadingView.setVisibility(View.GONE);
         List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
         Dianying dianying = null;
+        boolean showErrorDialog = true;
         for(BaseQuery baseQuery : baseQueryList) {
             if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
                 isReLogin = true;
@@ -1712,32 +1713,45 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 // 查询团购的结果
                 } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) || BaseQuery.DATA_TYPE_FENDIAN.equals(dataType)
                         || BaseQuery.DATA_TYPE_YANCHU.equals(dataType) || BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-                    mDynamicNormalPOI.msgReceived(mSphinx, baseQuery, response);
+
+                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, showErrorDialog, this, false) == false) {
+                        mDynamicNormalPOI.msgReceived(mSphinx, baseQuery, response);
+                    } else {
+                        showErrorDialog = false;
+                    }
                     
                 // 电影
                 } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {
-                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false) == false) {
+                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, showErrorDialog, this, false) == false) {
                         dianying = ((DianyingQueryResponse) response).getDianying();
+                    } else {
+                        showErrorDialog = false;
                     }
                 // 影讯
                 } else if (BaseQuery.DATA_TYPE_YINGXUN.equals(dataType)) {
-                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false) == false && dianying != null) {
-                        dianying.setYingxun(((YingxunQueryResponse) response).getYingxun());
-                        List<Dianying> list = new ArrayList<Dianying>();
-                        list.add(dianying);
-                        dianying.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY);
-                        mSphinx.showView(R.id.view_discover_dianying_detail);
-                        mSphinx.getDianyingDetailFragment().setData(list, 0, null);
+                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, showErrorDialog, this, false) == false) {
+                        if (dianying != null) {
+                            dianying.setYingxun(((YingxunQueryResponse) response).getYingxun());
+                            List<Dianying> list = new ArrayList<Dianying>();
+                            list.add(dianying);
+                            dianying.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY);
+                            mSphinx.showView(R.id.view_discover_dianying_detail);
+                            mSphinx.getDianyingDetailFragment().setData(list, 0, null);
+                        }
+                    } else {
+                        showErrorDialog = false;
                     }
                 }
                 
                 //TODO:看情况移走
             } else if (baseQuery instanceof ProxyQuery) {
-                if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false) == false) {
+                if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, showErrorDialog, this, false) == false) {
                     //查询房态
                     if (response instanceof RoomTypeDynamic) {
                         mDynamicHotelPOI.msgReceived(mSphinx, baseQuery, response);
                     }
+                } else {
+                    showErrorDialog = false;
                 }
             }
         }
