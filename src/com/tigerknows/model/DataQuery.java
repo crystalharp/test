@@ -653,6 +653,8 @@ public final class DataQuery extends BaseQuery {
             addParameter(new String[]{SERVER_PARAMETER_MESSAGE_ID_LIST, SERVER_PARAMETER_LAST_PULL_DATE}, false);
         } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
             addParameter(new String[]{SERVER_PARAMETER_KEYWORD});
+        } else if (DATA_TYPE_COUPON.equals(dataType)) {
+        	addParameter(SERVER_PARAMETER_POI_ID);
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
@@ -747,6 +749,8 @@ public final class DataQuery extends BaseQuery {
             this.response = pullMessage;
         } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
             this.response = new AlternativeResponse(responseXMap);
+        } else if (DATA_TYPE_COUPON.equals(dataType)) {
+            this.response = new CouponResponse(responseXMap);
         }
     }
     
@@ -1787,6 +1791,89 @@ public final class DataQuery extends BaseQuery {
         }
     }
     
+    public static class CouponResponse extends Response {
+        // 0x02 x_map   点评结果
+        public static final byte FIELD_COUPON_LIST = 0x02;
+
+        private CouponList list;
+
+        public CouponResponse(XMap data) throws APIException {
+            super(data);
+            
+            if (this.data.containsKey(FIELD_COUPON_LIST)) {
+                this.list = new CouponList(this.data.getXMap(FIELD_COUPON_LIST));
+            }
+        }
+
+        public CouponList getList() {
+            return list;
+        }
+
+        public void setList(CouponList list) {
+            this.list = list;
+        }
+        
+        public XMap getData() {
+            if (data == null) {
+                data = super.getData();
+                if (this.list != null) {
+                    data.put(FIELD_COUPON_LIST, this.list.getData());
+                }
+            }
+            return data;
+        }
+        
+        public static class CouponList extends BaseList {
+            
+            // 0x02 x_array<x_map>  poi列表 
+            public static final byte FIELD_LIST = 0x02;
+            
+            private List<Coupon> list;
+
+            public void setTotal(int total) {
+                this.total = total;
+            }
+
+            public List<Coupon> getList() {
+                return list;
+            }
+
+            public void setList(List<Coupon> list) {
+                this.list = list;
+                XArray<XMap> xarray = new XArray<XMap>();
+                if (this.list != null) {
+                    for(Coupon coupon : this.list) {
+                        xarray.add(coupon.getData());
+                    }
+                }
+                data.put(FIELD_LIST, xarray);
+            }
+
+            public CouponList(XMap data) throws APIException {
+                super(data);
+                
+                list = getListFromData(FIELD_LIST, Coupon.Initializer);
+                this.total = 0;
+            }     
+            
+            public XMap getData() {
+                if (data == null) {
+                    data = new XMap();
+                    if (list != null) {
+                        XArray<XMap> xarray = new XArray<XMap>();
+                        for(Coupon coupon : list) {
+                            xarray.add(coupon.getData());
+                        }
+                        data.put(FIELD_LIST, xarray);
+                    }
+                    if (TextUtils.isEmpty(message)) {
+                       data.put(FIELD_MESSAGE, message);
+                    }
+                }
+                return data;
+            }
+        }
+    }
     public static class ShangjiaResponse extends Response {
         // 0x02 x_map   商家结果
         public static final byte FIELD_LIST = 0x02;
@@ -2350,6 +2437,8 @@ public final class DataQuery extends BaseQuery {
             responseXMap = DataQueryTest.launchPullMessage();
         } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
             responseXMap = DataQueryTest.launchAlternativeResponse(168, "launchAlternativeResponse");
+        } else if (DATA_TYPE_COUPON.equals(dataType)){
+        	responseXMap = DataQueryTest.launchCouponResponse(168, "launchCouponResponse");
         }
     }
 }
