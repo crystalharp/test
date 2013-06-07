@@ -1545,6 +1545,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 return true;
             }
             uiStackClose(new int[]{R.id.view_poi_home});
+            getPOIQueryFragment().reset();
             showView(R.id.view_poi_input_search);
         } else if ("vnd.android.cursor.item/postal-address_v2".equals(mimetype)) {
             mFromThirdParty = THIRD_PARTY_CONTACT;
