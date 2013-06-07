@@ -1090,7 +1090,7 @@
     
     <string name="select_city">选择城市</string>
     <string name="can_not_found_target_location">找不到目标位置</string>
-    <string name="can_not_found_result_and_retry">找不到你要的结果\n建议尝试更改条件试试</string>
+    <string name="can_not_found_result_and_retry">找不到你要的结果\n建议更改条件试试</string>
     <string name="other_hotel">其他酒店</string>
     <string name="hotel_picture_title">酒店图片（%1$d张）</string>
     <string name="hotel_reserve">酒店预订</string>
