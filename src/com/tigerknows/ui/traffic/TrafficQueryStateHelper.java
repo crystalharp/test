@@ -114,6 +114,11 @@ public class TrafficQueryStateHelper {
 
         @Override
         public void enterFrom(State oldState) {
+            //这个要放在checkRadioButton之前，否则会触发Map状态的Listener，
+            //而不是触发Normal状态的Listener。
+            if (oldState != State.SelectPoint) {
+                mQueryFragment.mEventHelper.applyListenersInNormalState();
+            }
             if (oldState == State.Input) {
                 //返回normal状态时清理掉输入框的光标
                 mQueryFragment.mSelectedEdt.getEdt().clearFocus();
@@ -128,10 +133,6 @@ public class TrafficQueryStateHelper {
             }
             mQueryFragment.mMenuFragment.display();
             applyInnateProperty(TrafficViewSTT.State.Normal);
-            //这一行很别扭
-            if (oldState != State.SelectPoint) {
-                mQueryFragment.mEventHelper.applyListenersInNormalState();
-            }
         }
 	    
 	}
