@@ -439,6 +439,8 @@ public class POI extends BaseData {
     
     private DataQuery commentQuery = null;
     
+    private DataQuery couponQuery = null;
+    
     private int resultType = 0;
     
     private int sourceType = 0;
@@ -613,6 +615,14 @@ public class POI extends BaseData {
     
     public DataQuery getCommentQuery() {
         return this.commentQuery;
+    }
+    
+    public void setCouponQuery(DataQuery couponQuery) {
+        this.couponQuery = couponQuery;
+    }
+    
+    public DataQuery getCouponQuery() {
+        return this.couponQuery;
     }
 
     public String getName() {

@@ -157,6 +157,8 @@ import com.tigerknows.ui.more.MapDownloadActivity;
 import com.tigerknows.ui.more.MoreHomeFragment;
 import com.tigerknows.ui.more.SettingActivity;
 import com.tigerknows.ui.poi.CommentListActivity;
+import com.tigerknows.ui.poi.CouponDetailFragment;
+import com.tigerknows.ui.poi.CouponListFragment;
 import com.tigerknows.ui.poi.EditCommentActivity;
 import com.tigerknows.ui.poi.POIReportErrorActivity;
 import com.tigerknows.ui.poi.POIHomeFragment;
@@ -3311,6 +3313,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private HotelIntroFragment mHotelIntroFragment;
     private HotelImageGridFragment mHotelImageGridFragment;
     
+    private CouponListFragment mCouponListFragment;
+    private CouponDetailFragment mCouponDetailFragment;
+    
     public BaseFragment getFragment(int id) {
         BaseFragment baseFragment = null;
 
@@ -3455,6 +3460,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             case R.id.view_hotel_image_grid:
             	baseFragment = getHotelImageGridFragment();
             	break;
+                
+            case R.id.view_coupon_list:
+                baseFragment = getCouponListFragment();
+                break;
+                
+            case R.id.view_coupon_detail:
+                baseFragment = getCouponDetailFragment();
+                break;
                 
             default:
                 break;
@@ -3922,6 +3935,32 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mHotelIntroFragment = fragment;
             }
             return mHotelIntroFragment;
+        }
+    }
+    
+    public CouponListFragment getCouponListFragment(){
+        
+        synchronized (mUILock) {
+            if (mCouponListFragment == null) {
+                CouponListFragment fragment = new CouponListFragment(Sphinx.this);
+                fragment.setId(R.id.view_coupon_list);
+                fragment.onCreate(null);
+                mCouponListFragment = fragment;
+            }
+            return mCouponListFragment;
+        }
+    }
+    
+    public CouponDetailFragment getCouponDetailFragment(){
+        
+        synchronized (mUILock) {
+            if (mCouponDetailFragment == null) {
+                CouponDetailFragment fragment = new CouponDetailFragment(Sphinx.this);
+                fragment.setId(R.id.view_coupon_detail);
+                fragment.onCreate(null);
+                mCouponDetailFragment = fragment;
+            }
+            return mCouponDetailFragment;
         }
     }
 

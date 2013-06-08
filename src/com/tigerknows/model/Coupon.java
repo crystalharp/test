@@ -52,13 +52,17 @@ public class Coupon extends BaseData{
 	private String uid;
 	private String description;
 	private String briefPic;
+    private TKDrawable briefPicTKDrawable;
 	private long hot;
 	private String listName;
-	private String detailPic;
+    private String detailPic;
+    private TKDrawable detailPicTKDrawable;
 	private String detail;
 	private String twoDCode;
-	private String logo;
-	private String hintPic;
+    private String logo;
+    private TKDrawable logoTKDrawable;
+    private String hintPic;
+    private TKDrawable hintPicTKDrawable;
 	private String remark;
 	
 	public Coupon(XMap data) throws APIException {
@@ -71,13 +75,33 @@ public class Coupon extends BaseData{
 		this.uid = getStringFromData(FIELD_UID, reset ? null : this.uid);
 		this.description = getStringFromData(FIELD_DESCRIPTION, reset ? null : this.description);
 		this.briefPic = getStringFromData(FIELD_BRIEF_PIC, reset ? null : this.briefPic);
+		if (this.briefPic != null) {
+		    TKDrawable tkDrawable = new TKDrawable();
+		    tkDrawable.setUrl(this.briefPic);
+		    briefPicTKDrawable = tkDrawable;
+		}
 		this.hot = getLongFromData(FIELD_HOT, reset ? null : this.hot);
 		this.listName = getStringFromData(FIELD_LIST_NAME, reset ? null : this.listName);
 		this.detailPic = getStringFromData(FIELD_DETAIL_PIC, reset ? null : this.detailPic);
+        if (this.detailPic != null) {
+            TKDrawable tkDrawable = new TKDrawable();
+            tkDrawable.setUrl(this.detailPic);
+            detailPicTKDrawable = tkDrawable;
+        }
 		this.detail = getStringFromData(FIELD_DETAIL, reset ? null : this.detail);
 		this.twoDCode = getStringFromData(FIELD_2D_CODE, reset ? null : this.twoDCode);
 		this.logo = getStringFromData(FIELD_LOGO, reset ? null : this.logo);
+        if (this.logo != null) {
+            TKDrawable tkDrawable = new TKDrawable();
+            tkDrawable.setUrl(this.logo);
+            logoTKDrawable = tkDrawable;
+        }
 		this.hintPic = getStringFromData(FIELD_HINT_PIC, reset ? null : this.hintPic);
+        if (this.hintPic != null) {
+            TKDrawable tkDrawable = new TKDrawable();
+            tkDrawable.setUrl(this.hintPic);
+            hintPicTKDrawable = tkDrawable;
+        }
 		this.remark = getStringFromData(FIELD_REMARK, reset ? null : this.remark);
 	}
 	
@@ -169,7 +193,23 @@ public class Coupon extends BaseData{
 		this.remark = remark;
 	}
 
-	public static XMapInitializer<Coupon> Initializer = new XMapInitializer<Coupon>() {
+	public TKDrawable getBriefPicTKDrawable() {
+        return briefPicTKDrawable;
+    }
+
+    public TKDrawable getDetailPicTKDrawable() {
+        return detailPicTKDrawable;
+    }
+
+    public TKDrawable getLogoTKDrawable() {
+        return logoTKDrawable;
+    }
+
+    public TKDrawable getHintPicTKDrawable() {
+        return hintPicTKDrawable;
+    }
+
+    public static XMapInitializer<Coupon> Initializer = new XMapInitializer<Coupon>() {
 
         @Override
         public Coupon init(XMap data) throws APIException {
