@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -18,6 +19,7 @@ import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.ProxyQuery;
 import com.tigerknows.model.Response;
@@ -46,10 +48,12 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 	private String mMobile;
 	private String mIdcardNo;
 	
+	private String mActionTag;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        //TODO: mActionTag;
+        mActionTag = ActionLog.HotelSeveninnRegist;
     }
 	
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -88,6 +92,29 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 	            return true;
 	        }
 	    });
+        OnTouchListener edtTouchListener = new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if(event.getAction() == MotionEvent.ACTION_UP){
+					switch (v.getId()){
+					case R.id.seveninn_name_edt:
+						mActionLog.addAction(mActionTag + ActionLog.HotelSeveninnRegistName);
+						break;
+					case R.id.seveninn_phone_edt:
+						mActionLog.addAction(mActionTag + ActionLog.HotelSeveninnRegistPhone);
+						break;
+					case R.id.seveninn_idcard_code_edt:
+						mActionLog.addAction(mActionTag + ActionLog.HotelSeveninnRegistIdcard);
+						break;
+					}
+				}
+				return false;
+			}
+		};
+		mSeveninnNameEdt.setOnTouchListener(edtTouchListener);
+		mSeveninnPhoneEdt.setOnTouchListener(edtTouchListener);
+		mSeveninnIdcardCodeEdt.setOnTouchListener(edtTouchListener);    
 	}
     @Override
 	public void onClick(View view) {
@@ -98,6 +125,7 @@ public class HotelSeveninnRegistFragment extends BaseFragment implements View.On
 			exit();
 			break;
 		case R.id.seveninn_regist_btn:
+			mActionLog.addAction(mActionTag + ActionLog.HotelSeveninnRegistSubmit);
 			String str = mSeveninnNameEdt.getText().toString().trim();
 			if(TextUtils.isEmpty(str)){
 				Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_room_person_empty_tip), mSeveninnNameEdt);

@@ -35,6 +35,8 @@ import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.common.ActionLog;
+import com.tigerknows.util.CalendarUtil;
 
 
 /**
@@ -61,10 +63,12 @@ public class ValidityListView extends LinearLayout {
     private MyAdapter childAdapter;
     private Calendar now;
     
-    String actionTag;
+    private String mActionTag;
+    private ActionLog mActionLog;
 
     public void setData(Calendar calendar, CallBack callBack, String actionTag) {
-        this.calendar = calendar;
+        mActionTag = actionTag;
+    	this.calendar = calendar;
         now = Calendar.getInstance();
         if (this.calendar == null) {
             this.calendar = now;
@@ -110,7 +114,7 @@ public class ValidityListView extends LinearLayout {
         super(sphinx, attrs);
         mSphinx = sphinx;
         setFocusable(false);
-        
+        mActionLog = ActionLog.getInstance(mSphinx);
         LayoutInflater inflater = (LayoutInflater) sphinx
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.hotel_validity_list, this, // we are the parent
@@ -214,6 +218,7 @@ public class ValidityListView extends LinearLayout {
     private void selected() {
     	calendar.set(Calendar.YEAR, now.get(Calendar.YEAR) + selectedParentPosition);
     	calendar.set(Calendar.MONTH, (selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0) + selectedChildPosition);
+    	mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditValidateChoose, CalendarUtil.y4mc.format(calendar.getTime()));
         this.callBack.selected(calendar);
     }
     

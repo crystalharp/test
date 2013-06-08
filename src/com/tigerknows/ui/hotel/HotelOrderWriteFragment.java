@@ -43,6 +43,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.HotelOrderOperation;
 import com.tigerknows.model.HotelOrderOperation.HotelOrderCreateResponse;
@@ -137,7 +138,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        //mActionTag = ActionLog.HotelOrderWrite;
+        mActionTag = ActionLog.HotelOrderWrite;
     }
     
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -204,23 +205,42 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 			
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				// TODO Auto-generated method stub
-				
 			}
 			
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count,
 					int after) {
-				// TODO Auto-generated method stub
-				
 			}
 			
 			@Override
 			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
 				mMemberNum = "";
 			}
 		});
+        
+        OnTouchListener edtTouchListener = new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if(event.getAction() == MotionEvent.ACTION_UP){
+					switch (v.getId()){
+					case R.id.room_person_edt:
+						mActionLog.addAction(mActionTag + ActionLog.HotelOrderWriteBookName);
+						break;
+					case R.id.room_mobile_number_edt:
+						mActionLog.addAction(mActionTag + ActionLog.HotelOrderWriteMobile);
+						break;
+					case R.id.room_idcard_edt:
+						mActionLog.addAction(mActionTag + ActionLog.HotelOrderWriteIdCard);
+						break;
+					}
+				}
+				return false;
+			}
+		};
+		mBookUsernameEdt.setOnTouchListener(edtTouchListener);
+		mRoomMobileNumberEdt.setOnTouchListener(edtTouchListener);
+		mRoomIdcardEdt.setOnTouchListener(edtTouchListener);
     }
 
     @Override
@@ -231,12 +251,15 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	exit();
         	break;
         case R.id.room_howmany_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.HotelOrderWriteHowmany);
         	showRoomHowmanyDialog();
             break;
         case R.id.room_reserve_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.HotelOrderWriteReserve);
         	showRoomReserveDialog();
             break;
         case R.id.submit_order_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.HOTELOrderWriteSubmit);
         	String str = "";
         	for (int i = 1; i <= mRoomHowmany; i++){
         		final EditText thisPersonEdt = (EditText) mRootView.findViewById(idArray[i-1]);
@@ -311,7 +334,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
     	String tempStr;
 
-		mRoomIdcardEdt.setText("");
+    	mRoomIdcardEdt.setText("");
 		mIdCardNumber="";
     	mMemberNum = "";
     	mBookUsernameEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, ""));
@@ -484,7 +507,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
     private void showRoomHowmanyDialog(){
         final List<String> list = new ArrayList<String>();
-        //TODO: mActionlog
         
         long listsize = (mRoomtypeDynamic.getNum() > MAX_ROOM_HOWMANY) ? MAX_ROOM_HOWMANY : mRoomtypeDynamic.getNum();
         String listitem;
@@ -507,6 +529,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
             	listView.setAdapter(adapter);
             	mRoomHowmany = which + 1;
+            	mActionLog.addAction(mActionTag + ActionLog.HotelOrderWriteHowmanyChoose, mRoomHowmany);
             	mRTimeWhich = 0;
             	refreshData();
             	dialog.dismiss();
@@ -519,7 +542,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         HotelReserveListAdapter hotelReserveListAdapter = new HotelReserveListAdapter(mContext, rtList);
         ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(hotelReserveListAdapter);
-        //TODO: ActionLog
+
         final Dialog dialog = Utility.showNormalDialog(mSphinx, 
         		mSphinx.getString(R.string.choose_room_reserve), 
         		null,
