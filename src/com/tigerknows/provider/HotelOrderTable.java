@@ -136,7 +136,7 @@ public class HotelOrderTable {
 			return null;
 		
 		List<HotelOrder> results = new ArrayList<HotelOrder>();
-		Cursor cursor = mDb.query(TABLE_NAME, new String[]{ORDER_CONTENT}, null, null, null, null, ORDER_CREATE_TIME + " desc", start + "," + (start + count));
+		Cursor cursor = mDb.query(TABLE_NAME, new String[]{ORDER_CONTENT}, null, null, null, null, ORDER_CREATE_TIME + " desc", start + "," + (count));
 		int contentIndex = cursor.getColumnIndex(ORDER_CONTENT); 
 		while (cursor.moveToNext()) {
 			DataEncryptor dataEncryptor = DataEncryptor.getInstance();
