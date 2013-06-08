@@ -167,6 +167,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, dataType);
             criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+            //FIXME:多优惠券此字段为空
             criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUid());
             
             if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {

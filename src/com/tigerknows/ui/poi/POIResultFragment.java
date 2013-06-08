@@ -746,6 +746,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_dianying);
                     } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_coupon);
+                    } else {
+                        continue;
                     }
                     viewIndex++;
                 }
