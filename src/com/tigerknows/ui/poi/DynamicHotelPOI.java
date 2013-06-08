@@ -391,7 +391,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         int picNum = (picList == null ? 0 : picList.size());
         imageNumTxv.setText(mSphinx.getString(R.string.pictures, picNum));
         boolean setDefault = true;
-        if (picList != null) {
+        if (picList != null && picList.size() > 0) {
             final TKDrawable tkDrawable = picList.get(0).getTKDrawable();
             if (tkDrawable != null) {
                 Drawable hotelImageDraw = tkDrawable.loadDrawable(mSphinx, new Runnable() {
@@ -418,6 +418,9 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                     setDefault = false;
                 }
             }
+        } else {
+            hotelImage.setBackgroundResource(R.drawable.bg_picture_hotel_none);
+            setDefault = false;
         }
         if (setDefault)  {
             hotelImage.setBackgroundResource(R.drawable.bg_picture_hotel);

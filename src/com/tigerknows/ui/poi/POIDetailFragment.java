@@ -391,6 +391,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         for (int i = size - 1; i >= 0; i--) {
             DynamicPOIViewBlock a = DPOIViewBlockList.get(i);
             if (a.mType == t) {
+                a.clear();
                 DPOIViewBlockList.remove(a);
             }
         }
@@ -480,6 +481,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 	    for (int i = size - 1; i >= 0; i--) {
 	        DynamicPOIViewBlock block = POIList.get(i);
 	        if (!block.mLoadSucceed) {
+	            block.clear();
 	            POIList.remove(i);
 	        }
 	    }

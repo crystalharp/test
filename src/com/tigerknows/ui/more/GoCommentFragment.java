@@ -176,6 +176,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onClick(View view) {
         mActionLog.addAction(mActionTag +  ActionLog.GoCommentInput);
+        mSphinx.getPOIQueryFragment().reset();
         mSphinx.showView(R.id.view_poi_input_search);
     }
     

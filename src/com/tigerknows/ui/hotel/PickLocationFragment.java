@@ -135,7 +135,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             
             @Override
             public void onBtnClicked(TKWord tkWord, int position) {
-                mTKWord = tkWord;
+                mTKWord = tkWord.clone();
                 mKeywordEdt.setText(tkWord.word);
             }
         };
@@ -237,7 +237,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                         tkWord.position = mSphinx.getMapEngine().getwordslistStringWithPosition(tkWord.word, 0);
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItemSuggest, position, tkWord.word);
                     }
-                    mTKWord = tkWord;
+                    mTKWord = tkWord.clone();
                     mKeywordEdt.setText(tkWord.word); //处理光标问题
                     submit();
                 }

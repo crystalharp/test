@@ -618,7 +618,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                     mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter + ActionLog.Dismiss);
                 }
             });
-            
+            mPopupWindow.setAnimationStyle(R.style.AlterImageDialog);
+            mPopupWindow.update();
         }
         mPopupWindow.showAsDropDown(parent, 0, 0);
 
@@ -673,8 +674,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
 
     @Override
     public void cancelFilter() {
-        // TODO Auto-generated method stub
-        
+        dismissPopupWindow();
     }
     
     void submit() {

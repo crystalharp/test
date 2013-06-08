@@ -305,14 +305,14 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     		mHotelMobileLly.setBackgroundDrawable(getResources().getDrawable(R.drawable.list_footer));
     		mHotelBgImv.setVisibility(GONE);
     		mHotelIdcardLly.setVisibility(GONE);
-    		mRoomIdcardEdt.setText("");
-    		mIdCardNumber="";
     	}
     }
     
     public void setData(POI poi, RoomType roomtype, RoomTypeDynamic roomTypeDynamic, Calendar checkIn, Calendar checkOut ) {
     	String tempStr;
 
+		mRoomIdcardEdt.setText("");
+		mIdCardNumber="";
     	mMemberNum = "";
     	mBookUsernameEdt.setText(TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_LAST_BOOKNAME, ""));
     	mBookUsernameEdt.requestFocus();
