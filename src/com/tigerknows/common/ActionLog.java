@@ -542,8 +542,6 @@ public class ActionLog {
     public static final String HotelQueryCategory = "BD";
     public static final String HotelQuerySubmit = "BE";
     public static final String HotelQueryOrder = "BF";
-    public static final String HotelQuery702 = "BG";
-    public static final String HotelQuery703 = "BH";
     
     public static final String HotelPickLocation = "GB";
     public static final String HotelPickLocationInput = "BA";
@@ -585,7 +583,6 @@ public class ActionLog {
     public static final String HotelSeveninnRegistPhone = "BB";
     public static final String HotelSeveninnRegistIdcard = "BC";
     public static final String HotelSeveninnRegistSubmit = "BD";
-    
 
     // 订单列表页
     public static final String HotelOrderList = "GH";
