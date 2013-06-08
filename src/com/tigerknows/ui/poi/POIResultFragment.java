@@ -686,14 +686,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             
             ViewGroup dynamicPOIListView = (ViewGroup) view.findViewById(R.id.dynamic_poi_list_view);
             List<DynamicPOI> list = poi.getDynamicPOIList();
-            int viewIndex = 0;
-            if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType) == false) {
-                viewIndex = refresDynamicPOI(DynamicPOI.TYPE_HOTEL, list, dynamicPOIListView, viewIndex);
-            }
-            viewIndex = refresDynamicPOI(BaseQuery.DATA_TYPE_TUANGOU, list, dynamicPOIListView, viewIndex);
-            viewIndex = refresDynamicPOI(BaseQuery.DATA_TYPE_YANCHU, list, dynamicPOIListView, viewIndex);
-            viewIndex = refresDynamicPOI(BaseQuery.DATA_TYPE_ZHANLAN, list, dynamicPOIListView, viewIndex);
-            viewIndex = refresDynamicPOI(BaseQuery.DATA_TYPE_DIANYING, list, dynamicPOIListView, viewIndex);
+            int viewIndex = refresDynamicPOI(list, dynamicPOIListView);
             int dynamicPOIWidth = viewIndex * activity.getResources().getDrawable(R.drawable.ic_dynamicpoi_tuangou).getIntrinsicWidth();
             
             int viewCount = dynamicPOIListView.getChildCount();
@@ -716,17 +709,21 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             return view;
         }
         
-        int refresDynamicPOI(String type, List<DynamicPOI> list, ViewGroup listView, int viewIndex) {
+        int refresDynamicPOI(List<DynamicPOI> list, ViewGroup listView) {
 
-            if (list == null || list.isEmpty() || type == null) {
-                return viewIndex;
+            if (list == null || list.isEmpty()) {
+                return 0;
             }
             
+            List<String> DPOITypeList = new ArrayList<String>();
+            
             int viewCount = listView.getChildCount();
+            int viewIndex = 0;
             for(int i = 0, size = list.size(); i < size; i++) {
                 final DynamicPOI dynamicPOI = list.get(i);
                 final String dataType = dynamicPOI.getType();
-                if (type.equals(dataType)) {
+                if (!DPOITypeList.contains(dataType)) {
+                    DPOITypeList.add(dataType);
                     View child;
                     if (viewIndex < viewCount) {
                         child = listView.getChildAt(viewIndex);
@@ -747,9 +744,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_hotel);
                     } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_dianying);
+                    } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
+                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_coupon);
                     }
                     viewIndex++;
-                    break;
                 }
             }
             

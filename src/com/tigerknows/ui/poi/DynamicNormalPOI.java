@@ -54,7 +54,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
 
         @Override
         public void initItem(Object data, View v) {
-            DynamicPOI dynamicPOI = ((SortDynamicPOI)data).dynamicPOI;
+            DynamicPOI dynamicPOI = ((DynamicPOI)data);
             ImageView iconImv = (ImageView) v.findViewById(R.id.icon_imv);
             TextView textTxv = (TextView) v.findViewById(R.id.text_txv);
             if (BaseQuery.DATA_TYPE_TUANGOU.equals(dynamicPOI.getType())) {
@@ -63,6 +63,8 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                 iconImv.setImageResource(R.drawable.ic_dynamicpoi_yanchu);
             } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dynamicPOI.getType())) {
                 iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
+            } else if (BaseQuery.DATA_TYPE_COUPON.equals(dynamicPOI.getType())) {
+                iconImv.setImageResource(R.drawable.ic_dynamicpoi_coupon);
             }
             textTxv.setText(dynamicPOI.getSummary());
             v.setTag(dynamicPOI);
@@ -84,23 +86,23 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         
     }
     
-    private class SortDynamicPOI{
-        DynamicPOI dynamicPOI;
-        DPOIType type;
-        
-        public SortDynamicPOI(DynamicPOI dPOI, DPOIType t){
-            dynamicPOI = dPOI;
-            type = t;
-        }
-    }
-    
-    private class DPOICompare implements Comparator<SortDynamicPOI> {
-
-        @Override
-        public int compare(SortDynamicPOI lhs, SortDynamicPOI rhs) {
-            return lhs.type.ordinal() - rhs.type.ordinal();
-        }
-    }
+//    private class SortDynamicPOI{
+//        DynamicPOI dynamicPOI;
+//        DPOIType type;
+//        
+//        public SortDynamicPOI(DynamicPOI dPOI, DPOIType t){
+//            dynamicPOI = dPOI;
+//            type = t;
+//        }
+//    }
+//    
+//    private class DPOICompare implements Comparator<SortDynamicPOI> {
+//
+//        @Override
+//        public int compare(SortDynamicPOI lhs, SortDynamicPOI rhs) {
+//            return lhs.type.ordinal() - rhs.type.ordinal();
+//        }
+//    }
 
     @Override
     public List<DynamicPOIViewBlock> getViewList(POI poi) {
@@ -110,21 +112,20 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         }
         
         List<DynamicPOI> list = poi.getDynamicPOIList();
-        List<SortDynamicPOI> dataList = new LinkedList<SortDynamicPOI>();
+        List<DynamicPOI> dataList = new LinkedList<DynamicPOI>();
         int dPOIsize = (list != null ? list.size() : 0);
         for(int i = 0; i < dPOIsize; i++) {
             final DynamicPOI dynamicPOI = list.get(i);
             final String dataType = dynamicPOI.getType();
-            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
-                dataList.add(new SortDynamicPOI(dynamicPOI, DPOIType.GROUPBUY));
-            } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
-                dataList.add(new SortDynamicPOI(dynamicPOI, DPOIType.SHOW));
-            } else if  (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-                dataList.add(new SortDynamicPOI(dynamicPOI, DPOIType.EXHIBITION));
+            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) 
+                    || BaseQuery.DATA_TYPE_YANCHU.equals(dataType)
+                    || BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType) 
+                    || BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
+                dataList.add(dynamicPOI);
             }
         }
         
-        Collections.sort(dataList, new DPOICompare());
+//        Collections.sort(dataList, new DPOICompare());
         
         int size = dataList.size();
         if (size == 0) {
@@ -135,7 +136,6 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         
         for (int i = 0; i < size; i++){
             View child = lsv.getChildView(i);
-            int c = 0x77;
             if (size != 1) {
                 if (i == 0) {
                     child.setBackgroundResource(R.drawable.list_header);
@@ -151,7 +151,6 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                 child.setBackgroundResource(R.drawable.list_single);
                 child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
             }
-//            child.setBackgroundColor(0xff000000 | (c << (i % 6 * 2)));
         }
         blockList.add(mViewBlock);
         return blockList;
@@ -215,13 +214,17 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                 List<BaseQuery> list = new ArrayList<BaseQuery>();
                 list.add(dataOperation);
                 query(mPOIDetailFragment, list);
+            } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
+                //TODO:add coupon query. Two situations, query coupon list or query coupon.
+                // 1 coupon, d operation
+                
+                // some coupons, s operation
             }
         }
     }
 
     @Override
     public void msgReceived(Sphinx mSphinx, BaseQuery query, Response response) {
-        // TODO Auto-generated method stub
         String dataType = query.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
             tuangou = ((TuangouQueryResponse) response).getTuangou();
@@ -250,13 +253,15 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
             list.add(zhanlan);
             mSphinx.showView(R.id.view_discover_zhanlan_detail);
             mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
+        //查询优惠券的结果
+        } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
+            //TODO:直接跳到优惠券页
         }
         
     }
 
     @Override
     public boolean checkExistence(POI poi) {
-        // TODO Auto-generated method stub
         return false;
     }
     

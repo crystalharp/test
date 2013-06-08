@@ -1719,8 +1719,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     
                 // 查询团购的结果
                 } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) || BaseQuery.DATA_TYPE_FENDIAN.equals(dataType)
-                        || BaseQuery.DATA_TYPE_YANCHU.equals(dataType) || BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-
+                		|| BaseQuery.DATA_TYPE_YANCHU.equals(dataType) || BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)
+                		|| BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
                     if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, showErrorDialog, this, false) == false) {
                         mDynamicNormalPOI.msgReceived(mSphinx, baseQuery, response);
                     } else {
