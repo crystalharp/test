@@ -310,7 +310,7 @@
 	                    <TextView
 	                        android:layout_width="fill_parent" 
 	                        android:layout_height="wrap_content"
-	                        android:text="@string/dianying"
+	                        android:text="@string/play_dianying"
 	                        android:textSize="18sp"
 	                        android:padding="8dp" />
 	                
@@ -335,7 +335,7 @@
 	                    <TextView
 	                        android:layout_width="wrap_content" 
 	                        android:layout_height="wrap_content"
-	                        android:text="@string/more" />
+	                        android:text="@string/more_dianying" />
 	                </LinearLayout>
 	            </LinearLayout>                
 	                
