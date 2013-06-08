@@ -7,6 +7,7 @@ import android.widget.ListView;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.Util;
 import com.tigerknows.android.widget.TKEditText;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TKWord;
 import com.tigerknows.provider.HistoryWordTable;
@@ -64,6 +65,7 @@ public class TrafficQuerySuggestWordHelper {
                 mQueryFragment.mSelectedEdt.setPOI(tkWord.toPOI());
                 mQueryFragment.mSelectedEdt.getEdt().requestFocus();
             }
+            mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag + ActionLog.HistoryWordInput, position, tkWord.word, tkWord.attribute);
         }
     }
 	

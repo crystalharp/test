@@ -34,6 +34,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.HotelOrder;
@@ -105,6 +106,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mActionTag = ActionLog.HotelOrderList;
     }
 
     @Override
@@ -175,6 +177,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
+				mActionLog.addAction(mActionTag+ActionLog.HotelOrderListItemClick, position);
 				mSphinx.getHotelOrderDetailFragment().setData(orders.get(position-1));
 				mSphinx.getHotelOrderDetailFragment().setStageIndicatorVisible(false);
 				mSphinx.showView(R.id.view_hotel_order_detail);
@@ -221,7 +224,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     }
     
     private void fillOrderDb(){
-    	int maxDbSize = 30;
+    	int maxDbSize = 60;
     	HotelOrderTable table = new HotelOrderTable(mContext);
     	try {
     		long start = System.currentTimeMillis();
@@ -317,6 +320,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	
 		@Override
 		public void onClick(View v) {
+			mActionLog.addAction(mActionTag+ActionLog.HotelOrderListGoThere);
 	    	POI poi = mOrder.getPoi();
 	        Utility.queryTraffic(mSphinx, poi, mActionTag);
 		}
