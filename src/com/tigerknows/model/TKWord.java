@@ -74,7 +74,10 @@ public class TKWord {
     }
     
     public TKWord clone() {
-        TKWord tkWord = new TKWord(attribute, word, position.clone());
+        TKWord tkWord = new TKWord(attribute, word);
+        if (this.position != null) {
+            tkWord.position = this.position.clone();
+        }
         return tkWord;
     }
     
