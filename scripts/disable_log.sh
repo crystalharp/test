@@ -1,5 +1,5 @@
-#!/bin/sh
-#set -x
+#!/bin/bash
+set -x
 
 ######################################################
 # written by xupeng (xupeng@tigerknows.com)
@@ -8,6 +8,7 @@
 
 yes=$2
 comment_tag="by_xp"
+file_filter=(ActionLog.java PullService.java Alarms.java)
 cd $1
 
 usage(){
@@ -25,7 +26,7 @@ process_dir(){
 			cd ..;
 		elif [ -f $i ] && [ ${i##*.} = "java" ]
 		then
-			if [ $yes = "-y" ]
+			if [ $yes = "-y" ] && [[ "${file_filter[@]/$i/}" == "${file_filter[@]}" ]]
 			then
 				sed -i "s|^ *LogWrapper|//$comment_tag\0|" $i;
 			elif [ $yes = "-n" ]
