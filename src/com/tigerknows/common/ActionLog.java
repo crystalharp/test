@@ -586,6 +586,27 @@ public class ActionLog {
     public static final String HotelSeveninnRegistIdcard = "BC";
     public static final String HotelSeveninnRegistSubmit = "BD";
     
+
+    // 订单列表页
+    public static final String HotelOrderList = "GH";
+    public static final String HotelOrderListGoThere = "BA";
+    // BB-%d 被点击的订单的 index
+    public static final String HotelOrderListItemClick = "BB";
+
+    // 订单详情页
+    public static final String HotelOrderDetail = "GI";
+    public static final String HotelOrderDetailClickName = "BA";
+    public static final String HotelOrderDetailPhone = "BB";
+    public static final String HotelOrderDetailCancel= "BC";
+    public static final String HotelOrderDetailCancelDialogYes= "BD";
+    public static final String HotelOrderDetailCancelDialogNo= "BE";
+    public static final String HotelOrderDetailDelete= "BF";
+    public static final String HotelOrderDetailDeleteDialogYes= "BG";
+    public static final String HotelOrderDetailDeleteDialogNo = "BH";
+    public static final String HotelOrderDetailIssueComment = "BI";
+    public static final String HotelOrderDetailOrderAgain= "BJ";
+    
+    
     private Context mContext;
     private long mStartMillis = 0;
     private int mFileLength = 0;
