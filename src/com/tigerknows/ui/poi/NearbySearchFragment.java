@@ -145,6 +145,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             @Override
             public void onBtnClicked(TKWord tkWord, int position) {
                 mKeywordEdt.setText(tkWord.word);
+                mActionLog.addAction(mActionTag + ActionLog.HistoryWordInput, position, tkWord.word, tkWord.attribute);
             }
         };
         mSuggestWordListManager = new SuggestWordListManager(mSphinx, mSuggestLsv, mKeywordEdt, a, HistoryWordTable.TYPE_POI);
@@ -212,7 +213,7 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    mActionLog.addAction(ActionLog.POINearbySearchInput);
+                    mActionLog.addAction(mActionTag +  ActionLog.POINearbySearchInput);
                     mSuggestWordListManager.refresh();
                     mViewPager.setCurrentItem(1);
                 }

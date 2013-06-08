@@ -22,6 +22,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.ui.BaseFragment;
@@ -47,6 +48,7 @@ public class HotelImageGridFragment extends BaseFragment {
 	GridAdapter mGridAdapter;
     TKGallery mTKGallery;
     GalleryAdapter mGalleryAdapter;
+    int mPosition;
     
     private Runnable mLoadedDrawableRun = new Runnable() {
         
@@ -100,6 +102,7 @@ public class HotelImageGridFragment extends BaseFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mActionTag = ActionLog.HotelPicture;
 	}
 
 	@Override
@@ -132,6 +135,21 @@ public class HotelImageGridFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 setState(STATE_GALLERY);
                 mTKGallery.setSelection(position);
+                mActionLog.addAction(mActionTag+ActionLog.ListViewItem, position);
+                mPosition = position;
+            }
+        });
+	    mTKGallery.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, position, mPosition);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+                
             }
         });
 	}

@@ -120,7 +120,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.POINearbySearch;
+        mActionTag = ActionLog.HotelPickLocation;
     }
 
     @Override
@@ -137,6 +137,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             public void onBtnClicked(TKWord tkWord, int position) {
                 mTKWord = tkWord.clone();
                 mKeywordEdt.setText(tkWord.word);
+                mActionLog.addAction(mActionTag + ActionLog.HistoryWordInput, position, tkWord.word, tkWord.attribute);
             }
         };
 
@@ -201,7 +202,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    mActionLog.addAction(ActionLog.POINearbySearchInput);
+                    mActionLog.addAction(mActionTag+ActionLog.HotelPickLocationInput);
                     mSuggestWordListManager.refresh();
                     mViewPager.setCurrentItem(1);
                 }
@@ -261,6 +262,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         switch (view.getId()) {
                 
             case R.id.query_btn:
+                mActionLog.addAction(mActionTag + ActionLog.HotelPickLocationSubmit);
                 if (TextUtils.isEmpty(mKeywordEdt.getText().toString().trim())) {
                     mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
                 } else {
@@ -454,7 +456,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(adapter);
 
-        mActionLog.addAction(ActionLog.TrafficAlternative);
+        mActionLog.addAction(mActionTag+ActionLog.HotelPickLocationAlternative);
         final Dialog dialog = Utility.showNormalDialog(mSphinx,
                 mSphinx.getString(R.string.hotel_please_select_location),
                 null,
@@ -478,6 +480,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                             FilterListView.selectedFilter(filter, -1);
                         }
                         mPOI = list.get(which).toPOI();
+                        mActionLog.addAction(mActionTag+ActionLog.HotelPickLocationAlternativeSelect, which, mPOI.getName());
                         HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, mPOI.getName(), mPOI.getPosition()), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
                     }
                 }
@@ -490,7 +493,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             
             @Override
             public void onDismiss(DialogInterface dialog) {
-                mActionLog.addAction(ActionLog.TrafficAlternative + ActionLog.Dismiss);
+                mActionLog.addAction(mActionTag+ActionLog.HotelPickLocationAlternative);
             }
         });
     }

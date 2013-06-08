@@ -126,7 +126,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     private void showDateListView(View parent) {
-        mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.PopupWindowFilter);
+        mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.HotelDate);
         DateListView view = getDateListView();
         PopupWindow popupWindow = mPOIDetailFragment.getPopupWindow();
         if (popupWindow == null) {
@@ -142,7 +142,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 
                 @Override
                 public void onDismiss() {
-                    mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.PopupWindowFilter + ActionLog.Dismiss);
+                    mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.HotelDate + ActionLog.Dismiss);
                 }
             });
             mPOIDetailFragment.setPopupWindow(popupWindow);
