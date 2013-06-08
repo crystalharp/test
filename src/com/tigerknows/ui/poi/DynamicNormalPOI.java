@@ -226,19 +226,18 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
     @Override
     public void msgReceived(Sphinx mSphinx, BaseQuery query, Response response) {
         String dataType = query.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
-        if (BaseActivity.checkResponseCode(query, mSphinx, null, true, this, false)) {
-            return;
-        }
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
             tuangou = ((TuangouQueryResponse) response).getTuangou();
             
         // 查询团购分店的结果
         } else if (BaseQuery.DATA_TYPE_FENDIAN.equals(dataType)) {
-            tuangou.setFendian(((FendianQueryResponse) response).getFendian());
-            List<Tuangou> list = new ArrayList<Tuangou>();
-            list.add(tuangou);
-            mSphinx.showView(R.id.view_discover_tuangou_detail);
-            mSphinx.getTuangouDetailFragment().setData(list, 0, null);
+            if (tuangou != null) {
+                tuangou.setFendian(((FendianQueryResponse) response).getFendian());
+                List<Tuangou> list = new ArrayList<Tuangou>();
+                list.add(tuangou);
+                mSphinx.showView(R.id.view_discover_tuangou_detail);
+                mSphinx.getTuangouDetailFragment().setData(list, 0, null);
+            }
         // 查询演出的结果
         } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
             Yanchu yanchu = ((YanchuQueryResponse) response).getYanchu();

@@ -56,6 +56,7 @@ public class TrafficQueryStateHelper {
             // TODO Auto-generated method stub
             super.exit();
             mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeMap + ActionLog.Dismiss);
+            mQueryFragment.mMapLocationHelper.checkMapCenterInCity();
         }
 
         @Override
@@ -67,6 +68,7 @@ public class TrafficQueryStateHelper {
 			mQueryFragment.mEnd.mEdt.mActionTag = ActionLog.TrafficHomeMap;
 			mQueryFragment.mBusline.mEdt.mActionTag = ActionLog.TrafficHomeMap;
             mQueryFragment.mEventHelper.applyListenersInMapState();
+//            mQueryFragment.mMapLocationHelper.checkMapCenterInCity();
         }
 
         @Override
@@ -78,8 +80,6 @@ public class TrafficQueryStateHelper {
                 mQueryFragment.mAnimationHelper.hideBlockAndMenuAnimation();
             }
             if (oldState == State.Input) {
-                mQueryFragment.mMapLocationHelper.resetMapStateMap();
-                
                 mQueryFragment.mSphinx.clearMap();
                 
                 mQueryFragment.getContentView().setVisibility(View.GONE);
@@ -127,7 +127,6 @@ public class TrafficQueryStateHelper {
 
             }
             mQueryFragment.mMenuFragment.display();
-            mQueryFragment.mMapLocationHelper.resetNormalStateMap();
             applyInnateProperty(TrafficViewSTT.State.Normal);
             //这一行很别扭
             if (oldState != State.SelectPoint) {
@@ -171,6 +170,7 @@ public class TrafficQueryStateHelper {
 			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeSelectPoint+ActionLog.Dismiss);
             mQueryFragment.hideCommonTitle();
             mQueryFragment.mTitle.setVisibility(View.VISIBLE);
+            mQueryFragment.mMapLocationHelper.checkMapCenterInCity();
         }
 
         @Override
@@ -193,6 +193,7 @@ public class TrafficQueryStateHelper {
 			mQueryFragment.mEnd.mEdt.mActionTag = ActionLog.TrafficHomeSelectPoint;
 			mQueryFragment.mBusline.mEdt.mActionTag = ActionLog.TrafficHomeSelectPoint;
             mQueryFragment.mEventHelper.applyListenersInSelectPointState();
+            mQueryFragment.mMapLocationHelper.checkMapCenterInCity();
         }
 	}
 	
