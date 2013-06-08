@@ -150,6 +150,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                     } else {
                         CityInfo cityInfo = mapEngine.getCityInfo(cityId);
                         cityInfo.setPosition(myLocationPosition);
+                        cityInfo.setLevel(TKConfig.ZOOM_LEVEL_LOCATION);
                         if (cityInfo.isAvailably()) {
                             Globals.g_My_Location = location;
                             Globals.g_My_Location_City_Info = cityInfo;

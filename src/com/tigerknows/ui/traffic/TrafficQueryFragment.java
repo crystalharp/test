@@ -18,8 +18,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioGroup;
@@ -264,6 +262,7 @@ public class TrafficQueryFragment extends BaseFragment {
     @Override
     public void dismiss() {
     	super.dismiss();
+    	mMapLocationHelper.mTargetCityInfo = null;
     	mSphinx.setTouchMode(TouchMode.NORMAL);
     	mStart.clear();
     	mEnd.clear();
@@ -324,7 +323,6 @@ public class TrafficQueryFragment extends BaseFragment {
         LogWrapper.d("eric", "TrafficQueryView.show() currentState: " + currentState);
 
         if (currentState == TrafficViewSTT.State.Input) {
-        	mMapLocationHelper.resetMapStateMap();
             mMenuFragment.hide();
             if (mode == TRAFFIC_MODE) {
                 mSphinx.showSoftInput(mSelectedEdt.getEdt().getInput());
@@ -333,7 +331,6 @@ public class TrafficQueryFragment extends BaseFragment {
             }
             mSuggestWordHelper.refresh(mContext, mSelectedEdt.getEdt(), mode);
         } else if (currentState == TrafficViewSTT.State.Normal) {
-        	mMapLocationHelper.centerOnMyLocation();
         	mMapLocationHelper.showNormalStateMap();
             /*
              * 点击"收藏的点"后, 弹出的对话框, 在onPause中将mShowPromptOnLongClick设为false
@@ -356,20 +353,11 @@ public class TrafficQueryFragment extends BaseFragment {
          * 应该初始化的内容初始化。这个概念以后应该被扩展到其他的页面。
          */
         if (mDismissed) {
-            initStartContent();
             mDismissed = false;
+            mMapLocationHelper.resetMapCenter();
+            initStartContent();
         }
         
-        // 若之前是在酒店查询的逻辑里，那么查询交通时地图中心移动到酒店查询城市的中心
-        CityInfo hotelCityInfo = Globals.getHotelCityInfo();
-        CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
-        if (hotelCityInfo != null && (locationCityInfo == null || locationCityInfo.getId() != hotelCityInfo.getId())) {
-            int cityId = mapView.getCenterCityId();
-            CityInfo cityInfo = Globals.getCurrentCityInfo();
-            if (cityId != cityInfo.getId()) {
-                mapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
-            }
-        }
 	}
 
 	
@@ -822,6 +810,12 @@ public class TrafficQueryFragment extends BaseFragment {
     public void setDataNoSuggest(POI poi, int index, int queryType) {
         if (index != START && index != END && index != SELECTED) 
             return;
+
+        if (poi.getPosition() != null) {
+            MapEngine mapEngine = MapEngine.getInstance();
+            mMapLocationHelper.mTargetCityInfo = mapEngine.getCityInfo(mapEngine.getCityId(poi.getPosition()));
+        }
+        
         changeToMode(TRAFFIC_MODE);
         //自定起起点功能要求不显示起点，用这个变量进行标识，onpause的时候恢复
         setShowStartMyLocation(false);
@@ -1125,5 +1119,9 @@ public class TrafficQueryFragment extends BaseFragment {
         MapEngine.getInstance().suggestwordCheck(sphinx, cityId);
         HistoryWordTable.readHistoryWord(sphinx, cityId, HistoryWordTable.TYPE_TRAFFIC);
         HistoryWordTable.readHistoryWord(sphinx, cityId, HistoryWordTable.TYPE_BUSLINE);
+    }
+
+    public void resetCurrentMapInfo(Position position, int zoomLevel) {
+        mMapLocationHelper.resetCurrentMapInfo(position, zoomLevel);
     }
 }
