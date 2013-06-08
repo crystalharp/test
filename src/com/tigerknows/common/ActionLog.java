@@ -167,6 +167,13 @@ public class ActionLog {
     public static final String POIDetailFromWeixin = "BQ";
     public static final String POIDetailWeixinRequest = "BR";
     public static final String POIDetailWeixinSend = "BS";
+    public static final String POIDetailHotelClickDate = "BT";
+    public static final String POIDetailHotelClickRoomItem = "BU";
+    public static final String POIDetailHotelRoomBookBtn = "BV";
+    public static final String POIDetailHotelMoreRoom = "BW";
+    public static final String POIDetailHotelImage = "BX";
+    public static final String POIDetailHotelIntro = "BY";
+    public static final String POIDetailHotelFailRetry = "BZ";
 
     // POI点评列表页
     public static final String POICommentList = "AE";
@@ -551,6 +558,10 @@ public class ActionLog {
     public static final String HotelSeveninnRegistPhone = "BB";
     public static final String HotelSeveninnRegistIdcard = "BC";
     public static final String HotelSeveninnRegistSubmit = "BD";
+
+    // 酒店简介页
+    public static final String HotelIntro = "12";
+    
 
     private Context mContext;
     private long mStartMillis = 0;
