@@ -673,8 +673,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
 
     @Override
     public void cancelFilter() {
-        // TODO Auto-generated method stub
-        
+        dismissPopupWindow();
     }
     
     void submit() {
