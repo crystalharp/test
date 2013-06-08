@@ -43,7 +43,8 @@
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/app_name"
                     android:src="@drawable/icon_search"
-                    android:layout_alignParentRight="true""
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight="true"
                     />
             </RelativeLayout>
             <LinearLayout android:id="@+id/coupon_pic_lly"
@@ -55,7 +56,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:layout_weight="fill_parent"
                     android:contentDescription="@string/app_name"
                     android:src="@drawable/icon" />
             </LinearLayout>
@@ -119,7 +119,6 @@
                     android:textSize="16sp" />
 
                 <Button android:id="@+id/coupon_qrimg_btn"
-                    android:id="@+id/credit_validity_btn"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"
