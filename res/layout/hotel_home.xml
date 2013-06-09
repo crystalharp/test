@@ -83,7 +83,7 @@
                 android:orientation="horizontal"
                 android:background="@drawable/list_middle"
                 android:paddingLeft="8dp"
-                android:paddingTop="14dp"
+                android:paddingTop="12dp"
                 android:paddingRight="8dp"
                 android:paddingBottom="8dp"
                 android:textColor="@color/black_dark"

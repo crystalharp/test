@@ -41,7 +41,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.PopupWindow.OnDismissListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -86,6 +85,22 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private DateListView mDateListView = null;
     
     private ViewGroup mPopupWindowContain = null;
+    
+    PopupWindow.OnDismissListener mDateListViewDismiss = new PopupWindow.OnDismissListener() {
+        
+        @Override
+        public void onDismiss() {
+            mActionLog.addAction(mActionTag + ActionLog.HotelDate + ActionLog.Dismiss);
+        }
+    };
+    
+    PopupWindow.OnDismissListener mCategoryFilterViewDismiss = new PopupWindow.OnDismissListener() {
+        
+        @Override
+        public void onDismiss() {
+            mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter + ActionLog.Dismiss);
+        }
+    };
         
     private Dialog mProgressDialog = null;
     
@@ -98,7 +113,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.POIHome;
+        mActionTag = ActionLog.HotelQuery;
     }
     
     @Override
@@ -122,12 +137,12 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         
         mSphinx.showHint(TKConfig.PREFS_HINT_HOTEL_HOME, R.layout.hint_hotel_home);
         
-        refreshFilterArea(false);
         if (mSphinx.getPickLocationFragment().getPOI() != null) {
             FilterListView.selectedFilter(getFilter(getFilterList(), FilterArea.FIELD_LIST), -1);
         }
         if (mRefreshFilterArea) {
             mRefreshFilterArea = false;
+            refreshFilterArea(false);
         	queryFilter();
         }
         
@@ -202,12 +217,14 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         int id = view.getId();
         switch (id) {
             case R.id.city_btn:
+                mActionLog.addAction(mActionTag + ActionLog.HotelQueryCity);
                 Intent intent = new Intent();
                 intent.putExtra(ChangeCityActivity.EXTRA_ONLY_CHANGE_HOTEL_CITY, true);
                 mSphinx.showView(R.id.activity_more_change_city, intent);
                 break;
                 
             case R.id.location_btn:
+                mActionLog.addAction(mActionTag + ActionLog.HotelQueryLocation);
                 mSphinx.getPickLocationFragment().reset();
                 Filter filter = getFilter(mFilterList, FilterArea.FIELD_LIST);
                 if (filter == null || filter.getVersion().equals("0.0.0")) {
@@ -219,25 +236,26 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 break;
                 
             case R.id.price_view:
+                mActionLog.addAction(mActionTag + ActionLog.HotelQueryCategory);
                 showFilterCategory(mTitleFragment);
                 break;
                 
             case R.id.check_view:
+                mActionLog.addAction(mActionTag + ActionLog.HotelQueryDate);
                 showDateListView(mTitleFragment);
                 break;
                 
             case R.id.query_btn:
+                mActionLog.addAction(mActionTag + ActionLog.HotelQuerySubmit);
+                mRefreshFilterArea = true;
                 submit();
                 break;
                 
             case R.id.dingdan_btn:
+                mActionLog.addAction(mActionTag + ActionLog.HotelQueryOrder);
             	mSphinx.getHotelOrderListFragment().clearOrders();
                 mSphinx.showView(R.id.view_hotel_order_list);
             	break;
-                
-            case R.id.confirm_btn:
-                dismissPopupWindow();
-                break;
                 
             default:
                 break;
@@ -611,13 +629,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
-            mPopupWindow.setOnDismissListener(new OnDismissListener() {
-                
-                @Override
-                public void onDismiss() {
-                    mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter + ActionLog.Dismiss);
-                }
-            });
             mPopupWindow.setAnimationStyle(R.style.AlterImageDialog);
             mPopupWindow.update();
         }
@@ -628,6 +639,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private void showFilterCategory(View parent) {
         makePopupWindow(parent);
         mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter);
+        mPopupWindow.setOnDismissListener(mCategoryFilterViewDismiss);
         mPopupWindowContain.removeAllViews();
         mPopupWindowContain.addView(getFilterCategoryListView());
         mPopupWindow.showAsDropDown(parent, 0, 0);
@@ -648,8 +660,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     
     private void showDateListView(View parent) {
         makePopupWindow(parent);
+        mActionLog.addAction(mActionTag + ActionLog.HotelDate);
+        mPopupWindow.setOnDismissListener(mDateListViewDismiss);
         DateListView view = getDateListView();
-        mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter);
         mPopupWindowContain.removeAllViews();
         mPopupWindowContain.addView(getDateListView());
         mPopupWindow.showAsDropDown(parent, 0, 0);

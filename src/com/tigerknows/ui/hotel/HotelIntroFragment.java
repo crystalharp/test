@@ -28,12 +28,12 @@ public class HotelIntroFragment extends BaseFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mActionTag = ActionLog.HotelIntro;
 	}
 
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-	    mActionTag = ActionLog.HotelIntro;
 		mRootView = mLayoutInflater.inflate(R.layout.hotel_intro, container, false);
 		hotelNameTxv = (TextView) mRootView.findViewById(R.id.hotel_head);
 		longDescriptionTxv = (TextView) mRootView.findViewById(R.id.hotel_long_description);

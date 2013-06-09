@@ -29,6 +29,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
@@ -112,8 +113,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         setListener();
         mDistanceTxv.setVisibility(View.INVISIBLE);
         mNameView.setBackgroundResource(R.drawable.list_header);
-        // TODO
-        //mActionTag = "";
+        mActionTag = ActionLog.HotelOrderDetail;
 
     	mHotelNameTxv.setSingleLine(false);
     	
@@ -176,15 +176,19 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		@Override
 		public void onClick(View v) {
 			LogWrapper.i(TAG, "Cancel order. Id: " + mOrder.getId());
-			
+			mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailCancel);
 			Utility.showNormalDialog(mSphinx, mContext.getString(R.string.hotel_order_cancel_confirm), new DialogInterface.OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 
                     if (which == DialogInterface.BUTTON_POSITIVE) {
+            			mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailCancelDialogYes);
                     	// Send cancel order request to server
                     	sendCancelRequest();
+                    }else if(which == DialogInterface.BUTTON_NEGATIVE ){
+            			mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailCancelDialogNo);
+                    	
                     }
 				}
 				
@@ -225,7 +229,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		@Override
 		public void onClick(View v) {
 			LogWrapper.i(TAG, "Issue Comment");
-			
+			mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailIssueComment);
 			List<BaseQuery> queries = new ArrayList<BaseQuery>(2);
 			queries.add(createPOIQuery());
 			queries.add(createCommentQuery());
@@ -242,6 +246,11 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 			LogWrapper.i(TAG, "Order Again");
         	mTkAsyncTasking = mSphinx.queryStart(createPOIQuery());
         	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
+        	if(v==mNameView){
+    			mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailClickName);
+        	}else if(v==mBtnOrderAgain){
+    			mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailOrderAgain);
+        	}
 		}
 	};
     
@@ -251,14 +260,19 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		public void onClick(View v) {
 			LogWrapper.i(TAG, "Delete order action");
 
+			mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailDelete);
+			
 			Utility.showNormalDialog(mSphinx, mContext.getString(R.string.hotel_order_delete_confirm), new DialogInterface.OnClickListener() {
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 
                     if (which == DialogInterface.BUTTON_POSITIVE) {
+                    	mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailDeleteDialogYes);
             			deleteOrder();
             			mSphinx.getHotelOrderListFragment().clearOrders();
+                    }else {
+                    	mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailDeleteDialogNo);
                     }
 				}
 				
@@ -336,10 +350,12 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     public void onClick(final View view) {
         switch (view.getId()) {
             case R.id.telephone_view:
+            	mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailPhone);
             	Utility.telephone(mSphinx, mHotelTelTxv);
             	break;
             	
             case R.id.address_view:
+            	mActionLog.addAction(mActionTag +  ActionLog.CommonAddress);
             	POI poi = mOrder.getPoi();
                 Utility.queryTraffic(mSphinx, poi, mActionTag);
             	break;

@@ -3,7 +3,7 @@
  * deCarta confidential and proprietary.
  * Copyright deCarta. All rights reserved.
  */
-package com.decarta.android.map;
+package com.tigerknows.map;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +32,16 @@ import com.decarta.android.event.EventSource;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.BoundingBox;
 import com.decarta.android.location.Position;
+import com.decarta.android.map.Compass;
+import com.decarta.android.map.Icon;
+import com.decarta.android.map.InfoWindow;
+import com.decarta.android.map.ItemizedOverlay;
+import com.decarta.android.map.MapLayer;
+import com.decarta.android.map.MapText;
+import com.decarta.android.map.Shape;
+import com.decarta.android.map.TilesView;
 import com.decarta.android.map.Compass.PlaceLocation;
+import com.decarta.android.map.Compass.TouchEventListener;
 import com.decarta.android.map.MapLayer.MapLayerType;
 import com.decarta.android.map.TilesView.MapPreference;
 import com.decarta.android.util.LogWrapper;
@@ -42,7 +51,6 @@ import com.decarta.android.util.XYInteger;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.map.MapEngine;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.ZoomControls;
 
