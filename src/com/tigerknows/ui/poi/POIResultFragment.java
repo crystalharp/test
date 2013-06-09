@@ -740,7 +740,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_yanchu);
                     } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
-                    } else if (DynamicPOI.TYPE_HOTEL.equals(dataType)) {
+                    } else if (DynamicPOI.TYPE_HOTEL.equals(dataType) && !BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_hotel);
                     } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_dianying);
