@@ -29,7 +29,6 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.android.location.Position;
-import com.decarta.android.map.MapView.MapScene;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -37,6 +36,7 @@ import com.tigerknows.Sphinx;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.TrafficOverlayHelper;
+import com.tigerknows.map.MapView.MapScene;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;

@@ -9,12 +9,12 @@ import java.util.LinkedList;
 
 import com.decarta.CONFIG;
 import com.decarta.Profile;
-import com.decarta.android.map.MapView.DownloadEventListener;
 import com.decarta.android.map.TilesView.TileResponse;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.XYZ;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.TileDownload;
+import com.tigerknows.map.MapView.DownloadEventListener;
 
 /**
  * Thread class for loading tiles

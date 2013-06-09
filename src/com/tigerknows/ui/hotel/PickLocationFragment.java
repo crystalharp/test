@@ -282,6 +282,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         TKWord tkWord = mTKWord;
         String word = tkWord.word;
         if (TextUtils.isEmpty(word)) {
+            mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
             return;
         } else {
             mSphinx.hideSoftInput(mKeywordEdt.getInput());
@@ -436,6 +437,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                     result = true;
                     mPOI = null;
                     HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, selected.getFilterOption().getName(), null), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
+                    mSphinx.getHotelHomeFragment().setSelectedLocation(true);
                     dismiss();
                 }
             }

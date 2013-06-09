@@ -137,12 +137,12 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         
         mSphinx.showHint(TKConfig.PREFS_HINT_HOTEL_HOME, R.layout.hint_hotel_home);
         
-        refreshFilterArea(false);
         if (mSphinx.getPickLocationFragment().getPOI() != null) {
             FilterListView.selectedFilter(getFilter(getFilterList(), FilterArea.FIELD_LIST), -1);
         }
         if (mRefreshFilterArea) {
             mRefreshFilterArea = false;
+            refreshFilterArea(false);
         	queryFilter();
         }
         
@@ -247,6 +247,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 
             case R.id.query_btn:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQuerySubmit);
+                mRefreshFilterArea = true;
                 submit();
                 break;
                 

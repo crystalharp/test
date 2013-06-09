@@ -26,7 +26,6 @@ import android.widget.TextView;
 
 import com.decarta.Globals;
 import com.decarta.android.location.Position;
-import com.decarta.android.map.MapView;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
@@ -38,6 +37,7 @@ import com.tigerknows.android.widget.TKEditText;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapView;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.BuslineModel;

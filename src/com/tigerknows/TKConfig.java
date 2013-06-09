@@ -86,7 +86,7 @@ public class TKConfig {
     /**
      * 网络请求头中的User-Agent值
      */
-    private static String sUSER_AGENT = "tigermap/1.50";
+    private static String sUSER_AGENT = "tigerknows";
     
     /**
      * 网络超时值
@@ -1154,7 +1154,7 @@ public class TKConfig {
      * @return
      */
     public static String getUserAgent() {
-        return sUSER_AGENT;
+        return sUSER_AGENT+"/"+sCLIENT_SOFT_VERSION;
     }
 
     /**

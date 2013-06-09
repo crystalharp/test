@@ -145,6 +145,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                     mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.HotelDate + ActionLog.Dismiss);
                 }
             });
+            popupWindow.setAnimationStyle(R.style.AlterImageDialog);
+            popupWindow.update();
             mPOIDetailFragment.setPopupWindow(popupWindow);
         }
         popupWindow.showAsDropDown(parent, 0, 0);

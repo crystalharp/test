@@ -1,7 +1,6 @@
 package com.tigerknows.model.test;
 
 import com.decarta.Globals;
-import com.decarta.android.map.MapView;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
@@ -10,6 +9,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.TKLocationManager;
 import android.widget.Toast;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapView;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.map.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.AccountManage;
