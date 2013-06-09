@@ -43,7 +43,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/icon_search"
+                    android:background="@drawable/icon_search"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentRight="true"
                     />
@@ -53,12 +53,13 @@
                 android:layout_height="wrap_content"
                 android:gravity="top|center_horizontal"
                 >
-                <ImageView android:id="@+id/logo_imv"
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/detail_imv"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/icon" />
+                    android:background="@drawable/icon" />
             </LinearLayout>
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -69,7 +70,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:drawableLeft="@drawable/icon_search"
-                    android:text="123人已使用"
+                    android:text="@string/app_name"
 			        android:singleLine="true"
 			        android:lineSpacingExtra="0dp"
 			        android:includeFontPadding="false"
@@ -78,7 +79,7 @@
             <TextView android:id="@+id/detail_txv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/credit_note_detail"
+                android:text="@string/app_name"
                 android:padding="8dp"
                 />
             <LinearLayout
@@ -90,15 +91,14 @@
                 <TextView 
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="本优惠来自"
+                    android:text="@string/coupon_from"
                     android:textSize="16sp"
                     />
-                <TextView 
+                <ImageView 
+                    android:id="@+id/logo_imv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="丁丁优惠"
-                    android:drawableLeft="@drawable/icon_search"
-                    android:textSize="16sp"
+                    android:background="@drawable/icon"
                     />
             </LinearLayout>
             <ImageView
@@ -113,13 +113,14 @@
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
                 android:background="@drawable/list_single"
+                android:visibility="gone"
                 >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left|center_vertical"
                     android:padding="8dp"
-                    android:text="二维码验证"
+                    android:text="@string/app_name"
                     android:textColor="@color/black_dark"
                     android:textSize="16sp" />
 
@@ -142,12 +143,12 @@
             <TextView 
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="使用须知"
+                android:text="@string/coupon_note"
                 />
             <TextView android:id="@+id/remark_txv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/credit_note_detail_2"/>
+                android:text="@string/app_name"/>
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

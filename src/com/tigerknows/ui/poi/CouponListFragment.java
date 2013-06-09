@@ -134,6 +134,7 @@ public class CouponListFragment extends BaseFragment {
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_COUPON);
             criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
+            criteria.put(DataQuery.SERVER_PARAMETER_NEED_FIELD, Coupon.NEED_FIELD);
             dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
             mSphinx.queryStart(dataQuery);
         }
@@ -163,36 +164,33 @@ public class CouponListFragment extends BaseFragment {
                 view = convertView;
             }
 
-            try {
-                ImageView pictureImv = (ImageView) view.findViewById(R.id.picture_imv);
-                TextView nameTxv = (TextView)view.findViewById(R.id.name_txv);
-                TextView hotTxv = (TextView)view.findViewById(R.id.hot_txv);
-                
-                final Coupon coupon = getItem(position);
-                
-                nameTxv.setText(R.string.app_name);
-                
-                TKDrawable tkDrawable = coupon.getBriefPicTKDrawable();
-                if (tkDrawable != null) {
-                    Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, CouponListFragment.this.toString());
-                    if(drawable != null) {
-                        //To prevent the problem of size change of the same pic 
-                        //After it is used at a different place with smaller size
-                        if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
-                            pictureImv.setBackgroundDrawable(null);
-                        }
-                        pictureImv.setBackgroundDrawable(drawable);
-                    } else {
+            ImageView pictureImv = (ImageView) view.findViewById(R.id.picture_imv);
+            TextView nameTxv = (TextView)view.findViewById(R.id.name_txv);
+            TextView hotTxv = (TextView)view.findViewById(R.id.hot_txv);
+            
+            final Coupon coupon = getItem(position);
+            
+            nameTxv.setText(coupon.getListName());
+            hotTxv.setText(mSphinx.getString(R.string._used_sum_times, coupon.getHot()));
+            
+            TKDrawable tkDrawable = coupon.getBriefPicTKDrawable();
+            if (tkDrawable != null) {
+                Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, CouponListFragment.this.toString());
+                if(drawable != null) {
+                    //To prevent the problem of size change of the same pic 
+                    //After it is used at a different place with smaller size
+                    if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
                         pictureImv.setBackgroundDrawable(null);
                     }
-                    
+                    pictureImv.setBackgroundDrawable(drawable);
                 } else {
                     pictureImv.setBackgroundDrawable(null);
                 }
                 
-            } catch (Exception e) {
+            } else {
+                pictureImv.setBackgroundDrawable(null);
             }
-            
+                
             return view;
         }
     }

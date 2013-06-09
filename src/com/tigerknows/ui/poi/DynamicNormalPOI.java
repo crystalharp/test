@@ -228,20 +228,12 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
             } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
                 // 1 coupon, d operation
                 if (DPOIMasterUid != null && !TextUtils.isEmpty(DPOIMasterUid)) {
-                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, "0001020304050607080910");
+                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, Coupon.NEED_FIELD);
                     dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
                     list.add(dataOperation);
                     query(mPOIDetailFragment, list);
                 // some coupons, s operation
                 } else {
-                    criteria.clear();
-                    criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_COUPON);
-                    criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, String.valueOf(mPOI.getUUID()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_NEED_FIELD, "00010203");
-                    DataQuery dataQuery = new DataQuery(mSphinx);
-                    dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mSphinx.getCouponListFragment().getId(), mSphinx.getString(R.string.doing_and_wait));
-                    list.add(dataQuery);
-                    query(mPOIDetailFragment, list);
                     mSphinx.getCouponListFragment().setData(mPOI);
                     mSphinx.showView(R.id.view_coupon_list);
                 }

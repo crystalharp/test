@@ -17,6 +17,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Coupon;
+import com.tigerknows.model.POI;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.ui.BaseFragment;
 
@@ -43,15 +44,9 @@ public class CouponDetailFragment extends BaseFragment {
         
         @Override
         public void run() {
-            TKDrawable tkDrawable = mData.getHintPicTKDrawable();
-            if (tkDrawable != null) {
-                Drawable drawable = tkDrawable.loadDrawable(null, null, null);
-                if(drawable != null) {
-                    mHintImv.setBackgroundDrawable(drawable);
-                }
-            }
-            
-            //TODO还有其它图片
+            setPic(mData.getHintPicTKDrawable(), mHintImv, false);
+            setPic(mData.getDetailPicTKDrawable(), mDetailImv, false);
+            setPic(mData.getLogoTKDrawable(), mLogoImv, false);
         }
     };
 
@@ -64,6 +59,8 @@ public class CouponDetailFragment extends BaseFragment {
     private TextView mHotTxv = null;
 
     private TextView mDetailTxv = null;
+    
+    private ImageView mDetailImv = null;
     
     private ImageView mLogoImv = null;
     
@@ -109,6 +106,7 @@ public class CouponDetailFragment extends BaseFragment {
         mHotTxv = (TextView) mRootView.findViewById(R.id.hot_txv);
         mDetailTxv = (TextView) mRootView.findViewById(R.id.detail_txv);
         mLogoImv = (ImageView) mRootView.findViewById(R.id.logo_imv);
+        mDetailImv = (ImageView) mRootView.findViewById(R.id.detail_imv);
         mRemarkTxv = (TextView) mRootView.findViewById(R.id.remark_txv);
     }
 
@@ -117,25 +115,34 @@ public class CouponDetailFragment extends BaseFragment {
     
     public void setData(Coupon coupon) {
         mData = coupon;
+
+        setPic(mData.getHintPicTKDrawable(), mHintImv, true);
+        setPic(mData.getDetailPicTKDrawable(), mDetailImv, true);
+        setPic(mData.getLogoTKDrawable(), mLogoImv, true);
         
-        TKDrawable tkDrawable = mData.getHintPicTKDrawable();
-        if (tkDrawable != null) {
-            Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, this.toString());
-            if(drawable != null) {
-                mHintImv.setBackgroundDrawable(drawable);
-            }
-        }
-        mPOINameTxv.setText(coupon.getPOI().getName());
+        mPOINameTxv.setText(mData.getListName());
         mDescriptionTxv.setText(coupon.getDescription());
-        mHotTxv.setText(coupon.getHot() + "人已使用");
-        tkDrawable = mData.getLogoTKDrawable();
-        if (tkDrawable != null) {
-            Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, this.toString());
-            if(drawable != null) {
-                mLogoImv.setBackgroundDrawable(drawable);
-            }
-        }
+        mHotTxv.setText(mSphinx.getString(R.string._used_sum_times, coupon.getHot()));
+        mDetailTxv.setText(coupon.getDetail());
+        
         mRemarkTxv.setText(coupon.getRemark());
-        mPOINameTxv.setText(R.string.app_name);
+    }
+    
+    void setPic(TKDrawable tkDrawable, ImageView imageView, boolean reload) {
+        if (tkDrawable != null) {
+            Drawable drawable;
+            if (reload) {
+                drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, this.toString());
+            } else {
+                drawable = tkDrawable.loadDrawable(null, null, null);
+            }
+            if(drawable != null) {
+                imageView.setBackgroundDrawable(drawable);
+            } else {
+                imageView.setBackgroundResource(R.drawable.bg_picture_tuangou);
+            }
+        } else {
+            imageView.setBackgroundDrawable(null);
+        }
     }
 }
