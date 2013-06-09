@@ -1830,30 +1830,23 @@ public final class DataQuery extends BaseQuery {
             return data;
         }
         
-        public static class CouponList extends BaseList {
+        public static class CouponList extends XMapData{
             
-            // 0x02 x_array<x_map>  poi列表 
-            public static final byte FIELD_LIST = 0x02;
+        	// 0x00 x_int 优惠券数量
+        	public static final byte FIELD_TOTAL = 0x00;
+        	
+            // 0x01 x_array<x_map>  poi列表 
+            public static final byte FIELD_LIST = 0x01;
             
+            private long total;
             private List<Coupon> list;
 
-            public void setTotal(int total) {
-                this.total = total;
+            public long getTotal() {
+                return total;
             }
 
             public List<Coupon> getList() {
                 return list;
-            }
-
-            public void setList(List<Coupon> list) {
-                this.list = list;
-                XArray<XMap> xarray = new XArray<XMap>();
-                if (this.list != null) {
-                    for(Coupon coupon : this.list) {
-                        xarray.add(coupon.getData());
-                    }
-                }
-                data.put(FIELD_LIST, xarray);
             }
 
             public CouponList(XMap data) throws APIException {
@@ -1863,22 +1856,6 @@ public final class DataQuery extends BaseQuery {
                 this.total = 0;
             }     
             
-            public XMap getData() {
-                if (data == null) {
-                    data = new XMap();
-                    if (list != null) {
-                        XArray<XMap> xarray = new XArray<XMap>();
-                        for(Coupon coupon : list) {
-                            xarray.add(coupon.getData());
-                        }
-                        data.put(FIELD_LIST, xarray);
-                    }
-                    if (TextUtils.isEmpty(message)) {
-                       data.put(FIELD_MESSAGE, message);
-                    }
-                }
-                return data;
-            }
         }
     }
     public static class ShangjiaResponse extends Response {
