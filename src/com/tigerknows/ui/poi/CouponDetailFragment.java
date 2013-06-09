@@ -128,7 +128,14 @@ public class CouponDetailFragment extends BaseFragment {
         mPOINameTxv.setText(coupon.getPOI().getName());
         mDescriptionTxv.setText(coupon.getDescription());
         mHotTxv.setText(coupon.getHot() + "人已使用");
-        
+        tkDrawable = mData.getLogoTKDrawable();
+        if (tkDrawable != null) {
+            Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, this.toString());
+            if(drawable != null) {
+                mLogoImv.setBackgroundDrawable(drawable);
+            }
+        }
+        mRemarkTxv.setText(coupon.getRemark());
         mPOINameTxv.setText(R.string.app_name);
     }
 }
