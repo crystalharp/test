@@ -655,6 +655,7 @@ public final class DataQuery extends BaseQuery {
             addParameter(new String[]{SERVER_PARAMETER_KEYWORD});
         } else if (DATA_TYPE_COUPON.equals(dataType)) {
         	addParameter(SERVER_PARAMETER_POI_ID);
+        	addParameter(SERVER_PARAMETER_NEED_FIELD);
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
