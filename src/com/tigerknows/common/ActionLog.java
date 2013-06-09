@@ -167,6 +167,13 @@ public class ActionLog {
     public static final String POIDetailFromWeixin = "BQ";
     public static final String POIDetailWeixinRequest = "BR";
     public static final String POIDetailWeixinSend = "BS";
+    public static final String POIDetailHotelClickDate = "BT";
+    public static final String POIDetailHotelClickRoomItem = "BU";
+    public static final String POIDetailHotelRoomBookBtn = "BV";
+    public static final String POIDetailHotelMoreRoom = "BW";
+    public static final String POIDetailHotelImage = "BX";
+    public static final String POIDetailHotelIntro = "BY";
+    public static final String POIDetailHotelFailRetry = "BZ";
 
     // POI点评列表页
     public static final String POICommentList = "AE";
@@ -521,6 +528,41 @@ public class ActionLog {
     // 影院列表地图页
     public static final String ResultMapDianyingBranchList = "DV";
     
+    // 订单填写页
+    public static final String HotelOrderWrite = "GE";
+    public static final String HotelOrderWriteHowmany = "BA";   
+    public static final String HotelOrderWriteHowmanyChoose = "BB";
+    public static final String HotelOrderWriteReserve = "BC";
+    public static final String HotelOrderWriteBookName = "BD";
+    public static final String HotelOrderWriteMobile = "BE";
+    public static final String HotelOrderWriteIdCard = "BF";
+    public static final String HOTELOrderWriteSubmit = "BG";
+
+    // 信用卡担保页
+    public static final String HotelOrderCredit = "GF";
+    public static final String HotelOrderCreditBank = "BA";
+    public static final String HotelOrderCreditBankChoose = "BB";
+    public static final String HotelOrderCreditCode = "BC";
+    public static final String HotelOrderCreditOwner = "BD";
+    public static final String HotelOrderCreditVerify = "BE";
+    public static final String HotelOrderCreditValidate = "BF";
+    public static final String HotelOrderCreditValidateChoose = "BG";
+    public static final String HotelOrderCreditCertType = "BH";
+    public static final String HotelOrderCreditCertCode = "BI";
+    public static final String HotelOrderCreditSubmit = "BJ";
+    
+    
+    // 7天酒店注册页
+    public static final String HotelSeveninnRegist = "GG";
+    public static final String HotelSeveninnRegistName = "BA";
+    public static final String HotelSeveninnRegistPhone = "BB";
+    public static final String HotelSeveninnRegistIdcard = "BC";
+    public static final String HotelSeveninnRegistSubmit = "BD";
+
+    // 酒店简介页
+    public static final String HotelIntro = "12";
+    
+
     private Context mContext;
     private long mStartMillis = 0;
     private int mFileLength = 0;

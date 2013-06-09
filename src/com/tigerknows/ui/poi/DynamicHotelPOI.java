@@ -200,6 +200,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             
             @Override
             public void onClick(View v) {
+                mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelClickDate);
                 showDateListView(mPOIDetailFragment.mTitleFragment);
             }
         };
@@ -209,6 +210,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 
             @Override
             public void onClick(View v) {
+                mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelFailRetry);
                 List<BaseQuery> list = generateQuery(mPOI);
                 list.get(0).setTipText(mSphinx.getString(R.string.doing_and_wait));
                 query(mPOIDetailFragment, list);
@@ -221,6 +223,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             @Override
             public void onClick(View v) {
                 if (mPOI.getHotel().getUuid() != null) {
+                    mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelIntro);
                     HotelIntroFragment hotelIntro = mSphinx.getHotelIntroFragment();
                     hotelIntro.setData(mPOI);
                     mSphinx.showView(R.id.view_hotel_intro);
@@ -233,6 +236,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             public void onClick(View v) {
                 Hotel hotel = mPOI.getHotel();
                 if (hotel.getUuid() != null && hotel.getHotelTKDrawableList() != null && hotel.getHotelTKDrawableList().size() > 0) {
+                    mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelImage);
                     mSphinx.getHotelImageGridFragment().setData(hotel);
                     mSphinx.showView(R.id.view_hotel_image_grid);
                 }
@@ -260,6 +264,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     class MoreRoomTypeClickListener implements View.OnClickListener{
         @Override
         public void onClick(View v) {
+            mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelMoreRoom);
             roomTypeList.refreshList(mAllRoomList);
             refreshBackground(roomTypeList, mAllRoomList);
             mDynamicRoomTypeMoreView.setVisibility(View.GONE);
@@ -391,7 +396,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         int picNum = (picList == null ? 0 : picList.size());
         imageNumTxv.setText(mSphinx.getString(R.string.pictures, picNum));
         boolean setDefault = true;
-        if (picList != null) {
+        if (picList != null && picList.size() > 0) {
             final TKDrawable tkDrawable = picList.get(0).getTKDrawable();
             if (tkDrawable != null) {
                 Drawable hotelImageDraw = tkDrawable.loadDrawable(mSphinx, new Runnable() {
@@ -418,6 +423,9 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                     setDefault = false;
                 }
             }
+        } else {
+            hotelImage.setBackgroundResource(R.drawable.bg_picture_hotel_none);
+            setDefault = false;
         }
         if (setDefault)  {
             hotelImage.setBackgroundResource(R.drawable.bg_picture_hotel);
@@ -432,9 +440,11 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             if (v instanceof Button) {
                 mClickedBookBtn = (Button)v;
                 mClickedChild = (View) v.getTag(R.id.tag_hotel_room_child_view);
+                mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelRoomBookBtn);
             } else {
                 mClickedBookBtn = (Button) v.findViewById(R.id.book_btn);
                 mClickedChild = v;
+                mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelClickRoomItem);
             }
             mData = (RoomType) mClickedBookBtn.getTag(R.id.tag_hotel_room_type_data);
             mClickedRoomType = mData;

@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.POI;
 import com.tigerknows.ui.BaseFragment;
@@ -32,6 +33,7 @@ public class HotelIntroFragment extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+	    mActionTag = ActionLog.HotelIntro;
 		mRootView = mLayoutInflater.inflate(R.layout.hotel_intro, container, false);
 		hotelNameTxv = (TextView) mRootView.findViewById(R.id.hotel_head);
 		longDescriptionTxv = (TextView) mRootView.findViewById(R.id.hotel_long_description);

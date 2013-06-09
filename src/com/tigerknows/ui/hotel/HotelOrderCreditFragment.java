@@ -16,8 +16,10 @@ import android.os.Bundle;
 import android.text.Selection;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnTouchListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -30,6 +32,7 @@ import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
@@ -44,7 +47,6 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     }
     
     static final String TAG = "HotelOrderCreditFragment";
-    
     
     private ScrollView mCreditAssureScv;
     private Button mCreditBankBtn;
@@ -72,7 +74,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-        //mActionTag = ActionLog.HotelOrderCredit;
+        mActionTag = ActionLog.HotelOrderCredit;
     }
     
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -114,7 +116,34 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     	mCreditValidityBtn.setOnClickListener(this);
     	mCreditCertTypeBtn.setOnClickListener(this);
     	mCreditConfirmBtn.setOnClickListener(this);
-    }
+        OnTouchListener edtTouchListener = new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if(event.getAction() == MotionEvent.ACTION_UP){
+					switch (v.getId()){
+					case R.id.credit_code_edt:
+						mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditCode);
+						break;
+					case R.id.credit_owner_edt:
+						mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditOwner);
+						break;
+					case R.id.credit_verify_edt:
+						mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditVerify);
+						break;
+					case R.id.credit_cert_code_edt:
+						mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditCertCode);
+						break;
+					}
+				}
+				return false;
+			}
+		};
+		mCreditCodeEdt.setOnTouchListener(edtTouchListener);
+		mCreditOwnerEdt.setOnTouchListener(edtTouchListener);
+		mCreditVerifyEdt.setOnTouchListener(edtTouchListener);    
+		mCreditCertCodeEdt.setOnTouchListener(edtTouchListener);    
+	}
     
     @Override
     public void onClick(View view){
@@ -123,15 +152,19 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         case R.id.left_btn:
             break;
         case R.id.credit_bank_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditBank);
         	showCreditBankDialog();
         	break;
         case R.id.credit_validity_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditValidate);
         	showValidDialog();
         	break;
         case R.id.credit_cert_type_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditCertType);
         	showCertTypeDialog();
         	break;
         case R.id.credit_confirm_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditSubmit);
         	String str = mCreditBankBtn.getText().toString();
         	List<String> list = new ArrayList<String>();
         	// 判断选择银行
@@ -255,6 +288,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             	listView.setAdapter(adapter);
         		mGetBankPosition = which;
         		mCreditBankBtn.setText(mBankList.get(which));
+            	mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditBankChoose, mBankList.get(which));
         		mCreditBankBtn.setTextColor(getResources().getColor(R.color.black_dark));
         		dialog.dismiss();
         	}
