@@ -15,7 +15,10 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.Coupon;
 import com.tigerknows.model.DataOperation;
+import com.tigerknows.model.DataOperation.CouponQueryResponse;
+import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.POI.DynamicPOI;
@@ -35,6 +38,7 @@ import com.tigerknows.model.DataOperation.YanchuQueryResponse;
 import com.tigerknows.model.DataOperation.ZhanlanQueryResponse;
 
 import android.graphics.Color;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -44,6 +48,7 @@ import android.widget.TextView;
 public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
     
     static DynamicNormalPOI instance = null;
+    POI mPOI;
     DynamicPOIViewBlock mViewBlock;
     static Tuangou tuangou = null;
     NormalDPOIClickListener clickListener = new NormalDPOIClickListener();
@@ -111,6 +116,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
             return blockList;
         }
         
+        mPOI = poi;
         List<DynamicPOI> list = poi.getDynamicPOIList();
         List<DynamicPOI> dataList = new LinkedList<DynamicPOI>();
         int dPOIsize = (list != null ? list.size() : 0);
@@ -163,12 +169,16 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         public void onClick(View view) {
             DynamicPOI dynamicPOI = (DynamicPOI)view.getTag();
             final String dataType = dynamicPOI.getType();
+            List<BaseQuery> list = new ArrayList<BaseQuery>();
             DataOperation dataOperation = new DataOperation(mSphinx);
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, dataType);
             criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
             //FIXME:多优惠券此字段为空
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUid());
+            String DPOIMasterUid = dynamicPOI.getMasterUid();
+            if (DPOIMasterUid != null && !TextUtils.isEmpty(DPOIMasterUid)) {
+                criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, DPOIMasterUid);
+            }
             
             if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
                 mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag +  ActionLog.POIDetailTuangou);
@@ -182,7 +192,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                         Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[0]" + ";" +
                         Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_TAOCAN)+"_[0]");
                 dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
-                List<BaseQuery> list = new ArrayList<BaseQuery>();
+//                List<BaseQuery> list = new ArrayList<BaseQuery>();
                 list.add(dataOperation);
                 dataOperation = new DataOperation(mSphinx);
                 criteria = new Hashtable<String, String>();
@@ -201,7 +211,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                         Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
                         Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
                 dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
-                List<BaseQuery> list = new ArrayList<BaseQuery>();
+//                List<BaseQuery> list = new ArrayList<BaseQuery>();
                 list.add(dataOperation);
                 query(mPOIDetailFragment, list);
             } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
@@ -212,14 +222,29 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                         Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
                         Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
                 dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
-                List<BaseQuery> list = new ArrayList<BaseQuery>();
+//                List<BaseQuery> list = new ArrayList<BaseQuery>();
                 list.add(dataOperation);
                 query(mPOIDetailFragment, list);
             } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
-                //TODO:add coupon query. Two situations, query coupon list or query coupon.
                 // 1 coupon, d operation
-                
+                if (DPOIMasterUid != null && !TextUtils.isEmpty(DPOIMasterUid)) {
+                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, "0001020304050607080910");
+                    dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+                    list.add(dataOperation);
+                    query(mPOIDetailFragment, list);
                 // some coupons, s operation
+                } else {
+                    criteria.clear();
+                    criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_COUPON);
+                    criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, String.valueOf(mPOI.getUUID()));
+                    criteria.put(DataQuery.SERVER_PARAMETER_NEED_FIELD, "00010203");
+                    DataQuery dataQuery = new DataQuery(mSphinx);
+                    dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mSphinx.getCouponListFragment().getId(), mSphinx.getString(R.string.doing_and_wait));
+                    list.add(dataQuery);
+                    query(mPOIDetailFragment, list);
+                    mSphinx.getCouponListFragment().setData(mPOI);
+                    mSphinx.showView(R.id.view_coupon_list);
+                }
             }
         }
     }
@@ -254,9 +279,11 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
             list.add(zhanlan);
             mSphinx.showView(R.id.view_discover_zhanlan_detail);
             mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
-        //查询优惠券的结果
+        //查询单条优惠券的结果
         } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
-            //TODO:直接跳到优惠券页
+            Coupon coupon = ((CouponQueryResponse) response).getCoupon();
+            mSphinx.getCouponDetailFragment().setData(coupon);
+            mSphinx.showView(R.id.view_coupon_detail);
         }
         
     }
