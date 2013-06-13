@@ -30,15 +30,18 @@ import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.DataQuery.CouponResponse;
 import com.tigerknows.model.DataQuery.CouponResponse.CouponList;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.Response;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.widget.QueryingView;
+import com.tigerknows.widget.RetryView;
 import com.tigerknows.widget.SpringbackListView;
 
 /**
  * @author Peng Wenyue
  */
-public class CouponListFragment extends BaseFragment {
+public class CouponListFragment extends BaseFragment implements RetryView.CallBack {
     
     static final String TAG = "CouponListFragment";
 
@@ -47,8 +50,23 @@ public class CouponListFragment extends BaseFragment {
         // TODO Auto-generated constructor stub
     }
     
+    static final int STATE_QUERYING = 0;
+    static final int STATE_ERROR = 1;
+    static final int STATE_EMPTY = 2;
+    static final int STATE_LIST = 3;
+    
+    private int mState = STATE_QUERYING;
+    
     private SpringbackListView mResultLsv = null;
-    private TextView mEmptyTxv;
+
+    private QueryingView mQueryingView = null;
+    
+    private View mEmptyView = null;
+    
+    private TextView mEmptyTxv = null;
+    
+    private RetryView mRetryView;
+    
     private List<Coupon> mCouponArrayList = new ArrayList<Coupon>();
     private CouponAdapter mCouponAdapter;
     private POI mPOI;
@@ -82,11 +100,14 @@ public class CouponListFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         
-        mRootView = mLayoutInflater.inflate(R.layout.user_my_comment_list, container, false);
+        mRootView = mLayoutInflater.inflate(R.layout.poi_coupon_list, container, false);
         
         findViews();
         setListener();
 
+        mEmptyTxv.setText(R.string.coupon_no_result);
+        mRetryView.setCallBack(this, mActionTag);
+        
         mCouponAdapter = new CouponAdapter(mSphinx, mCouponArrayList);
         mResultLsv.setAdapter(mCouponAdapter);
         
@@ -94,12 +115,15 @@ public class CouponListFragment extends BaseFragment {
     }
 
     protected void findViews() {
-        mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.comment_lsv);
-        mEmptyTxv = (TextView)mRootView.findViewById(R.id.empty_txv);
+        mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
 //        mCommentLsv.addHeaderView(v);
 //        v = mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(v);
+        mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
+        mEmptyView = mRootView.findViewById(R.id.empty_view);
+        mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
+        mRetryView = (RetryView) mRootView.findViewById(R.id.retry_view);
     }
     
     protected void setListener() {
@@ -112,8 +136,8 @@ public class CouponListFragment extends BaseFragment {
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
                     Coupon data = (Coupon) adapterView.getAdapter().getItem(position);
                     if (data != null) {
-                        mSphinx.getCouponDetailFragment().setData(data);
                         mSphinx.showView(R.id.view_coupon_detail);
+                        mSphinx.getCouponDetailFragment().setData(data);
                     }
                 }
             }
@@ -126,15 +150,14 @@ public class CouponListFragment extends BaseFragment {
         mTitleBtn.setText(R.string.coupon_list);
         mRightBtn.setVisibility(View.INVISIBLE);
         
-        mEmptyTxv.setVisibility(View.GONE);
         mResultLsv.setFooterSpringback(false);
+        mResultLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
         
         if (isReLogin()) {
             return;
         }
         
-        if (mCouponArrayList.isEmpty()) { 
-            mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
+        if (mPOI.getCouponQuery() == null) { 
             DataQuery dataQuery = new DataQuery(mSphinx);
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_COUPON);
@@ -150,7 +173,12 @@ public class CouponListFragment extends BaseFragment {
         mCouponArrayList.clear();
         mCouponAdapter.notifyDataSetChanged();
         DataQuery dataQuery = mPOI.getCouponQuery();
-        setDataQuery(dataQuery);
+        if (dataQuery != null) {
+            setDataQuery(dataQuery);
+        } else {
+            this.mState = STATE_QUERYING;
+            updateView();
+        }
     }
     
     private class CouponAdapter extends ArrayAdapter<Coupon>{
@@ -175,7 +203,7 @@ public class CouponListFragment extends BaseFragment {
             
             final Coupon coupon = getItem(position);
             
-            nameTxv.setText(coupon.getListName());
+            nameTxv.setText(coupon.getDescription());
             hotTxv.setText(mSphinx.getString(R.string._used_sum_times, coupon.getHot()));
             
             TKDrawable tkDrawable = coupon.getBriefPicTKDrawable();
@@ -224,12 +252,21 @@ public class CouponListFragment extends BaseFragment {
         }
         
         if (baseQuery instanceof DataQuery) { 
-            if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, true)) {
+            int resId = R.id.view_invalid;
+            Response response = baseQuery.getResponse();
+            if (response == null) {
+                resId = R.string.touch_screen_and_retry;
+            } else if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, this, false)) {
+                resId = BaseActivity.getResponseResId(baseQuery);
+            }
+            
+            if (resId != R.id.view_invalid) {
+                mRetryView.setText(resId, true);
+                mState = STATE_ERROR;
+                updateView();
                 return;
             }
 
-            mResultLsv.onRefreshComplete(false);
-            mResultLsv.setFooterSpringback(false);
             setDataQuery((DataQuery)baseQuery);
         }
     }
@@ -252,12 +289,47 @@ public class CouponListFragment extends BaseFragment {
         }
         
         if (mCouponArrayList.isEmpty()) {
-            mResultLsv.setVisibility(View.GONE);
-            mEmptyTxv.setText(R.string.poi_comment_go_tip);
-            mEmptyTxv.setVisibility(View.VISIBLE);
+            mState = STATE_EMPTY;
         } else {
-            mResultLsv.setVisibility(View.VISIBLE);
-            mEmptyTxv.setVisibility(View.GONE);
+            mState = STATE_LIST;
         }
+        
+        updateView();
+    }
+    
+    private void updateView() {
+        if (mState == STATE_QUERYING) {
+            mQueryingView.setVisibility(View.VISIBLE);
+            mRetryView.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.GONE);
+            mResultLsv.setVisibility(View.GONE);
+        } else if (mState == STATE_ERROR) {
+            mQueryingView.setVisibility(View.GONE);
+            mRetryView.setVisibility(View.VISIBLE);
+            mEmptyView.setVisibility(View.GONE);
+            mResultLsv.setVisibility(View.GONE);
+        } else if (mState == STATE_EMPTY){
+            mQueryingView.setVisibility(View.GONE);
+            mRetryView.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.VISIBLE);
+            mResultLsv.setVisibility(View.GONE);
+        } else {
+            mQueryingView.setVisibility(View.GONE);
+            mRetryView.setVisibility(View.GONE);
+            mEmptyView.setVisibility(View.GONE);
+            mResultLsv.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void retry() {
+        if (mBaseQuerying != null) {
+            for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
+                mBaseQuerying.get(i).setResponse(null);
+            }
+            mSphinx.queryStart(mBaseQuerying);
+        }
+        mState = STATE_QUERYING;
+        updateView();
     }
 }

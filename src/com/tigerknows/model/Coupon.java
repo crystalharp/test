@@ -9,7 +9,6 @@
 package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
-import com.tigerknows.model.XMapData.XMapInitializer;
 import com.tigerknows.model.xobject.XMap;
 
 public class Coupon extends BaseData{

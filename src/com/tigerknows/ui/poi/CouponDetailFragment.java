@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.decarta.android.util.LogWrapper;
@@ -17,12 +18,11 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Coupon;
-import com.tigerknows.model.POI;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.ui.BaseFragment;
 
 /**
- * @author Peng Wenyue, and Feng Tianxiao
+ * @author Peng Wenyue
  */
 public class CouponDetailFragment extends BaseFragment {
     
@@ -44,15 +44,17 @@ public class CouponDetailFragment extends BaseFragment {
         
         @Override
         public void run() {
-            setPic(mData.getHintPicTKDrawable(), mHintImv, false);
-            setPic(mData.getDetailPicTKDrawable(), mDetailImv, false);
-            setPic(mData.getLogoTKDrawable(), mLogoImv, false);
+            setPic(mData.getHintPicTKDrawable(), mHintImv);
+            setPic(mData.getDetailPicTKDrawable(), mDetailImv);
+            setPic(mData.getLogoTKDrawable(), mLogoImv);
         }
     };
+    
+    private ScrollView mBodyScv;
 
     private ImageView mHintImv;
     
-    private TextView mPOINameTxv = null;
+    private TextView mNameTxv = null;
 
     private TextView mDescriptionTxv = null;
     
@@ -90,7 +92,7 @@ public class CouponDetailFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText(R.string.search);
+        mTitleBtn.setText(R.string.coupon_detail);
         mRightBtn.setVisibility(View.INVISIBLE);
     }
     
@@ -100,8 +102,9 @@ public class CouponDetailFragment extends BaseFragment {
     }
 
     protected void findViews() {
+        mBodyScv = (ScrollView) mRootView.findViewById(R.id.body_scv);
         mHintImv = (ImageView) mRootView.findViewById(R.id.hint_imv);
-        mPOINameTxv = (TextView) mRootView.findViewById(R.id.name_txv);
+        mNameTxv = (TextView) mRootView.findViewById(R.id.name_txv);
         mDescriptionTxv = (TextView) mRootView.findViewById(R.id.description_txv);
         mHotTxv = (TextView) mRootView.findViewById(R.id.hot_txv);
         mDetailTxv = (TextView) mRootView.findViewById(R.id.detail_txv);
@@ -116,33 +119,30 @@ public class CouponDetailFragment extends BaseFragment {
     public void setData(Coupon coupon) {
         mData = coupon;
 
-        setPic(mData.getHintPicTKDrawable(), mHintImv, true);
-        setPic(mData.getDetailPicTKDrawable(), mDetailImv, true);
-        setPic(mData.getLogoTKDrawable(), mLogoImv, true);
+        setPic(mData.getHintPicTKDrawable(), mHintImv);
+        setPic(mData.getDetailPicTKDrawable(), mDetailImv);
+        setPic(mData.getLogoTKDrawable(), mLogoImv);
         
-        mPOINameTxv.setText(mData.getListName());
+        mNameTxv.setText(mData.getListName());
         mDescriptionTxv.setText(coupon.getDescription());
         mHotTxv.setText(mSphinx.getString(R.string._used_sum_times, coupon.getHot()));
-        mDetailTxv.setText(coupon.getDetail().replace("N_Line", "\n"));
+        mDetailTxv.setText(coupon.getDetail());
         
         mRemarkTxv.setText(coupon.getRemark());
+        
+        mBodyScv.smoothScrollTo(0, 0);
     }
     
-    void setPic(TKDrawable tkDrawable, ImageView imageView, boolean reload) {
+    void setPic(TKDrawable tkDrawable, ImageView imageView) {
         if (tkDrawable != null) {
-            Drawable drawable;
-            if (reload) {
-                drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, this.toString());
-            } else {
-                drawable = tkDrawable.loadDrawable(null, null, null);
-            }
+            Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, this.toString());
             if(drawable != null) {
                 imageView.setBackgroundDrawable(drawable);
             } else {
-                imageView.setBackgroundResource(R.drawable.bg_picture_coupon_detail_reload);
+                imageView.setBackgroundResource(R.drawable.bg_picture_tuangou);
             }
         } else {
-            //imageView.setBackgroundDrawable(null);
+            imageView.setBackgroundDrawable(null);
         }
     }
 }
