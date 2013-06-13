@@ -114,10 +114,9 @@ public class AsyncImageLoader {
                 			  synchronized (signal) {
                     			  signal.wait();	
                     			  bitmapDrawable = checkMemoryAndDisk(context, imageUrl);
-							}
+							  }
                 		  }else{
                 			  
-                			  long startTime = System.currentTimeMillis();
                 			  //load image from url
                 			  bitmapDrawable = loadImageFromUrl(context, imageUrl);
                 			  //Put the image into the cache
@@ -136,7 +135,7 @@ public class AsyncImageLoader {
                 			  
                 		  }
                 	  }
-              	  handler.post(new CallbackBitmapRunnable(callback, bitmapDrawable));
+              	      handler.post(new CallbackBitmapRunnable(callback, bitmapDrawable));
               	  
                    
                 } catch (Exception e) {
@@ -204,11 +203,12 @@ public class AsyncImageLoader {
             }
             
             return null;
-//            return (BitmapDrawable) BitmapDrawable.createFromStream(new URL(imageUrl).openStream(), "image.png");
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+        
+        return null;
     }
 
     // 对外界开放的回调接口

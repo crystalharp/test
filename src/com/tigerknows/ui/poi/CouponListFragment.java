@@ -136,8 +136,8 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
                     Coupon data = (Coupon) adapterView.getAdapter().getItem(position);
                     if (data != null) {
-                        mSphinx.showView(R.id.view_coupon_detail);
                         mSphinx.getCouponDetailFragment().setData(data);
+                        mSphinx.showView(R.id.view_coupon_detail);
                     }
                 }
             }
@@ -166,6 +166,8 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
             dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
             mSphinx.queryStart(dataQuery);
         }
+        
+        mLoadedDrawableRun.run();
     }
     
     public void setData(POI poi) {

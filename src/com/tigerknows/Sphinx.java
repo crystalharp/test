@@ -1869,21 +1869,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel());
             } else {
                 mMapView.centerOnPosition(cityInfo.getPosition(), cityInfo.getLevel(), true);
-                updateCityInfo(cityInfo);
-                checkCitySupportDiscover(cityId);
-                if (!mViewedCityInfoList.contains(cityInfo)) {
-                    mViewedCityInfoList.add(cityInfo);
-                }
-                mActionLog.addAction(ActionLog.LifecycleSelectCity, cityInfo.getCName());
-
-                Position position = cityInfo.getPosition();
-                TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LON, String.valueOf(position.getLon()));
-                TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LAT, String.valueOf(position.getLat()));
-                TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(cityInfo.getLevel()));
-
-                HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
-                trafficQueryFragment.TrafficOnCityChanged(this, cityId);
             }
+            updateCityInfo(cityInfo);
+            checkCitySupportDiscover(cityId);
+            if (!mViewedCityInfoList.contains(cityInfo)) {
+                mViewedCityInfoList.add(cityInfo);
+            }
+            mActionLog.addAction(ActionLog.LifecycleSelectCity, cityInfo.getCName());
+            Position position = cityInfo.getPosition();
+            TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LON, String.valueOf(position.getLon()));
+            TKConfig.setPref(mContext, TKConfig.PREFS_LAST_LAT, String.valueOf(position.getLat()));
+            TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(cityInfo.getLevel()));
+            HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
+            trafficQueryFragment.TrafficOnCityChanged(this, cityId);
             trafficQueryFragment.resetCurrentMapInfo(cityInfo.getPosition(), cityInfo.getLevel());
         }    
     }
