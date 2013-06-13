@@ -1103,4 +1103,11 @@
     <string name="hotel_checkout_">离店</string>
     <string name="night">晚</string>
     <string name="can_not_reserve">订满</string>
+    
+    <string name="coupon_list">优惠券列表</string>
+    <string name="coupon_detail">优惠券详情</string>
+    <string name="_used_sum_times">%1$d人使用</string>
+    <string name="coupon_from">来自</string>
+    <string name="coupon_note">使用须知</string>
+    <string name="coupon_no_result">使用须知</string>
 </resources>

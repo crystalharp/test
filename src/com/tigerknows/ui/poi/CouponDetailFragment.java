@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.decarta.android.util.LogWrapper;
@@ -43,27 +44,25 @@ public class CouponDetailFragment extends BaseFragment {
         
         @Override
         public void run() {
-            TKDrawable tkDrawable = mData.getHintPicTKDrawable();
-            if (tkDrawable != null) {
-                Drawable drawable = tkDrawable.loadDrawable(null, null, null);
-                if(drawable != null) {
-                    mHintImv.setBackgroundDrawable(drawable);
-                }
-            }
-            
-            //TODO还有其它图片
+            setPic(mData.getHintPicTKDrawable(), mHintImv);
+            setPic(mData.getDetailPicTKDrawable(), mDetailImv);
+            setPic(mData.getLogoTKDrawable(), mLogoImv);
         }
     };
+    
+    private ScrollView mBodyScv;
 
     private ImageView mHintImv;
     
-    private TextView mPOINameTxv = null;
+    private TextView mNameTxv = null;
 
     private TextView mDescriptionTxv = null;
     
     private TextView mHotTxv = null;
 
     private TextView mDetailTxv = null;
+    
+    private ImageView mDetailImv = null;
     
     private ImageView mLogoImv = null;
     
@@ -93,8 +92,14 @@ public class CouponDetailFragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText(R.string.search);
+        mTitleBtn.setText(R.string.coupon_detail);
         mRightBtn.setVisibility(View.INVISIBLE);
+
+        if (mData != null) {
+            setPic(mData.getHintPicTKDrawable(), mHintImv);
+            setPic(mData.getDetailPicTKDrawable(), mDetailImv);
+            setPic(mData.getLogoTKDrawable(), mLogoImv);
+        }
     }
     
     @Override
@@ -103,12 +108,14 @@ public class CouponDetailFragment extends BaseFragment {
     }
 
     protected void findViews() {
+        mBodyScv = (ScrollView) mRootView.findViewById(R.id.body_scv);
         mHintImv = (ImageView) mRootView.findViewById(R.id.hint_imv);
-        mPOINameTxv = (TextView) mRootView.findViewById(R.id.name_txv);
+        mNameTxv = (TextView) mRootView.findViewById(R.id.name_txv);
         mDescriptionTxv = (TextView) mRootView.findViewById(R.id.description_txv);
         mHotTxv = (TextView) mRootView.findViewById(R.id.hot_txv);
         mDetailTxv = (TextView) mRootView.findViewById(R.id.detail_txv);
         mLogoImv = (ImageView) mRootView.findViewById(R.id.logo_imv);
+        mDetailImv = (ImageView) mRootView.findViewById(R.id.detail_imv);
         mRemarkTxv = (TextView) mRootView.findViewById(R.id.remark_txv);
     }
 
@@ -118,24 +125,26 @@ public class CouponDetailFragment extends BaseFragment {
     public void setData(Coupon coupon) {
         mData = coupon;
         
-        TKDrawable tkDrawable = mData.getHintPicTKDrawable();
-        if (tkDrawable != null) {
-            Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, this.toString());
-            if(drawable != null) {
-                mHintImv.setBackgroundDrawable(drawable);
-            }
-        }
-        mPOINameTxv.setText(coupon.getPOI().getName());
+        mNameTxv.setText(mData.getListName());
         mDescriptionTxv.setText(coupon.getDescription());
-        mHotTxv.setText(coupon.getHot() + "人已使用");
-        tkDrawable = mData.getLogoTKDrawable();
+        mHotTxv.setText(mSphinx.getString(R.string._used_sum_times, coupon.getHot()));
+        mDetailTxv.setText(coupon.getDetail());
+        
+        mRemarkTxv.setText(coupon.getRemark());
+        
+        mBodyScv.smoothScrollTo(0, 0);
+    }
+    
+    void setPic(TKDrawable tkDrawable, ImageView imageView) {
         if (tkDrawable != null) {
             Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, this.toString());
             if(drawable != null) {
-                mLogoImv.setBackgroundDrawable(drawable);
+                imageView.setBackgroundDrawable(drawable);
+            } else {
+                imageView.setBackgroundResource(R.drawable.bg_picture_tuangou);
             }
+        } else {
+            imageView.setBackgroundDrawable(null);
         }
-        mRemarkTxv.setText(coupon.getRemark());
-        mPOINameTxv.setText(R.string.app_name);
     }
 }

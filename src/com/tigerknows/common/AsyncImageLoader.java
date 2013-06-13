@@ -37,11 +37,6 @@ public class AsyncImageLoader {
      */
     static final int NEW_HTTP_CLIENT_TIME_INTERVAL = 6000;
     
-    /*
-     * 最近建立HttpClient的时间截
-     */
-    private long lastNewClientTime = 0;
-    
     private HttpClient mHttpClient;
     
     private String viewToken = "";
@@ -119,10 +114,9 @@ public class AsyncImageLoader {
                 			  synchronized (signal) {
                     			  signal.wait();	
                     			  bitmapDrawable = checkMemoryAndDisk(context, imageUrl);
-							}
+							  }
                 		  }else{
                 			  
-                			  long startTime = System.currentTimeMillis();
                 			  //load image from url
                 			  bitmapDrawable = loadImageFromUrl(context, imageUrl);
                 			  //Put the image into the cache
@@ -141,7 +135,7 @@ public class AsyncImageLoader {
                 			  
                 		  }
                 	  }
-              	  handler.post(new CallbackBitmapRunnable(callback, bitmapDrawable));
+              	      handler.post(new CallbackBitmapRunnable(callback, bitmapDrawable));
               	  
                    
                 } catch (Exception e) {
@@ -188,34 +182,33 @@ public class AsyncImageLoader {
                 return null;
             }
             
-            long currentTime = System.currentTimeMillis();
             if (mHttpClient == null) {
-                if (currentTime-lastNewClientTime > NEW_HTTP_CLIENT_TIME_INTERVAL) {
-                    lastNewClientTime = currentTime;
-                    mHttpClient = HttpManager.getNewHttpClient();
-                }
+                mHttpClient = HttpManager.getNewHttpClient();
             }
             
-            if (mHttpClient != null) {
-                try {
-                    byte[] data = HttpManager.openUrl(context, mHttpClient, imageUrl.url, "GET", new WeiboParameters());
-                    ImageCache imageCache1 = Globals.getImageCache();
-                    final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
-                    imageCache1.putImage(name, data);
-                    return (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(data), "image.png");
-                } catch (Exception e) {
-                    LogWrapper.d("AsyncImageLoader", "imageUrl.url="+imageUrl.url);
-                    mHttpClient = null;
-                    e.printStackTrace();
-                }
+            try {
+                byte[] data = HttpManager.openUrl(context, mHttpClient, imageUrl.url, "GET", new WeiboParameters());
+                ImageCache imageCache1 = Globals.getImageCache();
+                final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
+                imageCache1.putImage(name, data);
+                return (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(data), "image.png");
+            } catch (Exception e) {
+                LogWrapper.d("AsyncImageLoader", "imageUrl.url="+imageUrl.url);
+                mHttpClient = null;
+                e.printStackTrace();
+            }
+            
+            if (mHttpClient == null) {
+                Thread.sleep(NEW_HTTP_CLIENT_TIME_INTERVAL);
             }
             
             return null;
-//            return (BitmapDrawable) BitmapDrawable.createFromStream(new URL(imageUrl).openStream(), "image.png");
 
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+        
+        return null;
     }
 
     // 对外界开放的回调接口
@@ -250,7 +243,6 @@ public class AsyncImageLoader {
             httpClient.getConnectionManager().shutdown();
             mHttpClient = null;
         }
-        lastNewClientTime = 0;
     }
     
     public static class TKURL {

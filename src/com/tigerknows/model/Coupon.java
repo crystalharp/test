@@ -9,12 +9,11 @@
 package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
-import com.tigerknows.model.XMapData.XMapInitializer;
 import com.tigerknows.model.xobject.XMap;
 
 public class Coupon extends BaseData{
 	
-	public static final String NEED_FIELD = "00010203";
+	public static final String NEED_FIELD = "0001020304050607080910";
 	
 	// 0x00 x_string 优惠券uid uid
 	public static final byte FIELD_UID = 0x00;

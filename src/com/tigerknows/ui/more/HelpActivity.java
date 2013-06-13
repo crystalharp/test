@@ -69,7 +69,7 @@ public class HelpActivity extends BaseActivity {
                 LayoutInflater layoutInflater = (LayoutInflater)mThis.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View view = layoutInflater.inflate(R.layout.more_help_end, null, false);
                 ImageView imageView = (ImageView) view.findViewById(R.id.image_imv);
-                imageView.setImageResource(R.drawable.ic_learn4);
+                imageView.setImageResource(R.drawable.ic_learn1_upgrade);
                 imageView.setScaleType(ScaleType.FIT_XY);
                 Button button = (Button) view.findViewById(R.id.enter_btn);
                 button.setOnClickListener(new View.OnClickListener() {
