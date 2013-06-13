@@ -15,6 +15,7 @@ import com.tigerknows.model.xobject.XMap;
 public class Coupon extends BaseData{
 	
 	public static final String NEED_FIELD = "00010203";
+	public static final String NEED_FIELD_DETAIL = "0004050607080910";
 	
 	// 0x00 x_string 优惠券uid uid
 	public static final byte FIELD_UID = 0x00;

@@ -22,7 +22,7 @@ import com.tigerknows.model.TKDrawable;
 import com.tigerknows.ui.BaseFragment;
 
 /**
- * @author Peng Wenyue
+ * @author Peng Wenyue, and Feng Tianxiao
  */
 public class CouponDetailFragment extends BaseFragment {
     
@@ -123,7 +123,7 @@ public class CouponDetailFragment extends BaseFragment {
         mPOINameTxv.setText(mData.getListName());
         mDescriptionTxv.setText(coupon.getDescription());
         mHotTxv.setText(mSphinx.getString(R.string._used_sum_times, coupon.getHot()));
-        mDetailTxv.setText(coupon.getDetail());
+        mDetailTxv.setText(coupon.getDetail().replace("N_Line", "\n"));
         
         mRemarkTxv.setText(coupon.getRemark());
     }
@@ -139,10 +139,10 @@ public class CouponDetailFragment extends BaseFragment {
             if(drawable != null) {
                 imageView.setBackgroundDrawable(drawable);
             } else {
-                imageView.setBackgroundResource(R.drawable.bg_picture_tuangou);
+                imageView.setBackgroundResource(R.drawable.bg_picture_coupon_detail_reload);
             }
         } else {
-            imageView.setBackgroundDrawable(null);
+            //imageView.setBackgroundDrawable(null);
         }
     }
 }
