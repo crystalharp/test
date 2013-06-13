@@ -94,6 +94,12 @@ public class CouponDetailFragment extends BaseFragment {
         super.onResume();
         mTitleBtn.setText(R.string.coupon_detail);
         mRightBtn.setVisibility(View.INVISIBLE);
+
+        if (mData != null) {
+            setPic(mData.getHintPicTKDrawable(), mHintImv);
+            setPic(mData.getDetailPicTKDrawable(), mDetailImv);
+            setPic(mData.getLogoTKDrawable(), mLogoImv);
+        }
     }
     
     @Override
@@ -118,10 +124,6 @@ public class CouponDetailFragment extends BaseFragment {
     
     public void setData(Coupon coupon) {
         mData = coupon;
-
-        setPic(mData.getHintPicTKDrawable(), mHintImv);
-        setPic(mData.getDetailPicTKDrawable(), mDetailImv);
-        setPic(mData.getLogoTKDrawable(), mLogoImv);
         
         mNameTxv.setText(mData.getListName());
         mDescriptionTxv.setText(coupon.getDescription());

@@ -274,8 +274,8 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         //查询单条优惠券的结果
         } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
             Coupon coupon = ((CouponQueryResponse) response).getCoupon();
-            mSphinx.showView(R.id.view_coupon_detail);
             mSphinx.getCouponDetailFragment().setData(coupon);
+            mSphinx.showView(R.id.view_coupon_detail);
         }
         
     }
