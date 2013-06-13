@@ -8,6 +8,8 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.TKLocationManager;
 import android.widget.Toast;
+
+import com.tigerknows.map.LocalRegionDataInfo;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapView;
 import com.tigerknows.map.MapEngine.CityInfo;
@@ -557,6 +559,8 @@ public class BaseQueryTest {
                 MapEngine mapEngine = MapEngine.getInstance();
                 List<Integer> list = mapEngine.getRegionIdList(viewCityMapVersionEdt.getEditableText().toString());
                 StringBuilder s = new StringBuilder();
+                int totalSize = 0;
+                int downloadedSize = 0;
                 if (list != null) {
                     for (int j = list.size()-1; j >= 0; j--) {
                         int id = list.get(j);
@@ -566,9 +570,23 @@ public class BaseQueryTest {
                         if (regionMetaVersion != null) {
                             s.append(regionMetaVersion.toString());
                         }
+                        LocalRegionDataInfo regionMapInfo = mapEngine.getLocalRegionDataInfo(id);
+                        if (regionMapInfo != null) {
+                            totalSize += regionMapInfo.getTotalSize();
+                            downloadedSize += regionMapInfo.getDownloadedSize();
+                        }
+                        s.append("; ");
+                        s.append(regionMapInfo.getDownloadedSize());
+                        s.append(", ");
+                        s.append(regionMapInfo.getTotalSize());
                         s.append("\n");
                         
                     }
+                    s.append(list.size());
+                    s.append("; ");
+                    s.append(downloadedSize);
+                    s.append(", ");
+                    s.append(totalSize);
                 }
                 Utility.showDialogAcitvity(activity, s.toString());
             }

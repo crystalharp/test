@@ -1104,6 +1104,7 @@
     <string name="night">晚</string>
     <string name="can_not_reserve">订满</string>
     
+    <string name="coupon_list">优惠列表</string>
     <string name="_used_sum_times">%1$d人使用</string>
     <string name="coupon_from">来自</string>
     <string name="coupon_note">使用须知</string>

@@ -123,11 +123,16 @@ public class CouponListFragment extends BaseFragment {
     public void onResume() {
         super.onResume();
         
-        mTitleBtn.setText(R.string.my_comment);
+        mTitleBtn.setText(R.string.coupon_list);
         mRightBtn.setVisibility(View.INVISIBLE);
         
         mEmptyTxv.setVisibility(View.GONE);
         mResultLsv.setFooterSpringback(false);
+        
+        if (isReLogin()) {
+            return;
+        }
+        
         if (mCouponArrayList.isEmpty()) { 
             mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
             DataQuery dataQuery = new DataQuery(mSphinx);

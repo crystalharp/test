@@ -925,14 +925,8 @@ public class Utility {
         int minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
         int maxIndex = endPage * pageSize + (isShowAPOI ? 1 : 0);
         
-//        if ((maxIndex > size-1 ? size-1 : maxIndex)-minIndex < pageSize) {
-//            if (startPage > 0) {
-//                startPage--;
-//                minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
-//            }
-//        }
         int firstPosition = (firstVisiblePosition-(isShowAPOI ? 1 : 0)+(startPage%2 != 0 ? pageSize : 0)) % TKConfig.getPageSize();
-        if (maxIndex > lastVisiblePosition && (minIndex-10) >= 0) {
+        if (maxIndex > size && maxIndex > lastVisiblePosition && (minIndex-10) >= 0) {
             minIndex -= 10;
             maxIndex -= 10;
             if (firstPosition + 10 < lastVisiblePosition) {
