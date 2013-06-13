@@ -322,8 +322,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 
     }
 
-    @Override
-    public List<DynamicPOIViewBlock> getViewList(POI poi) {
+    public List<DynamicPOIViewBlock> getViewList() {
         blockList.clear();
         
         /**
@@ -338,12 +337,11 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         	return blockList;
         }
         //数据全空，可能是加载失败，也可能是还未加载
-        if (poi == null || poi.getHotel().getUuid() == null || poi.getHotel().getRoomTypeList() == null) {
+        if (mPOI == null || mPOI.getHotel().getUuid() == null || mPOI.getHotel().getRoomTypeList() == null) {
             LogWrapper.i(TAG, "poi or hotel or roomTypeList is null, nothing to show for DynamicHotel");
             return blockList;
         }
-        mPOI = poi;
-        mHotel = poi.getHotel();
+        mHotel = mPOI.getHotel();
 //        refreshDate();
 
         mAllRoomList.clear();

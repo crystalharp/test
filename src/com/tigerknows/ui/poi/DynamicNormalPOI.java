@@ -27,6 +27,7 @@ import com.tigerknows.model.Tuangou;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
 import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DPOIType;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
@@ -37,7 +38,6 @@ import com.tigerknows.model.DataOperation.FendianQueryResponse;
 import com.tigerknows.model.DataOperation.YanchuQueryResponse;
 import com.tigerknows.model.DataOperation.ZhanlanQueryResponse;
 
-import android.graphics.Color;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,7 +48,6 @@ import android.widget.TextView;
 public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
     
     static DynamicNormalPOI instance = null;
-    POI mPOI;
     DynamicPOIViewBlock mViewBlock;
     static Tuangou tuangou = null;
     NormalDPOIClickListener clickListener = new NormalDPOIClickListener();
@@ -80,11 +79,66 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         
     };
     
+    BlockRefresher mViewBlockRefresher = new BlockRefresher() {
+
+        @Override
+        public void refresh() {
+            if (mPOI == null) {
+                return;
+            }
+            List<DynamicPOI> list = mPOI.getDynamicPOIList();
+            List<DynamicPOI> dataList = new LinkedList<DynamicPOI>();
+            int dPOIsize = (list != null ? list.size() : 0);
+            if (dPOIsize == 0) {
+                return;
+            }
+            for(int i = 0; i < dPOIsize; i++) {
+                final DynamicPOI dynamicPOI = list.get(i);
+                final String dataType = dynamicPOI.getType();
+                if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) 
+                        || BaseQuery.DATA_TYPE_YANCHU.equals(dataType)
+                        || BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType) 
+                        || BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
+                    dataList.add(dynamicPOI);
+                }
+            }
+            
+//            Collections.sort(dataList, new DPOICompare());
+            
+            int size = dataList.size();
+            if (size == 0) {
+                return;
+            }
+            
+            lsv.refreshList(dataList);
+            
+            for (int i = 0; i < size; i++){
+                View child = lsv.getChildView(i);
+                if (size != 1) {
+                    if (i == 0) {
+                        child.setBackgroundResource(R.drawable.list_header);
+                        child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
+                    } else if (i == (size - 1)) {
+                        child.setBackgroundResource(R.drawable.list_footer);
+                        child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
+                    } else {
+                        child.setBackgroundResource(R.drawable.list_middle);
+                        child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
+                    }
+                } else {
+                    child.setBackgroundResource(R.drawable.list_single);
+                    child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
+                }
+            }
+        }
+        
+    };
+    
     public DynamicNormalPOI(POIDetailFragment poiFragment, LayoutInflater inflater){
         mPOIDetailFragment = poiFragment;
         mSphinx = mPOIDetailFragment.mSphinx;
         mInflater = inflater;
-        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, POIDetailFragment.DPOIType.GROUPBUY);
+        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, POIDetailFragment.DPOIType.GROUPBUY, mViewBlockRefresher);
         LinearLayout poiListView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_normal_poi, null);
         lsv = new LinearListView(mSphinx, poiListView, initer, R.layout.poi_dynamic_poi_list_item);
         mViewBlock.mOwnLayout = poiListView;
@@ -110,54 +164,13 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
 //    }
 
     @Override
-    public List<DynamicPOIViewBlock> getViewList(POI poi) {
+    public List<DynamicPOIViewBlock> getViewList() {
         blockList.clear();
-        if (poi == null) {
+        if (mPOI == null) {
             return blockList;
         }
         
-        mPOI = poi;
-        List<DynamicPOI> list = poi.getDynamicPOIList();
-        List<DynamicPOI> dataList = new LinkedList<DynamicPOI>();
-        int dPOIsize = (list != null ? list.size() : 0);
-        for(int i = 0; i < dPOIsize; i++) {
-            final DynamicPOI dynamicPOI = list.get(i);
-            final String dataType = dynamicPOI.getType();
-            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) 
-                    || BaseQuery.DATA_TYPE_YANCHU.equals(dataType)
-                    || BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType) 
-                    || BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
-                dataList.add(dynamicPOI);
-            }
-        }
-        
-//        Collections.sort(dataList, new DPOICompare());
-        
-        int size = dataList.size();
-        if (size == 0) {
-            return blockList;
-        }
-        
-        lsv.refreshList(dataList);
-        
-        for (int i = 0; i < size; i++){
-            View child = lsv.getChildView(i);
-            if (size != 1) {
-                if (i == 0) {
-                    child.setBackgroundResource(R.drawable.list_header);
-                    child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
-                } else if (i == (size - 1)) {
-                    child.setBackgroundResource(R.drawable.list_footer);
-                    child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
-                } else {
-                    child.setBackgroundResource(R.drawable.list_middle);
-                    child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
-                }
-            } else {
-                child.setBackgroundResource(R.drawable.list_single);
-                child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
-            }
-        }
+        mViewBlock.clear();
         blockList.add(mViewBlock);
         return blockList;
     }
@@ -174,7 +187,6 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, dataType);
             criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-            //FIXME:多优惠券此字段为空
             String DPOIMasterUid = dynamicPOI.getMasterUid();
             if (DPOIMasterUid != null && !TextUtils.isEmpty(DPOIMasterUid)) {
                 criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, DPOIMasterUid);
@@ -291,6 +303,11 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
     @Override
     public boolean checkExistence(POI poi) {
         return false;
+    }
+
+    @Override
+    public void refresh() {
+        mViewBlock.refresh();
     }
     
 }
