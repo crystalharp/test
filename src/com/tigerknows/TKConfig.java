@@ -1154,7 +1154,7 @@ public class TKConfig {
      * @return
      */
     public static String getUserAgent() {
-        return sUSER_AGENT+"/"+sCLIENT_SOFT_VERSION;
+        return sCLIENT_SOFT_VERSION;
     }
 
     /**
