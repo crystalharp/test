@@ -117,10 +117,12 @@ public class TrafficViewSTT {
          * 而肯定触发normal状态的ClickRadioGroup事件而变到Input状态,就永远回不去normal了.
          */
         running = false;
+        
 	    switch (event) {
 	    case Back:
 	        //返回上个状态，先弹栈，新状态是之前的状态
 	        if (stateStack.size() == 1) {
+	            running = true;
 	            return false;
 	        } else {
     	        oldState = stateStack.pop();
@@ -140,6 +142,7 @@ public class TrafficViewSTT {
             newState = getState(oldState, event);
             if (newState == State.MaxSize ) {
                 //没有这个转换规则，不做任何处理
+                running = true;
                 return false;
             } else {
                 stateStack.push(newState);

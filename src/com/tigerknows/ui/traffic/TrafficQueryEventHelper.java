@@ -415,10 +415,10 @@ public class TrafficQueryEventHelper {
 			/*
 			 * 切换TAB时, 若三个输入框都没有获得焦点, 则隐藏输入法
 			 */
-			if (!mQueryFragment.mStart.getEdt().isFocused() && !mQueryFragment.mEnd.getEdt().isFocused() 
-					&& !mQueryFragment.mBusline.getEdt().isFocused()) {
-				mQueryFragment.mSphinx.hideSoftInput();
-			}
+//			if (!mQueryFragment.mStart.getEdt().isFocused() && !mQueryFragment.mEnd.getEdt().isFocused() 
+//					&& !mQueryFragment.mBusline.getEdt().isFocused()) {
+//				mQueryFragment.mSphinx.hideSoftInput();
+//			}
         }
 	}
 
