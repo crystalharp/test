@@ -68,6 +68,7 @@ public class TrafficViewSTT {
 	    }
     	setStateTrans(State.Normal, Event.ClickSelectStartEndBtn, State.Input);
     	setStateTrans(State.Normal, Event.ClickEditText, State.Input);
+    	setStateTrans(State.Normal, Event.ClickRadioGroup, State.Input);
     	setStateTrans(State.Normal, Event.TouchMap, State.Map);
     	setStateTrans(State.Normal, Event.ClicktoSelectPoint, State.SelectPoint);
     	setStateTrans(State.Map, Event.ClickRadioGroup, State.Input);
@@ -107,6 +108,15 @@ public class TrafficViewSTT {
 	    if (!running) {
 	        return false;
 	    }
+	    
+        /**
+         * RadioGroup的触发并不是clickListener,而是onChangedListener,中间改变状态的时候
+         * 经常会误触发ClickRadioGroup事件.这里改变以下running状态,过滤掉那些连续发出两个
+         * 事件的情况.
+         * 此外,如果真的是用onChange而不过滤,因为从map状态返回normal的时候会把公交选上,
+         * 而肯定触发normal状态的ClickRadioGroup事件而变到Input状态,就永远回不去normal了.
+         */
+        running = false;
 	    switch (event) {
 	    case Back:
 	        //返回上个状态，先弹栈，新状态是之前的状态
@@ -140,6 +150,7 @@ public class TrafficViewSTT {
         ActionTbl[newState.ordinal()].enterFrom(oldState);
         ActionTbl[oldState.ordinal()].exit();
         ActionTbl[newState.ordinal()].postEnter();
+        running = true;
         LogWrapper.d(TAG, oldState + " --" + event + "--> " + newState);
         LogWrapper.d(TAG, "stack is:" + stateStack.toString());
         
