@@ -393,10 +393,10 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                 return list;
             }
             POIResponse poiResponse = (POIResponse) poiQuery.getResponse();
-            List<Integer> statusList = poiResponse.getIdList();
+            List<Long> statusList = poiResponse.getIdList();
             if (statusList != null && poiList.size() == statusList.size()) {
                 int i = 0;
-                for(int status : statusList) {
+                for(long status : statusList) {
                     if ((status & 1) == 0 && (status & 2) == 0) {
                         list.add(poiList.get(i));
                     }

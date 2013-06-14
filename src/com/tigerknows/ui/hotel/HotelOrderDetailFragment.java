@@ -555,10 +555,10 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             			return;
             		}
             		
-            		List<Integer> states = response.getStates();
+            		List<Long> states = response.getStates();
             		// here only one order is queried, so exactly state will be returned
             		if(states != null && states.size()!=0 && states.get(0) != -1){
-            			mOrder.setState(states.get(0));
+            			mOrder.setState(states.get(0).intValue());
             			mOrder.setStateUpdateTime(System.currentTimeMillis());
             			updateOrderStorage(mOrder);
             			mOrderStateTxv.setText(getOrderStateDesc(mOrder.getState()));

@@ -209,7 +209,7 @@ public class HotelOrderOperation extends BaseQuery {
         // 0x02 x_map   单个POI数据   
         public static final byte FIELD_STATES = 0x02;
         
-        private List<Integer> states;
+        private List<Long> states;
         
         @SuppressWarnings("unchecked")
         public HotelOrderStatesResponse(XMap data) throws APIException {
@@ -220,7 +220,7 @@ public class HotelOrderOperation extends BaseQuery {
             }
         }
 
-        public List<Integer> getStates() {
+        public List<Long> getStates() {
             return states;
 		}
 

@@ -336,10 +336,10 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 FilterCategoryOrder filterCategory = DataQuery.getHoteFilterCategoryOrder();
                 if (filterCategory != null) {
                     List<FilterOption> filterOptionList = filterCategory.getCategoryFilterOption();
-                    List<Integer> indexList = new ArrayList<Integer>();
-                    indexList.add(0);
+                    List<Long> indexList = new ArrayList<Long>();
+                    indexList.add(0l);
                     for(int i = 0, size = filterOptionList.size(); i < size; i++) {
-                        int id = filterOptionList.get(i).getId();
+                        long id = filterOptionList.get(i).getId();
                         indexList.add(id);
                     }
                     Filter filter = DataQuery.makeFilterResponse(mSphinx, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
@@ -368,9 +368,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             FilterArea filterArea = DataQuery.getFilterArea();
             if (filterArea != null && filterArea.getAreaFilterOption().size() > 0) {
                 List<FilterOption> filterOptionList = filterArea.getAreaFilterOption();
-                List<Integer> indexList = new ArrayList<Integer>();
+                List<Long> indexList = new ArrayList<Long>();
                 if (filterAreaState == 0) {
-                    int id = 0;
+                    long id = 0;
                     if (reset || mSelectedLocation == false) {
                         
                     } else {
@@ -384,7 +384,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                     }
                     indexList.add(id);
                 } else if (filterAreaState == 1) {
-                    int id = 10;
+                    long id = 10;
                     if (reset || mSelectedLocation == false) {
                         
                     } else {
@@ -396,7 +396,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                     indexList.add(id);
                 }
                 for(int i = 0, size = filterOptionList.size(); i < size; i++) {
-                    int id = filterOptionList.get(i).getId();
+                    long id = filterOptionList.get(i).getId();
                     if (filterAreaState == 0) {
                         if (id >= 1 && id <= 10) {
                             continue;
@@ -416,12 +416,12 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 FilterArea quanguoFilterArea = DataQuery.getQuanguoFilterArea(mSphinx);
                 if (quanguoFilterArea != null && quanguoFilterArea.getAreaFilterOption().size() > 0) {
                 	List<FilterOption> filterOptionList = quanguoFilterArea.getAreaFilterOption();
-                    List<Integer> indexList = new ArrayList<Integer>();
+                    List<Long> indexList = new ArrayList<Long>();
                     if (filterAreaState == 0) {
-                        indexList.add(0);
-                        indexList.add(0);
+                        indexList.add(0l);
+                        indexList.add(0l);
                     } else if (filterAreaState == 1) {
-                        int id = 10;
+                        long id = 10;
                         if (reset || mSelectedLocation == false) {
                             
                         } else {
@@ -431,12 +431,12 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                             }
                         }
                         indexList.add(id);
-                        indexList.add(0);
-                        indexList.add(6);
-                        indexList.add(7);
-                        indexList.add(8);
-                        indexList.add(9);
-                        indexList.add(10);
+                        indexList.add(0l);
+                        indexList.add(6l);
+                        indexList.add(7l);
+                        indexList.add(8l);
+                        indexList.add(9l);
+                        indexList.add(10l);
                     }
                     
                     deleteFilter(mFilterList, FilterArea.FIELD_LIST);
