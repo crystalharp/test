@@ -87,7 +87,7 @@ public class Coupon extends BaseData{
 		this.detailPic = getStringFromData(FIELD_DETAIL_PIC, reset ? null : this.detailPic);
         if (this.detailPic != null) {
             TKDrawable tkDrawable = new TKDrawable();
-            tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(this.detail, Globals.getPicWidthHeight(TKConfig.PICTURE_COUPON_DETAIL)));
+            tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(this.detailPic, Globals.getPicWidthHeight(TKConfig.PICTURE_COUPON_DETAIL)));
             detailPicTKDrawable = tkDrawable;
         }
 		this.detail = getStringFromData(FIELD_DETAIL, reset ? null : this.detail);
