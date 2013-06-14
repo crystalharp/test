@@ -145,6 +145,10 @@ public class HotelOrderTable {
 			XMap orderXMap = (XMap) ByteUtil.byteToXObject(decrypted);
 			results.add(new HotelOrder(orderXMap));
 		}
+
+		if (cursor != null) {
+			cursor.close();
+		}
 		
         return results;
 	}

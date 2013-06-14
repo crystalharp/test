@@ -72,6 +72,16 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     
     private ImageView mEmptyImv = null;
 
+    /**
+     * View group containing {@link mServiceHotlineTitleTxv} and {@link mServiceHotlineTxv}
+     */
+    private View mServiceHotlineView;
+
+    /**
+     * Hotline number
+     */
+    private TextView mServiceHotlineTxv;
+
     private DataQuery mDataQuery;
 
 	private HotelOrderAdapter hotelOrderAdapter;
@@ -158,6 +168,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         mResultLsv.addFooterView(v);
         v = mLayoutInflater.inflate(R.layout.hotel_order_list_empty_header_or_footer, null);
         mResultLsv.addHeaderView(v);
+        mServiceHotlineView = mRootView.findViewById(R.id.service_hotline_view);
+        mServiceHotlineTxv = (TextView) mRootView.findViewById(R.id.service_hotline_txv);
     }
 
     protected void setListener() {
@@ -184,7 +196,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 			}
         	
 		});
-        
+        mServiceHotlineView.setOnClickListener(this);
     }
     
     private void reloadOrders(){
@@ -265,7 +277,9 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     @Override
     public void onClick(final View view) {
         switch (view.getId()) {
-            case R.id.right_btn:
+            case R.id.service_hotline_view:
+                Utility.telephone(mSphinx, mServiceHotlineTxv);
+                break;
                 
             default:
                 break;

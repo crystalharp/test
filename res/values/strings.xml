@@ -1084,7 +1084,7 @@
     <string name="hotel_order_cancel_failed">订单取消失败</string>
     <string name="hotel_order_cancel_success">订单取消成功</string>
     
-    <string name="hotel_order_delete_confirm">是否删除订单？\n删除后订单不再显示，但本次预约有效</string>
+    <string name="hotel_order_delete_confirm">是否删除订单？\n删除后订单不再显示，且订单状态不变。</string>
     <string name="hotel_order_delete_success">删除订单成功</string>
     <string name="hotel_order_delete_fail">删除订单失败</string>
     
@@ -1103,4 +1103,5 @@
     <string name="hotel_checkout_">离店</string>
     <string name="night">晚</string>
     <string name="can_not_reserve">订满</string>
+    <string name="hotel_hot_line">400-666-1166</string>
 </resources>

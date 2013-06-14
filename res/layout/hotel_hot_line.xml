@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <LinearLayout android:id="@+id/service_hotline_view"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:background="@drawable/list_single"
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:padding="8dp"
+        >
+        <TextView android:id="@+id/service_hotline_title_txv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="left|center_vertical"
+            android:text="@string/service_hotline"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            />
+        <TextView android:id="@+id/service_hotline_txv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="left|center_vertical"
+            android:drawableRight="@drawable/ic_telephone"
+            android:text="@string/hotel_hot_line"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:autoLink="none"
+            />
+    </LinearLayout>
+</LinearLayout>

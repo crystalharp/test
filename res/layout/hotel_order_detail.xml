@@ -6,11 +6,18 @@
     android:layout_height="fill_parent"
     android:background="@drawable/bg_discover"
     >
+    <include
+        android:id="@+id/title_view"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        layout="@layout/hotel_hot_line"
+        />
 	<LinearLayout 
 	        android:id="@+id/panel_btns"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_alignParentBottom="true"
+	        android:layout_above="@id/title_view"
 	        android:orientation="vertical"
 	        >
 		
