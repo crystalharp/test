@@ -146,6 +146,10 @@ public class HotelOrderTable {
 			results.add(new HotelOrder(orderXMap));
 		}
 		
+		if (cursor != null) {
+		    cursor.close();
+		}
+		
         return results;
 	}
 	

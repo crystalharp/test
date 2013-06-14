@@ -49,11 +49,6 @@ public class TKConfig {
     private static final String TAG = "TKConfig";
     
     /**
-     * 是否开启TalkingData数据统计
-     */
-    public static boolean ENABLE_TALKINGDATA = false;
-    
-    /**
      * 是否开启缓存图片到内存
      */
     public static boolean CACHE_BITMAP_TO_MEMORY = true;
@@ -230,6 +225,11 @@ public class TKConfig {
      * 是否显示测试选项对话框
      */
     public static boolean ShowTestOption = true;
+    
+    /**
+     * 是否开启TalkingData数据统计
+     */
+    public static boolean ENABLE_TALKINGDATA = false;
     
     /**
      * IMSI(International Mobile Subscriber Identity)，国际移动用户标识号，是TD系统分给用户的唯一标识号，它存储在SIM卡、HLR/VLR中，最多由15个数字组成
@@ -1266,7 +1266,7 @@ public class TKConfig {
      */
     public static void readConfig() {
         String mapPath = TKConfig.getDataPath(true);
-        if (TextUtils.isEmpty(mapPath)) {
+        if (TextUtils.isEmpty(mapPath) || ShowTestOption == false) {
             return;
         }
         File file = new File(mapPath+"config.txt");

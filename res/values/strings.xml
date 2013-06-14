@@ -969,7 +969,7 @@
     <string name="hotel_room_person_name">入&#8194;住&#8194;人：</string>
     <string name="hotel_room_person_name_hint">入住人的姓名</string>
     <string name="hotel_room_mobile_nubmer">手&#8194;机&#8194;号：</string>
-    <string name="hotel_room_mobile_nubmer_hint">用于短信确认</string>
+    <string name="hotel_room_mobile_nubmer_hint">用于订单确认</string>
     <string name="hotel_room_idcard">身份证号：</string>
     <string name="hotel_room_idcard_hint">输入身份证号</string>
     <string name="hotel_mobile_format">请正确输入手机号，手机号为1开头的11位数字</string>
@@ -1084,7 +1084,7 @@
     <string name="hotel_order_cancel_failed">订单取消失败</string>
     <string name="hotel_order_cancel_success">订单取消成功</string>
     
-    <string name="hotel_order_delete_confirm">是否删除订单？\n删除后订单不再显示，但本次预约有效</string>
+    <string name="hotel_order_delete_confirm">是否删除订单？\n删除后订单不再显示，且订单状态不变。</string>
     <string name="hotel_order_delete_success">删除订单成功</string>
     <string name="hotel_order_delete_fail">删除订单失败</string>
     
@@ -1103,6 +1103,7 @@
     <string name="hotel_checkout_">离店</string>
     <string name="night">晚</string>
     <string name="can_not_reserve">订满</string>
+    <string name="hotel_hot_line">400-666-1166</string>
     
     <string name="coupon_list">优惠券列表</string>
     <string name="coupon_detail">优惠券详情</string>
