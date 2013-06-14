@@ -61,7 +61,7 @@ public class DiscoverCategoryView extends LinearLayout {
         public void run() {
             TKDrawable tkDrawable = mDiscoverCategory.getTKDrawable();
             if (tkDrawable != null) {
-                Drawable drawable = tkDrawable.loadDrawable(null, null, null);
+                Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, mSphinx.getDiscoverFragment().toString());
                 if (drawable != null) {
                     mPictureImv.setTag(R.id.view_invalid, "1");
                     mPictureImv.setImageDrawable(drawable);

@@ -347,6 +347,7 @@ public class TrafficQueryFragment extends BaseFragment {
 					TouchMode.CHOOSE_ROUTING_START_POINT : TouchMode.CHOOSE_ROUTING_END_POINT);
         }
         
+        mMapLocationHelper.resetMapCenter();
         /*
          * 由于在一个“session”中会多次调用onresume，导致在地图选点和收藏夹选点之后返回本页面都会调用initstart
          * 这里引入mDissmissed变量，在整个页面被dismiss的时候设为true，onresume的时候把变量设为false，并把所有
@@ -354,7 +355,6 @@ public class TrafficQueryFragment extends BaseFragment {
          */
         if (mDismissed) {
             mDismissed = false;
-            mMapLocationHelper.resetMapCenter();
             initStartContent();
         }
         

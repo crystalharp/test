@@ -111,56 +111,28 @@ public class Coupon extends BaseData{
 		return uid;
 	}
 
-	public void setUid(String uid) {
-		this.uid = uid;
-	}
-
 	public String getDescription() {
 		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public long getHot() {
 		return hot;
 	}
 
-	public void setHot(long hot) {
-		this.hot = hot;
-	}
-
 	public String getListName() {
 		return listName;
-	}
-
-	public void setListName(String listName) {
-		this.listName = listName;
 	}
 
 	public String getDetail() {
 		return detail;
 	}
 
-	public void setDetail(String detail) {
-		this.detail = detail;
-	}
-
 	public String getTwoDCode() {
 		return twoDCode;
 	}
 
-	public void setTwoDCode(String twoDCode) {
-		this.twoDCode = twoDCode;
-	}
-
 	public String getRemark() {
 		return remark;
-	}
-
-	public void setRemark(String remark) {
-		this.remark = remark;
 	}
 
 	public TKDrawable getBriefPicTKDrawable() {
