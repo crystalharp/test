@@ -356,7 +356,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     	mRoomType = roomtype;
     	mRoomtypeDynamic = roomTypeDynamic;
     	mHotelNameTxv.setText(mPOI.getName());
-    	mIsSevenInn = mPOI.getName().contains("7天");
+    	mIsSevenInn = false;//mPOI.getName().contains("7天");
     	mRoomtypeTxv.setText(mRoomType.getRoomType());
     	String roomTypeDetail="";
     	String appendContent;

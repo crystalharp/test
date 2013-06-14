@@ -8,8 +8,11 @@
 
 package com.tigerknows.model;
 
+import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.util.Utility;
 
 public class Coupon extends BaseData{
 	
@@ -76,7 +79,7 @@ public class Coupon extends BaseData{
 		this.briefPic = getStringFromData(FIELD_BRIEF_PIC, reset ? null : this.briefPic);
 		if (this.briefPic != null) {
 		    TKDrawable tkDrawable = new TKDrawable();
-		    tkDrawable.setUrl(this.briefPic);
+		    tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(this.briefPic, Globals.getPicWidthHeight(TKConfig.PICTURE_COUPON_LIST)));
 		    briefPicTKDrawable = tkDrawable;
 		}
 		this.hot = getLongFromData(FIELD_HOT, reset ? null : this.hot);
@@ -84,7 +87,7 @@ public class Coupon extends BaseData{
 		this.detailPic = getStringFromData(FIELD_DETAIL_PIC, reset ? null : this.detailPic);
         if (this.detailPic != null) {
             TKDrawable tkDrawable = new TKDrawable();
-            tkDrawable.setUrl(this.detailPic);
+            tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(this.detail, Globals.getPicWidthHeight(TKConfig.PICTURE_COUPON_DETAIL)));
             detailPicTKDrawable = tkDrawable;
         }
 		this.detail = getStringFromData(FIELD_DETAIL, reset ? null : this.detail);
@@ -120,14 +123,6 @@ public class Coupon extends BaseData{
 		this.description = description;
 	}
 
-	public String getBriefPic() {
-		return briefPic;
-	}
-
-	public void setBriefPic(String briefPic) {
-		this.briefPic = briefPic;
-	}
-
 	public long getHot() {
 		return hot;
 	}
@@ -144,14 +139,6 @@ public class Coupon extends BaseData{
 		this.listName = listName;
 	}
 
-	public String getDetailPic() {
-		return detailPic;
-	}
-
-	public void setDetailPic(String detailPic) {
-		this.detailPic = detailPic;
-	}
-
 	public String getDetail() {
 		return detail;
 	}
@@ -166,22 +153,6 @@ public class Coupon extends BaseData{
 
 	public void setTwoDCode(String twoDCode) {
 		this.twoDCode = twoDCode;
-	}
-
-	public String getLogo() {
-		return logo;
-	}
-
-	public void setLogo(String logo) {
-		this.logo = logo;
-	}
-
-	public String getHintPic() {
-		return hintPic;
-	}
-
-	public void setHintPic(String hintPic) {
-		this.hintPic = hintPic;
 	}
 
 	public String getRemark() {

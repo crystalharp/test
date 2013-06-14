@@ -44,9 +44,9 @@ public class CouponDetailFragment extends BaseFragment {
         
         @Override
         public void run() {
-            setPic(mData.getHintPicTKDrawable(), mHintImv);
-            setPic(mData.getDetailPicTKDrawable(), mDetailImv);
-            setPic(mData.getLogoTKDrawable(), mLogoImv);
+            refreshDrawable(mData.getHintPicTKDrawable(), mHintImv, R.drawable.icon);
+            refreshDrawable(mData.getDetailPicTKDrawable(), mDetailImv, R.drawable.bg_picture_hotel);
+            refreshDrawable(mData.getLogoTKDrawable(), mLogoImv, R.drawable.icon);
         }
     };
     
@@ -96,9 +96,9 @@ public class CouponDetailFragment extends BaseFragment {
         mRightBtn.setVisibility(View.INVISIBLE);
 
         if (mData != null) {
-            setPic(mData.getHintPicTKDrawable(), mHintImv);
-            setPic(mData.getDetailPicTKDrawable(), mDetailImv);
-            setPic(mData.getLogoTKDrawable(), mLogoImv);
+            refreshDrawable(mData.getHintPicTKDrawable(), mHintImv, R.drawable.icon);
+            refreshDrawable(mData.getDetailPicTKDrawable(), mDetailImv, R.drawable.bg_picture_hotel);
+            refreshDrawable(mData.getLogoTKDrawable(), mLogoImv, R.drawable.icon);
         }
     }
     
@@ -135,13 +135,15 @@ public class CouponDetailFragment extends BaseFragment {
         mBodyScv.smoothScrollTo(0, 0);
     }
     
-    void setPic(TKDrawable tkDrawable, ImageView imageView) {
+    void refreshDrawable(TKDrawable tkDrawable, ImageView imageView, int defaultResId) {
         if (tkDrawable != null) {
             Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, this.toString());
             if(drawable != null) {
                 imageView.setBackgroundDrawable(drawable);
+            } else if (defaultResId != R.drawable.icon) {
+                imageView.setBackgroundResource(defaultResId);
             } else {
-                imageView.setBackgroundResource(R.drawable.bg_picture_tuangou);
+                imageView.setBackgroundDrawable(null);
             }
         } else {
             imageView.setBackgroundDrawable(null);
