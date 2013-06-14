@@ -333,6 +333,7 @@ public class TrafficQueryEventHelper {
         	    mQueryFragment.mStateTransitionTable.event(Event.ClickRadioGroup);
         	}
             checkRadioButton(checkedId);
+            mQueryFragment.mSphinx.showSoftInput(mQueryFragment.mSelectedEdt.getEdt().getInput());
         }
     }
 

@@ -570,7 +570,7 @@ public class TrafficQueryFragment extends BaseFragment {
 		if (mode == TRAFFIC_MODE) {
 			mTrafficLayout.setVisibility(View.VISIBLE);
 			mBuslineLayout.setVisibility(View.GONE);
-			mSelectedEdt = mStart;
+			mSelectedEdt = (isEditTextEmpty(mStart.getEdt()) ? mStart : mEnd);
 			mSuggestWordHelper.refresh(mSphinx, mSelectedEdt.mEdt, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC);
 		} else {
 			mTrafficLayout.setVisibility(View.GONE);
