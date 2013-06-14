@@ -166,19 +166,23 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
             } 
             
             // 如果是打开应用软件第一次定到位，则需要通过用户反馈服务通知服务器进行记录，目的是为统计定位成功率？
-            if (Globals.g_My_Location_State == Globals.LOCATION_STATE_NONE && Globals.g_My_Location_City_Info != null) {
-                ActionLog.getInstance(activity).addAction(ActionLog.LifecycleFirstLocationSuccess, Globals.g_My_Location_City_Info.getCName());
-                final FeedbackUpload feedbackUpload = new FeedbackUpload(activity);
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                feedbackUpload.setup(criteria);
-                new Thread(new Runnable() {
-                    
-                    @Override
-                    public void run() {
-                        feedbackUpload.query();
-                    }
-                }).start();
-                Globals.g_My_Location_State = Globals.LOCATION_STATE_FIRST_SUCCESS;
+            if (Globals.g_My_Location_State == Globals.LOCATION_STATE_NONE) {
+                if (Globals.g_My_Location_City_Info != null) {
+                    ActionLog.getInstance(activity).addAction(ActionLog.LifecycleFirstLocationSuccess, Globals.g_My_Location_City_Info.getCName());
+                    final FeedbackUpload feedbackUpload = new FeedbackUpload(activity);
+                    Hashtable<String, String> criteria = new Hashtable<String, String>();
+                    feedbackUpload.setup(criteria);
+                    new Thread(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            feedbackUpload.query();
+                        }
+                    }).start();
+                    Globals.g_My_Location_State = Globals.LOCATION_STATE_FIRST_SUCCESS;
+                } else {
+                    Globals.g_My_Location_State = Globals.LOCATION_STATE_FAILED;
+                }
             }
             
             if (this.activity != null && this.runnable != null) {

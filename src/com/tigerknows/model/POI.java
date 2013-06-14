@@ -632,8 +632,8 @@ public class POI extends BaseData {
         this.position = position;
         XMap data = getData();
         if (this.position != null) {
-            data.put(FIELD_LONGITUDE, (int)(this.position.getLon()*TKConfig.LON_LAT_DIVISOR));
-            data.put(FIELD_LATITUDE, (int)(this.position.getLat()*TKConfig.LON_LAT_DIVISOR));
+            data.put(FIELD_LONGITUDE, (long)(this.position.getLon()*TKConfig.LON_LAT_DIVISOR));
+            data.put(FIELD_LATITUDE, (long)(this.position.getLat()*TKConfig.LON_LAT_DIVISOR));
         } else {
             data.remove(FIELD_LONGITUDE);
             data.remove(FIELD_LATITUDE);
@@ -866,8 +866,8 @@ public class POI extends BaseData {
             data.put(FIELD_TYPE, this.type);
             
             if (this.position != null) {
-                data.put(FIELD_LONGITUDE, (int)(this.position.getLon()*TKConfig.LON_LAT_DIVISOR));
-                data.put(FIELD_LATITUDE, (int)(this.position.getLat()*TKConfig.LON_LAT_DIVISOR));
+                data.put(FIELD_LONGITUDE, (long)(this.position.getLon()*TKConfig.LON_LAT_DIVISOR));
+                data.put(FIELD_LATITUDE, (long)(this.position.getLat()*TKConfig.LON_LAT_DIVISOR));
             }
             
             if (!TextUtils.isEmpty(this.name)) {

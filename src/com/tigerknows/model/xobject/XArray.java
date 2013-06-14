@@ -86,19 +86,19 @@ public class XArray<T> extends XObject {
         return this;
     }
 
-    public List<Integer> toIntList() {
+    public List<Long> toIntList() {
         int size = size();
-        ArrayList<Integer> list = new ArrayList<Integer>(size);
+        ArrayList<Long> list = new ArrayList<Long>(size);
         for (T xobject : elements) {
             XInt xint = (XInt)XObject.valueOf(xobject);
-            list.add((int) xint.getValue());
+            list.add(xint.getValue());
         }
         return list;
     }
     
-    public static XArray<XInt> fromIntList(List<Integer> list) {
+    public static XArray<XInt> fromIntList(List<Long> list) {
         XArray<XInt> xarray = new XArray<XInt>();
-        for (int i : list) {
+        for (long i : list) {
             xarray.add(new XInt(i));
         }
         return xarray;

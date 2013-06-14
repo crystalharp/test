@@ -192,10 +192,10 @@ public class TrafficModel extends XMapData {
             private int distance;
 
             //x坐标
-            private List<Integer> x;
+            private List<Long> x;
 
             //y坐标
-            private List<Integer> y;
+            private List<Long> y;
             
             private List<Position> positionList;
 
@@ -286,24 +286,24 @@ public class TrafficModel extends XMapData {
                     return;
                 }
                 this.positionList = positionList;
-                this.x = new ArrayList<Integer>();
-                this.y = new ArrayList<Integer>();
+                this.x = new ArrayList<Long>();
+                this.y = new ArrayList<Long>();
                 int i = 0;
-                int lon = 0;
-                int lat = 0;
-                int previousLon = 0;
-                int previousLat = 0;
+                long lon = 0;
+                long lat = 0;
+                long previousLon = 0;
+                long previousLat = 0;
                 for(Position position : positionList) {
                     if (i == 0) {
-                        lon = (int)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
-                        lat = (int)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
+                        lon = (long)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
+                        lat = (long)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
                         previousLon = lon;
                         previousLat = lat;
                     } else {
-                        lon = previousLon - (int)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
-                        lat = previousLat - (int)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
-                        previousLon = (int)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
-                        previousLat = (int)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
+                        lon = previousLon - (long)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
+                        lat = previousLat - (long)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
+                        previousLon = (long)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
+                        previousLat = (long)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
                     }
                     this.x.add(lon);
                     this.y.add(lat);
@@ -507,13 +507,13 @@ public class TrafficModel extends XMapData {
                         this.positionList = new ArrayList<Position>(this.x.size());
                         double lon = 0;
                         double lat = 0;
-                        for(int x : this.x) {
+                        for(long x : this.x) {
                             if (i == 0) {
-                                position = new Position(((double)this.y.get(i))/TKConfig.LON_LAT_DIVISOR, ((double)x)/TKConfig.LON_LAT_DIVISOR);
+                                position = new Position(long2doubleForLatLon(this.y.get(i)), long2doubleForLatLon(x));
                                 lat = position.getLat();
                                 lon = position.getLon();
                             } else {
-                                position = new Position(lat + ((double)this.y.get(i))/TKConfig.LON_LAT_DIVISOR, lon + ((double)x)/TKConfig.LON_LAT_DIVISOR);
+                                position = new Position(lat + long2doubleForLatLon(this.y.get(i)), lon + long2doubleForLatLon(x));
                                 lat = position.getLat();
                                 lon = position.getLon();
                             }
@@ -560,7 +560,7 @@ public class TrafficModel extends XMapData {
                     
                     if (this.x != null && this.x.size() > 0) {
                         XArray<XObject> xarray = new XArray<XObject>();
-                        for(int i : this.x) {
+                        for(long i : this.x) {
                             xarray.add(XObject.valueOf(i));
                         }
                         this.data.put(FIELD_X, xarray);
@@ -568,7 +568,7 @@ public class TrafficModel extends XMapData {
                     
                     if (this.y != null && this.y.size() > 0) {
                         XArray<XObject> xarray = new XArray<XObject>();
-                        for(int i : this.y) {
+                        for(long i : this.y) {
                             xarray.add(XObject.valueOf(i));
                         }
                         this.data.put(FIELD_Y, xarray);

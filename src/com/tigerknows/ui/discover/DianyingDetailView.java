@@ -123,7 +123,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
             
             @Override
             public void run() {
-                Drawable drawable = mData.getPicturesDetail().loadDrawable(null, null, null);
+                Drawable drawable = mData.getPicturesDetail().loadDrawable(mSphinx, mLoadedDrawableRun, mParentFragment.toString());
                 if(drawable != null) {
                     mPictureImv.setImageDrawable(drawable);
                 }

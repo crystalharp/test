@@ -72,6 +72,16 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     
     private ImageView mEmptyImv = null;
 
+    /**
+     * View group containing {@link mServiceHotlineTitleTxv} and {@link mServiceHotlineTxv}
+     */
+    private View mServiceHotlineView;
+
+    /**
+     * Hotline number
+     */
+    private TextView mServiceHotlineTxv;
+
     private DataQuery mDataQuery;
 
 	private HotelOrderAdapter hotelOrderAdapter;
@@ -158,6 +168,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         mResultLsv.addFooterView(v);
         v = mLayoutInflater.inflate(R.layout.hotel_order_list_empty_header_or_footer, null);
         mResultLsv.addHeaderView(v);
+        mServiceHotlineView = mRootView.findViewById(R.id.service_hotline_view);
+        mServiceHotlineTxv = (TextView) mRootView.findViewById(R.id.service_hotline_txv);
     }
 
     protected void setListener() {
@@ -184,7 +196,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 			}
         	
 		});
-        
+        mServiceHotlineView.setOnClickListener(this);
     }
     
     private void reloadOrders(){
@@ -265,7 +277,9 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     @Override
     public void onClick(final View view) {
         switch (view.getId()) {
-            case R.id.right_btn:
+            case R.id.service_hotline_view:
+                Utility.telephone(mSphinx, mServiceHotlineTxv);
+                break;
                 
             default:
                 break;
@@ -560,7 +574,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         
         final HotelOrderOperation hotelOrderOperation = (HotelOrderOperation)(tkAsyncTask.getBaseQuery());
         HotelOrderStatesResponse response = (HotelOrderStatesResponse) hotelOrderOperation.getResponse();
-        List<Integer> states = response.getStates();
+        List<Long> states = response.getStates();
         
         LogWrapper.i(TAG, "Number of states get: " + states.size());
         
@@ -582,7 +596,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
      * @param ids
      * @param orders
      */
-    public void updateOrderState(List<Integer> states, String ids, List<HotelOrder> orders){
+    public void updateOrderState(List<Long> states, String ids, List<HotelOrder> orders){
     	
     	updateOrderInMemory(states, ids, orders);
     	
@@ -596,7 +610,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
      * @param ids
      * @param orders
      */
-    private void updateOrderInMemory(List<Integer> states, String ids, List<HotelOrder> orders){
+    private void updateOrderInMemory(List<Long> states, String ids, List<HotelOrder> orders){
 
         long stateUpdateTime = System.currentTimeMillis();
     	String[] idArray = ids.split("_");
@@ -614,7 +628,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     				for (int j = idArray.length-1; j >= 0; j--) {
     					if(idArray[j].equals( order.getId()) ){
     						if(states.get(j)!=HotelOrder.STATE_NONE && j<states.size()){
-    							order.setState(states.get(j));
+    							order.setState(states.get(j).intValue());
     							order.setStateUpdateTime(stateUpdateTime);
     							ordersToUpdateToDB.addLast(order);
     							ordersQuerying.remove(order);

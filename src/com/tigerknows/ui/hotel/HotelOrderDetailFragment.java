@@ -96,6 +96,16 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	private ScrollView mScrollView;
 
 	private View mNameView;
+	
+    /**
+     * View group containing {@link mServiceHotlineTitleTxv} and {@link mServiceHotlineTxv}
+     */
+    private View mServiceHotlineView;
+	
+	/**
+     * Hotline number
+     */
+    private TextView mServiceHotlineTxv;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -155,6 +165,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 		
 		mScrollView = (ScrollView) mRootView.findViewById(R.id.body_scv);
 		mNameView = mRootView.findViewById(R.id.name_view);
+        mServiceHotlineView = mRootView.findViewById(R.id.service_hotline_view);
+        mServiceHotlineTxv = (TextView) mRootView.findViewById(R.id.service_hotline_txv);
 		
     }
 
@@ -169,6 +181,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     	mHotelTelView.setOnClickListener(this);
     	
     	mNameView.setOnClickListener(mJumpToPOIClickListener);
+    	mServiceHotlineView.setOnClickListener(this);
     }
     
     private OnClickListener mCancelOnClickListener = new OnClickListener() {
@@ -270,7 +283,6 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
                     if (which == DialogInterface.BUTTON_POSITIVE) {
                     	mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailDeleteDialogYes);
             			deleteOrder();
-            			mSphinx.getHotelOrderListFragment().clearOrders();
                     }else {
                     	mActionLog.addAction(mActionTag + ActionLog.HotelOrderDetailDeleteDialogNo);
                     }
@@ -360,6 +372,10 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
                 Utility.queryTraffic(mSphinx, poi, mActionTag);
             	break;
             	
+            case R.id.service_hotline_view:
+                Utility.telephone(mSphinx, mServiceHotlineTxv);
+                break;
+            	
             default:
                 break;
         }
@@ -401,7 +417,11 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     };
     
     public String getOrderStateDesc(int state){
-		return mContext.getString(orderStateDescResId[state-1]);
+        if (state < 1 || state > 5) {
+            state = 1;
+        }
+        
+        return mContext.getString(orderStateDescResId[state-1]);
     }
     
     public static String formatOrderTime(long millis){
@@ -535,10 +555,10 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             			return;
             		}
             		
-            		List<Integer> states = response.getStates();
+            		List<Long> states = response.getStates();
             		// here only one order is queried, so exactly state will be returned
             		if(states != null && states.size()!=0 && states.get(0) != -1){
-            			mOrder.setState(states.get(0));
+            			mOrder.setState(states.get(0).intValue());
             			mOrder.setStateUpdateTime(System.currentTimeMillis());
             			updateOrderStorage(mOrder);
             			mOrderStateTxv.setText(getOrderStateDesc(mOrder.getState()));

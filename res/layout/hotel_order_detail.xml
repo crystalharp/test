@@ -478,6 +478,15 @@
 	                    />
 	                
 	            </RelativeLayout>
+    
+			    <include
+			        android:layout_width="fill_parent" 
+			        android:layout_height="wrap_content"
+			        layout="@layout/hotel_hot_line"
+			        android:layout_marginLeft="8dp"
+			        android:layout_marginRight="8dp"
+			        android:layout_marginBottom="8dp"
+			        />
 	             
 	         </LinearLayout>
 	         

@@ -798,7 +798,7 @@ public final class DataQuery extends BaseQuery {
                 }
                 
                 if (staticFilterDataArea != null && staticFilterDataArea.cityId == cityId) {
-                    List<Integer> list = baseResponse.getFilterAreaIndex();
+                    List<Long> list = baseResponse.getFilterAreaIndex();
                     if (list != null && list.size() > 0) {
                         filterList.add(makeFilterResponse(context, list, staticFilterDataArea.getVersion(), staticFilterDataArea.getAreaFilterOption(), FilterArea.FIELD_LIST));
                     }
@@ -820,7 +820,7 @@ public final class DataQuery extends BaseQuery {
                 
                 if (staticFilterDataCategoryOrder != null) {
         
-                    List<Integer> list = baseResponse.getFilterCategoryIndex();
+                    List<Long> list = baseResponse.getFilterCategoryIndex();
                     if (list != null && list.size() > 0) {
                         filterList.add(makeFilterResponse(context, list, staticFilterDataCategoryOrder.getVersion(), staticFilterDataCategoryOrder.getCategoryFilterOption(), FilterCategoryOrder.FIELD_LIST_CATEGORY, BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType) == false));
                     }
@@ -906,11 +906,11 @@ public final class DataQuery extends BaseQuery {
         return s.toString();
     }
 
-    public static Filter makeFilterResponse(Context context, List<Integer> indexList, String version, List<FilterOption> filterOptionList, byte key) {
+    public static Filter makeFilterResponse(Context context, List<Long> indexList, String version, List<FilterOption> filterOptionList, byte key) {
         return makeFilterResponse(context, indexList, version, filterOptionList, key, true);
     }
     
-    public static Filter makeFilterResponse(Context context, List<Integer> indexList, String version, List<FilterOption> filterOptionList, byte key, boolean addAllAnyone) {
+    public static Filter makeFilterResponse(Context context, List<Long> indexList, String version, List<FilterOption> filterOptionList, byte key, boolean addAllAnyone) {
 
         Filter filter = new Filter();
         filter.version = version;
@@ -919,12 +919,12 @@ public final class DataQuery extends BaseQuery {
             Filter parentFilter = null;            
             FilterOption filterOption;
             
-            int selectedId = indexList.get(0);
+            long selectedId = indexList.get(0);
             
             for(int i = 1, size = indexList.size(); i < size; i++) {
-                int index = indexList.get(i);
+                long index = indexList.get(i);
                 if (index < filterOptionList.size()) {
-                    filterOption = filterOptionList.get(indexList.get(i));
+                    filterOption = filterOptionList.get((int)index);
     
                     Filter tempFilter = new Filter();
                     tempFilter.filterOption = filterOption;
@@ -1291,25 +1291,25 @@ public final class DataQuery extends BaseQuery {
         // 0x22 x_map 分类和排序筛选数据
         public static final byte FIELD_FILTER_CATEGORY_ORDER = 0x22;
 
-        protected List<Integer> filterAreaIndex;
+        protected List<Long> filterAreaIndex;
 
-        protected List<Integer> filterCategoryIndex;
+        protected List<Long> filterCategoryIndex;
 
-        protected List<Integer> filterOrderIndex;
+        protected List<Long> filterOrderIndex;
 
         protected FilterArea filterDataArea;
 
         protected FilterCategoryOrder filterDataCategoryOrder;
 
-        public List<Integer> getFilterAreaIndex() {
+        public List<Long> getFilterAreaIndex() {
             return filterAreaIndex;
         }
 
-        public List<Integer> getFilterCategoryIndex() {
+        public List<Long> getFilterCategoryIndex() {
             return filterCategoryIndex;
         }
 
-        public List<Integer> getFilterOrderIndex() {
+        public List<Long> getFilterOrderIndex() {
             return filterOrderIndex;
         }
 
@@ -1386,7 +1386,7 @@ public final class DataQuery extends BaseQuery {
 
         private POIList bPOIList;
 
-        private List<Integer> idList;
+        private List<Long> idList;
 
         public POIList getAPOIList() {
             return aPOIList;
@@ -1404,7 +1404,7 @@ public final class DataQuery extends BaseQuery {
             this.bPOIList = poiList;
         }
         
-        public List<Integer> getIdList() {
+        public List<Long> getIdList() {
             return idList;
         }
 
