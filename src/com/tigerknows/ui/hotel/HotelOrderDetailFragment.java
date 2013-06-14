@@ -417,8 +417,8 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     };
     
     public String getOrderStateDesc(int state){
-        if (state < 0 || state > 5) {
-            state = 0;
+        if (state < 1 || state > 5) {
+            state = 1;
         }
         
         return mContext.getString(orderStateDescResId[state-1]);
