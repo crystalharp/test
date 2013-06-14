@@ -223,7 +223,7 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
                 }
                 
             } else {
-                pictureImv.setBackgroundDrawable(null);
+                pictureImv.setBackgroundResource(R.drawable.bg_picture_hotel_none);
             }
                 
             return view;

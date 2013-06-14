@@ -417,7 +417,11 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     };
     
     public String getOrderStateDesc(int state){
-		return mContext.getString(orderStateDescResId[state-1]);
+        if (state < 0 || state > 5) {
+            state = 0;
+        }
+        
+        return mContext.getString(orderStateDescResId[state-1]);
     }
     
     public static String formatOrderTime(long millis){

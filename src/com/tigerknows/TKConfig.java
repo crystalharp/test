@@ -637,6 +637,16 @@ public class TKConfig {
      * 酒店详情图片尺寸的Key
      */
     public static final int PICTURE_HOTEL_DETAIL = 8;
+    
+    /**
+     * 优惠券列表图片尺寸的Key
+     */
+    public static final int PICTURE_COUPON_LIST = 9;
+    
+    /**
+     * 优惠券详情图片尺寸的Key
+     */
+    public static final int PICTURE_COUPON_DETAIL = 10;
 
     /**
      * 黑色
