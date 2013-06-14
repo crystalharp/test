@@ -37,9 +37,14 @@ public class Globals {
     public static final int LOCATION_STATE_FIRST_SUCCESS = 1;
     
     /**
+     * 定位失败
+     */
+    public static final int LOCATION_STATE_FAILED = 2;
+    
+    /**
      * 定位成功后，已经显示出切换城市对话框
      */
-    public static final int LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG = 2;
+    public static final int LOCATION_STATE_SHOW_CHANGE_CITY_DIALOG = 3;
     
     /**
      * 屏幕相关参数

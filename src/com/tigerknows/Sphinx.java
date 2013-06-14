@@ -511,13 +511,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             LogWrapper.d(TAG, "onCreate() uiStack="+uiStack);
 
+            final boolean fristUse = TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_FIRST_USE));
             checkFromThirdParty(true);
             if (uiStack != null) {
                 initView();
             } else {
                 mTitleView.setVisibility(View.INVISIBLE);
                 mMenuView.setVisibility(View.INVISIBLE);
-                final boolean fristUse = TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_FIRST_USE));
                 final boolean upgrade = TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_UPGRADE));
                 mPreventShowChangeMyLocationDialog |= fristUse;
                 mPreventShowChangeMyLocationDialog |= upgrade;
@@ -557,7 +557,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                 }, 1000);
                             } else {
                                 initView();
-                                checkLocationCity();
                             }
                         }
                     }
@@ -577,6 +576,22 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         e1.printStackTrace();
                     }
                     Globals.initOptimalAdaptiveScreenSize();
+                    while (Globals.g_My_Location_State == Globals.LOCATION_STATE_NONE &&
+                            fristUse == false) {
+                        try {
+                            Thread.sleep(LOGO_ANIMATION_TIME);
+                        } catch (InterruptedException e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                        if (isFinishing()) {
+                            break;
+                        }
+                    }
+
+                    if (isFinishing() == false) {
+                        mHandler.post(mCheckLocationCityRun);
+                    }
                 }
             }).start();
 
@@ -1012,7 +1027,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		            OnSetup();
 		        } else if (data.getBooleanExtra(HelpActivity.APP_UPGRADE, false)) {
                     mPreventShowChangeMyLocationDialog = false;
-                    checkLocationCity();
 		        }
 		    }
 		} else if (R.id.activity_more_app_recommend == requestCode) {
@@ -1124,21 +1138,19 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             Globals.g_My_Location_State = Globals.LOCATION_STATE_FIRST_SUCCESS;
         }
         
-        if (uiStackSize() > 0) {
-            checkLocationCity();
-        }
+        checkLocationCity(false);
 	}
 	
-	private void checkLocationCity() {
+	private void checkLocationCity(boolean tipGps) {
 	    CityInfo cityInfo = Globals.getCurrentCityInfo(false);
         CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
-        final boolean gps = Utility.checkGpsStatus(mContext);
         
         if (myLocationCityInfo != null) {
             if (myLocationCityInfo.getId() != cityInfo.getId()) {
                 showPromptChangeToMyLocationCityDialog(myLocationCityInfo);
             }
-        } else {
+        } else if (tipGps) {
+            final boolean gps = Utility.checkGpsStatus(mContext);
             if (!gps) {
                 showPromptSettingLocationDialog();
             }
@@ -2591,7 +2603,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             myLocationPosition = myLocationCityInfo.getPosition();
         }
         final Position myPosition = myLocationPosition;
-        final boolean gps = Utility.checkGpsStatus(mContext);
 
         if (myPosition != null) {
             int cityId = mMapEngine.getCityId(myPosition);
@@ -2600,6 +2611,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             cityInfo.setLevel(TKConfig.ZOOM_LEVEL_LOCATION);
             changeCity(cityInfo);
         } else {
+            final boolean gps = Utility.checkGpsStatus(mContext);
             if (gps) {
                 showLocationDialog(R.id.dialog_prompt_choose_city);
             } else {
@@ -3213,24 +3225,23 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 break;
                 
             case R.id.dialog_prompt_setting_location_first:
+                View settingLocationView1 = mLayoutInflater.inflate(R.layout.alert_setting_location, null, false);
                 dialog = Utility.getDialog(Sphinx.this,
-                        mContext.getString(R.string.prompt),
-                        mContext.getString(R.string.location_failed_and_jump_settings),
+                        getString(R.string.prompt),
                         null,
-                        mContext.getString(R.string.confirm),
-                        mContext.getString(R.string.settings),
+                        settingLocationView1,
+                        Sphinx.this.getString(R.string.i_know),
+                        Sphinx.this.getString(R.string.settings),
                         new DialogInterface.OnClickListener() {
                             
                             @Override
-                            public void onClick(DialogInterface dialog, int id) {
+                            public void onClick(DialogInterface arg0, int id) {
                                 switch (id) {
                                     case DialogInterface.BUTTON_POSITIVE:
                                         showLocationDialog(R.id.dialog_prompt_choose_city);
-                                        dialog.dismiss();
                                         break;
                                     case DialogInterface.BUTTON_NEGATIVE:
                                         showView(R.id.activity_setting_location);
-                                        dialog.dismiss();
                                         break;
 
                                     default:
@@ -3238,6 +3249,16 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                                 }
                             }
                         });
+
+                
+                final CheckBox checkChb1 = (CheckBox) dialog.findViewById(R.id.check_chb);
+                checkChb1.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+                    
+                    @Override
+                    public void onCheckedChanged(CompoundButton arg0, boolean checked) {
+                        TKConfig.setPref(Sphinx.this, TKConfig.PREFS_SHOW_LOCATION_SETTINGS_TIP, checked ? "1" : "");
+                    }
+                });
                 break;
                 
             case R.id.dialog_prompt_choose_city:
@@ -3979,6 +4000,13 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private boolean mPreventShowChangeMyLocationDialog = false;
     private MyLocation mMyLocation;
     private ItemizedOverlay mMyLocationOverlay;
+    private Runnable mCheckLocationCityRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            checkLocationCity(true);
+        }
+    };
     private Runnable mLocationChangedRun = new Runnable() {
         
         @Override
