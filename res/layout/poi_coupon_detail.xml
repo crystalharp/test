@@ -172,6 +172,7 @@
 	                    android:layout_width="86dp"
 	                    android:layout_height="18dp"
 	                    android:background="@drawable/ic_coupon_dingding"
+	                    android:layout_gravity="center_vertical"
 	                    android:layout_marginLeft="8dp"
 	                    />
 	            </LinearLayout>
