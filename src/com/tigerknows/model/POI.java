@@ -307,6 +307,14 @@ public class POI extends BaseData {
         // 当key 0x01 = 65537, POI附加信息数据类型为酒店POI，其他字段无用
         public static final String TYPE_HOTEL = "65537";
         
+        public static final String TYPE_TUANGOU = BaseQuery.DATA_TYPE_TUANGOU;
+        public static final String TYPE_YINGXUN = BaseQuery.DATA_TYPE_YINGXUN;
+        public static final String TYPE_DIANYING = BaseQuery.DATA_TYPE_DIANYING;
+        public static final String TYPE_YANCHU = BaseQuery.DATA_TYPE_YANCHU;
+        public static final String TYPE_ZHANLAN = BaseQuery.DATA_TYPE_ZHANLAN;
+        public static final String TYPE_FENDIAN = BaseQuery.DATA_TYPE_FENDIAN;
+        public static final String TYPE_COUPON = BaseQuery.DATA_TYPE_COUPON;
+        
         // 0x02 x_string    主动态poi的uid，masterUid
         public static final byte FIELD_MASTER_UID = 0x02;
         

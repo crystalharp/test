@@ -5,7 +5,6 @@
 package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
@@ -64,18 +63,11 @@ import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataOperation.DianyingQueryResponse;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Dianying;
-import com.tigerknows.model.Fendian;
-import com.tigerknows.model.Hotel;
-import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.ProxyQuery;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
 import com.tigerknows.model.Response;
-import com.tigerknows.model.TKDrawable;
-import com.tigerknows.model.Tuangou;
-import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Yingxun;
-import com.tigerknows.model.Zhanlan;
 import com.tigerknows.model.DataOperation.POIQueryResponse;
 import com.tigerknows.model.DataOperation.YingxunQueryResponse;
 import com.tigerknows.model.DataQuery.CommentResponse;
@@ -89,9 +81,7 @@ import com.tigerknows.share.ShareAPI;
 import com.tigerknows.share.TKWeixin;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.HintActivity;
 import com.tigerknows.util.Utility;
-import com.tigerknows.util.ShareTextUtil;
 
 /**
  * @author Peng Wenyue
@@ -110,15 +100,9 @@ import com.tigerknows.util.ShareTextUtil;
  */
 public class POIDetailFragment extends BaseFragment implements View.OnClickListener, OnTouchListener {
     
-	static final int SHOW_DYNAMIC_YINGXUN_MAX = 3;
-    
     public POIDetailFragment(Sphinx sphinx) {
         super(sphinx);
     }
-    
-    //动态POI枚举类型，他们在枚举类型中的顺序会决定它们的显示顺序.
-    //添加新的显示类型时需要添加它在枚举类型中对应的项。
-    public static enum DPOIType {HOTEL, MOVIE, COUPON, GROUPBUY, EXHIBITION, SHOW};
     
     private ScrollView mBodyScv;
 
@@ -181,20 +165,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     private TextView mTelephoneTxv = null;
     
     private View mCommentTipView;
-//    
-//    private LinearLayout mDynamicTuanguoListView;
-//    
-//    private LinearLayout mDynamicYanchuListView;
-//    
-//    private LinearLayout mDynamicZhanlanListView;
-    
-    private LinearLayout mDynamicDianyingView;
-    
-    private List<DynamicPOI> mDynamicDianyingList = new ArrayList<DynamicPOI>();
-    
-    private LinearLayout mDynamicDianyingListView;
-    
-    private LinearLayout mDynamicDianyingMoreView;
     
     private View mNavigationWidget;
     
@@ -202,7 +172,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     DynamicHotelPOI mDynamicHotelPOI;
     
-    private boolean mShowDynamicDianyingMoreView = true;
+    DynamicMoviePOI mDynamicMoviePOI;
     
     private Button mCommentTipEdt;
     
@@ -217,108 +187,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     private View mWeixinView;
     
     private Button mWeixinBtn;
-    
-    // TODO:移走到DynamicMoviePOI中
-    private OnClickListener mDynamicPOIListener = new View.OnClickListener() {
-        
-        @Override
-        public void onClick(View view) {
-            Object object = view.getTag();
-            if (object == null) {
-                return;
-            }
-            DataOperation dataOperation = new DataOperation(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            if (object instanceof DynamicPOI) {
-//                DynamicPOI dynamic = (DynamicPOI) object;
-//                String dataType = dynamic.getType();
-//                criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, dataType);
-//                criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-//                criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getMasterUid());
-//                
-//                if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
-//                    mActionLog.addAction(mActionTag +  ActionLog.POIDetailTuangou);
-//                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD,
-//                            Tuangou.NEED_FIELD
-//                            + Util.byteToHexString(Tuangou.FIELD_NOTICED)
-//                            + Util.byteToHexString(Tuangou.FIELD_CONTENT_TEXT)
-//                            + Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC));
-//                    criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-//                            Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[0]" + ";" +
-//                                    Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[0]" + ";" +
-//                                    Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_TAOCAN)+"_[0]");
-//                    dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-//                    List<BaseQuery> list = new ArrayList<BaseQuery>();
-//                    list.add(dataOperation);
-//                    dataOperation = new DataOperation(mSphinx);
-//                    criteria = new Hashtable<String, String>();
-//                    criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-//                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_FENDIAN);
-//                    criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getSlaveUid());
-//                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, Fendian.NEED_FIELD);
-//                    dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-//                    list.add(dataOperation);
-//                    mTkAsyncTasking = mSphinx.queryStart(list);
-//                    mBaseQuerying = list;
-//                } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
-//                    mActionLog.addAction(mActionTag +  ActionLog.POIDetailYanchu);
-//                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD,
-//                            Yanchu.NEED_FIELD + Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
-//                    criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-//                            Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
-//                                    Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
-//                    dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-//                    List<BaseQuery> list = new ArrayList<BaseQuery>();
-//                    list.add(dataOperation);
-//                    mTkAsyncTasking = mSphinx.queryStart(list);
-//                    mBaseQuerying = list;
-//                } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-//                    mActionLog.addAction(mActionTag +  ActionLog.POIDetailZhanlan);
-//                    criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD,
-//                            Zhanlan.NEED_FIELD + Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
-//                    criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-//                            Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
-//                                    Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
-//                    dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-//                    List<BaseQuery> list = new ArrayList<BaseQuery>();
-//                    list.add(dataOperation);
-//                    mTkAsyncTasking = mSphinx.queryStart(list);
-//                    mBaseQuerying = list;
-//                }
-            } else if (object instanceof Dianying) {
-                Dianying dynamic = (Dianying) object;
-                List<BaseQuery> list = new ArrayList<BaseQuery>();
-
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIANYING);
-                criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getUid());
-                
-                dataOperation = new DataOperation(mSphinx);
-                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD,
-                        Dianying.NEED_FIELD_ONLY_DIANYING
-                        + Util.byteToHexString(Dianying.FIELD_DESCRIPTION));
-                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-                        Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
-                        Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
-                dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-                list.add(dataOperation);
-                
-                dataOperation = new DataOperation(mSphinx);
-                criteria = new Hashtable<String, String>();
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_YINGXUN);
-                criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-                criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamic.getYingxun().getUid());
-                
-                criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, Yingxun.NEED_FIELD);
-                dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), POIDetailFragment.this.getId(), POIDetailFragment.this.getId(), mSphinx.getString(R.string.doing_and_wait));
-                list.add(dataOperation);
-                
-                mTkAsyncTasking = mSphinx.queryStart(list);
-                mBaseQuerying = list;
-            }
-            
-        }
-    };
     
     public boolean isReLogin() {
         boolean isRelogin = this.isReLogin;
@@ -337,25 +205,46 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     List<DynamicPOIViewBlock> DPOIViewBlockList = new LinkedList<DynamicPOIViewBlock>();
     
-    /*
-     * 动态POI的ViewBlock排序算法,按照枚举顺序进行排序
-     */
-    private class DPOICompare implements Comparator<DynamicPOIViewBlock> {
-
-        @Override
-        public int compare(DynamicPOIViewBlock lhs, DynamicPOIViewBlock rhs) {
-            return lhs.mType.ordinal() - rhs.mType.ordinal();
-        }
+    Hashtable<String, DynamicPOIView> DPOIViewTable = new Hashtable<String, DynamicPOIView>();
+    
+    List<DynamicPOIView> existView = new ArrayList<DynamicPOIView>();
+    
+    private void initDynamicPOIEnv(){
+        //目前可以处理的动态POI类型
+        DPOIViewTable.put(DynamicPOI.TYPE_HOTEL, mDynamicHotelPOI);
+        DPOIViewTable.put(DynamicPOI.TYPE_TUANGOU, mDynamicNormalPOI);
+        DPOIViewTable.put(DynamicPOI.TYPE_ZHANLAN, mDynamicNormalPOI);
+        DPOIViewTable.put(DynamicPOI.TYPE_YANCHU, mDynamicNormalPOI);
+        DPOIViewTable.put(DynamicPOI.TYPE_COUPON, mDynamicNormalPOI);
+        DPOIViewTable.put(DynamicPOI.TYPE_DIANYING, mDynamicMoviePOI);
     }
-
-    /*
-     * 显示动态POI的ViewBlock
+    
+    /**
+     * Viewblock的添加顺序按照服务器给的动态POI顺序添加,这样显示动态POI的时候就不用
+     * 手动排序了.
+     * @param poi
      */
-    private void showDynamicPOI(List<DynamicPOIViewBlock> POIList) {
-        Collections.sort(POIList, new DPOICompare());
-        LogWrapper.d("conan", "showPOIList:" + POIList);
-        for (DynamicPOIViewBlock iter : POIList){
-            iter.show();
+    private void checkAndAddDynamicPOIView(POI poi) {
+        List<DynamicPOI> list = poi.getDynamicPOIList();
+        existView.clear();
+        int size = (list == null ? 0 : list.size());
+        if (size == 0) {
+            return;
+        }
+        for (DynamicPOI dynamicPOI : list) {
+            String dataType = dynamicPOI.getType();
+            if (!DPOIViewTable.containsKey(dataType) || 
+                    existView.contains(DPOIViewTable.get(dataType))) {
+                continue;
+            }
+            existView.add(DPOIViewTable.get(dataType));
+            DPOIViewTable.get(dataType).initData(poi);
+            DPOIViewBlockList.addAll(DPOIViewTable.get(dataType).getViewList());
+        }
+        
+        for (DynamicPOIViewBlock block : DPOIViewBlockList) {
+            block.addToParent();
+            block.clear();
         }
     }
     
@@ -363,91 +252,73 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * 清除掉所有的动态POI的ViewBlock
      */
     private void clearDynamicPOI(List<DynamicPOIViewBlock> POIList) {
-        LogWrapper.d("conan", "clearPOIList:" + POIList);
-        for (DynamicPOIViewBlock iter : POIList) {
-            iter.clear();
-        }
+        mBelowCommentLayout.removeAllViews();
+        mBelowAddressLayout.removeAllViews();
         POIList.clear();
     }
-    
-    /*
-     * 页面中原来就存在动态POI的ViewBlock,又新添加了新种类的ViewBlock时使用
-     * 会先删掉原来的ViewBlock,然后调整顺序再添加上去
-     */
-    private void refreshDynamicPOI(List<DynamicPOIViewBlock> POIList){
-        for (DynamicPOIViewBlock iter : POIList) {
-            iter.clear();
-        }
-        Collections.sort(POIList, new DPOICompare());
-        LogWrapper.d("conan", "refreshPOIList:" + POIList);
-        for (DynamicPOIViewBlock iter : POIList){
-            iter.show();
-        }
-    }
-    
-    /*
-     * 在动态POI的ViewBlock列表中删掉某种特定类型的动态POI的ViewBlock
-     */
-    void removeDPOIViewBlock(DPOIType t) {
-        int size = DPOIViewBlockList.size();
-        if (size == 0) {
-            return;
-        }
-        for (int i = size - 1; i >= 0; i--) {
-            DynamicPOIViewBlock a = DPOIViewBlockList.get(i);
-            if (a.mType == t) {
-                a.clear();
-                DPOIViewBlockList.remove(a);
-            }
-        }
-    }
-    
-    private boolean containsDPOIType(DPOIType t) {
-        int size = DPOIViewBlockList.size();
-        if (size == 0) {
-            return false;
-        }
-        for (int i = size - 1; i >= 0; i--) {
-            DynamicPOIViewBlock a = DPOIViewBlockList.get(i);
-            if (a.mType == t) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-//    public interface DPOIViewInitializer<T> {
-//        public T init(POIDetailFragment poiFragment, LayoutInflater inflater, LinearLayout belongsLayout, DynamicPOI data);
+        
+//    private boolean containsDPOIType(DPOIType t) {
+//        int size = DPOIViewBlockList.size();
+//        if (size == 0) {
+//            return false;
+//        }
+//        for (int i = size - 1; i >= 0; i--) {
+//            DynamicPOIViewBlock a = DPOIViewBlockList.get(i);
+//            if (a.mType == t) {
+//                return true;
+//            }
+//        }
+//        return false;
 //    }
     
-    /*
+    /**
+     * 有些动态POI并不止一个显示区块，但是刷新的时候却有着不同的刷新规则
+     * 为了让刷新可以分开，而不是一次把相关的所有区块刷新，在ViewBlock下
+     * 也添加了refresh的接口，用来控制单独的刷新。
+     */
+    public interface BlockRefresher {
+        void refresh();
+    }
+    /**
      * 每个显示块都需要有一个这个类的对象,里面存有自己的Layout和所属的Layout
+     * 需要有个block级别的刷新机制。
      */
     public static class DynamicPOIViewBlock {
 		View mOwnLayout;
 		LinearLayout mBelongsLayout;
-		DPOIType mType;
 		boolean mLoadSucceed = true;
+		BlockRefresher mRefresher;
 		
-		public DynamicPOIViewBlock(LinearLayout belongsLayout, DPOIType type) {
+		public DynamicPOIViewBlock(LinearLayout belongsLayout, BlockRefresher refresher) {
 		    mBelongsLayout = belongsLayout;
-		    mType = type;
-        }
+		    mRefresher = refresher;
+		}
 		
-		void show() {
+		final void addToParent() {
 		    if (mBelongsLayout.indexOfChild(mOwnLayout) == -1) {
 		        mBelongsLayout.addView(mOwnLayout, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
 		    }
 		}
+		
+		final void show() {
+		    mOwnLayout.setVisibility(View.VISIBLE);
+		}
 
-        void clear() {
-            if (mBelongsLayout.indexOfChild(mOwnLayout) != -1) {
-                mBelongsLayout.removeView(mOwnLayout);
-            }
+        final void clear() {
+            mOwnLayout.setVisibility(View.GONE);
 		}
         
-        public String toString() {
-            return "ViewBlock, type:" + mType.toString();
+        final void remove() {
+		    if (mBelongsLayout.indexOfChild(mOwnLayout) == -1) {
+		        mBelongsLayout.removeView(mOwnLayout);
+		    }
+        }
+        
+        final public void refresh() {
+            if (mRefresher != null) {
+                mRefresher.refresh();
+                show();
+            }
         }
     }
     
@@ -458,61 +329,42 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 
 		POIDetailFragment mPOIDetailFragment;
 		Sphinx mSphinx;
+		POI mPOI;
 		LayoutInflater mInflater;
+		
+//        protected List<BaseQuery> mBaseQuerying;
+//        protected TKAsyncTask mTkAsyncTasking;
 		
 		static void query(POIDetailFragment fragment, List<BaseQuery> list){
 		    fragment.mTkAsyncTasking = fragment.mSphinx.queryStart(list);
-		    fragment.mBaseQuerying = list; 
+		    fragment.mBaseQuerying = list;
+//		    mTkAsyncTasking = mSphinx.queryStart(list);
+//		    mBaseQuerying = list; 
 		}
 		
-		public abstract List<DynamicPOIViewBlock> getViewList(POI poi);
+		public void initData(POI poi) {
+		    mPOI = poi;
+		}
+		
+		public abstract List<DynamicPOIViewBlock> getViewList();
+		
+		public abstract void refresh();
 		
 		public abstract void msgReceived(Sphinx mSphinx, BaseQuery query, Response response);
 		
 		public abstract boolean checkExistence(POI poi);
 		
 	}
-	
-	/*
-	 * 清理掉加载失败的ViewBlock.
-	 * 如果有的种类的动态信息在加载失败且有block显示,需要在进入的时候
-	 * 不显示这些加载失败的Block,只需要把它们的mLoadSucceed置为false即可
-	 */
-	private void clearFailedBlock(List<DynamicPOIViewBlock> POIList) {
-	    int size = (POIList == null ? 0 : POIList.size());
-	    if (size == 0) {
-	        return;
-	    }
-	    for (int i = size - 1; i >= 0; i--) {
-	        DynamicPOIViewBlock block = POIList.get(i);
-	        if (!block.mLoadSucceed) {
-	            block.clear();
-	            POIList.remove(i);
-	        }
-	    }
-	}
-    
+	    
 	/**
 	 * 进入页面时刷新所有动态POI的显示,以后再有就在onPostExecute中单刷
 	 */
-    final void showAllDynamicPOI(POI poi) {
-        refreshDynamicDinaying(poi);
-        refreshDynamicNormalPOI(poi);
-//        refreshDynamicHotel(poi);
-        clearFailedBlock(DPOIViewBlockList);
-        showDynamicPOI(DPOIViewBlockList);
-    }
-    
-    /**
-     * 刷新动态POI（团购、演出、展览）的显示区域
-     * @param poi
-     */
-    final void refreshDynamicNormalPOI(POI poi) {
-        if (poi == null) {
-            return;
+    final void initDynamicPOIView(POI poi) {
+        checkAndAddDynamicPOIView(poi);
+        //normal的团展演惠等都是随着POI一块获取的,可以直接刷新出来
+        if (existView.contains(mDynamicNormalPOI)) {
+            mDynamicNormalPOI.refresh();
         }
-
-        DPOIViewBlockList.addAll(mDynamicNormalPOI.getViewList(poi));
     }
     
     /**
@@ -520,8 +372,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * @param poi
      */
     final void refreshDynamicHotel(POI poi) {
-        removeDPOIViewBlock(DPOIType.HOTEL);
-        DPOIViewBlockList.addAll(mDynamicHotelPOI.getViewList(poi));
+        mDynamicHotelPOI.initData(poi);
+        mDynamicHotelPOI.refresh();
     }
 	
 	//*************DynamicPOI code end*******************
@@ -529,6 +381,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.POIDetail;
+        initDynamicPOIEnv();
     }
 
     @Override
@@ -567,6 +420,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         mDynamicHotelPOI = new DynamicHotelPOI(this, mLayoutInflater);
         
+        mDynamicMoviePOI = new DynamicMoviePOI(this, mLayoutInflater);
+        
         return mRootView;
     }
 
@@ -594,7 +449,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         // Ugly
         if (mPOI.getHotel().getUuid() != null) {
-            mDynamicHotelPOI.refresh();
+            mDynamicHotelPOI.refreshPicture();
         }
         
         if (poi.getName() == null && poi.getUUID() != null) {
@@ -739,157 +594,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         makeFeature(mFeatureTxv);
         
     }
-    /**
-     * 刷新动态电影的显示区域（仅电影院类POI）
-     * @param poi
-     */
-    // TODO:移走到DynamicMoviePOI中
-    void refreshDynamicDinaying(POI poi) {
-        if (poi == null) {
-            return;
-        }
-        
-        List<Dianying> list = poi.getDynamicDianyingList();        
-        int size = (list != null ? list.size() : 0);
-        mDynamicDianyingView.setVisibility(size > 0 ? View.VISIBLE : View.GONE);
-        
-        int viewCount = initDynamicPOIListView(list, mDynamicDianyingListView, R.layout.poi_dynamic_dianying_list_item);
-        
-        int childCount = mDynamicDianyingListView.getChildCount();
-        if (size > SHOW_DYNAMIC_YINGXUN_MAX && mShowDynamicDianyingMoreView) {
-            for(int i = SHOW_DYNAMIC_YINGXUN_MAX; i < childCount; i++) {
-                mDynamicDianyingListView.getChildAt(i).setVisibility(View.GONE);
-            }
-            mDynamicDianyingMoreView.setVisibility(View.VISIBLE);
-        } else {
-            mDynamicDianyingMoreView.setVisibility(View.GONE);
-        }
-        
-        for(int i = 0; i < viewCount; i++) {
-            View child = mDynamicDianyingListView.getChildAt(i);
-            if (i == (viewCount-1) && mDynamicDianyingMoreView.getVisibility() == View.GONE) {
-                child.setBackgroundResource(R.drawable.list_footer);
-                child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
-            } else {
-                child.setBackgroundResource(R.drawable.list_middle);
-                child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
-            }
-        }
-    }
-    
-    @SuppressWarnings("rawtypes")
-    /**
-     * 初始化动态POI（电影）列表
-     * @param list
-     * @param contains
-     * @param resId
-     * @return
-     */
-    // TODO:移走到DynamicMoviePOI中
-    int initDynamicPOIListView(List list, ViewGroup contains, int resId) {
-        int childCount = contains.getChildCount();
-        int viewCount = 0;
-        int dataSize = (list != null ? list.size() : 0);
-        if(dataSize == 0){
-            contains.setVisibility(View.GONE);
-        }else{
-            contains.setVisibility(View.VISIBLE);
-            for(int i = 0; i < dataSize; i++) {
-                Object data = list.get(i);
-                View child;
-                if (viewCount < childCount) {
-                    child = contains.getChildAt(viewCount);
-                    child.setVisibility(View.VISIBLE);
-                } else {
-                    child = mLayoutInflater.inflate(resId, contains, false);
-                    contains.addView(child, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-                }
-                child.setTag(data);
-                child.setOnClickListener(mDynamicPOIListener);
-                if (data instanceof DynamicPOI) {
-//                    initDynamicPOIItemView((DynamicPOI)data, child);
-                } else if (data instanceof Dianying) {
-                    initDianyingItemView((Dianying)data, child);
-                }
-                viewCount++;
-            }
-            
-            childCount = contains.getChildCount();
-            for(int i = viewCount; i < childCount; i++) {
-                contains.getChildAt(i).setVisibility(View.GONE);
-            }
-        }
-        
-        return viewCount;
-    }
-    
-    /**
-     * 初始化动态POI（团购、演出、展览）列表项的内容
-     * @param data
-     * @param view
-     */
-//    void initDynamicPOIItemView(DynamicPOI data, View view) {
-//        ImageView iconImv = (ImageView) view.findViewById(R.id.icon_imv);
-//        TextView textTxv = (TextView) view.findViewById(R.id.text_txv);
-//        if (BaseQuery.DATA_TYPE_TUANGOU.equals(data.getType())) {
-//            iconImv.setImageResource(R.drawable.ic_dynamicpoi_tuangou);
-//        } else if (BaseQuery.DATA_TYPE_YANCHU.equals(data.getType())) {
-//            iconImv.setImageResource(R.drawable.ic_dynamicpoi_yanchu);
-//        } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(data.getType())) {
-//            iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
-//        }
-//        textTxv.setText(data.getSummary());
-//    }
-    
-    /**
-     * 初始化电影列表项的内容
-     * @param data
-     * @param view
-     */
-    // TODO:移走到DynamicMoviePOI中
-    void initDianyingItemView(final Dianying data, View view) {
-        final ImageView pictureImv = (ImageView) view.findViewById(R.id.picture_imv);
-        TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
-        RatingBar starsRtb = (RatingBar) view.findViewById(R.id.stars_rtb);
-        TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
-        TextView addressTxv = (TextView) view.findViewById(R.id.category_txv);
-        TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
-        
-        view.findViewById(R.id.body_view).setBackgroundDrawable(null);
-
-        Drawable drawable = data.getPictures().loadDrawable(mSphinx, new Runnable() {
-            
-            @Override
-            public void run() {
-                Drawable drawableLoaded = data.getPictures().loadDrawable(null, null, null);
-                if(drawableLoaded.getBounds().width() != pictureImv.getWidth() || drawableLoaded.getBounds().height() != pictureImv.getHeight() ){
-                    pictureImv.setBackgroundDrawable(null);
-                }
-                pictureImv.setBackgroundDrawable(drawableLoaded);
-            }
-        }, POIDetailFragment.this.toString());
-        if(drawable != null) {
-            //To prevent the problem of size change of the same pic 
-            //After it is used at a different place with smaller size
-            if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
-                pictureImv.setBackgroundDrawable(null);
-            }
-            pictureImv.setBackgroundDrawable(drawable);
-        } else {
-            pictureImv.setBackgroundDrawable(null);
-        }
-        
-        nameTxv.setText(data.getName());
-        starsRtb.setProgress((int) data.getRank());
-        distanceTxv.setVisibility(View.GONE);
-        
-        addressTxv.setText(data.getTag());
-        if (TextUtils.isEmpty(data.getLength())) {
-            dateTxv.setText(R.string.dianying_no_length_now);
-        } else {
-            dateTxv.setText(String.valueOf(data.getLength()));
-        }
-    }
     
     public void refreshStamp() {
         POI poi = mPOI;
@@ -1028,8 +732,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mTelephoneView = mRootView.findViewById(R.id.telephone_view);
         mTelephoneTxv = (TextView)mRootView.findViewById(R.id.telephone_txv);
         
-//        mDynamicPOIListView = (LinearLayout) mRootView.findViewById(R.id.dynamic_poi_list_view);
-        
         mCommentTipView = mRootView.findViewById(R.id.comment_tip_view);
         mCommentTipEdt = (Button) mRootView.findViewById(R.id.comment_tip_btn);
         mLoadingView = mRootView.findViewById(R.id.loading_view);
@@ -1038,10 +740,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mWeixinView = mRootView.findViewById(R.id.weixin_view);
         mWeixinBtn = (Button)mRootView.findViewById(R.id.weixin_btn);
 
-        mDynamicDianyingView = (LinearLayout) mRootView.findViewById(R.id.dynamic_dianying_view);
-        mDynamicDianyingListView = (LinearLayout) mRootView.findViewById(R.id.dynamic_dianying_list_view);
-        mDynamicDianyingMoreView = (LinearLayout) mRootView.findViewById(R.id.dynamic_dianying_more_view);
-        
         mNavigationWidget = mRootView.findViewById(R.id.navigation_widget);
     }
 
@@ -1055,7 +753,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mCommentSumTotalView.setOnClickListener(this);
         mCommentTipView.setOnTouchListener(this);
         mWeixinBtn.setOnClickListener(this);
-        mDynamicDianyingMoreView.setOnClickListener(this);
         mCommentTipEdt.setOnClickListener(this);
     }
 
@@ -1109,32 +806,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 TKWeixin tkWeixin = TKWeixin.getInstance(mSphinx);
                 tkWeixin.sendResp(TKWeixin.makePOIResp(mSphinx, poi, mSphinx.getBundle()));
                 mSphinx.finish();
-                break;
-                
-            // TODO:移走到DynamicMoviePOI中
-            case R.id.dynamic_dianying_more_view:
-                mActionLog.addAction(mActionTag + ActionLog.POIDetailDianyingMore);
-                mShowDynamicDianyingMoreView = false;
-                mDynamicDianyingMoreView.setVisibility(View.GONE);
-                
-                List<Dianying> list = poi.getDynamicDianyingList();
-            	int size = (list != null ? list.size() : 0);
-                int viewCount = mDynamicDianyingListView.getChildCount();
-                for(int i = SHOW_DYNAMIC_YINGXUN_MAX; i < viewCount && i < size; i++) {
-                    View v = mDynamicDianyingListView.getChildAt(i);
-                    v.setVisibility(View.VISIBLE);
-                }
-                
-                for(int i = 0; i < viewCount; i++) {
-                    View child = mDynamicDianyingListView.getChildAt(i);
-                    if (i == (viewCount-1) && mDynamicDianyingMoreView.getVisibility() == View.GONE) {
-                        child.setBackgroundResource(R.drawable.list_footer);
-                        child.findViewById(R.id.list_separator_imv).setVisibility(View.GONE);
-                    } else {
-                        child.setBackgroundResource(R.drawable.list_middle);
-                        child.findViewById(R.id.list_separator_imv).setVisibility(View.VISIBLE);
-                    }
-                }
                 break;
                 
             case R.id.comment_tip_btn:
@@ -1265,13 +936,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi.getName() == null && poi.getUUID() != null) {
             return;
         }
-        clearDynamicPOI(DPOIViewBlockList);
         if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_DETAIL) == null) {
             mSphinx.showHint(new String[]{TKConfig.PREFS_HINT_POI_DETAIL, TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN}, new int[] {R.layout.hint_poi_detail, R.layout.hint_poi_detail_weixin});
         } else {
             mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN, R.layout.hint_poi_detail_weixin);
         }
-        mShowDynamicDianyingMoreView = true;
         mRootView.setVisibility(View.VISIBLE);
         if (mStampAnimation != null) {
             mStampBigImv.setVisibility(View.GONE);
@@ -1315,16 +984,16 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         refreshComment();
         // DynamicPOI检测区域
         // 检查是否包含电影的动态信息
-        DataQuery dataQuery = checkDianying(poi);
-        if (dataQuery != null) {
-            baseQueryList.add(dataQuery);
+        if (mDynamicMoviePOI.checkExistence(poi)) {
+            baseQueryList.add(mDynamicMoviePOI.buildQuery(poi));
         }
         //判断是否存在hotel信息
         if (mDynamicHotelPOI.checkExistence(mPOI)) {
             mDynamicHotelPOI.initDate();
             baseQueryList.addAll(mDynamicHotelPOI.generateQuery(mPOI));
         }
-        showAllDynamicPOI(mPOI);
+        clearDynamicPOI(DPOIViewBlockList);
+        initDynamicPOIView(mPOI);
         
         if (baseQueryList.isEmpty() == false) {
             mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
@@ -1339,42 +1008,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mActionLog.addAction(ActionLog.POIDetailShow, poi.getUUID(), poi.getName(), TextUtils.isEmpty(category) ? "NULL" : category.split(" ")[0]);
         mDoingView.setVisibility(View.GONE);
     }
-    
-    // TODO:移走到DynamicMoviePOI中
-    private DataQuery checkDianying(POI poi) {
-        DataQuery dataQuery = null;
-        if (poi == null) {
-            return dataQuery;
-        }
-        // 检查是否包含电影的动态信息
-        boolean isContainDianying = false;
-        List<DynamicPOI> list = poi.getDynamicPOIList();
-        if (list != null) {
-            for(int i = 0, size = list.size(); i < size; i++) {
-                DynamicPOI dynamic = list.get(i);
-                if (BaseQuery.DATA_TYPE_DIANYING.equals(dynamic.getType())) {
-                    isContainDianying = true;
-                    break;
-                }
-            }
-        }
         
-        if (isContainDianying && poi.getDynamicDianyingList() == null) {
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANYING);
-            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
-            criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD,
-                    Dianying.NEED_FIELD_POI_DETAIL);
-            criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
-                   Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]");
-            dataQuery = new DataQuery(mSphinx);
-            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null, false, false, poi);
-        }
-        
-        return dataQuery;
-    }
-    
     private void makeFeature(ViewGroup viewGroup) {
         POI poi = mPOI;
         if (poi == null) {
@@ -1638,7 +1272,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         DianyingList dianyingList = dianyingResponse.getList();
                         if (dianyingList != null) {
                             requestPOI.setDynamicDianyingList(dianyingList.getList());
-                            refreshDynamicDinaying(poi);
+                            mDynamicMoviePOI.refresh();
                         }
                     }
                 }
@@ -1677,29 +1311,26 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                     try {
                                         poi.init(onlinePOI.getData(), false);
                                         mDynamicHotelPOI.loadSucceed(true);
-//                                        removeDPOIViewBlock(DPOIType.HOTEL);
                                         refreshDynamicHotel(poi);
                                         refreshDetail();
                                     } catch (APIException e) {
                                         e.printStackTrace();
                                     }
-                                    refreshDynamicPOI(DPOIViewBlockList);
                                 } else {
                                     //收藏夹和历史记录进入的时候刷新POI,发现有动态信息则刷新整个POI的动态信息
                                     poi.updateData(mSphinx, onlinePOI.getData());
                                     poi.setFrom(POI.FROM_ONLINE);
                                     refreshDetail();
                                     refreshComment();
-                                    showAllDynamicPOI(mPOI);
+                                    initDynamicPOIView(mPOI);
                                     
                                     List<BaseQuery> list = new ArrayList<BaseQuery>();
                                     if (mDynamicHotelPOI.checkExistence(mPOI)) {
                                         mDynamicHotelPOI.initDate();
                                         list.addAll(mDynamicHotelPOI.generateQuery(mPOI));
                                     }
-                                    DataQuery dataQuery = checkDianying(poi);
-                                    if (dataQuery != null) {
-                                        list.add(dataQuery);
+                                    if (mDynamicMoviePOI.checkExistence(poi)) {
+                                        baseQueryList.add(mDynamicMoviePOI.buildQuery(poi));
                                     }
                                     if (list.size() > 0) {
                                         mLoadingView.setVisibility(View.VISIBLE);
@@ -1709,10 +1340,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                 }
                             }
                         } else {
+                            //网络出问题的情况
                             if (mDynamicHotelPOI.checkExistence(mPOI)) {
                                 mDynamicHotelPOI.loadSucceed(false);
                                 refreshDynamicHotel(poi);
-                                refreshDynamicPOI(DPOIViewBlockList);
                             }
                         }
                     }

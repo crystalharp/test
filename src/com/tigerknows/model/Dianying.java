@@ -72,7 +72,7 @@ public class Dianying extends BaseData implements Parcelable{
     private String name; // 0x01 x_string 电影名称 name
     private String alias; // 0x02 x_string 电影别名（如英文电影的中文名） alias
     private String tag; // 0x03 x_string 电影类型 tag
-    private TKDrawable pictures; // 0x04 x_string 电影海报 pictures
+    private TKDrawable picture; // 0x04 x_string 电影海报 pictures
     private TKDrawable picturesDetail; 
     private String description; // 0x05 x_string 简介 description
     private String startTime; // 0x06 x_string 首映时间 start_time
@@ -102,7 +102,7 @@ public class Dianying extends BaseData implements Parcelable{
         this.name = getStringFromData(FIELD_NAME, reset ? null : this.name);
         this.alias = getStringFromData(FIELD_ALIAS, reset ? null : this.alias);
         this.tag = getStringFromData(FIELD_TAG, reset ? null : this.tag);
-        this.pictures = getObjectFromData(FIELD_PICTURES, TKDrawable.Initializer, reset ? null : this.pictures);
+        this.picture = getObjectFromData(FIELD_PICTURES, TKDrawable.Initializer, reset ? null : this.picture);
         this.picturesDetail = getObjectFromData(FIELD_PICTURES_DETAIL, TKDrawable.Initializer, reset ? null : this.picturesDetail);
         this.description = getStringFromData(FIELD_DESCRIPTION, reset ? null : this.description);
         this.startTime = getStringFromData(FIELD_START_TIME, reset ? null : this.startTime);
@@ -170,8 +170,8 @@ public class Dianying extends BaseData implements Parcelable{
         this.tag = tag;
     }
 
-    public TKDrawable getPictures() {
-        return pictures;
+    public TKDrawable getPicture() {
+        return picture;
     }
     
     public TKDrawable getPicturesDetail() {
@@ -284,7 +284,7 @@ public class Dianying extends BaseData implements Parcelable{
 		name = in.readString();
 		alias = in.readString();
 		tag = in.readString();
-		pictures = in.readParcelable(TKDrawable.class.getClassLoader());
+		picture = in.readParcelable(TKDrawable.class.getClassLoader());
 		picturesDetail = in.readParcelable(TKDrawable.class.getClassLoader());
 		description = in.readString();
 		startTime = in.readString();
@@ -322,7 +322,7 @@ public class Dianying extends BaseData implements Parcelable{
 		dest.writeString(name);
 		dest.writeString(alias);
 		dest.writeString(tag);
-		dest.writeParcelable(pictures, flags);
+		dest.writeParcelable(picture, flags);
 		dest.writeParcelable(picturesDetail, flags);
 		dest.writeString(description);
 		dest.writeString(startTime);
