@@ -28,7 +28,6 @@ import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
-import com.tigerknows.ui.poi.POIDetailFragment.DPOIType;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.widget.LinearListView;
@@ -138,7 +137,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         mPOIDetailFragment = poiFragment;
         mSphinx = mPOIDetailFragment.mSphinx;
         mInflater = inflater;
-        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, POIDetailFragment.DPOIType.GROUPBUY, mViewBlockRefresher);
+        mViewBlock = new DynamicPOIViewBlock(mPOIDetailFragment.mBelowAddressLayout, mViewBlockRefresher);
         LinearLayout poiListView = (LinearLayout) mInflater.inflate(R.layout.poi_dynamic_normal_poi, null);
         lsv = new LinearListView(mSphinx, poiListView, initer, R.layout.poi_dynamic_poi_list_item);
         mViewBlock.mOwnLayout = poiListView;

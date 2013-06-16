@@ -45,6 +45,7 @@ import com.tigerknows.ui.hotel.DateListView;
 import com.tigerknows.ui.hotel.DateWidget;
 import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.HotelIntroFragment;
+import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.util.Utility;
@@ -68,7 +69,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     Button mClickedBookBtn;
     View mClickedChild;
     RoomType mClickedRoomType;
-    POI mPOI;
     List<RoomType> mShowingRoomList = new ArrayList<RoomType>();
     List<RoomType> mAllRoomList = new ArrayList<RoomType>();
     final int SHOW_DYNAMIC_HOTEL_MAX = 3;
@@ -91,6 +91,66 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     private DateWidget mCheckOutDat;
     
     private DateListView mDateListView = null;
+    
+    BlockRefresher mUpperBlockRefresher = new BlockRefresher() {
+
+        @Override
+        public void refresh() {
+            refreshDate();
+            if (!mUpperBlock.mLoadSucceed) {
+            	setState(STATE_LOAD_FAILED);
+            	roomTypeList.refreshList(null);
+            	return;
+            }
+            mAllRoomList.clear();
+            mShowingRoomList.clear();
+            mAllRoomList.addAll(mHotel.getRoomTypeList());
+            Collections.sort(mAllRoomList, new RoomTypeCMP());
+            int size = (mAllRoomList != null? mAllRoomList.size() : 0);
+            if (size == 0) {
+                LogWrapper.i(TAG, "size of roomTypeList is 0.");
+                setState(STATE_NO_DATA);
+            } else if (size > SHOW_DYNAMIC_HOTEL_MAX) {
+                for(int i = 0; i < SHOW_DYNAMIC_HOTEL_MAX; i++) {
+                    mShowingRoomList.add(mAllRoomList.get(i));
+                }
+                setState(STATE_DATA_GT_MAX);
+            } else {
+                mShowingRoomList.addAll(mAllRoomList);
+                setState(STATE_DATA_LT_MAX);
+            }
+            roomTypeList.refreshList(mShowingRoomList);
+            refreshBackground(roomTypeList, mShowingRoomList);
+            
+        }
+        
+    };
+    
+    BlockRefresher mLowerBlockRefresher = new BlockRefresher() {
+
+        @Override
+        public void refresh() {
+            String value = mHotel.getLongDescription();
+            if (TextUtils.isEmpty(value)) {
+                value = mSphinx.getString(R.string.hotel_no_summary);
+                hotelSummaryBlock.setClickable(false);
+            } else {
+                hotelSummaryBlock.setClickable(true);
+            }
+            hotelSummary.setText(value);
+
+            List<HotelTKDrawable> picList = mHotel.getHotelTKDrawableList();
+            int picNum = (picList == null ? 0 : picList.size());
+            refreshPicture();
+            if (picNum == 0) {
+                hotelImage.setClickable(false);
+            } else {
+                hotelImage.setClickable(true);
+            }
+            
+        }
+        
+    };
     
     DateListView getDateListView() {
         if (mDateListView == null) {
@@ -188,8 +248,8 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mPOIDetailFragment = poiFragment;
         mSphinx = poiFragment.mSphinx;
         mInflater = inflater;
-        mUpperBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, POIDetailFragment.DPOIType.HOTEL);
-        mLowerBlock = new DynamicPOIViewBlock(poiFragment.mBelowCommentLayout, POIDetailFragment.DPOIType.HOTEL);
+        mUpperBlock = new DynamicPOIViewBlock(poiFragment.mBelowAddressLayout, mUpperBlockRefresher);
+        mLowerBlock = new DynamicPOIViewBlock(poiFragment.mBelowCommentLayout, mLowerBlockRefresher);
         mUpperBlock.mOwnLayout = mInflater.inflate(R.layout.poi_dynamic_hotel_upper, null);
         mLowerBlock.mOwnLayout = mInflater.inflate(R.layout.poi_dynamic_hotel_lower, null);
         findViews();
@@ -287,7 +347,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             checkout = out;
         }
         refreshDate();
-//        getDateListView().refresh(checkin, checkout);
         List<BaseQuery> list = new ArrayList<BaseQuery>(); 
         BaseQuery query = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_DETAIL);
         query.setTipText(mSphinx.getString(R.string.doing_and_wait));
@@ -312,7 +371,6 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             checkout.add(Calendar.DAY_OF_YEAR, 1);
         }
         refreshDate();
-//        getDateListView().refresh(checkin, checkout);
     }
     
     final public void refreshDate() {
@@ -324,75 +382,22 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 
     public List<DynamicPOIViewBlock> getViewList() {
         blockList.clear();
-        
-        /**
-         * 失败就显示失败，不再根据数据生成可能是好的内容
-         */
-        //加载失败，只显示上面部分
-        if (!mUpperBlock.mLoadSucceed) {
-        	setState(STATE_LOAD_FAILED);
-        	roomTypeList.refreshList(null);
-        	blockList.add(mUpperBlock);
-        	LogWrapper.i(TAG, "Hotel viewBlock is:" + blockList);
-        	return blockList;
-        }
-        //数据全空，可能是加载失败，也可能是还未加载
-        if (mPOI == null || mPOI.getHotel().getUuid() == null || mPOI.getHotel().getRoomTypeList() == null) {
-            LogWrapper.i(TAG, "poi or hotel or roomTypeList is null, nothing to show for DynamicHotel");
-            return blockList;
-        }
-        mHotel = mPOI.getHotel();
-//        refreshDate();
-
-        mAllRoomList.clear();
-        mShowingRoomList.clear();
-        mAllRoomList.addAll(mHotel.getRoomTypeList());
-        Collections.sort(mAllRoomList, new RoomTypeCMP());
-        int size = (mAllRoomList != null? mAllRoomList.size() : 0);
-        if (size == 0) {
-            LogWrapper.i(TAG, "size of roomTypeList is 0.");
-            setState(STATE_NO_DATA);
-        } else if (size > SHOW_DYNAMIC_HOTEL_MAX) {
-            for(int i = 0; i < SHOW_DYNAMIC_HOTEL_MAX; i++) {
-                mShowingRoomList.add(mAllRoomList.get(i));
-            }
-            setState(STATE_DATA_GT_MAX);
-        } else {
-            mShowingRoomList.addAll(mAllRoomList);
-            setState(STATE_DATA_LT_MAX);
-        }
-        roomTypeList.refreshList(mShowingRoomList);
-        refreshBackground(roomTypeList, mShowingRoomList);
-        
-        String value = mHotel.getLongDescription();
-        if (TextUtils.isEmpty(value)) {
-            value = mSphinx.getString(R.string.hotel_no_summary);
-            hotelSummaryBlock.setClickable(false);
-        } else {
-            hotelSummaryBlock.setClickable(true);
-        }
-        hotelSummary.setText(value);
-
-        List<HotelTKDrawable> picList = mHotel.getHotelTKDrawableList();
-        int picNum = (picList == null ? 0 : picList.size());
-        refreshPicture(picList);
-        if (picNum == 0) {
-            hotelImage.setClickable(false);
-        } else {
-            hotelImage.setClickable(true);
-        }
-        
         blockList.add(mUpperBlock);
         blockList.add(mLowerBlock);
-        LogWrapper.i(TAG, "Hotel viewBlock is:" + blockList);
         return blockList;
     }
     
     public void refresh() {
-        refreshPicture(mHotel.getHotelTKDrawableList());
+        mHotel = mPOI.getHotel();
+        mUpperBlock.refresh();
+        if (mLowerBlock.mLoadSucceed) {
+            mLowerBlock.refresh();
+        }
+        refreshPicture();
     }
     
-    public void refreshPicture(List<HotelTKDrawable> picList) {
+    public void refreshPicture() {
+        List<HotelTKDrawable> picList = mHotel.getHotelTKDrawableList();
         int picNum = (picList == null ? 0 : picList.size());
         imageNumTxv.setText(mSphinx.getString(R.string.pictures, picNum));
         boolean setDefault = true;
