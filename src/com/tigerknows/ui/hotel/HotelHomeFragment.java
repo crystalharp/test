@@ -68,6 +68,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     
     boolean mRefreshFilterArea = false;
     
+    boolean mQueryFilter = false;
+    
     List<Filter> mFilterList = new ArrayList<DataQuery.Filter>();
 
     private Button mCityBtn;
@@ -143,7 +145,10 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         if (mRefreshFilterArea) {
             mRefreshFilterArea = false;
             refreshFilterArea(false);
-        	queryFilter();
+        }
+        
+        if (mQueryFilter) {
+            queryFilter();
         }
         
         if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE) == null) {
@@ -319,6 +324,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         
         refreshFilterCategory();
         
+        mQueryFilter = true;
         mSelectedLocation = false;
         mRefreshFilterArea = true;
         refreshFilterArea(true);
@@ -488,7 +494,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             return;
         } else {
             Response response = baseQuery.getResponse();
+            mQueryFilter = false;
             if (response == null) {
+                mQueryFilter = true;
                 queryFilter();
                 return;
             } else if (response.getResponseCode() != Response.RESPONSE_CODE_OK) {

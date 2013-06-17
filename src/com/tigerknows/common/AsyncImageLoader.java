@@ -62,8 +62,9 @@ public class AsyncImageLoader {
         if (TKConfig.CACHE_BITMAP_TO_MEMORY) {
             if (imageCache.containsKey(imageUrl.url)) {
                 SoftReference<BitmapDrawable> softReference = imageCache.get(imageUrl.url);
-                if (softReference.get() != null) {
-                    return softReference.get();
+                BitmapDrawable bm = softReference.get();
+                if (bm != null) {
+                    return bm;
                 }
             }
         }

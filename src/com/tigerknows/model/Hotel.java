@@ -123,11 +123,11 @@ public class Hotel extends XMapData {
             for(int i = 0, size = originalHotelTKDrawableList.size(); i < size; i++) {
                 HotelTKDrawable originalHotelTKDrawable = originalHotelTKDrawableList.get(i);
                 HotelTKDrawable hotelTKDrawable = new HotelTKDrawable();
-                hotelTKDrawable.name = originalHotelTKDrawable.name;
+                hotelTKDrawable.setName(originalHotelTKDrawable.name);
                 if (originalHotelTKDrawable.tkDrawable != null) {
                     TKDrawable tkDrawable = new TKDrawable();
                     tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(originalHotelTKDrawable.tkDrawable.getUrl(), Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)));
-                    hotelTKDrawable.tkDrawable = tkDrawable;
+                    hotelTKDrawable.setTkDrawable(tkDrawable);
                 }
                 hotelTKDrawableList.add(hotelTKDrawable);
             }
@@ -246,7 +246,7 @@ public class Hotel extends XMapData {
         private TKDrawable tkDrawable;
         
         public HotelTKDrawable() {
-            // TODO Auto-generated constructor stub
+            this.data = new XMap();
         }
 
         public HotelTKDrawable(XMap data) throws APIException {
@@ -268,11 +268,27 @@ public class Hotel extends XMapData {
         }
 
         public void setTkDrawable(TKDrawable tkDrawable) {
+            String url = null;
+            if (tkDrawable != null) {
+                url = tkDrawable.getUrl();
+            }
+            getData().put(FIELD_URL, url);
             this.tkDrawable = tkDrawable;
         }
 
         public void setName(String name) {
+            getData().put(FIELD_NAME, name);
             this.name = name;
+        }
+        
+        public HotelTKDrawable clone() {
+            HotelTKDrawable other = null;
+            try {
+                other = new HotelTKDrawable(getData());
+            } catch (APIException e) {
+                e.printStackTrace();
+            }
+            return other;
         }
 
         public static XMapInitializer<HotelTKDrawable> Initializer = new XMapInitializer<Hotel.HotelTKDrawable>() {
