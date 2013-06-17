@@ -21,7 +21,6 @@
             <LinearLayout 
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
-	            android:background="@drawable/list_middle"
 	            android:orientation="vertical"
 	            android:layout_marginTop="8dp"
 	            android:layout_marginRight="8dp"
@@ -31,7 +30,7 @@
 	                android:layout_width="match_parent"
 	                android:layout_height="match_parent"
 	                android:orientation="vertical"
-	                android:background="@color/list_bg_white"
+		            android:background="@drawable/list_middle"
 	                android:layout_gravity="center_horizontal"
 	                >
 		            <ImageView android:id="@+id/big_half_circle"
@@ -130,7 +129,7 @@
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
 	                android:gravity="top|center_horizontal"
-	                android:background="@color/list_bg_white"
+		            android:background="@drawable/list_middle"
 	                >
 	                <ImageView
 	                    android:id="@+id/detail_imv"
