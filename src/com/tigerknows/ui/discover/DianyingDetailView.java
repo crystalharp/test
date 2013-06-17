@@ -123,7 +123,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
             
             @Override
             public void run() {
-                Drawable drawable = mData.getPicturesDetail().loadDrawable(null, null, null);
+                Drawable drawable = mData.getPicturesDetail().loadDrawable(mSphinx, mLoadedDrawableRun, mParentFragment.toString());
                 if(drawable != null) {
                     mPictureImv.setImageDrawable(drawable);
                 }
@@ -139,8 +139,8 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
     }
     
     @Override
-    public void setData(BaseData data) {
-        super.setData(data);
+    public void setData(BaseData data, int position) {
+        super.setData(data, position);
         if (data == null || (data instanceof Dianying) == false || mData==data) {
             return;
         }
@@ -420,7 +420,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
         for (BaseQuery baseQuery : baseQueryList) {
 
-            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener)) {
+            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener, super.mParentFragment.mViewPager.getCurrentItem()==mPosition)) {
                 mParentFragment.isReLogin = true;
                 return true;
             } else {

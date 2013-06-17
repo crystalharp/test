@@ -188,7 +188,7 @@ public class CommentListActivity extends BaseActivity {
         });
     }
     
-    protected void onRusume() {
+    protected void onResume() {
         super.onResume();
         if (isReLogin()) {
             return;

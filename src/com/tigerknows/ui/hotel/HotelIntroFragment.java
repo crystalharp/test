@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.POI;
 import com.tigerknows.ui.BaseFragment;
@@ -27,6 +28,7 @@ public class HotelIntroFragment extends BaseFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mActionTag = ActionLog.HotelIntro;
 	}
 
 	@Override

@@ -653,6 +653,9 @@ public final class DataQuery extends BaseQuery {
             addParameter(new String[]{SERVER_PARAMETER_MESSAGE_ID_LIST, SERVER_PARAMETER_LAST_PULL_DATE}, false);
         } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
             addParameter(new String[]{SERVER_PARAMETER_KEYWORD});
+        } else if (DATA_TYPE_COUPON.equals(dataType)) {
+        	addParameter(SERVER_PARAMETER_POI_ID);
+        	addParameter(SERVER_PARAMETER_NEED_FIELD);
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
@@ -747,6 +750,8 @@ public final class DataQuery extends BaseQuery {
             this.response = pullMessage;
         } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
             this.response = new AlternativeResponse(responseXMap);
+        } else if (DATA_TYPE_COUPON.equals(dataType)) {
+            this.response = new CouponResponse(responseXMap);
         }
     }
     
@@ -793,7 +798,7 @@ public final class DataQuery extends BaseQuery {
                 }
                 
                 if (staticFilterDataArea != null && staticFilterDataArea.cityId == cityId) {
-                    List<Integer> list = baseResponse.getFilterAreaIndex();
+                    List<Long> list = baseResponse.getFilterAreaIndex();
                     if (list != null && list.size() > 0) {
                         filterList.add(makeFilterResponse(context, list, staticFilterDataArea.getVersion(), staticFilterDataArea.getAreaFilterOption(), FilterArea.FIELD_LIST));
                     }
@@ -815,9 +820,9 @@ public final class DataQuery extends BaseQuery {
                 
                 if (staticFilterDataCategoryOrder != null) {
         
-                    List<Integer> list = baseResponse.getFilterCategoryIndex();
+                    List<Long> list = baseResponse.getFilterCategoryIndex();
                     if (list != null && list.size() > 0) {
-                        filterList.add(makeFilterResponse(context, list, staticFilterDataCategoryOrder.getVersion(), staticFilterDataCategoryOrder.getCategoryFilterOption(), FilterCategoryOrder.FIELD_LIST_CATEGORY));
+                        filterList.add(makeFilterResponse(context, list, staticFilterDataCategoryOrder.getVersion(), staticFilterDataCategoryOrder.getCategoryFilterOption(), FilterCategoryOrder.FIELD_LIST_CATEGORY, BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType) == false));
                     }
                     list = baseResponse.getFilterOrderIndex();
                     if (list != null && list.size() > 0) {
@@ -900,8 +905,12 @@ public final class DataQuery extends BaseQuery {
 
         return s.toString();
     }
+
+    public static Filter makeFilterResponse(Context context, List<Long> indexList, String version, List<FilterOption> filterOptionList, byte key) {
+        return makeFilterResponse(context, indexList, version, filterOptionList, key, true);
+    }
     
-    public static Filter makeFilterResponse(Context context, List<Integer> indexList, String version, List<FilterOption> filterOptionList, byte key) {
+    public static Filter makeFilterResponse(Context context, List<Long> indexList, String version, List<FilterOption> filterOptionList, byte key, boolean addAllAnyone) {
 
         Filter filter = new Filter();
         filter.version = version;
@@ -910,12 +919,12 @@ public final class DataQuery extends BaseQuery {
             Filter parentFilter = null;            
             FilterOption filterOption;
             
-            int selectedId = indexList.get(0);
+            long selectedId = indexList.get(0);
             
             for(int i = 1, size = indexList.size(); i < size; i++) {
-                int index = indexList.get(i);
+                long index = indexList.get(i);
                 if (index < filterOptionList.size()) {
-                    filterOption = filterOptionList.get(indexList.get(i));
+                    filterOption = filterOptionList.get((int)index);
     
                     Filter tempFilter = new Filter();
                     tempFilter.filterOption = filterOption;
@@ -933,23 +942,25 @@ public final class DataQuery extends BaseQuery {
                 }
             }
             
-            // 增加全部
-            List<Filter> chidrenFilterList = filter.getChidrenFilterList();
-            for(Filter chidrenFilter : chidrenFilterList) {
-                if (chidrenFilter.getChidrenFilterList().size() > 0 &&
-                        chidrenFilter.getFilterOption().getParent() == -1) {
-                    FilterOption filterOption1 = new FilterOption();
-                    filterOption1.setName(context.getString(R.string.all_anyone, ""));
-                    
-                    int id = chidrenFilter.getFilterOption().getId();
-                    filterOption1.setId(id);
-                    filterOption1.setParent(id);
-                    
-                    Filter filter1 = new Filter();
-                    filter1.filterOption = filterOption1;
-                    filter1.selected = chidrenFilter.selected;
-                    chidrenFilter.getChidrenFilterList().add(0, filter1);
-                    chidrenFilter.selected = false;
+            if (addAllAnyone) {
+                // 增加全部
+                List<Filter> chidrenFilterList = filter.getChidrenFilterList();
+                for(Filter chidrenFilter : chidrenFilterList) {
+                    if (chidrenFilter.getChidrenFilterList().size() > 0 &&
+                            chidrenFilter.getFilterOption().getParent() == -1) {
+                        FilterOption filterOption1 = new FilterOption();
+                        filterOption1.setName(context.getString(R.string.all_anyone, ""));
+                        
+                        int id = chidrenFilter.getFilterOption().getId();
+                        filterOption1.setId(id);
+                        filterOption1.setParent(id);
+                        
+                        Filter filter1 = new Filter();
+                        filter1.filterOption = filterOption1;
+                        filter1.selected = chidrenFilter.selected;
+                        chidrenFilter.getChidrenFilterList().add(0, filter1);
+                        chidrenFilter.selected = false;
+                    }
                 }
             }
         }
@@ -1280,25 +1291,25 @@ public final class DataQuery extends BaseQuery {
         // 0x22 x_map 分类和排序筛选数据
         public static final byte FIELD_FILTER_CATEGORY_ORDER = 0x22;
 
-        protected List<Integer> filterAreaIndex;
+        protected List<Long> filterAreaIndex;
 
-        protected List<Integer> filterCategoryIndex;
+        protected List<Long> filterCategoryIndex;
 
-        protected List<Integer> filterOrderIndex;
+        protected List<Long> filterOrderIndex;
 
         protected FilterArea filterDataArea;
 
         protected FilterCategoryOrder filterDataCategoryOrder;
 
-        public List<Integer> getFilterAreaIndex() {
+        public List<Long> getFilterAreaIndex() {
             return filterAreaIndex;
         }
 
-        public List<Integer> getFilterCategoryIndex() {
+        public List<Long> getFilterCategoryIndex() {
             return filterCategoryIndex;
         }
 
-        public List<Integer> getFilterOrderIndex() {
+        public List<Long> getFilterOrderIndex() {
             return filterOrderIndex;
         }
 
@@ -1375,7 +1386,7 @@ public final class DataQuery extends BaseQuery {
 
         private POIList bPOIList;
 
-        private List<Integer> idList;
+        private List<Long> idList;
 
         public POIList getAPOIList() {
             return aPOIList;
@@ -1393,7 +1404,7 @@ public final class DataQuery extends BaseQuery {
             this.bPOIList = poiList;
         }
         
-        public List<Integer> getIdList() {
+        public List<Long> getIdList() {
             return idList;
         }
 
@@ -1787,6 +1798,66 @@ public final class DataQuery extends BaseQuery {
         }
     }
     
+    public static class CouponResponse extends Response {
+        // 0x02 x_map   点评结果
+        public static final byte FIELD_COUPON_LIST = 0x02;
+
+        private CouponList list;
+
+        public CouponResponse(XMap data) throws APIException {
+            super(data);
+            
+            if (this.data.containsKey(FIELD_COUPON_LIST)) {
+                this.list = new CouponList(this.data.getXMap(FIELD_COUPON_LIST));
+            }
+        }
+
+        public CouponList getList() {
+            return list;
+        }
+
+        public void setList(CouponList list) {
+            this.list = list;
+        }
+        
+        public XMap getData() {
+            if (data == null) {
+                data = super.getData();
+                if (this.list != null) {
+                    data.put(FIELD_COUPON_LIST, this.list.getData());
+                }
+            }
+            return data;
+        }
+        
+        public static class CouponList extends XMapData{
+            
+        	// 0x00 x_int 优惠券数量
+        	public static final byte FIELD_TOTAL = 0x00;
+        	
+            // 0x01 x_array<x_map>  poi列表 
+            public static final byte FIELD_LIST = 0x01;
+            
+            private long total;
+            private List<Coupon> list;
+
+            public long getTotal() {
+                return total;
+            }
+
+            public List<Coupon> getList() {
+                return list;
+            }
+
+            public CouponList(XMap data) throws APIException {
+                super(data);
+                
+                list = getListFromData(FIELD_LIST, Coupon.Initializer);
+                this.total = 0;
+            }     
+            
+        }
+    }
     public static class ShangjiaResponse extends Response {
         // 0x02 x_map   商家结果
         public static final byte FIELD_LIST = 0x02;
@@ -2350,6 +2421,8 @@ public final class DataQuery extends BaseQuery {
             responseXMap = DataQueryTest.launchPullMessage();
         } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
             responseXMap = DataQueryTest.launchAlternativeResponse(168, "launchAlternativeResponse");
+        } else if (DATA_TYPE_COUPON.equals(dataType)){
+        	responseXMap = DataQueryTest.launchCouponResponse(168, "launchCouponResponse");
         }
     }
 }

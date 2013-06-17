@@ -123,11 +123,11 @@ public class Hotel extends XMapData {
             for(int i = 0, size = originalHotelTKDrawableList.size(); i < size; i++) {
                 HotelTKDrawable originalHotelTKDrawable = originalHotelTKDrawableList.get(i);
                 HotelTKDrawable hotelTKDrawable = new HotelTKDrawable();
-                hotelTKDrawable.name = originalHotelTKDrawable.name;
+                hotelTKDrawable.setName(originalHotelTKDrawable.name);
                 if (originalHotelTKDrawable.tkDrawable != null) {
                     TKDrawable tkDrawable = new TKDrawable();
                     tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(originalHotelTKDrawable.tkDrawable.getUrl(), Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)));
-                    hotelTKDrawable.tkDrawable = tkDrawable;
+                    hotelTKDrawable.setTkDrawable(tkDrawable);
                 }
                 hotelTKDrawableList.add(hotelTKDrawable);
             }
@@ -137,43 +137,54 @@ public class Hotel extends XMapData {
         this.canReserve = getLongFromData(FIELD_CAN_RESERVE, reset ? 0 : this.canReserve);
         this.longDescription = getStringFromData(FIELD_LONG_DESCRIPTION, reset ? null : this.longDescription);
         this.roomDescription = getStringFromData(FIELD_ROOM_DESCRIPTION, reset ? null : this.roomDescription);
+        
+        if (reset == false) {
+            this.data = null;
+        }
     }
     
     public XMap getData() {
-        XMap data = new XMap();
-        if (uuid != null) {
-            data.put(FIELD_UUID, uuid);
-        }
-        if (source != null) {
-            data.put(FIELD_SOURCE, source);
-        }
-        data.put(FIELD_BRAND, brand);
-        if (imageThumbUrl != null) {
-            data.put(FIELD_IMAGE_THUMB, imageThumbUrl);
-        }
-        if (originalHotelTKDrawableList != null) {
-            XArray<XMap> xArray = new XArray<XMap>();
-            for(int i = 0, size = originalHotelTKDrawableList.size(); i < size; i++) {
-                xArray.add(originalHotelTKDrawableList.get(i).getData());
+        if (this.data == null) {
+            XMap data = new XMap();
+            if (uuid != null) {
+                data.put(FIELD_UUID, uuid);
             }
-            data.put(FIELD_IMAGE_LIST, xArray);
-        }
-        if (this.roomTypeList != null) {
-            XArray<XMap> xArray = new XArray<XMap>();
-            for(int i = 0, size = roomTypeList.size(); i < size; i++) {
-                xArray.add(roomTypeList.get(i).getData());
+            if (source != null) {
+                data.put(FIELD_SOURCE, source);
             }
-            data.put(FIELD_ROOM_TYPE_LIST, xArray);
-        }
-        if (service != null) {
-            data.put(FIELD_SERVICE, service);
-        }
-        data.put(FIELD_CAN_RESERVE, canReserve);
-        if (longDescription != null) {
-            data.put(FIELD_LONG_DESCRIPTION, longDescription);
-        }
-        if (roomDescription != null) {
-            data.put(FIELD_ROOM_DESCRIPTION, roomDescription);
+            if (brand != 0) {
+                data.put(FIELD_BRAND, brand);
+            }
+            if (imageThumbUrl != null) {
+                data.put(FIELD_IMAGE_THUMB, imageThumbUrl);
+            }
+            if (originalHotelTKDrawableList != null) {
+                XArray<XMap> xArray = new XArray<XMap>();
+                for(int i = 0, size = originalHotelTKDrawableList.size(); i < size; i++) {
+                    xArray.add(originalHotelTKDrawableList.get(i).getData());
+                }
+                data.put(FIELD_IMAGE_LIST, xArray);
+            }
+            if (this.roomTypeList != null) {
+                XArray<XMap> xArray = new XArray<XMap>();
+                for(int i = 0, size = roomTypeList.size(); i < size; i++) {
+                    xArray.add(roomTypeList.get(i).getData());
+                }
+                data.put(FIELD_ROOM_TYPE_LIST, xArray);
+            }
+            if (service != null) {
+                data.put(FIELD_SERVICE, service);
+            }
+            if (canReserve != 0) {
+                data.put(FIELD_CAN_RESERVE, canReserve);
+            }
+            if (longDescription != null) {
+                data.put(FIELD_LONG_DESCRIPTION, longDescription);
+            }
+            if (roomDescription != null) {
+                data.put(FIELD_ROOM_DESCRIPTION, roomDescription);
+            }
+            this.data = data;
         }
         return data;
     }
@@ -235,7 +246,7 @@ public class Hotel extends XMapData {
         private TKDrawable tkDrawable;
         
         public HotelTKDrawable() {
-            // TODO Auto-generated constructor stub
+            this.data = new XMap();
         }
 
         public HotelTKDrawable(XMap data) throws APIException {
@@ -257,11 +268,27 @@ public class Hotel extends XMapData {
         }
 
         public void setTkDrawable(TKDrawable tkDrawable) {
+            String url = null;
+            if (tkDrawable != null) {
+                url = tkDrawable.getUrl();
+            }
+            getData().put(FIELD_URL, url);
             this.tkDrawable = tkDrawable;
         }
 
         public void setName(String name) {
+            getData().put(FIELD_NAME, name);
             this.name = name;
+        }
+        
+        public HotelTKDrawable clone() {
+            HotelTKDrawable other = null;
+            try {
+                other = new HotelTKDrawable(getData());
+            } catch (APIException e) {
+                e.printStackTrace();
+            }
+            return other;
         }
 
         public static XMapInitializer<HotelTKDrawable> Initializer = new XMapInitializer<Hotel.HotelTKDrawable>() {

@@ -41,7 +41,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.PopupWindow.OnDismissListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -69,6 +68,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     
     boolean mRefreshFilterArea = false;
     
+    boolean mQueryFilter = false;
+    
     List<Filter> mFilterList = new ArrayList<DataQuery.Filter>();
 
     private Button mCityBtn;
@@ -86,6 +87,22 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private DateListView mDateListView = null;
     
     private ViewGroup mPopupWindowContain = null;
+    
+    PopupWindow.OnDismissListener mDateListViewDismiss = new PopupWindow.OnDismissListener() {
+        
+        @Override
+        public void onDismiss() {
+            mActionLog.addAction(mActionTag + ActionLog.HotelDate + ActionLog.Dismiss);
+        }
+    };
+    
+    PopupWindow.OnDismissListener mCategoryFilterViewDismiss = new PopupWindow.OnDismissListener() {
+        
+        @Override
+        public void onDismiss() {
+            mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter + ActionLog.Dismiss);
+        }
+    };
         
     private Dialog mProgressDialog = null;
     
@@ -98,7 +115,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.POIHome;
+        mActionTag = ActionLog.HotelQuery;
     }
     
     @Override
@@ -122,13 +139,16 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         
         mSphinx.showHint(TKConfig.PREFS_HINT_HOTEL_HOME, R.layout.hint_hotel_home);
         
-        refreshFilterArea(false);
         if (mSphinx.getPickLocationFragment().getPOI() != null) {
             FilterListView.selectedFilter(getFilter(getFilterList(), FilterArea.FIELD_LIST), -1);
         }
         if (mRefreshFilterArea) {
             mRefreshFilterArea = false;
-        	queryFilter();
+            refreshFilterArea(false);
+        }
+        
+        if (mQueryFilter) {
+            queryFilter();
         }
         
         if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE) == null) {
@@ -202,15 +222,18 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         int id = view.getId();
         switch (id) {
             case R.id.city_btn:
+                mActionLog.addAction(mActionTag + ActionLog.HotelQueryCity);
                 Intent intent = new Intent();
                 intent.putExtra(ChangeCityActivity.EXTRA_ONLY_CHANGE_HOTEL_CITY, true);
                 mSphinx.showView(R.id.activity_more_change_city, intent);
                 break;
                 
             case R.id.location_btn:
+                mActionLog.addAction(mActionTag + ActionLog.HotelQueryLocation);
                 mSphinx.getPickLocationFragment().reset();
                 Filter filter = getFilter(mFilterList, FilterArea.FIELD_LIST);
                 if (filter == null || filter.getVersion().equals("0.0.0")) {
+                    queryFilter();
                     showProgressDialog();
                 } else {
                     mSphinx.showView(R.id.view_hotel_pick_location);
@@ -218,25 +241,26 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 break;
                 
             case R.id.price_view:
+                mActionLog.addAction(mActionTag + ActionLog.HotelQueryCategory);
                 showFilterCategory(mTitleFragment);
                 break;
                 
             case R.id.check_view:
+                mActionLog.addAction(mActionTag + ActionLog.HotelQueryDate);
                 showDateListView(mTitleFragment);
                 break;
                 
             case R.id.query_btn:
+                mActionLog.addAction(mActionTag + ActionLog.HotelQuerySubmit);
+                mRefreshFilterArea = true;
                 submit();
                 break;
                 
             case R.id.dingdan_btn:
+                mActionLog.addAction(mActionTag + ActionLog.HotelQueryOrder);
             	mSphinx.getHotelOrderListFragment().clearOrders();
                 mSphinx.showView(R.id.view_hotel_order_list);
             	break;
-                
-            case R.id.confirm_btn:
-                dismissPopupWindow();
-                break;
                 
             default:
                 break;
@@ -300,6 +324,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         
         refreshFilterCategory();
         
+        mQueryFilter = true;
         mSelectedLocation = false;
         mRefreshFilterArea = true;
         refreshFilterArea(true);
@@ -317,13 +342,13 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 FilterCategoryOrder filterCategory = DataQuery.getHoteFilterCategoryOrder();
                 if (filterCategory != null) {
                     List<FilterOption> filterOptionList = filterCategory.getCategoryFilterOption();
-                    List<Integer> indexList = new ArrayList<Integer>();
-                    indexList.add(0);
+                    List<Long> indexList = new ArrayList<Long>();
+                    indexList.add(0l);
                     for(int i = 0, size = filterOptionList.size(); i < size; i++) {
-                        int id = filterOptionList.get(i).getId();
+                        long id = filterOptionList.get(i).getId();
                         indexList.add(id);
                     }
-                    Filter filter = DataQuery.makeFilterResponse(mSphinx, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY);
+                    Filter filter = DataQuery.makeFilterResponse(mSphinx, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
                     mFilterList.add(filter);
                 }
             }  
@@ -349,9 +374,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             FilterArea filterArea = DataQuery.getFilterArea();
             if (filterArea != null && filterArea.getAreaFilterOption().size() > 0) {
                 List<FilterOption> filterOptionList = filterArea.getAreaFilterOption();
-                List<Integer> indexList = new ArrayList<Integer>();
+                List<Long> indexList = new ArrayList<Long>();
                 if (filterAreaState == 0) {
-                    int id = 0;
+                    long id = 0;
                     if (reset || mSelectedLocation == false) {
                         
                     } else {
@@ -365,7 +390,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                     }
                     indexList.add(id);
                 } else if (filterAreaState == 1) {
-                    int id = 10;
+                    long id = 10;
                     if (reset || mSelectedLocation == false) {
                         
                     } else {
@@ -377,7 +402,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                     indexList.add(id);
                 }
                 for(int i = 0, size = filterOptionList.size(); i < size; i++) {
-                    int id = filterOptionList.get(i).getId();
+                    long id = filterOptionList.get(i).getId();
                     if (filterAreaState == 0) {
                         if (id >= 1 && id <= 10) {
                             continue;
@@ -397,12 +422,12 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 FilterArea quanguoFilterArea = DataQuery.getQuanguoFilterArea(mSphinx);
                 if (quanguoFilterArea != null && quanguoFilterArea.getAreaFilterOption().size() > 0) {
                 	List<FilterOption> filterOptionList = quanguoFilterArea.getAreaFilterOption();
-                    List<Integer> indexList = new ArrayList<Integer>();
+                    List<Long> indexList = new ArrayList<Long>();
                     if (filterAreaState == 0) {
-                        indexList.add(0);
-                        indexList.add(0);
+                        indexList.add(0l);
+                        indexList.add(0l);
                     } else if (filterAreaState == 1) {
-                        int id = 10;
+                        long id = 10;
                         if (reset || mSelectedLocation == false) {
                             
                         } else {
@@ -412,12 +437,12 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                             }
                         }
                         indexList.add(id);
-                        indexList.add(0);
-                        indexList.add(6);
-                        indexList.add(7);
-                        indexList.add(8);
-                        indexList.add(9);
-                        indexList.add(10);
+                        indexList.add(0l);
+                        indexList.add(6l);
+                        indexList.add(7l);
+                        indexList.add(8l);
+                        indexList.add(9l);
+                        indexList.add(10l);
                     }
                     
                     deleteFilter(mFilterList, FilterArea.FIELD_LIST);
@@ -469,14 +494,24 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             return;
         } else {
             Response response = baseQuery.getResponse();
+            mQueryFilter = false;
             if (response == null) {
+                mQueryFilter = true;
                 queryFilter();
                 return;
             } else if (response.getResponseCode() != Response.RESPONSE_CODE_OK) {
                 int responseCode = response.getResponseCode();
                 if (responseCode == 702) {
+                    
+                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                        dismissProgressDialog();
+                    }
                     Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.response_code_702));
                 } else if (responseCode == 703) {
+                    
+                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                        dismissProgressDialog();
+                    }
                     Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.response_code_703));
                 }
                 return;
@@ -602,14 +637,8 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
-            mPopupWindow.setOnDismissListener(new OnDismissListener() {
-                
-                @Override
-                public void onDismiss() {
-                    mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter + ActionLog.Dismiss);
-                }
-            });
-            
+            mPopupWindow.setAnimationStyle(R.style.AlterImageDialog);
+            mPopupWindow.update();
         }
         mPopupWindow.showAsDropDown(parent, 0, 0);
 
@@ -618,6 +647,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     private void showFilterCategory(View parent) {
         makePopupWindow(parent);
         mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter);
+        mPopupWindow.setOnDismissListener(mCategoryFilterViewDismiss);
         mPopupWindowContain.removeAllViews();
         mPopupWindowContain.addView(getFilterCategoryListView());
         mPopupWindow.showAsDropDown(parent, 0, 0);
@@ -628,7 +658,6 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     FilterListView getFilterCategoryListView() {
         if (mFilterCategoryListView == null) {
             FilterListView view = new FilterListView(mSphinx);
-            view.setDeleteFirstChild(true);
             view.findViewById(R.id.body_view).setPadding(0, Globals.g_metrics.heightPixels-((int) (320*Globals.g_metrics.density)), 0, 0);
             View titleView = mLayoutInflater.inflate(R.layout.hotel_category_list_header, view, false);
             ((ViewGroup) view.findViewById(R.id.title_view)).addView(titleView);
@@ -639,8 +668,9 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     
     private void showDateListView(View parent) {
         makePopupWindow(parent);
+        mActionLog.addAction(mActionTag + ActionLog.HotelDate);
+        mPopupWindow.setOnDismissListener(mDateListViewDismiss);
         DateListView view = getDateListView();
-        mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter);
         mPopupWindowContain.removeAllViews();
         mPopupWindowContain.addView(getDateListView());
         mPopupWindow.showAsDropDown(parent, 0, 0);
@@ -665,8 +695,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
 
     @Override
     public void cancelFilter() {
-        // TODO Auto-generated method stub
-        
+        dismissPopupWindow();
     }
     
     void submit() {

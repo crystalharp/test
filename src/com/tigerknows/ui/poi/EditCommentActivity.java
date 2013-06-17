@@ -396,7 +396,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             mComment.setEnvironment((int)mFoodEnvironmentRtb.getRating());
             mComment.setQos((int)mFoodQosRtb.getRating());
             
-            String restair = mRestairBtn.getText().toString().trim();
+            String restair = mRestairBtn.getText().toString();
             if (!TextUtils.isEmpty(restair)) {
                 mComment.setRestair(restair);
             }
@@ -776,7 +776,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             for(int i = 0, length = mRestairArray.length; i < length; i++) {
                 mRestairChecked[i] = false;
             }
-            String restair = mRestairBtn.getText().toString().trim();
+            String restair = mRestairBtn.getText().toString();
             if (!TextUtils.isEmpty(restair)) {
                 int i = 0;
                 for(String str : mRestairArray) {
@@ -880,7 +880,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         s.append(':');
         s.append(rating*2);
         s.append(',');
-        String content = mContentEdt.getEditableText().toString().trim();
+        String content = mContentEdt.getEditableText().toString();
         if (!TextUtils.isEmpty(content)) {
             s.append(Util.byteToHexString(Comment.FIELD_CONTENT));
             s.append(':');
@@ -1276,7 +1276,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                 return true;
             }
             
-            String restair = mRestairBtn.getText().toString().trim();
+            String restair = mRestairBtn.getText().toString();
             if (TextUtils.isEmpty(restair) == false) {
                 if (restair.equals(mComment.getRestair()) == false) {
                     return true;

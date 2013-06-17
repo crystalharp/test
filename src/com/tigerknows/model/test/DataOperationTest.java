@@ -3,6 +3,7 @@ package com.tigerknows.model.test;
 import com.tigerknows.model.DataOperation.CommentCreateResponse;
 import com.tigerknows.model.DataOperation.CommentQueryResponse;
 import com.tigerknows.model.DataOperation.CommentUpdateResponse;
+import com.tigerknows.model.DataOperation.CouponQueryResponse;
 import com.tigerknows.model.DataOperation.DianyingQueryResponse;
 import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
 import com.tigerknows.model.DataOperation.FendianQueryResponse;
@@ -116,6 +117,13 @@ public class DataOperationTest {
         BaseQueryTest.launchResponse(data);
         data.put(DiaoyanQueryResponse.FIELD_HAS_SURVEYED, 0);
         data.put(DiaoyanQueryResponse.FIELD_URL, "http://www.tigerknows.com");
+        return data;
+    }
+    
+    public static XMap launchCouponQueryResponse(){
+    	XMap data = new XMap();
+    	BaseQueryTest.launchResponse(data);
+        data.put(CouponQueryResponse.FIELD_DATA, DataQueryTest.launchCoupon());
         return data;
     }
 	

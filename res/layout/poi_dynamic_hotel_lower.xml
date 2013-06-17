@@ -17,7 +17,7 @@
 	        android:layout_height="80dp"
 	        android:layout_alignParentLeft="true"
 	        android:layout_alignParentTop="true"
-	        android:background="@drawable/bg_picture_tuangou_detail" />
+	        android:background="@drawable/bg_picture_hotel" />
 	    
 	    <TextView 
 	        android:id="@+id/image_num_txv"
@@ -28,7 +28,7 @@
 	        android:background="#99000000"
 	        android:textColor="@color/white"
 	        android:textSize="16sp"
-	        android:text="0张"
+	        android:text="@string/app_name"
 	        android:gravity="center"
 	        android:focusable="false"
 	        android:maxLines="6"
@@ -59,6 +59,7 @@
 	        android:maxLines="3"
 	        android:ellipsize="end"
 	        android:textSize="14sp"
+	        android:lineSpacingExtra="2sp"
 	        android:text="@string/app_name" />
 	        
     </LinearLayout>

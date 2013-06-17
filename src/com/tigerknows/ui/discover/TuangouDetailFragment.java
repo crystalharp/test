@@ -188,17 +188,17 @@ public class TuangouDetailFragment extends BaseDetailFragment
         TuangouDetailView view;
 
         view = (TuangouDetailView) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
-        view.setData(mDataList.get(position));
+        view.setData(mDataList.get(position), position);
         view.onResume();
         
         if (position - 1 >= 0) {
             view = (TuangouDetailView) mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
-            view.setData(mDataList.get(position-1));
+            view.setData(mDataList.get(position-1), position-1);
             view.onResume();
         }
         if (position + 1 < mDataList.size()) {
             view = (TuangouDetailView) mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
-            view.setData(mDataList.get(position+1));
+            view.setData(mDataList.get(position+1), position+1);
             view.onResume();
         }
     }

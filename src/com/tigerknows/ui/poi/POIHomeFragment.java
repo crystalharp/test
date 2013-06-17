@@ -483,6 +483,8 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         	} else {
         	    icon.setVisibility(View.GONE);
         	}
+        	//Id will be used in setupDragView.
+        	convertView.setId(position);
         	return convertView;
         }
     }
@@ -737,8 +739,8 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 		}else{
 			dragViewLeft = 0;
 		}
-		mDragView.layout(dragViewLeft, 0, dragViewLeft + mDragViewWidth, mDragViewHeight);	
-		isDragging = true;
+		mDragView.layout(dragViewLeft, 0, dragViewLeft + mDragViewWidth, mDragViewHeight);
+		mDragView.invalidate();
 	}
 	
 	class SubCategoryBtnOnTouchListener implements OnTouchListener {
@@ -782,6 +784,23 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 		}
 		mSubCategoryGrid.setAdapter(mSubCategoryAdapter);
 		mCategoryTagImv.setImageResource(mCategoryTagResIdList[position]);
+		
+		/*
+		 * Animate the tag
+		 */
+		View tagView = mRootView.findViewById(R.id.category_tag_view);
+		View item = mCategoryLsv.findViewById(position);
+		View normalItem = item;
+		if(position == mCategoryAdapter.getCount()-1){
+			normalItem = mCategoryLsv.findViewById(position-1);
+		}
+		int tagY = (int) (item.getTop() + normalItem.getHeight()/2) - tagView.getHeight()/2;
+		
+		Animation anim = new TranslateAnimation(0, 0, 0, tagY);
+		anim.setDuration(300);
+		anim.setFillAfter(true);
+		tagView.startAnimation(anim);
+		
 	}
     
 	OnItemClickListener mSubCategoryOnClickListener = new OnItemClickListener() {

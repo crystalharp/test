@@ -101,6 +101,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             @Override
             public void onBtnClicked(TKWord tkWord, int position) {
                 mKeywordEdt.setText(tkWord.word);
+                mActionLog.addAction(mActionTag + ActionLog.HistoryWordInput, position, tkWord.word, tkWord.attribute);
             }
         };
         mSuggestWordListManager = new SuggestWordListManager(mSphinx, mSuggestLsv, mKeywordEdt, a, HistoryWordTable.TYPE_POI);
@@ -201,9 +202,9 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
         String keyword = mKeywordEdt.getText().toString().trim();
         if (!TextUtils.isEmpty(keyword)) {
             mSphinx.hideSoftInput(mKeywordEdt.getInput());
-            mKeywordEdt.setText(null);
             int cityId = Globals.getCurrentCityInfo().getId();
             HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), cityId, HistoryWordTable.TYPE_POI);
+            mKeywordEdt.setText(null);
             mActionLog.addAction(mActionTag +  ActionLog.POIHomeInputQueryBtn, keyword);
 
             DataQuery poiQuery = new DataQuery(mContext);

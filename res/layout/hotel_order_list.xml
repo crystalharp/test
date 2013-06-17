@@ -1,50 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent" 
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/bg_discover">
+    android:background="@drawable/bg_discover" >
+    <include
+        android:id="@+id/title_view"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        layout="@layout/hotel_hot_line"
+        />
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/title_view"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp" >
 
-        <FrameLayout
+        <include
+            android:id="@+id/empty_view"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            >
-            <include
-                layout="@layout/empty_view"
-                android:id="@+id/empty_view"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                />
-            
-            <com.tigerknows.widget.QueryingView
-                android:id="@+id/querying_view"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:visibility="gone"
-                >
-            </com.tigerknows.widget.QueryingView>
-                
-            <com.tigerknows.widget.SpringbackListView
-                android:id="@+id/result_lsv"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                
-                android:divider="@color/transparent"
-                android:dividerHeight="12dp"
-                android:footerDividersEnabled="false"
-                android:fadingEdge="none"
-                android:scrollingCache="false"
-                />
-            
-        </FrameLayout>
-	    
-    <include layout="@layout/empty_view"
-        android:id="@+id/empty_view"
-        android:layout_below="@id/result_txv"
-        android:visibility="invisible"
-        android:layout_width="fill_parent" 
-        android:layout_height="fill_parent" />
-</RelativeLayout>
+            layout="@layout/empty_view" />
 
+        <com.tigerknows.widget.QueryingView
+            android:id="@+id/querying_view"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:visibility="gone" >
+        </com.tigerknows.widget.QueryingView>
+
+        <com.tigerknows.widget.SpringbackListView
+            android:id="@+id/result_lsv"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:divider="@color/transparent"
+            android:dividerHeight="12dp"
+            android:fadingEdge="none"
+            android:footerDividersEnabled="false"
+            android:scrollingCache="false" />
+    </FrameLayout>
+
+</RelativeLayout>

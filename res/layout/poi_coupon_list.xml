@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/gray_light"
+    android:orientation="vertical"
+    android:gravity="center"
+    >
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        >
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            >
+            <include
+                layout="@layout/empty_view"
+                android:id="@+id/empty_view"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                />
+            
+            <com.tigerknows.widget.QueryingView
+                android:id="@+id/querying_view"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:visibility="gone"
+                >
+            </com.tigerknows.widget.QueryingView>
+                
+            <com.tigerknows.widget.SpringbackListView
+                android:id="@+id/result_lsv"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:divider="@drawable/bg_line_split"
+                android:footerDividersEnabled="false"
+                android:fadingEdge="none"
+                android:scrollingCache="false"
+                />
+            <com.tigerknows.widget.RetryView
+               android:id="@+id/retry_view"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:visibility="gone"
+                >
+            </com.tigerknows.widget.RetryView>
+        </FrameLayout>
+    </LinearLayout>
+</RelativeLayout>

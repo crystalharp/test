@@ -56,6 +56,7 @@ public class TrafficQueryStateHelper {
             // TODO Auto-generated method stub
             super.exit();
             mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeMap + ActionLog.Dismiss);
+            mQueryFragment.mMapLocationHelper.checkMapCenterInCity();
         }
 
         @Override
@@ -67,6 +68,7 @@ public class TrafficQueryStateHelper {
 			mQueryFragment.mEnd.mEdt.mActionTag = ActionLog.TrafficHomeMap;
 			mQueryFragment.mBusline.mEdt.mActionTag = ActionLog.TrafficHomeMap;
             mQueryFragment.mEventHelper.applyListenersInMapState();
+//            mQueryFragment.mMapLocationHelper.checkMapCenterInCity();
         }
 
         @Override
@@ -78,8 +80,6 @@ public class TrafficQueryStateHelper {
                 mQueryFragment.mAnimationHelper.hideBlockAndMenuAnimation();
             }
             if (oldState == State.Input) {
-                mQueryFragment.mMapLocationHelper.resetMapStateMap();
-                
                 mQueryFragment.mSphinx.clearMap();
                 
                 mQueryFragment.getContentView().setVisibility(View.GONE);
@@ -114,6 +114,11 @@ public class TrafficQueryStateHelper {
 
         @Override
         public void enterFrom(State oldState) {
+            //这个要放在checkRadioButton之前，否则会触发Map状态的Listener，
+            //而不是触发Normal状态的Listener。
+            if (oldState != State.SelectPoint) {
+                mQueryFragment.mEventHelper.applyListenersInNormalState();
+            }
             if (oldState == State.Input) {
                 //返回normal状态时清理掉输入框的光标
                 mQueryFragment.mSelectedEdt.getEdt().clearFocus();
@@ -127,12 +132,7 @@ public class TrafficQueryStateHelper {
 
             }
             mQueryFragment.mMenuFragment.display();
-            mQueryFragment.mMapLocationHelper.resetNormalStateMap();
             applyInnateProperty(TrafficViewSTT.State.Normal);
-            //这一行很别扭
-            if (oldState != State.SelectPoint) {
-                mQueryFragment.mEventHelper.applyListenersInNormalState();
-            }
         }
 	    
 	}
@@ -171,6 +171,7 @@ public class TrafficQueryStateHelper {
 			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeSelectPoint+ActionLog.Dismiss);
             mQueryFragment.hideCommonTitle();
             mQueryFragment.mTitle.setVisibility(View.VISIBLE);
+            mQueryFragment.mMapLocationHelper.checkMapCenterInCity();
         }
 
         @Override
@@ -193,6 +194,7 @@ public class TrafficQueryStateHelper {
 			mQueryFragment.mEnd.mEdt.mActionTag = ActionLog.TrafficHomeSelectPoint;
 			mQueryFragment.mBusline.mEdt.mActionTag = ActionLog.TrafficHomeSelectPoint;
             mQueryFragment.mEventHelper.applyListenersInSelectPointState();
+            mQueryFragment.mMapLocationHelper.checkMapCenterInCity();
         }
 	}
 	

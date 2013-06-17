@@ -18,6 +18,7 @@ package com.tigerknows.ui.hotel;
 
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.util.CalendarUtil;
 
 import android.content.Context;
@@ -95,6 +96,8 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
     String[] days;
     
     String[] weedDays;
+    
+    ActionLog actionLog;
     
     public void refresh(Calendar checkIn, Calendar checkOut) {
         if (checkIn == null ||
@@ -178,6 +181,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         inflater.inflate(R.layout.hotel_date_list, this, // we are the parent
                 true);
         
+        actionLog = ActionLog.getInstance(context);
         this.context = context;
         Resources resources = context.getResources();
         days = resources.getStringArray(R.array.days);
@@ -239,15 +243,19 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
                 checkinAdapter.notifyDataSetChanged();
 
                 refreshCheckout();
+                
+                actionLog.addAction(actionTag + ActionLog.HotelDateCheckin, ((TextView)view.findViewById(R.id.text_txv)).getText());
             }
         });
         checkoutLsv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+            public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
                 checkoutPosition = position;
                 checkoutAdapter.notifyDataSetChanged();
                 refreshTitle();
+                
+                actionLog.addAction(actionTag + ActionLog.HotelDateCheckout, ((TextView)view.findViewById(R.id.text_txv)).getText());
             }
         });
         confirmBtn.setOnClickListener(this);
@@ -353,11 +361,8 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         int id = view.getId();
         switch (id) {
             case R.id.confirm_btn:
+                actionLog.addAction(actionTag + ActionLog.HotelDateDone);
                 confirm();
-                break;
-
-            case R.id.cancel_btn:
-                cancel();
                 break;
                 
             default:

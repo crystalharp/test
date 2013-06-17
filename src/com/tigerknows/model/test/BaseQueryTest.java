@@ -1,7 +1,6 @@
 package com.tigerknows.model.test;
 
 import com.decarta.Globals;
-import com.decarta.android.map.MapView;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
@@ -9,8 +8,12 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.location.TKLocationManager;
 import android.widget.Toast;
+
+import com.tigerknows.map.LocalRegionDataInfo;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapView;
 import com.tigerknows.map.MapEngine.CityInfo;
+import com.tigerknows.map.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery;
@@ -456,6 +459,14 @@ public class BaseQueryTest {
         final Button launchHistoryWorkBtn = new Button(activity);
         layout.addView(launchHistoryWorkBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         
+        final LinearLayout viewCityMapVersionLayout = new LinearLayout(activity);
+        viewCityMapVersionLayout.setOrientation(LinearLayout.HORIZONTAL);
+        Button viewCityMapVersionBtn = new Button(activity);
+        viewCityMapVersionLayout.addView(viewCityMapVersionBtn);
+        final EditText viewCityMapVersionEdt = new EditText(activity);
+        viewCityMapVersionLayout.addView(viewCityMapVersionEdt, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+        layout.addView(viewCityMapVersionLayout);
+        
         editConfigBtn.setText("View or Modify config.txt");
         editConfigBtn.setOnClickListener(new View.OnClickListener() {
             
@@ -536,6 +547,48 @@ public class BaseQueryTest {
                 } else if (activity instanceof Sphinx) {
                     ((Sphinx)(activity)).queryStart(accountManage);
                 }
+            }
+        });
+        
+        viewCityMapVersionBtn.setText("View city map version");
+        viewCityMapVersionEdt.setSingleLine();
+        viewCityMapVersionBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                MapEngine mapEngine = MapEngine.getInstance();
+                List<Integer> list = mapEngine.getRegionIdList(viewCityMapVersionEdt.getEditableText().toString());
+                StringBuilder s = new StringBuilder();
+                int totalSize = 0;
+                int downloadedSize = 0;
+                if (list != null) {
+                    for (int j = list.size()-1; j >= 0; j--) {
+                        int id = list.get(j);
+                        s.append(id);
+                        s.append(": ");
+                        RegionMetaVersion regionMetaVersion = mapEngine.getRegionMetaVersion(id);
+                        if (regionMetaVersion != null) {
+                            s.append(regionMetaVersion.toString());
+                        }
+                        LocalRegionDataInfo regionMapInfo = mapEngine.getLocalRegionDataInfo(id);
+                        if (regionMapInfo != null) {
+                            totalSize += regionMapInfo.getTotalSize();
+                            downloadedSize += regionMapInfo.getDownloadedSize();
+                        }
+                        s.append("; ");
+                        s.append(regionMapInfo.getDownloadedSize());
+                        s.append(", ");
+                        s.append(regionMapInfo.getTotalSize());
+                        s.append("\n");
+                        
+                    }
+                    s.append(list.size());
+                    s.append("; ");
+                    s.append(downloadedSize);
+                    s.append(", ");
+                    s.append(totalSize);
+                }
+                Utility.showDialogAcitvity(activity, s.toString());
             }
         });
         

@@ -274,7 +274,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             
             @Override
             public void run() {
-                Drawable drawable = mData.getPicturesDetail().loadDrawable(null, null, null);
+                Drawable drawable = mData.getPicturesDetail().loadDrawable(mSphinx, mLoadedDrawableRun, mParentFragment.toString());
                 if(drawable != null) {
                     mPictureImv.setBackgroundDrawable(drawable);
                 }else{
@@ -282,7 +282,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 }
                 TKDrawable tkDrawable = mData.getContentPic();
                 if (tkDrawable != null) {
-                    drawable = tkDrawable.loadDrawable(null, null, null);
+                    drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, mParentFragment.toString());
                     if(drawable != null) {
                         mContentTxv.setText(null);
                         mContentTxv.setBackgroundDrawable(drawable);
@@ -291,7 +291,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                         layoutParams.height = (int) (mPictureDetailWidth*((float)drawable.getIntrinsicHeight()/drawable.getIntrinsicWidth()));
                     }
                 }
-                Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), null, null);
+                Shangjia shangjia = Shangjia.getShangjiaById(mData.getSource(), mSphinx, mLoadedDrawableRun);
                 if (shangjia != null) {
                     mShangjiaMarkerImv.setImageDrawable(shangjia.getMarker());
                 } else {
@@ -318,8 +318,8 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     }
     
     @Override
-    public void setData(BaseData data) {
-        super.setData(data);
+    public void setData(BaseData data, int position) {
+        super.setData(data, position);
         if (data == null || (data instanceof Tuangou) == false || mData == data) {
             return;
         }
@@ -741,8 +741,9 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         if (super.onPostExecute(tkAsyncTask) == false) {
             return false;
         }
+        
         final DataOperation dataOperation = (DataOperation)(tkAsyncTask.getBaseQuery());
-        if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mCancelLoginListener)) {
+        if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mCancelLoginListener, super.mParentFragment.mViewPager.getCurrentItem()==mPosition)) {
             mParentFragment.isReLogin = true;
             return true;
         }

@@ -29,6 +29,8 @@
     <item type="id" name="activity_poi_report_error" />
     <item type="id" name="activity_poi_comment_list" />
     <item type="id" name="activity_poi_edit_comment" />
+    <item type="id" name="view_coupon_detail" />
+    <item type="id" name="view_coupon_list" />
     
     <item type="id" name="view_more_home" />
     <item type="id" name="view_more_history" />

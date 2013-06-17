@@ -43,7 +43,7 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     /**
      * 盛放详情页面的ViewPager
      */
-    protected ViewPager mViewPager = null;
+    ViewPager mViewPager = null;
     
     /**
      * PagerAdapter for ViewPager.<br />
@@ -206,7 +206,8 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
             mCyclePagerAdapter.notifyDataSetChanged();
             mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1, true);
         }
-        mCycleOnPageChangeListener.isPageTurning = false;        
+        mCycleOnPageChangeListener.isPageTurning = false;    
+        onResume();
     }
 
     /**

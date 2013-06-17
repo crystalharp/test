@@ -146,55 +146,81 @@ public class Comment extends BaseData {
         this.clientUid = getStringFromData(FIELD_CLIENT_UID, reset ? null : this.clientUid);
         this.source = getStringFromData(FIELD_SOURCE, reset ? null : this.source);
         
+        if (reset == false) {
+            this.data = null;
+        }
     }
     
     public XMap getData() {
-        XMap data = new XMap();   
-        if (!TextUtils.isEmpty(this.uid)) {
-            data.put(FIELD_UID, this.uid);
-        }
-        if (!TextUtils.isEmpty(this.content)) {
-            data.put(FIELD_CONTENT, this.content);
-        }
-        if (!TextUtils.isEmpty(this.user)) {
-            data.put(FIELD_USER, this.user);
-        }
-        if (!TextUtils.isEmpty(this.time)) {
-            data.put(FIELD_TIME, this.time);
-        }
-        data.put(FIELD_GRADE, this.grade);
-        if (!TextUtils.isEmpty(this.puid)) {
-            data.put(FIELD_PUID, this.puid);
-        }
-        data.put(FIELD_AVG, this.avg);
-        data.put(FIELD_TASTE, this.taste);
-        data.put(FIELD_QOS, this.qos);
-        data.put(FIELD_ENVIRONMENT, this.environment);
-        if (!TextUtils.isEmpty(this.recommend)) {
-            data.put(FIELD_RECOMMEND, this.recommend);
-        }
-        data.put(FIELD_LEVEL, this.level);
-        data.put(FIELD_EFFECT, this.effect);
-        if (!TextUtils.isEmpty(this.restair)) {
-            data.put(FIELD_RESTAIR, this.restair);
-        }
-        data.put(FIELD_POI_STATUS, this.poiStatus);
-        data.put(FIELD_PATTERN, this.pattern);
-        if (!TextUtils.isEmpty(this.poiName)) {
-            data.put(FIELD_POI_NAME, this.poiName);
-        }
-        data.put(FIELD_USER_ID, this.userId);
-        if (!TextUtils.isEmpty(this.poiCityId)) {
-            data.put(FIELD_POI_CITY_ID, this.poiCityId);
-        }
-        if (!TextUtils.isEmpty(this.url)) {
-            data.put(FIELD_URL, this.url);
-        }
-        if (!TextUtils.isEmpty(this.clientUid)) {
-            data.put(FIELD_CLIENT_UID, this.clientUid);
-        }
-        if (!TextUtils.isEmpty(this.source)) {
-            data.put(FIELD_SOURCE, this.source);
+        if (this.data == null) {
+            XMap data = new XMap();   
+            if (!TextUtils.isEmpty(this.uid)) {
+                data.put(FIELD_UID, this.uid);
+            }
+            if (!TextUtils.isEmpty(this.content)) {
+                data.put(FIELD_CONTENT, this.content);
+            }
+            if (!TextUtils.isEmpty(this.user)) {
+                data.put(FIELD_USER, this.user);
+            }
+            if (!TextUtils.isEmpty(this.time)) {
+                data.put(FIELD_TIME, this.time);
+            }
+            if (this.grade != 6) {
+                data.put(FIELD_GRADE, this.grade);
+            }
+            if (!TextUtils.isEmpty(this.puid)) {
+                data.put(FIELD_PUID, this.puid);
+            }
+            if (this.avg != -1) {
+                data.put(FIELD_AVG, this.avg);
+            }
+            if (this.taste != 3) {
+                data.put(FIELD_TASTE, this.taste);
+            }
+            if (this.qos != 3) {
+                data.put(FIELD_QOS, this.qos);
+            }
+            if (this.environment != 3) {
+                data.put(FIELD_ENVIRONMENT, this.environment);
+            }
+            if (!TextUtils.isEmpty(this.recommend)) {
+                data.put(FIELD_RECOMMEND, this.recommend);
+            }
+            if (this.level != 3) {
+                data.put(FIELD_LEVEL, this.level);
+            }
+            if (this.effect != 3) {
+                data.put(FIELD_EFFECT, this.effect);
+            }
+            if (!TextUtils.isEmpty(this.restair)) {
+                data.put(FIELD_RESTAIR, this.restair);
+            }
+            if (this.poiStatus != 0) {
+                data.put(FIELD_POI_STATUS, this.poiStatus);
+            }
+            if (this.pattern != 0) {
+                data.put(FIELD_PATTERN, this.pattern);
+            }
+            if (!TextUtils.isEmpty(this.poiName)) {
+                data.put(FIELD_POI_NAME, this.poiName);
+            }
+            if (this.userId != -1) {
+                data.put(FIELD_USER_ID, this.userId);
+            }
+            if (!TextUtils.isEmpty(this.poiCityId)) {
+                data.put(FIELD_POI_CITY_ID, this.poiCityId);
+            }
+            if (!TextUtils.isEmpty(this.url)) {
+                data.put(FIELD_URL, this.url);
+            }
+            if (!TextUtils.isEmpty(this.clientUid)) {
+                data.put(FIELD_CLIENT_UID, this.clientUid);
+            }
+            if (!TextUtils.isEmpty(this.source)) {
+                data.put(FIELD_SOURCE, this.source);
+            }
+            this.data = data;
         }
         return data;
     }
@@ -205,6 +231,7 @@ public class Comment extends BaseData {
 
     public void setUid(String uid) {
         this.uid = uid;
+        getData().put(FIELD_UID, this.uid);
     }
 
     public String getContent() {
@@ -213,6 +240,7 @@ public class Comment extends BaseData {
 
     public void setContent(String content) {
         this.content = content;
+        getData().put(FIELD_CONTENT, this.content);
     }
 
     public String getUser() {
@@ -221,6 +249,7 @@ public class Comment extends BaseData {
 
     public void setUser(String user) {
         this.user = user;
+        getData().put(FIELD_USER, this.user);
     }
 
     public String getTime() {
@@ -229,6 +258,7 @@ public class Comment extends BaseData {
 
     public void setTime(String time) {
         this.time = time;
+        getData().put(FIELD_TIME, this.time);
     }
 
     public long getGrade() {
@@ -237,22 +267,15 @@ public class Comment extends BaseData {
 
     public void setGrade(long grade) {
         this.grade = grade;
+        getData().put(FIELD_GRADE, this.grade);
     }
 
     public String getUrl() {
         return url;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
     public String getPuid() {
         return puid;
-    }
-
-    public void setPuid(String puid) {
-        this.puid = puid;
     }
 
     public long getAvg() {
@@ -261,6 +284,7 @@ public class Comment extends BaseData {
 
     public void setAvg(long avg) {
         this.avg = avg;
+        getData().put(FIELD_AVG, this.avg);
     }
 
     public long getTaste() {
@@ -269,6 +293,7 @@ public class Comment extends BaseData {
 
     public void setTaste(long taste) {
         this.taste = taste;
+        getData().put(FIELD_TASTE, this.taste);
     }
 
     public long getQos() {
@@ -277,6 +302,7 @@ public class Comment extends BaseData {
 
     public void setQos(long qos) {
         this.qos = qos;
+        getData().put(FIELD_QOS, this.qos);
     }
 
     public long getEnvironment() {
@@ -285,6 +311,7 @@ public class Comment extends BaseData {
 
     public void setEnvironment(long environment) {
         this.environment = environment;
+        getData().put(FIELD_ENVIRONMENT, this.environment);
     }
 
     public String getRecommend() {
@@ -293,6 +320,7 @@ public class Comment extends BaseData {
 
     public void setRecommend(String recommend) {
         this.recommend = recommend;
+        getData().put(FIELD_RECOMMEND, this.recommend);
     }
 
     public long getLevel() {
@@ -301,6 +329,7 @@ public class Comment extends BaseData {
 
     public void setLevel(long level) {
         this.level = level;
+        getData().put(FIELD_LEVEL, this.level);
     }
 
     public long getEffect() {
@@ -309,14 +338,11 @@ public class Comment extends BaseData {
 
     public void setEffect(long effect) {
         this.effect = effect;
+        getData().put(FIELD_EFFECT, this.effect);
     }
 
     public String getSource() {
         return source;
-    }
-
-    public void setSource(String source) {
-        this.source = source;
     }
 
     public String getRestair() {
@@ -325,30 +351,19 @@ public class Comment extends BaseData {
 
     public void setRestair(String restair) {
         this.restair = restair;
+        getData().put(FIELD_RESTAIR, this.restair);
     }
 
     public long getPOIStatus() {
         return poiStatus;
     }
 
-    public void setPOIStatus(long poiStatus) {
-        this.poiStatus = poiStatus;
-    }
-
     public long getPattern() {
         return pattern;
     }
 
-    public void setPattern(long pattern) {
-        this.pattern = pattern;
-    }
-
     public String getPOIName() {
         return poiName;
-    }
-
-    public void setPOIName(String poiName) {
-        this.poiName = poiName;
     }
 
     public long getUserId() {
@@ -357,14 +372,11 @@ public class Comment extends BaseData {
 
     public void setUserId(long userId) {
         this.userId = userId;
+        getData().put(FIELD_USER_ID, this.userId);
     }
 
     public String getPoiCityId() {
         return poiCityId;
-    }
-
-    public void setPoiCityId(String poiCityId) {
-        this.poiCityId = poiCityId;
     }
 
     public String getClientUid() {
@@ -373,6 +385,7 @@ public class Comment extends BaseData {
 
     public void setClientUid(String clientUid) {
         this.clientUid = clientUid;
+        getData().put(FIELD_CLIENT_UID, this.clientUid);
     }
 
     public POI getPOI() {

@@ -6,8 +6,11 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
+import com.tigerknows.model.Coupon;
 import com.tigerknows.model.DataQuery.AlternativeResponse;
 import com.tigerknows.model.DataQuery.AlternativeResponse.Alternative;
+import com.tigerknows.model.DataQuery.CouponResponse;
+import com.tigerknows.model.DataQuery.CouponResponse.CouponList;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.Hotel;
@@ -42,6 +45,7 @@ import com.tigerknows.model.DataQuery.POIResponse.POIList;
 import com.tigerknows.model.DataQuery.ShangjiaResponse.ShangjiaList;
 import com.tigerknows.model.DataQuery.TuangouResponse.TuangouList;
 import com.tigerknows.model.DataQuery.YanchuResponse.YanchuList;
+import com.tigerknows.model.DataQuery.YingxunResponse.YingxunList;
 import com.tigerknows.model.DataQuery.ZhanlanResponse.ZhanlanList;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.DynamicPOI;
@@ -459,7 +463,7 @@ public class DataQueryTest {
         for(int i = 0 ; i < pageSize; i ++) {
             list.add(launchYingxun("yingxun"+i));
         }
-        data.put(FendianList.FIELD_LIST, list);
+        data.put(YingxunList.FIELD_LIST, list);
         return data;
     }
 
@@ -612,6 +616,7 @@ public class DataQueryTest {
         for(int i = 0; i < 16; i ++) {
             xarray.add(launchDynamicPOI(i));
         }
+        xarray.add(launchDynamicPOI(Integer.parseInt(BaseQuery.DATA_TYPE_COUPON)));
         xarray.add(launchDynamicPOI(Integer.parseInt(DynamicPOI.TYPE_HOTEL)));
         data.put(POI.FIELD_DYNAMIC_POI, xarray);
         data.put(POI.FIELD_PRICE, "168");
@@ -805,6 +810,40 @@ public class DataQueryTest {
         data.put(Alternative.FIELD_ADDRESS, "ADDRESS");
         data.put(Alternative.FIELD_LONGITUDE, ((int) (116.397*100000)));
         data.put(Alternative.FIELD_LATITUDE, ((int) (39.904*100000)));
+        return data;
+    }
+
+    public static XMap launchCouponResponse(int total, String message) {
+        XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        data.put(CouponResponse.FIELD_COUPON_LIST, launchCouponList(total, message, TKConfig.getPageSize()));
+        return data;
+    }
+
+    protected static XMap launchCouponList(int total, String message, int pageSize) {
+        XMap data = new XMap();
+        launchBaseList(data, total, message);
+        XArray<XMap> list = new XArray<XMap>();
+        for(int i = 0 ; i < pageSize; i ++) {
+            list.add(launchYingxun("coupon"+i));
+        }
+        data.put(CouponList.FIELD_LIST, list);
+        return data;
+    }
+
+    protected static XMap launchCoupon() {
+        XMap data = new XMap();
+        data.put(Coupon.FIELD_UID, "FIELD_UID");
+        data.put(Coupon.FIELD_DESCRIPTION, "FIELD_DESCRIPTION");
+        data.put(Coupon.FIELD_BRIEF_PIC, "http://wap.tigerknows.com/images/logo_back.png");
+        data.put(Coupon.FIELD_HOT, 123);
+        data.put(Coupon.FIELD_LIST_NAME, "FIELD_LIST_NAME");
+        data.put(Coupon.FIELD_DETAIL_PIC, "http://wap.tigerknows.com/images/logo_back.png");
+        data.put(Coupon.FIELD_DETAIL, "FIELD_DETAIL,FIELD_DETAIL,FIELD_DETAIL");
+        data.put(Coupon.FIELD_2D_CODE, "http://wap.tigerknows.com/images/logo_back.png");
+        data.put(Coupon.FIELD_LOGO, "丁丁优惠");
+        data.put(Coupon.FIELD_HINT_PIC, "FIELD_HINT_PIC");
+        data.put(Coupon.FIELD_REMARK, "FIELD_REMARK");
         return data;
     }
 }
