@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -197,7 +198,7 @@ public class HotelImageGridFragment extends BaseFragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             View view;
             if (convertView == null) {
-                ViewGroup viewGroup = new LinearLayout(getContext());
+                LinearLayout viewGroup = new LinearLayout(getContext());
                 ImageView iconImv = new ImageView(getContext());
                 iconImv.setId(R.id.icon_imv);
                 iconImv.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -205,6 +206,7 @@ public class HotelImageGridFragment extends BaseFragment {
                 int padding = Util.dip2px(Globals.g_metrics.density, 4);
                 iconImv.setPadding(padding, padding, padding, padding);
                 viewGroup.addView(iconImv);
+                viewGroup.setGravity(Gravity.CENTER);
                 view = viewGroup;
             } else {
                 view = convertView;

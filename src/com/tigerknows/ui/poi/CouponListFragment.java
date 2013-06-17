@@ -157,16 +157,6 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
             return;
         }
         
-        if (mPOI.getCouponQuery() == null) { 
-            DataQuery dataQuery = new DataQuery(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_COUPON);
-            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
-            criteria.put(DataQuery.SERVER_PARAMETER_NEED_FIELD, Coupon.NEED_FIELD);
-            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
-            mSphinx.queryStart(dataQuery);
-        }
-        
         mLoadedDrawableRun.run();
     }
     
@@ -180,6 +170,14 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
         } else {
             this.mState = STATE_QUERYING;
             updateView();
+            
+            dataQuery = new DataQuery(mSphinx);
+            Hashtable<String, String> criteria = new Hashtable<String, String>();
+            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_COUPON);
+            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
+            criteria.put(DataQuery.SERVER_PARAMETER_NEED_FIELD, Coupon.NEED_FIELD);
+            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
+            mSphinx.queryStart(dataQuery);
         }
     }
     
@@ -294,6 +292,13 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
             mState = STATE_EMPTY;
         } else {
             mState = STATE_LIST;
+            mSphinx.getHandler().post(new Runnable() {
+
+                @Override
+                public void run() {
+                    mResultLsv.setSelectionFromTop(0, 0);
+                }
+            });
         }
         
         updateView();

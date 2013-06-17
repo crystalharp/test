@@ -62,6 +62,8 @@ public class CouponDetailFragment extends BaseFragment {
     
     private ImageView mDetailImv = null;
     
+    private View mLogoView = null;
+    
     private ImageView mLogoImv = null;
     
     private TextView mRemarkTxv = null;
@@ -110,6 +112,7 @@ public class CouponDetailFragment extends BaseFragment {
         mDescriptionTxv = (TextView) mRootView.findViewById(R.id.description_txv);
         mHotTxv = (TextView) mRootView.findViewById(R.id.hot_txv);
         mDetailTxv = (TextView) mRootView.findViewById(R.id.detail_txv);
+        mLogoView = mRootView.findViewById(R.id.logo_view);
         mLogoImv = (ImageView) mRootView.findViewById(R.id.logo_imv);
         mDetailImv = (ImageView) mRootView.findViewById(R.id.detail_imv);
         mRemarkTxv = (TextView) mRootView.findViewById(R.id.remark_txv);
@@ -133,14 +136,21 @@ public class CouponDetailFragment extends BaseFragment {
     
     void refreshDrawable() {
         refreshDrawable(mData.getHintPicTKDrawable(), mHintImv, R.drawable.icon, true);
-        refreshDrawable(mData.getDetailPicTKDrawable(), mDetailImv, R.drawable.bg_picture_hotel, false);
-        refreshDrawable(mData.getLogoTKDrawable(), mLogoImv, R.drawable.icon, true);
+        refreshDrawable(mData.getDetailPicTKDrawable(), mDetailImv, R.drawable.bg_picture_coupon_detail, false);
+        boolean loadedLogo = refreshDrawable(mData.getLogoTKDrawable(), mLogoImv, R.drawable.icon, true);
+        if (loadedLogo) {
+            mLogoView.setVisibility(View.VISIBLE);
+        } else {
+            mLogoView.setVisibility(View.GONE);
+        }
     }
     
-    void refreshDrawable(TKDrawable tkDrawable, ImageView imageView, int defaultResId, boolean isVisibility) {
+    boolean refreshDrawable(TKDrawable tkDrawable, ImageView imageView, int defaultResId, boolean isVisibility) {
+        boolean result = false;
         if (tkDrawable != null) {
             Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, this.toString());
             if(drawable != null) {
+                result = true;
                 imageView.setBackgroundDrawable(drawable);
             } else if (defaultResId != R.drawable.icon) {
                 imageView.setBackgroundResource(defaultResId);
@@ -156,5 +166,7 @@ public class CouponDetailFragment extends BaseFragment {
                 imageView.setVisibility(View.GONE);
             }
         }
+        
+        return result;
     }
 }
