@@ -106,6 +106,9 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             	roomTypeList.refreshList(null);
             	return;
             }
+            if (mHotel == null || mHotel.getRoomTypeList() == null) {
+                return;
+            }
             mAllRoomList.clear();
             mShowingRoomList.clear();
             mAllRoomList.addAll(mHotel.getRoomTypeList());
@@ -496,23 +499,24 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         return query;
     }
     
-    @Override
-    public boolean checkExistence(POI poi) {
-        List<DynamicPOI> list = poi.getDynamicPOIList();
-        mHotel = poi.getHotel();
-        int size = (list == null ? 0 : list.size()); 
-        for (int i = 0; i < size; i++) {
-            DynamicPOI iter = list.get(i);
-            if (iter.getType().equals(DynamicPOI.TYPE_HOTEL)) {
-                LogWrapper.i(TAG, "Dynamic Hotel info exists.");
-                return true;
-            }
-        }
-        return false;
-    }
+//    @Override
+//    public boolean checkExistence(POI poi) {
+//        List<DynamicPOI> list = poi.getDynamicPOIList();
+//        mHotel = poi.getHotel();
+//        int size = (list == null ? 0 : list.size()); 
+//        for (int i = 0; i < size; i++) {
+//            DynamicPOI iter = list.get(i);
+//            if (iter.getType().equals(DynamicPOI.TYPE_HOTEL)) {
+//                LogWrapper.i(TAG, "Dynamic Hotel info exists.");
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
     
     public List<BaseQuery> generateQuery(POI poi) {
         mPOI = poi;
+        mHotel = mPOI.getHotel();
         List<BaseQuery> baseQueryList = new LinkedList<BaseQuery>();
         if (mHotel.getUuid() != null && mHotel.getRoomTypeList() == null) {
             BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Util.byteToHexString(Hotel.FIELD_CAN_RESERVE));
