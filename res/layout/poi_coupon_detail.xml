@@ -51,18 +51,6 @@
 		                android:layout_toRightOf="@id/big_half_circle"
 		                android:background="@drawable/bg_dot_split_header"
 		                />
-		            <ImageView android:id="@+id/hint_imv"
-	                    android:layout_width="wrap_content"
-	                    android:layout_height="wrap_content"
-	                    android:contentDescription="@string/app_name"
-	                    android:background="@drawable/icon"
-	                    android:layout_alignParentTop="true"
-	                    android:layout_alignParentRight="true"
-	                    android:layout_marginLeft="12dp"
-	                    android:layout_marginRight="12dp"
-	                    android:layout_marginTop="8dp"
-	                    android:layout_marginBottom="8dp"
-	                    />
 	                <TextView android:id="@+id/hot_txv"
 	                    android:layout_width="wrap_content"
 	                    android:layout_height="wrap_content"
@@ -75,8 +63,21 @@
 				        android:lineSpacingExtra="0dp"
 				        android:includeFontPadding="false"
 	                    android:layout_alignParentRight="true"
-	                    android:layout_below="@id/hint_imv"
+	                    android:layout_alignParentBottom="true"
 	                    android:layout_marginRight="8dp"
+	                    android:paddingBottom="8dp"
+	                    />
+		            <ImageView android:id="@+id/hint_imv"
+	                    android:layout_width="wrap_content"
+	                    android:layout_height="wrap_content"
+	                    android:contentDescription="@string/app_name"
+	                    android:background="@drawable/icon"
+	                    android:layout_alignParentRight="true"
+	                    android:layout_marginTop="8dp"
+	                    android:layout_marginLeft="12dp"
+	                    android:layout_marginRight="12dp"
+	                    android:layout_marginBottom="8dp"
+
 	                    />
 	                <TextView android:id="@+id/name_txv"
 	                    android:layout_width="fill_parent"
@@ -103,13 +104,13 @@
 	                android:layout_height="wrap_content"
 	                android:background="@color/list_bg_white"
 	                >
-		            <ImageView
+		            <ImageView android:id="@+id/left_circle"
 		                android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"
 		                android:contentDescription="@string/app_name"
 		                android:background="@drawable/bg_half_circle_left"
 		                />
-		            <ImageView
+		            <ImageView android:id="@+id/right_circle"
 		                android:layout_width="wrap_content"
 		                android:layout_height="wrap_content"
 		                android:contentDescription="@string/app_name"
@@ -123,6 +124,8 @@
 		                android:background="@drawable/bg_dot_split"
 		                android:layout_marginTop="6dp"
 		                android:layout_marginBottom="6dp"
+		                android:layout_toLeftOf="@id/right_circle"
+		                android:layout_toRightOf="@id/left_circle"
 		                />
 	            </RelativeLayout>
 	            <LinearLayout android:id="@+id/pic_lly"
