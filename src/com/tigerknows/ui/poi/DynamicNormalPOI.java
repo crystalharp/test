@@ -13,6 +13,7 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Coupon;
@@ -43,6 +44,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
     
@@ -213,7 +215,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                 criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, Fendian.NEED_FIELD);
                 dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
                 list.add(dataOperation);
-                query(mPOIDetailFragment, list);
+                queryStart(list);
             } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
                 mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag +  ActionLog.POIDetailYanchu);
                 criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD,
@@ -224,7 +226,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                 dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
 //                List<BaseQuery> list = new ArrayList<BaseQuery>();
                 list.add(dataOperation);
-                query(mPOIDetailFragment, list);
+                queryStart(list);
             } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
                 mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag +  ActionLog.POIDetailZhanlan);
                 criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD,
@@ -235,14 +237,14 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                 dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
 //                List<BaseQuery> list = new ArrayList<BaseQuery>();
                 list.add(dataOperation);
-                query(mPOIDetailFragment, list);
+                queryStart(list);
             } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
                 // 1 coupon, d operation
                 if (DPOIMasterUid != null && !TextUtils.isEmpty(DPOIMasterUid)) {
                     criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, Coupon.NEED_FIELD);
                     dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
                     list.add(dataOperation);
-                    query(mPOIDetailFragment, list);
+                    queryStart(list);
                 // some coupons, s operation
                 } else {
                     mSphinx.showView(R.id.view_coupon_list);
@@ -252,44 +254,43 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         }
     }
 
-    @Override
-    public void msgReceived(Sphinx mSphinx, BaseQuery query, Response response) {
-        String dataType = query.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
-        if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
-            tuangou = ((TuangouQueryResponse) response).getTuangou();
-            
-        // 查询团购分店的结果
-        } else if (BaseQuery.DATA_TYPE_FENDIAN.equals(dataType)) {
-            if (tuangou != null) {
-                tuangou.setFendian(((FendianQueryResponse) response).getFendian());
-                List<Tuangou> list = new ArrayList<Tuangou>();
-                list.add(tuangou);
-                mSphinx.showView(R.id.view_discover_tuangou_detail);
-                mSphinx.getTuangouDetailFragment().setData(list, 0, null);
-            }
-        // 查询演出的结果
-        } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
-            Yanchu yanchu = ((YanchuQueryResponse) response).getYanchu();
-            List<Yanchu> list = new ArrayList<Yanchu>();
-            list.add(yanchu);
-            mSphinx.showView(R.id.view_discover_yanchu_detail);
-            mSphinx.getYanchuDetailFragment().setData(list, 0, null);
-            
-        // 查询展览的结果
-        } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-            Zhanlan zhanlan = ((ZhanlanQueryResponse) response).getZhanlan();
-            List<Zhanlan> list = new ArrayList<Zhanlan>();
-            list.add(zhanlan);
-            mSphinx.showView(R.id.view_discover_zhanlan_detail);
-            mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
-        //查询单条优惠券的结果
-        } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
-            Coupon coupon = ((CouponQueryResponse) response).getCoupon();
-            mSphinx.getCouponDetailFragment().setData(coupon);
-            mSphinx.showView(R.id.view_coupon_detail);
-        }
-        
-    }
+//    public void msgReceived(Sphinx mSphinx, BaseQuery query, Response response) {
+//        String dataType = query.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
+//        if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+//            tuangou = ((TuangouQueryResponse) response).getTuangou();
+//            
+//        // 查询团购分店的结果
+//        } else if (BaseQuery.DATA_TYPE_FENDIAN.equals(dataType)) {
+//            if (tuangou != null) {
+//                tuangou.setFendian(((FendianQueryResponse) response).getFendian());
+//                List<Tuangou> list = new ArrayList<Tuangou>();
+//                list.add(tuangou);
+//                mSphinx.showView(R.id.view_discover_tuangou_detail);
+//                mSphinx.getTuangouDetailFragment().setData(list, 0, null);
+//            }
+//        // 查询演出的结果
+//        } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
+//            Yanchu yanchu = ((YanchuQueryResponse) response).getYanchu();
+//            List<Yanchu> list = new ArrayList<Yanchu>();
+//            list.add(yanchu);
+//            mSphinx.showView(R.id.view_discover_yanchu_detail);
+//            mSphinx.getYanchuDetailFragment().setData(list, 0, null);
+//            
+//        // 查询展览的结果
+//        } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+//            Zhanlan zhanlan = ((ZhanlanQueryResponse) response).getZhanlan();
+//            List<Zhanlan> list = new ArrayList<Zhanlan>();
+//            list.add(zhanlan);
+//            mSphinx.showView(R.id.view_discover_zhanlan_detail);
+//            mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
+//        //查询单条优惠券的结果
+//        } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
+//            Coupon coupon = ((CouponQueryResponse) response).getCoupon();
+//            mSphinx.getCouponDetailFragment().setData(coupon);
+//            mSphinx.showView(R.id.view_coupon_detail);
+//        }
+//        
+//    }
 
     @Override
     public boolean checkExistence(POI poi) {
@@ -300,5 +301,65 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
     public void refresh() {
         mViewBlock.refresh();
     }
+
+	@Override
+	public void onPostExecute(TKAsyncTask tkAsyncTask) {
+        POI poi = mPOI;
+        if (poi == null) {
+            return;
+        }
+        List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
+        int mPOIFragmentId = mPOIDetailFragment.getId();
+        for(BaseQuery baseQuery : baseQueryList) {
+            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, null)) {
+                mPOIDetailFragment.isReLogin = true;
+                return;
+            }
+            if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
+                return;
+            }
+            Response response = baseQuery.getResponse();
+            String dataType = baseQuery.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
+            if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
+                tuangou = ((TuangouQueryResponse) response).getTuangou();
+
+                // 查询团购分店的结果
+            } else if (BaseQuery.DATA_TYPE_FENDIAN.equals(dataType)) {
+                if (tuangou != null) {
+                    tuangou.setFendian(((FendianQueryResponse) response).getFendian());
+                    List<Tuangou> list = new ArrayList<Tuangou>();
+                    list.add(tuangou);
+                    mSphinx.showView(R.id.view_discover_tuangou_detail);
+                    mSphinx.getTuangouDetailFragment().setData(list, 0, null);
+                }
+                // 查询演出的结果
+            } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
+                Yanchu yanchu = ((YanchuQueryResponse) response).getYanchu();
+                List<Yanchu> list = new ArrayList<Yanchu>();
+                list.add(yanchu);
+                mSphinx.showView(R.id.view_discover_yanchu_detail);
+                mSphinx.getYanchuDetailFragment().setData(list, 0, null);
+
+                // 查询展览的结果
+            } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
+                Zhanlan zhanlan = ((ZhanlanQueryResponse) response).getZhanlan();
+                List<Zhanlan> list = new ArrayList<Zhanlan>();
+                list.add(zhanlan);
+                mSphinx.showView(R.id.view_discover_zhanlan_detail);
+                mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
+                //查询单条优惠券的结果
+            } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
+                Coupon coupon = ((CouponQueryResponse) response).getCoupon();
+                mSphinx.getCouponDetailFragment().setData(coupon);
+                mSphinx.showView(R.id.view_coupon_detail);
+            }
+        }
+		
+	}
+
+	@Override
+	public void onCancelled(TKAsyncTask tkAsyncTask) {
+		
+	}
     
 }
