@@ -144,6 +144,8 @@ public class Globals {
         pic.put(TKConfig.PICTURE_HOTEL_DETAIL, new XYInteger(150, 150));
         pic.put(TKConfig.PICTURE_COUPON_LIST, new XYInteger(132, 132));
         pic.put(TKConfig.PICTURE_COUPON_DETAIL, new XYInteger(700, 790));
+        pic.put(TKConfig.PICTURE_COUPON_LOGO, new XYInteger(175, 37));
+        pic.put(TKConfig.PICTURE_COUPON_HINT, new XYInteger(147, 147));
     	sScreenAdaptPic.put(new XYInteger(800, 1280), pic);
 
         sOptimalAdaptive.put(TKConfig.PICTURE_DISCOVER_HOME, new XYInteger(322, 286));
@@ -156,6 +158,8 @@ public class Globals {
         sOptimalAdaptive.put(TKConfig.PICTURE_HOTEL_DETAIL, new XYInteger(90, 90));
         sOptimalAdaptive.put(TKConfig.PICTURE_COUPON_LIST, new XYInteger(80, 80));
         sOptimalAdaptive.put(TKConfig.PICTURE_COUPON_DETAIL, new XYInteger(420, 474));
+        sOptimalAdaptive.put(TKConfig.PICTURE_COUPON_LOGO, new XYInteger(105, 22));
+        sOptimalAdaptive.put(TKConfig.PICTURE_COUPON_HINT, new XYInteger(88, 88));
         sScreenAdaptPic.put(new XYInteger(480, 800), sOptimalAdaptive);
         
         pic = new HashMap<Integer, XYInteger>();
@@ -169,6 +173,8 @@ public class Globals {
         pic.put(TKConfig.PICTURE_HOTEL_DETAIL, new XYInteger(60, 60));
         pic.put(TKConfig.PICTURE_COUPON_LIST, new XYInteger(52, 52));
         pic.put(TKConfig.PICTURE_COUPON_DETAIL, new XYInteger(280, 318));
+        pic.put(TKConfig.PICTURE_COUPON_LOGO, new XYInteger(70, 15));
+        pic.put(TKConfig.PICTURE_COUPON_HINT, new XYInteger(59, 59));
         sScreenAdaptPic.put(new XYInteger(320, 480), pic);
     }
     

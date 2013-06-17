@@ -151,19 +151,19 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
         mDynamicDianyingMoreView.setOnClickListener(mMoreClickListener);
     }
 
-    @Override
-    public boolean checkExistence(POI poi) {
-        List<DynamicPOI> list = poi.getDynamicPOIList();
-        if (list != null) {
-            for(int i = 0, size = list.size(); i < size; i++) {
-                DynamicPOI dynamic = list.get(i);
-                if (BaseQuery.DATA_TYPE_DIANYING.equals(dynamic.getType())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
+//    @Override
+//    public boolean checkExistence(POI poi) {
+//        List<DynamicPOI> list = poi.getDynamicPOIList();
+//        if (list != null) {
+//            for(int i = 0, size = list.size(); i < size; i++) {
+//                DynamicPOI dynamic = list.get(i);
+//                if (BaseQuery.DATA_TYPE_DIANYING.equals(dynamic.getType())) {
+//                    return true;
+//                }
+//            }
+//        }
+//        return false;
+//    }
     
     public DataQuery buildQuery(POI poi) {
         Hashtable<String, String> criteria = new Hashtable<String, String>();
