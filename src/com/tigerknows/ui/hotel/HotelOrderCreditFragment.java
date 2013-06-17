@@ -90,6 +90,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     public void onResume(){
         super.onResume();
         mTitleBtn.setText(mSphinx.getString(R.string.credit_assure_title));
+        clearFocus();
     }
     
     public void onPause(){
@@ -332,6 +333,9 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
 	public void setData(String additionMessage, String oneNightPrice, String sumPrice, int assureType, String name) {
 		mSumPrice = sumPrice;
 		int assureTypeFromServer = 0;
+        mCreditOwnerEdt.setText(name);
+        mCreditOwnerEdt.requestFocus();
+        Selection.setSelection(mCreditOwnerEdt.getText(), mCreditOwnerEdt.length());
 		String[] sArray = additionMessage.split("#");
 		if(sArray[0].length() < 2){
 			assureType = Integer.parseInt(sArray[0]);
@@ -343,7 +347,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
 			mBankList.add(sArray[i]);
 		}
 		if(mBankList.isEmpty()){
-			mBankList.add("服务器错误：银行列表为空");
+			mBankList.addAll(Arrays.asList(getResources().getStringArray(R.array.default_bank_list)));
 		}
 		mGetBankPosition = -1;
 		mCertTypeList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
@@ -370,9 +374,6 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         			mSphinx.getString(R.string.credit_note_detail, mOrderModifyDeadline).trim(),
         			mOrderModifyDeadline));
         }
-        mCreditOwnerEdt.setText(name);
-        mCreditOwnerEdt.requestFocus();
-        Selection.setSelection(mCreditOwnerEdt.getText(), mCreditOwnerEdt.length());
         mCreditAssureScv.smoothScrollTo(0, 0);
 	}
 

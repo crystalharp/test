@@ -91,7 +91,7 @@ import com.tigerknows.util.Utility;
  * 动态POI添加说明:
  *   由于动态POI在这页添加的越来越多,于是决定给这页添加一个机制,让这一页不再
  * 随着动态POI类型的增加而迅速的膨胀下去.
- * TODO:完成这个说明
+ *   经过两次调整,觉得这个结构应该可以用下去.[2013-06-16]
  * 布局：
  *   为了让服务器可以控制动态POI的显示顺序，给服务器预留了排序接口，可以动态
  * 调整不同POI的顺序。为了动态调整的时候不同block的间隔不会出问题，现约定每个
@@ -203,14 +203,17 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     }	
     //*******************DynamicPOI code start*************************
     
+    //存储动态POI的ViewBlock的控制信息
     List<DynamicPOIViewBlock> DPOIViewBlockList = new LinkedList<DynamicPOIViewBlock>();
     
+    //目前可以处理的所有动态POI的Hashtab,key是它们的动态POI类型
     Hashtable<String, DynamicPOIView> DPOIViewTable = new Hashtable<String, DynamicPOIView>();
     
+    //当前页面已经存在的View,用于多种动态POI共用同一DynamicPOIView的判断
     List<DynamicPOIView> existView = new ArrayList<DynamicPOIView>();
     
+    //目前可以处理的动态POI类型
     private void initDynamicPOIEnv(){
-        //目前可以处理的动态POI类型
         DPOIViewTable.put(DynamicPOI.TYPE_HOTEL, mDynamicHotelPOI);
         DPOIViewTable.put(DynamicPOI.TYPE_TUANGOU, mDynamicNormalPOI);
         DPOIViewTable.put(DynamicPOI.TYPE_ZHANLAN, mDynamicNormalPOI);
@@ -220,9 +223,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     }
     
     /**
-     * Viewblock的添加顺序按照服务器给的动态POI顺序添加,这样显示动态POI的时候就不用
-     * 手动排序了.
      * @param poi
+     * 检测当前POI的动态POI信息,有对应DynamicPOIView的就将其Block加入本页中
      */
     private void checkAndAddDynamicPOIView(POI poi) {
         List<DynamicPOI> list = poi.getDynamicPOIList();
@@ -231,6 +233,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (size == 0) {
             return;
         }
+        //先把动态POI对应的DynamicPOIViewBlock获取出来
         for (DynamicPOI dynamicPOI : list) {
             String dataType = dynamicPOI.getType();
             if (!DPOIViewTable.containsKey(dataType) || 
@@ -242,14 +245,15 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             DPOIViewBlockList.addAll(DPOIViewTable.get(dataType).getViewList());
         }
         
+        //获取到的Block全部加入到该页中
         for (DynamicPOIViewBlock block : DPOIViewBlockList) {
-            block.addToParent();
             block.clear();
+            block.addToParent();
         }
     }
     
     /*
-     * 清除掉所有的动态POI的ViewBlock
+     * 进入这个页面时清除掉所有的动态POI的ViewBlock
      */
     private void clearDynamicPOI(List<DynamicPOIViewBlock> POIList) {
         mBelowCommentLayout.removeAllViews();
@@ -279,7 +283,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     public interface BlockRefresher {
         void refresh();
     }
+    
     /**
+     * 该类是动态POI的块级控制类,有着足够用的控制方法.
      * 每个显示块都需要有一个这个类的对象,里面存有自己的Layout和所属的Layout
      * 需要有个block级别的刷新机制。
      */
@@ -323,7 +329,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     }
     
     /*
-     * 所有新增加的动态POI需要继承这个类
+     * 动态POI控制类,用于动态POI的数据操作等
      */
 	public abstract static class DynamicPOIView {
 
@@ -342,12 +348,15 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 //		    mBaseQuerying = list; 
 		}
 		
+		//这个函数一般情况下不需要关心,会在页面setData的时候在检测动态POI时被调到
 		public void initData(POI poi) {
 		    mPOI = poi;
 		}
 		
+		//这个函数只用于返回块列表,且只在初始化动态POI的时候调用
 		public abstract List<DynamicPOIViewBlock> getViewList();
 		
+		//这个函数是一个动态POI的刷新主函数,刷新策略在其中实现.但是具体的刷新行为在BlockRefresher中实现
 		public abstract void refresh();
 		
 		public abstract void msgReceived(Sphinx mSphinx, BaseQuery query, Response response);
@@ -372,7 +381,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      * @param poi
      */
     final void refreshDynamicHotel(POI poi) {
-        mDynamicHotelPOI.initData(poi);
+//        mDynamicHotelPOI.initData(poi);
         mDynamicHotelPOI.refresh();
     }
 	
