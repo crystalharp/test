@@ -551,9 +551,6 @@ public class TrafficQueryFragment extends BaseFragment {
 	 * @param newMode
 	 */
 	public void changeToMode(int newMode) {
-		if (mode == newMode) {
-			return;
-		}
 		mode = newMode;
 		if (mode == TRAFFIC_MODE) {
 			mTrafficLayout.setVisibility(View.VISIBLE);
