@@ -245,8 +245,8 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                     query(mPOIDetailFragment, list);
                 // some coupons, s operation
                 } else {
-                    mSphinx.getCouponListFragment().setData(mPOI);
                     mSphinx.showView(R.id.view_coupon_list);
+                    mSphinx.getCouponListFragment().setData(mPOI);
                 }
             }
         }

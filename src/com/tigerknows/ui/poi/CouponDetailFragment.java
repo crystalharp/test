@@ -133,7 +133,7 @@ public class CouponDetailFragment extends BaseFragment {
     
     void refreshDrawable() {
         refreshDrawable(mData.getHintPicTKDrawable(), mHintImv, R.drawable.icon, true);
-        refreshDrawable(mData.getDetailPicTKDrawable(), mDetailImv, R.drawable.bg_picture_hotel, false);
+        refreshDrawable(mData.getDetailPicTKDrawable(), mDetailImv, R.drawable.bg_picture_coupon_detail, false);
         refreshDrawable(mData.getLogoTKDrawable(), mLogoImv, R.drawable.icon, true);
     }
     
