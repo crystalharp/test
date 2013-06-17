@@ -1,17 +1,13 @@
 package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
 import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
-import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
@@ -19,7 +15,6 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Coupon;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataOperation.CouponQueryResponse;
-import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.POI.DynamicPOI;
@@ -29,7 +24,6 @@ import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.Zhanlan;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
-import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.widget.LinearListView;
 import com.tigerknows.widget.LinearListView.ItemInitializer;
@@ -44,7 +38,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
     
@@ -104,8 +97,6 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                 }
             }
             
-//            Collections.sort(dataList, new DPOICompare());
-            
             int size = dataList.size();
             if (size == 0) {
                 return;
@@ -145,24 +136,6 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         mViewBlock.mOwnLayout = poiListView;
         
     }
-    
-//    private class SortDynamicPOI{
-//        DynamicPOI dynamicPOI;
-//        DPOIType type;
-//        
-//        public SortDynamicPOI(DynamicPOI dPOI, DPOIType t){
-//            dynamicPOI = dPOI;
-//            type = t;
-//        }
-//    }
-//    
-//    private class DPOICompare implements Comparator<SortDynamicPOI> {
-//
-//        @Override
-//        public int compare(SortDynamicPOI lhs, SortDynamicPOI rhs) {
-//            return lhs.type.ordinal() - rhs.type.ordinal();
-//        }
-//    }
 
     @Override
     public List<DynamicPOIViewBlock> getViewList() {
@@ -253,44 +226,6 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
             }
         }
     }
-
-//    public void msgReceived(Sphinx mSphinx, BaseQuery query, Response response) {
-//        String dataType = query.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
-//        if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
-//            tuangou = ((TuangouQueryResponse) response).getTuangou();
-//            
-//        // 查询团购分店的结果
-//        } else if (BaseQuery.DATA_TYPE_FENDIAN.equals(dataType)) {
-//            if (tuangou != null) {
-//                tuangou.setFendian(((FendianQueryResponse) response).getFendian());
-//                List<Tuangou> list = new ArrayList<Tuangou>();
-//                list.add(tuangou);
-//                mSphinx.showView(R.id.view_discover_tuangou_detail);
-//                mSphinx.getTuangouDetailFragment().setData(list, 0, null);
-//            }
-//        // 查询演出的结果
-//        } else if (BaseQuery.DATA_TYPE_YANCHU.equals(dataType)) {
-//            Yanchu yanchu = ((YanchuQueryResponse) response).getYanchu();
-//            List<Yanchu> list = new ArrayList<Yanchu>();
-//            list.add(yanchu);
-//            mSphinx.showView(R.id.view_discover_yanchu_detail);
-//            mSphinx.getYanchuDetailFragment().setData(list, 0, null);
-//            
-//        // 查询展览的结果
-//        } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
-//            Zhanlan zhanlan = ((ZhanlanQueryResponse) response).getZhanlan();
-//            List<Zhanlan> list = new ArrayList<Zhanlan>();
-//            list.add(zhanlan);
-//            mSphinx.showView(R.id.view_discover_zhanlan_detail);
-//            mSphinx.getZhanlanDetailFragment().setData(list, 0, null);
-//        //查询单条优惠券的结果
-//        } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
-//            Coupon coupon = ((CouponQueryResponse) response).getCoupon();
-//            mSphinx.getCouponDetailFragment().setData(coupon);
-//            mSphinx.showView(R.id.view_coupon_detail);
-//        }
-//        
-//    }
 
     @Override
     public boolean checkExistence(POI poi) {
