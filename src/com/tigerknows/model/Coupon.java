@@ -95,13 +95,13 @@ public class Coupon extends BaseData{
 		this.logo = getStringFromData(FIELD_LOGO, reset ? null : this.logo);
         if (this.logo != null) {
             TKDrawable tkDrawable = new TKDrawable();
-            tkDrawable.setUrl(this.logo);
+            tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(this.logo, Globals.getPicWidthHeight(TKConfig.PICTURE_COUPON_LOGO)));
             logoTKDrawable = tkDrawable;
         }
 		this.hintPic = getStringFromData(FIELD_HINT_PIC, reset ? null : this.hintPic);
         if (this.hintPic != null) {
             TKDrawable tkDrawable = new TKDrawable();
-            tkDrawable.setUrl(this.hintPic);
+            tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(this.hintPic, Globals.getPicWidthHeight(TKConfig.PICTURE_COUPON_HINT)));
             hintPicTKDrawable = tkDrawable;
         }
 		this.remark = getStringFromData(FIELD_REMARK, reset ? null : this.remark);

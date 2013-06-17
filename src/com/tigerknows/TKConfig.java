@@ -647,6 +647,16 @@ public class TKConfig {
      * 优惠券详情图片尺寸的Key
      */
     public static final int PICTURE_COUPON_DETAIL = 10;
+    
+    /**
+     * 优惠券Logo图片尺寸的Key
+     */
+    public static final int PICTURE_COUPON_LOGO = 11;
+    
+    /**
+     * 优惠券提示图片尺寸的Key
+     */
+    public static final int PICTURE_COUPON_HINT = 12;
 
     /**
      * 黑色
