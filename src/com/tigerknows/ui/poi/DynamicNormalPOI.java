@@ -227,10 +227,10 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
         }
     }
 
-    @Override
-    public boolean checkExistence(POI poi) {
-        return false;
-    }
+//    @Override
+//    public boolean checkExistence(POI poi) {
+//        return false;
+//    }
 
     @Override
     public void refresh() {

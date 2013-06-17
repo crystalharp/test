@@ -216,6 +216,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     private void checkAndAddDynamicPOIView(POI poi) {
         List<DynamicPOI> list = poi.getDynamicPOIList();
         existView.clear();
+        for (DynamicPOIView dpView : DPOIViewTable.values()) {
+            dpView.mExist = false;
+        }
         int size = (list == null ? 0 : list.size());
         if (size == 0) {
             return;
@@ -227,9 +230,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                     existView.contains(DPOIViewTable.get(dataType))) {
                 continue;
             }
-            existView.add(DPOIViewTable.get(dataType));
+            DynamicPOIView dpView = DPOIViewTable.get(dataType);
+            existView.add(dpView);
+            dpView.mExist = true;
             DPOIViewTable.get(dataType).initData(poi);
-            DPOIViewBlockList.addAll(DPOIViewTable.get(dataType).getViewList());
+            DPOIViewBlockList.addAll(dpView.getViewList());
         }
         
         //获取到的Block全部加入到该页中
@@ -310,6 +315,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		Sphinx mSphinx;
 		POI mPOI;
 		LayoutInflater mInflater;
+		boolean mExist;
 		
         protected List<BaseQuery> mBaseQuerying;
         protected TKAsyncTask mTkAsyncTasking;
@@ -327,7 +333,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		}
 		
 		//这个函数一般情况下不需要关心,会在页面setData的时候在检测动态POI时被调到
-		public void initData(POI poi) {
+		final public void initData(POI poi) {
 		    mPOI = poi;
 		}
 		
@@ -337,7 +343,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		//这个函数是一个动态POI的刷新主函数,刷新策略在其中实现.但是具体的刷新行为在BlockRefresher中实现
 		public abstract void refresh();
 		
-		public abstract boolean checkExistence(POI poi);
+		//初始化的时候会在checkAndAddDynamicPOIView中把这个变量初始化完毕,不用关心
+		final public boolean isExist() {
+		    return mExist;
+		}
 		
 	}
 	    
@@ -486,7 +495,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
 
         long money = poi.getPerCapity();
-        if (mDynamicHotelPOI.checkExistence(poi) || poi.getHotel().getUuid() != null) {
+        if (mDynamicHotelPOI.isExist() || poi.getHotel().getUuid() != null) {
             mMoneyTxv.setVisibility(View.GONE);
         } else if (money > -1) {
             mMoneyTxv.setText(mContext.getString(R.string.yuan, money));
@@ -903,6 +912,9 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
+        //这两个函数放在前面初始化动态POI信息
+        clearDynamicPOI(DPOIViewBlockList);
+        initDynamicPOIView(mPOI);
         if (poi.getHotel().getUuid() != null) {
             mNavigationWidget.setVisibility(View.VISIBLE);
         } else {
@@ -960,16 +972,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         refreshComment();
         // DynamicPOI检测区域
         // 检查是否包含电影的动态信息
-        if (mDynamicMoviePOI.checkExistence(poi)) {
+        if (mDynamicMoviePOI.isExist()) {
             mDynamicMoviePOI.queryStart(mDynamicMoviePOI.buildQuery(poi));
         }
         //判断是否存在hotel信息
-        if (mDynamicHotelPOI.checkExistence(mPOI)) {
+        if (mDynamicHotelPOI.isExist()) {
             mDynamicHotelPOI.initDate();
             mDynamicHotelPOI.queryStart(mDynamicHotelPOI.generateQuery(mPOI));
         }
-        clearDynamicPOI(DPOIViewBlockList);
-        initDynamicPOIView(mPOI);
         
         if (baseQueryList.isEmpty() == false) {
             mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
@@ -991,7 +1001,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             return;
         }
         
-        if (mDynamicHotelPOI.checkExistence(mPOI)) {
+        if (mDynamicHotelPOI.isExist()) {
             mFeatureTxv.setVisibility(View.GONE);
             return;
         } else {
@@ -1273,15 +1283,15 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             //收藏夹和历史记录进入的时候刷新POI,发现有动态信息则刷新整个POI的动态信息
                             poi.updateData(mSphinx, onlinePOI.getData());
                             poi.setFrom(POI.FROM_ONLINE);
+                            initDynamicPOIView(mPOI);
                             refreshDetail();
                             refreshComment();
-                            initDynamicPOIView(mPOI);
 
-                            if (mDynamicHotelPOI.checkExistence(mPOI)) {
+                            if (mDynamicHotelPOI.isExist()) {
                                 mDynamicHotelPOI.initDate();
                                 mDynamicHotelPOI.queryStart(mDynamicHotelPOI.generateQuery(mPOI));
                             }
-                            if (mDynamicMoviePOI.checkExistence(poi)) {
+                            if (mDynamicMoviePOI.isExist()) {
                                 mDynamicMoviePOI.queryStart(mDynamicMoviePOI.buildQuery(poi));
                             }
 //                                    if (list.size() > 0) {
