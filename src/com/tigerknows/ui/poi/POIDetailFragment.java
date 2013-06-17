@@ -5,8 +5,6 @@
 package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,9 +44,6 @@ import android.widget.TextView;
 
 
 import com.decarta.Globals;
-import com.decarta.android.exception.APIException;
-import com.decarta.android.util.LogWrapper;
-import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -60,20 +55,12 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.DataOperation;
-import com.tigerknows.model.DataOperation.DianyingQueryResponse;
 import com.tigerknows.model.DataQuery;
-import com.tigerknows.model.Dianying;
 import com.tigerknows.model.POI;
-import com.tigerknows.model.ProxyQuery;
-import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
 import com.tigerknows.model.Response;
-import com.tigerknows.model.Yingxun;
 import com.tigerknows.model.DataOperation.POIQueryResponse;
-import com.tigerknows.model.DataOperation.YingxunQueryResponse;
 import com.tigerknows.model.DataQuery.CommentResponse;
-import com.tigerknows.model.DataQuery.DianyingResponse;
 import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
-import com.tigerknows.model.DataQuery.DianyingResponse.DianyingList;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.provider.Tigerknows;
@@ -261,20 +248,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         POIList.clear();
     }
         
-//    private boolean containsDPOIType(DPOIType t) {
-//        int size = DPOIViewBlockList.size();
-//        if (size == 0) {
-//            return false;
-//        }
-//        for (int i = size - 1; i >= 0; i--) {
-//            DynamicPOIViewBlock a = DPOIViewBlockList.get(i);
-//            if (a.mType == t) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
-    
     /**
      * 有些动态POI并不止一个显示区块，但是刷新的时候却有着不同的刷新规则
      * 为了让刷新可以分开，而不是一次把相关的所有区块刷新，在ViewBlock下
@@ -331,21 +304,26 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     /*
      * 动态POI控制类,用于动态POI的数据操作等
      */
-	public abstract static class DynamicPOIView {
+	public abstract static class DynamicPOIView implements TKAsyncTask.EventListener{
 
 		POIDetailFragment mPOIDetailFragment;
 		Sphinx mSphinx;
 		POI mPOI;
 		LayoutInflater mInflater;
 		
-//        protected List<BaseQuery> mBaseQuerying;
-//        protected TKAsyncTask mTkAsyncTasking;
+        protected List<BaseQuery> mBaseQuerying;
+        protected TKAsyncTask mTkAsyncTasking;
 		
-		static void query(POIDetailFragment fragment, List<BaseQuery> list){
-		    fragment.mTkAsyncTasking = fragment.mSphinx.queryStart(list);
-		    fragment.mBaseQuerying = list;
-//		    mTkAsyncTasking = mSphinx.queryStart(list);
-//		    mBaseQuerying = list; 
+		void queryStart(List<BaseQuery> list) {
+		    mBaseQuerying = list; 
+	        mTkAsyncTasking = new TKAsyncTask(mSphinx, mBaseQuerying, this, null);
+		    mTkAsyncTasking.execute();
+		}
+		
+		void queryStart(BaseQuery baseQuery) {
+		    List<BaseQuery> list = new ArrayList<BaseQuery>();
+		    list.add(baseQuery);
+		    queryStart(list);
 		}
 		
 		//这个函数一般情况下不需要关心,会在页面setData的时候在检测动态POI时被调到
@@ -358,8 +336,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 		
 		//这个函数是一个动态POI的刷新主函数,刷新策略在其中实现.但是具体的刷新行为在BlockRefresher中实现
 		public abstract void refresh();
-		
-		public abstract void msgReceived(Sphinx mSphinx, BaseQuery query, Response response);
 		
 		public abstract boolean checkExistence(POI poi);
 		
@@ -376,15 +352,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
-    /**
-     * 刷新动态酒店的显示区域（仅酒店类POI）
-     * @param poi
-     */
-    final void refreshDynamicHotel(POI poi) {
-//        mDynamicHotelPOI.initData(poi);
-        mDynamicHotelPOI.refresh();
-    }
-	
 	//*************DynamicPOI code end*******************
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -994,12 +961,12 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         // DynamicPOI检测区域
         // 检查是否包含电影的动态信息
         if (mDynamicMoviePOI.checkExistence(poi)) {
-            baseQueryList.add(mDynamicMoviePOI.buildQuery(poi));
+            mDynamicMoviePOI.queryStart(mDynamicMoviePOI.buildQuery(poi));
         }
         //判断是否存在hotel信息
         if (mDynamicHotelPOI.checkExistence(mPOI)) {
             mDynamicHotelPOI.initDate();
-            baseQueryList.addAll(mDynamicHotelPOI.generateQuery(mPOI));
+            mDynamicHotelPOI.queryStart(mDynamicHotelPOI.generateQuery(mPOI));
         }
         clearDynamicPOI(DPOIViewBlockList);
         initDynamicPOIView(mPOI);
@@ -1255,8 +1222,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         mLoadingView.setVisibility(View.GONE);
         List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
-        Dianying dianying = null;
-        boolean showErrorDialog = true;
         for(BaseQuery baseQuery : baseQueryList) {
             if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
                 isReLogin = true;
@@ -1276,13 +1241,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         refreshDetail();
                         refreshComment();
                         requestPOI.updateComment(mSphinx);
-                    } else if (response instanceof DianyingResponse) {
-                        DianyingResponse dianyingResponse = (DianyingResponse) response;
-                        DianyingList dianyingList = dianyingResponse.getList();
-                        if (dianyingList != null) {
-                            requestPOI.setDynamicDianyingList(dianyingList.getList());
-                            mDynamicMoviePOI.refresh();
-                        }
                     }
                 }
                 
@@ -1300,7 +1258,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                         }
                     } else {
                         mLoadingView.setVisibility(View.GONE);
-                        boolean success = true;
                         if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[]{603}, false, this, false)) {
                             if (response != null) {
                                 int responseCode = response.getResponseCode();
@@ -1309,96 +1266,30 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                                     BaseActivity.showErrorDialog(mSphinx, mSphinx.getString(R.string.response_code_603), this, true);
                                 }
                             }
-                            success = false;
+                            return;
                         }
-                        if (success) {
-                            POI onlinePOI = ((POIQueryResponse)response).getPOI();
-                            if (onlinePOI != null && onlinePOI.getUUID() != null && onlinePOI.getUUID().equals(poi.getUUID())) {
-                                String subDataType = baseQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
-                                if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
-                                    //FIXME:移走
-                                    try {
-                                        poi.init(onlinePOI.getData(), false);
-                                        mDynamicHotelPOI.loadSucceed(true);
-                                        refreshDynamicHotel(poi);
-                                        refreshDetail();
-                                    } catch (APIException e) {
-                                        e.printStackTrace();
-                                    }
-                                } else {
-                                    //收藏夹和历史记录进入的时候刷新POI,发现有动态信息则刷新整个POI的动态信息
-                                    poi.updateData(mSphinx, onlinePOI.getData());
-                                    poi.setFrom(POI.FROM_ONLINE);
-                                    refreshDetail();
-                                    refreshComment();
-                                    initDynamicPOIView(mPOI);
-                                    
-                                    List<BaseQuery> list = new ArrayList<BaseQuery>();
-                                    if (mDynamicHotelPOI.checkExistence(mPOI)) {
-                                        mDynamicHotelPOI.initDate();
-                                        list.addAll(mDynamicHotelPOI.generateQuery(mPOI));
-                                    }
-                                    if (mDynamicMoviePOI.checkExistence(poi)) {
-                                        baseQueryList.add(mDynamicMoviePOI.buildQuery(poi));
-                                    }
-                                    if (list.size() > 0) {
-                                        mLoadingView.setVisibility(View.VISIBLE);
-                                        mTkAsyncTasking = mSphinx.queryStart(list);
-                                        mBaseQuerying = list;
-                                    }
-                                }
-                            }
-                        } else {
-                            //网络出问题的情况
+                        POI onlinePOI = ((POIQueryResponse)response).getPOI();
+                        if (onlinePOI != null && onlinePOI.getUUID() != null && onlinePOI.getUUID().equals(poi.getUUID())) {
+                            //收藏夹和历史记录进入的时候刷新POI,发现有动态信息则刷新整个POI的动态信息
+                            poi.updateData(mSphinx, onlinePOI.getData());
+                            poi.setFrom(POI.FROM_ONLINE);
+                            refreshDetail();
+                            refreshComment();
+                            initDynamicPOIView(mPOI);
+
                             if (mDynamicHotelPOI.checkExistence(mPOI)) {
-                                mDynamicHotelPOI.loadSucceed(false);
-                                refreshDynamicHotel(poi);
+                                mDynamicHotelPOI.initDate();
+                                mDynamicHotelPOI.queryStart(mDynamicHotelPOI.generateQuery(mPOI));
                             }
+                            if (mDynamicMoviePOI.checkExistence(poi)) {
+                                mDynamicMoviePOI.queryStart(mDynamicMoviePOI.buildQuery(poi));
+                            }
+//                                    if (list.size() > 0) {
+//                                        mLoadingView.setVisibility(View.VISIBLE);
+//                                    }
                         }
                     }
                     
-                // 查询团购的结果
-                } else if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType) || BaseQuery.DATA_TYPE_FENDIAN.equals(dataType)
-                		|| BaseQuery.DATA_TYPE_YANCHU.equals(dataType) || BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)
-                		|| BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
-                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, showErrorDialog, this, false) == false) {
-                        mDynamicNormalPOI.msgReceived(mSphinx, baseQuery, response);
-                    } else {
-                        showErrorDialog = false;
-                    }
-                    
-                // 电影
-                } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {
-                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, showErrorDialog, this, false) == false) {
-                        dianying = ((DianyingQueryResponse) response).getDianying();
-                    } else {
-                        showErrorDialog = false;
-                    }
-                // 影讯
-                } else if (BaseQuery.DATA_TYPE_YINGXUN.equals(dataType)) {
-                    if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, showErrorDialog, this, false) == false) {
-                        if (dianying != null) {
-                            dianying.setYingxun(((YingxunQueryResponse) response).getYingxun());
-                            List<Dianying> list = new ArrayList<Dianying>();
-                            list.add(dianying);
-                            dianying.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY);
-                            mSphinx.showView(R.id.view_discover_dianying_detail);
-                            mSphinx.getDianyingDetailFragment().setData(list, 0, null);
-                        }
-                    } else {
-                        showErrorDialog = false;
-                    }
-                }
-                
-                //TODO:看情况移走
-            } else if (baseQuery instanceof ProxyQuery) {
-                if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, showErrorDialog, this, false) == false) {
-                    //查询房态
-                    if (response instanceof RoomTypeDynamic) {
-                        mDynamicHotelPOI.msgReceived(mSphinx, baseQuery, response);
-                    }
-                } else {
-                    showErrorDialog = false;
                 }
             }
         }

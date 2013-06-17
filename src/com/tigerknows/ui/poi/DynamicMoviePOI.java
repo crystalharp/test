@@ -9,14 +9,20 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.DataQuery.DianyingResponse;
+import com.tigerknows.model.DataQuery.DianyingResponse.DianyingList;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Yingxun;
+import com.tigerknows.model.DataOperation.DianyingQueryResponse;
+import com.tigerknows.model.DataOperation.YingxunQueryResponse;
 import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.model.Response;
+import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
 import com.tigerknows.widget.LinearListView;
@@ -146,12 +152,6 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
     }
 
     @Override
-    public void msgReceived(Sphinx mSphinx, BaseQuery query, Response response) {
-        // TODO Auto-generated method stub
-        
-    }
-
-    @Override
     public boolean checkExistence(POI poi) {
         List<DynamicPOI> list = poi.getDynamicPOIList();
         if (list != null) {
@@ -232,7 +232,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
                 
 //                mTkAsyncTasking = mSphinx.queryStart(list);
 //                mBaseQuerying = list;
-                query(mPOIDetailFragment, list);
+                queryStart(list);
             }
             
         }
@@ -261,4 +261,58 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
             
         }
     };
+
+	@Override
+	public void onPostExecute(TKAsyncTask tkAsyncTask) {
+		// TODO Auto-generated method stub
+	    POI poi = mPOI;
+        if (poi == null) {
+            return;
+        }
+        List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
+        int mPOIFragmentId = mPOIDetailFragment.getId();
+        Dianying dianying = null;
+        for(BaseQuery baseQuery : baseQueryList) {
+            if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mPOIFragmentId, mPOIFragmentId, mPOIFragmentId, null)) {
+                mPOIDetailFragment.isReLogin = true;
+                return;
+            }
+            Hashtable<String, String> criteria = baseQuery.getCriteria();
+            String dataType = criteria.get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
+            Response response = baseQuery.getResponse();
+            if (baseQuery instanceof DataQuery) {
+                if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, this, false)) {
+                    return;
+                }
+                DianyingResponse dianyingResponse = (DianyingResponse) response;
+                DianyingList dianyingList = dianyingResponse.getList();
+                if (dianyingList != null) {
+                    mPOI.setDynamicDianyingList(dianyingList.getList());
+                    refresh();
+                }
+            } else if (baseQuery instanceof DataOperation) {
+                if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, true, this, false)) {
+                    return;
+                }
+                if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {
+                    dianying = ((DianyingQueryResponse) response).getDianying();
+                } else if (BaseQuery.DATA_TYPE_YINGXUN.equals(dataType)) {
+                    if (dianying != null) {
+                        dianying.setYingxun(((YingxunQueryResponse) response).getYingxun());
+                        List<Dianying> list = new ArrayList<Dianying>();
+                        list.add(dianying);
+                        dianying.getYingxun().setChangciOption(Yingxun.Changci.OPTION_DAY_TODAY);
+                        mSphinx.showView(R.id.view_discover_dianying_detail);
+                        mSphinx.getDianyingDetailFragment().setData(list, 0, null);
+                    }
+                }
+            }
+        }
+	}
+
+	@Override
+	public void onCancelled(TKAsyncTask tkAsyncTask) {
+		// TODO Auto-generated method stub
+		
+	}
 }
