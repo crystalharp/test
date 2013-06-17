@@ -44,9 +44,7 @@ public class CouponDetailFragment extends BaseFragment {
         
         @Override
         public void run() {
-            refreshDrawable(mData.getHintPicTKDrawable(), mHintImv, R.drawable.icon);
-            refreshDrawable(mData.getDetailPicTKDrawable(), mDetailImv, R.drawable.bg_picture_hotel);
-            refreshDrawable(mData.getLogoTKDrawable(), mLogoImv, R.drawable.icon);
+            refreshDrawable();
         }
     };
     
@@ -96,9 +94,7 @@ public class CouponDetailFragment extends BaseFragment {
         mRightBtn.setVisibility(View.INVISIBLE);
 
         if (mData != null) {
-            refreshDrawable(mData.getHintPicTKDrawable(), mHintImv, R.drawable.icon);
-            refreshDrawable(mData.getDetailPicTKDrawable(), mDetailImv, R.drawable.bg_picture_hotel);
-            refreshDrawable(mData.getLogoTKDrawable(), mLogoImv, R.drawable.icon);
+            refreshDrawable();
         }
     }
     
@@ -135,7 +131,13 @@ public class CouponDetailFragment extends BaseFragment {
         mBodyScv.smoothScrollTo(0, 0);
     }
     
-    void refreshDrawable(TKDrawable tkDrawable, ImageView imageView, int defaultResId) {
+    void refreshDrawable() {
+        refreshDrawable(mData.getHintPicTKDrawable(), mHintImv, R.drawable.icon, true);
+        refreshDrawable(mData.getDetailPicTKDrawable(), mDetailImv, R.drawable.bg_picture_hotel, false);
+        refreshDrawable(mData.getLogoTKDrawable(), mLogoImv, R.drawable.icon, true);
+    }
+    
+    void refreshDrawable(TKDrawable tkDrawable, ImageView imageView, int defaultResId, boolean isVisibility) {
         if (tkDrawable != null) {
             Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, this.toString());
             if(drawable != null) {
@@ -145,8 +147,14 @@ public class CouponDetailFragment extends BaseFragment {
             } else {
                 imageView.setBackgroundDrawable(null);
             }
+            imageView.setVisibility(View.VISIBLE);
         } else {
             imageView.setBackgroundDrawable(null);
+            if (isVisibility) {
+                imageView.setVisibility(View.VISIBLE);
+            } else {
+                imageView.setVisibility(View.GONE);
+            }
         }
     }
 }
