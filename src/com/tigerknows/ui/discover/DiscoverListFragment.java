@@ -830,7 +830,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             TextView dateTxv = (TextView) view.findViewById(R.id.date_txv);
 
             Dianying dianying = getItem(position);
-            Drawable drawable = dianying.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
+            Drawable drawable = dianying.getPicture().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size

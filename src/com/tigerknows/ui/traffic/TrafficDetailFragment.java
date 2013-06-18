@@ -29,7 +29,6 @@ import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.android.location.Position;
-import com.decarta.android.map.MapView.MapScene;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -37,6 +36,7 @@ import com.tigerknows.Sphinx;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.TrafficOverlayHelper;
+import com.tigerknows.map.MapView.MapScene;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;
@@ -136,16 +136,20 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             mTitleBtn.setText(mContext.getString(R.string.title_transfer_plan));
             mErrorRecoveryLayout.setVisibility(View.VISIBLE);
         	mSubTitleTxv.setText(this.plan.getTitle(mSphinx));
+        	mLengthTxv.setVisibility(View.VISIBLE);
+        	mLengthTxv.setText(plan.getLengthStr(mSphinx));
             break;
         case SHOW_TYPE_DRVIE:
             mTitleBtn.setText(mContext.getString(R.string.title_drive_plan));
             mSubTitleTxv.setText(mSphinx.getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
             mErrorRecoveryLayout.setVisibility(View.GONE);
+        	mLengthTxv.setVisibility(View.GONE);
             break;
         case SHOW_TYPE_WALK:
             mTitleBtn.setText(mContext.getString(R.string.title_walk_plan));
             mSubTitleTxv.setText(mSphinx.getString(R.string.length_str_title, plan.getLengthStr(mSphinx)));
             mErrorRecoveryLayout.setVisibility(View.GONE);
+        	mLengthTxv.setVisibility(View.GONE);
             break;
         default:
         }
@@ -195,8 +199,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         mLengthTxv = (TextView)mRootView.findViewById(R.id.length_txv);
         mResultLsv = (ListView)mRootView.findViewById(R.id.result_lsv);
         mShadowImv = (ImageView)mRootView.findViewById(R.id.shadow2);
-        mRootView.findViewById(R.id.sub_title_1column_view).setVisibility(View.VISIBLE);
-        mRootView.findViewById(R.id.sub_title_2column_view).setVisibility(View.GONE);
+        mRootView.findViewById(R.id.traffic_detail_sub_title).setVisibility(View.VISIBLE);
+        mRootView.findViewById(R.id.traffic_result_sub_title).setVisibility(View.GONE);
         mErrorRecoveryLayout = (LinearLayout)mRootView.findViewById(R.id.error_recovery_layout);
         mErrorRecoveryBtn = (Button)mRootView.findViewById(R.id.error_recovery_btn);
         mFavorateBtn = (Button)mRootView.findViewById(R.id.favorite_btn);

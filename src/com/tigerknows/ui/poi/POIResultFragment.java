@@ -279,7 +279,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         if (mTitleBtn != null) {
             mTitleBtn.setText(mTitleText);
         }
-        mEmptyTxv.setText(str);
+
+        if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(mResultAdapter.getSubDataType())) {
+            mEmptyTxv.setText(R.string.can_not_found_result_and_retry);
+        } else {
+            mEmptyTxv.setText(str);
+        }
     }
     
     private void refreshFilter(List<Filter> filterList) {
@@ -565,7 +570,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     }
                     
                 } else {
-                    pictureImv.setBackgroundDrawable(null);
+                    pictureImv.setBackgroundResource(R.drawable.bg_picture_hotel_none);
                 }
                 
                 if (hotel.getCanReserve() > 0) {
@@ -735,12 +740,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_yanchu);
                     } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(dataType)) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
-                    } else if (DynamicPOI.TYPE_HOTEL.equals(dataType)) {
+                    } else if (DynamicPOI.TYPE_HOTEL.equals(dataType) && !BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_hotel);
                     } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_dianying);
                     } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_coupon);
+                    } else {
+                        continue;
                     }
                     viewIndex++;
                 }

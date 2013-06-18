@@ -18,7 +18,6 @@
     <color name="map_traffic_color_red">#AA0000</color>
     <color name="text_gray">#ff6c6c6c</color>
     <color name="text_yellow">#ffffdd00</color>
-    <color name="list_item_background_gray">#F3F3F3</color>
     <color name="traffic_input_background_gray">#F5F5F5</color>
     
     <color name="edittext_hint_color">#acacac</color>
@@ -32,6 +31,7 @@
     <color name="text_click_map_content_blue">#ff008aff</color>
     
     <color name="dialog_btn_white">#f8f8f8</color>
+    <color name="list_bg_white">#fcfcfc</color>
 
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
@@ -46,6 +46,7 @@
     <color name="transparent">#00000000</color>
     <color name="blue">#3b94d8</color>
     <color name="blue_light">#cdedff</color>
+    <color name="red">#fe0101</color>
     
     <color name="infowindow_split_line">#e6e6e6</color>
     <color name="home_list_bg">#f8f6ff</color>

@@ -10,10 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.decarta.CONFIG;
-import com.decarta.android.map.MapView.DownloadEventListener;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.TileDownload;
+import com.tigerknows.map.MapView.DownloadEventListener;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.MapMetaFileDownload;
 import com.tigerknows.model.MapTileDataDownload;

@@ -162,12 +162,10 @@ public class BaseFragment extends LinearLayout {
     }
     
     public void onActivityCreated(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onActivityCreated()"+mActionTag);
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onActivityResult()"+mActionTag);
     }
 
@@ -178,76 +176,62 @@ public class BaseFragment extends LinearLayout {
     }
 
     public void onAttach(Activity activity) {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onAttach()"+mActionTag);
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onConfigurationChanged()"+mActionTag);
         super.onConfigurationChanged(newConfig);
     }
 
     public boolean onContextItemSelected(MenuItem item) {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onContextItemSelected()"+mActionTag);
         return false;
     }
 
     public Animation onCreateAnimation(int transit, boolean enter, int nextAnim) {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onCreateAnimator()"+mActionTag);
         return null;
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onCreateContextMenu()"+mActionTag);
     }
 
     public void onDestroy() {
         LogWrapper.d(TAG, "onDestroy()"+mActionTag);
-        // TODO Auto-generated method stub
     }
 
     public void onDestroyOptionsMenu() {
         LogWrapper.d(TAG, "onDestroyOptionsMenu()"+mActionTag);
-        // TODO Auto-generated method stub
     }
 
     public void onDestroyView() {
         LogWrapper.d(TAG, "onDestroyView()"+mActionTag);
-        // TODO Auto-generated method stub
     }
 
     public void onDetach() {
         LogWrapper.d(TAG, "onDetach()"+mActionTag);
-        // TODO Auto-generated method stub
     }
 
     public void onHiddenChanged(boolean hidden) {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onHiddenChanged()"+mActionTag);
     }
 
     public void onInflate(Activity activity, AttributeSet attrs, Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onInflate()"+mActionTag);
     }
 
     public void onLowMemory() {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onLowMemory()"+mActionTag);
     }
 
     public void onOptionsMenuClosed(Menu menu) {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onOptionsMenuClosed()"+mActionTag);
     }
 
     public void onPause() {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onPause()"+mActionTag);
         int id = getId();
         if (id != R.id.view_invalid
@@ -262,11 +246,9 @@ public class BaseFragment extends LinearLayout {
 
     public void onPrepareOptionsMenu(Menu menu) {
         LogWrapper.d(TAG, "onPrepareOptionsMenu()"+mActionTag);
-        // TODO Auto-generated method stub
     }
 
     public void onResume() {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onResume()"+mActionTag);
         int id = getId();
         if (id != R.id.view_invalid
@@ -308,7 +290,6 @@ public class BaseFragment extends LinearLayout {
                 
                 @Override
                 public boolean onTouch(View arg0, MotionEvent arg1) {
-                    // TODO Auto-generated method stub
                     return true;
                 }
             });
@@ -316,28 +297,23 @@ public class BaseFragment extends LinearLayout {
     }
 
     public void onSaveInstanceState(Bundle outState) {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onSaveInstanceState()"+mActionTag);
     }
 
     public void onStart() {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onStart()"+mActionTag);
     }
 
     public void onStop() {
-        // TODO Auto-generated method stub
         LogWrapper.d(TAG, "onStop()"+mActionTag);
     }
     
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         LogWrapper.d(TAG, "onCreateOptionsMenu()"+mActionTag);
-        // TODO Auto-generated method stub
     }
     
     public boolean onOptionsItemSelected(MenuItem item) {
         LogWrapper.d(TAG, "onOptionsItemSelected()"+mActionTag);
-        // TODO Auto-generated method stub
         return false;
     }
     

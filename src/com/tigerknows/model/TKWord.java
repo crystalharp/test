@@ -73,6 +73,14 @@ public class TKWord {
         return false;
     }
     
+    public TKWord clone() {
+        TKWord tkWord = new TKWord(attribute, word);
+        if (this.position != null) {
+            tkWord.position = this.position.clone();
+        }
+        return tkWord;
+    }
+    
     public POI toPOI() {
         POI poi = new POI();
         poi.setName(word);

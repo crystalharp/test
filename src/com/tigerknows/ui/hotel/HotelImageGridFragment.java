@@ -6,6 +6,7 @@ import java.util.List;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.ui.BaseFragment;
@@ -47,6 +49,7 @@ public class HotelImageGridFragment extends BaseFragment {
 	GridAdapter mGridAdapter;
     TKGallery mTKGallery;
     GalleryAdapter mGalleryAdapter;
+    int mPosition;
     
     private Runnable mLoadedDrawableRun = new Runnable() {
         
@@ -100,6 +103,7 @@ public class HotelImageGridFragment extends BaseFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		mActionTag = ActionLog.HotelPicture;
 	}
 
 	@Override
@@ -132,6 +136,21 @@ public class HotelImageGridFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 setState(STATE_GALLERY);
                 mTKGallery.setSelection(position);
+                mActionLog.addAction(mActionTag+ActionLog.ListViewItem, position);
+                mPosition = position;
+            }
+        });
+	    mTKGallery.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, position, mPosition);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+                
             }
         });
 	}
@@ -179,7 +198,7 @@ public class HotelImageGridFragment extends BaseFragment {
         public View getView(int position, View convertView, ViewGroup parent) {
             View view;
             if (convertView == null) {
-                ViewGroup viewGroup = new LinearLayout(getContext());
+                LinearLayout viewGroup = new LinearLayout(getContext());
                 ImageView iconImv = new ImageView(getContext());
                 iconImv.setId(R.id.icon_imv);
                 iconImv.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -187,6 +206,7 @@ public class HotelImageGridFragment extends BaseFragment {
                 int padding = Util.dip2px(Globals.g_metrics.density, 4);
                 iconImv.setPadding(padding, padding, padding, padding);
                 viewGroup.addView(iconImv);
+                viewGroup.setGravity(Gravity.CENTER);
                 view = viewGroup;
             } else {
                 view = convertView;

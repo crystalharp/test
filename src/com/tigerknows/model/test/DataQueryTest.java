@@ -616,6 +616,7 @@ public class DataQueryTest {
         for(int i = 0; i < 16; i ++) {
             xarray.add(launchDynamicPOI(i));
         }
+        xarray.add(launchDynamicPOI(Integer.parseInt(BaseQuery.DATA_TYPE_COUPON)));
         xarray.add(launchDynamicPOI(Integer.parseInt(DynamicPOI.TYPE_HOTEL)));
         data.put(POI.FIELD_DYNAMIC_POI, xarray);
         data.put(POI.FIELD_PRICE, "168");
