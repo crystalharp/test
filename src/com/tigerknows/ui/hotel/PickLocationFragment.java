@@ -105,11 +105,11 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         }
 
         public void afterTextChanged(Editable s) {
-            if (s.toString().trim().length() > 0) {
-                mQueryBtn.setEnabled(true);
-            } else {
-                mQueryBtn.setEnabled(false);
-            }
+//            if (s.toString().trim().length() > 0) {
+//                mQueryBtn.setEnabled(true);
+//            } else {
+//                mQueryBtn.setEnabled(false);
+//            }
         }
     };
     
@@ -263,7 +263,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
                 
             case R.id.query_btn:
                 mActionLog.addAction(mActionTag + ActionLog.HotelPickLocationSubmit);
-                if (TextUtils.isEmpty(mKeywordEdt.getText().toString().trim())) {
+                if (TextUtils.isEmpty(mKeywordEdt.getText().toString())) {
                     mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
                 } else {
                     submit();
@@ -307,7 +307,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mKeywordEdt.setText(null);
         mKeywordEdt.clearFocus();
         mViewPager.setCurrentItem(0);
-        mQueryBtn.setEnabled(false);
+//        mQueryBtn.setEnabled(false);
         mViewPager.requestFocus();
         mFilterListView.setData(mSphinx.getHotelHomeFragment().getFilterList(), FilterResponse.FIELD_FILTER_AREA_INDEX, this, false, false, mActionTag);
     }
