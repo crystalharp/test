@@ -192,9 +192,10 @@ public class AsyncImageLoader {
                 ImageCache imageCache1 = Globals.getImageCache();
                 final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
                 imageCache1.putImage(name, data);
+                LogWrapper.d("AsyncImageLoader", "imageUrl.url="+imageUrl.url);
                 return (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(data), "image.png");
             } catch (Exception e) {
-                LogWrapper.d("AsyncImageLoader", "imageUrl.url="+imageUrl.url);
+                LogWrapper.d("AsyncImageLoader", "Failed="+imageUrl.url);
                 mHttpClient = null;
                 e.printStackTrace();
             }
