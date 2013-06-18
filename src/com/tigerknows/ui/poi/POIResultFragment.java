@@ -742,8 +742,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_zhanlan);
                     } else if (DynamicPOI.TYPE_HOTEL.equals(dataType) && !BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_hotel);
-                    } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {
-                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_dianying);
+                        //暂时不需要显示"影"图标,等影院功能上线再做打算
+//                    } else if (BaseQuery.DATA_TYPE_DIANYING.equals(dataType)) {
+//                        iconImv.setImageResource(R.drawable.ic_dynamicpoi_dianying);
                     } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
                         iconImv.setImageResource(R.drawable.ic_dynamicpoi_coupon);
                     } else {
