@@ -78,6 +78,7 @@ public class AsyncImageLoader {
         }
         if (bitmap != null) {
             BitmapDrawable bitmapDrawable = new BitmapDrawable(bitmap);
+            bitmapDrawable.setTargetDensity(Globals.g_metrics);
             if (TKConfig.CACHE_BITMAP_TO_MEMORY) {
                 imageCache.put(imageUrl.url, new SoftReference<BitmapDrawable>(bitmapDrawable));
             }
@@ -193,7 +194,9 @@ public class AsyncImageLoader {
                 final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
                 imageCache1.putImage(name, data);
                 LogWrapper.d("AsyncImageLoader", "imageUrl.url="+imageUrl.url);
-                return (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(data), "image.png");
+                BitmapDrawable bm = (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(data), "image.png");
+                bm.setTargetDensity(Globals.g_metrics);
+                return bm;
             } catch (Exception e) {
                 LogWrapper.d("AsyncImageLoader", "Failed="+imageUrl.url);
                 mHttpClient = null;
