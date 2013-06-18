@@ -116,13 +116,13 @@ public class TrafficViewSTT {
          * 此外,如果真的是用onChange而不过滤,因为从map状态返回normal的时候会把公交选上,
          * 而肯定触发normal状态的ClickRadioGroup事件而变到Input状态,就永远回不去normal了.
          */
-        running = false;
+//        running = false;
         
 	    switch (event) {
 	    case Back:
 	        //返回上个状态，先弹栈，新状态是之前的状态
 	        if (stateStack.size() == 1) {
-	            running = true;
+//	            running = true;
 	            return false;
 	        } else {
     	        oldState = stateStack.pop();
@@ -142,7 +142,7 @@ public class TrafficViewSTT {
             newState = getState(oldState, event);
             if (newState == State.MaxSize ) {
                 //没有这个转换规则，不做任何处理
-                running = true;
+//                running = true;
                 return false;
             } else {
                 stateStack.push(newState);
@@ -153,7 +153,7 @@ public class TrafficViewSTT {
         ActionTbl[newState.ordinal()].enterFrom(oldState);
         ActionTbl[oldState.ordinal()].exit();
         ActionTbl[newState.ordinal()].postEnter();
-        running = true;
+//        running = true;
         LogWrapper.d(TAG, oldState + " --" + event + "--> " + newState);
         LogWrapper.d(TAG, "stack is:" + stateStack.toString());
         

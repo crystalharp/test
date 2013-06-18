@@ -207,7 +207,6 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
             mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1, true);
         }
         mCycleOnPageChangeListener.isPageTurning = false;    
-        onResume();
     }
 
     /**

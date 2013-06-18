@@ -560,7 +560,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             mResultLsv.setVisibility(View.VISIBLE);
             if (mRightBtn != null) {
                 if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
-                    mRightBtn.setVisibility(View.GONE);
+                    if( mSphinx.uiStackPeek() == R.id.view_discover_list){
+                    	mRightBtn.setVisibility(View.GONE);
+                    }
                 } else if (getList().size() > 0) {
                     mRightBtn.setVisibility(View.VISIBLE);
                     if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {

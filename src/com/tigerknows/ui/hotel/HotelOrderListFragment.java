@@ -129,6 +129,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         findViews();
         setListener();
         hotelOrderAdapter = new HotelOrderAdapter(mContext, orders);
+        mResultLsv.setHeaderSpringback(false);
         mResultLsv.setAdapter(hotelOrderAdapter);
         
         mEmptyTxv.setText( mContext.getString(R.string.no_order) );
