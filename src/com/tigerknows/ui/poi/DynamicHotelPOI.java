@@ -280,9 +280,12 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             @Override
             public void onClick(View v) {
                 mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelFailRetry);
-                List<BaseQuery> list = generateQuery(mPOI);
-                list.get(0).setTipText(mSphinx.getString(R.string.doing_and_wait));
-                queryStart(list);
+                if (mBaseQuerying != null) {
+                    for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
+                        mBaseQuerying.get(i).setResponse(null);
+                    }
+                    queryStart(mBaseQuerying);
+                }
             }
         };
         mRetryView.setOnClickListener(retryListener);
@@ -354,11 +357,9 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             checkout = out;
         }
         refreshDate();
-        List<BaseQuery> list = new ArrayList<BaseQuery>(); 
-        BaseQuery query = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_DETAIL);
-        query.setTipText(mSphinx.getString(R.string.doing_and_wait));
-        list.add(query);
-        queryStart(list);
+        BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_ROOM_INFO);
+        baseQuery.setTipText(mSphinx.getString(R.string.doing_and_wait));
+        queryStart(baseQuery);
         mPOIDetailFragment.dismissPopupWindow();
     }
 
