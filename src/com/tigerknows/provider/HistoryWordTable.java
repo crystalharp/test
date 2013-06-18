@@ -241,6 +241,9 @@ public class HistoryWordTable {
     }
     
     public static void addHistoryWord(Context context, TKWord tkWord, int cityId, int type) {
+        if (tkWord == null || tkWord.word == null || TextUtils.isEmpty(tkWord.word.trim())) {
+            return;
+        }
         List<TKWord> list;
         if (TYPE_POI == type) {
             list = History_Word_POI;
