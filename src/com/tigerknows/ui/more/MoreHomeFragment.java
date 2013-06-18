@@ -430,7 +430,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
             } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
-                mMessageBtn.setText(R.string.message_tip_user_survey);
+                mMessageBtn.setText(mDiaoyanQueryResponse.getDescription());
                 mMessageBtn.setBackgroundResource(R.drawable.btn_update);
                 mMessageBtn.setVisibility(View.VISIBLE);
                 mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
