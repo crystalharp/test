@@ -512,7 +512,7 @@ public class ShareTextUtil {
             
             // 标题区（按顺序展示 评分 菜系 均价 人气 口味 服务 环境）
             remaindCount = weiboTextAppendDescriptionWithLimit(context, remaindCount, s, R.string.share_poi_pingfen, 
-            		String.valueOf(poi.getGrade()/2), context.getString(R.string.period));
+            		String.valueOf(poi.getGrade()), context.getString(R.string.period));
             
             remaindCount = weiboTextAppendDescriptionWithLimit(context, remaindCount, s, R.string.share_poi_caixi, 
             		poi.getCookingStyle(), context.getString(R.string.comma));
@@ -578,7 +578,7 @@ public class ShareTextUtil {
             
             // 标题区（按顺序展示 评分 菜系 均价 人气 口味 服务 环境）
             remaindCount = weiboTextAppendDescriptionWithLimit(context, remaindCount, s, R.string.share_poi_pingfen, 
-            		String.valueOf(poi.getGrade()/2), context.getString(R.string.period));
+            		String.valueOf(poi.getGrade()), context.getString(R.string.period));
             
             remaindCount = weiboTextAppendDescriptionWithLimit(context, remaindCount, s, R.string.share_poi_caixi, 
             		poi.getCookingStyle(), context.getString(R.string.comma));
