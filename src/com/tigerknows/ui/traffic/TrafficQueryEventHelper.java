@@ -70,12 +70,13 @@ public class TrafficQueryEventHelper {
 		endSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mEnd, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC);
 		buslineSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mBusline, TrafficQuerySuggestWordHelper.TYPE_BUSLINE);
         mNormalRadioOnClickedListener = new NormalRadioOnClickedListener();
-		mInputRadioOnClickedListener = new InputRadioOnClickedListener();
+		mInputRadioOnClickedListener = null;
 		mMapRadioOnClickedListener = new MapRadioOnClickedListener();
 		
 		mQueryFragment.mStart.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mStart, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC));
 		mQueryFragment.mEnd.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mEnd, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC));
 		mQueryFragment.mBusline.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mBusline, TrafficQuerySuggestWordHelper.TYPE_BUSLINE));
+		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new RadioCheckedChangedListener());
 //	}
 	
 	/*
@@ -337,13 +338,23 @@ public class TrafficQueryEventHelper {
     	mQueryFragment.checkQueryState();
 	}
 	
-	protected class NormalRadioOnClickedListener implements View.OnClickListener{
+	protected class NormalRadioOnClickedListener implements View.OnClickListener {
 
         @Override
         public void onClick(View v) {
             mQueryFragment.mStateTransitionTable.event(Event.ClickRadioGroup);
-            checkRadioButton(v.getId());
             mQueryFragment.mSphinx.showSoftInput(mQueryFragment.mSelectedEdt.getEdt().getInput());
+        }
+	    
+	}
+	
+	protected class RadioCheckedChangedListener implements RadioGroup.OnCheckedChangeListener {
+
+        @Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+            if (checkedId != -1) {
+                checkRadioButton(checkedId);
+            }
         }
 	    
 	}
@@ -421,7 +432,6 @@ public class TrafficQueryEventHelper {
 
         @Override
         public void onClick(View v) {
-        	checkRadioButton(v.getId());
         	/*
         	 * 切换TAB时, 若三个输入框都没有获得焦点, 则隐藏输入法
         	 */
@@ -545,7 +555,6 @@ public class TrafficQueryEventHelper {
         @Override
         public void onClick(View v) {
             mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.ClickRadioGroup);
-            checkRadioButton(v.getId());
             mQueryFragment.mSphinx.showSoftInput(mQueryFragment.mSelectedEdt.getEdt().getInput());
         }
 	    
