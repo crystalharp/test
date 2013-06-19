@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnDismissListener;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -108,7 +109,7 @@ public class CouponDetailView extends BaseDetailView implements View.OnClickList
         mDescriptionTxv.setText(coupon.getDescription());
         mHotTxv.setText(mSphinx.getString(R.string._used_sum_times, coupon.getHot()));
         mDetailTxv.setText(coupon.getDetail());
-        if(!coupon.getQrImg().isEmpty()){
+        if(coupon.getQrimgTKDrawable() != null){
         	mQrimgLly.setVisibility(GONE);
         }else{
         	mQrimgLly.setVisibility(GONE);
