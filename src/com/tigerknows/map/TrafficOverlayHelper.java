@@ -34,7 +34,7 @@ public class TrafficOverlayHelper {
 
 	private static final int DEFAULT_SHOW_STEP_ZOOMLEVEL = 14;
 	
-	private static final float HIGHLIGHT_POSITION_ACCURACY = 0.0001f;
+	private static final float HIGHLIGHT_POSITION_ACCURACY = 0.00001f;
 	
 	private static final String TAG = "TrafficOverlayHelper";
 
