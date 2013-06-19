@@ -908,7 +908,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         ShareAPI.share(mSphinx, poi, poi.getPosition(), mActionTag);
     }
     
-    protected void setData(POI poi) {
+    public void setData(POI poi) {
         setData(poi, -1);
     }
     
