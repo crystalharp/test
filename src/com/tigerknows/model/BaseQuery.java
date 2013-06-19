@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.UUID;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -193,6 +194,9 @@ public abstract class BaseQuery {
     
     // checkout    String  true    离开酒店时间，格式"yyyy-MM-dd" 
     public static final String SERVER_PARAMETER_CHECKOUT = "checkout";
+    
+    // uuid     string  true    用于唯一标识联网请求的uuid或uuid_offset 
+    public static final String SERVER_PARAMETER_UUID = "uuid";
     
     /**
      * 检查是否为推送动态POI的查询
@@ -543,6 +547,14 @@ public abstract class BaseQuery {
         }
     }
     
+    protected void addUUIDParameter() {
+        String uuid = UUID.randomUUID().toString();
+        if (criteria != null) {
+            criteria.put(SERVER_PARAMETER_UUID, uuid);
+        }
+        requestParameters.add(SERVER_PARAMETER_UUID, uuid);
+    }
+    
     protected void makeRequestParameters() throws APIException {
         requestParameters.clear();
         if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false) {
@@ -552,6 +564,7 @@ public abstract class BaseQuery {
 
         addParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE, false);
         addMyLocationParameters();
+        addUUIDParameter();
         
         requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
     }
