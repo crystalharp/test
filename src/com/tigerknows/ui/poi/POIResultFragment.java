@@ -398,20 +398,26 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
         int size = mPOIList.size();
         List<POI> poiList = new ArrayList<POI>();
-        int[] page = Utility.makePage(mResultLsv, size, firstVisiblePosition, lastVisiblePosition, mShowAPOI);
+        int[] page = Utility.makePagedIndex(mResultLsv, mShowAPOI ? size - 1 : size, (mShowAPOI && firstVisiblePosition > 0) ? firstVisiblePosition-1 : firstVisiblePosition);
         POI poi;
         if (mShowAPOI) {
             poi = mPOIList.get(0);
             poiList.add(poi);
         }
         
-        int minIndex = page[0];
-        int maxIndex = page[1];
+        int minIndex = page[0]+(mShowAPOI ? 1 : 0);
+        int maxIndex = page[1]+(mShowAPOI ? 1 : 0);
         for(;minIndex < maxIndex && minIndex < size; minIndex++) {
             poi = mPOIList.get(minIndex);
             poiList.add(poi);
         }
-        mSphinx.showPOI(poiList, page[2]);
+        int firstIndex = page[2]+(mShowAPOI ? 1 : 0);
+        if (mShowAPOI) {
+            if (firstVisiblePosition == 0) {
+                firstIndex = 0;
+            }
+        }
+        mSphinx.showPOI(poiList, firstIndex);
         mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), ActionLog.POIListMap);
         mSphinx.showView(R.id.view_result_map);   
     }
