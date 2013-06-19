@@ -27,6 +27,8 @@ public class Hotel extends XMapData {
     
     public static final String NEED_FILED_DETAIL = "5455565859";
     
+    public static final String NEED_FILED_ROOM_INFO = "5055";
+    
     // 0x50 x_string 酒店ID
     public static final byte FIELD_UUID = 0x50;
 

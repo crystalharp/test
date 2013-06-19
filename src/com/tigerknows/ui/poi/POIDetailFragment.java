@@ -193,13 +193,13 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     //存储动态POI的ViewBlock的控制信息
     List<DynamicPOIViewBlock> DPOIViewBlockList = new LinkedList<DynamicPOIViewBlock>();
-    
+
     //目前可以处理的所有动态POI的Hashtab,key是它们的动态POI类型
     Hashtable<String, DynamicPOIView> DPOIViewTable = new Hashtable<String, DynamicPOIView>();
-    
+
     //当前页面已经存在的View,用于多种动态POI共用同一DynamicPOIView的判断
     List<DynamicPOIView> existView = new ArrayList<DynamicPOIView>();
-    
+
     //目前可以处理的动态POI类型
     private void initDynamicPOIEnv(){
         DPOIViewTable.put(DynamicPOI.TYPE_HOTEL, mDynamicHotelPOI);
@@ -209,7 +209,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         DPOIViewTable.put(DynamicPOI.TYPE_COUPON, mDynamicNormalPOI);
         DPOIViewTable.put(DynamicPOI.TYPE_DIANYING, mDynamicMoviePOI);
     }
-    
+
     /**
      * @param poi
      * 检测当前POI的动态POI信息,有对应DynamicPOIView的就将其Block加入本页中
@@ -237,14 +237,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             DPOIViewTable.get(dataType).initData(poi);
             DPOIViewBlockList.addAll(dpView.getViewList());
         }
-        
+
         //获取到的Block全部加入到该页中
         for (DynamicPOIViewBlock block : DPOIViewBlockList) {
             block.clear();
             block.addToParent();
         }
     }
-    
+
     /*
      * 进入这个页面时清除掉所有的动态POI的ViewBlock
      */
@@ -253,7 +253,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mBelowAddressLayout.removeAllViews();
         POIList.clear();
     }
-        
+
     /**
      * 有些动态POI并不止一个显示区块，但是刷新的时候却有着不同的刷新规则
      * 为了让刷新可以分开，而不是一次把相关的所有区块刷新，在ViewBlock下
@@ -262,43 +262,43 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     public interface BlockRefresher {
         void refresh();
     }
-    
+
     /**
      * 该类是动态POI的块级控制类,有着足够用的控制方法.
      * 每个显示块都需要有一个这个类的对象,里面存有自己的Layout和所属的Layout
      * 需要有个block级别的刷新机制。
      */
     public static class DynamicPOIViewBlock {
-		View mOwnLayout;
-		LinearLayout mBelongsLayout;
-		boolean mLoadSucceed = true;
-		BlockRefresher mRefresher;
-		
-		public DynamicPOIViewBlock(LinearLayout belongsLayout, BlockRefresher refresher) {
-		    mBelongsLayout = belongsLayout;
-		    mRefresher = refresher;
-		}
-		
-		final void addToParent() {
-		    if (mBelongsLayout.indexOfChild(mOwnLayout) == -1) {
-		        mBelongsLayout.addView(mOwnLayout, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-		    }
-		}
-		
-		final void show() {
-		    mOwnLayout.setVisibility(View.VISIBLE);
-		}
+        View mOwnLayout;
+        LinearLayout mBelongsLayout;
+        boolean mLoadSucceed = true;
+        BlockRefresher mRefresher;
+
+        public DynamicPOIViewBlock(LinearLayout belongsLayout, BlockRefresher refresher) {
+            mBelongsLayout = belongsLayout;
+            mRefresher = refresher;
+        }
+
+        final void addToParent() {
+            if (mBelongsLayout.indexOfChild(mOwnLayout) == -1) {
+                mBelongsLayout.addView(mOwnLayout, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+            }
+        }
+
+        final void show() {
+            mOwnLayout.setVisibility(View.VISIBLE);
+        }
 
         final void clear() {
             mOwnLayout.setVisibility(View.GONE);
-		}
-        
-        final void remove() {
-		    if (mBelongsLayout.indexOfChild(mOwnLayout) == -1) {
-		        mBelongsLayout.removeView(mOwnLayout);
-		    }
         }
-        
+
+        final void remove() {
+            if (mBelongsLayout.indexOfChild(mOwnLayout) == -1) {
+                mBelongsLayout.removeView(mOwnLayout);
+            }
+        }
+
         final public void refresh() {
             if (mRefresher != null) {
                 mRefresher.refresh();
@@ -306,54 +306,54 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             }
         }
     }
-    
+
     /*
      * 动态POI控制类,用于动态POI的数据操作等
      */
-	public abstract static class DynamicPOIView implements TKAsyncTask.EventListener{
+    public abstract static class DynamicPOIView implements TKAsyncTask.EventListener{
 
-		POIDetailFragment mPOIDetailFragment;
-		Sphinx mSphinx;
-		POI mPOI;
-		LayoutInflater mInflater;
-		boolean mExist;
-		
+        POIDetailFragment mPOIDetailFragment;
+        Sphinx mSphinx;
+        POI mPOI;
+        LayoutInflater mInflater;
+        boolean mExist;
+
         protected List<BaseQuery> mBaseQuerying;
         protected TKAsyncTask mTkAsyncTasking;
-		
-		void queryStart(List<BaseQuery> list) {
-		    mBaseQuerying = list; 
-	        mTkAsyncTasking = new TKAsyncTask(mSphinx, mBaseQuerying, this, null);
-		    mTkAsyncTasking.execute();
-		}
-		
-		void queryStart(BaseQuery baseQuery) {
-		    List<BaseQuery> list = new ArrayList<BaseQuery>();
-		    list.add(baseQuery);
-		    queryStart(list);
-		}
-		
-		//这个函数一般情况下不需要关心,会在页面setData的时候在检测动态POI时被调到
-		final public void initData(POI poi) {
-		    mPOI = poi;
-		}
-		
-		//这个函数只用于返回块列表,且只在初始化动态POI的时候调用
-		public abstract List<DynamicPOIViewBlock> getViewList();
-		
-		//这个函数是一个动态POI的刷新主函数,刷新策略在其中实现.但是具体的刷新行为在BlockRefresher中实现
-		public abstract void refresh();
-		
-		//初始化的时候会在checkAndAddDynamicPOIView中把这个变量初始化完毕,不用关心
-		final public boolean isExist() {
-		    return mExist;
-		}
-		
-	}
-	    
-	/**
-	 * 进入页面时刷新所有动态POI的显示,以后再有就在onPostExecute中单刷
-	 */
+
+        void queryStart(List<BaseQuery> list) {
+            mBaseQuerying = list; 
+            mTkAsyncTasking = new TKAsyncTask(mSphinx, mBaseQuerying, this, null);
+            mTkAsyncTasking.execute();
+        }
+
+        void queryStart(BaseQuery baseQuery) {
+            List<BaseQuery> list = new ArrayList<BaseQuery>();
+            list.add(baseQuery);
+            queryStart(list);
+        }
+
+        //这个函数一般情况下不需要关心,会在页面setData的时候在检测动态POI时被调到
+        final public void initData(POI poi) {
+            mPOI = poi;
+        }
+
+        //这个函数只用于返回块列表,且只在初始化动态POI的时候调用
+        public abstract List<DynamicPOIViewBlock> getViewList();
+
+        //这个函数是一个动态POI的刷新主函数,刷新策略在其中实现.但是具体的刷新行为在BlockRefresher中实现
+        public abstract void refresh();
+
+        //初始化的时候会在checkAndAddDynamicPOIView中把这个变量初始化完毕,不用关心
+        final public boolean isExist() {
+            return mExist;
+        }
+
+    }
+
+    /**
+     * 进入页面时刷新所有动态POI的显示,以后再有就在onPostExecute中单刷
+     */
     final void initDynamicPOIView(POI poi) {
         checkAndAddDynamicPOIView(poi);
         //normal的团展演惠等都是随着POI一块获取的,可以直接刷新出来
