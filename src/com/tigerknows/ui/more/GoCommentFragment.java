@@ -155,7 +155,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                     POI poi = mPOIList.get(position);
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, poi.getUUID(), poi.getName());
                     mSphinx.showView(R.id.view_poi_detail);
-                    mSphinx.getPOIDetailFragment().setData(poi);
+                    mSphinx.getPOIDetailFragment().setData(poi, position);
                 }
             }
         });

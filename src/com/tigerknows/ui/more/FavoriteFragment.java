@@ -339,7 +339,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                     if (poi != null) {
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem + ActionLog.FavoritePOI, position);
                         mSphinx.showView(R.id.view_poi_detail);
-                        mSphinx.getPOIDetailFragment().setData(poi);
+                        mSphinx.getPOIDetailFragment().setData(poi, position);
                     }
                 }
             }

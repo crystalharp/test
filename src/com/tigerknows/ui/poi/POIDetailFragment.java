@@ -56,6 +56,7 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataQuery;
+import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.DataOperation.POIQueryResponse;
@@ -907,7 +908,11 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         ShareAPI.share(mSphinx, poi, poi.getPosition(), mActionTag);
     }
     
-    public void setData(POI poi) {
+    protected void setData(POI poi) {
+        setData(poi, -1);
+    }
+    
+    public void setData(POI poi, int position) {
         mPOI = poi;
         if (poi == null) {
             return;
@@ -980,12 +985,26 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             mDynamicHotelPOI.initDate();
             mDynamicHotelPOI.queryStart(mDynamicHotelPOI.generateQuery(mPOI));
         }
+
+        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        criteria.put(FeedbackUpload.SERVER_PARAMETER_POI_RANK, String.valueOf(position));
+        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
+        criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, mDynamicHotelPOI.isExist() ? BaseQuery.SUB_DATA_TYPE_HOTEL : BaseQuery.SUB_DATA_TYPE_POI);
+        criteria.put(DataQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, mActionTag);
         
+        FeedbackUpload feedbackUpload = new FeedbackUpload(mSphinx);
+        feedbackUpload.setup(criteria);
         if (baseQueryList.isEmpty() == false) {
+            if (position >= 0) {
+                baseQueryList.add(feedbackUpload);
+            }
             mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
             mBaseQuerying = baseQueryList;
             mLoadingView.setVisibility(View.VISIBLE);
         } else {
+            if (position >= 0) {
+                mSphinx.queryStart(feedbackUpload);
+            }
             mLoadingView.setVisibility(View.GONE);
         }
         

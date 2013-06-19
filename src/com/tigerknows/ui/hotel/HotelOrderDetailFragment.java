@@ -63,6 +63,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     }
     
     private HotelOrder mOrder;
+    private int mPosition;
 
     // One minute for order update
 	private static final long ORDER_UPDATE_INTEVAL = 60*1000;
@@ -385,8 +386,9 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
      * Before showing the view, {@code setData()} first. 
      * @param order
      */
-    public void setData(HotelOrder order){
+    public void setData(HotelOrder order, int position){
     	mOrder = order;
+    	mPosition = position;
     	if(mOrder==null){
     		return;
     	}
@@ -596,7 +598,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             	// 一个数据操作的情况是： 再订一单。跳转到酒店POI详情界面。
             	POIQueryResponse response = (POIQueryResponse) baseQuery.getResponse();
             	POI hotelPoi = response.getPOI();
-                mSphinx.getPOIDetailFragment().setData(hotelPoi);
+                mSphinx.getPOIDetailFragment().setData(hotelPoi, mPosition);
                 mSphinx.showView(R.id.view_poi_detail);
 
             }//end API type decision
