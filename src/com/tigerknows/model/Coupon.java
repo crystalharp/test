@@ -95,7 +95,7 @@ public class Coupon extends BaseData{
 		this.qrImg = getStringFromData(FIELD_2D_CODE, reset ? null : this.qrImg);
 		if (this.qrImg != null){
 			TKDrawable tkDrawable = new TKDrawable();
-			tkDrawable.setUrl(qrImg);
+			tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(this.qrImg, Globals.getPicWidthHeight(TKConfig.PICTURE_COUPON_QRIMG)));
 			qrimgTKDrawable = tkDrawable;
 		}
 		this.logo = getStringFromData(FIELD_LOGO, reset ? null : this.logo);
