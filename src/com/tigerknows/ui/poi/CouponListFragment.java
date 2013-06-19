@@ -136,7 +136,7 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
                     Coupon data = (Coupon) adapterView.getAdapter().getItem(position);
                     if (data != null) {
-                        mSphinx.getCouponDetailFragment().setData(data);
+                        mSphinx.getCouponDetailFragment().setData(mCouponArrayList, position);
                         mSphinx.showView(R.id.view_coupon_detail);
                     }
                 }

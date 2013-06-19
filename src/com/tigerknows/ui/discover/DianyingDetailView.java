@@ -346,17 +346,6 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         
         mAddressView.setOnClickListener(this);
         mTelephoneView.setOnClickListener(this);
-        mBodyScv.setOnTouchListener(new OnTouchListener() {
-
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    mParentFragment.updateNextPrevControls();
-                    mParentFragment.scheduleDismissOnScreenControls();
-                }
-                return false;
-            }
-        });
     }
 
     @Override

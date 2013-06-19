@@ -7,7 +7,9 @@ package com.tigerknows.ui.discover;
 
 import java.util.List;
 
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
@@ -116,6 +118,17 @@ public class BaseDetailView extends LinearLayout {
     }
 
     protected void setListener() {
+        mBodyScv.setOnTouchListener(new OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    mParentFragment.updateNextPrevControls();
+                    mParentFragment.scheduleDismissOnScreenControls();
+                }
+                return false;
+            }
+        });
     }
     
     public void viewMap() {

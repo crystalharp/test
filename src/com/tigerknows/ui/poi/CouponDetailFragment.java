@@ -4,89 +4,59 @@
 
 package com.tigerknows.ui.poi;
 
-import android.graphics.drawable.Drawable;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ScrollView;
-import android.widget.TextView;
 
-import com.decarta.android.util.LogWrapper;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Coupon;
-import com.tigerknows.model.TKDrawable;
-import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.discover.BaseDetailFragment;
+import com.tigerknows.ui.discover.CycleViewPager;
+import com.tigerknows.ui.discover.CycleViewPager.CyclePagerAdapter;
 
 /**
  * @author Peng Wenyue
+ * </ul>
+ * 
  */
-public class CouponDetailFragment extends BaseFragment {
+public class CouponDetailFragment extends BaseDetailFragment implements View.OnClickListener, CycleViewPager.CycleOnPageChangeListener.IRefreshViews {
     
     public CouponDetailFragment(Sphinx sphinx) {
         super(sphinx);
         // TODO Auto-generated constructor stub
     }
-    
-    protected Runnable mLoadedDrawableRun = new Runnable() {
-            
-            @Override
-            public void run() {
-                mSphinx.getHandler().removeCallbacks(mActualLoadedDrawableRun);
-                mSphinx.getHandler().post(mActualLoadedDrawableRun);
-            }
-        };
-    
-    protected Runnable mActualLoadedDrawableRun = new Runnable() {
-        
-        @Override
-        public void run() {
-            refreshDrawable();
-        }
-    };
-    
-    private ScrollView mBodyScv;
 
-    private ImageView mHintImv;
-    
-    private TextView mNameTxv = null;
-
-    private TextView mDescriptionTxv = null;
-    
-    private TextView mHotTxv = null;
-
-    private TextView mDetailTxv = null;
-    
-    private ImageView mDetailImv = null;
-    
-    private View mLogoView = null;
-    
-    private ImageView mLogoImv = null;
-    
-    private TextView mRemarkTxv = null;
-    
-    private Coupon mData = null;
+    private List<Coupon> mDataList = null;
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.POIHomeInputQuery;
+        mActionTag = ActionLog.TuangouDetail;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
-        LogWrapper.d(TAG, "onCreateView()"+mActionTag);
-        
-        mRootView = mLayoutInflater.inflate(R.layout.poi_coupon_detail, container, false);
 
-        findViews();
-        setListener();
+        // Create the views used in the ViewPager
+        List<View> viewList = new ArrayList<View>();
+        CouponDetailView view;
+        view = new CouponDetailView(mSphinx, this);
+        viewList.add(view);
+        view = new CouponDetailView(mSphinx, this);
+        viewList.add(view);
+        view = new CouponDetailView(mSphinx, this);
+        viewList.add(view);
+        mCyclePagerAdapter = new CyclePagerAdapter(viewList);
         
-        return mRootView;
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -94,79 +64,47 @@ public class CouponDetailFragment extends BaseFragment {
         super.onResume();
         mTitleBtn.setText(R.string.coupon_detail);
         mRightBtn.setVisibility(View.INVISIBLE);
-
-        if (mData != null) {
-            refreshDrawable();
-        }
     }
     
-    @Override
-    public void onPause() {
-        super.onPause();
-    }
-
-    protected void findViews() {
-        mBodyScv = (ScrollView) mRootView.findViewById(R.id.body_scv);
-        mHintImv = (ImageView) mRootView.findViewById(R.id.hint_imv);
-        mNameTxv = (TextView) mRootView.findViewById(R.id.name_txv);
-        mDescriptionTxv = (TextView) mRootView.findViewById(R.id.description_txv);
-        mHotTxv = (TextView) mRootView.findViewById(R.id.hot_txv);
-        mDetailTxv = (TextView) mRootView.findViewById(R.id.detail_txv);
-        mLogoView = mRootView.findViewById(R.id.logo_view);
-        mLogoImv = (ImageView) mRootView.findViewById(R.id.logo_imv);
-        mDetailImv = (ImageView) mRootView.findViewById(R.id.detail_imv);
-        mRemarkTxv = (TextView) mRootView.findViewById(R.id.remark_txv);
-    }
-
-    protected void setListener() {
-    }
-    
-    public void setData(Coupon coupon) {
-        mData = coupon;
-        
-        mNameTxv.setText(mData.getListName());
-        mDescriptionTxv.setText(coupon.getDescription());
-        mHotTxv.setText(mSphinx.getString(R.string._used_sum_times, coupon.getHot()));
-        mDetailTxv.setText(coupon.getDetail());
-        
-        mRemarkTxv.setText(coupon.getRemark());
-        
-        mBodyScv.smoothScrollTo(0, 0);
-    }
-    
-    void refreshDrawable() {
-        refreshDrawable(mData.getHintPicTKDrawable(), mHintImv, R.drawable.icon, true);
-        refreshDrawable(mData.getDetailPicTKDrawable(), mDetailImv, R.drawable.bg_picture_coupon_detail, false);
-        boolean loadedLogo = refreshDrawable(mData.getLogoTKDrawable(), mLogoImv, R.drawable.icon, true);
-        if (loadedLogo) {
-            mLogoView.setVisibility(View.VISIBLE);
-        } else {
-            mLogoView.setVisibility(View.GONE);
-        }
-    }
-    
-    boolean refreshDrawable(TKDrawable tkDrawable, ImageView imageView, int defaultResId, boolean isVisibility) {
-        boolean result = false;
-        if (tkDrawable != null) {
-            Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, this.toString());
-            if(drawable != null) {
-                result = true;
-                imageView.setBackgroundDrawable(drawable);
-            } else if (defaultResId != R.drawable.icon) {
-                imageView.setBackgroundResource(defaultResId);
-            } else {
-                imageView.setBackgroundDrawable(null);
-            }
-            imageView.setVisibility(View.VISIBLE);
-        } else {
-            imageView.setBackgroundDrawable(null);
-            if (isVisibility) {
-                imageView.setVisibility(View.VISIBLE);
-            } else {
-                imageView.setVisibility(View.GONE);
+    public void setData(Coupon data) {
+        int position = 0;
+        for(int i = mDataList.size()-1; i >= 0; i--) {
+            if (data == mDataList.get(i)) {
+                position = i;
+                break;
             }
         }
+        setData(null, position);
+    }
+    
+    public void setData(List<Coupon> dataList, int position) {
+        if (dataList == null) {
+            dataList = mDataList;
+        }
         
-        return result;
+        this.mDataList = dataList;
+        setData(dataList.size(), position, null);
+        refreshViews(position);
+        setViewsVisibility(View.VISIBLE);
+    }
+    
+    public void refreshViews(int position) {
+        super.refreshViews(position);
+        CouponDetailView view;
+
+        view = (CouponDetailView) mCyclePagerAdapter.viewList.get((position) % mCyclePagerAdapter.viewList.size());
+        view.setData(mDataList.get(position), position);
+        view.onResume();
+        
+        if (position - 1 >= 0) {
+            view = (CouponDetailView) mCyclePagerAdapter.viewList.get((position-1) % mCyclePagerAdapter.viewList.size());
+            view.setData(mDataList.get(position-1), position-1);
+            view.onResume();
+        }
+        if (position + 1 < mDataList.size()) {
+            view = (CouponDetailView) mCyclePagerAdapter.viewList.get((position+1) % mCyclePagerAdapter.viewList.size());
+            view.setData(mDataList.get(position+1), position+1);
+            view.onResume();
+        }
     }
 }

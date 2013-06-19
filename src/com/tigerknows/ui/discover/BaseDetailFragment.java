@@ -281,7 +281,7 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     public void setPulledDynamicPOI(PulledDynamicPOI dynamicPOI){
     }
     
-    void setViewsVisibility(int visibility){
+    protected void setViewsVisibility(int visibility){
         for (View view : mCyclePagerAdapter.viewList) {
             view.setVisibility(visibility);
         }
