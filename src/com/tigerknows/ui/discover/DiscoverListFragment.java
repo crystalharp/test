@@ -610,7 +610,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             return;            
         }
         int size = getList().size();
-        int[] page = Utility.makePage(mResultLsv, size, firstVisiblePosition, lastVisiblePosition);
+        int[] page = Utility.makePagedIndex(mResultLsv, size, firstVisiblePosition);
         
         int minIndex = page[0];
         int maxIndex = page[1];

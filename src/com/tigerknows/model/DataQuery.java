@@ -464,6 +464,19 @@ public final class DataQuery extends BaseQuery {
             }
         }
     }
+    
+    @Override
+    protected void addUUIDParameter() {
+        if (isTurnPage == false) {
+            super.addUUIDParameter();
+        } else {
+            if (criteria.containsKey(SERVER_PARAMETER_UUID) && criteria.containsKey(SERVER_PARAMETER_INDEX)) {
+                String index = criteria.get(SERVER_PARAMETER_INDEX);
+                String uuid = criteria.get(SERVER_PARAMETER_UUID);
+                requestParameters.add(SERVER_PARAMETER_UUID, uuid+"_"+(Integer.parseInt(index)/TKConfig.getPageSize()));
+            }
+        }
+    }
 
     @Override
     protected void makeRequestParameters() throws APIException {

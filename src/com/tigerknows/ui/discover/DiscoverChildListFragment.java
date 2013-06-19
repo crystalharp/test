@@ -282,7 +282,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
 
     private void viewMap(int firstVisiblePosition, int lastVisiblePosition) {
         int size = getList().size();
-        int[] page = Utility.makePage(mResultLsv, size, firstVisiblePosition, lastVisiblePosition);        
+        int[] page = Utility.makePagedIndex(mResultLsv, size, firstVisiblePosition);        
         int minIndex = page[0];
         int maxIndex = page[1];
         List<POI> poiList = new ArrayList<POI>();

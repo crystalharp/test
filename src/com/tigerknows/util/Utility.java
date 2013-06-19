@@ -895,49 +895,25 @@ public class Utility {
         return formatter.toString();
     }
     
-    public static int[] makePage(SpringbackListView listView, int size, int firstVisiblePosition, int lastVisiblePosition) {
-        return makePage(listView, size, firstVisiblePosition, lastVisiblePosition, false);
-    }
-    
-    public static int[] makePage(SpringbackListView listView, int size, int firstVisiblePosition, int lastVisiblePosition, boolean isShowAPOI) {
-        if (listView.isFooterSpringback() && lastVisiblePosition > size-1) {
-            lastVisiblePosition -= 1;
-        }
-        if (isShowAPOI) {
-            firstVisiblePosition += 1;
-        }
+    public static int[] makePagedIndex(SpringbackListView listView, int size, int firstVisiblePosition) {
+        
+        int minIndex, maxIndex, firstPosition;
+        
         int configPageSize = TKConfig.getPageSize();
         
-        int pageSize = configPageSize/2;
-        int startPage = firstVisiblePosition/pageSize;
-        int endPage = (lastVisiblePosition/pageSize)+1;
-        int diff = endPage - startPage; 
-        if (diff < 2) {
-            if (lastVisiblePosition >= size-1) {
-                startPage-=(2-diff);
-            } else if (lastVisiblePosition < size-1) {
-                endPage+=(2-diff);
-            }
+        if (size <= configPageSize) {
+            minIndex = 0;
+            maxIndex = size-1;
+            firstPosition = firstVisiblePosition;
+        } else if (firstVisiblePosition + configPageSize - 1 < size) {
+            minIndex = firstVisiblePosition;
+            maxIndex = firstVisiblePosition + configPageSize - 1;
+            firstPosition = 0;
+        } else {
+            minIndex = size - configPageSize;
+            firstPosition = firstVisiblePosition - minIndex;
+            maxIndex = size -1;
         }
-        
-        if (startPage < 0) {
-            startPage = 0;
-        }
-        
-        int minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
-        int maxIndex = endPage * pageSize + (isShowAPOI ? 1 : 0);
-        
-        int firstPosition = (firstVisiblePosition-(isShowAPOI ? 1 : 0)+(startPage%2 != 0 ? pageSize : 0)) % configPageSize;
-        if (maxIndex > size && maxIndex > lastVisiblePosition && (minIndex-10) >= 0 &&
-                firstVisiblePosition >= minIndex - 10 && firstVisiblePosition+1 <= maxIndex - 10 &&
-                lastVisiblePosition >= minIndex - 10 && lastVisiblePosition+1 <= maxIndex - 10) {
-            minIndex -= 10;
-            maxIndex -= 10;
-            if (firstPosition + 10 < configPageSize) {
-                firstPosition += 10;
-            }
-        }
-        
         
         return new int[]{minIndex, maxIndex, firstPosition};
     }
