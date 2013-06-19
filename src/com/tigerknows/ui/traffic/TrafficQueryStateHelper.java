@@ -245,6 +245,7 @@ public class TrafficQueryStateHelper {
         mQueryFragment.mShadowWhite.setVisibility(View.GONE);
         mQueryFragment.mBackBtn.setVisibility(View.GONE);
         mQueryFragment.mSuggestLnl.setVisibility(View.GONE);
+        mQueryFragment.mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 182), 0, 0);
     }
     
     public void applyInputInnateProperty() {
