@@ -657,6 +657,11 @@ public class TKConfig {
      * 优惠券提示图片尺寸的Key
      */
     public static final int PICTURE_COUPON_HINT = 12;
+    
+    /**
+     * 优惠券二维码尺寸的Key
+     */
+    public static final int PICTURE_COUPON_QRIMG = 13;
 
     /**
      * 黑色

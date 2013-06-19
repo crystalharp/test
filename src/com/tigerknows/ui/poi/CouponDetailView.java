@@ -4,24 +4,33 @@
 
 package com.tigerknows.ui.poi;
 
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.graphics.drawable.Drawable;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnTouchListener;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.model.Coupon;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.ui.discover.BaseDetailView;
+import com.tigerknows.util.Utility;
 
 /**
  * @author Peng Wenyue
  */
-public class CouponDetailView extends BaseDetailView {
+public class CouponDetailView extends BaseDetailView implements View.OnClickListener {
     
     protected Runnable mLoadedDrawableRun = new Runnable() {
             
@@ -39,7 +48,6 @@ public class CouponDetailView extends BaseDetailView {
             refreshDrawable();
         }
     };
-    
     private ImageView mHintImv;
     
     private TextView mNameTxv = null;
@@ -55,6 +63,12 @@ public class CouponDetailView extends BaseDetailView {
     private View mLogoView = null;
     
     private ImageView mLogoImv = null;
+
+    private LinearLayout mQrimgLly;
+    
+    private Button mQrimgBtn;
+    
+    private ImageView mQrimgImv;
     
     private TextView mRemarkTxv = null;
     
@@ -75,12 +89,15 @@ public class CouponDetailView extends BaseDetailView {
         mDetailTxv = (TextView) findViewById(R.id.detail_txv);
         mLogoView = findViewById(R.id.logo_view);
         mLogoImv = (ImageView) findViewById(R.id.logo_imv);
+        mQrimgLly = (LinearLayout) findViewById(R.id.qrimg_lly);
+        mQrimgBtn = (Button) findViewById(R.id.qrimg_btn);
         mDetailImv = (ImageView) findViewById(R.id.detail_imv);
         mRemarkTxv = (TextView) findViewById(R.id.remark_txv);
     }
     
     protected void setListener() {
         super.setListener();
+        mQrimgBtn.setOnClickListener(this);
     }
     
     public void setData(Coupon coupon, int position) {
@@ -91,7 +108,11 @@ public class CouponDetailView extends BaseDetailView {
         mDescriptionTxv.setText(coupon.getDescription());
         mHotTxv.setText(mSphinx.getString(R.string._used_sum_times, coupon.getHot()));
         mDetailTxv.setText(coupon.getDetail());
-        
+        if(!coupon.getQrImg().isEmpty()){
+        	mQrimgLly.setVisibility(GONE);
+        }else{
+        	mQrimgLly.setVisibility(GONE);
+        }
         mRemarkTxv.setText(coupon.getRemark());
         
     }
@@ -105,9 +126,12 @@ public class CouponDetailView extends BaseDetailView {
         } else {
             mLogoView.setVisibility(View.GONE);
         }
+        if (mQrimgImv != null) {
+        	refreshDrawable(mData.getQrimgTKDrawable(), mQrimgImv, R.drawable.icon, true);
+        }
     }
     
-    boolean refreshDrawable(TKDrawable tkDrawable, ImageView imageView, int defaultResId, boolean isVisibility) {
+    public boolean refreshDrawable(TKDrawable tkDrawable, ImageView imageView, int defaultResId, boolean isVisibility) {
         boolean result = false;
         if (tkDrawable != null) {
             Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, mParentFragment.toString());
@@ -131,4 +155,22 @@ public class CouponDetailView extends BaseDetailView {
         
         return result;
     }
+
+	@Override
+	public void onClick(View v) {
+		if(v.getId() == R.id.qrimg_btn){
+			LayoutInflater inflater = (LayoutInflater) mSphinx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+			View view = inflater.inflate(R.layout.poi_coupon_qrimg, this, false);
+        	mQrimgImv = (ImageView)view.findViewById(R.id.qrimg_imv);
+        	refreshDrawable(mData.getQrimgTKDrawable(), mQrimgImv, R.drawable.icon, true);
+			Dialog dialog = Utility.showNormalDialog(mSphinx, null, null, view, null, null, null);
+			dialog.setOnDismissListener(new OnDismissListener() {
+				
+				@Override
+				public void onDismiss(DialogInterface dialog) {
+					mQrimgImv = null;
+				}
+			});
+		}
+	}
 }

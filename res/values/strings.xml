@@ -1111,4 +1111,6 @@
     <string name="coupon_from">来自</string>
     <string name="coupon_note">使用须知</string>
     <string name="coupon_no_result">使用须知</string>
+    <string name="qrimg_verify">二维码验证</string>
+    <string name="qrimg_title">请将二维码交给店员验证</string>
 </resources>
