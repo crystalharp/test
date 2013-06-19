@@ -60,7 +60,8 @@ public class Coupon extends BaseData{
     private String detailPic;
     private TKDrawable detailPicTKDrawable;
 	private String detail;
-	private String twoDCode;
+	private String qrImg;
+	private TKDrawable qrimgTKDrawable;
     private String logo;
     private TKDrawable logoTKDrawable;
     private String hintPic;
@@ -91,7 +92,12 @@ public class Coupon extends BaseData{
             detailPicTKDrawable = tkDrawable;
         }
 		this.detail = getStringFromData(FIELD_DETAIL, reset ? null : this.detail);
-		this.twoDCode = getStringFromData(FIELD_2D_CODE, reset ? null : this.twoDCode);
+		this.qrImg = getStringFromData(FIELD_2D_CODE, reset ? null : this.qrImg);
+		if (this.qrImg != null){
+			TKDrawable tkDrawable = new TKDrawable();
+			tkDrawable.setUrl(qrImg);
+			qrimgTKDrawable = tkDrawable;
+		}
 		this.logo = getStringFromData(FIELD_LOGO, reset ? null : this.logo);
         if (this.logo != null) {
             TKDrawable tkDrawable = new TKDrawable();
@@ -127,8 +133,8 @@ public class Coupon extends BaseData{
 		return detail;
 	}
 
-	public String getTwoDCode() {
-		return twoDCode;
+	public String getQrImg() {
+		return qrImg;
 	}
 
 	public String getRemark() {
@@ -149,6 +155,10 @@ public class Coupon extends BaseData{
 
     public TKDrawable getHintPicTKDrawable() {
         return hintPicTKDrawable;
+    }
+    
+    public TKDrawable getQrimgTKDrawable() {
+    	return qrimgTKDrawable;
     }
 
     public static XMapInitializer<Coupon> Initializer = new XMapInitializer<Coupon>() {

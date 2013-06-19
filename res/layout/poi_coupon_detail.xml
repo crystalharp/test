@@ -129,6 +129,7 @@
 	                    android:layout_gravity="center_horizontal"
 	                    android:contentDescription="@string/app_name"
 	                    android:background="@drawable/bg_picture_coupon_detail" 
+	                    android:visibility="gone"
 	                    />
 		            <TextView android:id="@+id/detail_txv"
 		                android:layout_width="fill_parent"
@@ -171,26 +172,26 @@
 		        </LinearLayout>
 	                
 	        </LinearLayout>
-            <LinearLayout 
+            <LinearLayout android:id="@+id/qrimg_lly"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:gravity="left|center_vertical"
                 android:background="@drawable/list_single"
-                android:visibility="gone"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
                 >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="left|center_vertical"
                     android:padding="8dp"
-                    android:text="@string/app_name"
+                    android:text="@string/qrimg_verify"
                     android:textColor="@color/black_dark"
-                    android:textSize="16sp" />
+                    android:textSize="18sp" />
 
-                <Button android:id="@+id/coupon_qrimg_btn"
+                <Button android:id="@+id/qrimg_btn"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/transparent"

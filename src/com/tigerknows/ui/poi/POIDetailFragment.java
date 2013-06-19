@@ -76,15 +76,50 @@ import com.tigerknows.util.Utility;
  * <ul>
  * 类型 价格 人气 口味 环境 服务 推荐菜
  * </ul>
- * 动态POI添加说明:
  *   由于动态POI在这页添加的越来越多,于是决定给这页添加一个机制,让这一页不再
  * 随着动态POI类型的增加而迅速的膨胀下去.
  *   经过两次调整,觉得这个结构应该可以用下去.[2013-06-16]
+ *   
+ * 动态POI添加指南:
+ *   1.新建一个类(如DynamicNormalPOI等)来继承DynamicPOIView作为该动态POI的主要控制类.
+ *   2.在本页定义一个该类变量,并在onCreatView的时候初始化.
+ *   3.在本页的initDynamicPOIEnv函数中添加其在动态POI中的type和该类实例化的对象
+ *   4.setData或者initDynamicPOIView中进行新动态POI的处理。若可以根据动态POI直接显示
+ * 就在initDynamicPOIView中直接调用该POI的refresh，需要再次查询则在setData中调用该类
+ * 的queryStart进行查询。
+ *   ！注意：在动态POI中要使用继承类queryStart方法，不要使用mSphinx.queryStart，这样
+ * 才能把其查询队列放到自己的OnPostExecute函数中处理.
+ *   5.给继承类创建ViewBlock对象，实现getViewList方法来返回这些ViewBlock对象。
+ *   6.给每个ViewBlock实现一个BlockRefresher对象，用来刷新那个ViewBlock。
+ *   7.实现继承类的refresh函数，可以根据不同状态来控制每个ViewBlock的刷新。
+ *   8.实现继承类的OnPostExecute函数，用来处理自己发出的各种请求。
+ *   
+ * 机制:
+ *   0.动态POI的显示使用了动态添加的方式,显示单位为ViewBlock,即一个显示区块.下面的类
+ * DPOIViewBlock为ViewBlock的控制类,包含一个ViewBlock可能用到的各种显示相关的方法.
+ *   每个ViewBlock中含有了它自己的Layout,mOwnLayout和它所需要添加到的layout,
+ * mBelongsLayout.这样可以在进入页面的时候把layout添加到对应的位置。
+ *   每个ViewBlock需要有一个刷新方法,即实例化时需要传入一个该实例的刷新接口函数,
+ * BlockRefresher.
+ *   动态POI使用一次添加多次刷新的方法,即检测到动态POI存在就把它对应的ViewBlock加入
+ * 到该页中,在数据变化的时候自己去刷新自己.
+ *   1.该页有两个空的LinearLayout,在页面setData的时候把POI含有的动态POI列表所对应的
+ * ViewBlock添加到本页中,并把Visibility设置为View.GONE.
+ *   2.ViewBlock的refresh函数会在刷新完后把该块的Visibility设置为View.VISIBLE
+ *   
  * 布局：
  *   为了让服务器可以控制动态POI的显示顺序，给服务器预留了排序接口，可以动态
  * 调整不同POI的顺序。为了动态调整的时候不同block的间隔不会出问题，现约定每个
  * block下面留8dp的padding，用来放动态Block的容器LinearLayout本身不带高度，这
  * 样调整顺序和不存在数据的时候都不会导致上下间距出问题
+ * 
+ * 注：
+ *   因为该页是个ScrollView，不能用ListView作为其子控件，一个个的实现list很麻烦，
+ * 于是写了一个LinearListView在com.tigerknows.widget中，可以用来实现类似于listview
+ * 的功能。
+ * 动态POI的重构记录在wiki上有,地址如下:
+ * http://192.168.11.147/wiki/index.php/Android的灵活动态布局-POI详情页重构
+ * http://192.168.11.147/wiki/index.php/重装上阵-POI详情页的动态POI方案改进
  */
 public class POIDetailFragment extends BaseFragment implements View.OnClickListener, OnTouchListener {
     
@@ -191,7 +226,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     }	
     //*******************DynamicPOI code start*************************
     
-    //存储动态POI的ViewBlock的控制信息
+    //存储当前页面POI所包含动态POI对应的ViewBlock
     List<DynamicPOIViewBlock> DPOIViewBlockList = new LinkedList<DynamicPOIViewBlock>();
 
     //目前可以处理的所有动态POI的Hashtab,key是它们的动态POI类型
