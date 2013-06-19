@@ -38,7 +38,6 @@ import com.tigerknows.model.TKWord;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.traffic.TrafficQueryFragment.QueryEditText;
 import com.tigerknows.ui.traffic.TrafficViewSTT.Event;
-import com.tigerknows.ui.traffic.TrafficViewSTT.State;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.StringArrayAdapter;
 import com.tigerknows.widget.SuggestArrayAdapter;
@@ -47,9 +46,6 @@ import com.tigerknows.widget.SuggestArrayAdapter;
  * 负责“交通频道首页”TrafficQueryFragment的[[控件事件处理]]
  * @author linqingzu
  * TODO:重新整理一下所有的listener
- *   RadioButton的触发不再用onCheckedChangedListener,改为使用OnClickedListener.
- * 使用RadioGroup的CheckedChanged触发会导致一些不期望的触发,比如进入到地图模式时
- * 取消上面button被check的状态
  */
 public class TrafficQueryEventHelper {
 	
@@ -60,23 +56,16 @@ public class TrafficQueryEventHelper {
 	InputEditTextSuggestWordTextWatcher startSuggestWatcher;
 	InputEditTextSuggestWordTextWatcher endSuggestWatcher;
 	InputEditTextSuggestWordTextWatcher buslineSuggestWatcher;
-	OnClickListener mNormalRadioOnClickedListener;
-	OnClickListener mInputRadioOnClickedListener;
-	OnClickListener mMapRadioOnClickedListener; 
 	
 	public TrafficQueryEventHelper(TrafficQueryFragment queryFragment) {
 		this.mQueryFragment = queryFragment;
 		startSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mStart, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC);
 		endSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mEnd, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC);
 		buslineSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mBusline, TrafficQuerySuggestWordHelper.TYPE_BUSLINE);
-        mNormalRadioOnClickedListener = new NormalRadioOnClickedListener();
-		mInputRadioOnClickedListener = null;
-		mMapRadioOnClickedListener = new MapRadioOnClickedListener();
 		
 		mQueryFragment.mStart.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mStart, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC));
 		mQueryFragment.mEnd.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mEnd, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC));
 		mQueryFragment.mBusline.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mBusline, TrafficQuerySuggestWordHelper.TYPE_BUSLINE));
-		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new RadioCheckedChangedListener());
 //	}
 	
 	/*
@@ -135,9 +124,7 @@ public class TrafficQueryEventHelper {
 //		clearListenersFromTargets();
 //		applyCommonListeners();
 		
-		for (int i = 0; i < mQueryFragment.mRadioGroup.getChildCount(); i++) {
-		    mQueryFragment.mRadioGroup.getChildAt(i).setOnClickListener(mNormalRadioOnClickedListener);
-		}
+		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new NormalOnCheckedChangeListener());
 	}
 //	
 	public void applyListenersInInputState() {
@@ -147,14 +134,12 @@ public class TrafficQueryEventHelper {
 //		applyCommonListeners();
 		
 		mQueryFragment.mBackBtn.setOnClickListener(new InputBackClickListener());
+		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new InputOnCheckedChangeListener());
 		mQueryFragment.mTrafficQueryBtn.setOnClickListener(new InputQueryClickListener());
 		mQueryFragment.mBuslineQueryBtn.setOnClickListener(new InputQueryClickListener());
 		mQueryFragment.mSuggestLsv.setOnItemClickListener(new InputSuggestOnItemClickListener());
 		mQueryFragment.mSuggestLsv.setOnTouchListener(new InputSuggestOnTouchListener());
 		mQueryFragment.mSuggestLnl.setOnTouchListener(new InputSuggestOnTouchListener());
-		for (int i = 0; i < mQueryFragment.mRadioGroup.getChildCount(); i++) {
-		    mQueryFragment.mRadioGroup.getChildAt(i).setOnClickListener(mInputRadioOnClickedListener);
-		}
 		
 //		addSuggestWatcherInInputState();
 	}
@@ -166,9 +151,7 @@ public class TrafficQueryEventHelper {
 //		applyCommonListeners();
 		
 		mQueryFragment.mBackBtn.setOnClickListener(new MapBackClickListener());
-		for (int i = 0; i < mQueryFragment.mRadioGroup.getChildCount(); i++) {
-		    mQueryFragment.mRadioGroup.getChildAt(i).setOnClickListener(mMapRadioOnClickedListener);
-		}
+		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new MapRadioOnCheckedChangeListener());
 //		mQueryFragment.mRootView.setOnTouchListener(new RootViewTouchListener());
 	}
 //	
@@ -310,54 +293,37 @@ public class TrafficQueryEventHelper {
 //		}
 //		
 //	}
-	
-	void checkRadioButton(int checkedId) {
-	    switch(checkedId){
-        case R.id.traffic_transfer_rbt:
-            if (mQueryFragment.mLogHelper.logForTabChange)
-                mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficTransferTab);
-            mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
-            break;
-        case R.id.traffic_drive_rbt:
-            if (mQueryFragment.mLogHelper.logForTabChange)
-                mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficDriveTab);
-            mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
-            break;
-        case R.id.traffic_walk_rbt:
-            if (mQueryFragment.mLogHelper.logForTabChange)
-                mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficWalkTab);
-            mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
-            break;
-        case R.id.traffic_busline_rbt:
-            if (mQueryFragment.mLogHelper.logForTabChange)
-                mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficBusLineTab);
-            mQueryFragment.changeToMode(TrafficQueryFragment.BUSLINE_MODE);
-        default:
-            break;
-        }
-    	mQueryFragment.checkQueryState();
-	}
-	
-	protected class NormalRadioOnClickedListener implements View.OnClickListener {
 
-        @Override
-        public void onClick(View v) {
-            mQueryFragment.mStateTransitionTable.event(Event.ClickRadioGroup);
-            mQueryFragment.mSphinx.showSoftInput(mQueryFragment.mSelectedEdt.getEdt().getInput());
-        }
-	    
-	}
-	
-	protected class RadioCheckedChangedListener implements RadioGroup.OnCheckedChangeListener {
-
+	protected class NormalOnCheckedChangeListener implements RadioGroup.OnCheckedChangeListener {
+    	
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
-            if (checkedId != -1) {
-                checkRadioButton(checkedId);
+        	switch(checkedId){
+            case R.id.traffic_transfer_rbt:
+            	if (mQueryFragment.mLogHelper.logForTabChange)
+            		mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficTransferTab);
+            	mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
+                break;
+            case R.id.traffic_drive_rbt:
+            	if (mQueryFragment.mLogHelper.logForTabChange)
+                    mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficDriveTab);
+            	mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
+                break;
+            case R.id.traffic_walk_rbt:
+            	if (mQueryFragment.mLogHelper.logForTabChange)
+                    mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficWalkTab);
+            	mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
+                break;
+            case R.id.traffic_busline_rbt:
+            	if (mQueryFragment.mLogHelper.logForTabChange)
+                    mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficBusLineTab);
+            	mQueryFragment.changeToMode(TrafficQueryFragment.BUSLINE_MODE);
+            default:
+                break;
             }
+        	mQueryFragment.checkQueryState();
         }
-	    
-	}
+    }
 
 	protected class EditTextTouchListener implements OnTouchListener {
 		
@@ -428,19 +394,20 @@ public class TrafficQueryEventHelper {
 		
 	}
 	
-	protected class InputRadioOnClickedListener implements View.OnClickListener {
-
+	protected class InputOnCheckedChangeListener extends NormalOnCheckedChangeListener {
+    	
         @Override
-        public void onClick(View v) {
-        	/*
-        	 * 切换TAB时, 若三个输入框都没有获得焦点, 则隐藏输入法
-        	 */
-//			if (!mQueryFragment.mStart.getEdt().isFocused() && !mQueryFragment.mEnd.getEdt().isFocused() 
-//					&& !mQueryFragment.mBusline.getEdt().isFocused()) {
-//				mQueryFragment.mSphinx.hideSoftInput();
-//			}
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+        	super.onCheckedChanged(group, checkedId);
+        	
+			/*
+			 * 切换TAB时, 若三个输入框都没有获得焦点, 则隐藏输入法
+			 */
+			if (!mQueryFragment.mStart.getEdt().isFocused() && !mQueryFragment.mEnd.getEdt().isFocused() 
+					&& !mQueryFragment.mBusline.getEdt().isFocused()) {
+				mQueryFragment.mSphinx.hideSoftInput();
+			}
         }
-	    
 	}
 
 	protected class InputQueryClickListener implements OnClickListener {
@@ -550,14 +517,16 @@ public class TrafficQueryEventHelper {
 		
 	}
 	
-	protected class MapRadioOnClickedListener implements View.OnClickListener {
-
-        @Override
-        public void onClick(View v) {
-            mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.ClickRadioGroup);
-            mQueryFragment.mSphinx.showSoftInput(mQueryFragment.mSelectedEdt.getEdt().getInput());
+	protected class MapRadioOnCheckedChangeListener extends NormalOnCheckedChangeListener {
+		
+		@Override
+        public void onCheckedChanged(RadioGroup group, int checkedId) {
+        	super.onCheckedChanged(group, checkedId);
+        	LogWrapper.d("conan", "RadioGroup checkedid:" + checkedId);
+        	if (checkedId != -1) {
+        	    mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.ClickRadioGroup);
+        	}
         }
-	    
 	}
 
 	protected class SelectPointLeftBtnOnClickListener implements OnClickListener {
