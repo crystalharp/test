@@ -3,19 +3,10 @@
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/bg_discover" >
-    <include
-        android:id="@+id/title_view"
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        layout="@layout/hotel_hot_line"
-        />
     <FrameLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_below="@id/title_view"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp" >
+        android:layout_below="@id/title_view" >
 
         <include
             android:id="@+id/empty_view"
@@ -37,8 +28,9 @@
             android:divider="@color/transparent"
             android:dividerHeight="12dp"
             android:fadingEdge="none"
+            android:listSelector="@color/transparent"
             android:footerDividersEnabled="false"
-            android:scrollingCache="false" />
+            android:scrollingCache="false"/>
     </FrameLayout>
 
 </RelativeLayout>

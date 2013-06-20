@@ -80,7 +80,7 @@ public class SpringbackListView extends ListView {
         headerContentHeight = headerView.getMeasuredHeight();  
         headerContentWidth = headerView.getMeasuredWidth();  
   
-        headerView.setPadding(0, -1 * headerContentHeight, 0, 0);  
+        headerView.setPadding(0, 0, 0, 0);  
         headerView.invalidate();  
   
         super.addHeaderView(headerView);
