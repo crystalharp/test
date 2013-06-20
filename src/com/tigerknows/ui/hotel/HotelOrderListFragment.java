@@ -104,17 +104,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
      */
     private LinkedList<HotelOrder> ordersQuerying = new LinkedList<HotelOrder>();
     
-    private Runnable mTurnPageRun = new Runnable() {
-        
-        @Override
-        public void run() {
-            if (mResultLsv.getLastVisiblePosition() >= mResultLsv.getCount()-2 &&
-                    mResultLsv.getFirstVisiblePosition() == 0) {
-                mResultLsv.getView(false).performClick();
-            }
-        }
-    };
-    
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -208,7 +197,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     private void reloadOrders(){
             mQueryingView.setVisibility(View.VISIBLE);
             mEmptyView.setVisibility(View.INVISIBLE);
-            mResultLsv.setVisibility(View.INVISIBLE);
+//            mResultLsv.setVisibility(View.INVISIBLE);
         	new LoadThread(0, TKConfig.getPageSize()).start();
     }
     
@@ -384,7 +373,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 				mResultLsv.setFooterSpringback(false);
 			}
 			
-			mResultLsv.setVisibility(View.VISIBLE);
+//			mResultLsv.setVisibility(View.VISIBLE);
 			if(ordersSize > 0){
 				mQueryingView.setVisibility(View.INVISIBLE);
 				mEmptyView.setVisibility(View.INVISIBLE);
