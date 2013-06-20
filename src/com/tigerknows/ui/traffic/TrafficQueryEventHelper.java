@@ -589,6 +589,7 @@ public class TrafficQueryEventHelper {
                         break;
                     case 1:
                         //地图选点
+                        mQueryFragment.mMapLocationHelper.checkMapCenterInCity();
                         performMapSelectPoint(queryEdt);
                         break;
                     case 2:
