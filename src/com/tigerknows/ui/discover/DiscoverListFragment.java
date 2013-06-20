@@ -616,7 +616,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         int maxIndex = page[1];
         List<BaseData> dataList = new ArrayList<BaseData>();
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
-            for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mTuangouList.size(); minIndex++) {
+            for(;minIndex >= 0 && minIndex <= maxIndex && minIndex < mTuangouList.size(); minIndex++) {
                 Tuangou data = mTuangouList.get(minIndex);
                 dataList.add(data);
             }
@@ -624,13 +624,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         } else if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
             
         } else if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
-            for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mYanchuList.size(); minIndex++) {
+            for(;minIndex >= 0 && minIndex <= maxIndex && minIndex < mYanchuList.size(); minIndex++) {
                 Yanchu data = mYanchuList.get(minIndex);
                 dataList.add(data);
             }
             mSphinx.getYanchuDetailFragment().setData(mYanchuList, page[2], DiscoverListFragment.this);
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
-            for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mZhanlanList.size(); minIndex++) {
+            for(;minIndex >= 0 && minIndex <= maxIndex && minIndex < mZhanlanList.size(); minIndex++) {
                 Zhanlan data = mZhanlanList.get(minIndex);
                 dataList.add(data);
             }
