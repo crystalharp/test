@@ -24,12 +24,14 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
+import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -131,7 +133,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         hotelOrderAdapter = new HotelOrderAdapter(mContext, orders);
         mResultLsv.setHeaderSpringback(false);
         mResultLsv.setAdapter(hotelOrderAdapter);
-        
+        mResultLsv.changeHeaderViewByState(true, SpringbackListView.PULL_TO_REFRESH);
         mEmptyTxv.setText( mContext.getString(R.string.no_order) );
         mEmptyImv.setBackgroundResource(R.drawable.bg_order_empty);
         
@@ -167,7 +169,10 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         mQueryingView = mRootView.findViewById(R.id.querying_view);
         View v = mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(v);
-        v = mLayoutInflater.inflate(R.layout.hotel_order_list_empty_header_or_footer, null);
+        v = mLayoutInflater.inflate(R.layout.hotel_hot_line, null);
+        LinearLayout.LayoutParams params = (LayoutParams) v.findViewById(R.id.service_hotline_view).getLayoutParams();//set(0, Util.dip2px(Globals.g_metrics.density, 8), 0, 0);
+        params.topMargin = Util.dip2px(Globals.g_metrics.density, 8);
+        v.findViewById(R.id.service_hotline_view).setLayoutParams(params);
         mResultLsv.addHeaderView(v);
         mServiceHotlineView = mRootView.findViewById(R.id.service_hotline_view);
         mServiceHotlineTxv = (TextView) mRootView.findViewById(R.id.service_hotline_txv);
@@ -379,15 +384,15 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 				mResultLsv.setFooterSpringback(false);
 			}
 			
+			mResultLsv.setVisibility(View.VISIBLE);
 			if(ordersSize > 0){
-				mResultLsv.setVisibility(View.VISIBLE);
 				mQueryingView.setVisibility(View.INVISIBLE);
 				mEmptyView.setVisibility(View.INVISIBLE);
 				hotelOrderAdapter.notifyDataSetChanged();
 //				launchStateQuery();
 			}else{
 				System.out.println("No orders");
-				mResultLsv.setVisibility(View.INVISIBLE);
+//				mResultLsv.setVisibility(View.INVISIBLE);
 				mQueryingView.setVisibility(View.INVISIBLE);
 				mEmptyView.setVisibility(View.VISIBLE);
 			}
