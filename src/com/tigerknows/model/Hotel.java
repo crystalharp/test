@@ -15,6 +15,8 @@ import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.Utility;
 
+import android.graphics.drawable.Drawable;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +73,11 @@ public class Hotel extends XMapData {
     // 0x53 x_string 列表页图片的url
     private TKDrawable imageThumb;
     private String imageThumbUrl;
+    
+    /**
+     * 仅用于绘制infowindow时
+     */
+    private Drawable imageInfoWindow;
 
     // 0x54 x_array<x_map> 酒店相关的所有x_array<图片>
     private List<HotelTKDrawable> hotelTKDrawableList;
@@ -205,6 +212,14 @@ public class Hotel extends XMapData {
 
     public TKDrawable getImageThumb() {
         return imageThumb;
+    }
+
+    public Drawable getImageInfoWindow() {
+        return imageInfoWindow;
+    }
+
+    public void setImageInfoWindow(Drawable imageInfoWindow) {
+        this.imageInfoWindow = imageInfoWindow;
     }
 
     public List<HotelTKDrawable> getHotelTKDrawableList() {

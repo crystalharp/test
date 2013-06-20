@@ -21,6 +21,7 @@ import android.graphics.Bitmap;
 import android.graphics.RectF;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.AnimationDrawable;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -2270,13 +2271,16 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     TKDrawable tkDrawable = hotel.getImageThumb();
                     Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, getResultMapFragment().toString());
                     if(drawable != null) {
-                        //To prevent the problem of size change of the same pic 
-                        //After it is used at a different place with smaller size
-                        if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
-                            pictureImv.setBackgroundDrawable(null);
+                        Drawable imageInfoWindow = hotel.getImageInfoWindow(); 
+                        if (imageInfoWindow == null) {
+                            BitmapDrawable bm = (BitmapDrawable) drawable;
+                            imageInfoWindow = new BitmapDrawable(bm.getBitmap());
+                            hotel.setImageInfoWindow(imageInfoWindow);
                         }
-                        pictureImv.setBackgroundDrawable(drawable);
-                    } else {
+                        pictureImv.setBackgroundDrawable(imageInfoWindow);
+                    }
+                    
+                    if (hotel.getImageInfoWindow() == null) {
                         pictureImv.setBackgroundResource(R.drawable.bg_picture_hotel);
                     }
                     
