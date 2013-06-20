@@ -63,9 +63,13 @@ public class HintActivity extends BaseActivity implements View.OnClickListener {
             String key = mKeyList[mIndex];
             int resId = mLayoutResIdList[mIndex];
             mIndex++;
-            TKConfig.setPref(mThis, key, "1");
-            mRootView.removeAllViews();
-            mLayoutInflater.inflate(resId, mRootView, true);
+            if (TKConfig.getPref(mThis, key) != null) {
+                showHint();
+            } else {
+                TKConfig.setPref(mThis, key, "1");
+                mRootView.removeAllViews();
+                mLayoutInflater.inflate(resId, mRootView, true);
+            }
         }
     }
 

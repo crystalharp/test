@@ -1830,7 +1830,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (null != mMapView && null != mMapEngine) {
             Position position = mMapView.getCenterPosition();
             // 地图显示的位置在当前城市范围内才更新最后一次位置信息
-            CityInfo cityInfo = Globals.getCurrentCityInfo();
+            CityInfo cityInfo = Globals.getCurrentCityInfo(false);
             if (cityInfo != null
                     && mMapEngine.getCityId(position) == cityInfo.getId()) {
                 int zoom = (int)mMapView.getZoomLevel();
