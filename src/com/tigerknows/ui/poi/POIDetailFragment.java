@@ -232,9 +232,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     //目前可以处理的所有动态POI的Hashtab,key是它们的动态POI类型
     Hashtable<String, DynamicPOIView> DPOIViewTable = new Hashtable<String, DynamicPOIView>();
 
-    //当前页面已经存在的View,用于多种动态POI共用同一DynamicPOIView的判断
-    List<DynamicPOIView> existView = new ArrayList<DynamicPOIView>();
-
     //目前可以处理的动态POI类型
     private void initDynamicPOIEnv(){
         DPOIViewTable.put(DynamicPOI.TYPE_HOTEL, mDynamicHotelPOI);
@@ -251,7 +248,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
      */
     private void checkAndAddDynamicPOIView(POI poi) {
         List<DynamicPOI> list = poi.getDynamicPOIList();
-        existView.clear();
         for (DynamicPOIView dpView : DPOIViewTable.values()) {
             dpView.mExist = false;
         }
@@ -263,11 +259,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         for (DynamicPOI dynamicPOI : list) {
             String dataType = dynamicPOI.getType();
             if (!DPOIViewTable.containsKey(dataType) || 
-                    existView.contains(DPOIViewTable.get(dataType))) {
+                    DPOIViewTable.get(dataType).isExist()) {
                 continue;
             }
             DynamicPOIView dpView = DPOIViewTable.get(dataType);
-            existView.add(dpView);
             dpView.mExist = true;
             DPOIViewTable.get(dataType).initData(poi);
             DPOIViewBlockList.addAll(dpView.getViewList());
@@ -392,7 +387,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     final void initDynamicPOIView(POI poi) {
         checkAndAddDynamicPOIView(poi);
         //normal的团展演惠等都是随着POI一块获取的,可以直接刷新出来
-        if (existView.contains(mDynamicNormalPOI)) {
+        if (mDynamicNormalPOI.isExist()) {
             mDynamicNormalPOI.refresh();
         }
     }
