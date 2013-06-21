@@ -214,12 +214,14 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
             } else if (BaseQuery.DATA_TYPE_COUPON.equals(dataType)) {
                 // 1 coupon, d operation
                 if (DPOIMasterUid != null && !TextUtils.isEmpty(DPOIMasterUid)) {
+                	mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.POIDetailCouponSingle);
                     criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, Coupon.NEED_FIELD);
                     dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mPOIDetailFragment.getId(), mPOIDetailFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
                     list.add(dataOperation);
                     queryStart(list);
                 // some coupons, s operation
                 } else {
+                	mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag + ActionLog.POIDetailCouponMulti);
                     mSphinx.showView(R.id.view_coupon_list);
                     mSphinx.getCouponListFragment().setData(mPOI);
                 }
