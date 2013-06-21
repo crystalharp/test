@@ -181,8 +181,8 @@ public class ActionLog {
     public static final String POIDetailHotelImage = "BX";
     public static final String POIDetailHotelIntro = "BY";
     public static final String POIDetailHotelFailRetry = "BZ";
-    public static final String POIDetailCouponSingle = "B0";
-    public static final String POIDetailCouponMulti = "B1";
+    public static final String POIDetailCouponSingle = "CA";
+    public static final String POIDetailCouponMulti = "CB";
 
     // POI点评列表页
     public static final String POICommentList = "AE";
