@@ -374,6 +374,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         String result = null;
         calendar.add(Calendar.DAY_OF_YEAR, add);
         result = monthDayFormat.format(calendar.getTime());
+        result += " ";
         if (add < 3) {
             result += days[add];
         } else {
@@ -388,6 +389,7 @@ public class DateListView extends LinearLayout implements View.OnClickListener {
         int month = calendar.get(Calendar.MONTH);
         calendar.add(Calendar.DAY_OF_YEAR, add);
         result = (month == calendar.get(Calendar.MONTH) ? dayFormat.format(calendar.getTime()) : monthDayFormat.format(calendar.getTime()) ) + context.getString(R.string.hotel_checkout_);
+        result += " ";
         result += add;
         result += context.getString(R.string.night);
         calendar.add(Calendar.DAY_OF_YEAR, -add);
