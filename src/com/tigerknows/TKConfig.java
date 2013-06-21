@@ -777,11 +777,14 @@ public class TKConfig {
                 WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
                 if (wifiManager != null) {
                     WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                    String macAddress = wifiInfo == null ? sSPREADER : wifiInfo.getMacAddress();
-                    sIMEI = macAddress;
-                } else {
-                    sIMEI = "null";
+                    if (wifiInfo != null) {
+                        sIMEI = wifiInfo.getMacAddress();
+                    }
                 }
+            }
+            
+            if (sIMEI == null) {
+                sIMEI = "null";
             }
         }
     }

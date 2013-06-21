@@ -148,7 +148,8 @@ public class TrafficQueryMapAndLocationHelper {
         } else {
             mQueryFragment.mSphinx.getMapView().centerOnPosition(result.getPosition(), result.getLevel());
         }
-    	resetCurrentMapInfo(result.getPosition(), result.getLevel());
+        
+        mMapCityInfo = result.clone();
     }
     
     /**

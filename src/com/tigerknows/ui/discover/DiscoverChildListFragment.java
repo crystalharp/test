@@ -287,12 +287,12 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         int maxIndex = page[1];
         List<POI> poiList = new ArrayList<POI>();
         if (BaseQuery.DATA_TYPE_FENDIAN.equals(mDataType)) {
-            for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mFendianList.size(); minIndex++) {
+            for(;minIndex >= 0 && minIndex <= maxIndex && minIndex < mFendianList.size(); minIndex++) {
                 Fendian fendian = mFendianList.get(minIndex);
                 poiList.add(fendian.getPOI(POI.SOURCE_TYPE_FENDIAN));
             }
         } else if (BaseQuery.DATA_TYPE_YINGXUN.equals(mDataType)) {
-            for(;minIndex >= 0 && minIndex < maxIndex && minIndex < mYingxunList.size(); minIndex++) {
+            for(;minIndex >= 0 && minIndex <= maxIndex && minIndex < mYingxunList.size(); minIndex++) {
                 Yingxun yingxun = mYingxunList.get(minIndex); 
                 poiList.add(yingxun.getPOI(POI.SOURCE_TYPE_YINGXUN));
             }

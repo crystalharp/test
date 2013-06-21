@@ -287,8 +287,8 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                 Coupon coupon = ((CouponQueryResponse) response).getCoupon();
                 List<Coupon> list = new ArrayList<Coupon>();
                 list.add(coupon);
-                mSphinx.getCouponDetailFragment().setData(list, 0);
                 mSphinx.showView(R.id.view_coupon_detail);
+                mSphinx.getCouponDetailFragment().setData(list, 0);
             }
         }
 		

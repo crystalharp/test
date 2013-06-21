@@ -473,7 +473,7 @@ public final class DataQuery extends BaseQuery {
             if (criteria.containsKey(SERVER_PARAMETER_UUID) && criteria.containsKey(SERVER_PARAMETER_INDEX)) {
                 String index = criteria.get(SERVER_PARAMETER_INDEX);
                 String uuid = criteria.get(SERVER_PARAMETER_UUID);
-                requestParameters.add(SERVER_PARAMETER_UUID, uuid+"_"+(Integer.parseInt(index)/TKConfig.getPageSize()));
+                requestParameters.add(SERVER_PARAMETER_UUID, uuid+"_"+index);
             }
         }
     }
