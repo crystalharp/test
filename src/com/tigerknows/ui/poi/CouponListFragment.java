@@ -93,7 +93,7 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.MyComment;
+        mActionTag = ActionLog.CouponList;
     }
 
     @Override

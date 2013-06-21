@@ -181,6 +181,8 @@ public class ActionLog {
     public static final String POIDetailHotelImage = "BX";
     public static final String POIDetailHotelIntro = "BY";
     public static final String POIDetailHotelFailRetry = "BZ";
+    public static final String POIDetailCouponSingle = "B0";
+    public static final String POIDetailCouponMulti = "B1";
 
     // POI点评列表页
     public static final String POICommentList = "AE";
@@ -223,6 +225,13 @@ public class ActionLog {
     
     // POI详情地图页
     public static final String POIDetailMap = "AL";
+    
+    // 优惠券列表页
+    public static final String CouponList = "AM";
+    
+    // 优惠券详情页
+    public static final String CouponDetail = "AN";
+    public static final String CouponQrimg = "BA";
 
     // 更多频道
     public static final String More = "CA";
