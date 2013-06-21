@@ -38,7 +38,7 @@ public class CouponDetailFragment extends BaseDetailFragment implements View.OnC
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.TuangouDetail;
+        mActionTag = ActionLog.CouponDetail;
     }
 
     @Override

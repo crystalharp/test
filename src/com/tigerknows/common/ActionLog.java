@@ -223,6 +223,13 @@ public class ActionLog {
     
     // POI详情地图页
     public static final String POIDetailMap = "AL";
+    
+    // 优惠券列表页
+    public static final String CouponList = "AM";
+    
+    // 优惠券详情页
+    public static final String CouponDetail = "AN";
+    public static final String CouponQrimg = "BA";
 
     // 更多频道
     public static final String More = "CA";

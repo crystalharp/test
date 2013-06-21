@@ -22,6 +22,7 @@ import android.widget.TextView;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Coupon;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.ui.discover.BaseDetailView;
@@ -159,6 +160,7 @@ public class CouponDetailView extends BaseDetailView implements View.OnClickList
 	@Override
 	public void onClick(View v) {
 		if(v.getId() == R.id.qrimg_btn){
+			mActionLog.addAction(mActionTag + ActionLog.CouponQrimg);
 			LayoutInflater inflater = (LayoutInflater) mSphinx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 			View view = inflater.inflate(R.layout.poi_coupon_qrimg, this, false);
         	mQrimgImv = (ImageView)view.findViewById(R.id.qrimg_imv);
