@@ -327,6 +327,23 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mRetryView = (RetryView) mRootView.findViewById(R.id.retry_view);
     }
 
+    private void updateChangeciOption(List<Dianying> list){
+        int changciOption = Changci.OPTION_DAY_TODAY;
+        for(Filter filter : mFilterList) {
+            if (filter.getKey() == FilterCategoryOrder.FIELD_LIST_CATEGORY) {
+                String str = getSelectFilterName(filter);
+                if (str.contains(mSphinx.getString(R.string.tomorrow_char))) {
+                    changciOption = Changci.OPTION_DAY_TOMORROW;
+                } else if (str.contains(mSphinx.getString(R.string.after_tomorrow_char))) {
+                    changciOption = Changci.OPTION_DAY_AFTER_TOMORROW;
+                }
+            }
+        }
+        for (int i = 0, size=list.size(); i < size; i++) {
+        	list.get(i).getYingxun().setChangciOption(changciOption);
+		}
+    }
+    
     protected void setListener() {
         mRetryView.setCallBack(this, mActionTag);
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -349,20 +366,6 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                         	mSphinx.getYanchuDetailFragment().setData(mYanchuList, position, DiscoverListFragment.this);
                         } else if (object instanceof Dianying){
                             Dianying tagret = (Dianying) object;
-                            int changciOption = Changci.OPTION_DAY_TODAY;
-                            for(Filter filter : mFilterList) {
-                                if (filter.getKey() == FilterCategoryOrder.FIELD_LIST_CATEGORY) {
-                                    String str = getSelectFilterName(filter);
-                                    if (str.contains(mSphinx.getString(R.string.tomorrow_char))) {
-                                        changciOption = Changci.OPTION_DAY_TOMORROW;
-                                    } else if (str.contains(mSphinx.getString(R.string.after_tomorrow_char))) {
-                                        changciOption = Changci.OPTION_DAY_AFTER_TOMORROW;
-                                    }
-                                }
-                            }
-                            for (int i = 0, size=getList().size(); i < size; i++) {
-								((Dianying)getList().get(i)).getYingxun().setChangciOption(changciOption);
-							}
 //                            tagret.getYingxun().setOrderNumber(position+1);
                             mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
                         	mSphinx.showView(R.id.view_discover_dianying_detail);
@@ -1088,6 +1091,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 makeFilterArea(dataQuery);
                 
                 List<Dianying> list = dianyingResponse.getList().getList();
+                updateChangeciOption(list);
                 for(Dianying item : list) {
                     item.setFilterArea(mFilterArea);
                 }
