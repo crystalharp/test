@@ -172,10 +172,13 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
             
             @Override
             public void onRefresh(boolean isHeader) {
+            	System.out.println("Onfresh isheader: " + isHeader);
 				if(isHeader){
+					mResultLsv.onRefreshComplete(isHeader);
+					mResultLsv.changeHeaderViewByState(true, SpringbackListView.PULL_TO_REFRESH);
 					return;
 				}
-                turnPage();
+				turnPage();
             }
         });
         
@@ -355,7 +358,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 		@Override
 		public void handleMessage(Message msg) {
 			super.handleMessage(msg);
-			System.out.println("Handle msg");
 			mResultLsv.onRefreshComplete(false);
 			
 			List<HotelOrder> ordersLoaded = (List<HotelOrder>) msg.obj;

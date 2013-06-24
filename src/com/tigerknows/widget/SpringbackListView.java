@@ -114,7 +114,8 @@ public class SpringbackListView extends ListView {
         });
     }
   
-    public boolean onTouchEvent(MotionEvent event) {  
+    public boolean onTouchEvent(MotionEvent event) {
+    	LogWrapper.i(TAG, "OnTouch action: " + event.getAction() + " stateHeader: " + stateHeader + " stateFooter: " + stateFooter);
         switch (event.getAction()) {  
         case MotionEvent.ACTION_DOWN:  
             if ((headerSpringback && getFirstVisiblePosition() == 0) && !isRecoredHeader) {  
@@ -124,8 +125,9 @@ public class SpringbackListView extends ListView {
             if ((footerSpringback && getLastVisiblePosition() == getCount()-1) && !isRecoredFooter) {  
                 startY = (int) event.getY();  
                 isRecoredFooter = true;  
-                LogWrapper.d(TAG, "记录按下时的位置:"+event.getY());  
-            }  
+            }
+            LogWrapper.d(TAG, "记录按下时的位置:"+event.getY());
+            LogWrapper.i(TAG, "isRecoredHeader: " + isRecoredHeader + " isRecoredFooter: " + isRecoredFooter);
             break;  
   
         case MotionEvent.ACTION_UP:  
@@ -235,6 +237,7 @@ public class SpringbackListView extends ListView {
                     if (tempY - startY > 0) {  
                         stateHeader = PULL_TO_REFRESH;  
                         changeHeaderViewByState();  
+                        LogWrapper.d(TAG, "由Done状态转变到下拉刷新状态");  
                     }  
                 }  
   
@@ -335,11 +338,16 @@ public class SpringbackListView extends ListView {
     private void changeHeaderViewByState() {  
         
         if (headerView != null) {
+        	LogWrapper.d(TAG,"Current header state: " + stateHeader);
             switch (stateHeader) {  
                 case RELEASE_TO_REFRESH:  
+                	headerView.setPadding(0, 0, 0, 0);  
+                    headerView.invalidate();  
                     break;  
                     
                 case PULL_TO_REFRESH:  
+                	headerView.setPadding(0, 0, 0, 0);  
+                    headerView.invalidate();  
                     break;  
                     
                 case REFRESHING:  
@@ -357,6 +365,7 @@ public class SpringbackListView extends ListView {
                     headerView.invalidate();  
                     break;
             }  
+        	
         }
         if (footerView != null) {
             switch (stateFooter) {  
