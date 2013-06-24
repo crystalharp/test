@@ -172,7 +172,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
             
             @Override
             public void onRefresh(boolean isHeader) {
-            	System.out.println("Onfresh isheader: " + isHeader);
 				if(isHeader){
 					mResultLsv.onRefreshComplete(isHeader);
 					mResultLsv.changeHeaderViewByState(true, SpringbackListView.PULL_TO_REFRESH);
