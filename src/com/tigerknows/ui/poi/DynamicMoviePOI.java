@@ -128,6 +128,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
                 for(int i = 0; i < SHOW_DYNAMIC_YINGXUN_MAX; i++) {
                     mShowingList.add(mAllList.get(i));
                 }
+                mDynamicDianyingMoreView.setVisibility(View.VISIBLE);
             } else {
                 mShowingList.addAll(mAllList);
             }
