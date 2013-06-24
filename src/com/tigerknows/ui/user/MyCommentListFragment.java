@@ -377,7 +377,7 @@ public class MyCommentListFragment extends BaseFragment {
                     }
                 }
                 mCommentAdapter.notifyDataSetChanged();
-                if (list.size() >= TKConfig.getPageSize()) {
+                if (list != null && list.size() >= TKConfig.getPageSize()) {
                     mCommentLsv.setFooterSpringback(true);
                 }
             } else if (commentList != null && commentList.getList() != null && commentList.getList().size() > 0) {
@@ -387,7 +387,7 @@ public class MyCommentListFragment extends BaseFragment {
                     mCommentArrayList.addAll(list);
                 }
                 mCommentAdapter.notifyDataSetChanged();
-                if (list.size() >= TKConfig.getPageSize()) {
+                if (list != null && list.size() >= TKConfig.getPageSize()) {
                     mCommentLsv.setFooterSpringback(true);
                 }
             }
