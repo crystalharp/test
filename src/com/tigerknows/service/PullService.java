@@ -71,6 +71,12 @@ import java.util.Map;
  *   RadarReceiver收到定时器的Intent调用，启动PullService
  *   PullService会获取当前定位信息并连接服务器查询是否有新的推送信息，如果有则从服务器获取下来发送
  *   本地推送信息。
+ * 4.联网触发机制
+ *   经过一段时间运营之后发现收不到推送消息的为数不少,且原因可能是网络不好.于是决定加入联网触发机制.
+ *   联网触发作为一种模式和原有的定时器逻辑为互斥的关系,定时器触发失败(一天累计三次重试失败)后就会
+ *   变为联网触发模式.
+ *   联网触发模式下不再走定时器逻辑,重新启动之类的行为也不会初始化定时器,只是在每次联网成功时设置
+ *   一个5分钟后的定时器
  *
  */
 public class PullService extends Service {
@@ -179,6 +185,7 @@ public class PullService extends Service {
                         PullMessage pullMessage = (PullMessage) response;
                         fail = 0;
                         next = processPullMessage(context, pullMessage, requestCal);
+                        //推送成功,设置为定时器触发模式
                         TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_TRIGGER_MODE, TRIGGER_MODE_ALARM);
                     } else {
                         fail += 1;
@@ -251,13 +258,17 @@ public class PullService extends Service {
         
         Context context = getApplicationContext();
         
-        if (fail >= MaxFail || next == null) {
+        if (getTriggerMode(context).equals(TRIGGER_MODE_NET)) {
+            //如果是网络触发模式,则不设置定时器,只把失败次数归零
+            LogWrapper.d(TAG, "failed in net trigger mode, do not set Alarm.");
             fail = 0;
-//            next = Alarms.calculateRandomAlarmInNextDay(next, requestStartHour, requestEndHour);
-            //改为联网触发模式
+        } else if (fail >= MaxFail || next == null) {
+            //如果定时器模式下超过了最大重试次数,则转为联网触发模式
+            fail = 0;
             LogWrapper.d(TAG, "failed too many times, change to net trigger mode.");
             TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_TRIGGER_MODE, TRIGGER_MODE_NET);
         } else {
+            //正常的定时器模式
             LogWrapper.d(TAG, "next Alarm: " + next.getTime().toLocaleString());
             Alarms.enableAlarm(context, next, alarmAction);
         }

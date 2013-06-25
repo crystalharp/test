@@ -11,6 +11,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 
+/**
+ * 推送服务的联网触发
+ * @author xupeng
+ * 联网触发的说明见PullService.java
+ */
+
 public class ConnectivityChangeReceiver extends BroadcastReceiver{
 
     // android 中网络变化时所发的Intent的名字
@@ -25,7 +31,7 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
             boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
             LogWrapper.d("NetCheckReceiver", "onReceive() noConnectivity="+noConnectivity);
             if (noConnectivity == false &&
-                PullService.TRIGGER_MODE_NET.equals(PullService.getTriggerMode(context))){
+                PullService.TRIGGER_MODE_NET.equals(PullService.getTriggerMode(context))) {
                 Calendar cal = Calendar.getInstance();
                 cal.setTimeInMillis(System.currentTimeMillis());
                 cal = Alarms.alarmAddMinutes(cal, TKConfig.PullServiceNetTriggerDelayTime);
