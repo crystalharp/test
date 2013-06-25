@@ -408,6 +408,8 @@ public class POI extends BaseData {
 
     public static final int SOURCE_TYPE_LONG_CLICK_SELECT_POINT = 13;
 
+    public static final int SOURCE_TYPE_HOTEL = 14;
+
     public static final int FROM_ONLINE = 0;
 
     public static final int FROM_LOCAL = 1;
