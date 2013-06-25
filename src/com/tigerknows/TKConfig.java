@@ -586,7 +586,11 @@ public class TKConfig {
      * 推送在一天中的失败次数
      */
     public static final String PREFS_RADAR_PULL_FAILED_TIMES = "prefs_radar_pull_failed_times";
-
+    
+    /**
+     * 推送的触发模式
+     */
+    public static final String PREFS_RADAR_PULL_TRIGGER_MODE = "prefs_radar_pull_trigger_mode";
     
     /**
      * 最近一次成功提交订单所保留的姓名
@@ -687,6 +691,11 @@ public class TKConfig {
      * 无效定时器被重置的延迟时间（单位：分钟）
      */
     public static int AlarmCheckDelayTime=60;
+    
+    /**
+     * 推送在网络触发模式下检测到网络变化所设置定时器的延迟时间(单位:分钟)
+     */
+    public static int PullServiceNetTriggerDelayTime = 5;
 
     /**
      * 初始化ClientUid、共用的网络请求参数（imsi、imsi、mcc、mnc）

@@ -82,6 +82,9 @@ public class PullService extends Service {
     int fail = 0;
     
     public static PullAlarmAction alarmAction = new PullAlarmAction();
+    
+    public static String TRIGGER_MODE_NET = "net";
+    public static String TRIGGER_MODE_ALARM = "alarm";
 
     @Override
     public void onCreate() {
@@ -176,6 +179,7 @@ public class PullService extends Service {
                         PullMessage pullMessage = (PullMessage) response;
                         fail = 0;
                         next = processPullMessage(context, pullMessage, requestCal);
+                        TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_TRIGGER_MODE, TRIGGER_MODE_ALARM);
                     } else {
                         fail += 1;
                     }
@@ -245,14 +249,18 @@ public class PullService extends Service {
     void exitService(Calendar next) {
         LogWrapper.d(TAG, "failed times = " + fail);
         
+        Context context = getApplicationContext();
+        
         if (fail >= MaxFail || next == null) {
             fail = 0;
-            next = Alarms.calculateRandomAlarmInNextDay(next, requestStartHour, requestEndHour);
+//            next = Alarms.calculateRandomAlarmInNextDay(next, requestStartHour, requestEndHour);
+            //改为联网触发模式
+            LogWrapper.d(TAG, "failed too many times, change to net trigger mode.");
+            TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_TRIGGER_MODE, TRIGGER_MODE_NET);
+        } else {
+            LogWrapper.d(TAG, "next Alarm: " + next.getTime().toLocaleString());
+            Alarms.enableAlarm(context, next, alarmAction);
         }
-        LogWrapper.d(TAG, "next Alarm: " + next.getTime().toLocaleString());
-        
-        Context context = getApplicationContext();
-        Alarms.enableAlarm(context, next, alarmAction);
         TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_FAILED_TIMES, String.valueOf(fail));
         
         Intent name = new Intent(context, PullService.class);
@@ -285,5 +293,9 @@ public class PullService extends Service {
         public String getRelAlarm(Context context) {
             return TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_ALARM_RELETIVE, "");
         }
+    }
+    
+    final public static String getTriggerMode(Context context) {
+        return TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_TRIGGER_MODE, TRIGGER_MODE_ALARM);
     }
 }
