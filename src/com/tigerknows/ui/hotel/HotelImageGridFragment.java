@@ -77,6 +77,17 @@ public class HotelImageGridFragment extends BaseFragment {
 	@Override
 	public void onResume() {
 		super.onResume();
+        mLeftBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                if (mState == STATE_GALLERY) {
+                    setState(STATE_GRID);
+                } else {
+                    dismiss();
+                }
+            }
+        });
         mTitleBtn.setText(mSphinx.getString(R.string.hotel_picture_title, mImageList.size()));
 		setState(mState);
 	}
@@ -84,15 +95,15 @@ public class HotelImageGridFragment extends BaseFragment {
 	void setState(int state) {
 	    this.mState = state;
 	    if (this.mState == STATE_GRID) {
-	        if (mTitleFragment != null) {
-                mTitleFragment.display();
+	        if (mTitleBtn != null) {
+                mTitleBtn.setText(mSphinx.getString(R.string.hotel_picture_title, mImageList.size()));
 	        }
             mGridView.setVisibility(View.VISIBLE);
             mTKGallery.setVisibility(View.GONE);
             mGridAdapter.notifyDataSetChanged();
         } else if (this.mState == STATE_GALLERY) {
-            if (mTitleFragment != null) {
-                mTitleFragment.hide();
+            if (mTitleBtn != null) {
+                mTitleBtn.setText(R.string.picture_detail);
             }
             mGridView.setVisibility(View.GONE);
             mTKGallery.setVisibility(View.VISIBLE);

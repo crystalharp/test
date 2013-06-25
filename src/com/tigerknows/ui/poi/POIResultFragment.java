@@ -33,9 +33,7 @@ import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -811,16 +809,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         int resid = BaseActivity.getResponseResId(dataQuery);
                         mRetryView.setText(resid, true);
                     } else {
-
-                        Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(resId));
                         mRetryView.setText(resId, false);
-                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                POIResultFragment.this.dismiss();
-                            }
-                        });
                     }
                     mState = STATE_ERROR;
                     updateView();
@@ -895,6 +884,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
 
             if (bPOIList != null) {
+                if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+                    for(int i = bPOIList.size()-1; i >= 0; i--) {
+                        bPOIList.get(i).setSourceType(POI.SOURCE_TYPE_HOTEL);
+                    }
+                }
                 mPOIList.addAll(bPOIList);
             }
 
