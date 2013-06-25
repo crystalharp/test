@@ -89,29 +89,33 @@ public class SpringbackListView extends ListView {
     
     @Override
     public void addFooterView(View v) {
-        footerView = v;
-        measureView(footerView);  
-  
-        footerContentHeight = footerView.getMeasuredHeight();  
-        footerContentWidth = footerView.getMeasuredWidth();  
-  
-        footerView.setPadding(0, -1 * footerContentHeight, 0, 0);  
-        footerView.invalidate();  
-  
+        this.addFooterView(v, true);
+    }
+    
+    public void addFooterView(View v, boolean footerSpringback) {
+        this.footerView = v;
+        this.footerSpringback = footerSpringback;
         super.addFooterView(footerView); 
-        footerLoadintTxv = (TextView)footerView.findViewById(R.id.loading_txv);
-        footerProgressBar = (ProgressBar)footerView.findViewById(R.id.progress_prb);
-        footerSpringback = true;
-        footerView.setOnClickListener(new OnClickListener() {
+        if (this.footerSpringback) {
+            measureView(footerView);  
+            footerContentHeight = footerView.getMeasuredHeight();  
+            footerContentWidth = footerView.getMeasuredWidth();  
             
-            @Override
-            public void onClick(View arg0) {
-                if (stateFooter != REFRESHING) {
-                    changeHeaderViewByState(false, REFRESHING);
-                    onRefresh(false);
+            footerView.setPadding(0, -1 * footerContentHeight, 0, 0);  
+            footerView.invalidate();  
+            footerLoadintTxv = (TextView)footerView.findViewById(R.id.loading_txv);
+            footerProgressBar = (ProgressBar)footerView.findViewById(R.id.progress_prb);
+            footerView.setOnClickListener(new OnClickListener() {
+                
+                @Override
+                public void onClick(View arg0) {
+                    if (stateFooter != REFRESHING) {
+                        changeHeaderViewByState(false, REFRESHING);
+                        onRefresh(false);
+                    }
                 }
-            }
-        });
+            });
+        }
     }
   
     public boolean onTouchEvent(MotionEvent event) {
