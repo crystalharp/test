@@ -61,13 +61,21 @@
                 android:visibility="gone"
                 >
             </com.tigerknows.widget.RetryView>
-            <include 
-               android:id="@+id/add_merchant_view"
-               android:layout_width="fill_parent"
-               android:layout_height="fill_parent"
-               layout="@layout/poi_list_item_add_merchant"
-               android:visibility="gone"
-               />
+	        <RelativeLayout
+	            android:id="@+id/add_merchant_view"
+	            android:layout_width="fill_parent"
+	            android:layout_height="fill_parent"
+	            android:background="@color/white"
+                android:visibility="gone"
+	            >
+	            <include 
+	               android:id="@+id/add_merchant_item_view"
+	               android:layout_width="fill_parent"
+	               android:layout_height="wrap_content"
+	               android:layout_alignParentTop="true"
+	               layout="@layout/poi_list_item_add_merchant"
+	               />
+            </RelativeLayout>
         </FrameLayout>
     </LinearLayout>
     <ImageButton 
