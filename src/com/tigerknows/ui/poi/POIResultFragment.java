@@ -145,6 +145,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
     };
     
+    public List<POI> getPOIList() {
+        return mPOIList;
+    }
+    
     public void setup() {
         DataQuery lastDataQuerying = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
         if (lastDataQuerying == null) {

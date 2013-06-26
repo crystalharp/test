@@ -10,6 +10,7 @@
 		<sub word="西餐" />
 		<sub word="自助餐" />
 		<sub word="海鲜" />
+		<sub word="咖啡馆" />
 		<sub word="日本料理" />
 		<sub word="韩国料理" />
 		<sub word="东北菜" />
@@ -39,7 +40,7 @@
 		<sub word="足疗" />
 		<sub word="网吧" />
 		<sub word="酒吧" />
-		<sub word="咖啡馆" />
+		<sub word="台球馆" />
 		<sub word="茶楼" />
 		<sub word="商务会馆" />
 		<sub word="夜总会" />
@@ -97,7 +98,6 @@
 		<sub word="体育场馆" />
 		<sub word="健身中心" />
 		<sub word="游泳馆" />
-		<sub word="台球馆" />
 		<sub word="羽毛球馆" />
 		<sub word="溜冰场" />
 		<sub word="瑜伽" />

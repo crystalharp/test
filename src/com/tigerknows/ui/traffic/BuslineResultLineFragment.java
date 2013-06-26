@@ -78,6 +78,10 @@ public class BuslineResultLineFragment extends BaseFragment {
     
     private static final String TAG = "BuslineResultLineFragment";
     
+    public List<Line> getLineList() {
+        return  mLineList;
+    }
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
