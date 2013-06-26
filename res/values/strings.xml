@@ -636,9 +636,6 @@
     <string name="station_position_error">站点位置错误</string>
     <string name="station_line_error">路线错误</string>
     <string name="staion_no_line">%1$s无%2$s</string>
-    <string name="errorrecovery_description">请输入问题详述或其他信息(选填)</string>
-    <string name="errorrecovery_user_phone">请输入你的手机号码(选填)</string>
-    <string name="errorrecovery_empty">你尚未输入任何纠错信息</string>
     <string name="poi_base_info_error">基本信息错误</string>
     <string name="poi_name_error">名称错误</string>
     <string name="poi_address_error">地址错误</string>
@@ -1115,7 +1112,33 @@
     <string name="qrimg_verify">二维码验证</string>
     <string name="qrimg_title">请将二维码交给店员验证</string>
     
+<!-- Traffic Error Recovery Start -->
+    <string name="errorrecovery_description">请输入问题详述或其他信息(选填)</string>
+    <string name="errorrecovery_user_phone">请输入你的手机号码(选填)</string>
+    <string name="errorrecovery_empty">你尚未输入任何纠错信息</string>
+<!-- Traffic Error Recovery End -->
+
+    <string name="tel_or_mobile">可输入座机或手机</string>
+
+<!-- POI Error Recovery Start -->
     <string name="erreport_note">感谢您帮助我们完善商户信息。请认真填写联系方式，以便我们将处理后的结果及时反馈给您。</string>
     <string name="erreport_mobile_hint">请输入您的手机号</string>
     <string name="erreport_contact">联系方式：</string>
+    <string name="erreport_name_error">名称错误</string>
+    <string name="erreport_tel_error">电话错误</string>
+    <string name="erreport_tel_add">添加电话</string>
+    <string name="erreport_address_error">地址错误</string>
+    <string name="erreport_not_exist">地点不存在</string>
+    <string name="erreport_redundancy">地点重复</string>
+    <string name="erreport_location_error">地图标注错误</string>
+    <string name="erreport_other_error">其他错误</string>
+    <string name="erreport_redundancy_confirm">确认提交地点重复的错误？</string>
+    <string name="erreport_tel_empty">你忘记输入商户电话了</string>
+    <string name="erreport_tel_empty_2">请描述电话错误类型，或直接填写新的正确电话。</string>
+    <string name="erreport_tel_error_type">电话错误类型</string>
+    <string name="erreport_if_you_know_tel">如果您知晓正确电话，请填写</string>
+    <string name="erreport_description_hint">请详细描述报错内容</string>
+    <string name="erreport_description_empty">请填写报错内容</string>
+    <string name="erreport_location_confirm">确认提交地图标注错误？</string>
+<!-- POI Error Recovery End -->
 </resources>

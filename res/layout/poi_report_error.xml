@@ -10,127 +10,71 @@
 	    layout="@layout/title" 
 	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content" />
-	
-	<ScrollView
-	    android:id="@+id/poi_error_recovery_scv"
+	<LinearLayout 
 	    android:layout_width="fill_parent"
-	    android:layout_height="fill_parent"
+	    android:layout_height="wrap_content"
 	    android:layout_below="@id/title_view"
-	    android:scrollbars="vertical"
-	    android:gravity="top"
-	    android:fillViewport="true"
-	    android:fadingEdge="none"
-        android:scrollingCache="false" >
-		<LinearLayout 
-		    android:id="@+id/poi_error_recovery_lly"
-		    android:layout_width="fill_parent" 
+	    android:padding="2dp"
+	    android:orientation="vertical"
+	    >
+	    
+		<Button android:id="@+id/name_btn"
+		    android:layout_width="fill_parent"
 		    android:layout_height="wrap_content"
-		    android:orientation="vertical"
-	    	android:padding="10dp" >
-		    <RadioGroup
-		        android:id="@+id/poi_rgp"
-			    android:layout_width="fill_parent"
-			    android:layout_height="wrap_content"
-			    android:orientation="vertical"
-			    android:focusable="true"
-			    android:focusableInTouchMode="true">
-			    <RadioButton
-			        android:id="@+id/base_infomation_error_rbt"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:textColor="@color/black"
-				    android:text="@string/poi_base_info_error"
-				    android:checked="true"
-				    android:button="@drawable/rdb_recovery"
-				    />
-				<LinearLayout 
-			        android:id="@+id/base_infomation_error_view"
-				    android:layout_width="fill_parent" 
-				    android:layout_height="wrap_content"
-				    android:orientation="vertical"
-				    android:paddingLeft="32dp">
-				    <CheckBox 
-				        android:id="@+id/name_error_chb"
-					    android:layout_width="wrap_content"
-					    android:layout_height="wrap_content"
-        				android:textColor="#FF5D5D5D"
-					    android:text="@string/poi_name_error"
-        				android:button="@drawable/btn_check" />
-				    <CheckBox 
-				        android:id="@+id/address_error_chb"
-					    android:layout_width="wrap_content"
-					    android:layout_height="wrap_content"
-        				android:textColor="#FF5D5D5D"
-					    android:text="@string/poi_address_error"
-        				android:button="@drawable/btn_check" />
-				    <CheckBox 
-				        android:id="@+id/telephone_error_chb"
-					    android:layout_width="wrap_content"
-					    android:layout_height="wrap_content"
-        				android:textColor="#FF5D5D5D"
-					    android:text="@string/poi_phone_error"
-        				android:button="@drawable/btn_check" />
-				    <CheckBox 
-				        android:id="@+id/coordinate_error_chb"
-					    android:layout_width="wrap_content"
-					    android:layout_height="wrap_content"
-        				android:textColor="#FF5D5D5D"
-					    android:text="@string/poi_mark_error"
-        				android:button="@drawable/btn_check" />
-			    </LinearLayout>
-			    <RadioButton
-			        android:id="@+id/place_absent_error_rbt"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:textColor="@color/black"
-				    android:text="@string/poi_address_noexist_error"
-				    android:button="@drawable/rdb_recovery"
-				    />
-			    <RadioButton
-			        android:id="@+id/place_duplication_error_rbt"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:textColor="@color/black"
-				    android:text="@string/poi_address_duplicate_error"
-				    android:button="@drawable/rdb_recovery"
-				    />
-			    <RadioButton
-			        android:id="@+id/other_error_rbt"
-				    android:layout_width="wrap_content"
-				    android:layout_height="wrap_content"
-				    android:textColor="@color/black"
-				    android:text="@string/poi_ohter_error"
-				    android:button="@drawable/rdb_recovery"
-				    />
-			</RadioGroup>
-		    <EditText
-			    android:id="@+id/content_edt"
-			    android:layout_width="fill_parent"
-			    android:layout_height="wrap_content"
-			    android:layout_marginTop="10dp"
-                android:imeOptions="actionNext"
-			    android:singleLine="false"
-			    android:minLines="4"
-                android:maxLength="1024"
-			    android:gravity="top|left"
-			    android:isScrollContainer="true"
-			    android:hint="@string/errorrecovery_description"
-                android:background="@drawable/textfield" />
+		    android:text="@string/erreport_name_error"
+		    android:gravity="left|center_vertical"
+		    />
+		<Button android:id="@+id/tel_btn"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:text="@string/app_name"
+		    android:gravity="left|center_vertical"
+		    />
+		<LinearLayout 
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal"
+		    >
 		    
-		    <EditText
-			    android:id="@+id/mobile_phone_edt"
+			<Button android:id="@+id/notexist_btn"
 			    android:layout_width="fill_parent"
 			    android:layout_height="wrap_content"
-			    android:layout_marginTop="10dp"
-			    android:imeOptions="actionDone"
-			    android:singleLine="true"
-			    android:gravity="top|left"
-			    android:isScrollContainer="true"
-			    android:inputType="phone"
-			    android:maxLength="11"
-			    android:hint="@string/errorrecovery_user_phone"
-                android:background="@drawable/textfield" 
-                android:phoneNumber="true"/>
+			    android:text="@string/erreport_not_exist"
+			    android:layout_weight="1"
+			    />
+			<Button android:id="@+id/address_btn"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:text="@string/erreport_address_error"
+			    android:layout_weight="1"
+			    />
 		</LinearLayout>
-	</ScrollView>
+
+		<LinearLayout 
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:orientation="horizontal"
+		    >
+		    
+			<Button android:id="@+id/redundancy_btn"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:text="@string/erreport_redundancy"
+			    android:layout_weight="1"
+			    />
+			<Button android:id="@+id/location_btn"
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:text="@string/erreport_location_error"
+			    android:layout_weight="1"
+			    />
+		</LinearLayout>
+		<Button android:id="@+id/other_btn"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:text="@string/erreport_other_error"
+		    android:gravity="left|center_vertical"
+		    />
+	</LinearLayout>
+
 </RelativeLayout>
