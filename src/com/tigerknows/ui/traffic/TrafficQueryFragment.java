@@ -217,8 +217,6 @@ public class TrafficQueryFragment extends BaseFragment {
         mBusline.setHint(mContext.getString(R.string.busline_name_, ""));
         mSelectedEdt = mStart;
 		
-		mMapLocationHelper.getCurrentMapInfo();
-        
         return mRootView;
     }
 	
@@ -275,7 +273,6 @@ public class TrafficQueryFragment extends BaseFragment {
     	 * BUG 187
     	 */   			
 		if (mSphinx.uiStackPeek() == R.id.view_poi_detail) {
-    		mMapLocationHelper.showNormalStateMap();
     		/*
     		 * 此时交通输入页已经从栈中清除, 也由于地图中心点变化通知延时性,
     		 * 此处主动更新当前城市文本
@@ -331,7 +328,6 @@ public class TrafficQueryFragment extends BaseFragment {
             }
             mSuggestWordHelper.refresh(mContext, mSelectedEdt.getEdt(), mode);
         } else if (currentState == TrafficViewSTT.State.Normal) {
-        	mMapLocationHelper.showNormalStateMap();
             /*
              * 点击"收藏的点"后, 弹出的对话框, 在onPause中将mShowPromptOnLongClick设为false
              */
@@ -359,14 +355,6 @@ public class TrafficQueryFragment extends BaseFragment {
         }
         
 	}
-
-	
-	/**
-     * 切换城市时设置当前城市名
-     */
-    public void refreshCity(String city) {
-    	mMapLocationHelper.getCurrentMapInfo();
-    }
     
     /**
      * 在交通首页时, 点击地图-定位按钮-缩放按钮, 进入交通全屏地图
@@ -1119,9 +1107,5 @@ public class TrafficQueryFragment extends BaseFragment {
         MapEngine.getInstance().suggestwordCheck(sphinx, cityId);
         HistoryWordTable.readHistoryWord(sphinx, cityId, HistoryWordTable.TYPE_TRAFFIC);
         HistoryWordTable.readHistoryWord(sphinx, cityId, HistoryWordTable.TYPE_BUSLINE);
-    }
-
-    public void resetCurrentMapInfo(Position position, int zoomLevel) {
-        mMapLocationHelper.resetCurrentMapInfo(position, zoomLevel);
     }
 }

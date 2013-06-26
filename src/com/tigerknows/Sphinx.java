@@ -1895,7 +1895,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(cityInfo.getLevel()));
             HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
             trafficQueryFragment.TrafficOnCityChanged(this, cityId);
-            trafficQueryFragment.resetCurrentMapInfo(cityInfo.getPosition(), cityInfo.getLevel());
         }    
     }
         
@@ -2592,9 +2591,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (mMoreFragment != null) {
             getMoreFragment().refreshCity(cName);
         }
-//        if (mTrafficQueryFragment != null) {
-            getTrafficQueryFragment().refreshCity(cName);
-//        }
     };
     
     // TODO: cityinfo end
