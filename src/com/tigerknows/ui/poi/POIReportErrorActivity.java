@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MotionEvent;
@@ -104,6 +105,11 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         synchronized (sTargetList) {
             sTargetList.add(obejct);
         }
+    }
+    @Override
+    public void onResume(){
+    	super.onResume();
+    	mRightBtn.setVisibility(View.GONE);
     }
     
     @Override
