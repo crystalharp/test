@@ -131,6 +131,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
                 mDynamicDianyingMoreView.setVisibility(View.VISIBLE);
             } else {
                 mShowingList.addAll(mAllList);
+                mDynamicDianyingMoreView.setVisibility(View.GONE);
             }
             
             lsv.refreshList(mShowingList);
