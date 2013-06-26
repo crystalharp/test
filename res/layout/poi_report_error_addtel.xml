@@ -7,4 +7,85 @@
     android:paddingRight="0dp"
     android:background="@drawable/bg_discover"
     >
+    <LinearLayout 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        >
+        
+	    <LinearLayout 
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/list_header"
+	        android:orientation="horizontal"
+	        >
+		    <TextView
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_marginRight="4dp"
+		        android:layout_gravity="left|center_vertical"
+		        android:text="@string/need_star"
+		        android:textColor="@color/orange"
+		        android:textSize="16sp"
+		        />
+			<TextView 
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="商户电话"
+	            android:textSize="16sp"
+		        android:layout_gravity="left|center_vertical"
+	            />
+			<EditText 
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:maxLength="80"
+		        android:textSize="14sp"
+			    android:layout_marginTop="2dp"
+			    android:layout_marginBottom="2dp"
+			    android:focusable="true"
+			    android:focusableInTouchMode="true"
+			    android:singleLine="true"
+			    android:ellipsize="end"
+			    android:background="@color/transparent"
+			    />        
+	    </LinearLayout>
+	    <LinearLayout 
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:background="@drawable/list_header"
+	        android:orientation="horizontal"
+	        >
+	        
+			<TextView 
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:text="@string/erreport_contact"
+	            android:textSize="16sp"
+		        android:layout_gravity="left|center_vertical"
+	            />
+			<EditText 
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:maxLength="80"
+		        android:textSize="14sp"
+		        android:hint="@string/erreport_mobile_hint"
+			    android:layout_marginTop="2dp"
+			    android:layout_marginBottom="2dp"
+			    android:focusable="true"
+			    android:focusableInTouchMode="true"
+			    android:singleLine="true"
+			    android:ellipsize="end"
+			    android:background="@color/transparent"
+			    />        
+	    </LinearLayout>
+	    <TextView 
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:singleLine="false"
+	        android:text="@string/erreport_note"
+	        android:textSize="14sp"/>
+    </LinearLayout>
+
 </RelativeLayout>
