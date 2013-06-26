@@ -82,6 +82,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     private View mAddMerchantView = null;
     
+    private View mAddMerchantItemView = null;
+    
     private TextView mQueryingTxv = null;
     
     private View mEmptyView = null;
@@ -213,6 +215,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mResultLsv.addFooterView(mLoadingView);
         mAddMerchantFootView = mLayoutInflater.inflate(R.layout.poi_list_item_add_merchant, null);
         mAddMerchantView = mRootView.findViewById(R.id.add_merchant_view);
+        mAddMerchantItemView = mRootView.findViewById(R.id.add_merchant_item_view);
         mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
@@ -252,7 +255,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
         });
         
-        mAddMerchantView.setOnClickListener(this);
+        mAddMerchantItemView.setOnClickListener(this);
     }
     
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -493,7 +496,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 
-            case R.id.add_merchant_view:
+            case R.id.add_merchant_item_view:
                 mSphinx.showView(R.id.activity_more_add_merchant);
                 break;
                 

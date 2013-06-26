@@ -1203,4 +1203,39 @@ public class Utility {
 					}
     	});
     }
+    
+    /**
+     * 获取城市的电话区号
+     * @param cityId
+     * @return
+     */
+    public static String getAreaCodeByCityId(String cityId) {
+        String result = null;
+        if (TextUtils.isEmpty(cityId)) {
+            return result;
+        }
+        String path = TKConfig.getDataPath(false);
+        if (TextUtils.isEmpty(path)) {
+            return result;
+        }
+        File file = new File(path+"areacode");
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                String text = Utility.readFile(fis);
+                fis.close();
+                String[] lines = text.split("\n");
+                for(int i = lines.length-1; i >= 0; i--) {
+                    String[] line = lines[i].split(" ");
+                    if (line[0].equals(cityId)) {
+                        result = line[1];
+                    }
+                }
+            } catch (Exception e) {
+                
+            }
+        }
+        
+        return result;
+    }
 }
