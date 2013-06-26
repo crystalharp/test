@@ -19,18 +19,27 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.TKWord;
+import com.tigerknows.model.BuslineModel.Line;
+import com.tigerknows.model.TrafficModel.Plan;
+import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XInt;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.model.xobject.XObject;
 import com.tigerknows.model.xobject.XString;
 import com.tigerknows.provider.HistoryWordTable;
+import com.tigerknows.provider.Tigerknows;
+import com.tigerknows.provider.Tigerknows.POI;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.service.LocationService;
 import com.tigerknows.service.PullService;
 import com.tigerknows.service.TigerknowsLocationManager;
 import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.more.MoreHomeFragment;
+import com.tigerknows.ui.poi.POIResultFragment;
+import com.tigerknows.ui.traffic.BuslineResultLineFragment;
+import com.tigerknows.ui.traffic.TrafficResultFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.StringArrayAdapter;
 import com.weibo.sdk.android.WeiboParameters;
@@ -467,6 +476,11 @@ public class BaseQueryTest {
         viewCityMapVersionLayout.addView(viewCityMapVersionEdt, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
         layout.addView(viewCityMapVersionLayout);
         
+        final Button historyBtn = new Button(activity);
+        layout.addView(historyBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button favoriteBtn = new Button(activity);
+        layout.addView(favoriteBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        
         editConfigBtn.setText("View or Modify config.txt");
         editConfigBtn.setOnClickListener(new View.OnClickListener() {
             
@@ -751,6 +765,24 @@ public class BaseQueryTest {
             }
         });
         
+        historyBtn.setText("History poi or traffic");
+        historyBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                historyFavoriteData(activity, 0);
+            }
+        });
+        
+        favoriteBtn.setText("Favorite poi or traffic");
+        favoriteBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                historyFavoriteData(activity, 1);
+            }
+        });
+        
         ScrollView scrollView = new ScrollView(activity);
         scrollView.addView(layout);
         AlertDialog dialog = new AlertDialog.Builder(activity)
@@ -786,6 +818,55 @@ public class BaseQueryTest {
             .create();
         dialog.setCanceledOnTouchOutside(false);
         dialog.show();
+    }
+    
+    static void historyFavoriteData(Activity activity, int type) {
+        if (activity instanceof Sphinx) {
+            Sphinx sphinx = (Sphinx) activity;
+            BaseFragment fragment = sphinx.getFragment(sphinx.uiStackPeek());
+            if (fragment != null) {
+                if (fragment instanceof POIResultFragment) {
+                    POIResultFragment dataFragment = (POIResultFragment) fragment;
+                    List<com.tigerknows.model.POI> list = dataFragment.getPOIList();
+                    for(int i = 0, size = list.size(); i < size; i++) {
+                        if (type==0) {
+                            list.get(i).updateHistory(activity);
+                        } else if (type==1) {
+                            if (list.get(i).checkFavorite(activity) == false) {
+                                list.get(i).writeToDatabases(activity, -1, Tigerknows.STORE_TYPE_FAVORITE);
+                            }
+                        }
+                    }
+                } else if (fragment instanceof BuslineResultLineFragment) {
+                    BuslineResultLineFragment dataFragment = (BuslineResultLineFragment) fragment;
+                    List<Line> list = dataFragment.getLineList();
+                    for(int i = 0, size = list.size(); i < size; i++) {
+                        if (type == 0) {
+                            list.get(i).updateHistory(activity);
+                        } else if (type==1) {
+                            if (list.get(i).checkFavorite(activity) == false) {
+                                list.get(i).writeToDatabases(activity, -1, Tigerknows.STORE_TYPE_FAVORITE);
+                            }
+                        }
+                    }
+                } else if (fragment instanceof TrafficResultFragment) {
+                    TrafficResultFragment dataFragment = (TrafficResultFragment) fragment;
+                    TrafficQuery trfficQuery = dataFragment.getTrafficQuery();
+                    if (trfficQuery != null && trfficQuery.getTrafficModel() != null && trfficQuery.getTrafficModel().getPlanList() != null) {
+                        List<Plan> list = trfficQuery.getTrafficModel().getPlanList();
+                        for(int i = 0, size = list.size(); i < size; i++) {
+                            if (type == 0) {
+                                list.get(i).updateHistory(activity);
+                            } else if (type==1) {
+                                if (list.get(i).checkFavorite(activity) == false) {
+                                    list.get(i).writeToDatabases(activity, -1, Tigerknows.STORE_TYPE_FAVORITE);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
     
     public static void throwNewException() {

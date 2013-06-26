@@ -74,6 +74,10 @@ public class TrafficResultFragment extends BaseFragment {
     
     private static final String TAG = "TrafficResultFragment";
     
+    public TrafficQuery getTrafficQuery() {
+        return mTrafficQuery;
+    }
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
