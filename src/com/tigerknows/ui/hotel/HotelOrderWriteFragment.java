@@ -490,14 +490,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             TextView needCreditTxv = (TextView) view.findViewById(R.id.need_credit_txv);
             
             RetentionTime rt = getItem(position);
-            //roomReserveTxv.setText(rt.getTime());
+            roomReserveTxv.setText(rt.getTime());
             if(rt.getNeed() == 1){
-                roomReserveTxv.setText(Utility.renderColorToPartOfString(mContext,
-            			R.color.orange,
-            			rt.getTime() + mSphinx.getString(R.string.hotel_room_credit_note),
-            			mSphinx.getString(R.string.hotel_room_credit_note)));
+            	needCreditTxv.setVisibility(VISIBLE);
             }else{
-                roomReserveTxv.setText(rt.getTime());
+            	needCreditTxv.setVisibility(GONE);
             }
             if(position == mRTimeWhich){
             	roomHowmanyIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_checked));
