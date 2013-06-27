@@ -1,33 +1,18 @@
 package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
-import android.opengl.Visibility;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-
 import com.tigerknows.ui.BaseActivity;
 
-import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.POI;
 
 public class POIReportErrorActivity extends BaseActivity implements View.OnClickListener{
