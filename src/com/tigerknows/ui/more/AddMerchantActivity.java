@@ -39,6 +39,8 @@ import com.tigerknows.widget.StringArrayAdapter;
 
 public class AddMerchantActivity extends BaseActivity implements View.OnClickListener {
     
+    public static final String EXTRA_INPUT_TEXT = "input_text";
+    
 	private ScrollView mAddMerchantScv;
     private Button mShanghuleixingBtn;
     private EditText mShanghumingchengEdt = null;
@@ -66,6 +68,17 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         
         mAddMerchantTypes = mThis.getResources().getStringArray(R.array.add_merchant_type);
         mShanghumingchengEdt.requestFocus();
+        
+        mShanghudianhuaEdt.setText(Utility.getAreaCodeByCityId(Globals.getCurrentCityInfo().getId())+"-");
+        
+        Intent intent = getIntent();
+        if (intent != null) {
+            String intputText = intent.getStringExtra(EXTRA_INPUT_TEXT);
+            if (intputText != null) {
+                mShanghumingchengEdt.setText(intputText);
+                mShanghumingchengEdt.setSelection(intputText.length());
+            }
+        }
     }
     
     /**

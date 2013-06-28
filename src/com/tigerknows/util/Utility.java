@@ -1219,11 +1219,9 @@ public class Utility {
      * @param cityId
      * @return
      */
-    public static String getAreaCodeByCityId(String cityId) {
+    public static String getAreaCodeByCityId(int cityId) {
         String result = null;
-        if (TextUtils.isEmpty(cityId)) {
-            return result;
-        }
+        String token = String.valueOf(cityId);
         String path = TKConfig.getDataPath(false);
         if (TextUtils.isEmpty(path)) {
             return result;
@@ -1237,7 +1235,7 @@ public class Utility {
                 String[] lines = text.split("\n");
                 for(int i = lines.length-1; i >= 0; i--) {
                     String[] line = lines[i].split(" ");
-                    if (line[0].equals(cityId)) {
+                    if (line[0].equals(token)) {
                         result = line[1];
                     }
                 }
