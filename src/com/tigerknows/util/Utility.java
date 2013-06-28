@@ -666,16 +666,24 @@ public class Utility {
     }
 
     public static Dialog showNormalDialog(Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener) {
+        return showNormalDialog(activity, title, message, custom, leftButtonText, rightButtonText, onClickListener, true);
+    }
+    
+    public static Dialog showNormalDialog(Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener, boolean dismiss) {
         if (title != null || message != null) {
             ActionLog.getInstance(activity).addAction(ActionLog.Dialog, title, message);
         }
-        Dialog dialog = getDialog(activity, title, message, custom, leftButtonText, rightButtonText, onClickListener);
+        Dialog dialog = getDialog(activity, title, message, custom, leftButtonText, rightButtonText, onClickListener, dismiss);
         dialog.show();
         
         return dialog;
     }
-
+    
     public static Dialog getDialog(final Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener) {
+        return getDialog(activity, title, message, custom, leftButtonText, rightButtonText, onClickListener, true);
+    }
+
+    public static Dialog getDialog(final Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener, final boolean dismiss) {
         
         LayoutInflater layoutInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         
@@ -725,7 +733,9 @@ public class Utility {
                 
                 @Override
                 public void onClick(View view) {
-                    dialog.dismiss();
+                    if (dismiss) {
+                        dialog.dismiss();
+                    }
                     if (onClickListener != null) {
                         if (view.getId() == R.id.button1) {
                             ActionLog.getInstance(activity).addAction(ActionLog.DialogLeftBtn, leftBtn.getText());
