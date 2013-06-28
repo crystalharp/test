@@ -27,6 +27,7 @@ import com.decarta.android.location.Position;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.crypto.Base64;
 import com.tigerknows.map.MapView.MapScene;
@@ -66,7 +67,7 @@ public class ShareAPI {
 	 * @author pengwenyue
 	 *
 	 */
-    public interface LoginCallBack {
+    public interface IAuthorizeCallBack {
         /**
          * 授权成功
          */
@@ -258,22 +259,37 @@ public class ShareAPI {
                     sphinx.snapMapView(new SnapMap() {
                         
                         @Override
-                        public void finish(Uri uri) {
-                            Intent intent = new Intent();
-                            if(uri != null) {
-                                intent.putExtra(ShareAPI.EXTRA_SHARE_PIC_URI, uri.toString());
+                        public void finish(final Uri uri) {
+                            UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(activity, ShareAPI.TYPE_WEIBO);
+                            if (userAccessIdenty == null) {
+                                TKActivity tkActivity = (TKActivity) activity;
+                                tkActivity.authorizeWeibo(new TKActivity.IAuthorizeCallback() {
+                                    
+                                    @Override
+                                    public void onSuccess(String type) {
+                                        shareToWeibo(activity, data, uri);
+                                    }
+                                });
+                            } else {
+                                shareToWeibo(activity, data, uri);
                             }
-                            intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, ShareTextUtil.makeText(activity, data, ShareTextUtil.SHARE_TYPE_WEIBO));
-                            intent.setClass(activity, WeiboSendActivity.class);
-                            activity.startActivity(intent);
                         }
                     }, position, mapScene);
                         
                 } else if (list[4].equals(text)) {
-                    Intent intent = new Intent();
-                    intent.setClass(activity, QZoneSendActivity.class);
-                    intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, ShareTextUtil.makeText(activity, data, ShareTextUtil.SHARE_TYPE_QZONE));
-                    activity.startActivity(intent);              
+                    UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(activity, ShareAPI.TYPE_TENCENT);
+                    if (userAccessIdenty == null) {
+                        TKActivity tkActivity = (TKActivity) activity;
+                        tkActivity.authorizeTencent(new TKActivity.IAuthorizeCallback() {
+                            
+                            @Override
+                            public void onSuccess(String type) {
+                                shareToQZone(activity, data);
+                            }
+                        });
+                    } else {
+                        shareToQZone(activity, data);
+                    }
                 } else if (list[5].equals(text)) {
                     sphinx.snapMapView(new SnapMap() {
                         
@@ -295,5 +311,28 @@ public class ShareAPI {
                 dialog.dismiss();
             }
         });
+    }
+    
+    private static void shareToWeibo(Activity activity, BaseData data, Uri uri) {
+        if (activity == null || data == null) {
+            return;
+        }
+        Intent intent = new Intent();
+        if(uri != null) {
+            intent.putExtra(ShareAPI.EXTRA_SHARE_PIC_URI, uri.toString());
+        }
+        intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, ShareTextUtil.makeText(activity, data, ShareTextUtil.SHARE_TYPE_WEIBO));
+        intent.setClass(activity, WeiboSendActivity.class);
+        activity.startActivity(intent);
+    }
+    
+    private static void shareToQZone(Activity activity, BaseData data) {
+        if (activity == null || data == null) {
+            return;
+        }
+        Intent intent = new Intent();
+        intent.setClass(activity, QZoneSendActivity.class);
+        intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, ShareTextUtil.makeText(activity, data, ShareTextUtil.SHARE_TYPE_QZONE));
+        activity.startActivity(intent);
     }
 }

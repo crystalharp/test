@@ -11,7 +11,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.android.app.TKActivity;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.share.ShareAPI.LoginCallBack;
+import com.tigerknows.share.ShareAPI.IAuthorizeCallBack;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
 import com.weibo.sdk.android.WeiboAuthListener;
@@ -72,14 +72,14 @@ public class TKWeibo implements RequestListener {
     private int currentAccessMethod = 0;
     
     private String expires_in; // 过期时间
-    private LoginCallBack loginCallBack; // 授权完成后的回调接口
+    private IAuthorizeCallBack loginCallBack; // 授权完成后的回调接口
 
     private Activity activity;
     
     private boolean showProgressDialog; // 在进行操作时是否显示进度对话框
     
     private boolean finishActivity; // 在操作完成时是否关闭当前activity
-    
+
     /**
      * @param activity
      * @param showProgressDialog 是否需要显示进度对话框
@@ -105,7 +105,7 @@ public class TKWeibo implements RequestListener {
     public static class AuthDialogListener implements WeiboAuthListener {
         
         TKWeibo tkWeiboSSO;
-        public AuthDialogListener(TKWeibo tkWeiboSSO, LoginCallBack loginCallBack) {
+        public AuthDialogListener(TKWeibo tkWeiboSSO, IAuthorizeCallBack loginCallBack) {
             this.tkWeiboSSO = tkWeiboSSO;
             this.tkWeiboSSO.loginCallBack = loginCallBack;
         }
@@ -235,12 +235,7 @@ public class TKWeibo implements RequestListener {
                                 || msg.contains("21319")
                                 || msg.contains("21327")) {
                             if (finishActivity) {
-                                if (activity instanceof WeiboSendActivity) {
-                                    ShareAPI.clearIdentity(activity, ShareAPI.TYPE_WEIBO);
-                                    WeiboSendActivity weiboSend = (WeiboSendActivity) activity;
-                                    weiboSend.getLogoutBtn().setText(R.string.back);
-                                    authorize(TKWeibo.this, weiboSend.getSinaAuthDialogListener());
-                                }
+                                ShareAPI.clearIdentity(activity, ShareAPI.TYPE_WEIBO);
                             }
                         }
                         Toast.makeText(activity, R.string.weibo_send_failed, Toast.LENGTH_LONG).show();
