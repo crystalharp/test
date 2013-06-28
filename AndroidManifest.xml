@@ -182,7 +182,7 @@
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.more.AddMerchantActivity"
-            android:theme="@style/Theme.NoTitleBar" 
+            android:theme="@style/AddMerchant" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
             android:windowSoftInputMode="adjustResize|stateVisible"
             android:screenOrientation="portrait" />
