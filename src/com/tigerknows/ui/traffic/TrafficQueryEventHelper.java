@@ -182,6 +182,7 @@ public class TrafficQueryEventHelper {
 				    mQueryFragment.mEnd.mEdt.requestFocus();
                     return true;
 				} else if (mQueryFragment.mSelectedEdt == mQueryFragment.mEnd) {
+				    //TODO:改为搜索
 				    mQueryFragment.mSelectedEdt = mQueryFragment.mStart;
                     mQueryFragment.mStart.mEdt.requestFocus();
                     return true;
@@ -277,7 +278,7 @@ public class TrafficQueryEventHelper {
         @Override
         public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-            	mQueryFragment.mSphinx.hideSoftInput();
+//            	mQueryFragment.mSphinx.hideSoftInput();
             	mQueryFragment.submitBuslineQuery();
                 return true;
             }
