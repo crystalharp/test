@@ -100,8 +100,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     
     private String mPOIWhere;
     
-    private boolean mDismiss = true;
-    
     protected Drawable mPOIEmpty;
     
     protected Drawable mTrafficEmpty;
@@ -219,7 +217,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mRightBtn.setOnClickListener(this);
         mRightBtn.setBackgroundResource(R.drawable.btn_delete_all);
 
-        if (mDismiss) {
+        if (mDismissed) {
             readPOI(mPOIList, Long.MAX_VALUE, 0, false);
             mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
             readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
@@ -259,11 +257,10 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             }
         }
         
-        if (mDismiss) {
+        if (mDismissed) {
             mPOILsv.setSelectionFromTop(0, 0);
             mTrafficLsv.setSelectionFromTop(0, 0);
         }
-        mDismiss = false;
     }
 
     @Override
@@ -274,7 +271,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mPOIAdapter.notifyDataSetChanged();
         mTrafficAdapter.notifyDataSetChanged();
         mLayerType = ItemizedOverlay.POI_OVERLAY;
-        mDismiss = true;
         mViewPager.setCurrentItem(0);
     }
 

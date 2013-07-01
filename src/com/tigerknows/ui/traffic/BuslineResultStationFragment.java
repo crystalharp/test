@@ -16,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnTouchListener;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -35,8 +34,6 @@ import com.tigerknows.model.BuslineModel;
 import com.tigerknows.model.BuslineModel.Station;
 import com.tigerknows.model.BuslineQuery;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.traffic.BuslineResultLineFragment.ViewHolder;
-import com.tigerknows.ui.traffic.TrafficResultFragment.ChildView;
 import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
@@ -95,6 +92,9 @@ public class BuslineResultStationFragment extends BaseFragment {
         findViews();
         setListener();
         
+        mStationAdapter = new StationAdapter();
+        mResultLsv.setAdapter(mStationAdapter);
+        
         return mRootView;
     }
 
@@ -108,9 +108,12 @@ public class BuslineResultStationFragment extends BaseFragment {
         		mBuslineModel.getTotal()));
     	mTitleBtn.setText(mContext.getString(R.string.title_station_result));
     	
-    	mStationAdapter.notifyDataSetChanged();
         if (mResultLsv.isFooterSpringback()) {
             mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
+        }
+        
+        if (mDismissed) {
+            mResultLsv.setSelectionFromTop(0, 0);
         }
     }
     
@@ -225,18 +228,16 @@ public class BuslineResultStationFragment extends BaseFragment {
                 mStationAdapter.notifyDataSetChanged();
             }
         }else{
-            mStationAdapter = null;
-            mStationList = null;
+            mStationList.clear();
             List<Station> list = mBuslineModel.getStationList();
             if (list != null) {
-                mStationList = list;
-                mStationAdapter = new StationAdapter();
-                mResultLsv.setAdapter(mStationAdapter);
+                mStationList.addAll(list);
             }
 
             focusedIndex = Integer.MAX_VALUE;
         }
 
+        mStationAdapter.notifyDataSetChanged();
         if (mStationList.size() >= mBuslineModel.getTotal()) {
             mResultLsv.setFooterSpringback(false);
         } else {
@@ -259,8 +260,6 @@ public class BuslineResultStationFragment extends BaseFragment {
      */
     private class StationAdapter extends BaseAdapter{
     	
-        private static final int sResource = R.layout.traffic_group_busline;
-        
         public StationAdapter() {
             super();
         }

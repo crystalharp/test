@@ -9,7 +9,6 @@ import java.util.List;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -31,10 +30,8 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;
-import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.util.Utility;
 
 /**
  * 
@@ -50,6 +47,8 @@ public class TrafficResultFragment extends BaseFragment {
     }
 
     private BaseAdapter mResultAdapter;
+    
+    private List<Plan> mPlanList = new ArrayList<TrafficModel.Plan>();
 
     private TextView mStartTxv = null;
 
@@ -94,6 +93,9 @@ public class TrafficResultFragment extends BaseFragment {
         findViews();
         setListener();
         
+        mResultAdapter = new TransferProjectListAdapter();
+        mResultLsv.setAdapter(mResultAdapter);
+        
         return mRootView;
     }
 
@@ -111,8 +113,9 @@ public class TrafficResultFragment extends BaseFragment {
         
         mFootLayout.setVisibility(View.GONE);
         
-        mResultAdapter = new TransferProjectListAdapter(mTrafficQuery.getTrafficModel().getPlanList());
-        mResultLsv.setAdapter(mResultAdapter);
+        if (mDismissed) {
+            mResultLsv.setSelectionFromTop(0, 0);
+        }
      
         // 下一行代码为避免以下操作会出现问题
         // 搜索-结果列表-详情-地图-点击气泡中的交通按钮-选择到这里去/公交-公交方案-公交详情-点击地图显示公交方案页(期望进入 地图界面)
@@ -189,6 +192,10 @@ public class TrafficResultFragment extends BaseFragment {
         mTrafficModel = mTrafficQuery.getTrafficModel();
         
         focusedIndex = Integer.MAX_VALUE;
+        
+        mPlanList.clear();
+        mPlanList.addAll(mTrafficModel.getPlanList());
+        mResultAdapter.notifyDataSetChanged();
     }
 
     public static class PlanViewHolder {
@@ -200,23 +207,18 @@ public class TrafficResultFragment extends BaseFragment {
     
     class TransferProjectListAdapter extends BaseAdapter{
 
-    	private static final int mResource = R.layout.traffic_group_traffic;
-    	
-    	List<Plan> planList;
-    	
-		public TransferProjectListAdapter(List<Plan> planList) {
+		public TransferProjectListAdapter() {
 			super();
-			this.planList = planList;
 		}
 
 		@Override
 		public int getCount() {
-			return planList.size();
+			return mPlanList.size();
 		}
 
 		@Override
 		public Object getItem(int position) {
-			return planList.get(position);
+			return mPlanList.get(position);
 		}
 
 		@Override

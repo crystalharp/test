@@ -75,6 +75,8 @@ public class BaseFragment extends LinearLayout {
     
     protected PopupWindow mPopupWindow;
     
+    public boolean mDismissed = true;
+    
     public PopupWindow getPopupWindow() {
         return mPopupWindow;
     }
@@ -144,11 +146,13 @@ public class BaseFragment extends LinearLayout {
         if (mTkAsyncTasking != null) {
             mTkAsyncTasking.stop();
         }
+        mDismissed = true;
     }
     
     public void show() {    
         mSphinx.uiStackPush(getId());  
         onResume();
+        mDismissed = false;
     }
     
     public void hide() {    
