@@ -63,25 +63,12 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 	protected void setListener() {
 		super.setListener();
 		
-		passwordEdt.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					mActionLog.addAction(ActionLog.UserClickPasswordEdt);
-				}
-				
-				return false;
-			}
-		});
-		
 		valiNumBtn.setOnClickListener(new android.view.View.OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
 				// TODO 获取验证码
-				mActionLog.addAction(ActionLog.UserUpdatPhoneValidNumBtn);
+				mActionLog.addAction(mActionTag +  ActionLog.UserCommonValidNumBtn);
 				if (!phoneEdt.isValid()) {
 					validationAction(phoneEdt);
 					return;
@@ -96,6 +83,7 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO 成功后, 跳转到个人帐户页面
+                mActionLog.addAction(mActionTag +  ActionLog.UserCommonConfirmBtn);
 				if (!mForm.isValid()) {
 					validationAction(mForm.getErrorSource());
 					return;
@@ -121,7 +109,9 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 			@Override
 			public void afterTextChanged(Editable s) {
 				// TODO Auto-generated method stub
-				valiNumBtn.reset(getString(R.string.reqest_validate_num));
+				//  [And4.30-206] 【更换手机号、重置密码、注册界面】点击获取验证码后，倒计时至少于30秒时，
+				//  重新输入原手机号最后一位，点击获取验证码，可收到验证码
+				// valiNumBtn.reset(getString(R.string.reqest_validate_num));
 			}
 		});
 	}
@@ -279,7 +269,7 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 					valiNumEdt.requestFocus();
 					showSoftInput(valiNumEdt);
 				}
-				valiNumBtn.reset(getString(R.string.request_validcode_retry));
+				//valiNumBtn.reset(getString(R.string.request_validcode_retry));
 			}
 			
 		});
@@ -316,7 +306,7 @@ public class UserUpdatePhoneActivity extends UserBaseActivity {
 					int which) {
 				// TODO Auto-generated method stub
 //				if (which == DialogInterface.BUTTON_POSITIVE) {
-					valiNumBtn.reset(getString(R.string.reqest_validate_num));
+					valiNumBtn.reset(getString(R.string.request_validcode_retry));
 //				}
 			}
 			

@@ -11,6 +11,7 @@
     <string name="input_valid_border">Please input valid integer border</string>
     <string name="input_valid_tile_thread_count">Please input valid integer tile thread num</string>
 	
+    <string name="all">全部</string>
     <string name="app_name">老虎宝典</string>
     <string name="send_sms">发短信</string>
     <string name="send_mms">发彩信</string>
@@ -41,8 +42,8 @@
     <string name="distanceA">距地标</string>
     <string name="double_bracket">（%1$s个）</string>
     
-	<string name="start_text">起点：%1$s</string>
-	<string name="end_text">终点：%1$s</string>
+    <string name="start_text">起点：%1$s</string>
+    <string name="end_text">终点：%1$s</string>
     <string name="start">起点</string>
     <string name="end">终点</string>
     <string name="start_">请输入起点</string>
@@ -73,8 +74,8 @@
     
     <string name="at_where_discover">发现：在%1$s进行发现 </string>
     <string name="at_where_discover_how">在"%1$s"发现%2$s个</string>   
-    <string name="discover_exist_tip">已经更新发现结果</string>   
-    
+    <string name="discover_exist_tip">已经更新发现结果</string>
+       
     <string name="init_map_dir_title">初始化地图数据</string>
     <string name="init_map_dir_message">程序异常退出可能是因为使用过程中地图数据文件损坏，建议你删除损坏的地图数据文件?</string>
     
@@ -109,7 +110,7 @@
     <string name="add">添加</string>
     <string name="all_province">全省</string>
     <string name="added">已加</string>
-    <string name="map_static_waiting_tip">地图信息统计中...</string>
+    <string name="map_static_waiting_tip">地图信息读取中...</string>
     <string name="city">市</string>
     <string name="province">省</string>
     <string name="please_add_city">请先添加城市...</string>
@@ -125,7 +126,7 @@
     
     <string name="download_software_title">新版本软件下载</string>
     <string name="downloading_software_message">正在下载新版本老虎宝典软件...</string>
- 	<string name="download_service">老虎宝典下载</string>
+     <string name="download_service">老虎宝典下载</string>
  	
     <string name="tip_longpress_select_traffic">长按可选择交通查询起终点</string>
     
@@ -156,24 +157,24 @@
     <string name="input_busline_name_tip">请输入线路名称！</string>
     <string name="transfer_operation_time">运营时间:\u0020\u0020%1$s</string>
     <string name="bus_index_station">%1$d. %2$s</string>
-	<string name="favorite_poi_empty">你还没有任何收藏</string>
-	<string name="mylocation_failed">对不起, 定位失败, 请重试...</string>
+    <string name="favorite_poi_empty">你还没有任何收藏</string>
+    <string name="mylocation_failed">对不起, 定位失败, 请重试...</string>
 
-	<string name="title_type_transfer">公交方案</string>
-	<string name="title_type_drive">驾车方案</string>
-	<string name="title_type_walk">步行方案</string>
-	<string name="title_transfer_plan">公交详情</string>
-	<string name="title_transfer_plan_popup">方案%1$s</string>
-	<string name="title_walk_plan">步行详情</string>
-	<string name="title_drive_plan">驾车详情</string>
-	<string name="title_busline_result">线路列表</string>
-	<string name="title_busline_line">线路详情</string>
-	<string name="title_busline_line_popup">线路%1$s</string>
-	<string name="title_station_result">站点列表</string>
-	<string name="title_traffic_result_map">交通地图</string>
-	<string name="title_busline_result_map">线路地图</string>
+    <string name="title_type_transfer">公交方案</string>
+    <string name="title_type_drive">驾车方案</string>
+    <string name="title_type_walk">步行方案</string>
+    <string name="title_transfer_plan">公交详情</string>
+    <string name="title_transfer_plan_popup">方案%1$s</string>
+    <string name="title_walk_plan">步行详情</string>
+    <string name="title_drive_plan">驾车详情</string>
+    <string name="title_busline_result">线路列表</string>
+    <string name="title_busline_line">线路详情</string>
+    <string name="title_busline_line_popup">线路%1$s</string>
+    <string name="title_station_result">站点列表</string>
+    <string name="title_traffic_result_map">交通地图</string>
+    <string name="title_busline_result_map">线路地图</string>
     <string name="title_click_map">地图选点</string>
-	<string name="title_popup_content">%1$d. %2$s</string>
+    <string name="title_popup_content">%1$d. %2$s</string>
 	
     <string name="poi_detail_not_next_tip">已经是最后一个了</string>
     <string name="poi_detail_not_previous_tip">已经是最前一个了</string>
@@ -188,17 +189,17 @@
     <string name="map_download">地图下载</string>
     <string name="change_city">切换城市</string>
     <string name="check_update">检查更新</string>
-    <string name="favorite">收藏</string>
-    <string name="favoriten">收藏夹</string>
+    <string name="favorite">收藏夹</string>
     <string name="clean_history">清空记录</string>
     <string name="settings">设置</string>
     <string name="system_settings">系统设置</string>
     <string name="select_point">选择该点</string>
     
     <string name="more">更多</string>
-    <string name="upgrade_tip_software">软件有新版本了, 点击下载!</string>
-    <string name="upgrade_tip_comment">没见解？不可能！来发表个点评吧！</string>
-    <string name="upgrade_tip_map">地图有更新数据了，点击升级!</string>
+    <string name="message_tip_software_update">软件有新版本了, 点击下载!</string>
+    <string name="message_tip_comment">没见解？不可能！来发表个点评吧！</string>
+    <string name="message_tip_map_upgrade">地图有更新数据了，点击升级!</string>
+    <string name="message_tip_user_survey">欢迎参加老虎宝典有奖用户调研</string>
     <string name="not_tip_week">一周之内不提醒</string>
     <string name="upgrade_all">全部升级</string>
     <string name="upgrade_manual">手动更新</string>
@@ -208,7 +209,7 @@
     <string name="help">帮助</string>
     <string name="about_us">关于我们</string>
     <string name="recommend_snda">盛大推荐</string>
-    <string name="recommend_tencent">腾讯应用中心</string>
+    <string name="recommend_tencent">腾讯应用宝</string>
     <string name="login_or_regist">登录/注册</string>
     <string name="user_home">个人中心</string>
     <string name="give_favourable_comment">给个好评鼓励我们</string>
@@ -219,6 +220,8 @@
     <string name="settings_gps_description_close">关闭GPS可能会降低定位精度</string>
     <string name="settings_acquire_wakelock">保持屏幕常亮</string>
     <string name="settings_acquire_wakelock_description">使用本软件时屏幕常亮，耗电量稍大</string>
+    <string name="settings_radar_push">接收推送信息</string>
+    <string name="settings_radar_push_description">开启后可接收老虎推荐信息，嗷呜！</string>
     <string name="settings_map_home">设置地图为首页</string>
     <string name="settings_map_home_description">在本软件打开时直接显示地图</string>
     
@@ -235,7 +238,7 @@
     <string name="pop_categories">热门搜索</string>
     <string name="pop_location">热门地点</string>
     <string name="search_location_me_failure_and_select">暂时无法获取当前位置，请选择具体位置或在地图上指定位置！</string>
-    <string name="search_input_keyword">你忘记输入搜索词啦</string>
+    <string name="search_input_keyword">你忘记输入搜索词啦！</string>
     <string name="search_input_valid_tip">没有找到相关的结果，你可以换个词或换个城市试试！</string>
     <string name="my_location_failure">无法获取当前位置</string>
     <string name="select_has_point">选定的位置</string>
@@ -255,7 +258,7 @@
     <string name="source_">来源：%1$s</string> 
     <string name="reserve_tel">预定电话：</string> 
     <string name="phonenumber">电话：</string> 
-    <string name="recommend_cooking">推荐菜:\u0020</string>
+    <string name="recommend_cooking">推荐菜:%1$s</string>
     <string name="look_all_comment">查看全部</string> 
     <string name="current_city_">当前所在城市：%1$s</string> 
     <string name="add_city">添加城市</string> 
@@ -276,24 +279,24 @@
     
     <!-- 328路 \u2192 239路 -->
     <string name="traffic_transfer_arrow">\u0020\u2192\u0020</string>
-	<string name="traffic_at_where_walk_how">从{%1$s}步行约%2$s米</string>
-	<string name="traffic_at_where_walk_to_where">从{%1$s}步行到{%2$s}</string>
-	<string name="traffic_at_where_walk_how_to_where">从{%1$s}步行约%2$s米到{%3$s}</string>
-	<string name="traffic_walk_how_to_where">步行约%1$s米到{%2$s}</string>
+    <string name="traffic_at_where_walk_how">从{%1$s}步行约%2$s米</string>
+    <string name="traffic_at_where_walk_to_where">从{%1$s}步行到{%2$s}</string>
+    <string name="traffic_at_where_walk_how_to_where">从{%1$s}步行约%2$s米到{%3$s}</string>
+    <string name="traffic_walk_how_to_where">步行约%1$s米到{%2$s}</string>
     <string name="traffic_walk_how">步行约%1$s米</string>
-	<string name="traffic_walk_to_where">步行到{%1$s}</string>
-	<string name="traffic_by_what_to_where">乘%1$s到{%2$s}</string>
-	<string name="traffic_at_where_by_what_to_where">在{%1$s}乘%2$s，经过%3$d站，到{%4$s}</string>
-	<string name="traffic_at_where_by_what_to_where_previous">在{%1$s}乘%2$s，经过%3$d站，到{%4$s}(前一站%5$s)</string>
-	<string name="set_off_from_start">从起点出发</string>
+    <string name="traffic_walk_to_where">步行到{%1$s}</string>
+    <string name="traffic_by_what_to_where">乘%1$s到{%2$s}</string>
+    <string name="traffic_at_where_by_what_to_where">在{%1$s}乘%2$s，经过%3$d站，到{%4$s}</string>
+    <string name="traffic_at_where_by_what_to_where_previous">在{%1$s}乘%2$s，经过%3$d站，到{%4$s}(前一站%5$s)</string>
+    <string name="set_off_from_start">从起点出发</string>
     <string name="traffic_goto_end_station">到达终点</string>
     <string name="traffic_goto_end_point">到达终点</string>
     <string name="traffic_noneed_transfer">无需换乘, 步行可达</string>
     <string name="or">或</string>
     <string name="accross">经过%1$s</string>
     
-	<string name="length_str_title">全程\u0020:\u0020%1$s</string>
-	<string name="time_str_title">时间\u0020:\u0020%1$s</string>
+    <string name="length_str_title">全程\u0020:\u0020%1$s</string>
+    <string name="time_str_title">时间\u0020:\u0020%1$s</string>
     <string name="length_str_m">%1$s米</string>
     <string name="length_str_km">%1$.1f公里</string>
     <string name="traffic_forward">前</string>
@@ -303,9 +306,9 @@
     
     <string name="begin_trun_to">从起点向%1$s方向出发，</string>
 	<!-- 为了比较简单的完成字体高亮工作，在这里使用大括号{}来对高亮部分进行标记 -->
-	<string name="highlight_tag_left">{</string>
-	<string name="highlight_tag_right">}</string>
-	<string name="highlight_tag">{%1$s}</string>
+    <string name="highlight_tag_left">{</string>
+    <string name="highlight_tag_right">}</string>
+    <string name="highlight_tag">{%1$s}</string>
     <string name="drive_along">沿{%1$s}行驶%2$s，</string>
     <string name="drive_along_roundabout">沿{环岛}行驶%1$s，</string>
     <string name="drive_run">行驶%1$s，</string>
@@ -317,19 +320,19 @@
     <string name="enter">进入{%s}</string>
     <string name="enter_roundabout">进入{环岛}</string>
     
-	<string name="walk_along">沿{%1$s}步行%2$s，</string>
-	<string name="walk_along_roundabout">沿{环岛}步行%1$s，</string>
+    <string name="walk_along">沿{%1$s}步行%2$s，</string>
+    <string name="walk_along_roundabout">沿{环岛}步行%1$s，</string>
     <string name="walk_run">步行%1$s，</string>
-	<string name="walk_forward">{前行}</string>
-	<string name="walk_back">{向后}</string>
-	<string name="walk_left">{向左}</string>
-	<string name="walk_right">{向右}</string>
+    <string name="walk_forward">{前行}</string>
+    <string name="walk_back">{向后}</string>
+    <string name="walk_left">{向左}</string>
+    <string name="walk_right">{向右}</string>
     
 
     <string name="busline_result_title">搜索“%1$s”共有%2$d个结果</string>
-	<string name="busline_line_listitem_title">时间：%1$s\u0020全程：%2$s</string>
+    <string name="busline_line_listitem_title">时间：%1$s\u0020全程：%2$s</string>
     <string name="busline_station_listitem_title">共有%1$d条线路经过</string>
-	<string name="busline_map_bubble_content">%1$d.%2$s</string>
+    <string name="busline_map_bubble_content">%1$d.%2$s</string>
     
     <string name="about_version">%1$s</string>
     <string name="about_release_date">%1$s</string>
@@ -339,7 +342,7 @@
     <string name="about_name">Beijing TigerKnows Technology Co.Ltd</string>
     <string name="about_right">© 2013 TigerKnows. All Rights reserved</string>
     <string name="about_web">官网 \u0020 http://www.tigerknows.com</string>
-    <string name="about_weibo">官方 \u0020 http://weibo.com/tigermap</string>
+    <string name="about_weibo">微博 \u0020 http://weibo.com/tigermap</string>
     <string name="about_wap">Wap网址 \u0020 http://wap.tigerknows.com</string>
     <string name="about_bbs">论坛 \u0020 http://bbs.tigerknows.com</string>
     <string name="about_email">邮件 \u0020 support@tigerknows.com</string>
@@ -382,7 +385,7 @@
     <string name="feedback_submiting">正在发送中</string>
     <string name="feedback_success">我们已经收到你的建议，感谢你的支持！</string>
     <string name="feedback_failure">提交失败！</string>
-    <string name="your_feedback">感谢你使用老虎宝典，请输入你的意见</string>
+    <string name="your_feedback">感谢你使用老虎宝典，请输入你的意见！</string>
     <string name="your_mobile_number">请输入你的手机号码(选填)</string>
     <string name="mobile_number_">手机号码：</string>
 
@@ -444,7 +447,7 @@
 <!-- Share Module SinaWeibo End -->
 
 <!-- Share Module Tencent Start -->
-	<string name="tencent_auth_fail">获取QQ访问授权失败</string>
+    <string name="tencent_auth_fail">获取QQ访问授权失败</string>
     <string name="tencent_getprofile_loading">正在获取用户信息, 请稍候</string>
     <string name="tencent_getprofile_failed">获取QQ用户信息失败</string>
     <string name="tencent_share_title">来自老虎宝典的分享</string>
@@ -457,11 +460,11 @@
     <string name="send">发送</string>
     <string name="attention">注意</string>
     <string name="are_you_delete_all">是否要删除全部文本内容？</string>
-    <string name="weibo_send_sucess">新浪微博分享成功！</string>
+    <string name="weibo_send_success">新浪微博分享成功！</string>
     <string name="weibo_send_failed">新浪微博分享失败！</string>
-    <string name="logout_sucess">注销成功！</string>
+    <string name="logout_success">注销成功！</string>
     <string name="logout_failed">注销失败！</string>
-    <string name="tencent_share_sucess">QQ空间分享成功！</string>
+    <string name="tencent_share_success">QQ空间分享成功！</string>
     <string name="tencent_share_failed">QQ空间分享失败！</string>
     <string name="tencent_share_failed_token_error">QQ空间授权已经过期，请重新绑定！</string>
     <string name="del_pic">是否删除图片？</string>
@@ -527,123 +530,123 @@
 
 <!-- User Manage Start -->
 	<!-- User Page Title Start -->
-	<string name="title_user_login">登录</string>
-	<string name="title_user_regist">注册</string>
-	<string name="title_user_home">个人中心</string>
-	<string name="title_reset_password">重置密码</string>
-	<string name="title_update_nickname">输入昵称</string>
-	<string name="title_update_phone">更换手机号</string>
-	<string name="title_update_password">修改密码</string>
-	<string name="title_update_comment_after">点评成功</string>
+    <string name="title_user_login">登录</string>
+    <string name="title_user_regist">注册</string>
+    <string name="title_user_home">个人中心</string>
+    <string name="title_reset_password">重置密码</string>
+    <string name="title_update_nickname">输入昵称</string>
+    <string name="title_update_phone">更换手机号</string>
+    <string name="title_update_password">修改密码</string>
+    <string name="title_update_comment_after">点评成功</string>
 	<!-- User Page Title Start -->
 
 	<!-- User Login Start -->
-	<string name="please_input_phone">请输入手机号</string>
-	<string name="login">登录</string>
-	<string name="phone_format_wrong_reinput">手机号格式不正确, 请重新输入</string>
-	<string name="login_tip_after_comment">想用专有昵称发表点评, 请登录或注册</string>
+    <string name="please_input_phone">请输入手机号</string>
+    <string name="login">登录</string>
+    <string name="phone_format_wrong_reinput">手机号格式不正确, 请重新输入</string>
+    <string name="login_tip_after_comment">想用专有昵称发表点评, 请登录或注册</string>
 	<!-- User Login End -->
 	
 	<!-- User Regist Start -->
 	<!-- User Regist End -->
 	
 	<!-- User UpdateNickName Start -->
-	<string name="pick_personal_nickname">起一个你专属的老虎昵称吧~</string>
-	<string name="nickname_compose_format">2-10个汉字或4-20个字符</string>
-	<string name="nicknam_format_wrong">昵称格式有误, 请重新输入</string>
-	<string name="nickname_no_modify">你还未作任何修改.</string>
-	<string name="update_nicknam_success1">昵称设置成功, 快开始你的老虎之旅吧!</string>
-	<string name="update_nicknam_success2">昵称修改成功!</string>
+    <string name="pick_personal_nickname">起一个你专属的老虎昵称吧~</string>
+    <string name="nickname_compose_format">2-10个汉字或4-20个字符</string>
+    <string name="nicknam_format_wrong">昵称格式有误, 请重新输入</string>
+    <string name="nickname_no_modify">你还未作任何修改.</string>
+    <string name="update_nicknam_success1">昵称设置成功, 快开始你的老虎之旅吧!</string>
+    <string name="update_nicknam_success2">昵称修改成功!</string>
 	<!-- User UpdateNickName End -->
 	
 	<!-- User Account Start -->
-	<string name="change_phone">更换手机号</string>
-	<string name="change_nickname">修改昵称</string>
-	<string name="change_password">修改密码</string>
-	<string name="logout_account">退出帐户</string>
-	<string name="logout_account_tip">你确定要退出帐户吗?</string>
+    <string name="change_phone">更换手机号</string>
+    <string name="change_nickname">修改昵称</string>
+    <string name="change_password">修改密码</string>
+    <string name="logout_account">退出帐户</string>
+    <string name="logout_account_tip">你确定要退出帐户吗?</string>
 	<!-- User Account end -->
 	
 	<!-- User ChangePassword Start -->
-	<string name="please_input_old_password">请输入旧密码</string>
-	<string name="please_input_new_password">请输入新密码</string>
-	<string name="please_input_new_password_again">请再次输入新密码</string>
+    <string name="please_input_old_password">请输入旧密码</string>
+    <string name="please_input_new_password">请输入新密码</string>
+    <string name="please_input_new_password_again">请再次输入新密码</string>
 	<!-- 
-	<string name="please_input_616_newpassword">请输入6-16位字母或数字密码</string>
-	<string name="please_input_616_newpassword_again">请再次输入6-16位字母或数字密码</string>
+    <string name="please_input_616_newpassword">请输入6-16位字母或数字密码</string>
+    <string name="please_input_616_newpassword_again">请再次输入6-16位字母或数字密码</string>
 	-->
-	<string name="update_password_success">密码修改成功!</string>
+    <string name="update_password_success">密码修改成功!</string>
 	<!-- User ChangePassword end -->
 	
 	<!-- User UpdatePhone Start -->
-	<string name="update_phone_success">手机号更换成功!</string>
+    <string name="update_phone_success">手机号更换成功!</string>
 	<!-- User UpdatePhone end -->
 	
 	<!-- User ResetPassword Start -->
-	<string name="reset_password_success">密码重置成功!</string>
+    <string name="reset_password_success">密码重置成功!</string>
 	<!-- User ResetPassword End -->
 	
 	<!-- User Account Start -->
-	<string name="logout_success">退出成功!</string>
+    <string name="logout_account_success">退出成功!</string>
 	<!-- User Account End -->
 	
 	<!-- User Common Start -->
-	<string name="regist">注册</string>
-	<string name="default_guest_name">老虎用户</string>
-	<string name="default_nick_name">老虎注册用户</string>
-	<string name="please_input_11_phone">请输入手机号</string>
-	<string name="please_input_11_new_phone">请输入新手机号</string>
+    <string name="regist">注册</string>
+    <string name="default_guest_name">老虎用户</string>
+    <string name="default_nick_name">老虎注册用户</string>
+    <string name="please_input_11_phone">请输入手机号</string>
+    <string name="please_input_11_new_phone">请输入新手机号</string>
 	<!-- <string name="please_input_4_validate_num">请输入4位数字验证码</string> -->
-	<string name="please_input_4_validate_num">请输入验证码</string>
-	<string name="please_input_616_password">请输入密码</string>
-	<string name="please_input_616_password_again">请再次输入密码</string>
-	<string name="reqest_validate_num">点击获取验证码</string>
-	<string name="request_validcode_retry">重新发送</string>
-	<string name="please_input_password">请输入密码</string>
-	<string name="forget_password"><u>忘记密码?</u></string>
-	<string name="title_error_tip">提示</string>
-	<string name="query_loading_tip">请求中, 请稍候</string>
-	<string name="coundown_valinum">%1$s秒后重新获取</string>
+    <string name="please_input_4_validate_num">请输入验证码</string>
+    <string name="please_input_616_password">请输入密码</string>
+    <string name="please_input_616_password_again">请再次输入密码</string>
+    <string name="reqest_validate_num">点击获取验证码</string>
+    <string name="request_validcode_retry">重新发送</string>
+    <string name="please_input_password">请输入密码</string>
+    <string name="forget_password"><u>忘记密码?</u></string>
+    <string name="title_error_tip">提示</string>
+    <string name="query_loading_tip">请求中, 请稍候</string>
+    <string name="coundown_valinum">%1$s秒后重新获取</string>
 	<!-- User Common End -->
 	
 	<!-- User InputError Tip Start -->
-	<string name="phone_empty_tip">请输入手机号</string>
-	<string name="code_empty_tip">请输入验证码</string>
-	<string name="password_empty_tip">请输入密码</string>
-	<string name="re_password_empty_tip">请再次输入密码</string>
-	<string name="old_password_empty_tip">请输入原密码</string>
-	<string name="new_password_empty_tip">请输入新密码</string>
-	<string name="name_empty_tip">请输入昵称</string>
-	<string name="phone_format_error_tip">手机号格式不正确, 请重新输入11位手机号</string>
-	<string name="password_format_error_tip">密码必须由6-16位数字或字母组成, 区分大小写</string>
-	<string name="password_union_error_tip">密码输入不一致, 请重新输入</string>
-	<string name="name_format_error_tip">昵称格式错误, 请重新输入</string>
+    <string name="phone_empty_tip">请输入手机号</string>
+    <string name="code_empty_tip">请输入验证码</string>
+    <string name="password_empty_tip">请输入密码</string>
+    <string name="re_password_empty_tip">请再次输入密码</string>
+    <string name="old_password_empty_tip">请输入原密码</string>
+    <string name="new_password_empty_tip">请输入新密码</string>
+    <string name="name_empty_tip">请输入昵称</string>
+    <string name="phone_format_error_tip">手机号格式不正确, 请重新输入11位手机号</string>
+    <string name="password_format_error_tip">密码必须由6-16位数字或字母组成, 区分大小写</string>
+    <string name="password_union_error_tip">密码输入不一致, 请重新输入</string>
+    <string name="name_format_error_tip">昵称格式错误, 请重新输入</string>
 	<!-- User InputError Tip End -->
 	
 	<!-- User Response Tip Start -->
-	<string name="request_validcode_success">验证码将以短信形式发送给你, 请查收</string>
-	<string name="regist_success">恭喜你注册成功</string>
-	<string name="request_server_failed">请求失败, 请重新尝试</string>
-	<string name="request_server_error">服务器正忙, 请稍候再试</string>
+    <string name="request_validcode_success">验证码将以短信形式发送给你, 请查收</string>
+    <string name="regist_success">恭喜你注册成功</string>
+    <string name="request_server_failed">请求失败, 请重新尝试</string>
+    <string name="request_server_error">服务器正忙, 请稍候再试</string>
 	<!-- User Response Tip End -->
 <!-- User Manage End -->
 
 <!-- Error Recover Start -->
-	<string name="station_position_error">站点位置错误</string>
-	<string name="station_line_error">路线错误</string>
-	<string name="staion_no_line">%1$s无%2$s</string>
-	<string name="errorrecovery_description">请输入问题详述或其他信息(选填)</string>
-	<string name="errorrecovery_user_phone">请输入你的手机号码(选填)</string>
-	<string name="errorrecovery_empty">你尚未输入任何纠错信息</string>
-	<string name="poi_base_info_error">基本信息错误</string>
-	<string name="poi_name_error">名称错误</string>
-	<string name="poi_address_error">地址错误</string>
-	<string name="poi_phone_error">电话错误</string>
-	<string name="poi_mark_error">地图标注错误</string>
-	<string name="poi_address_noexist_error">地点不存在</string>
-	<string name="poi_address_duplicate_error">地点重复</string>
-	<string name="poi_ohter_error">其他</string>
-	<string name="error_recovery_success">我们将尽快处理, 谢谢你的反馈！</string>
+    <string name="station_position_error">站点位置错误</string>
+    <string name="station_line_error">路线错误</string>
+    <string name="staion_no_line">%1$s无%2$s</string>
+    <string name="errorrecovery_description">请输入问题详述或其他信息(选填)</string>
+    <string name="errorrecovery_user_phone">请输入你的手机号码(选填)</string>
+    <string name="errorrecovery_empty">你尚未输入任何纠错信息</string>
+    <string name="poi_base_info_error">基本信息错误</string>
+    <string name="poi_name_error">名称错误</string>
+    <string name="poi_address_error">地址错误</string>
+    <string name="poi_phone_error">电话错误</string>
+    <string name="poi_mark_error">地图标注错误</string>
+    <string name="poi_address_noexist_error">地点不存在</string>
+    <string name="poi_address_duplicate_error">地点重复</string>
+    <string name="poi_ohter_error">其他</string>
+    <string name="error_recovery_success">我们将尽快处理, 谢谢你的反馈！</string>
 <!-- Error Recover End -->
 
 <!--  =======================    Common Part    =========================== -->
@@ -659,7 +662,7 @@
 <!-- Punctuation End -->
 
 <!-- Common Start -->
-	<string name="confirm">确定</string>
+    <string name="confirm">确定</string>
     <string name="cancel">取消</string>  
     <string name="yes">是</string>
     <string name="no">否</string>
@@ -686,7 +689,7 @@
     <string name="weibo_no_repeat">不能发送重复的微博！</string>
     
     <string name="please_login">请登录！</string>
-    <string name="logon_sucess">登录成功！</string>
+    <string name="logon_success">登录成功！</string>
     <string name="logon_failed">登录失败！</string>
     
     <string name="weibo_logon_failed">登录失败</string>
@@ -889,6 +892,8 @@
     <string name="response_code_603">抱歉，该地址不存在或已失效。</string>
     <string name="response_code_801">创建订单失败，请重试。</string>
     
+    <string name="response_code_410_pulled">抱歉,原信息已过期\n欢迎发现更多身边的精彩!</string>
+    
     <string name="retry">重试</string>
     <string name="location_city">定位城市</string>
     <string name="all_city">全部城市</string>
@@ -910,6 +915,8 @@
     <string name="wifi_enabled">wifi已开启</string>
     <string name="wifi_disabled">wifi已关闭</string>
     
+    <string name="user_survey">用户调研</string>
+    
     <string name="shanghu_xingxi">商户信息</string>
     <string name="call_telephone">拨打电话</string>
 
@@ -917,4 +924,24 @@
     <string name="are_you_exit_add_merchart">你确定要放弃添加商户？</string>
     <string name="searching_title">搜索中…</string>
     <string name="public_welfarre">传递正能量，手机照亮失踪宝贝回家之路</string>
+    
+    <string name="radar_new_version">嗷呜!有新版本出没!</string>
+    <string name="radar_new_film"></string>
+    <string name="radar_holidy"></string>
+    <string name="radar_interval"></string>
+    
+    <string name="counting_tip">正在统计...</string>
+
+    <!-- 微信 begin -->
+	<string name="errcode_success">发送成功</string>
+	<string name="errcode_cancel">发送取消</string>
+	<string name="errcode_deny">发送被拒绝</string>
+	<string name="errcode_unknown">发送返回</string>
+	<string name="send_weixin_friend">发给微信好友</string>
+	<string name="uninstall_weixin_tip">尚未安装微信，是否现在下载最新版微信？</string>
+	<string name="upgarde_weixin_tip">当前微信版本不支持朋友圈功能，是否现在去下载最新版微信？</string>
+	<!-- 微信 end -->
+	
+	<string name="play_dianying">在映电影</string>
+	<string name="more_dianying">更多电影</string>
 </resources>

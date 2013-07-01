@@ -5,7 +5,6 @@
 package com.tigerknows.maps;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,6 +16,8 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.text.TextUtils;
 
 import com.decarta.CONFIG;
@@ -28,8 +29,6 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
-import com.tigerknows.MapDownload.DownloadCity;
-import com.tigerknows.service.MapStatsService;
 import com.tigerknows.service.SuggestLexiconService;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.CommonUtils;
@@ -38,6 +37,16 @@ import com.tigerknows.util.SuggestWord;
 public class MapEngine {
 
     public static boolean BMP2PNG = false;
+    
+    /**
+     * 删除或更新地图数据时，通知MapView清除缓存的Tile信息
+     */
+    public static final String ACTION_REMOVE_CITY_MAP_DATA = "action.com.tigerknows.remove.city.map.data";
+    
+    /**
+     * 城市Id
+     */
+    public static final String EXTRA_CITY_ID = "extra_city_id";
     
     public static int CITY_ID_INVALID = -1;
     public static int CITY_ID_QUANGUO = -3;
@@ -52,8 +61,6 @@ public class MapEngine {
     private int suggestCityId = CITY_ID_INVALID;  // 联想词引擎所属城市Id
     private List<Integer> suggestDownloaded = new ArrayList<Integer>(); // 记录被下载更新过的城市Id
     
-    private List<DownloadCity> downloadCityList = new ArrayList<DownloadCity>();
-    private boolean statsFinish = false;
     private String mapPath = null;
     private boolean isExternalStorage = false;
     public boolean isExternalStorage() {
@@ -63,6 +70,7 @@ public class MapEngine {
     public static final int MAX_REGION_TOTAL_IN_ROM = 30;
     private int lastCityId;
     private List<Integer> lastRegionIdList = new ArrayList<Integer>();
+    private Context context;
     
     private void readLastRegionIdList(Context context) {
         synchronized (this) {
@@ -201,6 +209,7 @@ public class MapEngine {
                 }
             }
             this.isClosed = false;
+            this.context = context;
         } else {
             destroyEngine();
         }
@@ -339,7 +348,26 @@ public class MapEngine {
         if (isClosed) {
             return;
         }
+        int cityId = MapEngine.CITY_ID_INVALID;
+        RegionInfo regionInfo = getRegionInfo(rid);
+        if (regionInfo != null) {
+            cityId = getCityid(regionInfo.getCCityName());
+        }
         Ca.tk_remove_region_data(rid); 
+        sendBroadcastForRemoveMapData(cityId);
+        }
+    }
+    
+    void sendBroadcastForRemoveMapData(int cityId) {
+        synchronized (this) {
+        if (isClosed) {
+            return;
+        }
+        if (context != null) {
+            Intent intent = new Intent(ACTION_REMOVE_CITY_MAP_DATA);
+            intent.putExtra(EXTRA_CITY_ID, cityId);
+            context.sendBroadcast(intent);
+        }
         }
     }
 
@@ -369,7 +397,7 @@ public class MapEngine {
         if (buf == null || TextUtils.isEmpty(version)) {
             return -1;
         }
-        RegionMetaVersion regionMetaVersion = getRegionVersion(rid);
+        RegionMetaVersion regionMetaVersion = getRegionMetaVersion(rid);
         if (regionMetaVersion != null) {
             if (version.equals(regionMetaVersion.toString()) == false) {
                 return -1;
@@ -381,7 +409,7 @@ public class MapEngine {
         }
     }
     
-    public RegionMapInfo getRegionStat(int regionId) {
+    public LocalRegionDataInfo getLocalRegionDataInfo(int regionId) {
         synchronized (this) {
         if (isClosed) {
             return null;
@@ -532,10 +560,11 @@ public class MapEngine {
             return;
         }
         Ca.tk_remove_city_data(cityName.trim());
+        sendBroadcastForRemoveMapData(getCityid(cityName));
         }
     }
 
-    public RegionMetaVersion getRegionVersion(int regionId) {
+    public RegionMetaVersion getRegionMetaVersion(int regionId) {
         synchronized (this) {
         if (isClosed) {
             return null;
@@ -549,6 +578,12 @@ public class MapEngine {
         }
     }
     
+    /**
+     * 坐标转换
+     * 这个是遵守国家规定，所有定位的坐标都要经过此转换后，在地图上显示才是正确位置
+     * @param position
+     * @return
+     */
     public Position latlonTransform(Position position) {
         synchronized (this) {
         if (isClosed) {
@@ -693,7 +728,10 @@ public class MapEngine {
         return instance;
     }
 
-    public void initMapDataPath(Context context, boolean onResume) throws APIException{
+    /**
+     * 设置地图引擎数据文件夹路径，仅在初始化或扩展存储卡插拔时才设置并重启地图引擎
+     */
+    public void initMapDataPath(Context context) throws APIException{
         String appPath = TKConfig.getDataPath(true);
         if (!appPath.equals(mapPath)) {
             try {
@@ -705,33 +743,32 @@ public class MapEngine {
                 new File(appPath, "try.txt").delete();
                 destroyEngine();
                 initEngine(context, appPath);
-
-                if (onResume) {
-                    statsMapEnd(new ArrayList<DownloadCity>(), false);
-                    Intent service = new Intent(context, MapStatsService.class);
-                    context.startService(service);
-                }
                 LogWrapper.i(TAG, "setupDataPath() app path:"+ appPath + " map path:"+ mapPath + ",exist:" + new File(appPath).exists());
             } catch (Exception e) {
                 isClosed = true;
                 mapPath = null;
                 throw new APIException("Can't write/read cache. Please Grand permission");
             }
+            
         }
-
     }
     
+    /**
+     * 解压地图引擎资源文件及部分地图数据文件，通过保存版本名称来确保不出现重复解压的情况
+     * @param context
+     * @throws Exception
+     */
     public void setup(Context context) throws Exception {
         String versionName = TKConfig.getPref(context, TKConfig.PREFS_VERSION_NAME, null);
-        if (TextUtils.isEmpty(versionName) || !TKConfig.getClientSoftVersion().equals(versionName)) {
+        if (TextUtils.isEmpty(versionName)   // 第一次安装后使用
+                || !TKConfig.getClientSoftVersion().equals(versionName)) {   // 更新安装后使用
             String mapPath = TKConfig.getDataPath(true);
             AssetManager am = context.getAssets();
+            
             CommonUtils.deleteAllFile(TKConfig.getDataPath(false));
             
             CommonUtils.unZipFile(am, "tigerres.zip", TKConfig.getDataPath(false));
             CommonUtils.unZipFile(am, "tigermap.zip", mapPath);
-            TKConfig.setPref(context, TKConfig.PREFS_VERSION_NAME, TKConfig.getClientSoftVersion());
-            
         }
     }
     
@@ -789,31 +826,6 @@ public class MapEngine {
         }
     }
 
-    public RegionMetaVersion getRegionMetaVersion(int rid) {
-        synchronized (this) {
-        RegionMetaVersion version = null;
-        if (isClosed) {
-            return version;
-        }
-        String path = mapPath + String.format(TKConfig.MAP_REGION_METAFILE, rid);
-        File metaFile = new File(path);
-        try {
-            FileInputStream fis = new FileInputStream(metaFile);
-            if (fis.available() > 16) {
-                byte[] versionBytes = new byte[6];
-                fis.skip(10);
-                int readByteLen = fis.read(versionBytes);
-                if (readByteLen == 6) {
-                    version = new RegionMetaVersion(versionBytes);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return version;
-        }
-    }
-
     public List<CityInfo> getAllProvinceCityList(Context context) {
         synchronized (this) {
         List<CityInfo> allCityInfoList = new ArrayList<CityInfo>();
@@ -845,7 +857,7 @@ public class MapEngine {
     }
 
     //得到一个城市的所有region id
-    public ArrayList<Integer> getRegionIdListByCityName(String cityName) {
+    public ArrayList<Integer> getRegionIdList(String cityName) {
         synchronized (this) {
         int cityId = getCityid(cityName);
         ArrayList<Integer> regionIdList = new ArrayList<Integer>();
@@ -936,38 +948,13 @@ public class MapEngine {
         return suggestCityId != CITY_ID_INVALID;
     }
     
-    public boolean statsMapStart() {
-        synchronized (this) {
-            downloadCityList.clear();
-            statsFinish = false;
-            return true;
-        }
-    }
-    
-    public void statsMapEnd(List<DownloadCity> list, boolean statsFinish) {
-        synchronized (this) {
-            if (list == null) {
-                return;
-            }
-            downloadCityList.clear();
-            downloadCityList.addAll(list);
-            this.statsFinish = statsFinish;
-        }
-    }
-    
-    public List<DownloadCity> getDownloadCityList() {
-        synchronized (this) {
-            return downloadCityList;
-        }
-    }
-    
-    public boolean isStatsFinish() {
-        synchronized (this) {
-            return statsFinish;
-        }
-    }
-    
     public static class RegionMetaVersion {
+        
+        /*
+         * 当没有地图数据（*.dat）时的版本号默认为"0.0.0.0.0"
+         */
+        public static final String NONE = "0.0.0.0.0";
+        
         //主版本号 次版本号    年   月   日
         //uint1   uint1   uint2   uint1   uint1 
         private int mainVersion;
@@ -1092,7 +1079,7 @@ public class MapEngine {
         }
     }
 
-    public static class CityInfo {
+    public static class CityInfo implements Parcelable {
         // "城市中文名字, City english name, latitude, longitude, level, 省份中文名字, city
         // Province english name" such as
         // "北京,beijing,39.90415599,116.397772995,11, 北京,beijing"
@@ -1272,6 +1259,45 @@ public class MapEngine {
             }
             return hashCode;
         }
+
+        @Override
+        public int describeContents() {
+            return 0;
+        }
+
+        @Override
+        public void writeToParcel(Parcel parcel, int arg1) {
+            parcel.writeInt(id);
+            parcel.writeInt(type);
+            parcel.writeString(cName);
+            parcel.writeString(eName);
+            parcel.writeInt(level);
+            parcel.writeString(cProvinceName);
+            parcel.writeString(eProvinceName);
+            parcel.writeInt(order);            
+        }
+
+        public static final Parcelable.Creator<CityInfo> CREATOR
+                = new Parcelable.Creator<CityInfo>() {
+            public CityInfo createFromParcel(Parcel in) {
+                return new CityInfo(in);
+            }
+
+            public CityInfo[] newArray(int size) {
+                return new CityInfo[size];
+            }
+        };
+        
+        private CityInfo(Parcel in) {
+            id = in.readInt();
+            type = in.readInt();
+            cName = in.readString();
+            eName = in.readString();
+            level = in.readInt();
+            cProvinceName = in.readString();
+            eProvinceName = in.readString();
+            order = in.readInt();
+        }
     }
     
     /**
@@ -1335,7 +1361,7 @@ public class MapEngine {
         return hasCorrect;
     }
     
-    public static boolean hasCity(int cityId) {
+    public static boolean hasMunicipality(int cityId) {
         if (cityId == -3 || cityId == 1 || cityId == 2 || cityId == 6 || cityId == 8) {
             return true;
         }

@@ -5,12 +5,8 @@
 package com.tigerknows.model;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 
 import android.content.Context;
 
@@ -29,7 +25,7 @@ public class MapVersionQuery extends BaseQuery {
     public static final String VERSION = "2";
     
     private List<Integer> regionIdList;
-    private HashMap<Integer, RegionDataInfo> regionDataInfos = null;
+    private HashMap<Integer, ServerRegionDataInfo> regionDataInfos = null;
 
     public MapVersionQuery(Context context) {
         super(context, API_TYPE_MAP_VERSION_QUERY, VERSION);
@@ -39,7 +35,7 @@ public class MapVersionQuery extends BaseQuery {
         this.regionIdList = regionIdList;
     }
     
-    public HashMap<Integer, RegionDataInfo> getRegionVersion() {
+    public HashMap<Integer, ServerRegionDataInfo> getServerRegionDataInfoMap() {
         return regionDataInfos;
     }
     
@@ -66,9 +62,9 @@ public class MapVersionQuery extends BaseQuery {
     @Override
     protected void makeRequestParameters() throws APIException {
         super.makeRequestParameters();
-        requestParameters.add(new BasicNameValuePair("vs", TKConfig.getClientSoftVersion()));
+        requestParameters.add("vs", TKConfig.getClientSoftVersion());
         for (Integer regionId : regionIdList) {
-            requestParameters.add(new BasicNameValuePair("rid", String.valueOf(regionId)));
+            requestParameters.add("rid", String.valueOf(regionId));
         }
     }
 
@@ -99,13 +95,13 @@ public class MapVersionQuery extends BaseQuery {
         }
     }
 
-    public static class RegionDataInfo {
+    public static class ServerRegionDataInfo {
         private int mRegionId;
         private String mRegionVersion;
         private int mTotalSize;
         private String mCheckSum;
         
-        public RegionDataInfo(final String regionVersion, final int totalSize) {
+        public ServerRegionDataInfo(final String regionVersion, final int totalSize) {
             this.mRegionVersion = regionVersion;
             this.mTotalSize = totalSize;
         }

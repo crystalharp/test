@@ -68,7 +68,7 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO 获取验证码
-				mActionLog.addAction(ActionLog.UserResetPasswordValidNumBtn);
+				mActionLog.addAction(mActionTag +  ActionLog.UserCommonValidNumBtn);
 				if (!phoneEdt.isValid()) {
 					validationAction(phoneEdt);
 					return;
@@ -82,6 +82,7 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 
 			@Override
 			public void onClick(View v) {
+			    mActionLog.addAction(mActionTag +  ActionLog.UserCommonConfirmBtn);
 				// TODO 重置成功后, 跳转到登录页面? 个人中心页面?
 				if (!mForm.isValid()) {
 					validationAction(mForm.getErrorSource());
@@ -89,25 +90,6 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 				}
 				
 				requestResetPasswrod();
-			}
-		});
-		
-		phoneEdt.addTextChangedListener(new TextWatcher() {
-			
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				// TODO Auto-generated method stub
-			}
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-				// TODO Auto-generated method stub
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
 			}
 		});
 	}
@@ -239,7 +221,7 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 					showSoftInput(valiNumEdt);
 					valiNumEdt.selectAll();
 				}
-				valiNumBtn.reset(getString(R.string.request_validcode_retry));
+				//valiNumBtn.reset(getString(R.string.request_validcode_retry));
 			}
 			
 		});
@@ -277,7 +259,7 @@ public class UserResetPasswordActivity extends UserBaseActivity {
 					int which) {
 				// TODO Auto-generated method stub
 //				if (which == DialogInterface.BUTTON_POSITIVE) {
-					valiNumBtn.reset(getString(R.string.reqest_validate_num));
+					valiNumBtn.reset(getString(R.string.request_validcode_retry));
 //				}
 			}
 			

@@ -14,9 +14,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-
 import android.content.Context;
 import android.content.Intent;
 
@@ -46,6 +43,7 @@ import com.tigerknows.util.HttpUtils;
 import com.tigerknows.util.ParserUtil;
 import com.tigerknows.util.TKLZDecode;
 import com.tigerknows.util.HttpUtils.TKHttpClient.ProgressUpdate;
+import com.weibo.sdk.android.WeiboParameters;
 
 /**
  *本类是所有联网搜索类的公共父类.
@@ -56,7 +54,7 @@ import com.tigerknows.util.HttpUtils.TKHttpClient.ProgressUpdate;
  */
 public abstract class BaseQuery {
     
-    public static boolean Test = false;
+    static final String TAG = "BaseQuery";
     
     public static final String ACTION_NETWORK_STATUS_REPORT = "ACTION_NETWORK_STATUS_REPORT";
 
@@ -67,7 +65,7 @@ public abstract class BaseQuery {
     public static final String API_TYPE_BUSLINE_QUERY = "b";
     
     // 用户登录
-    public static final String API_TYPE_USER_LOGON = "l";
+    public static final String API_TYPE_BOOTSTRAP = "l";
     
     // 数据搜索
     public static final String API_TYPE_DATA_QUERY = "s";
@@ -149,6 +147,43 @@ public abstract class BaseQuery {
     // pic string  true 图片们的宽高信息，格式为key0:width_height_[(0|1)+];key1:width_height_[(0|1)+];... 
     public static final String SERVER_PARAMETER_PICTURE = "pic";
 
+	public static final String RESPONSE_CODE_ERROR_MSG_PREFIX = "resp_code_err_msg";
+
+	// dsrc	 string	 false	 data request source，该请求的来源（指客户端的不同“频道”
+    public static final String SERVER_PARAMETER_REQUSET_SOURCE_TYPE = "dsrc";
+
+    // dsrc=dpmsg，表示雷达频道，通过解析推送消息获得动态poi的uid之后，根据uid取完整的动态poi 
+    public static final String REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI = "dpmsg";
+
+    // dsrc=weixin，表示从附件栏启动客户端，仅在引导服务(at=l, Bootstrap)时使用
+    public static final String REQUSET_SOURCE_TYPE_WEIXIN = "weixin";
+
+    // dsrc=cinemadetail，表示点击POI中的电影院列表进入电影详情页
+    public static final String REQUSET_SOURCE_TYPE_POI_TO_CINEMA = "cinemadetail";
+
+    // cstatus  string  false   上传客户端状态信息,字段为cstatus,打开时为0(可以省略),关闭时为1
+    public static final String SERVER_PARAMETER_CLIENT_STATUS = "cstatus";
+    
+    public static final String CLIENT_STATUS_START = "0";
+    
+    public static final String CLIENT_STATUS_STOP = "1";
+    
+    public static String sClentStatus = CLIENT_STATUS_START;
+    
+    /**
+     * 检查是否为推送动态POI的查询
+     * @return
+     */
+    public boolean isPulledDynamicPOIRequest() {
+        boolean result = false;
+        if (criteria != null && criteria.containsKey(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {
+            String sourceType = criteria.get(SERVER_PARAMETER_REQUSET_SOURCE_TYPE);
+            if (REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI.equals(sourceType)) {
+                result = true;
+            }
+        }
+        return result;
+    }
     
     // 数据类型:
     // POI 1
@@ -198,9 +233,15 @@ public abstract class BaseQuery {
 
     // 团购分店 16
     public static final String DATA_TYPE_FENDIAN = "16";
+    
+    // 用户调研 21
+    public static final String DATA_TYPE_DIAOYAN = "21";
 
     // 发现首页动态数据统计 100
     public static final String DATA_TYPE_DISCOVER = "100";
+
+    // 消息推送 18
+    public static final String DATA_TYPE_PULL_MESSAGE = "18";
     
     public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     
@@ -226,36 +267,40 @@ public abstract class BaseQuery {
 
     public static final int KEEP_ALIVE_TIME = 30 * 1000;
     
-    private static List<NameValuePair> sCommonParameters;
+    private static WeiboParameters sCommonParameters;
     
+    /**
+     * 设置网络请求中的公共参数
+     */
     public static void initCommonParameters() {
         
-        sCommonParameters = new ArrayList<NameValuePair>();
-        sCommonParameters.add(new BasicNameValuePair("dv", "1"));
-        sCommonParameters.add(new BasicNameValuePair("e", TKConfig.getIMEI()));
-
-        sCommonParameters.add(new BasicNameValuePair("m", TKConfig.getSpreader()));
-        sCommonParameters.add(new BasicNameValuePair("sc", TKConfig.SERVICE_CENTER));
-        sCommonParameters.add(new BasicNameValuePair("sg", TKConfig.SG));
-        sCommonParameters.add(new BasicNameValuePair("si", TKConfig.SI));
-        sCommonParameters.add(new BasicNameValuePair("sv", TKConfig.SV));
-        sCommonParameters.add(new BasicNameValuePair("ec", TKConfig.getEncoding()));
-        sCommonParameters.add(new BasicNameValuePair("pk", TKConfig.getPhoneKey()));
-
-        sCommonParameters.add(new BasicNameValuePair("vs", TKConfig.getClientSoftVersion()));
-        sCommonParameters.add(new BasicNameValuePair("vd", TKConfig.getClientDataVersion()));
-        sCommonParameters.add(new BasicNameValuePair("vp", TKConfig.getVersionOfPlatform()));
+        sCommonParameters = new WeiboParameters();
+        
+        // 下列参数都是固定值，兼容旧版本服务的公共请求参数约定
+        sCommonParameters.add("dv", "1");
+        sCommonParameters.add("sc", "13800100500");
+        sCommonParameters.add("sg", "25");
+        sCommonParameters.add("si", "5$5$5$5$5");
+        sCommonParameters.add("sv", "1");
+        sCommonParameters.add("vd", "1.0.20100619");
+        
+        sCommonParameters.add("m", TKConfig.getSpreader());
+        sCommonParameters.add("ec", TKConfig.getEncoding());
+        sCommonParameters.add("pk", TKConfig.getPhoneKey());
+        sCommonParameters.add("vs", TKConfig.getClientSoftVersion());
+        sCommonParameters.add("vp", TKConfig.getVersionOfPlatform());
     }
     
-    protected static void addCommonParameters(List<NameValuePair> parameters, int cityId, boolean isLocateMe) {
+    protected static void addCommonParameters(WeiboParameters parameters, int cityId, boolean isLocateMe) {
         parameters.addAll(sCommonParameters);
 
         if (cityId < MapEngine.CITY_ID_BEIJING && isLocateMe == false) {
             cityId = MapEngine.CITY_ID_BEIJING;
         }
-        parameters.add(new BasicNameValuePair("c", String.valueOf(cityId)));
-        
-        parameters.add(new BasicNameValuePair("d", TKConfig.getIMSI()));
+        parameters.add("c", String.valueOf(cityId));
+
+        parameters.add("e", TKConfig.getIMEI());
+        parameters.add("d", TKConfig.getIMSI());
         boolean simAvailably = true;
         TKCellLocation tkCellLocation = TKConfig.getCellLocation();
         int mcc = TKConfig.getMCC();
@@ -267,23 +312,31 @@ public abstract class BaseQuery {
         }
         
         if (simAvailably) {
-            parameters.add(new BasicNameValuePair("mcc", String.valueOf(mcc)));
-            parameters.add(new BasicNameValuePair("mnc", String.valueOf(mnc)));
-            parameters.add(new BasicNameValuePair("lac", String.valueOf(lac)));
-            parameters.add(new BasicNameValuePair("ci", String.valueOf(cid)));
-            parameters.add(new BasicNameValuePair("ss", String.valueOf(TKConfig.getSignalStrength())));
+            parameters.add("mcc", String.valueOf(mcc));
+            parameters.add("mnc", String.valueOf(mnc));
+            parameters.add("lac", String.valueOf(lac));
+            parameters.add("ci", String.valueOf(cid));
+            parameters.add("ss", String.valueOf(TKConfig.getSignalStrength()));
         }
     }
     
-    protected static void addCommonParameters(List<NameValuePair> parameters) {
+    protected static void addCommonParameters(WeiboParameters parameters) {
         addCommonParameters(parameters, MapEngine.CITY_ID_BEIJING, false);
     }
     
-    protected static void addCommonParameters(List<NameValuePair> parameters, int cityId) {
+    protected static void addCommonParameters(WeiboParameters parameters, int cityId) {
         addCommonParameters(parameters, cityId, false);
     }
     
-    protected int loginConnectTime = 0;
+    /**
+     * 引导服务进行网络连接的最大重试次数
+     */
+    static final int BOOTSTRAP_RETRY_TIME_MAX = 3;
+    
+    /**
+     * 引导服务进行网络连接的重试次数
+     */
+    protected int bootstrapRetryTime = 0;
 
     protected Context context;
     
@@ -301,7 +354,7 @@ public abstract class BaseQuery {
     
     protected String tipText = null;
     
-    protected List<NameValuePair> requestParameters = new ArrayList<NameValuePair>();
+    protected WeiboParameters requestParameters = new WeiboParameters();
 
     protected HttpUtils.TKHttpClient httpClient;
 
@@ -455,19 +508,25 @@ public abstract class BaseQuery {
                     criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(myLocationPosition.getLon()));
                     criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(myLocationPosition.getLat()));
                 }
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_CITY, String.valueOf(myLocationCityInfo.getId())));
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(myLocationPosition.getLon())));
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(myLocationPosition.getLat())));
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_TYPE, String.valueOf(myLocationPosition.getType())));
+                requestParameters.add(SERVER_PARAMETER_LOCATION_CITY, String.valueOf(myLocationCityInfo.getId()));
+                requestParameters.add(SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(myLocationPosition.getLon()));
+                requestParameters.add(SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(myLocationPosition.getLat()));
+                requestParameters.add(SERVER_PARAMETER_LOCATION_TYPE, String.valueOf(myLocationPosition.getType()));
             }
         }
     }
     
     protected void makeRequestParameters() throws APIException {
         requestParameters.clear();
-        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_API_TYPE, apiType));
-        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_VERSION, version));
+        requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
+        requestParameters.add(SERVER_PARAMETER_VERSION, version);
+        
+        if(criteria != null && criteria.containsKey(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)){
+            requestParameters.add(SERVER_PARAMETER_REQUSET_SOURCE_TYPE, criteria.get(SERVER_PARAMETER_REQUSET_SOURCE_TYPE));
+        }
         addMyLocationParameters();
+        
+        requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
     }
     
     protected void createHttpClient() {
@@ -485,65 +544,70 @@ public abstract class BaseQuery {
 
         while ((isFirstConnection || needReconntection) && !isStop) {
             try {
-                if (Test && (apiType.equals(API_TYPE_BUSLINE_QUERY) == false &&
-                        apiType.equals(API_TYPE_LOCATION_QUERY) == false &&
-                        apiType.equals(API_TYPE_MAP_META_DOWNLOAD) == false &&
-                        apiType.equals(API_TYPE_MAP_TILE_DOWNLOAD) == false &&
-                        apiType.equals(API_TYPE_MAP_VERSION_QUERY) == false &&
-                        apiType.equals(API_TYPE_SUGGEST_LEXICON_DOWNLOAD) == false &&
-                        apiType.equals(API_TYPE_TRAFFIC_QUERY) == false &&
-                        apiType.equals(API_TYPE_USER_LOGON) == false)) {
-                    LogWrapper.d("BaseQuery", "execute() requestParameters="+requestParameters.toString());
-                    launchTest();
-                    httpClient.launchTest(ByteUtil.xobjectToByte(responseXMap), STATUS_CODE_NETWORK_OK);
-                } else {
+                boolean isLaunchTest = false;
+                if (TKConfig.LaunchTest) {
+                    if (apiType.equals(API_TYPE_DATA_QUERY)
+                            || apiType.equals(API_TYPE_DATA_OPERATION)
+                            || apiType.equals(API_TYPE_ACCOUNT_MANAGE)) {
+                        launchTest();
+                        if (responseXMap != null) {
+                            httpClient.launchTest(ByteUtil.xobjectToByte(responseXMap), STATUS_CODE_NETWORK_OK);
+                            isLaunchTest = true;
+                        }
+                    }
+                }
+                LogWrapper.d(TAG, "isLaunchTest="+isLaunchTest);
+                if (isLaunchTest == false) {
                     httpClient.execute(context);
                 }
                 statusCode = httpClient.getStatusCode();
                 if (statusCode == STATUS_CODE_NETWORK_OK) {
                     byte[] data = httpClient.getData();
                     if (data != null) {
-                        LogWrapper.i("BaseQuery", "execute():at="+apiType+", response="+data.length);
+                        LogWrapper.i(TAG, "execute():at="+apiType+", response="+data.length);
                     } else {
-                        LogWrapper.i("BaseQuery", "execute():at="+apiType+", response="+data+", stop="+isStop);
+                        LogWrapper.i(TAG, "execute():at="+apiType+", response="+data+", stop="+isStop);
                     }
                     translate(data);
                     break;
                 }
             } catch (IOException e) {
+                // 当前出现异常，如果当前连接的是服务器推送的动态负载均衡Host，则将此动态负载均衡Host置空，这样就会使用预置的Host
                 if (API_TYPE_MAP_META_DOWNLOAD.equals(apiType) ||
                         API_TYPE_MAP_TILE_DOWNLOAD.equals(apiType) ||
                         API_TYPE_MAP_VERSION_QUERY.equals(apiType) ||
                         API_TYPE_SUGGEST_LEXICON_DOWNLOAD.equals(apiType)) {
-                    if (TKConfig.sDYNAMIC_DOWNLOAD_HOST != null) {
-                        TKConfig.sDYNAMIC_DOWNLOAD_HOST = null;
+                    if (TKConfig.getDynamicDownloadHost() != null) {
+                        TKConfig.setDynamicDownloadHost(null);
                         createHttpClient();
+                        // 下面此代码需要注释，因为地图下载服务在下次httpClient.execute(context)时没有重新生成最新的请求参数，
+                        // 会造成将下载的地图数据写入到地图文件中的错误位置，从而引起地图引擎崩溃
 //                        continue;
                     }
                 } else if (API_TYPE_BUSLINE_QUERY.equals(apiType) ||
                         API_TYPE_TRAFFIC_QUERY.equals(apiType) ||
                         API_TYPE_DATA_QUERY.equals(apiType) ||
                         API_TYPE_DATA_OPERATION.equals(apiType)) {
-                    if (TKConfig.sDYNAMIC_QUERY_HOST != null) {
-                        TKConfig.sDYNAMIC_QUERY_HOST = null;
+                    if (TKConfig.getDynamicQueryHost() != null) {
+                        TKConfig.setDynamicQueryHost(null);
                         createHttpClient();
                         continue;
                     }
                 } else if (API_TYPE_LOCATION_QUERY.equals(apiType)) {
-                    if (TKConfig.sDYNAMIC_LOCATION_HOST != null) {
-                        TKConfig.sDYNAMIC_LOCATION_HOST = null;
+                    if (TKConfig.getDynamicLocationHost() != null) {
+                        TKConfig.setDynamicLocationHost(null);
                         createHttpClient();
                         continue;
                     }
                 } else if (API_TYPE_ACCOUNT_MANAGE.equals(apiType)) {
-                    if (TKConfig.sDYNAMIC_ACCOUNT_MANAGE_HOST != null) {
-                        TKConfig.sDYNAMIC_ACCOUNT_MANAGE_HOST = null;
+                    if (TKConfig.getDynamicAccountManageHost() != null) {
+                        TKConfig.setDynamicAccountManageHost(null);
                         createHttpClient();
                         continue;
                     }
-                } else if (API_TYPE_USER_LOGON.equals(apiType)) {
-                    loginConnectTime++;
-                    if (loginConnectTime < 3) {
+                } else if (API_TYPE_BOOTSTRAP.equals(apiType)) {
+                    bootstrapRetryTime++;
+                    if (bootstrapRetryTime < BOOTSTRAP_RETRY_TIME_MAX) {
                         createHttpClient();
                         continue;
                     }
@@ -567,28 +631,29 @@ public abstract class BaseQuery {
             isFirstConnection = false;
         }
 
-        LogWrapper.i("BaseQuery", "execute():at="+apiType+", statusCode="+statusCode+", isStop="+isStop);
+        LogWrapper.i(TAG, "execute():at="+apiType+", statusCode="+statusCode+", isStop="+isStop);
     }
 
     protected void translate(byte[] data) {
         if (data == null || data.length == 0) {
             return;
         }
-        if ((isStop == false || isTranslatePart)) {
+        if ((isStop == false
+                || isTranslatePart)) {
             try {
-                if (API_TYPE_MAP_META_DOWNLOAD.equals(apiType) ||
-                        API_TYPE_MAP_TILE_DOWNLOAD.equals(apiType) ||
-                        API_TYPE_MAP_VERSION_QUERY.equals(apiType) ||
-                        API_TYPE_SUGGEST_LEXICON_DOWNLOAD.equals(apiType) ||
-                        API_TYPE_LOCATION_QUERY.equals(apiType))  {
+                if (API_TYPE_MAP_META_DOWNLOAD.equals(apiType)
+                        || API_TYPE_MAP_TILE_DOWNLOAD.equals(apiType)
+                        || API_TYPE_MAP_VERSION_QUERY.equals(apiType)
+                        || API_TYPE_SUGGEST_LEXICON_DOWNLOAD.equals(apiType)
+                        || API_TYPE_LOCATION_QUERY.equals(apiType))  {
                     ParserUtil util = new ParserUtil(data, TKConfig.getEncoding());
                     translateResponseV12(util);
                 } else {
                     translateResponse(data);
                     if (response != null) {
-                        ActionLog.getInstance(context).addAction(ActionLog.RESULT, apiType, response.getResponseCode(), response.getDescription());
+                        ActionLog.getInstance(context).addAction(ActionLog.Response, apiType, response.getResponseCode(), response.getDescription());
                     }
-                    LogWrapper.d("BaseQuery", "translate():at="+apiType+", response="+response);
+                    LogWrapper.d(TAG, "translate():at="+apiType+", response="+response);
                 }
             } catch (APIException e) {
                 e.printStackTrace();
@@ -675,12 +740,9 @@ public abstract class BaseQuery {
     
     protected void translateResponse(byte[] data) throws APIException {
         try {
-            if (Test == false || 
-                    apiType.equals(API_TYPE_BUSLINE_QUERY) ||
-                    apiType.equals(API_TYPE_TRAFFIC_QUERY) ||
-                    apiType.equals(API_TYPE_USER_LOGON)) {
+            if (TKConfig.LaunchTest == false) { // 如果是自动测试分填充的数据，则没有加密
             // 解密数据
-            data = DataEncryptor.decrypt(data);
+            DataEncryptor.getInstance().decrypt(data);
             // 解压数据
             if (compress) {
                 try {
@@ -695,7 +757,7 @@ public abstract class BaseQuery {
             } catch (Exception cause) {
                 throw new APIException("byte to xmap error");
             }
-            LogWrapper.d("BaseQuery", "translateResponse():at="+apiType+", responseXMap="+responseXMap);
+            LogWrapper.d(TAG, "translateResponse():at="+apiType+", responseXMap="+responseXMap);
         } catch (APIException cause) {
             throw cause;
         } catch (Exception cause) {

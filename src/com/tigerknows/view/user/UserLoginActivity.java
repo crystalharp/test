@@ -86,7 +86,7 @@ public class UserLoginActivity extends UserBaseActivity {
                 
                 @Override
                 public void onClick(View arg0) {
-                    mActionLog.addAction(ActionLog.Title_Left_Back);
+                    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
                     hideSoftInput();
                     onBack();
                 }
@@ -98,7 +98,7 @@ public class UserLoginActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO 跳转到重置密码页面
-				mActionLog.addAction(ActionLog.UserLoginForgetPassword);
+				mActionLog.addAction(mActionTag +  ActionLog.UserCommonForgetPasswordBtn);
 				startActivityForResult(new Intent(UserLoginActivity.this, UserResetPasswordActivity.class), 0);
 			}
 		});
@@ -107,7 +107,8 @@ public class UserLoginActivity extends UserBaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO 发出登录请求, 若成功中转到个人中心页面, 记录到SharedPreference
+			    mActionLog.addAction(mActionTag +  ActionLog.UserCommonLoginBtn);
+                // TODO 发出登录请求, 若成功中转到个人中心页面, 记录到SharedPreference
 				if (!mForm.isValid()) {
 					doAction(mForm.getErrorSource());
 					return;
@@ -122,23 +123,12 @@ public class UserLoginActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO 跳转到注册页面
-				mActionLog.addAction(ActionLog.UserLoginRegistBtn);
+				mActionLog.addAction(mActionTag +  ActionLog.UserCommonRegisterBtn);
 				Intent intent = new Intent(UserLoginActivity.this, UserRegistActivity.class);
 				startActivityForResult(intent, REQUEST_CODE_REGIST);
 			}
 		});
 		
-		passwordEdt.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					mActionLog.addAction(ActionLog.UserClickPasswordEdt);
-				}
-				return false;
-			}
-		});
 	}
 
 	@Override
@@ -183,7 +173,7 @@ public class UserLoginActivity extends UserBaseActivity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-            mActionLog.addAction(ActionLog.KeyCodeBack, mActionTag);
+            mActionLog.addAction(ActionLog.KeyCodeBack);
 			onBack();
 			return true;
 		}
@@ -198,7 +188,8 @@ public class UserLoginActivity extends UserBaseActivity {
             startActivity(intent);
             return;
         }
-		if (mSourceViewIdLogin != R.id.activity_poi_comment) {
+		if (mSourceViewIdLogin != R.id.activity_poi_comment
+		        && mSourceViewIdLogin != R.id.activity_poi_comment_list) {
 			Intent intent = new Intent(UserLoginActivity.this, Sphinx.class);
 	        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 	        startActivity(intent);
@@ -208,7 +199,6 @@ public class UserLoginActivity extends UserBaseActivity {
 	}
 	
 	private void onSuccess() {
-	    mActionLog.addAction(ActionLog.UserLoginSuccessUI);
 		if (mSourceViewIdLogin == R.id.activity_poi_comment) {
             Intent intent = new Intent(UserLoginActivity.this, POIComment.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

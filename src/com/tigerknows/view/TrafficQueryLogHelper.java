@@ -33,30 +33,30 @@ public class TrafficQueryLogHelper {
 	 */
 	public void logForClickOnEditText(QueryEditText edt) {
 		if (edt == mQueryFragment.mStart) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficStartEdt);
+			mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficStartEdt);
 		} else if (edt == mQueryFragment.mEnd) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficEndEdt);
+            mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficEndEdt);
 		} else if (edt == mQueryFragment.mBusline) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficLineEdt);
+            mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficBusLineEdt);
 		}
 	}
 	
 	public void logForClickBookmarkOnEditText(QueryEditText edt) {
 		if (edt == mQueryFragment.mStart) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficStartBookmarkBtn);
+            mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficStartBtn);
 		} else if (edt == mQueryFragment.mEnd) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficEndBookmarkBtn);
+            mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficEndBtn);
 		}
 	}
 	
-	public void logForSuggestDispatch(QueryEditText edt, int index) {
+	public int logForSuggestDispatch(QueryEditText edt, int index) {
 		if (TextUtils.isEmpty(edt.getEdt().getText().toString())) {
-			logForHistoryWordSelected(edt, index);
+			return index;
 		} else {
 			SuggestArrayAdapter adapter = (SuggestArrayAdapter)mQueryFragment.mSuggestLsv.getAdapter();
 			TKWord tkWord =  adapter.getItem(index);
 			if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
-				logForSuggestWordSelected(edt, 0, index);
+			    return index;
 			} else if (tkWord.attribute == TKWord.ATTRIBUTE_SUGGEST){
 			    int hisWordCount = 0;
 			    for(int i = 0, size = adapter.getCount(); i < size; i++) {
@@ -67,36 +67,9 @@ public class TrafficQueryLogHelper {
 			            break;
 			        }
 			    }
-				logForSuggestWordSelected(edt, 1, index - hisWordCount);
+			    return index - hisWordCount;
 			}
 		}
-	}
-	
-	public void logForHistoryWordSelected(QueryEditText edt, int index) {
-		if (edt == mQueryFragment.mStart) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHistoryAsStart, index);
-		} else if (edt == mQueryFragment.mEnd) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHistoryAsEnd, index);
-		} else if (edt == mQueryFragment.mBusline) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHistoryAsLine, index);
-		}
-	}
-	
-	public void logForSuggestWordSelected(QueryEditText edt, int type, int index) {
-		if (edt == mQueryFragment.mStart) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficSuggestAsStart, type, index);
-		} else if (edt == mQueryFragment.mEnd) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficSuggestAsEnd, type, index);
-		} else if (edt == mQueryFragment.mBusline) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficSuggestAsLine, type, index);
-		}
-	}
-	
-	public void logForSelectPoint(int index) {
-		if (mQueryFragment.mSelectedEdt == mQueryFragment.mStart) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficClickAsStart);
-		} else if (mQueryFragment.mSelectedEdt == mQueryFragment.mEnd) {
-			mQueryFragment.mActionLog.addAction(ActionLog.TrafficClickAsEnd);
-		}
+        return index;
 	}
 }

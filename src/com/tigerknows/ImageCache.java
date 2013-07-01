@@ -20,7 +20,8 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 
 /**
- * Tiles caching table
+ * 此类实现缓存图片到扩展存储卡的功能
+ * 如果扩展存储卡不可用，则不缓存
  */
 public class ImageCache {
 	
@@ -42,25 +43,7 @@ public class ImageCache {
 	private LinkedList<ImageData> writingList=new LinkedList<ImageData>();
 	private final int MAX_WRITING_LIST_SIZE=300;
 	
-	private LinkedHashMap<String,Boolean> cacheTileFileNames=new LinkedHashMap<String,Boolean>(CONFIG.CACHE_SIZE,0.75f,true){
-        private static final long serialVersionUID = 1L;
-
-        @Override
-        protected boolean removeEldestEntry(
-                java.util.Map.Entry<String, Boolean> eldest) {
-            // TODO Auto-generated method stub
-            if(size()>CONFIG.CACHE_SIZE){
-                String fileName =eldest.getKey();
-                if(fileName!=null){
-                    File file=new File(appPath,fileName);
-                    file.delete();
-                }
-                remove(eldest.getKey());
-            }
-            return false;
-        }
-    };
-	
+	private LinkedHashMap<String,Boolean> cacheTileFileNames=new LinkedHashMap<String,Boolean>(CONFIG.CACHE_SIZE,0.75f,true);
 	
 	public ImageCache(){
 	}
@@ -93,6 +76,9 @@ public class ImageCache {
 		LogWrapper.i("TileTable", "app path:"+ appPath + ",exist:" + new File(appPath).exists());
 	}
 	
+	/**
+	 * 启动一个线程专门负责图片数据文件写入到扩展存储卡
+	 */
 	void startWritingThread(){
 		stopWriting=false;
 		synchronized(writingList){
@@ -129,10 +115,6 @@ public class ImageCache {
 				while (true) {
 					if(stopWriting){
 						LogWrapper.i("TileTable","writing thread break at beginning");
-						break;
-					}
-					if(stopWriting){
-						LogWrapper.i("TileTable","writing thread break after drawingLock");
 						break;
 					}
 					
@@ -213,7 +195,13 @@ public class ImageCache {
 	
 	}
 	
-	public Bitmap getTile(String name) throws Exception {
+	/**
+	 * 根据文件名返回Bitmap
+	 * @param name
+	 * @return
+	 * @throws Exception
+	 */
+	public Bitmap getImage(String name) throws Exception {
 		if (CONFIG.CACHE_SIZE<=0 || !externalStorage)
 			return null;
 		Bitmap bm = null;
@@ -240,7 +228,13 @@ public class ImageCache {
 		return bm;
 	}
 	
-	public void putTile(String name, byte[] bmBytes) throws Exception {
+	/**
+	 * 将图片数据写入指定名称的文件
+	 * @param name
+	 * @param bmBytes
+	 * @throws Exception
+	 */
+	public void putImage(String name, byte[] bmBytes) throws Exception {
 		if (CONFIG.CACHE_SIZE<=0 || !externalStorage)
 			return;
 
@@ -257,7 +251,10 @@ public class ImageCache {
 		
 	}
 
-	public void clearTiles() {
+	/**
+	 * 清除所有缓存图片文件
+	 */
+	public void clearImages() {
 		if (!externalStorage)
 			return;
 
@@ -276,6 +273,9 @@ public class ImageCache {
 
 	}
 	
+	/**
+	 * 结束写图片文件线程，当缓存的图片文件数目超过限制时，则删除其访问时间离当前较久的一些图片文件
+	 */
 	public void stopWritingAndRemoveOldTiles() {
 		stopWriting=true;
 		
@@ -306,10 +306,10 @@ public class ImageCache {
 						
 						String fileName=cacheTileFileNames.entrySet().iterator().next().getKey();
 						cacheTileFileNames.remove(fileName);
-//						if(fileName!=null){
-//							File file=new File(appPath,fileName);
-//							file.delete();
-//						}
+						if(fileName!=null){
+							File file=new File(appPath,fileName);
+							file.delete();
+						}
 					}
 				} catch (Exception e) {
 					LogWrapper.e("TileTable", e.getMessage());

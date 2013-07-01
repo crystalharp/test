@@ -22,6 +22,8 @@ public class AlterImageDialog extends Dialog {
 	
 	ActionLog mActionLog;
 	
+	String mActionTag = ActionLog.WeiboImage;
+	
 	public AlterImageDialog(WeiboSend context, Bitmap bitmap) {
 		super(context, R.style.Theme_Dialog);
 		// TODO Auto-generated constructor stub
@@ -59,7 +61,7 @@ public class AlterImageDialog extends Dialog {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				mActionLog.addAction(ActionLog.WeiboImageClickedDelPic);
+				mActionLog.addAction(mActionTag +  ActionLog.WeiboImageDelPic);
 				mContext.removeImage();
 				dismiss();
 			}
@@ -68,8 +70,14 @@ public class AlterImageDialog extends Dialog {
 
 	@Override
 	public void dismiss() {
+        mActionLog.addAction(mActionTag + ActionLog.Dismiss);
 		super.dismiss();
 	}
-	
+
+    @Override
+    public void show() {
+        mActionLog.addAction(mActionTag);
+        super.show();
+    }
 	
 }

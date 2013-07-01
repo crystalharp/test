@@ -7,8 +7,6 @@ package com.tigerknows.model;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.http.message.BasicNameValuePair;
-
 import android.content.Context;
 
 import com.decarta.android.exception.APIException;
@@ -105,8 +103,8 @@ public class MapTileDataDownload extends BaseQuery {
     @Override
     protected void makeRequestParameters() throws APIException {
         super.makeRequestParameters();
-        requestParameters.add(new BasicNameValuePair("rid", String.valueOf(rid)));
-        requestParameters.add(new BasicNameValuePair("vs", TKConfig.getClientSoftVersion()));
+        requestParameters.add("rid", String.valueOf(rid));
+        requestParameters.add("vs", TKConfig.getClientSoftVersion());
         String version = null;
         int count = 0;
         
@@ -118,8 +116,8 @@ public class MapTileDataDownload extends BaseQuery {
                 String currentVersion = tileDownload.getVersion();
                 if ((version != null && version.equals(currentVersion)) || (version == null && currentVersion == null)) {
                     count++;
-                    requestParameters.add(new BasicNameValuePair("off", String.valueOf(tileDownload.getOffset())));
-                    requestParameters.add(new BasicNameValuePair("len", String.valueOf(tileDownload.getLength())));
+                    requestParameters.add("off", String.valueOf(tileDownload.getOffset()));
+                    requestParameters.add("len", String.valueOf(tileDownload.getLength()));
                 }
             }
         }
@@ -127,7 +125,7 @@ public class MapTileDataDownload extends BaseQuery {
             throw APIException.wrapToMissingRequestParameterException("off,len");
         }
         if (version != null) {
-            requestParameters.add(new BasicNameValuePair("vd", version));
+            requestParameters.add("vd", version);
         } else {
             throw APIException.wrapToMissingRequestParameterException("vd");
         }
@@ -176,6 +174,7 @@ public class MapTileDataDownload extends BaseQuery {
                 }
             } else if (responseCode.getResponseCode() == ResponseCode.MAP_TILE_NEW_REVISION) {
                 iTileDownload.upgradeRegion(rid);
+                stop();
             } else {
                 stop();
             }

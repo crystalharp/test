@@ -46,6 +46,8 @@ import com.tigerknows.util.CommonUtils;
 import com.tigerknows.view.SuggestArrayAdapter.CallBack;
 
 /**
+ * 周边搜索界面
+ * 在指定的POI周边进行搜索
  * @author Peng Wenyue
  */
 public class POINearbyFragment extends BaseFragment implements View.OnClickListener {
@@ -55,9 +57,10 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         // TODO Auto-generated constructor stub
     }
 
+    /**
+     * 在此POI周边进行搜索
+     */
     private POI mPOI = new POI();
-    
-    private String[] mCategoryName;
     
     private ViewPager mViewPager;
     
@@ -76,8 +79,16 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     private List<TKWord> mSuggestWordList = new ArrayList<TKWord>();
     
     private ViewGroup mPageIndicatorView;
+    
+    /**
+     * 分类名称列表
+     */
+    private String[] mCategoryNames;
 
-    private final int[] mResIdList = {R.drawable.ic_food_search_near,
+    /**
+     * 分类图标资源Id列表
+     */
+    private final int[] mCategoryResIds = {R.drawable.ic_food_search_near,
         R.drawable.ic_amusement_search_near,
         R.drawable.ic_buy_search_near,
         R.drawable.ic_hotel_search_near,
@@ -89,14 +100,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         R.drawable.ic_hospital_search_near
         };
     
-    private final String[] mCategoryActionTag = {
-            ActionLog.SearchNearbyFood, ActionLog.SearchNearbyYuLe, ActionLog.SearchNearbyBuy,
-            ActionLog.SearchNearbyHotel, ActionLog.SearchNearbyLuYou, ActionLog.SearchNearbyLiRen,
-            ActionLog.SearchNearbySprot, ActionLog.SearchNearbyBank, ActionLog.SearchNearbyTraffic,
-            ActionLog.SearchNearbyYiLiao
-    };
-    
-    private final TextWatcher mFindEdtWatcher = new TextWatcher() {
+    private final TextWatcher mKeywordEdtWatcher = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
 
@@ -104,7 +108,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             String key = mKeywordEdt.getText().toString();
             POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, key);
             mSuggestAdapter.key = key;
-            notifyDataSetChanged();
+            refreshSuggest();
         }
 
         public void afterTextChanged(Editable s) {
@@ -119,7 +123,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.SearchNearby;
+        mActionTag = ActionLog.POINearbySearch;
     }
 
     @Override
@@ -132,8 +136,8 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         setListener();
                 
         Resources resources = mContext.getResources();
-        mCategoryName = resources.getStringArray(R.array.home_category);
-        mCategoryLsv.setAdapter(new StringArrayAdapter(mContext, mCategoryName, mResIdList));
+        mCategoryNames = resources.getStringArray(R.array.home_category);
+        mCategoryLsv.setAdapter(new StringArrayAdapter(mContext, mCategoryNames, mCategoryResIds));
         
         mSuggestAdapter = new SuggestArrayAdapter(mContext, SuggestArrayAdapter.TEXTVIEW_RESOURCE_ID, mSuggestWordList);
         mSuggestAdapter.setCallBack(new CallBack() {
@@ -167,9 +171,9 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         mQueryBtn = (Button)mRootView.findViewById(R.id.query_btn);
         mKeywordEdt = (TKEditText)mRootView.findViewById(R.id.keyword_edt);
         
-        mCategoryLsv = CommonUtils.makeListView(mSphinx);
+        mCategoryLsv = CommonUtils.makeListView(mSphinx, R.drawable.bg_line_split);
         mViewList.add(mCategoryLsv);
-        mSuggestLsv = CommonUtils.makeListView(mSphinx);
+        mSuggestLsv = CommonUtils.makeListView(mSphinx, R.drawable.bg_line_split);
         mViewList.add(mSuggestLsv);
         mViewPager.setAdapter(new MyAdapter());
         
@@ -183,11 +187,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             @Override
             public void onPageSelected(int index) {
                 CommonUtils.pageIndicatorChanged(mSphinx, mPageIndicatorView, index);
-                if (index == 0) {
-                    mActionLog.addAction(ActionLog.SearchNearbyCategory);
-                } else {
-                    mActionLog.addAction(ActionLog.SearchNearbyJingQue);
-                }
+                mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, index);
             }
             
             @Override
@@ -203,21 +203,23 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-                mActionLog.addAction(mCategoryActionTag[position]);
-                submitQuery(mCategoryName[position], false);                
+                mActionLog.addAction(mActionTag +  ActionLog.POINearbySearchCategory, mCategoryNames[position]);
+                submitQuery(mCategoryNames[position], false);                
             }
         });
         mQueryBtn.setOnClickListener(this);
-        mKeywordEdt.addTextChangedListener(mFindEdtWatcher);
+        mKeywordEdt.addTextChangedListener(mKeywordEdtWatcher);
         mKeywordEdt.setOnTouchListener(new OnTouchListener() {
             
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    mActionLog.addAction(ActionLog.POINearbySearchInput);
                     String key = mKeywordEdt.getText().toString();
                     POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, key);
                     mSuggestAdapter.key = key;
-                    notifyDataSetChanged();
+                    mViewPager.setCurrentItem(1);
+                    refreshSuggest();
                 }
                 return false;
             }
@@ -241,17 +243,17 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 TKWord tkWord = (TKWord) arg0.getAdapter().getItem(position);
                 if (tkWord.attribute == TKWord.ATTRIBUTE_CLEANUP) {
-                    mActionLog.addAction(ActionLog.SearchNearbyCleanHistory);
+                    mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistoryClear);
                     HistoryWordTable.clearHistoryWord(mSphinx, Globals.g_Current_City_Info.getId(), HistoryWordTable.TYPE_POI);
                     String key = mKeywordEdt.getText().toString();
                     POIQueryFragment.makeSuggestWord(mSphinx, mSuggestWordList, key);
                     mSuggestAdapter.key = key;
-                    notifyDataSetChanged();
+                    refreshSuggest();
                 } else {
                     if (tkWord.attribute == TKWord.ATTRIBUTE_HISTORY) {
-                        mActionLog.addAction(ActionLog.SearchNearHistoryWord, tkWord.word, position);
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItemHistory, position, tkWord.word);
                     } else {
-                        mActionLog.addAction(ActionLog.SearchNearSuggestWord, tkWord.word, position);
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItemSuggest, position, tkWord.word);
                     }
                     mKeywordEdt.setText(tkWord.word); //处理光标问题
                     submitQuery(mKeywordEdt.getText().toString().trim(), true);
@@ -276,7 +278,7 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         switch (view.getId()) {
                 
             case R.id.query_btn:
-                mActionLog.addAction(ActionLog.SearchNearbySubimt, mKeywordEdt.getText().toString().trim());
+                mActionLog.addAction(mActionTag +  ActionLog.POINearbySearchSubimt, mKeywordEdt.getText().toString().trim());
                 submitQuery(mKeywordEdt.getText().toString().trim(), true);
                 break;
 
@@ -285,6 +287,11 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
+    /**
+     * 查询
+     * @param keyword
+     * @param isInput 是否为用户手动输入
+     */
     private void submitQuery(String keyword, boolean isInput) {
         if (!TextUtils.isEmpty(keyword)) {
             mSphinx.hideSoftInput(mKeywordEdt.getInput());
@@ -319,17 +326,24 @@ public class POINearbyFragment extends BaseFragment implements View.OnClickListe
         mPOI = poi;
     }
     
-    private void notifyDataSetChanged() {
+    /**
+     * 刷新联想词列表，当联想词列表为空时自动切换到分类列表
+     */
+    private void refreshSuggest() {
         mSuggestAdapter.notifyDataSetChanged();
-        if (mSuggestWordList.isEmpty()) {
-            mViewPager.setCurrentItem(0);
-        } else {
-            mViewPager.setCurrentItem(1);
-        }
+//        if (mSuggestWordList.isEmpty()) {
+//            mViewPager.setCurrentItem(0);
+//        } else {
+//            mViewPager.setCurrentItem(1);
+//        }
     }
     
-    //还原为第一次进入的状态
+    /**
+     * 将UI及内容重置为第一次进入页面时的状态
+     */
     public void reset() {
+        mCategoryLsv.setSelectionFromTop(0, 0);
+        mSuggestLsv.setSelectionFromTop(0, 0);
         mKeywordEdt.setText(null);
         mKeywordEdt.clearFocus();
         mViewPager.setCurrentItem(0);

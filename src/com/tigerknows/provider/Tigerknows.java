@@ -72,8 +72,6 @@ public class Tigerknows {
         
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/poi");
         
-        public static final Uri CONTENT_URI_FOR_COUNT = Uri.parse("content://" + AUTHORITY + "/poi/count");
-        
         public static final String DEFAULT_SORT_ORDER = "_id ASC";
         
         public static final String STORE_TYPE = "store_type";

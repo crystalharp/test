@@ -1,20 +1,26 @@
 package com.tigerknows.model.test;
 
 import com.decarta.Globals;
-import com.decarta.android.map.MapView;
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine;
+import com.tigerknows.maps.MapView;
 import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery;
+import com.tigerknows.model.TKWord;
 import com.tigerknows.model.DataQuery.DiscoverResponse;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.provider.HistoryWordTable;
+import com.tigerknows.radar.Alarms;
+import com.tigerknows.service.PullService;
 import com.tigerknows.service.TKLocationManager;
 import com.tigerknows.service.TigerknowsLocationManager;
+import com.tigerknows.util.CommonUtils;
 import com.tigerknows.view.MoreFragment;
 import com.tigerknows.view.StringArrayAdapter;
 
@@ -26,6 +32,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -47,12 +54,13 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.Calendar;
 import java.util.Hashtable;
 import java.util.List;
 
 public class BaseQueryTest {
     
-    static boolean Test = true;
+    static final String TAG = "BaseQueryTest";
     
     static int RESPONSE_CODE = BaseQuery.STATUS_CODE_NETWORK_OK;
 
@@ -61,19 +69,13 @@ public class BaseQueryTest {
     }
 
     public static XMap launchResponse(XMap data) {
-        try {
-            Thread.sleep(3000);
-        } catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
         data.put(DiscoverResponse.FIELD_RESPONSE_CODE, RESPONSE_CODE);
         data.put(DiscoverResponse.FIELD_DESCRIPTION, "FIELD_DESCRIPTION");
         return  data;
     }
     
     public static void showSetResponseCode(LayoutInflater layoutInflater, final Activity activity) {
-        if (Test == false) {
+        if (TKConfig.ShowTestOption == false) {
             return;
         }
         LinearLayout layout = new LinearLayout(activity);
@@ -116,12 +118,24 @@ public class BaseQueryTest {
 
         final Button updateSoftTip = new Button(activity);
         layout.addView(updateSoftTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button diaoyanTip = new Button(activity);
+        layout.addView(diaoyanTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final Button commentTip = new Button(activity);
         layout.addView(commentTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final Button updateMapTip = new Button(activity);
         layout.addView(updateMapTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
-        final Button publicWelfarreTip = new Button(activity);
-        layout.addView(publicWelfarreTip, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button radarPushBtn = new Button(activity);
+        layout.addView(radarPushBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button radarLocationBtn = new Button(activity);
+        layout.addView(radarLocationBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button readLocationLogBtn = new Button(activity);
+        layout.addView(readLocationLogBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button launchHistoryWorkBtn = new Button(activity);
+        layout.addView(launchHistoryWorkBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button weixinWebBtn = new Button(activity);
+        layout.addView(weixinWebBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final Button weixinRequsetBtn = new Button(activity);
+        layout.addView(weixinRequsetBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         
         editConfigBtn.setText("View or Modify config.txt");
         editConfigBtn.setOnClickListener(new View.OnClickListener() {
@@ -149,9 +163,9 @@ public class BaseQueryTest {
                 Class<?> iPackageDataObserverClass = null;
                 try {
                     iPackageDataObserverClass = Class.forName("android.content.pm.IPackageDataObserver");
-                } catch (ClassNotFoundException e1) {
+                } catch (ClassNotFoundException e) {
                     // TODO Auto-generated catch block
-                    e1.printStackTrace();
+                    e.printStackTrace();
                 }
 
                 Class<ActivityManager> activityManagerClass=ActivityManager.class;
@@ -201,7 +215,7 @@ public class BaseQueryTest {
                 if (activity instanceof BaseActivity) {
                     ((BaseActivity)(activity)).queryStart(accountManage, false);
                 } else if (activity instanceof Sphinx) {
-                    ((Sphinx)(activity)).queryStart(accountManage, false);
+                    ((Sphinx)(activity)).queryStart(accountManage);
                 }
             }
         });
@@ -231,13 +245,13 @@ public class BaseQueryTest {
         });
         launchTestChb.setText("Launch fake data(DataQuery, DataOperation, AccountManage");
         launchTestChb.setTextColor(0xffffffff);
-        launchTestChb.setChecked(BaseQuery.Test);
+        launchTestChb.setChecked(TKConfig.LaunchTest);
         launchTestChb.setOnClickListener(new OnClickListener() {
             
             @Override
             public void onClick(View arg0) {
-                BaseQuery.Test = launchTestChb.isChecked();
-                lunchTestLayout.setVisibility(BaseQuery.Test ? View.VISIBLE : View.GONE);
+                TKConfig.LaunchTest = launchTestChb.isChecked();
+                lunchTestLayout.setVisibility(TKConfig.LaunchTest ? View.VISIBLE : View.GONE);
             }
         });
         responseCodeTxv.setText("ResponseCode:");
@@ -245,7 +259,7 @@ public class BaseQueryTest {
         responseCodeEdt.setText("");
         responseCodeEdt.setInputType(InputType.TYPE_CLASS_NUMBER);
         responseCodeEdt.setSingleLine();
-        lunchTestLayout.setVisibility(BaseQuery.Test ? View.VISIBLE : View.GONE);
+        lunchTestLayout.setVisibility(TKConfig.LaunchTest ? View.VISIBLE : View.GONE);
         
         locationChb.setText("Specific Location(lat,lon,accuracy)");
         locationChb.setChecked(TKLocationManager.UnallowedLocation);
@@ -264,9 +278,18 @@ public class BaseQueryTest {
             
             @Override
             public void onClick(View arg0) {
-                if (Globals.g_User_Logon_Model != null) {
-                    Globals.g_User_Logon_Model.setSoftwareUpdate(null);
+                if (Globals.g_Bootstrap_Model != null) {
+                    Globals.g_Bootstrap_Model.setSoftwareUpdate(null);
                 }
+            }
+        });
+        
+        diaoyanTip.setText("clear diaoyanTip");
+        diaoyanTip.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+            	(((Sphinx) activity).getMoreFragment()).setDiaoyanQueryResponse(null);
             }
         });
         
@@ -284,18 +307,100 @@ public class BaseQueryTest {
             
             @Override
             public void onClick(View arg0) {
-                MapEngine.getInstance().getDownloadCityList().clear();
+                MoreFragment.CurrentDownloadCity = null;
             }
         });
-        
-        publicWelfarreTip.setText("clear publicWelfarreTip");
-        publicWelfarreTip.setOnClickListener(new OnClickListener() {
+
+        radarPushBtn.setText("send a Radar Push in 5s");
+        radarPushBtn.setOnClickListener(new View.OnClickListener() {
             
             @Override
-            public void onClick(View arg0) {
-                if (Globals.g_User_Logon_Model != null) {
-                    Globals.g_User_Logon_Model.setRecommend(null);
+            public void onClick(View v) {
+                Calendar next = Calendar.getInstance();
+                next.setTimeInMillis(System.currentTimeMillis());
+                next.add(Calendar.SECOND, 5);
+                Alarms.enableAlarm(activity, next, PullService.alarmAction);
+                LogWrapper.d(TAG, "Radar Push send in:" + next.getTime().toLocaleString());
+            }
+        });
+
+        radarLocationBtn.setText("send a Radar location in 5s");
+        radarLocationBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                Calendar next = Calendar.getInstance();
+                next.setTimeInMillis(System.currentTimeMillis());
+                next.add(Calendar.SECOND, 5);
+                LogWrapper.d(TAG, "Radar Location send in:" + next.getTime().toLocaleString());
+            }
+        });
+
+        readLocationLogBtn.setText("read location log");
+        readLocationLogBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                String locationLog = PullService.queryCollectionLocation(activity);
+                CommonUtils.showNormalDialog(activity, locationLog);
+            }
+        });
+
+        launchHistoryWorkBtn.setText("launch History word");
+        launchHistoryWorkBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                List<CityInfo> allCityInfoList = MapEngine.getInstance().getAllProvinceCityList(activity.getApplicationContext());  
+                for(int i = allCityInfoList.size()-1; i >= 0; i--) {
+                    CityInfo cityInfo1 = allCityInfoList.get(i);
+                    List<CityInfo> childCityInfoList = cityInfo1.getCityList();
+                    if (childCityInfoList.size() > 1) {
+//                        for(int ii = childCityInfoList.size()-1; ii >= 0; ii--) {
+//                            CityInfo cityInfo2 = childCityInfoList.get(ii);
+//                            StringBuilder s = new StringBuilder();
+//                            for(int l = 0; l < 51; l++) {
+//                                s.append(l);
+//                                TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, s.toString(), cityInfo2.getPosition());
+//                                HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo2.getId(), HistoryWordTable.TYPE_POI);
+//                                HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo2.getId(), HistoryWordTable.TYPE_TRAFFIC);
+//                                HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo2.getId(), HistoryWordTable.TYPE_BUSLINE);
+//                            }
+//                        }
+                    } else {
+                        StringBuilder s = new StringBuilder();
+                        for(int l = 0; l < 51; l++) {
+                            s.append(l);
+                            TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_HISTORY, s.toString(), cityInfo1.getPosition());
+                            HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo1.getId(), HistoryWordTable.TYPE_POI);
+                            HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo1.getId(), HistoryWordTable.TYPE_TRAFFIC);
+                            HistoryWordTable.addHistoryWord(activity, tkWord, cityInfo1.getId(), HistoryWordTable.TYPE_BUSLINE);
+                        }
+                    }
                 }
+            }
+        });
+
+        weixinWebBtn.setText("source weixin web open");
+        weixinWebBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setData(Uri.parse("tigerknows://?poiuid=11"));
+                activity.startActivity(intent);
+            }
+        });
+
+        weixinRequsetBtn.setText("weixin requset data");
+        weixinRequsetBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View v) {
+	            Intent sphinx = new Intent(activity, Sphinx.class);
+	            sphinx.putExtra(Sphinx.EXTRA_WEIXIN, true);
+	            sphinx.putExtras(new Bundle());
+	            activity.startActivity(sphinx);
             }
         });
         
@@ -325,6 +430,7 @@ public class BaseQueryTest {
                                 sphinx.mLocationListener.onLocationChanged(location);
                             }
                         }
+                        TKConfig.readConfig();
                     } catch (Exception e) {
                         Toast.makeText(activity, "Parse Error!", Toast.LENGTH_LONG).show();
                     }
@@ -388,9 +494,9 @@ public class BaseQueryTest {
                               }
                           });
                           Thread.sleep(5*1000);
-                      } catch (InterruptedException e2) {
+                      } catch (InterruptedException e) {
                           // TODO Auto-generated catch block
-                          e2.printStackTrace();
+                          e.printStackTrace();
                       }
                       
                   }
@@ -433,9 +539,9 @@ public class BaseQueryTest {
                           }
                       });
                       Thread.sleep(5 * 1000);
-                  } catch (InterruptedException e2) {
+                  } catch (InterruptedException e) {
                       // TODO Auto-generated catch block
-                      e2.printStackTrace();
+                      e.printStackTrace();
                   }
               }
           }

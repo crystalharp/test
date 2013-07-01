@@ -149,6 +149,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
 
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             if (info.position > -1 && info.position < (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? mPOIAdapter.getCount() : mTrafficAdapter.getCount())) {
+            	mActionLog.addAction(mActionTag + ActionLog.ListViewItemLong + getActionLogType(), String.valueOf(info.position));
                 mSelectIndex = info.position;
                 menu.add(0, MENU_DELETE, 0, R.string.delete);
                 menu.add(0, MENU_RENAME, 0, R.string.rename);
@@ -160,6 +161,17 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.Favorite;
+    }
+    
+    String getActionLogType() {
+        String result =  null;
+        if (ItemizedOverlay.POI_OVERLAY.equals(mLayerType)) {
+            result = ActionLog.FavoritePOI;
+        } else if (ItemizedOverlay.TRAFFIC_OVERLAY.equals(mLayerType)) {
+            result = ActionLog.FavoriteTraffic;
+        }
+        
+        return result;
     }
 
     @Override
@@ -198,7 +210,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         return mRootView;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void onResume() {
         super.onResume();
@@ -208,8 +219,8 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
 
         if (mDismiss) {
             readPOI(mPOIList, Long.MAX_VALUE, 0, false);
-            readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
             mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
+            readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
             mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize());
             if (mPOIList.isEmpty() && mTrafficList.isEmpty() == false) {
                 mLayerType = ItemizedOverlay.TRAFFIC_OVERLAY;
@@ -223,12 +234,12 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 min = mPOIList.get(0).getId();
             }
             readPOI(mPOIList, Long.MAX_VALUE, min, true);
+            checkData(ItemizedOverlay.POI_OVERLAY);
             
             if (mTrafficList.size() > 0) {
                 min = mTrafficList.get(0).getId();
             }
             readTraffic(mTrafficList, Long.MAX_VALUE, min, true);
-            checkData(ItemizedOverlay.POI_OVERLAY);
             checkData(ItemizedOverlay.TRAFFIC_OVERLAY);
         }
         
@@ -271,7 +282,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
         
         List<View> viewList = new ArrayList<View>();
-        Drawable divider = mSphinx.getResources().getDrawable(R.drawable.bg_real_line);
+        Drawable divider = mSphinx.getResources().getDrawable(R.drawable.bg_line_split);
         mPOILsv = new SpringbackListView(mSphinx, null);
         mPOILsv.setFadingEdgeLength(0);
         mPOILsv.setScrollingCacheEnabled(false);
@@ -309,7 +320,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 if (position < adapterView.getCount()) {
                     Favorite traffic = (Favorite) adapterView.getAdapter().getItem(position);
                     if (traffic != null) {
-                        mActionLog.addAction(ActionLog.FavoriteSelectTraffic, position);
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem + ActionLog.FavoriteTraffic, position);
                         showTrafficDetail(traffic);
                     }
                 }
@@ -324,9 +335,9 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 if (position < adapterView.getCount()) {
                     POI poi = (POI) adapterView.getAdapter().getItem(position);
                     if (poi != null) {
-                        mActionLog.addAction(ActionLog.FavoriteSelectPOI, position);
-                        mSphinx.getPOIDetailFragment().setData(poi);
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem + ActionLog.FavoritePOI, position);
                         mSphinx.showView(R.id.view_poi_detail);
+                        mSphinx.getPOIDetailFragment().setData(poi);
                     }
                 }
             }
@@ -371,7 +382,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         loadThread.layerType = ItemizedOverlay.POI_OVERLAY;
         loadThread.maxId = maxId;
         loadThread.start();
-        mActionLog.addAction(ActionLog.FavoriteMore, 0);
+        mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore + ActionLog.FavoritePOI);
         }
     }
 
@@ -391,7 +402,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             loadThread.layerType = ItemizedOverlay.TRAFFIC_OVERLAY;
             loadThread.maxId = maxId;
             loadThread.start();
-        mActionLog.addAction(ActionLog.FavoriteMore, 1);
+        mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore + ActionLog.FavoriteTraffic);
         }
     }
     
@@ -400,6 +411,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         if (mSelectIndex > -1) {
             switch (item.getItemId()) {
                 case MENU_DELETE:
+                    mActionLog.addAction(mActionTag +  ActionLog.FavoriteMenuDelete + getActionLogType());
                     CommonUtils.showNormalDialog(mSphinx,
                             mContext.getString(R.string.prompt),
                             mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_a_favorite_poi : R.string.delete_a_favorite_traffic),
@@ -430,7 +442,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                             });
                     return true;
                 case MENU_RENAME:
-                    mActionLog.addAction(ActionLog.FavoriteRename);
+                    mActionLog.addAction(mActionTag +  ActionLog.FavoriteMenuRename + getActionLogType());
                     showRenameDialog(mSelectIndex);
                     return true;
             }
@@ -442,7 +454,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()) {                
             case R.id.right_btn:
-                mActionLog.addAction(ActionLog.FavoriteRightDelete, (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? "0" : "1"));
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton + getActionLogType());
 
                 int count = 0;
                 if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
@@ -477,12 +489,12 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 }
                 break;
             case R.id.poi_btn:
-                mActionLog.addAction(ActionLog.FavoritePOI);
+                mActionLog.addAction(mActionTag +  ActionLog.FavoritePOI);
                 mViewPager.setCurrentItem(0);
                 break;
                 
             case R.id.traffic_btn:
-                mActionLog.addAction(ActionLog.FavoriteTraffic);
+                mActionLog.addAction(mActionTag +  ActionLog.FavoriteTraffic);
                 mViewPager.setCurrentItem(1);
                 break;
                 
@@ -796,8 +808,8 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getDateTime(), true);
             } else {
                 readPOI(mPOIList, Long.MAX_VALUE, 0, false);
-                mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
             }
+            mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
             Collections.sort(mPOIList, mComparator);
             mPOIAdapter.notifyDataSetChanged();
         } else {
@@ -810,14 +822,14 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                 readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getDateTime(), true);
             } else {
                 readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
-                mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize());
             }
+            mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize());
             Collections.sort(mTrafficList, mComparator);
             mTrafficAdapter.notifyDataSetChanged();
         }
         refreshContent();
-        mPOILsv.changeHeaderViewByState(false, SpringbackListView.DONE);
-        mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+//        mPOILsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+//        mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
     }
     
     private void showRenameDialog(final int position) {
@@ -867,6 +879,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             
             @Override
             public void onDismiss(DialogInterface arg0) {
+                ActionLog.getInstance(mSphinx).addAction(ActionLog.Dialog + ActionLog.Dismiss);
                 mSphinx.postHideSoftInput();
             }
         });
@@ -889,8 +902,10 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         @Override
         public void onPageSelected(int position) {
             if (position == 0) {
+                mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected + ActionLog.FavoritePOI);
                 changeTab(ItemizedOverlay.POI_OVERLAY);
             } else {
+                mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected + ActionLog.FavoriteTraffic);
                 changeTab(ItemizedOverlay.TRAFFIC_OVERLAY);
             }
         }

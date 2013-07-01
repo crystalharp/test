@@ -11,18 +11,17 @@ import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.Response;
 import com.tigerknows.share.TKWeibo;
 import com.tigerknows.share.TKTencentOpenAPI;
-import com.weibo.net.Weibo;
 
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.content.DialogInterface.OnDismissListener;
 import android.os.AsyncTask;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -35,7 +34,7 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
     
     private Activity activity;
     
-    private List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
+    private List<BaseQuery> baseQueryList;
     
     private Runnable cancelTask;
     
@@ -55,24 +54,16 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
         cancel(true);
     }
     
-    public TKAsyncTask(Activity activity, BaseQuery baseQuery, EventListener eventListener, Runnable cancelTask) {
-        this(activity, baseQuery, eventListener, cancelTask, true);
-    }
-    
-    public TKAsyncTask(Activity activity, BaseQuery baseQuery, EventListener eventListener, Runnable cancelTask, boolean cancelable) {
-        this.activity = activity;
-        this.baseQueryList.add(baseQuery);
-        this.eventListener = eventListener;
-        this.cancelTask = cancelTask;
-        this.cancelable = cancelable;
-    }
-    
     public TKAsyncTask(Activity activity, List<BaseQuery> baseQueryList, EventListener eventListener, Runnable cancelTask) {
+    	this(activity, baseQueryList, eventListener, cancelTask, true);
+    }
+    
+    public TKAsyncTask(Activity activity, List<BaseQuery> baseQueryList, EventListener eventListener, Runnable cancelTask, boolean cancelable) {
         this.activity = activity;
         this.baseQueryList = baseQueryList;
         this.eventListener = eventListener;
         this.cancelTask = cancelTask;
-        this.cancelable = true;
+        this.cancelable = cancelable;
     }
 
     @Override
@@ -94,7 +85,7 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
         View custom = activity.getLayoutInflater().inflate(R.layout.loading, null);
         TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
         loadingTxv.setText(tipText);
-        ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, tipText);
+        ActionLog.getInstance(activity).addAction(ActionLog.Dialog, tipText);
         tipProgressDialog = CommonUtils.showNormalDialog(activity, custom);
         tipProgressDialog.setCancelable(cancelable);
         tipProgressDialog.setCanceledOnTouchOutside(false);
@@ -103,6 +94,13 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
             @Override
             public void onCancel(DialogInterface arg0) {
                 TKAsyncTask.this.stop();
+            }
+        });
+        tipProgressDialog.setOnDismissListener(new OnDismissListener() {
+            
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                ActionLog.getInstance(activity).addAction(ActionLog.Dialog + ActionLog.Dismiss);
             }
         });
 
@@ -119,7 +117,7 @@ public class TKAsyncTask extends AsyncTask<Void, Integer, Void> {
                     String shareSina = criteria.get(DataOperation.SERVER_PARAMETER_SHARE_SINA);
                     if (!TextUtils.isEmpty(shareSina)) {
                         TKWeibo tkweibo = new TKWeibo(activity, false, false);
-                        TKWeibo.update(tkweibo, Weibo.getInstance(), Weibo.getAppKey(), shareSina, "", "");
+                        TKWeibo.update(tkweibo, shareSina, "", "");
                     }
                     String shareQzone = criteria.get(DataOperation.SERVER_PARAMETER_SHARE_QZONE);
                     if (!TextUtils.isEmpty(shareQzone)) {

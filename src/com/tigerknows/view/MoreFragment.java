@@ -6,11 +6,12 @@ package com.tigerknows.view;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.List;
+import java.util.Hashtable;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,16 +29,19 @@ import android.widget.TextView;
 import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
+import com.tigerknows.MapDownload;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.MapDownload.DownloadCity;
 import com.tigerknows.maps.MapEngine;
-import com.tigerknows.model.UserLogonModel;
-import com.tigerknows.model.UserLogonModel.Recommend;
-import com.tigerknows.model.UserLogonModel.SoftwareUpdate;
-import com.tigerknows.model.UserLogonModel.Recommend.RecommendApp;
+import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.BootstrapModel;
+import com.tigerknows.model.DataOperation;
+import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
+import com.tigerknows.model.BootstrapModel.SoftwareUpdate;
 import com.tigerknows.util.CommonUtils;
+import com.tigerknows.view.discover.BrowserActivity;
 import com.tigerknows.view.user.UserBaseActivity;
 import com.tigerknows.view.user.UserLoginActivity;
 
@@ -54,13 +58,16 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     static final String TAG = "MoreFragment";
     
     public static final int SHOW_COMMENT_TIP_TIMES = 3;
+    public static final int SHOW_NICKNAME_MAX_WIDTH = 150;
+    //三个点的宽度为9
+    public static final int SHOW_NICKNAME_OMIT_WIDTH = 9;
     
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
     private ListView mListLsv;
     private TextView mUserNameTxv;
     private TextView mCurrentCityTxv;
-    private Button mUpgradeBtn;
+    private Button mMessageBtn;
     private Button mUserBtn;
     private Button mChangeCityBtn;
     private Button mDownloadMapBtn;
@@ -77,12 +84,22 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     
     private String mCityName;
     
-    public static final int UPGRADE_TYPE_NONE = 0;
-    public static final int UPGRADE_TYPE_MAP = 1;
-    public static final int UPGRADE_TYPE_COMMENT = 2;
-    public static final int UPGRADE_TYPE_SOFTWARE = 3;
-    public static final int UPGRADE_TYPE_PUBLIC_WELFARRE = 4;
-    private int mUpgradeType = UPGRADE_TYPE_NONE;
+    public static final int MESSAGE_TYPE_NONE = 0;
+    public static final int MESSAGE_TYPE_SOFTWARE_UPDATE = 1;
+    public static final int MESSAGE_TYPE_MAP_UPDATE = 2;
+    public static final int MESSAGE_TYPE_USER_SURVEY = 3;
+    public static final int MESSAGE_TYPE_COMMENT = 4;
+    private int mMessageType = MESSAGE_TYPE_NONE;
+    
+    private boolean addedGoCommentTimes = false;
+    
+    private DiaoyanQueryResponse mDiaoyanQueryResponse;
+    
+    public static DownloadCity CurrentDownloadCity;
+    
+    public void setDiaoyanQueryResponse(DiaoyanQueryResponse diaoyanQueryResponse) {
+    	mDiaoyanQueryResponse = diaoyanQueryResponse;
+    }
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -104,7 +121,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         findViews();        
         setListener();
         
-        if (TKConfig.sSPREADER.startsWith(TKConfig.sSPREADER_TENCENT)) {
+        if (TKConfig.sSPREADER.startsWith(TKConfig.SPREADER_TENCENT)) {
             mAppRecommendBtn.setText(R.string.recommend_tencent);
         } else {
             mAppRecommendBtn.setText(R.string.app_recommend);
@@ -132,40 +149,25 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         mMenuFragment.display();
         
         refreshUserEntrance();
-        refreshMoreBtn(false);
+        refreshMoreBtn();
+        refreshCity(Globals.g_Current_City_Info.getCName());
     }
     
-    public void refreshMoreBtn(boolean isCreate) {
+    public void refreshMoreBtn() {
         
-        setUpgrade(UPGRADE_TYPE_NONE);
+        setFragmentMessage(MESSAGE_TYPE_NONE);
         
-        UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
-        if (userLogonModel != null) {            
-            SoftwareUpdate softwareUpdate = userLogonModel.getSoftwareUpdate();
+        //软件更新
+        BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
+        if (bootstrapModel != null) {            
+            SoftwareUpdate softwareUpdate = bootstrapModel.getSoftwareUpdate();
             if (softwareUpdate != null) {
-                setUpgrade(MoreFragment.UPGRADE_TYPE_SOFTWARE);
+                setFragmentMessage(MoreFragment.MESSAGE_TYPE_SOFTWARE_UPDATE);
                 return;
             }
         }
 
-        int showCommentTipTimes = 0;
-        String commentTip = TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP);
-        if (!TextUtils.isEmpty(commentTip)) {
-            showCommentTipTimes = Integer.parseInt(commentTip);
-            if (isCreate) {
-                TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(showCommentTipTimes+1));
-            }
-        } else {
-            if (isCreate) {
-                TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(0));
-            }
-        }
-        
-        if (showCommentTipTimes < SHOW_COMMENT_TIP_TIMES) {
-            setUpgrade(MoreFragment.UPGRADE_TYPE_COMMENT);
-            return;
-        }
-        
+        //地图更新
         String upgradeMapTip = TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_MAP_TIP);
         int out = 8;
         if (!TextUtils.isEmpty(upgradeMapTip)) {
@@ -180,24 +182,44 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         }
         
         boolean upgrade = false;
-        MapEngine mapEngine = mSphinx.getMapEngine();
-        synchronized (mapEngine) {
-            List<DownloadCity> list = mapEngine.getDownloadCityList();
-            for(DownloadCity downloadCity : list) {
-                if (downloadCity.getState() == DownloadCity.MAYUPDATE && downloadCity.getCityInfo().getId() != MapEngine.CITY_ID_QUANGUO) {
-                    upgrade = true;
-                    break;
-                }
-            }
+        DownloadCity currentDownloadCity = CurrentDownloadCity;
+        if (currentDownloadCity != null
+                && currentDownloadCity.state == DownloadCity.STATE_CAN_BE_UPGRADE
+                && currentDownloadCity.cityInfo.getId() != MapEngine.CITY_ID_QUANGUO) {
+            upgrade = true;
         }
         if (upgrade && out >= 7) {
-            setUpgrade(MoreFragment.UPGRADE_TYPE_MAP);
+            setFragmentMessage(MoreFragment.MESSAGE_TYPE_MAP_UPDATE);
             return;
         }
         
-        RecommendApp recommendApp = getPublicWelfarre();
-        if (recommendApp != null) {
-            setUpgrade(UPGRADE_TYPE_PUBLIC_WELFARRE);
+        //用户调研
+        if (mDiaoyanQueryResponse != null) {
+        	if(mDiaoyanQueryResponse.getHasSurveyed() == 0 && mDiaoyanQueryResponse.getUrl() != null){
+                setFragmentMessage(MESSAGE_TYPE_USER_SURVEY);
+                return;
+        	}
+        }
+
+        //点评
+        int showCommentTipTimes = 0;
+        String commentTip = TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP);
+        if (!TextUtils.isEmpty(commentTip)) {
+            showCommentTipTimes = Integer.parseInt(commentTip);
+            if (addedGoCommentTimes == false) {
+                addedGoCommentTimes = true;
+                showCommentTipTimes++;
+                TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(showCommentTipTimes));
+            }
+        } else {
+            if (addedGoCommentTimes == false) {
+                addedGoCommentTimes = true;
+                TKConfig.setPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(0));
+            }
+        }
+        
+        if (showCommentTipTimes < SHOW_COMMENT_TIP_TIMES) {
+            setFragmentMessage(MoreFragment.MESSAGE_TYPE_COMMENT);
             return;
         }
     }
@@ -210,7 +232,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     protected void findViews() {
         mCurrentCityTxv = (TextView) mRootView.findViewById(R.id.current_city_txv);
         mUserNameTxv = (TextView) mRootView.findViewById(R.id.user_name_txv);
-        mUpgradeBtn = (Button)mRootView.findViewById(R.id.upgrade_btn);
+        mMessageBtn = (Button)mRootView.findViewById(R.id.message_btn);
         mUserBtn = (Button)mRootView.findViewById(R.id.user_btn);
         mChangeCityBtn = (Button)mRootView.findViewById(R.id.change_city_btn);
         mDownloadMapBtn = (Button)mRootView.findViewById(R.id.download_map_btn);
@@ -227,7 +249,7 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     }
     
     protected void setListener() {
-        mUpgradeBtn.setOnClickListener(this);
+        mMessageBtn.setOnClickListener(this);
         mUserBtn.setOnClickListener(this);
         mChangeCityBtn.setOnClickListener(this);
         mDownloadMapBtn.setOnClickListener(this);
@@ -245,30 +267,34 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.upgrade_btn:
-                if (mUpgradeType == UPGRADE_TYPE_SOFTWARE) {
-                    mActionLog.addAction(ActionLog.MoreUpdateSoft);
+            case R.id.message_btn:
+                if (mMessageType == MESSAGE_TYPE_SOFTWARE_UPDATE) {
+                    mActionLog.addAction(mActionTag +  ActionLog.MoreMessageSoft);
                     showDownloadSoftwareDialog();
-                } else if (mUpgradeType == UPGRADE_TYPE_COMMENT) {
-                    mActionLog.addAction(ActionLog.MoreUpdateComment);
-                    mSphinx.showView(R.id.view_go_comment);
-                } else if (mUpgradeType == UPGRADE_TYPE_MAP) {
-                    mActionLog.addAction(ActionLog.MoreUpdateMap);
+                } else if (mMessageType == MESSAGE_TYPE_MAP_UPDATE) {
+                    mActionLog.addAction(mActionTag +  ActionLog.MoreMessageMap);
                     showUpgradeMapDialog();
-                } else if (mUpgradeType == UPGRADE_TYPE_PUBLIC_WELFARRE) {
-                    RecommendApp publicWelfarre = getPublicWelfarre();
-                    if (publicWelfarre != null) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(publicWelfarre.getUrl()));
-                        mSphinx.startActivity(intent);
-                    }
+                } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
+                	String url=mDiaoyanQueryResponse.getUrl();
+                	if(url != null){               		
+                		Intent intent=new Intent();
+                		intent.putExtra(BrowserActivity.TITLE, mSphinx.getString(R.string.user_survey));
+                		intent.putExtra(BrowserActivity.URL, url);
+                		mDiaoyanQueryResponse.setHasSurveyed(1);
+                		mSphinx.showView(R.id.activity_browser, intent);
+                	}
+                    mActionLog.addAction(mActionTag +  ActionLog.MoreMessageUserSurvey);
+                } else if (mMessageType == MESSAGE_TYPE_COMMENT) {
+                    mActionLog.addAction(mActionTag +  ActionLog.MoreMessageComment);
+                    mSphinx.showView(R.id.view_go_comment);
                 }
                 break;
             case R.id.user_btn:
             	if (TextUtils.isEmpty(Globals.g_Session_Id) == false) {
-            		mActionLog.addAction(ActionLog.MoreUserHome);
+                    mActionLog.addAction(mActionTag +  ActionLog.MoreUserHome);
             		mSphinx.showView(R.id.view_user_home);
             	} else {
-            		mActionLog.addAction(ActionLog.MoreLoginRegist);
+                    mActionLog.addAction(mActionTag +  ActionLog.MoreLoginRegist);
             		Intent intent = new Intent(mSphinx, UserLoginActivity.class);
                     intent.putExtra(UserBaseActivity.SOURCE_VIEW_ID_LOGIN, getId());
                     intent.putExtra(UserBaseActivity.TARGET_VIEW_ID_LOGIN_SUCCESS, R.id.view_user_home);
@@ -277,16 +303,16 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
             	}
                 break;
             case R.id.change_city_btn:
-                mActionLog.addAction(ActionLog.MoreChangeCity);
+                mActionLog.addAction(mActionTag +  ActionLog.MoreChangeCity);
                 mSphinx.showView(R.id.activity_change_city);
                 break;
             case R.id.download_map_btn:
-                mActionLog.addAction(ActionLog.MoreDownloadMap);
+                mActionLog.addAction(mActionTag +  ActionLog.MoreMapDownload);
                 mSphinx.showView(R.id.activity_map_download);
                 break;
             case R.id.app_recommend_btn:
-                mActionLog.addAction(ActionLog.MoreAppRecommend);
-                if (TKConfig.sSPREADER.startsWith(TKConfig.sSPREADER_TENCENT)) {
+                mActionLog.addAction(mActionTag +  ActionLog.MoreAppRecommend);
+                if (TKConfig.sSPREADER.startsWith(TKConfig.SPREADER_TENCENT)) {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://a.wap.myapp.com/and2/s?aid=detail&appid=50801"));
                     mSphinx.startActivity(intent);
                 } else {
@@ -294,35 +320,36 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                 }
                 break;
             case R.id.favorite_btn:
-                mActionLog.addAction(ActionLog.MoreFavorite);
+                mActionLog.addAction(mActionTag +  ActionLog.MoreFavorite);
                 mSphinx.showView(R.id.view_favorite);
                 break;
             case R.id.history_browse_btn:
-                mActionLog.addAction(ActionLog.MoreHistory);
+                mActionLog.addAction(mActionTag +  ActionLog.MoreHistory);
                 mSphinx.showView(R.id.view_history);
                 break;
             case R.id.settings_btn:
-                mActionLog.addAction(ActionLog.MoreSetting);
+                mActionLog.addAction(mActionTag +  ActionLog.MoreSetting);
                 mSphinx.showView(R.id.activity_setting);
                 break;
             case R.id.feedback_btn:
-                mActionLog.addAction(ActionLog.MoreFeedback);
+                mActionLog.addAction(mActionTag +  ActionLog.MoreFeedback);
                 mSphinx.showView(R.id.activity_feedback);
                 break;
             case R.id.add_merchant_btn:
+                mActionLog.addAction(mActionTag +  ActionLog.MoreAddMerchant);
                 mSphinx.showView(R.id.activity_add_merchant);
                 break;
             case R.id.help_btn:
-                mActionLog.addAction(ActionLog.MoreHelp);
+                mActionLog.addAction(mActionTag +  ActionLog.MoreHelp);
                 mSphinx.showView(R.id.activity_help);
                 break;
             case R.id.about_btn:
-                mActionLog.addAction(ActionLog.MoreAboutUs);
+                mActionLog.addAction(mActionTag +  ActionLog.MoreAboutUs);
                 mSphinx.showView(R.id.activity_about_us);
                 break;
                 
             case R.id.give_favourable_comment_btn:
-                mActionLog.addAction(ActionLog.MoreGiveFavourableComment);
+                mActionLog.addAction(mActionTag +  ActionLog.MoreGiveFavourableComment);
                 mSphinx.startActivity(makeGiveFavourableIntent());  
                 break;
 
@@ -355,7 +382,26 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         	mUserBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
         	mUserBtn.setCompoundDrawablePadding(CommonUtils.dip2px(mContext, 10));
         	if (Globals.g_User != null) {
-            	mUserNameTxv.setText(Globals.g_User.getNickName());
+        		/*
+        		 * 下面一段代码衡量显示的昵称会否超出范围，如果超出，则显示时会截断并添加三个点
+        		 * 目前可显示的范围为150个宽度，这相当于12+2/3个"@"的宽度
+        		 * 截断后仍然可以显示11个"@"的宽度
+        		 * 注：这不是最佳的方法，对于屏幕较窄的手机可能仍然并不奏效，但已经优于产品部于
+        		 * 	   2013年03月29日(4.30版)所提出的依据字符数决定的办法，并报产品部通过
+        		 * 注2：若该方法将来在N多地方使用，可能需要单独放在一个Utils里以便调用
+        		 * fengtianxiao@tigerknows 2013/03/29
+        		 */
+        		Paint paint=new Paint();
+        		String nickNameText = Globals.g_User.getNickName();
+        		int strwid = (int)paint.measureText(nickNameText);
+        		if(strwid > SHOW_NICKNAME_MAX_WIDTH){
+        			while(strwid > SHOW_NICKNAME_MAX_WIDTH - SHOW_NICKNAME_OMIT_WIDTH){
+        				nickNameText = nickNameText.substring(0 , nickNameText.length()-1);
+        				strwid = (int)paint.measureText(nickNameText);
+        			}
+        			nickNameText = nickNameText + "...";
+        		}
+            	mUserNameTxv.setText(nickNameText);
             	mUserNameTxv.setVisibility(View.VISIBLE);
         	}
         } else {
@@ -368,54 +414,55 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
         }
     }
     
-    private void setUpgrade(int upgradeType) {
-        if (upgradeType == UPGRADE_TYPE_NONE) {
-            mUpgradeType = UPGRADE_TYPE_NONE;
-        } else if (upgradeType > mUpgradeType) {
-            mUpgradeType = upgradeType;
+    private void setFragmentMessage(int messageType) {
+        if (messageType == MESSAGE_TYPE_NONE) {
+            mMessageType = MESSAGE_TYPE_NONE;
+        } else if (messageType > mMessageType) {
+            mMessageType = messageType;
         }
-        if (mUpgradeType > UPGRADE_TYPE_NONE) {
-            mUpgradeBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
-            if (mUpgradeType == UPGRADE_TYPE_SOFTWARE) {
-                mUpgradeBtn.setText(R.string.upgrade_tip_software);
-                mUpgradeBtn.setBackgroundResource(R.drawable.btn_update);
-                mUpgradeBtn.setVisibility(View.VISIBLE);
-                mSphinx.getMenuFragment().setUpgrade(View.VISIBLE);
+        if (mMessageType > MESSAGE_TYPE_NONE) {
+            if (mMessageType == MESSAGE_TYPE_SOFTWARE_UPDATE) {
+                mMessageBtn.setText(R.string.message_tip_software_update);
+                mMessageBtn.setBackgroundResource(R.drawable.btn_update);
+                mMessageBtn.setVisibility(View.VISIBLE);
+                // setPadding需要在setVisibility之后调用，这样才能避免padding设置不起作用的情况
+                mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
+                mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
-            } else if (mUpgradeType == UPGRADE_TYPE_COMMENT) {
-                mUpgradeBtn.setText(R.string.upgrade_tip_comment);
-                mUpgradeBtn.setBackgroundResource(R.drawable.btn_orangle);
+            } else if (mMessageType == MESSAGE_TYPE_COMMENT) {
+                mMessageBtn.setText(R.string.message_tip_comment);
+                mMessageBtn.setBackgroundResource(R.drawable.btn_orangle);
                 TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_MAP_TIP);
-                mUpgradeBtn.setVisibility(View.VISIBLE);
-                mSphinx.getMenuFragment().setUpgrade(View.VISIBLE);
+                mMessageBtn.setVisibility(View.VISIBLE);
+                mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
+                mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
-            } else if (mUpgradeType == UPGRADE_TYPE_MAP) {
-                mUpgradeBtn.setText(R.string.upgrade_tip_map);
-                mUpgradeBtn.setBackgroundResource(R.drawable.btn_update);
-                mUpgradeBtn.setVisibility(View.VISIBLE);
-                mSphinx.getMenuFragment().setUpgrade(View.VISIBLE);
+            } else if (mMessageType == MESSAGE_TYPE_MAP_UPDATE) {
+                mMessageBtn.setText(R.string.message_tip_map_upgrade);
+                mMessageBtn.setBackgroundResource(R.drawable.btn_update);
+                mMessageBtn.setVisibility(View.VISIBLE);
+                mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
+                mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
                 return;
-            } else if (mUpgradeType == UPGRADE_TYPE_PUBLIC_WELFARRE) {
-                RecommendApp publicWelfarre = getPublicWelfarre();
-                if (publicWelfarre != null) {
-                    mUpgradeBtn.setText(publicWelfarre.getBody());
-                    mUpgradeBtn.setBackgroundResource(R.drawable.btn_update);
-                    mUpgradeBtn.setVisibility(View.VISIBLE);
-                    mSphinx.getMenuFragment().setUpgrade(View.VISIBLE);
-                    return;
-                }
+            } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
+                mMessageBtn.setText(R.string.message_tip_user_survey);
+                mMessageBtn.setBackgroundResource(R.drawable.btn_update);
+                mMessageBtn.setVisibility(View.VISIBLE);
+                mMessageBtn.setPadding(Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8), Util.dip2px(Globals.g_metrics.density, 8));
+                mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
+                return;
             }
         }
-        mUpgradeBtn.setVisibility(View.GONE);
-        mSphinx.getMenuFragment().setUpgrade(View.GONE);
+        mMessageBtn.setVisibility(View.GONE);
+        mSphinx.getMenuFragment().setFragmentMessage(View.GONE);
     }
 
     private void showDownloadSoftwareDialog() {
 
         SoftwareUpdate softwareUpdate = null;
-        UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
-        if (userLogonModel != null) {
-            softwareUpdate = userLogonModel.getSoftwareUpdate();
+        BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
+        if (bootstrapModel != null) {
+            softwareUpdate = bootstrapModel.getSoftwareUpdate();
         }
         final SoftwareUpdate finalSoftwareUpdate = softwareUpdate;
         if (finalSoftwareUpdate == null) {
@@ -468,35 +515,11 @@ public class MoreFragment extends BaseFragment implements View.OnClickListener {
                     public void onClick(DialogInterface arg0, int id) {
                         Intent intent = new Intent();
                         if (id == DialogInterface.BUTTON_POSITIVE) {
-                            mActionLog.addAction(ActionLog.MoreUpdateMapAll);
-                            intent.putExtra("upgradeAll", true);
-                        } else {
-                            mActionLog.addAction(ActionLog.MoreUpdateMapManual);
+                            intent.putExtra(MapDownload.EXTRA_UPGRADE_ALL, true);
                         }
                         mSphinx.showView(R.id.activity_map_download, intent);
                     }
                 });
     }
     
-    public RecommendApp getPublicWelfarre() {
-        RecommendApp publicWelfarre = null;
-        UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
-        if (userLogonModel != null) {
-            Recommend recommend = userLogonModel.getRecommend();
-            if (recommend != null) {
-                List<RecommendApp> list = recommend.getRecommendAppList();
-                if (list != null) {
-                    for(int i = 0, size = list.size(); i < size; i++) {
-                        RecommendApp recommendApp = list.get(i);
-                        if (recommendApp != null
-                                && mSphinx.getString(R.string.public_welfarre).equals(recommendApp.getBody())) {
-                            publicWelfarre = recommendApp;
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return publicWelfarre;
-    }
 }

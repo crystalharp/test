@@ -53,7 +53,9 @@ public class TrafficQueryMapAndLocationHelper {
 	private CityInfo mQueryCityInfo = new CityInfo();
 
 	public CityInfo getQueryCityInfo() {
-		return mQueryCityInfo;
+        return Globals.g_Current_City_Info;
+        //产品确定查询城市是系统设置城市，而不是地图所在城市。
+//      return mQueryCityInfo;
 	}
 	
 	public boolean isMyLocationLocateCurrentCity() {

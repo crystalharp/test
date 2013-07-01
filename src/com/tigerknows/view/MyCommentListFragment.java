@@ -6,14 +6,10 @@ package com.tigerknows.view;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -23,7 +19,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import com.tigerknows.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
@@ -38,7 +33,6 @@ import com.tigerknows.model.Comment;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.POI;
-import com.tigerknows.model.Response;
 import com.tigerknows.model.DataOperation.POIQueryResponse;
 import com.tigerknows.model.DataQuery.CommentResponse;
 import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
@@ -63,17 +57,6 @@ public class MyCommentListFragment extends BaseFragment {
     private DataQuery mDataQuery;
     private List<Comment> mCommentArrayList = new ArrayList<Comment>();
     private CommentAdapter mCommentAdapter;
-    
-    @SuppressWarnings("unchecked")
-    public static Comparator COMPARATOR = new Comparator() {
-
-        @Override
-        public int compare(Object object1, Object object2) {
-            Comment comment1 = (Comment) object1;
-            Comment comment2 = (Comment) object2;
-            return comment2.getTime().compareTo(comment1.getTime());
-        };
-    };
     
     
     private Runnable mTurnPageRun = new Runnable() {
@@ -123,7 +106,7 @@ public class MyCommentListFragment extends BaseFragment {
             
             @Override
             public void onRefresh(boolean isHeader) {
-                mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
+                mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
                 turnPage(isHeader);
             }
         });
@@ -133,7 +116,7 @@ public class MyCommentListFragment extends BaseFragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 if (position < adapterView.getCount()) {
-                    mActionLog.addAction(ActionLog.MyCommentClickComment, position);
+                    mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
                     Comment comment = (Comment) adapterView.getAdapter().getItem(position);
                     if (comment != null) {
                         long status = comment.getPOIStatus();
@@ -186,6 +169,7 @@ public class MyCommentListFragment extends BaseFragment {
         }
     }
     
+    @SuppressWarnings("unchecked")
     public void onResume() {
         super.onResume();
         
@@ -204,7 +188,7 @@ public class MyCommentListFragment extends BaseFragment {
                 Comment commentnew = comment.getPOI().getMyComment();
                 if (commentnew != null) {
                     try {
-                        commentnew.resetData();
+                        commentnew.setData(null);
                         comment.init(commentnew.getData());
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
@@ -212,7 +196,7 @@ public class MyCommentListFragment extends BaseFragment {
                     }
                 }
             }
-            Collections.sort(mCommentArrayList, COMPARATOR);
+            Collections.sort(mCommentArrayList, Comment.COMPARATOR_ONLY_TIME);
             mCommentAdapter.notifyDataSetChanged();
         }
     }
@@ -248,12 +232,12 @@ public class MyCommentListFragment extends BaseFragment {
                     
                     @Override
                     public void onClick(View arg0) {
-                        mActionLog.addAction(ActionLog.MyCommentClickPOI, comment.getPOIName());
+                        mActionLog.addAction(mActionTag +  ActionLog.MyCommentPOI, position, comment.getPOIName());
                         if (comment.getPOIStatus() >= 0) {
                             POI poi = comment.getPOI();
                             if (poi.getPosition() != null) {
-                                mSphinx.getPOIDetailFragment().setData(poi);
                                 mSphinx.showView(R.id.view_poi_detail);
+                                mSphinx.getPOIDetailFragment().setData(poi);
                             } else {
                                 Hashtable<String, String> criteria = new Hashtable<String, String>();
                                 criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
@@ -324,12 +308,13 @@ public class MyCommentListFragment extends BaseFragment {
             for(int i = mCommentArrayList.size()-1; i >= 0; i--) {
                 Comment comment = mCommentArrayList.get(i);
                 POI commentPOI = comment.getPOI();
-                if (commentPOI.getUUID().equals(poi.getUUID())) {
+                String uuid = commentPOI.getUUID();
+                if (uuid != null && uuid.equals(poi.getUUID())) {
                     try {
                         commentPOI.init(poi.getData());
                         commentPOI.setMyComment(comment);
-                        mSphinx.getPOIDetailFragment().setData(commentPOI);
                         mSphinx.showView(R.id.view_poi_detail);
+                        mSphinx.getPOIDetailFragment().setData(commentPOI);
                         return;
                     } catch (APIException e) {
                         e.printStackTrace();
@@ -416,9 +401,10 @@ public class MyCommentListFragment extends BaseFragment {
         }
     }
     
+    @SuppressWarnings("unchecked")
     public void refreshComment() {
         if (mCommentArrayList != null) {
-            Collections.sort(mCommentArrayList, COMPARATOR);
+            Collections.sort(mCommentArrayList, Comment.COMPARATOR_ONLY_TIME);
             mCommentAdapter.notifyDataSetChanged();
         }
     }

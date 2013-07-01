@@ -23,7 +23,7 @@
             android:layout_height="fill_parent"
             >
             <RelativeLayout 
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:padding="8dp"
@@ -55,7 +55,7 @@
 
                 <RatingBar android:id="@+id/stars_rtb"
                     android:layout_width="wrap_content"
-                    android:layout_height="18dp"
+                    android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/picture_imv"
                     android:layout_marginLeft="10dp"
                     android:layout_below="@id/name_txv"

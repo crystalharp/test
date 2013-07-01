@@ -28,6 +28,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -122,9 +123,11 @@ public class CommonUtils {
         intent.setType("image/png");
         intent.putExtra(Intent.EXTRA_TITLE, title);
         intent.putExtra(Intent.EXTRA_TEXT, body);
-        intent.putExtra(Intent.EXTRA_STREAM, uri);
         intent.putExtra("sms_body", body);
-        intent.putExtra("file_name", uri.toString());
+        if (uri != null) {
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            intent.putExtra("file_name", uri.toString());
+        }
         try {
             activity.startActivity(Intent.createChooser(intent, title));
         } catch (android.content.ActivityNotFoundException ex) {
@@ -648,10 +651,8 @@ public class CommonUtils {
     }
 
     public static Dialog showNormalDialog(Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener) {
-        if (message != null) {
-            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, message);
-        } else if (title !=  null) {
-            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG, title);
+        if (title != null || message != null) {
+            ActionLog.getInstance(activity).addAction(ActionLog.Dialog, title, message);
         }
         Dialog dialog = getDialog(activity, title, message, custom, leftButtonText, rightButtonText, onClickListener);
         dialog.show();
@@ -712,9 +713,9 @@ public class CommonUtils {
                     dialog.dismiss();
                     if (onClickListener != null) {
                         if (view.getId() == R.id.button1) {
-                            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG_BUTTON_ONCLICK, leftBtn.getText());
+                            ActionLog.getInstance(activity).addAction(ActionLog.DialogLeftBtn, leftBtn.getText());
                         } else {
-                            ActionLog.getInstance(activity).addAction(ActionLog.DIALOG_BUTTON_ONCLICK, rightBtn.getText());
+                            ActionLog.getInstance(activity).addAction(ActionLog.DialogRightBtn, rightBtn.getText());
                         }
                         onClickListener.onClick(dialog, view.getId() == R.id.button1 ? DialogInterface.BUTTON_POSITIVE : DialogInterface.BUTTON_NEGATIVE);
                     }
@@ -752,15 +753,27 @@ public class CommonUtils {
             ((Sphinx)activity).setDialog(dialog);
         }
         
+        dialog.setOnDismissListener(new OnDismissListener() {
+            
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                ActionLog.getInstance(activity).addAction(ActionLog.Dialog + ActionLog.Dismiss);
+            }
+        });
+        
         return dialog;
     }
-    
+
     public static ListView makeListView(Context context) {
+    	return makeListView(context, R.drawable.bg_real_line);
+    }
+    
+    public static ListView makeListView(Context context, int dividerResId) {
         ListView listView = new ListView(context);
         listView.setFadingEdgeLength(0);
         listView.setScrollingCacheEnabled(false);
         listView.setFooterDividersEnabled(false);
-        listView.setDivider(context.getResources().getDrawable(R.drawable.bg_real_line));
+        listView.setDivider(context.getResources().getDrawable(dividerResId));
         return listView;
     }
     
@@ -908,8 +921,8 @@ public class CommonUtils {
             firstVisiblePosition += 1;
         }
         int pageSize = TKConfig.getPageSize()/2;
-        int startPage = firstVisiblePosition/(pageSize);
-        int endPage = lastVisiblePosition/(pageSize)+1;
+        int startPage = firstVisiblePosition/pageSize;
+        int endPage = (lastVisiblePosition/pageSize)+1;
         int diff = endPage - startPage; 
         if (diff < 2) {
             if (lastVisiblePosition >= size-1) {
@@ -925,6 +938,13 @@ public class CommonUtils {
         
         int minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
         int maxIndex = endPage * pageSize + (isShowAPOI ? 1 : 0);
+        
+//        if ((maxIndex > size-1 ? size-1 : maxIndex)-minIndex < pageSize) {
+//            if (startPage > 0) {
+//                startPage--;
+//                minIndex = startPage * pageSize + (isShowAPOI ? 1 : 0);
+//            }
+//        }
         return new int[]{minIndex, maxIndex, (firstVisiblePosition-(isShowAPOI ? 1 : 0)+(startPage%2 != 0 ? pageSize : 0)) % TKConfig.getPageSize()};
     }
     
@@ -993,13 +1013,14 @@ public class CommonUtils {
         }
     }
 
-    public static void queryTraffic(final Sphinx sphinx, final POI poi) {
-        queryTraffic(sphinx, poi, TrafficQueryFragment.END);
+    public static void queryTraffic(final Sphinx sphinx, final POI poi, String actionTag) {
+        queryTraffic(sphinx, poi, TrafficQueryFragment.END, actionTag);
     }
     
-    public static void queryTraffic(final Sphinx sphinx, final POI poi, final int location) {
+    public static void queryTraffic(final Sphinx sphinx, POI poi, final int location, final String actionTag) {
         
-        String[] list = sphinx.getResources().getStringArray(R.array.goto_here);
+        final POI poiForTraffic = poi.clone();
+        final String[] list = sphinx.getResources().getStringArray(R.array.goto_here);
         int[] leftCompoundResIdList = new int[] {R.drawable.ic_bus, R.drawable.ic_drive, R.drawable.ic_walk, R.drawable.ic_start};
         final ArrayAdapter<String> adapter = new StringArrayAdapter(sphinx, list, leftCompoundResIdList);
         
@@ -1014,30 +1035,28 @@ public class CommonUtils {
                 null,
                 null);
         
+        ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere);
         listView.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
                 dialog.dismiss();
                 int queryType = -1;
+                ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere + ActionLog.ListViewItem, index, list[index]);
                 switch (index) {
                     case 0:
                         queryType = TrafficQuery.QUERY_TYPE_TRANSFER;
-                        ActionLog.getInstance(sphinx).addAction(ActionLog.DIALOG_COME_HERE_TRANSFER);
                         break;
                         
                     case 1:
                         queryType = TrafficQuery.QUERY_TYPE_DRIVE;
-                        ActionLog.getInstance(sphinx).addAction(ActionLog.DIALOG_COME_HERE_DRIVE);
                         break;
                         
                     case 2:
                         queryType = TrafficQuery.QUERY_TYPE_WALK;
-                        ActionLog.getInstance(sphinx).addAction(ActionLog.DIALOG_COME_HERE_WALK);
                         break;
                         
                     case 3:
-                        ActionLog.getInstance(sphinx).addAction(ActionLog.DIALOG_COME_HERE_CUSTOM_START);
                         break;
                 }
                 
@@ -1048,20 +1067,27 @@ public class CommonUtils {
                     POI start;
                     POI end;
                     if (location == TrafficQueryFragment.START) {
-                        start = poi;
+                        start = poiForTraffic;
                         end = myLocationPOI;
                     } else {
                         start = myLocationPOI;
-                        end = poi;
+                        end = poiForTraffic;
                     }
                     
-                    sphinx.getTrafficQueryFragment().addHistoryWord(poi, HistoryWordTable.TYPE_TRAFFIC);
+                    sphinx.getTrafficQueryFragment().addHistoryWord(poiForTraffic, HistoryWordTable.TYPE_TRAFFIC);
                     TrafficQueryFragment.submitTrafficQuery(sphinx, start, end, queryType);
                 } else {
-                    trafficQueryFragment.setDataNoSuggest(poi, location, queryType);
-                    sphinx.uiStackPop(R.id.view_result_map);   // 再回退时不出现地图界面
+                    trafficQueryFragment.setDataNoSuggest(poiForTraffic, location, queryType);
+                    sphinx.uiStackRemove(R.id.view_result_map);   // 再回退时不出现地图界面
                     sphinx.showView(R.id.view_traffic_query);
                 }
+            }
+        });
+        dialog.setOnDismissListener(new OnDismissListener() {
+            
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere + ActionLog.Dismiss);
             }
         });
     }

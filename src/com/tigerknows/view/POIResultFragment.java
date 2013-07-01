@@ -13,6 +13,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.Comment;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Response;
@@ -43,6 +44,7 @@ import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.PopupWindow.OnDismissListener;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -139,7 +141,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.SearchResult;
+        mActionTag = ActionLog.POIList;
     }
 
     @Override
@@ -181,7 +183,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
 
     protected void setListener() {
-        mRetryView.setCallBack(this);
+        mRetryView.setCallBack(this, mActionTag);
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -189,9 +191,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (position < adapterView.getCount()) {
                     POI poi = (POI) adapterView.getAdapter().getItem(position);
                     if (poi != null) {
-                        mActionLog.addAction(ActionLog.SearchResultSelect, poi.getUUID(), poi.getName(), position+1);
-                        mSphinx.getPOIDetailFragment().setData(poi);
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, poi.getUUID(), poi.getName());
                         mSphinx.showView(R.id.view_poi_detail);
+                        mSphinx.getPOIDetailFragment().setData(poi);
                     }
                 }
             }
@@ -329,7 +331,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             return;
         }
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
-        mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
+        mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
 
         DataQuery poiQuery = new DataQuery(mContext);
         POI requestPOI = lastDataQuery.getPOI();
@@ -361,16 +363,16 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             poiList.add(poi);
         }
         mSphinx.showPOI(poiList, page[2]);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), ActionLog.MapPOI);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.result_map), ActionLog.POIListMap);
         mSphinx.showView(R.id.view_result_map);   
     }
     
     public void doFilter(String name) {
         FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         
-        dismissPopupWindow();
         DataQuery lastDataQuery = mDataQuery;
         if (lastDataQuery == null) {
+            dismissPopupWindow();
             return;
         }
 
@@ -384,6 +386,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         poiQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(poiQuery);
         setup();
+        dismissPopupWindow();
     }
     
     public void cancelFilter() {
@@ -400,7 +403,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 if (mPOIList.isEmpty() || mState != STATE_LIST) {
                     return;
                 }
-                mActionLog.addAction(ActionLog.Title_Right_Button);
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 
@@ -419,7 +422,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 showFilterListView(mTitleFragment);
 
                 byte key = (Byte)view.getTag();
-                mFilterListView.setData(mFilterList, key, POIResultFragment.this, turnPageing);
+                mFilterListView.setData(mFilterList, key, POIResultFragment.this, turnPageing, mActionTag);
         }
     }
     
@@ -463,7 +466,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 view = convertView;
             }
             
-            ImageView bubbleImv = (ImageView) view.findViewById(R.id.bubble_imv);
             TextView nameTxv = (TextView) view.findViewById(R.id.name_txv);
             TextView distanceTxv = (TextView) view.findViewById(R.id.distance_txv);
             TextView distanceFromTxv = (TextView) view.findViewById(R.id.distance_from_txv);
@@ -484,10 +486,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
             
             if (position == 0 && poi.getResultType() == POIResponse.FIELD_A_POI_LIST && aTotal == 1) {
-                bubbleImv.setVisibility(View.VISIBLE);
                 nameTxv.setTextColor(aColor);
+                icAPOI.setBounds(0, 0, icAPOI.getIntrinsicWidth(), icAPOI.getIntrinsicHeight());
+                nameTxv.setCompoundDrawables(icAPOI, null, null, null);
+                nameTxv.setCompoundDrawablePadding(Util.dip2px(Globals.g_metrics.density, 4));
             } else {
-                bubbleImv.setVisibility(View.GONE);
+                nameTxv.setCompoundDrawables(null, null, null, null);
                 nameTxv.setTextColor(bColor);
             }
             
@@ -525,7 +529,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 moneyTxv.setText("");
             }
 
-            str = poi.getCommentSummary();            
+            str = null;
+            Comment lastComment = poi.getLastComment();
+            if (lastComment != null) {
+                str = lastComment.getContent();
+            }
             if (!TextUtils.isEmpty(str)) {
                 commentTxv.setText(str);
                 icComment.setBounds(0, 0, icComment.getIntrinsicWidth(), icComment.getIntrinsicHeight());
@@ -549,18 +557,15 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             startsRtb.setRating(star/2.0f);
 
             ImageView stampImv = (ImageView) view.findViewById(R.id.stamp_imv);
-            int storeType = poi.getStoreType();
+            int from = poi.getFrom();
              
             if (showStamp
                     // 跟马然沟通，本地搜藏或历史浏览的在我要点评是没有戳的，但是在加载出来的非本地poi若用户点评过是应该有戳的。但是现在没有戳。
-                    || (storeType != Tigerknows.STORE_TYPE_FAVORITE
-                            && storeType != Tigerknows.STORE_TYPE_HISTORY)) {
-                long attribute = poi.getAttribute();
-                User user = Globals.g_User;
-                if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0 && user != null) {
+                    || from == POI.FROM_ONLINE) {
+                if (poi.isGoldStamp()) {
                     stampImv.setImageResource(R.drawable.ic_stamp_gold);
                     stampImv.setVisibility(View.VISIBLE);
-                } else if ((attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0 && user == null) {
+                } else if (poi.isSilverStamp()) {
                     stampImv.setImageResource(R.drawable.ic_stamp_silver);
                     stampImv.setVisibility(View.VISIBLE);
                 } else {
@@ -612,14 +617,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 dynamicPOIListView.getChildAt(i).setVisibility(View.GONE);
             }
             if (dynamicPOIWidth > 0) {
-                int bubbleImvWidth = 0;
-                if (bubbleImv.getVisibility() == View.VISIBLE) {
-                    bubbleImv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-                    bubbleImvWidth = bubbleImv.getMeasuredWidth();
-                }
                 nameTxv.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
                 int nameTxvWidth = nameTxv.getMeasuredWidth();
-                int width = Globals.g_metrics.widthPixels-bubbleImvWidth-(4*Util.dip2px(Globals.g_metrics.density, 8));
+                int width = Globals.g_metrics.widthPixels-(4*Util.dip2px(Globals.g_metrics.density, 8));
                 if (nameTxvWidth > width-dynamicPOIWidth) {
                     nameTxv.getLayoutParams().width = (width-dynamicPOIWidth);
                 } else {
@@ -787,6 +787,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     private void showFilterListView(View parent) {
+        mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter);
         if (mPopupWindow == null) {
             mFilterListView = new FilterListView(mSphinx);
             
@@ -798,6 +799,13 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow.setOnDismissListener(new OnDismissListener() {
+                
+                @Override
+                public void onDismiss() {
+                    mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter + ActionLog.Dismiss);
+                }
+            });
             
         }
         mPopupWindow.showAsDropDown(parent, 0, 0);
@@ -807,7 +815,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void retry() {
         if (mBaseQuerying != null) {
-            mBaseQuerying.setResponse(null);
+        	for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
+                mBaseQuerying.get(i).setResponse(null);
+        	}
             mSphinx.queryStart(mBaseQuerying);
         }
         setup();

@@ -27,6 +27,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -150,9 +151,9 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 if (position < mPOIList.size()) {
                     POI poi = mPOIList.get(position);
-                    mActionLog.addAction(ActionLog.GoCommentClickPOI, position, poi.getUUID(), poi.getName());
-                    mSphinx.getPOIDetailFragment().setData(poi);
+                    mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, poi.getUUID(), poi.getName());
                     mSphinx.showView(R.id.view_poi_detail);
+                    mSphinx.getPOIDetailFragment().setData(poi);
                 }
             }
         });
@@ -164,7 +165,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                 if (isHeader) {
                     return;
                 }
-                mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
+                mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
                 turnPage();
             }
         });
@@ -172,7 +173,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
 
     @Override
     public void onClick(View view) {
-        mActionLog.addAction(ActionLog.GoCommentClickInputBox);
+        mActionLog.addAction(mActionTag +  ActionLog.GoCommentInput);
         mSphinx.showView(R.id.view_poi_query);
     }
     
@@ -362,11 +363,15 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
     private List<POI> refreshPOIStatus(List<POI> poiList) {
         List<POI> list = new ArrayList<POI>();
         StringBuilder idList =  new StringBuilder();
-        for(POI poi : poiList) {
-            if (idList.length() > 0) {
-                idList.append(',');
+        for(int i = 0, size = poiList.size(); i < size; i++) {
+            POI poi = poiList.get(i);
+            String uuid = poi.getUUID();
+            if (TextUtils.isEmpty(uuid) == false) {
+                if (idList.length() > 0) {
+                    idList.append(',');
+                }
+                idList.append(uuid);
             }
-            idList.append(poi.getUUID());
         }
         if (idList.length() > 0) {
             Hashtable<String, String> criteria = new Hashtable<String, String>();

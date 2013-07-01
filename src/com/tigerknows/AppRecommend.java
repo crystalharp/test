@@ -5,14 +5,14 @@
 package com.tigerknows;
 
 import com.decarta.Globals;
-import com.snda.recommend.api.RecommendAPI;
+//import com.snda.recommend.api.RecommendAPI;
 import com.tigerknows.R;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.TKDrawable;
-import com.tigerknows.model.UserLogon;
-import com.tigerknows.model.UserLogonModel;
-import com.tigerknows.model.UserLogonModel.Recommend;
-import com.tigerknows.model.UserLogonModel.Recommend.RecommendApp;
+import com.tigerknows.model.Bootstrap;
+import com.tigerknows.model.BootstrapModel;
+import com.tigerknows.model.BootstrapModel.Recommend;
+import com.tigerknows.model.BootstrapModel.Recommend.RecommendApp;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 
@@ -82,18 +82,18 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
         mRecommdAppAdapter = new RecommdAppAdapter(mThis, mRecommendAppList);
         mAppRecommendLsv.setAdapter(mRecommdAppAdapter);
         
-        UserLogonModel userLogonModel = Globals.g_User_Logon_Model;
-        if (userLogonModel != null) {
-            Recommend recommend = userLogonModel.getRecommend();
+        BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
+        if (bootstrapModel != null) {
+            Recommend recommend = bootstrapModel.getRecommend();
             if (recommend != null) {
                 initRecommendAppList(recommend.getRecommendAppList());
                 return;
             }
         }
         
-        UserLogon userLogon = new UserLogon(mThis);
-        userLogon.setup(null, Globals.g_Current_City_Info.getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
-        queryStart(userLogon);
+        Bootstrap bootstrap = new Bootstrap(mThis);
+        bootstrap.setup(null, Globals.g_Current_City_Info.getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+        queryStart(bootstrap);
     }
 
     protected void findViews() {
@@ -108,10 +108,10 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
         mAppRecommendLsv.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
-            public void onItemClick(AdapterView<?> arg0, View view, int arg2, long arg3) {
-                final RecommendApp recommendApp = mRecommendAppList.get(arg2);
+            public void onItemClick(AdapterView<?> arg0, View view, int postion, long arg3) {
+                final RecommendApp recommendApp = mRecommendAppList.get(postion);
                 if (recommendApp != null) {
-                    mActionLog.addAction(ActionLog.AppRecommendSelect, recommendApp.getName());
+                    mActionLog.addAction(mActionTag + ActionLog.ListViewItem, postion, recommendApp.getName());
                     final String uri = recommendApp.getUrl();
                     if (!TextUtils.isEmpty(uri)) {
                         CommonUtils.showNormalDialog(mThis, mThis.getString(R.string.prompt), 
@@ -162,18 +162,15 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
             TextView descriptionTxv = (TextView) view.findViewById(R.id.description_txv);
             descriptionTxv.setText(recommdApp.getBody());
             ImageView iconImv = (ImageView) view.findViewById(R.id.icon_imv);
-//            TKDrawable tkDrawable = recommdApp.getIcon();
-//            if (tkDrawable != null) {
-//                Drawable drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, mThis.toString());
-//                if (drawable != null) {
-//                    iconImv.setBackgroundDrawable(drawable);
-//                } else {
-//                    iconImv.setBackgroundResource(R.drawable.icon);
-//                }
-//            } else {
-//                iconImv.setBackgroundResource(R.drawable.icon);
-//            }
-            iconImv.setVisibility(View.GONE);
+            TKDrawable tkDrawable = recommdApp.getIcon();
+            Drawable drawable = null;
+            if (tkDrawable != null) {
+                drawable = tkDrawable.loadDrawable(mThis, mLoadedDrawableRun, mThis.toString());
+            }
+            if (drawable == null) {
+                drawable = getResources().getDrawable(R.drawable.ic_app_icon_loading);
+            }
+            iconImv.setImageDrawable(drawable);
             return view;
         }
     }
@@ -182,8 +179,9 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.snda_btn:
-                mActionLog.addAction(ActionLog.AppRecommendSnda);
-                boolean bRet = RecommendAPI.init(mThis, "800109436", "ANDsnda");
+/*
+                mActionLog.addAction(mActionTag +  ActionLog.AppRecommendSnda);
+                boolean bRet = RecommendAPI.init(mThis, "800109436", "ANDTKWWW");
                 RecommendAPI.setSdid("");
                 RecommendAPI.setPhoneNum("");
                 RecommendAPI.setFromPos(mThis, RecommendAPI.MAIN_TOP);
@@ -191,7 +189,7 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
                     RecommendAPI.openRecommendActivity(mThis);
                 }
                 break;
-
+*/
             default:
                 break;
         }
@@ -201,11 +199,11 @@ public class AppRecommend extends BaseActivity implements View.OnClickListener {
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
-        if (baseQuery instanceof UserLogon) {
-            UserLogonModel userLogonModel = ((UserLogon) baseQuery).getUserLogonModel();
-            if (userLogonModel != null) {
-                Globals.g_User_Logon_Model = userLogonModel;
-                Recommend recommend = userLogonModel.getRecommend();
+        if (baseQuery instanceof Bootstrap) {
+            BootstrapModel bootstrapModel = ((Bootstrap) baseQuery).getBootstrapModel();
+            if (bootstrapModel != null) {
+                Globals.g_Bootstrap_Model = bootstrapModel;
+                Recommend recommend = bootstrapModel.getRecommend();
                 if (recommend != null) {
                     initRecommendAppList(recommend.getRecommendAppList());
                     return;

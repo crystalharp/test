@@ -26,6 +26,10 @@ public class TKDrawable extends XMapData implements Parcelable {
     
     private String url;
     
+    public TKDrawable() {
+        
+    }
+    
     public TKDrawable(XMap data) throws APIException {
         super(data);
         
@@ -38,7 +42,7 @@ public class TKDrawable extends XMapData implements Parcelable {
             ImageCache imageCache1 = Globals.getImageCache();
             final String name = url.substring(url.lastIndexOf("/")+1);
             try {
-                imageCache1.putTile(name, bm);
+                imageCache1.putImage(name, bm);
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -46,6 +50,10 @@ public class TKDrawable extends XMapData implements Parcelable {
             BitmapDrawable bitmapDrawable = (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(bm), "image.png");
             Globals.getAsyncImageLoader().put(url, bitmapDrawable);
         }
+    }
+    
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public String getUrl() {

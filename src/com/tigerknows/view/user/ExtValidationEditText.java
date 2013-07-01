@@ -134,40 +134,6 @@ public class ExtValidationEditText extends EditText {
 	}
 
 	private void setListener() {
-		this.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					log();
-				}
-				
-				return false;
-			}
-		});
-	}
-	
-	public void log() {
-		switch(validType) {
-		case Phone:
-			mActionLog.addAction(ActionLog.UserClickPhoneEdt);
-			break;
-		case Password:
-			mActionLog.addAction(ActionLog.UserClickNewPasswordEdt);
-			break;
-		case Name:
-			mActionLog.addAction(ActionLog.UserClickNickNameEdt);
-			break;
-		case ValiNum:
-			mActionLog.addAction(ActionLog.UserClickValidNumEdt);
-			break;
-		case RePassword:
-			mActionLog.addAction(ActionLog.UserClickNewRePasswordEdt);
-			break;
-		default:
-		}
 	}
 	
 	public void setUpRelation(List<ExtValidationEditText> others) {
@@ -185,7 +151,6 @@ public class ExtValidationEditText extends EditText {
 		String text = this.getText().toString();
 		
 		if (TextUtils.isEmpty(text)) {
-			mActionLog.addAction(ActionLog.UserEdtEmptyError);
 			msg = mEmptyErrorTip;
 			validErrorType = ValidErrorType.EmptyError;
 			return false;
@@ -194,7 +159,6 @@ public class ExtValidationEditText extends EditText {
 		switch(validType) {
 		case Phone:
 			if (!ValidateUtil.isValidPhone(text)) {
-				mActionLog.addAction(ActionLog.UserPhoneFormatError);
 				msg = mFormatErrorTip;
 				validErrorType = ValidErrorType.PhoneFormatError;
 				return false;
@@ -202,13 +166,11 @@ public class ExtValidationEditText extends EditText {
 			break;
 		case Password:
 			if (!ValidateUtil.isValidPassword(text)) {
-				mActionLog.addAction(ActionLog.UserPasswordFormatError);
 				msg = mFormatErrorTip;
 				validErrorType = ValidErrorType.PasswordFormatError;
 				return false;
 			} else if (mUnionView != null && !TextUtils.isEmpty(mUnionView.getText().toString()) &&
 					!TextUtils.equals(mUnionView.getText().toString(), text)) {
-				mActionLog.addAction(ActionLog.UserRePasswordFormatError);
 				msg = mUnionErrortip;
 				validErrorType = ValidErrorType.UnionDifferentError;
 				return false;
@@ -216,7 +178,6 @@ public class ExtValidationEditText extends EditText {
 			break;
 		case Name:
 			if (TextUtils.isEmpty(text.trim()) || !ValidateUtil.isValidName(text.trim())) {
-				mActionLog.addAction(ActionLog.UserNicknameFormatError);
 				msg = mFormatErrorTip;
 				validErrorType = ValidErrorType.NameFormatError;
 				return false;

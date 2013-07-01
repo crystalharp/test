@@ -11,55 +11,81 @@
         android:layout_height="wrap_content" 
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
-        android:background="@drawable/bg_bottom_control"
-        android:weightSum="4"
-        android:gravity="center">
-        <LinearLayout
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center">
-        <Button android:id="@+id/poi_btn" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_search_nearby"
-            android:gravity="center"/>
-        </LinearLayout>
-            
-        <LinearLayout
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center">
-        <Button android:id="@+id/favorite_btn" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_favorite"
-            android:gravity="center"/>
-        </LinearLayout>
+        >
         
-        <LinearLayout
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+        <LinearLayout 
+            android:id="@+id/tools_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" 
+            android:background="@drawable/bg_bottom_control"
+            android:orientation="horizontal"
+            android:weightSum="4"
             android:gravity="center">
-        <Button android:id="@+id/share_btn" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_share"
-            android:gravity="center"/>
-        </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+            <Button android:id="@+id/poi_btn" 
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_search_nearby"
+                android:gravity="center"/>
+            </LinearLayout>
+                
+            <LinearLayout
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+            <Button android:id="@+id/favorite_btn" 
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_favorite"
+                android:gravity="center"/>
+            </LinearLayout>
             
-        <LinearLayout
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            <LinearLayout
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+            <Button android:id="@+id/share_btn" 
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_share"
+                android:gravity="center"/>
+            </LinearLayout>
+                
+            <LinearLayout
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center">
+            <Button android:id="@+id/error_recovery_btn" 
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_recovery_error"
+                android:gravity="center"/>
+            </LinearLayout>
+        </LinearLayout>
+                
+        <LinearLayout 
+            android:id="@+id/weixin_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" 
+            android:orientation="horizontal"
             android:gravity="center">
-        <Button android:id="@+id/error_recovery_btn" 
-            android:layout_width="wrap_content" 
-            android:layout_height="wrap_content"
-            android:background="@drawable/btn_recovery_error"
-            android:gravity="center"/>
+            
+            <Button android:id="@+id/weixin_btn" 
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_weixin_send"
+                android:text="@string/send_weixin_friend"
+                android:textColor="@color/white"
+                android:textSize="18sp"
+                android:gravity="center"
+                android:padding="12dp" />
         </LinearLayout>
     </LinearLayout>
     
@@ -89,7 +115,10 @@
             <LinearLayout
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
-                android:padding="8dp"
+                android:paddingLeft="20dp"
+                android:paddingTop="8dp"
+                android:paddingRight="20dp"
+                android:paddingBottom="8dp"
                 android:orientation="vertical"
                 android:gravity="left|top"
                 android:background="@color/white"
@@ -100,7 +129,7 @@
                     android:gravity="left|top"
                     >
                        
-                    <com.tigerknows.view.AlwaysMarqueeTextView
+                    <TextView
                         android:id="@+id/name_txv"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
@@ -111,16 +140,15 @@
                         android:text="@string/app_name"
                         android:textColor="@color/black_dark"
                         android:textSize="18sp"
-                        android:scrollHorizontally="true" 
-                        android:singleLine="true"
-                        android:ellipsize="marquee"
+                        android:maxLines="2"
+                        android:ellipsize="end"
                         android:focusable="true"
                         android:focusableInTouchMode="true"
-                        ></com.tigerknows.view.AlwaysMarqueeTextView>
+                        ></TextView>
         
                     <RatingBar android:id="@+id/stars_rtb"
                         android:layout_width="wrap_content"
-                        android:layout_height="18dp"
+                        android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_below="@id/name_txv" 
                         android:progressDrawable="@drawable/ratingbar_small"
@@ -175,7 +203,7 @@
                         android:layout_height="wrap_content" 
                         android:layout_below="@id/stars_rtb" 
                         android:layout_alignParentRight="true"
-                        android:paddingTop="4dp"
+                        android:paddingTop="6dp"
                         android:textColor="@color/orange"
                         android:textSize="16sp"
                         android:text="@string/app_name"
@@ -230,11 +258,11 @@
                         />
                 </RelativeLayout>
                 
-                	<ImageView android:id="@+id/address_telephome_divider_imv"
-						android:background="@drawable/bg_line_split"
-						android:layout_width="fill_parent"
-						android:layout_height="wrap_content"/>
-                	
+                    <ImageView android:id="@+id/address_telephome_divider_imv"
+                        android:background="@drawable/bg_line_split"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"/>
+                    
                 <LinearLayout android:id="@+id/telephone_view"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content" 
@@ -256,7 +284,76 @@
 
             </LinearLayout>
                 
-            <LinearLayout android:id="@+id/dynamic_poi_list_view"
+            <LinearLayout android:id="@+id/dynamic_dianying_view"
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                >
+                <LinearLayout
+                    android:layout_width="fill_parent" 
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/list_header"
+                    >
+                    <TextView
+                        android:layout_width="fill_parent" 
+                        android:layout_height="wrap_content"
+                        android:text="@string/play_dianying"
+                        android:textSize="18sp"
+                        android:padding="8dp" />
+                
+                    <ImageView
+                        android:background="@drawable/bg_line_split"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+                <LinearLayout android:id="@+id/dynamic_dianying_list_view"
+                    android:layout_width="fill_parent" 
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    >
+                </LinearLayout>
+                <LinearLayout android:id="@+id/dynamic_dianying_more_view"
+                    android:layout_width="fill_parent" 
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:background="@drawable/list_footer"
+                    android:gravity="center"
+                    >
+                    <TextView
+                        android:layout_width="wrap_content" 
+                        android:layout_height="wrap_content"
+                        android:text="@string/more_dianying"
+                        android:textSize="16sp"
+                        android:textColor="@color/black_middle"
+                        android:drawableRight="@drawable/icon_arrow_down" />
+                </LinearLayout>
+            </LinearLayout>
+                
+            <LinearLayout android:id="@+id/dynamic_tuanguo_list_view"
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                >
+            </LinearLayout>
+                
+            <LinearLayout android:id="@+id/dynamic_yanchu_list_view"
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="vertical"
+                >
+            </LinearLayout>
+                
+            <LinearLayout android:id="@+id/dynamic_zhanlan_list_view"
                 android:layout_width="fill_parent" 
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
@@ -301,7 +398,7 @@
                         android:layout_centerVertical="true"
                         android:layout_marginRight="8dp"
                         android:gravity="right|center_vertical"
-                        android:drawableRight="@drawable/ic_view_all_comment"
+                        android:drawableRight="@drawable/icon_arrow_right"
                         android:textColor="@color/text_gray"
                         android:text="@string/look_all_comment"
                         android:textSize="14sp"
@@ -376,4 +473,13 @@
         android:layout_marginBottom="8dp"
         >
     </include> 
+                
+    <LinearLayout 
+        android:id="@+id/doing_view"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" 
+        android:orientation="horizontal"
+        android:background="@drawable/bg_discover"
+        >
+        </LinearLayout>
 </RelativeLayout>

@@ -2,6 +2,7 @@ package com.decarta.android.map;
 
 import com.decarta.CONFIG;
 import com.decarta.android.util.XYInteger;
+import com.tigerknows.maps.MapView;
 
 public class MapMode{
 	private static int PERSPECTIVE_DEGREE=15;

@@ -17,7 +17,7 @@
         android:padding="8dp"
         >
         
-        <Button android:id="@+id/upgrade_btn"
+        <Button android:id="@+id/message_btn"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:padding="8dp"
@@ -157,7 +157,7 @@
                 android:drawableLeft="@drawable/ic_favorite_more"
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"
-                android:text="@string/favoriten"
+                android:text="@string/favorite"
                 android:gravity="left|center_vertical"
                 />
             <ImageView

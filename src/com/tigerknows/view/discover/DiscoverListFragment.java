@@ -24,7 +24,6 @@ import com.tigerknows.model.DataQuery.BaseList;
 import com.tigerknows.model.DataQuery.DianyingResponse;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.FilterCategoryOrder;
-import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.model.DataQuery.TuangouResponse;
 import com.tigerknows.model.DataQuery.YanchuResponse;
 import com.tigerknows.model.DataQuery.ZhanlanResponse;
@@ -60,6 +59,7 @@ import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.PopupWindow.OnDismissListener;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -72,29 +72,58 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 
     public DiscoverListFragment(Sphinx sphinx) {
         super(sphinx);
-        // TODO Auto-generated constructor stub
     }
     
+    /**
+     * Button for Dingdan in Tuangou list
+     */
     private ImageButton mDingdanBtn;
     
+    /**
+     * View containing the filter criterias, parent and child.
+     */
     private FilterListView mFilterListView = null;
     
+    /**
+     * The filter list control view containing three buttons
+     */
     private ViewGroup mFilterControlView = null;
-    
+
+    /**
+     * The list view containing the result of the list view
+     */
     private SpringbackListView mResultLsv = null;
 
+    /**
+     * The view showing that the query is in progress
+     */
     private QueryingView mQueryingView = null;
     
+    /**
+     * The text that shows the user that query is in progress
+     */
     private TextView mQueryingTxv = null;
     
+    /**
+     * The view that shows the query result is empty
+     */
     private View mEmptyView = null;
     
+    /**
+     * The text view that shows the query result is empty
+     */
     private TextView mEmptyTxv = null;
     
+    /**
+     * The view the promote the user to tap the screen to retry
+     */
     private RetryView mRetryView;
     
     private DataQuery mDataQuery;
     
+    /**
+     * Different state of the list fragment
+     */
     static final int STATE_QUERYING = 0;
     static final int STATE_ERROR = 1;
     static final int STATE_EMPTY = 2;
@@ -102,6 +131,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private int mState = STATE_QUERYING;
     
+    /**
+     * List of Discover entities and the corresponding adapter
+     */
     private List<Tuangou> mTuangouList = new ArrayList<Tuangou>();
     
     private TuangouAdapter mTuangouAdapter;
@@ -118,6 +150,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private ZhanlanAdapter mZhanlanAdapter;
     
+    /**
+     * Filter list used in the current list fragment
+     */
     private List<Filter> mFilterList = new ArrayList<Filter>();
     
     private String mFilterArea;
@@ -126,17 +161,27 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private String mDataType;
     
+    /**
+     * 发现分类列表
+     */
     private List<DiscoverCategory> mDiscoverCategoryList = new ArrayList<DiscoverCategory>();
     
+    /**
+     * Adapter used to choose between different discover categroy in list fragmenti
+     */
     private TitlePopupArrayAdapter mTitlePopupArrayAdapter;
     
     private OnItemClickListener mTitlePopupOnItemClickListener = new OnItemClickListener() {
 
         @Override
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
+        	//close the popup window
             mTitleFragment.dismissPopupWindow();
+            
             TitlePopupArrayAdapter titlePopupArrayAdapter = (TitlePopupArrayAdapter) adapterView.getAdapter();
             DiscoverCategory discoverCategory = titlePopupArrayAdapter.getItem(position);
+            
+            //Build the query
             DataQuery dataQuery = new DataQuery(mSphinx);
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, discoverCategory.getType());
@@ -145,10 +190,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     R.id.view_discover, R.id.view_discover_list, null, false, false,
                     mSphinx.getPOI());
             mSphinx.queryStart(dataQuery);
+            
             setup();
             onResume();
-            mTitleBtn.setClickable(false);
-            mActionLog.addAction(ActionLog.DiscoverListTitleSelection, position);
+            mActionLog.addAction(mActionTag + ActionLog.PopupWindowTitle + ActionLog.ListViewItem, position, discoverCategory.getType());
         }
     };
     
@@ -185,12 +230,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     SpringbackListView.IPagerListCallBack mIPagerListCallBack = null;
     
     public void setup() {
-        DataQuery lastDataQuerying = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
-        if (lastDataQuerying == null) {
+        DataQuery lastDataQuery = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
+        if (lastDataQuery == null) {
             return;
         }
-        if (lastDataQuerying.getSourceViewId() != getId()
-                || lastDataQuerying.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE).equals(mDataType) == false) {
+        if (lastDataQuery.getSourceViewId() != getId()
+                || lastDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE).equals(mDataType) == false) {
             mDataQuery = null;
             mFilterControlView.setVisibility(View.GONE);
             mFilterList.clear();
@@ -199,7 +244,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         String str = mContext.getString(R.string.loading);
         mQueryingTxv.setText(str);
         
-        mDataType = lastDataQuerying.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+        mDataType = lastDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             if (mTuangouAdapter == null) {
                 mTuangouAdapter = new TuangouAdapter(mSphinx, mTuangouList);
@@ -248,7 +293,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         findViews();
         setListener();
         
-        mResultLsv.setDivider(mSphinx.getResources().getDrawable(R.drawable.bg_broken_line));
+        //mResultLsv.setDivider(mSphinx.getResources().getDrawable(R.drawable.bg_broken_line));
         mTitlePopupArrayAdapter = new TitlePopupArrayAdapter(mSphinx, mDiscoverCategoryList);
         
         return mRootView;
@@ -283,7 +328,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     }
 
     protected void setListener() {
-        mRetryView.setCallBack(this);
+        mRetryView.setCallBack(this, mActionTag);
         mResultLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -294,12 +339,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                         if (object instanceof Tuangou) {
                             Tuangou tagret = (Tuangou) object;
 //                            tagret.getFendian().setOrderNumber(position+1);
-                            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, position+1, tagret.getUid());
+                            mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
                             mSphinx.showView(R.id.view_tuangou_detail);
                             mSphinx.getTuangouDetailFragment().setData(mTuangouList, position, DiscoverListFragment.this);
                         } else if (object instanceof Yanchu){
                             Yanchu tagret = (Yanchu) object;
-                            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, position+1, tagret.getUid());
+                            mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
                             mSphinx.showView(R.id.view_yanchu_detail);
                         	mSphinx.getYanchuDetailFragment().setData(mYanchuList, position, DiscoverListFragment.this);
                         } else if (object instanceof Dianying){
@@ -315,14 +360,16 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                                     }
                                 }
                             }
-                            tagret.getYingxun().setChangciOption(changciOption);
+                            for (int i = 0, size=getList().size(); i < size; i++) {
+								((Dianying)getList().get(i)).getYingxun().setChangciOption(changciOption);
+							}
 //                            tagret.getYingxun().setOrderNumber(position+1);
-                            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, position+1, tagret.getUid());
+                            mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
                         	mSphinx.showView(R.id.view_dianying_detail);
                         	mSphinx.getDianyingDetailFragment().setData(mDianyingList, position, DiscoverListFragment.this);
                         } else if (object instanceof Zhanlan){
                         	Zhanlan tagret = (Zhanlan) object;
-                            mActionLog.addAction(ActionLog.LISTVIEW_ITEM_ONCLICK, position+1, tagret.getUid());
+                            mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, tagret.getUid());
                             mSphinx.showView(R.id.view_zhanlan_detail);
                         	mSphinx.getZhanlanDetailFragment().setData(mZhanlanList, position, DiscoverListFragment.this);
                         }
@@ -442,7 +489,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
         mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
         mTitleBtn.setOnClickListener(this);
-        
+
         if (isReLogin()) {
             return;
         }
@@ -463,7 +510,26 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         super.onPause();
     }
     
+    /**
+     * In state querying, the button shouldn't be clickable 
+     */
+    private void updateTitleButtonState(){
+    	if(mTitleBtn == null){
+    		return;
+    	}
+        if (mState == STATE_QUERYING) {
+            mTitleBtn.setClickable(false);
+            mTitleBtn.setBackgroundResource(R.color.transparent);
+        } else {
+            mTitleBtn.setClickable(true);
+            mTitleBtn.setBackgroundResource(R.drawable.btn_title_popup);
+        }
+    }
+    
     private void updateView() {
+    	
+    	updateTitleButtonState();
+    	
         if (mState == STATE_QUERYING) {
             mQueryingView.setVisibility(View.VISIBLE);
             mRetryView.setVisibility(View.GONE);
@@ -521,7 +587,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             return;
         }
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
-        mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
+        mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
 
         DataQuery dataQuery = new DataQuery(mContext);
         Hashtable<String, String> criteria = lastDataQuery.getCriteria();
@@ -570,13 +636,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             return;
         }
         int name = R.string.tuangou_ditu;
-        String actionTag = ActionLog.MapTuangouList;
+        String actionTag = ActionLog.ResultMapTuangouList;
         if (BaseQuery.DATA_TYPE_YANCHU.equals(mDataType)) {
             name = R.string.yanchu_ditu;
-            actionTag = ActionLog.MapYanchuList;
+            actionTag = ActionLog.ResultMapYanchuList;
         } else if (BaseQuery.DATA_TYPE_ZHANLAN.equals(mDataType)) {
             name = R.string.zhanlan_ditu;
-            actionTag = ActionLog.MapZhanlanList;
+            actionTag = ActionLog.ResultMapZhanlanList;
         }
         mSphinx.showPOI(dataList, page[2]);
         mSphinx.getResultMapFragment().setData(mContext.getString(name), actionTag);
@@ -586,10 +652,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     public void doFilter(String name) {
         FilterListView.refreshFilterButton(mFilterControlView, mFilterList, mSphinx, this);
         
-        dismissPopupWindow();
-        
         DataQuery lastDataQuery = mDataQuery;
         if (lastDataQuery == null) {
+            dismissPopupWindow();
             return;
         }
 
@@ -603,6 +668,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         dataQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(dataQuery);
         setup();
+        
+        /*
+         * First set up the views that is under the filter list
+         * Then dismiss the PopupWindow to prevent the blink effect 
+         * Of the reverse order.
+         */
+        dismissPopupWindow();
     }
     
     public void cancelFilter() {
@@ -618,7 +690,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             case R.id.title_btn:
                 if (mDiscoverCategoryList.size() > 0) {
                     mTitlePopupArrayAdapter.mSelectDataType = mDataType;
-                    mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+                    mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener, mActionTag);
                     mTitlePopupArrayAdapter.notifyDataSetChanged();
                 }
                 break;
@@ -627,12 +699,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (mDataQuery == null || mState != STATE_LIST) {
                     return;
                 }
-                mActionLog.addAction(ActionLog.Title_Right_Button);
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
                 break;
                 
             case R.id.dingdan_btn:
-                mActionLog.addAction(ActionLog.TuangouListDingdan);
+                mActionLog.addAction(mActionTag +  ActionLog.TuangouListDingdan);
                 User user = Globals.g_User;
                 if (user != null) {
                     Intent intent = new Intent();
@@ -662,7 +734,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 showFilterListView(mTitleFragment);
 
                 byte key = (Byte)view.getTag();
-                mFilterListView.setData(mFilterList, key, DiscoverListFragment.this, turnPageing);
+                mFilterListView.setData(mFilterList, key, DiscoverListFragment.this, turnPageing, mActionTag);
         }
     }
     
@@ -698,11 +770,14 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             if(drawable != null) {
             	//To prevent the problem of size change of the same pic 
             	//After it is used at a different place with smaller size
-            	pictureImv.setBackgroundDrawable(null);
+            	if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+            		pictureImv.setBackgroundDrawable(null);
+            	}
             	pictureImv.setBackgroundDrawable(drawable);
             } else {
                 pictureImv.setBackgroundDrawable(null);
             }
+            
             Shangjia shangjia = Shangjia.getShangjiaById(tuangou.getSource(), mSphinx, mLoadedDrawableRun);
             if (shangjia != null) {
                 shangjiaMarkerImv.setImageDrawable(shangjia.getMarker());
@@ -753,10 +828,16 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             Dianying dianying = getItem(position);
             Drawable drawable = dianying.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
             if(drawable != null) {
-                pictureImv.setImageDrawable(drawable);
+            	//To prevent the problem of size change of the same pic 
+            	//After it is used at a different place with smaller size
+            	if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+            		pictureImv.setBackgroundDrawable(null);
+            	}
+            	pictureImv.setBackgroundDrawable(drawable);
             } else {
-                pictureImv.setImageDrawable(null);
+                pictureImv.setBackgroundDrawable(null);
             }
+            
             nameTxv.setText(dianying.getName());
             starsRtb.setProgress((int) dianying.getRank());
             String distance = dianying.getYingxun().getDistance();
@@ -807,10 +888,16 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             Yanchu yanchu = getItem(position);
             Drawable drawable = yanchu.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
             if(drawable != null) {
-                pictureImv.setImageDrawable(drawable);
+            	//To prevent the problem of size change of the same pic 
+            	//After it is used at a different place with smaller size
+            	if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+            		pictureImv.setBackgroundDrawable(null);
+            	}
+            	pictureImv.setBackgroundDrawable(drawable);
             } else {
-                pictureImv.setImageDrawable(null);
+                pictureImv.setBackgroundDrawable(null);
             }
+            
             nameTxv.setText(yanchu.getName());
             starsRtb.setProgress((int) yanchu.getHot());
             addressTxv.setText(yanchu.getAddress());
@@ -848,11 +935,16 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             Zhanlan yanchu = getItem(position);
             Drawable drawable = yanchu.getPictures().loadDrawable(mSphinx, mLoadedDrawableRun, DiscoverListFragment.this.toString());
             if(drawable != null) {
-            	pictureImv.setImageDrawable(null);
-            	pictureImv.setImageDrawable(drawable);
+            	//To prevent the problem of size change of the same pic 
+            	//After it is used at a different place with smaller size
+            	if( drawable.getBounds().width() != pictureImv.getWidth() || drawable.getBounds().height() != pictureImv.getHeight() ){
+            		pictureImv.setBackgroundDrawable(null);
+            	}
+            	pictureImv.setBackgroundDrawable(drawable);
             } else {
-                pictureImv.setImageDrawable(null);
+                pictureImv.setBackgroundDrawable(null);
             }
+            
             nameTxv.setText(yanchu.getName());
             starsRtb.setProgress((int) yanchu.getHot());
             addressTxv.setText(yanchu.getAddress());
@@ -866,13 +958,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     @Override
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
-        mResultLsv.onRefreshComplete(false);
+        mResultLsv.changeHeaderViewByState(false, SpringbackListView.PULL_TO_REFRESH);
+        invokeIPagerListCallBack();
     }
 
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
-        mTitleBtn.setClickable(true);
         
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
         
@@ -888,6 +980,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         } else {
             Response response = dataQuery.getResponse();
             if (response != null) {
+                
                 int responsCode = response.getResponseCode();
                 if (responsCode != Response.RESPONSE_CODE_OK) {
                     if (responsCode == 701) {
@@ -946,17 +1039,20 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     });
                 }
                 
+                refreshFilter(mDataQuery.getFilterList());
+                makeFilterArea(dataQuery);
+                
                 List<Tuangou> list = tuangouResponse.getList().getList();
                 for(Tuangou item : list) {
                     item.setFilterArea(mFilterArea);
                 }
                 mTuangouList.addAll(list);
+                
                 mDingdanBtn.setVisibility(View.VISIBLE);
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
                 }
-                refreshFilter(mDataQuery.getFilterList());
-                makeFilterArea(dataQuery);
+                
             } else {
                 if (dataQuery.isTurnPage()) {
                     return;
@@ -983,6 +1079,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                         }
                     });
                 }
+
+                refreshFilter(mDataQuery.getFilterList());
+                makeFilterArea(dataQuery);
                 
                 List<Dianying> list = dianyingResponse.getList().getList();
                 for(Dianying item : list) {
@@ -995,8 +1094,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                 if (getList().size() < mList.getTotal()) {
                     mResultLsv.setFooterSpringback(true);
                 }
-                refreshFilter(mDataQuery.getFilterList());
-                makeFilterArea(dataQuery);
+                
             } else {
                 if (dataQuery.isTurnPage()) {
                     return;
@@ -1140,6 +1238,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     }
     
     private void showFilterListView(View parent) {
+        mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter);
         if (mPopupWindow == null) {
             mFilterListView = new FilterListView(mSphinx);
             mPopupWindow = new PopupWindow(mFilterListView);
@@ -1150,6 +1249,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow.setOnDismissListener(new OnDismissListener() {
+                
+                @Override
+                public void onDismiss() {
+                    mActionLog.addAction(mActionTag + ActionLog.PopupWindowFilter + ActionLog.Dismiss);
+                }
+            });
             
         }
         mPopupWindow.showAsDropDown(parent, 0, 0);
@@ -1233,7 +1339,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     @Override
     public void retry() {
         if (mBaseQuerying != null) {
-            mBaseQuerying.setResponse(null);
+            for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
+                mBaseQuerying.get(i).setResponse(null);
+            }
             mSphinx.queryStart(mBaseQuerying);
         }
         setup();

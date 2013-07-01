@@ -13,7 +13,8 @@ import java.util.List;
 import com.tigerknows.TKConfig;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.maps.MapWord;
-import com.tigerknows.maps.RegionMapInfo;
+import com.tigerknows.maps.LocalRegionDataInfo;
+import com.tigerknows.maps.LocalRegionDataInfo;
 import com.tigerknows.maps.TileDownload;
 import com.tigerknows.maps.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.xobject.ByteReader;
@@ -182,7 +183,7 @@ public final class ByteUtil {
             
             int len = arr2int(byteTileInfo, start + 12*i + 8);
             
-            RegionMetaVersion regionMetaVersion = mapEngine.getRegionVersion(rid);
+            RegionMetaVersion regionMetaVersion = mapEngine.getRegionMetaVersion(rid);
             if (regionMetaVersion != null) {
                 String version = regionMetaVersion.toString();
                 TileDownload tileInfo = new TileDownload(rid, offset, len, version);
@@ -198,8 +199,8 @@ public final class ByteUtil {
      * @param byteTileInfo:lost data num, real return lost data num, total size, downloaded size, lost data
      * @return
      */
-    public static RegionMapInfo parseRegionMapInfo(final byte[] byteRegionMapInfo) {
-        RegionMapInfo regionMapInfo = new RegionMapInfo();
+    public static LocalRegionDataInfo parseRegionMapInfo(final byte[] byteRegionMapInfo) {
+        LocalRegionDataInfo regionMapInfo = new LocalRegionDataInfo();
         if (byteRegionMapInfo == null) {
             return regionMapInfo;
         }
@@ -300,5 +301,14 @@ public final class ByteUtil {
         ByteWriter writer = new ByteWriter(os, TKConfig.getEncoding());
         xobject.writeTo(writer);
         return os.toByteArray();
+    }
+
+    public static int getCharArrayLength(String str){
+    	char[] strChar = str.toCharArray();
+    	int doubleChar = 0;
+        for(int i=0;i<strChar.length;i++){
+        	if((char)(byte)strChar[i] != strChar[i])doubleChar ++;
+        }
+        return str.length() + doubleChar;      	
     }
 }

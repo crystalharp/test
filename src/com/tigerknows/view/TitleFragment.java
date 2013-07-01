@@ -5,6 +5,7 @@
 package com.tigerknows.view;
 
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 
@@ -19,6 +20,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.PopupWindow.OnDismissListener;
 
 /**
  * @author Peng Wenyue
@@ -83,7 +85,9 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
         return rightBtn;
     }
     
-    public void showPopupWindow(ListAdapter adapter, OnItemClickListener listener) {
+    public void showPopupWindow(ListAdapter adapter, OnItemClickListener listener, String actionTag) {
+    	this.mActionTag = actionTag;
+        mActionLog.addAction(this.mActionTag + ActionLog.PopupWindowTitle);
         if (mPopupWindow == null) {
             View view  = mLayoutInflater.inflate(R.layout.title_popup_list, this, false);
             popupLsv = (ListView) view.findViewById(R.id.listview);
@@ -96,6 +100,13 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow.setOnDismissListener(new OnDismissListener() {
+                
+                @Override
+                public void onDismiss() {
+                    mActionLog.addAction(mActionTag+ActionLog.PopupWindowTitle+ActionLog.Dismiss);
+                }
+            });
         }
         popupLsv.setOnItemClickListener(listener);
         popupLsv.setAdapter(adapter);

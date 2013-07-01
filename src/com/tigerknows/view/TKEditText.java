@@ -55,6 +55,7 @@ public class TKEditText extends LinearLayout implements OnClickListener {
     
     private EditText mInputEdt;
     private Button mDeleteBtn;
+    public String mActionTag;
         
     public TKEditText(Context context) {
         this(context, null);
@@ -197,7 +198,7 @@ public class TKEditText extends LinearLayout implements OnClickListener {
 
     @Override
     public void onClick(View view) {
-        ActionLog.getInstance(getContext()).addAction(ActionLog.EDITTEXT_DELELE_ONCLICK);
+        ActionLog.getInstance(getContext()).addAction(mActionTag+ActionLog.EditTextDelete);
         setText(null);
         mInputEdt.requestFocus();
     }

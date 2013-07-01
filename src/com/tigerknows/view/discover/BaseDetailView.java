@@ -5,6 +5,8 @@
 package com.tigerknows.view.discover;
 
 
+import java.util.List;
+
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
@@ -42,8 +44,19 @@ public class BaseDetailView extends LinearLayout {
     protected BaseDetailFragment mParentFragment;
     protected String mActionTag;
     protected ActionLog mActionLog;
+    
     protected TKAsyncTask mTKAsyncTasking;
-    protected BaseQuery mBaseQuerying;
+    /**
+     * Set to true when a query starts
+     * Set to false when a query returns in onPostExecute
+     * When new data is set to the same view, stopQuery will set this to false
+     * and the new data operation can go.
+     * This guarantees there is only one query on-going for a single description item
+     * to remove duplicate download for the same description, to save Data and Time.
+     */
+    protected boolean mAsyncTaskExecuting = false;
+    
+    protected List<BaseQuery> mBaseQuerying;
     private BaseData mData;
     
     public BaseDetailView(Sphinx sphinx, BaseDetailFragment parentFragment, int layoutResId) {
@@ -65,8 +78,13 @@ public class BaseDetailView extends LinearLayout {
         if (mBaseQuerying != null) {
             mBaseQuerying = null;
         }
+        mAsyncTaskExecuting = false;
     }
     
+    /**
+     * 
+     * @param data
+     */
     public void setData(BaseData data) {
         if (mData != data) {
             stopQuery();
@@ -75,7 +93,7 @@ public class BaseDetailView extends LinearLayout {
     }
 
     public void onResume() {
-        mBodyScv.scrollTo(0, 0);
+        mBodyScv.smoothScrollTo(0, 0);
         refreshDrawable();
     }
 
@@ -102,9 +120,18 @@ public class BaseDetailView extends LinearLayout {
     }    
 
     public boolean onPostExecute(TKAsyncTask tkAsyncTask) {
-        if (mBaseQuerying != tkAsyncTask.getBaseQuery()) {
+    	mAsyncTaskExecuting = false;
+        if (mBaseQuerying != tkAsyncTask.getBaseQueryList()) {
             return false;
         }
         return true;
     }
+
+	public boolean onCancel(TKAsyncTask tkAsyncTask) {
+    	mAsyncTaskExecuting = false;
+        if (mBaseQuerying != tkAsyncTask.getBaseQueryList()) {
+            return false;
+        }
+		return true;
+	}
 }

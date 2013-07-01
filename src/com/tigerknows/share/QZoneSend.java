@@ -92,6 +92,7 @@ public class QZoneSend extends BaseActivity implements OnClickListener {
                 
                 @Override
                 public void onDismiss(DialogInterface arg0) {
+                    mActionLog.addAction(ActionLog.Dialog + ActionLog.Dismiss);
                     checkUserAccessIdenty(false);
                 }
             });
@@ -169,19 +170,19 @@ public class QZoneSend extends BaseActivity implements OnClickListener {
         int viewId = v.getId();
         switch (viewId) {
             case R.id.logout_btn: {
-                mActionLog.addAction(ActionLog.QzoneSendClickLogoutbBtn);
                 if (checkUserAccessIdenty(false) == false) {
+                mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton, String.valueOf(checkUserAccessIdenty(false)));
                     QZoneSend.this.finish();
                     return;
                 }
                 hideInputMethodManager();
                 TKTencentOpenAPI.logout(QZoneSend.this);     
-                Toast.makeText(this, R.string.logout_sucess, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.logout_success, Toast.LENGTH_LONG).show();
                 finish();
                 break;
             }
             case R.id.send_btn: {
-                mActionLog.addAction(ActionLog.QzoneSendClickSendBtn, mContent);
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 if (checkUserAccessIdenty(true) == false) {
                     return;
                 }

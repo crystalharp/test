@@ -53,14 +53,6 @@ public abstract class UserBaseFragment extends BaseFragment {
 	protected ViewGroup mFormView;
 	
 	private static final String TAG = "UserBaseDialog";
-    
-    protected DialogInterface.OnClickListener mCancelLoginListener = new DialogInterface.OnClickListener() {
-        
-        @Override
-        public void onClick(DialogInterface arg0, int arg1) {
-            UserBaseFragment.this.dismiss();
-        }
-    };
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -141,7 +133,7 @@ public abstract class UserBaseFragment extends BaseFragment {
 	 */
 	protected void sendRequest(AccountManage accountManage, Hashtable<String, String> criteria) {
 		accountManage.setup(criteria, getCityParameter(), getId(), getId(), mContext.getString(R.string.query_loading_tip));
-		mSphinx.queryStart(accountManage, true, false);
+		mSphinx.queryStart(accountManage, false);
 	}
 
 	/**
@@ -170,14 +162,12 @@ public abstract class UserBaseFragment extends BaseFragment {
 		// TODO Auto-generated method stub
 		super.onPostExecute(tkAsyncTask);
 		BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
-		if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), R.id.view_user_home, R.id.view_more, mCancelLoginListener)) {
+		if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), R.id.view_user_home, R.id.view_more, null)) {
 		    return;
         }
 
 		Response response = baseQuery.getResponse();
 		if (response != null) {
-    		mActionLog.addAction(ActionLog.UserRequestResponse, mActionTag, response.getResponseCode());
-    		
     		AccountManage accountManage = (AccountManage)baseQuery;
         	dealResponse(accountManage);
 		} else {

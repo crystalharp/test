@@ -148,7 +148,7 @@ public class BuslineResultStationFragment extends BaseFragment {
                 final Station station = (Station)mStationList.get(position);
                 String busLine = station.getName();
                 if (!TextUtils.isEmpty(busLine)) {
-                    mActionLog.addAction(ActionLog.TrafficStationSelect, position);
+                    mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
                     submitBuslineQuery(busLine);
                 }
             }
@@ -202,7 +202,7 @@ public class BuslineResultStationFragment extends BaseFragment {
     	BuslineQuery buslineQuery = new BuslineQuery(mContext);
     	buslineQuery.setup(mBuslineQuery.getCityId(), mBuslineQuery.getKeyword(), mStationList.size(), true, getId(), null);
     	mSphinx.queryStart(buslineQuery);
-        mActionLog.addAction(ActionLog.LOAD_MORE_TRIGGER);
+        mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
         }
     }
 
@@ -392,21 +392,17 @@ public class BuslineResultStationFragment extends BaseFragment {
         BuslineModel buslineModel = buslineQuery.getBuslineModel();
         
         if (buslineModel == null) {
-        	mActionLog.addAction(ActionLog.TrafficQueryNoResultB);
         	mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
         } if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE 
         		|| buslineModel.getType() == BuslineModel.TYPE_STATION){
         	if (((buslineModel.getLineList() == null || buslineModel.getLineList().size() <= 0) && 
             (buslineModel.getStationList() == null || buslineModel.getStationList().size() <= 0))) {
-        		mActionLog.addAction(ActionLog.TrafficQueryNoResultB);
         		mSphinx.showTip(R.string.busline_non_tip, Toast.LENGTH_SHORT);
         	} else {
         		if (buslineModel.getType() == BuslineModel.TYPE_BUSLINE) {
-        			mActionLog.addAction(ActionLog.TrafficQueryResultB, buslineModel.getLineList().size());
         			mSphinx.getBuslineResultLineFragment().setData(buslineQuery);
         			mSphinx.showView(R.id.view_busline_line_result);
         		} else if (buslineModel.getType() == BuslineModel.TYPE_STATION) {
-        			mActionLog.addAction(ActionLog.TrafficQueryResultB, buslineModel.getStationList().size());
         			mSphinx.getBuslineResultStationFragment().setData(buslineQuery);
         		}        		
         	}

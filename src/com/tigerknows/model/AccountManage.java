@@ -16,8 +16,6 @@ import com.tigerknows.model.test.AccountManageTest;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.xobject.XMap;
 
-import org.apache.http.message.BasicNameValuePair;
-
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -82,122 +80,122 @@ public class AccountManage extends BaseQuery {
         String sessionId = Globals.g_Session_Id;
         if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE)) {
             String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_OPERATION_CODE, operationCode));
+            requestParameters.add(SERVER_PARAMETER_OPERATION_CODE, operationCode);
             if (OPERATION_CODE_BIND_TELEPHONE.equals(operationCode)) {
                 if (criteria.containsKey(SERVER_PARAMETER_TELEPHONE)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE)));
+                    requestParameters.add(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_TELEPHONE);
                 }
             } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
                 if (criteria.containsKey(SERVER_PARAMETER_TELEPHONE)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE)));
+                    requestParameters.add(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_TELEPHONE);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_PASSWORD)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PASSWORD, criteria.get(SERVER_PARAMETER_PASSWORD)));
+                    requestParameters.add(SERVER_PARAMETER_PASSWORD, criteria.get(SERVER_PARAMETER_PASSWORD));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_PASSWORD);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_VALIDATE_CODE)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_VALIDATE_CODE, criteria.get(SERVER_PARAMETER_VALIDATE_CODE)));
+                    requestParameters.add(SERVER_PARAMETER_VALIDATE_CODE, criteria.get(SERVER_PARAMETER_VALIDATE_CODE));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_VALIDATE_CODE);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_NICKNAME)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NICKNAME, criteria.get(SERVER_PARAMETER_NICKNAME)));
+                    requestParameters.add(SERVER_PARAMETER_NICKNAME, criteria.get(SERVER_PARAMETER_NICKNAME));
                 }
             } else if (OPERATION_CODE_UPDATE_NICKNAME.equals(operationCode)) {
                 if (!TextUtils.isEmpty(sessionId)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SESSION_ID, sessionId));
+                    requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_NICKNAME)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NICKNAME, criteria.get(SERVER_PARAMETER_NICKNAME)));
+                    requestParameters.add(SERVER_PARAMETER_NICKNAME, criteria.get(SERVER_PARAMETER_NICKNAME));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_NICKNAME);
                 }
             } else if (OPERATION_CODE_UPDATE_PASSWORD.equals(operationCode)) {
                 if (!TextUtils.isEmpty(sessionId)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SESSION_ID, sessionId));
+                    requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_OLD_PASSWORD)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_OLD_PASSWORD, criteria.get(SERVER_PARAMETER_OLD_PASSWORD)));
+                    requestParameters.add(SERVER_PARAMETER_OLD_PASSWORD, criteria.get(SERVER_PARAMETER_OLD_PASSWORD));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_OLD_PASSWORD);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_PASSWORD)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PASSWORD, criteria.get(SERVER_PARAMETER_PASSWORD)));
+                    requestParameters.add(SERVER_PARAMETER_PASSWORD, criteria.get(SERVER_PARAMETER_PASSWORD));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_PASSWORD);
                 }
             } else if (OPERATION_CODE_UPDATE_TELEPHONE.equals(operationCode)) {
                 if (!TextUtils.isEmpty(sessionId)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SESSION_ID, sessionId));
+                    requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_TELEPHONE)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE)));
+                    requestParameters.add(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_TELEPHONE);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_VALIDATE_CODE)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_VALIDATE_CODE, criteria.get(SERVER_PARAMETER_VALIDATE_CODE)));
+                    requestParameters.add(SERVER_PARAMETER_VALIDATE_CODE, criteria.get(SERVER_PARAMETER_VALIDATE_CODE));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_VALIDATE_CODE);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_PASSWORD)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PASSWORD, criteria.get(SERVER_PARAMETER_PASSWORD)));
+                    requestParameters.add(SERVER_PARAMETER_PASSWORD, criteria.get(SERVER_PARAMETER_PASSWORD));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_PASSWORD);
                 }
             } else if (OPERATION_CODE_GET_VALIDATE_CODE.equals(operationCode)) {
                 if (criteria.containsKey(SERVER_PARAMETER_TELEPHONE)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE)));
+                    requestParameters.add(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_TELEPHONE);
                 }
             } else if (OPERATION_CODE_RESET_PASSWORD.equals(operationCode)) {
                 if (criteria.containsKey(SERVER_PARAMETER_TELEPHONE)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE)));
+                    requestParameters.add(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_TELEPHONE);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_PASSWORD)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PASSWORD, criteria.get(SERVER_PARAMETER_PASSWORD)));
+                    requestParameters.add(SERVER_PARAMETER_PASSWORD, criteria.get(SERVER_PARAMETER_PASSWORD));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_PASSWORD);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_VALIDATE_CODE)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_VALIDATE_CODE, criteria.get(SERVER_PARAMETER_VALIDATE_CODE)));
+                    requestParameters.add(SERVER_PARAMETER_VALIDATE_CODE, criteria.get(SERVER_PARAMETER_VALIDATE_CODE));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_VALIDATE_CODE);
                 }
             } else if (OPERATION_CODE_LOGIN.equals(operationCode)) {
                 if (criteria.containsKey(SERVER_PARAMETER_TELEPHONE)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE)));
+                    requestParameters.add(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_TELEPHONE);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_PASSWORD)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PASSWORD, criteria.get(SERVER_PARAMETER_PASSWORD)));
+                    requestParameters.add(SERVER_PARAMETER_PASSWORD, criteria.get(SERVER_PARAMETER_PASSWORD));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_PASSWORD);
                 }
             } else if (OPERATION_CODE_LOGOUT.equals(operationCode)) {
                 if (!TextUtils.isEmpty(sessionId)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SESSION_ID, sessionId));
+                    requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
                 }
             } else if ("du".equals(operationCode)) {
                 if (criteria.containsKey(SERVER_PARAMETER_TELEPHONE)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE)));
+                    requestParameters.add(SERVER_PARAMETER_TELEPHONE, criteria.get(SERVER_PARAMETER_TELEPHONE));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_TELEPHONE);
                 }

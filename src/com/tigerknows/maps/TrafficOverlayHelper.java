@@ -15,7 +15,6 @@ import com.decarta.android.location.BoundingBox;
 import com.decarta.android.location.Position;
 import com.decarta.android.map.Icon;
 import com.decarta.android.map.ItemizedOverlay;
-import com.decarta.android.map.MapView;
 import com.decarta.android.map.OverlayItem;
 import com.decarta.android.map.Polyline;
 import com.decarta.android.map.RotationTilt;
@@ -265,15 +264,18 @@ public class TrafficOverlayHelper {
 	    		
 	    		Polyline trafficPolygon = (Polyline)mapview.getShapesByName(Shape.TRAFFIC_SHAPE);
 	    		List<Position> wholeLinePositions = trafficPolygon.getPositions();
-	    		int stepStartIndex = 0;
-	    		int stepEndIndex = 0;
+	    		int stepStartIndex = -1;
+	    		int stepEndIndex = -1;
 	    		for(int i = 0, size = wholeLinePositions.size(); i < size; i++) {
 	    		    Position pos = wholeLinePositions.get(i);
 	    		    if (Math.abs(pos.getLat()-focusedStepPosition.getLat()) < HIGHLIGHT_POSITION_ACCURACY
-                            && Math.abs(pos.getLon()-focusedStepPosition.getLon()) < HIGHLIGHT_POSITION_ACCURACY) {
+                            && Math.abs(pos.getLon()-focusedStepPosition.getLon()) < HIGHLIGHT_POSITION_ACCURACY
+                            && stepStartIndex == -1) {
 	    		        stepStartIndex = i;
-	    		    } else if (Math.abs(pos.getLat()-nextStepPosition.getLat()) < HIGHLIGHT_POSITION_ACCURACY
-                            && Math.abs(pos.getLon()-nextStepPosition.getLon()) < HIGHLIGHT_POSITION_ACCURACY) {
+	    		    } 
+	    		    if (Math.abs(pos.getLat()-nextStepPosition.getLat()) < HIGHLIGHT_POSITION_ACCURACY
+                            && Math.abs(pos.getLon()-nextStepPosition.getLon()) < HIGHLIGHT_POSITION_ACCURACY
+                            && stepEndIndex == -1) {
 	    		        stepEndIndex = i;
 	    		    }
 	    		}

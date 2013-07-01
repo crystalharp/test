@@ -101,7 +101,7 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
             @Override
             public void onFocusChange(View arg0, boolean focused) {
                 if (focused) {
-                    mActionLog.addAction(ActionLog.FeedBackContent);
+                    mActionLog.addAction(mActionTag +  ActionLog.FeedBackContent);
                 }
             }
         });
@@ -110,7 +110,7 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
             @Override
             public void onFocusChange(View arg0, boolean focused) {
                 if (focused) {
-                    mActionLog.addAction(ActionLog.FeedbackMobile);
+                    mActionLog.addAction(mActionTag +  ActionLog.FeedbackMobile);
                 }
             }
         });
@@ -131,7 +131,7 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.feedback_send:
-                mActionLog.addAction(ActionLog.FeedbackSubmit);
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 send();
                 break;
             case R.id.weibo_txv:
@@ -157,7 +157,7 @@ public class Feedback extends BaseActivity implements View.OnClickListener {
             feedbackUpload.setup(criteria, -1, -1, -1, mThis.getString(R.string.doing_and_wait));
             queryStart(feedbackUpload);
         } else {
-            Toast.makeText(mThis, R.string.feedback_no_content_tip, Toast.LENGTH_LONG).show();
+            Toast.makeText(mThis, R.string.feedback_no_content_tip, Toast.LENGTH_SHORT).show();
         }
     }
     

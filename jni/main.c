@@ -6,7 +6,7 @@
 #include "tks_suggest.h"
 #include "tk_log.h"
 
-#define DEBUG
+//#define DEBUG
 #ifdef DEBUG
 #include <android/log.h>
 char message[1000];

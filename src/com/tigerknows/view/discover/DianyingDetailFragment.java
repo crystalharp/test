@@ -18,6 +18,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.view.SpringbackListView.IPagerList;
 import com.tigerknows.view.discover.CycleViewPager.CyclePagerAdapter;
 
@@ -39,7 +40,7 @@ public class DianyingDetailFragment extends BaseDetailFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.DianyingXiangqing;
+        mActionTag = ActionLog.DianyingDetail;
     }
 
     @Override
@@ -83,6 +84,15 @@ public class DianyingDetailFragment extends BaseDetailFragment
         mDataList = dataList;
         setData(dataList.size(), position, iPagerList);
         refreshViews(position);
+        
+        setViewsVisibility(View.VISIBLE);
+    }
+
+    public void setPulledDynamicPOI(PulledDynamicPOI dynamicPOI){
+    	// There is only one item in the list when showing PulledDynamicPOI
+    	position = 0;
+        BaseDetailView baseDetailView = (BaseDetailView) mCyclePagerAdapter.viewList.get(position%mCyclePagerAdapter.viewList.size());
+        ((DianyingDetailView)baseDetailView).setPulledDynamicPOI(dynamicPOI);
     }
     
     public void viewMap() {
@@ -91,7 +101,7 @@ public class DianyingDetailFragment extends BaseDetailFragment
         POI poi = data.getPOI();
         list.add(poi);
         mSphinx.showPOI(list, 0);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.dianying_ditu), ActionLog.MapDianyingXiangqing);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.dianying_ditu), ActionLog.ResultMapDianyingDetail);
         super.viewMap();
     }
     
@@ -113,5 +123,6 @@ public class DianyingDetailFragment extends BaseDetailFragment
             view.setData(mDataList.get(position+1));
             view.onResume();
         }
-    }
+    }    
+
 }

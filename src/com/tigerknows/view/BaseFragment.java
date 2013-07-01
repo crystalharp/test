@@ -4,6 +4,8 @@
 
 package com.tigerknows.view;
 
+import java.util.List;
+
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ActionLog;
@@ -32,7 +34,6 @@ import android.view.ViewGroup;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.animation.Animation;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -68,9 +69,9 @@ public class BaseFragment extends LinearLayout {
     
     public boolean isReLogin = false;
     
-    public BaseQuery mBaseQuerying;
+    protected List<BaseQuery> mBaseQuerying;
     
-    public TKAsyncTask mTkAsyncTasking;
+    protected TKAsyncTask mTkAsyncTasking;
     
     protected PopupWindow mPopupWindow;
     
@@ -87,7 +88,9 @@ public class BaseFragment extends LinearLayout {
         this.isReLogin = false;
         if (isRelogin) {
             if (mBaseQuerying != null) {
-                mBaseQuerying.setResponse(null);
+            	for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
+	                mBaseQuerying.get(i).setResponse(null);
+            	}
                 mSphinx.queryStart(mBaseQuerying);
             }
         }
@@ -101,7 +104,7 @@ public class BaseFragment extends LinearLayout {
             synchronized (mSphinx.mUILock) {
                 if (!mSphinx.mUIProcessing) {
                 	if (arg0.getVisibility() == View.VISIBLE) {
-                	    mActionLog.addAction(ActionLog.Title_Left_Back);
+                	    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
 	                	dismiss();
                 	}
                 }
@@ -243,7 +246,9 @@ public class BaseFragment extends LinearLayout {
                 && id != R.id.view_title
                 && id != R.id.view_menu) {
             mSphinx.hideSoftInput();
-
+            if (!TextUtils.isEmpty(mActionTag)) {
+                mActionLog.addAction(mActionTag + ActionLog.Dismiss);
+            }
         }
     }
 
@@ -344,9 +349,24 @@ public class BaseFragment extends LinearLayout {
         return mSphinx.uiStackPeek() == getId();
     }
     
+    Runnable dismissPopupWindowTask = new Runnable() {
+		@Override
+		public void run() {
+            mPopupWindow.dismiss();
+		}
+	};
+    
     public void dismissPopupWindow() {
         if (mPopupWindow != null && mPopupWindow.isShowing()) {
-            mPopupWindow.dismiss();
+        	mRootView.post(dismissPopupWindowTask);
         }
+    }
+    
+    public void setTkAsyncTasking(TKAsyncTask tkAsyncTask) {
+    	this.mTkAsyncTasking = tkAsyncTask;
+    }
+    
+    public void setBaseQuerying(List<BaseQuery> baseQuerying) {
+    	this.mBaseQuerying = baseQuerying;
     }
 }

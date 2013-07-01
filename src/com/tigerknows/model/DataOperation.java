@@ -14,8 +14,6 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.model.test.DataOperationTest;
 import com.tigerknows.model.xobject.XMap;
 
-import org.apache.http.message.BasicNameValuePair;
-
 import android.content.Context;
 import android.text.TextUtils;
 
@@ -59,66 +57,72 @@ public class DataOperation extends BaseQuery {
             throw new APIException(APIException.CRITERIA_IS_NULL);
         }
 
-        if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE)) {
-            String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_TYPE, dataType));
-            if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE)) {
-                String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_OPERATION_CODE, operationCode));
-                if (OPERATION_CODE_QUERY.equals(operationCode)) {
-                    if (criteria.containsKey(SERVER_PARAMETER_NEED_FEILD)) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, criteria.get(SERVER_PARAMETER_NEED_FEILD)));
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_NEED_FEILD);
-                    }
-                    
-                    if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID)));
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
-                    }
-                    if (criteria.containsKey(SERVER_PARAMETER_PICTURE)) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PICTURE, criteria.get(SERVER_PARAMETER_PICTURE)));
-                    }
-                } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-                    if (criteria.containsKey(SERVER_PARAMETER_ENTITY)) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY)));
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ENTITY);
-                    }
-                } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
-                    if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID)));
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
-                    }
-                    if (criteria.containsKey(SERVER_PARAMETER_ENTITY)) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY)));
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ENTITY);
-                    }
-                } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
-                    if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID)));
-                    } else {
-                        throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
-                    }
-                } else {
-                    throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
-                }
-            } else {
-                throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_OPERATION_CODE);
-            }
-        } else {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_TYPE);
-        }
-        
         String sessionId = Globals.g_Session_Id;
         if (!TextUtils.isEmpty(sessionId)) {
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SESSION_ID, sessionId));
+            requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
+        } 
+
+        if (criteria.containsKey(SERVER_PARAMETER_DATA_TYPE) == false) {
+        	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_TYPE);
+        } else if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE) == false) {
+        	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_OPERATION_CODE);
+        } else {
+        	String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
+            requestParameters.add(SERVER_PARAMETER_DATA_TYPE, dataType);
+            String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+            requestParameters.add(SERVER_PARAMETER_OPERATION_CODE, operationCode);
+            if (OPERATION_CODE_QUERY.equals(operationCode)) {
+            	if (criteria.containsKey(SERVER_PARAMETER_NEED_FEILD)) {
+                    requestParameters.add(SERVER_PARAMETER_NEED_FEILD, criteria.get(SERVER_PARAMETER_NEED_FEILD));
+                } else if(dataType.equals(DATA_TYPE_DIAOYAN)){
+                	//do nothing
+                } else {
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_NEED_FEILD);
+                }
+                
+                if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
+                    requestParameters.add(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID));
+                } else if(dataType.equals(DATA_TYPE_DIAOYAN)){
+                	//do nothing
+                } else {
+                	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
+                }
+                if (criteria.containsKey(SERVER_PARAMETER_PICTURE)) {
+                    requestParameters.add(SERVER_PARAMETER_PICTURE, criteria.get(SERVER_PARAMETER_PICTURE));
+                }
+                
+            } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
+                if (criteria.containsKey(SERVER_PARAMETER_ENTITY)) {
+                    requestParameters.add(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY));
+                } else {
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ENTITY);
+                }
+            } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
+                if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
+                    requestParameters.add(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID));
+                } else {
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
+                }
+                if (criteria.containsKey(SERVER_PARAMETER_ENTITY)) {
+                    requestParameters.add(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY));
+                } else {
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ENTITY);
+                }
+            } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
+                if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
+                    requestParameters.add(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID));
+                } else {
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
+                }
+            } else {
+                throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
+            }
         }
+
+
+        
         if (!TextUtils.isEmpty(Globals.g_ClientUID)) {
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_CLIENT_ID, Globals.g_ClientUID));
+            requestParameters.add(SERVER_PARAMETER_CLIENT_ID, Globals.g_ClientUID);
         } else {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CLIENT_ID);
         }
@@ -127,7 +131,7 @@ public class DataOperation extends BaseQuery {
     @Override
     protected void createHttpClient() {
         super.createHttpClient();
-        String url = String.format(TKConfig.getQueryUrl(), TKConfig.getQueryHost());
+        String url = String.format(TKConfig.getQueryUrl(apiType, version, criteria.get(SERVER_PARAMETER_DATA_TYPE)), TKConfig.getQueryHost());
         httpClient.setURL(url);
     }
 
@@ -137,7 +141,7 @@ public class DataOperation extends BaseQuery {
 
         String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
         String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
-
+        
         if (OPERATION_CODE_QUERY.equals(operationCode)) {
             if (DATA_TYPE_POI.equals(dataType)) {
                 response = new POIQueryResponse(responseXMap);
@@ -149,10 +153,14 @@ public class DataOperation extends BaseQuery {
                 response = new FendianQueryResponse(responseXMap);
             } else if (DATA_TYPE_DIANYING.equals(dataType)) {
                 response = new DianyingQueryResponse(responseXMap);
+            } else if (DATA_TYPE_YINGXUN.equals(dataType)) {
+                response = new YingxunQueryResponse(responseXMap);
             } else if (DATA_TYPE_YANCHU.equals(dataType)) {
                 response = new YanchuQueryResponse(responseXMap);
             } else if (DATA_TYPE_ZHANLAN.equals(dataType)) {
                 response = new ZhanlanQueryResponse(responseXMap);
+            } else if (DATA_TYPE_DIAOYAN.equals(dataType)){
+            	response = new DiaoyanQueryResponse(responseXMap);
             }
         } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
             if (DATA_TYPE_DIANPING.equals(dataType)) {
@@ -295,7 +303,7 @@ public class DataOperation extends BaseQuery {
             }
         } 
     }
-    
+
     public static class FendianQueryResponse extends Response {
         
         public static final byte FIELD_DATA = 0x02;
@@ -311,6 +319,25 @@ public class DataOperation extends BaseQuery {
             
             if (this.data.containsKey(FIELD_DATA)) {
                 fendian = new Fendian(this.data.getXMap(FIELD_DATA));
+            }
+        } 
+    }
+    
+    public static class YingxunQueryResponse extends Response {
+        
+        public static final byte FIELD_DATA = 0x02;
+        
+        private Yingxun yingxun;
+
+        public Yingxun getYingxun() {
+			return yingxun;
+		}
+
+		public YingxunQueryResponse(XMap data) throws APIException {
+            super(data);
+            
+            if (this.data.containsKey(FIELD_DATA)) {
+                yingxun = new Yingxun(this.data.getXMap(FIELD_DATA));
             }
         } 
     }
@@ -372,6 +399,42 @@ public class DataOperation extends BaseQuery {
         } 
     }
     
+    public static class DiaoyanQueryResponse extends Response {
+    	
+    	//是否参加过本期调研
+    	public static final byte FIELD_HAS_SURVEYED = 0x03;
+    	
+    	//调研URL
+    	public static final byte FIELD_URL = 0x04;
+    	
+		private long hasSurveyed;
+		public void setHasSurveyed(long hasSurveyed) {
+			this.hasSurveyed = hasSurveyed;
+		}
+
+		private String url;
+
+		public long getHasSurveyed() {
+			return hasSurveyed;
+		}
+    	
+		public String getUrl() {
+			return url;
+		}
+ 	
+		public DiaoyanQueryResponse(XMap data) throws APIException{
+			super(data);
+			
+			if(this.data.containsKey(FIELD_HAS_SURVEYED)){
+				hasSurveyed = this.data.getInt(FIELD_HAS_SURVEYED);
+			}
+			
+			if(this.data.containsKey(FIELD_URL)){
+				url = this.data.getString(FIELD_URL);
+			}
+		}
+    }
+    
     public static class DingdanCreateResponse extends Response {
         
         public static final byte FIELD_DATA = 0x02;
@@ -412,12 +475,16 @@ public class DataOperation extends BaseQuery {
                     responseXMap = DataOperationTest.launchFendianQueryResponse(context);
                 } else if (DATA_TYPE_DIANYING.equals(dataType)) {
                     responseXMap = DataOperationTest.launchDianyingQueryResponse(context);
+                } else if (DATA_TYPE_YINGXUN.equals(dataType)) {
+                    responseXMap = DataOperationTest.launchYingxunQueryResponse(context);
                 } else if (DATA_TYPE_YANCHU.equals(dataType)) {
                     responseXMap = DataOperationTest.launchYanchuQueryResponse(context);
                 } else if (DATA_TYPE_ZHANLAN.equals(dataType)) {
                     responseXMap = DataOperationTest.launchZhanlanQueryResponse(context);
                 } else if (DATA_TYPE_DIANPING.equals(dataType)) {
                     responseXMap = DataOperationTest.launchDianpingQueryResponse();
+                } else if (DATA_TYPE_DIAOYAN.equals(dataType)) {
+                	responseXMap = DataOperationTest.launchDiaoyanQueryResponse(context);
                 }
             } if (OPERATION_CODE_UPDATE.equals(operationCode)) {
                 if (DATA_TYPE_DIANPING.equals(dataType)) {

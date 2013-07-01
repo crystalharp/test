@@ -33,9 +33,8 @@ import com.tigerknows.model.xobject.XInt;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.CommonUtils;
+import com.weibo.sdk.android.WeiboParameters;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 import org.xml.sax.InputSource;
@@ -117,6 +116,12 @@ public final class DataQuery extends BaseQuery {
     
     // ids string false 团购商家id列表  
     public static final String SERVER_PARAMETER_SHANGJIA_IDS = "ids";
+    
+    // lastsuc String false 上次接收到消息的时间,客户端首次请求时此项为空
+    public static final String SERVER_PARAMETER_LAST_PULL_DATE = "lastsuc";
+    
+    // msgIds String false 客户端已收到的消息id，多个id之间用_分隔。如"1000_32762_33658"。首次请求时此项为空。 
+    public static final String SERVER_PARAMETER_MESSAGE_ID_LIST = "msgIds";
 
     // 评论版本 
     public static final String COMMENT_VERSION = "1";
@@ -172,6 +177,16 @@ public final class DataQuery extends BaseQuery {
     private List<Filter> filterList = new ArrayList<Filter>();
     // POI Response End
     
+    private PullMessage pullMessage;
+    
+    public PullMessage getPullMessage() {
+        return pullMessage;
+    }
+
+    public void setPullMessage(PullMessage pullMessage) {
+        this.pullMessage = pullMessage;
+    }
+
     public static DiscoverConfigList getDiscoverConfigList() {
         return Discover_Config_List;
     }
@@ -345,9 +360,9 @@ public final class DataQuery extends BaseQuery {
                 if (criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY)
                         && criteria.containsKey(SERVER_PARAMETER_LOCATION_LONGITUDE)
                         && criteria.containsKey(SERVER_PARAMETER_LOCATION_LATITUDE)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_CITY, criteria.get(SERVER_PARAMETER_LOCATION_CITY)));
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_LONGITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LONGITUDE)));
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_LATITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LATITUDE)));
+                    requestParameters.add(SERVER_PARAMETER_LOCATION_CITY, criteria.get(SERVER_PARAMETER_LOCATION_CITY));
+                    requestParameters.add(SERVER_PARAMETER_LOCATION_LONGITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LONGITUDE));
+                    requestParameters.add(SERVER_PARAMETER_LOCATION_LATITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LATITUDE));
                 }
             } else {
                 super.addMyLocationParameters();
@@ -356,9 +371,9 @@ public final class DataQuery extends BaseQuery {
             if (criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY)
                     && criteria.containsKey(SERVER_PARAMETER_LOCATION_LONGITUDE)
                     && criteria.containsKey(SERVER_PARAMETER_LOCATION_LATITUDE)) {
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_CITY, criteria.get(SERVER_PARAMETER_LOCATION_CITY)));
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_LONGITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LONGITUDE)));
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LOCATION_LATITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LATITUDE)));
+                requestParameters.add(SERVER_PARAMETER_LOCATION_CITY, criteria.get(SERVER_PARAMETER_LOCATION_CITY));
+                requestParameters.add(SERVER_PARAMETER_LOCATION_LONGITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LONGITUDE));
+                requestParameters.add(SERVER_PARAMETER_LOCATION_LATITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LATITUDE));
             }
         }
     }
@@ -371,17 +386,23 @@ public final class DataQuery extends BaseQuery {
         if (criteria == null) {
             throw new APIException(APIException.CRITERIA_IS_NULL);
         }
-        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize())));
+        String size;
+        if (criteria.containsKey(SERVER_PARAMETER_SIZE)) {
+            size = criteria.get(SERVER_PARAMETER_SIZE);
+        } else {
+            size = String.valueOf(TKConfig.getPageSize());
+        }
+        requestParameters.add(SERVER_PARAMETER_SIZE, size);
         if (criteria.containsKey(SERVER_PARAMETER_DATA_TYPE)) {
             String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
             if (DATA_TYPE_POI.equals(dataType)) {     
                 if (criteria.containsKey(SERVER_PARAMETER_ID_LIST)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_ID_LIST, criteria.get(SERVER_PARAMETER_ID_LIST)));
+                    requestParameters.add(SERVER_PARAMETER_ID_LIST, criteria.get(SERVER_PARAMETER_ID_LIST));
                 } else {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD));
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION));
+                    requestParameters.add(SERVER_PARAMETER_NEED_FEILD, POI.NEED_FILELD);
+                    requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
                     if (criteria.containsKey(SERVER_PARAMETER_BIAS)) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_BIAS, criteria.get(SERVER_PARAMETER_BIAS)));
+                        requestParameters.add(SERVER_PARAMETER_BIAS, criteria.get(SERVER_PARAMETER_BIAS));
                     }
                     String cfv = null;
                     if (Filter_Area != null && Filter_Area.cityId == cityId) {
@@ -394,12 +415,12 @@ public final class DataQuery extends BaseQuery {
                     addFilterParameters(criteria, requestParameters, cfv, nfv);
                     String poiid = poi.getUUID();
                     if (TextUtils.isEmpty(poiid) == false) {
-                        requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_POI_ID, poiid));
+                        requestParameters.add(SERVER_PARAMETER_POI_ID, poiid);
                     }
                 }
 
             } else if (DATA_TYPE_DISCOVER.equals(dataType)) { 
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, DiscoverCategory.NEED_FILED));
+                requestParameters.add(SERVER_PARAMETER_NEED_FEILD, DiscoverCategory.NEED_FILED);
                 String pic = "";
                 String cdv = "";
                 if (Discover_Config_List != null) {
@@ -424,20 +445,20 @@ public final class DataQuery extends BaseQuery {
                         }
                     }
                 }
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DISCOVER_SUPPORT_DATATYPE, 
-                        DATA_TYPE_TUANGOU+":"+DATA_TYPE_DIANYING+":"+DATA_TYPE_ZHANLAN+":"+DATA_TYPE_YANCHU));
+                requestParameters.add(SERVER_PARAMETER_DISCOVER_SUPPORT_DATATYPE, 
+                        DATA_TYPE_TUANGOU+":"+DATA_TYPE_DIANYING+":"+DATA_TYPE_ZHANLAN+":"+DATA_TYPE_YANCHU);
                 if (TextUtils.isEmpty(cdv) == false) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DISCOVER_POI_VERSION, cdv));
+                    requestParameters.add(SERVER_PARAMETER_DISCOVER_POI_VERSION, cdv);
                 }
                 if (TextUtils.isEmpty(pic) == false) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PICTURE, 
-                            Util.byteToHexString(DiscoverCategory.FIELD_DATA)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DISCOVER_HOME)+"_["+pic+"]"));
+                    requestParameters.add(SERVER_PARAMETER_PICTURE, 
+                            Util.byteToHexString(DiscoverCategory.FIELD_DATA)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DISCOVER_HOME)+"_["+pic+"]");
                 }
             } else if (DATA_TYPE_TUANGOU.equals(dataType)) { 
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, Tuangou.NEED_FILELD));
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PICTURE, 
+                requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Tuangou.NEED_FILELD);
+                requestParameters.add(SERVER_PARAMETER_PICTURE, 
                         Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[10000000000000000000]" + ";" +
-                        Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[00000000000000000000]"));
+                        Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[00000000000000000000]");
                 addDiscoverCategoryParameters(requestParameters);
                 String cfv = null;
                 if (Filter_Area != null && Filter_Area.cityId == cityId) {
@@ -449,10 +470,10 @@ public final class DataQuery extends BaseQuery {
                 }
                 addFilterParameters(criteria, requestParameters, cfv, nfv);
             } else if (DATA_TYPE_FENDIAN.equals(dataType)) { 
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, Fendian.NEED_FILELD));
+                requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Fendian.NEED_FILELD);
                 addDiscoverCategoryParameters(requestParameters);
                 if (criteria.containsKey(SERVER_PARAMETER_TUANGOU_UUID)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_TUANGOU_UUID, criteria.get(SERVER_PARAMETER_TUANGOU_UUID)));
+                    requestParameters.add(SERVER_PARAMETER_TUANGOU_UUID, criteria.get(SERVER_PARAMETER_TUANGOU_UUID));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_TUANGOU_UUID);
                 }
@@ -467,12 +488,15 @@ public final class DataQuery extends BaseQuery {
                 addFilterParameters(criteria, requestParameters, cfv, nfv);
             } else if (DATA_TYPE_DIANYING.equals(dataType)) { 
                 if (criteria.containsKey(SERVER_PARAMETER_DIANYING_UUID)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DIANYING_UUID, criteria.get(SERVER_PARAMETER_DIANYING_UUID)));
+                    requestParameters.add(SERVER_PARAMETER_DIANYING_UUID, criteria.get(SERVER_PARAMETER_DIANYING_UUID));
                 }
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, Dianying.NEED_FILELD));
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PICTURE, 
+                if (criteria.containsKey(SERVER_PARAMETER_POI_ID)) {
+                    requestParameters.add(SERVER_PARAMETER_POI_ID, criteria.get(SERVER_PARAMETER_POI_ID));
+                }
+                requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Dianying.NEED_FILELD);
+                requestParameters.add(SERVER_PARAMETER_PICTURE, 
                         Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
-                        Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]"));
+                        Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
                 addDiscoverCategoryParameters(requestParameters);
                 String cfv = null;
                 if (Filter_Area != null && Filter_Area.cityId == cityId) {
@@ -484,10 +508,10 @@ public final class DataQuery extends BaseQuery {
                 }
                 addFilterParameters(criteria, requestParameters, cfv, nfv);
             } else if (DATA_TYPE_YINGXUN.equals(dataType)) { 
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, Yingxun.NEED_FILELD));
+                requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Yingxun.NEED_FILELD);
                 addDiscoverCategoryParameters(requestParameters);
                 if (criteria.containsKey(SERVER_PARAMETER_DIANYING_UUID)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DIANYING_UUID, criteria.get(SERVER_PARAMETER_DIANYING_UUID)));
+                    requestParameters.add(SERVER_PARAMETER_DIANYING_UUID, criteria.get(SERVER_PARAMETER_DIANYING_UUID));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DIANYING_UUID);
                 }
@@ -501,10 +525,10 @@ public final class DataQuery extends BaseQuery {
                 }
                 addFilterParameters(criteria, requestParameters, cfv, nfv);
             } else if (DATA_TYPE_YANCHU.equals(dataType)) { 
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, Yanchu.NEED_FILELD));
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PICTURE, 
+                requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Yanchu.NEED_FILELD);
+                requestParameters.add(SERVER_PARAMETER_PICTURE, 
                         Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
-                        Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]"));
+                        Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
                 addDiscoverCategoryParameters(requestParameters);
                 String cfv = null;
                 if (Filter_Area != null && Filter_Area.cityId == cityId) {
@@ -516,12 +540,12 @@ public final class DataQuery extends BaseQuery {
                 }
                 addFilterParameters(criteria, requestParameters, cfv, nfv);
             } else if (DATA_TYPE_SHANGJIA.equals(dataType)) { 
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, TextUtils.isEmpty(Globals.g_Session_Id) ? Shangjia.NEED_FILELD_NO_LOGON : Shangjia.NEED_FILELD));
+                requestParameters.add(SERVER_PARAMETER_NEED_FEILD, TextUtils.isEmpty(Globals.g_Session_Id) ? Shangjia.NEED_FILELD_NO_LOGON : Shangjia.NEED_FILELD);
             } else if (DATA_TYPE_ZHANLAN.equals(dataType)) { 
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, Zhanlan.NEED_FILELD));
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_PICTURE, 
+                requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Zhanlan.NEED_FILELD);
+                requestParameters.add(SERVER_PARAMETER_PICTURE, 
                         Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
-                        Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]"));
+                        Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
                 addDiscoverCategoryParameters(requestParameters);
                 String cfv = null;
                 if (Filter_Area != null && Filter_Area.cityId == cityId) {
@@ -533,48 +557,64 @@ public final class DataQuery extends BaseQuery {
                 }
                 addFilterParameters(criteria, requestParameters, cfv, nfv);
             } else if (DATA_TYPE_DIANPING.equals(dataType)) {
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NEED_FEILD, Comment.NEED_FILELD));
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION));
+                requestParameters.add(SERVER_PARAMETER_NEED_FEILD, Comment.NEED_FILELD);
+                requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
                 if (criteria.containsKey(SERVER_PARAMETER_REFER)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_REFER, criteria.get(SERVER_PARAMETER_REFER)));
+                    requestParameters.add(SERVER_PARAMETER_REFER, criteria.get(SERVER_PARAMETER_REFER));
                 } else {
                     throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_REFER);
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_POI_ID)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_POI_ID, criteria.get(SERVER_PARAMETER_POI_ID)));
+                    requestParameters.add(SERVER_PARAMETER_POI_ID, criteria.get(SERVER_PARAMETER_POI_ID));
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_TIME)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_TIME, criteria.get(SERVER_PARAMETER_TIME)));
+                    requestParameters.add(SERVER_PARAMETER_TIME, criteria.get(SERVER_PARAMETER_TIME));
                 }
                 if (criteria.containsKey(SERVER_PARAMETER_DIRECTION)) {
-                    requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DIRECTION, criteria.get(SERVER_PARAMETER_DIRECTION)));
+                    requestParameters.add(SERVER_PARAMETER_DIRECTION, criteria.get(SERVER_PARAMETER_DIRECTION));
+                }
+            } else if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
+                if (criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY)) {
+                    requestParameters.add(SERVER_PARAMETER_LOCATION_CITY, criteria.get(SERVER_PARAMETER_LOCATION_CITY));
+                }
+                if (criteria.containsKey(SERVER_PARAMETER_MESSAGE_ID_LIST)) {
+                    requestParameters.add(SERVER_PARAMETER_MESSAGE_ID_LIST, criteria.get(SERVER_PARAMETER_MESSAGE_ID_LIST));
+                }
+                if (criteria.containsKey(SERVER_PARAMETER_LAST_PULL_DATE)) {
+                    requestParameters.add(SERVER_PARAMETER_LAST_PULL_DATE, criteria.get(SERVER_PARAMETER_LAST_PULL_DATE));
+                }
+                if (criteria.containsKey(SERVER_PARAMETER_LOCATION_LONGITUDE)) {
+                    requestParameters.add(SERVER_PARAMETER_LOCATION_LONGITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LONGITUDE));
+                }
+                if (criteria.containsKey(SERVER_PARAMETER_LOCATION_LATITUDE)) {
+                    requestParameters.add(SERVER_PARAMETER_LOCATION_LATITUDE, criteria.get(SERVER_PARAMETER_LOCATION_LATITUDE));
                 }
             } else {
                 throw APIException.wrapToMissingRequestParameterException("invalid data type.");
             }
 
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DATA_TYPE, dataType));
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_TIME_STAMP, TIME_STAMP_FORMAT.format(Calendar.getInstance().getTime())));
+            requestParameters.add(SERVER_PARAMETER_DATA_TYPE, dataType);
+            requestParameters.add(SERVER_PARAMETER_TIME_STAMP, TIME_STAMP_FORMAT.format(Calendar.getInstance().getTime()));
             
             if (criteria.containsKey(SERVER_PARAMETER_KEYWORD)) {
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_KEYWORD, criteria.get(SERVER_PARAMETER_KEYWORD)));
+                requestParameters.add(SERVER_PARAMETER_KEYWORD, criteria.get(SERVER_PARAMETER_KEYWORD));
             }
             if (criteria.containsKey(SERVER_PARAMETER_LONGITUDE)) {
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LONGITUDE, criteria.get(SERVER_PARAMETER_LONGITUDE)));
+                requestParameters.add(SERVER_PARAMETER_LONGITUDE, criteria.get(SERVER_PARAMETER_LONGITUDE));
             }
             if (criteria.containsKey(SERVER_PARAMETER_LATITUDE)) {
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_LATITUDE, criteria.get(SERVER_PARAMETER_LATITUDE)));
+                requestParameters.add(SERVER_PARAMETER_LATITUDE, criteria.get(SERVER_PARAMETER_LATITUDE));
             }
             if (criteria.containsKey(SERVER_PARAMETER_KEYWORD_TYPE)) {
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_KEYWORD_TYPE, criteria.get(SERVER_PARAMETER_KEYWORD_TYPE)));
+                requestParameters.add(SERVER_PARAMETER_KEYWORD_TYPE, criteria.get(SERVER_PARAMETER_KEYWORD_TYPE));
             }
             
             String sessionId = Globals.g_Session_Id;
             if (!TextUtils.isEmpty(sessionId)) {
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_SESSION_ID, sessionId));
+                requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
             }
             if (!TextUtils.isEmpty(Globals.g_ClientUID)) {
-                requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_CLIENT_ID, Globals.g_ClientUID));
+                requestParameters.add(SERVER_PARAMETER_CLIENT_ID, Globals.g_ClientUID);
             } else {
                 throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CLIENT_ID);
             }
@@ -583,27 +623,27 @@ public final class DataQuery extends BaseQuery {
         }
     }
     
-    private void addDiscoverCategoryParameters(List<NameValuePair> requestParameters) {
+    private void addDiscoverCategoryParameters(WeiboParameters requestParameters) {
         if (Discover_Config_List != null) {
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DISCOVER_POI_VERSION, Discover_Config_List.getVersion()));
+            requestParameters.add(SERVER_PARAMETER_DISCOVER_POI_VERSION, Discover_Config_List.getVersion());
         }
         if (TextUtils.isEmpty(Discover_Database_Version) == false) {
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_DISCOVER_BASEINDEX_VERSION, Discover_Database_Version));
+            requestParameters.add(SERVER_PARAMETER_DISCOVER_BASEINDEX_VERSION, Discover_Database_Version);
         }
     }
     
-    private void addFilterParameters(Hashtable<String, String> criteria, List<NameValuePair> requestParameters, String cfv, String nfv) throws APIException {
+    private void addFilterParameters(Hashtable<String, String> criteria, WeiboParameters requestParameters, String cfv, String nfv) throws APIException {
         if (criteria.containsKey(SERVER_PARAMETER_FILTER)) {
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_FILTER, criteria.get(SERVER_PARAMETER_FILTER)));
+            requestParameters.add(SERVER_PARAMETER_FILTER, criteria.get(SERVER_PARAMETER_FILTER));
         }
         if (TextUtils.isEmpty(cfv) == false) {
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_CITY_FILTER_VERSION, cfv));
+            requestParameters.add(SERVER_PARAMETER_CITY_FILTER_VERSION, cfv);
         }
         if (TextUtils.isEmpty(nfv) == false) {
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_NATION_FILTER_VERSION, nfv));
+            requestParameters.add(SERVER_PARAMETER_NATION_FILTER_VERSION, nfv);
         }
         if (criteria.containsKey(SERVER_PARAMETER_INDEX)) {
-            requestParameters.add(new BasicNameValuePair(SERVER_PARAMETER_INDEX, criteria.get(SERVER_PARAMETER_INDEX)));
+            requestParameters.add(SERVER_PARAMETER_INDEX, criteria.get(SERVER_PARAMETER_INDEX));
         } else {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_INDEX);
         }
@@ -612,7 +652,7 @@ public final class DataQuery extends BaseQuery {
     @Override
     protected void createHttpClient() {
         super.createHttpClient();
-        String url = String.format(TKConfig.getQueryUrl(), TKConfig.getQueryHost());
+        String url = String.format(TKConfig.getQueryUrl(apiType, version, criteria.get(SERVER_PARAMETER_DATA_TYPE)), TKConfig.getQueryHost());
         httpClient.setURL(url);
     }
 
@@ -652,12 +692,11 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_DIANPING.equals(dataType)) {
             CommentResponse response = new CommentResponse(responseXMap);
             this.response = response;
-            if (isTurnPage == false && this.response != null && poi != null) {
-                poi.setCommentQuery(this);
-            }
         } else if (DATA_TYPE_DISCOVER.equals(dataType)) {
             DiscoverResponse response = new DiscoverResponse(responseXMap);
             this.response = response;
+        } else if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
+            this.pullMessage = new PullMessage(responseXMap);
         }
     }
     
@@ -2231,6 +2270,8 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_DISCOVER.equals(dataType)) {
             responseXMap = DataQueryTest.launchDiscoverResponse(context, "launchDiscoverResponse", 
                     DiscoverConfig.SUPPORT_TUANGOU+DiscoverConfig.SUPPORT_DIANYING+DiscoverConfig.SUPPORT_YANCHU+DiscoverConfig.SUPPORT_ZHANLAN);
+        } else if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
+            responseXMap = DataQueryTest.launchPullMessage();
         }
     }
 }

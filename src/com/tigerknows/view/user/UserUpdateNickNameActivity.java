@@ -25,6 +25,7 @@ import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.MaxLengthWatcher;
 
 public class UserUpdateNickNameActivity extends UserBaseActivity {
 	
@@ -33,6 +34,8 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 	private ImageView nickNameImg;
 	
 	private Button confirmBtn;
+	
+	private final int NickNameMaxLength = 20;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -65,7 +68,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
                 
                 @Override
                 public void onClick(View arg0) {
-                    mActionLog.addAction(ActionLog.Title_Left_Back);
+                    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
                     onBack();
                 }
             });
@@ -75,13 +78,22 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 
 			@Override
 			public void onClick(View v) {
+                mActionLog.addAction(mActionTag +  ActionLog.UserCommonConfirmBtn);
 				// TODO 关闭页面, 并跳转到个人中心页面
 				if (!mForm.isValid()) {
 					doAction(mForm.getErrorSource());
 					return;
 				}
 				
+				String nickName = null;
+				User user = Globals.g_User;
+				if (user == null) {
+				    onBack();
+				} else {
+				    nickName = user.getNickName();
+				}
 				if (!UserRegistActivity.class.getName().equals(getCallingActivity().getClassName())
+						&& !TextUtils.equals(nickNameEdt.getText().toString().trim(), getString(R.string.default_nick_name))
 						&& TextUtils.equals(Globals.g_User.getNickName(), nickNameEdt.getText().toString().trim())) {
 					CommonUtils.showNormalDialog(UserUpdateNickNameActivity.this, getString(R.string.title_error_tip), getString(R.string.nickname_no_modify), 
 					        getString(R.string.confirm),
@@ -137,12 +149,14 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 			}
 		});
 		
+		nickNameEdt.addTextChangedListener(new MaxLengthWatcher(NickNameMaxLength,nickNameEdt));
+		
 		nickNameImg.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				mActionLog.addAction(ActionLog.UserUpdateNickNameDelBtn);
+				mActionLog.addAction(mActionTag+ActionLog.EditTextDelete);
 				nickNameEdt.setText("");
 				showSoftInput(nickNameEdt);
 			}
@@ -153,7 +167,7 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		// TODO Auto-generated method stub
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-            mActionLog.addAction(ActionLog.KeyCodeBack, mActionTag);
+            mActionLog.addAction(ActionLog.KeyCodeBack);
 			onBack();
 			return true;
 		}
@@ -217,8 +231,10 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 		// TODO Auto-generated method stub
 		super.onResume();
 		User user = User.loadDefault(this);
-		
-		if (user != null && !TextUtils.equals(user.getNickName(), getString(R.string.default_nick_name))) {
+
+        if (user == null) {
+            onBack();
+        } else if (!TextUtils.equals(user.getNickName(), getString(R.string.default_nick_name))) {
 			nickNameEdt.setText(user.getNickName());
 			nickNameEdt.setSelection(nickNameEdt.getText().toString().length());
 			nickNameImg.setVisibility(View.VISIBLE);

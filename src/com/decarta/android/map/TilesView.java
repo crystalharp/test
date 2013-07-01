@@ -76,8 +76,6 @@ import com.decarta.android.location.Position;
 import com.decarta.android.map.Compass.PlaceLocation;
 import com.decarta.android.map.MapLayer.MapLayerProperty;
 import com.decarta.android.map.MapLayer.MapLayerType;
-import com.decarta.android.map.MapView.MapType;
-import com.decarta.android.map.MapView.MoveEndEventListener;
 import com.decarta.android.map.RotationTilt.RotateReference;
 import com.decarta.android.map.RotationTilt.TiltReference;
 import com.decarta.android.util.LogWrapper;
@@ -86,8 +84,11 @@ import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
 import com.decarta.android.util.XYZ;
+import com.tigerknows.maps.MapView;
 import com.tigerknows.maps.MapWord;
 import com.tigerknows.maps.TileDownload;
+import com.tigerknows.maps.MapView.MapType;
+import com.tigerknows.maps.MapView.MoveEndEventListener;
 import com.tigerknows.util.CommonUtils;
 
 /**
@@ -111,7 +112,7 @@ public class TilesView extends GLSurfaceView {
 	private static final float ABNORMAL_PINCH_CENTER_DIST=300/1.5f;
 	private static final int ABNORMAL_ZROTATION=30;
 	
-	private static final int MAX_TILE_IMAGE_DEF=2;
+	private static final int MAX_TILE_IMAGE_DEF=1;
 	private static final int MAX_TILE_TEXTURE_REF_DEF=128;
 	
 	private static final float XROTATION_YDIST=300/1.5f;
@@ -124,7 +125,7 @@ public class TilesView extends GLSurfaceView {
 	/**
      * tile buffer so tiles can be loaded before they are visible
      */
-	private static int TILE_BUFFER=0;
+	private static int TILE_BUFFER=4;
 	private static float ZOOMING_LAG=0.1f;
 	
 	private static float Cos30=(float)Math.cos(30*Math.PI/180);
@@ -211,29 +212,69 @@ public class TilesView extends GLSurfaceView {
         mParentMapView.executeDownloadListeners(state);
     }   
     
-    boolean isSnap = false;
+    public boolean clearTileImages = false;
+    
+    /**
+     * 是否取消快照
+     */
+    public boolean isCancelSnap = false;
+    
+    /**
+     * 快照图片
+     */
     Bitmap snapBmp;
-    public void cancelSnap() {
-        isSnap = false;
-    }
-    public void snap() {
-        isSnap = true;
-        snapBmp = null;
+    
+    /**
+     * 快照的中心位置
+     */
+    Position snapCenterPos;
+    
+    /**
+     * 停止快照
+     */
+    public void stopSnap() {
+        snapCenterPos = null;
         refreshMap();
     }
+    
+    /**
+     * 请求快照地图
+     * @param position
+     */
+    public void requestSnap(Position snapCenterPos) {
+        stopSnap();
+        this.isCancelSnap = false;
+        this.snapCenterPos = snapCenterPos;
+        refreshMap();
+    }
+    
+    public boolean isSnapFinish() {
+        return this.snapCenterPos == null;
+    }
+    
+    /**
+     * 获取快照地图
+     * @return
+     */
     public Bitmap getSnapBitmap() {
         if (CONFIG.DRAW_BY_OPENGL) {
             Bitmap bm = snapBmp;
             snapBmp = null;
             return bm;
         } else {
-            snapBmp = CommonUtils.viewToBitmap(this);
-            return snapBmp;
+            return CommonUtils.viewToBitmap(this);
         }
     }
-    public boolean isSnap() {
-        return isSnap;
-    }
+    
+    /**
+     * 快照地图
+     * @param x
+     * @param y
+     * @param w
+     * @param h
+     * @param gl
+     * @return
+     */
     public static Bitmap savePixels(int x, int y, int w, int h, GL10 gl)
     {  
         int b[]=new int[w*h];
@@ -2491,6 +2532,16 @@ public class TilesView extends GLSurfaceView {
 			// Tigerknows end
 			
 			synchronized(drawingLock){
+			    if (clearTileImages) {
+			        tileImages.clear();
+			        Iterator<Integer> iterator1=tileTextureRefs.values().iterator();
+		            while(iterator1.hasNext()){
+		                int textureRef=iterator1.next();
+		                deleteTextureRef(gl,textureRef);
+		            }
+		            tileTextureRefs.clear();
+		            clearTileImages = false;
+			    }
 				//status[0]:moving, status[1]:movingJustDone, status[2]:zooming, status[3]:zoomingJustDone
 				//status[4]:rotatingZ, status[5]:rotatingZJustDone, status[6]:rotatingX status[7]:rotatingXJustDone
 				boolean[] status=new boolean[8];
@@ -2887,7 +2938,10 @@ public class TilesView extends GLSurfaceView {
                             }
                             if (mapWords != null) {
                                 Bitmap bm;
-                                for (MapWord mapWord : mapWords) {
+                                int length = mapWords.length;
+                                
+                                for (int i = 0; i < length; i++) {
+                                    MapWord mapWord = mapWords[i];
                                     bm = mapWord.icon.getBitmap(); 
                                     if (bm != null) {
                                         int textureRef = 0;
@@ -3265,9 +3319,16 @@ public class TilesView extends GLSurfaceView {
     		        if(zoomingL || fading || movingL || rotatingX || rotatingZ) {
     		            requestRender();
     		        }
-                    else if (isSnap && mapText.texImageChanged == false && mapText.screenTextGetting == false && drawFullTile){
-                        snapBmp = savePixels(0, 0, displaySize.x, displaySize.y, gl);
-                        isSnap = false;
+                    else if (isCancelSnap == false && snapCenterPos != null && mapText.texImageChanged == false && mapText.screenTextGetting == false && drawFullTile){
+                        XYFloat xy = mercXYToScreenXYConv(Util.posToMercPix(snapCenterPos, getZoomLevel()), getZoomLevel());
+                        // 确保快照地图时，地图已经移动到指定的中心位置，误差为32像素?
+                        if (Math.abs(xy.x - displaySize.x/2) < 32 && Math.abs(xy.y - displaySize.y/2) < 32) {
+                            snapBmp = savePixels(0, 0, displaySize.x, displaySize.y, gl);
+                            synchronized (snapCenterPos) {
+                                snapCenterPos.notifyAll();
+                            }
+                            snapCenterPos = null;
+                        }
                     }
 
 				}catch(Exception e){
@@ -3447,7 +3508,7 @@ public class TilesView extends GLSurfaceView {
     				borderPaint.setStrokeWidth(borderSize);
     				borderPaint.setAntiAlias(ItemizedOverlay.OVERLAY_CLUSTER_BORDER_ANTIALIAS);
     				
-    				Bitmap.Config config=Config.ARGB_4444;
+    				Bitmap.Config config=Config.ARGB_8888;
 					Bitmap bm=Bitmap.createBitmap(bmSizeX,bmSizeY,config);
 					Canvas canvas=new Canvas(bm);
 					bm.eraseColor(0);
@@ -3530,7 +3591,7 @@ public class TilesView extends GLSurfaceView {
 				textureRef=genTextureRef(gl);
 				gl.glBindTexture(GL_TEXTURE_2D, textureRef);
 				try{
-					Bitmap.Config config=Config.ARGB_4444;
+					Bitmap.Config config=Config.ARGB_8888;
 					Bitmap bm=Bitmap.createBitmap(bmSizeX,bmSizeY,config);
 					Canvas canvas=new Canvas(bm);
 					bm.eraseColor(0);

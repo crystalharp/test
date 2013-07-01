@@ -16,6 +16,8 @@
 
 package com.tigerknows.view;
 
+import com.decarta.Globals;
+import com.decarta.android.util.Util;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
@@ -76,20 +78,23 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     
     private boolean isTurnPaging = false;
     
+    String actionTag;
+    
     public boolean isTurnPaging() {
         return isTurnPaging;
     }
 
-    public void setData(List<Filter> filterList, byte key, CallBack callBack, boolean isTurnPaging) {
+    public void setData(List<Filter> filterList, byte key, CallBack callBack, boolean isTurnPaging, String actionTag) {
         if (filterList == null) {
             return;
         }
+        this.actionTag = actionTag;
         if (key == POIResponse.FIELD_FILTER_AREA_INDEX) {
-            ActionLog.getInstance(getContext()).addAction(ActionLog.FILTER_AREA_ONCLICK);
+            ActionLog.getInstance(getContext()).addAction(this.actionTag+ActionLog.FilterArea);
         } else if (key == POIResponse.FIELD_FILTER_CATEGORY_INDEX) {
-            ActionLog.getInstance(getContext()).addAction(ActionLog.FILTER_CATEGORY_ONCLICK);
+            ActionLog.getInstance(getContext()).addAction(this.actionTag+ActionLog.FilterCategory);
         } else if (key == POIResponse.FIELD_FILTER_ORDER_INDEX) {
-            ActionLog.getInstance(getContext()).addAction(ActionLog.FILTER_ORDER_ONCLICK);
+            ActionLog.getInstance(getContext()).addAction(this.actionTag+ActionLog.FilterOrder);
         }
         refreshFilterButton(controlView, filterList, getContext(), this);
         this.filterList = filterList;
@@ -149,11 +154,17 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         }
         parentAdapter.notifyDataSetChanged();
         childAdapter.notifyDataSetChanged();
-        if (selectedParentPosition >= 0)
+        if (selectedParentPosition > -1) {
             parentLsv.setSelectionFromTop(selectedParentPosition, 0);
+        } else {
+            parentLsv.setSelectionFromTop(0, 0);
+        }
         
-        if (selectedChiledPosition >= 0)
+        if (selectedChiledPosition > -1) {
             childLsv.setSelectionFromTop(selectedChiledPosition, 0);
+        } else {
+            childLsv.setSelectionFromTop(0, 0);
+        }
     }
         
     public FilterListView(Context context) {
@@ -218,6 +229,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                     return;
                 }
                 Filter filter = parentFilterList.get(position);
+                ActionLog.getInstance(getContext()).addAction(actionTag + ActionLog.PopupWindowFilterGroup, position, filter.getFilterOption().getName());
                 List<Filter> filterList = filter.getChidrenFilterList();
                 if (filterList.size() == 0) {
                     childFilterList.clear();
@@ -238,8 +250,11 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                         }
                     }
                     
-                    if (selectedChiledPosition > -1)
+                    if (selectedChiledPosition > -1) {
                         childLsv.setSelectionFromTop(selectedChiledPosition, 0);
+                    } else {
+                        childLsv.setSelectionFromTop(0, 0);
+                    }
                 }
             }
         });
@@ -251,6 +266,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                     return;
                 }
                 Filter filter = childFilterList.get(position);
+                ActionLog.getInstance(getContext()).addAction(actionTag + ActionLog.PopupWindowFilterChild, position, filter.getFilterOption().getName());
                 doFilter(filter);
             }
         });
@@ -266,7 +282,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         filter.setSelected(true);
         
         if (callBack != null) {
-            ActionLog.getInstance(getContext()).addAction(ActionLog.FILTER_SELECTED, filter.getFilterOption().getName(), DataQuery.makeFilterRequest(this.filterList));
+            ActionLog.getInstance(getContext()).addAction(actionTag + ActionLog.FilterDo, filter.getFilterOption().getName(), DataQuery.makeFilterRequest(this.filterList));
             callBack.doFilter(filter.getFilterOption().getName());
         }
     }
@@ -290,7 +306,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     
     public void cancel() {
         if (callBack != null) {
-            ActionLog.getInstance(getContext()).addAction(ActionLog.FILTER_CANCEL);
+            ActionLog.getInstance(getContext()).addAction(actionTag+ActionLog.FilterCancel);
             callBack.cancelFilter();
         }
     }
@@ -412,7 +428,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         button.setGravity(Gravity.CENTER);
         button.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);
         button.setSingleLine(true);
-        button.setGravity(Gravity.CENTER);
+        button.setPadding(0, 0, Util.dip2px(Globals.g_metrics.density, 2), 0);
         return button;
     }
     
@@ -455,6 +471,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     @Override
     public void onClick(View view) {
         byte key = (Byte)view.getTag();
-        setData(filterList, key, callBack, isTurnPaging);
+        setData(filterList, key, callBack, isTurnPaging, this.actionTag);
     }
 }

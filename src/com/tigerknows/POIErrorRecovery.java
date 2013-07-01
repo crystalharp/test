@@ -6,12 +6,17 @@ import java.util.List;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
+
 import com.tigerknows.widget.Toast;
 
 import com.decarta.Globals;
@@ -24,6 +29,7 @@ import com.tigerknows.util.TKAsyncTask;
 
 public class POIErrorRecovery extends BaseActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
     
+	private LinearLayout mPOIErrorLly;
     private RadioGroup mPOIRgp;
     private RadioButton mBaseInfomationErrorRbt;
     private RadioButton mPlaceDuplicationErrorRbt;
@@ -72,6 +78,7 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
      */
     protected void findViews() {
         super.findViews();
+        mPOIErrorLly = (LinearLayout)findViewById(R.id.poi_error_recovery_lly);
         mPOIRgp = (RadioGroup)findViewById(R.id.poi_rgp);
         mBaseInfomationErrorRbt = (RadioButton)findViewById(R.id.base_infomation_error_rbt);
         mPlaceAbsentErrorRbt = (RadioButton)findViewById(R.id.place_absent_error_rbt);
@@ -92,6 +99,16 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
         super.setListener();
         mRightBtn.setOnClickListener(this);
         
+        mPOIRgp.setOnTouchListener(new OnTouchListener(){
+        	
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    hideSoftInput();
+                }
+                return true;
+            }
+        });
         mBaseInfomationErrorRbt.setOnClickListener(this);
         mPlaceDuplicationErrorRbt.setOnClickListener(this);
         mPlaceAbsentErrorRbt.setOnClickListener(this);
@@ -113,7 +130,7 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
         // TODO Auto-generated method stub
         switch(v.getId()){
             case R.id.right_btn:
-                mActionLog.addAction(ActionLog.Title_Right_Button);
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 // md=$uid-$errcode[-$detail]_$uid-$errcode[-$detail]_$uid-$errcode[-$detail]_ 
                 // md=edc1e4c9-5081-428a-935d-1d31fd3848f5-502_8d5cc821-c130-4f9e-acfa-d4906e82c016-404
                 StringBuilder s = new StringBuilder();
@@ -185,7 +202,6 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
 //                }
                 
                 hideSoftInput();
-                mActionLog.addAction(ActionLog.Title_Right_Button);
                 Hashtable<String, String> criteria = new Hashtable<String, String>();
                 criteria.put(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, s.toString());
                 FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
@@ -197,6 +213,7 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
             case R.id.address_error_chb:
             case R.id.telephone_error_chb:
             case R.id.coordinate_error_chb:
+            	hideSoftInput();
                 mPOIRgp.check(R.id.base_infomation_error_rbt);
                 break;
             
@@ -204,6 +221,7 @@ public class POIErrorRecovery extends BaseActivity implements View.OnClickListen
             case R.id.place_absent_error_rbt:
             case R.id.place_duplication_error_rbt:
             case R.id.other_error_rbt:
+            	hideSoftInput();
                 if (mPOIRgp.getCheckedRadioButtonId() != R.id.base_infomation_error_rbt) {
                     mNameErrorChb.setChecked(false);
                     mAddressErrorChb.setChecked(false);

@@ -13,7 +13,9 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
@@ -22,13 +24,16 @@ import com.tigerknows.ActionLog;
 import com.tigerknows.BaseActivity;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.BaseData;
+import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Yanchu;
 import com.tigerknows.model.DataOperation.YanchuQueryResponse;
+import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.TKAsyncTask;
 
@@ -74,7 +79,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
     public YanchuDetailView(Sphinx sphinx, YanchuDetailFragment parentFragment) {
         super(sphinx, parentFragment, R.layout.yanchu_detail);
         findViews();
-        mActionTag = ActionLog.YanchuXiangqing;
+        mActionTag = ActionLog.YanchuDetail;
         
         mActualLoadedDrawableRun = new Runnable() {
             
@@ -98,7 +103,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
     @Override
     public void setData(BaseData data) {
         super.setData(data);
-        if (data == null || (data instanceof Yanchu) == false) {
+        if (data == null || (data instanceof Yanchu) == false || mData == data) {
             return;
         }
         mData = (Yanchu)data;
@@ -108,12 +113,12 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
         mDateTxv.setText(mData.getTimeDesc());
         mDescriptionTitle.setText(R.string.yanchu_detail_introduce);
         if (!TextUtils.isEmpty(mData.getPrice())) {
-        	mPriceImv.setVisibility(View.VISIBLE);
-        	mPriceTxv.setVisibility(View.VISIBLE);
-        	mPriceTxv.setText(String.valueOf(mData.getPrice()));
+            mPriceImv.setVisibility(View.VISIBLE);
+            mPriceTxv.setVisibility(View.VISIBLE);
+            mPriceTxv.setText(String.valueOf(mData.getPrice()));
         } else {
-        	mPriceImv.setVisibility(View.GONE);
-        	mPriceTxv.setVisibility(View.GONE);
+            mPriceImv.setVisibility(View.GONE);
+            mPriceTxv.setVisibility(View.GONE);
         }
 
         String telephoneTitle = null;
@@ -166,18 +171,48 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
             mDescriptionTxv.setVisibility(View.VISIBLE);
             mLoadingView.setVisibility(View.GONE);
         } else if (query){
-            mDescriptionTxv.setVisibility(View.GONE);
-            mLoadingView.setVisibility(View.VISIBLE);
-            DataOperation dataOperation = new DataOperation(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_YANCHU);
-            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
-            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
-            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
-            mBaseQuerying = dataOperation;
-            mSphinx.queryStart(dataOperation);
+        	if(!mAsyncTaskExecuting){
+        		mDescriptionTxv.setVisibility(View.GONE);
+        		mLoadingView.setVisibility(View.VISIBLE);
+        		DataOperation dataOperation = new DataOperation(mSphinx);
+        		Hashtable<String, String> criteria = new Hashtable<String, String>();
+        		criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_YANCHU);
+        		criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+        		criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
+        		criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
+        		dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
+        		mAsyncTaskExecuting = true;
+        		mTKAsyncTasking = mSphinx.queryStart(dataOperation);
+        		mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
+        	}
         }
+    }
+    
+    public void setPulledDynamicPOI(PulledDynamicPOI dynamicPOI){
+        
+        if(dynamicPOI==null || dynamicPOI.getMasterUID()==null
+                || dynamicPOI.getMasterType()==0){
+            return;
+        }
+
+        mParentFragment.setViewsVisibility(View.INVISIBLE);
+        
+        DataOperation dataOperation = new DataOperation(mSphinx);
+        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        criteria.put(BaseQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI);
+        criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_YANCHU);
+        criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUID());
+        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD,
+                Yanchu.NEED_FILELD + Util.byteToHexString(Yanchu.FIELD_DESCRIPTION));
+        criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+               Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
+               Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
+        criteria.put(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + 410, ""+R.string.response_code_410_pulled);
+        dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+        mTKAsyncTasking = mSphinx.queryStart(dataOperation);
+        mAsyncTaskExecuting = true;
+        mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
     }
     
     @Override
@@ -228,16 +263,16 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.telephone_view:
-                mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailTelphone);
+                mActionLog.addAction(mActionTag +  ActionLog.CommonTelphone);
                 CommonUtils.telephone(mSphinx, mTelephoneTxv);
                 break;
                 
             case R.id.address_view:
-                mActionLog.addAction(mActionTag+ActionLog.DiscoverDetailAddress);
+                mActionLog.addAction(mActionTag +  ActionLog.CommonAddress);
                 POI poi = mData.getPOI();
                 poi.setName(mData.getPlaceName());
                 poi.setAddress(mData.getAddress());
-                CommonUtils.queryTraffic(mSphinx, poi);
+                CommonUtils.queryTraffic(mSphinx, poi, mActionTag);
                 break;
                 
         }
@@ -249,23 +284,42 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
             return false;
         }
         final DataOperation dataOperation = (DataOperation)(tkAsyncTask.getBaseQuery());
+        boolean isPulledDynamicPOIRequest = dataOperation.isPulledDynamicPOIRequest();
         if (BaseActivity.checkReLogin(dataOperation, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.getId(), mParentFragment.mCancelLoginListener)) {
             mParentFragment.isReLogin = true;
             return true;
-        } else if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, false, mParentFragment, false)) {
-            return true;
+        } else {
+            if (isPulledDynamicPOIRequest) {
+                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, mParentFragment, true)) {
+                    return true;
+                }
+            } else {
+                if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, false, mParentFragment, false)) {
+                    return true;
+                }
+            }
         }
 
         final Response response = dataOperation.getResponse();
         YanchuQueryResponse targetResponse = (YanchuQueryResponse) response;
         Yanchu target = targetResponse.getYanchu();
-        if (target != null && dataOperation.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_UID).equals(mData.getUid())) {
-            try {
-                mData.init(target.getData());
-                refreshDescription(false);
-            } catch (APIException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+        if (isPulledDynamicPOIRequest) {
+            if (target != null) {
+                List<Yanchu> list = new ArrayList<Yanchu>();
+                list.add(target);
+                ((YanchuDetailFragment) mParentFragment).setData(list, mParentFragment.position, null);
+            } else {
+                mParentFragment.dismiss();
+            }
+        } else {
+            if (target != null && dataOperation.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_UID).equals(mData.getUid())) {
+                try {
+                    mData.init(target.getData());
+                    refreshDescription(false);
+                } catch (APIException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
             }
         }
         return true;

@@ -15,7 +15,7 @@
     <ListView android:id="@+id/listview"
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
-        android:divider="@drawable/bg_real_line"
+        android:divider="@drawable/bg_line_split"
         android:drawSelectorOnTop="false"
         android:scrollingCache="false"
         android:fadingEdge="none" />

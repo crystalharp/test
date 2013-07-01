@@ -43,8 +43,6 @@ public class TigerknowsProvider extends ContentProvider {
     
     private static HashMap<String, String> POI_LIST_PROJECTION_MAP;
     
-    private static HashMap<String, String> POI_COUNT_PROJECTION_MAP;
-    
     private static HashMap<String, String> BUSLINE_LIST_PROJECTION_MAP;
     
     private static HashMap<String, String> TRANSITPLAN_LIST_PROJECTION_MAP;
@@ -69,7 +67,6 @@ public class TigerknowsProvider extends ContentProvider {
     
     private static final int TRANSITPLAN_ID = 18;
     
-    private static final int POI_COUNT = 25;
     
     private static final UriMatcher URL_MATCHER;
 
@@ -89,8 +86,7 @@ public class TigerknowsProvider extends ContentProvider {
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             assert (newVersion == DATABASE_VERSION);
-            LogWrapper.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion
-                    + "...");
+            LogWrapper.w(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + "...");
             switch (oldVersion) {
                 case 1:
                     if (newVersion <= 1) {
@@ -620,11 +616,6 @@ public class TigerknowsProvider extends ContentProvider {
                 qb.appendWhere("_id=" + url.getPathSegments().get(1));
                 break;
 
-            case POI_COUNT:
-                qb.setTables("poi");
-                qb.setProjectionMap(POI_COUNT_PROJECTION_MAP);
-                break;
-                
             case TRANSITPLAN:
                 qb.setTables("transitplan");
                 qb.setProjectionMap(TRANSITPLAN_LIST_PROJECTION_MAP);
@@ -723,7 +714,6 @@ public class TigerknowsProvider extends ContentProvider {
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "favorite/#", FAVORITE_ID);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "poi", POI);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "poi/#", POI_ID);
-        URL_MATCHER.addURI(Tigerknows.AUTHORITY, "poi/count", POI_COUNT);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "transitplan", TRANSITPLAN);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "transitplan/#", TRANSITPLAN_ID);
         URL_MATCHER.addURI(Tigerknows.AUTHORITY, "busline", BUSLINE);
@@ -752,10 +742,6 @@ public class TigerknowsProvider extends ContentProvider {
         POI_LIST_PROJECTION_MAP.put(Tigerknows.POI.DATETIME, "_datetime");
         POI_LIST_PROJECTION_MAP.put(Tigerknows.POI.DATA, "_data");
         POI_LIST_PROJECTION_MAP.put(Tigerknows.POI.COMMENT_DATA, "_comment_data");
-        
-        POI_COUNT_PROJECTION_MAP = new HashMap<String, String>();
-        POI_COUNT_PROJECTION_MAP.put(Tigerknows.POI._ID, "_id");
-        
         
         BUSLINE_LIST_PROJECTION_MAP = new HashMap<String, String>();
         BUSLINE_LIST_PROJECTION_MAP.put(Tigerknows.Busline._ID, "_id");

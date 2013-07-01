@@ -40,6 +40,6 @@
 	    android:layout_height="wrap_content" 
 	    android:layout_width="fill_parent"
 	    android:layout_marginTop="-1dp"
-	    android:background="@drawable/bg_real_line"
+	    android:background="@drawable/bg_line_split"
 	></ImageView>
 </LinearLayout>

@@ -85,7 +85,7 @@ public class BaseDialog extends Dialog {
                 public void onClick(View arg0) {
                     synchronized (mSphinx.mUILock) {
                         if (!mSphinx.mUIProcessing) {
-                            mActionLog.addAction(ActionLog.Title_Left_Back);
+                            mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
                             dismiss();
                         }
                     }
@@ -138,5 +138,8 @@ public class BaseDialog extends Dialog {
     
     public void onPause() {
         mSphinx.hideSoftInput();
+        if (!TextUtils.isEmpty(mActionTag)) {
+            mActionLog.addAction(mActionTag + ActionLog.Dismiss);
+        }
     }
 }

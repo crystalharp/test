@@ -8,12 +8,20 @@
 
 package com.tigerknows.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.decarta.android.exception.APIException;
 import com.tigerknows.model.xobject.XMap;
 
-public class Dianying extends BaseData {
-    
-    public static final String NEED_FILELD = "000102030414060708090a0b0c0d20262728292a2b2c";
+public class Dianying extends BaseData implements Parcelable{
+
+    public static final String NEED_FILELD = "000102030414060708090a0b0c0d" +
+    		"20262728292a2b2c";
+
+    public static final String NEED_FILELD_ONLY_DIANYING = "000102030414060708090a0b0c0d";
+
+    public static final String NEED_FILELD_POI_DETAIL = "00010304070920";
     
     // 0x00 x_string UUID uid
     public static final byte FIELD_UID = 0x00;
@@ -290,7 +298,11 @@ public class Dianying extends BaseData {
         return yingxunQuery;
     }
 
-    public void setYingxunQuery(DataQuery yingxunQuery) {
+    public void setYingxun(Yingxun yingxun) {
+		this.yingxun = yingxun;
+	}
+
+	public void setYingxunQuery(DataQuery yingxunQuery) {
         this.yingxunQuery = yingxunQuery;
     }
 
@@ -306,4 +318,66 @@ public class Dianying extends BaseData {
 	public POI getPOI() {
 		return yingxun.getPOI(POI.SOURCE_TYPE_DIANYING);
 	}
+
+	public Dianying(Parcel in){
+		uid = in.readString();
+		name = in.readString();
+		alias = in.readString();
+		tag = in.readString();
+		pictures = in.readParcelable(TKDrawable.class.getClassLoader());
+		picturesDetail = in.readParcelable(TKDrawable.class.getClassLoader());
+		description = in.readString();
+		startTime = in.readString();
+		length = in.readString();
+		language = in.readString();
+		rank = in.readLong();
+		country = in.readString();
+		director = in.readString();
+		mainActor = in.readString();
+		num = in.readLong();
+		yingxun = in.readParcelable(Yingxun.class.getClassLoader());
+		filterArea = in.readString();
+	}
+
+    public static final Parcelable.Creator<Dianying> CREATOR
+            = new Parcelable.Creator<Dianying>() {
+        public Dianying createFromParcel(Parcel in) {
+            return new Dianying(in);
+        }
+
+        public Dianying[] newArray(int size) {
+            return new Dianying[size];
+        }
+    };
+    
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(uid);
+		dest.writeString(name);
+		dest.writeString(alias);
+		dest.writeString(tag);
+		dest.writeParcelable(pictures, flags);
+		dest.writeParcelable(picturesDetail, flags);
+		dest.writeString(description);
+		dest.writeString(startTime);
+		dest.writeString(length);
+		dest.writeString(language);
+		dest.writeLong(rank);
+		dest.writeString(country);
+		dest.writeString(director);
+		dest.writeString(mainActor);
+		dest.writeLong(num);
+		dest.writeParcelable(yingxun, flags);
+		dest.writeString(filterArea);
+		
+		//!!! here data query is ignored!!
+		
+	}
+	
 }

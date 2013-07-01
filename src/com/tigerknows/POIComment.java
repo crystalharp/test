@@ -40,8 +40,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
@@ -72,7 +74,6 @@ import android.widget.RatingBar.OnRatingBarChangeListener;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -204,6 +205,8 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         }
     }
     
+    TKWeibo mTKWeibo = null;
+    
     private AuthDialogListener mSinaAuthDialogListener;
     
     private AuthReceiver mTencentAuthReceiver;
@@ -231,26 +234,18 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         findViews();
         setListener();
         
-        mSinaAuthDialogListener = new AuthDialogListener(mThis, new MyLoginCallBack(ShareAPI.TYPE_WEIBO));
+        mTKWeibo = new TKWeibo(mThis, true, false);
+        mSinaAuthDialogListener = new AuthDialogListener(mTKWeibo, new MyLoginCallBack(ShareAPI.TYPE_WEIBO));
         mTencentAuthReceiver = new AuthReceiver(mThis, new MyLoginCallBack(ShareAPI.TYPE_TENCENT));
         registerIntentReceivers();
         
         mTitleBtn.setText(mStatus == STATUS_NEW ? R.string.publish_comment : R.string.modify_comment);
         mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
         Comment comment = mPOI.getMyComment();
-        long userId = Long.MIN_VALUE;
-        User user = Globals.g_User;            
-        if (user != null) {
-            userId = user.getUserId();
-            if (comment.getUserId() != userId) {
-                mPOI.setMyComment(new Comment());
-            }
-        } else {
-            if (!Globals.g_ClientUID.equals(comment.getClientUid())) {
-                mPOI.setMyComment(new Comment());
-            }
+        if (Comment.isAuthorMe(comment) <= 0) {
+            comment = new Comment();
         }
-        mComment = mPOI.getMyComment();
+        mComment = comment;
         long commentPattern = mPOI.getCommentPattern();
 
         int grade = (int) (mComment.getGrade()/2);
@@ -265,6 +260,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         } else {
             mContentEdt.setText(null);
         }
+        mContentEdt.setFilters(new InputFilter[] { new InputFilter.LengthFilter(800) });
         
     	UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_TENCENT);
         if (userAccessIdenty != null) {
@@ -517,11 +513,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 switch (action & MotionEvent.ACTION_MASK) {
                     case MotionEvent.ACTION_UP: {
                         if (R.id.taste_rbt == v.getId()) {
-                            mActionLog.addAction(ActionLog.POICommentTaste);
+                            mActionLog.addAction(mActionTag +  ActionLog.POICommentTaste);
                         } else if (R.id.environment_rbt == v.getId()) {
-                            mActionLog.addAction(ActionLog.POICommentEnvironment);
+                            mActionLog.addAction(mActionTag +  ActionLog.POICommentEnvironment);
                         } else if (R.id.qos_rbt == v.getId()) {
-                            mActionLog.addAction(ActionLog.POICommentQos);
+                            mActionLog.addAction(mActionTag +  ActionLog.POICommentQos);
                         }
                         break;
                     }
@@ -543,15 +539,15 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 if (value) {
                     switch (v.getId()) {
                         case R.id.content_edt:
-                            mActionLog.addAction(ActionLog.POICommentContent);
+                            mActionLog.addAction(mActionTag +  ActionLog.POICommentContent);
                             break;
                             
                         case R.id.avg_edt:
-                            mActionLog.addAction(ActionLog.POICommentAvg);                        
+                            mActionLog.addAction(mActionTag +  ActionLog.POICommentAvg);                        
                             break;
                             
                         case R.id.recommend_edt:
-                            mActionLog.addAction(ActionLog.POICommentRecommend);  
+                            mActionLog.addAction(mActionTag +  ActionLog.POICommentRecommend);  
                             break;
     
                         default:
@@ -581,7 +577,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                     String lenStr = String.valueOf(len);
                     mTextNumTxv.setText(mThis.getString(R.string.poi_comment_sum, lenStr));
                 } else {
-                    String lenStr = String.valueOf(30-len);
+                    String lenStr = String.valueOf(MIN_CHAR-len);
                     SpannableStringBuilder style = new SpannableStringBuilder(mThis.getString(R.string.poi_comment_must, lenStr));
                     style.setSpan(new ForegroundColorSpan(0xffff0000),2,2+lenStr.length(),Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
                     mTextNumTxv.setText(style);
@@ -598,6 +594,33 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 return false;
             }
         });
+        mTasteRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener(){
+        	@Override
+        	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromTouch){
+        		if(fromTouch && rating==0){
+        			mTasteRtb.setRating(1);
+        		}
+        	}
+        });
+        mFoodEnvironmentRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener(){
+        	@Override
+        	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromTouch){
+        		if(fromTouch && rating==0){
+        			mFoodEnvironmentRtb.setRating(1);
+        		}
+        	}
+        });
+        
+        mFoodQosRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener(){
+        	@Override
+        	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromTouch){
+        		if(fromTouch && rating==0){
+        			mFoodQosRtb.setRating(1);
+        		}
+        	}
+        });
+        
+        
         mGradeRtb.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {
             
             @Override
@@ -613,8 +636,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                         resId = R.string.poi_comment_share_grade4;
                     } else if (rating == 5) {
                         resId = R.string.poi_comment_share_grade5;
+                    } else if (rating == 0) {
+                    	resId = R.string.poi_comment_share_grade1;
+                    	mGradeRtb.setRating(1);
                     }
-                    mActionLog.addAction(ActionLog.POICommentClickGrade, rating);
+                    mActionLog.addAction(mActionTag +  ActionLog.POICommentGrade, rating);
                     mGradeTipTxv.setText(resId);
                     mGradeTipTxv.setVisibility(View.VISIBLE);
                     mGradeTipTxv.startAnimation(animation);
@@ -687,6 +713,13 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             dialog = new ProgressDialog(this);
             dialog.setCancelable(false);
             ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait));
+            dialog.setOnDismissListener(new OnDismissListener() {
+                
+                @Override
+                public void onDismiss(DialogInterface arg0) {
+                    mActionLog.addAction(ActionLog.Dialog + ActionLog.Dismiss);
+                }
+            });
             break;
         }
         
@@ -697,7 +730,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     public void onClick(View view) {
         int viewId = view.getId();
         if (R.id.right_btn == viewId) {
-            mActionLog.addAction(ActionLog.Title_Right_Button);
+            mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
             if (mContentEdt.getEditableText().toString().trim().length() < MIN_CHAR) {
                 CommonUtils.showNormalDialog(mThis, 
                         mThis.getString(R.string.prompt), 
@@ -706,11 +739,11 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                         null,
                         new DialogInterface.OnClickListener() {
                     
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        mContentEdt.requestFocus();
-                    }
-                });
+		                    @Override
+		                    public void onClick(DialogInterface arg0, int arg1) {
+		                        mContentEdt.requestFocus();
+		                    }
+		                });
                 return;
             }
             if (mStatus == STATUS_MODIFY) {
@@ -731,7 +764,7 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             }
             
         } else if (R.id.restair_btn == viewId) {
-            mActionLog.addAction(ActionLog.POICommentRestair);
+            mActionLog.addAction(mActionTag +  ActionLog.POICommentRestair);
             if (mRestairArray == null) {
                 mRestairArray = mThis.getResources().getStringArray(R.array.comment_restair);
                 mRestairChecked = new boolean[mRestairArray.length];
@@ -781,20 +814,17 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                                     }
                                 }
                                 mRestairBtn.setText(s.toString());
-                                mActionLog.addAction(ActionLog.POICommentClickRestairOK);
-                            } else {
-                                mActionLog.addAction(ActionLog.POICommentClickRestairCancel);
                             }
                         }
                     });
         } else if (viewId == R.id.left_btn) {
-            mActionLog.addAction(ActionLog.Title_Left_Back);
+            mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
             if (showDiscardDialog() == false) {
                 finish();
             }
         } else if (viewId == R.id.sync_qzone_chb) { 
+            mActionLog.addAction(mActionTag +  ActionLog.POICommentQZone, String.valueOf(mSyncQZoneChb.isChecked()));
             if (mSyncQZoneChb.isChecked() == true) {
-                mActionLog.addAction(ActionLog.POICommentClickQZone, 0);
                 UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_TENCENT);
                 if (userAccessIdenty != null) {
                     mSyncQZoneChb.setChecked(true);
@@ -803,21 +833,19 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                     TKTencentOpenAPI.login(mThis);
                 }
             } else {
-                mActionLog.addAction(ActionLog.POICommentClickQZone, 1);
                 mSyncQZoneChb.setChecked(false);
             }
         } else if (viewId == R.id.sync_sina_chb) {
+            mActionLog.addAction(mActionTag +  ActionLog.POICommentSina, String.valueOf(mSyncSinaChb.isChecked()));
             if (mSyncSinaChb.isChecked() == true) {
-                mActionLog.addAction(ActionLog.POICommentClickSina, 0);
                 UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_WEIBO);
                 if (userAccessIdenty != null) {
                     mSyncSinaChb.setChecked(true);
                 } else {
                     mSyncSinaChb.setChecked(false);
-                    TKWeibo.login(mThis, mSinaAuthDialogListener);
+                    TKWeibo.authorize(mTKWeibo, mSinaAuthDialogListener);
                 }
             } else {
-                mActionLog.addAction(ActionLog.POICommentClickSina, 1);
                 mSyncSinaChb.setChecked(false);
             }
         }
@@ -825,14 +853,28 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
     
     private void submit() {
         hideSoftInput();
-        String shareGrade = "";
+        int resId = R.string.poi_comment_share_grade1;
+        int rating = (int)mGradeRtb.getRating();
+        if (rating == 2) {
+            resId = R.string.poi_comment_share_grade2;
+        } else if (rating == 3) {
+            resId = R.string.poi_comment_share_grade3;
+        } else if (rating == 4) {
+            resId = R.string.poi_comment_share_grade4;
+        } else if (rating == 5) {
+            resId = R.string.poi_comment_share_grade5;
+        } else {
+            resId = R.string.poi_comment_share_grade1;
+        }
+        String shareGrade = getString(resId);
+        
         String recommendCook = "";
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_DIANPING);
         StringBuilder s = new StringBuilder();
         s.append(Util.byteToHexString(Comment.FIELD_GRADE));
         s.append(':');
-        s.append((int)(mGradeRtb.getRating()*2));
+        s.append(rating*2);
         s.append(',');
         String content = mContentEdt.getEditableText().toString().trim();
         if (!TextUtils.isEmpty(content)) {
@@ -962,22 +1004,26 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), -1, mFromViewId, mThis.getString(R.string.comment_publishing_and_wait));
 
         if (mSyncSinaChb.isChecked()) {
+            // http://open.weibo.com/wiki/2/statuses/update
+            // status  true  string  要发布的微博文本内容，必须做URLencode，内容不超过140个汉字。   
             String shareSina = "";
             shareSina = mThis.getString(R.string.poi_comment_share_sina, mPOI.getName(), shareGrade, content, TextUtils.isEmpty(recommendCook) ? "" : mThis.getString(R.string.recommend_cooking, recommendCook));
-            if (shareSina.length() > 120) {
-                shareSina = shareSina.subSequence(0, 117) + "...";
+            if (shareSina.length() > 115) {
+                shareSina = shareSina.subSequence(0, 112) + "...";
             }
-            shareSina = shareSina + "http://www.tigerknows.com";
+            shareSina = shareSina + "http://www.tigerknows.com";   // 25个 TODO: 但是这个网址被微博删除了
             criteria.put(DataOperation.SERVER_PARAMETER_SHARE_SINA, shareSina);
         }
         
         if (mSyncQZoneChb.isChecked()) {
+            // http://wiki.opensns.qq.com/wiki/%E3%80%90QQ%E7%99%BB%E5%BD%95%E3%80%91add_share
+            // summary   string  所分享的网页资源的摘要内容，或者是网页的概要描述，对应上文接口说明的3。最长80个中文字，超出部分会被截断。  
             String shareQzone = "";
             shareQzone = mThis.getString(R.string.poi_comment_share_qzone, mPOI.getName(), shareGrade, content, TextUtils.isEmpty(recommendCook) ? "" : mThis.getString(R.string.recommend_cooking, recommendCook));
-            if (shareQzone.length() > 123) {
-                shareQzone = shareQzone.subSequence(0, 120) + "...";
+            if (shareQzone.length() > 63) {
+                shareQzone = shareQzone.subSequence(0, 60) + "...";
             }
-            shareQzone = shareQzone + mThis.getString(R.string.poi_comment_share_qzone_source);
+            shareQzone = shareQzone + mThis.getString(R.string.poi_comment_share_qzone_source); // 17个
             criteria.put(DataOperation.SERVER_PARAMETER_SHARE_QZONE, shareQzone);
         }
         queryStart(dataOperation, false);
@@ -1033,7 +1079,6 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
         }
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
@@ -1049,7 +1094,8 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 if (response.getResponseCode() == 201) {
                     BaseActivity.showErrorDialog(mThis, mThis.getString(R.string.response_code_201), mThis, true);
                 } else if (response.getResponseCode() == 601 && response instanceof CommentCreateResponse) {
-                    mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_USER);
+                    mPOI.setAttribute(Globals.g_User != null ? POI.ATTRIBUTE_COMMENT_USER : POI.ATTRIBUTE_COMMENT_ANONYMOUS);
+                    mPOI.setMyComment(mComment);
                     mStatus = STATUS_MODIFY;
                     mTitleBtn.setText(R.string.modify_comment);
                     mComment.setUid(((CommentCreateResponse)response).getUid());
@@ -1062,15 +1108,12 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                         
                         @Override
                         public void onClick(DialogInterface arg0, int arg1) {
-                            User user = Globals.g_User;
-                            if (user != null) {
                             Hashtable<String, String> criteria = commentOperation.getCriteria();
                             criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_UPDATE);
                             criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mComment.getUid());
                             DataOperation dataOperation = new DataOperation(mThis);
                             dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), -1, mFromViewId, mThis.getString(R.string.doing_and_wait));
                             queryStart(dataOperation);
-                            }
                         }
                     });
                 } else if (response.getResponseCode() == 602) {
@@ -1098,53 +1141,54 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
             mComment.setTime(commentUpdateResponse.getTimeStamp());
         }
         
-        long userId = Long.MIN_VALUE;
         User user = Globals.g_User;            
         if (user != null) {
+            long userId = Long.MIN_VALUE;
             userId = user.getUserId();
             mComment.setUserId(userId);
             mComment.getPOI().setAttribute(POI.ATTRIBUTE_COMMENT_USER);
+            mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_USER);
             mComment.setUser(user.getNickName());
         } else {
             mComment.getPOI().setAttribute(POI.ATTRIBUTE_COMMENT_ANONYMOUS);
+            mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_ANONYMOUS);
             mComment.setUserId(-1);
             mComment.setUser(mThis.getString(R.string.default_guest_name));
         }
         mComment.setClientUid(Globals.g_ClientUID);
         
         mPOI.setMyComment(mComment);
-        DataQuery dataQuery = mPOI.getCommentQuery();
+        mComment.setData(null);
+//        mPOI.setLastComment(mComment);
+        mPOI.updateData(mThis, mPOI.getData());
         
         List<Comment> commentArrayList = null;
-        // 正常不会出现commentQuery为空的情况
+        
+        // 如果以前查看过点评列表，则更新列表中属于我的那条点评信息
+        DataQuery dataQuery = mPOI.getCommentQuery();
         if (dataQuery != null) {
-            Response commentResponse = dataQuery.getResponse();
-            if (commentResponse != null && commentResponse instanceof CommentResponse) {
-                CommentList commentList = ((CommentResponse)commentResponse).getList();
+            CommentResponse commentResponse = (CommentResponse)dataQuery.getResponse();
+            if (commentResponse != null) {
+                CommentList commentList = commentResponse.getList();
                 if (commentList != null) {
-                    commentArrayList = commentList.getList();
-                    if (commentArrayList != null) {
-                        if (commentArrayList.size() > 0) {
-                            mPOI.updateAttribute();
-                            Collections.sort(commentArrayList, Comment.COMPARATOR);
-                            long attribute = mPOI.getAttribute();
-                            if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0 || (attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0) {
-                                commentArrayList.remove(0);
-                                commentArrayList.add(0, mComment);
-                            } else {
-                                commentArrayList.add(0, mComment);
-                                commentList.setTotal(1);
+                    List<Comment> list = commentList.getList();
+                    commentArrayList = list;
+                    if (list != null) {
+                        for(int i = list.size()-1; i >= 0; i--) {
+                            // 如果列表中已经有我的点评则将其删除
+                            if (Comment.isAuthorMe(list.get(i)) > 0) {
+                                list.remove(i);
+                                break;
                             }
-                        } else {
-                            commentArrayList.add(mComment);
-                            commentList.setTotal(1);
                         }
+                        // 将我的点评插入为第一条
+                        list.add(0, mComment);
                     }
                 }
             }
         }
         
-        if (commentArrayList == null || commentArrayList.isEmpty()) {
+        if ((commentArrayList == null || commentArrayList.isEmpty()) && mFromViewId != R.id.view_my_comment_list) {
             try {
                 XMap data = new XMap();
                 CommentList commentList = new CommentList(data);
@@ -1162,16 +1206,8 @@ public class POIComment extends BaseActivity implements View.OnClickListener {
                 e.printStackTrace();
             }
         }
-        mPOI.updateAttribute();
-        mComment.setData(null);
         mPOI.updateComment(mThis);
-        
-        if (userId != Long.MIN_VALUE) {
-            mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_USER);
-        } else {
-            mPOI.setAttribute(POI.ATTRIBUTE_COMMENT_ANONYMOUS);
-        }
-        
+
         mPOI.update(mThis, mPOI.getStoreType());
         Intent intent = new Intent(POIComment.this, Sphinx.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

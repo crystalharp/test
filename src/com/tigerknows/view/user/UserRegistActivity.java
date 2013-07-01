@@ -68,7 +68,7 @@ public class UserRegistActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO 获取验证码
-				mActionLog.addAction(ActionLog.UserRegistValidNumBtn);
+				mActionLog.addAction(mActionTag +  ActionLog.UserCommonValidNumBtn);
 				if (!phoneEdt.isValid()) {
 					validationAction(phoneEdt);
 					return;
@@ -84,31 +84,13 @@ public class UserRegistActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO 注册成功后, 跳转到输入昵称页面
+                mActionLog.addAction(mActionTag +  ActionLog.UserCommonRegisterBtn);
 				if (!mForm.isValid()) {
 					validationAction(mForm.getErrorSource());
 					return;
 				}
 				
 				requestRegist();
-			}
-		});
-		
-		phoneEdt.addTextChangedListener(new TextWatcher() {
-			
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				// TODO Auto-generated method stub
-			}
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
-				// TODO Auto-generated method stub
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
 			}
 		});
 	}
@@ -192,7 +174,6 @@ public class UserRegistActivity extends UserBaseActivity {
 	}
 
 	private void onSuccess() {
-        mActionLog.addAction(ActionLog.UserRegisterSuccess);
 		showToast(R.string.regist_success);
 		if (mSourceViewIdLogin != R.id.activity_poi_comment) {
     		Intent intent = new Intent(UserRegistActivity.this, UserUpdateNickNameActivity.class);
@@ -298,7 +279,7 @@ public class UserRegistActivity extends UserBaseActivity {
 					valiNumEdt.selectAll();
 					showSoftInput(valiNumEdt);
 				}
-				valiNumBtn.reset(getString(R.string.request_validcode_retry));
+				//valiNumBtn.reset(getString(R.string.request_validcode_retry));
 			}
 			
 		});
@@ -315,7 +296,7 @@ public class UserRegistActivity extends UserBaseActivity {
 					int which) {
 				// TODO Auto-generated method stub
 //				if (which == DialogInterface.BUTTON_POSITIVE) {
-					valiNumBtn.reset(getString(R.string.reqest_validate_num));
+					valiNumBtn.reset(getString(R.string.request_validcode_retry));
 //				}
 			}
 			

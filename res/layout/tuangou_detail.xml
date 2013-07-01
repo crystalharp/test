@@ -32,6 +32,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:layout_centerInParent="true"
+                    android:scaleType="fitXY"
                     android:background="@drawable/bg_picture_tuangou_detail"
                     />
                 <ImageView 
@@ -40,7 +41,6 @@
                     android:layout_height="48dp"
                     android:layout_alignRight="@id/picture_imv"
                     android:layout_alignParentTop="true"
-                    android:layout_margin="2dp"
                     android:scaleType="fitXY"
                     />
 
@@ -48,7 +48,7 @@
                     android:id="@+id/name_txv"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
+                    android:layout_alignBottom="@id/picture_imv"
                     android:background="#99000000"
                     android:textColor="@color/white"
                     android:textSize="16sp"
@@ -125,7 +125,7 @@
                     android:includeFontPadding="false"
                     android:focusable="false"
                     />
-                 <View
+                 <ImageView
                      android:background="@drawable/bg_broken_line"
                      android:layout_width="fill_parent"
                      android:layout_height="wrap_content"
@@ -208,7 +208,7 @@
                     android:textSize="14sp"
                     />
              </RelativeLayout>
-             <View
+             <ImageView
                  android:background="@drawable/bg_line_split"
                  android:layout_width="fill_parent"
                  android:layout_height="wrap_content"

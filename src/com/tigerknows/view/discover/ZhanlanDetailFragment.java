@@ -18,6 +18,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Zhanlan;
+import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.view.SpringbackListView.IPagerList;
 import com.tigerknows.view.discover.CycleViewPager.CyclePagerAdapter;
 
@@ -39,7 +40,7 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.ZhanlanXiangqing;
+        mActionTag = ActionLog.ZhanlanDetail;
     }
 
     @Override
@@ -83,6 +84,14 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
         mDataList = dataList;
         setData(dataList.size(), position, iPagerList);
         refreshViews(position);
+        
+        setViewsVisibility(View.VISIBLE);
+    }
+    
+    public void setPulledDynamicPOI(PulledDynamicPOI dynamicPOI){
+    	position = 0;
+        BaseDetailView baseDetailView = (BaseDetailView) mCyclePagerAdapter.viewList.get(position%mCyclePagerAdapter.viewList.size());
+        ((ZhanlanDetailView)baseDetailView).setPulledDynamicPOI(dynamicPOI);        
     }
     
     public void viewMap() {
@@ -93,7 +102,7 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
         poi.setAddress(data.getAddress());
         list.add(poi);
         mSphinx.showPOI(list, 0);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.zhanlan_didian_ditu), ActionLog.MapZhanlanXiangqing);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.zhanlan_didian_ditu), ActionLog.ResultMapZhanlanDetail);
         super.viewMap();
     }
     
@@ -115,5 +124,5 @@ public class ZhanlanDetailFragment extends BaseDetailFragment
             view.setData(mDataList.get(position+1));
             view.onResume();
         }
-    }
+    }    
 }

@@ -14,7 +14,6 @@ import com.decarta.android.location.Position;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.DataQuery.CommentResponse;
-import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.provider.Tigerknows;
@@ -278,9 +277,6 @@ public class POI extends BaseData {
     // 0x0b x_int 距中心点距离（单位为米）
     public static final byte FIELD_TO_CENTER_DISTANCE = 0x0b;
 
-    // 0x11 x_string    点评摘要 
-    public static final byte FIELD_COMMENT_SUMMARY = 0x11;
-    
     // 0x12 x_int   点评模式 
     public static final byte FIELD_COMMENT_PATTERN = 0x12;
     
@@ -292,6 +288,9 @@ public class POI extends BaseData {
     
     // 0x15 x_array<x_map>  动态poi摘要，最多给10条 
     public static final byte FIELD_DYNAMIC_POI = 0x15;
+    
+    // 0x16 x_map  最近的一条点评 
+    public static final byte FIELD_LAST_COMMENT = 0x16;
     
     public static class DynamicPOI extends XMapData {
         // 0x01 x_int 动态poi的类型
@@ -398,7 +397,7 @@ public class POI extends BaseData {
 
     public static final int FROM_LOCAL = 1;
     
-    public static final String NEED_FILELD = "0102030405060708090a0b1112131415";
+    public static final String NEED_FILELD = "0102030405060708090a0b1213141516";
     
     private String uuid;
     
@@ -422,8 +421,6 @@ public class POI extends BaseData {
     
     private String toCenterDistance;
     
-    private String commentSummary;
-    
     private long commentPattern;
     
     private long attribute;
@@ -432,7 +429,9 @@ public class POI extends BaseData {
     
     private List<DynamicPOI> dynamicPOIList = new ArrayList<DynamicPOI>();
     
-    private DataQuery commentQuery;
+    private List<Dianying> dynamicDianyingList;
+    
+    private DataQuery commentQuery = null;
     
     private int resultType = 0;
     
@@ -441,8 +440,6 @@ public class POI extends BaseData {
     private int grade;
     
     private int from = FROM_ONLINE;
-    
-    private boolean updated = false;
     
     // 菜系
     private String cookingStyle;
@@ -453,51 +450,45 @@ public class POI extends BaseData {
     
     private String feature;
     
-    // 品味 FIELD_TASTE
+    // 口味 FIELD_TASTE
     private String taste;
     
-    // 服务 FIELD_SERVICE
+    // 服务 FIELD_SERVICE|FIELD_SERVICE_ATTITUDE|FIELD_SERVICE_QUALITY
     private String service;
     
     // 环境 FIELD_ENVIRONMENT
     private String envrionment;
     
-    private boolean isSelected;
+    // 产品 FIELD_PRODUCT|FIELD_PRODUCT_ATTITUDE
+    private String product;
     
     private boolean onlyAPOI = false;
     
-    private Comment myComment = new Comment();
+    private Comment myComment = null;
+    
+    private Comment lastComment;
     
     public int ciytId = 0;
     
-    public boolean isUpdated() {
-        return updated;
-    }
-
-    public void setUpdated(boolean updated) {
-        this.updated = updated;
-    }
-    
     public void updateData(Context context, XMap data) {
         try {
-            init(data);
             BaseData baseData = checkStore(context, storeType, -1, false);
+            init(data);
             if (baseData != null) {
-                    try {
-                        ContentValues values = new ContentValues();
-                        values.put(Tigerknows.POI.DATA, ByteUtil.xobjectToByte(data));
-                        this.dateTime = System.currentTimeMillis();
-                        values.put(Tigerknows.POI.DATETIME, this.dateTime);
-                        SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
-                        this.updated = true;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                try {
+                    ContentValues values = new ContentValues();
+                    values.put(Tigerknows.POI.DATA, ByteUtil.xobjectToByte(data));
+                    this.dateTime = System.currentTimeMillis();
+                    values.put(Tigerknows.POI.DATETIME, this.dateTime);
+                    SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } else {
                 writeToDatabases(context, -1, com.tigerknows.provider.Tigerknows.STORE_TYPE_HISTORY);
             }
-        } catch (APIException e1) {
-            e1.printStackTrace();
+        } catch (APIException e) {
+            e.printStackTrace();
         }
     }
     
@@ -539,14 +530,23 @@ public class POI extends BaseData {
 
     public void setMyComment(Comment myComment) {
         this.myComment = myComment;
+        this.attribute = Comment.isAuthorMe(myComment);
+        XMap data = getData();
+        if (data != null) {
+            data.put(FIELD_ATTRIBUTE, this.attribute);
+        }
     }
 
-    public String getCommentSummary() {
-        return commentSummary;
+    public Comment getLastComment() {
+        return this.lastComment;
     }
     
-    public void setCommentSummary(String commentSummary) {
-        this.commentSummary = commentSummary;
+    public void setLastComment(Comment lastComment) {
+        this.lastComment = lastComment;
+        XMap data = getData();
+        if (data != null) {
+            data.put(FIELD_LAST_COMMENT, lastComment.getData());
+        }
     }
     
     public boolean isOnlyAPOI() {
@@ -555,14 +555,6 @@ public class POI extends BaseData {
 
     public void setOnlyAPOI(boolean onlyAPOI) {
         this.onlyAPOI = onlyAPOI;
-    }
-
-    public boolean isSelected() {
-        return isSelected;
-    }
-    
-    public void setSelected(boolean isSelected) {
-        this.isSelected = isSelected;
     }
 
     public void setSourceType(int sourceType) {
@@ -681,6 +673,9 @@ public class POI extends BaseData {
     	return envrionment;
     }
     
+    public String getProduct() {
+    	return product;
+    }
     /**
      * 设置POI类型.如果类型不合法，设为全部类型.
      * 
@@ -727,6 +722,14 @@ public class POI extends BaseData {
 
     public List<DynamicPOI> getDynamicPOIList() {
         return dynamicPOIList;
+    }
+
+    public List<Dianying> getDynamicDianyingList() {
+        return dynamicDianyingList;
+    }
+
+    public void setDynamicDianyingList(List<Dianying> dynamicDianyingList) {
+        this.dynamicDianyingList = dynamicDianyingList;
     }
 
     public POI() {
@@ -806,14 +809,26 @@ public class POI extends BaseData {
                 	this.taste = this.description.getString(Description.FIELD_TASTE);
                 }
                 
-                if (this.description.containsKey(Description.FIELD_SERVICE)) {
-                	this.service = this.description.getString(Description.FIELD_SERVICE);
+                if (this.description.containsKey(Description.FIELD_SERVICE_ATTITUDE)) {
+                	this.service = this.description.getString(Description.FIELD_SERVICE_ATTITUDE);
+                } else if (this.description.containsKey(Description.FIELD_SERVICE_QUALITY)) {
+                    this.service = this.description.getString(Description.FIELD_SERVICE_QUALITY);
                 }
                 
                 if (this.description.containsKey(Description.FIELD_ENVIRONMENT)) {
                 	this.envrionment = this.description.getString(Description.FIELD_ENVIRONMENT);
                 }
+                
+                //购物POI中的产品信息，4.30 ALPHA3中暂未添加
+                //目前暂无其他代码调用此段信息，仅作为预留
+                if (this.description.containsKey(Description.FIELD_PRODUCT)){
+                	this.product = this.description.getString(Description.FIELD_PRODUCT);
+                } else if(this.description.containsKey(Description.FIELD_PRODUCT_ATTITUDE)){
+                	this.product = this.description.getString(Description.FIELD_PRODUCT_ATTITUDE);
+                }
             }
+        } else {
+            this.description = null;
         }
         if (this.data.containsKey(FIELD_TELEPHONE)) {
             this.telephone = this.data.getString(FIELD_TELEPHONE);
@@ -829,9 +844,6 @@ public class POI extends BaseData {
         }
         if (this.data.containsKey(FIELD_TO_CENTER_DISTANCE)) {
             this.toCenterDistance = this.data.getString(FIELD_TO_CENTER_DISTANCE);
-        }
-        if (this.data.containsKey(FIELD_COMMENT_SUMMARY)) {
-            this.commentSummary = this.data.getString(FIELD_COMMENT_SUMMARY);
         }
         if (this.data.containsKey(FIELD_COMMENT_PATTERN)) {
             this.commentPattern = this.data.getInt(FIELD_COMMENT_PATTERN);
@@ -851,12 +863,21 @@ public class POI extends BaseData {
                 }
             }
         }
+        if (this.data.containsKey(FIELD_LAST_COMMENT)) {
+            this.lastComment = new Comment(this.data.getXMap(FIELD_LAST_COMMENT));
+        } else {
+            this.lastComment = null;
+        }
     }
     
     public XMap getData() {
         if (this.data == null) {
             this.data = new XMap();
-        
+
+            if (this.uuid != null) {
+                this.data.put(FIELD_UUID, this.uuid);
+            }
+            
             this.data.put(FIELD_TYPE, this.type);
             
             if (this.position != null) {
@@ -883,14 +904,20 @@ public class POI extends BaseData {
             if (!TextUtils.isEmpty(this.url)) {
                 this.data.put(FIELD_URL, this.url);
             }
-            
             this.data.put(FIELD_TO_CENTER_DISTANCE, this.toCenterDistance);
-            if (!TextUtils.isEmpty(this.commentSummary)) {
-                this.data.put(FIELD_COMMENT_SUMMARY, this.commentSummary);
-            }
             this.data.put(FIELD_COMMENT_PATTERN, this.commentPattern);
             this.data.put(FIELD_ATTRIBUTE, this.attribute);
             this.data.put(FIELD_STATUS, this.status);
+            if (lastComment != null) {
+                this.data.put(FIELD_LAST_COMMENT, lastComment.getData());
+            }
+            if (dynamicPOIList.size() > 0) {
+                XArray<XMap> xarray = new XArray<XMap>();
+                for(int i = 0, size = dynamicPOIList.size(); i < size; i++) {
+                    xarray.add(dynamicPOIList.get(i).getData());
+                }
+                this.data.put(FIELD_DYNAMIC_POI, xarray);
+            }
         }
         return this.data;
     }
@@ -1431,39 +1458,6 @@ public class POI extends BaseData {
 		return false;
 	}
     
-    public void updateAttribute() {
-        attribute = 0;
-        DataQuery dataQuery = this.commentQuery;
-        if (dataQuery != null) {
-            Response response = dataQuery.getResponse();
-            if (response != null && response instanceof CommentResponse) {
-                CommentList commentList = ((CommentResponse)response).getList();
-                if (commentList != null) {
-                    List<Comment> commentArrayList = commentList.getList();
-                    if (commentArrayList != null && commentArrayList.size() > 0) {
-                        User user = Globals.g_User;
-                        long userId = Long.MIN_VALUE;
-                        if (user != null) {
-                            userId = user.getUserId();
-                        }
-                        for(Comment comment : commentArrayList) {
-                            long attr = 0;
-                            if (userId != Long.MIN_VALUE && comment.getUserId() == userId) {
-                                attribute = POI.ATTRIBUTE_COMMENT_USER;
-                                attr = POI.ATTRIBUTE_COMMENT_USER;
-                            } else if (userId == Long.MIN_VALUE && comment.getUserId() == -1 && TextUtils.isEmpty(Globals.g_ClientUID) == false && Globals.g_ClientUID.equals(comment.getClientUid())) {
-                                attribute = POI.ATTRIBUTE_COMMENT_ANONYMOUS;
-                                attr = POI.ATTRIBUTE_COMMENT_ANONYMOUS;
-                            }
-                            comment.setAttribute(attr);
-                        }
-                        
-                    }
-                }
-            }
-        }
-    }
-    
     /**
      * 克隆一个POI对象。
      * Notice: 当前仅克隆了名字及经纬度
@@ -1474,5 +1468,47 @@ public class POI extends BaseData {
     	newPOI.setPosition(this.position);
     	
     	return newPOI;
+    }
+    
+    /**
+     * 根据当前用户登录状态，刷新金/银戳状态
+     * @return
+     */
+    long refreshAttribute() {
+        User user = Globals.g_User;
+        if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0 && user != null) {
+            attribute = POI.ATTRIBUTE_COMMENT_USER;
+        } else if ((attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0 && user == null) {
+            attribute = POI.ATTRIBUTE_COMMENT_ANONYMOUS;
+        }
+        return attribute;
+    }
+    
+    /**
+     * 检查是否为金戳，注册用户点评过此POI
+     * @return
+     */
+    public boolean isGoldStamp() {
+        boolean result = false;
+        refreshAttribute();
+        if ((attribute & POI.ATTRIBUTE_COMMENT_USER) > 0) {
+            result = true;
+        }
+        
+        return result;
+    }
+    
+    /**
+     * 检查是否为银戳，非注册用户点评过此POI
+     * @return
+     */
+    public boolean isSilverStamp() {
+        boolean result = false;
+        refreshAttribute();
+        if ((attribute & POI.ATTRIBUTE_COMMENT_ANONYMOUS) > 0) {
+            result = true;
+        }
+        
+        return result;
     }
 }

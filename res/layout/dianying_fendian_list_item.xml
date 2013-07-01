@@ -17,7 +17,7 @@
     <ImageView android:id="@+id/divider_imv"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/bg_real_line"
+        android:background="@drawable/bg_line_split"
         />
     
     <RelativeLayout
@@ -31,7 +31,7 @@
         <ImageView android:id="@+id/show_time_divider_imv"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_real_line"
+            android:background="@drawable/bg_line_split"
             />
                
         <RelativeLayout android:id="@+id/show_time_view"

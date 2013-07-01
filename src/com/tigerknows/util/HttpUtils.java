@@ -7,13 +7,14 @@ package com.tigerknows.util;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ActionLog;
 import com.tigerknows.TKConfig;
+import com.tigerknows.net.Utility;
+import com.weibo.sdk.android.WeiboParameters;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.entity.ByteArrayEntity;
@@ -22,26 +23,49 @@ import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.http.AndroidHttpClient;
 import android.text.TextUtils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.List;
+import java.net.URLEncoder;
+import java.util.zip.GZIPInputStream;
 
 /**
  * @author Peng Wenyue
  */
 public class HttpUtils {
     private static final String TAG = "HttpUtils";
+    
+    public static final String CONTENT_ENCODING = "Content-Encoding";
+    
+    /** The Content-Type */
+    public static final String CONTENT_TYPE = "Content-Type";
+    
+    /** The Content-Type for application/x-www-form-urlencoded. */
+    public static final String APPLICATION_FORM_CONTENT_TYPE_VALUE = "application/x-www-form-urlencoded";
+    
+    /** The Content-Type for multipart/form-data. */
+    public static final String MULTIPART_FORM_CONTENT_TYPE = "multipart/form-data";
+    
+    /** Tigerknows服务器接口定义的Header */
+    public static final String TK_SERVICE_TYPE = "tkServiceType";
+    
+    /** Tigerknows服务器接口定义的用于s的v13的Header */
+    public static final String TK_SERVICE_TYPE_VALUE = "blade";
+    
+    private static final String PARAMETER_SEPARATOR = "&";
+    private static final String NAME_VALUE_SEPARATOR = "=";
 
     private HttpUtils() {
         // To forbidden instantiate this class.
     }
     
     public static class TKHttpClient {
-        private static int BUFFER_SIZE = 1024;
+        private static int BUFFER_SIZE = 1024*5;
     
         public interface RealTimeRecive {
             public void reciveData(byte[] data);    
@@ -69,7 +93,7 @@ public class HttpUtils {
         
         private String apiType;
         
-        private List<NameValuePair> parameters;
+        private WeiboParameters parameters;
         
         private ProgressUpdate progressUpdate;
         
@@ -112,7 +136,7 @@ public class HttpUtils {
             this.apiType = apiType;
         }
         
-        public void setParameters(List<NameValuePair> parameters) {
+        public void setParameters(WeiboParameters parameters) {
             this.parameters = parameters;
         }
         
@@ -167,30 +191,40 @@ public class HttpUtils {
                      */
                         
                     HttpEntity reqEntity;
+                    byte[] data = null;
+                    ByteArrayOutputStream bos = null;
+                    bos = new ByteArrayOutputStream(1024 * 50);
+                    String postParam;
                     if (isEncrypt) {
-                        StringBuilder s = new StringBuilder();
-                        for(NameValuePair nameValuePair : parameters) {
-                            if (s.length() > 0) {
-                                s.append('&');
+                        // 服务器接收加密的数据时不需要URLEncoder
+                        StringBuilder buf = new StringBuilder();
+                        int j = 0;
+                        for (int loc = 0; loc < parameters.size(); loc++) {
+                            String key = parameters.getKey(loc);
+                            if (j != 0) {
+                                buf.append(PARAMETER_SEPARATOR);
                             }
-                            s.append(nameValuePair.getName());
-                            s.append('=');
-                            s.append(nameValuePair.getValue());
-                        } 
+                            buf.append(key).append(NAME_VALUE_SEPARATOR).append(parameters.getValue(loc));
+                            j++;
+                        }
                         /* A flag to indicate the interface version. */
-                        post.addHeader("tkServiceType", "at=s&v=13");
-                        post.addHeader("Content-Type", "multipart/form-data");               
+                        post.addHeader(TK_SERVICE_TYPE, TK_SERVICE_TYPE_VALUE);
+                        post.addHeader(CONTENT_TYPE, MULTIPART_FORM_CONTENT_TYPE);
+                        postParam = buf.toString();
+                        data = postParam.getBytes(TKConfig.getEncoding());
+                        DataEncryptor.getInstance().encrypt(data);
                         
-                        byte[] encryptParameters = DataEncryptor.encrypt(s.toString().getBytes(TKConfig.getEncoding()));
-                        
-                        reqEntity = new ByteArrayEntity(encryptParameters);
                     } else {
-                        reqEntity = new UrlEncodedFormEntity(parameters, TKConfig.getEncoding());
+                        post.addHeader(CONTENT_TYPE, APPLICATION_FORM_CONTENT_TYPE_VALUE);
+                        postParam = encodeParameters(parameters, TKConfig.getEncoding());
+                        data = postParam.getBytes(TKConfig.getEncoding());
+                        bos.write(data);
                     }
+                    reqEntity = new ByteArrayEntity(data);
                     
                     post.setEntity(reqEntity);
                     LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", url="+url);
-                    LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", parameters="+parameters+", TKConfig.getEncoding()="+TKConfig.getEncoding());
+                    LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", parameters="+postParam+", TKConfig.getEncoding()="+TKConfig.getEncoding());
                 }
 
                 if (client == null) {
@@ -233,7 +267,6 @@ public class HttpUtils {
                         long size = entity.getContentLength();
                         if (size > 0) {
                             DataInputStream dis = new DataInputStream(entity.getContent());
-
                             try {
                                 ByteArrayOutputStream baos = new ByteArrayOutputStream(BUFFER_SIZE);
                                 byte[] buffer = new byte[BUFFER_SIZE];
@@ -304,13 +337,47 @@ public class HttpUtils {
                 throw e;
             } finally {
                 if (!TextUtils.isEmpty(apiType)) {
-                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail);
+                    ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+                    String networkInfoDetail = "none";
+                    if (networkInfo != null) {
+                        networkInfoDetail = networkInfo.getDetailedState().toString();
+                    }
+                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getRadioType(), isStop);
                 }
                 if (!keepAlive) {
                     close();
                 }
             }
         }
+    }
+
+    /**
+     * 将查询参数进行URLEnecode编码处理后组合成字符串
+     * @param httpParams
+     * @param enc
+     * @return
+     */
+    public static String encodeParameters(WeiboParameters httpParams, String enc) {
+        if (null == httpParams || Utility.isBundleEmpty(httpParams)) {
+            return "";
+        }
+        StringBuilder buf = new StringBuilder();
+        int j = 0;
+        for (int loc = 0; loc < httpParams.size(); loc++) {
+            String key = httpParams.getKey(loc);
+            if (j != 0) {
+                buf.append(PARAMETER_SEPARATOR);
+            }
+            try {
+                buf.append(URLEncoder.encode(key, enc)).append(NAME_VALUE_SEPARATOR)
+                        .append(URLEncoder.encode(httpParams.getValue(loc), enc));
+            } catch (java.io.UnsupportedEncodingException neverHappen) {
+            }
+            j++;
+        }
+        return buf.toString();
+
     }
 
     private static AndroidHttpClient createHttpClient(Context context) {

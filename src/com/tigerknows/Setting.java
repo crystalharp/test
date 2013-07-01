@@ -4,7 +4,12 @@
 
 package com.tigerknows;
 
+import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
+import com.tigerknows.radar.AlarmInitReceiver;
+import com.tigerknows.radar.Alarms;
+import com.tigerknows.radar.RadarReceiver;
+import com.tigerknows.service.PullService;
 
 import android.content.Context;
 import android.content.Intent;
@@ -55,8 +60,8 @@ public class Setting extends BaseActivity {
         dataBean.type = DataBean.TYPE_GPS;
         mBeans.add(dataBean);
         
-        dataBean = new DataBean(mThis.getString(R.string.settings_acquire_wakelock), mThis.getString(R.string.settings_acquire_wakelock_description));
-        dataBean.onClickListener = new OnClickListener() {
+        final DataBean wakeLockBean = new DataBean(mThis.getString(R.string.settings_acquire_wakelock), mThis.getString(R.string.settings_acquire_wakelock_description));
+        wakeLockBean.onClickListener = new OnClickListener() {
             
             @Override
             public void onClick(View view) {
@@ -64,13 +69,32 @@ public class Setting extends BaseActivity {
                 if (mWakeLock.isHeld() == checkBox.isChecked()) {
                     return;
                 }
+                wakeLockBean.checked = !wakeLockBean.checked;
                 switchWakeLock();
-                mActionLog.addAction(checkBox.isChecked() ? ActionLog.SettingAcquireWakeLockYes : ActionLog.SettingAcquireWakeLockNo);
+                mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingWakeLock, checkBox.isChecked());
             }
         };
-        dataBean.showIcon = false;
-        dataBean.type = DataBean.TYPE_WAKELOCK;
-        mBeans.add(dataBean);
+        wakeLockBean.showIcon = false;
+        wakeLockBean.type = DataBean.TYPE_WAKELOCK;
+        mBeans.add(wakeLockBean);
+        
+        final DataBean radarPushBean = new DataBean(mThis.getString(R.string.settings_radar_push), mThis.getString(R.string.settings_radar_push_description));
+        radarPushBean.onClickListener = new OnClickListener() {
+            
+            @Override
+            public void onClick(View view) {
+                CheckBox checkBox = (CheckBox) view;
+                if (radarOn(mThis) == checkBox.isChecked()) {
+                    return;
+                }
+                radarPushBean.checked = !radarPushBean.checked; 
+                switchRadarPush();
+                mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingRadar, checkBox.isChecked());
+            }
+        };
+        radarPushBean.showIcon = false;
+        radarPushBean.type = DataBean.TYPE_RADARPUSH;
+        mBeans.add(radarPushBean);
         
         mSettingAdatpter = new SimpleAdapter(mThis, mBeans);
         mListView.setAdapter(mSettingAdatpter);
@@ -85,6 +109,22 @@ public class Setting extends BaseActivity {
             mWakeLock.acquire();
         }
         TKConfig.setPref(mThis, TKConfig.PREFS_ACQUIRE_WAKELOCK, mWakeLock.isHeld() ? "" : "1");
+    }
+    
+    private void switchRadarPush() {
+        if (radarOn(mThis)) {
+            TKConfig.setPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "off");
+            Alarms.disableAlarm(mThis, PullService.alarmAction.getIntent());
+        } else {
+            TKConfig.setPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "");
+            Intent pullIntent = new Intent(AlarmInitReceiver.ACTION_ALARM_INIT);
+            mThis.sendBroadcast(pullIntent);
+        }
+        LogWrapper.d("conan", "Radar status:" + TKConfig.getPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "on"));
+    }
+    
+    public static boolean radarOn(Context context) {
+        return TextUtils.isEmpty(TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, ""));
     }
 
     protected void findViews() {
@@ -105,15 +145,21 @@ public class Setting extends BaseActivity {
                 int type = dataBean.type;
                 switch (type) {
                     case DataBean.TYPE_GPS:
-                        mActionLog.addAction(ActionLog.SettingGPS, checkGPS() ? "0" : "1");
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingGPS, checkGPS());
                         Intent intent = new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
                         startActivityForResult(intent, R.id.activity_setting_location);
                         break;
                     case DataBean.TYPE_WAKELOCK:
                         dataBean.checked = !dataBean.checked;
-                        mActionLog.addAction(dataBean.checked ? ActionLog.SettingAcquireWakeLockYes : ActionLog.SettingAcquireWakeLockNo);
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingWakeLock, dataBean.checked);
                         mSettingAdatpter.notifyDataSetChanged();
                         switchWakeLock();
+                        break;
+                    case DataBean.TYPE_RADARPUSH:
+                        dataBean.checked = !dataBean.checked;
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingRadar, dataBean.checked);
+                        mSettingAdatpter.notifyDataSetChanged();
+                        switchRadarPush();
                         break;
                     default:
                         break;
@@ -139,6 +185,10 @@ public class Setting extends BaseActivity {
         dataBean = getDataBeanByType(DataBean.TYPE_WAKELOCK);
         if (dataBean != null) {
             dataBean.checked = TextUtils.isEmpty(TKConfig.getPref(mThis, TKConfig.PREFS_ACQUIRE_WAKELOCK));
+        }
+        dataBean = getDataBeanByType(DataBean.TYPE_RADARPUSH);
+        if (dataBean != null) {
+            dataBean.checked = radarOn(mThis);
         }
         mSettingAdatpter.notifyDataSetChanged();
     }
@@ -168,6 +218,7 @@ public class Setting extends BaseActivity {
             
             titleTxv.setText(data.title);
             descriptionTxv.setText(data.description);
+            LogWrapper.d("conan", "data:" + data.title +  "checked:" + data.checked);
             if (data.onClickListener != null) {
                 selectChb.setOnClickListener(data.onClickListener);
                 selectChb.setChecked(data.checked);
@@ -208,6 +259,7 @@ public class Setting extends BaseActivity {
         
         static final int TYPE_GPS = 1;
         static final int TYPE_WAKELOCK = 2;
+        static final int TYPE_RADARPUSH = 3;
         
         protected int type;
         

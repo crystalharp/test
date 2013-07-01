@@ -62,25 +62,12 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 	protected void setListener() {
 		super.setListener();
 		
-		oldPasswordEdt.setOnTouchListener(new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				if (event.getAction() == MotionEvent.ACTION_DOWN) {
-					mActionLog.addAction(ActionLog.UserClickPasswordEdt);
-				}
-				
-				return false;
-			}
-		});
-		
 		forgetPasswordTxt.setOnClickListener(new android.view.View.OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
 				// TODO 跳转到重置密码页面
-				mActionLog.addAction(ActionLog.UserUpdatePasswordForgetPassword);
+				mActionLog.addAction(mActionTag +  ActionLog.UserCommonForgetPasswordBtn);
 				startActivity(new Intent(UserUpdatePasswordActivity.this, UserResetPasswordActivity.class));
 			}
 		});
@@ -90,6 +77,7 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 			@Override
 			public void onClick(View v) {
 				// TODO 发出请求, 若成功中转到帐户管理页面
+			    mActionLog.addAction(mActionTag +  ActionLog.UserCommonConfirmBtn);
 				if (!mForm.isValid()) {
 					doAction(mForm.getErrorSource());
 					return;

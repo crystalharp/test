@@ -59,18 +59,35 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     
     private ImageView mShangjiaMarkerImv;
     
-    
+    /**
+     * The bar view embeded in the details
+     */
     private View mBarView = null;
     
+    /**
+     * The price textView
+     */
     private TextView mPriceTxv;
     
+    /**
+     * The original price TextView
+     */
     private TextView mOrgPriceTxv;
     
+    /**
+     * The discount textView
+     */
     private TextView mDiscountTxv;
 
+    /**
+     * Buy buton
+     */
     private Button mBuyBtn = null;
-
     
+    /**
+     * Duplicate bar view that is to be floating at the top of this detail view<br> 
+     * If the top the embeded bar view become invisible 
+     */
     private View mBarView_2 = null;
     
     private TextView mPriceTxv_2;
@@ -83,67 +100,151 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     
     private TextView mNameTxt = null;
     
+    /**
+     * ImageView representing whether this tuangou support give back your money
+     */
     private ImageView mRefundImv = null;
 
+    /**
+     * TextView representing whether this tuangou support give back your money
+     */
     private TextView mRefundTxv = null;
 
+    /**
+     * Presenting the numbers of customers who has bought this Tuangou
+     */
     private TextView mBuyerNumTxv = null;
     
+    /**
+     * The name view group of the nearest fendian
+     */
     private View mFendianNameView = null;
     
+    /**
+     * Name textView representing the name of the Fendian
+     */
     private TextView mFendianNameTxv = null;
     
+    /**
+     * Distance at the right side of {@link mFendianNameView}
+     */
     private TextView mDistanceTxv = null;
     
+    /**
+     * TextView representing the address
+     */
     private TextView mAddressTxv = null;
     
+    /**
+     * TextView containing the telephones of the Fendian
+     */
     private TextView mTelephoneTxv = null;
     
-    private View mAddressView = null;
+    /**
+     * View group enclosing the {@link mAddressTxv}
+     */
+    private View mAddressViewGroup = null;
     
+    /**
+     * Divider view between Address View and telephone view
+     */
     private View mDividerView;
     
+    /**
+     * View group containing the {@link mTelephoneTxv}
+     */
     private View mTelephoneView = null;
     
+    /**
+     * View group containing nearByFendian stats info
+     */
     private View mNearbyFendianView = null;
     
+    /**
+     * TextView containing the number of nearby Fendian
+     */
     private TextView mNearbyFendianTxv = null;
     
+    /**
+     * View group containing the {@link mContentTxv}
+     */
     private View mContentView;
     
+    /**
+     * TextView presenting the content
+     */
     private TextView mContentTxv;
     
+    /**
+     * View group associated with the {@link mNoticedTxv}
+     */
     private View mNoticedView;
 
+    /**
+     * TextView presenting the special notice the user need to notice 
+     */
     private TextView mNoticedTxv;
 
+    /**
+     * View group containing {@link mServiceHotlineTitleTxv} and {@link mServiceHotlineTxv}
+     */
     private View mServiceHotlineView;
 
+    /**
+     * TextView presenting which Tuangou source the hotline belongs to
+     */
     private TextView mServiceHotlineTitleTxv;
 
+    /**
+     * Hotline number
+     */
     private TextView mServiceHotlineTxv;
     
+    /**
+     * Tuangou data associcated this detain fragment is for
+     */
     private Tuangou mData;
     
+    /**
+     * Filter area by which this tuangou is searched.
+     */
     private String mFilterArea;
     
+    /**
+     * String value in the res xml of R.string.tuangou_no_refund
+     */
     private String noRefundStr;
     
+    /**
+     * Width of pixes of the tuangou main picture
+     */
     private int mPictureDetailWidth;
     
-	int[] locationScv = new int[]{0, 1};
-	int[] locationBar = new int[]{0, 2};
-	  
+    /**
+     * Location of the scroll view content
+     * 0:x, 1:y
+     */
+    int[] locationScv = new int[]{0, 1};
+    
+    /**
+     * Location of the the embeded bar
+     * 0:x, 1:y
+     */
+    int[] locationBar = new int[]{0, 2};
+    
     protected DialogInterface.OnClickListener mCancelLoginListener = new DialogInterface.OnClickListener() {
         
         @Override
         public void onClick(DialogInterface arg0, int arg1) {
-            if (mBaseQuerying != null && BaseQuery.API_TYPE_DATA_OPERATION.equals(mBaseQuerying.getAPIType())) {
-                Hashtable<String, String> criteria = mBaseQuerying.getCriteria();
-                if (criteria != null && criteria.containsKey(BaseQuery.SERVER_PARAMETER_DATA_TYPE)) {
-                    String dataType = criteria.get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
-                    if (DataOperation.DATA_TYPE_DINGDAN.equals(dataType)) {
-                        mBaseQuerying = null;
+            if (mBaseQuerying != null && mBaseQuerying.size() > 0) {
+                BaseQuery baseQuery = mBaseQuerying.get(0);
+                if (BaseQuery.API_TYPE_DATA_OPERATION.equals(baseQuery.getAPIType())) {
+                    Hashtable<String, String> criteria = baseQuery.getCriteria();
+                    if (criteria != null && criteria.containsKey(BaseQuery.SERVER_PARAMETER_DATA_TYPE)) {
+                        String dataType = criteria.get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+                        if (DataOperation.DATA_TYPE_DINGDAN.equals(dataType)) {
+                            mBaseQuerying = null;
+                        }
                     }
                 }
             }
@@ -155,7 +256,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         super(sphinx, parentFragment, R.layout.tuangou_detail);
         
         findViews();
-        mActionTag = ActionLog.TuangouXiangqing;
+        mActionTag = ActionLog.TuangouDetail;
         
         noRefundStr = mSphinx.getString(R.string.tuangou_no_refund);
 
@@ -176,7 +277,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 if(drawable != null) {
                     mPictureImv.setBackgroundDrawable(drawable);
                 }else{
-                	mPictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou_detail);
+                    mPictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou_detail);
                 }
                 TKDrawable tkDrawable = mData.getContentPic();
                 if (tkDrawable != null) {
@@ -218,7 +319,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     @Override
     public void setData(BaseData data) {
         super.setData(data);
-        if (data == null || (data instanceof Tuangou) == false) {
+        if (data == null || (data instanceof Tuangou) == false || mData == data) {
             return;
         }
         mData = (Tuangou)data;
@@ -301,18 +402,16 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             if(drawable != null) {
                 mPictureImv.setBackgroundDrawable(drawable);
             }else{
-            	mPictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou_detail);
+                mPictureImv.setBackgroundResource(R.drawable.bg_picture_tuangou_detail);
             }
         }
         tkDrawable = mData.getContentPic();
         if (tkDrawable != null) {
             Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, mParentFragment.toString());
             if(drawable != null) {
+            	mContentTxv.setVisibility(View.VISIBLE);
                 mContentTxv.setBackgroundDrawable(drawable);
                 mContentTxv.setText(null);
-            } else {
-                mContentTxv.setBackgroundDrawable(null);
-                mContentTxv.setText(R.string.loading);
             }
         } else {
             mContentTxv.setBackgroundDrawable(null);
@@ -322,7 +421,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
     private void refreshFendian() {
         Fendian fendian = mData.getFendian();
         DiscoverChildListFragment.showPOI(mSphinx, fendian.getPlaceName(), fendian.getDistance(), fendian.getAddress(), fendian.getPlacePhone(), 
-                mFendianNameTxv, mDistanceTxv, mAddressView, mDividerView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
+                mFendianNameTxv, mDistanceTxv, mAddressViewGroup, mDividerView, mTelephoneView, mAddressTxv, mTelephoneTxv, 
                 R.drawable.list_middle, R.drawable.list_footer, R.drawable.list_footer);
     }
     
@@ -350,8 +449,10 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                     layoutParams = mContentTxv.getLayoutParams();
                     layoutParams.width = mPictureDetailWidth;
                     layoutParams.height = (int) (mPictureDetailWidth*((float)drawable.getIntrinsicHeight()/drawable.getIntrinsicWidth()));
+                    mContentView.setVisibility(View.VISIBLE);
+                }else{
+                    mContentView.setVisibility(View.GONE);
                 }
-                mContentView.setVisibility(View.VISIBLE);
             } else {
                 needFiled.append(Util.byteToHexString(Tuangou.FIELD_CONTENT_TEXT));
                 needFiled.append(Util.byteToHexString(Tuangou.FIELD_CONTENT_PIC));
@@ -377,25 +478,28 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         }
         
         if (needFiled.length() > 0 && query) {
-            mLoadingView.setVisibility(View.VISIBLE);
-            DataOperation dataOperation = new DataOperation(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_TUANGOU);
-            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
-            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, needFiled.toString());
-            if (pic.length() > 0) {
-                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE, pic.toString());
-            }
-            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
-            mBaseQuerying = dataOperation;
-            mSphinx.queryStart(dataOperation);
+        	if(!mAsyncTaskExecuting){
+	            mLoadingView.setVisibility(View.VISIBLE);
+	            DataOperation dataOperation = new DataOperation(mSphinx);
+	            Hashtable<String, String> criteria = new Hashtable<String, String>();
+	            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_TUANGOU);
+	            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+	            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
+	            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FEILD, needFiled.toString());
+	            if (pic.length() > 0) {
+	                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE, pic.toString());
+	            }
+	            dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
+	            mAsyncTaskExecuting = true;
+	            mTKAsyncTasking = mSphinx.queryStart(dataOperation);
+	            mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
+        	}
         } else {
             mLoadingView.setVisibility(View.GONE);
         }
     }
 
-	  
+      
     @Override
     protected void findViews() {
         super.findViews();
@@ -426,7 +530,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         view.findViewById(R.id.tuangou_fendian_list_item).setPadding(0, 0, 0, 0);
         mFendianNameTxv = (TextView) view.findViewById(R.id.name_txv);
         mDistanceTxv = (TextView)view.findViewById(R.id.distance_txv);
-        mAddressView = view.findViewById(R.id.address_view);
+        mAddressViewGroup = view.findViewById(R.id.address_view);
         mDividerView = view.findViewById(R.id.divider_imv);
         mTelephoneView = view.findViewById(R.id.telephone_view);
         mAddressTxv = (TextView)view.findViewById(R.id.address_txv);
@@ -447,29 +551,29 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
 
     private int touchEventId = R.id.view_invalid;
 
-  	  
+        
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
-        		super.handleMessage(msg);
-        		if( !updateBarViewVisibility(true)){
-        			
-                	if (lastY != locationBar[1]) {
-                		handler.sendMessageDelayed(handler.obtainMessage(touchEventId, null), FLOATING_BAR_MSG_DELAY);
-                		lastY = locationBar[1];
-                	}//end if
-                	
-        		}
+                super.handleMessage(msg);
+                if( !updateBarViewVisibility(true)){
+                    
+                    if (lastY != locationBar[1]) {
+                        handler.sendMessageDelayed(handler.obtainMessage(touchEventId, null), FLOATING_BAR_MSG_DELAY);
+                        lastY = locationBar[1];
+                    }//end if
+                    
+                }
              
         }
     };
-	  
+      
     @Override
     protected void setListener() {
         super.setListener();
         mBuyBtn.setOnClickListener(this);
         mBuyBtn_2.setOnClickListener(this);
-        mAddressView.setOnClickListener(this);
+        mAddressViewGroup.setOnClickListener(this);
         mTelephoneView.setOnClickListener(this);
         mNearbyFendianView.setOnClickListener(this);
         mServiceHotlineView.setOnClickListener(this);
@@ -478,20 +582,20 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-            	 
-            	//Deal with floating bar
-	          	  if(event.getAction() == MotionEvent.ACTION_UP){
-	          		  //user finger up, deal with possible animation
-	          		  handler.sendMessageDelayed(handler.obtainMessage(touchEventId, null), FLOATING_BAR_MSG_DELAY);
-	          	  }else{//Scroll moved
-	          		  updateBarViewVisibility(true);
-	          	  }
-	          	  
-	          	  //
-	          	  if (event.getAction() == MotionEvent.ACTION_DOWN) {
-	          		  mParentFragment.updateNextPrevControls();
+                 
+                //Deal with floating bar
+                    if(event.getAction() == MotionEvent.ACTION_UP){
+                        //user finger up, deal with possible animation
+                        handler.sendMessageDelayed(handler.obtainMessage(touchEventId, null), FLOATING_BAR_MSG_DELAY);
+                    }else{//Scroll moved
+                        updateBarViewVisibility(true);
+                    }
+                    
+                    //
+                    if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                        mParentFragment.updateNextPrevControls();
                     mParentFragment.scheduleDismissOnScreenControls();
-	          	  }
+                    }
                 return false;
             }
         });
@@ -502,43 +606,55 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 return true;
             }
         });
+        
+        /**
+         * If the listener is not set, the click event
+         * will be dispatched to the view that's under it, 
+         * which is not visible, and should not be click-able.
+         */
+        mBarView_2.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+			}
+		});
     }
 
     private boolean updateBarViewVisibility(boolean renew){
 
-    	if(renew){
-    		//Get view position
-	      	mBodyScv.getLocationInWindow(locationScv);
-	      	mBarView.getLocationInWindow(locationBar);
-    	}
-      	
-      	if(locationBar[1]<=locationScv[1]){
-      		
-      		//Judge original visibility to avoid unnecessary message loops
-      		if(mBarView_2.getVisibility()==View.INVISIBLE){
-        		mBarView.setVisibility(View.INVISIBLE);
-        		mBarView_2.setVisibility(View.VISIBLE);
-            		return true;
-      		}
-      		
-      	}else{
-      		if(mBarView_2.getVisibility()==View.VISIBLE){                                                                                                                              
-        		mBarView.setVisibility(View.VISIBLE);
-        		mBarView_2.setVisibility(View.INVISIBLE);
-            		return true;
-      		}
-      	}
-      	
-      	return false;
-    	
+        if(renew){
+            //Get view position
+              mBodyScv.getLocationInWindow(locationScv);
+              mBarView.getLocationInWindow(locationBar);
+        }
+          
+          if(locationBar[1]<=locationScv[1]){
+              
+              //Judge original visibility to avoid unnecessary message loops
+              if(mBarView_2.getVisibility()==View.INVISIBLE){
+                mBarView.setVisibility(View.INVISIBLE);
+                mBarView_2.setVisibility(View.VISIBLE);
+                    return true;
+              }
+              
+          }else{
+              if(mBarView_2.getVisibility()==View.VISIBLE){                                                                                                                              
+                mBarView.setVisibility(View.VISIBLE);
+                mBarView_2.setVisibility(View.INVISIBLE);
+                    return true;
+              }
+          }
+          
+          return false;
+        
     }
     
     @Override
     public void onClick(View view) {
         switch (view.getId()) {                     
-	        case R.id.buy_btn:                  
-	        case R.id.buy_btn_2:
-                mActionLog.addAction(ActionLog.TuangouXiangqingBuy);
+            case R.id.buy_btn:                  
+            case R.id.buy_btn_2:
+                mActionLog.addAction(mActionTag +  ActionLog.TuangouDetailBuy);
                 String sessionId = Globals.g_Session_Id;
                 if (TextUtils.isEmpty(sessionId)) {
                     ((TuangouDetailFragment) mParentFragment).isRequsetBuy = true;
@@ -554,28 +670,28 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
                 break;
                 
             case R.id.telephone_view:
-                mActionLog.addAction(ActionLog.TuangouXiangqing+ActionLog.DiscoverDetailTelphone);
+                mActionLog.addAction(mActionTag +  ActionLog.CommonTelphone);
                 CommonUtils.telephone(mSphinx, mTelephoneTxv);
                 break;
                 
             case R.id.address_view:
-                mActionLog.addAction(ActionLog.TuangouXiangqing+ActionLog.DiscoverDetailAddress);
+                mActionLog.addAction(mActionTag +  ActionLog.CommonAddress);
                 Fendian fendian = mData.getFendian();
                 if (fendian == null) {
                     return;
                 }
-                CommonUtils.queryTraffic(mSphinx, fendian.getPOI(POI.SOURCE_TYPE_TUANGOU));
+                CommonUtils.queryTraffic(mSphinx, fendian.getPOI(POI.SOURCE_TYPE_TUANGOU), mActionTag);
                 break;
                 
             case R.id.nearby_fendian_view:
                 if (mNearbyFendianTxv.getVisibility() == View.VISIBLE) {
-                    mActionLog.addAction(ActionLog.TuangouXiangqing+ActionLog.DiscoverDetailBranch);
+                    mActionLog.addAction(mActionTag +  ActionLog.DiscoverCommonBranch);
                     mSphinx.getDiscoverChildListFragment().setup(mData, mNearbyFendianTxv.getText().toString(), ActionLog.FendianList);
                     mSphinx.showView(R.id.view_discover_child_list);
                 }
                 break;
             case R.id.service_hotline_view:
-                mActionLog.addAction(ActionLog.TuangouXiangqingCustomService);
+                mActionLog.addAction(mActionTag +  ActionLog.TuangouDetailCustomService);
                 CommonUtils.telephone(mSphinx, mServiceHotlineTxv);
                 break;
         }
@@ -614,8 +730,8 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
             criteria.put(DataOperation.SERVER_PARAMETER_ENTITY, s.toString());
             dataOperation.setup(criteria, Globals.g_Current_City_Info.getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
-            mBaseQuerying = dataOperation;
-            mSphinx.queryStart(dataOperation);
+            mTKAsyncTasking = mSphinx.queryStart(dataOperation);
+            mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
         }
     }
 

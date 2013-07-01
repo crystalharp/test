@@ -9,7 +9,6 @@ import com.decarta.android.location.Position;
 import com.decarta.android.map.Icon;
 import com.decarta.android.map.InfoWindow;
 import com.decarta.android.map.ItemizedOverlay;
-import com.decarta.android.map.MapView;
 import com.decarta.android.map.OverlayItem;
 import com.decarta.android.map.RotationTilt;
 import com.decarta.android.map.RotationTilt.RotateReference;
@@ -21,14 +20,10 @@ import com.tigerknows.model.POI;
 
 public class PinOverlayHelper {
 
-	private static final String TAG = "PinOverlayHelper";
+	static final String TAG = "PinOverlayHelper";
 	
-	public static void drawSelectPointOverlay(Context context, Handler mainThreadHandler, final MapView mapView, boolean isStart, String name, Position position) {
+	public static void drawSelectPointOverlay(final Sphinx sphinx, Handler mainThreadHandler, final MapView mapView, boolean isStart, String name, Position position) {
 		
-//		String positionName = mSphinx.getMapEngine().getPOIName(position);
-//		if (TextUtils.isEmpty(positionName)) {
-//			positionName = context.getString(R.string.select_has_point);
-//		}
 		try {
 	        if(name != null && position != null){
 	        	// 单击选点图层
@@ -37,10 +32,10 @@ public class PinOverlayHelper {
                 poi.setName(name);
                 poi.setPosition(position);
                 
-	            String message = context.getString(isStart ? R.string.select_where_as_start : R.string.select_where_as_end, name);
+	            String message = sphinx.getString(isStart ? R.string.select_where_as_start : R.string.select_where_as_end, name);
 	            ItemizedOverlay overlay = new ItemizedOverlay(ItemizedOverlay.PIN_OVERLAY);
 	            RotationTilt rt = new RotationTilt(RotateReference.SCREEN,TiltReference.SCREEN);
-	            OverlayItem overlayItem = new OverlayItem(poi.getPosition(), Icon.getIcon(context.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
+	            OverlayItem overlayItem = new OverlayItem(poi.getPosition(), Icon.getIcon(sphinx.getResources(), R.drawable.btn_bubble_b_normal, Icon.OFFSET_LOCATION_CENTER_BOTTOM), 
 	            		message, rt);
 	            overlayItem.setAssociatedObject(poi);
 		        
@@ -48,18 +43,7 @@ public class PinOverlayHelper {
 				    @Override
 				    public void onTouchEvent(EventSource eventSource) {
 				        OverlayItem overlayItem=(OverlayItem) eventSource;
-				        mapView.getInfoWindow().setAssociatedOverlayItem(overlayItem);
-				        mapView.getInfoWindow().setMessage(overlayItem.getMessage());
-				        try{
-				            mapView.getInfoWindow().setPosition(overlayItem.getPosition());
-				        }catch(Exception e){
-				            e.printStackTrace();
-				        }
-				        
-				        mapView.getInfoWindow().setOffset(new XYFloat(0f,(float)(overlayItem.getIcon().getOffset().y)),
-				                overlayItem.getRotationTilt());
-				        mapView.getInfoWindow().setTextAlign(InfoWindow.TextAlign.CENTER);
-				        mapView.getInfoWindow().setVisible(true);
+				        sphinx.showInfoWindow(overlayItem);
 				    }
 				});
 	            overlayItem.isFoucsed = true;

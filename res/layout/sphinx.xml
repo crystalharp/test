@@ -7,7 +7,7 @@
     android:orientation="vertical"
     >
 
-    <com.decarta.android.map.MapView
+    <com.tigerknows.maps.MapView
         android:id="@+id/mapview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -124,4 +124,30 @@
         android:visibility="invisible"
         >
     </FrameLayout>
+    
+    <!-- 拦截屏幕上的Touch事件 -->
+    <RelativeLayout
+        android:id="@+id/overlay_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/transparent"
+        android:visibility="gone" />
+    <RelativeLayout 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="fill_parent"
+	    android:id="@+id/hint_root_view"
+	    android:visibility="gone"
+	    android:background="@color/black_transparent_half">
+        
+	    <ImageView android:id="@+id/imv_home_hint"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_marginTop="120dp"
+		    android:layout_alignParentRight="true"
+		    android:layout_alignParentTop="true"
+		    android:background="@drawable/ic_hint_home_drag"
+        />
+	</RelativeLayout>
+
+    
 </RelativeLayout>

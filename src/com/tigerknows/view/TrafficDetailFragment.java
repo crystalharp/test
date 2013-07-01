@@ -30,23 +30,23 @@ import com.tigerknows.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.decarta.android.location.Position;
-import com.decarta.android.map.MapView.MapScene;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TransferErrorRecovery;
 import com.tigerknows.maps.TrafficOverlayHelper;
+import com.tigerknows.maps.MapView.MapScene;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.TrafficModel;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.Step;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.provider.Tigerknows;
+import com.tigerknows.share.ShareAPI;
 import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.NavigationSplitJointRule;
 import com.tigerknows.util.ShareTextUtil;
-import com.tigerknows.util.WidgetUtils;
 import com.tigerknows.view.ResultMapFragment.TitlePopupArrayAdapter;
 
 public class TrafficDetailFragment extends BaseFragment implements View.OnClickListener{
@@ -157,20 +157,14 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     	        mTitleBtn.setOnClickListener(new View.OnClickListener(){
     				@Override
     				public void onClick(View v) {
-    			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener);
+    			        mTitleFragment.showPopupWindow(mTitlePopupArrayAdapter, mTitlePopupOnItemClickListener, mActionTag);
     			        mTitlePopupArrayAdapter.notifyDataSetChanged();
-    			        mActionLog.addAction(ActionLog.TrafficPopupWindow);
     				}
     	        });
         	}
-        } else {
-        	//不用顶部弹出切换
-        	mTitleBtn.setText(mContext.getString(R.string.title_busline_line));
         }
         
         setFavoriteState(mRootView, plan.checkFavorite(mContext));
-                
-        history();
     }
     
     private OnItemClickListener mTitlePopupOnItemClickListener = new OnItemClickListener() {
@@ -179,7 +173,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
             mTitleFragment.dismissPopupWindow();
             Plan clickedPlan = mPlanList.get(position);
-            mActionLog.addAction(ActionLog.TrafficPopupClickItem, position);
+            mActionLog.addAction(mActionTag + ActionLog.PopupWindowTitle + ActionLog.ListViewItem, position);
             if (clickedPlan.equals(plan)) {
             	return;
             } else {
@@ -214,7 +208,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         	@Override
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id) {
-				mActionLog.addAction(ActionLog.TrafficDetailStep, position);
+				mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position);
 
 				// 绘制交通图层
                 viewMap();
@@ -228,7 +222,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 	public void onClick(View v) {
 		int viewId = v.getId();
 		if (viewId == R.id.right_btn) {
-            mActionLog.addAction(ActionLog.Title_Right_Button);
+            mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
 			// 绘制交通图层
 			viewMap();
 			// 将地图缩放至可以显示完整的交通路径, 并平移到交通路径中心点
@@ -259,7 +253,8 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 		        }
         	}
         }
-        
+
+        plan.updateHistory(mContext);
     }
 
     public static class StepViewHolder {
@@ -400,12 +395,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 
             if (v.getId() == R.id.share_btn) {
                 //弹出分享对话框
-                mActionLog.addAction(ActionLog.TrafficDetailShare);
+                mActionLog.addAction(mActionTag +  ActionLog.CommonShare);
                 share(plan);
             } else if (v.getId() == R.id.favorite_btn) {
             	favorite(plan, v);
             } else if (v.getId() == R.id.error_recovery_btn) {
-                mActionLog.addAction(ActionLog.TrafficDetailErrorRecovery);
+                mActionLog.addAction(mActionTag +  ActionLog.CommonErrorRecovery);
             	TransferErrorRecovery.addTarget(plan);
             	mSphinx.showView(R.id.activity_traffic_error_recovery);
             }
@@ -416,6 +411,7 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
 				return ;
 			
 	        boolean isFavorite = data.checkFavorite(mContext);
+            mActionLog.addAction(mActionTag +  ActionLog.CommonFavorite, String.valueOf(isFavorite));
 	        if (isFavorite) {
 	        	CommonUtils.showNormalDialog(mSphinx, 
                         mContext.getString(R.string.prompt),
@@ -427,14 +423,12 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
                             @Override
                             public void onClick(DialogInterface arg0, int id) {
                                 if (id == DialogInterface.BUTTON_POSITIVE) {
-                                    mActionLog.addAction(ActionLog.TrafficDetailCancelFav);
                                     setFavoriteState(v, false);
                                     data.deleteFavorite(mContext);
                                 }
                             }
                         });
 	        } else {
-	        	mActionLog.addAction(ActionLog.TrafficDetailFavorite);
 	        	setFavoriteState(v, true);
 				data.writeToDatabases(mContext, -1, Tigerknows.STORE_TYPE_FAVORITE);
                 Toast.makeText(mSphinx, R.string.favorite_toast, Toast.LENGTH_LONG).show();
@@ -445,32 +439,13 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
     public void share(final Plan plan) {
         if(plan == null)
             return;
-                
-    	String smsContent = "";
-    	String weiboContent = "";
-    	String qzoneContent = "";
-    	if (plan != null) {
-    		if (SHOW_TYPE_TRANSFER == mShowType) {
-                weiboContent = ShareTextUtil.shareTrafficTransferWeiboContent(plan, mContext);
-                smsContent = ShareTextUtil.shareTrafficTransferSmsContent(plan, mContext);
-                qzoneContent = ShareTextUtil.shareTrafficTransferQzoneContent(plan, mContext);
-            } else if (SHOW_TYPE_DRVIE == mShowType) {
-                weiboContent = ShareTextUtil.shareTrafficDriveWeiboContent(plan, mContext);
-                smsContent = ShareTextUtil.shareTrafficDriveSmsContent(plan, mContext);
-                qzoneContent = ShareTextUtil.shareTrafficDriveQzoneContent(plan, mContext);
-            } else if (SHOW_TYPE_WALK == mShowType) {
-                weiboContent = ShareTextUtil.shareTrafficWalkWeiboContnet(plan, mContext);
-                smsContent = ShareTextUtil.shareTrafficWalkSmsContnet(plan, mContext);
-                qzoneContent = ShareTextUtil.shareTrafficWalkQzoneContnet(plan, mContext);
-            }
-    	}
     	
     	MapScene mapScene = mSphinx.getMapView().getCurrentMapScene();
     	mSphinx.clearMap();
     	TrafficOverlayHelper.drawOverlay(mSphinx, mSphinx.getHandler(), mSphinx.getMapView(), plan, mShowType);
     	Position position = TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
     	
-    	WidgetUtils.share(mSphinx, smsContent, weiboContent, qzoneContent, position, mapScene);
+    	ShareAPI.share(mSphinx, plan, position, mapScene, mActionTag);
     }
 
     private void setFavoriteState(View v, boolean favoriteYet) {
@@ -489,13 +464,13 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
             String actionTag = "";
         	switch(mShowType) {
         	case SHOW_TYPE_TRANSFER:
-        	    actionTag = ActionLog.MapTrafficTransfer;
+        	    actionTag = ActionLog.TrafficTransferMap;
         		break;
         	case SHOW_TYPE_DRVIE:
-                actionTag = ActionLog.MapTrafficDrive;
+                actionTag = ActionLog.TrafficDriveMap;
         		break;
         	case SHOW_TYPE_WALK:
-                actionTag = ActionLog.MapTrafficWalk;
+                actionTag = ActionLog.TrafficWalkMap;
         		break;
         	default:
         			
@@ -522,12 +497,6 @@ public class TrafficDetailFragment extends BaseFragment implements View.OnClickL
         viewMap();
         mSphinx.getResultMapFragment().onResume();
         TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
-    }
-
-    private void history() {
-        if (plan != null) {
-            plan.updateHistory(mContext);
-        }
     }
 
     public Plan getData() {

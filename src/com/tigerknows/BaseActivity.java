@@ -4,10 +4,11 @@
 
 package com.tigerknows;
 
+import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
-import com.tigerknows.Sphinx.MyLocationListener;
+import com.tigerknows.util.AsyncImageLoader;
 import com.tigerknows.util.TKAsyncTask;
 
 import android.content.DialogInterface;
@@ -60,8 +61,10 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
         this.isReLogin = false;
         if (isRelogin) {
             if (mBaseQuerying != null) {
-                mBaseQuerying.setResponse(null);
-                queryStart(mBaseQuerying);
+            	for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
+	                mBaseQuerying.get(i).setResponse(null);
+            	}
+            	queryStart(mBaseQuerying);
             }
         }
         return isRelogin;
@@ -90,7 +93,7 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
                 
                 @Override
                 public void onClick(View arg0) {
-                    mActionLog.addAction(ActionLog.Title_Left_Back);
+                    mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
                     finish();
                 }
             });
@@ -104,12 +107,16 @@ public class BaseActivity extends TKActivity implements TKAsyncTask.EventListene
         if (!TextUtils.isEmpty(mActionTag)) {
             mActionLog.addAction(mActionTag);
         }
+        Globals.getAsyncImageLoader().setViewToken(mThis.toString());
     }
 
     @Override
     protected void onPause() {
         LogWrapper.d(TAG, "onPause()");
         super.onPause();
+        if (!TextUtils.isEmpty(mActionTag)) {
+            mActionLog.addAction(mActionTag + ActionLog.Dismiss);
+        }
     }
     
     @Override

@@ -12,6 +12,7 @@
 	    android:layout_height="wrap_content" />
 	
 	<ScrollView
+	    android:id="@+id/poi_error_recovery_scv"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
 	    android:layout_below="@id/title_view"
@@ -21,6 +22,7 @@
 	    android:fadingEdge="none"
         android:scrollingCache="false" >
 		<LinearLayout 
+		    android:id="@+id/poi_error_recovery_lly"
 		    android:layout_width="fill_parent" 
 		    android:layout_height="wrap_content"
 		    android:orientation="vertical"
@@ -127,7 +129,8 @@
 			    android:inputType="phone"
 			    android:maxLength="11"
 			    android:hint="@string/errorrecovery_user_phone"
-                android:background="@drawable/textfield" />
+                android:background="@drawable/textfield" 
+                android:phoneNumber="true"/>
 		</LinearLayout>
 	</ScrollView>
 </RelativeLayout>

@@ -18,6 +18,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.Yanchu;
+import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.view.SpringbackListView.IPagerList;
 import com.tigerknows.view.discover.CycleViewPager.CyclePagerAdapter;
 
@@ -39,7 +40,7 @@ public class YanchuDetailFragment extends BaseDetailFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mActionTag = ActionLog.YanchuXiangqing;
+        mActionTag = ActionLog.YanchuDetail;
     }
 
     @Override
@@ -83,6 +84,13 @@ public class YanchuDetailFragment extends BaseDetailFragment
         mDataList = dataList;
         setData(dataList.size(), position, iPagerList);
         refreshViews(position);
+        setViewsVisibility(View.VISIBLE);
+    }
+    
+    public void setPulledDynamicPOI(PulledDynamicPOI dynamicPOI){
+    	position = 0;
+        BaseDetailView baseDetailView = (BaseDetailView) mCyclePagerAdapter.viewList.get(position%mCyclePagerAdapter.viewList.size());
+        ((YanchuDetailView)baseDetailView).setPulledDynamicPOI(dynamicPOI);
     }
     
     public void viewMap() {
@@ -93,7 +101,7 @@ public class YanchuDetailFragment extends BaseDetailFragment
         poi.setAddress(data.getAddress());
         list.add(poi);
         mSphinx.showPOI(list, 0);
-        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.yanchu_didian_ditu), ActionLog.MapYanchuXiangqing);
+        mSphinx.getResultMapFragment().setData(mContext.getString(R.string.yanchu_didian_ditu), ActionLog.ResultMapYanchuDetail);
         super.viewMap();
     }
     
@@ -116,4 +124,5 @@ public class YanchuDetailFragment extends BaseDetailFragment
             view.onResume();
         }
     }
+    
 }

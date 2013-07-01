@@ -129,6 +129,7 @@ public class LocationService extends TKNetworkService {
             onStatusChanged(TigerknowsLocationManager.TIGERKNOWS_PROVIDER, LocationProvider.OUT_OF_SERVICE, null);
             return;
         }
+        //TODO:获取当前位置信息
         Location location = locationQuery.getLocation();
         
         if (location != null) {

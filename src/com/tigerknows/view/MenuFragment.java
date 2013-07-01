@@ -4,12 +4,10 @@
 
 package com.tigerknows.view;
 
-import com.decarta.Globals;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,12 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import java.util.Hashtable;
-
 import com.tigerknows.ActionLog;
-import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.DataQuery;
-import com.tigerknows.util.TKAsyncTask;
 
 /**
  * @author Peng Wenyue
@@ -102,31 +95,44 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.poi_btn:
-            	mActionLog.addAction(ActionLog.MenuSearch);
+            	mActionLog.addAction(ActionLog.MenuPOI);
                 mSphinx.uiStackClose(new int[]{R.id.view_home});
                 mSphinx.showView(R.id.view_home);
                 break;
             case R.id.discover_btn:
-                mSphinx.uiStackClose(new int[]{R.id.view_discover});
                 mActionLog.addAction(ActionLog.MenuDiscover);
+                mSphinx.uiStackClose(new int[]{R.id.view_discover});
                 mSphinx.showView(R.id.view_discover);
                 mSphinx.getDiscoverFragment().setCurrentItem(0);
                 if (mDiscvoerImv.getVisibility() == View.VISIBLE) {
                     mDiscvoerImv.setVisibility(View.GONE);
-                    mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_HOME, R.layout.hint_discover_home);
                 }
+                
+                /*
+                 * 通过这里的这个post可以消除android pad上面出现如下问题
+                 * 发现首页的团购的category上的那3个点不出现。
+                 * 原因不明。只有摩托的pad上边会有这个问题。其他的pad没有测试。
+                 */
+                post(new Runnable() {
+					@Override
+					public void run() {
+		                mSphinx.getDiscoverFragment().setCurrentItem(0);
+					}
+				});
+                mSphinx.showHint(TKConfig.PREFS_HINT_DISCOVER_HOME, R.layout.hint_discover_home);
+				
                 break;
             case R.id.traffic_btn:
+                mActionLog.addAction(ActionLog.MenuTraffic);
                 mSphinx.uiStackClose(new int[]{R.id.view_traffic_query});
-            	mActionLog.addAction(ActionLog.MenuTraffic);
             	mSphinx.getTrafficQueryFragment().setState(TrafficViewSTT.State.Normal);
             	//正常使用菜单进入交通，默认在起点显示我的位置。
             	mSphinx.getTrafficQueryFragment().setShowStartMyLocation(true);
                 mSphinx.showView(R.id.view_traffic_query);
                 break;
             case R.id.more_btn:
+                mActionLog.addAction(ActionLog.MenuMore);
                 mSphinx.uiStackClose(new int[]{R.id.view_more});
-            	mActionLog.addAction(ActionLog.MenuMore);
                 mSphinx.showView(R.id.view_more);
                 break;
 
@@ -150,7 +156,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         }
     }
     
-    public void setUpgrade(int visibility) {
+    public void setFragmentMessage(int visibility) {
         mUpgradeImv.setVisibility(visibility);
     }
     

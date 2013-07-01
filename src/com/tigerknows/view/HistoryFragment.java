@@ -140,6 +140,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
 
             AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
             if (info.position > -1 && info.position < (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? mPOIAdapter.getCount() : mTrafficAdapter.getCount())) {
+            	mActionLog.addAction(mActionTag + ActionLog.ListViewItemLong + getActionLogType(), String.valueOf(info.position));
                 mSelectIndex = info.position;
                 menu.add(0, MENU_DELETE, 0, R.string.delete);
             }
@@ -150,6 +151,17 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.History;
+    }
+    
+    String getActionLogType() {
+        String result =  null;
+        if (ItemizedOverlay.POI_OVERLAY.equals(mLayerType)) {
+            result = ActionLog.HistoryPOI;
+        } else if (ItemizedOverlay.TRAFFIC_OVERLAY.equals(mLayerType)) {
+            result = ActionLog.HistoryTraffic;
+        }
+        
+        return result;
     }
 
     @Override
@@ -198,9 +210,9 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
 
         if (mDismiss) {
             readPOI(mPOIList, Long.MAX_VALUE, 0, false);
+            mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize() && mPOIList.size() < Tigerknows.HISTORY_MAX_SIZE);
             readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
-            mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
-            mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize());
+            mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize() && mTrafficList.size() < Tigerknows.HISTORY_MAX_SIZE);
             if (mPOIList.isEmpty() && mTrafficList.isEmpty() == false) {
                 mLayerType = ItemizedOverlay.TRAFFIC_OVERLAY;
             }
@@ -210,12 +222,12 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 min = mPOIList.get(0).getDateTime();
             }
             readPOI(mPOIList, Long.MAX_VALUE, min, true);
+            checkData(ItemizedOverlay.POI_OVERLAY);
             
             if (mTrafficList.size() > 0) {
                 min = mTrafficList.get(0).getDateTime();
             }
             readTraffic(mTrafficList, Long.MAX_VALUE, min, true);
-            checkData(ItemizedOverlay.POI_OVERLAY);
             checkData(ItemizedOverlay.TRAFFIC_OVERLAY);
         }
         
@@ -258,7 +270,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
         
         List<View> viewList = new ArrayList<View>();
-        Drawable divider = mSphinx.getResources().getDrawable(R.drawable.bg_real_line);
+        Drawable divider = mSphinx.getResources().getDrawable(R.drawable.bg_line_split);
         mPOILsv = new SpringbackListView(mSphinx, null);
         mPOILsv.setFadingEdgeLength(0);
         mPOILsv.setScrollingCacheEnabled(false);
@@ -296,7 +308,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 if (position < adapterView.getCount()) {
                     History traffic = (History) adapterView.getAdapter().getItem(position);
                     if (traffic != null) {
-                        mActionLog.addAction(ActionLog.HistorySelectTraffic, position);
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem + ActionLog.HistoryTraffic, position);
                         showTrafficDetail(traffic);
                     }
                 }
@@ -311,9 +323,9 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 if (position < adapterView.getCount()) {
                     POI poi = (POI) adapterView.getAdapter().getItem(position);
                     if (poi != null) {
-                        mActionLog.addAction(ActionLog.HistorySelectPOI, position);
-                        mSphinx.getPOIDetailFragment().setData(poi);
+                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem + ActionLog.HistoryPOI, position);
                         mSphinx.showView(R.id.view_poi_detail);
+                        mSphinx.getPOIDetailFragment().setData(poi);
                     }
                 }
             }
@@ -358,7 +370,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         loadThread.layerType = ItemizedOverlay.POI_OVERLAY;
         loadThread.maxId = maxId;
         loadThread.start();
-        mActionLog.addAction(ActionLog.HistoryMore, 0);
+        mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore + ActionLog.HistoryPOI);
         }
     }
 
@@ -378,7 +390,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             loadThread.layerType = ItemizedOverlay.TRAFFIC_OVERLAY;
             loadThread.maxId = maxId;
             loadThread.start();
-            mActionLog.addAction(ActionLog.HistoryMore, 1);
+            mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore + ActionLog.HistoryTraffic);
         }
     }
     
@@ -387,6 +399,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         if (mSelectIndex > -1) {
             switch (item.getItemId()) {
                 case MENU_DELETE:
+                    mActionLog.addAction(mActionTag+ActionLog.HistoryMenuDelete + getActionLogType());
                     CommonUtils.showNormalDialog(mSphinx,
                             mContext.getString(R.string.prompt),
                             mContext.getString(mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? R.string.delete_a_history_poi : R.string.delete_a_history_traffic),
@@ -437,7 +450,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     public void onClick(View view) {
         switch (view.getId()) {                
             case R.id.right_btn:
-                mActionLog.addAction(ActionLog.HistoryRightDelete, (mLayerType.equals(ItemizedOverlay.POI_OVERLAY) ? "0" : "1"));
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton + getActionLogType());
 
                 int count = 0;
                 if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
@@ -472,12 +485,12 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 }
                 break;
             case R.id.poi_btn:
-                mActionLog.addAction(ActionLog.HistoryPOI);
+                mActionLog.addAction(mActionTag +  ActionLog.HistoryPOI);
                 mViewPager.setCurrentItem(0);
                 break;
                 
             case R.id.traffic_btn:
-                mActionLog.addAction(ActionLog.HistoryTraffic);
+                mActionLog.addAction(mActionTag +  ActionLog.HistoryTraffic);
                 mViewPager.setCurrentItem(1);
                 break;
                 
@@ -782,8 +795,8 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getDateTime(), true);
             } else {
                 readPOI(mPOIList, Long.MAX_VALUE, 0, false);
-                mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
             }
+            mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize() && mPOIList.size() < Tigerknows.HISTORY_MAX_SIZE);
             Collections.sort(mPOIList, mComparator);
             CommonUtils.keepListSize(mPOIList, Tigerknows.HISTORY_MAX_SIZE);
             mPOIAdapter.notifyDataSetChanged();
@@ -797,15 +810,15 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                 readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getDateTime(), true);
             } else {
                 readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
-                mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize());
             }
+            mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize() && mTrafficList.size() < Tigerknows.HISTORY_MAX_SIZE);
             Collections.sort(mTrafficList, mComparator);
             CommonUtils.keepListSize(mTrafficList, Tigerknows.HISTORY_MAX_SIZE);
             mTrafficAdapter.notifyDataSetChanged();
         }
         refreshContent();
-        mPOILsv.changeHeaderViewByState(false, SpringbackListView.DONE);
-        mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+//        mPOILsv.changeHeaderViewByState(false, SpringbackListView.DONE);
+//        mTrafficLsv.changeHeaderViewByState(false, SpringbackListView.DONE);
     }
     
     class MyPageChangeListener implements OnPageChangeListener {
@@ -825,11 +838,14 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         @Override
         public void onPageSelected(int position) {
             if (position == 0) {
+                mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, ActionLog.HistoryPOI);
                 changeTab(ItemizedOverlay.POI_OVERLAY);
             } else {
+                mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, ActionLog.HistoryTraffic);
                 changeTab(ItemizedOverlay.TRAFFIC_OVERLAY);
             }
         }
         
     }
+    
 }

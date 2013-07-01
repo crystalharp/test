@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 定位管理类
  * 
  * @author pengwenyue
  *
@@ -28,6 +29,9 @@ import java.util.List;
 public class TKLocationManager {
     
     static final String TAG = "TKLocationManager";
+    
+    public static final String GPS_COLLECTION_PROVIDER = "tk_gps_collection";
+    
     public static final int GPS_TIME_OUT = 60000;
     public static final int REQUEST_MIN_TIME = 10;
     public static final int REQUEST_MIN_DISTANCE = 10;

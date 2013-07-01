@@ -11,14 +11,18 @@
         android:layout_width="46dp"
         android:layout_height="60dp"
         android:background="@drawable/bg_picture_dianying"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="6dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="12dp"
         />
     <RelativeLayout
         android:id="@+id/body_view"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:orientation="vertical"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="8dp"
         >
         
         <TextView 
@@ -37,7 +41,7 @@
         
         <RatingBar android:id="@+id/stars_rtb"
             android:layout_width="wrap_content"
-            android:layout_height="18dp"
+            android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/name_txv"
             android:progressDrawable="@drawable/ratingbar_small"
@@ -52,7 +56,10 @@
         android:background="@color/infowindow_split_line"
         android:layout_height="fill_parent"
         android:layout_width="1dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="6dp"
         android:layout_marginRight="8dp"
+        android:layout_marginBottom="12dp"
         >
     </View>
     <Button 
@@ -61,5 +68,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/ic_goto_here"
         android:contentDescription="@string/app_name"
+        android:layout_marginTop="2dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
         />
 </LinearLayout>

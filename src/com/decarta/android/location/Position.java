@@ -10,13 +10,15 @@ import com.tigerknows.service.TigerknowsLocationManager;
 
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.io.Serializable;
 
 /**
  * immutable position object
  */
-public class Position implements Serializable{
+public class Position implements Serializable, Parcelable{
 
 	private static final long serialVersionUID = 1L;
 	private double lat;
@@ -120,4 +122,38 @@ public class Position implements Serializable{
         Location.distanceBetween(position1.getLat(), position1.getLon(), position2.getLat(), position2.getLon(), results);
         return (int)results[0];
     }
+    
+    public Position(Parcel in){
+		this.lat = in.readDouble();
+		this.lon = in.readDouble();
+		this.accuracy = in.readFloat();
+		this.type = in.readInt();
+    }
+
+    public static final Parcelable.Creator<Position> CREATOR
+		    = new Parcelable.Creator<Position>() {
+		public Position createFromParcel(Parcel in) {
+		    return new Position(in);
+		}
+		
+		public Position[] newArray(int size) {
+		    return new Position[size];
+		}
+	};
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeDouble(this.lat);
+		dest.writeDouble(this.lon);
+		dest.writeFloat(this.accuracy);
+		dest.writeInt(this.type);
+	}
+	
+	
+	
+	
 }

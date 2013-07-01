@@ -16,6 +16,7 @@ import android.view.animation.Animation;
 import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.util.TKAsyncTask;
 import com.tigerknows.view.SpringbackListView;
 import com.tigerknows.view.SpringbackListView.IPagerList;
@@ -34,7 +35,7 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
         // TODO Auto-generated constructor stub
     }
     
-    protected int position = -1;
+    protected int position = 0;
     
     protected ViewPager mViewPager = null;
     
@@ -106,7 +107,6 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
         mCycleOnPageChangeListener.count = mCyclePagerAdapter.count;
         mCyclePagerAdapter.notifyDataSetChanged();
         mViewPager.setCurrentItem(position);
-        this.position = -1;
     }
 
     protected void findViews() {
@@ -117,14 +117,14 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     }
 
     protected void setListener() {
-        mCycleOnPageChangeListener = new CycleOnPageChangeListener(mContext, this, this);
+        mCycleOnPageChangeListener = new CycleOnPageChangeListener(mContext, this, this, mActionTag);
         mViewPager.setOnPageChangeListener(mCycleOnPageChangeListener);
     }
 
     public void onClick(View view) {
         switch (view.getId()) {                
             case R.id.right_btn:
-                mActionLog.addAction(ActionLog.Title_Right_Button);
+                mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 viewMap();
                 break;
         }
@@ -143,6 +143,24 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
                 break;
             }
         }
+    }
+    
+    @Override
+    public void onCancelled(TKAsyncTask tkAsyncTask) {
+        super.onCancelled(tkAsyncTask);
+        
+        for(int i = mCyclePagerAdapter.viewList.size()-1; i >= 0; i--) {
+            BaseDetailView view = (BaseDetailView) mCyclePagerAdapter.viewList.get(i);
+            if (view.onCancel(tkAsyncTask)) {
+                break;
+            }
+        }
+        
+        if (tkAsyncTask.getBaseQuery().isPulledDynamicPOIRequest()) {
+            dismiss();
+        }
+
+        
     }
     
     public void refreshViews(int position) {
@@ -216,5 +234,14 @@ public class BaseDetailFragment extends DiscoverBaseFragment implements View.OnC
     public void scheduleDismissOnScreenControls() {
         mSphinx.getHandler().removeCallbacks(mDismissOnScreenControlRunner);
         mSphinx.getHandler().postDelayed(mDismissOnScreenControlRunner, 2000);
+    }
+
+    public void setPulledDynamicPOI(PulledDynamicPOI dynamicPOI){
+    }
+    
+    void setViewsVisibility(int visibility){
+        for (View view : mCyclePagerAdapter.viewList) {
+            view.setVisibility(visibility);
+        }
     }
 }

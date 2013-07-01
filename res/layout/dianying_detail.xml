@@ -54,7 +54,7 @@
 
                 <RatingBar android:id="@+id/stars_rtb"
                     android:layout_width="wrap_content"
-                    android:layout_height="18dp"
+                    android:layout_height="wrap_content"
                     android:layout_toRightOf="@id/picture_imv"
                     android:layout_below="@id/name_txv"
                     android:layout_marginLeft="10dp"
@@ -194,7 +194,7 @@
                     />
              </RelativeLayout>
              
-             <View
+             <ImageView
                  android:background="@drawable/bg_line_split"
                  android:layout_width="fill_parent"
                  android:layout_height="wrap_content"

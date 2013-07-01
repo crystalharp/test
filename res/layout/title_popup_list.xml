@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/left_view"
         android:layout_toLeftOf="@id/right_view"
-        android:divider="@drawable/bg_real_line"
+        android:divider="@drawable/bg_line_split"
         android:drawSelectorOnTop="false"
         android:scrollingCache="false"
         android:footerDividersEnabled="false"

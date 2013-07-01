@@ -79,11 +79,11 @@ public class DiscoverTopIndicator extends View {
        
     public void onDraw(Canvas canvas){   
         super.onDraw(canvas);
-        int temp = (int)(width * DiscoverFragment.DISCOVER_WIDHT_RATE);
+        int discoverCategoryWidth = (int)(width * DiscoverFragment.DISCOVER_WIDHT_RATE);
         if (leftStr != null) {
-            if (Math.abs(leftOffset) > (temp/2-textWidth/2)) {
+            if (Math.abs(leftOffset) > (discoverCategoryWidth/2-textWidth/2)) {
                 if (rightRightStr != null) {
-                    canvas.drawText(rightRightStr, (width)-(Math.abs(leftOffset) - (temp/2-textWidth/2)), fontSize, mLeftPaint);
+                    canvas.drawText(rightRightStr, (width)-(Math.abs(leftOffset) - (discoverCategoryWidth/2-textWidth/2)), fontSize, mLeftPaint);
                 }
             } else {
                 canvas.drawText(leftStr, rightOffset+leftOffset, fontSize, mLeftPaint);   
@@ -93,9 +93,9 @@ public class DiscoverTopIndicator extends View {
             canvas.drawText(centerStr, (width/2)+(leftOffset+rightOffset)-(textWidth/2), fontSize, mCenterPaint);  
         }
         if (rightStr != null) {
-            if (rightOffset > (temp/2-textWidth/2)) {
+            if (rightOffset > (discoverCategoryWidth/2-textWidth/2)) {
                 if (leftLeftStr != null) {
-                    canvas.drawText(leftLeftStr, (rightOffset-(temp/2-textWidth/2))-textWidth, fontSize, mRightPaint);
+                    canvas.drawText(leftLeftStr, (rightOffset-(discoverCategoryWidth/2-textWidth/2))-textWidth, fontSize, mRightPaint);
                 }
             } else {
                 canvas.drawText(rightStr, (width-textWidth)+leftOffset+rightOffset, fontSize, mRightPaint);   
@@ -122,6 +122,7 @@ public class DiscoverTopIndicator extends View {
             rightOffset = (int) (positionOffsetPixels);
             updateColor(positionOffset);
         }
+        System.out.println("Top indicator OnPageScroll. leftOffset: " + leftOffset + " rightOffset: " + rightOffset);
         invalidate();
     }
 
@@ -134,6 +135,7 @@ public class DiscoverTopIndicator extends View {
         leftOffset = 0;
         rightOffset = 0;
         updateColor(0);
+        System.out.println("On page selected: " + toString());
         invalidate();
     }
 
@@ -200,4 +202,15 @@ public class DiscoverTopIndicator extends View {
     public int getTextWidth() {
         return textWidth;
     }
+
+	@Override
+	public String toString() {
+		return "DiscoverTopIndicator [leftStr=" + leftStr + ", centerStr="
+				+ centerStr + ", rightStr=" + rightStr + ", leftLeftStr="
+				+ leftLeftStr + ", rightRightStr=" + rightRightStr + ", width="
+				+ width + ", textWidth=" + textWidth + ", leftOffset="
+				+ leftOffset + ", rightOffset=" + rightOffset + "]";
+	}
+    
+    
 }

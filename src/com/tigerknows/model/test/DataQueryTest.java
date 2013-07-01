@@ -9,6 +9,7 @@ import com.tigerknows.model.Comment;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.PullMessage;
 import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.model.Tuangou;
@@ -39,6 +40,8 @@ import com.tigerknows.model.DataQuery.YanchuResponse.YanchuList;
 import com.tigerknows.model.DataQuery.ZhanlanResponse.ZhanlanList;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.DynamicPOI;
+import com.tigerknows.model.PullMessage.Message;
+import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XInt;
@@ -596,13 +599,13 @@ public class DataQueryTest {
         data.put(POI.FIELD_ADDRESS, "FIELD_ADDRESS");
         data.put(POI.FIELD_URL, "FIELD_URL");
         data.put(POI.FIELD_TO_CENTER_DISTANCE, "12km");
-        data.put(POI.FIELD_COMMENT_SUMMARY, "FIELD_COMMENT_SUMMARY");
         data.put(POI.FIELD_COMMENT_PATTERN, POI.COMMENT_PATTERN_FOOD);
         data.put(POI.FIELD_ATTRIBUTE, 1);
         data.put(POI.FIELD_STATUS, 1);
+        data.put(POI.FIELD_LAST_COMMENT, launchDianping("FIELD_LAST_COMMENT"));
         XArray<XMap> xarray = new XArray<XMap>();
-        for(int i = 0; i < 16; i ++) {
-            xarray.add(launchDynamicPOI(i));
+        for(int i = 0; i < 168; i ++) {
+            xarray.add(launchDynamicPOI(i%15));
         }
         data.put(POI.FIELD_DYNAMIC_POI, xarray);
         return data;
@@ -623,7 +626,7 @@ public class DataQueryTest {
         XMap data = new XMap();
         data.put(DynamicPOI.FIELD_TYPE, type);
         data.put(DynamicPOI.FIELD_MASTER_UID, "FIELD_MASTER_UID");
-        data.put(DynamicPOI.FIELD_SUMMARY, "FIELD_SUMMARY");
+        data.put(DynamicPOI.FIELD_SUMMARY, "FIELD_SUMMARY"+type);
         data.put(DynamicPOI.FIELD_SLAVE_UID, "FIELD_SLAVE_UID");
         return data;
     }
@@ -669,6 +672,37 @@ public class DataQueryTest {
         data.put(Comment.FIELD_URL, "FIELD_URL");
         data.put(Comment.FIELD_CLIENT_UID, "FIELD_CLIENT_UID");
         data.put(Comment.FIELD_SOURCE, "test");
+        return data;
+    }
+
+    public static XMap launchPullMessage() {
+        XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        data.put(PullMessage.FIELD_REQUEST_INTERVAL_DAYS, 1);
+        data.put(PullMessage.FIELD_RECORD_MESSAGE_UPPER_LIMIT, 12);
+        XArray<XMap> xArray = new XArray<XMap>();
+        xArray.add(launchMessage());
+        data.put(PullMessage.FIELD_MESSAGE, xArray);
+        return data;
+    }
+    
+    protected static XMap launchMessage() {
+        XMap data = new XMap();
+        data.put(Message.FIELD_MESSAGE_ID, 10);
+        data.put(Message.FIELD_CITY_ID, "1");
+        data.put(Message.FIELD_EXPIRY_DATE, "2013-01-03");
+        data.put(Message.FIELD_MSG_TYPE, Message.TYPE_FILM);
+        data.put(Message.FIELD_POI_INFO, launchPulledDynamicPOI());
+        return data;
+    }
+    
+    protected static XMap launchPulledDynamicPOI() {
+        XMap data = new XMap();
+        data.put(PulledDynamicPOI.FIELD_MASTER_POI_TYPE, Integer.parseInt(BaseQuery.DATA_TYPE_DIANYING));
+        data.put(PulledDynamicPOI.FIELD_MASTER_POI_UID, "FIELD_MASTER_POI_UID");
+        data.put(PulledDynamicPOI.FIELD_SLAVE_POI_TYPE, Integer.parseInt(BaseQuery.DATA_TYPE_YINGXUN));
+        data.put(PulledDynamicPOI.FIELD_SLAVE_POI_UID, "FIELD_SLAVE_POI_UID");
+        data.put(PulledDynamicPOI.FIELD_POI_DESCRIPTION, "FIELD_POI_DESCRIPTION");
         return data;
     }
 }

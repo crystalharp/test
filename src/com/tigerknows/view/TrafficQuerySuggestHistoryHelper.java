@@ -10,6 +10,7 @@ import android.widget.ListView;
 
 import com.decarta.android.location.Position;
 import com.decarta.android.util.Util;
+import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.POI;
@@ -31,11 +32,15 @@ public class TrafficQuerySuggestHistoryHelper {
 	
 	SuggestArrayAdapter mSuggestArrayAdapter;
 	
-	List<TKWord> mTKWordList = new ArrayList<TKWord>();
+	ListView mSuggestLsv;
+	
+	//下轮优化都改成LinkedList
+	List<TKWord> mTKWordList = new LinkedList<TKWord>();
 	
 	public TrafficQuerySuggestHistoryHelper(Context context, TrafficQueryFragment queryFragment, ListView listView) {
 		mQueryFragment = queryFragment;
 		mSuggestArrayAdapter = new SuggestArrayAdapter(context, R.layout.suggest_list_item, mTKWordList);
+		mSuggestLsv = listView;
 		mSuggestArrayAdapter.setCallBack(new CallBack() {
             
             @Override
@@ -57,13 +62,6 @@ public class TrafficQuerySuggestHistoryHelper {
         });
 		listView.setAdapter(mSuggestArrayAdapter);
 	}
-
-	public void check() {
-    	int cityId = mQueryFragment.mMapLocationHelper.getQueryCityInfo().getId();
-    	mQueryFragment.mSphinx.getMapEngine().suggestwordCheck(mQueryFragment.mSphinx, cityId);
-        HistoryWordTable.readHistoryWord(mQueryFragment.mContext, cityId, HistoryWordTable.TYPE_TRAFFIC);
-        HistoryWordTable.readHistoryWord(mQueryFragment.mContext, cityId, HistoryWordTable.TYPE_BUSLINE);
-    }
 	
 	public void refresh(final Context context, final TKEditText tkEditText, final int type) {
 	    mTKWordList.clear();
@@ -80,7 +78,6 @@ public class TrafficQuerySuggestHistoryHelper {
                 break;
             default:
             }
-            
             int historyNum=0;
             if (TextUtils.isEmpty(searchWord)) {
                 // 显示历史词
@@ -109,11 +106,11 @@ public class TrafficQuerySuggestHistoryHelper {
             mSuggestArrayAdapter.key = searchWord;
 	    }
         mSuggestArrayAdapter.notifyDataSetChanged();
+        mSuggestLsv.setSelectionFromTop(0, 0);
 	}
 
 	public void suggestSelect(POI poi, int index) {
 		
-        mQueryFragment.mLogHelper.logForSuggestDispatch(mQueryFragment.mSelectedEdt, index);
         mQueryFragment.mSelectedEdt.setPOI(poi);
 		
 		if (mQueryFragment.mTrafficQueryBtn.isEnabled() || mQueryFragment.mBuslineQueryBtn.isEnabled()) {
