@@ -98,23 +98,22 @@
         <LinearLayout 
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             >
-            <Button 
+            <RadioButton android:id="@+id/tel_connect_rbt"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="打不通"
-                android:layout_margin="8dp"
+                android:textColor="@color/black"
+                android:button="@drawable/rdb_recovery"
                 />
-            <Button 
+            <RadioButton android:id="@+id/tel_notthis_rbt"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:text="不是此商户"
-                android:layout_margin="8dp"
+                android:textColor="@color/black"
+                android:button="@drawable/rdb_recovery"
                 />
-            
         </LinearLayout>
         
         <TextView 
@@ -125,13 +124,58 @@
             android:layout_gravity="left|center_vertical"
             android:padding="8dp"
             />
-
+    </LinearLayout>
+    <LinearLayout android:id="@+id/notexist_lly"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tel_lly" 
+        android:orientation="vertical"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:visibility="gone"
+        >
+        
+        <RadioButton android:id="@+id/tel_notthis_rbt"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="停业中"
+            android:textColor="@color/black"
+            android:button="@drawable/rdb_recovery"
+            />
+        <RadioButton android:id="@+id/tel_notthis_rbt"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="已拆迁"
+            android:textColor="@color/black"
+            android:button="@drawable/rdb_recovery"
+            />
+        <RadioButton android:id="@+id/tel_notthis_rbt"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="已搬迁"
+            android:textColor="@color/black"
+            android:button="@drawable/rdb_recovery"
+            />
+        <RadioButton android:id="@+id/tel_notthis_rbt"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="没找到"
+            android:textColor="@color/black"
+            android:button="@drawable/rdb_recovery"
+            />
+        <RadioButton android:id="@+id/tel_notthis_rbt"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="其他"
+            android:textColor="@color/black"
+            android:button="@drawable/rdb_recovery"
+            />
     </LinearLayout>
 	<LinearLayout android:id="@+id/main_lly"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/list_header"
-        android:layout_below="@id/tel_lly"
+        android:background="@drawable/list_single"
+        android:layout_below="@id/notexist_lly"
         android:orientation="horizontal"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -145,14 +189,14 @@
 	        android:textColor="@color/orange"
 	        android:textSize="16sp"
 	        />
-		<TextView 
+		<TextView android:id="@+id/main_txv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="地　　址"
             android:textSize="16sp"
 	        android:layout_gravity="left|center_vertical"
             />
-		<EditText 
+		<EditText android:id="@+id/main_edt"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:maxLength="80"
@@ -164,9 +208,11 @@
 		    android:singleLine="true"
 		    android:ellipsize="end"
 		    android:background="@color/transparent"
-		    />        
+		    android:hint="@string/app_name"
+		    android:layout_gravity="left|center_vertical"
+		    />
     </LinearLayout>
-    <LinearLayout android:id="@+id/type_lly"
+	<LinearLayout android:id="@+id/type_lly"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/list_footer"
@@ -175,15 +221,6 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         >
-	    <TextView
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_marginRight="4dp"
-	        android:layout_gravity="left|center_vertical"
-	        android:text="@string/need_star"
-	        android:textColor="@color/orange"
-	        android:textSize="16sp"
-	        />
 		<TextView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -191,25 +228,51 @@
             android:textSize="16sp"
 	        android:layout_gravity="left|center_vertical"
             />
-		<Button 
+		<EditText android:id="@+id/type_edt"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:maxLength="80"
+	        android:textSize="14sp"
 		    android:layout_marginTop="2dp"
 		    android:layout_marginBottom="2dp"
+		    android:focusable="true"
+		    android:focusableInTouchMode="true"
+		    android:singleLine="true"
+		    android:ellipsize="end"
 		    android:background="@color/transparent"
-		    android:drawableRight="@drawable/ic_view_all_comment"
-		    android:padding="8dp"
-               android:layout_gravity="left|center_vertical"
-		    />        
+		    />
     </LinearLayout>
+    <LinearLayout android:id="@+id/description_lly"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/list_single"
+        android:orientation="horizontal"
+        android:layout_below="@id/type_lly"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        >
+		<EditText android:id="@+id/description_edt"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:minLines="5"
+		    android:singleLine="false"
+		    android:hint="请详细描述报错内容"
+		    android:gravity="top|left"
+		    android:isScrollContainer="true"
+		    android:background="@color/transparent"
+		    android:focusable="true"
+		    android:focusableInTouchMode="true"
+		    />
+        
+    </LinearLayout>
+	
 	<LinearLayout android:id="@+id/contact_lly"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_below="@id/type_lly"
+        android:layout_below="@id/description_lly"
         >
         
 
@@ -227,7 +290,7 @@
 	            android:textSize="16sp"
 		        android:layout_gravity="left|center_vertical"
 	            />
-			<EditText 
+			<EditText android:id="@+id/contact_edt"
 		        android:layout_width="fill_parent"
 		        android:layout_height="wrap_content"
 		        android:maxLength="80"
@@ -248,7 +311,8 @@
 	        android:layout_height="wrap_content"
 	        android:singleLine="false"
 	        android:text="@string/erreport_note"
-	        android:textSize="14sp"/>
+	        android:textSize="14sp"
+	        />
     </LinearLayout>
     
     </RelativeLayout>
