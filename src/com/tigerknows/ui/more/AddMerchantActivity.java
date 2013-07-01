@@ -44,6 +44,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
 	private ScrollView mAddMerchantScv;
     private Button mShanghuleixingBtn;
     private EditText mShanghumingchengEdt = null;
+    private Button mCityBtn;
     private EditText mShanghudizhiEdt = null;
     private EditText mShanghudianhuaEdt = null;
     private EditText mYingyeshijianEdt = null;
@@ -69,7 +70,10 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mAddMerchantTypes = mThis.getResources().getStringArray(R.array.add_merchant_type);
         mShanghumingchengEdt.requestFocus();
         
-        mShanghudianhuaEdt.setText(Utility.getAreaCodeByCityId(Globals.getCurrentCityInfo().getId())+"-");
+        CityInfo cityInfo = Globals.getCurrentCityInfo();
+        
+        mCityBtn.setText(cityInfo.getCName());
+        mShanghudianhuaEdt.setText(MapEngine.getAreaCodeByCityId(cityInfo.getId())+"-");
         
         Intent intent = getIntent();
         if (intent != null) {

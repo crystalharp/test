@@ -32,6 +32,7 @@ import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserCommentAfterActivity;
 import com.tigerknows.ui.user.UserUpdateNickNameActivity;
 import com.tigerknows.util.Utility;
+import com.tigerknows.widget.MultichoiceArrayAdapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -706,7 +707,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                 }
             }
             
-            final MultichoiceArrayAdapter multichoiceArrayAdapter = new MultichoiceArrayAdapter(mThis, mRestairArray);
+            final MultichoiceArrayAdapter multichoiceArrayAdapter = new MultichoiceArrayAdapter(mThis, mRestairArray, mRestairChecked);
             ListView listView = Utility.makeListView(mThis);
             listView.setAdapter(multichoiceArrayAdapter);
             listView.setOnItemClickListener(new OnItemClickListener() {
@@ -1268,30 +1269,5 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             }
         }
         return false;
-    }
-    
-    class MultichoiceArrayAdapter extends ArrayAdapter<String> {
-        
-        static final int RESOURCE_ID = R.layout.select_dialog_multichoice;
-        
-        public MultichoiceArrayAdapter(Context context, String[] list) {
-            super(context, RESOURCE_ID, list);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view;
-            if (convertView == null) {
-                view = mLayoutInflater.inflate(RESOURCE_ID, parent, false);
-            } else {
-                view = convertView;
-            }
-            
-            CheckedTextView textView = (CheckedTextView)view.findViewById(R.id.text1);
-            textView.setText(mRestairArray[position]);
-            textView.setChecked(mRestairChecked[position]);
-
-            return view;
-        }
     }
 }
