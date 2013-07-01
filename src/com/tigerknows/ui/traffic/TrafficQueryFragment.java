@@ -88,8 +88,6 @@ public class TrafficQueryFragment extends BaseFragment {
 	
 	private int mSettedRadioBtn = 0;
 	
-	private boolean mDismissed = true;
-	
 	boolean showStartMyLocation = true;
 
 	FrameLayout mTitle;
@@ -267,7 +265,6 @@ public class TrafficQueryFragment extends BaseFragment {
     	mBusline.clear();
     	showStartMyLocation = true; 
     	mSelectedEdt = mStart;
-    	mDismissed = true;
     	
     	/*
     	 * BUG 187
