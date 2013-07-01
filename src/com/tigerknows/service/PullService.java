@@ -86,6 +86,12 @@ public class PullService extends Service {
     public final static int requestStartHour = 9;
     public final static int requestEndHour = 21;
     int fail = 0;
+    int requsetIntervalDays;
+    
+    public final static int STAT_SUCCESS = 0;
+    public final static int STAT_NULL = 1;
+    public final static int STAT_NORMAL_FAIL = 2;
+    public final static int STAT_RAND_TIME_NEXT_DAY = 3;
     
     public static PullAlarmAction alarmAction = new PullAlarmAction();
     
@@ -102,6 +108,7 @@ public class PullService extends Service {
             public void run() {
                 TKConfig.readConfig();
                 long currentTimeMillis = System.currentTimeMillis();
+                requsetIntervalDays = 1;
                 
                 Context context = getApplicationContext();
                 
@@ -114,18 +121,11 @@ public class PullService extends Service {
 
                 Calendar requestCal = Calendar.getInstance();
                 requestCal.setTimeInMillis(currentTimeMillis);
-                Calendar next = (Calendar) requestCal.clone();
                 //如果不在请求时间范围内，肯定是请求失败被推迟的定时器，推迟到第二天的随机时间再请求
                 if (requestCal.getTime().getHours() >= requestEndHour ||requestCal.getTime().getHours() < requestStartHour) {
-                    fail = 0;
-                    next = Alarms.calculateRandomAlarmInNextDay(requestCal, requestStartHour, requestEndHour);
-                    exitService(next);
+                    exitService(STAT_RAND_TIME_NEXT_DAY, requestCal);
                     return;
                 }
-                //TODO:普通失败，推迟一天
-                next.add(Calendar.MINUTE, TKConfig.PullServiceFailedRetryTime);
-//                Alarms.alarmAddHours(next, 1);
-                
                 
                 // 获取当前城市
                 CityInfo currentCityInfo = Globals.getLastCityInfo(getApplicationContext());
@@ -133,7 +133,7 @@ public class PullService extends Service {
                 LogWrapper.d(TAG, "currentCityInfo="+currentCityInfo);
                 // 安装后从来没有使用过老虎宝典的情况
                 if (currentCityInfo == null || currentCityInfo.isAvailably() == false) {
-                    exitService(next);
+                    exitService(STAT_NULL, requestCal);
                     return;
                 }
                 
@@ -153,8 +153,7 @@ public class PullService extends Service {
                         e.printStackTrace();
                     }
                 } else {
-                    fail += 1;
-                    exitService(next);
+                    exitService(STAT_NORMAL_FAIL, requestCal);
                     return;
                 }
                 LogWrapper.d(TAG, "locationCityInfo="+locationCityInfo);
@@ -183,29 +182,28 @@ public class PullService extends Service {
                     Response response = dataQuery.getResponse();
                     if (response != null && response.getResponseCode() == 200 && response instanceof PullMessage) {
                         PullMessage pullMessage = (PullMessage) response;
-                        fail = 0;
-                        next = processPullMessage(context, pullMessage, requestCal);
+                        processPullMessage(context, pullMessage, requestCal);
                         //推送成功,设置为定时器触发模式
                         TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_TRIGGER_MODE, TRIGGER_MODE_ALARM);
-                    } else {
-                        fail += 1;
+                        exitService(STAT_SUCCESS, requestCal);
+                        return;
                     }
                 } else {
                     //定位城市与设置城市不符，则跳到第二天的随机时间
-                    fail = 0;
-                    next = Alarms.calculateRandomAlarmInNextDay(next, requestStartHour, requestEndHour);
+                    exitService(STAT_RAND_TIME_NEXT_DAY, requestCal);
+                    return;
                 }
                 
                 // 退出并设置下一个定时器
-                exitService(next);
+                exitService(STAT_NORMAL_FAIL, requestCal);
             }
         }).start();
     }
 
-    public Calendar processPullMessage(Context context, PullMessage pullMessage, Calendar requestCal) {
+    public void processPullMessage(Context context, PullMessage pullMessage, Calendar requestCal) {
         
         long recordMessageUpperLimit = pullMessage.getRecordMessageUpperLimit();
-        int requsetIntervalDays = pullMessage.getRequsetIntervalDays();
+        requsetIntervalDays = pullMessage.getRequsetIntervalDays();
         LogWrapper.d(TAG, "interval day:" + requsetIntervalDays);
         TKConfig.setPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_UPPER_LIMIT, String.valueOf(pullMessage.getRecordMessageUpperLimit()));
         String messageIdList = TKConfig.getPref(context, TKConfig.PREFS_RADAR_RECORD_MESSAGE_ID_LIST, "");
@@ -239,8 +237,6 @@ public class PullService extends Service {
             }
             TKNotificationManager.notify(context, message);
         }
-        
-        return Alarms.alarmAddDays(requestCal, requsetIntervalDays);
     }
 
     @Override
@@ -253,7 +249,7 @@ public class PullService extends Service {
         super.onDestroy();
     }
     
-    void exitService(Calendar next) {
+    void exitService(int status, Calendar now) {
         LogWrapper.d(TAG, "failed times = " + fail);
         
         Context context = getApplicationContext();
@@ -262,16 +258,35 @@ public class PullService extends Service {
             //如果是网络触发模式,则不设置定时器,只把失败次数归零
             LogWrapper.d(TAG, "failed in net trigger mode, do not set Alarm.");
             fail = 0;
-        } else if (fail >= MaxFail || next == null) {
-            //如果定时器模式下超过了最大重试次数,则转为联网触发模式
-            fail = 0;
-            LogWrapper.d(TAG, "failed too many times, change to net trigger mode.");
-            TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_TRIGGER_MODE, TRIGGER_MODE_NET);
         } else {
-            //正常的定时器模式
-            LogWrapper.d(TAG, "next Alarm: " + next.getTime().toLocaleString());
-            Alarms.enableAlarm(context, next, alarmAction);
-        }
+            //如果是正常定时器触发模式
+            Calendar next = (Calendar) now.clone();
+            switch (status) {
+            case STAT_NORMAL_FAIL:
+                fail += 1; 
+                next.add(Calendar.MINUTE, TKConfig.PullServiceFailedRetryTime);
+                break;
+            case STAT_RAND_TIME_NEXT_DAY:
+                fail = 0;
+                next = Alarms.calculateRandomAlarmInNextDay(next, requestStartHour, requestEndHour);
+                break;
+            case STAT_SUCCESS:
+                fail = 0;
+                next = Alarms.alarmAddDays(now, requsetIntervalDays);
+                break;
+            default:
+                break;
+            }
+            if (fail >= MaxFail) {
+                LogWrapper.d(TAG, "failed too many times, change to net trigger mode.");
+                TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_TRIGGER_MODE, TRIGGER_MODE_NET);
+                fail = 0;
+            } else {
+                LogWrapper.d(TAG, "next Alarm: " + next.getTime().toLocaleString());
+                Alarms.enableAlarm(context, next, alarmAction);
+            }
+        } 
+            
         TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_FAILED_TIMES, String.valueOf(fail));
         
         Intent name = new Intent(context, PullService.class);

@@ -91,8 +91,6 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
     
     private String mPOIWhere;
     
-    private boolean mDismiss = true;
-    
     protected Drawable mPOIEmpty;
     
     protected Drawable mTrafficEmpty;
@@ -210,7 +208,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         mRightBtn.setOnClickListener(this);
         mRightBtn.setBackgroundResource(R.drawable.btn_delete_all);
 
-        if (mDismiss) {
+        if (mDismissed) {
             readPOI(mPOIList, Long.MAX_VALUE, 0, false);
             mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize() && mPOIList.size() < Tigerknows.HISTORY_MAX_SIZE);
             readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
@@ -247,11 +245,10 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             }
         }
         
-        if (mDismiss) {
+        if (mDismissed) {
             mPOILsv.setSelectionFromTop(0, 0);
             mTrafficLsv.setSelectionFromTop(0, 0);
         }
-        mDismiss = false;
     }
 
     @Override
@@ -262,7 +259,6 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         mPOIAdapter.notifyDataSetChanged();
         mTrafficAdapter.notifyDataSetChanged();
         mLayerType = ItemizedOverlay.POI_OVERLAY;
-        mDismiss = true;
         mViewPager.setCurrentItem(0);
     }
 

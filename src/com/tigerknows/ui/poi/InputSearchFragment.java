@@ -4,10 +4,7 @@
 
 package com.tigerknows.ui.poi;
 
-import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
 
 import android.os.Bundle;
 import android.text.Editable;
@@ -34,14 +31,12 @@ import com.tigerknows.Sphinx;
 import com.tigerknows.android.widget.TKEditText;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.TKWord;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.widget.SuggestArrayAdapter;
 import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
 import com.tigerknows.widget.SuggestWordListManager;
 
@@ -222,7 +217,7 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD_TYPE, DataQuery.KEYWORD_TYPE_INPUT);
             poiQuery.setup(criteria, cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
             mSphinx.queryStart(poiQuery);
-            ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup();
+            ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup(keyword);
             mSphinx.showView(poiQuery.getTargetViewId());
         } else {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);

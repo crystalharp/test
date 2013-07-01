@@ -18,31 +18,24 @@
 package com.tigerknows.share;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.text.Html;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.View.OnClickListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.tencent.tauth.TAuthView;
 import com.tigerknows.R;
+import com.tigerknows.android.app.TKActivity;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.share.TKTencentOpenAPI.AuthReceiver;
 import com.tigerknows.ui.BaseActivity;
 
-public class QZoneSendActivity extends BaseActivity implements OnClickListener {
+public class QZoneSendActivity extends BaseActivity implements View.OnClickListener, TKActivity.IAuthorizeCallback {
 	
     private Button mLogoutBtn;
 
@@ -54,67 +47,30 @@ public class QZoneSendActivity extends BaseActivity implements OnClickListener {
 
     private String mContent = "";
     
-    private ShareAPI.LoginCallBack mLoginCallBack = new ShareAPI.LoginCallBack() {
-        
-        @Override
-        public void onSuccess() {
-            QZoneSendActivity.this.runOnUiThread(new Runnable() {
-                
-                @Override
-                public void run() {
-                    checkUserAccessIdenty(false);
-                }
-            });
-        }
-
-        @Override
-        public void onFailed() {
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-    
-    private AuthReceiver mTencentAuthReceiver;
-
     @Override
-    protected Dialog onCreateDialog(int id) {
-        Dialog dialog = null;
-        switch (id) {
-        case R.id.dialog_share_doing:
-            dialog = new ProgressDialog(this);
-            dialog.setCancelable(false);
-            dialog.setCanceledOnTouchOutside(false);
-            ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait));
-            dialog.setOnDismissListener(new OnDismissListener() {
-                
-                @Override
-                public void onDismiss(DialogInterface arg0) {
-                    mActionLog.addAction(ActionLog.Dialog + ActionLog.Dismiss);
-                    checkUserAccessIdenty(false);
-                }
-            });
-            break;
+    public void onSuccess(String type) {
+        if (ShareAPI.TYPE_TENCENT.equals(type)) {
+            checkUserAccessIdenty(false);
         }
-        
-        return dialog;
     }
-    
-    private boolean checkUserAccessIdenty(boolean needLogin) {
+        
+    private boolean checkUserAccessIdenty(boolean needAuthorize) {
+        boolean result;
         UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(QZoneSendActivity.this, ShareAPI.TYPE_TENCENT);
         if (userAccessIdenty == null) {
-            if (needLogin) {
-                TKTencentOpenAPI.login(QZoneSendActivity.this);
-            }
+            result = false;
             mLogoutBtn.setText(R.string.back);
-            mTitleTxv.setText(R.string.share_tiger_user);
+            mTitleTxv.setText(null);
+            if (needAuthorize) {
+                authorizeTencent(this);
+            }
         } else {
+            result = true;
             mLogoutBtn.setText(R.string.logout);
             mTitleTxv.setText(Html.fromHtml(userAccessIdenty.getUserName()));
         }
         
-        return userAccessIdenty != null;
+        return result;
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -129,14 +85,14 @@ public class QZoneSendActivity extends BaseActivity implements OnClickListener {
         findViews();
         setListener();
         
+        initQZone();
+        
         Intent in = this.getIntent();
         
         mContent = in.getStringExtra(ShareAPI.EXTRA_SHARE_CONTENT);
         mTextEdt.setText(mContent);
         mTextEdt.requestFocus();
         
-        mTencentAuthReceiver = new AuthReceiver(this, mLoginCallBack);
-        registerIntentReceivers();
         checkUserAccessIdenty(true);
     }
 
@@ -169,12 +125,13 @@ public class QZoneSendActivity extends BaseActivity implements OnClickListener {
         int viewId = v.getId();
         switch (viewId) {
             case R.id.logout_btn: {
-                if (checkUserAccessIdenty(false) == false) {
-                mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton, String.valueOf(checkUserAccessIdenty(false)));
-                    QZoneSendActivity.this.finish();
+                boolean finish = (checkUserAccessIdenty(false) == false);
+                mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton, finish);
+                hideInputMethodManager();
+                if (finish) {
+                    finish();
                     return;
                 }
-                hideInputMethodManager();
                 TKTencentOpenAPI.logout(QZoneSendActivity.this);     
                 Toast.makeText(this, R.string.logout_success, Toast.LENGTH_LONG).show();
                 finish();
@@ -203,25 +160,6 @@ public class QZoneSendActivity extends BaseActivity implements OnClickListener {
     @Override
     protected void onStop() {
         super.onStop();
-    }
-    
-    @Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-        if (mTencentAuthReceiver != null) {
-            unregisterIntentReceivers();
-        }
-    }
-
-    private void registerIntentReceivers() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(TAuthView.AUTH_BROADCAST);
-        registerReceiver(mTencentAuthReceiver, filter);
-    }
-    
-    private void unregisterIntentReceivers() {
-        unregisterReceiver(mTencentAuthReceiver);
     }
     
     /*

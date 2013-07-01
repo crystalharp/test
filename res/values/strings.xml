@@ -429,6 +429,8 @@
     <string name="city_list">添加城市</string>
     <string name="not_find_city">未找到匹配城市</string>
     <string name="favorite_long_click_tip">长按可以删除或重命名</string>
+    <string name="favorite_rename_empty_tip">请输入重命名内容！</string>
+    <string name="favorite_rename_success">重命名成功！</string>
 
     <string name="snap_current_map">截屏当前地图?</string>
     <string name="are_you_view_url">你确认要查看网页%1$s?</string>

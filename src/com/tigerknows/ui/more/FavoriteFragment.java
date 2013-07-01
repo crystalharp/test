@@ -100,8 +100,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     
     private String mPOIWhere;
     
-    private boolean mDismiss = true;
-    
     protected Drawable mPOIEmpty;
     
     protected Drawable mTrafficEmpty;
@@ -219,7 +217,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mRightBtn.setOnClickListener(this);
         mRightBtn.setBackgroundResource(R.drawable.btn_delete_all);
 
-        if (mDismiss) {
+        if (mDismissed) {
             readPOI(mPOIList, Long.MAX_VALUE, 0, false);
             mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
             readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
@@ -259,11 +257,10 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             }
         }
         
-        if (mDismiss) {
+        if (mDismissed) {
             mPOILsv.setSelectionFromTop(0, 0);
             mTrafficLsv.setSelectionFromTop(0, 0);
         }
-        mDismiss = false;
     }
 
     @Override
@@ -274,7 +271,6 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mPOIAdapter.notifyDataSetChanged();
         mTrafficAdapter.notifyDataSetChanged();
         mLayerType = ItemizedOverlay.POI_OVERLAY;
-        mDismiss = true;
         mViewPager.setCurrentItem(0);
     }
 
@@ -858,24 +854,36 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         nameEdt.append(name);
         Dialog dialog = Utility.showNormalDialog(mSphinx,
                 mSphinx.getString(R.string.rename),
+                null,
                 textEntryView,
+                mSphinx.getString(R.string.confirm),
+                mSphinx.getString(R.string.cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         if (whichButton == DialogInterface.BUTTON_POSITIVE) {
-                            if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
-                                POI poi = mPOIList.get(position);
-                                poi.setAlise(nameEdt.getEditableText().toString());
-                                poi.updateAlias(mContext);
-                                mPOIAdapter.notifyDataSetChanged();
+                            if (TextUtils.isEmpty(nameEdt.getText())) {
+                                Toast.makeText(mSphinx, R.string.favorite_rename_empty_tip, Toast.LENGTH_SHORT).show();
                             } else {
-                                Favorite traffic = mTrafficList.get(position);
-                                traffic.setAlise(nameEdt.getEditableText().toString());
-                                traffic.updateAlias(mContext);
-                                mTrafficAdapter.notifyDataSetChanged();
+                                dialog.dismiss();
+                                if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
+                                    POI poi = mPOIList.get(position);
+                                    poi.setAlise(nameEdt.getEditableText().toString());
+                                    poi.updateAlias(mContext);
+                                    mPOIAdapter.notifyDataSetChanged();
+                                } else {
+                                    Favorite traffic = mTrafficList.get(position);
+                                    traffic.setAlise(nameEdt.getEditableText().toString());
+                                    traffic.updateAlias(mContext);
+                                    mTrafficAdapter.notifyDataSetChanged();
+                                }
+                                Toast.makeText(mSphinx, R.string.favorite_rename_success, Toast.LENGTH_SHORT).show();
                             }
+                        } else if (whichButton == DialogInterface.BUTTON_NEGATIVE) {
+                            dialog.dismiss();
                         }
                     }
-                });
+                },
+                false);
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         dialog.setOnDismissListener(new OnDismissListener() {
             

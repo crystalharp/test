@@ -499,7 +499,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (isReLogin()) {
             return;
         }
-        mBodyScv.smoothScrollTo(0, 0);
+        
+        if (mDismissed) {
+            mBodyScv.smoothScrollTo(0, 0);
+        }
     }
     
     @Override

@@ -6,6 +6,7 @@ import java.util.Hashtable;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -31,6 +32,8 @@ import com.tigerknows.R.string;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.ui.BaseActivity;
@@ -39,9 +42,12 @@ import com.tigerknows.widget.StringArrayAdapter;
 
 public class AddMerchantActivity extends BaseActivity implements View.OnClickListener {
     
+    public static final String EXTRA_INPUT_TEXT = "input_text";
+    
 	private ScrollView mAddMerchantScv;
     private Button mShanghuleixingBtn;
     private EditText mShanghumingchengEdt = null;
+    private Button mCityBtn;
     private EditText mShanghudizhiEdt = null;
     private EditText mShanghudianhuaEdt = null;
     private EditText mYingyeshijianEdt = null;
@@ -66,6 +72,20 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         
         mAddMerchantTypes = mThis.getResources().getStringArray(R.array.add_merchant_type);
         mShanghumingchengEdt.requestFocus();
+        
+        CityInfo cityInfo = Globals.getCurrentCityInfo();
+        
+        mCityBtn.setText(cityInfo.getCName());
+        mShanghudianhuaEdt.setText(MapEngine.getAreaCodeByCityId(cityInfo.getId())+"-");
+        
+        Intent intent = getIntent();
+        if (intent != null) {
+            String intputText = intent.getStringExtra(EXTRA_INPUT_TEXT);
+            if (intputText != null) {
+                mShanghumingchengEdt.setText(intputText);
+                mShanghumingchengEdt.setSelection(intputText.length());
+            }
+        }
     }
     
     /**

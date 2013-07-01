@@ -10,11 +10,13 @@ import java.util.List;
 
 import android.app.ActivityManager;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -897,6 +899,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         queryStart(list);
         
         checkCitySupportDiscover(Globals.getCurrentCityInfo().getId());
+        initWeibo(false, false);
+        initQZone();
 	}
 	
 	private void sendFirstStartupBroadcast() {
@@ -1019,7 +1023,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {		
 		super.onActivityResult(requestCode, resultCode, data);
-		LogWrapper.d(TAG, "onActivityResult() requestCode="+requestCode+" resultCode="+resultCode+ "data="+data); 
+		LogWrapper.d(TAG, "onActivityResult() requestCode="+requestCode+" resultCode="+resultCode+ "data="+data);
+		mActivityResult = true;
 		mOnActivityResultLoginBack = false;
 		if (R.id.activity_more_help == requestCode) {
 		    if (data != null) {
@@ -3149,7 +3154,20 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     public Dialog getDialog(int id) {
         Dialog dialog = null;
-        switch (id) {                
+        switch (id) {       
+            case R.id.dialog_share_doing:
+                dialog = new ProgressDialog(this);
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait));
+                dialog.setOnDismissListener(new OnDismissListener() {
+                    
+                    @Override
+                    public void onDismiss(DialogInterface arg0) {
+                        mActionLog.addAction(ActionLog.Dialog + ActionLog.Dismiss);
+                    }
+                });
+                break;
             case R.id.dialog_prompt_change_to_my_location_city:
                 dialog = Utility.getDialog(mThis,
                             getString(R.string.prompt),
