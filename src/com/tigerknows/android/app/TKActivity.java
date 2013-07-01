@@ -13,6 +13,7 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.map.MapActivity;
 import com.decarta.android.util.LogWrapper;
+import com.tencent.tauth.TAuthView;
 import com.tendcloud.tenddata.TCAgent;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -32,6 +33,11 @@ import com.tigerknows.model.Response;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.service.MapDownloadService;
 import com.tigerknows.service.MapStatsService;
+import com.tigerknows.share.ShareAPI;
+import com.tigerknows.share.TKTencentOpenAPI;
+import com.tigerknows.share.TKWeibo;
+import com.tigerknows.share.TKTencentOpenAPI.AuthReceiver;
+import com.tigerknows.share.TKWeibo.AuthDialogListener;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.user.UserBaseActivity;
@@ -40,6 +46,7 @@ import com.tigerknows.util.Utility;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -58,6 +65,7 @@ import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+
 import com.weibo.sdk.android.sso.SsoHandler;
 
 /**
@@ -284,10 +292,110 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
     };
     private ConnectivityBroadcastReceiver mConnectivityReceiver = new ConnectivityBroadcastReceiver();
     
+    public interface IAuthorizeCallback {
+        public void onSuccess(String type);
+    }
+    
+    protected IAuthorizeCallback mIAuthorizeCallback;
+    
+    protected String mAuthorizeType;
+
+    public void authorizeWeibo(IAuthorizeCallback iAuthorizeCallback) {
+        mIAuthorizeCallback = iAuthorizeCallback;
+        mAuthorizeType = ShareAPI.TYPE_WEIBO;
+        TKWeibo.authorize(mTKWeibo, mSinaAuthDialogListener);
+    }
+    
+    public void authorizeTencent(IAuthorizeCallback iAuthorizeCallback) {
+        mIAuthorizeCallback = iAuthorizeCallback;
+        mAuthorizeType = ShareAPI.TYPE_TENCENT;
+        TKTencentOpenAPI.login(this);
+    }
+    
+    protected void initWeibo(boolean showProgressDialog, boolean finishActivity) {
+        mTKWeibo = new TKWeibo(mThis, showProgressDialog, finishActivity);
+        mSinaAuthDialogListener = new AuthDialogListener(mTKWeibo, getThirdPartyAuthorizeCallBack());
+    }
+    
+    protected void initQZone() {
+        mTencentAuthReceiver = new AuthReceiver(this, getThirdPartyAuthorizeCallBack());
+        registerIntentReceivers();
+    }
+
+    private void registerIntentReceivers() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(TAuthView.AUTH_BROADCAST);
+        registerReceiver(mTencentAuthReceiver, filter);
+    }
+    
+    private void unregisterIntentReceivers() {
+        unregisterReceiver(mTencentAuthReceiver);
+    }
+    
+    protected ShareAPI.IAuthorizeCallBack mThirdPartyAuthorizeCallBack;
+    
+    protected ShareAPI.IAuthorizeCallBack getThirdPartyAuthorizeCallBack() {
+        if (mThirdPartyAuthorizeCallBack == null) {
+            mThirdPartyAuthorizeCallBack = new ShareAPI.IAuthorizeCallBack() {
+                
+                @Override
+                public void onSuccess() {
+                    mThis.runOnUiThread(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            if (mIAuthorizeCallback != null) {
+                                mIAuthorizeCallback.onSuccess(mAuthorizeType);
+                            }
+                        }
+                    });
+                }
+
+                @Override
+                public void onFailed() {
+                }
+
+                @Override
+                public void onCancel() {
+                }
+            };
+        }
+        
+        return mThirdPartyAuthorizeCallBack;
+    }
+    
+    protected AuthReceiver mTencentAuthReceiver;
+
+    protected TKWeibo mTKWeibo;
+
+    protected AuthDialogListener mSinaAuthDialogListener;
+    
     /**
      * SsoHandler 仅当sdk支持sso时有效，
      */
     public SsoHandler mSsoHandler;
+    
+    @Override
+    protected Dialog onCreateDialog(int id) {
+        Dialog dialog = null;
+        switch (id) {
+        case R.id.dialog_share_doing:
+            dialog = new ProgressDialog(this);
+            dialog.setCancelable(false);
+            dialog.setCanceledOnTouchOutside(false);
+            ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait));
+            dialog.setOnDismissListener(new OnDismissListener() {
+                
+                @Override
+                public void onDismiss(DialogInterface arg0) {
+                    mActionLog.addAction(ActionLog.Dialog + ActionLog.Dismiss);
+                }
+            });
+            break;
+        }
+        
+        return dialog;
+    }
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -374,6 +482,9 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
 	@Override
     protected void onDestroy() {
         super.onDestroy();
+        if (mTencentAuthReceiver != null) {
+            unregisterIntentReceivers();
+        }
     }
     
     @Override

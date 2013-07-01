@@ -5,6 +5,7 @@
 package com.tigerknows.map;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -1377,5 +1378,38 @@ public class MapEngine {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * 获取城市的电话区号
+     * @param cityId
+     * @return
+     */
+    public static String getAreaCodeByCityId(int cityId) {
+        String result = null;
+        String token = String.valueOf(cityId);
+        String path = TKConfig.getDataPath(false);
+        if (TextUtils.isEmpty(path)) {
+            return result;
+        }
+        File file = new File(path+"areacode");
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                String text = Utility.readFile(fis);
+                fis.close();
+                String[] lines = text.split("\n");
+                for(int i = lines.length-1; i >= 0; i--) {
+                    String[] line = lines[i].split(" ");
+                    if (line[0].equals(token)) {
+                        result = line[1];
+                    }
+                }
+            } catch (Exception e) {
+                
+            }
+        }
+        
+        return result;
     }
 }

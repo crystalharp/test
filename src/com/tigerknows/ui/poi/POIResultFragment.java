@@ -25,6 +25,7 @@ import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.hotel.NavigationWidget;
+import com.tigerknows.ui.more.AddMerchantActivity;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 import com.tigerknows.widget.QueryingView;
@@ -34,6 +35,7 @@ import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -100,6 +102,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     private List<POI> mPOIList = new ArrayList<POI>();
     
+    private String mInputText;
+    
     private long mATotal;
     
     private long mBTotal;
@@ -150,6 +154,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     public void setup() {
+        setup(null);
+    }
+    
+    public void setup(String inputText) {
+        mInputText = inputText;
+        
         DataQuery lastDataQuerying = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
         if (lastDataQuerying == null) {
             return;
@@ -241,7 +251,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         mSphinx.showView(R.id.view_poi_detail);
                         mSphinx.getPOIDetailFragment().setData(poi, position);
                     } else if (mResultLsv.isFooterSpringback() == false) {
-                        mSphinx.showView(R.id.activity_more_add_merchant);
+                        showAddMerchant();
                     }
                 } 
             }
@@ -260,6 +270,14 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         });
         
         mAddMerchantItemView.setOnClickListener(this);
+    }
+    
+    void showAddMerchant() {
+        Intent intent = new Intent();
+        if (TextUtils.isEmpty(mInputText) == false) {
+            intent.putExtra(AddMerchantActivity.EXTRA_INPUT_TEXT, mInputText);
+        }
+        mSphinx.showView(R.id.activity_more_add_merchant, intent);
     }
     
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -501,7 +519,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 break;
                 
             case R.id.add_merchant_item_view:
-                mSphinx.showView(R.id.activity_more_add_merchant);
+                showAddMerchant();
                 break;
                 
             default:
