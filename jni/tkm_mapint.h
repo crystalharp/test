@@ -3,14 +3,14 @@
  *
  *       Filename:  tkm_mapint.h
  *
- *    Description:  
+ *    Description:
  *
  *        Version:  1.0
  *        Created:  2010年12月28日 17时47分23秒
  *       Revision:  none
  *       Compiler:  gcc
  *
- *        Company:  
+ *        Company:
  *
  * =====================================================================================
  */
@@ -21,11 +21,11 @@
 #include "tkm_comm.h"
 
 /* =======================================================
- * the global variables declaration 
+ * the global variables declaration
  *=========================================================*/
 #define LEVEL_MAX 18
 #define LEVEL_MIN 4
-#define LEVEL_SKIP 9 
+#define LEVEL_SKIP 9
 
 #define TK_CLIP_REDUNDENT  40
 #define TK_CLIP_CAIRO      10
@@ -57,21 +57,20 @@
 
 #ifdef TK_BPP_16
 typedef unsigned short tk_pixel;
-typedef unsigned short gdi_color;
 #else
 typedef unsigned int tk_pixel;
-typedef unsigned int gdi_color;
 #endif
 
-/*  qkhe add subway color */
-#define SUBWAYCITY  8   
+typedef unsigned int gdi_color;
+
+#define SUBWAYCITY  8
 #define MAXSWCITY   50
 #define MAXSWNUM    30
 #define MAXSWNAMELEN 32
 
 struct subway_color_info {
     char sw_name[MAXSWNAMELEN];
-    int color;
+    gdi_color color;
 };
 
 struct subway_city_info {
@@ -96,9 +95,8 @@ extern unsigned char data_buffer[DATA_BUFF_LEN];
 
 extern int need_read_whole_map;
 extern struct style *pstyle;
-extern cairo_surface_t *surface; 
+extern cairo_surface_t *surface;
 extern cairo_t *cr;
-extern int is_draw_subway;
 
 struct envelope
 {
@@ -132,32 +130,33 @@ struct style
     int             font_alter;
 };
 
-struct styles_buffer 
+struct styles_buffer
 {
     int layer_num;
-    short int *feature_type;
+    short *feature_type;
+    short *priority;
     struct style *styles;
 };
 
 struct tk_pool {
     char *tk_map_names;
     struct tk_point *tk_points;
-    int cur_name;
+    int cur_name_index;
     int cur_point;
 };
 
 struct tile {
     unsigned int coder_lat;//the left bottom value
-    unsigned int coder_lon;
+    unsigned int coder_lon;//基本坐标
     //转化为屏幕坐标需要的量
-    int level;// the num of tiles merged in this tile in one direction 
+    int level;// the num of tiles merged in this tile in one direction
     int bias_x;
     int bias_y;
-    int need_move_bits; // = tk_engine.bl - tk_engine.current_z
+    int level_dif; // = tk_engine.bl - tk_engine.current_z
     struct feature *features;
     int fnum;
     struct tk_pool mem_pool;
-
+    
     int region_id;
     int overall_name_len;
     int overall_point_num;
@@ -171,7 +170,7 @@ struct tile {
     int length;//the tile's length in dat file
 };
 
-struct feature 
+struct feature
 {
     struct tk_point *points;
     short int name_index;
@@ -190,7 +189,7 @@ struct feature
     struct feature *layer_next;
     // the left top of its outside rectangle
     struct tk_point left_top;
-    struct tk_point right_bottom;    
+    struct tk_point right_bottom;
     int label_priority;
 };
 
@@ -202,7 +201,7 @@ struct tk_struct_tile_region_id {
 };
 
 enum ENGINE_FLAG {
-    F_ZOOMED, 
+    F_ZOOMED,
     F_MOVED
 };
 
@@ -214,7 +213,7 @@ enum TKGeoENMFType
 	TKGEO_ENMFTYPE_RAIL,			//
 	TKGEO_ENMFTYPE_ROAD,			//
 	TKGEO_ENMFTYPE_POLY,			//
-	TKGEO_ENMFTYPE_MAX			
+	TKGEO_ENMFTYPE_MAX
 };
 
 struct tk_engine {
@@ -227,27 +226,26 @@ struct tk_engine {
     int old_z;
     int width;  // the width of map screen
     int height; // the height of map screen
-
+    
     // base level
     int bl;
     // base level index : A ==> 0, B ==> 1, C ==> 2
     int bl_idx;
     int bl_dif;
-
+    
     int tile_flag;
     int tilebuf_length;
     /* map_buffer (tile buffer)*/
     struct tile *tb;
     int tb_size; // the total size of tiles in tile buffer
     int tile_num;  //the tiles' total num for the current map screen
-
-    struct tk_pool *pool;
+    
     /* an array of layer */
     struct layer *layer_list;
     
     struct envelope old_bbox;
- 	struct envelope cur_bbox;
-
+ 	struct envelope cur_bbox;//最细级别mercator坐标
+    
     struct styles_buffer n_styles;
     struct styles_buffer c_styles;
     struct styles_buffer *ps;
@@ -259,7 +257,7 @@ extern struct tk_engine tk_engine; //meta data for tile buffer
 extern int  regnum_in_bound;
 
 /* =======================================================
- * the region structure management part  
+ * the region structure management part
  * ====================================================== */
 
 /* release all the loaded region */
@@ -384,14 +382,11 @@ struct local_feature {
 };
 
 extern struct local_feature best_feature;
-/* load all the images of the different features' icons  */
-extern int load_images();
-/* release the resources used for loading and store icon images */
-extern void release_images();
+
 /* initialize the bmp buffer */
 extern void set_bmpbuf(unsigned char *bmpbuf);
 /*  get the context of map engine for next action */
-extern void load_context(); 
+extern void load_context();
 extern int tk_init_bestfeature();
 extern void release_layers();
 /* init the boundary of regions */
@@ -414,8 +409,8 @@ extern void release_list();
 extern void release_tb();
 void release_styles();
 
-#define TK_NAME_NOT_EXIST -1 
-#define TK_NAME_NEW 0 
+#define TK_NAME_NOT_EXIST -1
+#define TK_NAME_NEW 0
 #define TK_NAME_NEED_DISPLAY 1
 #define TK_NAME_DO_NOT_NEED_DISPLAY 2
 #define TK_NAME_TOO_SHORT_TO_DISPLAY 3
@@ -423,7 +418,7 @@ void release_styles();
 /* =======================================
  * mapdata file processing functions
  * ======================================= */
-/* 
+/*
  * purpose: read the checksum file into memory
  * @filename: the name of checksum file
  * @pverifycode: used to return the pointer to verifycode
@@ -431,13 +426,13 @@ void release_styles();
  * */
 extern int read_chk_file(char *filename, unsigned char **pverifycode, unsigned short int *pbyte_num);
 
-/* 
+/*
  * purpose: get the size of region data file
  * @filename: the name of the region data file
  * */
 extern int get_datafile_size(char *filename);
 
-/* 
+/*
  * purpose: get the num of tile of level A,B,C respectively
  * @tk_buffer_tile_index: the pointer to the index
  * @pA_num: used to return the tilenum of level A
@@ -445,42 +440,41 @@ extern int get_datafile_size(char *filename);
  * @pC_num: used to return the tilenum of level C
  * */
 extern int get_tile_num(unsigned char *tk_buffer_tile_index, int *pA_num,
-        int *pB_num, int *pC_num, int index_length);
+                        int *pB_num, int *pC_num, int index_length);
 
-/* 
+/*
  * purpose: get the size of the tile and the last byte of the tile
  * @cur_pointer: the pointers pointed to the index of the current tile
  * @ptail: used to return the last byte of the tail
  * @ptile_size: used to return the size of the tile
  * */
-extern int get_tile_info(FILE *map_data, unsigned char *cur_pointer, int map_data_bias, 
-        int pre_pos,  int *ppos, unsigned char *ptail, 
-        int *ptile_size, int *ptotal_size);
+extern int get_tile_info(FILE *map_data, unsigned char *cur_pointer, int map_data_bias,
+                         int pre_pos,  int *ppos, unsigned char *ptail,
+                         int *ptile_size, int *ptotal_size);
 
-/* 
+/*
  * purpose: record the offset and length according to the code
  * @rid: the region id
  * @tail: the last byte of the tile
  * @code: the verify code */
 extern int add_lostdata(int rid, unsigned char tail, unsigned char code,
-        unsigned char shift_num, unsigned int map_data_bias, int pre_pos, 
-        int tile_size, int *pdownload_size, int *poffset,
-        int *plength, int *pis_in_block);
+                        unsigned char shift_num, unsigned int map_data_bias, int pre_pos,
+                        int tile_size, int *pdownload_size, int *poffset,
+                        int *plength, int *pis_in_block);
 
-/* this is a common routine called by all functions that will change 
+/* this is a common routine called by all functions that will change
  * the zoom level
  */
 extern void set_zlevel(int zl);
 
-extern void calculate_box();
-extern void draw_whole_map();
 extern  void get_tile_bbox_from_point(struct envelope *bbox);
 
+int tk_get_rid_by_point_and_level(struct tk_point *pt, int level);
 extern int tk_get_rid_by_point(struct tk_point *pt);
 
-extern unsigned int wgtochina_lb(int wg_flag, unsigned int wg_lng, unsigned int wg_lat, 
-                       int wg_heit,  int wg_week, unsigned int wg_time, 
-                       unsigned int *china_lng, unsigned int *china_lat);
+extern unsigned int wgtochina_lb(int wg_flag, unsigned int wg_lng, unsigned int wg_lat,
+                                 int wg_heit,  int wg_week, unsigned int wg_time,
+                                 unsigned int *china_lng, unsigned int *china_lat);
 
 extern struct local_feature *get_best_feature();
 
@@ -489,6 +483,7 @@ extern void get_tile_base_level_bound(int x, int y, int bl_dif, struct envelope 
 extern void clean_tile(int zl);
 
 extern int get_base_level(int zoomlevel);
-extern int load_map();
 extern int load_tile(int x, int y, struct envelope *tile_box);
+extern int draw_tile(int x, int y, struct envelope *el);
+extern void reset_tile_screen(struct envelope *env);
 #endif
