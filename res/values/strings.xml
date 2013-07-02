@@ -974,7 +974,7 @@
     <string name="hotel_mobile_format">请正确输入手机号，手机号为1开头的11位数字</string>
     <string name="submit_order">提交订单</string>
     <string name="hotel_room_date">入住：%1$d月%2$d日&#8195;离店：%3$d月%4$d日</string>
-    <string name="hotel_room_credit_note">因酒店房间紧张，需信用卡担保，以便保留房间</string>
+    <string name="hotel_room_credit_note">（因酒店房间紧张，需信用卡担保，以便保留房间）</string>
     <string name="hotel_room_person_empty_tip">请填写入住人</string>
     <string name="hotel_room_mobile_empty_tip">请填写手机号</string>
     <string name="hotel_room_idcard_empty_tip">请填写身份证号</string>
