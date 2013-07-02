@@ -28,7 +28,6 @@
 #include "tkm_render.h"
 #include "tkm_layer.h"
 #include "cairo/cairo.h"
-#include "TKLog.h"
 
 #ifdef TK_BPP_16
 #define TK_COLOR_WHITE  0xffff
