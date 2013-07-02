@@ -82,6 +82,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     private View mAddMerchantFootView = null;
     
+    private View mCurrentFootView;
+    
     private View mAddMerchantView = null;
     
     private View mAddMerchantItemView = null;
@@ -185,9 +187,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mTitleText = mSphinx.getString(R.string.searching_title);
         
         this.mState = STATE_QUERYING;
-        mResultLsv.removeFooterView(mAddMerchantFootView);
-        mResultLsv.removeFooterView(mLoadingView);
-        mResultLsv.addFooterView(mLoadingView);
         updateView();
     }
     
@@ -227,6 +226,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
         mLoadingView = mLayoutInflater.inflate(R.layout.loading, null);
         mResultLsv.addFooterView(mLoadingView);
+        mCurrentFootView = mLoadingView;
         mAddMerchantFootView = mLayoutInflater.inflate(R.layout.poi_list_item_add_merchant, null);
         mAddMerchantView = mRootView.findViewById(R.id.add_merchant_view);
         mAddMerchantItemView = mRootView.findViewById(R.id.add_merchant_item_view);
@@ -415,12 +415,23 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             
             mSphinx.showHint(TKConfig.PREFS_HINT_POI_LIST, R.layout.hint_poi_list);
             
+            View v = mCurrentFootView;
+            boolean addMerchant = false;
             if (BaseQuery.SUB_DATA_TYPE_POI.equals(mResultAdapter.getSubDataType())) {
-                if (mResultLsv.isFooterSpringback() == false) {
+                if (mResultLsv.isFooterSpringback() == false && v != mAddMerchantFootView) {
                     mResultLsv.removeFooterView(mAddMerchantFootView);
                     mResultLsv.removeFooterView(mLoadingView);
                     mResultLsv.addFooterView(mAddMerchantFootView, false);
+                    mCurrentFootView = mAddMerchantFootView;
+                    addMerchant = true;
                 }
+            }
+            
+            if (addMerchant == false && v != mLoadingView) {
+                mResultLsv.removeFooterView(mAddMerchantFootView);
+                mResultLsv.removeFooterView(mLoadingView);
+                mResultLsv.addFooterView(mLoadingView);
+                mCurrentFootView = mLoadingView;
             }
             mAddMerchantView.setVisibility(View.GONE);
             
