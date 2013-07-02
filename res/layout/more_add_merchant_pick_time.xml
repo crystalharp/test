@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+       
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/black_transparent_half"
+    >
+    
+    <LinearLayout
+        android:id="@+id/body_view"
+        android:layout_width="fill_parent"
+        android:layout_height="216dp"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        >
+        <RelativeLayout
+            android:id="@+id/parent_view"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:background="@drawable/list_selector_background_gray_dark">
+	        <TextView 
+	            android:id="@+id/start_txv"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_alignParentTop="true"
+	            android:text="开始时间"/>
+	        <com.tigerknows.widget.TimeListView android:id="@+id/start_tlv"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/start_txv"
+	            android:padding="0dp"
+	            android:dividerHeight="0dp"
+	            android:divider="@drawable/bg_line_split"
+	            android:drawSelectorOnTop="false"
+	            android:scrollingCache="false"
+	            android:footerDividersEnabled="false"
+	            android:fadingEdge="none"
+	            >
+	        </com.tigerknows.widget.TimeListView>
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/child_view"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_weight="1"
+	        android:background="@drawable/list_selector_background_gray_light">
+	        <TextView 
+	            android:id="@+id/end_txv"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:text="结束时间"/>
+	        <com.tigerknows.widget.TimeListView android:id="@+id/end_tlv"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_below="@id/end_txv"
+	            android:padding="0dp"
+	            android:dividerHeight="0dp"
+	            android:divider="@drawable/bg_line_split"
+	            android:drawSelectorOnTop="false"
+	            android:scrollingCache="false"
+	            android:footerDividersEnabled="false"
+	            android:fadingEdge="none"
+	            >
+	         </com.tigerknows.widget.TimeListView>
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

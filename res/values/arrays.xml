@@ -206,17 +206,6 @@
         <item>婚庆宴会</item>
     </string-array>
     
-    <string-array name="add_merchant_type">
-        <item>美食</item>
-        <item>娱乐</item>
-        <item>购物</item>
-        <item>酒店</item>
-        <item>旅游</item>
-        <item>丽人</item>
-        <item>运动</item>
-        <item>其他分类</item>
-    </string-array>
-    
     <string-array name="days">
         <item>今天</item>
         <item>明天</item>

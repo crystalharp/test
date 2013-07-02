@@ -1,13 +1,24 @@
 package com.tigerknows.ui.more;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.media.ExifInterface;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -17,6 +28,10 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.ImageView.ScaleType;
 import android.widget.ListView;
 import android.widget.ScrollView;
 
@@ -24,36 +39,79 @@ import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 
 import com.decarta.Globals;
-import com.tigerknows.R.array;
-import com.tigerknows.R.drawable;
-import com.tigerknows.R.id;
-import com.tigerknows.R.layout;
-import com.tigerknows.R.string;
+import com.decarta.android.util.Util;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.FeedbackUpload;
+import com.tigerknows.model.DataQuery.Filter;
+import com.tigerknows.model.DataQuery.FilterCategoryOrder;
+import com.tigerknows.model.DataQuery.FilterOption;
+import com.tigerknows.model.DataQuery.FilterResponse;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.util.Utility;
-import com.tigerknows.widget.StringArrayAdapter;
+import com.tigerknows.widget.FilterListView;
+import com.tigerknows.widget.MultichoiceArrayAdapter;
+import com.tigerknows.widget.TimeListView;
 
-public class AddMerchantActivity extends BaseActivity implements View.OnClickListener {
+public class AddMerchantActivity extends BaseActivity implements View.OnClickListener, FilterListView.CallBack {
     
     public static final String EXTRA_INPUT_TEXT = "input_text";
+
+    public static final int REQUEST_CODE_PICK_PHOTO = 0;
+
+    public static final int REQUEST_CODE_CAPTURE_PHOTO = 1;
+    
+    public static final int REQUEST_CODE_CHANGE_CITY = 2;
+    
+    private String mCacheFilePath;
+    
+    private String mCameraFilePath;
+    
+    private Uri mCaptureUri;
+    private Uri mPhotoUri;
+    private Uri mUploadUri;
+    
+    private ImageButton mTakePhotoBtn;
     
 	private ScrollView mAddMerchantScv;
-    private Button mShanghuleixingBtn;
-    private EditText mShanghumingchengEdt = null;
-    private Button mCityBtn;
-    private EditText mShanghudizhiEdt = null;
-    private EditText mShanghudianhuaEdt = null;
-    private EditText mYingyeshijianEdt = null;
-    private EditText mNingdedianhuaEdt = null;
+    private Button mType;
+    private FilterListView mFilterListView;
+    private List<Filter> mFilterList;
     
-    private String[] mAddMerchantTypes;
+    private EditText mNameEdt;
+    private Button mCityBtn;
+    private EditText mAddressEdt;
+    private EditText mTelephoneEdt;
+    private EditText mMobilePhoneEdt;
+    private String mLastAreaCode;
+    
+    private Button mDateBtn;
+    private ListView mPickDateView;
+    private MultichoiceArrayAdapter mPickDateArrayAdapter;
+    private String[] mWeekDays;
+    private boolean[] mDateChecked;
+    private Dialog mPickDateDialog;
+    
+    private Button mTimeBtn;
+    private View mPickTimeView;
+    private TimeListView mStartTimeListView;
+    private TimeListView mEndTimeListView;
+    private Dialog mPickTimeDialog;
+    
+    private EditText mYourTelephoneEdt = null;
+    
+    private View mImageView;
+    
+    private ImageView mImageImv;
+    
+    private Button mCancelBtn;
+    
+    private Button mConfirmBtn;
     
 	static final String TAG = "AddMerchant";
 	
@@ -70,21 +128,89 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mTitleBtn.setText(R.string.add_merchant);
         mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
         
-        mAddMerchantTypes = mThis.getResources().getStringArray(R.array.add_merchant_type);
-        mShanghumingchengEdt.requestFocus();
+        mNameEdt.requestFocus();
+        
+        mCacheFilePath = Environment.getExternalStorageDirectory()+ "/Android/data/" + getPackageName() + "/files"+"/cache.jpg";
+        mCameraFilePath = Environment.getExternalStorageDirectory()+ "/Android/data/" + getPackageName() + "/files"+"/camera.jpg";
         
         CityInfo cityInfo = Globals.getCurrentCityInfo();
         
         mCityBtn.setText(cityInfo.getCName());
-        mShanghudianhuaEdt.setText(MapEngine.getAreaCodeByCityId(cityInfo.getId())+"-");
+        mLastAreaCode = MapEngine.getAreaCodeByCityId(cityInfo.getId())+"-";
+        mTelephoneEdt.setText(mLastAreaCode);
         
         Intent intent = getIntent();
         if (intent != null) {
             String intputText = intent.getStringExtra(EXTRA_INPUT_TEXT);
             if (intputText != null) {
-                mShanghumingchengEdt.setText(intputText);
-                mShanghumingchengEdt.setSelection(intputText.length());
+                mNameEdt.setText(intputText);
+                mNameEdt.setSelection(intputText.length());
             }
+        }
+        
+        mImageView.setVisibility(View.GONE);
+
+        mPickTimeView = mLayoutInflater.inflate(R.layout.more_add_merchant_pick_time, null, false);
+        mStartTimeListView = (TimeListView) mPickTimeView.findViewById(R.id.start_tlv);
+        mEndTimeListView = (TimeListView) mPickTimeView.findViewById(R.id.end_tlv);
+        
+        mStartTimeListView.setData(9, 6);
+        mEndTimeListView.setData(21, 6);
+        
+        mPickTimeDialog = Utility.getDialog(mThis, 
+                mThis.getString(R.string.comment_food_restair), 
+                null,
+                mPickTimeView,
+                mThis.getString(R.string.confirm), 
+                mThis.getString(R.string.cancel), 
+                new DialogInterface.OnClickListener() {
+            
+            @Override
+            public void onClick(DialogInterface arg0, int id) {
+                
+                
+            }
+        });
+
+        DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo().getId());
+        FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
+        if (filterCategory != null) {
+            List<FilterOption> filterOptionList = filterCategory.getCategoryFilterOption();
+            List<Long> indexList = new ArrayList<Long>();
+            indexList.add(0l);
+            for(int i = 0, size = filterOptionList.size(); i < size; i++) {
+                long id = filterOptionList.get(i).getId();
+                indexList.add(id);
+            }
+            
+            // 每个分类下面添加其他
+            String otherText = getString(R.string.poi_ohter_error);
+            
+            Filter categoryFitler = DataQuery.makeFilterResponse(mThis, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
+            Filter other = categoryFitler.getChidrenFilterList().remove(0);
+            other.getFilterOption().setName(otherText);
+            
+            List<Filter> list = categoryFitler.getChidrenFilterList();
+            int endId = Integer.MIN_VALUE;
+            for(int i = 0, size = list.size(); i < size; i++) {
+                Filter filter = list.get(i);
+                List<Filter> chidrenList = filter.getChidrenFilterList();
+                if (chidrenList.size() > 0) {
+                    Filter end = chidrenList.get(chidrenList.size()-1);
+                    Filter other1 = end.clone();
+                    FilterOption filterOption = other1.getFilterOption();
+                    filterOption.setName(otherText);
+                    filterOption.setId(endId+i+1);
+                    chidrenList.add(other1);
+                }
+            }
+            
+            other.setSelected(false);
+            list.add(other);
+            
+            mFilterList = new ArrayList<Filter>();
+            mFilterList.add(categoryFitler);
+            mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
         }
     }
     
@@ -94,12 +220,23 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     protected void findViews() {
         super.findViews();
         mAddMerchantScv = (ScrollView)findViewById(R.id.add_merchant_scv);
-        mShanghumingchengEdt = (EditText)findViewById(R.id.shanghumingcheng_edt);
-        mShanghuleixingBtn = (Button)findViewById(R.id.shanghuleixing_btn);
-        mShanghudizhiEdt = (EditText)findViewById(R.id.shanghudizhi_edt);
-        mShanghudianhuaEdt = (EditText)findViewById(R.id.shanghudianhua_edt);
-        mYingyeshijianEdt = (EditText)findViewById(R.id.yingyeshijian_edt);
-        mNingdedianhuaEdt = (EditText)findViewById(R.id.ningdedianhua_edt);
+        mNameEdt = (EditText)findViewById(R.id.name_edt);
+        mType = (Button)findViewById(R.id.type_btn);
+        mFilterListView = (FilterListView) findViewById(R.id.filter_list_view);
+        mFilterListView.findViewById(R.id.body_view).setPadding(0, 0, 0, 0);
+        mCityBtn = (Button)findViewById(R.id.city_btn);
+        mAddressEdt = (EditText)findViewById(R.id.address_edt);
+        mTelephoneEdt = (EditText)findViewById(R.id.telephone_edt);
+        mMobilePhoneEdt = (EditText)findViewById(R.id.mobile_phone_edt);
+        mDateBtn = (Button)findViewById(R.id.date_btn);
+        mTimeBtn = (Button)findViewById(R.id.time_btn);
+        mYourTelephoneEdt = (EditText)findViewById(R.id.your_telephone_edt);
+        mTakePhotoBtn = (ImageButton) findViewById(R.id.take_photo_btn);
+        
+        mImageView = findViewById(R.id.image_view);
+        mImageImv = (ImageView) findViewById(R.id.image_imv);
+        mCancelBtn = (Button) findViewById(R.id.cancel_btn);
+        mConfirmBtn = (Button) findViewById(R.id.confirm_btn);
     }
 
     /**
@@ -109,67 +246,41 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         super.setListener();
         mLeftBtn.setOnClickListener(this);
         mRightBtn.setOnClickListener(this);
-        
-        mShanghuleixingBtn.setOnTouchListener(new OnTouchListener() {
+        mTakePhotoBtn.setOnClickListener(this);
+        mCancelBtn.setOnClickListener(this);
+        mConfirmBtn.setOnClickListener(this);
+        mCityBtn.setOnClickListener(this);
+        mDateBtn.setOnClickListener(this);
+        mTimeBtn.setOnClickListener(this);
+        mImageView.setOnTouchListener(new OnTouchListener() {
             
             @Override
-            public boolean onTouch(View v, MotionEvent ev) {
-                final int action = ev.getAction();
-
-                switch (action & MotionEvent.ACTION_MASK) {
-                    case MotionEvent.ACTION_UP: {
-                        mActionLog.addAction(mActionTag +  ActionLog.AddMerchantType);
-                        StringArrayAdapter adapter =  new StringArrayAdapter(mThis, mAddMerchantTypes);
-                        ListView listView = Utility.makeListView(mThis);
-                        listView.setAdapter(adapter);
-                        
-                        final Dialog dialog = Utility.showNormalDialog(mThis,
-                                mThis.getString(R.string.shanghuleixing),
-                                null,
-                                listView,
-                                null,
-                                null,
-                                null);
-                        listView.setOnItemClickListener(new OnItemClickListener() {
-                            
-                            @Override
-                            public void onItemClick(AdapterView<?> arg0, View arg1, int index,
-                                    long arg3) {
-                                mShanghuleixingBtn.setText(mAddMerchantTypes[index]);
-                                mShanghuleixingBtn.setTextColor(0xff000000);
-                                dialog.dismiss();
-                            }
-                            
-                        });
-                        break;
-                    }
-                }
-                return false;
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
             }
         });
+        
+        mType.setOnClickListener(this);
+        
         OnTouchListener onTouchListener = new OnTouchListener() {
             
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     switch (v.getId()) {
-                        case R.id.shanghumingcheng_edt:
+                        case R.id.name_edt:
                             mActionLog.addAction(mActionTag +  ActionLog.AddMerchantName);
                             break;
                             
-                        case R.id.shanghudizhi_edt:
+                        case R.id.address_btn:
                             mActionLog.addAction(mActionTag +  ActionLog.AddMerchantAddress);
                             break;
                             
-                        case R.id.shanghudianhua_edt:
+                        case R.id.telephone_edt:
                             mActionLog.addAction(mActionTag +  ActionLog.AddMerchantTelephone);
                             break;
                             
-                        case R.id.yingyeshijian_edt:
-                            mActionLog.addAction(mActionTag +  ActionLog.AddMerchantTime);
-                            break;
-                            
-                        case R.id.ningdedianhua_edt:
+                        case R.id.your_telephone_edt:
                             mActionLog.addAction(mActionTag +  ActionLog.AddMerchantMobile);
                             break;
                             
@@ -180,39 +291,51 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 return false;
             }
         };
-        mShanghumingchengEdt.setOnTouchListener(onTouchListener);
-        mShanghudizhiEdt.setOnTouchListener(onTouchListener);
-        mShanghudianhuaEdt.setOnTouchListener(onTouchListener);
-        mYingyeshijianEdt.setOnTouchListener(onTouchListener);
-        mNingdedianhuaEdt.setOnTouchListener(onTouchListener);
+        mNameEdt.setOnTouchListener(onTouchListener);
+        mAddressEdt.setOnTouchListener(onTouchListener);
+        mTelephoneEdt.setOnTouchListener(onTouchListener);
+        mYourTelephoneEdt.setOnTouchListener(onTouchListener);
     }
     
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK
                 && event.getAction() == KeyEvent.ACTION_DOWN) {
-            exit();
+            if (mImageView.getVisibility() == View.VISIBLE) {
+                mImageView.setVisibility(View.GONE);
+                backHome();
+            } else if (mFilterListView.getVisibility() == View.VISIBLE) {
+                mFilterListView.setVisibility(View.GONE);
+                backHome();
+            } else {
+                exit();
+            }
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
     
+    void backHome() {
+        mImageView.setVisibility(View.GONE);
+        mTitleBtn.setText(R.string.add_merchant);
+    }
+    
     private void exit() {
-        boolean notEmpty = !TextUtils.isEmpty(mShanghumingchengEdt.getEditableText().toString());
+        boolean notEmpty = !TextUtils.isEmpty(mNameEdt.getEditableText().toString());
         if (notEmpty == false) {
-            notEmpty = !TextUtils.isEmpty(mShanghuleixingBtn.getText().toString());
+            notEmpty = !TextUtils.isEmpty(mType.getText().toString());
         }
         if (notEmpty == false) {
-            notEmpty = !TextUtils.isEmpty(mShanghudizhiEdt.getEditableText().toString());
+            notEmpty = !TextUtils.isEmpty(mAddressEdt.getEditableText().toString());
         }
         if (notEmpty == false) {
-            notEmpty = !TextUtils.isEmpty(mShanghudianhuaEdt.getEditableText().toString());
+            notEmpty = !TextUtils.isEmpty(mTelephoneEdt.getEditableText().toString());
         }
         if (notEmpty == false) {
-            notEmpty = !TextUtils.isEmpty(mYingyeshijianEdt.getEditableText().toString());
+            notEmpty = !TextUtils.isEmpty(mTimeBtn.getText().toString());
         }
         if (notEmpty == false) {
-            notEmpty = !TextUtils.isEmpty(mNingdedianhuaEdt.getEditableText().toString());
+            notEmpty = !TextUtils.isEmpty(mYourTelephoneEdt.getEditableText().toString());
         }
         
         if (notEmpty == false) {
@@ -236,26 +359,34 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         // TODO Auto-generated method stub
         switch(v.getId()){
             case R.id.left_btn:
-                exit();
+                if (mImageView.getVisibility() == View.VISIBLE) {
+                    mImageView.setVisibility(View.GONE);
+                    backHome();
+                } else if (mFilterListView.getVisibility() == View.VISIBLE) {
+                    mFilterListView.setVisibility(View.GONE);
+                    backHome();
+                } else {
+                    exit();
+                }
                 break;
             case R.id.right_btn:
                 mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 StringBuilder s = new StringBuilder();
                 try {
-                    String str = mShanghumingchengEdt.getEditableText().toString().trim();
+                    String str = mNameEdt.getEditableText().toString().trim();
                     if (!TextUtils.isEmpty(str)) {
                         s.append("shanghumingcheng");
                         s.append('=');
                         s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
                     } else {
-                        mShanghumingchengEdt.requestFocus();
+                        mNameEdt.requestFocus();
                         mAddMerchantScv.scrollTo(0, 0);
-                        Toast.makeText(mThis, mThis.getString(R.string.please_input)+mThis.getString(R.string.shanghumingcheng)+"!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mThis, mThis.getString(R.string.please_input)+mThis.getString(R.string.merchant_name)+"!", Toast.LENGTH_SHORT).show();
                         showSoftInput();
                         return;
                     }
                     
-                    str = mShanghuleixingBtn.getText().toString().trim();
+                    str = mType.getText().toString().trim();
                     if (!TextUtils.isEmpty(str) && str.equals(mThis.getString(R.string.bitian)) == false) {
                         if (s.length() > 0) {
                             s.append('&');
@@ -264,13 +395,13 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                         s.append('=');
                         s.append(URLEncoder.encode(str.toString(), TKConfig.getEncoding()));
                     } else {
-                        mShanghuleixingBtn.requestFocus();
-                        Toast.makeText(mThis, mThis.getString(R.string.please_select)+mThis.getString(R.string.shanghuleixing)+"!", Toast.LENGTH_SHORT).show();
+                        mType.requestFocus();
+                        Toast.makeText(mThis, mThis.getString(R.string.please_select)+mThis.getString(R.string.merchant_type)+"!", Toast.LENGTH_SHORT).show();
                         hideSoftInput();
                         return;
                     }
                     
-                    str = mShanghudizhiEdt.getEditableText().toString().trim();
+                    str = mAddressEdt.getEditableText().toString().trim();
                     if (!TextUtils.isEmpty(str)) {
                         if (s.length() > 0) {
                             s.append('&');
@@ -279,13 +410,13 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                         s.append('=');
                         s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
                     } else {
-                        mShanghudizhiEdt.requestFocus();
-                        Toast.makeText(mThis, mThis.getString(R.string.please_input)+mThis.getString(R.string.shanghudizhi)+"!", Toast.LENGTH_SHORT).show();
+                        mAddressEdt.requestFocus();
+                        Toast.makeText(mThis, mThis.getString(R.string.please_input)+mThis.getString(R.string.address)+"!", Toast.LENGTH_SHORT).show();
                         showSoftInput();
                         return;
                     }
                     
-                    str = mShanghudianhuaEdt.getEditableText().toString().trim();
+                    str = mTelephoneEdt.getEditableText().toString().trim();
                     if (!TextUtils.isEmpty(str)) {
                         if (s.length() > 0) {
                             s.append('&');
@@ -295,7 +426,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                         s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
                     }
                     
-                    str = mYingyeshijianEdt.getEditableText().toString().trim();
+                    str = mTimeBtn.getText().toString().trim();
                     if (!TextUtils.isEmpty(str)) {
                         if (s.length() > 0) {
                             s.append('&');
@@ -305,7 +436,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                         s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
                     }
                     
-                    str = mNingdedianhuaEdt.getEditableText().toString().trim();
+                    str = mYourTelephoneEdt.getEditableText().toString().trim();
                     if (!TextUtils.isEmpty(str)) {
                         if (s.length() > 0) {
                             s.append('&');
@@ -326,8 +457,132 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 queryStart(feedbackUpload);
                 break;
                 
+            case R.id.take_photo_btn:
+                showTakePhotoDialog(REQUEST_CODE_PICK_PHOTO, REQUEST_CODE_CAPTURE_PHOTO);
+                break;
+                
+            case R.id.cancel_btn:
+                mImageView.setVisibility(View.GONE);
+                backHome();
+                mUploadUri = null;
+                break;
+                
+            case R.id.confirm_btn:
+                mImageView.setVisibility(View.GONE);
+                backHome();
+                confrimUploadUri(mImageImv.getDrawable());
+                break;
+                
+            case R.id.city_btn:
+                Intent intent = new Intent();
+                intent.putExtra(ChangeCityActivity.EXTRA_ONLY_CHANGE_HOTEL_CITY, true);
+                intent.setClass(mThis, ChangeCityActivity.class);
+                startActivityForResult(intent, REQUEST_CODE_CHANGE_CITY);
+                break;
+                
+            case R.id.date_btn:
+                if (mWeekDays == null) {
+                    mWeekDays = mThis.getResources().getStringArray(R.array.week_days);
+                    String sunday = mWeekDays[0];
+                    int length = mWeekDays.length;
+                    for(int i = 1; i < length; i++) {
+                        mWeekDays[i-1] = mWeekDays[i];
+                    }
+                    mWeekDays[length-1] = sunday;
+                    mDateChecked = new boolean[mWeekDays.length];
+                    for(int i = 0; i < length; i++) {
+                        mDateChecked[i] = false;
+                    }
+                }
+                String date = mDateBtn.getText().toString();
+                if (!TextUtils.isEmpty(date)) {
+                    int i = 0;
+                    for(String str : mWeekDays) {
+                        if (date.contains(str)) {
+                            mDateChecked[i] = true;
+                        }
+                        i++;
+                    }
+                }
+                
+                
+                if (mPickDateView == null) {
+                    mPickDateArrayAdapter = new MultichoiceArrayAdapter(mThis, mWeekDays, mDateChecked);
+                    mPickDateView = Utility.makeListView(mThis);
+                    mPickDateView.setAdapter(mPickDateArrayAdapter);
+                    mPickDateView.setOnItemClickListener(new OnItemClickListener() {
+                        
+                        @Override
+                        public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
+                            mDateChecked[position] = !mDateChecked[position];
+                            mPickDateArrayAdapter.notifyDataSetChanged();
+                        }
+                    });
+                    
+                    mPickDateDialog = Utility.showNormalDialog(mThis, 
+                            mThis.getString(R.string.comment_food_restair), 
+                            mPickDateView,
+                            new DialogInterface.OnClickListener() {
+                        
+                        @Override
+                        public void onClick(DialogInterface arg0, int id) {
+                            
+                            if (id == DialogInterface.BUTTON_POSITIVE) {
+
+                                int checked = 0;
+                                for(int i = 0, length = mDateChecked.length; i < length; i++) {
+                                    checked = (checked << 1) + (mDateChecked[i] ? 1 : 0);
+                                }
+                                if (checked == 0) {
+                                    mDateBtn.setText(R.string.select_business_hours_day);
+                                } else if (checked == 127) {
+                                    mDateBtn.setText(R.string.every_day);
+                                } else if (checked == 124) {
+                                    mDateBtn.setText(R.string.working_days);
+                                } else if (checked == 3) {
+                                    mDateBtn.setText(R.string.weekend);
+                                } else {
+                                    StringBuilder s = new StringBuilder();
+                                    for(int i = 0, length = mDateChecked.length; i < length; i++) {
+                                        if (mDateChecked[i]) {
+                                            if (s.length() > 0) {
+                                                s.append(',');
+                                            }
+                                            s.append(mWeekDays[i]);
+                                        }
+                                    }
+                                    mDateBtn.setText(s.toString());
+                                }
+                            }
+                        }
+                    });
+                } else {
+                    mPickDateDialog.show();
+                }
+                break;
+                
+            case R.id.time_btn:
+                mPickTimeDialog.show();
+                break;
+                
+            case R.id.type_btn:
+                mTitleBtn.setText(R.string.merchant_type);
+                mRightBtn.setVisibility(View.GONE);
+                mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+                mFilterListView.setVisibility(View.VISIBLE);
+                break;
+                
             default:
                 
+        }
+    }
+    
+    void confrimUploadUri(Drawable drawable) {
+        if (mPhotoUri != null) {
+            mUploadUri = mPhotoUri;
+            mTakePhotoBtn.setScaleType(ScaleType.MATRIX);
+            mTakePhotoBtn.setImageMatrix(Utility.resizeSqareMatrix(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Util.dip2px(Globals.g_metrics.density, 112)));
+            mTakePhotoBtn.setImageDrawable(drawable);
         }
     }
     
@@ -343,5 +598,146 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         }
         Toast.makeText(mThis, R.string.add_merchant_success, Toast.LENGTH_LONG).show();
         finish();
+    }
+
+    public void showTakePhotoDialog(int pickRequestCode, int captureRequestCode) {
+        File file = new File(mCameraFilePath);
+        file.delete();
+        mCaptureUri = Uri.fromFile(file);
+        Utility.showTakePhotoDialog(this, pickRequestCode,
+                captureRequestCode, mCaptureUri);
+    }
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK) {
+            if (requestCode == REQUEST_CODE_PICK_PHOTO) {
+                Uri uri = data.getData();
+                setPhoto(uri, true);
+            } else if (requestCode == REQUEST_CODE_CAPTURE_PHOTO) {
+                setPhoto(mCaptureUri, false);
+            } else if (requestCode == REQUEST_CODE_CHANGE_CITY) {
+                if (data != null && RESULT_OK == resultCode) {
+                    CityInfo cityInfo = data.getParcelableExtra(ChangeCityActivity.EXTRA_CITYINFO);
+                    mCityBtn.setText(cityInfo.getCName());
+
+                    String areaCode = MapEngine.getAreaCodeByCityId(cityInfo.getId())+"-";
+                    String lastAreaCode = mTelephoneEdt.getEditableText().toString();
+                    if (lastAreaCode.equals(mLastAreaCode)) {
+                        mTelephoneEdt.setText(areaCode);
+                        mLastAreaCode = areaCode;
+                    }
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+    
+    public void setPhoto(final Uri uri, final boolean isPick) {
+        if (uri == null) {
+            mPhotoUri = null;
+            return;
+        }
+        View custom = getLayoutInflater().inflate(R.layout.loading, null);
+        TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
+        loadingTxv.setText(R.string.doing_and_wait);
+        final Dialog tipProgressDialog = Utility.showNormalDialog(this, custom);
+        tipProgressDialog.setCancelable(false);
+        tipProgressDialog.setCanceledOnTouchOutside(false);
+        
+        new Thread(new Runnable() {
+            
+            @Override
+            public void run() {
+                Utility.copyFile(Utility.imageUri2FilePath(mThis, uri), mCacheFilePath);
+                final File cacheFile = new File(mCacheFilePath);
+                Uri cache = Uri.fromFile(cacheFile);
+                Bitmap bm = Utility.getBitmapByUri(mThis, cache, 800, 800);
+                try {
+                    String path = Utility.imageUri2FilePath(mThis, cache);
+                    ExifInterface exifInterface = new ExifInterface(path);
+                    int tag = exifInterface.getAttributeInt(ExifInterface.TAG_ORIENTATION, -1);
+                    float degrees = 0;
+                    if (tag == ExifInterface.ORIENTATION_ROTATE_90) {
+                        degrees = 90;
+                    } else if (tag == ExifInterface.ORIENTATION_ROTATE_180) {
+                        degrees = 180;
+                    } else if (tag == ExifInterface.ORIENTATION_ROTATE_270) {
+                        degrees = 270;  
+                    }
+                    if (degrees != 0) {
+                        Matrix matrix = new Matrix();
+                        int w = bm.getWidth();
+                        int h = bm.getHeight();
+                        matrix.preRotate(degrees, w/2, h/2);
+                        Bitmap newBitmap = Bitmap.createBitmap(bm, 0, 0, w, h, matrix, true);
+                        bm.recycle();
+                        bm = newBitmap;
+                    }
+                    
+                    Utility.bitmapToFile(bm, cacheFile);
+                    
+                    final Bitmap resultBitmap = bm;
+                    mThis.runOnUiThread(new Runnable() {
+                        
+                        @Override
+                        public void run() {
+                            if (resultBitmap != null && Utility.bitmapToFile(resultBitmap, cacheFile)) {
+                                mPhotoUri = Uri.fromFile(cacheFile);
+                                if (isPick) {
+                                    confrimUploadUri(new BitmapDrawable(resultBitmap));
+                                } else {
+                                    mTitleBtn.setText(R.string.storefront_photo);
+                                    mRightBtn.setVisibility(View.GONE);
+                                    mImageView.setVisibility(View.VISIBLE);
+                                    mImageImv.setScaleType(ScaleType.MATRIX);
+                                    mImageImv.setImageMatrix(Utility.resizeMaxWidthMatrix(resultBitmap.getWidth(), resultBitmap.getHeight(), Globals.g_metrics.widthPixels));
+                                    mImageImv.setImageBitmap(resultBitmap);
+                                }
+                            } else {
+                                mPhotoUri = null;
+                            }
+                            if (tipProgressDialog != null && tipProgressDialog.isShowing()) {
+                                tipProgressDialog.dismiss();
+                            }
+                        }
+                    });
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        
+//        UploadImageUtils.revitionPostImageSize(Utility.imageUri2FilePath(this, uri));
+        
+    }
+
+    @Override
+    public void doFilter(String name) {
+        mFilterListView.setVisibility(View.GONE);
+        backHome();
+        Filter categoryFitler = mFilterList.get(0);
+        List<Filter> list = categoryFitler.getChidrenFilterList();
+        for(int i = 0, size = list.size(); i < size; i++) {
+            Filter filter = list.get(i);
+            if (filter.isSelected()) {
+                mType.setText(filter.getFilterOption().getName());
+                return;
+            }
+            List<Filter> chidrenList = filter.getChidrenFilterList();
+            for(int j = 0, count = chidrenList.size(); j < count; j++) {
+                Filter chidren = chidrenList.get(j);
+                if (chidren.isSelected()) {
+                    mType.setText(filter.getFilterOption().getName()+"-"+chidren.getFilterOption().getName());
+                    return;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void cancelFilter() {
+        mFilterListView.setVisibility(View.GONE);
+        backHome();
     }
 }
