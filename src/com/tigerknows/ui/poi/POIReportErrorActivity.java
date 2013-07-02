@@ -1,49 +1,32 @@
 package com.tigerknows.ui.poi;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-
+import android.widget.Button;
 import com.tigerknows.ui.BaseActivity;
 
-import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.POI;
 
-public class POIReportErrorActivity extends BaseActivity implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
+public class POIReportErrorActivity extends BaseActivity implements View.OnClickListener{
     
-	private LinearLayout mPOIErrorLly;
-    private RadioGroup mPOIRgp;
-    private RadioButton mBaseInfomationErrorRbt;
-    private RadioButton mPlaceDuplicationErrorRbt;
-    private RadioButton mPlaceAbsentErrorRbt;
-    private RadioButton mOtherErrorRbt;
-    private CheckBox mNameErrorChb = null;
-    private CheckBox mAddressErrorChb = null;
-    private CheckBox mTelephoneErrorChb = null;
-    private CheckBox mCoordinateErrorChb = null;
+	private Button mNameBtn;
+	private Button mTelBtn;
+	private Button mNotexistBtn;
+	private Button mAddressBtn;
+	private Button mRedundancyBtn;
+	private Button mLocationBtn;
+	private Button mOtherBtn;
+
 
     private POI mPOI;
-    private EditText mContentEdt = null;
-    private EditText mMobilePhoneEdt = null;
     
     private static List<Object> sTargetList = new ArrayList<Object>();
 
@@ -71,7 +54,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             }
         }
         
-        mPOIRgp.requestFocus();
     }
     
     /**
@@ -79,18 +61,13 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
      */
     protected void findViews() {
         super.findViews();
-        mPOIErrorLly = (LinearLayout)findViewById(R.id.poi_error_recovery_lly);
-        mPOIRgp = (RadioGroup)findViewById(R.id.poi_rgp);
-        mBaseInfomationErrorRbt = (RadioButton)findViewById(R.id.base_infomation_error_rbt);
-        mPlaceAbsentErrorRbt = (RadioButton)findViewById(R.id.place_absent_error_rbt);
-        mPlaceDuplicationErrorRbt = (RadioButton)findViewById(R.id.place_duplication_error_rbt);
-        mOtherErrorRbt = (RadioButton)findViewById(R.id.other_error_rbt);
-        mNameErrorChb = (CheckBox)findViewById(R.id.name_error_chb);
-        mAddressErrorChb = (CheckBox)findViewById(R.id.address_error_chb);
-        mTelephoneErrorChb = (CheckBox)findViewById(R.id.telephone_error_chb);
-        mCoordinateErrorChb = (CheckBox)findViewById(R.id.coordinate_error_chb);
-        mContentEdt = (EditText)findViewById(R.id.content_edt);
-        mMobilePhoneEdt = (EditText)findViewById(R.id.mobile_phone_edt);
+        mNameBtn = (Button) findViewById(R.id.name_btn);
+        mTelBtn = (Button) findViewById(R.id.tel_btn);
+        mNotexistBtn = (Button) findViewById(R.id.notexist_btn);
+        mAddressBtn = (Button) findViewById(R.id.address_btn);
+        mRedundancyBtn = (Button) findViewById(R.id.redundancy_btn);
+        mLocationBtn = (Button) findViewById(R.id.location_btn);
+        mOtherBtn = (Button) findViewById(R.id.other_btn);
     }
 
     /**
@@ -100,30 +77,24 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         super.setListener();
         mRightBtn.setOnClickListener(this);
         
-        mPOIRgp.setOnTouchListener(new OnTouchListener(){
-        	
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    hideSoftInput();
-                }
-                return true;
-            }
-        });
-        mBaseInfomationErrorRbt.setOnClickListener(this);
-        mPlaceDuplicationErrorRbt.setOnClickListener(this);
-        mPlaceAbsentErrorRbt.setOnClickListener(this);
-        mOtherErrorRbt.setOnClickListener(this);
-        mNameErrorChb.setOnClickListener(this);
-        mAddressErrorChb.setOnClickListener(this);
-        mTelephoneErrorChb.setOnClickListener(this);
-        mCoordinateErrorChb.setOnClickListener(this);
+        mNameBtn.setOnClickListener(this);
+        mTelBtn.setOnClickListener(this);
+        mNotexistBtn.setOnClickListener(this);
+        mAddressBtn.setOnClickListener(this);
+        mRedundancyBtn.setOnClickListener(this);
+        mLocationBtn.setOnClickListener(this);
+        mOtherBtn.setOnClickListener(this);
     }
     
     public static void addTarget(Object obejct) {
         synchronized (sTargetList) {
             sTargetList.add(obejct);
         }
+    }
+    @Override
+    public void onResume(){
+    	super.onResume();
+    	mRightBtn.setVisibility(View.GONE);
     }
     
     @Override
@@ -134,103 +105,13 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
                 mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 // md=$uid-$errcode[-$detail]_$uid-$errcode[-$detail]_$uid-$errcode[-$detail]_ 
                 // md=edc1e4c9-5081-428a-935d-1d31fd3848f5-502_8d5cc821-c130-4f9e-acfa-d4906e82c016-404
-                StringBuilder s = new StringBuilder();
-                s.append("P_" + mPOI.getUUID());
-                s.append("_C" + mMapEngine.getCityId(mPOI.getPosition()));
-                StringBuilder errorCode = new StringBuilder();
-                switch (mPOIRgp.getCheckedRadioButtonId()) {
-                    case R.id.base_infomation_error_rbt:
-                    	List<String> tmp = new ArrayList<String>();
-                        if (mNameErrorChb.isChecked()) {
-                        	tmp.add(mThis.getString(R.string.poi_name_error));
-                        }
-                        if (mAddressErrorChb.isChecked()) {
-                        	tmp.add(mThis.getString(R.string.poi_address_error));
-                        }
-                        if (mTelephoneErrorChb.isChecked()) {
-                        	tmp.add(mThis.getString(R.string.poi_phone_error));
-                        }
-                        if (mCoordinateErrorChb.isChecked()) {
-                        	tmp.add(mThis.getString(R.string.poi_mark_error));
-                        }
-                        for(int i = 0; i < tmp.size(); i++) {
-                        	if (i == 0) {
-                        		errorCode.append(tmp.get(i));
-                        	} else {
-                        		errorCode.append("-" + tmp.get(i));
-                        	}
-                        }
-                        
-                        break;
-                        
-                    case R.id.place_duplication_error_rbt:
-                    	errorCode.append(mThis.getString(R.string.poi_address_duplicate_error));
-                        break;
-                        
-                    case R.id.place_absent_error_rbt:
-                    	errorCode.append(mThis.getString(R.string.poi_address_noexist_error));                            
-                        break;
-                        
-                    case R.id.other_error_rbt:
-                    	errorCode.append(mThis.getString(R.string.poi_ohter_error));
-                        break;
-    
-                    default:
-                        break;
-                }
-                s.append("_E");
-                if (!TextUtils.isEmpty(errorCode.toString())) {
-                	s.append(errorCode.toString());
-                }
 
-                s.append("_D");
-                String content = mContentEdt.getText().toString().trim().replace("\n", "\\n").replace("_", "#");
-                if (!TextUtils.isEmpty(content)) {
-                    s.append(content);
-                }
-                
-                s.append("_P");
-                String mobilePhone = mMobilePhoneEdt.getText().toString().trim().replace("\n", "\\n").replace("_", "#");
-                if (!TextUtils.isEmpty(mobilePhone)) {
-                    s.append(mobilePhone);
-                }
-                
-                LogWrapper.d(TAG, "errorrecovery: " + s);
-                
-//                if (TextUtils.isEmpty(errorCode.toString()) && TextUtils.isEmpty(content)) {
-//					Toast.makeText(POIErrorRecovery.this, R.string.errorrecovery_empty, 3000).show();
-//                	return;
-//                }
-                
-                hideSoftInput();
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                criteria.put(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, s.toString());
-                FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
-                feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
-                queryStart(feedbackUpload);
+//                Hashtable<String, String> criteria = new Hashtable<String, String>();
+//                criteria.put(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, s.toString());
+//                FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
+//                feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+//                queryStart(feedbackUpload);
                 break;
-                
-            case R.id.name_error_chb:
-            case R.id.address_error_chb:
-            case R.id.telephone_error_chb:
-            case R.id.coordinate_error_chb:
-            	hideSoftInput();
-                mPOIRgp.check(R.id.base_infomation_error_rbt);
-                break;
-            
-            case R.id.base_infomation_error_rbt:
-            case R.id.place_absent_error_rbt:
-            case R.id.place_duplication_error_rbt:
-            case R.id.other_error_rbt:
-            	hideSoftInput();
-                if (mPOIRgp.getCheckedRadioButtonId() != R.id.base_infomation_error_rbt) {
-                    mNameErrorChb.setChecked(false);
-                    mAddressErrorChb.setChecked(false);
-                    mTelephoneErrorChb.setChecked(false);
-                    mCoordinateErrorChb.setChecked(false);
-                }                 
-                break;
-                
             default:
                 
         }
@@ -260,10 +141,4 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         super.finish();        
     }
 
-    @Override
-    public void onCheckedChanged(CompoundButton arg0, boolean checked) {
-        if (checked) {
-            mPOIRgp.check(R.id.base_infomation_error_rbt);
-        }
-    }
 }
