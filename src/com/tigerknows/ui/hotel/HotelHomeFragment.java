@@ -341,7 +341,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     void refreshFilterCategory() {
         synchronized (mFilterList) {
             if (checkFilter(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY) == false) {
-                FilterCategoryOrder filterCategory = DataQuery.getHoteFilterCategoryOrder();
+                FilterCategoryOrder filterCategory = DataQuery.getHotelFilterCategoryOrder();
                 if (filterCategory != null) {
                     List<FilterOption> filterOptionList = filterCategory.getCategoryFilterOption();
                     List<Long> indexList = new ArrayList<Long>();

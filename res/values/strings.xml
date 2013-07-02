@@ -833,14 +833,32 @@
     
     <string name="add_merchant">添加商户</string>
     <string name="need_star">*</string>
-    <string name="shanghumingcheng">名称</string>
-    <string name="shanghuleixing">类型</string>
-    <string name="suozaichengshi">所在城市</string>
-    <string name="shanghudizhi">地址</string>
-    <string name="shanghudianhua">电话号码</string>
-    <string name="yingyeshijian">营业时间</string>
-    <string name="renjunjiawei">人均价位</string>
-    <string name="ningdedianhua">你的电话</string>
+    <string name="merchant_name">商户名称</string>
+    <string name="merchant_type">商户类型</string>
+    <string name="please_select_merchant_type">请选择商户类型</string>
+    <string name="add_merchant_address">地&#160;&#160;址</string>
+    <string name="add_merchant_address_hint">如：海淀区中关村北大街116号</string>
+    <string name="merchant_telephone">商户座机</string>
+    <string name="merchant_telephone_hint">可输入座机或手机</string>
+    <string name="merchant_mobile_phone">商户手机</string>
+    <string name="merchant_mobile_phone_hint">商户移动电话</string>
+    <string name="address_description">位置描述</string>
+    <string name="add_merchant_address_description_hint">如：北大东门向北200米路东</string>
+    <string name="business_hours">营业时间</string>
+    <string name="select_business_hours_day">选择营业日期</string>
+    <string name="select_business_hours_time">选择营业时间</string>
+    <string name="storefront_photo">门面照片</string>
+    <string name="add_merchant_upload_photo">上传商户门面照片</string>
+    <string name="add_merchant_upload_photo_not_added">上传后将极大提高申请通过率</string>
+    <string name="add_merchant_upload_photo_added">已添加商户门面图片</string>
+    <string name="wait_submit">等待提交</string>
+    <string name="contact">联系方式</string>
+    <string name="please_input_your_telephone">请输入您的电话</string>
+    <string name="add_merchant_thanks">感谢您帮助我们完善商户信息。请认真填写联系方式，以便我们将处理后的结果及时反馈给您。 </string>
+    
+    <string name="every_day">每天</string>
+    <string name="weekend">周末</string>
+    <string name="working_days">工作日</string>
     
     <string name="bitian">必填</string>
     <string name="xuantian">选填</string>

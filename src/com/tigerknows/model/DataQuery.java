@@ -168,8 +168,12 @@ public final class DataQuery extends BaseQuery {
     
     private static FilterCategoryOrder Filter_Category_Order_Hotel;
     
-    public static FilterCategoryOrder getHoteFilterCategoryOrder() {
+    public static FilterCategoryOrder getHotelFilterCategoryOrder() {
         return Filter_Category_Order_Hotel;
+    }
+    
+    public static FilterCategoryOrder getPOIFilterCategoryOrder() {
+        return Filter_Category_Order_POI;
     }
     
     private static FilterArea Quanguo_Filter_Area;
