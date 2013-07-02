@@ -1142,5 +1142,11 @@
     <string name="erreport_description_hint">请详细描述报错内容</string>
     <string name="erreport_description_empty">请填写报错内容</string>
     <string name="erreport_location_confirm">确认提交地图标注错误？</string>
+    <string name="erreport_tel_error_connect">打不通</string>
+    <string name="erreport_tel_error_notthis">不是此商户</string>
+    <string name="erreport_merchant_stop">停业中</string>
+    <string name="erreport_merchant_chai">已拆迁</string>
+    <string name="erreport_merchant_move">已搬迁</string>
+    <string name="erreport_merchant_find">没找到</string>
 <!-- POI Error Recovery End -->
 </resources>
