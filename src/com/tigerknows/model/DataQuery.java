@@ -132,7 +132,9 @@ public final class DataQuery extends BaseQuery {
     
     public static final String INFO_TYPE_TAG = "tagsearch";
     
-    public static final String INFO_TYPE_NETWORK_PUSH = "networkpush";    
+    public static final String INFO_TYPE_NETWORK_PUSH = "networkpush";  
+    
+    public static final String INFO_CATE_FLT = "cate_flt";
     
     public static final String FILTER_TYPE_AREA = "11";    
     
@@ -507,7 +509,8 @@ public final class DataQuery extends BaseQuery {
                     requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
                     String bias = addParameter(SERVER_PARAMETER_BIAS, false);
                     if (bias == null) {
-                        addParameter(new String[]{SERVER_PARAMETER_KEYWORD, SERVER_PARAMETER_INFO});
+                        addParameter(new String[]{SERVER_PARAMETER_KEYWORD});
+                        addParameter(new String[]{SERVER_PARAMETER_INFO}, false);
                     }
                     addParameter(SERVER_PARAMETER_POI_ID, false);
                 }
@@ -572,6 +575,7 @@ public final class DataQuery extends BaseQuery {
                         Util.byteToHexString(DiscoverCategory.FIELD_DATA)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DISCOVER_HOME)+"_["+pic+"]");
             }
         } else if (DATA_TYPE_TUANGOU.equals(dataType)) { 
+            addParameter(new String[]{SERVER_PARAMETER_INFO}, false);
             requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Tuangou.NEED_FIELD);
             requestParameters.add(SERVER_PARAMETER_PICTURE, 
                     Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[10000000000000000000]" + ";" +

@@ -717,14 +717,14 @@ public class BaseQueryTest {
             }
         });
 
-        radarPushBtn.setText("send a Radar Push in 5s");
+        radarPushBtn.setText("send a Radar Push in 15s");
         radarPushBtn.setOnClickListener(new View.OnClickListener() {
             
             @Override
             public void onClick(View v) {
                 Calendar next = Calendar.getInstance();
                 next.setTimeInMillis(System.currentTimeMillis());
-                next.add(Calendar.SECOND, 5);
+                next.add(Calendar.SECOND, 15);
                 Alarms.enableAlarm(activity, next, PullService.alarmAction);
                 LogWrapper.d(TAG, "Radar Push send in:" + next.getTime().toLocaleString());
             }
