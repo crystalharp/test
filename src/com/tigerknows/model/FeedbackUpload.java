@@ -24,7 +24,7 @@ public class FeedbackUpload extends BaseQuery {
     public static final String SERVER_PARAMETER_ERROR_RECOVERY = "md";
 
     // am String false 添加商户
-    public static final String SERVER_PARAMETER_ADD_MERCHANT = "am";
+    public static final String SERVER_PARAMETER_ADD_MERCHANT = "nc";
     
     public static final String SERVER_PARAMETER_POI_RANK = "poirank";
 

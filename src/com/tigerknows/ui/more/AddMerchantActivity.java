@@ -86,8 +86,8 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     private EditText mNameEdt;
     private Button mCityBtn;
     private EditText mAddressEdt;
+    private EditText mAddressDescriptionEdt;
     private EditText mTelephoneEdt;
-    private EditText mMobilePhoneEdt;
     private String mLastAreaCode;
     
     private Button mDateBtn;
@@ -105,9 +105,15 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     
     private EditText mYourTelephoneEdt = null;
     
+    private ImageView mImageImv;
+    
     private View mImageView;
     
-    private ImageView mImageImv;
+    private Button mDeletePhotoBtn;
+
+    private TextView mPhotoTitleTxv;
+    
+    private TextView mPhotoDescriptionTxv;
     
     private Button mCancelBtn;
     
@@ -138,6 +144,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mCityBtn.setText(cityInfo.getCName());
         mLastAreaCode = MapEngine.getAreaCodeByCityId(cityInfo.getId())+"-";
         mTelephoneEdt.setText(mLastAreaCode);
+        mTelephoneEdt.setSelection(mLastAreaCode.length());
         
         Intent intent = getIntent();
         if (intent != null) {
@@ -149,6 +156,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         }
         
         mImageView.setVisibility(View.GONE);
+        mDeletePhotoBtn.setVisibility(View.GONE);
 
         mPickTimeView = mLayoutInflater.inflate(R.layout.more_add_merchant_pick_time, null, false);
         mStartTimeListView = (TimeListView) mPickTimeView.findViewById(R.id.start_tlv);
@@ -167,12 +175,11 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             
             @Override
             public void onClick(DialogInterface arg0, int id) {
-                
-                
+                mTimeBtn.setText(mStartTimeListView.getHour()+":"+mStartTimeListView.getMinute()+"-"+mEndTimeListView.getHour()+":"+mEndTimeListView.getMinute());
             }
         });
 
-        DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo().getId());
+        DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo().getId(), mThis);
         FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
         if (filterCategory != null) {
             List<FilterOption> filterOptionList = filterCategory.getCategoryFilterOption();
@@ -226,12 +233,15 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mFilterListView.findViewById(R.id.body_view).setPadding(0, 0, 0, 0);
         mCityBtn = (Button)findViewById(R.id.city_btn);
         mAddressEdt = (EditText)findViewById(R.id.address_edt);
+        mAddressDescriptionEdt = (EditText)findViewById(R.id.address_description_edt);
         mTelephoneEdt = (EditText)findViewById(R.id.telephone_edt);
-        mMobilePhoneEdt = (EditText)findViewById(R.id.mobile_phone_edt);
         mDateBtn = (Button)findViewById(R.id.date_btn);
         mTimeBtn = (Button)findViewById(R.id.time_btn);
         mYourTelephoneEdt = (EditText)findViewById(R.id.your_telephone_edt);
         mTakePhotoBtn = (ImageButton) findViewById(R.id.take_photo_btn);
+        mDeletePhotoBtn = (Button) findViewById(R.id.delete_photo_btn);
+        mPhotoTitleTxv = (TextView) findViewById(R.id.upload_image_title_txv);
+        mPhotoDescriptionTxv = (TextView) findViewById(R.id.upload_image_description_txv);
         
         mImageView = findViewById(R.id.image_view);
         mImageImv = (ImageView) findViewById(R.id.image_imv);
@@ -247,6 +257,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mLeftBtn.setOnClickListener(this);
         mRightBtn.setOnClickListener(this);
         mTakePhotoBtn.setOnClickListener(this);
+        mDeletePhotoBtn.setOnClickListener(this);
         mCancelBtn.setOnClickListener(this);
         mConfirmBtn.setOnClickListener(this);
         mCityBtn.setOnClickListener(this);
@@ -316,8 +327,8 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     }
     
     void backHome() {
-        mImageView.setVisibility(View.GONE);
         mTitleBtn.setText(R.string.add_merchant);
+        mRightBtn.setVisibility(View.VISIBLE);
     }
     
     private void exit() {
@@ -329,10 +340,19 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             notEmpty = !TextUtils.isEmpty(mAddressEdt.getEditableText().toString());
         }
         if (notEmpty == false) {
-            notEmpty = !TextUtils.isEmpty(mTelephoneEdt.getEditableText().toString());
+            notEmpty = !(mTelephoneEdt.getText().equals(MapEngine.getAreaCodeByCityId(Globals.getCurrentCityInfo().getId())+"-"));
+        }
+        if (notEmpty == false) {
+            notEmpty = !TextUtils.isEmpty(mAddressDescriptionEdt.getEditableText().toString());
+        }
+        if (notEmpty == false) {
+            notEmpty = !TextUtils.isEmpty(mDateBtn.getEditableText().toString());
         }
         if (notEmpty == false) {
             notEmpty = !TextUtils.isEmpty(mTimeBtn.getText().toString());
+        }
+        if (notEmpty == false) {
+            notEmpty = (mUploadUri != null);
         }
         if (notEmpty == false) {
             notEmpty = !TextUtils.isEmpty(mYourTelephoneEdt.getEditableText().toString());
@@ -371,94 +391,22 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 break;
             case R.id.right_btn:
                 mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
-                StringBuilder s = new StringBuilder();
-                try {
-                    String str = mNameEdt.getEditableText().toString().trim();
-                    if (!TextUtils.isEmpty(str)) {
-                        s.append("shanghumingcheng");
-                        s.append('=');
-                        s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
-                    } else {
-                        mNameEdt.requestFocus();
-                        mAddMerchantScv.scrollTo(0, 0);
-                        Toast.makeText(mThis, mThis.getString(R.string.please_input)+mThis.getString(R.string.merchant_name)+"!", Toast.LENGTH_SHORT).show();
-                        showSoftInput();
-                        return;
-                    }
-                    
-                    str = mType.getText().toString().trim();
-                    if (!TextUtils.isEmpty(str) && str.equals(mThis.getString(R.string.bitian)) == false) {
-                        if (s.length() > 0) {
-                            s.append('&');
-                        }
-                        s.append("shanghuleixing");
-                        s.append('=');
-                        s.append(URLEncoder.encode(str.toString(), TKConfig.getEncoding()));
-                    } else {
-                        mType.requestFocus();
-                        Toast.makeText(mThis, mThis.getString(R.string.please_select)+mThis.getString(R.string.merchant_type)+"!", Toast.LENGTH_SHORT).show();
-                        hideSoftInput();
-                        return;
-                    }
-                    
-                    str = mAddressEdt.getEditableText().toString().trim();
-                    if (!TextUtils.isEmpty(str)) {
-                        if (s.length() > 0) {
-                            s.append('&');
-                        }
-                        s.append("shanghudizhi");
-                        s.append('=');
-                        s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
-                    } else {
-                        mAddressEdt.requestFocus();
-                        Toast.makeText(mThis, mThis.getString(R.string.please_input)+mThis.getString(R.string.address)+"!", Toast.LENGTH_SHORT).show();
-                        showSoftInput();
-                        return;
-                    }
-                    
-                    str = mTelephoneEdt.getEditableText().toString().trim();
-                    if (!TextUtils.isEmpty(str)) {
-                        if (s.length() > 0) {
-                            s.append('&');
-                        }
-                        s.append("shanghudianhua");
-                        s.append('=');
-                        s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
-                    }
-                    
-                    str = mTimeBtn.getText().toString().trim();
-                    if (!TextUtils.isEmpty(str)) {
-                        if (s.length() > 0) {
-                            s.append('&');
-                        }
-                        s.append("yingyeshijian");
-                        s.append('=');
-                        s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
-                    }
-                    
-                    str = mYourTelephoneEdt.getEditableText().toString().trim();
-                    if (!TextUtils.isEmpty(str)) {
-                        if (s.length() > 0) {
-                            s.append('&');
-                        }
-                        s.append("ningdedianhua");
-                        s.append('=');
-                        s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
-                    }
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                
-                hideSoftInput();
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                criteria.put(FeedbackUpload.SERVER_PARAMETER_ADD_MERCHANT, s.toString());
-                FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
-                feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
-                queryStart(feedbackUpload);
+                submit();
                 break;
                 
             case R.id.take_photo_btn:
+                hideSoftInput();
                 showTakePhotoDialog(REQUEST_CODE_PICK_PHOTO, REQUEST_CODE_CAPTURE_PHOTO);
+                break;
+                
+            case R.id.delete_photo_btn:
+                mUploadUri = null;
+                mPhotoUri = null;
+                mTakePhotoBtn.setScaleType(ScaleType.FIT_XY);
+                mTakePhotoBtn.setImageResource(R.drawable.btn_take_photo);
+                mDeletePhotoBtn.setVisibility(View.GONE);
+                mPhotoTitleTxv.setText(R.string.storefront_photo);
+                mPhotoDescriptionTxv.setText(R.string.add_merchant_upload_photo);
                 break;
                 
             case R.id.cancel_btn:
@@ -474,6 +422,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 break;
                 
             case R.id.city_btn:
+                hideSoftInput();
                 Intent intent = new Intent();
                 intent.putExtra(ChangeCityActivity.EXTRA_ONLY_CHANGE_HOTEL_CITY, true);
                 intent.setClass(mThis, ChangeCityActivity.class);
@@ -481,6 +430,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 break;
                 
             case R.id.date_btn:
+                hideSoftInput();
                 if (mWeekDays == null) {
                     mWeekDays = mThis.getResources().getStringArray(R.array.week_days);
                     String sunday = mWeekDays[0];
@@ -562,10 +512,12 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 break;
                 
             case R.id.time_btn:
+                hideSoftInput();
                 mPickTimeDialog.show();
                 break;
                 
             case R.id.type_btn:
+                hideSoftInput();
                 mTitleBtn.setText(R.string.merchant_type);
                 mRightBtn.setVisibility(View.GONE);
                 mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
@@ -577,12 +529,113 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         }
     }
     
+    void submit() {
+        StringBuilder s = new StringBuilder();
+        try {
+            char splitChar = '~';
+            String nullStr = "null";
+            
+            String name = mNameEdt.getText().toString();
+            
+            if (!TextUtils.isEmpty(name)) {
+                s.append(URLEncoder.encode(name, TKConfig.getEncoding()));
+            } else {
+                mNameEdt.requestFocus();
+                mAddMerchantScv.scrollTo(0, 0);
+                Toast.makeText(mThis, mThis.getString(R.string.please_input)+mThis.getString(R.string.merchant_name)+"!", Toast.LENGTH_SHORT).show();
+                showSoftInput();
+                return;
+            }
+            
+            String type = mType.getText().toString();
+            if (!TextUtils.isEmpty(type)) {
+                s.append(splitChar);
+                s.append(URLEncoder.encode(type.toString(), TKConfig.getEncoding()));
+            } else {
+                mType.requestFocus();
+                Toast.makeText(mThis, mThis.getString(R.string.please_select)+mThis.getString(R.string.merchant_type)+"!", Toast.LENGTH_SHORT).show();
+                hideSoftInput();
+                return;
+            }
+
+            String address = mAddressEdt.getText().toString();
+            if (!TextUtils.isEmpty(address)) {
+                s.append(splitChar);
+                s.append(URLEncoder.encode(mCityBtn.getText()+address, TKConfig.getEncoding()));
+            } else {
+                mAddressEdt.requestFocus();
+                Toast.makeText(mThis, mThis.getString(R.string.please_input)+mThis.getString(R.string.address)+"!", Toast.LENGTH_SHORT).show();
+                showSoftInput();
+                return;
+            }
+            
+            s.append(splitChar);
+            String str = mTelephoneEdt.getText().toString();
+            if (!TextUtils.isEmpty(str)) {
+                s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
+            } else {
+                s.append(nullStr);
+            }
+            
+            s.append(splitChar);
+            str = mAddressDescriptionEdt.getText().toString();
+            if (!TextUtils.isEmpty(str)) {
+                s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
+            } else {
+                s.append(nullStr);
+            }
+            
+            s.append(splitChar);
+            str = mDateBtn.getText().toString();
+            if (!TextUtils.isEmpty(str)) {
+                s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
+            } else {
+                s.append(nullStr);
+            }
+            
+            s.append(splitChar);
+            str = mTimeBtn.getText().toString();
+            if (!TextUtils.isEmpty(str)) {
+                s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
+            } else {
+                s.append(nullStr);
+            }
+            
+            s.append(splitChar);
+            if (mUploadUri != null) {
+                s.append(URLEncoder.encode(mUploadUri.toString(), TKConfig.getEncoding()));
+            } else {
+                s.append(nullStr);
+            }
+            
+            s.append(splitChar);
+            str = mYourTelephoneEdt.getEditableText().toString();
+            if (!TextUtils.isEmpty(str)) {
+                s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
+            } else {
+                s.append(nullStr);
+            }
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        
+        hideSoftInput();
+        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        criteria.put(FeedbackUpload.SERVER_PARAMETER_ADD_MERCHANT, s.toString());
+        FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
+        feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+        queryStart(feedbackUpload);
+    }
+    
     void confrimUploadUri(Drawable drawable) {
         if (mPhotoUri != null) {
             mUploadUri = mPhotoUri;
             mTakePhotoBtn.setScaleType(ScaleType.MATRIX);
             mTakePhotoBtn.setImageMatrix(Utility.resizeSqareMatrix(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Util.dip2px(Globals.g_metrics.density, 112)));
             mTakePhotoBtn.setImageDrawable(drawable);
+            mDeletePhotoBtn.setVisibility(View.VISIBLE);
+            mPhotoTitleTxv.setText(R.string.add_merchant_upload_photo_added);
+            mPhotoDescriptionTxv.setText(R.string.wait_submit);
         }
     }
     
@@ -625,6 +678,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                     String lastAreaCode = mTelephoneEdt.getEditableText().toString();
                     if (lastAreaCode.equals(mLastAreaCode)) {
                         mTelephoneEdt.setText(areaCode);
+                        mTelephoneEdt.setSelection(areaCode.length());
                         mLastAreaCode = areaCode;
                     }
                 }
