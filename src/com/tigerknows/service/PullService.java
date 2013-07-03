@@ -253,7 +253,6 @@ public class PullService extends Service {
     }
     
     void exitService(int status, Calendar now) {
-        LogWrapper.d(TAG, "failed times = " + fail);
         
         Context context = getApplicationContext();
         
@@ -280,6 +279,7 @@ public class PullService extends Service {
             default:
                 break;
             }
+            LogWrapper.d(TAG, "failed times = " + fail);
             if (fail >= MaxFail) {
                 LogWrapper.d(TAG, "failed too many times, change to net trigger mode.");
                 TKConfig.setPref(context, TKConfig.PREFS_RADAR_PULL_TRIGGER_MODE, TRIGGER_MODE_NET);
