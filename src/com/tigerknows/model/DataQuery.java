@@ -52,8 +52,8 @@ public final class DataQuery extends BaseQuery {
     // ts   String  true    时间戳，形如"yyyy/MM/dd HH:mm:ss" 
     public static final String SERVER_PARAMETER_TIME_STAMP = "ts";
     
-    // kt  string  false   kt=tag表示用户选择的keyword，kt=input表示用户输入的keyword
-    public static final String SERVER_PARAMETER_KEYWORD_TYPE = "kt";
+    // info  string  false   info目前的取值有： tagsearch POI搜索时是通过点击首页进行的搜索（非输入搜索） networkpush 因为网络可用触发的push请求 
+    public static final String SERVER_PARAMETER_INFO = "info";
     
     // x   Double  false   选定经度x
     public static final String SERVER_PARAMETER_LONGITUDE = "x";
@@ -130,9 +130,9 @@ public final class DataQuery extends BaseQuery {
     // 评论版本 
     public static final String COMMENT_VERSION = "1";
     
-    public static final String KEYWORD_TYPE_TAG = "tag";
+    public static final String INFO_TYPE_TAG = "tagsearch";
     
-    public static final String KEYWORD_TYPE_INPUT = "input";    
+    public static final String INFO_TYPE_NETWORK_PUSH = "networkpush";    
     
     public static final String FILTER_TYPE_AREA = "11";    
     
@@ -507,7 +507,7 @@ public final class DataQuery extends BaseQuery {
                     requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
                     String bias = addParameter(SERVER_PARAMETER_BIAS, false);
                     if (bias == null) {
-                        addParameter(new String[]{SERVER_PARAMETER_KEYWORD, SERVER_PARAMETER_KEYWORD_TYPE});
+                        addParameter(new String[]{SERVER_PARAMETER_KEYWORD, SERVER_PARAMETER_INFO});
                     }
                     addParameter(SERVER_PARAMETER_POI_ID, false);
                 }

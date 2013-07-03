@@ -170,6 +170,9 @@ public class PullService extends Service {
                     criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
                     criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(position.getLon()));
                     criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(position.getLat()));
+                    if (getTriggerMode(context).equals(TRIGGER_MODE_NET)) {
+                        criteria.put(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_NETWORK_PUSH);
+                    }
                     if (!TextUtils.isEmpty(messageIdList)) {
                         criteria.put(DataQuery.SERVER_PARAMETER_MESSAGE_ID_LIST, messageIdList);
                     }
