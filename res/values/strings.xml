@@ -978,7 +978,7 @@
     <string name="pictures">%1$s张</string>
     <string name="fold">收起</string>
     <string name="hotel_no_room_left">该房型已经订满，建议换个房型吧！</string>
-    <string name="hotel_click_to_reload">网络状况不好,点击此处重新加载</string>
+    <string name="hotel_click_to_reload">网络状况不好,点击此处&lt;font color="#ff6c00"&gt;&lt;U&gt;重新加载&lt;/U&gt;&lt;/font&gt;</string>
     <string name="summary">简介</string>
     <string name="hotel_room_title">订单填写</string>
     <string name="hotel_room_howmany">房间数</string>
