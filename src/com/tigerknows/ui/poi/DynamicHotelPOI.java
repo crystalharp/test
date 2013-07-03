@@ -10,6 +10,7 @@ import java.util.List;
 
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -177,7 +178,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
             mRetryView.setVisibility(View.GONE);
         } else if (s == STATE_LOAD_FAILED) {
-            retryTxv.setText(mSphinx.getString(R.string.hotel_click_to_reload));
+            retryTxv.setText(Html.fromHtml(mSphinx.getString(R.string.hotel_click_to_reload)));
             mDynamicRoomTypeMoreView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);
             mRetryView.setClickable(true);
