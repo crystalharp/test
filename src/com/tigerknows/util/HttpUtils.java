@@ -169,7 +169,7 @@ public class HttpUtils {
             this.statusCode = statusCode;
         }
         
-        public void execute(Context context) throws IOException {
+        public static void modifyRequestData(final WeiboParameters parameters) {
             final Activity activity = BaseQueryTest.getActivity();
             if (TKConfig.ModifyRequestData && activity != null) {
                 activity.runOnUiThread(new Runnable() {
@@ -204,6 +204,11 @@ public class HttpUtils {
                     }
                 }
             }
+        }
+        
+        public void execute(Context context) throws IOException {
+            
+            modifyRequestData(parameters);
             
             receivedAllData = false;
             statusCode = 0;

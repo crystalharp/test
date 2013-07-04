@@ -324,6 +324,7 @@ public class ActionLog {
     public static final String AddMerchantTelephone = "BD";
     public static final String AddMerchantTime = "BE";
     public static final String AddMerchantMobile = "BF";
+    public static final String AddMerchantAddressDescription = "BG";
 
     // 软件生命周期  AO
     public static final String Lifecycle = "FA";

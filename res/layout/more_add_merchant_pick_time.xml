@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
        
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows"
+    android:id="@+id/root_view"
     android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="fill_parent"
     android:background="@color/black_transparent_half"
     >
     
@@ -11,6 +11,7 @@
         android:id="@+id/body_view"
         android:layout_width="fill_parent"
         android:layout_height="216dp"
+        android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:weightSum="2"
         >
@@ -25,7 +26,7 @@
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
 	            android:layout_alignParentTop="true"
-	            android:text="开始时间"/>
+	            android:text="@string/start_time"/>
 	        <com.tigerknows.widget.TimeListView android:id="@+id/start_tlv"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
@@ -50,7 +51,7 @@
 	            android:id="@+id/end_txv"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
-	            android:text="结束时间"/>
+	            android:text="@string/end_time"/>
 	        <com.tigerknows.widget.TimeListView android:id="@+id/end_tlv"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
@@ -66,4 +67,37 @@
 	         </com.tigerknows.widget.TimeListView>
         </RelativeLayout>
     </LinearLayout>
+    
+    <RelativeLayout android:id="@+id/control_view"
+        android:padding="0dp"
+        android:layout_width="fill_parent"
+        android:layout_above="@id/body_view"
+        android:layout_height="48dp"
+	    android:paddingLeft="8dp"
+	    android:paddingRight="8dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:id="@+id/title_txv"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="@string/business_hours"
+	        android:layout_centerVertical="true"
+	        android:layout_alignParentLeft="true"
+	        android:paddingLeft="12dp"
+	        android:textSize="18sp"
+	        />
+        <Button
+            android:id="@+id/time_confirm_btn"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:padding="8dp"
+	        android:layout_marginRight="4dp"
+	        android:background="@drawable/btn_confirm_hotel_normal"
+	        android:layout_centerVertical="true"
+	        android:layout_alignParentRight="true"
+	        />
+    </RelativeLayout>
 </RelativeLayout>

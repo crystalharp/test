@@ -30,8 +30,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.ImageView.ScaleType;
+import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListView;
 import android.widget.ScrollView;
 
@@ -48,6 +50,8 @@ import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.FeedbackUpload;
+import com.tigerknows.model.ImageUpload;
+import com.tigerknows.model.Response;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.FilterCategoryOrder;
 import com.tigerknows.model.DataQuery.FilterOption;
@@ -75,6 +79,9 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     private Uri mCaptureUri;
     private Uri mPhotoUri;
     private Uri mUploadUri;
+    private String mPhotoMD5;
+    
+    private View mTitleView;
     
     private ImageButton mTakePhotoBtn;
     
@@ -101,7 +108,19 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     private View mPickTimeView;
     private TimeListView mStartTimeListView;
     private TimeListView mEndTimeListView;
-    private Dialog mPickTimeDialog;
+    private int mStartHourPosition = 11;
+    private int mStartMinutePosition = 2;
+    private int mEndHourPosition = 23;
+    private int mEndMinutePosition = 2;
+    private Button mTimeConfirmBtn;
+    
+    protected PopupWindow mPopupWindow;
+    
+    void dismissPopupWindow() {
+        if (mPopupWindow != null && mPopupWindow.isShowing()) {
+            mPopupWindow.dismiss();
+        }
+    }
     
     private EditText mYourTelephoneEdt = null;
     
@@ -161,24 +180,17 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mPickTimeView = mLayoutInflater.inflate(R.layout.more_add_merchant_pick_time, null, false);
         mStartTimeListView = (TimeListView) mPickTimeView.findViewById(R.id.start_tlv);
         mEndTimeListView = (TimeListView) mPickTimeView.findViewById(R.id.end_tlv);
-        
-        mStartTimeListView.setData(9, 6);
-        mEndTimeListView.setData(21, 6);
-        
-        mPickTimeDialog = Utility.getDialog(mThis, 
-                mThis.getString(R.string.comment_food_restair), 
-                null,
-                mPickTimeView,
-                mThis.getString(R.string.confirm), 
-                mThis.getString(R.string.cancel), 
-                new DialogInterface.OnClickListener() {
+        mTimeConfirmBtn = (Button) mPickTimeView.findViewById(R.id.time_confirm_btn);
+        mTimeConfirmBtn.setOnClickListener(this);
+        mPickTimeView.findViewById(R.id.root_view).setOnTouchListener(new OnTouchListener() {
             
             @Override
-            public void onClick(DialogInterface arg0, int id) {
-                mTimeBtn.setText(mStartTimeListView.getHour()+":"+mStartTimeListView.getMinute()+"-"+mEndTimeListView.getHour()+":"+mEndTimeListView.getMinute());
+            public boolean onTouch(View v, MotionEvent event) {
+                dismissPopupWindow();
+                return false;
             }
         });
-
+        
         DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo().getId(), mThis);
         FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
         if (filterCategory != null) {
@@ -226,6 +238,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
      */
     protected void findViews() {
         super.findViews();
+        mTitleView = findViewById(R.id.title_view);
         mAddMerchantScv = (ScrollView)findViewById(R.id.add_merchant_scv);
         mNameEdt = (EditText)findViewById(R.id.name_edt);
         mType = (Button)findViewById(R.id.type_btn);
@@ -283,12 +296,16 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                             mActionLog.addAction(mActionTag +  ActionLog.AddMerchantName);
                             break;
                             
-                        case R.id.address_btn:
+                        case R.id.address_edt:
                             mActionLog.addAction(mActionTag +  ActionLog.AddMerchantAddress);
                             break;
                             
                         case R.id.telephone_edt:
                             mActionLog.addAction(mActionTag +  ActionLog.AddMerchantTelephone);
+                            break;
+                            
+                        case R.id.address_description_edt:
+                            mActionLog.addAction(mActionTag +  ActionLog.AddMerchantAddressDescription);
                             break;
                             
                         case R.id.your_telephone_edt:
@@ -401,6 +418,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 
             case R.id.delete_photo_btn:
                 mUploadUri = null;
+                mPhotoMD5 = null;
                 mPhotoUri = null;
                 mTakePhotoBtn.setScaleType(ScaleType.FIT_XY);
                 mTakePhotoBtn.setImageResource(R.drawable.btn_take_photo);
@@ -513,7 +531,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 
             case R.id.time_btn:
                 hideSoftInput();
-                mPickTimeDialog.show();
+                showPopupWindow();
                 break;
                 
             case R.id.type_btn:
@@ -522,6 +540,15 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 mRightBtn.setVisibility(View.GONE);
                 mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
                 mFilterListView.setVisibility(View.VISIBLE);
+                break;
+                
+            case R.id.time_confirm_btn:
+                mStartHourPosition = mStartTimeListView.getHourPosition();
+                mStartMinutePosition = mStartTimeListView.getMinutePosition();
+                mEndHourPosition = mEndTimeListView.getHourPosition();
+                mEndMinutePosition = mEndTimeListView.getMinutePosition();
+                mTimeBtn.setText(mStartTimeListView.getHour()+":"+mStartTimeListView.getMinute()+"-"+mEndTimeListView.getHour()+":"+mEndTimeListView.getMinute());
+                dismissPopupWindow();
                 break;
                 
             default:
@@ -602,8 +629,8 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             }
             
             s.append(splitChar);
-            if (mUploadUri != null) {
-                s.append(URLEncoder.encode(mUploadUri.toString(), TKConfig.getEncoding()));
+            if (mPhotoMD5 != null) {
+                s.append(URLEncoder.encode(mPhotoMD5, TKConfig.getEncoding()));
             } else {
                 s.append(nullStr);
             }
@@ -620,16 +647,28 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         }
         
         hideSoftInput();
+        List<BaseQuery> list = new ArrayList<BaseQuery>();
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(FeedbackUpload.SERVER_PARAMETER_ADD_MERCHANT, s.toString());
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
         feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
-        queryStart(feedbackUpload);
+        list.add(feedbackUpload);
+        
+        if (mUploadUri != null && mPhotoMD5 != null) {
+            ImageUpload imageUpload = new ImageUpload(mThis);
+            criteria = new Hashtable<String, String>();
+            criteria.put(ImageUpload.SERVER_PARAMETER_MD5, mPhotoMD5);
+            criteria.put(ImageUpload.SERVER_PARAMETER_PICTURE, Utility.imageUri2FilePath(mThis, mUploadUri));
+            imageUpload.setup(criteria);
+            list.add(imageUpload);
+        }
+        queryStart(list);
     }
     
     void confrimUploadUri(Drawable drawable) {
         if (mPhotoUri != null) {
             mUploadUri = mPhotoUri;
+            mPhotoMD5 = Utility.md5sum(Utility.imageUri2FilePath(mThis, mUploadUri));
             mTakePhotoBtn.setScaleType(ScaleType.MATRIX);
             mTakePhotoBtn.setImageMatrix(Utility.resizeSqareMatrix(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Util.dip2px(Globals.g_metrics.density, 112)));
             mTakePhotoBtn.setImageDrawable(drawable);
@@ -639,18 +678,79 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         }
     }
     
+    protected boolean isReLogin() {
+        boolean isRelogin = this.isReLogin;
+        this.isReLogin = false;
+        if (isRelogin) {
+            if (mBaseQuerying != null) {
+                List<BaseQuery> list = new ArrayList<BaseQuery>();
+                for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
+                    BaseQuery baseQuery = mBaseQuerying.get(i);
+                    Response response = baseQuery.getResponse();
+                    if (response == null ||
+                            response.getResponseCode() == Response.RESPONSE_CODE_SESSION_INVALID ||
+                            response.getResponseCode() == Response.RESPONSE_CODE_LOGON_EXIST) {
+                        baseQuery.setResponse(null);
+                        list.add(baseQuery);
+                    }
+                }
+                queryStart(list);;
+            }
+        }
+        return isRelogin;
+    }
+    
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
-        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
-        if (BaseActivity.checkReLogin(baseQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
-            isReLogin = true;
-            return;
-        } else if (BaseActivity.checkResponseCode(baseQuery, mThis, null, true, this, false)) {
-            return;
+        List<BaseQuery> list = tkAsyncTask.getBaseQueryList();
+        boolean textUploadSuccess = true;
+        boolean imageUploadSuccess = true;
+        boolean showErroDialog = true;
+        BaseQuery imageUpload = null;
+        
+        for(int i = 0, size = list.size(); i < size; i++) {
+            BaseQuery baseQuery = list.get(i);
+            if (BaseActivity.checkReLogin(baseQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
+                isReLogin = true;
+                return;
+            } else if (BaseActivity.checkResponseCode(baseQuery, mThis, null, showErroDialog && !(baseQuery instanceof ImageUpload), this, false)) {
+                showErroDialog = false;
+                if (baseQuery instanceof FeedbackUpload) {
+                    textUploadSuccess = false;
+                }
+                
+                if (baseQuery instanceof ImageUpload) {
+                    imageUploadSuccess = false;
+                    imageUpload = baseQuery;
+                }
+            }
         }
-        Toast.makeText(mThis, R.string.add_merchant_success, Toast.LENGTH_LONG).show();
-        finish();
+        
+        if (imageUploadSuccess) {
+            mUploadUri = null;
+            mPhotoMD5 = null;
+        }
+        
+        if (textUploadSuccess && imageUploadSuccess) {
+            Toast.makeText(mThis, R.string.add_merchant_success, Toast.LENGTH_LONG).show();
+            finish();
+        } else if (textUploadSuccess) {
+            final BaseQuery finalImageUpload = imageUpload;
+            Utility.showNormalDialog(mThis, getString(R.string.add_merchant_image_upload_falied_tip), new DialogInterface.OnClickListener() {
+                
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    if (which == DialogInterface.BUTTON_POSITIVE) {
+                        if (finalImageUpload != null) {
+                            queryStart(finalImageUpload);
+                        }
+                    }
+                }
+            });
+        } else {
+            Toast.makeText(mThis, R.string.add_merchant_text_upload_falied_tip, Toast.LENGTH_LONG).show();
+        }
     }
 
     public void showTakePhotoDialog(int pickRequestCode, int captureRequestCode) {
@@ -793,5 +893,26 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     public void cancelFilter() {
         mFilterListView.setVisibility(View.GONE);
         backHome();
+    }
+    
+    void showPopupWindow() {
+        if (mPopupWindow == null) {
+            
+            mPopupWindow = new PopupWindow(mPickTimeView);
+            mPopupWindow.setWindowLayoutMode(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
+            mPopupWindow.setFocusable(true);
+            // 设置允许在外点击消失
+            mPopupWindow.setOutsideTouchable(true);
+
+            // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
+            mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
+            mPopupWindow.setAnimationStyle(R.style.AlterImageDialog);
+            mPopupWindow.update();
+        }
+
+        mStartTimeListView.setData(mStartHourPosition, mStartMinutePosition);
+        mEndTimeListView.setData(mEndHourPosition, mEndMinutePosition);
+        
+        mPopupWindow.showAsDropDown(mTitleView, 0, 0);
     }
 }
