@@ -1162,33 +1162,6 @@ _cairo_default_context_show_page (void *abstract_cr)
     return _cairo_gstate_show_page (cr->gstate);
 }
 
-static cairo_status_t
-_cairo_default_context_set_font_size (void *abstract_cr,
-				      double size)
-{
-    cairo_default_context_t *cr = abstract_cr;
-
-    return _cairo_gstate_set_font_size (cr->gstate, size);
-}
-
-static cairo_status_t
-_cairo_default_context_set_font_matrix (void *abstract_cr,
-					const cairo_matrix_t *matrix)
-{
-    cairo_default_context_t *cr = abstract_cr;
-
-    return _cairo_gstate_set_font_matrix (cr->gstate, matrix);
-}
-
-static void
-_cairo_default_context_get_font_matrix (void *abstract_cr,
-					cairo_matrix_t *matrix)
-{
-    cairo_default_context_t *cr = abstract_cr;
-
-    _cairo_gstate_get_font_matrix (cr->gstate, matrix);
-}
-
 static const cairo_backend_t _cairo_default_context_backend = {
     CAIRO_TYPE_DEFAULT,
     _cairo_default_context_destroy,

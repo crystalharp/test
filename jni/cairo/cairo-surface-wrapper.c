@@ -485,12 +485,6 @@ _cairo_surface_wrapper_snapshot (cairo_surface_wrapper_t *wrapper)
     return NULL;
 }
 
-cairo_bool_t
-_cairo_surface_wrapper_has_show_text_glyphs (cairo_surface_wrapper_t *wrapper)
-{
-    return cairo_surface_has_show_text_glyphs (wrapper->target);
-}
-
 void
 _cairo_surface_wrapper_init (cairo_surface_wrapper_t *wrapper,
 			     cairo_surface_t *target)
