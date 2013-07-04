@@ -564,6 +564,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 
 	@Override
 	public void onPostExecute(TKAsyncTask tkAsyncTask) {
+	    mPOIDetailFragment.minusLoadingView();
 	    POI poi = mPOI;
         if (poi == null) {
             return;
