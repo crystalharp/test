@@ -427,18 +427,6 @@ unwrap_source (const cairo_pattern_t *pattern)
 }
 
 static cairo_bool_t
-is_recording_pattern (const cairo_pattern_t *pattern)
-{
-    cairo_surface_t *surface;
-    
-    if (pattern->type != CAIRO_PATTERN_TYPE_SURFACE)
-        return FALSE;
-    
-    surface = ((const cairo_surface_pattern_t *) pattern)->surface;
-    return _cairo_surface_is_recording (surface);
-}
-
-static cairo_bool_t
 op_reduces_to_source (const cairo_composite_rectangles_t *extents,
                       cairo_bool_t no_mask)
 {
