@@ -1142,8 +1142,10 @@
 <!-- Traffic Error Recovery End -->
 
     <string name="tel_or_mobile">可输入座机或手机</string>
+    <string name="next_procedure">下一步</string>
 
 <!-- POI Error Recovery Start -->
+    <string name="erreport_title">我来报错</string>
     <string name="erreport_note">感谢您帮助我们完善商户信息。请认真填写联系方式，以便我们将处理后的结果及时反馈给您。</string>
     <string name="erreport_mobile_hint">请输入您的手机号</string>
     <string name="erreport_contact">联系方式：</string>
@@ -1169,5 +1171,9 @@
     <string name="erreport_merchant_chai">已拆迁</string>
     <string name="erreport_merchant_move">已搬迁</string>
     <string name="erreport_merchant_find">没找到</string>
+    <string name="erreport_merchant_tel">商户电话</string>
+    <string name="erreport_address">地　　址</string>
+    <string name="erreport_merchant_name">商户名称</string>
+    <string name="erreport_merchant_type">商户类型</string>
 <!-- POI Error Recovery End -->
 </resources>
