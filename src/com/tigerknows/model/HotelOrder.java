@@ -3,6 +3,7 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
+import com.tigerknows.model.XMapData.XMapInitializer;
 import com.tigerknows.model.xobject.XMap;
 
 /**
@@ -22,6 +23,8 @@ public class HotelOrder extends XMapData{
 	public static final int STATE_CANCELED = 3;
 	public static final int STATE_POST_DUE = 4;
 	public static final int STATE_CHECKED_IN = 5;
+	
+	public static final String NEED_FIELDS = "0102030405060708090A0B0C0E0F1011121320";
 	
 	// identification info
 	/**
@@ -435,5 +438,12 @@ public class HotelOrder extends XMapData{
 		return mPoi;
 	}
 
+    public static XMapInitializer<HotelOrder> Initializer = new XMapInitializer<HotelOrder>() {
+
+        @Override
+        public HotelOrder init(XMap data) throws APIException {
+            return new HotelOrder(data);
+        }
+    };
 	
 }

@@ -541,6 +541,10 @@ public class TKConfig {
      * 是否已显示搜索首页界面的酒店预订引导
      */
     public static final String PREFS_HINT_POI_HOME_HOTEL_RESERVE = "prefs_hint_poi_home_hotel_reserve";
+    /**
+     * 是否已显示搜索首页界面的酒店预订引导
+     */
+    public static final String PREFS_HOTEL_ORDER_COULD_ANOMALY_EXISTS = "prefs_hotel_order_could_anomaly_exists";
     
     /**
      * 推送服务绝对启动时间

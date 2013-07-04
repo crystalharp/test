@@ -259,6 +259,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         	showRoomReserveDialog();
             break;
         case R.id.submit_order_btn:
+        	TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_ORDER_COULD_ANOMALY_EXISTS, "yes");
         	mActionLog.addAction(mActionTag + ActionLog.HOTELOrderWriteSubmit);
         	String str = "";
         	for (int i = 1; i <= mRoomHowmany; i++){

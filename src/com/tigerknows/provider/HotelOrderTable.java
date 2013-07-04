@@ -207,4 +207,28 @@ public class HotelOrderTable {
 		
 	}
 	
+	public String getAllIds(){
+		StringBuilder sb;
+
+		if(!mDb.isOpen())
+			return null;
+		
+		List<HotelOrder> results = new ArrayList<HotelOrder>();
+		Cursor cursor = mDb.query(TABLE_NAME, new String[]{ORDER_ID}, null, null, null, null, null, null);
+		sb = new StringBuilder(cursor.getCount() * 10);
+		int contentIndex = cursor.getColumnIndex(ORDER_ID); 
+		while (cursor.moveToNext()) {
+			if(sb.length() > 0){
+				sb.append(",");
+			}
+			sb.append(cursor.getString(contentIndex));
+		}
+		
+		if (cursor != null) {
+		    cursor.close();
+		}
+		
+		return sb.toString();
+	}
+	
 }
