@@ -204,12 +204,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         	new LoadThread(0, TKConfig.getPageSize()).start();
     }
     
-    private boolean mIsToSyncOrders = false;
-    
-    public void syncOrders(){
-    	mIsToSyncOrders = true;
-    }
-    
     @Override
     public void onResume() {
     	super.onResume();
@@ -226,7 +220,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         	reloadOrders();
         }
         
-        if(mIsToSyncOrders && couldAnomalyExists()){
+        if(couldAnomalyExists()){
         	sendOrderSyncQuery();
         }
         
