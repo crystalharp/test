@@ -1114,19 +1114,6 @@ composite_tristrip (const cairo_traps_compositor_t *compositor,
 					   info->antialias, &info->strip);
 }
 
-static cairo_bool_t
-is_recording_pattern (const cairo_pattern_t *pattern)
-{
-    cairo_surface_t *surface;
-
-    if (pattern->type != CAIRO_PATTERN_TYPE_SURFACE)
-	return FALSE;
-
-    surface = ((const cairo_surface_pattern_t *) pattern)->surface;
-    surface = _cairo_surface_get_source (surface, NULL);
-    return _cairo_surface_is_recording (surface);
-}
-
 static cairo_surface_t *
 recording_pattern_get_surface (const cairo_pattern_t *pattern)
 {
