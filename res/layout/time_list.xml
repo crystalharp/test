@@ -30,6 +30,7 @@
 	            android:scrollingCache="false"
 	            android:footerDividersEnabled="false"
 	            android:fadingEdge="none"
+	            android:scrollbars="none"
 	            />
         </RelativeLayout>
         <RelativeLayout
@@ -48,6 +49,7 @@
 	            android:scrollingCache="false"
 	            android:footerDividersEnabled="false"
 	            android:fadingEdge="none"
+	            android:scrollbars="none"
 	            />
         </RelativeLayout>
     </LinearLayout>

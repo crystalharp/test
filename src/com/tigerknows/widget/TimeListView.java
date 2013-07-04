@@ -26,13 +26,13 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -81,22 +81,28 @@ public class TimeListView extends LinearLayout {
         this.context = context;
         
         hourList = new ArrayList<String>();
+        hourList.add("");
+        hourList.add("");
         for(int i = 1, size = 25; i < size; i++) {
-            hourList.add(String.valueOf(i));
+            hourList.add(toTwoChar(i));
         }
+        hourList.add("");
+        hourList.add("");
         
         minuteList = new ArrayList<String>();
+        minuteList.add("");
+        minuteList.add("");
         for(int i = 0, size = 12; i < size; i++) {
-            minuteList.add(String.valueOf(i*5));
+            minuteList.add(toTwoChar(i*5));
         }
+        minuteList.add("");
+        minuteList.add("");
         
         findViews();
         setListener();
         
         hourAdapter = new MyAdapter(context, hourList);
-        hourAdapter.isParent = true;
         minuteAdapter = new MyAdapter(context, minuteList);
-        minuteAdapter.isParent = false;
         
         hourLsv.setAdapter(hourAdapter);
         minuteLsv.setAdapter(minuteAdapter);
@@ -108,21 +114,42 @@ public class TimeListView extends LinearLayout {
     }
     
     protected void setListener() {
-        hourLsv.setOnItemClickListener(new OnItemClickListener() {
-
+        
+        hourLsv.setOnScrollListener(new OnScrollListener() {
+            
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long arg3) {
-                hourPosition = position;
-                minutePosition = 0;
-                hourAdapter.notifyDataSetChanged();
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (OnScrollListener.SCROLL_STATE_IDLE == scrollState) {
+                    int firstPosition = hourLsv.getFirstVisiblePosition();
+                    hourLsv.setSelectionFromTop(firstPosition, 0);
+                    hourPosition = firstPosition+2;
+                }
+            }
+            
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
+                    int totalItemCount) {
+                // TODO Auto-generated method stub
+                
             }
         });
-        minuteLsv.setOnItemClickListener(new OnItemClickListener() {
-
+        
+        minuteLsv.setOnScrollListener(new OnScrollListener() {
+            
             @Override
-            public void onItemClick(AdapterView<?> arg0, View view, int position, long arg3) {
-                minutePosition = position;
-                minuteAdapter.notifyDataSetChanged();
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+                if (OnScrollListener.SCROLL_STATE_IDLE == scrollState) {
+                    int firstPosition = minuteLsv.getFirstVisiblePosition();
+                    minuteLsv.setSelectionFromTop(firstPosition, 0);
+                    minutePosition = firstPosition+2;
+                }
+            }
+            
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
+                    int totalItemCount) {
+                // TODO Auto-generated method stub
+                
             }
         });
     }
@@ -150,8 +177,6 @@ public class TimeListView extends LinearLayout {
         
         private LayoutInflater mLayoutInflater;
         
-        boolean isParent = false;
-
         public MyAdapter(Context context, List<String> list) {
             super(context, TEXTVIEW_RESOURCE_ID, list);
             mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -173,23 +198,8 @@ public class TimeListView extends LinearLayout {
             
             String name = getItem(position);
             
-            if (isParent) {
-                if (position == hourPosition) {
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
-                    textTxv.setTextColor(TKConfig.COLOR_ORANGE);
-                } else {
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
-                    textTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
-                }
-            } else {
-                if (position == minutePosition) {
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
-                    textTxv.setTextColor(TKConfig.COLOR_ORANGE);
-                } else {
-                    view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
-                    textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
-                }
-            }
+            view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+            textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
             
             textTxv.setText(name);
             
@@ -198,11 +208,19 @@ public class TimeListView extends LinearLayout {
     }
     
     public String getHour() {
-        return null;
+        return hourList.get(hourPosition);
     }
     
     public String getMinute() {
-        return null;
+        return minuteList.get(minutePosition);
+    }
+    
+    public int getHourPosition() {
+        return hourPosition;
+    }
+    
+    public int getMinutePosition() {
+        return minutePosition;
     }
     
     public void setData(int hourPosition, int minutePosition) {
@@ -219,5 +237,16 @@ public class TimeListView extends LinearLayout {
 
             minuteLsv.setSelectionFromTop(this.minutePosition-2, 0);
         }
+    }
+    
+    String toTwoChar(int value) {
+        String result;
+        if (value < 10) {
+            result = "0" + value;
+        } else {
+            result = String.valueOf(value);
+        }
+        
+        return result;
     }
 }
