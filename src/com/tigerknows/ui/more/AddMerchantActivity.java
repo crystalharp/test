@@ -50,6 +50,8 @@ import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.FeedbackUpload;
+import com.tigerknows.model.ImageUpload;
+import com.tigerknows.model.Response;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.FilterCategoryOrder;
 import com.tigerknows.model.DataQuery.FilterOption;
@@ -77,6 +79,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     private Uri mCaptureUri;
     private Uri mPhotoUri;
     private Uri mUploadUri;
+    private String mPhotoMD5;
     
     private View mTitleView;
     
@@ -409,18 +412,32 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 break;
                 
             case R.id.take_photo_btn:
-                hideSoftInput();
-                showTakePhotoDialog(REQUEST_CODE_PICK_PHOTO, REQUEST_CODE_CAPTURE_PHOTO);
+                if (mUploadUri == null || mPhotoMD5 == null) {
+                    hideSoftInput();
+                    showTakePhotoDialog(REQUEST_CODE_PICK_PHOTO, REQUEST_CODE_CAPTURE_PHOTO);
+                }
                 break;
                 
             case R.id.delete_photo_btn:
-                mUploadUri = null;
-                mPhotoUri = null;
-                mTakePhotoBtn.setScaleType(ScaleType.FIT_XY);
-                mTakePhotoBtn.setImageResource(R.drawable.btn_take_photo);
-                mDeletePhotoBtn.setVisibility(View.GONE);
-                mPhotoTitleTxv.setText(R.string.storefront_photo);
-                mPhotoDescriptionTxv.setText(R.string.add_merchant_upload_photo);
+
+                if (mUploadUri != null || mPhotoMD5 != null) {
+                    Utility.showNormalDialog(mThis, getString(R.string.add_merchant_delete_photo_tip), new DialogInterface.OnClickListener() {
+                        
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (which == DialogInterface.BUTTON_POSITIVE) {
+                                mUploadUri = null;
+                                mPhotoMD5 = null;
+                                mPhotoUri = null;
+                                mTakePhotoBtn.setScaleType(ScaleType.FIT_XY);
+                                mTakePhotoBtn.setImageResource(R.drawable.btn_take_photo);
+                                mDeletePhotoBtn.setVisibility(View.GONE);
+                                mPhotoTitleTxv.setText(R.string.storefront_photo);
+                                mPhotoDescriptionTxv.setText(R.string.add_merchant_upload_photo);
+                            }
+                        }
+                    });
+                }
                 break;
                 
             case R.id.cancel_btn:
@@ -484,7 +501,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                     });
                     
                     mPickDateDialog = Utility.showNormalDialog(mThis, 
-                            mThis.getString(R.string.comment_food_restair), 
+                            mThis.getString(R.string.select_business_hours_day), 
                             mPickDateView,
                             new DialogInterface.OnClickListener() {
                         
@@ -625,8 +642,8 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             }
             
             s.append(splitChar);
-            if (mUploadUri != null) {
-                s.append(URLEncoder.encode(mUploadUri.toString(), TKConfig.getEncoding()));
+            if (mPhotoMD5 != null) {
+                s.append(URLEncoder.encode(mPhotoMD5, TKConfig.getEncoding()));
             } else {
                 s.append(nullStr);
             }
@@ -643,16 +660,28 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         }
         
         hideSoftInput();
+        List<BaseQuery> list = new ArrayList<BaseQuery>();
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(FeedbackUpload.SERVER_PARAMETER_ADD_MERCHANT, s.toString());
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
         feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
-        queryStart(feedbackUpload);
+        list.add(feedbackUpload);
+        
+        if (mUploadUri != null && mPhotoMD5 != null) {
+            ImageUpload imageUpload = new ImageUpload(mThis);
+            criteria = new Hashtable<String, String>();
+            criteria.put(ImageUpload.SERVER_PARAMETER_MD5, mPhotoMD5);
+            criteria.put(ImageUpload.SERVER_PARAMETER_PICTURE, Utility.imageUri2FilePath(mThis, mUploadUri));
+            imageUpload.setup(criteria);
+            list.add(imageUpload);
+        }
+        queryStart(list);
     }
     
     void confrimUploadUri(Drawable drawable) {
         if (mPhotoUri != null) {
             mUploadUri = mPhotoUri;
+            mPhotoMD5 = Utility.md5sum(Utility.imageUri2FilePath(mThis, mUploadUri));
             mTakePhotoBtn.setScaleType(ScaleType.MATRIX);
             mTakePhotoBtn.setImageMatrix(Utility.resizeSqareMatrix(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Util.dip2px(Globals.g_metrics.density, 112)));
             mTakePhotoBtn.setImageDrawable(drawable);
@@ -662,18 +691,84 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         }
     }
     
+    protected boolean isReLogin() {
+        boolean isRelogin = this.isReLogin;
+        this.isReLogin = false;
+        if (isRelogin) {
+            if (mBaseQuerying != null) {
+                List<BaseQuery> list = new ArrayList<BaseQuery>();
+                for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
+                    BaseQuery baseQuery = mBaseQuerying.get(i);
+                    Response response = baseQuery.getResponse();
+                    if (response == null ||
+                            response.getResponseCode() == Response.RESPONSE_CODE_SESSION_INVALID ||
+                            response.getResponseCode() == Response.RESPONSE_CODE_LOGON_EXIST) {
+                        baseQuery.setResponse(null);
+                        list.add(baseQuery);
+                    }
+                }
+                queryStart(list);;
+            }
+        }
+        return isRelogin;
+    }
+    
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
-        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
-        if (BaseActivity.checkReLogin(baseQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
-            isReLogin = true;
-            return;
-        } else if (BaseActivity.checkResponseCode(baseQuery, mThis, null, true, this, false)) {
-            return;
+        List<BaseQuery> list = tkAsyncTask.getBaseQueryList();
+        boolean textUploadSuccess = true;
+        boolean imageUploadSuccess = true;
+        boolean showErroDialog = true;
+        BaseQuery imageUpload = null;
+        
+        for(int i = 0, size = list.size(); i < size; i++) {
+            BaseQuery baseQuery = list.get(i);
+            if (BaseActivity.checkReLogin(baseQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
+                isReLogin = true;
+                return;
+            } else if (BaseActivity.checkResponseCode(baseQuery, mThis, null, showErroDialog && !(baseQuery instanceof ImageUpload), this, false)) {
+                showErroDialog = false;
+                if (baseQuery instanceof FeedbackUpload) {
+                    textUploadSuccess = false;
+                }
+                
+                if (baseQuery instanceof ImageUpload) {
+                    imageUploadSuccess = false;
+                    imageUpload = baseQuery;
+                }
+            }
         }
-        Toast.makeText(mThis, R.string.add_merchant_success, Toast.LENGTH_LONG).show();
-        finish();
+        
+        if (imageUploadSuccess) {
+            mUploadUri = null;
+            mPhotoMD5 = null;
+        }
+        
+        if (textUploadSuccess && imageUploadSuccess) {
+            Toast.makeText(mThis, R.string.add_merchant_success, Toast.LENGTH_LONG).show();
+            finish();
+        } else if (textUploadSuccess) {
+            final BaseQuery finalImageUpload = imageUpload;
+            Utility.showNormalDialog(mThis,
+                    getString(R.string.prompt),
+                    getString(R.string.add_merchant_image_upload_falied_tip),
+                    getString(R.string.retry),
+                    getString(R.string.cancel),
+                    new DialogInterface.OnClickListener() {
+                
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (which == DialogInterface.BUTTON_POSITIVE) {
+                                if (finalImageUpload != null) {
+                                    queryStart(finalImageUpload);
+                                }
+                            }
+                        }
+                    });
+        } else {
+            Toast.makeText(mThis, R.string.add_merchant_text_upload_falied_tip, Toast.LENGTH_LONG).show();
+        }
     }
 
     public void showTakePhotoDialog(int pickRequestCode, int captureRequestCode) {

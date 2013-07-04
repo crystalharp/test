@@ -67,7 +67,7 @@ public class HttpManager {
 	private static final String END_MP_BOUNDARY = "--" + BOUNDARY + "--";
 	private static final String MULTIPART_FORM_DATA = "multipart/form-data";
 
-	private static final String HTTPMETHOD_POST = "POST";
+	public static final String HTTPMETHOD_POST = "POST";
 	public static final String HTTPMETHOD_GET = "GET";
 
 	private static final int SET_CONNECTION_TIMEOUT = 5 * 1000;

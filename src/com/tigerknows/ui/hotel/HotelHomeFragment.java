@@ -454,6 +454,12 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             }
         }
         
+        if (mSphinx.getPickLocationFragment().getPOI() != null) {
+            Filter filter = getFilter(mFilterList, FilterArea.FIELD_LIST);
+            if (filter != null) {
+                FilterListView.selectedFilter(filter, -1);
+            }
+        }
         mSphinx.getPickLocationFragment().setData(mFilterList);
         refreshFilterAreaView();
     }

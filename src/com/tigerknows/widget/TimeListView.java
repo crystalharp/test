@@ -102,7 +102,9 @@ public class TimeListView extends LinearLayout {
         setListener();
         
         hourAdapter = new MyAdapter(context, hourList);
+        hourAdapter.isParent = true;
         minuteAdapter = new MyAdapter(context, minuteList);
+        minuteAdapter.isParent = false;
         
         hourLsv.setAdapter(hourAdapter);
         minuteLsv.setAdapter(minuteAdapter);
@@ -121,8 +123,9 @@ public class TimeListView extends LinearLayout {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (OnScrollListener.SCROLL_STATE_IDLE == scrollState) {
                     int firstPosition = hourLsv.getFirstVisiblePosition();
-                    hourLsv.setSelectionFromTop(firstPosition, 0);
                     hourPosition = firstPosition+2;
+                    hourAdapter.notifyDataSetChanged();
+                    hourLsv.setSelectionFromTop(firstPosition, 0);
                 }
             }
             
@@ -140,8 +143,9 @@ public class TimeListView extends LinearLayout {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 if (OnScrollListener.SCROLL_STATE_IDLE == scrollState) {
                     int firstPosition = minuteLsv.getFirstVisiblePosition();
-                    minuteLsv.setSelectionFromTop(firstPosition, 0);
                     minutePosition = firstPosition+2;
+                    minuteAdapter.notifyDataSetChanged();
+                    minuteLsv.setSelectionFromTop(firstPosition, 0);
                 }
             }
             
@@ -177,6 +181,8 @@ public class TimeListView extends LinearLayout {
         
         private LayoutInflater mLayoutInflater;
         
+        boolean isParent = false;
+
         public MyAdapter(Context context, List<String> list) {
             super(context, TEXTVIEW_RESOURCE_ID, list);
             mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -200,6 +206,15 @@ public class TimeListView extends LinearLayout {
             
             view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
             textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+            if ((isParent == true && position == hourPosition) ||
+                    (isParent == false && position == minutePosition)) {
+                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
+                textTxv.setTextColor(TKConfig.COLOR_ORANGE);
+            } else {
+                view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
+                textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+            }
+
             
             textTxv.setText(name);
             

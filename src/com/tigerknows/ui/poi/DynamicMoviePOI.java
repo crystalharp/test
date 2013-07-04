@@ -266,7 +266,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
 
 	@Override
 	public void onPostExecute(TKAsyncTask tkAsyncTask) {
-		// TODO Auto-generated method stub
+	    mPOIDetailFragment.minusLoadingView();
 	    POI poi = mPOI;
         if (poi == null) {
             return;
