@@ -284,6 +284,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 if (mBaseQuerying != null) {
                     for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
                         mBaseQuerying.get(i).setResponse(null);
+                        mBaseQuerying.get(0).setTipText(mSphinx.getString(R.string.doing_and_wait));
                     }
                     queryStart(mBaseQuerying);
                 }
