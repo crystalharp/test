@@ -331,6 +331,10 @@ public class Utility {
     }
 
     public static void unZipFile(AssetManager am, String fileName, String path) {
+        unZipFile(am, fileName, path, null);
+    }
+
+    public static void unZipFile(AssetManager am, String fileName, String path, String specifyFileName) {
 
         try {
             File file = new File(path + fileName);
@@ -354,8 +358,11 @@ public class Utility {
                              LogWrapper.e(TAG, "Unable to create new folder: " + filePath);
                          }
                      }
-                 } else {
+                 } else if (specifyFileName == null) {
                      saveFile(zipFile.getInputStream(entry), entry.getName(), path);
+                 } else if (entry.getName().equals(specifyFileName)) {
+                     saveFile(zipFile.getInputStream(entry), entry.getName(), path);
+                     break;
                  }
             }
             if (file.exists()) {
@@ -1220,28 +1227,25 @@ public class Utility {
     public static void showTakePhotoDialog(final Activity activity, final int pickRequestCode,
             final int captureRequestCode, final Uri captureUri) {
         final List<String> textList = new ArrayList<String>();
-        textList.add("pick picture");
-        textList.add("capture picture");
-        int[] leftCompoundIconArray = new int[] {
-                R.drawable.ic_share_sms, R.drawable.ic_share_sina
-        };
+        textList.add(activity.getString(R.string.capture_photo));
+        textList.add(activity.getString(R.string.pick_photo));
         final ArrayAdapter<String> adapter = new StringArrayAdapter(activity, textList,
-                leftCompoundIconArray);
+                null);
 
         ListView listView = Utility.makeListView(activity);
         listView.setAdapter(adapter);
 
         final Dialog dialog = Utility.showNormalDialog(activity,
-                activity.getString(R.string.share), null, listView, null, null, null);
+                activity.getString(R.string.storefront_photo), null, listView, null, null, null);
 
         listView.setOnItemClickListener(new OnItemClickListener() {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View arg1, int which, long arg3) {
                 if (which == 0) {
-                    pickPicture(activity, pickRequestCode);
-                } else if (which == 1) {
                     capturePicture(activity, captureRequestCode, captureUri);
+                } else if (which == 1) {
+                    pickPicture(activity, pickRequestCode);
                 }
                 dialog.dismiss();
             }

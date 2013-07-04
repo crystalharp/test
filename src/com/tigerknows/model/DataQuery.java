@@ -43,6 +43,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -308,6 +309,10 @@ public final class DataQuery extends BaseQuery {
     }
     
     public static void initStaticField(String dataType, String subDataType, int cityId) {
+        initStaticField(dataType, subDataType, cityId, null);
+    }
+    
+    public static void initStaticField(String dataType, String subDataType, int cityId, Context context) {
         try {
             synchronized (Filter_Lock) {
                 FilterArea filterDataArea = null;
@@ -346,8 +351,20 @@ public final class DataQuery extends BaseQuery {
                 }
                 
                 if (filterDataCategoryOrder == null) {
-                    String path = MapEngine.cityId2Floder(MapEngine.SW_ID_QUANGUO) + String.format(TKConfig.FILTER_FILE, filterFileKey, MapEngine.SW_ID_QUANGUO);
+                    String name = String.format(TKConfig.FILTER_FILE, filterFileKey, MapEngine.SW_ID_QUANGUO);
+                    String path = MapEngine.cityId2Floder(MapEngine.SW_ID_QUANGUO) + name;
                     File file = new File(path);
+
+                    if (file.exists() == false) {
+                        if (DATA_TYPE_POI.equals(dataType) &&
+                                SUB_DATA_TYPE_POI.equals(subDataType) &&
+                                context != null) {
+                            AssetManager am = context.getAssets();
+                            String mapPath = TKConfig.getDataPath(true);
+                            Utility.unZipFile(am, "tigermap.zip", mapPath, name);
+                        }
+                    }
+                    
                     if (file.exists()) {
                         FileInputStream fis = new FileInputStream(file);
                         try {
@@ -374,12 +391,23 @@ public final class DataQuery extends BaseQuery {
                 if (filterDataArea == null || filterDataArea.cityId != cityId){
                     filterDataArea = null;
                     String path;
+                    String name = null;
                 	if (cityId == MapEngine.SW_ID_QUANGUO) {
-                		path = MapEngine.cityId2Floder(cityId) + String.format(TKConfig.FILTER_FILE, "0", cityId);
+                	    name = String.format(TKConfig.FILTER_FILE, "0", cityId);
+                		path = MapEngine.cityId2Floder(cityId) + name;
                 	} else {
                 		path = MapEngine.cityId2Floder(cityId) + String.format(TKConfig.FILTER_FILE, DATA_TYPE_POI, cityId);
                 	}
                     File file = new File(path);
+
+                    if (file.exists() == false) {
+                        if (context != null && name != null) {
+                            AssetManager am = context.getAssets();
+                            String mapPath = TKConfig.getDataPath(true);
+                            Utility.unZipFile(am, "tigermap.zip", mapPath, name);
+                        }
+                    }
+                    
                     if (file.exists()) {
                         FileInputStream fis = new FileInputStream(file);
                         try {

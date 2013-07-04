@@ -840,8 +840,6 @@
     <string name="add_merchant_address_hint">如：海淀区中关村北大街116号</string>
     <string name="merchant_telephone">商户座机</string>
     <string name="merchant_telephone_hint">可输入座机或手机</string>
-    <string name="merchant_mobile_phone">商户手机</string>
-    <string name="merchant_mobile_phone_hint">商户移动电话</string>
     <string name="address_description">位置描述</string>
     <string name="add_merchant_address_description_hint">如：北大东门向北200米路东</string>
     <string name="business_hours">营业时间</string>
@@ -855,6 +853,8 @@
     <string name="contact">联系方式</string>
     <string name="please_input_your_telephone">请输入您的电话</string>
     <string name="add_merchant_thanks">感谢您帮助我们完善商户信息。请认真填写联系方式，以便我们将处理后的结果及时反馈给您。 </string>
+    <string name="capture_photo">拍照上传</string>
+    <string name="pick_photo">从手机相册选择</string>
     
     <string name="every_day">每天</string>
     <string name="weekend">周末</string>

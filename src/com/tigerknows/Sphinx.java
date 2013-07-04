@@ -289,6 +289,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private ViewGroup mInfoWindowHotel = null;
     private ViewGroup mInfoWindowMessage = null;
     
+    /*
+     * 因为显示地图的时候会进行一次缩放,会和后续的手动缩放混淆,加入这个变量是为了
+     * 过滤掉第一次进入地图时调用ZoomEndEvent时对overlay.isShowInPreferZoom
+     * 这个全局变量的改变,不建议在别的地方使用.
+     * overlay.isShowInPreferZoom算是个全局变量,用来标记点击下一个的时候是进行缩放操作
+     * 还是进行直接移动操作.
+     */
+    private boolean firstEnterMap = false;
+    
     private Dialog mDialog = null;
     public void setDialog(Dialog dialog) {
         mDialog = dialog;
@@ -703,6 +712,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         
                         @Override
                         public void run() {
+                            //过滤掉viewMap的时候引起的非手动的第一次缩放
+                            if (firstEnterMap) {
+                                firstEnterMap = false;
+                            } else {
+                                ItemizedOverlay overlay = mMapView.getCurrentOverlay();
+                                if (overlay != null) {
+                                    overlay.isShowInPreferZoom = false;
+                                }
+                            }
                             mScaleView.setMetersPerPixelAtZoom((float)Util.metersPerPixelAtZoom(CONFIG.TILE_SIZE, newZoomLevel, mMapView.getCenterPosition().getLat()), newZoomLevel);
                             if (newZoomLevel >= CONFIG.ZOOM_UPPER_BOUND) {
                                 mMapView.getZoomControls().setIsZoomInEnabled(false);
@@ -3123,6 +3141,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 	baseFragment.onResume();
                     show = true;
                 }
+            }
+            
+            if (viewId == R.id.view_result_map) {
+                ItemizedOverlay overlay = mMapView.getCurrentOverlay();
+                if (overlay != null) {
+                    overlay.isShowInPreferZoom = true;
+                }
+                firstEnterMap = true;
             }
             mUIProcessing = false;
             return show;
