@@ -1,2 +1,0 @@
-set solib-search-path /home/linqingzu/workspace/trunk/obj/local/armeabi
-directory /home/linqingzu/tools/android-ndk-r5/platforms/android-8/arch-arm/usr/include /home/linqingzu/tools/android-ndk-r5/sources/cxx-stl/system /home/linqingzu/workspace/trunk/jni
