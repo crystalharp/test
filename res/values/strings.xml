@@ -857,6 +857,8 @@
     <string name="pick_photo">从手机相册选择</string>
     <string name="start_time">开始时间</string>
     <string name="end_time">结束时间</string>
+    <string name="add_merchant_image_upload_falied_tip">图片上传失败，是否重试？</string>
+    <string name="add_merchant_text_upload_falied_tip">提交失败，请重试</string>
     
     <string name="every_day">每天</string>
     <string name="weekend">周末</string>

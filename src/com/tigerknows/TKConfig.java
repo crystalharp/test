@@ -320,6 +320,11 @@ public class TKConfig {
      * 软件登录服务访问URL路径
      */
     private static String BOOTSTRAP_URL = "http://%s/bootstrap/local";
+    
+    /**
+     * 图片上传服务访问URL路径
+     */
+    private static String IMAGE_UPLOAD_URL = "http://%s/bootstrap/local";
 
     /**
      * 默认下载服务器Host
@@ -345,6 +350,11 @@ public class TKConfig {
      * 默认软件登录服务器的Host列表
      */
     private static String[] BOOTSTRAP_HOST_LIST = new String[]{"init.tigerknows.net", "chshh.tigerknows.com", "csh.laohubaodian.net"};
+    
+    /** 
+     * 默认图片上传服务器的Host
+     */
+    private static String IMAGE_UPLOAD_HOST = "init.tigerknows.net";
 
     /**
      * 软件登录服务推送用于动态负载均衡的下载服务器Host
@@ -947,11 +957,27 @@ public class TKConfig {
     }
     
     /**
+     * 获取图片上传服务访问的URL
+     * @return
+     */
+    public static String getImageUploadUrl() {
+        return IMAGE_UPLOAD_URL;
+    }
+    
+    /**
      * 获取引导服务器Host列表
      * @return
      */
     public static String[] getBootStrapHostList() {
         return BOOTSTRAP_HOST_LIST;
+    }
+    
+    /**
+     * 获取图片上传服务器Host
+     * @return
+     */
+    public static String getImageUploadHost() {
+        return IMAGE_UPLOAD_HOST;
     }
     
     /**
@@ -1441,6 +1467,18 @@ public class TKConfig {
                 if (start > -1 && end > -1) {
                     start += "hotelOrderUrl=".length();
                     TKConfig.sHOTEL_ORDER_URL = text.substring(start, end);
+                }
+                start = text.indexOf("imageUploadHost=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "imageUploadHost=".length();
+                    TKConfig.IMAGE_UPLOAD_HOST = text.substring(start, end);
+                }
+                start = text.indexOf("imageUploadUrl=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "imageUploadUrl=".length();
+                    TKConfig.IMAGE_UPLOAD_URL = text.substring(start, end);
                 }
                 
                 BaseQuery.initCommonParameters();
