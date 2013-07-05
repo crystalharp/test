@@ -577,7 +577,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	}
 	
 	public void query() {
-		mSphinx.hideSoftInput();
+//		mSphinx.hideSoftInput();
 		
 		if (mode == TRAFFIC_MODE) {
 			submitTrafficQuery();

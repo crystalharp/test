@@ -190,17 +190,25 @@ public class TrafficQueryEventHelper {
 			if (actionId == EditorInfo.IME_ACTION_NEXT
                     || actionId == EditorInfo.IME_ACTION_SEARCH 
 			        || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-				if (!mQueryFragment.mStart.isEmpty() && !mQueryFragment.mEnd.isEmpty()) {
-					//都有内容，搜索
-					mQueryFragment.query();
-					return true;
-				} else if (mQueryFragment.mSelectedEdt == mQueryFragment.mStart) {
+//				if (!mQueryFragment.mStart.isEmpty() && !mQueryFragment.mEnd.isEmpty()) {
+//					//都有内容，搜索
+//					mQueryFragment.query();
+//					return true;
+//				} else if (mQueryFragment.mSelectedEdt == mQueryFragment.mStart) {
+//				    mQueryFragment.mSelectedEdt = mQueryFragment.mEnd;
+//				    mQueryFragment.mEnd.mEdt.requestFocus();
+//                    return true;
+//				} else if (mQueryFragment.mSelectedEdt == mQueryFragment.mEnd) {
+//				    mQueryFragment.mSelectedEdt = mQueryFragment.mStart;
+//                    mQueryFragment.mStart.mEdt.requestFocus();
+//                    return true;
+//				}
+			    if (mQueryFragment.mSelectedEdt == mQueryFragment.mStart) {
 				    mQueryFragment.mSelectedEdt = mQueryFragment.mEnd;
 				    mQueryFragment.mEnd.mEdt.requestFocus();
                     return true;
 				} else if (mQueryFragment.mSelectedEdt == mQueryFragment.mEnd) {
-				    mQueryFragment.mSelectedEdt = mQueryFragment.mStart;
-                    mQueryFragment.mStart.mEdt.requestFocus();
+				    mQueryFragment.query();
                     return true;
 				}
 			}
