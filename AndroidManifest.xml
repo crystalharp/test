@@ -225,6 +225,7 @@
             <intent-filter>
                 <action android:name="action.com.tigerknows.first.startup" />
                 <action android:name="com.tigerknows.action.AlarmInit" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
             </intent-filter>
         </receiver>
         
