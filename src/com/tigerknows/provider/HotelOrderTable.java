@@ -117,6 +117,7 @@ public class HotelOrderTable {
 		ContentValues cv = new ContentValues();
         cv.put(ORDER_ID, order.getId());
         cv.put(ORDER_CREATE_TIME, order.getCreateTime());
+        cv.put(ORDER_DELETED, 0);
         DataEncryptor dataEncryptor = DataEncryptor.getInstance();
         byte[] encrypted = ByteUtil.xobjectToByte(order.toXMapForStorage());
         dataEncryptor.encrypt(encrypted);
@@ -187,13 +188,16 @@ public class HotelOrderTable {
 	 */
 	public int delete(String orderId){
 		int result = 0;
-
+		
 		if(!mDb.isOpen())
 			return result;
 		
-		result = mDb.delete(TABLE_NAME, ORDER_ID + "=?", new String[]{orderId});
+		ContentValues cv = new ContentValues();
+        cv.put(ORDER_DELETED, 1);
+        result = mDb.update(TABLE_NAME, cv, ORDER_ID + "=?", new String[]{orderId});
 		
 		return result;
+		
 	}
 	
 	public int count(){

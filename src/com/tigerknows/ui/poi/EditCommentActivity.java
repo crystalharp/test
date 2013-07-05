@@ -930,22 +930,24 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         if (mSyncSinaChb.isChecked()) {
             // http://open.weibo.com/wiki/2/statuses/update
             // status  true  string  要发布的微博文本内容，必须做URLencode，内容不超过140个汉字。   
+            // #老虎宝典分享#我来过：XXXX（poi 名称）+空格+我觉得 XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+来自@老虎宝典+空格+www.tigerknows.com （“来自@老虎宝典” 之前的内容如果超出 123 字，截断成 122 个字+“…”（半个省略号“……”））；图片为地图图片（同 poi 分享的图片一样）
             String shareSina = "";
             shareSina = mThis.getString(R.string.poi_comment_share_sina, mPOI.getName(), shareGrade, content, TextUtils.isEmpty(recommendCook) ? "" : mThis.getString(R.string.recommend_cooking, recommendCook));
-            if (shareSina.length() > 115) {
-                shareSina = shareSina.subSequence(0, 112) + "...";
+            if (shareSina.length() > 107) {
+                shareSina = shareSina.subSequence(0, 104) + "...";
             }
-            shareSina = shareSina + "http://www.tigerknows.com";   // 25个 TODO: 但是这个网址被微博删除了
+            shareSina = shareSina + mThis.getString(R.string.poi_comment_share_sina_source); // TODO: 但是这个网址被微博删除了
             criteria.put(DataOperation.SERVER_PARAMETER_SHARE_SINA, shareSina);
         }
         
         if (mSyncQZoneChb.isChecked()) {
             // http://wiki.opensns.qq.com/wiki/%E3%80%90QQ%E7%99%BB%E5%BD%95%E3%80%91add_share
-            // summary   string  所分享的网页资源的摘要内容，或者是网页的概要描述，对应上文接口说明的3。最长80个中文字，超出部分会被截断。  
+            // summary   string  所分享的网页资源的摘要内容，或者是网页的概要描述，对应上文接口说明的3。最长80个中文字，超出部分会被截断。
+            // 我来过：XXXX（poi 名称）+空格+我觉得 XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+空格+#老虎宝典分享#（“网址之前的内容如果超出 123 字，截断成 122 个字+“…”（半个省略号“……”）），没有图片显示
             String shareQzone = "";
             shareQzone = mThis.getString(R.string.poi_comment_share_qzone, mPOI.getName(), shareGrade, content, TextUtils.isEmpty(recommendCook) ? "" : mThis.getString(R.string.recommend_cooking, recommendCook));
-            if (shareQzone.length() > 63) {
-                shareQzone = shareQzone.subSequence(0, 60) + "...";
+            if (shareQzone.length() > 72) {
+                shareQzone = shareQzone.subSequence(0, 69) + "...";
             }
             shareQzone = shareQzone + mThis.getString(R.string.poi_comment_share_qzone_source); // 17个
             criteria.put(DataOperation.SERVER_PARAMETER_SHARE_QZONE, shareQzone);
