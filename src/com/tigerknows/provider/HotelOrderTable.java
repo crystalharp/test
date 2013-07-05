@@ -2,27 +2,20 @@ package com.tigerknows.provider;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
-import com.tigerknows.crypto.DataDecode;
 import com.tigerknows.crypto.DataEncryptor;
 import com.tigerknows.model.HotelOrder;
-import com.tigerknows.model.TKWord;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
 
-import android.R.integer;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.text.TextUtils;
 
 public class HotelOrderTable {
 
@@ -50,9 +43,11 @@ public class HotelOrderTable {
 			+ "( " 
             + ORDER_ID + " TEXT PRIMARY KEY, "
             + ORDER_CREATE_TIME + " INTEGER(20) not null,"
-            + ORDER_DELETED + " INTEGER(1) not null,"
+            + ORDER_DELETED + " INTEGER(1) not null default 0,"
             + ORDER_CONTENT + " BLOB not null);";
 
+	private static final String TABLE_UPGRAD_1to2 = "alter table " + TABLE_NAME + " add column" + ORDER_DELETED + " INTEGER(1) not null default 0;";
+	
 	public Context mCtx;
 
 	/**
@@ -66,17 +61,17 @@ public class HotelOrderTable {
 		
 		@Override
 		public void onCreate(SQLiteDatabase db) {
-			System.out.println("Create database.");
 			db.execSQL(TABLE_CREATE);
 		}
 		
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-			System.out.println("old version: " + oldVersion);
+			if(oldVersion == 1 && newVersion==2){
+				db.execSQL(TABLE_UPGRAD_1to2);
+			}
 		}
 		
 	}
-	
 
 	/**
 	 * constructor
@@ -145,7 +140,7 @@ public class HotelOrderTable {
 			return null;
 		
 		List<HotelOrder> results = new ArrayList<HotelOrder>();
-		Cursor cursor = mDb.query(TABLE_NAME, new String[]{ORDER_CONTENT}, null, null, null, null, ORDER_CREATE_TIME + " desc", start + "," + (count));
+		Cursor cursor = mDb.query(TABLE_NAME, new String[]{ORDER_CONTENT}, " " + ORDER_DELETED + "=0", null, null, null, ORDER_CREATE_TIME + " desc", start + "," + (count));
 		int contentIndex = cursor.getColumnIndex(ORDER_CONTENT); 
 		while (cursor.moveToNext()) {
 			DataEncryptor dataEncryptor = DataEncryptor.getInstance();
