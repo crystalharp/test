@@ -41,7 +41,7 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.HotelOrder;
 import com.tigerknows.model.HotelOrderOperation;
-import com.tigerknows.model.HotelOrderOperation.HotelOrderDifferenceResponse;
+import com.tigerknows.model.HotelOrderOperation.HotelOrderSyncResponse;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.HotelOrderOperation.HotelOrderStatesResponse;
 import com.tigerknows.provider.HotelOrderTable;
@@ -221,6 +221,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         }
         
         if(couldAnomalyExists()){
+        	logi("Anomaly could exists. Send list sync query.");
         	sendOrderSyncQuery();
         }
         
@@ -233,6 +234,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
      */
     private boolean couldAnomalyExists(){
     	String orderSubmited = TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_ORDER_COULD_ANOMALY_EXISTS, "no");
+    	logi("orderSubmited: " + orderSubmited);
 		return "yes".equals(orderSubmited);
     }
     
@@ -245,7 +247,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	LogWrapper.i(TAG, "send order sync query for: " + ids);
     	
     	Hashtable<String, String> criteria = new Hashtable<String, String>();
-    	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_QUERY);
+    	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_SYNC);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_ID_FILTER, ids);
     	criteria.put(BaseQuery.SERVER_PARAMETER_NEED_FIELD, HotelOrder.NEED_FIELDS);
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
@@ -595,15 +597,15 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         
 
-        if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_NO, this, true)) {
+        if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, true)) {
             return;
         }
         
         final HotelOrderOperation hotelOrderOperation = (HotelOrderOperation)(tkAsyncTask.getBaseQuery());
         String opCode = hotelOrderOperation.getCriteria().get(HotelOrderOperation.SERVER_PARAMETER_OPERATION_CODE);
-        if(opCode.equals(HotelOrderOperation.OPERATION_CODE_QUERY)){
+        if(opCode.equals(HotelOrderOperation.OPERATION_CODE_SYNC)){
         	// Get the orders loaded from server
-        	HotelOrderDifferenceResponse response = (HotelOrderDifferenceResponse) hotelOrderOperation.getResponse();
+        	HotelOrderSyncResponse response = (HotelOrderSyncResponse) hotelOrderOperation.getResponse();
         	List<HotelOrder> orders = response.getOrders();
         	
         	// If there exists orders to sync
@@ -641,7 +643,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         		
         	}
         	
-        }else if(opCode.equals(HotelOrderOperation.OPERATION_CODE_SYNC)){
+        }else if(opCode.equals(HotelOrderOperation.OPERATION_CODE_QUERY)){
         	HotelOrderStatesResponse response = (HotelOrderStatesResponse) hotelOrderOperation.getResponse();
         	List<Long> states = response.getStates();
         	String ids = baseQuery.getCriteria().get(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS);

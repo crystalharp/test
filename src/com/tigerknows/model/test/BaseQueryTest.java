@@ -409,7 +409,7 @@ public class BaseQueryTest {
         return layout;
     }
     
-    public static void showSetResponseCode(LayoutInflater layoutInflater, final Activity activity) {
+    public static void showSetResponseCode(final LayoutInflater layoutInflater, final Activity activity) {
         if (TKConfig.ShowTestOption == false) {
             return;
         }
@@ -480,6 +480,12 @@ public class BaseQueryTest {
         layout.addView(historyBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         final Button favoriteBtn = new Button(activity);
         layout.addView(favoriteBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+
+        final Button anomalyHotelOrderBtn = new Button(activity);
+        layout.addView(anomalyHotelOrderBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        
+        final Button deleteAnOrderBtn = new Button(activity);
+        layout.addView(deleteAnOrderBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
         
         editConfigBtn.setText("View or Modify config.txt");
         editConfigBtn.setOnClickListener(new View.OnClickListener() {
@@ -780,6 +786,24 @@ public class BaseQueryTest {
             @Override
             public void onClick(View arg0) {
                 historyFavoriteData(activity, 1);
+            }
+        });
+
+        anomalyHotelOrderBtn.setText("Anomyly hotel order");
+        anomalyHotelOrderBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+            	TKConfig.setPref(layoutInflater.getContext(), TKConfig.PREFS_HOTEL_ORDER_COULD_ANOMALY_EXISTS, "yes");
+            }
+        });
+        
+        deleteAnOrderBtn.setText("Delete a local hotel order");
+        deleteAnOrderBtn.setOnClickListener(new View.OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+            	
             }
         });
         
