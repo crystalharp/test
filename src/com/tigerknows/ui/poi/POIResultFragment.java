@@ -429,10 +429,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
             }
             
-            if (addMerchant == false && v != mLoadingView) {
+            if (mResultLsv.isFooterSpringback() && addMerchant == false && v != mLoadingView) {
+                int state = mResultLsv.getState(false);
                 mResultLsv.removeFooterView(mAddMerchantFootView);
                 mResultLsv.removeFooterView(mLoadingView);
                 mResultLsv.addFooterView(mLoadingView);
+                mResultLsv.changeHeaderViewByState(false, state);
                 mCurrentFootView = mLoadingView;
             }
             mAddMerchantView.setVisibility(View.GONE);
@@ -981,7 +983,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
 
             mResultLsv.setFooterSpringback(canTurnPage());
-            refreshFilter(mDataQuery.getFilterList());
+            List<Filter> filterList = mDataQuery.getFilterList();
+            if (filterList != null && filterList.size() > 0) {
+                refreshFilter(filterList);
+            }
         } else {
             if (dataQuery.isTurnPage()) {
                 return;

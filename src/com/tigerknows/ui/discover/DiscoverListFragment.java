@@ -1046,7 +1046,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     });
                 }
                 
-                refreshFilter(mDataQuery.getFilterList());
+                List<Filter> filterList = mDataQuery.getFilterList();
+                if (filterList != null && filterList.size() > 0) {
+                    refreshFilter(filterList);
+                }
                 makeFilterArea(dataQuery);
                 
                 List<Tuangou> list = tuangouResponse.getList().getList();
