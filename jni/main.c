@@ -14,8 +14,8 @@ char message[1000];
 
 //init regine
 JNIEXPORT jint JNICALL Java_com_tigerknows_map_Ca_a(JNIEnv *env, jobject thiz,
-        jstring jresdir, jstring jmapdir, jint w, jint h, jbyteArray jbmpbuf, jint need_opt) {
-    char *bmpbuf = (*env)->GetByteArrayElements(env, jbmpbuf, NULL);
+        jstring jresdir, jstring jmapdir, jint w, jint h, jintArray jbmpbuf, jint need_opt) {
+    char *bmpbuf = (*env)->GetIntArrayElements(env, jbmpbuf, NULL);
     const char *resdir = (*env)->GetStringUTFChars(env, jresdir, 0);
     const char *mapdir = (*env)->GetStringUTFChars(env, jmapdir, 0);
 
@@ -36,11 +36,12 @@ JNIEXPORT jint JNICALL Java_com_tigerknows_map_Ca_a(JNIEnv *env, jobject thiz,
     #ifdef DEBUG
     sprintf(message, "...........Java_com_tigerknows_map_Ca_a...end....ret%d", ret);
     __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
-    #endif 
+    #endif
     return ret;
 }
 
 //reset engine
+
 JNIEXPORT void JNICALL Java_com_tigerknows_map_Ca_b(JNIEnv *env, jobject thiz,
         jint w, jint h, jbyteArray jbmpbuf) {
     const char *bmpbuf = (*env)->GetByteArrayElements(env, jbmpbuf, NULL);
@@ -50,12 +51,13 @@ JNIEXPORT void JNICALL Java_com_tigerknows_map_Ca_b(JNIEnv *env, jobject thiz,
     __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
     #endif
 
-    tk_reset_matrix_size(w, h, bmpbuf);
+    //tk_reset_matrix_size(w, h, bmpbuf);
     #ifdef DEBUG
     sprintf(message, "...........Java_com_tigerknows_map_Ca_b...end....");
     __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
     #endif
 }
+
 
 //destory engine
 JNIEXPORT void JNICALL Java_com_tigerknows_map_Ca_c(JNIEnv *env, jobject thiz) {
@@ -345,7 +347,7 @@ JNIEXPORT jint JNICALL Java_com_tigerknows_map_Ca_q(JNIEnv *env, jobject thiz, j
     return ret;
 }
 
-//引擎声明的默认返回的联想词个�?define SWCOUNT 15
+//引擎声明的默认返回的联想词个�?define SWCOUNT 15
 JNIEXPORT jint JNICALL Java_com_tigerknows_map_Ca_r(JNIEnv *env, jobject thiz) {
     #ifdef DEBUG
     sprintf(message, "...........Java_com_tigerknows_map_Ca_r...SWCOUNT....");
@@ -828,7 +830,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_tigerknows_map_Ca_yk(JNIEnv *env, jobject 
     return barray;
 }
 
-//remove city data�?dat文件�?
+//remove city data�?dat文件�?
 JNIEXPORT void JNICALL Java_com_tigerknows_map_Ca_yl(JNIEnv *env, jobject thiz, jstring jcityname) {
    const char *cityname = (*env)->GetStringUTFChars(env, jcityname, 0);
     #ifdef DEBUG
@@ -864,7 +866,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_tigerknows_map_Ca_ym(JNIEnv *env, jobject 
     return versionByte;
 }
 
-//remove region data�?dat文件 .chk文件�?
+//remove region data�?dat文件 .chk文件�?
 JNIEXPORT void JNICALL Java_com_tigerknows_map_Ca_yn(JNIEnv *env, jobject thiz, jint regionId) {
     #ifdef DEBUG
     sprintf(message, "...........Java_com_tigerknows_map_Ca_yn...tk_remove_region_data...regionId:%d..", regionId);
@@ -979,7 +981,7 @@ JNIEXPORT void JNICALL Java_com_tigerknows_map_Ca_zb(JNIEnv *env, jobject thiz, 
     __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
     #endif
 
-    tk_reset_icon_size(offset);
+    //tk_reset_icon_size(offset);
 
     #ifdef DEBUG
     sprintf(message, "...........Java_com_tigerknows_map_Ca_zb...end....");
@@ -987,6 +989,7 @@ JNIEXPORT void JNICALL Java_com_tigerknows_map_Ca_zb(JNIEnv *env, jobject thiz, 
     #endif
 }
 
+/*
 JNIEXPORT jint JNICALL Java_com_tigerknows_map_Ca_zc(JNIEnv *env, jobject thiz, jbyteArray jbmpbuf, jbyteArray jpngbuf) {
     char *bmpbuf = (*env)->GetByteArrayElements(env, jbmpbuf, NULL);
     char *pngbuf = (*env)->GetByteArrayElements(env, jpngbuf, NULL);
@@ -1008,7 +1011,7 @@ JNIEXPORT jint JNICALL Java_com_tigerknows_map_Ca_zc(JNIEnv *env, jobject thiz, 
     __android_log_write(ANDROID_LOG_ERROR, "TKEngine-stat", message);
     #endif 
     return ret;
-}
+}*/
 
 JNIEXPORT jint JNICALL Java_com_tigerknows_map_Ca_ys(JNIEnv *env, jobject thiz, jdouble lon, jdouble lat, jint w, jint h, jint zoom) {
     #ifdef DEBUG

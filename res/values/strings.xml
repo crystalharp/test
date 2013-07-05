@@ -859,6 +859,7 @@
     <string name="end_time">结束时间</string>
     <string name="add_merchant_image_upload_falied_tip">图片上传失败，是否重试？</string>
     <string name="add_merchant_text_upload_falied_tip">提交失败，请重试</string>
+   <string name="add_merchant_delete_photo_tip">确定要删除该图片吗？</string>
     
     <string name="every_day">每天</string>
     <string name="weekend">周末</string>
@@ -1162,8 +1163,8 @@
     <string name="erreport_redundancy_confirm">确认提交地点重复的错误？</string>
     <string name="erreport_tel_empty">你忘记输入商户电话了</string>
     <string name="erreport_tel_empty_2">请描述电话错误类型，或直接填写新的正确电话。</string>
-    <string name="erreport_tel_error_type">电话错误类型</string>
-    <string name="erreport_if_you_know_tel">如果您知晓正确电话，请填写</string>
+    <string name="erreport_tel_error_type">电话错误类型：</string>
+    <string name="erreport_if_you_know_tel">如果您知晓正确电话，请填写：</string>
     <string name="erreport_description_hint">请详细描述报错内容</string>
     <string name="erreport_description_empty">请填写报错内容</string>
     <string name="erreport_location_confirm">确认提交地图标注错误？</string>
@@ -1173,9 +1174,10 @@
     <string name="erreport_merchant_chai">已拆迁</string>
     <string name="erreport_merchant_move">已搬迁</string>
     <string name="erreport_merchant_find">没找到</string>
-    <string name="erreport_merchant_tel">商户电话</string>
-    <string name="erreport_address">地　　址</string>
-    <string name="erreport_merchant_name">商户名称</string>
-    <string name="erreport_merchant_type">商户类型</string>
+    <string name="erreport_merchant_tel">添加电话：</string>
+    <string name="erreport_address">地　　址：</string>
+    <string name="erreport_merchant_name">商户名称：</string>
+    <string name="erreport_merchant_type">商户类型：</string>
+    <string name="erreport_xuantian">（选填）</string>
 <!-- POI Error Recovery End -->
 </resources>

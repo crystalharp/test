@@ -157,9 +157,6 @@ _cairo_surface_wrapper_get_extents (cairo_surface_wrapper_t *wrapper,
 cairo_private cairo_surface_t *
 _cairo_surface_wrapper_snapshot (cairo_surface_wrapper_t *wrapper);
 
-cairo_private cairo_bool_t
-_cairo_surface_wrapper_has_show_text_glyphs (cairo_surface_wrapper_t *wrapper);
-
 static inline cairo_bool_t
 _cairo_surface_wrapper_is_active (cairo_surface_wrapper_t *wrapper)
 {

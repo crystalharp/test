@@ -10,9 +10,10 @@ public class Ca {
     }
     
     /**初始化引擎、销毁引擎、reset引擎、计算bmpBuf大小*/
-    private static native int a(String resdir, String mapdir, int w, int h, byte[] buf, int need_opt);
-    protected static int tk_init_engine(String resdir, String mapdir, int w, int h, byte[] buf, int need_opt) { return a(resdir, mapdir, w, h, buf, need_opt); }
-    private static native void b(int w, int h, byte[] buf);
+    private static native int a(String resdir, String mapdir, int w, int h, int[] buf, int need_opt) ;
+    protected static int tk_init_engine(String resdir, String mapdir, int w, int h, int[] buf, int need_opt) { return a(resdir, mapdir, w, h, buf, need_opt); }
+    
+	private static native void b(int w, int h, byte[] buf);
     protected static void tk_reset_matrix_size(int w, int h, byte[] buf) { b(w, h, buf); }
     private static native void c();
     protected static void tk_destroy_engine() { c(); }

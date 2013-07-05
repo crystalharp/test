@@ -107,6 +107,7 @@ public class TrafficQueryMapAndLocationHelper {
      */
     public void resetMapCenter() {
     	
+        mQueryFragment.mSphinx.resetLoactionButtonState();
         CityInfo currentCityInfo = Globals.getCurrentCityInfo();
     	CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
     	CityInfo lastCityInfo = mMapCityInfo;

@@ -412,19 +412,32 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 break;
                 
             case R.id.take_photo_btn:
-                hideSoftInput();
-                showTakePhotoDialog(REQUEST_CODE_PICK_PHOTO, REQUEST_CODE_CAPTURE_PHOTO);
+                if (mUploadUri == null || mPhotoMD5 == null) {
+                    hideSoftInput();
+                    showTakePhotoDialog(REQUEST_CODE_PICK_PHOTO, REQUEST_CODE_CAPTURE_PHOTO);
+                }
                 break;
                 
             case R.id.delete_photo_btn:
-                mUploadUri = null;
-                mPhotoMD5 = null;
-                mPhotoUri = null;
-                mTakePhotoBtn.setScaleType(ScaleType.FIT_XY);
-                mTakePhotoBtn.setImageResource(R.drawable.btn_take_photo);
-                mDeletePhotoBtn.setVisibility(View.GONE);
-                mPhotoTitleTxv.setText(R.string.storefront_photo);
-                mPhotoDescriptionTxv.setText(R.string.add_merchant_upload_photo);
+
+                if (mUploadUri != null || mPhotoMD5 != null) {
+                    Utility.showNormalDialog(mThis, getString(R.string.add_merchant_delete_photo_tip), new DialogInterface.OnClickListener() {
+                        
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (which == DialogInterface.BUTTON_POSITIVE) {
+                                mUploadUri = null;
+                                mPhotoMD5 = null;
+                                mPhotoUri = null;
+                                mTakePhotoBtn.setScaleType(ScaleType.FIT_XY);
+                                mTakePhotoBtn.setImageResource(R.drawable.btn_take_photo);
+                                mDeletePhotoBtn.setVisibility(View.GONE);
+                                mPhotoTitleTxv.setText(R.string.storefront_photo);
+                                mPhotoDescriptionTxv.setText(R.string.add_merchant_upload_photo);
+                            }
+                        }
+                    });
+                }
                 break;
                 
             case R.id.cancel_btn:
@@ -488,7 +501,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                     });
                     
                     mPickDateDialog = Utility.showNormalDialog(mThis, 
-                            mThis.getString(R.string.comment_food_restair), 
+                            mThis.getString(R.string.select_business_hours_day), 
                             mPickDateView,
                             new DialogInterface.OnClickListener() {
                         
@@ -737,17 +750,22 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             finish();
         } else if (textUploadSuccess) {
             final BaseQuery finalImageUpload = imageUpload;
-            Utility.showNormalDialog(mThis, getString(R.string.add_merchant_image_upload_falied_tip), new DialogInterface.OnClickListener() {
+            Utility.showNormalDialog(mThis,
+                    getString(R.string.prompt),
+                    getString(R.string.add_merchant_image_upload_falied_tip),
+                    getString(R.string.retry),
+                    getString(R.string.cancel),
+                    new DialogInterface.OnClickListener() {
                 
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    if (which == DialogInterface.BUTTON_POSITIVE) {
-                        if (finalImageUpload != null) {
-                            queryStart(finalImageUpload);
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (which == DialogInterface.BUTTON_POSITIVE) {
+                                if (finalImageUpload != null) {
+                                    queryStart(finalImageUpload);
+                                }
+                            }
                         }
-                    }
-                }
-            });
+                    });
         } else {
             Toast.makeText(mThis, R.string.add_merchant_text_upload_falied_tip, Toast.LENGTH_LONG).show();
         }
