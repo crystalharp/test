@@ -652,7 +652,7 @@ public class Utility {
     }
     
     public static Dialog showNormalDialog(Activity activity, String title, View custom) {
-        return showNormalDialog(activity, title, null, custom, activity.getString(R.string.confirm), activity.getString(R.string.cancel), null);
+        return showNormalDialog(activity, title, null, custom, null, null, null);
     }
     
     public static Dialog showNormalDialog(Activity activity, String title, View custom, DialogInterface.OnClickListener onClickListener) {

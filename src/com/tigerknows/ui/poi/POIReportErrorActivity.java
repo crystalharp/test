@@ -7,6 +7,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,8 +15,10 @@ import android.text.InputType;
 import android.text.Selection;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +30,7 @@ import android.widget.TextView;
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.util.Utility;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
@@ -211,6 +215,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     }
     protected void setListenerDetail() {
     	super.setListener();
+		mLeftBtn.setOnClickListener(this);
     	mBodyLly.setOnTouchListener(new OnTouchListener(){
     	
 	        @Override
@@ -252,6 +257,35 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
 		};
         mMainEdt.addTextChangedListener(textWatcher);
         mDescriptionEdt.addTextChangedListener(textWatcher);
+    }
+    
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (showDiscardDialog() == false) {
+                mActionLog.addAction(ActionLog.KeyCodeBack);
+                finish();
+                return true;
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    private boolean showDiscardDialog(){
+    	boolean show = mSubmitBtn.isEnabled();
+    	if (mPage == HOME_PAGE || show == false)return false;
+		Utility.showNormalDialog(mThis, getString(R.string.erreport_abandon), new DialogInterface.OnClickListener(){
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				if (which == DialogInterface.BUTTON_POSITIVE){
+					finish();
+				}
+				
+			}
+			
+		});
+		return show;
     }
     
     protected void jumpToDetail(){
@@ -377,89 +411,95 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     public void onClick(View v) {
         // TODO Auto-generated method stub
         switch(v.getId()){
-            case R.id.name_btn:
-            	mChecked = NAME_ERR;
-            	mNextTitle = mNameBtn.getText().toString();
-            	refreshDataMain();
-            	break;
-            case R.id.tel_btn:
-            	mChecked = mHasTel ? TEL_ERR : TEL_ADD;
-            	mNextTitle = mTelBtn.getText().toString();
-            	refreshDataMain();
-            	break;
-            case R.id.notexist_btn:
-            	mChecked = NOT_EXIST;
-            	mNextTitle = mNotexistBtn.getText().toString();
-            	refreshDataMain();
-            	break;
-            case R.id.address_btn:
-            	mChecked = ADDRESS_ERR;
-            	mNextTitle = mAddressBtn.getText().toString();
-            	refreshDataMain();
-            	break;
-            case R.id.redundancy_btn:
-                mChecked = REDUNDANCY;
-                refreshDataMain();
-                break;
-            case R.id.location_btn:
-                mChecked = LOCATION_ERR;
-                refreshDataMain();
-                break;
-            case R.id.other_btn:
-            	mChecked = OTHER_ERR;
-            	mNextTitle = mOtherBtn.getText().toString();
-            	refreshDataMain();
-            	break;
-            case R.id.submit_btn:
-        		if((mChecked & DIRECT_SUBMIT) == 0) submit();
-        		else jumpToDetail();
-            	break;
-            case R.id.submit_detail_btn:
-            	submit();
-            	break;
-            case R.id.ne_stop_rbt:
-            	mChecked = NOT_EXIST;
-            	mRbtChecked = NE_STOP;
-            	refreshDataDetail();
-            	hideSoftInput();
-            	break;
-            case R.id.ne_chai_rbt:
-            	mChecked = NOT_EXIST;
-            	mRbtChecked = NE_CHAI;
-            	refreshDataDetail();
-            	hideSoftInput();
-            	break;
-            case R.id.ne_move_rbt:
-            	mChecked = NOT_EXIST;
-            	mRbtChecked = NE_MOVE;
-            	refreshDataDetail();
-            	hideSoftInput();
-            	break;
-            case R.id.ne_find_rbt:
-            	mChecked = NOT_EXIST;
-            	mRbtChecked = NE_FIND;
-            	refreshDataDetail();
-            	hideSoftInput();
-            	break;
-            case R.id.ne_other_rbt:
-            	mChecked = NE_OTHER;
-            	mRbtChecked = NE_OTHER_CHECK;
-            	mDescriptionEdt.requestFocus();
-            	refreshDataDetail();
-            	showSoftInput();
-            	break;
-            case R.id.tel_connect_rbt:
-            	mRbtChecked = TEL_CONNECT;
-            	refreshDataDetail();
-            	hideSoftInput();
-            	break;
-            case R.id.tel_notthis_rbt:
-            	mRbtChecked = TEL_NOTTHIS;
-            	refreshDataDetail();
-            	hideSoftInput();
-            	break;
-            default:
-                break;
+        case R.id.left_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
+            if (showDiscardDialog() == false) {
+                finish();
+            }
+            break;
+        case R.id.name_btn:
+        	mChecked = NAME_ERR;
+        	mNextTitle = mNameBtn.getText().toString();
+        	refreshDataMain();
+        	break;
+        case R.id.tel_btn:
+        	mChecked = mHasTel ? TEL_ERR : TEL_ADD;
+        	mNextTitle = mTelBtn.getText().toString();
+        	refreshDataMain();
+        	break;
+        case R.id.notexist_btn:
+        	mChecked = NOT_EXIST;
+        	mNextTitle = mNotexistBtn.getText().toString();
+        	refreshDataMain();
+        	break;
+        case R.id.address_btn:
+        	mChecked = ADDRESS_ERR;
+        	mNextTitle = mAddressBtn.getText().toString();
+        	refreshDataMain();
+        	break;
+        case R.id.redundancy_btn:
+            mChecked = REDUNDANCY;
+            refreshDataMain();
+            break;
+        case R.id.location_btn:
+            mChecked = LOCATION_ERR;
+            refreshDataMain();
+            break;
+        case R.id.other_btn:
+        	mChecked = OTHER_ERR;
+        	mNextTitle = mOtherBtn.getText().toString();
+        	refreshDataMain();
+        	break;
+        case R.id.submit_btn:
+    		if((mChecked & DIRECT_SUBMIT) == 0) submit();
+    		else jumpToDetail();
+        	break;
+        case R.id.submit_detail_btn:
+        	submit();
+        	break;
+        case R.id.ne_stop_rbt:
+        	mChecked = NOT_EXIST;
+        	mRbtChecked = NE_STOP;
+        	refreshDataDetail();
+        	hideSoftInput();
+        	break;
+        case R.id.ne_chai_rbt:
+        	mChecked = NOT_EXIST;
+        	mRbtChecked = NE_CHAI;
+        	refreshDataDetail();
+        	hideSoftInput();
+        	break;
+        case R.id.ne_move_rbt:
+        	mChecked = NOT_EXIST;
+        	mRbtChecked = NE_MOVE;
+        	refreshDataDetail();
+        	hideSoftInput();
+        	break;
+        case R.id.ne_find_rbt:
+        	mChecked = NOT_EXIST;
+        	mRbtChecked = NE_FIND;
+        	refreshDataDetail();
+        	hideSoftInput();
+        	break;
+        case R.id.ne_other_rbt:
+        	mChecked = NE_OTHER;
+        	mRbtChecked = NE_OTHER_CHECK;
+        	mDescriptionEdt.requestFocus();
+        	refreshDataDetail();
+        	showSoftInput();
+        	break;
+        case R.id.tel_connect_rbt:
+        	mRbtChecked = TEL_CONNECT;
+        	refreshDataDetail();
+        	hideSoftInput();
+        	break;
+        case R.id.tel_notthis_rbt:
+        	mRbtChecked = TEL_NOTTHIS;
+        	refreshDataDetail();
+        	hideSoftInput();
+        	break;
+        default:
+            break;
         }
     }
     private void submit(){

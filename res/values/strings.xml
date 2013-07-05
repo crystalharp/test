@@ -508,6 +508,7 @@
     
     <!-- POI Weibo Share Start -->
     <string name="share_weibo_poi_topic">#老虎宝典分享#</string>
+    <string name="share_weibo_ivecome">我来过：</string>
     <string name="share_poi_pingfen">评分:\u0020%1$s分</string>
     <string name="share_poi_caixi">菜系:\u0020%1$s</string>
     <string name="share_poi_junjia">均价:\u0020%1$s元</string>
@@ -1179,5 +1180,6 @@
     <string name="erreport_merchant_name">商户名称：</string>
     <string name="erreport_merchant_type">商户类型：</string>
     <string name="erreport_xuantian">（选填）</string>
+    <string name="erreport_abandon">确定放弃报错吗？</string>
 <!-- POI Error Recovery End -->
 </resources>
