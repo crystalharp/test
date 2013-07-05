@@ -252,6 +252,7 @@ public class ActionLog {
     public static final String MoreGiveFavourableComment = "BO";
     public static final String MoreMessageUserSurvey = "BP";
     public static final String MoreAddMerchant = "BQ";
+    public static final String MoreSatisfyRate = "BR";
 
     // 切换城市页
     public static final String ChangeCity = "CB";

@@ -1188,6 +1188,7 @@
 <!-- POI Error Recovery End -->
 
 <!-- Satisfy Rate Start -->
+    <string name="satisfy_rate">满意度评分</string>
     <string name="satisfy_note">你对老虎宝典的满意度评分是：</string>
     <string name="satisfy_a">搜索结果</string>
     <string name="satisfy_b">定位准确性</string>
