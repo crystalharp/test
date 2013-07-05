@@ -106,9 +106,9 @@ public class CouponDetailView extends BaseDetailView implements View.OnClickList
         mHotTxv.setText(mSphinx.getString(R.string._used_sum_times, coupon.getHot()));
         mDetailTxv.setText(coupon.getDetail());
         if(coupon.getQrimgTKDrawable() != null){
-        	mQrimgLly.setVisibility(GONE);
+            mQrimgLly.setVisibility(GONE);
         }else{
-        	mQrimgLly.setVisibility(GONE);
+            mQrimgLly.setVisibility(GONE);
         }
         mRemarkTxv.setText(coupon.getRemark());
         
@@ -124,7 +124,7 @@ public class CouponDetailView extends BaseDetailView implements View.OnClickList
             mLogoView.setVisibility(View.GONE);
         }
         if (mQrimgImv != null) {
-        	refreshDrawable(mData.getQrimgTKDrawable(), mQrimgImv, R.drawable.icon, true);
+            refreshDrawable(mData.getQrimgTKDrawable(), mQrimgImv, R.drawable.icon, true);
         }
     }
     
@@ -153,22 +153,22 @@ public class CouponDetailView extends BaseDetailView implements View.OnClickList
         return result;
     }
 
-	@Override
-	public void onClick(View v) {
-		if(v.getId() == R.id.qrimg_btn){
-			mActionLog.addAction(mActionTag + ActionLog.CouponQrimg);
-			LayoutInflater inflater = (LayoutInflater) mSphinx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			View view = inflater.inflate(R.layout.poi_coupon_qrimg, this, false);
-        	mQrimgImv = (ImageView)view.findViewById(R.id.qrimg_imv);
-        	refreshDrawable(mData.getQrimgTKDrawable(), mQrimgImv, R.drawable.icon, true);
-			Dialog dialog = Utility.showNormalDialog(mSphinx, null, null, view, null, null, null);
-			dialog.setOnDismissListener(new OnDismissListener() {
-				
-				@Override
-				public void onDismiss(DialogInterface dialog) {
-					mQrimgImv = null;
-				}
-			});
-		}
-	}
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.qrimg_btn){
+            mActionLog.addAction(mActionTag + ActionLog.CouponQrimg);
+            LayoutInflater inflater = (LayoutInflater) mSphinx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View view = inflater.inflate(R.layout.poi_coupon_qrimg, this, false);
+            mQrimgImv = (ImageView)view.findViewById(R.id.qrimg_imv);
+            refreshDrawable(mData.getQrimgTKDrawable(), mQrimgImv, R.drawable.icon, true);
+            Dialog dialog = Utility.showNormalDialog(mSphinx, null, null, view, null, null, null);
+            dialog.setOnDismissListener(new OnDismissListener() {
+                
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    mQrimgImv = null;
+                }
+            });
+        }
+    }
 }

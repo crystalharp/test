@@ -11,249 +11,283 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" 
         />
+    <Button android:id="@+id/submit_detail_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/submit"
+        android:textColor="@color/orange"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bg_bottom_control"
+        />
     <ScrollView android:id="@+id/body_scv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/title_view"
+        android:layout_above="@id/submit_detail_btn"
         >
-        <LinearLayout 
+        <LinearLayout android:id="@+id/body_lly"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-	        android:layout_marginLeft="8dp"
-	        android:layout_marginRight="8dp"
+            android:layout_marginBottom="64dp"
+            android:padding="8dp"
             >
-		    <LinearLayout android:id="@+id/tel_lly"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:orientation="vertical"
-		        >
-		        <TextView 
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:text="@string/erreport_tel_error_type"
-		            android:textSize="16sp"
-		            android:layout_gravity="left|center_vertical"
-		            android:padding="8dp"
-		            />
-		        <RadioGroup android:id="@+id/tel_rgp"
-		            android:layout_width="fill_parent"
-		            android:layout_height="wrap_content"
-		            android:orientation="vertical"
-		            android:focusable="true"
-		            android:focusableInTouchMode="true" 
-		            >
-		            <RadioButton android:id="@+id/tel_connect_rbt"
-		                android:layout_width="fill_parent"
-		                android:layout_height="wrap_content"
-		                android:text="@string/erreport_tel_error_connect"
-		                android:textColor="@color/black"
-		                android:button="@drawable/rdb_recovery"
-		                />
-		            <RadioButton android:id="@+id/tel_notthis_rbt"
-		                android:layout_width="fill_parent"
-		                android:layout_height="wrap_content"
-		                android:text="@string/erreport_tel_error_notthis"
-		                android:textColor="@color/black"
-		                android:button="@drawable/rdb_recovery"
-		                />
-		        </RadioGroup>
-		        
-		        <TextView 
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:text="@string/erreport_if_you_know_tel"
-		            android:textSize="16sp"
-		            android:layout_gravity="left|center_vertical"
-		            android:padding="8dp"
-		            />
-		    </LinearLayout>
-		    
-		    <LinearLayout android:id="@+id/notexist_lly"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:orientation="vertical"
-		        >
-		        <RadioGroup android:id="@+id/notexist_rgp"
-		            android:layout_width="fill_parent"
-		            android:layout_height="wrap_content"
-		            android:orientation="vertical"
-		            android:focusable="true"
-		            android:focusableInTouchMode="true" 
-		            >
-		            
-			        <RadioButton android:id="@+id/ne_stop_rbt"
-			            android:layout_width="fill_parent"
-			            android:layout_height="wrap_content"
-			            android:text="@string/erreport_merchant_stop"
-			            android:textColor="@color/black"
-			            android:button="@drawable/rdb_recovery"
-			            />
-			        <RadioButton android:id="@+id/ne_chai_rbt"
-			            android:layout_width="fill_parent"
-			            android:layout_height="wrap_content"
-			            android:text="@string/erreport_merchant_chai"
-			            android:textColor="@color/black"
-			            android:button="@drawable/rdb_recovery"
-			            />
-			        <RadioButton android:id="@+id/ne_move_rbt"
-			            android:layout_width="fill_parent"
-			            android:layout_height="wrap_content"
-			            android:text="@string/erreport_merchant_move"
-			            android:textColor="@color/black"
-			            android:button="@drawable/rdb_recovery"
-			            />
-			        <RadioButton android:id="@+id/ne_find_rbt"
-			            android:layout_width="fill_parent"
-			            android:layout_height="wrap_content"
-			            android:text="@string/erreport_merchant_find"
-			            android:textColor="@color/black"
-			            android:button="@drawable/rdb_recovery"
-			            />
-			        <RadioButton android:id="@+id/ne_other_rbt"
-			            android:layout_width="fill_parent"
-			            android:layout_height="wrap_content"
-			            android:text="@string/poi_ohter_error"
-			            android:textColor="@color/black"
-			            android:button="@drawable/rdb_recovery"
-			            />
-		        </RadioGroup>
-		    </LinearLayout>
-		    <LinearLayout android:id="@+id/main_lly"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:background="@drawable/list_single"
-		        android:orientation="horizontal"
-		        >
-		        <TextView android:id="@+id/star_txv"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:layout_marginRight="4dp"
-		            android:layout_gravity="left|center_vertical"
-		            android:text="@string/need_star"
-		            android:textColor="@color/orange"
-		            android:textSize="16sp"
-		            />
-		        <TextView android:id="@+id/main_txv"
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:text="@string/app_name"
-		            android:textSize="16sp"
-		            android:layout_gravity="left|center_vertical"
-		            />
-		        <EditText android:id="@+id/main_edt"
-		            android:layout_width="fill_parent"
-		            android:layout_height="wrap_content"
-		            android:maxLength="80"
-		            android:textSize="14sp"
-		            android:layout_marginTop="2dp"
-		            android:layout_marginBottom="2dp"
-		            android:focusable="true"
-		            android:focusableInTouchMode="true"
-		            android:singleLine="true"
-		            android:ellipsize="end"
-		            android:background="@color/transparent"
-		            android:hint="@string/app_name"
-		            android:layout_gravity="left|center_vertical"
-		            />
-		    </LinearLayout>
-		    <LinearLayout android:id="@+id/type_lly"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:background="@drawable/list_footer"
-		        android:orientation="horizontal"
-		        >
-		        <TextView 
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:text="@string/erreport_merchant_type"
-		            android:textSize="16sp"
-		            android:layout_gravity="left|center_vertical"
-		            />
-		        <EditText android:id="@+id/type_edt"
-		            android:layout_width="fill_parent"
-		            android:layout_height="wrap_content"
-		            android:maxLength="80"
-		            android:textSize="14sp"
-		            android:layout_marginTop="2dp"
-		            android:layout_marginBottom="2dp"
-		            android:focusable="true"
-		            android:focusableInTouchMode="true"
-		            android:singleLine="true"
-		            android:ellipsize="end"
-		            android:background="@color/transparent"
-		            />
-		    </LinearLayout>
-		    <LinearLayout android:id="@+id/description_lly"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:background="@drawable/list_single"
-		        android:orientation="horizontal"
-		        >
-		        <EditText android:id="@+id/description_edt"
-		            android:layout_width="fill_parent"
-		            android:layout_height="wrap_content"
-		            android:minLines="5"
-		            android:singleLine="false"
-		            android:hint="@string/erreport_description_hint"
-		            android:gravity="top|left"
-		            android:isScrollContainer="true"
-		            android:background="@color/transparent"
-		            android:focusable="true"
-		            android:focusableInTouchMode="true"
-		            />
-		        
-		    </LinearLayout>
-		    
-		    <LinearLayout android:id="@+id/contact_lly"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:orientation="vertical"
-		        >
-		        <LinearLayout 
-		            android:layout_width="fill_parent"
-		            android:layout_height="wrap_content"
-		            android:background="@drawable/list_header"
-		            android:orientation="horizontal"
-		            >
-		            
-		            <TextView 
-		                android:layout_width="wrap_content"
-		                android:layout_height="wrap_content"
-		                android:text="@string/erreport_contact"
-		                android:textSize="16sp"
-		                android:layout_gravity="left|center_vertical"
-		                />
-		            <EditText android:id="@+id/contact_edt"
-		                android:layout_width="fill_parent"
-		                android:layout_height="wrap_content"
-		                android:maxLength="80"
-		                android:textSize="14sp"
-		                android:hint="@string/erreport_mobile_hint"
-		                android:layout_marginTop="2dp"
-		                android:layout_marginBottom="2dp"
-		                android:focusable="true"
-		                android:focusableInTouchMode="true"
-		                android:singleLine="true"
-		                android:ellipsize="end"
-		                android:background="@color/transparent"
-		                android:layout_gravity="left|center_vertical"
-		                />        
-		        </LinearLayout>
-		        <TextView 
-		            android:layout_width="wrap_content"
-		            android:layout_height="wrap_content"
-		            android:singleLine="false"
-		            android:text="@string/erreport_note"
-		            android:textSize="14sp"
-		            />
-		    </LinearLayout>
-		    <Button android:id="@+id/submit_detail_btn"
-			    android:layout_width="fill_parent"
-			    android:layout_height="wrap_content"
-			    android:text="@string/submit"
-			    android:gravity="center"
-		        />
+            <LinearLayout android:id="@+id/tel_lly"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <TextView 
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/erreport_tel_error_type"
+                    android:textSize="16sp"
+                    android:layout_gravity="left|center_vertical"
+                    android:paddingBottom="16dp"
+                    />
+                <RadioGroup android:id="@+id/tel_rgp"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginBottom="32dp"
+                    >
+                    <RadioButton android:id="@+id/tel_connect_rbt"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/erreport_tel_error_connect"
+                        android:textColor="@color/black_dark"
+                        android:textSize="16sp"
+                        android:button="@drawable/rdb_recovery"
+                        android:paddingLeft="40dp"
+                        android:layout_marginBottom="8dp"
+                        />
+                    <RadioButton android:id="@+id/tel_notthis_rbt"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/erreport_tel_error_notthis"
+                        android:textColor="@color/black_dark"
+                        android:textSize="16sp"
+                        android:button="@drawable/rdb_recovery"
+                        android:paddingLeft="40dp"
+                        />
+                </RadioGroup>
+                
+                <TextView 
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/erreport_if_you_know_tel"
+                    android:textSize="16sp"
+                    android:layout_gravity="left|center_vertical"
+                    android:layout_marginBottom="8dp"
+                    />
+            </LinearLayout>
+            
+            <RadioGroup android:id="@+id/notexist_rgp"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:layout_marginLeft="8dp"
+                   android:layout_marginTop="8dp"
+                   android:layout_marginBottom="8dp"
+                >
+                
+                <RadioButton android:id="@+id/ne_stop_rbt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/erreport_merchant_stop"
+                    android:textColor="@color/black_dark"
+                    android:button="@drawable/rdb_recovery"
+                    android:paddingLeft="40dp"
+                    android:layout_marginBottom="8dp"
+                    />
+                <RadioButton android:id="@+id/ne_chai_rbt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/erreport_merchant_chai"
+                    android:textColor="@color/black"
+                    android:button="@drawable/rdb_recovery"
+                    android:paddingLeft="40dp"
+                    android:layout_marginBottom="8dp"
+                    />
+                <RadioButton android:id="@+id/ne_move_rbt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/erreport_merchant_move"
+                    android:textColor="@color/black"
+                    android:button="@drawable/rdb_recovery"
+                    android:paddingLeft="40dp"
+                    android:layout_marginBottom="8dp"
+                    />
+                <RadioButton android:id="@+id/ne_find_rbt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/erreport_merchant_find"
+                    android:textColor="@color/black"
+                    android:button="@drawable/rdb_recovery"
+                    android:paddingLeft="40dp"
+                    android:layout_marginBottom="8dp"
+                    />
+                <RadioButton android:id="@+id/ne_other_rbt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/poi_ohter_error"
+                    android:textColor="@color/black"
+                    android:button="@drawable/rdb_recovery"
+                    android:paddingLeft="40dp"
+                    />
+            </RadioGroup>
+            <LinearLayout android:id="@+id/main_lly"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_single"
+                android:orientation="horizontal"
+                >
+                
+                <TextView android:id="@+id/main_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/app_name"
+                    android:paddingLeft="16dp"
+                    android:textSize="16sp"
+                    android:layout_gravity="left|center_vertical"
+                    />
+                <EditText android:id="@+id/main_edt"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLength="80"
+                    android:textSize="16sp"
+                    android:layout_marginTop="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:background="@color/transparent"
+                    android:hint="@string/app_name"
+                    android:layout_gravity="left|center_vertical"
+                    />
+            </LinearLayout>
+            
+            <LinearLayout android:id="@+id/type_lly"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@color/transparent"
+                >
+                <ImageView 
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_line_split"
+                    android:contentDescription="@string/app_name"
+                    />
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/list_footer"
+                    android:orientation="horizontal"
+                    >
+                    <TextView 
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/erreport_merchant_type"
+                        android:textSize="16sp"
+                        android:paddingLeft="16dp"
+                        android:layout_gravity="left|center_vertical"
+                        />
+                    <EditText android:id="@+id/type_edt"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLength="80"
+                        android:textSize="16sp"
+                        android:hint="@string/erreport_xuantian"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:background="@color/transparent"
+                        />
+                </LinearLayout>                
+            </LinearLayout>
+
+            <LinearLayout android:id="@+id/description_lly"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_single"
+                android:orientation="horizontal"
+                android:paddingBottom="8dp"
+                >
+                <EditText android:id="@+id/description_edt"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:minLines="5"
+                    android:singleLine="false"
+                    android:hint="@string/erreport_description_hint"
+                    android:gravity="top|left"
+                    android:isScrollContainer="true"
+                    android:background="@color/transparent"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    />
+                
+            </LinearLayout>
+            
+            <LinearLayout android:id="@+id/contact_lly"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp"
+                >
+                <TextView 
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="false"
+                    android:text="@string/erreport_note"
+                    android:textSize="14sp"
+                    android:paddingBottom="8dp"
+                    android:textColor="@color/black_light"
+                    />
+                <LinearLayout 
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/list_single"
+                    android:orientation="horizontal"
+                    >
+                    
+                    <TextView 
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/erreport_contact"
+                        android:textSize="16sp"
+                        android:paddingLeft="16dp"
+                        android:layout_gravity="left|center_vertical"
+                        />
+                    <EditText android:id="@+id/contact_edt"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:maxLength="80"
+                        android:textSize="16sp"
+                        android:hint="@string/erreport_mobile_hint"
+                        android:layout_marginTop="2dp"
+                        android:layout_marginBottom="2dp"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:singleLine="true"
+                        android:ellipsize="end"
+                        android:background="@color/transparent"
+                        android:layout_gravity="left|center_vertical"
+                        android:inputType="number"
+                        />        
+                </LinearLayout>
+                
+            </LinearLayout>
         </LinearLayout>
         
     </ScrollView>

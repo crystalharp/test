@@ -5,69 +5,69 @@
     android:orientation="vertical" 
     android:background="@color/gray_dark"
     android:id="@+id/root_view" >
-	
-	<include android:id="@+id/title_view"
-     	layout="@layout/title" 
-     	android:layout_width="fill_parent"
-     	android:layout_height="wrap_content" />
-	
-	<ScrollView
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent" >
+    
+    <include android:id="@+id/title_view"
+         layout="@layout/title" 
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content" />
+    
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
         <LinearLayout 
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="vertical"
-	        android:padding="8dp" >
-	    	<TextView
-		        android:id="@+id/textView1"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_gravity="left"
-		        android:text="@string/pick_personal_nickname"
-		        android:textSize="18sp"
-		        android:textColor="@color/black"  />
-	    	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		        android:layout_width="fill_parent" 
-		        android:layout_height="wrap_content"
-		        android:background="@drawable/list_single_normal"
-		        android:layout_marginTop="8dp" >
-	    	    <ImageView android:id="@+id/nickname_img"
-		            android:layout_width="wrap_content" 
-		            android:layout_height="wrap_content" 
-		            android:layout_alignParentRight="true"
-		            android:layout_centerVertical="true"
-		            android:layout_marginLeft="5dp"
-		            android:layout_marginRight="5dp"
-		            android:background="@drawable/ic_edt_delete" />
-		    	<com.tigerknows.ui.user.ExtValidationEditText
-			        android:id="@+id/nickname_edt"
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-		            android:layout_toLeftOf="@id/nickname_img"
-			        android:padding="8dp"
-			        android:singleLine="true"
-			        android:ellipsize="end"
-			        android:textSize="18sp"
-		            android:background="@drawable/transparent_bg"
-		            android:hint="@string/nickname_compose_format"
-			        flag="0"
-			        validateType="name"
-			        emptyErrorTip="@string/name_empty_tip"
-			        formatErrorTip="@string/name_format_error_tip" >
-		   		</com.tigerknows.ui.user.ExtValidationEditText>
-	        </RelativeLayout>
-	   		<Button
-		        android:id="@+id/confirm_btn"
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        android:layout_marginTop="8dp"
-			    android:padding="8dp"
-		        android:text="@string/confirm"
-		        android:textSize="18sp"
-		        android:textColor="@color/white"
-		        android:background="@drawable/btn_blue_green" />
-	    </LinearLayout>
-	</ScrollView>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp" >
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:text="@string/pick_personal_nickname"
+                android:textSize="18sp"
+                android:textColor="@color/black"  />
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="fill_parent" 
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_single_normal"
+                android:layout_marginTop="8dp" >
+                <ImageView android:id="@+id/nickname_img"
+                    android:layout_width="wrap_content" 
+                    android:layout_height="wrap_content" 
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:background="@drawable/ic_edt_delete" />
+                <com.tigerknows.ui.user.ExtValidationEditText
+                    android:id="@+id/nickname_edt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toLeftOf="@id/nickname_img"
+                    android:padding="8dp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textSize="18sp"
+                    android:background="@drawable/transparent_bg"
+                    android:hint="@string/nickname_compose_format"
+                    flag="0"
+                    validateType="name"
+                    emptyErrorTip="@string/name_empty_tip"
+                    formatErrorTip="@string/name_format_error_tip" >
+                   </com.tigerknows.ui.user.ExtValidationEditText>
+            </RelativeLayout>
+               <Button
+                android:id="@+id/confirm_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:padding="8dp"
+                android:text="@string/confirm"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:background="@drawable/btn_blue_green" />
+        </LinearLayout>
+    </ScrollView>
     
 </LinearLayout>

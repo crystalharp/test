@@ -15,38 +15,38 @@
         >
         <RelativeLayout
             android:id="@+id/parent_view"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1">
-	        <ListView android:id="@+id/parent_lsv"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:padding="0dp"
-	            android:dividerHeight="0dp"
-	            android:divider="@drawable/bg_line_split"
-	            android:drawSelectorOnTop="false"
-	            android:scrollingCache="false"
-	            android:footerDividersEnabled="false"
-	            android:fadingEdge="none"
-	            android:background="@drawable/list_selector_background_gray_dark"
-	            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <ListView android:id="@+id/parent_lsv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:dividerHeight="0dp"
+                android:divider="@drawable/bg_line_split"
+                android:drawSelectorOnTop="false"
+                android:scrollingCache="false"
+                android:footerDividersEnabled="false"
+                android:fadingEdge="none"
+                android:background="@drawable/list_selector_background_gray_dark"
+                />
         </RelativeLayout>
         <RelativeLayout
             android:id="@+id/child_view"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_weight="1">
-	        <ListView android:id="@+id/child_lsv"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:padding="0dp"
-	            android:divider="@color/transparent"
-	            android:drawSelectorOnTop="false"
-	            android:scrollingCache="false"
-	            android:footerDividersEnabled="false"
-	            android:fadingEdge="none"
-	            android:background="@drawable/list_selector_background_gray_light"
-	            />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <ListView android:id="@+id/child_lsv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="0dp"
+                android:divider="@color/transparent"
+                android:drawSelectorOnTop="false"
+                android:scrollingCache="false"
+                android:footerDividersEnabled="false"
+                android:fadingEdge="none"
+                android:background="@drawable/list_selector_background_gray_light"
+                />
         </RelativeLayout>
     </LinearLayout>
 </RelativeLayout>

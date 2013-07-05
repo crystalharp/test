@@ -4,128 +4,128 @@
     android:layout_height="match_parent" 
     android:background="@color/gray_dark"
     android:id="@+id/root_view" >
-	
-	<include android:id="@+id/title_view"
-     	layout="@layout/title" 
-     	android:layout_width="fill_parent"
-     	android:layout_height="wrap_content" />
     
-	<ScrollView
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
+    <include android:id="@+id/title_view"
+         layout="@layout/title" 
+         android:layout_width="fill_parent"
+         android:layout_height="wrap_content" />
+    
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:layout_below="@+id/title_view" >
     
-    	<LinearLayout 
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:orientation="vertical"
-	        android:padding="8dp" >
-	        <com.tigerknows.ui.user.ExtValidationEditText
-		        android:id="@+id/phone_edt"
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        android:inputType="phone"
-		        android:padding="8dp"
-		        android:singleLine="true"
-			    android:maxLength="11"
-		        android:ellipsize="end"
-		        android:textSize="18sp"
-		        android:hint="@string/please_input_11_phone"
-		        android:background="@drawable/list_single_normal"
-		        flag="0"
-		        validateType="phone"
-		        emptyErrorTip="@string/phone_empty_tip"
-		        formatErrorTip="@string/phone_format_error_tip" >
-	    	</com.tigerknows.ui.user.ExtValidationEditText>
-	    	<RelativeLayout 
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        android:layout_marginTop="8dp" >
-			    <com.tigerknows.ui.user.CountDownButton
-			        android:id="@+id/vali_num_btn"
-			        android:layout_width="wrap_content"
-			        android:layout_height="wrap_content"
-			        android:layout_alignParentLeft="true"
-			        android:layout_centerVertical="true"
-			        android:layout_marginRight="8dp"
-			        android:padding="13dp"
-			        android:text="@string/reqest_validate_num"
-			        android:textSize="16sp"
-			        android:textColor="@color/black"
-			        android:background="@drawable/btn_valicode" />
-		        <com.tigerknows.ui.user.ExtValidationEditText
-			        android:id="@+id/vali_num_edt"
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:layout_toRightOf="@id/vali_num_btn"
-			        android:layout_centerVertical="true"
-			        android:padding="8dp"
-			        android:inputType="number"
-			        android:singleLine="true"
-			        android:maxLength="4"
-			        android:ellipsize="end"
-			        android:textSize="18sp"
-			        android:hint="@string/please_input_4_validate_num"
-	                android:background="@drawable/list_single_normal"
-			        flag="1"
-		        	validateType="validnum"
-			        emptyErrorTip="@string/code_empty_tip" />
-		    </RelativeLayout>
-		    <LinearLayout 
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        android:orientation="vertical"
-		        android:paddingTop="8dp" >
-		        <com.tigerknows.ui.user.ExtValidationEditText
-			        android:id="@+id/password_edt"
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:inputType="textPassword"
-			        android:padding="8dp"
-			        android:singleLine="true"
-			        android:ellipsize="end"
-			        android:textSize="18sp"
-			        android:maxLength="16"
-			        android:hint="@string/please_input_616_password"
-			        android:background="@drawable/list_header_normal"
-			        flag="2"
-			        validateType="password"
-			        emptyErrorTip="@string/password_empty_tip"
-			        formatErrorTip="@string/password_format_error_tip"
-			        unionFlag="3"
-			        unionErrorTip="@string/password_union_error_tip" />
-		        <ImageView
-	                android:layout_width="fill_parent"
-	                android:layout_height="wrap_content"
-	                android:background="@drawable/bg_line_split" />
-			    <com.tigerknows.ui.user.ExtValidationEditText
-			        android:id="@+id/re_password_edt"
-			        android:layout_width="match_parent"
-			        android:layout_height="wrap_content"
-			        android:inputType="textPassword"
-			        android:padding="8dp"
-			        android:singleLine="true"
-			        android:ellipsize="end"
-			        android:textSize="18sp"
-			        android:maxLength="16"
-			        android:hint="@string/please_input_616_password_again"
-	                android:background="@drawable/list_footer_normal"
-			        flag="3"
-			        validateType="repassword"
-			        emptyErrorTip="@string/re_password_empty_tip" />
-		    </LinearLayout>
-		    <Button
-		        android:id="@+id/regist_btn"
-		        android:layout_width="match_parent"
-		        android:layout_height="wrap_content"
-		        android:layout_marginTop="16dp"
-			    android:padding="8dp"
-		        android:text="@string/regist"
-		        android:textSize="18sp"
-		        android:textColor="@color/white"
-		        android:background="@drawable/btn_blue_green"  />
-		</LinearLayout>
-	</ScrollView>
-	
-	
+        <LinearLayout 
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp" >
+            <com.tigerknows.ui.user.ExtValidationEditText
+                android:id="@+id/phone_edt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="phone"
+                android:padding="8dp"
+                android:singleLine="true"
+                android:maxLength="11"
+                android:ellipsize="end"
+                android:textSize="18sp"
+                android:hint="@string/please_input_11_phone"
+                android:background="@drawable/list_single_normal"
+                flag="0"
+                validateType="phone"
+                emptyErrorTip="@string/phone_empty_tip"
+                formatErrorTip="@string/phone_format_error_tip" >
+            </com.tigerknows.ui.user.ExtValidationEditText>
+            <RelativeLayout 
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp" >
+                <com.tigerknows.ui.user.CountDownButton
+                    android:id="@+id/vali_num_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginRight="8dp"
+                    android:padding="13dp"
+                    android:text="@string/reqest_validate_num"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    android:background="@drawable/btn_valicode" />
+                <com.tigerknows.ui.user.ExtValidationEditText
+                    android:id="@+id/vali_num_edt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/vali_num_btn"
+                    android:layout_centerVertical="true"
+                    android:padding="8dp"
+                    android:inputType="number"
+                    android:singleLine="true"
+                    android:maxLength="4"
+                    android:ellipsize="end"
+                    android:textSize="18sp"
+                    android:hint="@string/please_input_4_validate_num"
+                    android:background="@drawable/list_single_normal"
+                    flag="1"
+                    validateType="validnum"
+                    emptyErrorTip="@string/code_empty_tip" />
+            </RelativeLayout>
+            <LinearLayout 
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="8dp" >
+                <com.tigerknows.ui.user.ExtValidationEditText
+                    android:id="@+id/password_edt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:padding="8dp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textSize="18sp"
+                    android:maxLength="16"
+                    android:hint="@string/please_input_616_password"
+                    android:background="@drawable/list_header_normal"
+                    flag="2"
+                    validateType="password"
+                    emptyErrorTip="@string/password_empty_tip"
+                    formatErrorTip="@string/password_format_error_tip"
+                    unionFlag="3"
+                    unionErrorTip="@string/password_union_error_tip" />
+                <ImageView
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_line_split" />
+                <com.tigerknows.ui.user.ExtValidationEditText
+                    android:id="@+id/re_password_edt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:padding="8dp"
+                    android:singleLine="true"
+                    android:ellipsize="end"
+                    android:textSize="18sp"
+                    android:maxLength="16"
+                    android:hint="@string/please_input_616_password_again"
+                    android:background="@drawable/list_footer_normal"
+                    flag="3"
+                    validateType="repassword"
+                    emptyErrorTip="@string/re_password_empty_tip" />
+            </LinearLayout>
+            <Button
+                android:id="@+id/regist_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:padding="8dp"
+                android:text="@string/regist"
+                android:textSize="18sp"
+                android:textColor="@color/white"
+                android:background="@drawable/btn_blue_green"  />
+        </LinearLayout>
+    </ScrollView>
+    
+    
 </RelativeLayout>

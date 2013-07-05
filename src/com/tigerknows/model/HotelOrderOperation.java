@@ -187,6 +187,8 @@ public class HotelOrderOperation extends BaseQuery {
             response = new HotelOrderCreateResponse(responseXMap);
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
             response = new Response(responseXMap);
+        }else if( OPERATION_CODE_SYNC.equals(operationCode)){
+            response = new HotelOrderSyncResponse(responseXMap);
         }
     }
 
@@ -233,7 +235,7 @@ public class HotelOrderOperation extends BaseQuery {
 
     }
 
-    public static class HotelOrderDifferenceResponse extends Response {
+    public static class HotelOrderSyncResponse extends Response {
         
         // 0x02 x_map   单个POI数据   
         public static final byte FIELD_LIST = 0x02;
@@ -241,7 +243,7 @@ public class HotelOrderOperation extends BaseQuery {
         private List<HotelOrder> orders;
         
         @SuppressWarnings("unchecked")
-        public HotelOrderDifferenceResponse(XMap data) throws APIException {
+        public HotelOrderSyncResponse(XMap data) throws APIException {
             super(data);
             
             if (this.data.containsKey(FIELD_LIST)) {

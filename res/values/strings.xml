@@ -508,6 +508,7 @@
     
     <!-- POI Weibo Share Start -->
     <string name="share_weibo_poi_topic">#老虎宝典分享#</string>
+    <string name="share_weibo_ivecome">我来过：</string>
     <string name="share_poi_pingfen">评分:\u0020%1$s分</string>
     <string name="share_poi_caixi">菜系:\u0020%1$s</string>
     <string name="share_poi_junjia">均价:\u0020%1$s元</string>
@@ -1164,8 +1165,8 @@
     <string name="erreport_redundancy_confirm">确认提交地点重复的错误？</string>
     <string name="erreport_tel_empty">你忘记输入商户电话了</string>
     <string name="erreport_tel_empty_2">请描述电话错误类型，或直接填写新的正确电话。</string>
-    <string name="erreport_tel_error_type">电话错误类型</string>
-    <string name="erreport_if_you_know_tel">如果您知晓正确电话，请填写</string>
+    <string name="erreport_tel_error_type">电话错误类型：</string>
+    <string name="erreport_if_you_know_tel">如果您知晓正确电话，请填写：</string>
     <string name="erreport_description_hint">请详细描述报错内容</string>
     <string name="erreport_description_empty">请填写报错内容</string>
     <string name="erreport_location_confirm">确认提交地图标注错误？</string>
@@ -1175,9 +1176,11 @@
     <string name="erreport_merchant_chai">已拆迁</string>
     <string name="erreport_merchant_move">已搬迁</string>
     <string name="erreport_merchant_find">没找到</string>
-    <string name="erreport_merchant_tel">商户电话</string>
-    <string name="erreport_address">地　　址</string>
-    <string name="erreport_merchant_name">商户名称</string>
-    <string name="erreport_merchant_type">商户类型</string>
+    <string name="erreport_merchant_tel">添加电话：</string>
+    <string name="erreport_address">地　　址：</string>
+    <string name="erreport_merchant_name">商户名称：</string>
+    <string name="erreport_merchant_type">商户类型：</string>
+    <string name="erreport_xuantian">（选填）</string>
+    <string name="erreport_abandon">确定放弃报错吗？</string>
 <!-- POI Error Recovery End -->
 </resources>
