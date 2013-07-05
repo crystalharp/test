@@ -418,11 +418,13 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             View v = mCurrentFootView;
             boolean addMerchant = false;
             if (BaseQuery.SUB_DATA_TYPE_POI.equals(mResultAdapter.getSubDataType())) {
-                if (mResultLsv.isFooterSpringback() == false && v != mAddMerchantFootView) {
-                    mResultLsv.removeFooterView(mAddMerchantFootView);
-                    mResultLsv.removeFooterView(mLoadingView);
-                    mResultLsv.addFooterView(mAddMerchantFootView, false);
-                    mCurrentFootView = mAddMerchantFootView;
+                if (mResultLsv.isFooterSpringback() == false) {
+                    if (v != mAddMerchantFootView) {
+                        mResultLsv.removeFooterView(mAddMerchantFootView);
+                        mResultLsv.removeFooterView(mLoadingView);
+                        mResultLsv.addFooterView(mAddMerchantFootView, false);
+                        mCurrentFootView = mAddMerchantFootView;
+                    }
                     addMerchant = true;
                 }
             }
