@@ -105,9 +105,6 @@ public class TimeListView extends LinearLayout {
         hourAdapter.isParent = true;
         minuteAdapter = new MyAdapter(context, minuteList);
         minuteAdapter.isParent = false;
-        
-        hourLsv.setAdapter(hourAdapter);
-        minuteLsv.setAdapter(minuteAdapter);
     }
 
     protected void findViews() {
@@ -239,6 +236,10 @@ public class TimeListView extends LinearLayout {
     }
     
     public void setData(int hourPosition, int minutePosition) {
+
+        hourLsv.setAdapter(hourAdapter);
+        minuteLsv.setAdapter(minuteAdapter);
+        
         if (hourPosition >= 0 && hourPosition < hourList.size()) {
             this.hourPosition = hourPosition;
             hourAdapter.notifyDataSetChanged();
@@ -252,6 +253,11 @@ public class TimeListView extends LinearLayout {
 
             minuteLsv.setSelectionFromTop(this.minutePosition-2, 0);
         }
+    }
+    
+    public void reset() {
+        hourLsv.setAdapter(null);
+        minuteLsv.setAdapter(null);
     }
     
     String toTwoChar(int value) {

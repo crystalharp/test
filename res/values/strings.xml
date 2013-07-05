@@ -434,6 +434,8 @@
 
     <string name="snap_current_map">截屏当前地图?</string>
     <string name="are_you_view_url">你确认要查看网页%1$s?</string>
+    
+    <string name="zhi">至</string>
 
 <!--  =======================    Share Part    =========================== -->
 <!-- Share Module SinaWeibo Start -->
@@ -862,6 +864,7 @@
     <string name="add_merchant_image_upload_falied_tip">图片上传失败，是否重试？</string>
     <string name="add_merchant_text_upload_falied_tip">提交失败，请重试</string>
    <string name="add_merchant_delete_photo_tip">确定要删除该图片吗？</string>
+   <string name="poi_list_item_add_merchant">没有找到想要的商户</string>
     
     <string name="every_day">每天</string>
     <string name="weekend">周末</string>
