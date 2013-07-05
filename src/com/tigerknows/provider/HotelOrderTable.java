@@ -35,6 +35,7 @@ public class HotelOrderTable {
 	// COLUMNS
     public static final String ORDER_ID= "tk_id";
     public static final String ORDER_CREATE_TIME = "tk_create_time";
+    public static final String ORDER_DELETED= "tk_deleted";
 	public static final String ORDER_CONTENT = "tk_content";
 	
 	// DB NAME
@@ -42,13 +43,14 @@ public class HotelOrderTable {
 
 	// TABLES
 	protected static final String TABLE_NAME = "hotelOrder";
-	protected static final int DATABASE_VERSION = 1;
+	protected static final int DATABASE_VERSION = 2;
 
 	private static final String TABLE_CREATE = "create table if not exists "
 			+ TABLE_NAME
 			+ "( " 
             + ORDER_ID + " TEXT PRIMARY KEY, "
             + ORDER_CREATE_TIME + " INTEGER(20) not null,"
+            + ORDER_DELETED + " INTEGER(1) not null,"
             + ORDER_CONTENT + " BLOB not null);";
 
 	public Context mCtx;
@@ -57,14 +59,22 @@ public class HotelOrderTable {
 	 * DatabaseHelper extends SQLiteOpenHelper
 	 */
 	private static class DatabaseHelper extends SQLiteOpenHelper {
+		
 		DatabaseHelper(Context context) {
 			super(context, DATABASE_NAME, null, DATABASE_VERSION);
 		}
-		@Override
-		public void onCreate(SQLiteDatabase db) {}
 		
 		@Override
-		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {}
+		public void onCreate(SQLiteDatabase db) {
+			System.out.println("Create database.");
+			db.execSQL(TABLE_CREATE);
+		}
+		
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			System.out.println("old version: " + oldVersion);
+		}
+		
 	}
 	
 
@@ -86,7 +96,6 @@ public class HotelOrderTable {
 	public HotelOrderTable open() throws SQLException {
 		mDbHelper = new DatabaseHelper(mCtx);
 		mDb = mDbHelper.getWritableDatabase();
-		mDb.execSQL(TABLE_CREATE);
 		return this;
 	}
 	
