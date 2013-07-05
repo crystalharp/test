@@ -19,6 +19,7 @@ import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -190,6 +191,14 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 return false;
             }
         });
+        mPickTimeView.findViewById(R.id.body_view).setOnTouchListener(new OnTouchListener() {
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return true;
+            }
+        });
+        mHandler = new Handler();
         
         DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo().getId(), mThis);
         FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
@@ -681,7 +690,8 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     void confrimUploadUri(Drawable drawable) {
         if (mPhotoUri != null) {
             mUploadUri = mPhotoUri;
-            mPhotoMD5 = Utility.md5sum(Utility.imageUri2FilePath(mThis, mUploadUri));
+            String fileName = Utility.imageUri2FilePath(mThis, mUploadUri);
+            mPhotoMD5 = Utility.md5sum(fileName)+fileName.substring(fileName.lastIndexOf("."));
             mTakePhotoBtn.setScaleType(ScaleType.MATRIX);
             mTakePhotoBtn.setImageMatrix(Utility.resizeSqareMatrix(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Util.dip2px(Globals.g_metrics.density, 112)));
             mTakePhotoBtn.setImageDrawable(drawable);
@@ -921,16 +931,30 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             mPopupWindow.setFocusable(true);
             // 设置允许在外点击消失
             mPopupWindow.setOutsideTouchable(true);
+            mPopupWindow.setOnDismissListener(new PopupWindow.OnDismissListener() {
+                
+                @Override
+                public void onDismiss() {
+                    mStartTimeListView.reset();
+                    mEndTimeListView.reset();
+                }
+            });
 
             // 这个是为了点击“返回Back”也能使其消失，并且并不会影响你的背景
             mPopupWindow.setBackgroundDrawable(new BitmapDrawable());
             mPopupWindow.setAnimationStyle(R.style.AlterImageDialog);
             mPopupWindow.update();
         }
-
-        mStartTimeListView.setData(mStartHourPosition, mStartMinutePosition);
-        mEndTimeListView.setData(mEndHourPosition, mEndMinutePosition);
         
         mPopupWindow.showAsDropDown(mTitleView, 0, 0);
+        
+        mHandler.postDelayed(new Runnable() {
+            
+            @Override
+            public void run() {
+                mStartTimeListView.setData(mStartHourPosition, mStartMinutePosition);
+                mEndTimeListView.setData(mEndHourPosition, mEndMinutePosition);
+            }
+        }, 200);
     }
 }

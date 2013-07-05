@@ -434,6 +434,8 @@
 
     <string name="snap_current_map">截屏当前地图?</string>
     <string name="are_you_view_url">你确认要查看网页%1$s?</string>
+    
+    <string name="zhi">至</string>
 
 <!--  =======================    Share Part    =========================== -->
 <!-- Share Module SinaWeibo Start -->
@@ -740,7 +742,7 @@
     <string name="comment_grade">满意度</string>
     <string name="comment_publishing_and_wait">发表中，请稍候</string>
     <string name="go_comment_hit">搜索你去过的商家发表点评...</string>
-    <string name="poi_comment_override_tip">确定覆盖你之前的点评？</string>
+    <string name="poi_comment_override_tip">确定覆盖你之前的点评吗？</string>
     <string name="poi_comment_poi_invalid_not_create">该地点已失效，你无法对其进行点评。</string>
     <string name="poi_comment_poi_invalid_not_update">该地点已失效，你无法修改点评内容。</string>
     <string name="poi_invalid">该地点已失效。</string>
@@ -862,6 +864,7 @@
     <string name="add_merchant_image_upload_falied_tip">图片上传失败，是否重试？</string>
     <string name="add_merchant_text_upload_falied_tip">提交失败，请重试</string>
    <string name="add_merchant_delete_photo_tip">确定要删除该图片吗？</string>
+   <string name="poi_list_item_add_merchant">没有找到想要的商户</string>
     
     <string name="every_day">每天</string>
     <string name="weekend">周末</string>
@@ -912,7 +915,7 @@
     <string name="response_code_407">数据异常，请稍后重试。</string>
     <string name="response_code_410">抱歉，该信息已过期。</string>
     <string name="response_code_503">短信传输失败,请稍后重试。</string>
-    <string name="response_code_601">你确定覆盖之前的点评吗？</string>
+    <string name="response_code_601">确定覆盖你之前的点评吗？</string>
     <string name="response_code_602">抱歉，该点评不存在。</string>
     <string name="response_code_603">抱歉，该地址不存在或已失效。</string>
     <string name="response_code_702">目前暂时无法提供酒店预订功能</string>
