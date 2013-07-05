@@ -60,17 +60,19 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
 	private TextView[] mRateTxv;
 	private List<String> mRateList;
 	private Button mSubmitBtn;
+	private boolean mChanged;
 	
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.SatisfyRate;
         setContentView(R.layout.more_satisfy_rate);
-        hideSoftInput();
     	mSatisfyRbt = new RatingBar[NUM_OF_RATINGBAR];
     	mRateTxv = new TextView[NUM_OF_RATINGBAR];
     	mRateList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.satisfy_star)));
         findViews();
         setListener();    
+        mTitleBtn.setText(getString(R.string.satisfy_rate));
+        mChanged = false;
     }
     
     protected void findViews() {
@@ -80,6 +82,12 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     		mSatisfyRbt[i] = (RatingBar)findViewById(mRatingBarID[i]);
     		mRateTxv[i] = (TextView)findViewById(mRateTxvID[i]);
     	}
+    }
+    
+    @Override
+    protected void onResume(){
+    	super.onResume();
+    	hideSoftInput();
     }
     
     protected void setListener() {
@@ -110,11 +118,12 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     
     private void refreshSubmitBtn(){
     	boolean status = true;
+    	mChanged = false;
     	for (int i=0; i<NUM_OF_RATINGBAR; i++){
     		if (Math.round(mSatisfyRbt[i].getRating())== 0){
     			status = false;
     			break;
-    		}
+    		}else mChanged = true;
     	}
     	mSubmitBtn.setEnabled(status);
     }
@@ -130,7 +139,7 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
         return super.onKeyDown(keyCode, event);
     }
     private boolean showDiscardDialog(){
-        boolean show = mSubmitBtn.isEnabled();
+        boolean show = mChanged;
         if (show == false)return false;
         Utility.showNormalDialog(mThis, getString(R.string.satisfy_abandon), new DialogInterface.OnClickListener(){
 
