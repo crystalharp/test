@@ -269,9 +269,11 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	HotelOrderTable table = new HotelOrderTable(mContext);
     	try {
     		long start = System.currentTimeMillis();
+    		int totalCount = table.count();
     		List<HotelOrder> list = table.read(0, maxDbSize);
     		System.out.println("Time used for read: " + (System.currentTimeMillis()-start)/1000.0);
     		System.out.println("OrderDB count: " + list.size());
+    		System.out.println("Total count: " + totalCount);
     		
     		if(list.size() < maxDbSize){
     			HotelOrder order = new HotelOrder("11111", System.currentTimeMillis(), 1, "0F2B4330-906A-11E2-A511-06973B18DA73", "HotelName", "hotelAddress", new Position(39.88, 116.3), "13581704277", 
