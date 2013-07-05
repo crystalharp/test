@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2008 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -68,7 +68,7 @@ public class ValidityListView extends LinearLayout {
 
     public void setData(Calendar calendar, CallBack callBack, String actionTag) {
         mActionTag = actionTag;
-    	this.calendar = calendar;
+        this.calendar = calendar;
         now = Calendar.getInstance();
         if (this.calendar == null) {
             this.calendar = now;
@@ -136,13 +136,13 @@ public class ValidityListView extends LinearLayout {
 
     private void resizeLsv(){
         parentLsv.post(new Runnable() {
-			
-			@Override
-			public void run() {
-				setLsvHeigth(parentLsv, R.layout.hotel_validity_list_item, 5);
-				setLsvHeigth(childLsv, R.layout.hotel_validity_list_item, 5);
-			}
-		});
+            
+            @Override
+            public void run() {
+                setLsvHeigth(parentLsv, R.layout.hotel_validity_list_item, 5);
+                setLsvHeigth(childLsv, R.layout.hotel_validity_list_item, 5);
+            }
+        });
     }
     
     protected void findViews() {
@@ -181,7 +181,7 @@ public class ValidityListView extends LinearLayout {
                 }
                 selectedParentPosition = position;
                 if(position != selectedParentPosition){
-                	selectedChildPosition = 0;
+                    selectedChildPosition = 0;
                 }
                 parentAdapter.notifyDataSetChanged();
                 
@@ -195,11 +195,11 @@ public class ValidityListView extends LinearLayout {
                 childAdapter.notifyDataSetChanged();
                 resizeLsv();
                 childLsv.post(new Runnable() {
-					@Override
-					public void run() {
-		                childLsv.smoothScrollToPosition(0, 0);
-					}
-				});
+                    @Override
+                    public void run() {
+                        childLsv.smoothScrollToPosition(0, 0);
+                    }
+                });
             }
         });
         childLsv.setOnItemClickListener(new OnItemClickListener() {
@@ -216,9 +216,9 @@ public class ValidityListView extends LinearLayout {
     }
     
     private void selected() {
-    	calendar.set(Calendar.YEAR, now.get(Calendar.YEAR) + selectedParentPosition);
-    	calendar.set(Calendar.MONTH, (selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0) + selectedChildPosition);
-    	mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditValidateChoose, CalendarUtil.y4mc.format(calendar.getTime()));
+        calendar.set(Calendar.YEAR, now.get(Calendar.YEAR) + selectedParentPosition);
+        calendar.set(Calendar.MONTH, (selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0) + selectedChildPosition);
+        mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditValidateChoose, CalendarUtil.y4mc.format(calendar.getTime()));
         this.callBack.selected(calendar);
     }
     
@@ -240,27 +240,27 @@ public class ValidityListView extends LinearLayout {
     }
     
     public void setLsvHeigth(ListView lsv, int itemResId, int maxCount){
-    	if(maxCount<1){
-    		return;
-    	}
-    	int itemHeight = getLsvItemHeight(lsv, R.layout.hotel_validity_list_item);
-    	int count = lsv.getCount()>maxCount? maxCount:lsv.getCount();
-    	int lsvHeigth = (itemHeight + lsv.getDividerHeight())*count;
-//    	System.out.println("itemHeight: " + itemHeight);
-//    	System.out.println("lsvHeigth: " + lsvHeigth);
-    	ViewGroup.LayoutParams params = lsv.getLayoutParams();
-    	params.height = lsvHeigth;
-    	lsv.setLayoutParams(params);
-    	
+        if(maxCount<1){
+            return;
+        }
+        int itemHeight = getLsvItemHeight(lsv, R.layout.hotel_validity_list_item);
+        int count = lsv.getCount()>maxCount? maxCount:lsv.getCount();
+        int lsvHeigth = (itemHeight + lsv.getDividerHeight())*count;
+//        System.out.println("itemHeight: " + itemHeight);
+//        System.out.println("lsvHeigth: " + lsvHeigth);
+        ViewGroup.LayoutParams params = lsv.getLayoutParams();
+        params.height = lsvHeigth;
+        lsv.setLayoutParams(params);
+        
     }
     
     public int getLsvItemHeight(ListView parent, int itemResId){
-    	ViewGroup templateView;
-		// Inflate a new view for it.
-       	templateView = (ViewGroup)mSphinx.getLayoutInflater().inflate(itemResId, parent, false);
-    	((TextView)templateView.findViewById(R.id.text_txv)).setText("xx");
-    	templateView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
-    	return templateView.getMeasuredHeight();
+        ViewGroup templateView;
+        // Inflate a new view for it.
+           templateView = (ViewGroup)mSphinx.getLayoutInflater().inflate(itemResId, parent, false);
+        ((TextView)templateView.findViewById(R.id.text_txv)).setText("xx");
+        templateView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        return templateView.getMeasuredHeight();
     }
     
     class MyAdapter extends ArrayAdapter<String> {
