@@ -745,17 +745,18 @@
     <string name="poi_invalid">该地点已失效。</string>
     <string name="poi_comment_publish_success">点评发表成功！</string>
     <string name="poi_comment_update_success">点评修改成功！</string>
-    <!-- 文字：#老虎宝典分享#我来过：XXXX（poi名称）+空格+我觉得XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+www.tigerknows.com（网址之前的内容如果超出120字，截断成119个字+“…”（半个省略号“……”） -->
-    <string name="poi_comment_share_sina">#老虎宝典分享#我来过：%1$s 我觉得%2$s%3$s %4$s</string>
+    <!-- ：#老虎宝典分享#我来过：XXXX（poi 名称）+空格+我觉得 XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+来自@老虎宝典+空格+www.tigerknows.com （“来自@老虎宝典” 之前的内容如果超出 123 字，截断成 122 个字+“…”（半个省略号“……”））；图片为地图图片（同 poi 分享的图片一样） -->
+    <string name="poi_comment_share_sina">#老虎宝典分享#我来过：%1$s 我觉得%2$s%3$s%4$s</string>
+    <string name="poi_comment_share_sina_source">来自@老虎宝典 http://www.tigerknows.com</string>
     <string name="poi_comment_intput_hit">请输入你的点评！（30字以上）</string>
     <string name="poi_comment_share_grade1">太差啦！</string>
     <string name="poi_comment_share_grade2">不咋地！</string>
     <string name="poi_comment_share_grade3">一般般！</string>
     <string name="poi_comment_share_grade4">还不错！</string>
     <string name="poi_comment_share_grade5">太赞啦！</string>
-    <!-- 文字：我来过：XXXX（poi名称）+空格+我觉得XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+空格+来自@老虎宝典+空格+#老虎宝典分享#（“来自@老虎宝典”之前的内容如果超出123字，截断成122个字+“…”（半个省略号“……”）） -->
-    <string name="poi_comment_share_qzone">我来过：%1$s 我觉得%2$s%3$s %4$s </string>
-    <string name="poi_comment_share_qzone_source">来自@老虎宝典 #老虎宝典分享# </string>
+    <!-- 我来过：XXXX（poi 名称）+空格+我觉得 XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+空格+#老虎宝典分享#（“网址之前的内容如果超出 123 字，截断成 122 个字+“…”（半个省略号“……”）），没有图片显示 -->
+    <string name="poi_comment_share_qzone">我来过：%1$s 我觉得%2$s%3$s%4$s </string>
+    <string name="poi_comment_share_qzone_source">#老虎宝典分享#</string>
     <string name="publish">发表</string>
     <string name="publish_comment">发表点评</string>
     <string name="publish_comment_failed">发表点评失败！</string>
