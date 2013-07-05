@@ -266,10 +266,16 @@
                             <Button android:id="@+id/date_btn"
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
-                                android:textSize="16sp"
-                                android:gravity="left"
-                                android:text="@string/select_business_hours_day"
+                                android:textColor="@color/black_dark"
+                                android:gravity="left|center_vertical"
+                                android:layout_marginTop="2dp"
+                                android:layout_marginBottom="2dp"
+                                android:paddingLeft="8dp"
+                                android:paddingTop="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingBottom="8dp"
                                 android:singleLine="true"
+                                android:hint="@string/select_business_hours_day"
                                 android:ellipsize="end"
                                 android:drawableRight="@drawable/ic_small_triangle_down"
                                 android:background="@color/transparent"/>
@@ -281,10 +287,16 @@
                             <Button android:id="@+id/time_btn"
                                 android:layout_width="fill_parent"
                                 android:layout_height="wrap_content"
-                                android:gravity="left"
-                                android:textSize="16sp"
-                                android:text="@string/select_business_hours_time"
+                                android:textColor="@color/black_dark"
+                                android:gravity="left|center_vertical"
+                                android:layout_marginTop="2dp"
+                                android:layout_marginBottom="2dp"
+                                android:paddingLeft="8dp"
+                                android:paddingTop="8dp"
+                                android:paddingRight="8dp"
+                                android:paddingBottom="8dp"
                                 android:singleLine="true"
+                                android:hint="@string/select_business_hours_time"
                                 android:ellipsize="end"
                                 android:drawableRight="@drawable/ic_small_triangle_down"
                                 android:background="@color/transparent"/>
@@ -299,8 +311,8 @@
                     android:background="@drawable/list_single" >
                     <RelativeLayout 
                         android:id="@+id/thumb_image_view"
-                        android:layout_width="120dp" 
-                        android:layout_height="120dp"
+                        android:layout_width="80dp" 
+                        android:layout_height="80dp"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentTop="true"
                         android:layout_gravity="center_horizontal" >
@@ -323,19 +335,21 @@
                             android:layout_height="wrap_content" 
                             android:layout_alignParentTop="true"
                             android:layout_alignParentRight="true"
-                            android:background="@drawable/btn_delete"
+                            android:background="@drawable/del_pic"
                             />
                     </RelativeLayout>
                     <LinearLayout 
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_toRightOf="@id/thumb_image_view"
+                        android:paddingLeft="8dp"
                         android:layout_centerVertical="true"
                         android:orientation="vertical">
                         <TextView
                             android:id="@+id/upload_image_title_txv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:paddingBottom="8dp"
                             android:gravity="left|center_vertical"
                             android:text="@string/add_merchant_upload_photo"
                             android:textSize="16sp"/>
@@ -401,26 +415,31 @@
             android:background="@color/black" >
             <ImageView  
                 android:id="@+id/image_imv"
-                android:layout_width="fill_parent" 
-                android:layout_height="fill_parent" 
+                android:layout_width="wrap_content" 
+                android:layout_height="wrap_content" 
                 android:layout_centerInParent="true"
                 />
-            <Button  
-                android:id="@+id/cancel_btn"
+            <LinearLayout 
                 android:layout_width="wrap_content" 
-                android:layout_height="wrap_content" 
-                android:layout_alignParentLeft="true"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
                 android:layout_alignParentBottom="true"
-                android:text="@string/cancel"
-                />
-            <Button  
-                android:id="@+id/confirm_btn"
-                android:layout_width="wrap_content" 
-                android:layout_height="wrap_content" 
-                android:layout_alignParentRight="true"
-                android:layout_alignParentBottom="true"
-                android:text="@string/confirm"
-                />
+                android:layout_centerHorizontal="true"
+                >
+                <Button  
+                    android:id="@+id/cancel_btn"
+                    android:layout_width="wrap_content" 
+                    android:layout_height="wrap_content" 
+                    android:layout_marginRight="72dp"
+                    android:background="@drawable/btn_cancel_add_merchant"
+                    />
+                <Button  
+                    android:id="@+id/confirm_btn"
+                    android:layout_width="wrap_content" 
+                    android:layout_height="wrap_content" 
+                    android:background="@drawable/btn_confirm_add_merchant"
+                    />
+            </LinearLayout>
         </RelativeLayout>
         
         <com.tigerknows.widget.FilterListView

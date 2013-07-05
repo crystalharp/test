@@ -434,6 +434,8 @@
 
     <string name="snap_current_map">截屏当前地图?</string>
     <string name="are_you_view_url">你确认要查看网页%1$s?</string>
+    
+    <string name="zhi">至</string>
 
 <!--  =======================    Share Part    =========================== -->
 <!-- Share Module SinaWeibo Start -->
