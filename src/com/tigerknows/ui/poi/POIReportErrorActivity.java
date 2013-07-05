@@ -10,14 +10,18 @@ import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.Selection;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.decarta.Globals;
@@ -55,7 +59,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
 	
 	// 若状态的后六为不全为0，则在详情页面需要选择性显示
 	private static final int TEL_LLY = 32;
-	private static final int NOTEXIST_LLY = 16;
+	private static final int NOTEXIST_RGP = 16;
 	private static final int MAIN_LLY = 8;
 	private static final int TYPE_LLY = 4;
 	private static final int DESCRIPTION_LLY = 2;
@@ -78,9 +82,9 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
 	
 	private Context mContext;
 	
-	private LinearLayout mHomeLly;
+	private LinearLayout mBodyLly;
 	private LinearLayout mTelLly;
-	private LinearLayout mNotExistLly;
+	private RadioGroup mNotExistRgp;
 	private LinearLayout mMainLly;
 	private LinearLayout mTypeLly;
 	private LinearLayout mDescriptionLly;
@@ -103,7 +107,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
 	private RadioButton mNeFindRbt;
 	private RadioButton mNeOtherRbt;
 	
-	private TextView mStarTxv;
 	private TextView mMainTxv;
 	private EditText mMainEdt;
 	private EditText mTypeEdt;
@@ -159,7 +162,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
      */
     protected void findViewsMain() {
         super.findViews();
-        mHomeLly = (LinearLayout) findViewById(R.id.home_lly);
         mNameBtn = (Button) findViewById(R.id.name_btn);
         mTelBtn = (Button) findViewById(R.id.tel_btn);
         mNotexistBtn = (Button) findViewById(R.id.notexist_btn);
@@ -171,8 +173,9 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     }
     protected void findViewsDetail() {
     	super.findViews();
+        mBodyLly = (LinearLayout) findViewById(R.id.body_lly);
         mTelLly = (LinearLayout) findViewById(R.id.tel_lly);
-        mNotExistLly = (LinearLayout) findViewById(R.id.notexist_lly);
+        mNotExistRgp = (RadioGroup) findViewById(R.id.notexist_rgp);
         mMainLly = (LinearLayout) findViewById(R.id.main_lly);
         mTypeLly = (LinearLayout) findViewById(R.id.type_lly);
         mDescriptionLly = (LinearLayout) findViewById(R.id.description_lly);
@@ -184,7 +187,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         mNeMoveRbt = (RadioButton) findViewById(R.id.ne_move_rbt);
         mNeFindRbt = (RadioButton) findViewById(R.id.ne_find_rbt);
         mNeOtherRbt = (RadioButton) findViewById(R.id.ne_other_rbt);
-        mStarTxv = (TextView) findViewById(R.id.star_txv);
         mMainTxv = (TextView) findViewById(R.id.main_txv);
         mMainEdt = (EditText) findViewById(R.id.main_edt);
         mTypeEdt = (EditText) findViewById(R.id.type_edt);
@@ -209,6 +211,16 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     }
     protected void setListenerDetail() {
     	super.setListener();
+    	mBodyLly.setOnTouchListener(new OnTouchListener(){
+    	
+	        @Override
+	        public boolean onTouch(View v, MotionEvent event) {
+	            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+	            	postHideSoftInput();
+	            }
+	            return true;
+	        }
+	    });
         mTelConnectRbt.setOnClickListener(this);
         mTelNotthisRbt.setOnClickListener(this);
         mNeStopRbt.setOnClickListener(this);
@@ -280,7 +292,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     
     private void setDataDetail(){
     	mTelLly.setVisibility(((mChecked & TEL_LLY) !=0) ? View.VISIBLE : View.GONE);
-    	mNotExistLly.setVisibility(((mChecked & NOTEXIST_LLY) !=0) ? View.VISIBLE : View.GONE);
+    	mNotExistRgp.setVisibility(((mChecked & NOTEXIST_RGP) !=0) ? View.VISIBLE : View.GONE);
     	mMainLly.setVisibility(((mChecked & MAIN_LLY) !=0) ? View.VISIBLE : View.GONE);
     	mTypeLly.setVisibility(((mChecked & TYPE_LLY) !=0) ? View.VISIBLE : View.GONE);
     	mDescriptionLly.setVisibility(((mChecked & DESCRIPTION_LLY) !=0) ? View.VISIBLE : View.GONE);
@@ -289,8 +301,9 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     	switch(mChecked){
     	case TEL_ERR:
     		mMainTxv.setText(getString(R.string.erreport_merchant_tel));
-    		mStarTxv.setVisibility(View.INVISIBLE);
-    		mOrigin = MapEngine.getAreaCodeByCityId(MapEngine.getInstance().getCityId(mPOI.getPosition()));
+    		mOrigin = MapEngine.getAreaCodeByCityId(MapEngine.getInstance().getCityId(mPOI.getPosition())) + '-';
+    		mMainEdt.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED);
+    		mMainEdt.setHint(getString(R.string.tel_or_mobile));
     		break;
     	case ADDRESS_ERR:
     		mMainTxv.setText(getString(R.string.erreport_address));
@@ -298,24 +311,43 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     		break;
     	case NAME_ERR:
     		mMainTxv.setText(getString(R.string.erreport_merchant_name));
+    		mMainLly.setBackgroundDrawable(getResources().getDrawable(R.drawable.list_header));
     		mOrigin = mPOI.getName();
     		break;
     	case TEL_ADD:
     		mMainTxv.setText(getString(R.string.erreport_merchant_tel));
-    		mOrigin = MapEngine.getAreaCodeByCityId(MapEngine.getInstance().getCityId(mPOI.getPosition()));
+    		mOrigin = MapEngine.getAreaCodeByCityId(MapEngine.getInstance().getCityId(mPOI.getPosition())) + '-';
+    		mMainEdt.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED);
+    		mMainEdt.setHint(getString(R.string.tel_or_mobile));
     		break;
     	}
     	if(mMainLly.getVisibility() == View.VISIBLE){
     		mMainEdt.setText(mOrigin);
-    		mMainEdt.requestFocus();
-    		Selection.setSelection(mMainEdt.getText(), mMainEdt.length());
+    		if(mChecked != TEL_ERR){
+    			mMainEdt.requestFocus();
+    			Selection.setSelection(mMainEdt.getText(), mMainEdt.length());
+    			showSoftInput();
+    		}
+    	}
+    	if(mDescriptionLly.getVisibility() == View.VISIBLE){
+			mDescriptionEdt.requestFocus();
+			showSoftInput();
     	}
     	refreshDataDetail();
     }
     
     private void refreshDataDetail(){
-    	mDescriptionLly.setVisibility(((mChecked & DESCRIPTION_LLY) !=0) ? View.VISIBLE : View.GONE);
+    	if((mChecked & DESCRIPTION_LLY) !=0){
+    		mDescriptionLly.setVisibility(View.VISIBLE);
+    	}else if (mChecked == NOT_EXIST){
+    		mDescriptionEdt.clearFocus();
+    		postHideSoftInput();
+    		mDescriptionLly.setVisibility(View.GONE);
+    	}
     	refreshSubmitBtn();
+    	mSubmitBtn.setTextColor(mSubmitBtn.isEnabled() 
+    			? getResources().getColor(R.color.orange) 
+    			: getResources().getColor(R.color.black_light));
     }
     public void refreshSubmitBtn(){
     	if(mPage == HOME_PAGE) return;
@@ -389,34 +421,42 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             	mChecked = NOT_EXIST;
             	mRbtChecked = NE_STOP;
             	refreshDataDetail();
+            	hideSoftInput();
             	break;
             case R.id.ne_chai_rbt:
             	mChecked = NOT_EXIST;
             	mRbtChecked = NE_CHAI;
             	refreshDataDetail();
+            	hideSoftInput();
             	break;
             case R.id.ne_move_rbt:
             	mChecked = NOT_EXIST;
             	mRbtChecked = NE_MOVE;
             	refreshDataDetail();
+            	hideSoftInput();
             	break;
             case R.id.ne_find_rbt:
             	mChecked = NOT_EXIST;
             	mRbtChecked = NE_FIND;
             	refreshDataDetail();
+            	hideSoftInput();
             	break;
             case R.id.ne_other_rbt:
             	mChecked = NE_OTHER;
             	mRbtChecked = NE_OTHER_CHECK;
+            	mDescriptionEdt.requestFocus();
             	refreshDataDetail();
+            	showSoftInput();
             	break;
             case R.id.tel_connect_rbt:
             	mRbtChecked = TEL_CONNECT;
             	refreshDataDetail();
+            	hideSoftInput();
             	break;
             case R.id.tel_notthis_rbt:
             	mRbtChecked = TEL_NOTTHIS;
             	refreshDataDetail();
+            	hideSoftInput();
             	break;
             default:
                 break;
