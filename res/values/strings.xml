@@ -1186,4 +1186,19 @@
     <string name="erreport_xuantian">（选填）</string>
     <string name="erreport_abandon">确定放弃报错吗？</string>
 <!-- POI Error Recovery End -->
+
+<!-- Satisfy Rate Start -->
+    <string name="satisfy_note">你对老虎宝典的满意度评分是：</string>
+    <string name="satisfy_a">搜索结果</string>
+    <string name="satisfy_b">定位准确性</string>
+    <string name="satisfy_c">操作流畅性</string>
+    <string name="satisfy_d">功能满足需求</string>
+    <string name="satisfy_e">功能操作简单</string>
+    <string name="satisfy_f">应用反应速度</string>
+    <string name="satisfy_g">整体满意度</string>
+    <string name="satisfy_0">请选择</string>
+    <string name="satisfy_abandon">确定放弃满意度评分吗？</string>
+    <string name="satisfy_success">谢谢您对我们的评价</string>
+    
+<!-- Satisfy Rate End -->
 </resources>

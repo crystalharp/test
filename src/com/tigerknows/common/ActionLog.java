@@ -297,7 +297,7 @@ public class ActionLog {
     public static final String SettingWakeLock = "BB";
     public static final String SettingRadar = "BC";
 
-    // 意见反馈页 AL
+    // 意见反馈页 
     public static final String Feedback = "CG";
     public static final String FeedBackContent = "BA";
     public static final String FeedbackMobile = "BB";
@@ -325,6 +325,9 @@ public class ActionLog {
     public static final String AddMerchantTime = "BE";
     public static final String AddMerchantMobile = "BF";
     public static final String AddMerchantAddressDescription = "BG";
+    
+    // 满意度评分页
+    public static final String SatisfyRate = "CL";
 
     // 软件生命周期  AO
     public static final String Lifecycle = "FA";
