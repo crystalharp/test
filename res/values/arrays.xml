@@ -263,4 +263,12 @@
         <item>中国邮政储蓄银行</item>
         <item>宁波银行</item>
     </string-array>
+    <string-array name="satisfy_star">
+        <item>请选择</item>
+        <item>很不满意</item>
+        <item>不满意</item>
+        <item>一般</item>
+        <item>较满意</item>
+        <item>十分满意</item>
+    </string-array>    
 </resources>

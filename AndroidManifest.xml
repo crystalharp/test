@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.tigerknows" android:installLocation="auto"
       android:versionName="5.10.20130528A" android:versionCode="510">
@@ -69,6 +69,12 @@
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
             android:windowSoftInputMode="adjustResize|stateHidden"
+            android:screenOrientation="portrait" />
+        
+        <activity android:name="com.tigerknows.ui.more.SatisfyRateActivity"
+            android:theme="@style/Theme.NoTitleBar" 
+            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:windowSoftInputMode="adjustPan|stateVisible"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.FeedbackActivity"

@@ -332,7 +332,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 break;
             case R.id.feedback_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreFeedback);
-                mSphinx.showView(R.id.activity_more_feedback);
+                mSphinx.showView(R.id.activity_more_satisfy);
+                //mSphinx.showView(R.id.activity_more_feedback);
                 break;
             case R.id.add_merchant_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreAddMerchant);
