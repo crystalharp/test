@@ -23,8 +23,11 @@ public class FeedbackUpload extends BaseQuery {
     // md String false POI纠错日志，格式见POI纠错功能说明
     public static final String SERVER_PARAMETER_ERROR_RECOVERY = "md";
 
-    // am String false 添加商户
+    // nc String false 添加商户
     public static final String SERVER_PARAMETER_ADD_MERCHANT = "nc";
+    
+    // sat String false 满意度评分
+    public static final String SERVER_PARAMETER_SATISFY_RATE = "sat";
     
     public static final String SERVER_PARAMETER_POI_RANK = "poirank";
 
