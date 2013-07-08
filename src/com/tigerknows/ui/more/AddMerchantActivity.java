@@ -691,7 +691,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         if (mPhotoUri != null) {
             mUploadUri = mPhotoUri;
             String fileName = Utility.imageUri2FilePath(mThis, mUploadUri);
-            mPhotoMD5 = Utility.md5sum(fileName)+fileName.substring(fileName.lastIndexOf("."));
+            mPhotoMD5 = Utility.md5sum(fileName);
             mTakePhotoBtn.setScaleType(ScaleType.MATRIX);
             mTakePhotoBtn.setImageMatrix(Utility.resizeSqareMatrix(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Util.dip2px(Globals.g_metrics.density, 112)));
             mTakePhotoBtn.setImageDrawable(drawable);

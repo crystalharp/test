@@ -4,6 +4,7 @@ package com.tigerknows.ui.more;
 import com.tigerknows.R;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.util.Utility;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,9 +39,11 @@ public class HelpActivity extends BaseActivity {
     
     private HashMap<Integer, View> viewMap = new HashMap<Integer, View>();
     
+    private ViewGroup mPageIndicatorView;
+    
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        
         mActionTag = ActionLog.Help;
         if (mIntent != null) {
             mAppFirstStart = mIntent.getBooleanExtra(APP_FIRST_START, false); 
@@ -51,12 +55,42 @@ public class HelpActivity extends BaseActivity {
         } else {
             mPagecount = 4;
         }
+
+        setContentView(R.layout.more_help);
         
-        mViewPager = new ViewPager(mThis);
+        findViews();
+        setListener();
         
         mViewPager.setAdapter(new MyAdapter());
+    }
+    
+    protected void findViews() {
+        super.findViews();
+        mViewPager = (ViewPager) findViewById(R.id.view_pager);
         
-        setContentView(mViewPager);
+        mPageIndicatorView = (ViewGroup) findViewById(R.id.page_indicator_view);
+        Utility.pageIndicatorInit(mThis, mPageIndicatorView, mPagecount);
+    }
+    
+    protected void setListener() {
+        super.setListener();
+
+        mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+            
+            @Override
+            public void onPageSelected(int index) {
+                Utility.pageIndicatorChanged(mThis, mPageIndicatorView, index);
+                mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, index);
+            }
+            
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
+            
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+            }
+        });
     }
 
     public View getView(int position) {

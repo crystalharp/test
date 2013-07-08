@@ -125,11 +125,6 @@ public class ActionLog {
     public static final String LogOut = "ZW";
     
     public static final String HistoryWordInput = "ZX";
-
-    public static final String HotelDate = "ZY";
-    public static final String HotelDateDone = HotelDate+"BA";
-    public static final String HotelDateCheckin = HotelDate+"BB";
-    public static final String HotelDateCheckout = HotelDate+"BC";
     
     // == 共用 ==
     public static final String CommonAddress = "ZX";
@@ -137,6 +132,11 @@ public class ActionLog {
     public static final String CommonFavorite = "ZZ";
     public static final String CommonShare = "YA";
     public static final String CommonErrorRecovery = "YB";
+
+    public static final String HotelDate = "YC";
+    public static final String HotelDateDone = HotelDate+"BA";
+    public static final String HotelDateCheckin = HotelDate+"BB";
+    public static final String HotelDateCheckout = HotelDate+"BC";
     
     // POI主页 
     public static final String POIHome = "AA";
