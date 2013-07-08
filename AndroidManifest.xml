@@ -74,7 +74,7 @@
         <activity android:name="com.tigerknows.ui.more.SatisfyRateActivity"
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
-            android:windowSoftInputMode="adjustPan|stateVisible"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.FeedbackActivity"

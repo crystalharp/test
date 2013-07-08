@@ -10,6 +10,7 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataOperation;
 import com.tigerknows.model.DataQuery;
@@ -202,6 +203,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
             if (object == null) {
                 return;
             }
+            mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetailDianying);
             DataOperation dataOperation = new DataOperation(mSphinx);
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             if (object instanceof Dianying) {
@@ -257,6 +259,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
         
         @Override
         public void onClick(View v) {
+            mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetailDianyingMore);
             lsv.refreshList(mAllList);
             mDynamicDianyingMoreView.setVisibility(View.GONE);
             refreshBackground(lsv, mAllList.size());
