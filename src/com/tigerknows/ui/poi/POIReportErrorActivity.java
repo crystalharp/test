@@ -40,7 +40,9 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.POI;
-
+/*
+ * author fengtianxiao@tigerknows.com
+ */
 public class POIReportErrorActivity extends BaseActivity implements View.OnClickListener{
     
     private static final int HOME_PAGE = 1;

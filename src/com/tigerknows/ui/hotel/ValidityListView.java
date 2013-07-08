@@ -80,13 +80,13 @@ public class ValidityListView extends LinearLayout {
         this.childFilterList.clear();
 
         for(int i = 0; i < 10; i++) {
-            parentFilterList.add((now.get(Calendar.YEAR)+i)+"年");
+            parentFilterList.add((now.get(Calendar.YEAR)+i)+mSphinx.getString(R.string.year));
         }
 
         this.selectedParentPosition = (this.calendar.get(Calendar.YEAR)-now.get(Calendar.YEAR));
         
         for(int i = (this.selectedParentPosition <= 0 ? now.get(Calendar.MONTH) : 0); i < 12; i++) {
-            childFilterList.add((i+1)+"月");
+            childFilterList.add((i+1)+mSphinx.getString(R.string.month));
         }
         
         this.selectedChildPosition = this.calendar.get(Calendar.MONTH) - (this.selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0);

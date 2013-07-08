@@ -711,7 +711,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private String analysisElongRequest(String description){
         String ResponseStr = description.split("!")[0].split("！")[0];
         int ResponseInt = 0;
-        String[] strArray = description.split("订单总价应为wwwwwwwwwwwwwwwwww");
+        String[] strArray = description.split("sdafdsagfsdwwwwwwwwwwwwwwwwww");
         if(strArray.length > 1){
             ResponseInt = 1;
             ResponseStr = strArray[1];
