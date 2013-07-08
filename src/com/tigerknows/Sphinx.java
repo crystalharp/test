@@ -158,6 +158,7 @@ import com.tigerknows.ui.more.HelpActivity;
 import com.tigerknows.ui.more.HistoryFragment;
 import com.tigerknows.ui.more.MapDownloadActivity;
 import com.tigerknows.ui.more.MoreHomeFragment;
+import com.tigerknows.ui.more.SatisfyRateActivity;
 import com.tigerknows.ui.more.SettingActivity;
 import com.tigerknows.ui.poi.CommentListActivity;
 import com.tigerknows.ui.poi.CouponDetailFragment;
@@ -3055,6 +3056,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             } else if (R.id.activity_traffic_report_error == viewId) {
                 intent.setClass(this, TrafficReportErrorActivity.class);
                 startActivityForResult(intent, R.id.activity_traffic_report_error);
+                return true;
+            } else if (R.id.activity_more_satisfy == viewId) {
+                intent.setClass(this, SatisfyRateActivity.class);
+                startActivityForResult(intent, R.id.activity_more_satisfy);
                 return true;
             } else if (R.id.activity_more_feedback == viewId) {
                 intent.setClass(this, FeedbackActivity.class);

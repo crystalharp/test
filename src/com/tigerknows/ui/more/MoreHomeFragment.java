@@ -69,6 +69,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private Button mFavoriteBtn;
     private Button mHistoryBrowseBtn;
     private Button mSettingsBtn;
+    private Button mSatisfyRateBtn;
     private Button mFeedbackBtn;
     private Button mAddMerchantBtn;
     private Button mHelpBtn;
@@ -239,6 +240,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mFavoriteBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
         mHistoryBrowseBtn = (Button)mRootView.findViewById(R.id.history_browse_btn);
         mSettingsBtn = (Button)mRootView.findViewById(R.id.settings_btn);
+        mSatisfyRateBtn = (Button)mRootView.findViewById(R.id.satisfy_btn);
         mFeedbackBtn = (Button)mRootView.findViewById(R.id.feedback_btn);
         mAddMerchantBtn = (Button)mRootView.findViewById(R.id.add_merchant_btn);
         mHelpBtn = (Button)mRootView.findViewById(R.id.help_btn);
@@ -256,6 +258,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mFavoriteBtn.setOnClickListener(this);
         mHistoryBrowseBtn.setOnClickListener(this);
         mSettingsBtn.setOnClickListener(this);
+        mSatisfyRateBtn.setOnClickListener(this);
         mFeedbackBtn.setOnClickListener(this);
         mAddMerchantBtn.setOnClickListener(this);
         mHelpBtn.setOnClickListener(this);
@@ -330,6 +333,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 mActionLog.addAction(mActionTag +  ActionLog.MoreSetting);
                 mSphinx.showView(R.id.activity_more_setting);
                 break;
+            case R.id.satisfy_btn:
+            	mActionLog.addAction(mActionTag +  ActionLog.MoreSatisfyRate);
+            	mSphinx.showView(R.id.activity_more_satisfy);
+            	break;
             case R.id.feedback_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreFeedback);
                 mSphinx.showView(R.id.activity_more_feedback);
