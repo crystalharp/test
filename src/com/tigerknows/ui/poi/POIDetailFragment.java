@@ -414,6 +414,12 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             if (queryCount == 0) {
                 mLoadingView.setVisibility(View.GONE);
             }
+        }
+    }
+    
+    synchronized void resetLoadingView() {
+        if (queryCount > 0) {
+            mLoadingView.setVisibility(View.VISIBLE);
         } else {
             mLoadingView.setVisibility(View.GONE);
         }
@@ -1067,7 +1073,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             if (position >= 0) {
                 mSphinx.queryStart(feedbackUpload);
             }
-            minusLoadingView();
+            resetLoadingView();
         }
         
         String category = poi.getCategory().trim();
