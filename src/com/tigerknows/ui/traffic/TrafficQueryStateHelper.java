@@ -96,7 +96,6 @@ public class TrafficQueryStateHelper {
 
         @Override
         public void postEnter() {
-            // TODO Auto-generated method stub
             super.postEnter();
             mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeNormal);
 			mQueryFragment.mActionTag = ActionLog.TrafficHomeNormal;
@@ -107,7 +106,6 @@ public class TrafficQueryStateHelper {
 
         @Override
         public void exit() {
-            // TODO Auto-generated method stub
             super.exit();
             mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeNormal + ActionLog.Dismiss);
         }
@@ -122,8 +120,6 @@ public class TrafficQueryStateHelper {
             if (oldState == State.Input) {
                 //返回normal状态时清理掉输入框的光标
                 mQueryFragment.mSelectedEdt.getEdt().clearFocus();
-                //放在这里是因为uiRollback最后执行，需要切换完normal之后才能把交通状态清除
-//                mQueryFragment.clearTrafficMode();
             }
             if (oldState == State.Map) {
 
@@ -141,7 +137,6 @@ public class TrafficQueryStateHelper {
 
         @Override
         public void exit() {
-            // TODO Auto-generated method stub
             super.exit();
             mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeInput + ActionLog.Dismiss);
         }
@@ -282,225 +277,4 @@ public class TrafficQueryStateHelper {
         mQueryFragment.mSphinx.getControlView().setPadding(0, 0, 0, 0);
         mQueryFragment.mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 38), 0, 0);
     }
-//	private class NormalToInputAction extends TrafficAction {
-
-//		@Override
-//		public void uiExecute() {
-//			applyInnateProperty(TrafficViewSTT.State.Input);
-//		}
-//
-//		@Override
-//		public void eventExecute() {
-//			mQueryFragment.mEventHelper.applyListenersInInputState();
-//		}
-
-//		@Override
-//		public void uiRollback() {
-//			mQueryFragment.mSphinx.getMenuFragment().display();
-////			resetNormalStateMap();
-//			applyInnateProperty(TrafficViewSTT.State.Normal);
-//			//返回normal状态时清理掉输入框的光标
-//			mQueryFragment.mSelectedEdt.getEdt().clearFocus();
-//			//放在这里是因为uiRollback最后执行，需要切换完normal之后才能把交通状态清除
-//			mQueryFragment.clearTrafficMode();   
-//		}
-
-//		@Override
-//		public void eventRollback() {
-//			mQueryFragment.mEventHelper.applyListenersInNormalState();
-//			
-////			if (!isEqualsToMapCenter(mCityInfo)) {
-////        		mSphinx.getMapView().zoomTo(mCityInfo.getLevel(), getCityCenterPosition(mCityInfo));
-////        	}
-//			mQueryFragment.mMapLocationHelper.showNormalStateMap();
-//		}
-
-//	}
-	
-//	private class NormalToMapAction extends TrafficAction {
-	
-//		@Override
-//		public void uiExecute() {
-//			mQueryFragment.mActionLog.addAction(ActionLog.TrafficHomeToMap);
-//			
-//			mQueryFragment.oldCheckButton = mQueryFragment.mRadioGroup.getCheckedRadioButtonId();
-//        	
-//			mQueryFragment.mAnimationHelper.hideBlockAndMenuAnimation();
-//
-//			applyInnateProperty(TrafficViewSTT.State.Map);
-//			mQueryFragment.mBackBtn.setVisibility(View.VISIBLE);
-//  		}
-
-//		@Override
-//		public void eventExecute() {
-//			mQueryFragment.mEventHelper.applyListenersInMapState();
-//		}
-
-//		@Override
-//		public void uiRollback() {
-//			mQueryFragment.mMapLocationHelper.resetNormalStateMap();
-//
-//			mQueryFragment.mLogHelper.checkedRadioButton(R.id.traffic_transfer_rbt);
-//			mQueryFragment.mAnimationHelper.showBlockAndMenuAnimation();
-//
-//			applyInnateProperty(TrafficViewSTT.State.Normal);
-//        	
-//		}
-
-//		@Override
-//		public void eventRollback() {
-//			mQueryFragment.mEventHelper.applyListenersInNormalState();
-//		}
-		
-//	}
-	
-//	private class MapToInputAction extends TrafficAction {
-
-//		@Override
-//		public void uiExecute() {
-//			applyInnateProperty(TrafficViewSTT.State.Input);
-//		}
-//
-//		@Override
-//		public void eventExecute() {
-//			mQueryFragment.mEventHelper.applyListenersInInputState();
-//		}
-
-//		@Override
-//		public void uiRollback() {
-//			/*
-//			 * 从Input返回Map时, 记录之前Check的Id
-//			 */
-//			mQueryFragment.oldCheckButton = mQueryFragment.mRadioGroup.getCheckedRadioButtonId();
-//			
-//			mQueryFragment.mSphinx.clearMap();
-//			
-//			mQueryFragment.getContentView().setVisibility(View.GONE);
-//			mQueryFragment.mCityView.setVisibility(View.VISIBLE);
-//			mQueryFragment.mShadowWhite.setVisibility(View.GONE);
-//			applyInnateProperty(TrafficViewSTT.State.Map);
-//			mQueryFragment.mSphinx.getControlView().setPadding(0, 0, 0, 0);
-//		}
-
-//		@Override
-//		public void eventRollback() {
-//			mQueryFragment.mEventHelper.applyListenersInMapState();
-//			mQueryFragment.mMapLocationHelper.resetMapStateMap();
-//		}
-		
-//	}
-	
-//	private class NormalToSelectPointAction extends TrafficAction {
-
-//		@Override
-//		public void uiExecute() {
-//			mQueryFragment.displayCommonTitle();
-//			mQueryFragment.mRightBtn.setVisibility(View.GONE);
-//			mQueryFragment.mTitleBtn.setText(R.string.title_click_map);
-//			mQueryFragment.mTitle.setVisibility(View.GONE);
-//			mQueryFragment.mMenuFragment.hide();
-//			
-//			applyInnateProperty(TrafficViewSTT.State.SelectPoint);
-//		}
-
-//		@Override
-//		public void eventExecute() {
-//			mQueryFragment.mEventHelper.applyListenersInSelectPointState();
-//		}
-
-//		@Override
-//		public void uiRollback() {
-//			mQueryFragment.hideCommonTitle();
-//			mQueryFragment.mTitle.setVisibility(View.VISIBLE);
-//			mQueryFragment.mMenuFragment.display();
-//			
-//			applyInnateProperty(TrafficViewSTT.State.Normal);
-//		}
-
-//		@Override
-//		public void eventRollback() {
-//			mQueryFragment.mMapLocationHelper.resetNormalStateMap();
-//		}
-		
-//	}
-	
-//	private class InputToSelectPointAction extends TrafficAction {
-
-//		@Override
-//		public void uiExecute() {
-//			mQueryFragment.displayCommonTitle();
-//			mQueryFragment.mRightBtn.setVisibility(View.GONE);
-//			mQueryFragment.mTitleBtn.setText(R.string.title_click_map);
-//			mQueryFragment.mTitle.setVisibility(View.GONE);
-//			applyInnateProperty(TrafficViewSTT.State.SelectPoint);
-//		}
-
-//		@Override
-//		public void eventExecute() {
-//			mQueryFragment.mEventHelper.applyListenersInSelectPointState();
-//		}
-
-//		@Override
-//		public void uiRollback() {
-//			mQueryFragment.hideCommonTitle();
-//			mQueryFragment.mTitle.setVisibility(View.VISIBLE);
-//			applyInnateProperty(TrafficViewSTT.State.Input);
-//		}
-//
-//		@Override
-//		public void eventRollback() {
-//		}
-		
-//	}
-	
-//	private class SelectPointToInputAction extends TrafficAction {
-//		@Override
-//		public void uiExecute() {
-//			mQueryFragment.hideCommonTitle();
-//			mQueryFragment.mTitle.setVisibility(View.VISIBLE);
-//			applyInnateProperty(TrafficViewSTT.State.Input);
-//		}
-//
-//		@Override
-//		public void eventExecute() {
-//			mQueryFragment.mEventHelper.applyListenersInInputState();
-//		}
-
-//		@Override
-//		public void uiRollback() {
-//			mQueryFragment.displayCommonTitle();
-//			mQueryFragment.mRightBtn.setVisibility(View.GONE);
-//			mQueryFragment.mTitleBtn.setText(R.string.title_click_map);
-//			mQueryFragment.mTitle.setVisibility(View.GONE);
-//			applyInnateProperty(TrafficViewSTT.State.SelectPoint);
-//		}
-
-//		@Override
-//		public void eventRollback() {
-//		}
-//	}
-	
-//	public NormalToInputAction createNormalToInputAction() {
-//		return new NormalToInputAction();
-//	}
-//	
-//	public NormalToMapAction createNormalToMapAction() {
-//		return new NormalToMapAction();
-//	}
-//	
-//	public MapToInputAction createMapToInputAction() {
-//		return new MapToInputAction();
-//	}
-//	
-//	public NormalToSelectPointAction createNormalToSelectPointAction() {
-//		return new NormalToSelectPointAction();
-//	}
-//	
-//	public InputToSelectPointAction createInputToSelectPointAction() {
-//		return new InputToSelectPointAction();
-//	}
-//	
-//	public SelectPointToInputAction createSelectPointToInputAction() {
-//		return new SelectPointToInputAction();
-//	}
 }
