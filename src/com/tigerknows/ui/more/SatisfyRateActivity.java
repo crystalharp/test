@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2010 pengwenyue@tigerknows.com
+ * Copyright (C) 2013 fengtianxiao@tigerknows.com
+ * 2013.07
  */
-
 package com.tigerknows.ui.more;
 
 import java.util.ArrayList;
@@ -31,9 +31,7 @@ import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.util.Utility;
 
-/**
- * @author Feng TianXiao
- */
+
 public class SatisfyRateActivity extends BaseActivity implements View.OnClickListener{
     
 	private static final int NUM_OF_RATINGBAR = 7;

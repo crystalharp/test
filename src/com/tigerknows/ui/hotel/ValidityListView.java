@@ -1,4 +1,4 @@
-/*
+ï»¿/*
  * Copyright (C) 2008 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -189,7 +189,7 @@ public class ValidityListView extends LinearLayout {
                 
                 childFilterList.clear();
                 for(int i = (selectedParentPosition == 0 ? now.get(Calendar.MONTH) : 0); i < 12; i++) {
-                    childFilterList.add((i+1)+"ÔÂ");
+                    childFilterList.add((i+1)+"æœˆ");
                 }
                 selectedChildPosition = 0;
                 childAdapter.notifyDataSetChanged();

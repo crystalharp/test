@@ -1,3 +1,7 @@
+Ôªø/*
+ * Copyright (C) 2013 fengtianxiao@tigerknows.com
+ * 2013.06
+ */
 package com.tigerknows.ui.poi;
 
 import java.io.UnsupportedEncodingException;
@@ -40,16 +44,15 @@ import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.POI;
-/*
- * author fengtianxiao@tigerknows.com
- */
+
+
 public class POIReportErrorActivity extends BaseActivity implements View.OnClickListener{
     
     private static final int HOME_PAGE = 1;
     private static final int DETAIL_PAGE = 2;
     
-    // ∫Û¡˘Œªøÿ÷∆œÍ«È“≥µƒ“≥√Êœ‘ æ
-    // «∞»˝Œªøÿ÷∆POIæ¿¥Ì¬Îµƒ ÆŒª ˝£¨≤¢«“–Ë“™º”“ª
+    // ÂêéÂÖ≠‰ΩçÊéßÂà∂ËØ¶ÊÉÖÈ°µÁöÑÈ°µÈù¢ÊòæÁ§∫
+    // Ââç‰∏â‰ΩçÊéßÂà∂POIÁ∫†ÈîôÁ†ÅÁöÑÂçÅ‰ΩçÊï∞ÔºåÂπ∂‰∏îÈúÄË¶ÅÂä†‰∏Ä
     private static final int NAME_ERR = 0215;        //2 001101
     private static final int TEL_ERR = 0451;        //4 101001
     private static final int TEL_ADD = 0511;        //5 001001
@@ -60,10 +63,10 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     private static final int LOCATION_ERR = 0300;    //3 000000
     private static final int REDUNDANCY = 0600;        //6 000000
     
-    // »Ù◊¥Ã¨µƒ∫Û¡˘Œªæ˘Œ™0£¨‘Ú¥˙±Ì «÷±Ω”Ã·Ωªµƒµÿµ„÷ÿ∏¥ªÚµÿÕº±Íº«¥ÌŒÛ
+    // Ëã•Áä∂ÊÄÅÁöÑÂêéÂÖ≠‰ΩçÂùá‰∏∫0ÔºåÂàô‰ª£Ë°®ÊòØÁõ¥Êé•Êèê‰∫§ÁöÑÂú∞ÁÇπÈáçÂ§çÊàñÂú∞ÂõæÊ†áËÆ∞ÈîôËØØ
     private static final int DIRECT_SUBMIT = 63;
     
-    // »Ù◊¥Ã¨µƒ∫Û¡˘Œ™≤ª»´Œ™0£¨‘Ú‘⁄œÍ«È“≥√Ê–Ë“™—°‘Ò–‘œ‘ æ
+    // Ëã•Áä∂ÊÄÅÁöÑÂêéÂÖ≠‰∏∫‰∏çÂÖ®‰∏∫0ÔºåÂàôÂú®ËØ¶ÊÉÖÈ°µÈù¢ÈúÄË¶ÅÈÄâÊã©ÊÄßÊòæÁ§∫
     private static final int TEL_LLY = 32;
     private static final int NOTEXIST_RGP = 16;
     private static final int MAIN_LLY = 8;
@@ -71,7 +74,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     private static final int DESCRIPTION_LLY = 2;
     private static final int CONTACT_LLY = 1;
     
-    // ”√¿¥øÿ÷∆æ¿¥Ì¬Îµƒ∏ˆŒª ˝
+    // Áî®Êù•ÊéßÂà∂Á∫†ÈîôÁ†ÅÁöÑ‰∏™‰ΩçÊï∞
     private static final int NOT_CHECKED = 0;
     
     private static final int NE_STOP = 1;
@@ -124,7 +127,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     private int mRbtChecked;
     private boolean mHasTel;
     private String mNextTitle;
-    // POIæ¿¥Ì¬Î = 510 + (mChecked>>6)*10 + mRbtChecked 
+    // POIÁ∫†ÈîôÁ†Å = 510 + (mChecked>>6)*10 + mRbtChecked 
     
     private String mOrigin;
 
@@ -392,7 +395,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             if(mRbtChecked != NOT_CHECKED) {
                 mSubmitBtn.setEnabled(true);
                 return;
-            }    //≤ªƒ‹break
+            }    //‰∏çËÉΩbreak
         case NAME_ERR:
         case ADDRESS_ERR:
         case TEL_ADD:

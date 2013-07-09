@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 fengtianxiao@tigerknows.com
+ * 2013.05
  */
 package com.tigerknows.ui.hotel;
 
@@ -168,13 +169,13 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditSubmit);
             String str = mCreditBankBtn.getText().toString();
             List<String> list = new ArrayList<String>();
-            // ÅĞ¶ÏÑ¡ÔñÒøĞĞ
+            // åˆ¤æ–­é€‰æ‹©é“¶è¡Œ
             if(TextUtils.isEmpty(str) || TextUtils.equals(str, mSphinx.getString(R.string.credit_bank_hint))){
                 Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_bank_empty_tip));
                 return;
             }
             
-            // ÅĞ¶ÏÒøĞĞ¿¨ºÅ
+            // åˆ¤æ–­é“¶è¡Œå¡å·
             str = mCreditCodeEdt.getText().toString();
             if(TextUtils.isEmpty(str)){
                 Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_code_empty_tip), mCreditCodeEdt);
@@ -185,7 +186,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             }
             list.add(str);
             
-            // ÅĞ¶Ï³Ö¿¨ÈËĞÕÃû
+            // åˆ¤æ–­æŒå¡äººå§“å
             str = mCreditOwnerEdt.getText().toString().trim();
             if(TextUtils.isEmpty(str)){
                 Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_owner_empty_tip), mCreditOwnerEdt);
@@ -196,7 +197,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             }
             list.add(str);
             
-            // ÅĞ¶ÏĞÅÓÃ¿¨ÑéÖ¤Âë
+            // åˆ¤æ–­ä¿¡ç”¨å¡éªŒè¯ç 
             str = mCreditVerifyEdt.getText().toString();
             if(TextUtils.isEmpty(str)){
                 Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_verify_empty_tip), mCreditVerifyEdt);
@@ -207,7 +208,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             }
             list.add(str);
             
-            // ÅĞ¶ÏĞÅÓÃ¿¨ÓĞĞ§ÆÚ
+            // åˆ¤æ–­ä¿¡ç”¨å¡æœ‰æ•ˆæœŸ
             if(mDate == null){
                 Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_validity_empty_tip));
                 return;
@@ -215,11 +216,11 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             list.add(mDate.get(Calendar.YEAR) + "");
             list.add(1+mDate.get(Calendar.MONTH) + "");
             
-            // ÅĞ¶ÏÖ¤¼şÀàĞÍ(Õâ¸ö²»ÓÃÅĞ¶Ï)
+            // åˆ¤æ–­è¯ä»¶ç±»å‹(è¿™ä¸ªä¸ç”¨åˆ¤æ–­)
             str = mCreditCertTypeBtn.getText().toString();
             list.add(str);
             
-            // ÅĞ¶ÏÖ¤¼şºÅÂë
+            // åˆ¤æ–­è¯ä»¶å·ç 
             str = mCreditCertCodeEdt.getText().toString();
             if(TextUtils.isEmpty(str)){
                 Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_cert_code_empty_tip), mCreditCertCodeEdt);
@@ -242,7 +243,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         public CreditBankAdapter(Context context, List<String> list) {
             super(context, list);
             // TODO Auto-generated constructor stub
-            // ÕĞÉÌÒøĞĞ ÖĞ¹ú½¨ÉèÒøĞĞ ÖĞ¹ú¹¤ÉÌÒøĞĞ ÖĞ¹úÒøĞĞ ½»Í¨ÒøĞĞ ÖĞĞÅÒøĞĞ ¹ã·¢ÒøĞĞ ÖĞ¹úÃñÉúÒøĞĞ ĞËÒµÒøĞĞ ÉÏº£ÆÖ¶«·¢Õ¹ÒøĞĞ ÖĞ¹ú¹â´óÒøĞĞ     ÖĞ¹úÅ©ÒµÒøĞĞ Æ½°²ÒøĞĞ ÉîÛÚ·¢Õ¹ÒøĞĞ ±±¾©ÒøĞĞ ÉÏº£ÒøĞĞ »ªÏÄÒøĞĞ ÖĞ¹úÓÊÕş´¢ĞîÒøĞĞ Äş²¨ÒøĞĞ
+            // æ‹›å•†é“¶è¡Œ ä¸­å›½å»ºè®¾é“¶è¡Œ ä¸­å›½å·¥å•†é“¶è¡Œ ä¸­å›½é“¶è¡Œ äº¤é€šé“¶è¡Œ ä¸­ä¿¡é“¶è¡Œ å¹¿å‘é“¶è¡Œ ä¸­å›½æ°‘ç”Ÿé“¶è¡Œ å…´ä¸šé“¶è¡Œ ä¸Šæµ·æµ¦ä¸œå‘å±•é“¶è¡Œ ä¸­å›½å…‰å¤§é“¶è¡Œ     ä¸­å›½å†œä¸šé“¶è¡Œ å¹³å®‰é“¶è¡Œ æ·±åœ³å‘å±•é“¶è¡Œ åŒ—äº¬é“¶è¡Œ ä¸Šæµ·é“¶è¡Œ åå¤é“¶è¡Œ ä¸­å›½é‚®æ”¿å‚¨è“„é“¶è¡Œ å®æ³¢é“¶è¡Œ
         }
         @Override
         public View getView(final int position, View convertView, ViewGroup parent){
@@ -362,7 +363,6 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             // do nothing
         }
         Calendar c2 = Calendar.getInstance();
-        c2.set(2013, 0, 1);
         if(c1.after(c2) == false){
             mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
                     R.color.orange,
@@ -379,7 +379,6 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
 
     @Override
     public void selected(Calendar calendar) {
-        // TODO ÉèÖÃÑ¡ÔñµÄÈÕÆÚ
         mDate = Calendar.getInstance();
         mDate.setTime(calendar.getTime());
         mCreditValidityBtn.setText(CalendarUtil.y4mc.format(mDate.getTime()));
