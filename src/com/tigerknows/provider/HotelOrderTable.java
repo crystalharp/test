@@ -46,7 +46,7 @@ public class HotelOrderTable {
             + ORDER_DELETED + " INTEGER(1) not null default 0,"
             + ORDER_CONTENT + " BLOB not null);";
 
-	private static final String TABLE_UPGRAD_1to2 = "alter table " + TABLE_NAME + " add column" + ORDER_DELETED + " INTEGER(1) not null default 0;";
+	private static final String TABLE_UPGRAD_1to2 = "alter table " + TABLE_NAME + " add column " + ORDER_DELETED + " INTEGER(1) not null default 0;";
 	
 	public Context mCtx;
 
@@ -61,13 +61,18 @@ public class HotelOrderTable {
 		
 		@Override
 		public void onCreate(SQLiteDatabase db) {
+			System.out.println("Create");
 			db.execSQL(TABLE_CREATE);
 		}
 		
 		@Override
 		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+			System.out.println("Upgrade: " + oldVersion + " " + newVersion);
 			if(oldVersion == 1 && newVersion==2){
+				System.out.println("Execute sql");
 				db.execSQL(TABLE_UPGRAD_1to2);
+			}else{
+				System.out.println("Not execute sql!");
 			}
 		}
 		
