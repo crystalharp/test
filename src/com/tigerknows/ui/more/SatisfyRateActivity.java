@@ -120,7 +120,6 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     	for (int i=0; i<NUM_OF_RATINGBAR; i++){
     		if (Math.round(mSatisfyRbt[i].getRating())== 0){
     			status = false;
-    			break;
     		}else mChanged = true;
     	}
     	mSubmitBtn.setEnabled(status);
