@@ -105,11 +105,11 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private Calendar mCheckOut;
     
     private boolean mIsSevenInn;
-    private String mIdCardNumber;    //È¢ÑËÆ¢7Â§©ÈÖíÂ∫óË¶ÅÂ°´ÁöÑË∫´‰ªΩËØÅÂè∑Ôºå‰∏é‰ø°Áî®Âç°ÊãÖ‰øùÈ°µ‰∏çÂêå
+    private String mIdCardNumber;    //‘§∂©7ÃÏæ∆µÍ“™ÃÓµƒ…Ì∑›÷§∫≈£¨”Î–≈”√ø®µ£±£“≥≤ªÕ¨
 
     private static final long MAX_ROOM_HOWMANY = 5;
     
-    // ÈÖíÂ∫óËÆ¢ÂçïÁõ∏ÂÖ≥Êï∞ÊçÆ
+    // æ∆µÍ∂©µ•œ‡πÿ ˝æ›
     private int mRTimeWhich;
     private String mRTime;
     private String mRTimeDetail;
@@ -121,10 +121,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     private int mNights;
     private double mTotalPrice;
     
-    // 7Â§©ÈÖíÂ∫ó‰ºöÂëòÂè∑
+    // 7ÃÏæ∆µÍª·‘±∫≈
     private String mMemberNum;
     
-    // ‰ø°Áî®Âç°ÊãÖ‰øùÁõ∏ÂÖ≥Êï∞ÊçÆ
+    // –≈”√ø®µ£±£œ‡πÿ ˝æ›
     private long mTypeCreditAssure;
     private String mCreditCardNo;
     private String mVerifyCode;
@@ -357,7 +357,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         mRoomType = roomtype;
         mRoomtypeDynamic = roomTypeDynamic;
         mHotelNameTxv.setText(mPOI.getName());
-        mIsSevenInn = false;//mPOI.getName().contains("7Â§©");
+        mIsSevenInn = false;//mPOI.getName().contains("7ÃÏ");
         mRoomtypeTxv.setText(mRoomType.getRoomType());
         String roomTypeDetail="";
         String appendContent;
@@ -433,7 +433,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
     
     private void RefreshPersonView(){
-        // Ëøô‰∏™ÂáΩÊï∞Áî®‰∫éÂú®ÊàøÈó¥Êï∞ÂèòÂåñÊó∂ÔºåÂÖ•‰Ωè‰∫∫ÁöÑÁºñËæëÊ°ÜÊï∞ÈáèÁõ∏Â∫îÂèòÂåñ
+        // ’‚∏ˆ∫Ø ˝”√”⁄‘⁄∑øº‰ ˝±‰ªØ ±£¨»Î◊°»Àµƒ±‡º≠øÚ ˝¡øœ‡”¶±‰ªØ
         int count = mPersonNameLly.getChildCount();
         if(count > mRoomHowmany*2-1){
             for (int i = count-1; i >= mRoomHowmany*2-1; i--){
@@ -669,7 +669,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             } finally {
                 hotelOrderTable.close();
             }
-            //ËÆ¢ÂçïÂàóË°®Â∑≤ÁªèÂèëÁîü‰∫ÜÂèòÂåñÔºåÂú®Ê≠§Â§ÑÊ∏ÖÈô§ÂàóË°®ÁïåÈù¢ÁöÑÂÜÖÂÆπÔºåÂàóË°®È°µonResumeÊó∂‰ºöÈáçÊñ∞Âä†ËΩΩËÆ¢Âçï„ÄÇ
+            //∂©µ•¡–±Ì“—æ≠∑¢…˙¡À±‰ªØ£¨‘⁄¥À¥¶«Â≥˝¡–±ÌΩÁ√Êµƒƒ⁄»›£¨¡–±Ì“≥onResume ±ª·÷ÿ–¬º”‘ÿ∂©µ•°£
             mSphinx.getHotelOrderListFragment().clearOrders();
             mSphinx.showView(R.id.view_hotel_order_detail);
             destroyFragments(true, true);
@@ -709,7 +709,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         }
     }
     private String analysisElongRequest(String description){
-        String ResponseStr = description.split("!")[0].split("ÔºÅ")[0];
+        String ResponseStr = description.split("!")[0].split("£°")[0];
         int ResponseInt = 0;
         String[] strArray = description.split("sdafdsagfsdwwwwwwwwwwwwwwwwww");
         if(strArray.length > 1){
@@ -759,7 +759,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         }
         if(list.isEmpty()){
             XMap data = new XMap();
-            data.put(RetentionTime.FIELD_TIME, "23:59‰πãÂâç");
+            data.put(RetentionTime.FIELD_TIME, "23:59÷Æ«∞");
             data.put(RetentionTime.FIELD_NEED, 0);
             data.put(RetentionTime.FIELD_TYPE, 0);
             data.put(RetentionTime.FIELD_TIME_DETAIL, SIMPLE_DATE_FORMAT.format(mCheckIn.getTime()) + " 23:59:00");

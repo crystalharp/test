@@ -168,13 +168,13 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditSubmit);
             String str = mCreditBankBtn.getText().toString();
             List<String> list = new ArrayList<String>();
-            // åˆ¤æ–­é€‰æ‹©é“¶è¡Œ
+            // ÅĞ¶ÏÑ¡ÔñÒøĞĞ
             if(TextUtils.isEmpty(str) || TextUtils.equals(str, mSphinx.getString(R.string.credit_bank_hint))){
                 Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_bank_empty_tip));
                 return;
             }
             
-            // åˆ¤æ–­é“¶è¡Œå¡å·
+            // ÅĞ¶ÏÒøĞĞ¿¨ºÅ
             str = mCreditCodeEdt.getText().toString();
             if(TextUtils.isEmpty(str)){
                 Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_code_empty_tip), mCreditCodeEdt);
@@ -185,7 +185,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             }
             list.add(str);
             
-            // åˆ¤æ–­æŒå¡äººå§“å
+            // ÅĞ¶Ï³Ö¿¨ÈËĞÕÃû
             str = mCreditOwnerEdt.getText().toString().trim();
             if(TextUtils.isEmpty(str)){
                 Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_owner_empty_tip), mCreditOwnerEdt);
@@ -196,7 +196,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             }
             list.add(str);
             
-            // åˆ¤æ–­ä¿¡ç”¨å¡éªŒè¯ç 
+            // ÅĞ¶ÏĞÅÓÃ¿¨ÑéÖ¤Âë
             str = mCreditVerifyEdt.getText().toString();
             if(TextUtils.isEmpty(str)){
                 Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_verify_empty_tip), mCreditVerifyEdt);
@@ -207,7 +207,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             }
             list.add(str);
             
-            // åˆ¤æ–­ä¿¡ç”¨å¡æœ‰æ•ˆæœŸ
+            // ÅĞ¶ÏĞÅÓÃ¿¨ÓĞĞ§ÆÚ
             if(mDate == null){
                 Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_validity_empty_tip));
                 return;
@@ -215,11 +215,11 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             list.add(mDate.get(Calendar.YEAR) + "");
             list.add(1+mDate.get(Calendar.MONTH) + "");
             
-            // åˆ¤æ–­è¯ä»¶ç±»å‹(è¿™ä¸ªä¸ç”¨åˆ¤æ–­)
+            // ÅĞ¶ÏÖ¤¼şÀàĞÍ(Õâ¸ö²»ÓÃÅĞ¶Ï)
             str = mCreditCertTypeBtn.getText().toString();
             list.add(str);
             
-            // åˆ¤æ–­è¯ä»¶å·ç 
+            // ÅĞ¶ÏÖ¤¼şºÅÂë
             str = mCreditCertCodeEdt.getText().toString();
             if(TextUtils.isEmpty(str)){
                 Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_cert_code_empty_tip), mCreditCertCodeEdt);
@@ -242,7 +242,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         public CreditBankAdapter(Context context, List<String> list) {
             super(context, list);
             // TODO Auto-generated constructor stub
-            // æ‹›å•†é“¶è¡Œ ä¸­å›½å»ºè®¾é“¶è¡Œ ä¸­å›½å·¥å•†é“¶è¡Œ ä¸­å›½é“¶è¡Œ äº¤é€šé“¶è¡Œ ä¸­ä¿¡é“¶è¡Œ å¹¿å‘é“¶è¡Œ ä¸­å›½æ°‘ç”Ÿé“¶è¡Œ å…´ä¸šé“¶è¡Œ ä¸Šæµ·æµ¦ä¸œå‘å±•é“¶è¡Œ ä¸­å›½å…‰å¤§é“¶è¡Œ     ä¸­å›½å†œä¸šé“¶è¡Œ å¹³å®‰é“¶è¡Œ æ·±åœ³å‘å±•é“¶è¡Œ åŒ—äº¬é“¶è¡Œ ä¸Šæµ·é“¶è¡Œ åå¤é“¶è¡Œ ä¸­å›½é‚®æ”¿å‚¨è“„é“¶è¡Œ å®æ³¢é“¶è¡Œ
+            // ÕĞÉÌÒøĞĞ ÖĞ¹ú½¨ÉèÒøĞĞ ÖĞ¹ú¹¤ÉÌÒøĞĞ ÖĞ¹úÒøĞĞ ½»Í¨ÒøĞĞ ÖĞĞÅÒøĞĞ ¹ã·¢ÒøĞĞ ÖĞ¹úÃñÉúÒøĞĞ ĞËÒµÒøĞĞ ÉÏº£ÆÖ¶«·¢Õ¹ÒøĞĞ ÖĞ¹ú¹â´óÒøĞĞ     ÖĞ¹úÅ©ÒµÒøĞĞ Æ½°²ÒøĞĞ ÉîÛÚ·¢Õ¹ÒøĞĞ ±±¾©ÒøĞĞ ÉÏº£ÒøĞĞ »ªÏÄÒøĞĞ ÖĞ¹úÓÊÕş´¢ĞîÒøĞĞ Äş²¨ÒøĞĞ
         }
         @Override
         public View getView(final int position, View convertView, ViewGroup parent){
@@ -379,7 +379,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
 
     @Override
     public void selected(Calendar calendar) {
-        // TODO è®¾ç½®é€‰æ‹©çš„æ—¥æœŸ
+        // TODO ÉèÖÃÑ¡ÔñµÄÈÕÆÚ
         mDate = Calendar.getInstance();
         mDate.setTime(calendar.getTime());
         mCreditValidityBtn.setText(CalendarUtil.y4mc.format(mDate.getTime()));
