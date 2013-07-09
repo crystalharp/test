@@ -77,41 +77,11 @@ public class TrafficQueryEventHelper {
 		mQueryFragment.mEnd.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mEnd, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC));
 		mQueryFragment.mBusline.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mBusline, TrafficQuerySuggestWordHelper.TYPE_BUSLINE));
 		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new RadioCheckedChangedListener());
-//	}
-	
-	/*
-	 * Do not remove common Listeners
-	 */
-//	public void clearListenersFromTargets() {
-//		mQueryFragment.mStart.getEdt().setOnClickListener(null);
-//		mQueryFragment.mEnd.getEdt().setOnClickListener(null);
-//		mQueryFragment.mBusline.getEdt().setOnClickListener(null);
-//		
-//		mQueryFragment.mStart.getEdt().setOnTouchListener(null);
-//		mQueryFragment.mEnd.getEdt().setOnTouchListener(null);
-//		mQueryFragment.mBusline.getEdt().setOnTouchListener(null);
-//		
-//		clearSuggestWatcherInInputState();
-//		
-//		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(null);
-//		mQueryFragment.mSelectStartBtn.setOnClickListener(null);
-//		mQueryFragment.mSelectEndBtn.setOnClickListener(null);
-//		mQueryFragment.mBackBtn.setOnClickListener(null);
-//		mQueryFragment.mTrafficQueryBtn.setOnClickListener(null);
-//		mQueryFragment.mBuslineQueryBtn.setOnClickListener(null);
-//		mQueryFragment.mSuggestLsv.setOnItemClickListener(null);
-//		mQueryFragment.mSuggestLsv.setOnTouchListener(null);
-//		mQueryFragment.mSuggestLnl.setOnTouchListener(null);
-//		mQueryFragment.mRootView.setOnTouchListener(null);
-//	}
 		
-//  public void addSuggestWatcherInInputState() {
         mQueryFragment.mStart.getEdt().addTextChangedListener(startSuggestWatcher);
         mQueryFragment.mEnd.getEdt().addTextChangedListener(endSuggestWatcher);
         mQueryFragment.mBusline.getEdt().addTextChangedListener(buslineSuggestWatcher);
-//  }
-	
-//	public void applyCommonListeners() {
+        
 		mQueryFragment.mStart.getEdt().addTextChangedListener(new EditTextContentTextWatcher(mQueryFragment.mStart));
 		mQueryFragment.mEnd.getEdt().addTextChangedListener(new EditTextContentTextWatcher(mQueryFragment.mEnd));
 		mQueryFragment.mBusline.getEdt().addTextChangedListener(new EditTextContentTextWatcher(mQueryFragment.mBusline));
@@ -120,8 +90,6 @@ public class TrafficQueryEventHelper {
 		mQueryFragment.mEnd.getEdt().setOnEditorActionListener(new StartEndEdtClickListener());
 		mQueryFragment.mBusline.getEdt().setOnEditorActionListener(new EditorActionListener(mQueryFragment.mBusline));
 
-//		mQueryFragment.mRootView.setOnTouchListener(new RootViewTouchListener());
-		
 		mQueryFragment.mStart.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mStart, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC));
 		mQueryFragment.mEnd.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mEnd, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC));
 		mQueryFragment.mBusline.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mBusline, TrafficQuerySuggestWordHelper.TYPE_BUSLINE));
@@ -132,19 +100,13 @@ public class TrafficQueryEventHelper {
 	public void applyListenersInNormalState() {
 		LogWrapper.d("eric", "applyListenersInNormalState");
 		
-//		clearListenersFromTargets();
-//		applyCommonListeners();
-		
 		for (int i = 0; i < mQueryFragment.mRadioGroup.getChildCount(); i++) {
 		    mQueryFragment.mRadioGroup.getChildAt(i).setOnClickListener(mNormalRadioOnClickedListener);
 		}
 	}
-//	
+	
 	public void applyListenersInInputState() {
 		LogWrapper.d("eric", "applyListenersInInputState");
-		
-//		clearListenersFromTargets();
-//		applyCommonListeners();
 		
 		mQueryFragment.mBackBtn.setOnClickListener(new InputBackClickListener());
 		mQueryFragment.mTrafficQueryBtn.setOnClickListener(new InputQueryClickListener());
@@ -156,33 +118,20 @@ public class TrafficQueryEventHelper {
 		    mQueryFragment.mRadioGroup.getChildAt(i).setOnClickListener(mInputRadioOnClickedListener);
 		}
 		
-//		addSuggestWatcherInInputState();
 	}
 	
 	public void applyListenersInMapState() {
 		LogWrapper.d("eric", "applyListenersInMapState");
 		
-//		clearListenersFromTargets();
-//		applyCommonListeners();
-		
 		mQueryFragment.mBackBtn.setOnClickListener(new MapBackClickListener());
 		for (int i = 0; i < mQueryFragment.mRadioGroup.getChildCount(); i++) {
 		    mQueryFragment.mRadioGroup.getChildAt(i).setOnClickListener(mMapRadioOnClickedListener);
 		}
-//		mQueryFragment.mRootView.setOnTouchListener(new RootViewTouchListener());
 	}
-//	
+	
 	public void applyListenersInSelectPointState() {
 		mQueryFragment.mLeftBtn.setOnClickListener(new SelectPointLeftBtnOnClickListener());
 	}
-//	
-//	public void clearSuggestWatcherInInputState() {
-//		mQueryFragment.mStart.getEdt().removeTextChangedListener(startSuggestWatcher);
-//		mQueryFragment.mEnd.getEdt().removeTextChangedListener(endSuggestWatcher);
-//		mQueryFragment.mBusline.getEdt().removeTextChangedListener(buslineSuggestWatcher);
-//		//清除显示的历史词和建议词
-//		mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mSphinx, null, 0);
-//	}
 	
 	protected class StartEndEdtClickListener implements OnEditorActionListener {
 		
@@ -309,15 +258,6 @@ public class TrafficQueryEventHelper {
             return false;
         }
     }
-	
-//	protected class RootViewTouchListener implements OnTouchListener {
-//
-//		@Override
-//		public boolean onTouch(View v, MotionEvent event) {
-//			return true;
-//		}
-//		
-//	}
 	
 	void checkRadioButton(int checkedId) {
 	    switch(checkedId){
@@ -507,7 +447,6 @@ public class TrafficQueryEventHelper {
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-//			LogWrapper.d("eric", "SuggestLsv.onTouch");
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
 				mQueryFragment.mSphinx.hideSoftInput();
             }
@@ -646,13 +585,10 @@ public class TrafficQueryEventHelper {
 			
 		    private void performSwitchStartEnd() {
 		        mQueryFragment.mSuggestWordHelper.clearSuggestList();
-//                clearSuggestWatcherInInputState();
                 POI temp = mQueryFragment.mStart.getPOI();
                 mQueryFragment.mStart.setPOI(mQueryFragment.mEnd.getPOI());
                 mQueryFragment.mEnd.setPOI(temp);
                 mQueryFragment.mSuggestWordHelper.clearSuggestList();
-//                addSuggestWatcherInInputState();
-//                mQueryFragment.mBlock.requestFocus();
 		    }
 		    
 			private void performSelectMyLocation() {
