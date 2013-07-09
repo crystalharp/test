@@ -74,7 +74,8 @@
                         android:button="@drawable/rdb_recovery"
                         android:paddingLeft="40dp"
                         />
-                </RadioGroup>
+
+                    </RadioGroup>
                 
                 <TextView 
                     android:layout_width="wrap_content"

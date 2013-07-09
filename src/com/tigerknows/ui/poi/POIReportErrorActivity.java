@@ -93,6 +93,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     
     private LinearLayout mBodyLly;
     private LinearLayout mTelLly;
+    private RadioGroup mTelRgp;
     private RadioGroup mNotExistRgp;
     private LinearLayout mMainLly;
     private LinearLayout mTypeLly;
@@ -148,7 +149,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         findViewsMain();
         setListenerMain();
 
-        mTitleBtn.setText(R.string.erreport_title);
         mChecked = HOME_PAGE;
         mPage = HOME_PAGE;
         
@@ -185,6 +185,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         mBodyLly = (LinearLayout) findViewById(R.id.body_lly);
         mTelLly = (LinearLayout) findViewById(R.id.tel_lly);
         mNotExistRgp = (RadioGroup) findViewById(R.id.notexist_rgp);
+        mTelRgp = (RadioGroup) findViewById(R.id.tel_rgp);
         mMainLly = (LinearLayout) findViewById(R.id.main_lly);
         mTypeLly = (LinearLayout) findViewById(R.id.type_lly);
         mDescriptionLly = (LinearLayout) findViewById(R.id.description_lly);
@@ -202,6 +203,15 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         mDescriptionEdt = (EditText) findViewById(R.id.description_edt);
         mContactEdt = (EditText) findViewById(R.id.contact_edt);
         mSubmitBtn = (Button) findViewById(R.id.submit_detail_btn);
+        mTelConnectRbt.setChecked(false);
+        mTelNotthisRbt.setChecked(false);
+        mNotExistRgp.clearCheck();
+        mTelRgp.clearCheck();
+        mTypeEdt.setText("");
+        mDescriptionEdt.setText("");
+        mContactEdt.setText("");
+        mSubmitBtn.setEnabled(false);
+        mRbtChecked = 0;
     }
 
     /**
@@ -226,7 +236,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    postHideSoftInput();
+                    hideSoftInput();
                 }
                 return true;
             }
@@ -269,7 +279,8 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if (showDiscardDialog() == false) {
                 mActionLog.addAction(ActionLog.KeyCodeBack);
-                finish();
+                if(mPage == HOME_PAGE)finish();
+                else jumpToMain();
                 return true;
             }
         }
@@ -284,7 +295,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             public void onClick(DialogInterface dialog, int which) {
                 // TODO Auto-generated method stub
                 if (which == DialogInterface.BUTTON_POSITIVE){
-                    finish();
+                    jumpToMain();
                 }
                 
             }
@@ -292,7 +303,15 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         });
         return show;
     }
-    
+    protected void jumpToMain(){
+    	setContentView(vErreportMain);
+    	findViewsMain();
+    	setListenerMain();
+        mChecked = HOME_PAGE;
+        mPage = HOME_PAGE;
+    	setDataMain();
+    	refreshDataMain();
+    }
     protected void jumpToDetail(){
         setContentView(vErreportDetail);
         mPage = DETAIL_PAGE;
@@ -312,6 +331,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         if(mPage == HOME_PAGE)setDataMain();
     }
     private void setDataMain(){
+        mTitleBtn.setText(R.string.erreport_title);
         mHasTel = ( mPOI.getTelephone() != null && !TextUtils.isEmpty(mPOI.getTelephone())) ? true : false;
         mTelBtn.setText(mHasTel ? getString(R.string.erreport_tel_error) : getString(R.string.erreport_tel_add));
     }
@@ -339,33 +359,47 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         mTitleBtn.setText(mNextTitle);
         switch(mChecked){
         case TEL_ERR:
+        	mMainEdt.clearFocus();
+        	mMainEdt.clearComposingText();
+        	mMainEdt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
             mMainTxv.setText(getString(R.string.erreport_merchant_tel));
             mOrigin = MapEngine.getAreaCodeByCityId(MapEngine.getInstance().getCityId(mPOI.getPosition())) + '-';
-            mMainEdt.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED);
             mMainEdt.setHint(getString(R.string.tel_or_mobile));
             break;
         case ADDRESS_ERR:
+        	mMainEdt.clearFocus();
+        	mMainEdt.clearComposingText();
+        	mMainEdt.setInputType(InputType.TYPE_CLASS_TEXT);
             mMainTxv.setText(getString(R.string.erreport_address));
+            mMainEdt.setHint(getString(R.string.add_merchant_address_hint));
             mOrigin = mPOI.getAddress();
             break;
         case NAME_ERR:
+        	mMainEdt.clearFocus();
+        	mMainEdt.clearComposingText();
+        	mMainEdt.setInputType(InputType.TYPE_CLASS_TEXT);
             mMainTxv.setText(getString(R.string.erreport_merchant_name));
             mMainLly.setBackgroundDrawable(getResources().getDrawable(R.drawable.list_header));
+            mMainEdt.setHint("");
             mOrigin = mPOI.getName();
             break;
         case TEL_ADD:
+        	mMainEdt.clearFocus();
+        	mMainEdt.clearComposingText();
+        	mMainEdt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
             mMainTxv.setText(getString(R.string.erreport_merchant_tel));
             mOrigin = MapEngine.getAreaCodeByCityId(MapEngine.getInstance().getCityId(mPOI.getPosition())) + '-';
-            mMainEdt.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED);
             mMainEdt.setHint(getString(R.string.tel_or_mobile));
             break;
         }
         if(mMainLly.getVisibility() == View.VISIBLE){
             mMainEdt.setText(mOrigin);
-            if(mChecked != TEL_ERR){
-                mMainEdt.requestFocus();
+            if(mChecked == TEL_ERR){
+            	mMainEdt.setSelection(mMainEdt.length());
+            }else{
+            	mMainEdt.requestFocus();
                 Selection.setSelection(mMainEdt.getText(), mMainEdt.length());
-                showSoftInput();
+                showSoftInput(mMainEdt);
             }
         }
         if(mDescriptionLly.getVisibility() == View.VISIBLE){
@@ -380,7 +414,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             mDescriptionLly.setVisibility(View.VISIBLE);
         }else if (mChecked == NOT_EXIST){
             mDescriptionEdt.clearFocus();
-            postHideSoftInput();
+            hideSoftInput();
             mDescriptionLly.setVisibility(View.GONE);
         }
         refreshSubmitBtn();
@@ -417,9 +451,13 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         // TODO Auto-generated method stub
         switch(v.getId()){
         case R.id.left_btn:
-            mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
             if (showDiscardDialog() == false) {
-                finish();
+            	mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
+                if(mPage == HOME_PAGE)finish();
+                else {
+                	hideSoftInput();
+                	jumpToMain();
+                }
             }
             break;
         case R.id.name_btn:
@@ -465,33 +503,33 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         case R.id.ne_stop_rbt:
             mChecked = NOT_EXIST;
             mRbtChecked = NE_STOP;
+            hideSoftInput(mDescriptionEdt);
             refreshDataDetail();
-            hideSoftInput();
             break;
         case R.id.ne_chai_rbt:
             mChecked = NOT_EXIST;
             mRbtChecked = NE_CHAI;
+            hideSoftInput(mDescriptionEdt);
             refreshDataDetail();
-            hideSoftInput();
             break;
         case R.id.ne_move_rbt:
             mChecked = NOT_EXIST;
             mRbtChecked = NE_MOVE;
+            hideSoftInput(mDescriptionEdt);
             refreshDataDetail();
-            hideSoftInput();
             break;
         case R.id.ne_find_rbt:
             mChecked = NOT_EXIST;
             mRbtChecked = NE_FIND;
+            hideSoftInput(mDescriptionEdt);
             refreshDataDetail();
-            hideSoftInput();
             break;
         case R.id.ne_other_rbt:
             mChecked = NE_OTHER;
             mRbtChecked = NE_OTHER_CHECK;
             mDescriptionEdt.requestFocus();
             refreshDataDetail();
-            showSoftInput();
+            showSoftInput(mDescriptionEdt);
             break;
         case R.id.tel_connect_rbt:
             mRbtChecked = TEL_CONNECT;
