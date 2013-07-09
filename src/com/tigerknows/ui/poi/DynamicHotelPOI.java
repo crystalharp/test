@@ -371,15 +371,16 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     final public void initDate() {
-        if (mSphinx.uiStackContains(R.id.view_hotel_home)) {
-            checkin = mSphinx.getHotelHomeFragment().getCheckin();
-            checkout = mSphinx.getHotelHomeFragment().getCheckout();
-        } else {
-            checkin = Calendar.getInstance();
-            checkin.setTimeInMillis(System.currentTimeMillis());
-            checkout = (Calendar) checkin.clone();
-            checkout.add(Calendar.DAY_OF_YEAR, 1);
-        }
+        checkin = Calendar.getInstance();
+        checkin.setTimeInMillis(System.currentTimeMillis());
+        checkout = (Calendar) checkin.clone();
+        checkout.add(Calendar.DAY_OF_YEAR, 1);
+        refreshDate();
+    }
+    
+    final public void initDate(Calendar in, Calendar out) {
+        checkout = out;
+        checkin = in;
         refreshDate();
     }
     

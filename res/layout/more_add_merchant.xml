@@ -133,9 +133,9 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:gravity="left|center_vertical"
-                            android:paddingLeft="8dp"
                             android:drawableRight="@drawable/ic_small_triangle_down"
                             android:background="@color/transparent"
+                            android:textSize="16sp"
                             >
                         </Button>
                         <TextView
@@ -257,6 +257,7 @@
                             android:layout_gravity="center_vertical"
                             android:gravity="left|center_vertical"
                             android:text="@string/business_hours"
+                            android:background="@drawable/list_single_normal"
                             android:textSize="16sp"/>
                         <LinearLayout 
                             android:layout_width="fill_parent" 

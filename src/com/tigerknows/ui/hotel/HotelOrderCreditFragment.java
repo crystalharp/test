@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2013 fengtianxiao@tigerknows.com
  */
 package com.tigerknows.ui.hotel;
@@ -224,7 +224,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             if(TextUtils.isEmpty(str)){
                 Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_cert_code_empty_tip), mCreditCertCodeEdt);
                 return;
-            }else if(mCreditCertTypeBtn.getText().toString().contains("身份证") && !ValidateUtil.isValidIdCardCode(str)){
+            }else if(mCreditCertTypeBtn.getText().toString().contains(mSphinx.getString(R.string.mainland_id_card)) && !ValidateUtil.isValidIdCardCode(str)){
                 Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_idcard_code_format), mCreditCertCodeEdt);
                 return;
             }

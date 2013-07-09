@@ -126,7 +126,7 @@ public class QZoneSendActivity extends BaseActivity implements View.OnClickListe
         switch (viewId) {
             case R.id.logout_btn: {
                 boolean finish = (checkUserAccessIdenty(false) == false);
-                mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton, finish);
+                mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton, String.valueOf(finish));
                 hideInputMethodManager();
                 if (finish) {
                     finish();

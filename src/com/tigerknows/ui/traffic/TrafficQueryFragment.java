@@ -536,14 +536,11 @@ public class TrafficQueryFragment extends BaseFragment {
 	 * @param newMode
 	 */
 	public void changeToMode(int newMode) {
-		if (mode == newMode) {
-			return;
-		}
 		mode = newMode;
 		if (mode == TRAFFIC_MODE) {
 			mTrafficLayout.setVisibility(View.VISIBLE);
 			mBuslineLayout.setVisibility(View.GONE);
-			mSelectedEdt = mStart;
+			mSelectedEdt = isEditTextEmpty(mStart.getEdt()) ? mStart : mEnd;
 			mSuggestWordHelper.refresh(mSphinx, mSelectedEdt.mEdt, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC);
 		} else {
 			mTrafficLayout.setVisibility(View.GONE);
@@ -580,7 +577,7 @@ public class TrafficQueryFragment extends BaseFragment {
 	}
 	
 	public void query() {
-		mSphinx.hideSoftInput();
+//		mSphinx.hideSoftInput();
 		
 		if (mode == TRAFFIC_MODE) {
 			submitTrafficQuery();

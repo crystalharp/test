@@ -4,6 +4,7 @@ package com.tigerknows.ui.more;
 import com.tigerknows.R;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.util.Utility;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,9 +39,11 @@ public class HelpActivity extends BaseActivity {
     
     private HashMap<Integer, View> viewMap = new HashMap<Integer, View>();
     
+    private ViewGroup mPageIndicatorView;
+    
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        
         mActionTag = ActionLog.Help;
         if (mIntent != null) {
             mAppFirstStart = mIntent.getBooleanExtra(APP_FIRST_START, false); 
@@ -47,16 +51,46 @@ public class HelpActivity extends BaseActivity {
         }
         
         if (mAppUpgrade) {
-            mPagecount = 1;
+            mPagecount = 2;
         } else {
-            mPagecount = 4;
+            mPagecount = 5;
         }
+
+        setContentView(R.layout.more_help);
         
-        mViewPager = new ViewPager(mThis);
+        findViews();
+        setListener();
         
         mViewPager.setAdapter(new MyAdapter());
+    }
+    
+    protected void findViews() {
+        super.findViews();
+        mViewPager = (ViewPager) findViewById(R.id.view_pager);
         
-        setContentView(mViewPager);
+        mPageIndicatorView = (ViewGroup) findViewById(R.id.page_indicator_view);
+        Utility.pageIndicatorInit(mThis, mPageIndicatorView, mPagecount, 0, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
+    }
+    
+    protected void setListener() {
+        super.setListener();
+
+        mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+            
+            @Override
+            public void onPageSelected(int index) {
+                Utility.pageIndicatorChanged(mThis, mPageIndicatorView, index, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
+                mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, index);
+            }
+            
+            @Override
+            public void onPageScrolled(int arg0, float arg1, int arg2) {
+            }
+            
+            @Override
+            public void onPageScrollStateChanged(int arg0) {
+            }
+        });
     }
 
     public View getView(int position) {
@@ -66,21 +100,12 @@ public class HelpActivity extends BaseActivity {
         
         if (position == 0) {
             if (mAppUpgrade) {
-                LayoutInflater layoutInflater = (LayoutInflater)mThis.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View view = layoutInflater.inflate(R.layout.more_help_end, null, false);
-                ImageView imageView = (ImageView) view.findViewById(R.id.image_imv);
-                imageView.setImageResource(R.drawable.ic_learn1_upgrade);
-                imageView.setScaleType(ScaleType.FIT_XY);
-                Button button = (Button) view.findViewById(R.id.enter_btn);
-                button.setOnClickListener(new View.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(View arg0) {
-                        finish();
-                    }
-                });
+                ImageView view = new ImageView(mThis);
+                view.setImageResource(R.drawable.ic_learn4);
+                view.setScaleType(ScaleType.FIT_XY);
                 viewMap.put(position, view);
                 return view;
+            
             } else {
                 ImageView view = new ImageView(mThis);
                 view.setImageResource(R.drawable.ic_learn1);
@@ -89,23 +114,11 @@ public class HelpActivity extends BaseActivity {
                 return view;
             }
         } else if (position == 1) {
-            ImageView view = new ImageView(mThis);
-            view.setImageResource(R.drawable.ic_learn2);
-            view.setScaleType(ScaleType.FIT_XY);
-            viewMap.put(position, view);
-            return view;
-        } else if (position == 2) {
-            ImageView view = new ImageView(mThis);
-            view.setImageResource(R.drawable.ic_learn3);
-            view.setScaleType(ScaleType.FIT_XY);
-            viewMap.put(position, view);
-            return view;
-        } else {
-            if (mAppFirstStart) {
+            if (mAppUpgrade) {
                 LayoutInflater layoutInflater = (LayoutInflater)mThis.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View view = layoutInflater.inflate(R.layout.more_help_end, null, false);
                 ImageView imageView = (ImageView) view.findViewById(R.id.image_imv);
-                imageView.setImageResource(R.drawable.ic_learn4);
+                imageView.setImageResource(R.drawable.ic_learn5);
                 imageView.setScaleType(ScaleType.FIT_XY);
                 Button button = (Button) view.findViewById(R.id.enter_btn);
                 button.setOnClickListener(new View.OnClickListener() {
@@ -119,7 +132,43 @@ public class HelpActivity extends BaseActivity {
                 return view;
             } else {
                 ImageView view = new ImageView(mThis);
-                view.setImageResource(R.drawable.ic_learn4);
+                view.setImageResource(R.drawable.ic_learn2);
+                view.setScaleType(ScaleType.FIT_XY);
+                viewMap.put(position, view);
+                return view;
+            }
+        } else if (position == 2) {
+            ImageView view = new ImageView(mThis);
+            view.setImageResource(R.drawable.ic_learn3);
+            view.setScaleType(ScaleType.FIT_XY);
+            viewMap.put(position, view);
+            return view;
+        } else if (position == 3) {
+            ImageView view = new ImageView(mThis);
+            view.setImageResource(R.drawable.ic_learn4);
+            view.setScaleType(ScaleType.FIT_XY);
+            viewMap.put(position, view);
+            return view;
+        } else {
+            if (mAppFirstStart) {
+                LayoutInflater layoutInflater = (LayoutInflater)mThis.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View view = layoutInflater.inflate(R.layout.more_help_end, null, false);
+                ImageView imageView = (ImageView) view.findViewById(R.id.image_imv);
+                imageView.setImageResource(R.drawable.ic_learn5);
+                imageView.setScaleType(ScaleType.FIT_XY);
+                Button button = (Button) view.findViewById(R.id.enter_btn);
+                button.setOnClickListener(new View.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(View arg0) {
+                        finish();
+                    }
+                });
+                viewMap.put(position, view);
+                return view;
+            } else {
+                ImageView view = new ImageView(mThis);
+                view.setImageResource(R.drawable.ic_learn5);
                 view.setScaleType(ScaleType.FIT_XY);
                 viewMap.put(position, view);
                 return view; 
