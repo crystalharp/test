@@ -11,6 +11,7 @@ package com.tigerknows.model;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
@@ -955,5 +956,25 @@ public abstract class BaseQuery {
         } else {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CLIENT_ID);
         }
+    }
+    
+    WeiboParameters hashtableToParameters(Hashtable<String, String> criteria) {
+        WeiboParameters parameters = new WeiboParameters();
+        Enumeration<String> e = criteria.keys();
+        while (e.hasMoreElements()) {
+            String s = e.nextElement();
+            parameters.add(s, criteria.get(s));
+        }
+        return parameters;
+        
+    }
+    
+    boolean checkExistParameters(String[] keys) {
+        for (int i = 0; i < keys.length; i++) {
+            if (!criteria.containsKey(keys[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 }
