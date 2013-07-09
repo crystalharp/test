@@ -51,9 +51,9 @@ public class HelpActivity extends BaseActivity {
         }
         
         if (mAppUpgrade) {
-            mPagecount = 1;
+            mPagecount = 2;
         } else {
-            mPagecount = 4;
+            mPagecount = 5;
         }
 
         setContentView(R.layout.more_help);
@@ -69,7 +69,7 @@ public class HelpActivity extends BaseActivity {
         mViewPager = (ViewPager) findViewById(R.id.view_pager);
         
         mPageIndicatorView = (ViewGroup) findViewById(R.id.page_indicator_view);
-        Utility.pageIndicatorInit(mThis, mPageIndicatorView, mPagecount);
+        Utility.pageIndicatorInit(mThis, mPageIndicatorView, mPagecount, 0, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
     }
     
     protected void setListener() {
@@ -79,7 +79,7 @@ public class HelpActivity extends BaseActivity {
             
             @Override
             public void onPageSelected(int index) {
-                Utility.pageIndicatorChanged(mThis, mPageIndicatorView, index);
+                Utility.pageIndicatorChanged(mThis, mPageIndicatorView, index, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
                 mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, index);
             }
             
@@ -100,21 +100,12 @@ public class HelpActivity extends BaseActivity {
         
         if (position == 0) {
             if (mAppUpgrade) {
-                LayoutInflater layoutInflater = (LayoutInflater)mThis.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View view = layoutInflater.inflate(R.layout.more_help_end, null, false);
-                ImageView imageView = (ImageView) view.findViewById(R.id.image_imv);
-                imageView.setImageResource(R.drawable.ic_learn1_upgrade);
-                imageView.setScaleType(ScaleType.FIT_XY);
-                Button button = (Button) view.findViewById(R.id.enter_btn);
-                button.setOnClickListener(new View.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(View arg0) {
-                        finish();
-                    }
-                });
+                ImageView view = new ImageView(mThis);
+                view.setImageResource(R.drawable.ic_learn4);
+                view.setScaleType(ScaleType.FIT_XY);
                 viewMap.put(position, view);
                 return view;
+            
             } else {
                 ImageView view = new ImageView(mThis);
                 view.setImageResource(R.drawable.ic_learn1);
@@ -123,23 +114,11 @@ public class HelpActivity extends BaseActivity {
                 return view;
             }
         } else if (position == 1) {
-            ImageView view = new ImageView(mThis);
-            view.setImageResource(R.drawable.ic_learn2);
-            view.setScaleType(ScaleType.FIT_XY);
-            viewMap.put(position, view);
-            return view;
-        } else if (position == 2) {
-            ImageView view = new ImageView(mThis);
-            view.setImageResource(R.drawable.ic_learn3);
-            view.setScaleType(ScaleType.FIT_XY);
-            viewMap.put(position, view);
-            return view;
-        } else {
-            if (mAppFirstStart) {
+            if (mAppUpgrade) {
                 LayoutInflater layoutInflater = (LayoutInflater)mThis.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View view = layoutInflater.inflate(R.layout.more_help_end, null, false);
                 ImageView imageView = (ImageView) view.findViewById(R.id.image_imv);
-                imageView.setImageResource(R.drawable.ic_learn4);
+                imageView.setImageResource(R.drawable.ic_learn5);
                 imageView.setScaleType(ScaleType.FIT_XY);
                 Button button = (Button) view.findViewById(R.id.enter_btn);
                 button.setOnClickListener(new View.OnClickListener() {
@@ -153,7 +132,43 @@ public class HelpActivity extends BaseActivity {
                 return view;
             } else {
                 ImageView view = new ImageView(mThis);
-                view.setImageResource(R.drawable.ic_learn4);
+                view.setImageResource(R.drawable.ic_learn2);
+                view.setScaleType(ScaleType.FIT_XY);
+                viewMap.put(position, view);
+                return view;
+            }
+        } else if (position == 2) {
+            ImageView view = new ImageView(mThis);
+            view.setImageResource(R.drawable.ic_learn3);
+            view.setScaleType(ScaleType.FIT_XY);
+            viewMap.put(position, view);
+            return view;
+        } else if (position == 3) {
+            ImageView view = new ImageView(mThis);
+            view.setImageResource(R.drawable.ic_learn4);
+            view.setScaleType(ScaleType.FIT_XY);
+            viewMap.put(position, view);
+            return view;
+        } else {
+            if (mAppFirstStart) {
+                LayoutInflater layoutInflater = (LayoutInflater)mThis.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View view = layoutInflater.inflate(R.layout.more_help_end, null, false);
+                ImageView imageView = (ImageView) view.findViewById(R.id.image_imv);
+                imageView.setImageResource(R.drawable.ic_learn5);
+                imageView.setScaleType(ScaleType.FIT_XY);
+                Button button = (Button) view.findViewById(R.id.enter_btn);
+                button.setOnClickListener(new View.OnClickListener() {
+                    
+                    @Override
+                    public void onClick(View arg0) {
+                        finish();
+                    }
+                });
+                viewMap.put(position, view);
+                return view;
+            } else {
+                ImageView view = new ImageView(mThis);
+                view.setImageResource(R.drawable.ic_learn5);
                 view.setScaleType(ScaleType.FIT_XY);
                 viewMap.put(position, view);
                 return view; 

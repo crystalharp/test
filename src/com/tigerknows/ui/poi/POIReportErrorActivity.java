@@ -1,4 +1,4 @@
-﻿package com.tigerknows.ui.poi;
+package com.tigerknows.ui.poi;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
