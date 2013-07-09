@@ -1044,7 +1044,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         //判断是否存在hotel信息
         if (mDynamicHotelPOI.isExist()) {
-            mDynamicHotelPOI.initDate();
             mDynamicHotelPOI.queryStart(mDynamicHotelPOI.generateQuery(mPOI));
             addLoadingView();
         }
