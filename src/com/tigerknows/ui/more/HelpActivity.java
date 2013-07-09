@@ -51,7 +51,7 @@ public class HelpActivity extends BaseActivity {
         }
         
         if (mAppUpgrade) {
-            mPagecount = 1;
+            mPagecount = 2;
         } else {
             mPagecount = 5;
         }
