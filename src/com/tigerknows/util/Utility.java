@@ -939,14 +939,18 @@ public class Utility {
     }
     
     public static void pageIndicatorInit(Context context, ViewGroup viewPoints, int size) {
+        pageIndicatorInit(context, viewPoints, size, 0, R.drawable.ic_viewpage_indicator_normal, R.drawable.ic_viewpage_indicator_selected);
+    }
+    
+    public static void pageIndicatorInit(Context context, ViewGroup viewPoints, int size, int selectedIndex, int normalResId, int selectedResId) {
         int margin = (int)(Globals.g_metrics.density * 2);
         for(int i=0;i<size;i++){
             ImageView imageView = new ImageView(context);            
             //默认选中的是第一张图片，此时第一个小圆点是选中状态，其他不是
-            if(i==0){
-                imageView.setBackgroundResource(R.drawable.ic_learn_dot_selected);
+            if(i==selectedIndex){
+                imageView.setBackgroundResource(selectedResId);
             }else{
-                imageView.setBackgroundResource(R.drawable.ic_learn_dot_normal);
+                imageView.setBackgroundResource(normalResId);
             }
             
             //将imageviews添加到小圆点视图组
@@ -958,15 +962,19 @@ public class Utility {
 
     }
     
-    public static void pageIndicatorChanged(Context context, ViewGroup viewPoints, int index) {
+    public static void pageIndicatorChanged(Context context, ViewGroup viewPoints, int selectedIndex) {
+        pageIndicatorChanged(context, viewPoints, selectedIndex, R.drawable.ic_viewpage_indicator_normal, R.drawable.ic_viewpage_indicator_selected);
+    }
+    
+    public static void pageIndicatorChanged(Context context, ViewGroup viewPoints, int selectedIndex, int normalResId, int selectedResId) {
         for(int i=0, size = viewPoints.getChildCount();i<size;i++){
             ImageView imageView = (ImageView) viewPoints.getChildAt(i);
             
             //默认选中的是第一张图片，此时第一个小圆点是选中状态，其他不是
-            if(i==index){
-                imageView.setBackgroundResource(R.drawable.ic_learn_dot_selected);
+            if(i==selectedIndex){
+                imageView.setBackgroundResource(selectedResId);
             }else{
-                imageView.setBackgroundResource(R.drawable.ic_learn_dot_normal);
+                imageView.setBackgroundResource(normalResId);
             }
         }
 
