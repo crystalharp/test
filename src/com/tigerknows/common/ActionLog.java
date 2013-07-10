@@ -138,6 +138,9 @@ public class ActionLog {
     public static final String HotelDateCheckin = HotelDate+"BB";
     public static final String HotelDateCheckout = HotelDate+"BC";
     
+    public static final String PickPhoto = "YD";
+    public static final String CameraPhoto = "YF";
+    
     // POI主页 
     public static final String POIHome = "AA";
     public static final String POIHomeChangeCityBtn = "BA";
@@ -367,6 +370,13 @@ public class ActionLog {
     public static final String AddMerchantTime = "BE";
     public static final String AddMerchantMobile = "BF";
     public static final String AddMerchantAddressDescription = "BG";
+    public static final String AddMerchantDate = "BH";
+    public static final String AddMerchantPhoto = "BI";
+    public static final String AddMerchantDeletePhoto = "BJ";
+    public static final String AddMerchantConfirmPhoto = "BK";
+    public static final String AddMerchantCancelPhoto = "BM";
+    public static final String AddMerchantConfirmTime = "BN";
+    public static final String AddMerchantCity = "BO";
     
     // 满意度评分页
     public static final String SatisfyRate = "CL";

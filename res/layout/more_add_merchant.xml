@@ -62,8 +62,6 @@
                             android:textSize="14sp"
                             android:layout_marginTop="2dp"
                             android:layout_marginBottom="2dp"
-                            android:focusable="true"
-                            android:focusableInTouchMode="true"
                             android:singleLine="true"
                             android:ellipsize="end"
                             android:background="@color/transparent"/>
@@ -154,8 +152,6 @@
                             android:textSize="14sp"
                             android:layout_marginTop="2dp"
                             android:layout_marginBottom="2dp"
-                            android:focusable="true"
-                            android:focusableInTouchMode="true"
                             android:hint="@string/add_merchant_address_hint"
                             android:singleLine="true"
                             android:ellipsize="end"
@@ -190,8 +186,6 @@
                             android:textSize="14sp"
                             android:layout_marginTop="2dp"
                             android:layout_marginBottom="2dp"
-                            android:focusable="true"
-                            android:focusableInTouchMode="true"
                             android:singleLine="true"
                             android:hint="@string/merchant_telephone_hint"
                             android:ellipsize="end"
@@ -230,8 +224,6 @@
                             android:textSize="14sp"
                             android:layout_marginTop="2dp"
                             android:layout_marginBottom="2dp"
-                            android:focusable="true"
-                            android:focusableInTouchMode="true"
                             android:hint="@string/add_merchant_address_description_hint"
                             android:singleLine="true"
                             android:ellipsize="end"
@@ -250,15 +242,24 @@
                         android:paddingLeft="8dp"
                         android:gravity="left|center_vertical"
                         android:background="@drawable/list_footer">
-                        <TextView
-                            android:layout_width="wrap_content"
+                        <LinearLayout 
+                            android:layout_width="wrap_content" 
                             android:layout_height="wrap_content"
-                            android:layout_marginRight="4dp"
-                            android:layout_gravity="center_vertical"
-                            android:gravity="left|center_vertical"
-                            android:text="@string/business_hours"
-                            android:background="@drawable/list_single_normal"
-                            android:textSize="16sp"/>
+                            android:orientation="horizontal"
+                            android:gravity="left|center_vertical">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginRight="4dp"
+                                android:layout_gravity="center_vertical"
+                                android:gravity="left|center_vertical"
+                                android:text="@string/business_hours"
+                                android:textSize="16sp"/>
+                            <ImageView
+                                android:layout_width="1dp"
+                                android:layout_height="80dp"
+                                android:background="@color/gray_dark"/>
+                        </LinearLayout>
                         <LinearLayout 
                             android:layout_width="fill_parent" 
                             android:layout_height="wrap_content"
@@ -396,8 +397,6 @@
                         android:textSize="14sp"
                         android:layout_marginTop="2dp"
                         android:layout_marginBottom="2dp"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true"
                         android:singleLine="true"
                         android:ellipsize="end"
                         android:hint="@string/please_input_your_telephone"

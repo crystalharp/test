@@ -63,8 +63,8 @@ public class HttpUtils {
     /** Tigerknows服务器接口定义的用于s的v13的Header */
     public static final String TK_SERVICE_TYPE_VALUE = "lakers";
     
-    private static final String PARAMETER_SEPARATOR = "&";
-    private static final String NAME_VALUE_SEPARATOR = "=";
+    public static final String PARAMETER_SEPARATOR = "&";
+    public static final String NAME_VALUE_SEPARATOR = "=";
 
     private HttpUtils() {
         // To forbidden instantiate this class.
