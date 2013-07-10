@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -92,8 +93,8 @@ public class TimeListView extends LinearLayout {
         minuteList = new ArrayList<String>();
         minuteList.add("");
         minuteList.add("");
-        for(int i = 0, size = 12; i < size; i++) {
-            minuteList.add(toTwoChar(i*5));
+        for(int i = 0, size = 6; i < size; i++) {
+            minuteList.add(toTwoChar(i*10));
         }
         minuteList.add("");
         minuteList.add("");
@@ -113,6 +114,26 @@ public class TimeListView extends LinearLayout {
     }
     
     protected void setListener() {
+        
+        hourLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                hourPosition = arg2;
+                hourAdapter.notifyDataSetChanged();
+                hourLsv.setSelectionFromTop(arg2-2, 0);
+            }
+        });
+        
+        minuteLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                minutePosition = arg2;
+                minuteAdapter.notifyDataSetChanged();
+                minuteLsv.setSelectionFromTop(arg2-2, 0);
+            }
+        });
         
         hourLsv.setOnScrollListener(new OnScrollListener() {
             
