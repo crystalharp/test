@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Copyright (C) 2013 fengtianxiao@tigerknows.com
  */
 package com.tigerknows.ui.hotel;

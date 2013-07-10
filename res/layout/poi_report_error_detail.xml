@@ -74,7 +74,8 @@
                         android:button="@drawable/rdb_recovery"
                         android:paddingLeft="40dp"
                         />
-                </RadioGroup>
+
+                    </RadioGroup>
                 
                 <TextView 
                     android:layout_width="wrap_content"
@@ -98,7 +99,7 @@
                 >
                 
                 <RadioButton android:id="@+id/ne_stop_rbt"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/erreport_merchant_stop"
                     android:textColor="@color/black_dark"
@@ -107,7 +108,7 @@
                     android:layout_marginBottom="8dp"
                     />
                 <RadioButton android:id="@+id/ne_chai_rbt"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/erreport_merchant_chai"
                     android:textColor="@color/black"
@@ -116,7 +117,7 @@
                     android:layout_marginBottom="8dp"
                     />
                 <RadioButton android:id="@+id/ne_move_rbt"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/erreport_merchant_move"
                     android:textColor="@color/black"
@@ -125,7 +126,7 @@
                     android:layout_marginBottom="8dp"
                     />
                 <RadioButton android:id="@+id/ne_find_rbt"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/erreport_merchant_find"
                     android:textColor="@color/black"
@@ -134,7 +135,7 @@
                     android:layout_marginBottom="8dp"
                     />
                 <RadioButton android:id="@+id/ne_other_rbt"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/poi_ohter_error"
                     android:textColor="@color/black"

@@ -38,6 +38,18 @@
                         android:layout_height="wrap_content"
                         android:background="@drawable/bg_dot_split_header"
                         />
+                    <ImageView android:id="@+id/hint_imv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:contentDescription="@string/app_name"
+                        android:background="@drawable/icon"
+                        android:layout_alignParentRight="true"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginLeft="12dp"
+                        android:layout_marginRight="12dp"
+                        android:layout_marginBottom="8dp"
+                        />
+                    
                     <TextView android:id="@+id/hot_txv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -50,21 +62,9 @@
                         android:lineSpacingExtra="0dp"
                         android:includeFontPadding="false"
                         android:layout_alignParentRight="true"
-                        android:layout_alignParentBottom="true"
                         android:layout_marginRight="8dp"
-                        android:paddingBottom="8dp"
-                        />
-                    <ImageView android:id="@+id/hint_imv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:contentDescription="@string/app_name"
-                        android:background="@drawable/icon"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginTop="8dp"
-                        android:layout_marginLeft="12dp"
-                        android:layout_marginRight="12dp"
-                        android:layout_marginBottom="8dp"
-
+                        android:paddingTop="8dp"
+                        android:layout_below="@id/hint_imv"
                         />
                     <TextView android:id="@+id/name_txv"
                         android:layout_width="fill_parent"

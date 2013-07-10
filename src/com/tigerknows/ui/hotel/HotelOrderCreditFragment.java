@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 fengtianxiao@tigerknows.com
+ * 2013.05
  */
 package com.tigerknows.ui.hotel;
 
@@ -362,7 +363,6 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
             // do nothing
         }
         Calendar c2 = Calendar.getInstance();
-        c2.set(2013, 0, 1);
         if(c1.after(c2) == false){
             mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
                     R.color.orange,
@@ -379,7 +379,6 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
 
     @Override
     public void selected(Calendar calendar) {
-        // TODO 设置选择的日期
         mDate = Calendar.getInstance();
         mDate.setTime(calendar.getTime());
         mCreditValidityBtn.setText(CalendarUtil.y4mc.format(mDate.getTime()));
