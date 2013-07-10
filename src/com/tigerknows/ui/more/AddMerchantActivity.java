@@ -367,21 +367,21 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     }
     
     private void exit() {
-        boolean notEmpty = !TextUtils.isEmpty(mNameEdt.getEditableText().toString());
+        boolean notEmpty = !TextUtils.isEmpty(mNameEdt.getText().toString());
         if (notEmpty == false) {
             notEmpty = !TextUtils.isEmpty(mType.getText().toString());
         }
         if (notEmpty == false) {
-            notEmpty = !TextUtils.isEmpty(mAddressEdt.getEditableText().toString());
+            notEmpty = !TextUtils.isEmpty(mAddressEdt.getText().toString());
         }
         if (notEmpty == false) {
-            notEmpty = !(mTelephoneEdt.getText().equals(MapEngine.getAreaCodeByCityId(Globals.getCurrentCityInfo().getId())+"-"));
+            notEmpty = !(mTelephoneEdt.getText().toString().equals(mLastAreaCode));
         }
         if (notEmpty == false) {
-            notEmpty = !TextUtils.isEmpty(mAddressDescriptionEdt.getEditableText().toString());
+            notEmpty = !TextUtils.isEmpty(mAddressDescriptionEdt.getText().toString());
         }
         if (notEmpty == false) {
-            notEmpty = !TextUtils.isEmpty(mDateBtn.getEditableText().toString());
+            notEmpty = !TextUtils.isEmpty(mDateBtn.getText().toString());
         }
         if (notEmpty == false) {
             notEmpty = !TextUtils.isEmpty(mTimeBtn.getText().toString());
@@ -390,11 +390,12 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             notEmpty = (mUploadUri != null);
         }
         if (notEmpty == false) {
-            notEmpty = !TextUtils.isEmpty(mYourTelephoneEdt.getEditableText().toString());
+            notEmpty = !TextUtils.isEmpty(mYourTelephoneEdt.getText().toString());
         }
         
         if (notEmpty == false) {
             finish();
+            return;
         }
         Utility.showNormalDialog(mThis,
                 getString(R.string.are_you_exit_add_merchart),
