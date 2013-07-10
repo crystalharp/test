@@ -382,6 +382,8 @@ public class ActionLog {
     
     // 满意度评分页
     public static final String SatisfyRate = "CL";
+    public static final String[] SatisfyRatingBar = {"BA", "BB", "BC", "BD", "BE", "BF", "BG"};
+    public static final String SatisfyRateSubmit = "BH";
 
     // 软件生命周期  AO
     public static final String Lifecycle = "FA";

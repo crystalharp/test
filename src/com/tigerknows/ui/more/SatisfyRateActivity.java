@@ -15,7 +15,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.Toast;
@@ -99,7 +101,6 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     	mLeftBtn.setOnClickListener(this);
     	for (int i=0; i<NUM_OF_RATINGBAR; i++){
     		final int j=i;
-    		LogWrapper.d("Trap", j+"");
     		mSatisfyRbt[j].setOnRatingBarChangeListener(new OnRatingBarChangeListener(){
 
 				@Override
@@ -116,6 +117,19 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
 					}
 				}
     		});
+    		mSatisfyRbt[j].setOnTouchListener(new OnTouchListener() {
+				
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					final int action = event.getAction();
+					switch (action & MotionEvent.ACTION_MASK){
+					case MotionEvent.ACTION_UP:
+						mActionLog.addAction(mActionTag + ActionLog.SatisfyRatingBar[j]);
+						break;
+					}
+					return false;
+				}
+			});
     	}
     }
     
@@ -159,9 +173,10 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onClick(View view) {
     	if(view.getId() == R.id.submit_btn){
+    		mActionLog.addAction(mActionTag + ActionLog.SatisfyRateSubmit);
     		submit();
     	}else if(view.getId() == R.id.left_btn){
-    		mActionLog.addAction(mActionTag, ActionLog.TitleLeftButton);
+    		mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
     		if (showDiscardDialog() == false){
     			finish();
     		}
