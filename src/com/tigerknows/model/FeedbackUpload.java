@@ -30,6 +30,10 @@ public class FeedbackUpload extends BaseQuery {
     public static final String SERVER_PARAMETER_SATISFY_RATE = "sat";
     
     public static final String SERVER_PARAMETER_POI_RANK = "poirank";
+    
+    // POI纠错页区分
+    public static final String LOCAL_PARAMETER_POIERROR_IGNORE = "ignore";
+
 
     
     public FeedbackUpload(Context context) {

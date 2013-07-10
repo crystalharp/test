@@ -148,6 +148,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mMenuFragment.display();
         
         refreshUserEntrance();
+        refreshSatisfyRate();
         refreshMoreBtn();
         refreshCity(Globals.getCurrentCityInfo().getCName());
     }
@@ -406,6 +407,18 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	mUserBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
         	mUserNameTxv.setVisibility(View.GONE);
         }
+    }
+    
+    private void refreshSatisfyRate() {
+    	if (TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
+    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
+    		drawables[2] = mContext.getResources().getDrawable(R.drawable.ic_satisfy_new);
+    		drawables[2].setBounds(0, 0, drawables[2].getIntrinsicWidth(), drawables[2].getIntrinsicHeight());
+    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
+    	}else{
+    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
+    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], null, drawables[3]);
+    	}
     }
     
     private void setFragmentMessage(int messageType) {

@@ -214,7 +214,17 @@ public class ActionLog {
     public static final String POINearbySearchInput = "BC";
     
     // POI纠错页
-    public static final String POIErrorRecovery = "AH";
+    public static final String POIReportError = "AH";
+    public static final String POIReportErrorName = "BA";
+    public static final String POIReportErrorTelAdd = "BB";
+    public static final String POIReportErrorTel = "BC";
+    public static final String POIReportErrorNotExist = "BD";
+    public static final String POIReportErrorAddress = "BE";
+    public static final String POIReportErrorRedundancy = "BF";
+    public static final String POIReportErrorLocation = "BG";
+    public static final String POIReportErrorOther = "BH";
+    public static final String POIReportErrorSubmit = "BI";
+    public static final String POIReportErrorNext = "BJ";
     
     // 我的点评页
     public static final String MyComment = "AI";
@@ -236,6 +246,37 @@ public class ActionLog {
     // 优惠券详情页
     public static final String CouponDetail = "AN";
     public static final String CouponQrimg = "BA";
+    
+    // POI纠错详情页-公共部分
+    public static final String POIErrorDetailMain = "BA";
+    public static final String POIErrorDetailContact = "BB";
+    public static final String POIErrorDetailSubmit = "BC";
+    
+    // POI纠错-名称错误页
+    public static final String POINameError = "AO";
+    public static final String POINameErrorType = "BD";
+
+    // POI纠错-地址错误页
+    public static final String POIAddressError = "AP";
+
+    // POI纠错-添加电话页
+    public static final String POIAddTel = "AQ";
+
+    // POI纠错-电话错误页
+    public static final String POITelError = "AR";
+    public static final String POITelErrorConnect = "BD";
+    public static final String POITelErrorNotthis = "BE";
+    // POI纠错-地点不存在页
+    
+    public static final String POINotExist = "AS";
+    public static final String POINotExistStop = "BD";
+    public static final String POINotExistChai = "BE";
+    public static final String POINotExistMove = "BF";
+    public static final String POINotExistFind = "BG";
+    public static final String POINotExistOther = "BH";
+
+    // POI纠错-其他错误页
+    public static final String POIOtherError = "AT";
 
     // 更多频道
     public static final String More = "CA";

@@ -229,6 +229,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:minLines="5"
+                    android:maxLength="800"
                     android:singleLine="false"
                     android:hint="@string/erreport_description_hint"
                     android:gravity="top|left"
