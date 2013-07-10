@@ -222,6 +222,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             setFragmentMessage(MoreHomeFragment.MESSAGE_TYPE_COMMENT);
             return;
         }
+        
+        //满意度评分(不是button)
+        if(TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
+        	mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
+        	return;
+        }
     }
 
     @Override
@@ -415,6 +421,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     		drawables[2] = mContext.getResources().getDrawable(R.drawable.ic_satisfy_new);
     		drawables[2].setBounds(0, 0, drawables[2].getIntrinsicWidth(), drawables[2].getIntrinsicHeight());
     		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
+    		mSatisfyRateBtn.setCompoundDrawablePadding(Utility.dip2px(mContext, 10));
     	}else{
     		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
     		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], null, drawables[3]);

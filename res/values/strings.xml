@@ -1200,7 +1200,7 @@
     <string name="satisfy_e">功能操作简单</string>
     <string name="satisfy_f">应用反应速度</string>
     <string name="satisfy_g">整体满意度</string>
-    <string name="satisfy_0">请选择</string>
+    <string name="satisfy_0">　</string>
     <string name="satisfy_abandon">确定放弃满意度评分吗？</string>
     <string name="satisfy_success">谢谢您对我们的评价</string>
     
