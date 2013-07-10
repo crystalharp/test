@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -24,6 +25,7 @@ import android.widget.TextView;
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
+import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -53,6 +55,7 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
 	    R.id.rate_6_txv,
 	    R.id.rate_7_txv
 	};
+	private Context mContext;
 
 	private RatingBar[] mSatisfyRbt;
 	private TextView[] mRateTxv;
@@ -63,6 +66,8 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.SatisfyRate;
+        mContext = getBaseContext();
+        TKConfig.setPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, "yes");
         setContentView(R.layout.more_satisfy_rate);
     	mSatisfyRbt = new RatingBar[NUM_OF_RATINGBAR];
     	mRateTxv = new TextView[NUM_OF_RATINGBAR];
