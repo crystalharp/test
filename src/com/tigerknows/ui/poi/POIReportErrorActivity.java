@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2013 fengtianxiao@tigerknows.com
  * 2013.06
  */
