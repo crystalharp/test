@@ -303,9 +303,9 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         }
         
         if (mValidityDialog == null) {
-            mValidityDialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_credit_validity), null, mValidityListView, null, null, null);
+            mValidityDialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_credit_validity), mValidityListView);
             mValidityDialog.setCancelable(true);
-            mValidityDialog.setCanceledOnTouchOutside(false);
+            mValidityDialog.setCanceledOnTouchOutside(true);
         }else if(mValidityDialog.isShowing() == false){
             mValidityDialog.show();
         }
