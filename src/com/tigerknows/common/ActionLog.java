@@ -160,6 +160,7 @@ public class ActionLog {
 
     // POI结果列表页
     public static final String POIList = "AC";
+    public static final String POIListAddMerchanty = "BA";
     
     // Poi详情页
     public static final String POIDetail = "AD";
@@ -374,9 +375,10 @@ public class ActionLog {
     public static final String AddMerchantPhoto = "BI";
     public static final String AddMerchantDeletePhoto = "BJ";
     public static final String AddMerchantConfirmPhoto = "BK";
-    public static final String AddMerchantCancelPhoto = "BM";
-    public static final String AddMerchantConfirmTime = "BN";
-    public static final String AddMerchantCity = "BO";
+    public static final String AddMerchantCancelPhoto = "BL";
+    public static final String AddMerchantConfirmTime = "BM";
+    public static final String AddMerchantCity = "BN";
+    public static final String AddMerchantBackPhoto = "BO";
     
     // 满意度评分页
     public static final String SatisfyRate = "CL";

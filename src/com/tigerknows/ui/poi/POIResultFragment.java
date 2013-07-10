@@ -274,6 +274,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     }
     
     void showAddMerchant() {
+        mActionLog.addAction(mActionTag + ActionLog.POIListAddMerchanty);
         Intent intent = new Intent();
         if (TextUtils.isEmpty(mInputText) == false) {
             intent.putExtra(AddMerchantActivity.EXTRA_INPUT_TEXT, mInputText);

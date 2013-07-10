@@ -414,14 +414,15 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         // TODO Auto-generated method stub
         switch(v.getId()){
             case R.id.left_btn:
-                mActionLog.addAction(mActionTag +  ActionLog.TitleLeftButton);
                 if (mImageView.getVisibility() == View.VISIBLE) {
+                    mActionLog.addAction(mActionTag +  ActionLog.AddMerchantBackPhoto);
                     mImageView.setVisibility(View.GONE);
                     backHome();
                 } else if (mFilterListView.getVisibility() == View.VISIBLE) {
                     mFilterListView.setVisibility(View.GONE);
                     backHome();
                 } else {
+                    mActionLog.addAction(mActionTag +  ActionLog.TitleLeftButton);
                     exit();
                 }
                 break;
@@ -970,13 +971,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         
         mPopupWindow.showAsDropDown(mTitleView, 0, 0);
         
-        mHandler.postDelayed(new Runnable() {
-            
-            @Override
-            public void run() {
-                mStartTimeListView.setData(mStartHourPosition, mStartMinutePosition);
-                mEndTimeListView.setData(mEndHourPosition, mEndMinutePosition);
-            }
-        }, 200);
+        mStartTimeListView.setData(mStartHourPosition, mStartMinutePosition);
+        mEndTimeListView.setData(mEndHourPosition, mEndMinutePosition);
     }
 }
