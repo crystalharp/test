@@ -201,20 +201,16 @@
                         android:paddingLeft="16dp"
                         android:layout_gravity="left|center_vertical"
                         />
-                    <EditText android:id="@+id/type_edt"
+                    <Button
+                        android:id="@+id/type_btn"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:maxLength="80"
-                        android:textSize="16sp"
-                        android:hint="@string/erreport_xuantian"
-                        android:layout_marginTop="2dp"
-                        android:layout_marginBottom="2dp"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true"
-                        android:singleLine="true"
-                        android:ellipsize="end"
                         android:background="@color/transparent"
-                        />
+                        android:drawableRight="@drawable/ic_view_all_comment"
+                        android:gravity="left|center_vertical"
+                        android:padding="8dp"
+                        android:text="@string/erreport_xuantian"
+                        android:textSize="16sp" />
                 </LinearLayout>                
             </LinearLayout>
 
@@ -229,7 +225,6 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:minLines="5"
-                    android:maxLength="800"
                     android:singleLine="false"
                     android:hint="@string/erreport_description_hint"
                     android:gravity="top|left"
@@ -294,4 +289,11 @@
         
     </ScrollView>
     
+    <com.tigerknows.widget.FilterListView
+            android:id="@+id/filter_list_view"
+            android:layout_width="fill_parent" 
+            android:layout_height="fill_parent" 
+            android:layout_below="@id/title_view"
+            android:visibility="gone"
+            ></com.tigerknows.widget.FilterListView>
 </RelativeLayout>
