@@ -141,7 +141,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        mActionTag = ActionLog.POIErrorRecovery;
+        mActionTag = ActionLog.POIReportError;
         vErreportMain = this.getLayoutInflater().inflate(R.layout.poi_report_error, null);
         vErreportDetail = this.getLayoutInflater().inflate(R.layout.poi_report_error_detail, null);
         setContentView(vErreportMain);
@@ -272,6 +272,33 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         };
         mMainEdt.addTextChangedListener(textWatcher);
         mDescriptionEdt.addTextChangedListener(textWatcher);
+        OnTouchListener edtTouchListener = new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if(event.getAction() == MotionEvent.ACTION_UP){
+					switch (v.getId()){
+					case R.id.main_edt:
+						mActionLog.addAction(mActionTag + ActionLog.POIErrorDetailMain);
+						break;
+					case R.id.description_edt:
+						mActionLog.addAction(mActionTag + ActionLog.POIErrorDetailMain);
+						break;
+					case R.id.contact_edt:
+						mActionLog.addAction(mActionTag + ActionLog.POIErrorDetailContact);
+						break;
+					case R.id.type_edt:
+						mActionLog.addAction(mActionTag + ActionLog.POINameErrorType);
+						break;
+					}
+				}
+				return false;
+			}
+		};
+		mMainEdt.setOnTouchListener(edtTouchListener);
+		mDescriptionEdt.setOnTouchListener(edtTouchListener);
+		mContactEdt.setOnTouchListener(edtTouchListener);
+		mTypeEdt.setOnTouchListener(edtTouchListener);
     }
     
     @Override
@@ -304,6 +331,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         return show;
     }
     protected void jumpToMain(){
+    	mActionTag = ActionLog.POIReportError;
     	setContentView(vErreportMain);
     	findViewsMain();
     	setListenerMain();
@@ -359,6 +387,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         mTitleBtn.setText(mNextTitle);
         switch(mChecked){
         case TEL_ERR:
+        	mActionTag = ActionLog.POITelError;
         	mMainEdt.clearFocus();
         	mMainEdt.clearComposingText();
         	mMainEdt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
@@ -367,6 +396,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             mMainEdt.setHint(getString(R.string.tel_or_mobile));
             break;
         case ADDRESS_ERR:
+        	mActionTag = ActionLog.POIAddressError;
         	mMainEdt.clearFocus();
         	mMainEdt.clearComposingText();
         	mMainEdt.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -375,6 +405,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             mOrigin = mPOI.getAddress();
             break;
         case NAME_ERR:
+        	mActionTag = ActionLog.POINameError;
         	mMainEdt.clearFocus();
         	mMainEdt.clearComposingText();
         	mMainEdt.setInputType(InputType.TYPE_CLASS_TEXT);
@@ -384,6 +415,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             mOrigin = mPOI.getName();
             break;
         case TEL_ADD:
+        	mActionTag = ActionLog.POIAddTel;
         	mMainEdt.clearFocus();
         	mMainEdt.clearComposingText();
         	mMainEdt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
@@ -391,6 +423,12 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             mOrigin = MapEngine.getAreaCodeByCityId(MapEngine.getInstance().getCityId(mPOI.getPosition())) + '-';
             mMainEdt.setHint(getString(R.string.tel_or_mobile));
             break;
+        case NOT_EXIST:
+        case NE_OTHER:
+        	mActionTag = ActionLog.POINotExist;
+        	break;
+        case OTHER_ERR:
+        	mActionTag = ActionLog.POIOtherError;
         }
         if(mMainLly.getVisibility() == View.VISIBLE){
             mMainEdt.setText(mOrigin);
@@ -461,70 +499,87 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             }
             break;
         case R.id.name_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.POIReportErrorName);
             mChecked = NAME_ERR;
             mNextTitle = mNameBtn.getText().toString();
             refreshDataMain();
             break;
         case R.id.tel_btn:
+        	mActionLog.addAction(mActionTag + (mHasTel ? ActionLog.POIReportErrorTel : ActionLog.POIReportErrorTelAdd));
             mChecked = mHasTel ? TEL_ERR : TEL_ADD;
             mNextTitle = mTelBtn.getText().toString();
             refreshDataMain();
             break;
         case R.id.notexist_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.POIReportErrorNotExist);
             mChecked = NOT_EXIST;
             mNextTitle = mNotexistBtn.getText().toString();
             refreshDataMain();
             break;
         case R.id.address_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.POIReportErrorAddress);
             mChecked = ADDRESS_ERR;
             mNextTitle = mAddressBtn.getText().toString();
             refreshDataMain();
             break;
         case R.id.redundancy_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.POIReportErrorRedundancy);
             mChecked = REDUNDANCY;
             refreshDataMain();
             break;
         case R.id.location_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.POIReportErrorLocation);
             mChecked = LOCATION_ERR;
             refreshDataMain();
             break;
         case R.id.other_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.POIReportErrorOther);
             mChecked = OTHER_ERR;
             mNextTitle = mOtherBtn.getText().toString();
             refreshDataMain();
             break;
         case R.id.submit_btn:
-            if((mChecked & DIRECT_SUBMIT) == 0) submit();
-            else jumpToDetail();
+        	mActionLog.addAction(mActionTag + ((mPage == HOME_PAGE) ? ActionLog.POIReportErrorSubmit : ActionLog.POIReportErrorNext) );
+            if((mChecked & DIRECT_SUBMIT) == 0) submitDetail();
+            else {
+            	submitMain();
+            	jumpToDetail();
+            }
             break;
         case R.id.submit_detail_btn:
-            submit();
+        	mActionLog.addAction(mActionTag + ActionLog.POIErrorDetailSubmit);
+            submitDetail();
             break;
         case R.id.ne_stop_rbt:
+        	mActionLog.addAction(mActionTag + ActionLog.POINotExistStop);
             mChecked = NOT_EXIST;
             mRbtChecked = NE_STOP;
             hideSoftInput(mDescriptionEdt);
             refreshDataDetail();
             break;
         case R.id.ne_chai_rbt:
+        	mActionLog.addAction(mActionTag + ActionLog.POINotExistChai);
             mChecked = NOT_EXIST;
             mRbtChecked = NE_CHAI;
             hideSoftInput(mDescriptionEdt);
             refreshDataDetail();
             break;
         case R.id.ne_move_rbt:
+        	mActionLog.addAction(mActionTag + ActionLog.POINotExistMove);
             mChecked = NOT_EXIST;
             mRbtChecked = NE_MOVE;
             hideSoftInput(mDescriptionEdt);
             refreshDataDetail();
             break;
         case R.id.ne_find_rbt:
+        	mActionLog.addAction(mActionTag + ActionLog.POINotExistFind);
             mChecked = NOT_EXIST;
             mRbtChecked = NE_FIND;
             hideSoftInput(mDescriptionEdt);
             refreshDataDetail();
             break;
         case R.id.ne_other_rbt:
+        	mActionLog.addAction(mActionTag + ActionLog.POINotExistOther);
             mChecked = NE_OTHER;
             mRbtChecked = NE_OTHER_CHECK;
             mDescriptionEdt.requestFocus();
@@ -532,11 +587,13 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             showSoftInput(mDescriptionEdt);
             break;
         case R.id.tel_connect_rbt:
+        	mActionLog.addAction(mActionTag + ActionLog.POITelErrorConnect);
             mRbtChecked = TEL_CONNECT;
             refreshDataDetail();
             hideSoftInput();
             break;
         case R.id.tel_notthis_rbt:
+        	mActionLog.addAction(mActionTag + ActionLog.POITelErrorNotthis);
             mRbtChecked = TEL_NOTTHIS;
             refreshDataDetail();
             hideSoftInput();
@@ -545,7 +602,21 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             break;
         }
     }
-    private void submit(){
+    private void submitMain(){
+    	StringBuilder s = new StringBuilder();
+    	s.append(mPOI.getUUID());
+    	s.append('_');
+    	int errcode = 510 + (mChecked >> 6)*10;
+    	s.append(errcode + "");
+        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        criteria.put(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, s.toString());
+        criteria.put(FeedbackUpload.LOCAL_PARAMETER_POIERROR_IGNORE, "true");
+        FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
+        feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId());
+        queryStart(feedbackUpload);
+    }
+
+    private void submitDetail(){
         StringBuilder s = new StringBuilder();
         try{
             s.append(mPOI.getUUID());
@@ -585,11 +656,15 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         if (BaseActivity.checkReLogin(baseQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.checkResponseCode(baseQuery, mThis, null, true, this, false)) {
-            return;
         }
-        Toast.makeText(mThis, R.string.error_recovery_success, Toast.LENGTH_LONG).show();
-        finish();
+        
+        if(! baseQuery.getCriteria().containsKey(FeedbackUpload.LOCAL_PARAMETER_POIERROR_IGNORE)){
+        	if (BaseActivity.checkResponseCode(baseQuery, mThis, null, true, this, false)) {
+        		return;
+        	}
+        	Toast.makeText(mThis, R.string.error_recovery_success, Toast.LENGTH_LONG).show();
+        	finish();
+        }
     }
     
     public void finish() {
