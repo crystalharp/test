@@ -326,6 +326,13 @@ public class ActionLog {
     public static final String AddMerchantTime = "BE";
     public static final String AddMerchantMobile = "BF";
     public static final String AddMerchantAddressDescription = "BG";
+    public static final String AddMerchantDate = "BH";
+    public static final String AddMerchantPhoto = "BI";
+    public static final String AddMerchantDeletePhoto = "BJ";
+    public static final String AddMerchantConfirmPhoto = "BK";
+    public static final String AddMerchantCancelPhoto = "BM";
+    public static final String AddMerchantConfirmTime = "BN";
+    public static final String AddMerchantCity = "BO";
     
     // 满意度评分页
     public static final String SatisfyRate = "CL";

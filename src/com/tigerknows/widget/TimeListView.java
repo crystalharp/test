@@ -203,15 +203,6 @@ public class TimeListView extends LinearLayout {
             
             view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
             textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
-            if ((isParent == true && position == hourPosition) ||
-                    (isParent == false && position == minutePosition)) {
-                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
-                textTxv.setTextColor(TKConfig.COLOR_ORANGE);
-            } else {
-                view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
-                textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
-            }
-
             
             textTxv.setText(name);
             

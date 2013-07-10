@@ -50,6 +50,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.text.TextUtils;
 
+import com.tigerknows.model.FileUpload;
+import com.tigerknows.util.HttpUtils;
 import com.weibo.sdk.android.WeiboException;
 import com.weibo.sdk.android.WeiboParameters;
 import com.weibo.sdk.android.net.NetStateManager;
@@ -87,7 +89,7 @@ public class HttpManager {
         String file = "";
         for (int loc = 0; loc < params.size(); loc++) {
             String key = params.getKey(loc);
-            if (key.equals("pic")) {
+            if (key.equals(FileUpload.SERVER_PARAMETER_UPFILE)) {
                 file = params.getValue(key);
                 params.remove(key);
             }
@@ -118,10 +120,12 @@ public class HttpManager {
 				
 				bos = new ByteArrayOutputStream();
 				if (!TextUtils.isEmpty(file)) {
+                    post.addHeader(HttpUtils.CONTENT_ENCODING, "UTF-8");
+				    post.addHeader(HttpUtils.TK_SERVICE_TYPE, HttpUtils.TK_SERVICE_TYPE_VALUE);
 					paramToUpload(bos, params);
 					post.setHeader("Content-Type", MULTIPART_FORM_DATA + "; boundary=" + BOUNDARY);
-					Utility.UploadImageUtils.revitionPostImageSize(  file);
-					imageContentToUpload(bos, file);
+//					Utility.UploadImageUtils.revitionPostImageSize(  file);
+					imageContentToUpload(bos, file, params.getValue(FileUpload.SERVER_PARAMETER_FILENAME));
 				} else {
 				    if(_contentType!=null){
 				        params.remove("content-type");
@@ -236,13 +240,17 @@ public class HttpManager {
 		String key = "";
 		for (int loc = 0; loc < params.size(); loc++) {
 			key = params.getKey(loc);
+			if (key.equals(FileUpload.SERVER_PARAMETER_FILENAME) ||
+			        key.equals(FileUpload.SERVER_PARAMETER_UPFILE)) {
+			    continue;
+			}
 			StringBuilder temp = new StringBuilder(10);
 			temp.setLength(0);
 			temp.append(MP_BOUNDARY).append("\r\n");
 			temp.append("content-disposition: form-data; name=\"").append(key).append("\"\r\n\r\n");
 			temp.append(params.getValue(key)).append("\r\n");
-			byte[] res = temp.toString().getBytes();
 			try {
+			    byte[] res = temp.toString().getBytes("UTF-8");
 				baos.write(res);
 			} catch (IOException e) {
 				throw new WeiboException(e);
@@ -250,20 +258,20 @@ public class HttpManager {
 		}
 	}
 
-	private static void imageContentToUpload(OutputStream out, String imgpath) throws WeiboException {
+	private static void imageContentToUpload(OutputStream out, String imgpath, String fileName) throws WeiboException {
 		if(imgpath==null){
 		    return;
 		}
 	    StringBuilder temp = new StringBuilder();
 		
 		temp.append(MP_BOUNDARY).append("\r\n");
-		temp.append("Content-Disposition: form-data; name=\"pic\"; filename=\"")
-				.append("news_image").append("\"\r\n");
+		temp.append("Content-Disposition: form-data; name=\""+FileUpload.SERVER_PARAMETER_UPFILE+"\"; filename=\"")
+				.append(fileName).append("\"\r\n");
 		String filetype = "image/png";
 		temp.append("Content-Type: ").append(filetype).append("\r\n\r\n");
-		byte[] res = temp.toString().getBytes();
 		FileInputStream input = null;
 		try {
+		    byte[] res = temp.toString().getBytes("UTF-8");
 			out.write(res);
 			 input = new FileInputStream(imgpath);
 			byte[] buffer=new byte[1024*50];
@@ -274,8 +282,8 @@ public class HttpManager {
 				}
 				out.write(buffer, 0, count);
 			}
-			out.write("\r\n".getBytes());
-			out.write(("\r\n" + END_MP_BOUNDARY).getBytes());
+//			out.write("\r\n".getBytes("UTF-8"));
+			out.write(("\r\n" + END_MP_BOUNDARY).getBytes("UTF-8"));
 		} catch (IOException e) {
 			throw new WeiboException(e);
 		} finally {

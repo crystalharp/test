@@ -51,7 +51,7 @@ import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.FeedbackUpload;
-import com.tigerknows.model.ImageUpload;
+import com.tigerknows.model.FileUpload;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.model.DataQuery.FilterCategoryOrder;
@@ -98,11 +98,16 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     private EditText mTelephoneEdt;
     private String mLastAreaCode;
     
+    public static final int DATE_EVERY_DAY = 127;
+    public static final int DATE_WORKING_DAYS = 31;
+    public static final int DATE_WEEKEND = 96;
+    
     private Button mDateBtn;
     private ListView mPickDateView;
     private MultichoiceArrayAdapter mPickDateArrayAdapter;
     private String[] mWeekDays;
     private boolean[] mDateChecked;
+    private int mDateSelected = DATE_EVERY_DAY;
     private Dialog mPickDateDialog;
     
     private Button mTimeBtn;
@@ -154,8 +159,6 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mTitleBtn.setText(R.string.add_merchant);
         mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
         
-        mNameEdt.requestFocus();
-        
         mCacheFilePath = Environment.getExternalStorageDirectory()+ "/Android/data/" + getPackageName() + "/files"+"/cache.jpg";
         mCameraFilePath = Environment.getExternalStorageDirectory()+ "/Android/data/" + getPackageName() + "/files"+"/camera.jpg";
         
@@ -203,7 +206,13 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo().getId(), mThis);
         FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
         if (filterCategory != null) {
-            List<FilterOption> filterOptionList = filterCategory.getCategoryFilterOption();
+            List<FilterOption> filterOptionList = new ArrayList<DataQuery.FilterOption>();
+            List<FilterOption> online = filterCategory.getCategoryFilterOption();
+            if (online != null) {
+                for(int i = 0, size = online.size(); i < size; i++) {
+                    filterOptionList.add(online.get(i).clone());
+                }
+            }
             List<Long> indexList = new ArrayList<Long>();
             indexList.add(0l);
             for(int i = 0, size = filterOptionList.size(); i < size; i++) {
@@ -405,6 +414,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         // TODO Auto-generated method stub
         switch(v.getId()){
             case R.id.left_btn:
+                mActionLog.addAction(mActionTag +  ActionLog.TitleLeftButton);
                 if (mImageView.getVisibility() == View.VISIBLE) {
                     mImageView.setVisibility(View.GONE);
                     backHome();
@@ -422,6 +432,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 
             case R.id.take_photo_btn:
                 if (mUploadUri == null || mPhotoMD5 == null) {
+                    mActionLog.addAction(mActionTag +  ActionLog.AddMerchantPhoto);
                     hideSoftInput();
                     showTakePhotoDialog(REQUEST_CODE_PICK_PHOTO, REQUEST_CODE_CAPTURE_PHOTO);
                 }
@@ -430,6 +441,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             case R.id.delete_photo_btn:
 
                 if (mUploadUri != null || mPhotoMD5 != null) {
+                    mActionLog.addAction(mActionTag +  ActionLog.AddMerchantDeletePhoto);
                     Utility.showNormalDialog(mThis, getString(R.string.add_merchant_delete_photo_tip), new DialogInterface.OnClickListener() {
                         
                         @Override
@@ -450,18 +462,21 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 break;
                 
             case R.id.cancel_btn:
+                mActionLog.addAction(mActionTag +  ActionLog.AddMerchantCancelPhoto);
                 mImageView.setVisibility(View.GONE);
                 backHome();
                 mUploadUri = null;
                 break;
                 
             case R.id.confirm_btn:
+                mActionLog.addAction(mActionTag +  ActionLog.AddMerchantConfirmPhoto);
                 mImageView.setVisibility(View.GONE);
                 backHome();
                 confrimUploadUri(mImageImv.getDrawable());
                 break;
                 
             case R.id.city_btn:
+                mActionLog.addAction(mActionTag +  ActionLog.AddMerchantCity);
                 hideSoftInput();
                 Intent intent = new Intent();
                 intent.putExtra(ChangeCityActivity.EXTRA_ONLY_CHANGE_HOTEL_CITY, true);
@@ -470,6 +485,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 break;
                 
             case R.id.date_btn:
+                mActionLog.addAction(mActionTag +  ActionLog.AddMerchantDate);
                 hideSoftInput();
                 if (mWeekDays == null) {
                     mWeekDays = mThis.getResources().getStringArray(R.array.week_days);
@@ -480,21 +496,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                     }
                     mWeekDays[length-1] = sunday;
                     mDateChecked = new boolean[mWeekDays.length];
-                    for(int i = 0; i < length; i++) {
-                        mDateChecked[i] = false;
-                    }
                 }
-                String date = mDateBtn.getText().toString();
-                if (!TextUtils.isEmpty(date)) {
-                    int i = 0;
-                    for(String str : mWeekDays) {
-                        if (date.contains(str)) {
-                            mDateChecked[i] = true;
-                        }
-                        i++;
-                    }
-                }
-                
                 
                 if (mPickDateView == null) {
                     mPickDateArrayAdapter = new MultichoiceArrayAdapter(mThis, mWeekDays, mDateChecked);
@@ -519,17 +521,19 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                             
                             if (id == DialogInterface.BUTTON_POSITIVE) {
 
-                                int checked = 0;
-                                for(int i = 0, length = mDateChecked.length; i < length; i++) {
-                                    checked = (checked << 1) + (mDateChecked[i] ? 1 : 0);
+                                int dateSelected = 0;
+                                for(int i = mDateChecked.length-1; i >= 0; i--) {
+                                    dateSelected = (dateSelected << 1) + (mDateChecked[i] ? 1 : 0);
                                 }
-                                if (checked == 0) {
-                                    mDateBtn.setText(R.string.select_business_hours_day);
-                                } else if (checked == 127) {
+                                
+                                mDateSelected = dateSelected;
+                                if (mDateSelected == 0) {
+                                    mDateBtn.setText(null);
+                                } else if (mDateSelected == DATE_EVERY_DAY) {
                                     mDateBtn.setText(R.string.every_day);
-                                } else if (checked == 124) {
+                                } else if (mDateSelected == DATE_WORKING_DAYS) {
                                     mDateBtn.setText(R.string.working_days);
-                                } else if (checked == 3) {
+                                } else if (mDateSelected == DATE_WEEKEND) {
                                     mDateBtn.setText(R.string.weekend);
                                 } else {
                                     StringBuilder s = new StringBuilder();
@@ -549,14 +553,29 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 } else {
                     mPickDateDialog.show();
                 }
+
+                int dateSelected = mDateSelected;
+                for(int i = 0, length = mDateChecked.length; i < length; i++) {
+                    if (i > 0) {
+                        dateSelected = (dateSelected >>> 1);
+                    }
+                    if ((dateSelected & 0x1) > 0) {
+                        mDateChecked[i] = true;
+                    } else {
+                        mDateChecked[i] = false;
+                    }
+                }
+                mPickDateArrayAdapter.notifyDataSetChanged();
                 break;
                 
             case R.id.time_btn:
+                mActionLog.addAction(mActionTag +  ActionLog.AddMerchantTime);
                 hideSoftInput();
                 showPopupWindow();
                 break;
                 
             case R.id.type_btn:
+                mActionLog.addAction(mActionTag +  ActionLog.AddMerchantType);
                 hideSoftInput();
                 mTitleBtn.setText(R.string.merchant_type);
                 mRightBtn.setVisibility(View.GONE);
@@ -565,6 +584,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 break;
                 
             case R.id.time_confirm_btn:
+                mActionLog.addAction(mActionTag +  ActionLog.AddMerchantConfirmTime);
                 mStartHourPosition = mStartTimeListView.getHourPosition();
                 mStartMinutePosition = mStartTimeListView.getMinutePosition();
                 mEndHourPosition = mEndTimeListView.getHourPosition();
@@ -677,12 +697,15 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         list.add(feedbackUpload);
         
         if (mUploadUri != null && mPhotoMD5 != null) {
-            ImageUpload imageUpload = new ImageUpload(mThis);
+            String filePath = Utility.imageUri2FilePath(mThis, mUploadUri);
+            FileUpload fileUpload = new FileUpload(mThis);
             criteria = new Hashtable<String, String>();
-            criteria.put(ImageUpload.SERVER_PARAMETER_MD5, mPhotoMD5);
-            criteria.put(ImageUpload.SERVER_PARAMETER_PICTURE, Utility.imageUri2FilePath(mThis, mUploadUri));
-            imageUpload.setup(criteria);
-            list.add(imageUpload);
+            criteria.put(FileUpload.SERVER_PARAMETER_FILE_TYPE, FileUpload.FILE_TYPE_IMAGE);
+            criteria.put(FileUpload.SERVER_PARAMETER_CHECKSUM, mPhotoMD5);
+            criteria.put(FileUpload.SERVER_PARAMETER_FILENAME, mPhotoMD5+filePath.substring(filePath.lastIndexOf(".")));
+            criteria.put(FileUpload.SERVER_PARAMETER_UPFILE, filePath);
+            fileUpload.setup(criteria);
+            list.add(fileUpload);
         }
         queryStart(list);
     }
@@ -737,13 +760,13 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             if (BaseActivity.checkReLogin(baseQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
                 isReLogin = true;
                 return;
-            } else if (BaseActivity.checkResponseCode(baseQuery, mThis, null, showErroDialog && !(baseQuery instanceof ImageUpload), this, false)) {
+            } else if (BaseActivity.checkResponseCode(baseQuery, mThis, null, showErroDialog && !(baseQuery instanceof FileUpload), this, false)) {
                 showErroDialog = false;
                 if (baseQuery instanceof FeedbackUpload) {
                     textUploadSuccess = false;
                 }
                 
-                if (baseQuery instanceof ImageUpload) {
+                if (baseQuery instanceof FileUpload) {
                     imageUploadSuccess = false;
                     imageUpload = baseQuery;
                 }
@@ -866,7 +889,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                         public void run() {
                             if (resultBitmap != null && Utility.bitmapToFile(resultBitmap, cacheFile)) {
                                 mPhotoUri = Uri.fromFile(cacheFile);
-                                if (isPick) {
+                                if (isPick == false) {
                                     confrimUploadUri(new BitmapDrawable(resultBitmap));
                                 } else {
                                     mTitleBtn.setText(R.string.storefront_photo);
