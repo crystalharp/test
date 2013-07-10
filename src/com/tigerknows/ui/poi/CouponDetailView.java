@@ -161,7 +161,7 @@ public class CouponDetailView extends BaseDetailView implements View.OnClickList
             View view = inflater.inflate(R.layout.poi_coupon_qrimg, this, false);
             mQrimgImv = (ImageView)view.findViewById(R.id.qrimg_imv);
             refreshDrawable(mData.getQrimgTKDrawable(), mQrimgImv, R.drawable.icon, true);
-            Dialog dialog = Utility.showNormalDialog(mSphinx, null, null, view, null, null, null);
+            Dialog dialog = Utility.showNormalDialog(mSphinx, null, view);
             dialog.setOnDismissListener(new OnDismissListener() {
                 
                 @Override

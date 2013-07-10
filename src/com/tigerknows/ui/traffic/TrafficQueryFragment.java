@@ -1017,11 +1017,7 @@ public class TrafficQueryFragment extends BaseFragment {
         mActionLog.addAction(ActionLog.TrafficAlternative);
         final Dialog dialog = Utility.showNormalDialog(mSphinx,
                 mSphinx.getString(start ? R.string.select_start_station : R.string.select_end_station),
-                null,
-                listView,
-                null,
-                null,
-                null);
+                listView);
         
         listView.setOnItemClickListener(new OnItemClickListener() {
 
