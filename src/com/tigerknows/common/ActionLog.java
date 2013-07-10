@@ -138,6 +138,9 @@ public class ActionLog {
     public static final String HotelDateCheckin = HotelDate+"BB";
     public static final String HotelDateCheckout = HotelDate+"BC";
     
+    public static final String PickPhoto = "YD";
+    public static final String CameraPhoto = "YF";
+    
     // POI主页 
     public static final String POIHome = "AA";
     public static final String POIHomeChangeCityBtn = "BA";

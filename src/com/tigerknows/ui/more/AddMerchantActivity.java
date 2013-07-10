@@ -807,7 +807,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         File file = new File(mCameraFilePath);
         file.delete();
         mCaptureUri = Uri.fromFile(file);
-        Utility.showTakePhotoDialog(this, pickRequestCode,
+        Utility.showTakePhotoDialog(mActionTag, this, pickRequestCode,
                 captureRequestCode, mCaptureUri);
     }
     
