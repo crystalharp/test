@@ -433,7 +433,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             case R.id.take_photo_btn:
                 if (mUploadUri == null || mPhotoMD5 == null) {
                     mActionLog.addAction(mActionTag +  ActionLog.AddMerchantPhoto);
-                    hideSoftInput();
+                    hideSoftInput(false);
                     showTakePhotoDialog(REQUEST_CODE_PICK_PHOTO, REQUEST_CODE_CAPTURE_PHOTO);
                 }
                 break;
@@ -477,7 +477,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 
             case R.id.city_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.AddMerchantCity);
-                hideSoftInput();
+                hideSoftInput(false);
                 Intent intent = new Intent();
                 intent.putExtra(ChangeCityActivity.EXTRA_ONLY_CHANGE_HOTEL_CITY, true);
                 intent.setClass(mThis, ChangeCityActivity.class);
@@ -486,7 +486,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 
             case R.id.date_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.AddMerchantDate);
-                hideSoftInput();
+                hideSoftInput(false);
                 if (mWeekDays == null) {
                     mWeekDays = mThis.getResources().getStringArray(R.array.week_days);
                     String sunday = mWeekDays[0];
@@ -570,13 +570,13 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 
             case R.id.time_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.AddMerchantTime);
-                hideSoftInput();
+                hideSoftInput(false);
                 showPopupWindow();
                 break;
                 
             case R.id.type_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.AddMerchantType);
-                hideSoftInput();
+                hideSoftInput(false);
                 mTitleBtn.setText(R.string.merchant_type);
                 mRightBtn.setVisibility(View.GONE);
                 mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
@@ -623,7 +623,6 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             } else {
                 mType.requestFocus();
                 Toast.makeText(mThis, mThis.getString(R.string.please_select)+mThis.getString(R.string.merchant_type)+"!", Toast.LENGTH_SHORT).show();
-                hideSoftInput();
                 return;
             }
 
@@ -688,7 +687,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             e.printStackTrace();
         }
         
-        hideSoftInput();
+        hideSoftInput(false);
         List<BaseQuery> list = new ArrayList<BaseQuery>();
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(FeedbackUpload.SERVER_PARAMETER_ADD_MERCHANT, s.toString());

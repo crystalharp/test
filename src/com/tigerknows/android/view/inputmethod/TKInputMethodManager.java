@@ -106,9 +106,15 @@ public class TKInputMethodManager {
      * 隐藏虚拟键盘
      */
     public void hideSoftInput() {
+        hideSoftInput(true);
+    }
+    
+    public void hideSoftInput(boolean clearFocus) {
         View view = activity.getCurrentFocus();
         if (view != null) {
-            view.clearFocus();
+            if (clearFocus) {
+                view.clearFocus();
+            }
             inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }     
