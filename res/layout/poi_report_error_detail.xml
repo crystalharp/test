@@ -208,6 +208,7 @@
                         android:background="@color/transparent"
                         android:drawableRight="@drawable/ic_view_all_comment"
                         android:gravity="left|center_vertical"
+                        android:layout_gravity="left|center_vertical"
                         android:padding="8dp"
                         android:text="@string/erreport_xuantian"
                         android:textSize="16sp" />
