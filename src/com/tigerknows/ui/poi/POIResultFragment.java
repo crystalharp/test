@@ -520,7 +520,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
         poiQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(poiQuery);
-        setup();
+        setup(mInputText);
         dismissPopupWindow();
     }
     
@@ -1063,6 +1063,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         	}
             mSphinx.queryStart(mBaseQuerying);
         }
-        setup();
+        setup(mInputText);
     }
 }
