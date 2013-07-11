@@ -15,6 +15,7 @@ import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Selection;
 import android.text.TextUtils;
@@ -447,12 +448,15 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         mDescriptionLly.setVisibility(((mChecked & DESCRIPTION_LLY) !=0) ? View.VISIBLE : View.GONE);
         mContactLly.setVisibility(((mChecked & CONTACT_LLY) !=0) ? View.VISIBLE : View.GONE);
         mTitleBtn.setText(mNextTitle);
+        InputFilter[] phoneFilter = {new InputFilter.LengthFilter(15)};
+        InputFilter[] normalFilter = {new InputFilter.LengthFilter(80)};
         switch(mChecked){
         case TEL_ERR:
         	mActionTag = ActionLog.POITelError;
         	mMainEdt.clearFocus();
         	mMainEdt.clearComposingText();
-        	mMainEdt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+        	mMainEdt.setInputType(InputType.TYPE_CLASS_PHONE);
+        	mMainEdt.setFilters(phoneFilter);
             mMainTxv.setText(getString(R.string.erreport_merchant_tel));
             mOrigin = MapEngine.getAreaCodeByCityId(MapEngine.getInstance().getCityId(mPOI.getPosition())) + '-';
             mMainEdt.setHint(getString(R.string.tel_or_mobile));
@@ -462,6 +466,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         	mMainEdt.clearFocus();
         	mMainEdt.clearComposingText();
         	mMainEdt.setInputType(InputType.TYPE_CLASS_TEXT);
+        	mMainEdt.setFilters(normalFilter);
             mMainTxv.setText(getString(R.string.erreport_address));
             mMainEdt.setHint(getString(R.string.erreport_address_hint));
             mOrigin = mPOI.getAddress();
@@ -471,17 +476,19 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         	mMainEdt.clearFocus();
         	mMainEdt.clearComposingText();
         	mMainEdt.setInputType(InputType.TYPE_CLASS_TEXT);
+        	mMainEdt.setFilters(normalFilter);
             mMainTxv.setText(getString(R.string.erreport_merchant_name));
             mMainEdt.setHint(getString(R.string.erreport_name_hint));
             mMainLly.setBackgroundDrawable(getResources().getDrawable(R.drawable.list_header));
-            mMainEdt.setHint("");
+            mTypeBtn.setText( TextUtils.isEmpty(mPOI.getCategory()) ? getString(R.string.erreport_xuantian) : mPOI.getCategory());
             mOrigin = mPOI.getName();
             break;
         case TEL_ADD:
         	mActionTag = ActionLog.POIAddTel;
         	mMainEdt.clearFocus();
         	mMainEdt.clearComposingText();
-        	mMainEdt.setInputType(InputType.TYPE_CLASS_NUMBER | InputType.TYPE_NUMBER_FLAG_SIGNED);
+        	mMainEdt.setInputType(InputType.TYPE_CLASS_PHONE);
+        	mMainEdt.setFilters(phoneFilter);
             mMainTxv.setText(getString(R.string.erreport_merchant_tel));
             mOrigin = MapEngine.getAreaCodeByCityId(MapEngine.getInstance().getCityId(mPOI.getPosition())) + '-';
             mMainEdt.setHint(getString(R.string.tel_or_mobile));
@@ -679,8 +686,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             break;
         case R.id.type_btn:
             mActionLog.addAction(mActionTag + ActionLog.POINameErrorType);
-            mFilterListView.setVisibility(View.VISIBLE);
-            hideSoftInput(false);
+            hideSoftInput();
             mTitleBtn.setText(R.string.merchant_type);
             mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
             mFilterListView.setVisibility(View.VISIBLE);

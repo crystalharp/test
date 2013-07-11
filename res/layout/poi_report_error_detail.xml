@@ -226,6 +226,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:minLines="5"
+                    android:maxLength="800"
                     android:singleLine="false"
                     android:hint="@string/erreport_description_hint"
                     android:gravity="top|left"
@@ -270,7 +271,7 @@
                     <EditText android:id="@+id/contact_edt"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:maxLength="80"
+                        android:maxLength="11"
                         android:textSize="16sp"
                         android:hint="@string/erreport_mobile_hint"
                         android:layout_marginTop="2dp"
@@ -281,7 +282,8 @@
                         android:ellipsize="end"
                         android:background="@color/transparent"
                         android:layout_gravity="left|center_vertical"
-                        android:inputType="number"
+                        android:inputType="phone"
+                        android:digits="0123456789"
                         />        
                 </LinearLayout>
                 
