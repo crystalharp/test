@@ -486,7 +486,6 @@ public class TrafficQueryEventHelper {
 
 		@Override
 		public void onClick(View v) {
-			mQueryFragment.mRadioGroup.setOnCheckedChangeListener(null);
 //			onBack();
 			synchronized (mQueryFragment.mSphinx.mUILock) {
                 if (!mQueryFragment.mSphinx.mUIProcessing) {
