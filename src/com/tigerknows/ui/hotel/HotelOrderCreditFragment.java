@@ -283,7 +283,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         final ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(adapter);
         //TODO: ActionLog
-        final Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_credit_bank), null, listView, null, null, null);
+        final Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_credit_bank), listView);
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
@@ -303,9 +303,9 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         }
         
         if (mValidityDialog == null) {
-            mValidityDialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_credit_validity), null, mValidityListView, null, null, null);
+            mValidityDialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_credit_validity), mValidityListView);
             mValidityDialog.setCancelable(true);
-            mValidityDialog.setCanceledOnTouchOutside(false);
+            mValidityDialog.setCanceledOnTouchOutside(true);
         }else if(mValidityDialog.isShowing() == false){
             mValidityDialog.show();
         }
@@ -319,7 +319,7 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         final ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(adapter);
         //TODO: ActionLog
-        final Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_cert_type), null, listView, null, null, null);
+        final Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_cert_type), listView);
         listView.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){

@@ -461,11 +461,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mActionLog.addAction(mActionTag+ActionLog.HotelPickLocationAlternative);
         final Dialog dialog = Utility.showNormalDialog(mSphinx,
                 mSphinx.getString(R.string.hotel_please_select_location),
-                null,
-                listView,
-                null,
-                null,
-                null);
+                listView);
         
         listView.setOnItemClickListener(new OnItemClickListener() {
 

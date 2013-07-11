@@ -541,11 +541,7 @@ public class TrafficQueryEventHelper {
 		    listView.setAdapter(adapter);
             final Dialog dialog = Utility.showNormalDialog(mQueryFragment.mSphinx,
                     title,
-                    null,
-                    listView,
-                    null,
-                    null,
-                    null);
+                    listView);
             
             dialog.setCancelable(true);
             listView.setOnItemClickListener(new OnItemClickListener() {

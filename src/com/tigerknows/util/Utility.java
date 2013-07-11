@@ -993,11 +993,7 @@ public class Utility {
             
             final Dialog dialog = showNormalDialog(activity,
                     activity.getString(R.string.call_telephone),
-                    null,
-                    listView,
-                    null,
-                    null,
-                    null);
+                    listView);
             
             listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -1027,11 +1023,7 @@ public class Utility {
         
         final Dialog dialog = Utility.showNormalDialog(sphinx, 
                 sphinx.getString(R.string.come_here), 
-                null,
-                listView,
-                null,
-                null,
-                null);
+                listView);
         
         ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere);
         listView.setOnItemClickListener(new OnItemClickListener() {
