@@ -169,15 +169,6 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mTelephoneEdt.setText(mLastAreaCode);
         mTelephoneEdt.setSelection(mLastAreaCode.length());
         
-        Intent intent = getIntent();
-        if (intent != null) {
-            String intputText = intent.getStringExtra(EXTRA_INPUT_TEXT);
-            if (intputText != null) {
-                mNameEdt.setText(intputText);
-                mNameEdt.setSelection(intputText.length());
-            }
-        }
-        
         mImageView.setVisibility(View.GONE);
         mDeletePhotoBtn.setVisibility(View.GONE);
 
@@ -205,6 +196,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         
         DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo().getId(), mThis);
         FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
+        Filter categoryFitler = null;
         if (filterCategory != null) {
             List<FilterOption> filterOptionList = new ArrayList<DataQuery.FilterOption>();
             List<FilterOption> online = filterCategory.getCategoryFilterOption();
@@ -223,7 +215,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             // 每个分类下面添加其他
             String otherText = getString(R.string.poi_ohter_error);
             
-            Filter categoryFitler = DataQuery.makeFilterResponse(mThis, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
+            categoryFitler = DataQuery.makeFilterResponse(mThis, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
             Filter other = categoryFitler.getChidrenFilterList().remove(0);
             other.getFilterOption().setName(otherText);
             
@@ -248,6 +240,39 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             mFilterList = new ArrayList<Filter>();
             mFilterList.add(categoryFitler);
             mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+        }
+        
+        Intent intent = getIntent();
+        if (intent != null) {
+            String intputText = intent.getStringExtra(EXTRA_INPUT_TEXT);
+            if (intputText != null) {
+                intputText = intputText.trim();
+                if (categoryFitler != null) {
+                    List<Filter> list = categoryFitler.getChidrenFilterList();
+                    for(int i = 0, size = list.size(); i < size; i++) {
+                        Filter filter = list.get(i);
+                        List<Filter> chidrenList = filter.getChidrenFilterList();
+                        for(int j = 0, s = chidrenList.size(); j < s; j++) {
+                            if (chidrenList.get(j).getFilterOption().getName().equals(intputText)) {
+                                intputText = null;
+                                break;
+                            }
+                        }
+                        
+                        if (filter.getFilterOption().getName().equals(intputText)) {
+                            intputText = null;
+                        }
+                        
+                        if (intputText == null) {
+                            break;
+                        }
+                    }
+                }
+                if (TextUtils.isEmpty(intputText) == false) {
+                    mNameEdt.setText(intputText);
+                    mNameEdt.setSelection(intputText.length());
+                }
+            }
         }
     }
     
