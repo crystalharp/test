@@ -252,7 +252,7 @@
     <string name="come_here">到这里去</string>
     <string name="detail">详情</string>
     <string name="comment">点评</string>
-    <string name="address">地址：</string>   
+    <string name="address_colon">地址：</string>   
     <string name="name_">名称：</string>   
     <string name="source_">来源：%1$s</string> 
     <string name="reserve_tel">预定电话：</string> 
@@ -838,6 +838,7 @@
     <string name="discover_no_support_tip">%1$s市暂无发现内容\n去搜索频道逛逛吧！</string>
     
     <string name="add_merchant">添加商户</string>
+    <string name="address">地址</string>
     <string name="need_star">*</string>
     <string name="merchant_name">商户名称</string>
     <string name="merchant_type">商户类型</string>
