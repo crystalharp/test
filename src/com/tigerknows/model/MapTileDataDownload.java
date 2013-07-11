@@ -11,8 +11,8 @@ import android.content.Context;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.maps.TileDownload;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.TileDownload;
 import com.tigerknows.model.response.Appendix;
 import com.tigerknows.model.response.DataPackage;
 import com.tigerknows.model.response.ResponseCode;

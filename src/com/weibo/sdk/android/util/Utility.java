@@ -110,7 +110,7 @@ public class Utility {
 		alertBuilder.create().show();
 	}
 
-	private static boolean isBundleEmpty(WeiboParameters bundle) {
+	public static boolean isBundleEmpty(WeiboParameters bundle) {
 		if (bundle == null || bundle.size() == 0) {
 			return true;
 		}

@@ -9,8 +9,8 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.maps.MapEngine.CityInfo;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.FeedbackUpload;
@@ -26,7 +26,7 @@ import com.tigerknows.provider.LocationTable;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.radar.RadarReceiver;
 import com.tigerknows.radar.TKNotificationManager;
-import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.Utility;
 
 import android.app.Service;
 import android.content.Context;
@@ -171,8 +171,9 @@ public class PullService extends Service {
                     LogWrapper.d(TAG, criteria.toString());
                     dataQuery.setup(criteria, currentCityInfo.getId());
                     dataQuery.query();
-                    PullMessage pullMessage = dataQuery.getPullMessage();
-                    if (pullMessage != null && pullMessage.getResponseCode() == 200) {
+                    Response response = dataQuery.getResponse();
+                    if (response != null && response.getResponseCode() == 200 && response instanceof PullMessage) {
+                        PullMessage pullMessage = (PullMessage) response;
                         fail = 0;
                         next = processPullMessage(context, pullMessage, requestCal);
                     } else {
@@ -188,104 +189,6 @@ public class PullService extends Service {
                 exitService(next);
             }
         }).start();
-    }
-    
-    /*
-     * 查询是否收集的定位信息，拼接定位信息
-     */
-    public static String queryCollectionLocation(Context context) {
-        StringBuilder data =  new StringBuilder();
-
-        // 从数据库中读取收集的定位信息
-        LocationTable locationTable = new LocationTable(context);
-        HashMap<LocationParameter, Location> map = new HashMap<LocationParameter, Location>();
-        locationTable.read(map, LocationTable.Provider_List_Collection);
-        locationTable.close();
-        LogWrapper.d(TAG, "queryCollectionLocation() size="+map.size());
-        
-        // 遍历收集的定位信息记录
-        Iterator<Map.Entry<LocationParameter, Location>> iter = map.entrySet().iterator();
-        while (iter.hasNext()) {
-            Map.Entry<LocationParameter, Location> entry = (Map.Entry<LocationParameter, Location>)iter.next();
-            LocationParameter key = entry.getKey();
-            Location value = entry.getValue();
-            if (value != null) {
-                int mcc = key.mcc;
-                int mnc = key.mnc;
-                
-                TKCellLocation tkCellLocation = key.tkCellLocation;
-                int lac = tkCellLocation.lac;
-                int cid = tkCellLocation.cid;
-                
-                if (data.length() > 0) {
-                    data.append("|");
-                }
-                
-                data.append(key.time);
-                data.append(",");
-                data.append(CommonUtils.doubleKeep(value.getLatitude(), 6));
-                data.append(",");
-                data.append(CommonUtils.doubleKeep(value.getLongitude(), 6));
-                data.append(",");
-                data.append(value.getAccuracy());
-                data.append(","); 
-                
-                // 基站
-                if (CommonUtils.mccMncLacCidValid(mcc, mnc, lac, cid)) {
-                    data.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
-                    data.append("@");
-                    data.append(CommonUtils.asu2dbm(tkCellLocation.signalStrength));
-                }
-                
-                // wifi队列
-                List<TKScanResult> scanResultList = key.wifiList;
-                for (int i = 0, size = scanResultList.size(); i < size; i++) {
-                    data.append(";");
-                    TKScanResult scanResult = scanResultList.get(i);
-                    String bssid = scanResult.BSSID;
-                    data.append(bssid);
-                    data.append("@");
-                    data.append(scanResult.level);
-                }
-
-                // 邻近基站队列
-                List<TKNeighboringCellInfo> neighboringCellInfoList = key.neighboringCellInfoList;
-                for (int i = 0, size = neighboringCellInfoList.size(); i < size; i++) {
-                    TKNeighboringCellInfo neighboringCellInfo = neighboringCellInfoList.get(i);
-                    lac = neighboringCellInfo.lac;
-                    cid = neighboringCellInfo.cid;
-                    if (CommonUtils.lacCidValid(lac, cid)) {
-                        data.append(";");
-                        data.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
-                        data.append("@");
-                        data.append(CommonUtils.asu2dbm(neighboringCellInfo.rssi));
-                    }
-                }
-            }
-        }
-
-        return data.toString();
-    }
-    
-    /*
-     * 上传收集的定位数据到服务器，如果上传成功则清空之前收集的定位信息
-     */
-    void uploadLocationData(Context context, String data) {
-        // 上传收集的定位数据到服务器
-        FeedbackUpload feedbackUpload = new FeedbackUpload(context);
-        
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(FeedbackUpload.SERVER_PARAMETER_LOCATION, data);
-        feedbackUpload.setup(criteria);
-        feedbackUpload.query();
-        
-        Response response = feedbackUpload.getResponse();
-        // 如果上传成功，则将之前收集的定位信息全部清空
-        if (response != null && response.getResponseCode() == Response.RESPONSE_CODE_OK) {
-            LocationTable locationTable = new LocationTable(context);
-            locationTable.clear(LocationTable.Provider_List_Collection);
-            locationTable.close();
-        }
     }
 
     public Calendar processPullMessage(Context context, PullMessage pullMessage, Calendar requestCal) {

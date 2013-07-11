@@ -121,4 +121,12 @@
         <attr name="imeOptions" />
         <attr name="height" format="dimension" />
     </declare-styleable>
+    
+    <declare-styleable name="hotelDateWidget">
+        <attr name="checkin" format="string" />
+    </declare-styleable>
+    
+    <declare-styleable name="hotelNavigationWidget">
+        <attr name="navigationState" format="integer" min="0" />
+    </declare-styleable>
 </resources>

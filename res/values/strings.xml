@@ -18,11 +18,8 @@
     <string name="send_weibo">发微博</string>
     <string name="quit">退出</string>
     <string name="clean_history_message">你要清除所有记录？</string>
-    <string name="location_failed_and_jump_settings">定位失败，请确认是否开启了‘设置>位置’中的GPS功能。</string>
+    <string name="location_failed_and_jump_settings">为了提高定位精度，请确认是否开启了‘设置>位置’中的GPS功能。</string>
     <string name="location_failed_and_change_city">定位失败，无法找到所在城市，是否直接选择城市？</string>
-    <string name="location_failed_cause">定位失败，请参见下面建议：</string>
-    <string name="location_failed_gps">%1$s、启用GPS，并到户外开阔的地方。</string>
-    <string name="location_failed_network">%1$s、启用Wifi或移动网络。</string>
     <string name="location_doing">正在定位…</string>
 
     <string name="yuan">%1$d元</string>
@@ -243,7 +240,7 @@
     <string name="my_location_failure">无法获取当前位置</string>
     <string name="select_has_point">选定的位置</string>
 
-    <string name="no_result">找不到你要的结果！</string>
+    <string name="no_result">&#8194;找不到你要的结果！</string>
 
     <string name="confirm_start_station">你要找的起点是</string>
     <string name="confirm_end_station">你要找的终点是</string>
@@ -277,8 +274,9 @@
     <string name="location_success">当前位置-精确到%1$s</string>
     <string name="mapview_start_click">点击即可选择该点</string>
     
-    <!-- 328路 \u2192 239路 -->
+    <!-- \u2192为一个箭头符号，这个用于交通方案的路线换乘表示。328路 \u2192 239路 -->
     <string name="traffic_transfer_arrow">\u0020\u2192\u0020</string>
+    <!-- 大括号{}用于高亮标记 -->
     <string name="traffic_at_where_walk_how">从{%1$s}步行约%2$s米</string>
     <string name="traffic_at_where_walk_to_where">从{%1$s}步行到{%2$s}</string>
     <string name="traffic_at_where_walk_how_to_where">从{%1$s}步行约%2$s米到{%3$s}</string>
@@ -611,14 +609,17 @@
 	
 	<!-- User InputError Tip Start -->
     <string name="phone_empty_tip">请输入手机号</string>
+    <string name="new_phone_empty_tip">请输入新手机号</string>
     <string name="code_empty_tip">请输入验证码</string>
     <string name="password_empty_tip">请输入密码</string>
     <string name="re_password_empty_tip">请再次输入密码</string>
-    <string name="old_password_empty_tip">请输入原密码</string>
+    <string name="old_password_empty_tip">请输入旧密码</string>
+    <string name="prev_password_empty_tip">请输入原密码</string>
     <string name="new_password_empty_tip">请输入新密码</string>
     <string name="name_empty_tip">请输入昵称</string>
     <string name="phone_format_error_tip">手机号格式不正确, 请重新输入11位手机号</string>
     <string name="password_format_error_tip">密码必须由6-16位数字或字母组成, 区分大小写</string>
+    <string name="prev_password_format_error_tip">原始密码有误, 请重新输入</string>
     <string name="password_union_error_tip">密码输入不一致, 请重新输入</string>
     <string name="name_format_error_tip">昵称格式错误, 请重新输入</string>
 	<!-- User InputError Tip End -->
@@ -890,7 +891,12 @@
     <string name="response_code_601">你确定覆盖之前的点评吗？</string>
     <string name="response_code_602">抱歉，该点评不存在。</string>
     <string name="response_code_603">抱歉，该地址不存在或已失效。</string>
+    <string name="response_code_702">目前暂时无法提供酒店预订功能</string>
+    <string name="response_code_703">所选城市暂不提供酒店预订服务</string>
     <string name="response_code_801">创建订单失败，请重试。</string>
+    <string name="response_code_821">网络状态不好，请稍候重试。</string>
+    <string name="response_code_823">用户身份证与姓名不匹配。</string>
+    <string name="response_code_831">取消失败。</string>
     
     <string name="response_code_410_pulled">抱歉,原信息已过期\n欢迎发现更多身边的精彩!</string>
     
@@ -944,4 +950,158 @@
 	
 	<string name="play_dianying">在映电影</string>
 	<string name="more_dianying">更多电影</string>
+
+<!-- Hotel Reservation Start -->
+    
+    <string name="hotel_btn_book">预订</string>
+    <string name="hotel_btn_sold_out">售完</string>
+    <string name="hotel_description">酒店简介</string>
+    <string name="hotel_expand_roomtype">展开全部房型</string>
+    <string name="hotel_no_roomtype">暂无房型信息</string>
+    <string name="pictures">%1$s张</string>
+    <string name="fold">收起</string>
+    <string name="hotel_no_room_left">该房型已经订满，建议换个房型吧！</string>
+    <string name="hotel_click_to_reload">网络状况不好,点击此处重新加载</string>
+    <string name="summary">简介</string>
+    <string name="hotel_room_title">订单填写</string>
+    <string name="hotel_room_howmany">房间数</string>
+    <string name="hotel_room_reserve">房间保留到</string>
+    <string name="hotel_room_person_name">入&#8194;住&#8194;人：</string>
+    <string name="hotel_room_person_name_hint">入住人的姓名</string>
+    <string name="hotel_room_mobile_nubmer">手&#8194;机&#8194;号：</string>
+    <string name="hotel_room_mobile_nubmer_hint">用于订单确认</string>
+    <string name="hotel_room_idcard">身份证号：</string>
+    <string name="hotel_room_idcard_hint">输入身份证号</string>
+    <string name="hotel_mobile_format">请正确输入手机号，手机号为1开头的11位数字</string>
+    <string name="submit_order">提交订单</string>
+    <string name="hotel_room_date">入住：%1$d月%2$d日&#8195;离店：%3$d月%4$d日</string>
+    <string name="hotel_room_credit_note">因酒店房间紧张，需信用卡担保，以便保留房间</string>
+    <string name="hotel_room_person_empty_tip">请填写入住人</string>
+    <string name="hotel_room_mobile_empty_tip">请填写手机号</string>
+    <string name="hotel_room_idcard_empty_tip">请填写身份证号</string>
+    <string name="choose_room_howmany">选择房间数</string>
+    <string name="room_howmany_item">%1$d间/%2$s元</string>
+    <string name="choose_room_reserve">房间保留到</string>
+    
+    <string name="hotel_service_title">酒店服务</string>
+    <string name="hotel_room_description_title">房间设施</string>
+    <string name="hotel_description_title">酒店介绍</string>
+    <string name="hotel_no_summary">暂无简介</string>
+    
+    <string name="hotel_person_name_format">姓名只能输入英文和汉字</string>
+    <string name="hotel_certcard_number_format">证件号码格式不正确</string>
+    <string name="credit_code_format">卡号格式不正确，请重新输入</string>
+    <string name="credit_verify_format">验证码格式不正确，请重新输入3位验证码</string>
+    <string name="hotel_idcard_code_format">输入的身份证号码格式不正确</string>
+
+    <string name="credit_assure_title">信用卡担保信息</string>
+    <string name="credit_bank">发卡银行：</string>
+    <string name="credit_bank_hint">选择银行</string>
+    <string name="credit_code">卡　　号：</string>
+    <string name="credit_code_hint">输入卡号</string>
+    <string name="credit_owner">持&#8194;卡&#8194;人：</string>
+    <string name="credit_owner_hint">输入姓名</string>
+    <string name="credit_verify_number">验&#8194;证&#8194;码：</string>
+    <string name="credit_verify_number_hint">输入信用卡背后三位数</string>
+    <string name="credit_validity">有&#8194;效&#8194;期：</string>
+    <string name="credit_validity_hint">选择有效期</string>
+    <string name="credit_cert_type">证件类型：</string>
+    <string name="credit_cert_code">证件号码：</string>
+    <string name="credit_cert_code_hint">输入号码</string>
+    <string name="credit_assure_pricetitle">担保价格：</string>
+    <string name="credit_assure_price">%1$s元</string>
+    <string name="credit_note">信用担保说明</string>
+    <string name="credit_note_detail">本订单您可以在%1$s之前取消，如果您到时候没有入住，将按照担保金额扣除房费。请在填写担保前慎重考虑您是否可能会修改行程，以免造成不必要的损失。</string>
+    <string name="credit_note_detail_2">本订单您%1$s，如果您到时候没有入住，将按照担保金额扣除房费。请在填写担保前慎重考虑您是否可能会修改行程，以免造成不必要的损失。</string>
+    <string name="credit_cannot_cancel">预定后无法取消</string>
+    <string name="credit_confirm">确认无误，提交</string>
+    <string name="choose_credit_bank">选择银行</string>
+    <string name="choose_credit_validity">选择信用卡有效期</string>
+    <string name="choose_cert_type">选择证件类型</string>
+    <string name="credit_bank_empty_tip">请填写发卡银行</string>
+    <string name="credit_code_empty_tip">请输入卡号</string>
+    <string name="credit_owner_empty_tip">请输入持卡人姓名</string>
+    <string name="credit_verify_empty_tip">请输入信用卡验证码</string>
+    <string name="credit_validity_empty_tip">请选择信用卡有效期</string>
+    <string name="credit_cert_type_empty_tip">请选择证件类型</string>
+    <string name="credit_cert_code_empty_tip">请输入证件号码</string>
+    
+    <string name="seveninn_regist_title">注册7天会员</string>
+    <string name="seveninn_note">发现您的手机号%1$s非7天会员号，如继续预定需要准确填写以下信息进行验证，该号码会自动注册为7天会员手机号。</string>
+    <string name="seveninn_person_name">入住姓名：</string>
+    <string name="seveninn_person_name_hint">输入姓名</string>
+    <string name="seveninn_mobile_number">手&#8194;机&#8194;号：</string>
+    <string name="seveninn_mobile_number_hint">输入手机号</string>
+    <string name="seveninn_idcard_code">身份证号：</string>
+    <string name="seveninn_idcard_code_hint">输入身份证号</string>
+    <string name="seveninn_regist_confirm">注册7天会员</string>
+    <string name="seveninn_idcard_code_empty_error">请填写身份证号</string>
+    
+    <string name="order_submit_success">订单提交成功</string>
+    
+    <string name="hotel_checkin">入住：</string>
+    <string name="hotel_checkout">离店：</string>
+    <string name="hotel_total_nights">共%1$d晚</string>
+    <string name="hotel_ordered">已订酒店</string>
+    <string name="hotel_order_detail">订单详情</string>
+    
+    <string name="issue_comment">发表点评</string>
+    <string name="order_again">再订一单</string>
+    <string name="delete_order">删除订单</string>
+    
+    <string name="choose_hotel">选择酒店</string>
+    <string name="choose_room_type">选择房型</string>
+    <string name="fill_order">填写订单</string>
+    <string name="reserve_success">预订成功</string>
+
+    <string name="hotel_order_id">订&#160;&#160;单&#160;&#160;号：</string>
+    <string name="hotel_order_state">订单状态：</string>
+    <string name="hotel_order_time">预订时间：</string>
+    <string name="hotel_order_gross">预订总额：</string>
+    <string name="hotel_pay_type">付款方式：</string>
+    <string name="checkin_date">入住日期：</string>
+    <string name="checkout_date">离店日期：</string>
+    <string name="retention_date">保留日期：</string>
+    <string name="room_type">入住房型：</string>
+    <string name="checkin_person">入&#160;&#160;住&#160;&#160;人：</string>
+    
+    <string name="order_state_processing">处理中</string>
+    <string name="order_state_success">预订成功</string>
+    <string name="order_state_canceled">已取消</string>
+    <string name="order_state_post_due">已过期</string>
+    <string name="order_state_checked_in">已入住</string>
+    
+    <string name="hotel_order_default_pay_type">前台自付</string>
+    <string name="cancel_order">取消订单</string>
+    
+    <string name="simple_month_day_format">M月d日</string>
+    <string name="simple_day_format">d日</string>
+    <string name="simple_month_format">M月</string>
+    
+    <string name="no_order">暂无订单\n&#8194;快去预订酒店吧！</string>
+    
+    <string name="hotel_order_cancel_confirm">是否取消订单？\n取消后本次预订将失效</string>
+    <string name="hotel_order_cancel_failed">订单取消失败</string>
+    <string name="hotel_order_cancel_success">订单取消成功</string>
+    
+    <string name="hotel_order_delete_confirm">是否删除订单？\n删除后订单不再显示，且订单状态不变。</string>
+    <string name="hotel_order_delete_success">删除订单成功</string>
+    <string name="hotel_order_delete_fail">删除订单失败</string>
+    
+    <string name="select_city">选择城市</string>
+    <string name="can_not_found_target_location">找不到目标位置</string>
+    <string name="can_not_found_result_and_retry">找不到你要的结果\n建议更改条件试试</string>
+    <string name="other_hotel">其他酒店</string>
+    <string name="hotel_picture_title">酒店图片（%1$d张）</string>
+    <string name="hotel_reserve">酒店预订</string>
+    <string name="hotel_select_location">选择位置</string>
+    <string name="hotel_please_select_location">请选择位置</string>
+    <string name="hotel_not_limit">不限</string>
+    <string name="hotel_query">查找酒店</string>
+    <string name="hotel_category_title">星级/品牌/价格</string>
+    <string name="hotel_checkin_">入住</string>
+    <string name="hotel_checkout_">离店</string>
+    <string name="night">晚</string>
+    <string name="can_not_reserve">订满</string>
+    <string name="hotel_hot_line">400-666-1166</string>
 </resources>

@@ -20,7 +20,7 @@
 	        android:orientation="vertical"
 	        android:padding="8dp" >
 		    
-	        <com.tigerknows.view.user.ExtValidationEditText
+	        <com.tigerknows.ui.user.ExtValidationEditText
 		        android:id="@+id/phone_edt"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
 	            android:background="@drawable/list_single_normal"
 		        flag="0"
 		        validateType="phone"
-		        emptyErrorTip="@string/phone_empty_tip"
+		        emptyErrorTip="@string/new_phone_empty_tip"
 		        formatErrorTip="@string/phone_format_error_tip" />
 		        
 		    <RelativeLayout 
@@ -42,7 +42,7 @@
 		        android:layout_height="wrap_content"
 		        android:layout_marginTop="8dp" >
 		        
-		        <com.tigerknows.view.user.CountDownButton
+		        <com.tigerknows.ui.user.CountDownButton
 			        android:id="@+id/vali_num_btn"
 			        android:layout_width="wrap_content"
 			        android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
 			        android:textSize="16sp"
 			        android:textColor="@color/black"
 			        android:background="@drawable/btn_valicode" />
-		        <com.tigerknows.view.user.ExtValidationEditText
+		        <com.tigerknows.ui.user.ExtValidationEditText
 			        android:id="@+id/vali_num_edt"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
@@ -73,7 +73,7 @@
 			        emptyErrorTip="@string/code_empty_tip" />
 		    </RelativeLayout>
 		    
-		    <com.tigerknows.view.user.ExtValidationEditText
+		    <com.tigerknows.ui.user.ExtValidationEditText
 		        android:id="@+id/password_edt"
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
@@ -83,12 +83,13 @@
 		        android:singleLine="true"
 		        android:ellipsize="end"
 		        android:textSize="18sp"
+		        android:maxLength="16"
 		        android:hint="@string/please_input_old_password"
 		        android:background="@drawable/list_single_normal"
 		        flag="2"
 		        validateType="password"
 		        formatErrorTip="@string/password_format_error_tip"
-		        emptyErrorTip="@string/password_empty_tip" />
+		        emptyErrorTip="@string/old_password_empty_tip" />
 		    
 		    <Button
 		        android:id="@+id/confirm_btn"

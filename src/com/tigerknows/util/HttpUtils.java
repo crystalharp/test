@@ -5,12 +5,12 @@
 package com.tigerknows.util;
 
 import com.decarta.android.util.LogWrapper;
-import com.tigerknows.ActionLog;
 import com.tigerknows.TKConfig;
-import com.tigerknows.net.Utility;
+import com.tigerknows.common.ActionLog;
+import com.tigerknows.crypto.DataEncryptor;
+import com.tigerknows.model.test.BaseQueryTest;
 import com.weibo.sdk.android.WeiboParameters;
 
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpResponse;
@@ -22,11 +22,17 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnDismissListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.http.AndroidHttpClient;
 import android.text.TextUtils;
+import android.view.ViewGroup;
+import android.widget.ScrollView;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -55,7 +61,7 @@ public class HttpUtils {
     public static final String TK_SERVICE_TYPE = "tkServiceType";
     
     /** Tigerknows服务器接口定义的用于s的v13的Header */
-    public static final String TK_SERVICE_TYPE_VALUE = "blade";
+    public static final String TK_SERVICE_TYPE_VALUE = "lakers";
     
     private static final String PARAMETER_SEPARATOR = "&";
     private static final String NAME_VALUE_SEPARATOR = "=";
@@ -164,6 +170,41 @@ public class HttpUtils {
         }
         
         public void execute(Context context) throws IOException {
+            final Activity activity = BaseQueryTest.getActivity();
+            if (TKConfig.ModifyRequestData && activity != null) {
+                activity.runOnUiThread(new Runnable() {
+                    
+                    @Override
+                    public void run() {
+
+                        ViewGroup viewGroup = BaseQueryTest.getViewByWeiboParameters(activity, parameters);
+                        ScrollView scrollView = new ScrollView(activity);
+                        scrollView.addView(viewGroup);
+                        
+                        Dialog dialog = Utility.showNormalDialog(activity, scrollView);
+                        dialog.setOnDismissListener(new OnDismissListener() {
+                            
+                            @Override
+                            public void onDismiss(DialogInterface dialog) {
+                                parameters.remove("test");
+                                parameters.add("test", "test");
+                            }
+                        });
+                    }
+                });
+                while (true) {
+                    try {
+                        Thread.sleep(3000);
+                    } catch (InterruptedException e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
+                    if (parameters.getValue("test") != null) {
+                        break;
+                    }
+                }
+            }
+            
             receivedAllData = false;
             statusCode = 0;
             if (url == null) {
@@ -212,6 +253,7 @@ public class HttpUtils {
                         post.addHeader(CONTENT_TYPE, MULTIPART_FORM_CONTENT_TYPE);
                         postParam = buf.toString();
                         data = postParam.getBytes(TKConfig.getEncoding());
+                        data = ZLibUtils.compress(data);
                         DataEncryptor.getInstance().encrypt(data);
                         
                     } else {
@@ -236,7 +278,7 @@ public class HttpUtils {
                 
                 String proxyHost = android.net.Proxy.getDefaultHost();
                 if (proxyHost != null) {
-                    if (CommonUtils.checkMobileNetwork(context)) {
+                    if (Utility.checkMobileNetwork(context)) {
                         LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", proxyHost="+proxyHost);
                         HttpHost proxy = new HttpHost(android.net.Proxy.getDefaultHost(), android.net.Proxy.getDefaultPort(), "http");
                         String domain = url.replace("http://", "");
@@ -359,7 +401,7 @@ public class HttpUtils {
      * @return
      */
     public static String encodeParameters(WeiboParameters httpParams, String enc) {
-        if (null == httpParams || Utility.isBundleEmpty(httpParams)) {
+        if (null == httpParams || com.weibo.sdk.android.util.Utility.isBundleEmpty(httpParams)) {
             return "";
         }
         StringBuilder buf = new StringBuilder();

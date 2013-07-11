@@ -14,7 +14,7 @@ import com.tigerknows.model.BuslineModel.Station;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.Step;
-import com.tigerknows.share.WeiboSend;
+import com.tigerknows.share.WeiboSendActivity;
 
 public class ShareTextUtil {
 	
@@ -508,7 +508,7 @@ public class ShareTextUtil {
 //            String tail = context.getString(R.string.period) + context.getString(R.string.share_weibo_text_tail);
             String tail = context.getString(R.string.period) + context.getString(R.string.share_from_at_tigerknows) 
             		+ context.getString(R.string.space) + context.getString(R.string.share_tiger_official_website);
-            int remaindCount = WeiboSend.MAX_LEN - (s.length() + tail.length());
+            int remaindCount = WeiboSendActivity.MAX_LEN - (s.length() + tail.length());
             
             // 标题区（按顺序展示 评分 菜系 均价 人气 口味 服务 环境）
             remaindCount = weiboTextAppendDescriptionWithLimit(context, remaindCount, s, R.string.share_poi_pingfen, 
@@ -574,7 +574,7 @@ public class ShareTextUtil {
 //            String tail = context.getString(R.string.period) + context.getString(R.string.share_weibo_text_tail);
             String tail = context.getString(R.string.period) + context.getString(R.string.share_from_at_tigerknows) 
             		+ context.getString(R.string.space) + context.getString(R.string.share_weibo_poi_topic);
-            int remaindCount = WeiboSend.MAX_LEN - (s.length() + tail.length());
+            int remaindCount = WeiboSendActivity.MAX_LEN - (s.length() + tail.length());
             
             // 标题区（按顺序展示 评分 菜系 均价 人气 口味 服务 环境）
             remaindCount = weiboTextAppendDescriptionWithLimit(context, remaindCount, s, R.string.share_poi_pingfen, 
@@ -708,7 +708,7 @@ public class ShareTextUtil {
 	public static String getPlanLength(Context context, int oLength) {
 		String length = "";
         if (oLength > 1000) {
-            length = context.getString(R.string.length_str_km, CommonUtils.meter2kilometre(oLength));
+            length = context.getString(R.string.length_str_km, Utility.meter2kilometre(oLength));
         } else {
         	length = context.getString(R.string.length_str_m, oLength);
         }

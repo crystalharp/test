@@ -1,0 +1,67 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/list_single"
+    android:padding="8dp"
+    >
+
+    <RelativeLayout
+        android:id="@+id/picture_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="8dp"
+        >
+	    <ImageView
+	        android:id="@+id/icon_imv"
+	        android:layout_width="80dp"
+	        android:layout_height="80dp"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentTop="true"
+	        android:background="@drawable/bg_picture_hotel" />
+	    
+	    <TextView 
+	        android:id="@+id/image_num_txv"
+	        android:layout_width="80dp"
+	        android:layout_height="wrap_content"
+	        android:layout_centerHorizontal="true"
+	        android:layout_alignBottom="@id/icon_imv"
+	        android:background="#99000000"
+	        android:textColor="@color/white"
+	        android:textSize="16sp"
+	        android:text="0张"
+	        android:gravity="center"
+	        android:focusable="false"
+	        android:maxLines="6"
+	        />
+    </RelativeLayout>
+    
+    <LinearLayout
+        android:id="@+id/hotel_summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/picture_view"
+        android:paddingBottom="2dp"
+        android:orientation="vertical"
+        >
+
+	    <TextView
+	        android:id="@+id/summary_title"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentTop="true"
+	        android:textSize="18sp"
+	        android:text="@string/summary" />
+	
+	    <TextView
+	        android:id="@+id/short_summary"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:maxLines="3"
+	        android:ellipsize="end"
+	        android:textSize="14sp"
+	        android:lineSpacingExtra="2sp"
+	        android:text="@string/app_name" />
+	        
+    </LinearLayout>
+    
+</RelativeLayout>

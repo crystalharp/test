@@ -152,6 +152,11 @@ public class XMap extends XObject {
         return sb.toString();
     }
     
+    public List<Byte> getKeyList() {
+        List<Byte> keyList = new ArrayList<Byte>(objects.keySet()); 
+        return keyList;
+    }
+    
     public boolean equals(Object object) {
         if (this == object) {
             return true;

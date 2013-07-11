@@ -1,9 +1,9 @@
 package com.tigerknows.radar;
 
 import com.decarta.android.util.LogWrapper;
-import com.tigerknows.Setting;
 import com.tigerknows.TKConfig;
 import com.tigerknows.service.PullService;
+import com.tigerknows.ui.more.SettingActivity;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -20,7 +20,7 @@ public class RadarReceiver extends BroadcastReceiver{
     public void onReceive(Context context, Intent intent) {
 
         LogWrapper.d(TAG, "onReceive() " + intent);
-        if (Setting.radarOn(context)) {
+        if (SettingActivity.radarOn(context)) {
             Intent service = new Intent(context, PullService.class);
             context.startService(service);
         }

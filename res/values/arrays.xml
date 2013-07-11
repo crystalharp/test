@@ -217,4 +217,39 @@
         <item>其他分类</item>
     </string-array>
     
+    <string-array name="days">
+        <item>今天</item>
+        <item>明天</item>
+        <item>后天</item>
+    </string-array>
+    
+    <string-array name="week_days">
+        <item>周日</item>
+        <item>周一</item>
+        <item>周二</item>
+        <item>周三</item>
+        <item>周四</item>
+        <item>周五</item>
+        <item>周六</item>
+    </string-array>
+    
+    <string-array name="cert_type">
+        <item>身份证</item>
+        <item>护照</item>
+        <item>其他</item>
+    </string-array>
+    
+    <string-array name="preset_filter_area">
+        <item>全部区域</item>
+        <item>指定地点</item>
+        <item>附近500米</item>
+        <item>附近1000米</item>
+        <item>附近2000米</item>
+        <item>附近5000米</item>
+        <item>我的当前位置</item>
+        <item>附近500米</item>
+        <item>附近1000米</item>
+        <item>附近2000米</item>
+        <item>附近5000米</item>
+    </string-array>
 </resources>

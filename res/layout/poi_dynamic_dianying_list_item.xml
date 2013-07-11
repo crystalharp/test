@@ -6,7 +6,7 @@
     android:orientation="vertical">
 	<include 
 	    android:id="@+id/body_view"
-	    layout="@layout/dianying_list_item"
+	    layout="@layout/discover_dianying_list_item"
 	    android:layout_height="wrap_content" 
 	    android:layout_width="fill_parent"/>
 	    

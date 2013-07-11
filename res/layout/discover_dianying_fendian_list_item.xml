@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:gravity="center_horizontal|top"
+    android:padding="8dp"
+    >
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/discover_tuangou_fendian_list_item"
+        android:id="@+id/tuangou_fendian_list_item"
+        />
+
+    <ImageView android:id="@+id/divider_imv"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_line_split"
+        />
+    
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:background="@drawable/list_footer"
+        android:orientation="vertical"
+        >
+
+        <ImageView android:id="@+id/show_time_divider_imv"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_line_split"
+            />
+               
+        <RelativeLayout android:id="@+id/show_time_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            >
+            
+            <Button
+                android:id="@+id/after_tomorrow_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="40dp"
+                android:gravity="left"
+                android:textColor="@color/bright_foreground_light"
+                android:textSize="16sp"
+                android:background="@drawable/btn_after_tomorrow_normal"
+                />
+            <Button
+                android:id="@+id/tomorrow_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="left"
+                android:textColor="@color/bright_foreground_light"
+                android:textSize="16sp"
+                android:background="@drawable/btn_tomorrow_normal"
+                />
+            <Button
+                android:id="@+id/today_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_alignParentLeft="true"
+                android:gravity="left"
+                android:textColor="@android:color/background_dark"
+                android:textSize="16sp"
+                android:background="@drawable/btn_today_normal"
+                />
+        </RelativeLayout>
+
+        <LinearLayout android:id="@+id/changci_list_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/show_time_view"
+            android:paddingTop="2dp"
+            android:paddingLeft="8dp"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            />
+
+        <LinearLayout android:id="@+id/no_time_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/show_time_view"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="8dp"
+            android:visibility="gone"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="left|center_vertical"
+                android:text="@string/dianying_detail_no_changci"
+                android:textColor="@color/bright_foreground_light"
+                android:textSize="14sp"
+                />
+        </LinearLayout>
+    </RelativeLayout>
+
+</LinearLayout>

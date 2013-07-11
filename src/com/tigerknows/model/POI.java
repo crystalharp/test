@@ -19,7 +19,6 @@ import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.SqliteWrapper;
-import com.tigerknows.view.user.User;
 
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -292,9 +291,20 @@ public class POI extends BaseData {
     // 0x16 x_map  最近的一条点评 
     public static final byte FIELD_LAST_COMMENT = 0x16;
     
+    // 0x17    x_string    价格描述，格式为"960元" 
+    public static final byte FIELD_PRICE = 0x17;
+    
     public static class DynamicPOI extends XMapData {
+        
         // 0x01 x_int 动态poi的类型
         public static final byte FIELD_TYPE = 0x01;
+        // 当key 0x01 = 2，POI附加信息数据类型为团购，附加信息1为团购uid，附加信息2为摘要信息，附加信息3为分店的uid
+        // 当key 0x01 = 13，POI附加信息数据类型为演出，附加信息1为演出uid，其他字段无用
+        // 当key 0x01 = 14，POI附加信息数据类型为展览，附加信息1为展览uid，其他字段无用
+        // 当key 0x01 = 4, POI附加信息数据类型为电影，附加信息1为电影uid，附加信息2为摘要信息，附加信息3为影讯的uid，附加信息4为影片海报url，附加信息5为影片评分，附加信息6为影片星级，附加信息7为影片时长
+        
+        // 当key 0x01 = 65537, POI附加信息数据类型为酒店POI，其他字段无用
+        public static final String TYPE_HOTEL = "65537";
         
         // 0x02 x_string    主动态poi的uid，masterUid
         public static final byte FIELD_MASTER_UID = 0x02;
@@ -313,21 +323,10 @@ public class POI extends BaseData {
         public DynamicPOI(XMap data) throws APIException {
             super(data);
             
-            if (data.containsKey(FIELD_TYPE)) {
-                type = data.getInt(FIELD_TYPE);
-            }
-            
-            if (data.containsKey(FIELD_MASTER_UID)) {
-                masterUid = data.getString(FIELD_MASTER_UID);
-            }
-            
-            if (data.containsKey(FIELD_SUMMARY)) {
-                summary = data.getString(FIELD_SUMMARY);
-            }
-            
-            if (data.containsKey(FIELD_SLAVE_UID)) {
-                slaveUid = data.getString(FIELD_SLAVE_UID);
-            }
+            type = getLongFromData(FIELD_TYPE);
+            masterUid = getStringFromData(FIELD_MASTER_UID);
+            summary = getStringFromData(FIELD_SUMMARY);
+            slaveUid = getStringFromData(FIELD_SLAVE_UID);
         }
 
         public String getType() {
@@ -345,7 +344,14 @@ public class POI extends BaseData {
         public String getSlaveUid() {
             return slaveUid;
         }
-        
+
+        public static XMapInitializer<DynamicPOI> Initializer = new XMapInitializer<DynamicPOI>() {
+
+            @Override
+            public DynamicPOI init(XMap data) throws APIException {
+                return new DynamicPOI(data);
+            }
+        };
     }
     
     // 0x14 x_int   status，> 0 代表poi有效，< 0 代表poi当前已失效， == 0 保留
@@ -397,11 +403,11 @@ public class POI extends BaseData {
 
     public static final int FROM_LOCAL = 1;
     
-    public static final String NEED_FILELD = "0102030405060708090a0b1213141516";
+    public static final String NEED_FILELD = "0102030405060708090a0b121314151617";
     
     private String uuid;
     
-    private int type;
+    private long type;
     
     private Position position = null;
 
@@ -427,7 +433,7 @@ public class POI extends BaseData {
     
     private long status = STATUS_NONE;
     
-    private List<DynamicPOI> dynamicPOIList = new ArrayList<DynamicPOI>();
+    private List<DynamicPOI> dynamicPOIList;
     
     private List<Dianying> dynamicDianyingList;
     
@@ -437,14 +443,20 @@ public class POI extends BaseData {
     
     private int sourceType = 0;
     
-    private int grade;
+    private long grade;
     
     private int from = FROM_ONLINE;
     
     // 菜系
     private String cookingStyle;
     
-    private int perCapity = -1;
+    private long perCapity = -1;
+    
+    private String price;
+    
+    public String getPrice() {
+        return this.price;
+    }
     
     private String recommendCook;
     
@@ -470,10 +482,12 @@ public class POI extends BaseData {
     
     public int ciytId = 0;
     
+    private Hotel hotel = new Hotel();
+    
     public void updateData(Context context, XMap data) {
         try {
             BaseData baseData = checkStore(context, storeType, -1, false);
-            init(data);
+            init(data, false);
             if (baseData != null) {
                 try {
                     ContentValues values = new ContentValues();
@@ -487,8 +501,8 @@ public class POI extends BaseData {
             } else {
                 writeToDatabases(context, -1, com.tigerknows.provider.Tigerknows.STORE_TYPE_HISTORY);
             }
-        } catch (APIException e) {
-            e.printStackTrace();
+        } catch (APIException e1) {
+            e1.printStackTrace();
         }
     }
     
@@ -530,25 +544,13 @@ public class POI extends BaseData {
 
     public void setMyComment(Comment myComment) {
         this.myComment = myComment;
-        this.attribute = Comment.isAuthorMe(myComment);
-        XMap data = getData();
-        if (data != null) {
-            data.put(FIELD_ATTRIBUTE, this.attribute);
-        }
+        setAttribute(Comment.isAuthorMe(myComment));
     }
 
     public Comment getLastComment() {
         return this.lastComment;
     }
-    
-    public void setLastComment(Comment lastComment) {
-        this.lastComment = lastComment;
-        XMap data = getData();
-        if (data != null) {
-            data.put(FIELD_LAST_COMMENT, lastComment.getData());
-        }
-    }
-    
+        
     public boolean isOnlyAPOI() {
         return onlyAPOI;
     }
@@ -579,14 +581,11 @@ public class POI extends BaseData {
 
     public void setAddress(String address) {
         this.address = address;
+        getData().put(FIELD_ADDRESS, this.address);
     }
 
     public String getUrl() {
         return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
     }
     
     public void setCommentQuery(DataQuery commentQuery) {
@@ -603,6 +602,7 @@ public class POI extends BaseData {
 
     public void setName(String name) {
         this.name = name;
+        getData().put(FIELD_NAME, this.name);
     }
 
     public String getAlise() {
@@ -619,6 +619,14 @@ public class POI extends BaseData {
 
     public void setPosition(Position position) {
         this.position = position;
+        XMap data = getData();
+        if (this.position != null) {
+            data.put(FIELD_LONGITUDE, (int)(this.position.getLon()*TKConfig.LON_LAT_DIVISOR));
+            data.put(FIELD_LATITUDE, (int)(this.position.getLat()*TKConfig.LON_LAT_DIVISOR));
+        } else {
+            data.remove(FIELD_LONGITUDE);
+            data.remove(FIELD_LATITUDE);
+        }
     }
 
     public String getTelephone() {
@@ -629,11 +637,7 @@ public class POI extends BaseData {
         return description;
     }
 
-    public void setTelephone(String telephone) {
-        this.telephone = telephone;
-    }
-
-    public int getType() {
+    public long getType() {
         return type;
     }
     
@@ -641,7 +645,7 @@ public class POI extends BaseData {
         return toCenterDistance;
     }
     
-    public int getGrade() {
+    public long getGrade() {
         return grade;
     }
     
@@ -649,7 +653,8 @@ public class POI extends BaseData {
         return cookingStyle;
     }
     
-    public int getPerCapity() {
+    
+    public long getPerCapity() {
         return perCapity;
     }
     
@@ -676,20 +681,10 @@ public class POI extends BaseData {
     public String getProduct() {
     	return product;
     }
-    /**
-     * 设置POI类型.如果类型不合法，设为全部类型.
-     * 
-     * @param type
-     */
-    public void setType(int type) {
-        if (type < 0 || type > 19)
-            type = 0;
-
-        this.type = type;
-    }
     
     public void setUUID(String uuid) {
         this.uuid = uuid;
+        getData().put(FIELD_UUID, this.uuid);
     }
     
     public String getUUID() {
@@ -702,6 +697,7 @@ public class POI extends BaseData {
 
     public void setCommentPattern(long commentPattern) {
         this.commentPattern = commentPattern;
+        getData().put(FIELD_COMMENT_PATTERN, this.commentPattern);
     }
 
     public long getAttribute() {
@@ -714,10 +710,12 @@ public class POI extends BaseData {
 
     public void setAttribute(long attribute) {
         this.attribute = attribute;
+        getData().put(FIELD_ATTRIBUTE, this.attribute);
     }
 
     public void setStatus(long status) {
         this.status = status;
+        getData().put(FIELD_STATUS, this.status);
     }
 
     public List<DynamicPOI> getDynamicPOIList() {
@@ -732,42 +730,31 @@ public class POI extends BaseData {
         this.dynamicDianyingList = dynamicDianyingList;
     }
 
+    public Hotel getHotel() {
+        return hotel;
+    }
+
     public POI() {
     }
 
     public POI (XMap data) throws APIException {
         super(data);
-        init(data);
+        init(data, true);
     }
     
     @SuppressWarnings("unchecked")
-    public void init(XMap data) throws APIException {
-        super.init(data);
+    public void init(XMap data, boolean reset) throws APIException {
+        super.init(data, reset);
 
-        if (this.data.containsKey(FIELD_UUID)) {
-            this.uuid = this.data.getString(FIELD_UUID);
-        }
-        if (this.data.containsKey(FIELD_TYPE)) {
-            int type = (int)this.data.getInt(FIELD_TYPE);
-            if (type < 0) {
-                type = 0;
-            } else if (type > 10) {
-                type = 10;
-            }
-            this.type = type;
-        }
-        if (this.data.containsKey(FIELD_LATITUDE) && this.data.containsKey(FIELD_LONGITUDE)) {
-            this.position = new Position(((double)this.data.getInt(FIELD_LATITUDE))/TKConfig.LON_LAT_DIVISOR, ((double)this.data.getInt(FIELD_LONGITUDE))/TKConfig.LON_LAT_DIVISOR);
-        }
-        if (this.data.containsKey(FIELD_NAME)) {
-            this.name = this.data.getString(FIELD_NAME);
-        }
+        this.uuid = getStringFromData(FIELD_UUID, reset ? null : this.uuid);
+        
+        this.type = getLongFromData(FIELD_TYPE, reset ? 0 : this.type);
+        this.position = getPositionFromData(FIELD_LONGITUDE, FIELD_LATITUDE, reset ? null : this.position);
+        this.name = getStringFromData(FIELD_NAME, reset ? null : this.name);
         if (this.data.containsKey(FIELD_DESCRIPTION)) {
             this.description = this.data.getXMap(FIELD_DESCRIPTION);
             if (this.description != null) {
-                if (this.description.containsKey(Description.FIELD_GRADE)) {
-                    this.grade = (int)this.description.getInt(Description.FIELD_GRADE);
-                }
+                this.grade = getLongFromData(this.description, Description.FIELD_GRADE, reset ? 0 : this.grade);
                 if (this.description.containsKey(Description.FIELD_COOKING_STYLE)) {
                     List<String> strs = this.description.getXArray(Description.FIELD_COOKING_STYLE).toStringList();
                     StringBuilder s = new StringBuilder();
@@ -778,9 +765,8 @@ public class POI extends BaseData {
                     if (s.length() > 0) {
                         this.cookingStyle = s.substring(1);
                     }
-                }
-                if (this.description.containsKey(Description.FIELD_PER_CAPITA)) {
-                    this.perCapity = (int) this.description.getInt(Description.FIELD_PER_CAPITA);
+                } else if (reset) {
+                    this.cookingStyle = null;
                 }
                 if (this.description.containsKey(Description.FIELD_RECOMMEND_COOK)) {
                     List<String> strs = this.description.getXArray(Description.FIELD_RECOMMEND_COOK).toStringList();
@@ -792,6 +778,8 @@ public class POI extends BaseData {
                     if (s.length() > 0) {
                         this.recommendCook = s.substring(1);
                     }
+                } else if (reset) {
+                    this.recommendCook = null;
                 }
                 if (this.description.containsKey(Description.FIELD_FEATURE)) {
                     List<String> strs = this.description.getXArray(Description.FIELD_FEATURE).toStringList();
@@ -803,123 +791,122 @@ public class POI extends BaseData {
                     if (s.length() > 0) {
                         this.feature = s.substring(1);
                     }
+                } else if (reset) {
+                    this.feature = null;
                 }
                 
-                if (this.description.containsKey(Description.FIELD_TASTE)) {
-                	this.taste = this.description.getString(Description.FIELD_TASTE);
-                }
+                this.perCapity = getLongFromData(this.description, Description.FIELD_PER_CAPITA, reset ? -1 : this.perCapity);
                 
-                if (this.description.containsKey(Description.FIELD_SERVICE_ATTITUDE)) {
-                	this.service = this.description.getString(Description.FIELD_SERVICE_ATTITUDE);
-                } else if (this.description.containsKey(Description.FIELD_SERVICE_QUALITY)) {
-                    this.service = this.description.getString(Description.FIELD_SERVICE_QUALITY);
+                this.taste = getStringFromData(this.description, Description.FIELD_TASTE, reset ? null : this.taste);
+
+                String service = getStringFromData(this.description, Description.FIELD_SERVICE_ATTITUDE, reset ? null : this.service);
+                if (service == null) {
+                    service = getStringFromData(this.description, Description.FIELD_SERVICE_QUALITY, reset ? null : this.service);
                 }
+                this.service = service;
                 
-                if (this.description.containsKey(Description.FIELD_ENVIRONMENT)) {
-                	this.envrionment = this.description.getString(Description.FIELD_ENVIRONMENT);
-                }
+                this.envrionment = getStringFromData(this.description, Description.FIELD_ENVIRONMENT, reset ? null : this.envrionment);
                 
                 //购物POI中的产品信息，4.30 ALPHA3中暂未添加
                 //目前暂无其他代码调用此段信息，仅作为预留
-                if (this.description.containsKey(Description.FIELD_PRODUCT)){
-                	this.product = this.description.getString(Description.FIELD_PRODUCT);
-                } else if(this.description.containsKey(Description.FIELD_PRODUCT_ATTITUDE)){
-                	this.product = this.description.getString(Description.FIELD_PRODUCT_ATTITUDE);
+                String product = getStringFromData(this.description, Description.FIELD_PRODUCT, reset ? null : this.product);
+                if (product == null){
+                	product = getStringFromData(this.description, Description.FIELD_PRODUCT_ATTITUDE, reset ? null : this.product);
                 }
+                this.product = product;
             }
-        } else {
+        } else if (reset) {
             this.description = null;
+            this.grade = 0;
+            this.cookingStyle = null;
+            this.recommendCook = null;
+            this.feature = null;
+            this.taste = null;
+            this.service = null;
+            this.envrionment = null;
+            this.product = null;
         }
-        if (this.data.containsKey(FIELD_TELEPHONE)) {
-            this.telephone = this.data.getString(FIELD_TELEPHONE);
-        }
-        if (this.data.containsKey(FIELD_RESERVE_TEL)) {
-            this.reserveTel = this.data.getString(FIELD_RESERVE_TEL);
-        }
-        if (this.data.containsKey(FIELD_ADDRESS)) {
-            this.address = this.data.getString(FIELD_ADDRESS);
-        }
-        if (this.data.containsKey(FIELD_URL)) {
-            this.url = this.data.getString(FIELD_URL);
-        }
-        if (this.data.containsKey(FIELD_TO_CENTER_DISTANCE)) {
-            this.toCenterDistance = this.data.getString(FIELD_TO_CENTER_DISTANCE);
-        }
-        if (this.data.containsKey(FIELD_COMMENT_PATTERN)) {
-            this.commentPattern = this.data.getInt(FIELD_COMMENT_PATTERN);
-        }
-        if (this.data.containsKey(FIELD_ATTRIBUTE)) {
-            this.attribute = this.data.getInt(FIELD_ATTRIBUTE);
-        }
-        if (this.data.containsKey(FIELD_STATUS)) {
-            this.status = this.data.getInt(FIELD_STATUS);
-        }
-        dynamicPOIList.clear();
-        if (this.data.containsKey(FIELD_DYNAMIC_POI)) {
-            XArray<XMap> xarray = data.getXArray(FIELD_DYNAMIC_POI);
-            if (xarray != null) {
-                for(int i = 0; i < xarray.size(); i++) {
-                    dynamicPOIList.add(new DynamicPOI(xarray.get(i)));
-                }
-            }
-        }
-        if (this.data.containsKey(FIELD_LAST_COMMENT)) {
-            this.lastComment = new Comment(this.data.getXMap(FIELD_LAST_COMMENT));
-        } else {
-            this.lastComment = null;
+        this.telephone = getStringFromData(FIELD_TELEPHONE, reset ? null : this.telephone);
+        this.reserveTel = getStringFromData(FIELD_RESERVE_TEL, reset ? null : this.reserveTel);
+        this.address = getStringFromData(FIELD_ADDRESS, reset ? null : this.address);
+        this.url = getStringFromData(FIELD_URL, reset ? null : this.url);
+        this.toCenterDistance = getStringFromData(FIELD_TO_CENTER_DISTANCE, reset ? null : this.toCenterDistance);
+        this.commentPattern = getLongFromData(FIELD_COMMENT_PATTERN, reset ? 0 : this.commentPattern);
+        this.attribute = getLongFromData(FIELD_ATTRIBUTE, reset ? 0 : this.attribute);
+        this.status = getLongFromData(FIELD_STATUS, reset ? 0 : this.status);
+        this.dynamicPOIList = getListFromData(FIELD_DYNAMIC_POI, DynamicPOI.Initializer, reset ? null : this.dynamicPOIList);
+        this.lastComment = getObjectFromData(FIELD_LAST_COMMENT, Comment.Initializer, reset ? null : this.lastComment);
+        this.hotel.init(this.data, reset);
+        this.price = getStringFromData(FIELD_PRICE, reset ? null : this.price);
+        
+        if (reset == false) {
+            this.data = null;
         }
     }
     
     public XMap getData() {
         if (this.data == null) {
-            this.data = new XMap();
-
+            XMap data = this.hotel.getData();
+    
             if (this.uuid != null) {
-                this.data.put(FIELD_UUID, this.uuid);
+                data.put(FIELD_UUID, this.uuid);
             }
             
-            this.data.put(FIELD_TYPE, this.type);
+            data.put(FIELD_TYPE, this.type);
             
             if (this.position != null) {
-                this.data.put(FIELD_LONGITUDE, (int)(this.position.getLon()*TKConfig.LON_LAT_DIVISOR));
-                this.data.put(FIELD_LATITUDE, (int)(this.position.getLat()*TKConfig.LON_LAT_DIVISOR));
+                data.put(FIELD_LONGITUDE, (int)(this.position.getLon()*TKConfig.LON_LAT_DIVISOR));
+                data.put(FIELD_LATITUDE, (int)(this.position.getLat()*TKConfig.LON_LAT_DIVISOR));
             }
             
             if (!TextUtils.isEmpty(this.name)) {
-                this.data.put(FIELD_NAME, this.name);
+                data.put(FIELD_NAME, this.name);
             }
             
             if (description != null) {
-                this.data.put(FIELD_DESCRIPTION, description);
+                data.put(FIELD_DESCRIPTION, description);
             }
             if (!TextUtils.isEmpty(this.telephone)) {
-                this.data.put(FIELD_TELEPHONE, this.telephone);
+                data.put(FIELD_TELEPHONE, this.telephone);
             }
             if (!TextUtils.isEmpty(this.reserveTel)) {
-                this.data.put(FIELD_RESERVE_TEL, this.reserveTel);
+                data.put(FIELD_RESERVE_TEL, this.reserveTel);
             }
             if (!TextUtils.isEmpty(this.address)) {
-                this.data.put(FIELD_ADDRESS, this.address);
+                data.put(FIELD_ADDRESS, this.address);
             }
             if (!TextUtils.isEmpty(this.url)) {
-                this.data.put(FIELD_URL, this.url);
+                data.put(FIELD_URL, this.url);
             }
-            this.data.put(FIELD_TO_CENTER_DISTANCE, this.toCenterDistance);
-            this.data.put(FIELD_COMMENT_PATTERN, this.commentPattern);
-            this.data.put(FIELD_ATTRIBUTE, this.attribute);
-            this.data.put(FIELD_STATUS, this.status);
+            if (!TextUtils.isEmpty(this.toCenterDistance)) {
+                data.put(FIELD_TO_CENTER_DISTANCE, this.toCenterDistance);
+            }
+            if (commentPattern != 0) {
+                data.put(FIELD_COMMENT_PATTERN, this.commentPattern);
+            }
+            if (attribute != 0) {
+                data.put(FIELD_ATTRIBUTE, this.attribute);
+            }
+            if (status != 0) {
+                data.put(FIELD_STATUS, this.status);
+            }
             if (lastComment != null) {
-                this.data.put(FIELD_LAST_COMMENT, lastComment.getData());
+                data.put(FIELD_LAST_COMMENT, lastComment.getData());
             }
-            if (dynamicPOIList.size() > 0) {
+            if (dynamicPOIList != null) {
                 XArray<XMap> xarray = new XArray<XMap>();
                 for(int i = 0, size = dynamicPOIList.size(); i < size; i++) {
                     xarray.add(dynamicPOIList.get(i).getData());
                 }
-                this.data.put(FIELD_DYNAMIC_POI, xarray);
+                data.put(FIELD_DYNAMIC_POI, xarray);
             }
+            if (!TextUtils.isEmpty(this.price)) {
+                data.put(FIELD_PRICE, this.price);
+            }
+            
+            this.data = data;
         }
-        return this.data;
+        return data;
     }
 
     public String getSMSString(Context context) {
@@ -1220,7 +1207,8 @@ public class POI extends BaseData {
                 if (version == 13) {
                     if (dataBytes != null && dataBytes.length > 0) {
                         try {
-                            poi.init((XMap) ByteUtil.byteToXObject(dataBytes));
+                            poi.init((XMap) ByteUtil.byteToXObject(dataBytes), false);
+                            poi.hotel.init(new XMap(), true);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -1238,7 +1226,7 @@ public class POI extends BaseData {
                 }
                 poi.dateTime = cursor.getLong(cursor.getColumnIndex(Tigerknows.POI.DATETIME));
                 poi.from = FROM_LOCAL;
-                poi.dynamicPOIList.clear();
+                poi.dynamicPOIList = null;
                 poi.toCenterDistance = null;
             }
         }
@@ -1286,7 +1274,7 @@ public class POI extends BaseData {
             count = SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
         } else {
             try {
-                init(getData());
+                init(getData(), false);
             } catch (APIException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -1511,4 +1499,12 @@ public class POI extends BaseData {
         
         return result;
     }
+
+    public static XMapInitializer<POI> Initializer = new XMapInitializer<POI>() {
+
+        @Override
+        public POI init(XMap data) throws APIException {
+            return new POI(data);
+        }
+    };
 }

@@ -20,7 +20,7 @@ public class Dianying extends BaseData implements Parcelable{
     		"20262728292a2b2c";
 
     public static final String NEED_FILELD_ONLY_DIANYING = "000102030414060708090a0b0c0d";
-
+    
     public static final String NEED_FILELD_POI_DETAIL = "00010304070920";
     
     // 0x00 x_string UUID uid
@@ -93,71 +93,31 @@ public class Dianying extends BaseData implements Parcelable{
 
     public Dianying (XMap data) throws APIException {
         super(data);
-        init(data);
+        init(data, true);
     }
     
-    public void init(XMap data) throws APIException {
-        super.init(data);
-        if (this.data.containsKey(FIELD_UID)) {
-            this.uid = this.data.getString(FIELD_UID);
-        }
-        if (this.data.containsKey(FIELD_NAME)) {
-            this.name = this.data.getString(FIELD_NAME);
-        }
-        if (this.data.containsKey(FIELD_ALIAS)) {
-            this.alias = this.data.getString(FIELD_ALIAS);
-        }
-        if (this.data.containsKey(FIELD_TAG)) {
-            this.tag = this.data.getString(FIELD_TAG);
-        }
-        if (this.data.containsKey(FIELD_PICTURES)) {
-            this.pictures = new TKDrawable(this.data.getXMap(FIELD_PICTURES));
-        }
-        if (this.data.containsKey(FIELD_PICTURES_DETAIL)) {
-            this.picturesDetail = new TKDrawable(this.data.getXMap(FIELD_PICTURES_DETAIL));
-        }
-        if (this.data.containsKey(FIELD_DESCRIPTION)) {
-            this.description = this.data.getString(FIELD_DESCRIPTION);
-        }
-        if (this.data.containsKey(FIELD_START_TIME)) {
-            this.startTime = this.data.getString(FIELD_START_TIME);
-        }
-        if (this.data.containsKey(FIELD_LENGTH)) {
-            this.length = this.data.getString(FIELD_LENGTH);
-        }
-        if (this.data.containsKey(FIELD_LENGTH)) {
-            this.length = this.data.getString(FIELD_LENGTH);
-        }
-        if (this.data.containsKey(FIELD_LENGTH)) {
-            this.length = this.data.getString(FIELD_LENGTH);
-        }
-        if (this.data.containsKey(FIELD_LANGUAGE)) {
-            this.language = this.data.getString(FIELD_LANGUAGE);
-        }
-        if (this.data.containsKey(FIELD_RANK)) {
-            this.rank = this.data.getInt(FIELD_RANK);
-        }
-        if (this.data.containsKey(FIELD_COUNTRY)) {
-            this.country = this.data.getString(FIELD_COUNTRY);
-        }
-        if (this.data.containsKey(FIELD_DIRECTOR)) {
-            this.director = this.data.getString(FIELD_DIRECTOR);
-        }
-        if (this.data.containsKey(FIELD_MAIN_ACTOR)) {
-            this.mainActor = this.data.getString(FIELD_MAIN_ACTOR);
-        }
-        if (this.data.containsKey(FIELD_NUM)) {
-            this.num = this.data.getInt(FIELD_NUM);
-        }
+    public void init(XMap data, boolean reset) throws APIException {
+        super.init(data, reset);
+        this.uid = getStringFromData(FIELD_UID, reset ? null : this.uid);
+        this.name = getStringFromData(FIELD_NAME, reset ? null : this.name);
+        this.alias = getStringFromData(FIELD_ALIAS, reset ? null : this.alias);
+        this.tag = getStringFromData(FIELD_TAG, reset ? null : this.tag);
+        this.pictures = getObjectFromData(FIELD_PICTURES, TKDrawable.Initializer, reset ? null : this.pictures);
+        this.picturesDetail = getObjectFromData(FIELD_PICTURES_DETAIL, TKDrawable.Initializer, reset ? null : this.picturesDetail);
+        this.description = getStringFromData(FIELD_DESCRIPTION, reset ? null : this.description);
+        this.startTime = getStringFromData(FIELD_START_TIME, reset ? null : this.startTime);
+        this.length = getStringFromData(FIELD_LENGTH, reset ? null : this.length);
+        this.language = getStringFromData(FIELD_LANGUAGE, reset ? null : this.language);
+        this.rank = getLongFromData(FIELD_RANK, reset ? 0 : this.rank);
+        this.country = getStringFromData(FIELD_COUNTRY, reset ? null : this.country);
+        this.director = getStringFromData(FIELD_DIRECTOR, reset ? null : this.director);
+        this.mainActor = getStringFromData(FIELD_MAIN_ACTOR, reset ? null : this.mainActor);
+        this.num = getLongFromData(FIELD_NUM, reset ? 0 : this.num);
         if (yingxun == null) {
-            yingxun = new Yingxun(data);
+            yingxun = new Yingxun(this.data);
         } else {
-            yingxun.init(this.data);
+            yingxun.init(this.data, reset);
         }
-    }
-    
-    public void resetData() {
-        this.data = null;
     }
     
     @Override
@@ -379,5 +339,13 @@ public class Dianying extends BaseData implements Parcelable{
 		//!!! here data query is ignored!!
 		
 	}
+
+    public static XMapInitializer<Dianying> Initializer = new XMapInitializer<Dianying>() {
+
+        @Override
+        public Dianying init(XMap data) throws APIException {
+            return new Dianying(data);
+        }
+    };
 	
 }

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:paddingLeft="0dp"
+    android:paddingRight="0dp"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:background="@drawable/bg_discover"
+    >
+    
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        >
+       
+        <LinearLayout android:id="@+id/seveninn_regist_lly"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginBottom="4dp"
+            >
+            <TextView android:id="@+id/seveninn_note_txv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/seveninn_note"
+                android:background="@drawable/list_header"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="12dp"
+                android:paddingBottom="12dp"
+                android:textSize="14sp"
+                />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+            	android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_sawtooth" /> 
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="left|center_vertical"
+                android:background="@drawable/list_header"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left|center_vertical"
+                    android:padding="4dp"
+                    android:text="@string/seveninn_person_name"
+                    android:textColor="@color/black_dark"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/seveninn_name_edt"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:ellipsize="end"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/seveninn_person_name_hint"
+                    android:inputType="none"
+                    android:maxLength="50"
+                    android:singleLine="true"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                android:contentDescription="@string/app_name"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="left|center_vertical"
+                android:background="@drawable/list_middle"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left|center_vertical"
+                    android:padding="4dp"
+                    android:text="@string/seveninn_mobile_number"
+                    android:textColor="@color/black_dark"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/seveninn_phone_edt"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:ellipsize="end"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/seveninn_mobile_number_hint"
+                    android:inputType="phone"
+                    android:maxLength="11"
+                    android:singleLine="true"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                android:contentDescription="@string/app_name"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                />
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="left|center_vertical"
+                android:background="@drawable/list_footer"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="left|center_vertical"
+                    android:padding="4dp"
+                    android:text="@string/seveninn_idcard_code"
+                    android:textColor="@color/black_dark"
+                    android:textSize="16sp" />
+
+                <EditText
+                    android:id="@+id/seveninn_idcard_code_edt"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/transparent"
+                    android:inputType="number"
+                    android:digits="1234567890Xx"
+                    android:ellipsize="end"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/seveninn_idcard_code_hint"
+                    android:maxLength="18"
+                    android:singleLine="true"
+                    android:textSize="16sp" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/seveninn_regist_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/btn_query_hotel_normal"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:padding="8dp"
+                android:text="@string/seveninn_regist_confirm"
+                android:textColor="@color/white"
+                android:textSize="18sp" 
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+		        android:shadowDx="0"
+		        android:shadowDy="1"
+		        android:shadowColor="#a77a00"
+		        android:shadowRadius="1"
+                />
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

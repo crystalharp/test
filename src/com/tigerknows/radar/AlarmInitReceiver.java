@@ -51,7 +51,7 @@ public class AlarmInitReceiver extends BroadcastReceiver {
         next = Alarms.calculateRandomAlarmInNextDay(next, PullService.requestStartHour, PullService.requestEndHour);
         
         Calendar pullNext = null;
-                
+        
         String pullAlarm = PullService.alarmAction.getAbsAlarm(context);
         if (TextUtils.isEmpty(pullAlarm)) {
             pullNext = next;

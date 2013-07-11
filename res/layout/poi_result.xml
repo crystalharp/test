@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows"
     android:id="@+id/root_view"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
@@ -36,15 +37,15 @@
                 android:layout_height="fill_parent"
                 />
             
-            <com.tigerknows.view.QueryingView
+            <com.tigerknows.widget.QueryingView
                 android:id="@+id/querying_view"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:visibility="gone"
                 >
-            </com.tigerknows.view.QueryingView>
+            </com.tigerknows.widget.QueryingView>
                 
-            <com.tigerknows.view.SpringbackListView
+            <com.tigerknows.widget.SpringbackListView
                 android:id="@+id/result_lsv"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
@@ -53,13 +54,13 @@
                 android:fadingEdge="none"
                 android:scrollingCache="false"
                 />
-            <com.tigerknows.view.RetryView
+            <com.tigerknows.widget.RetryView
                android:id="@+id/retry_view"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:visibility="gone"
                 >
-            </com.tigerknows.view.RetryView>
+            </com.tigerknows.widget.RetryView>
         </FrameLayout>
     </LinearLayout>
     <ImageButton 
@@ -71,4 +72,15 @@
         android:visibility="invisible"
         android:background="@drawable/btn_dingdan"
         />
+        
+    <com.tigerknows.ui.hotel.NavigationWidget
+        android:id="@+id/navigation_widget"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:visibility="gone"
+        tkandroid:navigationState="0"
+        >
+    </com.tigerknows.ui.hotel.NavigationWidget>
 </RelativeLayout>

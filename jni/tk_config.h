@@ -22,9 +22,9 @@
 
 //#define ANDROID_PLAT
 //#define SYMBIAN_PLAT
-#define IPHONE_PLAT
+//#define IPHONE_PLAT
 //#define WINDOWS_PLAT
-//#define LINUX_PLAT 
+#define LINUX_PLAT 
 //#define BADA_PLAT
 
 //#define LOG_LEVEL_DEBUG
@@ -37,7 +37,7 @@
 
 //#define LOG_TO_FILE 
 //#define DRAW_STRING
-//#define NEED_BMP_HEADER
+#define NEED_BMP_HEADER
 
 //#define MAX_TILE_BUFFER_SIZE 102400   //for smartphone
 #define MAX_TILE_BUFFER_SIZE 409600   //for tablet

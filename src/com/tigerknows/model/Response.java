@@ -96,9 +96,32 @@ public class Response extends XMapData {
     // 701 发现数据已更新（在列表页请求具有一定偏移量的结果时，服务器切换了数据库，客户端需给出提示“需重新发请求”）
     public static final int RESPONSE_CODE_DISCOVER_REQUEST = 701;
     
+    // 801 团购订单创建失败
     public static final int RESPONSE_CODE_801 = 801;
     
+    // 802 无效的团购商家id
     public static final int RESPONSE_CODE_802 = 802;
+    
+    // 821 酒店订单提交失败
+    public static final int RESPONSE_CODE_HOTEL_ORDER_CREATE_FAILED = 821;
+    
+    // 822 需要注册酒店会员
+    public static final int RESPONSE_CODE_HOTEL_NEED_REGIST = 822;
+    
+    // 823 注册酒店会员失败
+    public static final int RESPONSE_CODE_HOTEL_REGIST_MEMBER_FAILED = 823;
+    
+    // 824 获取房型动态信息失败
+    public static final int RESPONSE_CODE_HOTEL_ROOMTYPE_DYNAMIC_FAILED = 824;
+    
+    // 825 需要信用卡担保
+    public static final int RESPONSE_CODE_HOTEL_NEED_CREDIT_ASSURE = 825;
+    
+    // 826 艺龙返回其他错误信息
+    public static final int RESPONSE_CODE_HOTEL_OTHER_ERROR = 826;
+    
+    // 831 取消订单失败（得到了艺龙的回复，但是因为某些原因失败了）
+    public static final int RESPONSE_CODE_HOTEL_ORDER_CANCEL_FAILED = 831;
     
     // 0x00 x_int   响应状态码 
     public static final byte FIELD_RESPONSE_CODE = 0x00;
@@ -112,12 +135,8 @@ public class Response extends XMapData {
 
     public Response(XMap data) throws APIException {
         super(data);
-        if (this.data.containsKey(FIELD_RESPONSE_CODE)) {
-            this.responseCode = this.data.getInt(FIELD_RESPONSE_CODE);
-        }
-        if (this.data.containsKey(FIELD_DESCRIPTION)) {
-            this.description = this.data.getString(FIELD_DESCRIPTION);
-        }
+        this.responseCode = getLongFromData(FIELD_RESPONSE_CODE);
+        this.description = getStringFromData(FIELD_DESCRIPTION);
     }
     
     public XMap getData() {
