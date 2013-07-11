@@ -1415,7 +1415,7 @@ public class Utility {
                 }
             }
             fout = new FileOutputStream(file, true);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fout);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fout);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
