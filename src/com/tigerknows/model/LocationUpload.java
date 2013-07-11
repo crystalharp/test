@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.LocationQuery.TKCellLocation;
-import com.tigerknows.util.Utility;
+import com.tigerknows.util.CommonUtils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -119,10 +119,10 @@ public class LocationUpload {
             int cid = tkCellLocation.cid;
             
             // 记录当前基站
-            if (Utility.mccMncLacCidValid(mcc, mnc, lac, cid)) {
+            if (CommonUtils.mccMncLacCidValid(mcc, mnc, lac, cid)) {
                 address.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
                 address.append("@");
-                address.append(Utility.asu2dbm(TKConfig.getSignalStrength()));
+                address.append(CommonUtils.asu2dbm(TKConfig.getSignalStrength()));
                 address.append(";");
             }
             
@@ -147,10 +147,10 @@ public class LocationUpload {
                 for (NeighboringCellInfo neighboringCellInfo : neighboringCellInfoList) {
                     lac = neighboringCellInfo.getLac();
                     cid = neighboringCellInfo.getCid();
-                    if (Utility.lacCidValid(lac, cid)) {
+                    if (CommonUtils.lacCidValid(lac, cid)) {
                         address.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
                         address.append("@");
-                        address.append(Utility.asu2dbm(neighboringCellInfo.getRssi()));
+                        address.append(CommonUtils.asu2dbm(neighboringCellInfo.getRssi()));
                         address.append(";");
                     }
                 }
@@ -162,9 +162,9 @@ public class LocationUpload {
                 }
                 data.append(SIMPLE_DATE_FORMAT.format(Calendar.getInstance().getTime()));
                 data.append(",");
-                data.append(Utility.doubleKeep(location.getLatitude(), 6));
+                data.append(CommonUtils.doubleKeep(location.getLatitude(), 6));
                 data.append(",");
-                data.append(Utility.doubleKeep(location.getLongitude(), 6));
+                data.append(CommonUtils.doubleKeep(location.getLongitude(), 6));
                 data.append(",");
                 data.append(location.getAccuracy());
                 data.append(","); 

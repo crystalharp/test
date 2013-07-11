@@ -7,9 +7,7 @@ package com.tigerknows.provider;
 
 import com.decarta.android.db.PrefTable;
 import com.decarta.android.location.Position;
-import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
-import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.TKWord;
 
 import android.content.ContentValues;
@@ -191,7 +189,6 @@ public class HistoryWordTable {
 	
 	/**
      * 存储的记录数目超过最大值时，将超过的部分记录（插入时间较早的）删除
-     * 某个类型的历史词最大存储MAX_COUNT个，与城市没有关系
      * @param providerList
      * @throws SQLException
      */
@@ -272,61 +269,51 @@ public class HistoryWordTable {
         historyWordTable.close();
     }
     
-    public static List<TKWord> generateSuggestWordList(Sphinx sphinx, String searchWord, int type){
-        List<TKWord> suggestList = new LinkedList<TKWord>();
-        MapEngine mapEngine = MapEngine.getInstance();
-        List<TKWord> associationalList;
+    public static List<TKWord> mergeTKWordList(List<TKWord> suggestWordList, String searchword, int type) {
+        List<TKWord> list = new ArrayList<TKWord>();
+        if (suggestWordList == null || searchword == null) {
+            return list;
+        }
         List<TKWord> historyWordList;
-        
-        if (searchWord == null) {
-            return suggestList;
-        }
-        String key = searchWord.trim();
-        
-        switch (type){
-        case TYPE_POI:
-            associationalList = stringToTKWord(mapEngine.getwordslistString(key, 2), TKWord.ATTRIBUTE_SUGGEST);
+        if (TYPE_POI == type) {
             historyWordList = History_Word_POI;
-            break;
-        case TYPE_TRAFFIC:
-            associationalList = stringToTKWord(mapEngine.getwordslistString(key, 0), TKWord.ATTRIBUTE_SUGGEST);
+        } else if (TYPE_TRAFFIC == type) {
             historyWordList = History_Word_Traffic;
-            break;
-        case TYPE_BUSLINE:
-            associationalList = stringToTKWord(mapEngine.getwordslistString(key, 0), TKWord.ATTRIBUTE_SUGGEST);
+        } else {
             historyWordList = History_Word_Busline;
-            break;
-        default:
-            return suggestList;
         }
-        
-        if (TextUtils.isEmpty(key) && historyWordList.size() > 0){
-            suggestList.addAll(historyWordList);
-            suggestList.add(TKWord.getCleanupTKWord(sphinx));
-            return suggestList;
-        }
-        
         int historyIndex = 0;
         for (int i = 0, size = historyWordList.size(); i < size; i++) {
             if (historyIndex >= HISTORY_WORD_LIST_SIZE) {
                  break;
             }
             TKWord historyWord = historyWordList.get(i);
-            //xupeng:确认key与建议词完全匹配的时候保留建议词
-//            if (historyWord.word.startsWith(searchword) && !historyWord.word.equals(searchword)) {
-            if (historyWord.word.startsWith(key)) {
-                suggestList.add(historyWord);
-                associationalList.remove(historyWord);
-                historyIndex++;
+            if (historyWord.word.startsWith(searchword) && !historyWord.word.equals(searchword)) {
+                boolean add = true;
+                if (TYPE_TRAFFIC == type) {
+                    int index = suggestWordList.indexOf(historyWord);
+                    if (index >= 0 && index < suggestWordList.size()) {
+                        TKWord suggestTKWord = suggestWordList.get(index);
+                        if (historyWord.position == null && suggestTKWord.position != null) {
+                            add = false;
+                        }
+                    }
+                }
+                
+                if (add) {
+                    list.add(historyWord);
+                    suggestWordList.remove(historyWord);
+                    historyIndex++;
+                }
             }
         }
         
-        suggestList.addAll(associationalList);
-        return suggestList;
+        list.addAll(suggestWordList);
+        return list;
     }
     
     public static List<TKWord> getHistoryWordList(String searchword, int type) {
-        List<TKWord> list = new LinkedList<TKWord>();
+        List<TKWord> list = new ArrayList<TKWord>();
         List<TKWord> historyWordList;
         if (HistoryWordTable.TYPE_POI == type) {
             historyWordList = History_Word_POI;
@@ -350,7 +337,7 @@ public class HistoryWordTable {
     }
     
     public static List<TKWord> stringToTKWord(List<String> list, int attribute) {
-        List<TKWord> tkList = new LinkedList<TKWord>();
+        List<TKWord> tkList = new ArrayList<TKWord>();
         if (list == null) {
             return tkList;
         }

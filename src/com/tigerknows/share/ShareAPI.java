@@ -24,18 +24,17 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.decarta.android.location.Position;
+import com.tigerknows.ActionLog;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
-import com.tigerknows.common.ActionLog;
-import com.tigerknows.crypto.Base64;
-import com.tigerknows.map.MapView.MapScene;
-import com.tigerknows.map.MapView.SnapMap;
+import com.tigerknows.maps.MapView.MapScene;
+import com.tigerknows.maps.MapView.SnapMap;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.POI;
+import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.ShareTextUtil;
-import com.tigerknows.util.Utility;
-import com.tigerknows.widget.StringArrayAdapter;
+import com.tigerknows.view.StringArrayAdapter;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
 import com.weibo.sdk.android.keep.AccessTokenKeeper;
@@ -214,10 +213,10 @@ public class ShareAPI {
         }
         final ArrayAdapter<String> adapter = new StringArrayAdapter(activity, textList, leftCompoundIconArray);
         
-        ListView listView = Utility.makeListView(activity);
+        ListView listView = CommonUtils.makeListView(activity);
         listView.setAdapter(adapter);
         
-        final Dialog dialog = Utility.showNormalDialog(activity, 
+        final Dialog dialog = CommonUtils.showNormalDialog(activity, 
                 activity.getString(R.string.share), 
                 null,
                 listView,
@@ -264,14 +263,14 @@ public class ShareAPI {
                                 intent.putExtra(ShareAPI.EXTRA_SHARE_PIC_URI, uri.toString());
                             }
                             intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, ShareTextUtil.makeText(activity, data, ShareTextUtil.SHARE_TYPE_WEIBO));
-                            intent.setClass(activity, WeiboSendActivity.class);
+                            intent.setClass(activity, WeiboSend.class);
                             activity.startActivity(intent);
                         }
                     }, position, mapScene);
                         
                 } else if (list[4].equals(text)) {
                     Intent intent = new Intent();
-                    intent.setClass(activity, QZoneSendActivity.class);
+                    intent.setClass(activity, QZoneSend.class);
                     intent.putExtra(ShareAPI.EXTRA_SHARE_CONTENT, ShareTextUtil.makeText(activity, data, ShareTextUtil.SHARE_TYPE_QZONE));
                     activity.startActivity(intent);              
                 } else if (list[5].equals(text)) {
@@ -280,7 +279,7 @@ public class ShareAPI {
                         @Override
                         public void finish(Uri uri) {
                         	String content = ShareTextUtil.makeText(activity, data, ShareTextUtil.SHARE_TYPE_SMS);
-                        	Utility.share(sphinx, activity.getString(R.string.share), content, uri);
+                            CommonUtils.share(sphinx, activity.getString(R.string.share), content, uri);
                         }
                     }, position, mapScene);
                     

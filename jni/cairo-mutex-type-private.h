@@ -1,8 +1,0 @@
-
-#ifndef CAIRO_MUTEX_TYPE_PRIVATE_H
-#define CAIRO_MUTEX_TYPE_PRIVATE_H
-#include "cairo-mutex-impl-private.h"
-
-#define CAIRO_MUTEX_LOCK		CAIRO_MUTEX_IMPL_LOCK
-#define CAIRO_MUTEX_UNLOCK		CAIRO_MUTEX_IMPL_UNLOCK
-#endif

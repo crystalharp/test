@@ -16,10 +16,6 @@ public class XInt extends XObject{
         value = l;
     }
     
-    public void setValue(long l) {
-        this.value = l;
-    }
-    
     public long getValue(){
         return value;
     }

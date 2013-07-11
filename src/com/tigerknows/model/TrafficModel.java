@@ -494,8 +494,13 @@ public class TrafficModel extends XMapData {
             public Step(XMap data) throws APIException {
                 super(data);
 
-                type = (int)getLongFromData(FIELD_TYPE);
-                distance = (int)getLongFromData(FIELD_DISTANCE);
+                if (this.data.containsKey(FIELD_TYPE)) {
+                    type = (int)this.data.getInt(FIELD_TYPE);
+                }
+                
+                if (this.data.containsKey(FIELD_DISTANCE)) {
+                    distance = (int)this.data.getInt(FIELD_DISTANCE);
+                }
 
                 if (this.data.containsKey(FIELD_X) && this.data.containsKey(FIELD_Y)) {
                     this.x = this.data.getXArray(FIELD_X).toIntList();
@@ -524,30 +529,75 @@ public class TrafficModel extends XMapData {
                 }
 
                 if (type == TYPE_WALK) {
-                    walkPublicNudity = (int)getLongFromData(FIELD_WALK_PUBLIC_NUDITY);
-                    walkRoadName = getStringFromData(FIELD_WALK_ROAD_NAME);
-                    walkTurnTo = getStringFromData(FIELD_WALK_TURN_TO);
-                    walkWhetherRoundabout = (int)getLongFromData(FIELD_WALK_WHETHER_ROUNDABOUT);
+                    if (this.data.containsKey(FIELD_WALK_PUBLIC_NUDITY)) {
+                        walkPublicNudity = (int)this.data.getInt(FIELD_WALK_PUBLIC_NUDITY);
+                    }
+                    if (this.data.containsKey(FIELD_WALK_ROAD_NAME)) {
+                        walkRoadName = this.data.getString(FIELD_WALK_ROAD_NAME);
+                    }
+                    if (this.data.containsKey(FIELD_WALK_TURN_TO)) {
+                        walkTurnTo = this.data.getString(FIELD_WALK_TURN_TO);
+                    }
+                    if (this.data.containsKey(FIELD_WALK_WHETHER_ROUNDABOUT)) {
+                        walkWhetherRoundabout = (int)this.data.getInt(FIELD_WALK_WHETHER_ROUNDABOUT);
+                    }
                 } else if (type == TYPE_TRANSFER) {
-                    transferUpStopName = getStringFromData(FIELD_TRANSFER_UP_STOP_NAME);
-                    transferDownStopName = getStringFromData(FIELD_TRANSFER_DOWN_STOP_NAME);
-                    transferPreviousStopName = getStringFromData(FIELD_TRANSFER_PREVIOUS_STOP_NAME);
-                    transferStopNumber = (int)getLongFromData(FIELD_TRANSFER_STOP_NUMBER);
-                    transferLineName = getStringFromData(FIELD_TRANSFER_LINE_NAME);
-                    transferStartStopName = getStringFromData(FIELD_TRANSFER_START_STOP_NAME);
-                    transferEndStopName = getStringFromData(FIELD_TRANSFER_END_STOP_NAME);
-                    transferOperationTime = getStringFromData(FIELD_TRANSFER_OPERATION_TIME);
-                    transferTicketPrice = getStringFromData(FIELD_TRANSFER_TICKET_PRICE);
-                    transferOperationCompany = getStringFromData(FIELD_TRANSFER_OPERATION_COMPANY);
-                    lineType = (int)getLongFromData(FIELD_LINE_TYPE);
+                    if (this.data.containsKey(FIELD_TRANSFER_UP_STOP_NAME)) {
+                        transferUpStopName = this.data.getString(FIELD_TRANSFER_UP_STOP_NAME);
+                    }
+                    if (this.data.containsKey(FIELD_TRANSFER_DOWN_STOP_NAME)) {
+                        transferDownStopName = this.data.getString(FIELD_TRANSFER_DOWN_STOP_NAME);
+                    }
+                    if (this.data.containsKey(FIELD_TRANSFER_PREVIOUS_STOP_NAME)) {
+                        transferPreviousStopName = this.data.getString(FIELD_TRANSFER_PREVIOUS_STOP_NAME);
+                    }
+                    if (this.data.containsKey(FIELD_TRANSFER_STOP_NUMBER)) {
+                        transferStopNumber = (int)this.data.getInt(FIELD_TRANSFER_STOP_NUMBER);
+                    }
+                    if (this.data.containsKey(FIELD_TRANSFER_LINE_NAME)) {
+                        transferLineName = this.data.getString(FIELD_TRANSFER_LINE_NAME);
+                    }
+                    if (this.data.containsKey(FIELD_TRANSFER_START_STOP_NAME)) {
+                        transferStartStopName = this.data.getString(FIELD_TRANSFER_START_STOP_NAME);
+                    }
+                    if (this.data.containsKey(FIELD_TRANSFER_END_STOP_NAME)) {
+                        transferEndStopName = this.data.getString(FIELD_TRANSFER_END_STOP_NAME);
+                    }
+                    if (this.data.containsKey(FIELD_TRANSFER_OPERATION_TIME)) {
+                        transferOperationTime = this.data.getString(FIELD_TRANSFER_OPERATION_TIME);
+                    }
+                    if (this.data.containsKey(FIELD_TRANSFER_TICKET_PRICE)) {
+                        transferTicketPrice = this.data.getString(FIELD_TRANSFER_TICKET_PRICE);
+                    }
+                    if (this.data.containsKey(FIELD_TRANSFER_OPERATION_COMPANY)) {
+                        transferOperationCompany = this.data.getString(FIELD_TRANSFER_OPERATION_COMPANY);
+                    }
+                    if (this.data.containsKey(FIELD_LINE_TYPE)) {
+                    	lineType = (int)this.data.getInt(FIELD_LINE_TYPE);
+                    }
                 } else if (type == TYPE_DRIVE) {
-                    driveRoadName = getStringFromData(FIELD_DRIVE_ROAD_NAME);
-                    driveTurnTo = getStringFromData(FIELD_DRIVE_TURN_TO);
-                    driveGangway = getStringFromData(FIELD_DRIVE_GANGWAY);
-                    driveWhetherRoundabout = (int)getLongFromData(FIELD_DRIVE_WHETHER_ROUNDABOUT);
-                    driveWhetherCharge = (int)getLongFromData(FIELD_DRIVE_WHETHER_CHARGE);
-                    driveRamp = getStringFromData(FIELD_DRIVE_RAMP);
-                    driveOrientation = getStringFromData(FIELD_DRIVE_ORIENTATION);
+                    if (this.data.containsKey(FIELD_DRIVE_ROAD_NAME)) {
+                        driveRoadName = this.data.getString(FIELD_DRIVE_ROAD_NAME);
+                    }
+                    if (this.data.containsKey(FIELD_DRIVE_TURN_TO)) {
+                        driveTurnTo = this.data.getString(FIELD_DRIVE_TURN_TO);
+//                        Log.d("eric", "drive_turn_to from xmap:"+driveTurnTo);
+                    }
+                    if (this.data.containsKey(FIELD_DRIVE_GANGWAY)) {
+                        driveGangway = this.data.getString(FIELD_DRIVE_GANGWAY);
+                    }
+                    if (this.data.containsKey(FIELD_DRIVE_WHETHER_ROUNDABOUT)) {
+                        driveWhetherRoundabout = (int)this.data.getInt(FIELD_DRIVE_WHETHER_ROUNDABOUT);
+                    }
+                    if (this.data.containsKey(FIELD_DRIVE_WHETHER_CHARGE)) {
+                        driveWhetherCharge = (int)this.data.getInt(FIELD_DRIVE_WHETHER_CHARGE);
+                    }
+                    if (this.data.containsKey(FIELD_DRIVE_RAMP)) {
+                        driveRamp = this.data.getString(FIELD_DRIVE_RAMP);
+                    }
+                    if (this.data.containsKey(FIELD_DRIVE_ORIENTATION)) {
+                        driveOrientation = this.data.getString(FIELD_DRIVE_ORIENTATION);
+                    }
                 }
             }
             
@@ -691,14 +741,6 @@ public class TrafficModel extends XMapData {
                 }
                 return s.toString();
             }
-
-            public static XMapInitializer<Step> Initializer = new XMapInitializer<Step>() {
-
-                @Override
-                public Step init(XMap data) throws APIException {
-                    return new Step(data);
-                }
-            };
         }
         
         private String description;
@@ -793,18 +835,38 @@ public class TrafficModel extends XMapData {
 
         public Plan(XMap data) throws APIException {            
             super(data);
-            init(data, true);
+            init(data);
         }
         
-        public void init(XMap data, boolean reset) throws APIException {
-            super.init(data, reset);
+        @SuppressWarnings("unchecked")
+        public void init(XMap data) throws APIException {
+            super.init(data);
             title = null;
             lengthStr = null;
             
-            description = getStringFromData(FIELD_DESCRIPTION, reset ? null : description);
-            length = (int)getLongFromData(FIELD_LENGTH, reset ? 0 : length);
-            stepList = getListFromData(FIELD_STEP_LIST, Step.Initializer, reset ? null : stepList);
-            startOutOrientation = getStringFromData(FIELD_START_OUT_ORIENTATION, reset ? null : startOutOrientation);
+            if (this.data.containsKey(FIELD_DESCRIPTION)) {
+                description = this.data.getString(FIELD_DESCRIPTION);
+            }
+            
+            if (this.data.containsKey(FIELD_LENGTH)) {
+                length = (int)this.data.getInt(FIELD_LENGTH);
+            }
+
+            XArray<XMap> xarray;
+            if (this.data.containsKey(FIELD_STEP_LIST)) {
+                xarray = (XArray<XMap>)this.data.getXArray(FIELD_STEP_LIST);
+                int size = xarray.size();
+                XMap xmap;
+                this.stepList = new ArrayList<Step>(size);
+                for(int i = 0; i < size; i++) {
+                    xmap = (XMap)xarray.get(i);
+                    this.stepList.add(new Step(xmap));
+                }
+            }
+            
+            if (this.data.containsKey(FIELD_START_OUT_ORIENTATION)) {
+                startOutOrientation = this.data.getString(FIELD_START_OUT_ORIENTATION);
+            }
             
         }
         
@@ -826,7 +888,7 @@ public class TrafficModel extends XMapData {
                 
                 data.put(FIELD_LENGTH, XObject.valueOf(length));
 
-                if (stepList != null) {
+                if (stepList != null && stepList.size() > 0) {
                     XArray<XMap> xarray = new XArray<XMap>();
                     for(Step step : stepList) {
                         xarray.add(step.getData());
@@ -867,9 +929,7 @@ public class TrafficModel extends XMapData {
             this.storeType = storeType;
             this.parentId = parentId;
             ContentValues values = new ContentValues();
-            if (stepList != null) {
-                values.put(Tigerknows.TransitPlan.TIMES, stepList.size());
-            }
+            values.put(Tigerknows.TransitPlan.TIMES, stepList.size());
             values.put(Tigerknows.TransitPlan.TOTAL_LENGTH, length);
             values.put(Tigerknows.TransitPlan.TYPE, type);
             Uri uri = start.writeToDatabases(context, -1, Tigerknows.STORE_TYPE_OTHER);
@@ -934,7 +994,7 @@ public class TrafficModel extends XMapData {
                     byte[] data = c.getBlob(c.getColumnIndex(Tigerknows.TransitPlan.DATA));
                     try {
                         XMap xmap = (XMap) ByteUtil.byteToXObject(data);
-                        plan.init(xmap, true);
+                        plan.init(xmap);
                     } catch (Exception e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
@@ -1009,9 +1069,7 @@ public class TrafficModel extends XMapData {
                 if((null != other.data && !other.data.equals(data)) || (null == other.data && other.data != data)) {
                     return false;
                 } else {
-                    if (other.getStart().getName().equals(this.getStart().getName()) && other.getEnd().getName().equals(this.getEnd().getName())){
-                        return true;
-                    }
+                    return true;
                 }
             }
             
@@ -1108,7 +1166,7 @@ public class TrafficModel extends XMapData {
                 plan.setEnd(end);
                 plan.type = this.type;
                 try {
-                    plan.init(getData(), true);
+                    plan.init(getData());
                     plan.writeToDatabases(context, -1, Tigerknows.STORE_TYPE_HISTORY);
                 } catch (APIException e) {
                     // TODO Auto-generated catch block
@@ -1151,20 +1209,12 @@ public class TrafficModel extends XMapData {
             
             return lengthStr;
         }
-
-        public static XMapInitializer<Plan> Initializer = new XMapInitializer<Plan>() {
-
-            @Override
-            public Plan init(XMap data) throws APIException {
-                return new Plan(data);
-            }
-        };
     }
     
     // 0x20 x_array<x_map> array<起点备选站点>
     private static final byte FIELD_START_ALTERNATIVES_LIST = 0x20;
     
-    public static class Station extends XMapData {
+    public static class Station {
         // 0x01 x_string 名称
         private static final byte FIELD_NAME = 0x01;
 
@@ -1176,6 +1226,12 @@ public class TrafficModel extends XMapData {
         
         //名称
         private String name;
+        
+        //经度＊100000
+        private int longitude;
+        
+        //纬度＊100000
+        private int latitude;
         
         private Position position;
         
@@ -1191,19 +1247,39 @@ public class TrafficModel extends XMapData {
             this.name = name;
         }
 
+        public int getLongitude() {
+            return longitude;
+        }
+
+        public int getLatitude() {
+			return latitude;
+		}
+
 		public void setPosition(Position position) {
             if (!Util.inChina(position)) {
                 return;
             }
             
+            this.longitude = (int)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
+            this.latitude = (int)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
             this.position = position;
         }
 
-        public Station(XMap data) throws APIException {
-            super(data);
+        public Station(XMap data) {
+            if (data == null) {
+                return;
+            }
             
-            name = data.getString(FIELD_NAME);
-            this.position = getPositionFromData(FIELD_LONGITUDE, FIELD_LATITUDE);
+            if (data.containsKey(FIELD_NAME)) {
+                name = data.getString(FIELD_NAME);
+            }
+            
+            if (data.containsKey(FIELD_LONGITUDE) && data.containsKey(FIELD_LATITUDE)) {
+                longitude = (int)data.getInt(FIELD_LONGITUDE);// /10
+                latitude = (int)data.getInt(FIELD_LATITUDE);
+                this.position = new Position(((double)this.latitude)/TKConfig.LON_LAT_DIVISOR, ((double)this.longitude)/TKConfig.LON_LAT_DIVISOR);
+            }
+            
         }
         
         public Station(String name, Position position) {
@@ -1214,17 +1290,12 @@ public class TrafficModel extends XMapData {
         public POI toPOI() {
             POI poi = new POI();
             poi.setName(name);
+            if (this.position == null) {
+                this.position = new Position(((double)this.latitude)/TKConfig.LON_LAT_DIVISOR, ((double)this.longitude)/TKConfig.LON_LAT_DIVISOR);
+            }
             poi.setPosition(this.position);
             return poi;
         }
-
-        public static XMapInitializer<Station> Initializer = new XMapInitializer<Station>() {
-
-            @Override
-            public Station init(XMap data) throws APIException {
-                return new Station(data);
-            }
-        };
         
     }
 
@@ -1310,17 +1381,31 @@ public class TrafficModel extends XMapData {
     public TrafficModel() {
     }
     
+    @SuppressWarnings("unchecked")
     public TrafficModel(XMap data, int queryType) throws APIException {
         super(data);
         
-        this.type = (int)getLongFromData(FIELD_TYPE);
-        this.startName = getStringFromData(FIELD_START_NAME);
-        this.endName = getStringFromData(FIELD_END_NAME);
+        if (this.data.containsKey(FIELD_TYPE)) {
+            this.type = (int)this.data.getInt(FIELD_TYPE);
+        }
+        
+        if (this.data.containsKey(FIELD_START_NAME)) {
+            this.startName = this.data.getString(FIELD_START_NAME);
+        }
+        
+        if (this.data.containsKey(FIELD_END_NAME)) {
+            this.endName = this.data.getString(FIELD_END_NAME);
+        }
         if (TYPE_PROJECT == this.type) {
-            this.planList = getListFromData(FIELD_PROJECT_LIST, Plan.Initializer);
-            if (this.planList != null) {
-                for(int i = 0, size = this.planList.size(); i < size; i++) {
-                    Plan plan = this.planList.get(i);
+            XArray<XMap> xarray;
+            if (this.data.containsKey(FIELD_PROJECT_LIST)) {
+                xarray = (XArray<XMap>)data.getXArray(FIELD_PROJECT_LIST);
+                int size = xarray.size();
+                XMap xmap;
+                this.planList = new ArrayList<Plan>(size);
+                for(int i = 0; i < size; i++) {
+                    xmap = (XMap)xarray.get(i);
+                    Plan plan = new Plan(xmap);
                     plan.setType(queryType);
                     POI poi = plan.getStart();
                     if (poi != null) {
@@ -1330,11 +1415,31 @@ public class TrafficModel extends XMapData {
                     if (poi != null) {
                         poi.setName(this.endName);
                     }
+                    this.planList.add(plan);
                 }
             }
         } else {
-            this.startAlternativesList = getListFromData(FIELD_START_ALTERNATIVES_LIST, Station.Initializer);
-            this.endAlternativesList = getListFromData(FIELD_END_ALTERNATIVES_LIST, Station.Initializer);
+            XArray<XMap> xarray;
+            if (this.data.containsKey(FIELD_START_ALTERNATIVES_LIST)) {
+                xarray = (XArray<XMap>)data.getXArray(FIELD_START_ALTERNATIVES_LIST);
+                int size = xarray.size();
+                XMap xmap;
+                this.startAlternativesList = new ArrayList<Station>(size);
+                for(int i = 0; i < size; i++) {
+                    xmap = (XMap)xarray.get(i);
+                    this.startAlternativesList.add(new Station(xmap));
+                }
+            }
+            if (this.data.containsKey(FIELD_END_ALTERNATIVES_LIST)) {
+                xarray = (XArray<XMap>)data.getXArray(FIELD_END_ALTERNATIVES_LIST);
+                int size = xarray.size();
+                XMap xmap;
+                this.endAlternativesList = new ArrayList<Station>(size);
+                for(int i = 0; i < size; i++) {
+                    xmap = (XMap)xarray.get(i);
+                    this.endAlternativesList.add(new Station(xmap));
+                }
+            }
         }
     }
 }

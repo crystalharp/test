@@ -1,8 +1,10 @@
 package com.tigerknows.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.decarta.android.exception.APIException;
+import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 
 import android.os.Parcel;
@@ -86,11 +88,26 @@ public class PullMessage extends Response {
             public PulledDynamicPOI(XMap data) throws APIException{
             	super(data);
             	
-            	this.masterType = getLongFromData(FIELD_MASTER_POI_TYPE);
-                this.masterUID = getStringFromData(FIELD_MASTER_POI_UID);
-                this.slaveType = getLongFromData(FIELD_SLAVE_POI_TYPE);
-                this.slaveUID = getStringFromData(FIELD_SLAVE_POI_UID);
-                this.description = getStringFromData(FIELD_POI_DESCRIPTION);
+            	if (this.data.containsKey(FIELD_MASTER_POI_TYPE)) {
+            		this.masterType = this.data.getInt(FIELD_MASTER_POI_TYPE);
+            	}
+            	
+                if (this.data.containsKey(FIELD_MASTER_POI_UID)) {
+                    this.masterUID = this.data.getString(FIELD_MASTER_POI_UID);
+                }
+                
+                if (this.data.containsKey(FIELD_SLAVE_POI_TYPE)) {
+                    this.slaveType = this.data.getInt(FIELD_SLAVE_POI_TYPE);
+                }
+
+                if (this.data.containsKey(FIELD_SLAVE_POI_UID)) {
+                    this.slaveUID = this.data.getString(FIELD_SLAVE_POI_UID);
+                }
+                
+                if (this.data.containsKey(FIELD_POI_DESCRIPTION)) {
+                    this.description = this.data.getString(FIELD_POI_DESCRIPTION);
+                }
+                
             }
 
             public static final Parcelable.Creator<PulledDynamicPOI> CREATOR
@@ -198,8 +215,14 @@ public class PullMessage extends Response {
 
 	        private PulledProductMessage(XMap data) throws APIException {
 	        	super(data);
-	            this.downloadUrl = getStringFromData(FILED_PRODUCT_DOWNLOAD_URL);
-	            this.description = getStringFromData(FIELD_PRODUCT_DESCRIPTION);
+	            if (this.data.containsKey(FILED_PRODUCT_DOWNLOAD_URL)) {
+	                this.downloadUrl = this.data.getString(FILED_PRODUCT_DOWNLOAD_URL);
+	            }
+	            
+	            if (this.data.containsKey(FIELD_PRODUCT_DESCRIPTION)) {
+	                this.description = this.data.getString(FIELD_PRODUCT_DESCRIPTION);
+	            }
+	            
 	        }
 
 	        private PulledProductMessage(Parcel in) {
@@ -244,38 +267,47 @@ public class PullMessage extends Response {
         public Message(XMap data) throws APIException {
             super(data);
 
-            this.id = getLongFromData(FIELD_MESSAGE_ID);
-            this.type = getLongFromData(FIELD_MSG_TYPE);
-            switch ((int)this.type) {
-				case TYPE_HOLIDAY:
-				case TYPE_FILM:
-				case TYPE_INTERVAL:
-					if(data.containsKey(FIELD_POI_INFO)){
-						dynamicPOI = new PulledDynamicPOI(this.data.getXMap(FIELD_POI_INFO));
-					}
-					break;
-
-				case TYPE_PRODUCT_UPGRADE:
-				case TYPE_PRODUCT_INFOMATION:
-					if(data.containsKey(FIELD_PRODUCT_MESSAGE)){
-						productMsg = new PulledProductMessage(this.data.getXMap(FIELD_PRODUCT_MESSAGE));
-					}
-					break;
-
-				default:
-					break;
-			}
-                
+            if (this.data.containsKey(FIELD_MESSAGE_ID)) {
+                this.id = this.data.getInt(FIELD_MESSAGE_ID);
+            }
             
-            String cityId = getStringFromData(FIELD_CITY_ID);
-            if (cityId != null) {
+            if (this.data.containsKey(FIELD_MSG_TYPE)) {
+                this.type = this.data.getInt(FIELD_MSG_TYPE);
+                
+                switch ((int)this.type) {
+					case TYPE_HOLIDAY:
+					case TYPE_FILM:
+					case TYPE_INTERVAL:
+						if(data.containsKey(FIELD_POI_INFO)){
+							dynamicPOI = new PulledDynamicPOI(this.data.getXMap(FIELD_POI_INFO));
+						}
+						break;
+	
+					case TYPE_PRODUCT_UPGRADE:
+					case TYPE_PRODUCT_INFOMATION:
+						if(data.containsKey(FIELD_PRODUCT_MESSAGE)){
+							productMsg = new PulledProductMessage(this.data.getXMap(FIELD_PRODUCT_MESSAGE));
+						}
+						break;
+	
+					default:
+						break;
+				}
+                
+            }
+            
+            if (this.data.containsKey(FIELD_CITY_ID)) {
+                String cityId = this.data.getString(FIELD_CITY_ID);
                 try {
                     this.cityId = Integer.parseInt(cityId);
                 } catch (Exception e) {
                     // TODO: handle exception
                 }
             }
-            expiryDate = getStringFromData(FIELD_EXPIRY_DATE);
+            
+            if (this.data.containsKey(FIELD_EXPIRY_DATE)) {
+                expiryDate = this.data.getString(FIELD_EXPIRY_DATE);
+            }
             
         }
 
@@ -360,14 +392,6 @@ public class PullMessage extends Response {
             out.writeParcelable(this.dynamicPOI, flags);
             out.writeParcelable(this.productMsg, flags);
         }
-        
-        public static XMapInitializer<Message> Initializer = new XMapInitializer<Message>() {
-            
-            @Override
-            public Message init(XMap data) throws APIException {
-                return new Message(data);
-            }
-        };
     }
 
     private int requestIntervalDays;
@@ -377,9 +401,29 @@ public class PullMessage extends Response {
     public PullMessage(XMap data) throws APIException {
         super(data);
 
-        messageList = getListFromData(FIELD_MESSAGE, Message.Initializer);
-        requestIntervalDays = (int)getLongFromData(FIELD_REQUEST_INTERVAL_DAYS);
-        this.recordMessageUpperLimit = getLongFromData(FIELD_RECORD_MESSAGE_UPPER_LIMIT);
+        if (this.data.containsKey(FIELD_RESPONSE_CODE)) {
+            this.responseCode = this.data.getInt(FIELD_RESPONSE_CODE);
+        }
+        
+        if (this.data.containsKey(FIELD_MESSAGE)) {
+            messageList = new ArrayList<Message>();
+            @SuppressWarnings("unchecked")
+            XArray<XMap> xarray = (XArray<XMap>)this.data.getXArray(FIELD_MESSAGE);
+            if (xarray != null) {
+                for (int i = 0; i < xarray.size(); i++) {
+                    Message message = new Message(xarray.get(i));
+                    messageList.add(message);
+                }
+            }
+        }
+        
+        if (this.data.containsKey(FIELD_REQUEST_INTERVAL_DAYS)) {
+            requestIntervalDays = (int)this.data.getInt(FIELD_REQUEST_INTERVAL_DAYS);
+        }
+        
+        if (this.data.containsKey(FIELD_RECORD_MESSAGE_UPPER_LIMIT)) {
+            this.recordMessageUpperLimit = this.data.getInt(FIELD_RECORD_MESSAGE_UPPER_LIMIT);
+        }
     }
 
     public int getRequsetIntervalDays() {

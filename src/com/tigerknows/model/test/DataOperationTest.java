@@ -11,10 +11,8 @@ import com.tigerknows.model.DataOperation.TuangouQueryResponse;
 import com.tigerknows.model.DataOperation.YanchuQueryResponse;
 import com.tigerknows.model.DataOperation.YingxunQueryResponse;
 import com.tigerknows.model.DataOperation.ZhanlanQueryResponse;
-import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 
-import android.R.integer;
 import android.content.Context;
 
 public class DataOperationTest {
@@ -95,19 +93,11 @@ public class DataOperationTest {
         data.put(CommentQueryResponse.FIELD_COMMENT, DataQueryTest.launchDianping("comment"));
         return data;
     }
-    
 
     public static XMap launchPOIQueryResponse() {
         XMap data = new XMap();
         BaseQueryTest.launchResponse(data);
         data.put(POIQueryResponse.FIELD_POI, DataQueryTest.launchPOI("poi"));
-        return data;
-    }
-    
-    public static XMap launchHotelPOIQueryResponse(){
-    	XMap data = new XMap();
-        BaseQueryTest.launchResponse(data);
-        data.put(POIQueryResponse.FIELD_POI, DataQueryTest.launchHotelPOI("HotelPOI", 1));
         return data;
     }
 
@@ -118,5 +108,4 @@ public class DataOperationTest {
         data.put(DiaoyanQueryResponse.FIELD_URL, "http://www.tigerknows.com");
         return data;
     }
-	
 }

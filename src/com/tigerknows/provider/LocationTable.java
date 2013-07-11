@@ -5,12 +5,12 @@
  */
 package com.tigerknows.provider;
 
-import com.tigerknows.android.location.TKLocationManager;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.LocationQuery.LocationParameter;
 import com.tigerknows.model.LocationQuery.TKCellLocation;
 import com.tigerknows.model.LocationQuery.TKNeighboringCellInfo;
 import com.tigerknows.model.LocationQuery.TKScanResult;
+import com.tigerknows.service.TKLocationManager;
 
 import android.content.ContentValues;
 import android.content.Context;

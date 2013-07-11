@@ -2,10 +2,10 @@ package com.tigerknows.model;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
-import com.tigerknows.common.ImageCache;
-import com.tigerknows.common.AsyncImageLoader.ImageCallback;
-import com.tigerknows.common.AsyncImageLoader.TKURL;
+import com.tigerknows.ImageCache;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.util.AsyncImageLoader.ImageCallback;
+import com.tigerknows.util.AsyncImageLoader.TKURL;
 
 import android.app.Activity;
 import android.graphics.drawable.BitmapDrawable;
@@ -33,28 +33,31 @@ public class TKDrawable extends XMapData implements Parcelable {
     public TKDrawable(XMap data) throws APIException {
         super(data);
         
-        this.url = getStringFromData(FIELD_URL);
-        byte[] image = getBytesFromData(FIELD_DATA);
-        if (image != null) {
+        if (this.data.containsKey(FIELD_URL)) {
+            this.url = this.data.getString(FIELD_URL);
+        }
+        
+        if (this.data.containsKey(FIELD_DATA)) {
+            byte[] bm = this.data.getBytes(FIELD_DATA);
             ImageCache imageCache1 = Globals.getImageCache();
             final String name = url.substring(url.lastIndexOf("/")+1);
             try {
-                imageCache1.putImage(name, image);
+                imageCache1.putImage(name, bm);
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            BitmapDrawable bitmapDrawable = (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(image), "image.png");
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(bm), "image.png");
             Globals.getAsyncImageLoader().put(url, bitmapDrawable);
         }
-    }
-
-    public String getUrl() {
-        return url;
     }
     
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     public Drawable loadDrawable(final Activity activity, final Runnable action, final String viewToken) {
@@ -104,12 +107,4 @@ public class TKDrawable extends XMapData implements Parcelable {
     public void writeToParcel(Parcel out, int flags) {
         out.writeString(url);
     }
-    
-    public static XMapInitializer<TKDrawable> Initializer = new XMapInitializer<TKDrawable>() {
-
-        @Override
-        public TKDrawable init(XMap data) throws APIException {
-            return new TKDrawable(data);
-        }
-    };
 }

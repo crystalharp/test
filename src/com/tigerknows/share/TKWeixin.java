@@ -9,9 +9,9 @@ import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.mm.sdk.openapi.WXMediaMessage;
 import com.tencent.mm.sdk.openapi.WXWebpageObject;
 import com.tigerknows.R;
-import com.tigerknows.map.MapEngine;
+import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.POI;
-import com.tigerknows.util.Utility;
+import com.tigerknows.util.CommonUtils;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -82,7 +82,7 @@ public class TKWeixin {
 
         boolean result = isWXAppInstalled();
         if (result == false) {
-            Utility.showNormalDialog(activity, activity.getString(R.string.uninstall_weixin_tip), new DialogInterface.OnClickListener() {
+            CommonUtils.showNormalDialog(activity, activity.getString(R.string.uninstall_weixin_tip), new DialogInterface.OnClickListener() {
                 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -106,7 +106,7 @@ public class TKWeixin {
         if (result) {
         	result = isWXAppSupportAPI();
         	if (result == false) {
-        	    Utility.showNormalDialog(activity, activity.getString(R.string.upgarde_weixin_tip), new DialogInterface.OnClickListener() {
+        		CommonUtils.showNormalDialog(activity, activity.getString(R.string.upgarde_weixin_tip), new DialogInterface.OnClickListener() {
                     
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

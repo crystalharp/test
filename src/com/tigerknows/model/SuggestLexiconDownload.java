@@ -7,7 +7,7 @@ package com.tigerknows.model;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.map.MapEngine;
+import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.response.Appendix;
 import com.tigerknows.model.response.DataPackage;
 import com.tigerknows.model.response.ResponseCode;

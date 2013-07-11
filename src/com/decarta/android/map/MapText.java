@@ -19,7 +19,7 @@ import com.decarta.android.location.Position;
 import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
-import com.tigerknows.map.MapWord;
+import com.tigerknows.maps.MapWord;
 
 /**
  * A Pin that gets attached to a Map object has a default, simple message for 

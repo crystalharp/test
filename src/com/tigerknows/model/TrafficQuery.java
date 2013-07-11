@@ -19,7 +19,7 @@ import com.decarta.android.location.Position;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
-import com.tigerknows.map.MapEngine;
+import com.tigerknows.maps.MapEngine;
 import com.tigerknows.model.TrafficModel.Plan;
 import com.tigerknows.model.TrafficModel.Plan.Step;
 
@@ -78,7 +78,7 @@ public final class TrafficQuery extends BaseQuery {
     }
 
     public TrafficQuery(Context context) {
-        super(context, API_TYPE_TRAFFIC_QUERY, VERSION);
+        super(context, API_TYPE_TRAFFIC_QUERY, VERSION, false);
     }
     
     public void setup(int cityId, POI startPOI, POI endPOI, int queryType, int targetViewId, String tipText) {
@@ -138,7 +138,7 @@ public final class TrafficQuery extends BaseQuery {
     @Override
     protected void createHttpClient() {
         super.createHttpClient();
-        String url = String.format(TKConfig.getQueryUrl(), TKConfig.getQueryHost());
+        String url = String.format(TKConfig.getQueryUrl(apiType, version, null), TKConfig.getQueryHost());
         httpClient.setURL(url);
     }
 

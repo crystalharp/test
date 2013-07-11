@@ -11,6 +11,7 @@ package com.tigerknows.model;
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.view.user.User;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -118,111 +119,130 @@ public class Comment extends BaseData {
 
     public Comment (XMap data) throws APIException {
         super(data);
-        init(data, true);
+        init(data);
     }
     
-    public void init(XMap data, boolean reset) throws APIException {
-        super.init(data, reset);
-        this.uid = getStringFromData(FIELD_UID, reset ? null : this.uid);
-        this.content = getStringFromData(FIELD_CONTENT, reset ? null : this.content);
-        this.user = getStringFromData(FIELD_USER, reset ? null : this.user);
-        this.time = getStringFromData(FIELD_TIME, reset ? null : this.time);
-        this.grade = getLongFromData(FIELD_GRADE, reset ? 6 : this.grade);
-        this.puid = getStringFromData(FIELD_PUID, reset ? null : this.puid);
-        this.avg = getLongFromData(FIELD_AVG, reset ? -1 : this.avg);
-        this.taste = getLongFromData(FIELD_TASTE, reset ? 3 : this.taste);
-        this.qos = getLongFromData(FIELD_QOS, reset ? 3 : this.qos);
-        this.environment = getLongFromData(FIELD_ENVIRONMENT, reset ? 3 : this.environment);
-        this.recommend = getStringFromData(FIELD_RECOMMEND, reset ? null : this.recommend);
-        this.level = getLongFromData(FIELD_LEVEL, reset ? 3 : this.level);
-        this.effect = getLongFromData(FIELD_EFFECT, reset ? 3 : this.effect);
-        this.restair = getStringFromData(FIELD_RESTAIR, reset ? null : this.restair);
-        this.poiStatus = getLongFromData(FIELD_POI_STATUS, reset ? 0 : this.poiStatus);
-        this.pattern = getLongFromData(FIELD_PATTERN, reset ? 0 : this.pattern);
-        this.poiName = getStringFromData(FIELD_POI_NAME, reset ? null : this.poiName);
-        this.userId = getLongFromData(FIELD_USER_ID, reset ? -1 : this.userId);
-        this.poiCityId = getStringFromData(FIELD_POI_CITY_ID, reset ? null : this.poiCityId);
-        this.url = getStringFromData(FIELD_URL, reset ? null : this.url);
-        this.clientUid = getStringFromData(FIELD_CLIENT_UID, reset ? null : this.clientUid);
-        this.source = getStringFromData(FIELD_SOURCE, reset ? null : this.source);
-        
-        if (reset == false) {
-            this.data = null;
+    public void init(XMap data) throws APIException {
+        super.init(data);
+        if (this.data.containsKey(FIELD_UID)) {
+            this.uid = this.data.getString(FIELD_UID);
+        }
+        if (this.data.containsKey(FIELD_CONTENT)) {
+            this.content = this.data.getString(FIELD_CONTENT);
+        }
+        if (this.data.containsKey(FIELD_USER)) {
+            this.user = this.data.getString(FIELD_USER);
+        }
+        if (this.data.containsKey(FIELD_TIME)) {
+            this.time = this.data.getString(FIELD_TIME);
+        }
+        if (this.data.containsKey(FIELD_GRADE)) {
+            this.grade = this.data.getInt(FIELD_GRADE);
+        }
+        if (this.data.containsKey(FIELD_PUID)) {
+            this.puid = this.data.getString(FIELD_PUID);
+        }
+        if (this.data.containsKey(FIELD_AVG)) {
+            this.avg = this.data.getInt(FIELD_AVG);
+        }
+        if (this.data.containsKey(FIELD_TASTE)) {
+            this.taste = this.data.getInt(FIELD_TASTE);
+        }
+        if (this.data.containsKey(FIELD_QOS)) {
+            this.qos = this.data.getInt(FIELD_QOS);
+        }
+        if (this.data.containsKey(FIELD_ENVIRONMENT)) {
+            this.environment = this.data.getInt(FIELD_ENVIRONMENT);
+        }
+        if (this.data.containsKey(FIELD_RECOMMEND)) {
+            this.recommend = this.data.getString(FIELD_RECOMMEND);
+        }
+        if (this.data.containsKey(FIELD_LEVEL)) {
+            this.level = this.data.getInt(FIELD_LEVEL);
+        }
+        if (this.data.containsKey(FIELD_EFFECT)) {
+            this.effect = this.data.getInt(FIELD_EFFECT);
+        }
+        if (this.data.containsKey(FIELD_RESTAIR)) {
+            this.restair = this.data.getString(FIELD_RESTAIR);
+        }
+        if (this.data.containsKey(FIELD_POI_STATUS)) {
+            this.poiStatus = this.data.getInt(FIELD_POI_STATUS);
+        }
+        if (this.data.containsKey(FIELD_PATTERN)) {
+            this.pattern = this.data.getInt(FIELD_PATTERN);
+        }
+        if (this.data.containsKey(FIELD_POI_NAME)) {
+            this.poiName = this.data.getString(FIELD_POI_NAME);
+        }
+        if (this.data.containsKey(FIELD_USER_ID)) {
+            this.userId = this.data.getInt(FIELD_USER_ID);
+        }
+        if (this.data.containsKey(FIELD_POI_CITY_ID)) {
+            this.poiCityId = this.data.getString(FIELD_POI_CITY_ID);
+        }
+        if (this.data.containsKey(FIELD_URL)) {
+            this.url = this.data.getString(FIELD_URL);
+        }
+        if (this.data.containsKey(FIELD_CLIENT_UID)) {
+            this.clientUid = this.data.getString(FIELD_CLIENT_UID);
+        }
+        if (this.data.containsKey(FIELD_SOURCE)) {
+            this.source = this.data.getString(FIELD_SOURCE);
         }
     }
     
     public XMap getData() {
         if (this.data == null) {
-            XMap data = new XMap();   
+            this.data = new XMap();            
             if (!TextUtils.isEmpty(this.uid)) {
-                data.put(FIELD_UID, this.uid);
+                this.data.put(FIELD_UID, this.uid);
             }
             if (!TextUtils.isEmpty(this.content)) {
-                data.put(FIELD_CONTENT, this.content);
+                this.data.put(FIELD_CONTENT, this.content);
             }
             if (!TextUtils.isEmpty(this.user)) {
-                data.put(FIELD_USER, this.user);
+                this.data.put(FIELD_USER, this.user);
             }
             if (!TextUtils.isEmpty(this.time)) {
-                data.put(FIELD_TIME, this.time);
+                this.data.put(FIELD_TIME, this.time);
             }
-            if (this.grade != 6) {
-                data.put(FIELD_GRADE, this.grade);
-            }
+            this.data.put(FIELD_GRADE, this.grade);
             if (!TextUtils.isEmpty(this.puid)) {
-                data.put(FIELD_PUID, this.puid);
+                this.data.put(FIELD_PUID, this.puid);
             }
-            if (this.avg != -1) {
-                data.put(FIELD_AVG, this.avg);
-            }
-            if (this.taste != 3) {
-                data.put(FIELD_TASTE, this.taste);
-            }
-            if (this.qos != 3) {
-                data.put(FIELD_QOS, this.qos);
-            }
-            if (this.environment != 3) {
-                data.put(FIELD_ENVIRONMENT, this.environment);
-            }
+            this.data.put(FIELD_AVG, this.avg);
+            this.data.put(FIELD_TASTE, this.taste);
+            this.data.put(FIELD_QOS, this.qos);
+            this.data.put(FIELD_ENVIRONMENT, this.environment);
             if (!TextUtils.isEmpty(this.recommend)) {
-                data.put(FIELD_RECOMMEND, this.recommend);
+                this.data.put(FIELD_RECOMMEND, this.recommend);
             }
-            if (this.level != 3) {
-                data.put(FIELD_LEVEL, this.level);
-            }
-            if (this.effect != 3) {
-                data.put(FIELD_EFFECT, this.effect);
-            }
+            this.data.put(FIELD_LEVEL, this.level);
+            this.data.put(FIELD_EFFECT, this.effect);
             if (!TextUtils.isEmpty(this.restair)) {
-                data.put(FIELD_RESTAIR, this.restair);
+                this.data.put(FIELD_RESTAIR, this.restair);
             }
-            if (this.poiStatus != 0) {
-                data.put(FIELD_POI_STATUS, this.poiStatus);
-            }
-            if (this.pattern != 0) {
-                data.put(FIELD_PATTERN, this.pattern);
-            }
+            this.data.put(FIELD_POI_STATUS, this.poiStatus);
+            this.data.put(FIELD_PATTERN, this.pattern);
             if (!TextUtils.isEmpty(this.poiName)) {
-                data.put(FIELD_POI_NAME, this.poiName);
+                this.data.put(FIELD_POI_NAME, this.poiName);
             }
-            if (this.userId != -1) {
-                data.put(FIELD_USER_ID, this.userId);
-            }
+            this.data.put(FIELD_USER_ID, this.userId);
             if (!TextUtils.isEmpty(this.poiCityId)) {
-                data.put(FIELD_POI_CITY_ID, this.poiCityId);
+                this.data.put(FIELD_POI_CITY_ID, this.poiCityId);
             }
             if (!TextUtils.isEmpty(this.url)) {
-                data.put(FIELD_URL, this.url);
+                this.data.put(FIELD_URL, this.url);
             }
             if (!TextUtils.isEmpty(this.clientUid)) {
-                data.put(FIELD_CLIENT_UID, this.clientUid);
+                this.data.put(FIELD_CLIENT_UID, this.clientUid);
             }
             if (!TextUtils.isEmpty(this.source)) {
-                data.put(FIELD_SOURCE, this.source);
+                this.data.put(FIELD_SOURCE, this.source);
             }
-            this.data = data;
         }
-        return data;
+        return this.data;
     }
 
     public String getUid() {
@@ -231,7 +251,6 @@ public class Comment extends BaseData {
 
     public void setUid(String uid) {
         this.uid = uid;
-        getData().put(FIELD_UID, this.uid);
     }
 
     public String getContent() {
@@ -240,7 +259,6 @@ public class Comment extends BaseData {
 
     public void setContent(String content) {
         this.content = content;
-        getData().put(FIELD_CONTENT, this.content);
     }
 
     public String getUser() {
@@ -249,7 +267,6 @@ public class Comment extends BaseData {
 
     public void setUser(String user) {
         this.user = user;
-        getData().put(FIELD_USER, this.user);
     }
 
     public String getTime() {
@@ -258,7 +275,6 @@ public class Comment extends BaseData {
 
     public void setTime(String time) {
         this.time = time;
-        getData().put(FIELD_TIME, this.time);
     }
 
     public long getGrade() {
@@ -267,15 +283,22 @@ public class Comment extends BaseData {
 
     public void setGrade(long grade) {
         this.grade = grade;
-        getData().put(FIELD_GRADE, this.grade);
     }
 
     public String getUrl() {
         return url;
     }
 
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public String getPuid() {
         return puid;
+    }
+
+    public void setPuid(String puid) {
+        this.puid = puid;
     }
 
     public long getAvg() {
@@ -284,7 +307,6 @@ public class Comment extends BaseData {
 
     public void setAvg(long avg) {
         this.avg = avg;
-        getData().put(FIELD_AVG, this.avg);
     }
 
     public long getTaste() {
@@ -293,7 +315,6 @@ public class Comment extends BaseData {
 
     public void setTaste(long taste) {
         this.taste = taste;
-        getData().put(FIELD_TASTE, this.taste);
     }
 
     public long getQos() {
@@ -302,7 +323,6 @@ public class Comment extends BaseData {
 
     public void setQos(long qos) {
         this.qos = qos;
-        getData().put(FIELD_QOS, this.qos);
     }
 
     public long getEnvironment() {
@@ -311,7 +331,6 @@ public class Comment extends BaseData {
 
     public void setEnvironment(long environment) {
         this.environment = environment;
-        getData().put(FIELD_ENVIRONMENT, this.environment);
     }
 
     public String getRecommend() {
@@ -320,7 +339,6 @@ public class Comment extends BaseData {
 
     public void setRecommend(String recommend) {
         this.recommend = recommend;
-        getData().put(FIELD_RECOMMEND, this.recommend);
     }
 
     public long getLevel() {
@@ -329,7 +347,6 @@ public class Comment extends BaseData {
 
     public void setLevel(long level) {
         this.level = level;
-        getData().put(FIELD_LEVEL, this.level);
     }
 
     public long getEffect() {
@@ -338,11 +355,14 @@ public class Comment extends BaseData {
 
     public void setEffect(long effect) {
         this.effect = effect;
-        getData().put(FIELD_EFFECT, this.effect);
     }
 
     public String getSource() {
         return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public String getRestair() {
@@ -351,19 +371,30 @@ public class Comment extends BaseData {
 
     public void setRestair(String restair) {
         this.restair = restair;
-        getData().put(FIELD_RESTAIR, this.restair);
     }
 
     public long getPOIStatus() {
         return poiStatus;
     }
 
+    public void setPOIStatus(long poiStatus) {
+        this.poiStatus = poiStatus;
+    }
+
     public long getPattern() {
         return pattern;
     }
 
+    public void setPattern(long pattern) {
+        this.pattern = pattern;
+    }
+
     public String getPOIName() {
         return poiName;
+    }
+
+    public void setPOIName(String poiName) {
+        this.poiName = poiName;
     }
 
     public long getUserId() {
@@ -372,11 +403,14 @@ public class Comment extends BaseData {
 
     public void setUserId(long userId) {
         this.userId = userId;
-        getData().put(FIELD_USER_ID, this.userId);
     }
 
     public String getPoiCityId() {
         return poiCityId;
+    }
+
+    public void setPoiCityId(String poiCityId) {
+        this.poiCityId = poiCityId;
     }
 
     public String getClientUid() {
@@ -385,7 +419,6 @@ public class Comment extends BaseData {
 
     public void setClientUid(String clientUid) {
         this.clientUid = clientUid;
-        getData().put(FIELD_CLIENT_UID, this.clientUid);
     }
 
     public POI getPOI() {
@@ -508,15 +541,7 @@ public class Comment extends BaseData {
         criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
         criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
         DataQuery commentQuery = new DataQuery(context);
-        commentQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), sourceViewId, targerViewId, null, false, false, poi);
+        commentQuery.setup(criteria, Globals.g_Current_City_Info.getId(), sourceViewId, targerViewId, null, false, false, poi);
         return commentQuery;
     }
-    
-    public static XMapInitializer<Comment> Initializer = new XMapInitializer<Comment>() {
-
-        @Override
-        public Comment init(XMap data) throws APIException {
-            return new Comment(data);
-        }
-    };
 }

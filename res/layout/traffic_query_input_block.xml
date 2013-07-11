@@ -32,13 +32,13 @@
 			            android:layout_marginRight="4dp"
 			            android:focusable="true" />
 
-			        <com.tigerknows.android.widget.TKEditText
+			        <com.tigerknows.view.TKEditText
 			            android:id="@+id/start_edt"
 			            android:layout_width="fill_parent" 
 			            android:layout_height="44dp"
 			            tkandroid:height="44dp"
 			            tkandroid:imeOptions="actionNext">
-			         </com.tigerknows.android.widget.TKEditText>
+			         </com.tigerknows.view.TKEditText>
         		</LinearLayout>
 	            <LinearLayout 
 	                android:layout_marginTop="6dp"
@@ -52,13 +52,13 @@
 			            android:layout_marginRight="4dp"
 			            android:layout_width="wrap_content"
 			            android:layout_height="wrap_content" />
-			        <com.tigerknows.android.widget.TKEditText
+			        <com.tigerknows.view.TKEditText
 			            android:id="@+id/end_edt"
 			            android:layout_width="fill_parent" 
 			            android:layout_height="44dp"
 			            tkandroid:height="44dp"
 			            tkandroid:imeOptions="actionSearch">
-			         </com.tigerknows.android.widget.TKEditText>
+			         </com.tigerknows.view.TKEditText>
         		</LinearLayout>
 	        </LinearLayout>
 	        <Button android:id="@+id/traffic_query_btn"
@@ -83,12 +83,12 @@
 	            android:orientation="vertical"
 	            android:layout_marginRight="8dp"
 	            android:layout_toLeftOf="@+id/busline_query_btn">
-			        <com.tigerknows.android.widget.TKEditText
+			        <com.tigerknows.view.TKEditText
 			            android:id="@+id/busline_edt"
 			            android:layout_width="fill_parent" 
 			            android:layout_height="wrap_content"
 			            tkandroid:imeOptions="actionSearch">
-			         </com.tigerknows.android.widget.TKEditText>
+			         </com.tigerknows.view.TKEditText>
 			</LinearLayout>
 			<Button android:id="@+id/busline_query_btn"
 	            android:layout_alignParentRight="true"

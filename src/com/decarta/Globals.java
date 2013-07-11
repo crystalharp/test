@@ -12,17 +12,17 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYInteger;
+import com.tigerknows.ImageCache;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
-import com.tigerknows.common.AsyncImageLoader;
-import com.tigerknows.common.ImageCache;
-import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.CityInfo;
+import com.tigerknows.maps.MapEngine;
+import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.BootstrapModel;
-import com.tigerknows.model.Session;
-import com.tigerknows.model.User;
 import com.tigerknows.model.AccountManage.UserRespnose;
-import com.tigerknows.util.Utility;
+import com.tigerknows.util.AsyncImageLoader;
+import com.tigerknows.util.CommonUtils;
+import com.tigerknows.view.user.Session;
+import com.tigerknows.view.user.User;
 
 public class Globals {
     
@@ -49,52 +49,7 @@ public class Globals {
 	/**
 	 * 当前所选城市信息
 	 */
-	private static CityInfo g_Current_City_Info = null;
-    
-    public static void setCurrentCityInfo(CityInfo cityInfo) {
-        g_Current_City_Info = cityInfo;
-    }
-    
-    public static CityInfo getCurrentCityInfo() {
-        return getCurrentCityInfo(true);
-    }
-    
-    public static CityInfo getCurrentCityInfo(boolean query) {
-        CityInfo currentCityInfo = g_Current_City_Info;
-        CityInfo hotelCityInfo = g_Hotel_City_Info;
-        CityInfo cityInfo = null;
-        if (query && hotelCityInfo != null && hotelCityInfo.isAvailably()) {
-            cityInfo = hotelCityInfo;
-        } else if (currentCityInfo != null && currentCityInfo.isAvailably()){
-            cityInfo = currentCityInfo;
-        } else {
-            // "北京,beijing,39.90415599,116.397772995,11, 北京,beijing"
-            cityInfo = new CityInfo();
-            cityInfo.setCName("beijing");
-            cityInfo.setCProvinceName("beijing");
-            cityInfo.setEName("beijing");
-            cityInfo.setEProvinceName("beijing");
-            cityInfo.setId(1);
-            cityInfo.setPosition(new Position(39.90415599,116.397772995));
-            cityInfo.setLevel(11);
-        }
-        return cityInfo;
-    }
-    
-    /**
-     * 酒店查询的目标城市
-     * 打开酒店页面时，默认设为当前所选城市
-     * 用户在此页面切换酒店查询的目标城市时并不影响当前所选城市
-     */
-    private static CityInfo g_Hotel_City_Info = null;
-    
-    public static void setHotelCityInfo(CityInfo cityInfo) {
-        g_Hotel_City_Info = cityInfo;
-    }
-    
-    public static CityInfo getHotelCityInfo() {
-        return g_Hotel_City_Info;
-    }
+    public static CityInfo g_Current_City_Info = new CityInfo();
     
     /**
      * 定位信息
@@ -135,8 +90,6 @@ public class Globals {
         pic.put(TKConfig.PICTURE_TUANGOU_DETAIL, new XYInteger(688, 416));
         pic.put(TKConfig.PICTURE_TUANGOU_TAOCAN, new XYInteger(688, 0));
         pic.put(TKConfig.PICTURE_DIANYING_DETAIL, new XYInteger(312, 416));
-        pic.put(TKConfig.PICTURE_HOTEL_LIST, new XYInteger(180, 180));
-        pic.put(TKConfig.PICTURE_HOTEL_DETAIL, new XYInteger(150, 150));
     	sScreenAdaptPic.put(new XYInteger(800, 1280), pic);
 
         sOptimalAdaptive.put(TKConfig.PICTURE_DISCOVER_HOME, new XYInteger(322, 286));
@@ -145,8 +98,6 @@ public class Globals {
         sOptimalAdaptive.put(TKConfig.PICTURE_TUANGOU_DETAIL, new XYInteger(412, 250));
         sOptimalAdaptive.put(TKConfig.PICTURE_TUANGOU_TAOCAN, new XYInteger(412, 0));
         sOptimalAdaptive.put(TKConfig.PICTURE_DIANYING_DETAIL, new XYInteger(188, 250));
-        sOptimalAdaptive.put(TKConfig.PICTURE_HOTEL_LIST, new XYInteger(108, 108));
-        sOptimalAdaptive.put(TKConfig.PICTURE_HOTEL_DETAIL, new XYInteger(90, 90));
         sScreenAdaptPic.put(new XYInteger(480, 800), sOptimalAdaptive);
         
         pic = new HashMap<Integer, XYInteger>();
@@ -156,8 +107,6 @@ public class Globals {
         pic.put(TKConfig.PICTURE_TUANGOU_DETAIL, new XYInteger(276, 168));
         pic.put(TKConfig.PICTURE_TUANGOU_TAOCAN, new XYInteger(276, 0));
         pic.put(TKConfig.PICTURE_DIANYING_DETAIL, new XYInteger(126, 168));
-        pic.put(TKConfig.PICTURE_HOTEL_LIST, new XYInteger(72, 72));
-        pic.put(TKConfig.PICTURE_HOTEL_DETAIL, new XYInteger(60, 60));
         sScreenAdaptPic.put(new XYInteger(320, 480), pic);
     }
     
@@ -172,7 +121,7 @@ public class Globals {
         Globals.g_My_Location_State = LOCATION_STATE_NONE;
         
         Globals.readSessionAndUser(context);
-        Globals.setConnectionFast(Utility.isConnectionFast(context));
+        Globals.setConnectionFast(CommonUtils.isConnectionFast(context));
     }
 
     public static AsyncImageLoader getAsyncImageLoader() {
@@ -277,7 +226,20 @@ public class Globals {
             Globals.g_User = null;
         }
     }
-        
+    
+    /**
+     * 获取当前城市Id
+     * @return
+     */
+    public static int getCurrentCityId() {
+        int cityId = MapEngine.CITY_ID_INVALID;
+        CityInfo cityInfo = g_Current_City_Info;
+        if (cityInfo != null) {
+            cityId = cityInfo.getId(); 
+        }
+        return cityId;
+    }
+    
     /**
      * 获取最近所选的城市信息
      * @param context

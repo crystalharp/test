@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content"
+    android:orientation="vertical">    
+    
+	<LinearLayout 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:paddingRight="24dp"
+        android:gravity="left|center_vertical">
+	    <TextView
+	        android:layout_width="70dp"
+	        android:layout_height="wrap_content"
+	        android:layout_marginRight="6dp"
+	        android:gravity="left|center_vertical"
+	        android:text="@string/comment_cinema_effect"/>
+		<LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical">
+			<RatingBar android:id="@+id/effect_rbt"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+                style="@style/RatingBar.Middle"
+		        android:numStars="5"
+		        android:rating="3" 
+		        android:stepSize="1"
+		        android:focusable="true"
+		        android:focusableInTouchMode="true" />
+		</LinearLayout>    
+    </LinearLayout>
+    
+	<LinearLayout 
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content"
+	    android:orientation="horizontal"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"
+        android:paddingRight="24dp"
+        android:gravity="left|center_vertical">
+	    <TextView
+	        android:layout_width="70dp"
+	        android:layout_height="wrap_content"
+	        android:layout_marginRight="6dp"
+	        android:gravity="left|center_vertical"
+	        android:text="@string/comment_qos"/>
+		<LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:orientation="vertical">
+			<RatingBar android:id="@+id/qos_rbt"
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:focusable="true"
+		        android:focusableInTouchMode="true"
+                style="@style/RatingBar.Middle"
+		        android:numStars="5"
+		        android:rating="3" 
+		        android:stepSize="1" />
+		</LinearLayout>    
+    </LinearLayout>
+    
+	<include
+	    layout="@layout/comment_input_avg"
+	    android:layout_width="fill_parent" 
+	    android:layout_height="wrap_content"
+	    />
+</LinearLayout>
+

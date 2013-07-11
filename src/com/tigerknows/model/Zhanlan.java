@@ -13,6 +13,7 @@ import android.os.Parcelable;
 
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.xobject.XMap;
 
 public class Zhanlan extends BaseData implements Parcelable{
@@ -112,31 +113,73 @@ public class Zhanlan extends BaseData implements Parcelable{
 
     public Zhanlan (XMap data) throws APIException {
         super(data);
-        init(data, true);
+        init(data);
     }
     
-    public void init(XMap data, boolean reset) throws APIException {
-        super.init(data, reset);
-        this.uid = getStringFromData(FIELD_UID, reset ? null : this.uid);
-        this.name = getStringFromData(FIELD_NAME, reset ? null : this.name);
-        this.cityId = getStringFromData(FIELD_CITY_ID, reset ? null : this.cityId);
-        this.pictures = getObjectFromData(FIELD_PICTURES, TKDrawable.Initializer, reset ? null : this.pictures);
-        this.picturesDetail = getObjectFromData(FIELD_PICTURES_DETAIL, TKDrawable.Initializer, reset ? null : this.picturesDetail);
-        this.description = getStringFromData(FIELD_DESCRIPTION, reset ? null : this.description);
-        this.linkUid = getStringFromData(FIELD_LINK_UID, reset ? null : this.linkUid);
-        this.position = getPositionFromData(FIELD_X, FIELD_Y, reset ? null : this.position);
-        this.timeInfo = getStringFromData(FIELD_TIME_INFO, reset ? null : this.timeInfo);
-        this.timeDesc = getStringFromData(FIELD_TIME_DESC, reset ? null : this.timeDesc);
-        this.price = getStringFromData(FIELD_PRICE, reset ? null : this.price);
-        this.contact_tel = getStringFromData(FIELD_CONTACT_TEL, reset ? null : this.contact_tel);
-        this.placeName = getStringFromData(FIELD_PLACE_NAME, reset ? null : this.placeName);
-        this.address = getStringFromData(FIELD_ADDRESS, reset ? null : this.address);
-        this.hot = getLongFromData(FIELD_HOT, reset ? 0 : this.hot);
-        this.url = getStringFromData(FIELD_URL, reset ? null : this.url);
-        this.adminname = getStringFromData(FIELD_ADMINNAME, reset ? null : this.adminname);
-        this.areaname = getStringFromData(FIELD_AREANAME, reset ? null : this.areaname);
-        this.source = getStringFromData(FIELD_SOURCE, reset ? null : this.source);
-        this.distance = getStringFromData(FIELD_DISTANCE, reset ? null : this.distance);
+    public void init(XMap data) throws APIException {
+        super.init(data);
+        if (this.data.containsKey(FIELD_UID)) {
+            this.uid = this.data.getString(FIELD_UID);
+        }
+        if (this.data.containsKey(FIELD_NAME)) {
+            this.name = this.data.getString(FIELD_NAME);
+        }
+        if (this.data.containsKey(FIELD_CITY_ID)) {
+            this.cityId = this.data.getString(FIELD_CITY_ID);
+        }
+        if (this.data.containsKey(FIELD_PICTURES)) {
+            this.pictures = new TKDrawable(this.data.getXMap(FIELD_PICTURES));
+        }
+        if (this.data.containsKey(FIELD_PICTURES_DETAIL)) {
+            this.picturesDetail = new TKDrawable(this.data.getXMap(FIELD_PICTURES_DETAIL));
+        }
+        if (this.data.containsKey(FIELD_DESCRIPTION)) {
+            this.description = this.data.getString(FIELD_DESCRIPTION);
+        }
+        if (this.data.containsKey(FIELD_LINK_UID)) {
+            this.linkUid = this.data.getString(FIELD_LINK_UID);
+        }
+        if (this.data.containsKey(FIELD_X) && this.data.containsKey(FIELD_Y)) {
+            this.x = this.data.getInt(FIELD_X);
+            this.y = this.data.getInt(FIELD_Y);
+            this.position = new Position(((double)this.y)/TKConfig.LON_LAT_DIVISOR, ((double)this.x)/TKConfig.LON_LAT_DIVISOR);
+        }
+        if (this.data.containsKey(FIELD_TIME_INFO)) {
+            this.timeInfo = this.data.getString(FIELD_TIME_INFO);
+        }
+        if (this.data.containsKey(FIELD_TIME_DESC)) {
+            this.timeDesc = this.data.getString(FIELD_TIME_DESC);
+        }
+        if (this.data.containsKey(FIELD_PRICE)) {
+            this.price = this.data.getString(FIELD_PRICE);
+        }
+        if (this.data.containsKey(FIELD_CONTACT_TEL)) {
+            this.contact_tel = this.data.getString(FIELD_CONTACT_TEL);
+        }
+        if (this.data.containsKey(FIELD_PLACE_NAME)) {
+            this.placeName = this.data.getString(FIELD_PLACE_NAME);
+        }
+        if (this.data.containsKey(FIELD_ADDRESS)) {
+            this.address = this.data.getString(FIELD_ADDRESS);
+        }
+        if (this.data.containsKey(FIELD_HOT)) {
+            this.hot = this.data.getInt(FIELD_HOT);
+        }
+        if (this.data.containsKey(FIELD_URL)) {
+            this.url = this.data.getString(FIELD_URL);
+        }
+        if (this.data.containsKey(FIELD_ADMINNAME)) {
+            this.adminname = this.data.getString(FIELD_ADMINNAME);
+        }
+        if (this.data.containsKey(FIELD_AREANAME)) {
+            this.areaname = this.data.getString(FIELD_AREANAME);
+        }
+        if (this.data.containsKey(FIELD_SOURCE)) {
+            this.source = this.data.getString(FIELD_SOURCE);
+        }
+        if (this.data.containsKey(FIELD_DISTANCE)) {
+            this.distance = this.data.getString(FIELD_DISTANCE);
+        }
     }
     
     @Override
@@ -398,13 +441,6 @@ public class Zhanlan extends BaseData implements Parcelable{
 				+ ", distance=" + distance + ", position=" + position
 				+ ", poi=" + poi + "]";
 	}
-
-    public static XMapInitializer<Zhanlan> Initializer = new XMapInitializer<Zhanlan>() {
-
-        @Override
-        public Zhanlan init(XMap data) throws APIException {
-            return new Zhanlan(data);
-        }
-    };
+	
 	
 }

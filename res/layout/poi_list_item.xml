@@ -7,47 +7,6 @@
     android:paddingRight="8dp"
     android:paddingBottom="8dp"
     android:background="@drawable/list_selector_background_gray_light">
-
-    <RelativeLayout
-        android:id="@+id/picture_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginRight="8dp"
-        >
-        <ImageView
-            android:id="@+id/bg_imv"
-            android:layout_width="90dp"
-            android:layout_height="90dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:background="@drawable/bg_picture_hotel"
-            />
-        <ImageView
-            android:id="@+id/picture_imv"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_centerInParent="true"
-            android:background="@drawable/icon"
-            />
-
-         <TextView 
-             android:id="@+id/can_reserve_txv"
-             android:layout_width="80dp"
-             android:layout_height="wrap_content"
-             android:layout_centerHorizontal="true"
-             android:layout_alignBottom="@id/bg_imv"
-             android:layout_marginBottom="5dp"
-             android:paddingLeft="8dp"
-             android:background="#99000000"
-             android:textColor="@color/white"
-             android:textSize="16sp"
-             android:text="@string/can_not_reserve"
-             android:gravity="left"
-             android:focusable="false"
-             android:singleLine="true"
-             />
-    </RelativeLayout>
     
     <LinearLayout
         android:id="@+id/name_view" 
@@ -55,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:orientation="horizontal"
-        android:layout_toRightOf="@id/picture_view"
+        android:layout_alignParentLeft="true"
         android:paddingBottom="5dp"  >
     <TextView 
         android:id="@+id/name_txv" 
@@ -75,7 +34,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="left|center_vertical"
-        android:layout_marginTop="1dp"
         ></LinearLayout> 
     </LinearLayout>   
     <RatingBar android:id="@+id/stars_rtb"
@@ -83,7 +41,7 @@
         android:layout_height="wrap_content"
         android:padding="0dp"
         android:layout_marginTop="2dp"
-        android:layout_toRightOf="@id/picture_view"
+        android:layout_alignParentLeft="true"
         android:layout_below="@id/name_view" 
         android:progressDrawable="@drawable/ratingbar_small"
         style="@style/RatingBar.Small"
@@ -152,7 +110,7 @@
         android:id="@+id/comment_txv" 
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" 
-        android:layout_toRightOf="@id/picture_view"
+        android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@id/money_txv"
         android:layout_below="@id/stars_rtb" 
         android:layout_marginTop="8dp"

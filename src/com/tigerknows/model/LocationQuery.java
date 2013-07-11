@@ -18,7 +18,7 @@ import com.tigerknows.model.response.PositionCake;
 import com.tigerknows.model.response.ResponseCode;
 import com.tigerknows.provider.LocationTable;
 import com.tigerknows.service.TigerknowsLocationManager;
-import com.tigerknows.util.Utility;
+import com.tigerknows.util.CommonUtils;
 import com.tigerknows.util.ParserUtil;
 
 import android.content.Context;
@@ -160,7 +160,7 @@ public class LocationQuery extends BaseQuery {
     @Override
     protected void makeRequestParameters() throws APIException {
         super.makeRequestParameters();
-        addCommonParameters(requestParameters, Globals.getCurrentCityInfo(false).getId(), true);
+        addCommonParameters(requestParameters, Globals.getCurrentCityId(), true);
         
         if (wifiManager != null) {
             List<ScanResult> scanResults = wifiManager.getScanResults();
@@ -178,10 +178,10 @@ public class LocationQuery extends BaseQuery {
             for (NeighboringCellInfo cellInfo : list) {
                 lac = cellInfo.getLac();
                 cid = cellInfo.getCid();
-                if (Utility.lacCidValid(lac, cid)) {
+                if (CommonUtils.lacCidValid(lac, cid)) {
                     requestParameters.add("n8b_lac[]", String.valueOf(lac));
                     requestParameters.add("n8b_ci[]", String.valueOf(cid));
-                    requestParameters.add("n8b_ss[]", String.valueOf(Utility.asu2dbm(cellInfo.getRssi())));
+                    requestParameters.add("n8b_ss[]", String.valueOf(CommonUtils.asu2dbm(cellInfo.getRssi())));
                 }
             }
         }
@@ -462,12 +462,7 @@ public class LocationQuery extends BaseQuery {
                 } else {
                     int match = matchWifi(wifiList, other.wifiList);
                     rate = ((float)match)/size;
-//                    LogWrapper.d("LocationQuery", "match="+match);
-//                    LogWrapper.d("LocationQuery", "size="+size);
-//                    LogWrapper.d("LocationQuery", "scanResult    ="+wifiList);
-//                    LogWrapper.d("LocationQuery", "other.wifiList="+other.wifiList);
                 }
-//                LogWrapper.d("LocationQuery", "rate="+rate);
                 return rate;
             } else if (wifiList == null && other.wifiList == null) {
                 return 1;

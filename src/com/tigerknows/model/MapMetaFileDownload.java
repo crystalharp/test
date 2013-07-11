@@ -13,8 +13,8 @@ import android.text.TextUtils;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
-import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.RegionMetaVersion;
+import com.tigerknows.maps.MapEngine;
+import com.tigerknows.maps.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.response.Appendix;
 import com.tigerknows.model.response.DataPackage;
 import com.tigerknows.model.response.ResponseCode;

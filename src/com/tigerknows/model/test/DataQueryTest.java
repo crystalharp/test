@@ -2,17 +2,12 @@ package com.tigerknows.model.test;
 
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
-import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.CityInfo;
+import com.tigerknows.maps.MapEngine;
+import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Comment;
-import com.tigerknows.model.DataQuery.AlternativeResponse;
-import com.tigerknows.model.DataQuery.AlternativeResponse.Alternative;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
-import com.tigerknows.model.Hotel;
-import com.tigerknows.model.Hotel.HotelTKDrawable;
-import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.PullMessage;
 import com.tigerknows.model.Shangjia;
@@ -51,7 +46,7 @@ import com.tigerknows.model.Yingxun.Changci;
 import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XInt;
 import com.tigerknows.model.xobject.XMap;
-import com.tigerknows.util.Utility;
+import com.tigerknows.util.CommonUtils;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -236,10 +231,10 @@ public class DataQueryTest {
         data.put(Shangjia.FIELD_SOURCE, Shangjia.SOURCE_TEST);
         data.put(Shangjia.FIELD_NAME, "test");
         data.put(Shangjia.FIELD_SERVICE_TEL, "16899168");
-        data.put(Shangjia.FIELD_MARKER, Utility.getDrawableResource(context, R.drawable.icon));
+        data.put(Shangjia.FIELD_MARKER, CommonUtils.getDrawableResource(context, R.drawable.icon));
         data.put(Shangjia.FIELD_URL, "http://www.baidu.com");
         data.put(Shangjia.FIELD_MESSAGE, message);
-        data.put(Shangjia.FIELD_LOGO, Utility.getDrawableResource(context, R.drawable.icon));
+        data.put(Shangjia.FIELD_LOGO, CommonUtils.getDrawableResource(context, R.drawable.icon));
         return data;
     }
 
@@ -609,12 +604,10 @@ public class DataQueryTest {
         data.put(POI.FIELD_STATUS, 1);
         data.put(POI.FIELD_LAST_COMMENT, launchDianping("FIELD_LAST_COMMENT"));
         XArray<XMap> xarray = new XArray<XMap>();
-        for(int i = 0; i < 16; i ++) {
-            xarray.add(launchDynamicPOI(i));
+        for(int i = 0; i < 168; i ++) {
+            xarray.add(launchDynamicPOI(i%15));
         }
-        xarray.add(launchDynamicPOI(Integer.parseInt(DynamicPOI.TYPE_HOTEL)));
         data.put(POI.FIELD_DYNAMIC_POI, xarray);
-        data.put(POI.FIELD_PRICE, "168");
         return data;
     }
 
@@ -633,73 +626,8 @@ public class DataQueryTest {
         XMap data = new XMap();
         data.put(DynamicPOI.FIELD_TYPE, type);
         data.put(DynamicPOI.FIELD_MASTER_UID, "FIELD_MASTER_UID");
-        data.put(DynamicPOI.FIELD_SUMMARY, "FIELD_SUMMARY");
+        data.put(DynamicPOI.FIELD_SUMMARY, "FIELD_SUMMARY"+type);
         data.put(DynamicPOI.FIELD_SLAVE_UID, "FIELD_SLAVE_UID");
-        return data;
-    }
-
-    public static XMap launchHotelPOIResponse(int total, String message) {
-        XMap data = new XMap();
-        BaseQueryTest.launchResponse(data);
-        data.put(POIResponse.FIELD_B_POI_LIST, launchHotelPOIList(total, message, TKConfig.getPageSize()));
-        data.put(POIResponse.FIELD_FILTER_AREA_INDEX, launchFilterIndex(1, 168));
-        data.put(POIResponse.FIELD_FILTER_CATEGORY_INDEX, launchFilterIndex(2, 168));
-        data.put(POIResponse.FIELD_FILTER_ORDER_INDEX, launchFilterIndex(3, 168));
-        data.put(POIResponse.FIELD_FILTER_AREA, launchFilterArea());
-        data.put(POIResponse.FIELD_FILTER_CATEGORY_ORDER, launchFilterCategoryOrder());
-        return data;
-    }
-
-    public static XMap launchHotelPOIList(int total, String message, int size) {
-        XMap data = new XMap();
-        launchBaseList(data, total, message);
-        XArray<XMap> list = new XArray<XMap>();
-        for(int i = 0 ; i < size; i ++) {
-            list.add(launchHotelPOI("Hotel"+i+"HotelHotelHotelHotelHotelHotelHotel", i % 2));
-        }
-        data.put(POIList.FIELD_LIST, list);
-        return data;
-    }
-
-    public static XMap launchHotelPOI(String name, int canReserve) {
-        XMap data = launchPOI(name);
-        data.put(Hotel.FIELD_UUID, "FIELD_UUID");
-        data.put(Hotel.FIELD_SOURCE, "FIELD_SOURCE");
-        data.put(Hotel.FIELD_BRAND, 8);
-        data.put(Hotel.FIELD_IMAGE_THUMB, "FIELD_IMAGE_THUMB");
-        XArray<XMap> xarray = new XArray<XMap>();
-        for(int i = 0; i < 16; i ++) {
-            xarray.add(launchHotelTKDrawable(i));
-        }
-        data.put(Hotel.FIELD_IMAGE_LIST, xarray);
-        xarray = new XArray<XMap>();
-        for(int i = 0; i < 16; i ++) {
-            xarray.add(launchRoomType(i));
-        }
-        data.put(Hotel.FIELD_ROOM_TYPE_LIST, xarray);
-        data.put(Hotel.FIELD_SERVICE, "FIELD_SERVICE");
-        data.put(Hotel.FIELD_CAN_RESERVE, canReserve);
-        return data;
-    }
-
-    protected static XMap launchHotelTKDrawable(int order) {
-        XMap data = new XMap();
-        data.put(HotelTKDrawable.FIELD_NAME, "FIELD_NAME"+order);
-        data.put(HotelTKDrawable.FIELD_URL, "http://www.tigerknows.com/wp-content/themes/tiger/images/logo.jpg");
-        return data;
-    }
-
-    public static XMap launchRoomType(int order) {
-        XMap data = new XMap();
-        data.put(RoomType.FIELD_ROOM_ID, "168");
-        data.put(RoomType.FIELD_RATEPLAN_ID, "168");
-        data.put(RoomType.FIELD_ROOM_TYPE, "FIELD_ROOM_TYPE"+order);
-        data.put(RoomType.FIELD_FLOOR, "FIELD_FLOOR"+order);
-        data.put(RoomType.FIELD_BED_TYPE, "FIELD_BED_TYPE");
-        data.put(RoomType.FIELD_NET_SERVICE, "FIELD_NET_SERVICE");
-        data.put(RoomType.FIELD_BREAKFAST, "FIELD_BREAKFAST");
-        data.put(RoomType.FIELD_PRICE, 168+order*100+"");
-        data.put(RoomType.FIELD_CAN_RESERVE, 1);
         return data;
     }
 
@@ -775,36 +703,6 @@ public class DataQueryTest {
         data.put(PulledDynamicPOI.FIELD_SLAVE_POI_TYPE, Integer.parseInt(BaseQuery.DATA_TYPE_YINGXUN));
         data.put(PulledDynamicPOI.FIELD_SLAVE_POI_UID, "FIELD_SLAVE_POI_UID");
         data.put(PulledDynamicPOI.FIELD_POI_DESCRIPTION, "FIELD_POI_DESCRIPTION");
-        return data;
-    }
-
-    public static XMap launchAlternativeResponse(int total, String message) {
-        XMap data = new XMap();
-        BaseQueryTest.launchResponse(data);
-        data.put(AlternativeResponse.FIELD_LIST, launchPOIList(total, message, TKConfig.getPageSize()));
-        data.put(AlternativeResponse.FIELD_FILTER_AREA, launchFilterArea());
-        data.put(AlternativeResponse.FIELD_POSITION, 16);
-        return data;
-    }
-
-    public static XMap launchAlternativeList(int total, String message, int size) {
-        XMap data = new XMap();
-        launchBaseList(data, total, message);
-        XArray<XMap> list = new XArray<XMap>();
-        for(int i = 0 ; i < size; i ++) {
-            list.add(launchAlternative("Alternative"+i+"AlternativeAlternativeAlternative"));
-        }
-        data.put(AlternativeResponse.FIELD_LIST, list);
-        return data;
-    }
-
-    protected static XMap launchAlternative(String name) {
-        XMap data = new XMap();
-        data.put(Alternative.FIELD_UUID, POI_UUID);
-        data.put(Alternative.FIELD_NAME, name);
-        data.put(Alternative.FIELD_ADDRESS, "ADDRESS");
-        data.put(Alternative.FIELD_LONGITUDE, ((int) (116.397*100000)));
-        data.put(Alternative.FIELD_LATITUDE, ((int) (39.904*100000)));
         return data;
     }
 }

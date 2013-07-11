@@ -28,10 +28,6 @@ public class XArray<T> extends XObject {
     public T get(int i) {
         return elements.get(i);
     }
-
-    public T remove(int i) {
-        return elements.remove(i);
-    }
     
     public int size() {
         return elements.size();

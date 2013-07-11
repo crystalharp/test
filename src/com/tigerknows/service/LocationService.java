@@ -27,8 +27,6 @@ public class LocationService extends TKNetworkService {
     
     private LocationQuery locationQuery;
     
-    public static Location LOCATION_FOR_TEST;
-    
     @Override
     public void onCreate() {
         super.onCreate();
@@ -134,9 +132,6 @@ public class LocationService extends TKNetworkService {
         //TODO:获取当前位置信息
         Location location = locationQuery.getLocation();
         
-        if (LOCATION_FOR_TEST != null) {
-            location = LOCATION_FOR_TEST;
-        }
         if (location != null) {
             onLocationChanged(location);
         } else {

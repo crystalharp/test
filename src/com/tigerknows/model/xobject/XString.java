@@ -16,10 +16,6 @@ public class XString extends XObject{
         value = s;
     }
     
-    public void setValue(String s) {
-        this.value = s;
-    }
-    
     protected String getValue(){
         return value;
     }
@@ -55,9 +51,5 @@ public class XString extends XObject{
         }
         
         return false;
-    }
-    
-    public static XString valueOf(String s){
-        return new XString(s);
     }
 }

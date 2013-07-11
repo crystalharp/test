@@ -84,12 +84,12 @@ import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYFloat;
 import com.decarta.android.util.XYInteger;
 import com.decarta.android.util.XYZ;
-import com.tigerknows.map.MapView;
-import com.tigerknows.map.MapWord;
-import com.tigerknows.map.TileDownload;
-import com.tigerknows.map.MapView.MapType;
-import com.tigerknows.map.MapView.MoveEndEventListener;
-import com.tigerknows.util.Utility;
+import com.tigerknows.maps.MapView;
+import com.tigerknows.maps.MapWord;
+import com.tigerknows.maps.TileDownload;
+import com.tigerknows.maps.MapView.MapType;
+import com.tigerknows.maps.MapView.MoveEndEventListener;
+import com.tigerknows.util.CommonUtils;
 
 /**
  *This class provide all function implementation related to map. It's a child view of MapView.
@@ -262,7 +262,7 @@ public class TilesView extends GLSurfaceView {
             snapBmp = null;
             return bm;
         } else {
-            return Utility.viewToBitmap(this);
+            return CommonUtils.viewToBitmap(this);
         }
     }
     
@@ -664,7 +664,6 @@ public class TilesView extends GLSurfaceView {
 // tigerknows modify begin		
 //		tileThreadPool.stopAllThreads();
 //		tileCache.stopWritingAndRemoveOldTiles();
-		TileThread.stopAllThreads();
         DownloadThread.stopAllThreads();
         MapTextThread.stopThread();
 // tigerknows modify end

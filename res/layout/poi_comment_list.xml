@@ -10,7 +10,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" />        
                 
-    <com.tigerknows.widget.SpringbackListView android:id="@+id/comment_lsv"
+    <com.tigerknows.view.SpringbackListView android:id="@+id/comment_lsv"
         android:layout_width="fill_parent" 
         android:layout_height="fill_parent"
         android:layout_below="@id/title_view"
@@ -29,7 +29,7 @@
         android:paddingRight="4dp"
         android:paddingBottom="4dp">
         <include
-            layout="@layout/poi_tip_comment"
+            layout="@layout/comment_tip"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" />
     </LinearLayout>

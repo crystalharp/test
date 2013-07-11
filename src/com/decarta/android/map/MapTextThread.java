@@ -11,8 +11,8 @@ import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYDouble;
-import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapWord;
+import com.tigerknows.maps.MapEngine;
+import com.tigerknows.maps.MapWord;
 
 /**
  * Thread class for loading tiles

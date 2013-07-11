@@ -4,8 +4,10 @@
 package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
+import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -70,7 +72,9 @@ public class BootstrapModel extends XMapData {
             this.recommend = new Recommend(this.data.getXMap(FIELD_RECOMMEND));
         }
         
-        this.uploadLog = getStringFromData(FIELD_UPLOAD_LOG);
+        if (this.data.containsKey(FIELD_UPLOAD_LOG)) {
+            this.uploadLog = this.data.getString(FIELD_UPLOAD_LOG);
+        }
      }
     
     public static class SoftwareUpdate extends XMapData {
@@ -106,10 +110,18 @@ public class BootstrapModel extends XMapData {
         
         public SoftwareUpdate(XMap data) throws APIException {
             super(data);
-            id = getLongFromData(FIELD_ID);
-            version = getStringFromData(FIELD_VERSION);
-            url = getStringFromData(FIELD_URL);
-            text = getStringFromData(FIELD_TEXT);
+            if (this.data.containsKey(FIELD_ID)) {
+                id = this.data.getInt(FIELD_ID);
+            }
+            if (this.data.containsKey(FIELD_VERSION)) {
+                version = this.data.getString(FIELD_VERSION);
+            }
+            if (this.data.containsKey(FIELD_URL)) {
+                url = this.data.getString(FIELD_URL);
+            }
+            if (this.data.containsKey(FIELD_TEXT)) {
+                text = this.data.getString(FIELD_TEXT);
+            }
         }
     }
     
@@ -153,11 +165,21 @@ public class BootstrapModel extends XMapData {
 
         public DomainName(XMap data) throws APIException {
             super(data);
-            download = getStringFromData(FIELD_DOWNLOAD);
-            query = getStringFromData(FIELD_QUERY);
-            location = getStringFromData(FIELD_LOCATION);
-            newQuery = getStringFromData(FIELD_NEW_QUERY);
-            accountManage = getStringFromData(FIELD_ACCOUNT_MANAGE);
+            if (this.data.containsKey(FIELD_DOWNLOAD)) {
+                download = this.data.getString(FIELD_DOWNLOAD);
+            }
+            if (this.data.containsKey(FIELD_QUERY)) {
+                query = this.data.getString(FIELD_QUERY);
+            }
+            if (this.data.containsKey(FIELD_LOCATION)) {
+                location = this.data.getString(FIELD_LOCATION);
+            }
+            if (this.data.containsKey(FIELD_NEW_QUERY)) {
+                newQuery = this.data.getString(FIELD_NEW_QUERY);
+            }
+            if (this.data.containsKey(FIELD_ACCOUNT_MANAGE)) {
+                accountManage = this.data.getString(FIELD_ACCOUNT_MANAGE);
+            }
         }
     }
     
@@ -171,9 +193,17 @@ public class BootstrapModel extends XMapData {
             return recommendAppList;
         }
         
+        @SuppressWarnings("unchecked")        
         public Recommend(XMap data) throws APIException {
             super(data);
-            recommendAppList = getListFromData(FIELD_RECOMMEND_APP, RecommendApp.Initializer);
+            if (this.data.containsKey(FIELD_RECOMMEND_APP)) {
+                recommendAppList = new ArrayList<RecommendApp>();
+                XArray<XMap> list = (XArray<XMap>)this.data.getXArray(FIELD_RECOMMEND_APP);
+                int length = list.size();
+                for(int i = 0; i < length; i++) {
+                    recommendAppList.add(new RecommendApp(list.get(i)));
+                }
+            }
         }
         
         public static class RecommendApp extends XMapData {
@@ -216,25 +246,24 @@ public class BootstrapModel extends XMapData {
 
             public RecommendApp(XMap data) throws APIException {
                 super(data);
-                name = getStringFromData(FIELD_NAME);
-                body = getStringFromData(FIELD_BODY);
-                url = getStringFromData(FIELD_URL);
-                id = getStringFromData(FIELD_ID);
-                String url = getStringFromData(FIELD_ICON);
-                if (url != null) {
-                    TKDrawable tkDrawable = new TKDrawable();
-                    tkDrawable.setUrl(url);
-                    icon = tkDrawable;
+                if (this.data.containsKey(FIELD_NAME)) {
+                    name = this.data.getString(FIELD_NAME);
+                }
+                if (this.data.containsKey(FIELD_BODY)) {
+                    body = this.data.getString(FIELD_BODY);
+                }
+                if (this.data.containsKey(FIELD_URL)) {
+                    url = this.data.getString(FIELD_URL);
+                }
+                if (this.data.containsKey(FIELD_ID)) {
+                    id = this.data.getString(FIELD_ID);
+                }
+                if (this.data.containsKey(FIELD_ICON)) {
+                    XMap xmap = new XMap();
+                    xmap.put(TKDrawable.FIELD_URL, this.data.getString(FIELD_ICON));
+                    icon = new TKDrawable(xmap);
                 }
             }
-
-            public static XMapInitializer<RecommendApp> Initializer = new XMapInitializer<RecommendApp>() {
-
-                @Override
-                public RecommendApp init(XMap data) throws APIException {
-                    return new RecommendApp(data);
-                }
-            };
         }
     }
 }

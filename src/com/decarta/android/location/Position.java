@@ -77,8 +77,7 @@ public class Position implements Serializable, Parcelable{
 			return false;
 		}
 		Position other = (Position) obj;
-		// 浮点数的判断不能用==
-		if(Math.abs(other.lat-this.lat) < 0.00001 && Math.abs(other.lon-this.lon) < 0.00001)
+		if(other.lat==this.lat && other.lon==this.lon)
 			return true;
 		else
 			return false;

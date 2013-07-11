@@ -8,18 +8,20 @@
 
 package com.tigerknows.model;
 
+import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.test.DataOperationTest;
 import com.tigerknows.model.xobject.XMap;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 public class DataOperation extends BaseQuery {
 
     // dataid string true 数据uid
     public static final String SERVER_PARAMETER_DATA_UID = "dataid";
-    
+
     // entity string true key-value数组
     public static final String SERVER_PARAMETER_ENTITY = "entity";
 
@@ -41,16 +43,6 @@ public class DataOperation extends BaseQuery {
 
     // 删除 d
     public static final String OPERATION_CODE_DELETE = "d";
-
-    /**
-     * 团购订单类型
-     */
-    public static final String ORDER_TYPE_TUANGOU = "1";
-    
-    /**
-     * 酒店订单类型
-     */
-    public static final String ORDER_TYPE_HOTEL = "2";
     
     public DataOperation(Context context) {
         super(context, API_TYPE_DATA_OPERATION);
@@ -64,41 +56,82 @@ public class DataOperation extends BaseQuery {
         if (criteria == null) {
             throw new APIException(APIException.CRITERIA_IS_NULL);
         }
-        
-        String dataType = addParameter(SERVER_PARAMETER_DATA_TYPE);
-        String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
-        if (OPERATION_CODE_QUERY.equals(operationCode)) {
-            if(DATA_TYPE_POI.equals(dataType)){
-                String subDataType = addParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
-                if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
-                    addParameter(new String[] {SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
-                }
-            }
-            
-        	if(dataType.equals(DATA_TYPE_DIAOYAN) == false){
-        		addParameter(new String[] {SERVER_PARAMETER_NEED_FEILD, SERVER_PARAMETER_DATA_UID});
-            }
-        	
-        	// 部分查询需要提交pic信息和dsrc信息，据说上一个写这行代码的人懒得用一堆if判断于是就直接用这行代码了
-        	// fengtianxiao 2013.05.10
-        	addParameter(new String[] {SERVER_PARAMETER_PICTURE}, false);
-        } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-            addParameter(SERVER_PARAMETER_ENTITY);
-        } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
-            addParameter(new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY});
-        } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
-            addParameter(SERVER_PARAMETER_DATA_UID);
+
+        String sessionId = Globals.g_Session_Id;
+        if (!TextUtils.isEmpty(sessionId)) {
+            requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
+        } 
+
+        if (criteria.containsKey(SERVER_PARAMETER_DATA_TYPE) == false) {
+        	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_TYPE);
+        } else if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE) == false) {
+        	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_OPERATION_CODE);
         } else {
-            throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
+        	String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
+            requestParameters.add(SERVER_PARAMETER_DATA_TYPE, dataType);
+            String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+            requestParameters.add(SERVER_PARAMETER_OPERATION_CODE, operationCode);
+            if (OPERATION_CODE_QUERY.equals(operationCode)) {
+            	if (criteria.containsKey(SERVER_PARAMETER_NEED_FEILD)) {
+                    requestParameters.add(SERVER_PARAMETER_NEED_FEILD, criteria.get(SERVER_PARAMETER_NEED_FEILD));
+                } else if(dataType.equals(DATA_TYPE_DIAOYAN)){
+                	//do nothing
+                } else {
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_NEED_FEILD);
+                }
+                
+                if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
+                    requestParameters.add(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID));
+                } else if(dataType.equals(DATA_TYPE_DIAOYAN)){
+                	//do nothing
+                } else {
+                	throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
+                }
+                if (criteria.containsKey(SERVER_PARAMETER_PICTURE)) {
+                    requestParameters.add(SERVER_PARAMETER_PICTURE, criteria.get(SERVER_PARAMETER_PICTURE));
+                }
+                
+            } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
+                if (criteria.containsKey(SERVER_PARAMETER_ENTITY)) {
+                    requestParameters.add(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY));
+                } else {
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ENTITY);
+                }
+            } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
+                if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
+                    requestParameters.add(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID));
+                } else {
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
+                }
+                if (criteria.containsKey(SERVER_PARAMETER_ENTITY)) {
+                    requestParameters.add(SERVER_PARAMETER_ENTITY, criteria.get(SERVER_PARAMETER_ENTITY));
+                } else {
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_ENTITY);
+                }
+            } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
+                if (criteria.containsKey(SERVER_PARAMETER_DATA_UID)) {
+                    requestParameters.add(SERVER_PARAMETER_DATA_UID, criteria.get(SERVER_PARAMETER_DATA_UID));
+                } else {
+                    throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_DATA_UID);
+                }
+            } else {
+                throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
+            }
         }
 
-        addSessionId(false);
+
+        
+        if (!TextUtils.isEmpty(Globals.g_ClientUID)) {
+            requestParameters.add(SERVER_PARAMETER_CLIENT_ID, Globals.g_ClientUID);
+        } else {
+            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CLIENT_ID);
+        }
     }
 
     @Override
     protected void createHttpClient() {
         super.createHttpClient();
-        String url = String.format(TKConfig.getQueryUrl(), TKConfig.getQueryHost());
+        String url = String.format(TKConfig.getQueryUrl(apiType, version, criteria.get(SERVER_PARAMETER_DATA_TYPE)), TKConfig.getQueryHost());
         httpClient.setURL(url);
     }
 
@@ -176,7 +209,9 @@ public class DataOperation extends BaseQuery {
         public CommentQueryResponse(XMap data) throws APIException {
             super(data);
             
-            comment = getObjectFromData(FIELD_COMMENT, Comment.Initializer);
+            if (this.data.containsKey(FIELD_COMMENT)) {
+                comment = new Comment(this.data.getXMap(FIELD_COMMENT));
+            }
         }
 
         public void setComment(Comment comment) {
@@ -199,8 +234,13 @@ public class DataOperation extends BaseQuery {
         public CommentCreateResponse(XMap data) throws APIException {
             super(data);
             
-            timeStamp = getStringFromData(FIELD_TIME_STAMP);
-            uid = getStringFromData(FIELD_UID);
+            if (this.data.containsKey(FIELD_TIME_STAMP)) {
+                timeStamp = this.data.getString(FIELD_TIME_STAMP);
+            }   
+
+            if (this.data.containsKey(FIELD_UID)) {
+                uid = this.data.getString(FIELD_UID);
+            }
         }
 
         public String getTimeStamp() {
@@ -230,7 +270,9 @@ public class DataOperation extends BaseQuery {
         public CommentUpdateResponse(XMap data) throws APIException {
             super(data);
             
-            timeStamp = getStringFromData(FIELD_TIME_STAMP);
+            if (this.data.containsKey(FIELD_TIME_STAMP)) {
+                timeStamp = this.data.getString(FIELD_TIME_STAMP);
+            }   
         }
     
         public String getTimeStamp() {
@@ -256,7 +298,9 @@ public class DataOperation extends BaseQuery {
         public TuangouQueryResponse(XMap data) throws APIException {
             super(data);
             
-            tuangou = getObjectFromData(FIELD_DATA, Tuangou.Initializer);
+            if (this.data.containsKey(FIELD_DATA)) {
+                tuangou = new Tuangou(this.data.getXMap(FIELD_DATA));
+            }
         } 
     }
 
@@ -273,7 +317,9 @@ public class DataOperation extends BaseQuery {
         public FendianQueryResponse(XMap data) throws APIException {
             super(data);
             
-            fendian = getObjectFromData(FIELD_DATA, Fendian.Initializer);
+            if (this.data.containsKey(FIELD_DATA)) {
+                fendian = new Fendian(this.data.getXMap(FIELD_DATA));
+            }
         } 
     }
     
@@ -290,7 +336,9 @@ public class DataOperation extends BaseQuery {
 		public YingxunQueryResponse(XMap data) throws APIException {
             super(data);
             
-            yingxun = getObjectFromData(FIELD_DATA, Yingxun.Initializer);
+            if (this.data.containsKey(FIELD_DATA)) {
+                yingxun = new Yingxun(this.data.getXMap(FIELD_DATA));
+            }
         } 
     }
     
@@ -307,7 +355,9 @@ public class DataOperation extends BaseQuery {
         public DianyingQueryResponse(XMap data) throws APIException {
             super(data);
             
-            dianying = getObjectFromData(FIELD_DATA, Dianying.Initializer);
+            if (this.data.containsKey(FIELD_DATA)) {
+                dianying = new Dianying(this.data.getXMap(FIELD_DATA));
+            }
         } 
     }
     
@@ -324,7 +374,9 @@ public class DataOperation extends BaseQuery {
         public YanchuQueryResponse(XMap data) throws APIException {
             super(data);
             
-            yanchu = getObjectFromData(FIELD_DATA, Yanchu.Initializer);
+            if (this.data.containsKey(FIELD_DATA)) {
+                yanchu = new Yanchu(this.data.getXMap(FIELD_DATA));
+            }
         } 
     }
     
@@ -341,7 +393,9 @@ public class DataOperation extends BaseQuery {
         public ZhanlanQueryResponse(XMap data) throws APIException {
             super(data);
             
-            zhanlan = getObjectFromData(FIELD_DATA, Zhanlan.Initializer);
+            if (this.data.containsKey(FIELD_DATA)) {
+                zhanlan = new Zhanlan(this.data.getXMap(FIELD_DATA));
+            }
         } 
     }
     
@@ -371,8 +425,13 @@ public class DataOperation extends BaseQuery {
 		public DiaoyanQueryResponse(XMap data) throws APIException{
 			super(data);
 			
-			hasSurveyed = getLongFromData(FIELD_HAS_SURVEYED);
-            url = getStringFromData(FIELD_URL);
+			if(this.data.containsKey(FIELD_HAS_SURVEYED)){
+				hasSurveyed = this.data.getInt(FIELD_HAS_SURVEYED);
+			}
+			
+			if(this.data.containsKey(FIELD_URL)){
+				url = this.data.getString(FIELD_URL);
+			}
 		}
     }
     
@@ -389,7 +448,9 @@ public class DataOperation extends BaseQuery {
         public DingdanCreateResponse(XMap data) throws APIException {
             super(data);
             
-            url = getStringFromData(FIELD_DATA);
+            if (this.data.containsKey(FIELD_DATA)) {
+                url = this.data.getString(FIELD_DATA);
+            }
         } 
     }
     
@@ -407,12 +468,7 @@ public class DataOperation extends BaseQuery {
                 }
             } if (OPERATION_CODE_QUERY.equals(operationCode)) {
                 if (DATA_TYPE_POI.equals(dataType)) {
-                    String subDataType = criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
-                    if (SUB_DATA_TYPE_POI.equals(subDataType)) {
-                        responseXMap = DataOperationTest.launchPOIQueryResponse();
-                    }else if(SUB_DATA_TYPE_HOTEL.equals(subDataType)){
-                    	responseXMap = DataOperationTest.launchHotelPOIQueryResponse();
-                    }
+                    responseXMap = DataOperationTest.launchPOIQueryResponse();
                 } else if (DATA_TYPE_TUANGOU.equals(dataType)) {
                     responseXMap = DataOperationTest.launchTuangouQueryResponse(context);
                 } else if (DATA_TYPE_FENDIAN.equals(dataType)) {

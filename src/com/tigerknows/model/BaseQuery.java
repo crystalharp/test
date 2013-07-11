@@ -14,26 +14,17 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnDismissListener;
 import android.content.Intent;
-import android.text.TextUtils;
-import android.view.ViewGroup;
-import android.widget.ScrollView;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.ActionLog;
 import com.tigerknows.TKConfig;
-import com.tigerknows.common.ActionLog;
-import com.tigerknows.crypto.DataEncryptor;
-import com.tigerknows.crypto.DataDecode;
-import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.CityInfo;
+import com.tigerknows.maps.MapEngine;
+import com.tigerknows.maps.MapEngine.CityInfo;
 import com.tigerknows.model.LocationQuery.TKCellLocation;
 import com.tigerknows.model.response.Appendix;
 import com.tigerknows.model.response.DataPackage;
@@ -44,13 +35,13 @@ import com.tigerknows.model.response.ResponseCode;
 import com.tigerknows.model.response.UUIDInfo;
 import com.tigerknows.model.response.UpdateVersionData;
 import com.tigerknows.model.response.UserActionTrackSwitch;
-import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
-import com.tigerknows.util.Utility;
+import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.DataEncryptor;
 import com.tigerknows.util.HttpUtils;
 import com.tigerknows.util.ParserUtil;
-import com.tigerknows.util.ZLibUtils;
+import com.tigerknows.util.TKLZDecode;
 import com.tigerknows.util.HttpUtils.TKHttpClient.ProgressUpdate;
 import com.weibo.sdk.android.WeiboParameters;
 
@@ -102,12 +93,6 @@ public abstract class BaseQuery {
     
     // 联想词下载
     public static final String API_TYPE_SUGGEST_LEXICON_DOWNLOAD = "is";
-    
-    // 接口代理
-    public static final String API_TYPE_PROXY = "proxy";
-    
-    // 酒店订单
-    public static final String API_TYPE_HOTEL_ORDER = "hotelOrder";
     
     protected static final String VERSION = "13";
     
@@ -185,15 +170,6 @@ public abstract class BaseQuery {
     
     public static String sClentStatus = CLIENT_STATUS_START;
     
-    // subty   int     false   子数据类型，当dty=1时，可有取值，取值范围{0,1} 
-    public static final String SERVER_PARAMETER_SUB_DATA_TYPE = "subty";
-
-    // checkin     String  true    入住酒店时间，格式"yyyy-MM-dd"
-    public static final String SERVER_PARAMETER_CHECKIN = "checkin";
-    
-    // checkout    String  true    离开酒店时间，格式"yyyy-MM-dd" 
-    public static final String SERVER_PARAMETER_CHECKOUT = "checkout";
-    
     /**
      * 检查是否为推送动态POI的查询
      * @return
@@ -222,8 +198,8 @@ public abstract class BaseQuery {
     // 电影? 4
     public static final String DATA_TYPE_DIANYING = "4";
 
-    // 备选 5
-    public static final String DATA_TYPE_ALTERNATIVE = "5";
+    // 活动 5
+    public static final String DATA_TYPE_HUODONG = "5";
 
     // 打折商场 6
     public static final String DATA_TYPE_DAZHESHANGCHANG = "6";
@@ -266,13 +242,6 @@ public abstract class BaseQuery {
 
     // 消息推送 18
     public static final String DATA_TYPE_PULL_MESSAGE = "18";
-    
-    // 数据子类型:
-    // POI 0
-    public static final String SUB_DATA_TYPE_POI = "0";
-    
-    // 酒店 1
-    public static final String SUB_DATA_TYPE_HOTEL = "1";
     
     public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
     
@@ -338,7 +307,7 @@ public abstract class BaseQuery {
         int mnc = TKConfig.getMNC();
         int lac = tkCellLocation.lac;
         int cid = tkCellLocation.cid;
-        if (isLocateMe && !Utility.mccMncLacCidValid(mcc, mnc, lac, cid)) {
+        if (isLocateMe && !CommonUtils.mccMncLacCidValid(mcc, mnc, lac, cid)) {
             simAvailably = false;
         }
         
@@ -401,6 +370,8 @@ public abstract class BaseQuery {
 
     protected ProgressUpdate progressUpdate;
 
+    protected boolean compress = false;
+    
     protected XMap responseXMap;
     
     protected Response response;
@@ -410,9 +381,14 @@ public abstract class BaseQuery {
     }
     
     public BaseQuery(Context context, String apiType, String version) {
+        this(context, apiType, version, true);
+    }
+    
+    public BaseQuery(Context context, String apiType, String version, boolean compress) {
         this.context = context;
         this.apiType = apiType;
         this.version = version;
+        this.compress = compress;
     }
     
     public int getTargetViewId() {
@@ -542,12 +518,12 @@ public abstract class BaseQuery {
     
     protected void makeRequestParameters() throws APIException {
         requestParameters.clear();
-        if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false) {
-            requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
-            requestParameters.add(SERVER_PARAMETER_VERSION, version);
+        requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
+        requestParameters.add(SERVER_PARAMETER_VERSION, version);
+        
+        if(criteria != null && criteria.containsKey(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)){
+            requestParameters.add(SERVER_PARAMETER_REQUSET_SOURCE_TYPE, criteria.get(SERVER_PARAMETER_REQUSET_SOURCE_TYPE));
         }
-
-        addParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE, false);
         addMyLocationParameters();
         
         requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
@@ -572,14 +548,7 @@ public abstract class BaseQuery {
                 if (TKConfig.LaunchTest) {
                     if (apiType.equals(API_TYPE_DATA_QUERY)
                             || apiType.equals(API_TYPE_DATA_OPERATION)
-                            || apiType.equals(API_TYPE_ACCOUNT_MANAGE)
-                            || apiType.equals(API_TYPE_PROXY)
-                            || apiType.equals(API_TYPE_HOTEL_ORDER)) {
-                        try {
-                            httpClient.execute(context);
-                        } catch (Exception e) {
-                            
-                        }
+                            || apiType.equals(API_TYPE_ACCOUNT_MANAGE)) {
                         launchTest();
                         if (responseXMap != null) {
                             httpClient.launchTest(ByteUtil.xobjectToByte(responseXMap), STATUS_CODE_NETWORK_OK);
@@ -618,9 +587,7 @@ public abstract class BaseQuery {
                 } else if (API_TYPE_BUSLINE_QUERY.equals(apiType) ||
                         API_TYPE_TRAFFIC_QUERY.equals(apiType) ||
                         API_TYPE_DATA_QUERY.equals(apiType) ||
-                        API_TYPE_DATA_OPERATION.equals(apiType) ||
-                        API_TYPE_PROXY.equals(apiType) ||
-                        API_TYPE_HOTEL_ORDER.equals(apiType)) {
+                        API_TYPE_DATA_OPERATION.equals(apiType)) {
                     if (TKConfig.getDynamicQueryHost() != null) {
                         TKConfig.setDynamicQueryHost(null);
                         createHttpClient();
@@ -774,45 +741,19 @@ public abstract class BaseQuery {
     protected void translateResponse(byte[] data) throws APIException {
         try {
             if (TKConfig.LaunchTest == false) { // 如果是自动测试分填充的数据，则没有加密
-                // 解密数据
-                DataEncryptor.getInstance().decrypt(data);
-                // 解压数据
+            // 解密数据
+            DataEncryptor.getInstance().decrypt(data);
+            // 解压数据
+            if (compress) {
                 try {
-                    data = ZLibUtils.decompress(data);
+                    data = TKLZDecode.decode(data, 0);
                 } catch (Exception cause) {
                     throw new APIException("decode data error");
                 }
             }
+            }
             try {
                 responseXMap = (XMap) ByteUtil.byteToXObject(data);
-
-                final Activity activity = BaseQueryTest.getActivity();
-                if (TKConfig.ModifyResponseData && activity != null) {
-                    activity.runOnUiThread(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            ViewGroup viewGroup = BaseQueryTest.getViewByXObject(activity, (byte)0, responseXMap, 0);
-                            
-                            ScrollView scrollView = new ScrollView(activity);
-                            scrollView.addView(viewGroup);
-                            Dialog dialog = Utility.showNormalDialog(activity, scrollView);
-                            dialog.setOnDismissListener(new OnDismissListener() {
-                                
-                                @Override
-                                public void onDismiss(DialogInterface dialog) {
-                                    responseXMap.put((byte)250, 250);
-                                }
-                            });
-                        }
-                    });
-                    while (true) {
-                        Thread.sleep(3000);
-                        if (responseXMap.containsKey((byte)250)) {
-                            break;
-                        }
-                    }
-                }
             } catch (Exception cause) {
                 throw new APIException("byte to xmap error");
             }
@@ -845,87 +786,6 @@ public abstract class BaseQuery {
         }
         if (source.containsKey(DataQuery.SERVER_PARAMETER_FILTER)) {
             target.put(DataQuery.SERVER_PARAMETER_FILTER, source.get(DataQuery.SERVER_PARAMETER_FILTER));
-        }
-    }
-    
-    /**
-     * 根据keys从criteria中获取参数值，将其值添加到requestParameters
-     * @param keys
-     * @throws APIException
-     */
-    void addParameter(String[] keys) throws APIException {
-        addParameter(keys, true);
-    }
-    
-    /**
-     * 根据keys从criteria中获取参数值，将其值添加到requestParameters
-     * @param keys
-     * @param need
-     * @throws APIException
-     */
-    void addParameter(String[] keys, boolean need) throws APIException {
-        if (keys == null) {
-            return;
-        }
-        for(int i = 0, length = keys.length; i < length; i++) {
-            addParameter(keys[i], need);
-        }
-    }
-    
-    /**
-     * 根据key从criteria中获取参数值，将其值添加到requestParameters
-     * @param key
-     * @return
-     * @throws APIException
-     */
-    String addParameter(String key) throws APIException {
-        return addParameter(key, true);
-    }
-    
-    /**
-     * 根据key从criteria中获取参数值，将其值添加到requestParameters
-     * @param key
-     * @param need
-     * @return
-     * @throws APIException
-     */
-    String addParameter(String key, boolean need) throws APIException {
-        String result = null;
-        if (key == null) {
-            return result;
-        }
-        if (criteria != null && criteria.containsKey(key)) {
-            result = criteria.get(key);
-            if (result != null) {
-                requestParameters.add(key, result);
-            } else {
-                throw APIException.wrapToMissingRequestParameterException(key);
-            }
-        } else if (need){
-            throw APIException.wrapToMissingRequestParameterException(key);
-        }
-        
-        return result;
-    }
-    
-    /**
-     * 添加SessionId和ClientId
-     * @param need
-     * @throws APIException
-     */
-    void addSessionId(boolean need) throws APIException {
-        String sessionId = Globals.g_Session_Id;
-        if (!TextUtils.isEmpty(sessionId)) {
-            requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
-        } else if (need) {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
-        }
-        
-        String clientId = Globals.g_ClientUID;
-        if (!TextUtils.isEmpty(clientId)) {
-            requestParameters.add(SERVER_PARAMETER_CLIENT_ID, clientId);
-        } else {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CLIENT_ID);
         }
     }
 }

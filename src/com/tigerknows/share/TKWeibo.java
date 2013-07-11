@@ -1,6 +1,7 @@
 package com.tigerknows.share;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -8,9 +9,9 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.ActionLog;
 import com.tigerknows.R;
-import com.tigerknows.android.app.TKActivity;
-import com.tigerknows.common.ActionLog;
+import com.tigerknows.TKActivity;
 import com.tigerknows.share.ShareAPI.LoginCallBack;
 import com.weibo.sdk.android.Oauth2AccessToken;
 import com.weibo.sdk.android.Weibo;
@@ -235,9 +236,9 @@ public class TKWeibo implements RequestListener {
                                 || msg.contains("21319")
                                 || msg.contains("21327")) {
                             if (finishActivity) {
-                                if (activity instanceof WeiboSendActivity) {
+                                if (activity instanceof WeiboSend) {
                                     ShareAPI.clearIdentity(activity, ShareAPI.TYPE_WEIBO);
-                                    WeiboSendActivity weiboSend = (WeiboSendActivity) activity;
+                                    WeiboSend weiboSend = (WeiboSend) activity;
                                     weiboSend.getLogoutBtn().setText(R.string.back);
                                     authorize(TKWeibo.this, weiboSend.getSinaAuthDialogListener());
                                 }

@@ -40,7 +40,7 @@
 		            android:layout_marginLeft="5dp"
 		            android:layout_marginRight="5dp"
 		            android:background="@drawable/ic_edt_delete" />
-		    	<com.tigerknows.ui.user.ExtValidationEditText
+		    	<com.tigerknows.view.user.ExtValidationEditText
 			        android:id="@+id/nickname_edt"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
@@ -55,7 +55,7 @@
 			        validateType="name"
 			        emptyErrorTip="@string/name_empty_tip"
 			        formatErrorTip="@string/name_format_error_tip" >
-		   		</com.tigerknows.ui.user.ExtValidationEditText>
+		   		</com.tigerknows.view.user.ExtValidationEditText>
 	        </RelativeLayout>
 	   		<Button
 		        android:id="@+id/confirm_btn"

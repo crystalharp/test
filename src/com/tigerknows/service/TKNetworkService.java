@@ -4,7 +4,7 @@
 
 package com.tigerknows.service;
 
-import com.tigerknows.util.Utility;
+import com.tigerknows.util.CommonUtils;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -29,7 +29,7 @@ public abstract class TKNetworkService extends Service {
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         receiver = new ConnectivityBroadcastReceiver();
         registerReceiver(receiver, filter);
-        isNetworkAvailable = Utility.checkNetworkStatus(getBaseContext());
+        isNetworkAvailable = CommonUtils.checkNetworkStatus(getBaseContext());
         if (networkThread == null) {
             networkThread = new NetworkThread();
             networkThread.start();
@@ -92,7 +92,7 @@ public abstract class TKNetworkService extends Service {
     private class ConnectivityBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            isNetworkAvailable = Utility.checkNetworkStatus(context);
+            isNetworkAvailable = CommonUtils.checkNetworkStatus(context);
         }
     };
 }
