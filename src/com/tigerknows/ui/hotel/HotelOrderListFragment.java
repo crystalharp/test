@@ -144,7 +144,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         if (orders != null) {
         	orders.clear();
             if (hotelOrderAdapter != null) {
-                hotelOrderAdapter.notifyDataSetChanged();
+                hotelOrderAdapter.notifyDataSetChanged(); 
             }
         }
     }
