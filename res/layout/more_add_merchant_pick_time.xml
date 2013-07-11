@@ -82,7 +82,7 @@
             android:id="@+id/title_txv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/business_hours"
+            android:text="@string/select_business_hours_time"
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:paddingLeft="12dp"
