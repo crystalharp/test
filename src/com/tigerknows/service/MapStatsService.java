@@ -6,17 +6,17 @@ package com.tigerknows.service;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
-import com.tigerknows.MapDownload;
 import com.tigerknows.TKConfig;
-import com.tigerknows.MapDownload.DownloadCity;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.maps.LocalRegionDataInfo;
-import com.tigerknows.maps.MapEngine.CityInfo;
-import com.tigerknows.maps.MapEngine.RegionInfo;
-import com.tigerknows.maps.MapEngine.RegionMetaVersion;
+import com.tigerknows.map.LocalRegionDataInfo;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapEngine.CityInfo;
+import com.tigerknows.map.MapEngine.RegionInfo;
+import com.tigerknows.map.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.MapVersionQuery;
 import com.tigerknows.model.MapVersionQuery.ServerRegionDataInfo;
-import com.tigerknows.view.MoreFragment;
+import com.tigerknows.ui.more.MapDownloadActivity;
+import com.tigerknows.ui.more.MoreHomeFragment;
+import com.tigerknows.ui.more.MapDownloadActivity.DownloadCity;
 
 import android.app.Service;
 import android.content.Context;
@@ -242,7 +242,7 @@ public class MapStatsService extends Service {
                             
                             DownloadCity downloadCity = statsCurrentCity();
                             
-                            MoreFragment.CurrentDownloadCity = downloadCity;
+                            MoreHomeFragment.CurrentDownloadCity = downloadCity;
                             broadcast = new Intent(ACTION_STATS_CURRENT_DOWNLOAD_CITY_COMPLATE);
                             sendBroadcast(broadcast);
                             
@@ -351,7 +351,7 @@ public class MapStatsService extends Service {
         List<DownloadCity> expandList = new ArrayList<DownloadCity>();
         for(int i = list.size()-1; i >= 0; i--) {
             DownloadCity downloadCity = list.get(i);
-            MapDownload.addDownloadCity(getApplicationContext(), expandList, downloadCity, true);
+            MapDownloadActivity.addDownloadCity(getApplicationContext(), expandList, downloadCity, true);
         }
         return expandList;
     }
@@ -360,7 +360,7 @@ public class MapStatsService extends Service {
      * 统计当前城市的地图信息及状态
      */
     private DownloadCity statsCurrentCity() {
-        CityInfo cityInfo = Globals.g_Current_City_Info;
+        CityInfo cityInfo = Globals.getCurrentCityInfo(false);
         if (cityInfo != null) {
             MapVersionQuery mapVersionQuery = new MapVersionQuery(getBaseContext());
             mapVersionQuery.setup(MapEngine.getInstance().getRegionIdList(cityInfo.getCName()));
@@ -495,7 +495,7 @@ public class MapStatsService extends Service {
         
         if (maybeUpgrade) {
             downloadCity.state = DownloadCity.STATE_CAN_BE_UPGRADE;
-        } else if (downloadCity.getPercent() >= MapDownload.PERCENT_COMPLETE) {
+        } else if (downloadCity.getPercent() >= MapDownloadActivity.PERCENT_COMPLETE) {
     		downloadCity.state = DownloadCity.STATE_COMPLETED;
         } else if (downloadCity.state == DownloadCity.STATE_COMPLETED) {
            	downloadCity.state = DownloadCity.STATE_STOPPED;

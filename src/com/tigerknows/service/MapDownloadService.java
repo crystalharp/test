@@ -5,16 +5,16 @@
 package com.tigerknows.service;
 
 import com.decarta.android.util.LogWrapper;
-import com.tigerknows.MapDownload;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.maps.LocalRegionDataInfo;
-import com.tigerknows.maps.TileDownload;
-import com.tigerknows.maps.MapEngine.CityInfo;
-import com.tigerknows.maps.MapEngine.RegionMetaVersion;
+import com.tigerknows.map.LocalRegionDataInfo;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.TileDownload;
+import com.tigerknows.map.MapEngine.CityInfo;
+import com.tigerknows.map.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.MapMetaFileDownload;
 import com.tigerknows.model.MapTileDataDownload;
 import com.tigerknows.model.MapVersionQuery.ServerRegionDataInfo;
+import com.tigerknows.ui.more.MapDownloadActivity;
 
 import android.app.Service;
 import android.content.Context;
@@ -182,7 +182,7 @@ public class MapDownloadService extends Service implements MapTileDataDownload.I
                         refreshProgress(true);
                         if (totalSize > 0
                                 && downloadedSize > 0
-                                && downloadedSize/(float)totalSize >= MapDownload.PERCENT_COMPLETE) {
+                                && downloadedSize/(float)totalSize >= MapDownloadActivity.PERCENT_COMPLETE) {
                             synchronized (CityInfoList) {
                                 CityInfoList.remove(currentCityInfo);
                             }

@@ -217,4 +217,61 @@
         <item>其他分类</item>
     </string-array>
     
+    <string-array name="days">
+        <item>今天</item>
+        <item>明天</item>
+        <item>后天</item>
+    </string-array>
+    
+    <string-array name="week_days">
+        <item>周日</item>
+        <item>周一</item>
+        <item>周二</item>
+        <item>周三</item>
+        <item>周四</item>
+        <item>周五</item>
+        <item>周六</item>
+    </string-array>
+    
+    <string-array name="cert_type">
+        <item>身份证</item>
+        <item>护照</item>
+        <item>其他</item>
+    </string-array>
+    
+    <string-array name="preset_filter_area">
+        <item>全部区域</item>
+        <item>指定地点</item>
+        <item>附近500米</item>
+        <item>附近1000米</item>
+        <item>附近2000米</item>
+        <item>附近5000米</item>
+        <item>我的当前位置</item>
+        <item>附近500米</item>
+        <item>附近1000米</item>
+        <item>附近2000米</item>
+        <item>附近5000米</item>
+    </string-array>
+    
+    <string-array name="default_bank_list">
+        <item>招商银行</item>
+        <item>中国建设银行</item>
+        <item>中国工商银行</item>
+        <item>中国银行</item>
+        <item>交通银行</item>
+        <item>中信银行</item>
+        <item>广发银行</item>
+        <item>中国民生银行</item>
+        <item>兴业银行</item>
+        <item>上海浦东发展银行</item>
+        <item>中国光大银行</item>
+        <item>中国农业银行</item>
+        <item>平安银行</item>
+        <item>深圳发展银行</item>
+        <item>北京银行</item>
+        <item>上海银行</item>
+        <item>华夏银行</item>
+        <item>中国邮政储蓄银行</item>
+        <item>宁波银行</item>
+    </string-array>
 </resources>

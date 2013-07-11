@@ -13,7 +13,7 @@ import com.tigerknows.model.xobject.XMap;
 
 public class Tuangou extends BaseData {
     
-    public static final String NEED_FILELD = "00010405140b0c0d0e10191f20222350565758595b5c";
+    public static final String NEED_FIELD = "00010405140b0c0d0e10191f20222350565758595b5c";
     
     // 0x00 x_string uid uid
     public static final byte FIELD_UID = 0x00;
@@ -113,81 +113,40 @@ public class Tuangou extends BaseData {
 
     public Tuangou (XMap data) throws APIException {
         super(data);
-        init(data);
+        init(data, true);
     }
     
-    public void init(XMap data) throws APIException {
-        super.init(data);
-        if (this.data.containsKey(FIELD_UID)) {
-            this.uid = this.data.getString(FIELD_UID);
+    public void init(XMap data, boolean reset) throws APIException {
+        super.init(data, reset);
+        this.uid = getStringFromData(FIELD_UID, reset ? null : this.uid);
+        this.name = getStringFromData(FIELD_NAME, reset ? null : this.name);
+        this.tag = getStringFromData(FIELD_TAG, reset ? null : this.tag);
+        this.cityId = getStringFromData(FIELD_CITY_ID, reset ? null : this.cityId);
+        this.pictures = getObjectFromData(FIELD_PICTURES, TKDrawable.Initializer, reset ? null : this.pictures);
+        this.picturesDetail = getObjectFromData(FIELD_PICTURES_DETAIL, TKDrawable.Initializer, reset ? null : this.picturesDetail);
+        this.description = getStringFromData(FIELD_DESCRIPTION, reset ? null : this.description);
+        this.startTime = getStringFromData(FIELD_START_TIME, reset ? null : this.startTime);
+        this.endTime = getStringFromData(FIELD_END_TIME, reset ? null : this.endTime);
+        this.price = getStringFromData(FIELD_PRICE, reset ? null : this.price);
+        this.orgPrice = getStringFromData(FIELD_ORG_PRICE, reset ? null : this.orgPrice);
+        this.discount = getStringFromData(FIELD_DISCOUNT, reset ? null : this.discount);
+        this.noticed = getStringFromData(FIELD_NOTICED, reset ? null : this.noticed);
+        this.buyerNum = getLongFromData(FIELD_BUYER_NUM, reset ? 0 : this.buyerNum);
+        String str = getStringFromData(FIELD_REFUND, reset ? null : this.refund);
+        if (str != null) {
+            this.refund = str.replace("[", "").replace("]", "").replace(",", "\n").replace("\"", "").replace(" ", "").trim();
         }
-        if (this.data.containsKey(FIELD_NAME)) {
-            this.name = this.data.getString(FIELD_NAME);
-        }
-        if (this.data.containsKey(FIELD_TAG)) {
-            this.tag = this.data.getString(FIELD_TAG);
-        }
-        if (this.data.containsKey(FIELD_CITY_ID)) {
-            this.cityId = this.data.getString(FIELD_CITY_ID);
-        }
-        if (this.data.containsKey(FIELD_PICTURES)) {
-            this.pictures = new TKDrawable(this.data.getXMap(FIELD_PICTURES));
-        }
-        if (this.data.containsKey(FIELD_PICTURES_DETAIL)) {
-            this.picturesDetail = new TKDrawable(this.data.getXMap(FIELD_PICTURES_DETAIL));
-        }
-        if (this.data.containsKey(FIELD_DESCRIPTION)) {
-            this.description = this.data.getString(FIELD_DESCRIPTION);
-        }
-        if (this.data.containsKey(FIELD_START_TIME)) {
-            this.startTime = this.data.getString(FIELD_START_TIME);
-        }
-        if (this.data.containsKey(FIELD_END_TIME)) {
-            this.endTime = this.data.getString(FIELD_END_TIME);
-        }
-        if (this.data.containsKey(FIELD_PRICE)) {
-            this.price = this.data.getString(FIELD_PRICE);
-        }
-        if (this.data.containsKey(FIELD_ORG_PRICE)) {
-            this.orgPrice = this.data.getString(FIELD_ORG_PRICE);
-        }
-        if (this.data.containsKey(FIELD_DISCOUNT)) {
-            this.discount = this.data.getString(FIELD_DISCOUNT);
-        }
-        if (this.data.containsKey(FIELD_NOTICED)) {
-            this.noticed = this.data.getString(FIELD_NOTICED);
-        }
-        if (this.data.containsKey(FIELD_BUYER_NUM)) {
-            this.buyerNum = this.data.getInt(FIELD_BUYER_NUM);
-        }
-        if (this.data.containsKey(FIELD_REFUND)) {
-            this.refund = this.data.getString(FIELD_REFUND).replace("[", "").replace("]", "").replace(",", "\n").replace("\"", "").replace(" ", "").trim();
-        }
-        if (this.data.containsKey(FIELD_CONTENT_TEXT)) {
-            this.contentText = this.data.getString(FIELD_CONTENT_TEXT);
-        }
-        if (this.data.containsKey(FIELD_CONTENT_PIC)) {
-            this.contentPic = new TKDrawable(this.data.getXMap(FIELD_CONTENT_PIC));
-        }
-        if (this.data.containsKey(FIELD_SOURCE)) {
-            this.source = this.data.getInt(FIELD_SOURCE);
-        }
-        if (this.data.containsKey(FIELD_SHORT_DESC)) {
-            this.shortDesc = this.data.getString(FIELD_SHORT_DESC);
-        }
-        if (this.data.containsKey(FIELD_DEADLINE)) {
-            this.deadline = this.data.getString(FIELD_DEADLINE);
-        }
-        if (this.data.containsKey(FIELD_GOODS_ID)) {
-            this.goodsId = this.data.getString(FIELD_GOODS_ID);
-        }
-        if (this.data.containsKey(FIELD_BRANCH_NUM)) {
-            this.branchNum = this.data.getInt(FIELD_BRANCH_NUM);
-        }
+        this.contentText = getStringFromData(FIELD_CONTENT_TEXT, reset ? null : this.contentText);
+        this.contentPic = getObjectFromData(FIELD_CONTENT_PIC, TKDrawable.Initializer, reset ? null : this.contentPic);
+        this.source = getLongFromData(FIELD_SOURCE, reset ? 0 : this.source);
+        this.shortDesc = getStringFromData(FIELD_SHORT_DESC, reset ? null : this.shortDesc);
+        this.deadline = getStringFromData(FIELD_DEADLINE, reset ? null : this.deadline);
+        this.goodsId = getStringFromData(FIELD_GOODS_ID, reset ? null : this.goodsId);
+        this.branchNum = getLongFromData(FIELD_BRANCH_NUM, reset ? 0 : this.branchNum);
         if (fendian == null) {
             fendian = new Fendian(this.data);
         } else {
-            fendian.init(this.data);
+            fendian.init(this.data, reset);
         }
     }
     
@@ -399,4 +358,12 @@ public class Tuangou extends BaseData {
     public void setFilterArea(String filterArea) {
         this.filterArea = filterArea;
     }    
+    
+    public static XMapInitializer<Tuangou> Initializer = new XMapInitializer<Tuangou>() {
+
+        @Override
+        public Tuangou init(XMap data) throws APIException {
+            return new Tuangou(data);
+        }
+    };
 }

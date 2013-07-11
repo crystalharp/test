@@ -7,7 +7,7 @@
     android:orientation="vertical"
     >
 
-    <com.tigerknows.maps.MapView
+    <com.tigerknows.map.MapView
         android:id="@+id/mapview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -62,7 +62,7 @@
         android:gravity="left"
         android:visibility="invisible"
         android:padding="6dp">
-        <com.tigerknows.view.ScaleView
+        <com.tigerknows.widget.ScaleView
             android:id="@+id/scale_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="6dp"
             >
-        </com.tigerknows.view.ScaleView>
+        </com.tigerknows.widget.ScaleView>
 
         <ImageButton
             android:id="@+id/location_btn"
@@ -127,7 +127,7 @@
     
     <!-- 拦截屏幕上的Touch事件 -->
     <RelativeLayout
-        android:id="@+id/overlay_view"
+        android:id="@+id/disable_touch_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/transparent"

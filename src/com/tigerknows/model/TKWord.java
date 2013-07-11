@@ -73,6 +73,14 @@ public class TKWord {
         return false;
     }
     
+    public TKWord clone() {
+        TKWord tkWord = new TKWord(attribute, word);
+        if (this.position != null) {
+            tkWord.position = this.position.clone();
+        }
+        return tkWord;
+    }
+    
     public POI toPOI() {
         POI poi = new POI();
         poi.setName(word);
@@ -83,5 +91,9 @@ public class TKWord {
     public static TKWord getCleanupTKWord(Context context) {
         TKWord tkWord = new TKWord(TKWord.ATTRIBUTE_CLEANUP, context.getString(R.string.clean_history));
         return tkWord;
+    }
+    
+    public String toString(){
+        return word;
     }
 }

@@ -8,10 +8,11 @@ import com.decarta.CONFIG;
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
-import com.tigerknows.maps.MapEngine;
+import com.tigerknows.android.app.TKApplication;
+import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.LocationQuery.TKCellLocation;
-import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.Utility;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -53,9 +54,14 @@ public class TKConfig {
     public static boolean CACHE_BITMAP_TO_MEMORY = true;
     
     /**
-     * 缓存内存图片的最大数目
+     * 缓存在内存的图片最大数目
      */
-    public static int CACHE_SIZE = 32;
+    public static int IMAGE_CACHE_SIZE_MEMORY = 32;
+    
+    /**
+     * 缓存在扩展存储卡的图片最大数目
+     */
+    public static int IMAGE_CACHE_SIZE_SDCARD = 1024;
     
     /**
      * 默认地图显示级别
@@ -75,7 +81,7 @@ public class TKConfig {
     /**
      * 网络请求头中的User-Agent值
      */
-    private static String sUSER_AGENT = "tigermap/1.50";
+    private static String sUSER_AGENT = "tigerknows";
     
     /**
      * 网络超时值
@@ -164,17 +170,17 @@ public class TKConfig {
     /**
      * 网络请求参数中的客户端软件版本
      */
-    private static String sCLIENT_SOFT_VERSION = "5.00.20130515A";
+    private static String sCLIENT_SOFT_VERSION = "5.10.20130528A";
     
     /**
      * 关于我们界面中的客户端软件发布版本
      */
     
-    public static final String CLIENT_SOFT_VERSION = "5.00.rc1";
+    public static final String CLIENT_SOFT_VERSION = "5.10.alpha1";
     /**
      * 关于我们界面中的客户端软件发布日期
      */
-    public static final String CLIENT_SOFT_RELEASE_DATE = "2013-05-15";
+    public static final String CLIENT_SOFT_RELEASE_DATE = "2013-05-28";
     
     /**
      * 手机产品信息，包括品牌、型号、软件版本等信息
@@ -201,6 +207,16 @@ public class TKConfig {
     public static String sCommentSource = "test";
     
     /**
+     * 是否可以修改请求的数据
+     */    
+    public static boolean ModifyRequestData = false;
+    
+    /**
+     * 是否可以修改返回的数据
+     */    
+    public static boolean ModifyResponseData = false;
+    
+    /**
      * 是否使用假数据
      */    
     public static boolean LaunchTest = false;
@@ -208,7 +224,12 @@ public class TKConfig {
     /**
      * 是否显示测试选项对话框
      */
-    public static boolean ShowTestOption = false;
+    public static boolean ShowTestOption = true;
+    
+    /**
+     * 是否开启TalkingData数据统计
+     */
+    public static boolean ENABLE_TALKINGDATA = false;
     
     /**
      * IMSI(International Mobile Subscriber Identity)，国际移动用户标识号，是TD系统分给用户的唯一标识号，它存储在SIM卡、HLR/VLR中，最多由15个数字组成
@@ -274,6 +295,16 @@ public class TKConfig {
      * 查询服务访问URL路径
      */
     private static String sQUERY_URL = "http://%s/cormorant/local";
+    
+    /**
+     * 第三方接口代理服务访问URL路径
+     */
+    private static String sPROXY_URL = "http://%s//thirdparty/13";
+    
+    /**
+     * 酒店订单服务访问URL路径
+     */
+    private static String sHOTEL_ORDER_URL = "http://%s//hotelorder/13";
     
     /**
      * 定位服务访问URL路径
@@ -384,7 +415,7 @@ public class TKConfig {
     /**
      * 是否为升级后使用本软件
      */
-    public static final String PREFS_UPGRADE = "prefs_learn_4.20";    
+    public static final String PREFS_UPGRADE = "prefs_learn_5.10";    
     
     /**
      * 是否为第一次安装使用本软件
@@ -460,6 +491,16 @@ public class TKConfig {
      * 是否已显示POI主页界面的用户引导
      */
     public static final String PREFS_HINT_HOME_DRAG = "prefs_hint_home_drag";
+
+    /**
+     * 是否已显示POI主页界面的酒店预订用户引导
+     */
+    public static final String PREFS_HINT_POI_HOME_HOTEL = "prefs_hint_poi_home_hotel";
+
+    /**
+     * 是否已显示酒店主页界面的用户引导
+     */
+    public static final String PREFS_HINT_HOTEL_HOME = "prefs_hint_hotel_home";
     
     /**
      * 是否已显示POI详情界面的用户引导
@@ -495,6 +536,11 @@ public class TKConfig {
      * 是否已显示地图界面的用户引导
      */
     public static final String PREFS_HINT_LOCATION = "prefs_hint_location";
+    
+    /**
+     * 是否已显示搜索首页界面的酒店预订引导
+     */
+    public static final String PREFS_HINT_POI_HOME_HOTEL_RESERVE = "prefs_hint_poi_home_hotel_reserve";
     
     /**
      * 推送服务绝对启动时间
@@ -543,6 +589,16 @@ public class TKConfig {
 
     
     /**
+     * 最近一次成功提交订单所保留的姓名
+     */
+    public static final String PREFS_HOTEL_LAST_BOOKNAME="prefs_hotel_last_bookname";
+    
+    /**
+     * 最近一次成功提交订单所保留的手机号
+     */
+    public static final String PREFS_HOTEL_LAST_MOBILE="prefs_hotel_last_mobile";
+    
+    /**
      * 发现分类图片尺寸的Key
      */
     public static final int PICTURE_DISCOVER_HOME = 1;
@@ -571,6 +627,41 @@ public class TKConfig {
      * 电影详情图片尺寸的Key
      */
     public static final int PICTURE_DIANYING_DETAIL = 6;
+    
+    /**
+     * 酒店列表图片尺寸的Key
+     */
+    public static final int PICTURE_HOTEL_LIST = 7;
+    
+    /**
+     * 酒店详情图片尺寸的Key
+     */
+    public static final int PICTURE_HOTEL_DETAIL = 8;
+    
+    /**
+     * 优惠券列表图片尺寸的Key
+     */
+    public static final int PICTURE_COUPON_LIST = 9;
+    
+    /**
+     * 优惠券详情图片尺寸的Key
+     */
+    public static final int PICTURE_COUPON_DETAIL = 10;
+    
+    /**
+     * 优惠券Logo图片尺寸的Key
+     */
+    public static final int PICTURE_COUPON_LOGO = 11;
+    
+    /**
+     * 优惠券提示图片尺寸的Key
+     */
+    public static final int PICTURE_COUPON_HINT = 12;
+    
+    /**
+     * 优惠券二维码尺寸的Key
+     */
+    public static final int PICTURE_COUPON_QRIMG = 13;
 
     /**
      * 黑色
@@ -686,11 +777,14 @@ public class TKConfig {
                 WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
                 if (wifiManager != null) {
                     WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-                    String macAddress = wifiInfo == null ? sSPREADER : wifiInfo.getMacAddress();
-                    sIMEI = macAddress;
-                } else {
-                    sIMEI = "null";
+                    if (wifiInfo != null) {
+                        sIMEI = wifiInfo.getMacAddress();
+                    }
                 }
+            }
+            
+            if (sIMEI == null) {
+                sIMEI = "null";
             }
         }
     }
@@ -867,21 +961,24 @@ public class TKConfig {
      * 获取查询服务访问的URL
      * @return
      */
-    public static String getQueryUrl(String at, String version, String dataType) {
-        String url = sQUERY_URL;
-//        if (at != null) {
-//            url += "/";
-//            url += at;
-//        }
-//        if (version != null) {
-//            url += "/";
-//            url += version;
-//        }
-//        if (dataType != null) {
-//            url += "/";
-//            url += dataType;
-//        }
-        return url;
+    public static String getQueryUrl() {
+        return sQUERY_URL;
+    }
+    
+    /**
+     * 获取第三方接口代理服务访问的URL
+     * @return
+     */
+    public static String getProxyUrl() {
+        return sPROXY_URL;
+    }
+    
+    /**
+     * 获取酒店订单服务访问的URL
+     * @return
+     */
+    public static String getHotelOrderUrl() {
+        return sHOTEL_ORDER_URL;
     }
     
     /**
@@ -1085,7 +1182,7 @@ public class TKConfig {
      * @return
      */
     public static String getUserAgent() {
-        return sUSER_AGENT;
+        return sCLIENT_SOFT_VERSION;
     }
 
     /**
@@ -1197,14 +1294,14 @@ public class TKConfig {
      */
     public static void readConfig() {
         String mapPath = TKConfig.getDataPath(true);
-        if (TextUtils.isEmpty(mapPath)) {
+        if (TextUtils.isEmpty(mapPath) || ShowTestOption == false) {
             return;
         }
         File file = new File(mapPath+"config.txt");
         if (file.exists()) {
             try {
                 FileInputStream fis = new FileInputStream(file);
-                String text = CommonUtils.readFile(fis);
+                String text = Utility.readFile(fis);
                 fis.close();
                 int start = text.indexOf("downloadHost=");
                 int end = text.indexOf(";", start);
@@ -1319,6 +1416,18 @@ public class TKConfig {
                 if (start > -1 && end > -1) {
                     start += "alarmCheckDelayTime=".length();
                     AlarmCheckDelayTime = Integer.parseInt(text.substring(start, end));
+                }
+                start = text.indexOf("proxyUrl=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "proxyUrl=".length();
+                    TKConfig.sPROXY_URL = text.substring(start, end);
+                }
+                start = text.indexOf("hotelOrderUrl=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "hotelOrderUrl=".length();
+                    TKConfig.sHOTEL_ORDER_URL = text.substring(start, end);
                 }
                 
                 BaseQuery.initCommonParameters();

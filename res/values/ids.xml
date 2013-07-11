@@ -6,10 +6,65 @@
     <item type="id" name="dialog_prompt_setting_location" />
     <item type="id" name="dialog_prompt_setting_location_first" />
     <item type="id" name="dialog_prompt_choose_city" />
-    <item type="id" name="dialog_fetch_favorite_poi" />
     
     <item type="id" name="dialog_share_doing" />
     
+    <item type="id" name="activity_setting_location" />
+    
+    <item type="id" name="view_invalid" />
+    
+    <item type="id" name="view_menu" />
+    <item type="id" name="view_title" />
+    
+    <item type="id" name="view_result_map" />
+    <item type="id" name="activity_browser" />
+    <item type="id" name="activity_hint" />
+    
+    <item type="id" name="view_poi_home" />
+    <item type="id" name="view_poi_input_search" />
+    <item type="id" name="view_poi_result" />
+    <item type="id" name="view_poi_result2" />
+    <item type="id" name="view_poi_detail" />
+    <item type="id" name="view_poi_nearby_search" />
+    <item type="id" name="activity_poi_report_error" />
+    <item type="id" name="activity_poi_comment_list" />
+    <item type="id" name="activity_poi_edit_comment" />
+    <item type="id" name="view_coupon_detail" />
+    <item type="id" name="view_coupon_list" />
+    
+    <item type="id" name="view_more_home" />
+    <item type="id" name="view_more_history" />
+    <item type="id" name="view_more_go_comment" />
+    <item type="id" name="view_more_favorite" />
+    <item type="id" name="activity_more_add_merchant" />
+    <item type="id" name="activity_more_change_city" />
+    <item type="id" name="activity_more_map_download" />
+    <item type="id" name="activity_more_about_us" />
+    <item type="id" name="activity_more_feedback" />
+    <item type="id" name="activity_more_setting" />
+    <item type="id" name="activity_more_app_recommend" />
+    <item type="id" name="activity_more_help" />
+    
+    <item type="id" name="view_discover_home" />
+    <item type="id" name="view_discover_list" />
+    <item type="id" name="view_discover_tuangou_detail" />
+    <item type="id" name="view_discover_child_list" />
+    <item type="id" name="view_discover_dianying_detail" />
+    <item type="id" name="view_discover_yanchu_detail" />
+    <item type="id" name="view_discover_zhanlan_detail" />
+    <item type="id" name="activity_discover_shangjia_list" />
+    
+    <item type="id" name="view_traffic_home" />
+    <item type="id" name="view_traffic_fetch_favorite_poi" />
+    <item type="id" name="view_traffic_result_detail" />
+    <item type="id" name="view_traffic_result_transfer" />
+    <item type="id" name="view_traffic_busline_line_result" />
+    <item type="id" name="view_traffic_busline_station_result" />
+    <item type="id" name="view_traffic_busline_detail" />
+    <item type="id" name="activity_traffic_report_error" />
+    
+    <item type="id" name="view_user_home" />
+    <item type="id" name="view_user_my_comment_list" />    
     <item type="id" name="activity_user_login" />
     <item type="id" name="activity_user_regist" />
     <item type="id" name="activity_user_reset_password" />
@@ -18,52 +73,20 @@
     <item type="id" name="activity_user_update_phone" />
     <item type="id" name="activity_user_comment_after" />
     
-    <item type="id" name="activity_hint" />
-    <item type="id" name="activity_help" />
-    <item type="id" name="activity_poi_comment_list" />
-    <item type="id" name="activity_poi_comment" />
-    <item type="id" name="activity_change_city" />
-    <item type="id" name="activity_map_download" />
-    <item type="id" name="activity_about_us" />
-    <item type="id" name="activity_feedback" />
-    <item type="id" name="activity_setting" />
-    <item type="id" name="activity_traffic_error_recovery" />
-    <item type="id" name="activity_poi_error_recovery" />
-    <item type="id" name="activity_app_recommend" />
-    <item type="id" name="activity_setting_location" />
-    <item type="id" name="activity_tuangou_shangjia_list" />
-    <item type="id" name="activity_browser" />
-    <item type="id" name="activity_add_merchant" />
+    <item type="id" name="view_hotel_home" />
+    <item type="id" name="view_hotel_pick_location" />
+    <item type="id" name="view_hotel_order_write" />
+    <item type="id" name="view_hotel_credit_assure" />
+    <item type="id" name="view_hotel_order_detail" />
+    <item type="id" name="view_hotel_seveninn_regist"/>
+    <item type="id" name="view_hotel_order_list"/>
+    <item type="id" name="view_hotel_image_grid"/>
+    <item type="id" name="view_hotel_intro"/>
     
-    <item type="id" name="view_invalid" />
-    <item type="id" name="view_title" />
-    <item type="id" name="view_menu" />
-    <item type="id" name="view_home" />
-    <item type="id" name="view_traffic_query" />
-    <item type="id" name="view_more" />
-    <item type="id" name="view_result_map" />
-    <item type="id" name="view_user_home" />
-    <item type="id" name="view_history" />
-    <item type="id" name="view_poi_detail" />
-    <item type="id" name="view_poi_nearby" />
-    <item type="id" name="view_my_comment_list" />
-    <item type="id" name="view_go_comment" />
-    <item type="id" name="view_traffic_result_detail" />
-    <item type="id" name="view_traffic_result_transfer" />
-    <item type="id" name="view_busline_line_result" />
-    <item type="id" name="view_busline_station_result" />
-    <item type="id" name="view_busline_result_detail" />
-    <item type="id" name="view_poi_query" />
-    <item type="id" name="view_poi_result" />
-    <item type="id" name="view_poi_result2" />
-    <item type="id" name="view_favorite" />
-    
-    <item type="id" name="view_discover" />
-    <item type="id" name="view_discover_list" />
-    <item type="id" name="view_tuangou_detail" />
-    <item type="id" name="view_discover_child_list" />
-    <item type="id" name="view_dianying_detail" />
-    <item type="id" name="view_yanchu_detail" />
-    <item type="id" name="view_zhanlan_detail" />
-  
+    <item type="id" name="tag_hotel_room_child_view" />
+    <item type="id" name="tag_hotel_room_type_data" />
+    <item type="id" name="room_person_edt_2"/>
+    <item type="id" name="room_person_edt_3"/>
+    <item type="id" name="room_person_edt_4"/>
+    <item type="id" name="room_person_edt_5"/>
 </resources>

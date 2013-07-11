@@ -11,9 +11,9 @@ import java.util.List;
 
 import com.decarta.CONFIG;
 import com.decarta.android.util.LogWrapper;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.maps.TileDownload;
-import com.tigerknows.maps.MapView.DownloadEventListener;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.TileDownload;
+import com.tigerknows.map.MapView.DownloadEventListener;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.MapMetaFileDownload;
 import com.tigerknows.model.MapTileDataDownload;

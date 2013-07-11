@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:gravity="left|top" >
+
+	<include android:id="@+id/city_view"
+		layout="@layout/more_map_download_suggest_list_item" 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" />
+
+	<include android:id="@+id/province_view"
+		layout="@layout/more_change_city_list_item" 
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content" />
+</FrameLayout>

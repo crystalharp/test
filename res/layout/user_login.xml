@@ -26,7 +26,7 @@
 		        android:layout_width="match_parent"
 		        android:layout_height="wrap_content"
 		        android:orientation="vertical" >
-		        <com.tigerknows.view.user.ExtValidationEditText
+		        <com.tigerknows.ui.user.ExtValidationEditText
 			        android:id="@+id/phone_edt"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
@@ -46,14 +46,14 @@
 			        validateType="phone" >
 			
 			        <requestFocus />
-			    </com.tigerknows.view.user.ExtValidationEditText>
+			    </com.tigerknows.ui.user.ExtValidationEditText>
 			    
 			    <ImageView
 	                android:layout_width="fill_parent"
 	                android:layout_height="wrap_content"
 	                android:background="@drawable/bg_line_split" />
 			    
-			    <com.tigerknows.view.user.ExtValidationEditText
+			    <com.tigerknows.ui.user.ExtValidationEditText
 			        android:id="@+id/password_edt"
 			        android:layout_width="match_parent"
 			        android:layout_height="wrap_content"
@@ -63,6 +63,7 @@
 			        android:singleLine="true"
 			        android:ellipsize="end"
 			        android:textSize="14sp"
+			        android:maxLength="16"
 	                android:background="@drawable/list_footer_normal"
 			        emptyErrorTip="@string/password_empty_tip"
 			        validateType="password"

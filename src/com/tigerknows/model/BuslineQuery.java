@@ -13,7 +13,7 @@ import android.content.Context;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
+import com.tigerknows.map.MapEngine;
 
 public final class BuslineQuery extends BaseQuery {
 
@@ -89,7 +89,7 @@ public final class BuslineQuery extends BaseQuery {
     @Override
     protected void createHttpClient() {
         super.createHttpClient();
-        String url = String.format(TKConfig.getQueryUrl(apiType, version, null), TKConfig.getQueryHost());
+        String url = String.format(TKConfig.getQueryUrl(), TKConfig.getQueryHost());
         httpClient.setURL(url);
     }
 

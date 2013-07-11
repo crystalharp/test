@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows"
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent"
     android:background="@drawable/bg_discover">
@@ -10,9 +11,18 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content" 
         android:layout_alignParentBottom="true"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         >
-        
+	    <com.tigerknows.ui.hotel.NavigationWidget
+	        android:id="@+id/navigation_widget"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_alignParentBottom="true"
+	        android:visibility="gone"
+	        tkandroid:navigationState="1"
+	        >
+	    </com.tigerknows.ui.hotel.NavigationWidget>
         <LinearLayout 
             android:id="@+id/tools_view"
             android:layout_width="fill_parent"
@@ -75,7 +85,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content" 
             android:orientation="horizontal"
-            android:gravity="center">
+            android:gravity="center"
+            android:visibility="gone">
             
             <Button android:id="@+id/weixin_btn" 
                 android:layout_width="fill_parent" 
@@ -112,333 +123,281 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
             
-            <LinearLayout
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content"
-                android:paddingLeft="20dp"
-                android:paddingTop="8dp"
-                android:paddingRight="20dp"
-                android:paddingBottom="8dp"
-                android:orientation="vertical"
-                android:gravity="left|top"
-                android:background="@color/white"
-                >
-                <RelativeLayout
-                    android:layout_width="fill_parent" 
-                    android:layout_height="wrap_content"
-                    android:gravity="left|top"
-                    >
-                       
-                    <TextView
-                        android:id="@+id/name_txv"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentTop="true" 
-                        android:paddingBottom="6dp"
-                        android:gravity="left"
-                        android:text="@string/app_name"
-                        android:textColor="@color/black_dark"
-                        android:textSize="18sp"
-                        android:maxLines="2"
-                        android:ellipsize="end"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true"
-                        ></TextView>
-        
-                    <RatingBar android:id="@+id/stars_rtb"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_below="@id/name_txv" 
-                        android:progressDrawable="@drawable/ratingbar_small"
-                        style="@style/RatingBar.Small"
-                        android:numStars="5"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false" />
-    
-                    <TextView 
-                        android:id="@+id/distance_txv" 
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" 
-                        android:layout_alignParentRight="true"
-                        android:layout_below="@id/name_txv" 
-                        android:textColor="@color/black_dark"
-                        android:textSize="14sp"
-                        android:text="@string/app_name"
-                        android:singleLine="true"
-                        android:focusable="false" />   
-                    
-                    <TextView 
-                        android:id="@+id/distance_from_txv" 
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" 
-                        android:layout_toLeftOf="@id/distance_txv" 
-                        android:layout_below="@id/name_txv" 
-                        android:drawableRight="@drawable/ic_a_poi"
-                        android:textColor="@color/black_dark"
-                        android:textSize="14sp"
-                        android:text="@string/distance"
-                        android:singleLine="true"
-                        android:focusable="false" />   
-            
-                    <TextView 
-                        android:id="@+id/category_txv" 
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content" 
-                        android:paddingLeft="5dp"
-                        android:layout_toRightOf="@id/stars_rtb" 
-                        android:layout_toLeftOf="@id/distance_from_txv" 
-                        android:layout_below="@id/name_txv" 
-                        android:textColor="@color/black_light"
-                        android:textSize="14sp"
-                        android:text="@string/app_name"
-                        android:singleLine="true"
-                        android:focusable="false" 
-                        android:includeFontPadding="false" /> 
-                   
-                    <TextView 
-                        android:id="@+id/money_txv" 
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" 
-                        android:layout_below="@id/stars_rtb" 
-                        android:layout_alignParentRight="true"
-                        android:paddingTop="6dp"
-                        android:textColor="@color/orange"
-                        android:textSize="16sp"
-                        android:text="@string/app_name"
-                        android:singleLine="true"
-                        android:focusable="false" 
-                        android:includeFontPadding="false" />  
-                    <TextView 
-                        android:id="@+id/description_txv" 
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content" 
-                        android:layout_below="@id/stars_rtb" 
-                        android:layout_toLeftOf="@id/money_txv"
-                        android:paddingTop="4dp"
-                        android:textColor="@color/black_light"
-                        android:textSize="14sp"
-                        android:text="@string/app_name"
-                        android:focusable="false"
-                        />    
-                </RelativeLayout>
-            </LinearLayout>
-            <ImageView 
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/bg_sawtooth" /> 
-                
-            <LinearLayout
-                android:id="@+id/address_phone_view"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:orientation="vertical">
-                
-                <RelativeLayout android:id="@+id/address_view"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" 
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    >
-                    <TextView android:id="@+id/address_txv"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"
-                        android:padding="9dp"
-                        android:gravity="left|center_vertical"
-                        android:text="@string/app_name" 
-                        android:textColor="@color/black"
-                        android:drawableRight="@drawable/ic_goto_here"
-                        android:textSize="16sp"
-                        android:autoLink="none"
-                        />
-                </RelativeLayout>
-                
-                    <ImageView android:id="@+id/address_telephome_divider_imv"
-                        android:background="@drawable/bg_line_split"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"/>
-                    
-                <LinearLayout android:id="@+id/telephone_view"
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" 
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    >
-                    <TextView android:id="@+id/telephone_txv"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content" 
-                        android:padding="8dp"
-                        android:gravity="left|center_vertical"
-                        android:drawableRight="@drawable/ic_telephone"
-                        android:text="@string/app_name" 
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:autoLink="none"
-                        ></TextView>
-                </LinearLayout>
-
-            </LinearLayout>
-                
-            <LinearLayout android:id="@+id/dynamic_dianying_view"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:orientation="vertical"
-                >
-                <LinearLayout
-                    android:layout_width="fill_parent" 
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/list_header"
-                    >
-                    <TextView
-                        android:layout_width="fill_parent" 
-                        android:layout_height="wrap_content"
-                        android:text="@string/play_dianying"
-                        android:textSize="18sp"
-                        android:padding="8dp" />
-                
-                    <ImageView
-                        android:background="@drawable/bg_line_split"
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content"/>
-                </LinearLayout>
-                <LinearLayout android:id="@+id/dynamic_dianying_list_view"
-                    android:layout_width="fill_parent" 
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
-                </LinearLayout>
-                <LinearLayout android:id="@+id/dynamic_dianying_more_view"
-                    android:layout_width="fill_parent" 
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:background="@drawable/list_footer"
-                    android:gravity="center"
-                    >
-                    <TextView
-                        android:layout_width="wrap_content" 
-                        android:layout_height="wrap_content"
-                        android:text="@string/more_dianying"
-                        android:textSize="16sp"
-                        android:textColor="@color/black_middle"
-                        android:drawableRight="@drawable/icon_arrow_down" />
-                </LinearLayout>
-            </LinearLayout>
-                
-            <LinearLayout android:id="@+id/dynamic_tuanguo_list_view"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:orientation="vertical"
-                >
-            </LinearLayout>
-                
-            <LinearLayout android:id="@+id/dynamic_yanchu_list_view"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:orientation="vertical"
-                >
-            </LinearLayout>
-                
-            <LinearLayout android:id="@+id/dynamic_zhanlan_list_view"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:orientation="vertical"
-                >
-            </LinearLayout>
-                
-            <LinearLayout android:id="@+id/comment_list_view"
-                android:layout_width="fill_parent" 
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:orientation="vertical"
-                >
-                <RelativeLayout
-                    android:id="@+id/comment_sum_total_view" 
-                    android:layout_width="fill_parent" 
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/list_header"
-                    android:clickable="true">
-                    <TextView
-                        android:id="@+id/comment_sum_total_txv" 
-                        android:layout_width="fill_parent"
-                        android:layout_height="wrap_content" 
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="8dp"
-                        android:textColor="@color/black"
-                        android:textSize="16sp"
-                        android:gravity="left|center_vertical"
-                        android:text="@string/comment"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"/>
-                    <TextView
-                        android:id="@+id/look_all_txv" 
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" 
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginRight="8dp"
-                        android:gravity="right|center_vertical"
-                        android:drawableRight="@drawable/icon_arrow_right"
-                        android:textColor="@color/text_gray"
-                        android:text="@string/look_all_comment"
-                        android:textSize="14sp"
-                        android:clickable="false"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        />
-                </RelativeLayout>
-                <ImageView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content" 
-                    android:background="@drawable/bg_line_split"
-                    />
-            </LinearLayout> 
-    
-            <include 
-                android:id="@+id/comment_tip_view"
-                layout="@layout/comment_tip"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                />
-                
-            <LinearLayout 
-                android:id="@+id/feature_txv" 
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content" 
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="8dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:orientation="vertical"
-                android:gravity="left"
-                android:background="@drawable/list_single_normal"
-                android:focusable="false"
-                />
-               
+	            <LinearLayout
+	                android:layout_width="fill_parent" 
+	                android:layout_height="wrap_content"
+	                android:padding="8dp"
+	                android:orientation="vertical"
+	                android:gravity="left|top"
+	                android:background="@color/white"
+	                >
+	                <RelativeLayout
+	                    android:layout_width="fill_parent" 
+	                    android:layout_height="wrap_content"
+	                    android:gravity="left|top"
+	                    >
+	                       
+	                    <TextView
+	                        android:id="@+id/name_txv"
+	                        android:layout_width="fill_parent"
+	                        android:layout_height="wrap_content"
+	                        android:layout_alignParentLeft="true"
+	                        android:layout_alignParentTop="true" 
+	                        android:paddingBottom="6dp"
+	                        android:gravity="left"
+	                        android:text="@string/app_name"
+	                        android:textColor="@color/black_dark"
+	                        android:textSize="18sp"
+	                        android:maxLines="2"
+	                        android:ellipsize="end"
+	                        android:focusable="true"
+	                        android:focusableInTouchMode="true"
+	                        ></TextView>
+	        
+	                    <RatingBar android:id="@+id/stars_rtb"
+	                        android:layout_width="wrap_content"
+	                        android:layout_height="wrap_content"
+	                        android:layout_alignParentLeft="true"
+	                        android:layout_below="@id/name_txv" 
+	                        android:progressDrawable="@drawable/ratingbar_small"
+	                        style="@style/RatingBar.Small"
+	                        android:numStars="5"
+	                        android:focusable="false"
+	                        android:focusableInTouchMode="false" />
+	    
+	                    <TextView 
+	                        android:id="@+id/distance_txv" 
+	                        android:layout_width="wrap_content"
+	                        android:layout_height="wrap_content" 
+	                        android:layout_alignParentRight="true"
+	                        android:layout_below="@id/name_txv" 
+	                        android:textColor="@color/black_dark"
+	                        android:textSize="14sp"
+	                        android:text="@string/app_name"
+	                        android:singleLine="true"
+	                        android:focusable="false" />   
+	                    
+	                    <TextView 
+	                        android:id="@+id/distance_from_txv" 
+	                        android:layout_width="wrap_content"
+	                        android:layout_height="wrap_content" 
+	                        android:layout_toLeftOf="@id/distance_txv" 
+	                        android:layout_below="@id/name_txv" 
+	                        android:drawableRight="@drawable/ic_a_poi"
+	                        android:textColor="@color/black_dark"
+	                        android:textSize="14sp"
+	                        android:text="@string/distance"
+	                        android:singleLine="true"
+	                        android:focusable="false" />   
+	            
+	                    <TextView 
+	                        android:id="@+id/category_txv" 
+	                        android:layout_width="fill_parent"
+	                        android:layout_height="wrap_content" 
+	                        android:paddingLeft="5dp"
+	                        android:layout_toRightOf="@id/stars_rtb" 
+	                        android:layout_toLeftOf="@id/distance_from_txv" 
+	                        android:layout_below="@id/name_txv" 
+	                        android:textColor="@color/black_light"
+	                        android:textSize="14sp"
+	                        android:text="@string/app_name"
+	                        android:singleLine="true"
+	                        android:focusable="false" 
+	                        android:includeFontPadding="false" /> 
+	                   
+	                    <TextView 
+	                        android:id="@+id/money_txv" 
+	                        android:layout_width="wrap_content"
+	                        android:layout_height="wrap_content" 
+	                        android:layout_below="@id/stars_rtb" 
+	                        android:layout_alignParentRight="true"
+	                        android:paddingTop="4dp"
+	                        android:textColor="@color/orange"
+	                        android:textSize="16sp"
+	                        android:text="@string/app_name"
+	                        android:singleLine="true"
+	                        android:focusable="false" 
+	                        android:includeFontPadding="false" />  
+	                    <TextView 
+	                        android:id="@+id/description_txv" 
+	                        android:layout_width="fill_parent"
+	                        android:layout_height="wrap_content" 
+	                        android:layout_below="@id/stars_rtb" 
+	                        android:layout_toLeftOf="@id/money_txv"
+	                        android:paddingTop="4dp"
+	                        android:textColor="@color/black_light"
+	                        android:textSize="14sp"
+	                        android:text="@string/app_name"
+	                        android:focusable="false"
+	                        />    
+	                </RelativeLayout>
+	            </LinearLayout>
+	            <ImageView 
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_marginBottom="8dp"
+	                android:background="@drawable/bg_sawtooth" /> 
+	                
+	            <LinearLayout
+	                android:id="@+id/address_phone_view"
+	                android:layout_width="fill_parent" 
+	                android:layout_height="wrap_content"
+	                android:layout_marginLeft="8dp"
+	                android:layout_marginRight="8dp"
+	                android:layout_marginBottom="8dp"
+	                android:orientation="vertical">
+	                
+	                <RelativeLayout android:id="@+id/address_view"
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content" 
+	                    android:gravity="center_vertical"
+	                    android:orientation="horizontal"
+	                    >
+	                    <TextView android:id="@+id/address_txv"
+	                        android:layout_width="fill_parent"
+	                        android:layout_height="wrap_content"
+	                        android:padding="9dp"
+	                        android:gravity="left|center_vertical"
+	                        android:text="@string/app_name" 
+	                        android:textColor="@color/black"
+	                        android:drawableRight="@drawable/ic_goto_here"
+	                        android:textSize="16sp"
+	                        android:autoLink="none"
+	                        />
+	                </RelativeLayout>
+	                
+	                    <ImageView android:id="@+id/address_telephome_divider_imv"
+	                        android:background="@drawable/bg_line_split"
+	                        android:layout_width="fill_parent"
+	                        android:layout_height="wrap_content"/>
+	                    
+	                <LinearLayout android:id="@+id/telephone_view"
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content" 
+	                    android:gravity="center_vertical"
+	                    android:orientation="horizontal"
+	                    >
+	                    <TextView android:id="@+id/telephone_txv"
+	                        android:layout_width="fill_parent"
+	                        android:layout_height="wrap_content" 
+	                        android:padding="8dp"
+	                        android:gravity="left|center_vertical"
+	                        android:drawableRight="@drawable/ic_telephone"
+	                        android:text="@string/app_name" 
+	                        android:textColor="@color/black"
+	                        android:textSize="16sp"
+	                        android:autoLink="none"
+	                        ></TextView>
+	                </LinearLayout>
+	
+	            </LinearLayout>
+	            
+	            <LinearLayout android:id="@+id/below_address"
+	                android:layout_width="fill_parent" 
+	                android:layout_height="wrap_content"
+	                android:layout_marginLeft="8dp"
+	                android:layout_marginRight="8dp"
+	                android:orientation="vertical"
+	                >
+	            </LinearLayout>
+	                
+	            <LinearLayout android:id="@+id/comment_list_view"
+	                android:layout_width="fill_parent" 
+	                android:layout_height="wrap_content"
+	                android:layout_marginLeft="8dp"
+	                android:layout_marginRight="8dp"
+	                android:orientation="vertical"
+	                >
+	                <RelativeLayout
+	                    android:id="@+id/comment_sum_total_view" 
+	                    android:layout_width="fill_parent" 
+	                    android:layout_height="wrap_content"
+	                    android:background="@drawable/list_header"
+	                    android:clickable="true">
+	                    <TextView
+	                        android:id="@+id/comment_sum_total_txv" 
+	                        android:layout_width="fill_parent"
+	                        android:layout_height="wrap_content" 
+	                        android:layout_alignParentLeft="true"
+	                        android:layout_centerVertical="true"
+	                        android:layout_marginLeft="8dp"
+	                        android:textColor="@color/black"
+	                        android:textSize="16sp"
+	                        android:gravity="left|center_vertical"
+	                        android:text="@string/comment"
+	                        android:clickable="false"
+	                        android:focusable="false"
+	                        android:focusableInTouchMode="false"/>
+	                    <TextView
+	                        android:id="@+id/look_all_txv" 
+	                        android:layout_width="wrap_content"
+	                        android:layout_height="wrap_content" 
+	                        android:layout_alignParentRight="true"
+	                        android:layout_centerVertical="true"
+	                        android:layout_marginRight="8dp"
+	                        android:gravity="right|center_vertical"
+	                        android:drawableRight="@drawable/ic_view_all_comment"
+	                        android:textColor="@color/text_gray"
+	                        android:text="@string/look_all_comment"
+	                        android:textSize="14sp"
+	                        android:clickable="false"
+	                        android:focusable="false"
+	                        android:focusableInTouchMode="false"
+	                        />
+	                </RelativeLayout>
+	                <ImageView
+	                    android:layout_width="fill_parent"
+	                    android:layout_height="wrap_content" 
+	                    android:background="@drawable/bg_line_split"
+	                    />
+	            </LinearLayout> 
+	    
+	            <include 
+	                android:id="@+id/comment_tip_view"
+	                layout="@layout/poi_tip_comment"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content"
+	                android:layout_marginLeft="8dp"
+	                android:layout_marginRight="8dp"
+	                android:layout_marginBottom="8dp"
+	                />
+	            
+	            <LinearLayout android:id="@+id/below_comment"
+	                android:layout_width="fill_parent" 
+	                android:layout_height="wrap_content"
+	                android:layout_marginLeft="8dp"
+	                android:layout_marginRight="8dp"
+	                android:orientation="vertical"
+	                >
+	            </LinearLayout>
+	                
+	            <LinearLayout 
+	                android:id="@+id/feature_txv" 
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content" 
+	                android:layout_marginLeft="8dp"
+	                android:layout_marginRight="8dp"
+	                android:layout_marginBottom="8dp"
+	                android:paddingLeft="8dp"
+	                android:paddingRight="8dp"
+	                android:orientation="vertical"
+	                android:gravity="left"
+	                android:background="@drawable/list_single_normal"
+	                android:focusable="false"
+	                >
+	            </LinearLayout>
+	               
+	            <LinearLayout
+	                android:id="@+id/layout_below_feature"
+	                android:layout_width="fill_parent"
+	                android:layout_height="wrap_content" 
+	                android:layout_marginLeft="8dp"
+	                android:layout_marginRight="8dp"
+	                android:orientation="vertical"
+	                android:gravity="left"
+	                >
+	                
+	            </LinearLayout>
             </LinearLayout>        
             <ImageView 
                 android:id="@+id/stamp_imv" 

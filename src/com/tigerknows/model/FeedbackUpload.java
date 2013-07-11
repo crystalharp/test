@@ -25,10 +25,12 @@ public class FeedbackUpload extends BaseQuery {
 
     // am String false 添加商户
     public static final String SERVER_PARAMETER_ADD_MERCHANT = "am";
+    
+    public static final String SERVER_PARAMETER_POI_RANK = "poirank";
 
     
     public FeedbackUpload(Context context) {
-        super(context, API_TYPE_FEEDBACK_UPLOAD, VERSION, false);
+        super(context, API_TYPE_FEEDBACK_UPLOAD, VERSION);
     }
 
     @Override
@@ -45,27 +47,18 @@ public class FeedbackUpload extends BaseQuery {
             // TODO 这个参数必须要，那怕是空？！
             requestParameters.add(SERVER_PARAMETER_FEEDBACK, "");
         }
-        if (criteria.containsKey(SERVER_PARAMETER_ACTION_LOG)) {
-            requestParameters.add(SERVER_PARAMETER_ACTION_LOG, criteria.get(SERVER_PARAMETER_ACTION_LOG));
-        }
-        if (criteria.containsKey(SERVER_PARAMETER_LOCATION)) {
-            requestParameters.add(SERVER_PARAMETER_LOCATION, criteria.get(SERVER_PARAMETER_LOCATION));
-        }
-        if (criteria.containsKey(SERVER_PARAMETER_LOCATION_IN_ANDROID)) {
-            requestParameters.add(SERVER_PARAMETER_LOCATION_IN_ANDROID, criteria.get(SERVER_PARAMETER_LOCATION_IN_ANDROID));
-        }
-        if (criteria.containsKey(SERVER_PARAMETER_ERROR_RECOVERY)) {
-            requestParameters.add(SERVER_PARAMETER_ERROR_RECOVERY, criteria.get(SERVER_PARAMETER_ERROR_RECOVERY));
-        }
-        if (criteria.containsKey(SERVER_PARAMETER_ADD_MERCHANT)) {
-            requestParameters.add(SERVER_PARAMETER_ADD_MERCHANT, criteria.get(SERVER_PARAMETER_ADD_MERCHANT));
-        }
+        addParameter(new String[]{SERVER_PARAMETER_ACTION_LOG,
+                SERVER_PARAMETER_LOCATION,
+                SERVER_PARAMETER_LOCATION_IN_ANDROID,
+                SERVER_PARAMETER_ERROR_RECOVERY,
+                SERVER_PARAMETER_ADD_MERCHANT,
+                SERVER_PARAMETER_POI_RANK, SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_SUB_DATA_TYPE, SERVER_PARAMETER_REQUSET_SOURCE_TYPE}, false);
     }
 
     @Override
     protected void createHttpClient() {
         super.createHttpClient();
-        String url = String.format(TKConfig.getQueryUrl(apiType, version, null), TKConfig.getQueryHost());
+        String url = String.format(TKConfig.getQueryUrl(), TKConfig.getQueryHost());
         httpClient.setURL(url);
     }
 

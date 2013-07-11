@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/bg_discover" >
+    <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_below="@id/title_view" >
+
+        <include
+            android:id="@+id/empty_view"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            layout="@layout/empty_view" />
+
+        <com.tigerknows.widget.QueryingView
+            android:id="@+id/querying_view"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:visibility="gone" >
+        </com.tigerknows.widget.QueryingView>
+
+        <com.tigerknows.widget.SpringbackListView
+            android:id="@+id/result_lsv"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:divider="@color/transparent"
+            android:dividerHeight="12dp"
+            android:fadingEdge="none"
+            android:listSelector="@color/transparent"
+            android:footerDividersEnabled="false"
+            android:scrollingCache="false"/>
+    </FrameLayout>
+
+</RelativeLayout>

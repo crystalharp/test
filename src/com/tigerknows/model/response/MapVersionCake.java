@@ -10,7 +10,7 @@ package com.tigerknows.model.response;
 import java.io.IOException;
 import java.util.HashMap;
 
-import com.tigerknows.maps.MapEngine.RegionMetaVersion;
+import com.tigerknows.map.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.MapVersionQuery.ServerRegionDataInfo;
 import com.tigerknows.util.ParserUtil;
 

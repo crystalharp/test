@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+    
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tkandroid ="http://schemas.android.com/apk/res/com.tigerknows"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:gravity="center"
+    android:background="@color/white"
+    >
+        
+    <Button
+        android:id="@+id/query_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/btn_search"
+        />
+        
+    <com.tigerknows.android.widget.TKEditText
+        android:id="@+id/keyword_edt"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/query_btn"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="8dp"
+        tkandroid:hint="@string/find_poi"
+        tkandroid:maxLength="50"
+        tkandroid:imeOptions="actionSearch"
+        >
+    </com.tigerknows.android.widget.TKEditText>
+        
+</RelativeLayout>

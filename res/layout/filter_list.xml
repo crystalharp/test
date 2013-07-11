@@ -18,48 +18,65 @@
     </LinearLayout>
     
     <LinearLayout
+        android:id="@+id/body_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_below="@id/control_view"
-        android:orientation="horizontal"
-        android:weightSum="2"
+        android:orientation="vertical"
         android:paddingBottom="64dp"
         >
-        <RelativeLayout
-            android:id="@+id/parent_view"
-	        android:layout_width="wrap_content"
+        <LinearLayout android:id="@+id/title_view"
+	        android:padding="0dp"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:background="@color/white"
+	        android:gravity="center"
+	        android:orientation="horizontal"
+	        >
+	    </LinearLayout>
+        <LinearLayout
+	        android:layout_width="fill_parent"
 	        android:layout_height="fill_parent"
-	        android:layout_weight="1"
-	        android:background="@drawable/list_selector_background_gray_dark">
-	        <ListView android:id="@+id/parent_lsv"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:padding="0dp"
-	            android:dividerHeight="0dp"
-	            android:divider="@drawable/bg_line_split"
-	            android:drawSelectorOnTop="false"
-	            android:scrollingCache="false"
-	            android:footerDividersEnabled="false"
-	            android:fadingEdge="none"
-	            />
-        </RelativeLayout>
-        <RelativeLayout
-            android:id="@+id/child_view"
-	        android:layout_width="wrap_content"
-	        android:layout_height="fill_parent"
-	        android:layout_weight="1"
-	        android:background="@drawable/list_selector_background_gray_light">
-	        <ListView android:id="@+id/child_lsv"
-	            android:layout_width="wrap_content"
-	            android:layout_height="wrap_content"
-	            android:padding="0dp"
-	            android:dividerHeight="1.5dp"
-	            android:divider="@color/transparent"
-	            android:drawSelectorOnTop="false"
-	            android:scrollingCache="false"
-	            android:footerDividersEnabled="false"
-	            android:fadingEdge="none"
-	            />
-        </RelativeLayout>
+	        android:layout_below="@id/control_view"
+	        android:orientation="horizontal"
+	        android:weightSum="2"
+	        >
+	        <RelativeLayout
+	            android:id="@+id/parent_view"
+		        android:layout_width="wrap_content"
+		        android:layout_height="fill_parent"
+		        android:layout_weight="1"
+		        android:background="@drawable/list_selector_background_gray_dark">
+		        <ListView android:id="@+id/parent_lsv"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:padding="0dp"
+		            android:dividerHeight="0dp"
+		            android:divider="@drawable/bg_line_split"
+		            android:drawSelectorOnTop="false"
+		            android:scrollingCache="false"
+		            android:footerDividersEnabled="false"
+		            android:fadingEdge="none"
+		            />
+	        </RelativeLayout>
+	        <RelativeLayout
+	            android:id="@+id/child_view"
+		        android:layout_width="wrap_content"
+		        android:layout_height="fill_parent"
+		        android:layout_weight="1"
+		        android:background="@drawable/list_selector_background_gray_light">
+		        <ListView android:id="@+id/child_lsv"
+		            android:layout_width="wrap_content"
+		            android:layout_height="wrap_content"
+		            android:padding="0dp"
+		            android:dividerHeight="1.5dp"
+		            android:divider="@color/transparent"
+		            android:drawSelectorOnTop="false"
+		            android:scrollingCache="false"
+		            android:footerDividersEnabled="false"
+		            android:fadingEdge="none"
+		            />
+	        </RelativeLayout>
+        </LinearLayout>
     </LinearLayout>
 </RelativeLayout>

@@ -19,7 +19,7 @@
 #ifndef __TKM_COMM_H
 #define __TKM_COMM_H
 
-#include "./cairo/cairo.h"
+#include "tk_cairo.h"
 
 /* ==========================
  * variables to up level apps.

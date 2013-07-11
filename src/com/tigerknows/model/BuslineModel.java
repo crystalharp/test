@@ -12,7 +12,7 @@ import com.tigerknows.provider.Tigerknows;
 import com.tigerknows.provider.Tigerknows.Favorite;
 import com.tigerknows.provider.Tigerknows.History;
 import com.tigerknows.util.ByteUtil;
-import com.tigerknows.util.CommonUtils;
+import com.tigerknows.util.Utility;
 import com.tigerknows.util.ShareTextUtil;
 import com.tigerknows.util.SqliteWrapper;
 
@@ -86,8 +86,8 @@ public class BuslineModel extends XMapData {
         private static final byte FIELD_STATION = 0x20;
 
         private int length;
-        private List<Integer> x;
-        private List<Integer> y;
+        private List<Long> x;
+        private List<Long> y;
         private String name;
         private String time;
         private List<Station> stationList;
@@ -98,24 +98,24 @@ public class BuslineModel extends XMapData {
                 return;
             }
             this.positionList = (ArrayList<Position>)positionList;
-            this.x = new ArrayList<Integer>();
-            this.y = new ArrayList<Integer>();
+            this.x = new ArrayList<Long>();
+            this.y = new ArrayList<Long>();
             int i = 0;
-            int lon = 0;
-            int lat = 0;
-            int previousLon = 0;
-            int previousLat = 0;
+            long lon = 0;
+            long lat = 0;
+            long previousLon = 0;
+            long previousLat = 0;
             for(Position position : positionList) {
                 if (i == 0) {
-                    lon = (int)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
-                    lat = (int)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
+                    lon = (long)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
+                    lat = (long)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
                     previousLon = lon;
                     previousLat = lat;
                 } else {
-                    lon = previousLon - (int)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
-                    lat = previousLat - (int)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
-                    previousLon = (int)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
-                    previousLat = (int)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
+                    lon = previousLon - (long)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
+                    lat = previousLat - (long)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
+                    previousLon = (long)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
+                    previousLat = (long)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
                 }
                 this.x.add(lon);
                 this.y.add(lat);
@@ -168,15 +168,13 @@ public class BuslineModel extends XMapData {
         
         public Line(XMap data) throws APIException {
             super(data);
-            init(data);
+            init(data, true);
         }
 
         @SuppressWarnings("unchecked")
-        public void init(XMap data) throws APIException {
-            super.init(data);
-            if (this.data.containsKey(FIELD_LENGTH)) {
-                length = (int)this.data.getInt(FIELD_LENGTH);
-            }
+        public void init(XMap data, boolean reset) throws APIException {
+            super.init(data, reset);
+            length = (int)getLongFromData(FIELD_LENGTH, reset ? 0 : this.length);
 
             if (this.data.containsKey(FIELD_X) && this.data.containsKey(FIELD_Y)) {
                 this.x = this.data.getXArray(FIELD_X).toIntList();
@@ -188,13 +186,13 @@ public class BuslineModel extends XMapData {
                     this.positionList = new ArrayList<Position>(this.x.size());
                     double lon = 0d;
                     double lat = 0d;
-                    for(int x : this.x) {
+                    for(long x : this.x) {
                         if (i == 0) {
-                            position = new Position(((double)this.y.get(i))/TKConfig.LON_LAT_DIVISOR, ((double)x)/TKConfig.LON_LAT_DIVISOR);
+                            position = new Position(long2doubleForLatLon(this.y.get(i)), long2doubleForLatLon(x));
                             lon = position.getLon();
                             lat = position.getLat();
                         } else {
-                            position = new Position(lat + ((double)this.y.get(i))/TKConfig.LON_LAT_DIVISOR, lon + ((double)x)/TKConfig.LON_LAT_DIVISOR);
+                            position = new Position(lat + long2doubleForLatLon(this.y.get(i)), lon + long2doubleForLatLon(x));
                             lon = position.getLon();
                             lat = position.getLat();
                         }
@@ -202,27 +200,16 @@ public class BuslineModel extends XMapData {
                         i++;
                     }
                 }
-            }
-            
-            if (this.data.containsKey(FIELD_NAME)) {
-                name = this.data.getString(FIELD_NAME);
-            }
-            
-            if (this.data.containsKey(FIELD_TIME)) {
-            	time = this.data.getString(FIELD_TIME);
-            }
-            
-            XArray<XMap> xstationList;
-            XMap xstation;
-            if (this.data.containsKey(FIELD_STATION)) {
-                xstationList = (XArray<XMap>)this.data.getXArray(FIELD_STATION);
-                int size = xstationList.size();
-                this.stationList = new ArrayList<Station>(size);
-                for(int i = 0; i < size; i++) {
-                    xstation = xstationList.get(i);
-                    this.stationList.add(new Station(xstation));
+            } else if (reset) {
+                if (this.positionList != null) {
+                    this.positionList.clear();
                 }
             }
+            
+            name = getStringFromData(FIELD_NAME, reset ? null : this.name);
+            time = getStringFromData(FIELD_TIME, reset ? null : this.time);
+            
+            this.stationList = getListFromData(FIELD_STATION, Station.Initializer, reset ? null : this.stationList);
         }
 
         public XMap getData() {
@@ -315,7 +302,7 @@ public class BuslineModel extends XMapData {
                 byte[] data = c.getBlob(c.getColumnIndex(Tigerknows.Busline.DATA));
                 try {
                     XMap xmap = (XMap) ByteUtil.byteToXObject(data);
-                    line.init(xmap);
+                    line.init(xmap, true);
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -373,7 +360,7 @@ public class BuslineModel extends XMapData {
         public String getSMSString(Context context) {
             StringBuilder body = new StringBuilder();
             body.append(context.getString(R.string.busline_, name));
-            body.append(context.getString(R.string.busline_line_listitem_title, time, CommonUtils.meter2kilometre(length)));//, stationList.size()));
+            body.append(context.getString(R.string.busline_line_listitem_title, time, Utility.meter2kilometre(length)));//, stationList.size()));
             body.append("\n");
             int i = 0;
             for(Station station : stationList) {
@@ -398,13 +385,21 @@ public class BuslineModel extends XMapData {
             } else {
                 try {
                     Line line = new Line();
-                    line.init(getData());
+                    line.init(getData(), true);
                     line.writeToDatabases(context, -1, Tigerknows.STORE_TYPE_HISTORY);
                 } catch (APIException e) {
                     // TODO: handle exception
                 }
             }
         }
+
+        public static XMapInitializer<Line> Initializer = new XMapInitializer<Line>() {
+
+            @Override
+            public Line init(XMap data) throws APIException {
+                return new Line(data);
+            }
+        };
     }
 
     // 0x20 x_array<x_map> 站点结果，每个map　是一个公交站（类型为２时才有）
@@ -430,8 +425,8 @@ public class BuslineModel extends XMapData {
         public static final int TOTAL_LENGTH = -1;
         
         private int index;
-        private int x;
-        private int y;
+        private long x;
+        private long y;
         private String name;
         private List<String> lineList;
         private Position position;
@@ -445,8 +440,8 @@ public class BuslineModel extends XMapData {
                 return;
             }
             
-            this.x = (int)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
-            this.y = (int)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
+            this.x = (long)(position.getLon()*TKConfig.LON_LAT_DIVISOR);
+            this.y = (long)(position.getLat()*TKConfig.LON_LAT_DIVISOR);
             this.position = position;
         }
 
@@ -479,29 +474,24 @@ public class BuslineModel extends XMapData {
 
         public Station(XMap data) throws APIException {
             super(data);
-            init(data);
+            init(data, true);
         }
 
         @SuppressWarnings("unchecked")
-        public void init(XMap data) throws APIException {
-            super.init(data);
+        public void init(XMap data, boolean reset) throws APIException {
+            super.init(data, reset);
             
-            if (this.data.containsKey(FIELD_INDEX)) {
-                index = (int)this.data.getInt(FIELD_INDEX);
-            }
-            
-            if (this.data.containsKey(FIELD_X) && this.data.containsKey(FIELD_Y)) {
-                x = (int)this.data.getInt(FIELD_X);
-                y = (int)this.data.getInt(FIELD_Y);
-                this.position = new Position(((double)this.y)/TKConfig.LON_LAT_DIVISOR, ((double)this.x)/TKConfig.LON_LAT_DIVISOR);
-            }
-                        
-            if (this.data.containsKey(FIELD_NAME)) {
-                name = this.data.getString(FIELD_NAME);
-            }
-
+            index = (int)getLongFromData(FIELD_INDEX, reset ? 0 : index);
+            x = (int)getLongFromData(FIELD_X, reset ? 0 : x);
+            y = (int)getLongFromData(FIELD_Y, reset ? 0 : y);
+            position = getPositionFromData(FIELD_X, FIELD_Y, reset ? null : position);
+            name = getStringFromData(FIELD_NAME, reset ? null : name);
             if (this.data.containsKey(FIELD_LINE)) {
                 this.lineList = this.data.getXArray(FIELD_LINE).toStringList();
+            } else if (reset) {
+                if (this.lineList != null) {
+                    this.lineList.clear();
+                }
             }
         }
 
@@ -509,7 +499,7 @@ public class BuslineModel extends XMapData {
             POI poi = new POI();
             poi.setName(name);
             if (this.position == null) {
-                this.position = new Position(((double)this.y)/TKConfig.LON_LAT_DIVISOR, ((double)this.x)/TKConfig.LON_LAT_DIVISOR);
+                this.position = new Position(long2doubleForLatLon(y), long2doubleForLatLon(x));
             }
             poi.setPosition(this.position);
             return poi;
@@ -602,7 +592,7 @@ public class BuslineModel extends XMapData {
                 byte[] data = c.getBlob(c.getColumnIndex(Tigerknows.Busline.DATA));
                 try {
                     XMap xmap = (XMap) ByteUtil.byteToXObject(data);
-                    station.init(xmap);
+                    station.init(xmap, true);
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -626,6 +616,14 @@ public class BuslineModel extends XMapData {
             }
             return body.toString();
         }
+
+        public static XMapInitializer<Station> Initializer = new XMapInitializer<Station>() {
+
+            @Override
+            public Station init(XMap data) throws APIException {
+                return new Station(data);
+            }
+        };
     }
     
     private int type;
@@ -669,37 +667,11 @@ public class BuslineModel extends XMapData {
         
     }
     
-    @SuppressWarnings("unchecked")
     public BuslineModel(XMap data) throws APIException {
         super(data);
-        if (this.data.containsKey(FIELD_TYPE)) {
-            type = (int)this.data.getInt(FIELD_TYPE);
-        }
-        if (this.data.containsKey(FIELD_TOTAL)) {
-            total = (int)this.data.getInt(FIELD_TOTAL);
-        }
-        XArray<XMap> array;
-        if (this.data.containsKey(FIELD_LINE)) {
-            array = (XArray<XMap>)this.data.getXArray(FIELD_LINE);
-            int size = array.size();
-            XMap xmap;
-            this.lineList = new ArrayList<Line>(size);
-            for(int i = 0; i < size; i++) {
-                xmap = array.get(i);
-                this.lineList.add(new Line(xmap));
-            }
-        }
-        
-        XArray<XMap> xstations;
-        XMap xstation;
-        if (this.data.containsKey(FIELD_STATION)) {
-            xstations = (XArray<XMap>)this.data.getXArray(FIELD_STATION);
-            int size = xstations.size();
-            this.stationList = new ArrayList<Station>(size);
-            for(int i = 0; i < size; i++) {
-                xstation = xstations.get(i);
-                this.stationList.add(new Station(xstation));
-            }
-        }
-    }        
+        type = (int)getLongFromData(FIELD_TYPE);
+        total = (int)getLongFromData(FIELD_TOTAL);
+        lineList = getListFromData(FIELD_LINE, Line.Initializer);
+        stationList = getListFromData(FIELD_STATION, Station.Initializer);
+    }
 }

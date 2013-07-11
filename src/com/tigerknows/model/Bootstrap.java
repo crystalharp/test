@@ -49,11 +49,7 @@ public final class Bootstrap extends BaseQuery {
         addCommonParameters(requestParameters);
         // TODO 这个参数必须要，那怕是空？！
         requestParameters.add("fe", "");
-        if(criteria != null){
-            if(criteria.containsKey(SERVER_PARAMETER_FIRST_LOGIN)){
-                requestParameters.add(SERVER_PARAMETER_FIRST_LOGIN, criteria.get(SERVER_PARAMETER_FIRST_LOGIN));
-            }
-        }
+        addParameter(SERVER_PARAMETER_FIRST_LOGIN, false);
     }
 
     @Override

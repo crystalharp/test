@@ -1,0 +1,83 @@
+package com.tigerknows.share;
+
+import android.app.Dialog;
+import android.graphics.Bitmap;
+import android.view.View;
+import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageView;
+
+import com.tigerknows.R;
+import com.tigerknows.common.ActionLog;
+
+public class ViewImageDialog extends Dialog {
+
+	ImageView mPic;
+	
+	Button mBack;
+	
+	Button mDelete;
+	
+	WeiboSendActivity mContext;
+	
+	ActionLog mActionLog;
+	
+	String mActionTag = ActionLog.WeiboImage;
+	
+	public ViewImageDialog(WeiboSendActivity context, Bitmap bitmap) {
+		super(context, R.style.Theme_Dialog);
+		// TODO Auto-generated constructor stub
+		mContext = context;
+		
+		mActionLog = ActionLog.getInstance(context);
+		mActionLog.addAction(ActionLog.WeiboImage);
+		requestWindowFeature(Window.FEATURE_NO_TITLE); 
+        
+		setContentView(R.layout.share_weibo_view_image);
+		findViews();
+		setListeners();
+		mPic.setImageBitmap(bitmap);
+		
+		getWindow().getAttributes().windowAnimations = R.style.AlterImageDialog;
+	}
+
+	protected void findViews() {
+		mPic = (ImageView)findViewById(R.id.pic_imv);
+		mBack = (Button)findViewById(R.id.back_btn);
+		mDelete = (Button)findViewById(R.id.delete_btn);
+	}
+	
+	protected void setListeners() {
+		mBack.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				dismiss();
+			}
+		});
+		
+		mDelete.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				mActionLog.addAction(mActionTag +  ActionLog.WeiboImageDelPic);
+				mContext.removeImage();
+				dismiss();
+			}
+		});
+	}
+
+	@Override
+	public void dismiss() {
+        mActionLog.addAction(mActionTag + ActionLog.Dismiss);
+		super.dismiss();
+	}
+
+    @Override
+    public void show() {
+        mActionLog.addAction(mActionTag);
+        super.show();
+    }
+	
+}

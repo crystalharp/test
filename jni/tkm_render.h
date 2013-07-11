@@ -3,15 +3,15 @@
  *
  *       Filename:  tkm_render.h
  *
- *    Description:
+ *    Description:  
  *
  *        Version:  1.0
  *        Created:  2010年12月28日 17时53分56秒
  *       Revision:  none
  *       Compiler:  gcc
  *
- *         Author:  YOUR NAME (),
- *        Company:
+ *         Author:  YOUR NAME (), 
+ *        Company:  
  *
  * =====================================================================================
  */
@@ -41,7 +41,6 @@
 #define TK_DONOT_NEED_SPECIAL 1
 #define MAX_POINT_CLIP 256
 #define UNVALID_IMG_ID 100
-#define BACKGROUND_IMAGE_INDEX 35
 
 //定义gdi相关信息
 struct gdi {
@@ -51,12 +50,12 @@ struct gdi {
 	unsigned char		nLStyle;	//line style--TKGdiENLStyle
     gdi_color           txtcol;     //text color
 	gdi_color		    bgcolor;   //background color
-    gdi_color           color;
+    gdi_color           color;   
     int                 font_size;
 	unsigned char		nSPixel;	//
 	tk_pixel            *pd;		//
-	unsigned char       nLabelStyle;
-    int             pixel_should_overlap;
+	unsigned char       nLabelStyle; 
+    int             pixel_should_overlap; 
     int             is_road;
     struct envelope rtview;
     struct envelope unuse_view;
@@ -64,69 +63,59 @@ struct gdi {
     struct tk_point *draw_point_buffer;
     // the length of the buffer above
     int draw_point_buffer_len;
-    struct envelope feature_clip_view;
 };
 
+extern int is_zoomed_to_max;
 extern struct envelope vm_screen;
 extern struct gdi tk_gdi;
 
-//#ifdef TK_BPP_16
-//#define TK_COLOR2INDEX(Color)	tk_gdi_rgb565(Color)
-//#define TK_INDEX2COLOR(Index)	tk_gdi_rgb888(Index)
-//#define TK_GDI_COLOR_BG         0xef3b
-//#define TK_GDI_COLOR_WATER      40345
-//#define GET_RED(color) (((unsigned short)color >> (11)) & (0x1f))
-//#define GET_GREEN(color) (((unsigned short)color >> (5)) & (0x3f))
-//#define GET_BLUE(color) (((unsigned short)color) & (0x1f))
-//#endif
+#ifdef TK_BPP_16
+#define TK_COLOR2INDEX(Color)   tk_gdi_rgb565(Color)
+#define TK_INDEX2COLOR(Index)   tk_gdi_rgb888(Index)
+#endif
 
-//#ifdef TK_BPP_32
-#define TK_COLOR2INDEX(Color)	(Color)
-#define TK_INDEX2COLOR(Index)	(Index)
-#define TK_GDI_COLOR_WATER      10007243
-#define TK_GDI_COLOR_BG         0xf4f3ef //15460060
-#define GET_RED(color) (((unsigned)color >> (16)) & (0xff))
-#define GET_GREEN(color) (((unsigned)color >> (8)) & (0xff))
-#define GET_BLUE(color) (((unsigned)color) & (0xff))
-//#endif
+#ifdef TK_BPP_32
+#define TK_COLOR2INDEX(Color)   (Color)
+#define TK_INDEX2COLOR(Index)   (Index)
+#endif
 
 
 #define GDI_SETCOLOR(col) do { \
-tk_gdi.color = col; \
+	tk_gdi.color = col; \
 } while (0)
 
 #define GDI_SETBGCOLOR(bgcol) do { \
-tk_gdi.bgcolor = bgcol; \
+	tk_gdi.bgcolor = bgcol; \
 } while (0)
 
 #define GDI_SETFONTSIZE(ft_size) do { \
-tk_gdi.font_size = ft_size; \
+	tk_gdi.font_size = ft_size; \
 } while (0)
 
 #define GDI_SETTEXTCOLOR(txt_col) do { \
-tk_gdi.txtcol = txt_col; \
+	tk_gdi.txtcol = txt_col; \
 } while (0)
 
 #define GDI_GETTEXTCOLOR() (tk_gdi.txtcol)
 
 #define GDI_SETPENSIZE(PSize) do { \
-tk_gdi.nPSize = (unsigned char)PSize; \
+	tk_gdi.nPSize = (unsigned char)PSize; \
 } while (0)
 
 #define GDI_SETLINESTYLE(enLStyle) do { \
-tk_gdi.nLStyle = enLStyle; \
+	tk_gdi.nLStyle = enLStyle; \
 } while (0)
 
 #define GDI_GETLINESTYLE() (tk_gdi.nLStyle)
 
 #define GDI_SETLABELSTYLE(labelstyle) do { \
-tk_gdi.nLabelStyle = labelstyle; \
+    tk_gdi.nLabelStyle = labelstyle; \
 } while (0)
 
 #define GDI_GETLABELSTYLE() (tk_gdi.nLabelStyle)
 
 #define GDI_SET_SHOULD_PIXEL_OVERLAP(is_overlap) do { \
-tk_gdi.pixel_should_overlap = is_overlap; \
+    tk_gdi.pixel_should_overlap = is_overlap; \
 } while (0)
 
 //TODO: will change these two routines into defines later
@@ -135,33 +124,39 @@ extern void tk_gdi_setcolor(gdi_color col);
 extern void tk_gdi_setbkcolor(gdi_color bkCol);
 
 extern void tk_init_gdicontext(void);
-extern void release_gdicontext();
+extern void release_gdicontext(); 
 extern void tk_reinit_gdicontext(int w, int h);
+extern void draw_bg(short zoom_level, int is_file_not_found_scene);
 
 extern void tk_reset_filter_screen();
 extern void tk_set_filter_screen(struct envelope rect);
 
-extern void draw_point(struct layer *pl, int vlevel);
+extern void draw_point(struct layer *pl, int vlevel); 
 extern void draw_rail(struct layer *pl, int vlevel);
 extern void draw_road(struct layer *pl,  int vlevel);
 extern void draw_linelayer(struct layer *pl, int vlevel);
-extern int tk_geo_drawvmlpoly(struct layer *pl, int vlevel);
+extern int tk_geo_drawvmlpoly(struct layer *pl, int vlevel); 
 
+extern void _tk_mem_blt_16(unsigned char* dest, unsigned short width, short dx, short dy, unsigned short height);
 extern void tk_gdi_cleancdata(struct envelope filter, short int zoom_level, int is_file_not_found_scene);
 
 extern void tk_init_label();
 extern void tk_destroy_label();
-extern void tk_geo_cleanmaplabel();
+extern int draw_label();
+extern void tk_geo_cleanmaplabel(); 
 extern void release_points();
 extern void refresh_local_feature(int x, int y, int flag);
 
+extern void begin_area_fill();
+extern void draw_area();
+extern void end_area_fill();
 extern int judge_feature_env_relation(struct feature* pft, int scr_env_id);
 extern void get_point_from_feature(struct feature* pfeature, int* ptnum);
 extern int clipgeopoints(struct tk_point *pPoints, int ptNbr, struct envelope rect, int nGType, struct tk_point **pPts, int *ptNum);
 extern int tk_geo_add_label(struct feature* ft, struct tk_point *pPts, int ptNum, struct envelope rect, int label_type, int icon_id, int outline_color, int font_alter);
 extern void add_polygon(int n, struct tk_point *pts);
-extern int insert_label_buffer(struct feature *pfeature, struct envelope *label_rects, struct tk_point_slope *label_point,
-                               struct tk_point *pPts, int label_rect_num,char *name, int name_len, int font_size, int icon_id, int outline_color, int icon_x, int icon_y);
+extern int insert_label_buffer(struct envelope *label_rects, struct tk_point_slope *label_point, 
+        struct tk_point *pPts, int label_rect_num,char *name, int name_len, int font_size, int icon_id, int outline_color, int icon_x, int icon_y);
 extern void get_map_road_name(struct layer *pl, int vlevel);
 extern void get_map_polygon_name(struct layer *pl, int vlevel);
 #endif

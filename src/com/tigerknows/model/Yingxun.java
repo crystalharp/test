@@ -13,8 +13,6 @@ import android.os.Parcelable;
 
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
-import com.tigerknows.TKConfig;
-import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 
 import java.util.ArrayList;
@@ -22,7 +20,7 @@ import java.util.List;
 
 public class Yingxun extends BaseData implements Parcelable {
 
-    public static final String NEED_FILELD = "20262728292a2b2c";
+    public static final String NEED_FIELD = "20262728292a2b2c";
         
     // 0x20 x_string UUID uid
     public static final byte FIELD_UID = 0x20;
@@ -69,13 +67,11 @@ public class Yingxun extends BaseData implements Parcelable {
     private String movieUid; // 0x23 x_string 电影的uid movie_uid
     private String adminname; // 0x24 x_string 影院所属一级地片名 adminname
     private String areaname; // 0x25 x_string 影院所属二级地片名 areaname
-    private long x; // 0x26 x_double 影院的经度 x
-    private long y; // 0x27 x_double 影院的纬度 y
     private String name; // 0x28 x_string 影院对应poi名称 name
     private String address; // 0x29 x_string 影院对应poi地址 address
     private String phone; // 0x2a x_string 影院对应poi电话 phone
     private String distance; // 0x2b x_string 该影讯所对应的影院到当前位置的距离 实时计算生成
-    private List<Changci> changciList = new ArrayList<Changci>(); // 0x2c x_array 该影讯所对应电影在该影院的播放场次列表 通过关联changci表得到
+    private List<Changci> changciList; // 0x2c x_array 该影讯所对应电影在该影院的播放场次列表 通过关联changci表得到
     
     private Position position;
     private POI poi;
@@ -89,60 +85,27 @@ public class Yingxun extends BaseData implements Parcelable {
 
     public Yingxun (XMap data) throws APIException {
         super(data);
-        init(data);
+        init(data, true);
     }
     
-    @SuppressWarnings("unchecked")
-    public void init(XMap data) throws APIException {
-        super.init(data);
-        if (this.data.containsKey(FIELD_UID)) {
-            this.uid = this.data.getString(FIELD_UID);
-        }
-        if (this.data.containsKey(FIELD_CITY_ID)) {
-            this.cityId = this.data.getString(FIELD_CITY_ID);
-        }
-        if (this.data.containsKey(FIELD_LINK_UID)) {
-            this.linkUid = this.data.getString(FIELD_LINK_UID);
-        }
-        if (this.data.containsKey(FIELD_CITY_ID)) {
-            this.cityId = this.data.getString(FIELD_CITY_ID);
-        }
-        if (this.data.containsKey(FIELD_MOVIE_UID)) {
-            this.movieUid = this.data.getString(FIELD_MOVIE_UID);
-        }
-        if (this.data.containsKey(FIELD_ADMINNAME)) {
-            this.adminname = this.data.getString(FIELD_ADMINNAME);
-        }
-        if (this.data.containsKey(FIELD_AREANAME)) {
-            this.areaname = this.data.getString(FIELD_AREANAME);
-        }
-        if (this.data.containsKey(FIELD_X) && this.data.containsKey(FIELD_Y)) {
-            this.x = this.data.getInt(FIELD_X);
-            this.y = this.data.getInt(FIELD_Y);
-            this.position = new Position(((double)this.y)/TKConfig.LON_LAT_DIVISOR, ((double)this.x)/TKConfig.LON_LAT_DIVISOR);
-        }
-        if (this.data.containsKey(FIELD_NAME)) {
-            this.name = this.data.getString(FIELD_NAME);
-        }
-        if (this.data.containsKey(FIELD_ADDRESS)) {
-            this.address = this.data.getString(FIELD_ADDRESS);
-        }
-        if (this.data.containsKey(FIELD_PHONE)) {
-            this.phone = this.data.getString(FIELD_PHONE);
-        }
-        if (this.data.containsKey(FIELD_DISTANCE)) {
-            this.distance = this.data.getString(FIELD_DISTANCE);
-        }
-        if (this.data.containsKey(FIELD_CHANGCI_LIST)) {
-            changciList.clear();
-            XArray<XMap> xArray = this.data.getXArray(FIELD_CHANGCI_LIST);
-            for (int i = 0, size = xArray.size(); i < size; i++) {
-                Changci changci = new Changci(xArray.get(i));
-                changciList.add(changci);
-            }
-        }
+    public void init(XMap data, boolean reset) throws APIException {
+        super.init(data, reset);
+        this.uid = getStringFromData(FIELD_UID, reset ? null : this.uid);
+        this.cityId = getStringFromData(FIELD_CITY_ID, reset ? null : this.cityId);
+        this.linkUid = getStringFromData(FIELD_LINK_UID, reset ? null : this.linkUid);
+        this.movieUid = getStringFromData(FIELD_MOVIE_UID, reset ? null : this.movieUid);
+        this.adminname = getStringFromData(FIELD_ADMINNAME, reset ? null : this.adminname);
+        this.areaname = getStringFromData(FIELD_AREANAME, reset ? null : this.areaname);
+        this.position = getPositionFromData(FIELD_X, FIELD_Y, reset ? null : this.position);
+        this.name = getStringFromData(FIELD_NAME, reset ? null : this.name);
+        this.address = getStringFromData(FIELD_ADDRESS, reset ? null : this.address);
+        this.phone = getStringFromData(FIELD_PHONE, reset ? null : this.phone);
+        this.distance = getStringFromData(FIELD_DISTANCE, reset ? null : this.distance);
+        this.changciList = getListFromData(FIELD_CHANGCI_LIST, Changci.Initializer, reset ? null : this.changciList);
         
-        for(Changci changci : changciList) {
+        int size = (this.changciList != null ? this.changciList.size() : 0);
+        for(int i = 0; i < size; i++) {
+            Changci changci = changciList.get(i);
             long option = changci.getOption();
             if ((option & Changci.OPTION_DAY_TODAY) > 0) {
                 changciToday++;
@@ -186,7 +149,7 @@ public class Yingxun extends BaseData implements Parcelable {
     
     public static class Changci extends BaseData implements Parcelable{
 
-        public static final String NEED_FILELD = "40414243";
+        public static final String NEED_FIELD = "40414243";
         
         // 0x40 x_string uid uid
         public static final byte FIELD_UID = 0x40;
@@ -225,26 +188,16 @@ public class Yingxun extends BaseData implements Parcelable {
 
         public Changci (XMap data) throws APIException {
             super(data);
-            init(data);
+            init(data, true);
         }
         
-        public void init(XMap data) throws APIException {
-            super.init(data);
-            if (this.data.containsKey(FIELD_UID)) {
-                this.uid = this.data.getString(FIELD_UID);
-            }
-            if (this.data.containsKey(FIELD_YINGX_UID)) {
-                this.yingxUid = this.data.getString(FIELD_YINGX_UID);
-            }
-            if (this.data.containsKey(FIELD_START_TIME)) {
-                this.startTime = this.data.getString(FIELD_START_TIME);
-            }
-            if (this.data.containsKey(FIELD_VERSION)) {
-                this.version = this.data.getString(FIELD_VERSION);
-            }
-            if (this.data.containsKey(FIELD_OPTION)) {
-                this.option = this.data.getInt(FIELD_OPTION);
-            }
+        public void init(XMap data, boolean reset) throws APIException {
+            super.init(data, reset);
+            this.uid = getStringFromData(FIELD_UID, reset ? null : this.uid);
+            this.yingxUid = getStringFromData(FIELD_YINGX_UID, reset ? null : this.yingxUid);
+            this.startTime = getStringFromData(FIELD_START_TIME, reset ? null : this.startTime);
+            this.version = getStringFromData(FIELD_VERSION, reset ? null : this.version);
+            this.option = getLongFromData(FIELD_OPTION, reset ? 0 : this.option);
         }
         
         @Override
@@ -333,6 +286,14 @@ public class Yingxun extends BaseData implements Parcelable {
 			dest.writeString(version);
 			dest.writeLong(option);
 		}
+		
+	    public static XMapInitializer<Changci> Initializer = new XMapInitializer<Changci>() {
+
+	        @Override
+	        public Changci init(XMap data) throws APIException {
+	            return new Changci(data);
+	        }
+	    };
 		
     }
 
@@ -455,8 +416,6 @@ public class Yingxun extends BaseData implements Parcelable {
 		movieUid = in.readString();
 		adminname = in.readString();
 		areaname = in.readString();
-		x = in.readLong();
-		y = in.readLong();
 		name = in.readString();
 		address = in.readString();
 		phone = in.readString();
@@ -495,8 +454,6 @@ public class Yingxun extends BaseData implements Parcelable {
 		dest.writeString(movieUid);
 		dest.writeString(adminname);
 		dest.writeString(areaname);
-		dest.writeLong(x);
-		dest.writeLong(y);
 		dest.writeString(name);
 		dest.writeString(address);
 		dest.writeString(phone);
@@ -515,13 +472,21 @@ public class Yingxun extends BaseData implements Parcelable {
 	public String toString() {
 		return "Yingxun [uid=" + uid + ", cityId=" + cityId + ", linkUid="
 				+ linkUid + ", movieUid=" + movieUid + ", adminname="
-				+ adminname + ", areaname=" + areaname + ", x=" + x + ", y="
-				+ y + ", name=" + name + ", address=" + address + ", phone="
+				+ adminname + ", areaname=" + areaname + ", position="
+				+ position + ", name=" + name + ", address=" + address + ", phone="
 				+ phone + ", distance=" + distance + ", changciList="
 				+ changciList + ", position=" + position + ", poi=" + poi
 				+ ", changciOption=" + changciOption + ", changciToday="
 				+ changciToday + ", changciTomorrow=" + changciTomorrow
 				+ ", changciAfterTomorrow=" + changciAfterTomorrow + "]";
 	}
+    
+    public static XMapInitializer<Yingxun> Initializer = new XMapInitializer<Yingxun>() {
+
+        @Override
+        public Yingxun init(XMap data) throws APIException {
+            return new Yingxun(data);
+        }
+    };
     
 }

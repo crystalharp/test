@@ -10,13 +10,14 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.decarta.android.location.Position;
 import com.tigerknows.TKConfig;
-import com.tigerknows.maps.MapEngine;
-import com.tigerknows.maps.MapWord;
-import com.tigerknows.maps.LocalRegionDataInfo;
-import com.tigerknows.maps.LocalRegionDataInfo;
-import com.tigerknows.maps.TileDownload;
-import com.tigerknows.maps.MapEngine.RegionMetaVersion;
+import com.tigerknows.map.LocalRegionDataInfo;
+import com.tigerknows.map.MapEngine;
+import com.tigerknows.map.MapWord;
+import com.tigerknows.map.TileDownload;
+import com.tigerknows.map.MapEngine.RegionMetaVersion;
+import com.tigerknows.model.TKWord;
 import com.tigerknows.model.xobject.ByteReader;
 import com.tigerknows.model.xobject.ByteWriter;
 import com.tigerknows.model.xobject.XObject;
@@ -139,8 +140,8 @@ public final class ByteUtil {
         return words;
     }
     
-    public static ArrayList<SuggestWord> byte2LonLatSuggestWords(byte[] data, int wordsNum) {
-        ArrayList<SuggestWord> words = new ArrayList<SuggestWord>();
+    public static ArrayList<TKWord> byte2LonLatSuggestWords(byte[] data, int wordsNum) {
+        ArrayList<TKWord> words = new ArrayList<TKWord>();
         for (int i=0; (i<wordsNum*36) && (data[i]!=0); i += 36) {
             try {
                 int wordLen = 0;
@@ -151,7 +152,7 @@ public final class ByteUtil {
                     String word = new String(data, i, wordLen, "GBK");
                     float lon = arr2float(data, i + 28);
                     float lat = arr2float(data, i + 32);
-                    words.add(new SuggestWord(word, lon, lat));
+                    words.add(new TKWord(TKWord.ATTRIBUTE_SUGGEST, word, new Position(lat, lon)));
                 }
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
