@@ -424,10 +424,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             
             mSphinx.showHint(TKConfig.PREFS_HINT_POI_LIST, R.layout.hint_poi_list);
             
+            boolean footerSpringback = mResultLsv.isFooterSpringback();
             View v = mCurrentFootView;
             boolean addMerchant = false;
             if (BaseQuery.SUB_DATA_TYPE_POI.equals(mResultAdapter.getSubDataType())) {
-                if (mResultLsv.isFooterSpringback() == false) {
+                if (footerSpringback == false) {
                     if (v != mAddMerchantFootView) {
                         mResultLsv.removeFooterView(mAddMerchantFootView);
                         mResultLsv.removeFooterView(mLoadingView);
@@ -438,13 +439,16 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
             }
             
-            if (mResultLsv.isFooterSpringback() && addMerchant == false && v != mLoadingView) {
-                int state = mResultLsv.getState(false);
-                mResultLsv.removeFooterView(mAddMerchantFootView);
-                mResultLsv.removeFooterView(mLoadingView);
-                mResultLsv.addFooterView(mLoadingView);
-                mResultLsv.changeHeaderViewByState(false, state);
-                mCurrentFootView = mLoadingView;
+            if (addMerchant == false) {
+                if (v != mLoadingView) {
+                    int state = mResultLsv.getState(false);
+                    mResultLsv.removeFooterView(mAddMerchantFootView);
+                    mResultLsv.removeFooterView(mLoadingView);
+                    mResultLsv.addFooterView(mLoadingView);
+                    mResultLsv.setFooterSpringback(footerSpringback);
+                    mResultLsv.changeHeaderViewByState(false, state);
+                    mCurrentFootView = mLoadingView;
+                }
             }
             mAddMerchantView.setVisibility(View.GONE);
             
