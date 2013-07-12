@@ -400,7 +400,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 				orders.addAll(ordersLoaded);
 				ordersSize = orders.size();
 			}
-			
+			logi("OrderTotal: " + orderTotal);
+			logi("OrdersSize: " + ordersSize);
 			if(orderTotal > ordersSize){
 				mResultLsv.changeHeaderViewByState(false, SpringbackListView.PULL_TO_REFRESH);
 				mResultLsv.setFooterSpringback(true);
