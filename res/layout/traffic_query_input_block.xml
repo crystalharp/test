@@ -131,6 +131,7 @@
 		    </RelativeLayout>
 	
 	        <LinearLayout
+	            android:orientation="vertical"
 	            android:id="@+id/shadow_input"
 	            android:layout_width="fill_parent"
 	            android:layout_height="wrap_content"
