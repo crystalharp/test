@@ -8,6 +8,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.crypto.DataEncryptor;
+import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.weibo.sdk.android.WeiboParameters;
 
@@ -390,7 +391,8 @@ public class HttpUtils {
                     if (networkInfo != null) {
                         networkInfoDetail = networkInfo.getDetailedState().toString();
                     }
-                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getRadioType(), isStop);
+                    String uuid = this.parameters.getValue(BaseQuery.SERVER_PARAMETER_UUID);
+                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getRadioType(), isStop, uuid);
                 }
                 if (!keepAlive) {
                     close();
