@@ -702,10 +702,7 @@ public class TrafficQueryFragment extends BaseFragment {
 		String start = mStart.getEdt().getText().toString().trim();
 		String end = mEnd.getEdt().getText().toString().trim();
 		
-		if (TextUtils.isEmpty(start) && TextUtils.isEmpty(end) ) {
-            mSphinx.showTip(R.string.forget_all_tip, Toast.LENGTH_SHORT);
-            return true;
-        } else if (TextUtils.isEmpty(start)) {
+        if (TextUtils.isEmpty(start)) {
             mSphinx.showTip(R.string.forget_start_tip, Toast.LENGTH_SHORT);
             return true;
         } else if (TextUtils.isEmpty(end)) {

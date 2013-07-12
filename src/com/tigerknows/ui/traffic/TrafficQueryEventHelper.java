@@ -224,19 +224,6 @@ public class TrafficQueryEventHelper {
 //                mQueryEdt.getEdt().setSelectAllOnFocus(false);
             }
 			
-			if (mQueryFragment.mStart == mQueryEdt) {
-			    if (mQueryFragment.isEditTextEmpty(mQueryFragment.mStart.mEdt) == false) {
-			        mQueryFragment.mEnd.mEdt.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
-			    } else {
-			        mQueryFragment.mEnd.mEdt.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-			    }
-			} else {
-			    if (mQueryFragment.isEditTextEmpty(mQueryFragment.mEnd.mEdt) == false) {
-                    mQueryFragment.mStart.mEdt.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
-                } else {
-                    mQueryFragment.mStart.mEdt.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-                }
-			}
 		}
 		
 	}

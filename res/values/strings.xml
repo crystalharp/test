@@ -147,8 +147,8 @@
     <string name="busline_non_tip">目前找不到你要的公交线路信息！</string>
     <string name="busline_not_support">本城市暂不支持公交线路查询！</string>
     <string name="forget_all_tip">你忘记输入起点和终点啦！</string>
-    <string name="forget_start_tip">你忘记输入起点啦！</string>
-    <string name="forget_end_tip">你忘记输入终点啦！</string>
+    <string name="forget_start_tip">请输入起点！</string>
+    <string name="forget_end_tip">请输入终点！</string>
     <string name="input_valid_tip">没有找到起点或终点，你可以换一个词或在地图上选点试试！</string>
     <string name="start_equal_to_end">起点与终点相同, 请重新输入!</string>
     <string name="start_equal_to_end_select">起点与终点相同, 请重新选择!</string>
