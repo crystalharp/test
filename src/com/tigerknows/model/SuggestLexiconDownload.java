@@ -163,8 +163,7 @@ public class SuggestLexiconDownload extends BaseQuery {
     }
     
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
+    protected void checkRequestParameters() throws APIException {
         addCommonParameters(requestParameters, currentCityId);
         requestParameters.add("lr", String.valueOf(oldversion));
         requestParameters.add("rs", String.valueOf(hasDataLength > 0 ? hasDataLength - VALIDATE_LENGTH : 0));

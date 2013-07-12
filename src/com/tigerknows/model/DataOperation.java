@@ -57,8 +57,7 @@ public class DataOperation extends BaseQuery {
     }
 
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
+    protected void checkRequestParameters() throws APIException {
         addCommonParameters(requestParameters, cityId);
         
         if (criteria == null) {

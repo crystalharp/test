@@ -101,8 +101,7 @@ public class MapTileDataDownload extends BaseQuery {
     }
 
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
+    protected void checkRequestParameters() throws APIException {
         requestParameters.add("rid", String.valueOf(rid));
         requestParameters.add("vs", TKConfig.getClientSoftVersion());
         String version = null;

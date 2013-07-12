@@ -56,4 +56,10 @@ public final class ImageUpload extends BaseQuery {
             }
         }
     }
+
+    @Override
+    protected void checkRequestParameters() throws APIException {
+        // TODO Auto-generated method stub
+        
+    }
 }

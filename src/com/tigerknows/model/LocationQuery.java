@@ -158,8 +158,7 @@ public class LocationQuery extends BaseQuery {
     }
 
     @Override
-    protected void makeRequestParameters() throws APIException {
-        super.makeRequestParameters();
+    protected void checkRequestParameters() throws APIException {
         addCommonParameters(requestParameters, Globals.getCurrentCityInfo(false).getId(), true);
         
         if (wifiManager != null) {

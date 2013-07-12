@@ -396,6 +396,7 @@ public abstract class BaseQuery {
     
     protected String tipText = null;
     
+    //FIXME:使用private变量
     protected WeiboParameters requestParameters = new WeiboParameters();
 
     protected HttpUtils.TKHttpClient httpClient;
@@ -522,13 +523,14 @@ public abstract class BaseQuery {
         statusCode = STATUS_CODE_NONE;
         appendice.clear();
         try {
-            makeRequestParameters();
+            checkRequestParameters();
         } catch (APIException e) {
             e.printStackTrace();
             statusCode = STATUS_CODE_MISSING_REQUEST_PARAMETER;
             return;
         }
         
+        makeRequestParameters();
         createHttpClient();
         execute();
     }
@@ -559,18 +561,28 @@ public abstract class BaseQuery {
         requestParameters.add(SERVER_PARAMETER_UUID, uuid);
     }
     
-    protected void makeRequestParameters() throws APIException {
+    /**
+     * 这个函数用来检测参数,顺便可以兼容以前添加公共参数的行为.
+     * @throws APIException
+     */
+    abstract protected void checkRequestParameters() throws APIException;
+    
+    /**
+     * 这个函数只管把criteria中的值添加为参数,其他什么都不管.
+     */
+    protected void makeRequestParameters() {
         requestParameters.clear();
         if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false) {
             requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
             requestParameters.add(SERVER_PARAMETER_VERSION, version);
         }
 
-        addParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE, false);
+//        addParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE, false);
         addMyLocationParameters();
         addUUIDParameter();
         
         requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
+        requestParameters.addAll(hashtableToParameters(criteria));
     }
     
     protected void createHttpClient() {
@@ -843,7 +855,6 @@ public abstract class BaseQuery {
                 try {
                     Thread.sleep(3000);
                 } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 if (responseXMap.containsKey((byte)250)) {
@@ -877,6 +888,7 @@ public abstract class BaseQuery {
         }
     }
     
+    //TODO:删掉这个系列函数
     /**
      * 根据keys从criteria中获取参数值，将其值添加到requestParameters
      * @param keys
@@ -969,12 +981,20 @@ public abstract class BaseQuery {
         
     }
     
-    boolean checkExistParameters(String[] keys) {
-        for (int i = 0; i < keys.length; i++) {
-            if (!criteria.containsKey(keys[i])) {
-                return false;
+    protected void checkParameter(String key) throws APIException {
+        if (criteria != null && criteria.containsKey(key)) {
+            String result = criteria.get(key);
+            if (result == null) {
+                throw APIException.wrapToMissingRequestParameterException(key);
             }
+        } else {
+            throw APIException.wrapToMissingRequestParameterException(key);
         }
-        return true;
+    }
+    
+    protected void checkParameter(String[] keys) throws APIException{
+        for (int i = 0; i < keys.length; i++) {
+            checkParameter(keys[i]);
+        }
     }
 }
