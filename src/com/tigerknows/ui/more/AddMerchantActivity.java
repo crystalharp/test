@@ -18,7 +18,6 @@ import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.KeyEvent;
@@ -159,8 +158,8 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mTitleBtn.setText(R.string.add_merchant);
         mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
         
-        mCacheFilePath = Environment.getExternalStorageDirectory()+ "/Android/data/" + getPackageName() + "/files"+"/cache.jpg";
-        mCameraFilePath = Environment.getExternalStorageDirectory()+ "/Android/data/" + getPackageName() + "/files"+"/camera.jpg";
+        mCacheFilePath = TKConfig.getDataPath(true) + "cache.jpg";
+        mCameraFilePath = TKConfig.getDataPath(true) + "camera.jpg";
         
         CityInfo cityInfo = Globals.getCurrentCityInfo();
         
@@ -480,8 +479,8 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                                 mTakePhotoBtn.setScaleType(ScaleType.FIT_XY);
                                 mTakePhotoBtn.setImageResource(R.drawable.btn_take_photo);
                                 mDeletePhotoBtn.setVisibility(View.GONE);
-                                mPhotoTitleTxv.setText(R.string.storefront_photo);
-                                mPhotoDescriptionTxv.setText(R.string.add_merchant_upload_photo);
+                                mPhotoTitleTxv.setText(R.string.add_merchant_upload_photo);
+                                mPhotoDescriptionTxv.setText(R.string.add_merchant_upload_photo_not_added);
                             }
                         }
                     });
