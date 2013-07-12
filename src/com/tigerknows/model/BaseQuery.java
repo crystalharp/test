@@ -394,6 +394,8 @@ public abstract class BaseQuery {
     
     protected Hashtable<String, String> criteria = null;
     
+    protected Hashtable<String, String> checkCriteria = null;
+    
     protected String tipText = null;
     
     //FIXME:使用private变量
@@ -972,18 +974,20 @@ public abstract class BaseQuery {
     
     WeiboParameters hashtableToParameters(Hashtable<String, String> criteria) {
         WeiboParameters parameters = new WeiboParameters();
-        Enumeration<String> e = criteria.keys();
-        while (e.hasMoreElements()) {
-            String s = e.nextElement();
-            parameters.add(s, criteria.get(s));
+        if (criteria != null && !criteria.isEmpty()) {
+            Enumeration<String> e = criteria.keys();
+            while (e.hasMoreElements()) {
+                String s = e.nextElement();
+                parameters.add(s, criteria.get(s));
+            }
         }
         return parameters;
         
     }
     
-    protected void checkParameter(String key) throws APIException {
-        if (criteria != null && criteria.containsKey(key)) {
-            String result = criteria.get(key);
+    private void checkParameter(String key) throws APIException {
+        if (checkCriteria != null && checkCriteria.containsKey(key)) {
+            String result = checkCriteria.get(key);
             if (result == null) {
                 throw APIException.wrapToMissingRequestParameterException(key);
             }
@@ -992,9 +996,28 @@ public abstract class BaseQuery {
         }
     }
     
-    protected void checkParameter(String[] keys) throws APIException{
-        for (int i = 0; i < keys.length; i++) {
-            checkParameter(keys[i]);
+    /**
+     * 检查一个请求的参数，不许比必选参数少，不许比必选+可选参数多
+     * 调用方法：
+     * checkParameters(new String[]{"key1", "key2"}, new String[]{"key5", "key6"})
+     * @param essentialKeys 必选参数列表
+     * @param optionalKeys 可选参数列表
+     * @throws APIException
+     */
+    @SuppressWarnings("unchecked")
+    protected void checkParameters(String[] essentialKeys, String[] optionalKeys) throws APIException{
+        checkCriteria = (Hashtable<String, String>) criteria.clone();
+        for (int i = 0; i < essentialKeys.length; i++) {
+            checkParameter(essentialKeys[i]);
+            checkCriteria.remove(essentialKeys[i]);
+        }
+        
+        for (int i = 0; i < optionalKeys.length; i++) {
+            checkCriteria.remove(optionalKeys[i]);
+        }
+        
+        if (!checkCriteria.isEmpty()) {
+            throw APIException.wrapToUnwantedRequestParameterException(checkCriteria.keys().toString());
         }
     }
 }
