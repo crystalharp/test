@@ -247,7 +247,7 @@ public class HotelOrderOperation extends BaseQuery {
             super(data);
             
             if (this.data.containsKey(FIELD_LIST)) {
-            	orders = getListFromData(FIELD_LIST, HotelOrder.Initializer);;
+            	orders = getListFromData(FIELD_LIST, HotelOrder.InitializerServerData);;
             }
         }
 

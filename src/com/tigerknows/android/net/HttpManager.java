@@ -46,10 +46,12 @@ import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.text.TextUtils;
 
+import com.tigerknows.TKConfig;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.FileUpload;
 import com.tigerknows.util.HttpUtils;
 import com.weibo.sdk.android.WeiboException;
@@ -85,6 +87,11 @@ public class HttpManager {
 	 */
     public static byte[] openUrl(Context context, HttpClient client, String url, String method,
             WeiboParameters params) throws WeiboException {
+        return openUrl(context, client, url, method, params, null, null);
+    }
+    
+    public static byte[] openUrl(Context context, HttpClient client, String url, String method,
+            WeiboParameters params, String apiType, String uuid) throws WeiboException {
         byte[] rlt = null;
         String file = "";
         for (int loc = 0; loc < params.size(); loc++) {
@@ -95,15 +102,27 @@ public class HttpManager {
             }
         }
         if (TextUtils.isEmpty(file)) {
-            rlt = openUrl(context, client, url, method, params, null);
+            rlt = openUrl(context, client, url, method, params, null, apiType, uuid);
         } else {
-            rlt = openUrl(context, client, url, method, params, file);
+            rlt = openUrl(context, client, url, method, params, file, apiType, uuid);
         }
         return rlt;
     }
     
-	public static byte[] openUrl(Context context, HttpClient client, String url, String method, WeiboParameters params, String file) throws WeiboException {
+	public static byte[] openUrl(Context context, HttpClient client, String url, String method, WeiboParameters params, String file, String apiType, String uuid) throws WeiboException {
 	    byte[] result = null;
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        String networkInfoDetail = "none";
+        if (networkInfo != null) {
+            networkInfoDetail = networkInfo.getDetailedState().toString();
+        }
+        
+        long reqTime = 0;
+        long revTime = 0;
+        long resTime = 0;
+        String fail = "";
 		try {
 			HttpUriRequest request = null;
 			ByteArrayOutputStream bos = null;
@@ -146,18 +165,30 @@ public class HttpManager {
 			} else if (method.equals("DELETE")) {
 				request = new HttpDelete(url);
 			}
+			reqTime = System.currentTimeMillis();
 			HttpResponse response = client.execute(request);
 			StatusLine status = response.getStatusLine();
 			int statusCode = status.getStatusCode();
-
+	        revTime = System.currentTimeMillis();
+			
 			if (statusCode != 200) {
 				result = readHttpResponse(response);
 				throw new WeiboException(new String(result), statusCode);
 			}
 			result = readHttpResponse(response);
+			resTime = System.currentTimeMillis();
+
 			return result;
 		} catch (IOException e) {
+		    fail = e.toString();
+            if (TextUtils.isEmpty(fail)) {
+                fail="fail";
+            }
 			throw new WeiboException(e);
+		} finally {
+		    if (apiType != null && uuid != null) {
+		        ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getRadioType(), false, uuid);
+		    }
 		}
 	}
 	

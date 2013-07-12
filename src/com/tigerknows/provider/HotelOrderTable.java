@@ -211,7 +211,7 @@ public class HotelOrderTable {
 			return 0;
 
 		int count=0;
-		Cursor cursor = mDb.query(TABLE_NAME, new String[]{"count(*)"}, null, null, null, null, null, null);
+		Cursor cursor = mDb.query(TABLE_NAME, new String[]{"count(*)"}, " " + ORDER_DELETED + "=0", null, null, null, null, null);
 		if( cursor.moveToNext()){
 			count = cursor.getInt(0);
 		}
