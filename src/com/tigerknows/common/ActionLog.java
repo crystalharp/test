@@ -3,42 +3,34 @@
  */
 package com.tigerknows.common;
 
-import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.FeedbackUpload;
-import com.tigerknows.util.Utility;
 
 import android.content.Context;
 import android.text.TextUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Hashtable;
 
 /**
  * 用户行为日志类
  * @author pengwenyue
  *
  */
-public class ActionLog {
+public class ActionLog extends LogUpload {
 
+    static final String TAG = "ActionLog";
+    
     public static final String SEPARATOR_STAET = "_";
     public static final String SEPARATOR_MIDDLE = "-";
-    private static final int UPLOAD_LENGTH = 10 * 1024;
-    private static final int WRITE_FILE_SIZE = 1024;
     
-    private SimpleDateFormat simpleDateFormat;
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     
     private static ActionLog sActionLog;
     public static ActionLog getInstance(Context context) {
         if (sActionLog == null) {
-            sActionLog = new ActionLog(context);
+            sActionLog = new ActionLog(context, "action.log", FeedbackUpload.SERVER_PARAMETER_ACTION_LOG);
         }
         return sActionLog;
     }
@@ -672,39 +664,11 @@ public class ActionLog {
     public static final String HotelOrderDetailIssueComment = "BI";
     public static final String HotelOrderDetailOrderAgain= "BJ";
     
-    
-    private Context mContext;
     private long mStartMillis = 0;
-    private int mFileLength = 0;
-    private String mPath;
-    private Object mLock = new Object();
-    private StringBuilder mStringBuilder = null;
     private String lastAction = null;
     
-    private ActionLog(Context context) {
-        synchronized (mLock) {
-            mContext = context;
-            mPath = TKConfig.getDataPath(false) + "action.log";
-            mFileLength = 0;
-            
-            try {
-                simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-                File file = new File(mPath);
-                if (!file.exists()) {
-                    if (!file.createNewFile()) {
-                        LogWrapper.e("ActionLog", "ActionLog() Unable to create new file: " + mPath);
-                        return;
-                    }
-                }
-                FileInputStream fis = new FileInputStream(file);
-                mFileLength = fis.available();
-                fis.close();
-    
-                mStringBuilder = new StringBuilder();
-            } catch (Exception e) {
-                LogWrapper.e("ActionLog", "ActionLog() "+e.getMessage());
-            }
-        }
+    private ActionLog(Context context, String logFileName, String serverParameterKey) {
+        super(context, logFileName, serverParameterKey);
     }
     
     public void addAction(String actionLog, Object... args) {
@@ -730,7 +694,6 @@ public class ActionLog {
             addAction(String.format(actionLog, str), true);
         } catch (Exception e) {
             e.printStackTrace();
-            LogWrapper.e("ActionLog", "addAction() actionLog="+actionLog);
         }
         }
     }
@@ -753,69 +716,35 @@ public class ActionLog {
                     lastAction = actionLog;
                 }
                 mStringBuilder.append(actionLog);
-                LogWrapper.d("ActionLog", actionLog);
+                LogWrapper.d(TAG, actionLog);
     
-                // 判断是否要写入文件
-                if (mStringBuilder.length() > WRITE_FILE_SIZE) {
-                    write();
-                    
-                    // 判断是否要上传
-                    if (mFileLength > UPLOAD_LENGTH) {
-                        upload();
-                    }
-                }
+                tryUpload();
                 
             } catch (Exception e) {
-                LogWrapper.e("ActionLog", "addAction() e="+e.getMessage());
+                LogWrapper.e(TAG, e.getMessage());
+                e.printStackTrace();
             }
         }
     }
     
-    private void upload() {
+    protected boolean canUpload() {
+        return TKConfig.getUserActionTrack().equals("on");
+    }
+    
+    protected String getLogOutToken() {
+        return SEPARATOR_STAET+(simpleDateFormat.format(Calendar.getInstance().getTime()))+SEPARATOR_MIDDLE+LogOut;
+    }
+    
+    protected void onLogOut() {
+        super.onLogOut();
         synchronized (mLock) {
-            try {
-                if (mStringBuilder == null) {
-                    return;
-                }
-                File file = new File(mPath);
-                FileInputStream fis = new FileInputStream(file);
-                final String str = Utility.readFile(fis)+SEPARATOR_STAET+(simpleDateFormat.format(Calendar.getInstance().getTime()))+SEPARATOR_MIDDLE+LogOut;
-                fis.close();
-                
-                if (file.delete()) {
-                    if (!file.createNewFile()) {
-                        LogWrapper.e("ActionLog", "ActionLog() Unable to create new file: " + mPath);
-                        return;
-                    }
-                    mFileLength = 0;
-                    mStringBuilder = new StringBuilder();
-                    mStringBuilder.append(SEPARATOR_STAET);
-                    mStringBuilder.append(simpleDateFormat.format(Calendar.getInstance().getTime()));
-                    mStringBuilder.append(SEPARATOR_MIDDLE);
-                    mStringBuilder.append(LogOut);
-                    
-                    if (TKConfig.getUserActionTrack().equals("on")) {
-                        new Thread(new Runnable() {
-                            
-                            @Override
-                            public void run() {
-                                FeedbackUpload feedbackUpload = new FeedbackUpload(mContext);
-                                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                                criteria.put(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG, str);
-                                CityInfo cityInfo = Globals.getCurrentCityInfo();
-                                int cityId = MapEngine.CITY_ID_BEIJING;
-                                if (cityInfo != null) {
-                                    cityId = cityInfo.getId();
-                                }
-                                feedbackUpload.setup(criteria, cityId);
-                                feedbackUpload.query();
-                            }
-                        }).start();
-                    }
-                }
-            } catch (Exception e) {
-                LogWrapper.e("ActionLog", "addAction() e="+e.getMessage());
+            if (mStringBuilder == null) {
+                return;
             }
+            StringBuilder s = mStringBuilder;
+            mStringBuilder = new StringBuilder();
+            mStringBuilder.append(getLogOutToken());
+            mStringBuilder.append(s);
         }
     }
     
@@ -823,19 +752,14 @@ public class ActionLog {
         try {
             addAction(NetworkAction, apiType, String.valueOf(reqTime - mStartMillis), String.valueOf(revTime - mStartMillis), String.valueOf(resTime-mStartMillis), fail, detail, signal, radioType, isStop);
         } catch (Exception e) {
-            LogWrapper.e("ActionLog", "addNetworkAction() e="+e.getMessage());
+            LogWrapper.e(TAG, e.getMessage());
+            e.printStackTrace();
         }
     }
     
     public void onCreate() {
+        super.onCreate();
         synchronized (mLock) {
-            if (mStringBuilder == null) {
-                return;
-            }
-            if (mFileLength > WRITE_FILE_SIZE) {
-                upload();
-            }
-
             mStartMillis = System.currentTimeMillis();
             addAction(SEPARATOR_STAET+simpleDateFormat.format(Calendar.getInstance().getTime())+SEPARATOR_MIDDLE+LifecycleCreate+SEPARATOR_MIDDLE+TKConfig.getClientSoftVersion(), false);
         }
@@ -854,43 +778,7 @@ public class ActionLog {
     }
     
     public void onDestroy() {
-        synchronized (mLock) {
-            if (mStringBuilder == null) {
-                return;
-            }
-            addAction(SEPARATOR_STAET+simpleDateFormat.format(Calendar.getInstance().getTime())+SEPARATOR_MIDDLE+LifecycleDestroy, false);
-            write();
-        }
-    }
-    
-    public void onTerminate() {
-        synchronized (mLock) {
-            write();
-            mFileLength = 0;
-            lastAction = null;
-        }
-    }
-    
-    private void write() {
-        synchronized (mLock) {
-            if (mStringBuilder == null) {
-                return;
-            }
-            if (mStringBuilder.length() > 0) {
-                try {
-                    File file = new File(mPath); 
-                    FileOutputStream fileOutputStream = new FileOutputStream(file, true);
-                    byte[] data = mStringBuilder.toString().getBytes();
-                    fileOutputStream.write(data);
-                    fileOutputStream.flush();
-                    fileOutputStream.close();
-                    mStringBuilder = new StringBuilder();
-                    mFileLength += data.length;
-                } catch (Exception e) {
-                    mStringBuilder = null;
-                    e.printStackTrace();
-                }
-            }
-        }
+        addAction(SEPARATOR_STAET+simpleDateFormat.format(Calendar.getInstance().getTime())+SEPARATOR_MIDDLE+LifecycleDestroy, false);
+        super.onDestroy();
     }
 }
