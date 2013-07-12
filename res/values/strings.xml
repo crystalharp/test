@@ -855,7 +855,7 @@
     <string name="storefront_photo">门面照片</string>
     <string name="add_merchant_upload_photo">上传商户门面照片</string>
     <string name="add_merchant_upload_photo_not_added">上传后将极大提高申请通过率</string>
-    <string name="add_merchant_upload_photo_added">已添加商户门面图片</string>
+    <string name="add_merchant_upload_photo_added">已添加商户门面照片</string>
     <string name="wait_submit">等待提交</string>
     <string name="contact">联系方式</string>
     <string name="please_input_your_telephone">请输入您的电话</string>
