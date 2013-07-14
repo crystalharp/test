@@ -221,6 +221,10 @@
     <string name="settings_radar_push_description">开启后可接收老虎推荐信息，嗷呜！</string>
     <string name="settings_map_home">设置地图为首页</string>
     <string name="settings_map_home_description">在本软件打开时直接显示地图</string>
+    <string name="settings_clear_cache">一键清理缓存</string>
+    <string name="settings_clear_cache_description">可以清除图片缓存</string>
+    <string name="settings_clear_cache_confirm">确定清空缓存数据吗？</string>
+    <string name="settings_clear_cache_success">缓存清理成功！</string>
     
     <string name="delete_city_map_tip">确认删除该城市地图包？</string>
     <string name="cancel_favorite_tip">是否取消收藏？</string>

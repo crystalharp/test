@@ -4,23 +4,26 @@
 
 package com.tigerknows.ui.more;
 
+import com.decarta.Globals;
+import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
-import com.tigerknows.R.id;
-import com.tigerknows.R.layout;
-import com.tigerknows.R.string;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.radar.AlarmInitReceiver;
 import com.tigerknows.radar.Alarms;
-import com.tigerknows.radar.RadarReceiver;
 import com.tigerknows.service.PullService;
 import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.util.Utility;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.View;
@@ -33,6 +36,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +51,10 @@ public class SettingActivity extends BaseActivity {
     private ArrayList<DataBean> mBeans;
     private SimpleAdapter mSettingAdatpter;
     
+    private Context mContext;
+    private Handler mHandler;
+    private Dialog mProgressDialog;
+    
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -55,10 +63,29 @@ public class SettingActivity extends BaseActivity {
         setContentView(R.layout.more_setting);
         findViews();
         setListener();
-        
+        mContext = getBaseContext();
         mTitleBtn.setText(R.string.system_settings);
         mRightBtn.setVisibility(View.GONE);
-
+        
+        mHandler = new Handler(){
+        	public void handleMessage(Message msg){
+        		switch (msg.what){
+        		case HandlerMessage.CLEAR_CACHE_SUCCESS:
+        			Toast.makeText(mContext, getString(R.string.settings_clear_cache_success), Toast.LENGTH_LONG).show();
+        			break;
+        		case HandlerMessage.BEFORE_CLEAR_CACHE:
+        			showProgressDialog();
+        			break;
+        		case HandlerMessage.AFTER_CLEAR_CACHE:
+        			dismissProgressDialog();
+        			break;
+        		default:
+        		    break;
+        		}
+        	}
+        };
+        
+        // 是否开启GPS
         mBeans = new ArrayList<DataBean>();
         DataBean dataBean = null;
         dataBean = new DataBean(mThis.getString(R.string.settings_open_gps), mThis.getString(R.string.settings_gps_description_open));
@@ -66,6 +93,7 @@ public class SettingActivity extends BaseActivity {
         dataBean.type = DataBean.TYPE_GPS;
         mBeans.add(dataBean);
         
+        // 保持屏幕常亮
         final DataBean wakeLockBean = new DataBean(mThis.getString(R.string.settings_acquire_wakelock), mThis.getString(R.string.settings_acquire_wakelock_description));
         wakeLockBean.onClickListener = new OnClickListener() {
             
@@ -84,6 +112,7 @@ public class SettingActivity extends BaseActivity {
         wakeLockBean.type = DataBean.TYPE_WAKELOCK;
         mBeans.add(wakeLockBean);
         
+        //雷达推送
         final DataBean radarPushBean = new DataBean(mThis.getString(R.string.settings_radar_push), mThis.getString(R.string.settings_radar_push_description));
         radarPushBean.onClickListener = new OnClickListener() {
             
@@ -101,6 +130,21 @@ public class SettingActivity extends BaseActivity {
         radarPushBean.showIcon = false;
         radarPushBean.type = DataBean.TYPE_RADARPUSH;
         mBeans.add(radarPushBean);
+        
+        // 一键清理缓存
+        final DataBean clearCacheBean = new DataBean(mThis.getString(R.string.settings_clear_cache), mThis.getString(R.string.settings_clear_cache_description));
+//        clearCacheBean.onClickListener = new OnClickListener() {
+//			
+//			@Override
+//			public void onClick(View v) {
+//				mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingClearCache);
+//				showClearCacheDialog();
+//
+//			}
+//		};
+		clearCacheBean.showIcon = false;
+		clearCacheBean.type = DataBean.TYPE_CLEARCACHE;
+		mBeans.add(clearCacheBean);
         
         mSettingAdatpter = new SimpleAdapter(mThis, mBeans);
         mListView.setAdapter(mSettingAdatpter);
@@ -127,6 +171,66 @@ public class SettingActivity extends BaseActivity {
             mThis.sendBroadcast(pullIntent);
         }
         LogWrapper.d("conan", "Radar status:" + TKConfig.getPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "on"));
+    }
+    
+    private void showClearCacheDialog(){
+		Utility.showNormalDialog(mThis, mThis.getString(R.string.settings_clear_cache_confirm),
+				new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						if (which == DialogInterface.BUTTON_POSITIVE){
+			                new Thread(new Runnable(){
+
+								@Override
+								public void run() {
+									// TODO Auto-generated method stub
+									try {
+										Globals.getImageCache().init(mContext);
+									} catch (APIException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+									Message msg[] = new Message[3];
+									for (int i=0; i<msg.length; i++){
+										msg[i] = new Message();
+									}
+									msg[0].what = HandlerMessage.BEFORE_CLEAR_CACHE;
+									msg[1].what = HandlerMessage.AFTER_CLEAR_CACHE;
+									msg[2].what = HandlerMessage.CLEAR_CACHE_SUCCESS;
+									mHandler.sendMessage(msg[0]);
+									if(Globals.getImageCache() != null){
+										Globals.getImageCache().clearImages();
+									}
+									mHandler.sendMessage(msg[1]);
+									mHandler.sendMessage(msg[2]);
+								}
+			                	
+			                }).start();
+						}
+					}
+				});
+    }
+    void showProgressDialog() {
+        if (mProgressDialog == null) {
+            View custom = mThis.getLayoutInflater().inflate(R.layout.loading, null);
+            TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
+            loadingTxv.setText(mThis.getString(R.string.doing_and_wait));
+            mProgressDialog = Utility.showNormalDialog(mThis, custom);
+            mProgressDialog.setCancelable(true);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+        }
+        if (mProgressDialog.isShowing() == false) {
+            mProgressDialog.show();
+        }
+        
+    }    
+
+    void dismissProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
     }
     
     public static boolean radarOn(Context context) {
@@ -167,6 +271,10 @@ public class SettingActivity extends BaseActivity {
                         mSettingAdatpter.notifyDataSetChanged();
                         switchRadarPush();
                         break;
+                    case DataBean.TYPE_CLEARCACHE:
+                    	mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingClearCache);
+                    	showClearCacheDialog();
+                    	break;
                     default:
                         break;
                 }
@@ -266,6 +374,7 @@ public class SettingActivity extends BaseActivity {
         static final int TYPE_GPS = 1;
         static final int TYPE_WAKELOCK = 2;
         static final int TYPE_RADARPUSH = 3;
+        static final int TYPE_CLEARCACHE = 4;
         
         protected int type;
         
@@ -284,5 +393,12 @@ public class SettingActivity extends BaseActivity {
             this.description = description;
         }
 
-    }    
+    }
+    
+    private class HandlerMessage{
+    	
+    	static final int BEFORE_CLEAR_CACHE = 10;
+    	static final int AFTER_CLEAR_CACHE = 11;
+    	static final int CLEAR_CACHE_SUCCESS = 12;
+    }
 }

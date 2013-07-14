@@ -296,6 +296,7 @@ public class ActionLog {
     public static final String SettingGPS = "BA";
     public static final String SettingWakeLock = "BB";
     public static final String SettingRadar = "BC";
+    public static final String SettingClearCache = "BD";
 
     // 意见反馈页 AL
     public static final String Feedback = "CG";
