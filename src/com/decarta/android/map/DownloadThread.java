@@ -40,8 +40,12 @@ public class DownloadThread extends Thread implements MapTileDataDownload.ITileD
 		stop=true;
 	}
 	
+	public static boolean isStop() {
+	    return stop;
+	}
+	
 	private int sequence;
-	private TilesView tilesView;
+	TilesView tilesView;
 	private boolean blocked=true;
 	private List<TileDownload> downloadingTiles = new ArrayList<TileDownload>();
 	

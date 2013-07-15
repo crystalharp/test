@@ -1134,6 +1134,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		    mMapView.refreshMap();
 		}
 		interceptTouchEnd();
+		
+		boolean ensureThreadsRunning = mMapView.ensureThreadRunning();
+		// TODO mTrafficQueryFragment实例的成员变量在地图的背景线程被重新生成后会造成丢失的问题
+		if (ensureThreadsRunning) {
+		    mTrafficQueryFragment = null;
+		}
 
         Globals.setConnectionFast(Utility.isConnectionFast(this));
         Globals.getAsyncImageLoader().onResume();
