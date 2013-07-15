@@ -100,7 +100,7 @@ public final class FileUpload extends BaseQuery {
                 LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", parameters="+postParam+", TKConfig.getEncoding()="+TKConfig.getEncoding());
                 
                 byte result[] = HttpManager.openUrl(context, client, url,
-                        HttpManager.HTTPMETHOD_POST, parameters);
+                        HttpManager.HTTPMETHOD_POST, parameters, apiType, requestParameters.getValue(SERVER_PARAMETER_UUID));
                 statusCode = STATUS_CODE_NETWORK_OK;
                 
                 translate(result);
