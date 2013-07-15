@@ -50,6 +50,24 @@ public class ProxyQuery extends BaseQuery {
 
     // idcardno string true 用于注册酒店会员的身份证号
     public static final String SERVER_PARAMETER_IDCARDNO = "idcardno";
+    
+    //动态房型信息查询必选参数key
+    private static final String[] ROOM_TYPE_DYNAMIC_EKEYS = new String[] {
+        SERVER_PARAMETER_HOTELID, SERVER_PARAMETER_ROOMID,
+        SERVER_PARAMETER_ROOM_TYPE_TAOCANID,
+        SERVER_PARAMETER_CHECKIN_DATE,
+        SERVER_PARAMETER_CHECKOUT_DATE, SERVER_PARAMETER_TASK};
+    
+    //动态房型信息查询可选参数key
+    private static final String[] ROOM_TYPE_DYNAMIC_OKEYS = null;
+    
+    //7天会员注册必选参数key
+    private static final String[] REGISTER_7_DAY_MEMBER_EKEYS = new String[] {
+        SERVER_PARAMETER_USERNAME, SERVER_PARAMETER_MOBILE, 
+        SERVER_PARAMETER_IDCARDNO, SERVER_PARAMETER_TASK};
+    
+    //7天会员注册可选参数key
+    private static final String[] REGISTER_7_DAY_MEMBER_OKEYS = null;
 
     static final String TAG = "TaskQuery";
 
@@ -63,20 +81,11 @@ public class ProxyQuery extends BaseQuery {
         if (criteria == null) {
             throw new APIException(APIException.CRITERIA_IS_NULL);
         }
-        String task = addParameter(SERVER_PARAMETER_TASK);
+        String task = getParameter(SERVER_PARAMETER_TASK);
         if (task.equals(TASK_ROOM_TYPE_DYNAMIC)) {
-            addParameter(new String[] {
-                    SERVER_PARAMETER_HOTELID, SERVER_PARAMETER_ROOMID,
-                    SERVER_PARAMETER_ROOM_TYPE_TAOCANID,
-                    SERVER_PARAMETER_CHECKIN_DATE,
-                    SERVER_PARAMETER_CHECKOUT_DATE
-            });
+            checkParameters(ROOM_TYPE_DYNAMIC_EKEYS, ROOM_TYPE_DYNAMIC_OKEYS);
         } else if (task.equals(TASK_REGISTER_7_DAY_MEMBER)) {
-            addParameter(new String[] {
-                    SERVER_PARAMETER_USERNAME,
-                    SERVER_PARAMETER_MOBILE,
-                    SERVER_PARAMETER_IDCARDNO
-            });
+            checkParameters(REGISTER_7_DAY_MEMBER_EKEYS, REGISTER_7_DAY_MEMBER_OKEYS);
         } else {
             throw APIException.wrapToMissingRequestParameterException("task type invalid.");
         }
