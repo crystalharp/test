@@ -23,10 +23,17 @@ public class FeedbackUpload extends BaseQuery {
     // md String false POI纠错日志，格式见POI纠错功能说明
     public static final String SERVER_PARAMETER_ERROR_RECOVERY = "md";
 
-    // am String false 添加商户
-    public static final String SERVER_PARAMETER_ADD_MERCHANT = "am";
+    // nc String false 添加商户
+    public static final String SERVER_PARAMETER_ADD_MERCHANT = "nc";
+    
+    // sat String false 满意度评分
+    public static final String SERVER_PARAMETER_SATISFY_RATE = "sat";
     
     public static final String SERVER_PARAMETER_POI_RANK = "poirank";
+    
+    // POI纠错页区分
+    public static final String LOCAL_PARAMETER_POIERROR_IGNORE = "ignore";
+
 
     
     public FeedbackUpload(Context context) {
@@ -52,6 +59,7 @@ public class FeedbackUpload extends BaseQuery {
                 SERVER_PARAMETER_LOCATION_IN_ANDROID,
                 SERVER_PARAMETER_ERROR_RECOVERY,
                 SERVER_PARAMETER_ADD_MERCHANT,
+                SERVER_PARAMETER_SATISFY_RATE,
                 SERVER_PARAMETER_POI_RANK, SERVER_PARAMETER_DATA_TYPE, SERVER_PARAMETER_SUB_DATA_TYPE, SERVER_PARAMETER_REQUSET_SOURCE_TYPE}, false);
     }
 

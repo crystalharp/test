@@ -28,7 +28,6 @@ import android.widget.TextView.OnEditorActionListener;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.List;
 
 import com.decarta.Globals;
@@ -47,7 +46,6 @@ import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.StringArrayAdapter;
-import com.tigerknows.widget.SuggestArrayAdapter;
 import com.tigerknows.widget.SuggestWordListManager;
 import com.tigerknows.widget.SuggestArrayAdapter.BtnEventHandler;
 
@@ -303,14 +301,13 @@ public class NearbySearchFragment extends BaseFragment implements View.OnClickLi
                 criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
             }
             if (isInput) {
-                criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD_TYPE, DataQuery.KEYWORD_TYPE_INPUT);
                 HistoryWordTable.addHistoryWord(mContext, new TKWord(TKWord.ATTRIBUTE_HISTORY, keyword), cityId, HistoryWordTable.TYPE_POI);
             } else {
-                criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD_TYPE, DataQuery.KEYWORD_TYPE_TAG);
+                criteria.put(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
             }
             poiQuery.setup(criteria, cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
             mSphinx.queryStart(poiQuery);
-            ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup();
+            ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup(isInput ? keyword : null);
             mSphinx.showView(poiQuery.getTargetViewId());
         } else {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);

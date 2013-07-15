@@ -11,15 +11,14 @@
     <ScrollView android:id="@+id/credit_assure_scv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:padding="8dp" >
+        >
        
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:layout_marginBottom="4dp"
+            android:padding="8dp"
             >
 
             <LinearLayout
@@ -358,10 +357,10 @@
                 android:text="@string/credit_confirm"
                 android:textColor="@color/white"
                 android:textSize="18sp" 
-		        android:shadowDx="0"
-		        android:shadowDy="1"
-		        android:shadowColor="#a77a00"
-		        android:shadowRadius="1"
+                android:shadowDx="0"
+                android:shadowDy="1"
+                android:shadowColor="#a77a00"
+                android:shadowRadius="1"
                 />
 
         </LinearLayout>

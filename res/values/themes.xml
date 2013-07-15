@@ -29,11 +29,11 @@
     </style>
     
     <style name="Hit" parent="Theme.NoTitleBar">       
-        <item name="android:colorBackground">@android:color/transparent</item>
         <item name="android:windowBackground">@color/black_transparent_half</item>
-        <item name="android:editTextStyle">@style/Widget.EditText</item>
-        <item name="android:textViewStyle">@style/Widget.TextView</item>
-        <item name="android:buttonStyle">@style/Widget.Button</item>
+    </style>
+    
+    <style name="AddMerchant" parent="Theme.NoTitleBar">       
+        <item name="android:windowIsTranslucent">false</item>
     </style>
     
 </resources>

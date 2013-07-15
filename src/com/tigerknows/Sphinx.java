@@ -10,11 +10,13 @@ import java.util.List;
 
 import android.app.ActivityManager;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.DialogInterface.OnDismissListener;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -156,6 +158,7 @@ import com.tigerknows.ui.more.HelpActivity;
 import com.tigerknows.ui.more.HistoryFragment;
 import com.tigerknows.ui.more.MapDownloadActivity;
 import com.tigerknows.ui.more.MoreHomeFragment;
+import com.tigerknows.ui.more.SatisfyRateActivity;
 import com.tigerknows.ui.more.SettingActivity;
 import com.tigerknows.ui.poi.CommentListActivity;
 import com.tigerknows.ui.poi.CouponDetailFragment;
@@ -286,6 +289,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private ViewGroup mInfoWindowYanchuList = null;
     private ViewGroup mInfoWindowHotel = null;
     private ViewGroup mInfoWindowMessage = null;
+    
+    /*
+     * 因为显示地图的时候会进行一次缩放,会和后续的手动缩放混淆,加入这个变量是为了
+     * 过滤掉第一次进入地图时调用ZoomEndEvent时对overlay.isShowInPreferZoom
+     * 这个全局变量的改变,不建议在别的地方使用.
+     * overlay.isShowInPreferZoom算是个全局变量,用来标记点击下一个的时候是进行缩放操作
+     * 还是进行直接移动操作.
+     */
+    private boolean firstEnterMap = false;
     
     private Dialog mDialog = null;
     public void setDialog(Dialog dialog) {
@@ -701,6 +713,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         
                         @Override
                         public void run() {
+                            //过滤掉viewMap的时候引起的非手动的第一次缩放
+                            if (firstEnterMap) {
+                                firstEnterMap = false;
+                            } else {
+                                ItemizedOverlay overlay = mMapView.getCurrentOverlay();
+                                if (overlay != null) {
+                                    overlay.isShowInPreferZoom = false;
+                                }
+                            }
                             mScaleView.setMetersPerPixelAtZoom((float)Util.metersPerPixelAtZoom(CONFIG.TILE_SIZE, newZoomLevel, mMapView.getCenterPosition().getLat()), newZoomLevel);
                             if (newZoomLevel >= CONFIG.ZOOM_UPPER_BOUND) {
                                 mMapView.getZoomControls().setIsZoomInEnabled(false);
@@ -897,6 +918,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         queryStart(list);
         
         checkCitySupportDiscover(Globals.getCurrentCityInfo().getId());
+        initWeibo(false, false);
+        initQZone();
 	}
 	
 	private void sendFirstStartupBroadcast() {
@@ -1019,7 +1042,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {		
 		super.onActivityResult(requestCode, resultCode, data);
-		LogWrapper.d(TAG, "onActivityResult() requestCode="+requestCode+" resultCode="+resultCode+ "data="+data); 
+		LogWrapper.d(TAG, "onActivityResult() requestCode="+requestCode+" resultCode="+resultCode+ "data="+data);
+		mActivityResult = true;
 		mOnActivityResultLoginBack = false;
 		if (R.id.activity_more_help == requestCode) {
 		    if (data != null) {
@@ -1693,7 +1717,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
             criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
         }
-        criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD_TYPE, DataQuery.KEYWORD_TYPE_INPUT);
         poiQuery.setup(criteria, cityId, uiStackPeek(), getPOIResultFragmentID(), null, false, false, requestPOI);
         return poiQuery;
     }
@@ -1895,7 +1918,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             TKConfig.setPref(mContext, TKConfig.PREFS_LAST_ZOOM_LEVEL, String.valueOf(cityInfo.getLevel()));
             HistoryWordTable.readHistoryWord(mContext, cityId, HistoryWordTable.TYPE_POI);
             trafficQueryFragment.TrafficOnCityChanged(this, cityId);
-            trafficQueryFragment.resetCurrentMapInfo(cityInfo.getPosition(), cityInfo.getLevel());
         }    
     }
         
@@ -2251,7 +2273,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 endBtn.setOnTouchListener(mInfoWindowLongEndListener);
                 
                 infoWindow.setViewGroup(mInfoWindowLongClick);
-            } else if (poi.getHotel().getUuid() != null) {
+            } else if (poi.getSourceType() == POI.SOURCE_TYPE_HOTEL) {
 //              if (mInfoWindowHotel == null) {
                 mInfoWindowHotel = (LinearLayout) mLayoutInflater.inflate(R.layout.info_window_hotel, null);
 //            }
@@ -2592,9 +2614,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (mMoreFragment != null) {
             getMoreFragment().refreshCity(cName);
         }
-//        if (mTrafficQueryFragment != null) {
-            getTrafficQueryFragment().refreshCity(cName);
-//        }
     };
     
     // TODO: cityinfo end
@@ -3038,6 +3057,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 intent.setClass(this, TrafficReportErrorActivity.class);
                 startActivityForResult(intent, R.id.activity_traffic_report_error);
                 return true;
+            } else if (R.id.activity_more_satisfy == viewId) {
+                intent.setClass(this, SatisfyRateActivity.class);
+                startActivityForResult(intent, R.id.activity_more_satisfy);
+                return true;
             } else if (R.id.activity_more_feedback == viewId) {
                 intent.setClass(this, FeedbackActivity.class);
                 startActivityForResult(intent, R.id.activity_more_feedback);
@@ -3124,6 +3147,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                     show = true;
                 }
             }
+            
+            if (viewId == R.id.view_result_map) {
+                ItemizedOverlay overlay = mMapView.getCurrentOverlay();
+                if (overlay != null) {
+                    overlay.isShowInPreferZoom = true;
+                }
+                firstEnterMap = true;
+            }
             mUIProcessing = false;
             return show;
         }
@@ -3153,7 +3184,20 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     
     public Dialog getDialog(int id) {
         Dialog dialog = null;
-        switch (id) {                
+        switch (id) {       
+            case R.id.dialog_share_doing:
+                dialog = new ProgressDialog(this);
+                dialog.setCancelable(false);
+                dialog.setCanceledOnTouchOutside(false);
+                ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait));
+                dialog.setOnDismissListener(new OnDismissListener() {
+                    
+                    @Override
+                    public void onDismiss(DialogInterface arg0) {
+                        mActionLog.addAction(ActionLog.Dialog + ActionLog.Dismiss);
+                    }
+                });
+                break;
             case R.id.dialog_prompt_change_to_my_location_city:
                 dialog = Utility.getDialog(mThis,
                             getString(R.string.prompt),

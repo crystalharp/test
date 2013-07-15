@@ -10,6 +10,7 @@ import java.util.List;
 
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.text.Html;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -177,7 +178,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             mDynamicRoomTypeMoreView.setVisibility(View.VISIBLE);
             mRetryView.setVisibility(View.GONE);
         } else if (s == STATE_LOAD_FAILED) {
-            retryTxv.setText(mSphinx.getString(R.string.hotel_click_to_reload));
+            retryTxv.setText(Html.fromHtml(mSphinx.getString(R.string.hotel_click_to_reload)));
             mDynamicRoomTypeMoreView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);
             mRetryView.setClickable(true);
@@ -283,6 +284,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
                 if (mBaseQuerying != null) {
                     for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
                         mBaseQuerying.get(i).setResponse(null);
+                        mBaseQuerying.get(0).setTipText(mSphinx.getString(R.string.doing_and_wait));
                     }
                     queryStart(mBaseQuerying);
                 }
@@ -369,15 +371,16 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     final public void initDate() {
-        if (mSphinx.uiStackContains(R.id.view_hotel_home)) {
-            checkin = mSphinx.getHotelHomeFragment().getCheckin();
-            checkout = mSphinx.getHotelHomeFragment().getCheckout();
-        } else {
-            checkin = Calendar.getInstance();
-            checkin.setTimeInMillis(System.currentTimeMillis());
-            checkout = (Calendar) checkin.clone();
-            checkout.add(Calendar.DAY_OF_YEAR, 1);
-        }
+        checkin = Calendar.getInstance();
+        checkin.setTimeInMillis(System.currentTimeMillis());
+        checkout = (Calendar) checkin.clone();
+        checkout.add(Calendar.DAY_OF_YEAR, 1);
+        refreshDate();
+    }
+    
+    final public void initDate(Calendar in, Calendar out) {
+        checkout = out;
+        checkin = in;
         refreshDate();
     }
     
@@ -562,6 +565,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
 
 	@Override
 	public void onPostExecute(TKAsyncTask tkAsyncTask) {
+	    mPOIDetailFragment.minusLoadingView();
 	    POI poi = mPOI;
         if (poi == null) {
             return;

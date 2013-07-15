@@ -110,6 +110,9 @@ public abstract class BaseQuery {
     // 酒店订单
     public static final String API_TYPE_HOTEL_ORDER = "hotelOrder";
     
+    // 图片上传
+    public static final String API_TYPE_FILE_UPLOAD = "fileUpload";
+    
     protected static final String VERSION = "13";
     
     // at string true api type，固定为d
@@ -557,7 +560,7 @@ public abstract class BaseQuery {
     
     protected void makeRequestParameters() throws APIException {
         requestParameters.clear();
-        if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false) {
+        if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false && API_TYPE_FILE_UPLOAD.equals(apiType) == false) {
             requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
             requestParameters.add(SERVER_PARAMETER_VERSION, version);
         }
@@ -802,33 +805,7 @@ public abstract class BaseQuery {
             try {
                 responseXMap = (XMap) ByteUtil.byteToXObject(data);
 
-                final Activity activity = BaseQueryTest.getActivity();
-                if (TKConfig.ModifyResponseData && activity != null) {
-                    activity.runOnUiThread(new Runnable() {
-                        
-                        @Override
-                        public void run() {
-                            ViewGroup viewGroup = BaseQueryTest.getViewByXObject(activity, (byte)0, responseXMap, 0);
-                            
-                            ScrollView scrollView = new ScrollView(activity);
-                            scrollView.addView(viewGroup);
-                            Dialog dialog = Utility.showNormalDialog(activity, scrollView);
-                            dialog.setOnDismissListener(new OnDismissListener() {
-                                
-                                @Override
-                                public void onDismiss(DialogInterface dialog) {
-                                    responseXMap.put((byte)250, 250);
-                                }
-                            });
-                        }
-                    });
-                    while (true) {
-                        Thread.sleep(3000);
-                        if (responseXMap.containsKey((byte)250)) {
-                            break;
-                        }
-                    }
-                }
+                modifyResponseData();
             } catch (Exception cause) {
                 throw new APIException("byte to xmap error");
             }
@@ -837,6 +814,41 @@ public abstract class BaseQuery {
             throw cause;
         } catch (Exception cause) {
             throw new APIException(cause);
+        }
+    }
+    
+    protected void modifyResponseData() {
+        final Activity activity = BaseQueryTest.getActivity();
+        if (TKConfig.ModifyResponseData && activity != null && responseXMap != null) {
+            activity.runOnUiThread(new Runnable() {
+                
+                @Override
+                public void run() {
+                    ViewGroup viewGroup = BaseQueryTest.getViewByXObject(activity, (byte)0, responseXMap, 0);
+                    
+                    ScrollView scrollView = new ScrollView(activity);
+                    scrollView.addView(viewGroup);
+                    Dialog dialog = Utility.showNormalDialog(activity, scrollView);
+                    dialog.setOnDismissListener(new OnDismissListener() {
+                        
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            responseXMap.put((byte)250, 250);
+                        }
+                    });
+                }
+            });
+            while (true) {
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                if (responseXMap.containsKey((byte)250)) {
+                    break;
+                }
+            }
         }
     }
     

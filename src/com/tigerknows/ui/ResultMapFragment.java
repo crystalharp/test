@@ -170,7 +170,6 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void onPause() {
         super.onPause();
-        mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 78), 0, 0);
         mSphinx.getMapView().getPadding().top = mSphinx.getTitleViewHeight() + mSphinx.getCityViewHeight() + Util.dip2px(Globals.g_metrics.density, 18);
     }
     

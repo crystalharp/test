@@ -43,6 +43,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.text.TextUtils;
@@ -52,8 +53,8 @@ public final class DataQuery extends BaseQuery {
     // ts   String  true    时间戳，形如"yyyy/MM/dd HH:mm:ss" 
     public static final String SERVER_PARAMETER_TIME_STAMP = "ts";
     
-    // kt  string  false   kt=tag表示用户选择的keyword，kt=input表示用户输入的keyword
-    public static final String SERVER_PARAMETER_KEYWORD_TYPE = "kt";
+    // info  string  false   info目前的取值有： tagsearch POI搜索时是通过点击首页进行的搜索（非输入搜索） networkpush 因为网络可用触发的push请求 
+    public static final String SERVER_PARAMETER_INFO = "info";
     
     // x   Double  false   选定经度x
     public static final String SERVER_PARAMETER_LONGITUDE = "x";
@@ -130,9 +131,11 @@ public final class DataQuery extends BaseQuery {
     // 评论版本 
     public static final String COMMENT_VERSION = "1";
     
-    public static final String KEYWORD_TYPE_TAG = "tag";
+    public static final String INFO_TYPE_TAG = "tagsearch";
     
-    public static final String KEYWORD_TYPE_INPUT = "input";    
+    public static final String INFO_TYPE_NETWORK_PUSH = "networkpush";  
+    
+    public static final String INFO_CATE_FLT = "cate_flt";
     
     public static final String FILTER_TYPE_AREA = "11";    
     
@@ -168,8 +171,12 @@ public final class DataQuery extends BaseQuery {
     
     private static FilterCategoryOrder Filter_Category_Order_Hotel;
     
-    public static FilterCategoryOrder getHoteFilterCategoryOrder() {
+    public static FilterCategoryOrder getHotelFilterCategoryOrder() {
         return Filter_Category_Order_Hotel;
+    }
+    
+    public static FilterCategoryOrder getPOIFilterCategoryOrder() {
+        return Filter_Category_Order_POI;
     }
     
     private static FilterArea Quanguo_Filter_Area;
@@ -302,6 +309,10 @@ public final class DataQuery extends BaseQuery {
     }
     
     public static void initStaticField(String dataType, String subDataType, int cityId) {
+        initStaticField(dataType, subDataType, cityId, null);
+    }
+    
+    public static void initStaticField(String dataType, String subDataType, int cityId, Context context) {
         try {
             synchronized (Filter_Lock) {
                 FilterArea filterDataArea = null;
@@ -340,8 +351,20 @@ public final class DataQuery extends BaseQuery {
                 }
                 
                 if (filterDataCategoryOrder == null) {
-                    String path = MapEngine.cityId2Floder(MapEngine.SW_ID_QUANGUO) + String.format(TKConfig.FILTER_FILE, filterFileKey, MapEngine.SW_ID_QUANGUO);
+                    String name = String.format(TKConfig.FILTER_FILE, filterFileKey, MapEngine.SW_ID_QUANGUO);
+                    String path = MapEngine.cityId2Floder(MapEngine.SW_ID_QUANGUO) + name;
                     File file = new File(path);
+
+                    if (file.exists() == false) {
+                        if (DATA_TYPE_POI.equals(dataType) &&
+                                SUB_DATA_TYPE_POI.equals(subDataType) &&
+                                context != null) {
+                            AssetManager am = context.getAssets();
+                            String mapPath = TKConfig.getDataPath(true);
+                            Utility.unZipFile(am, "tigermap.zip", mapPath, name);
+                        }
+                    }
+                    
                     if (file.exists()) {
                         FileInputStream fis = new FileInputStream(file);
                         try {
@@ -368,12 +391,23 @@ public final class DataQuery extends BaseQuery {
                 if (filterDataArea == null || filterDataArea.cityId != cityId){
                     filterDataArea = null;
                     String path;
+                    String name = null;
                 	if (cityId == MapEngine.SW_ID_QUANGUO) {
-                		path = MapEngine.cityId2Floder(cityId) + String.format(TKConfig.FILTER_FILE, "0", cityId);
+                	    name = String.format(TKConfig.FILTER_FILE, "0", cityId);
+                		path = MapEngine.cityId2Floder(cityId) + name;
                 	} else {
                 		path = MapEngine.cityId2Floder(cityId) + String.format(TKConfig.FILTER_FILE, DATA_TYPE_POI, cityId);
                 	}
                     File file = new File(path);
+
+                    if (file.exists() == false) {
+                        if (context != null && name != null) {
+                            AssetManager am = context.getAssets();
+                            String mapPath = TKConfig.getDataPath(true);
+                            Utility.unZipFile(am, "tigermap.zip", mapPath, name);
+                        }
+                    }
+                    
                     if (file.exists()) {
                         FileInputStream fis = new FileInputStream(file);
                         try {
@@ -503,7 +537,8 @@ public final class DataQuery extends BaseQuery {
                     requestParameters.add(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
                     String bias = addParameter(SERVER_PARAMETER_BIAS, false);
                     if (bias == null) {
-                        addParameter(new String[]{SERVER_PARAMETER_KEYWORD, SERVER_PARAMETER_KEYWORD_TYPE});
+                        addParameter(new String[]{SERVER_PARAMETER_KEYWORD});
+                        addParameter(new String[]{SERVER_PARAMETER_INFO}, false);
                     }
                     addParameter(SERVER_PARAMETER_POI_ID, false);
                 }
@@ -568,6 +603,7 @@ public final class DataQuery extends BaseQuery {
                         Util.byteToHexString(DiscoverCategory.FIELD_DATA)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DISCOVER_HOME)+"_["+pic+"]");
             }
         } else if (DATA_TYPE_TUANGOU.equals(dataType)) { 
+            addParameter(new String[]{SERVER_PARAMETER_INFO}, false);
             requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Tuangou.NEED_FIELD);
             requestParameters.add(SERVER_PARAMETER_PICTURE, 
                     Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[10000000000000000000]" + ";" +
@@ -662,7 +698,7 @@ public final class DataQuery extends BaseQuery {
             addParameter(new String[]{SERVER_PARAMETER_REFER});
             addParameter(new String[]{SERVER_PARAMETER_TIME, SERVER_PARAMETER_DIRECTION, SERVER_PARAMETER_POI_ID}, false);
         } else if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
-            addParameter(new String[]{SERVER_PARAMETER_LOCATION_CITY, SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE});
+            addParameter(new String[]{SERVER_PARAMETER_LOCATION_CITY, SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE, SERVER_PARAMETER_LOCATION_LONGITUDE, SERVER_PARAMETER_LOCATION_LATITUDE});
             addParameter(new String[]{SERVER_PARAMETER_MESSAGE_ID_LIST, SERVER_PARAMETER_LAST_PULL_DATE}, false);
         } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
             addParameter(new String[]{SERVER_PARAMETER_KEYWORD});

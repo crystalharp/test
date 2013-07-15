@@ -11,12 +11,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
+import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
@@ -242,6 +242,31 @@ public class UserHomeFragment extends UserBaseFragment {
 	}
 
 	@Override
+    public void onPostExecute(TKAsyncTask tkAsyncTask) {
+        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+
+        Response response = baseQuery.getResponse();
+        // 这里做一个特殊判断，注销操作时返回300也视为注销成功
+        if (response != null) {
+            int responseCode = response.getResponseCode();
+            String operationCode = baseQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
+            if (AccountManage.OPERATION_CODE_LOGOUT.equals(operationCode)) {
+                if (responseCode == 300) {
+                    
+                    this.mTkAsyncTasking = null;   // 调用BaseFragment的onPostExecute(TKAsyncTask tkAsyncTask)方法
+                    
+                    showToast(R.string.logout_account_success);
+                    Globals.clearSessionAndUser(mContext);
+                    dismiss();
+                    return;
+                }
+            }
+        }
+        
+        super.onPostExecute(tkAsyncTask);
+    }
+	
+    @Override
 	protected void responseCodeAction(AccountManage accountManage) {
 		// TODO Auto-generated method stub
 		String operationCode = accountManage.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);

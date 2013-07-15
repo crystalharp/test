@@ -36,8 +36,10 @@ public class AlarmInitReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
         LogWrapper.d(TAG, "onReceive() " + action);
-        TKConfig.readConfig();
-        enableAlarm(context);
+        if (PullService.TRIGGER_MODE_ALARM.equals(PullService.getTriggerMode(context))) {
+            TKConfig.readConfig();
+            enableAlarm(context);
+        }
     }
     
     void disableAlarm(Context context) {

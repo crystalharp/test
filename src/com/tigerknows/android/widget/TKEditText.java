@@ -214,7 +214,11 @@ public class TKEditText extends LinearLayout implements OnClickListener {
     public void setText(CharSequence text) {
         mInputEdt.setText(text);
         if (text != null) {
-            mInputEdt.setSelection(text.length());
+            try {
+                mInputEdt.setSelection(text.length());
+            } catch (Exception e) {
+                // 设置android:maxLength后，当setSelection的值等于或大于maxLength时会引发异常
+            }
         } else {
             mInputEdt.setSelection(0);
         }

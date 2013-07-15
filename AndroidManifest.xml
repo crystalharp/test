@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.tigerknows" android:installLocation="auto"
       android:versionName="5.10.20130528A" android:versionCode="510">
@@ -69,6 +69,12 @@
             android:theme="@style/Theme.NoTitleBar" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
             android:windowSoftInputMode="adjustResize|stateHidden"
+            android:screenOrientation="portrait" />
+        
+        <activity android:name="com.tigerknows.ui.more.SatisfyRateActivity"
+            android:theme="@style/Theme.NoTitleBar" 
+            android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden"
             android:screenOrientation="portrait" />
         
         <activity android:name="com.tigerknows.ui.more.FeedbackActivity"
@@ -182,9 +188,9 @@
             android:screenOrientation="portrait" />
          
         <activity android:name="com.tigerknows.ui.more.AddMerchantActivity"
-            android:theme="@style/Theme.NoTitleBar" 
+            android:theme="@style/AddMerchant" 
             android:configChanges="mcc|mnc|keyboardHidden|orientation|locale"
-            android:windowSoftInputMode="adjustResize|stateVisible"
+            android:windowSoftInputMode="adjustResize|stateHidden"
             android:screenOrientation="portrait" />
         
         <!-- User Module -->
@@ -225,6 +231,7 @@
             <intent-filter>
                 <action android:name="action.com.tigerknows.first.startup" />
                 <action android:name="com.tigerknows.action.AlarmInit" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
             </intent-filter>
         </receiver>
         
@@ -234,13 +241,13 @@
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
             </intent-filter>
         </receiver>
-        <!-- 
+        
         <receiver android:name="com.tigerknows.radar.ConnectivityChangeReceiver">
             <intent-filter>
                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
-         -->
+        
         <receiver android:name="com.tigerknows.radar.RadarReceiver">
             <intent-filter>
                <action android:name="action.com.tigerknows.radar.PullReceiver" />

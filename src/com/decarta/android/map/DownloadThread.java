@@ -24,7 +24,7 @@ import com.tigerknows.model.MapTileDataDownload;
 public class DownloadThread extends Thread implements MapTileDataDownload.ITileDownload {
 	//private final static int FAST_LOAD_THREAD_MAX=5;
 	
-    private static final int NETWORK_ERROR_WAIT_TIME = 20*1000;
+    private static final int NETWORK_ERROR_WAIT_TIME = 6*1000;
 	private static boolean stop=false;
 	private MapEngine mapEngine=null;
     private MapMetaFileDownload mapMetaFileDownload;

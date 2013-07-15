@@ -231,6 +231,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 
     //目前可以处理的所有动态POI的Hashtab,key是它们的动态POI类型
     Hashtable<String, DynamicPOIView> DPOIViewTable = new Hashtable<String, DynamicPOIView>();
+    
+    private static int queryCount = 0;
 
     //目前可以处理的动态POI类型
     private void initDynamicPOIEnv(){
@@ -392,6 +394,41 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
+    /**
+     * 以下两个函数出现的原因是因为拆开POI和动态POI的onPostExecute函数后,正在加载几个字
+     * 只和POI的查询相关,无法再标识动态POI的加载状态.
+     * 但是不同的查询在不同的队列中,分散在代码各处,只好使用同步方法来解决这个问题.
+     * 
+     * 不要直接操作mLoadingView.
+     */
+    synchronized void addLoadingView() {
+        if (queryCount == 0) {
+            mLoadingView.setVisibility(View.VISIBLE);
+        }
+        queryCount++;
+    }
+
+    synchronized void minusLoadingView() {
+        if (queryCount > 0) {
+            queryCount--;
+            if (queryCount == 0) {
+                mLoadingView.setVisibility(View.GONE);
+            }
+        }
+    }
+    
+    synchronized void resetLoadingView() {
+        if (queryCount > 0) {
+            mLoadingView.setVisibility(View.VISIBLE);
+        } else {
+            mLoadingView.setVisibility(View.GONE);
+        }
+    }
+    
+    public DynamicHotelPOI getDynamicHotelPOI() {
+        return mDynamicHotelPOI;
+    }
+    
 	//*************DynamicPOI code end*******************
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -462,6 +499,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
+        queryCount = 0;
         
         // Ugly
         if (mPOI.getHotel().getUuid() != null) {
@@ -499,7 +537,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (isReLogin()) {
             return;
         }
-        mBodyScv.smoothScrollTo(0, 0);
+        
+        if (mDismissed) {
+            mBodyScv.smoothScrollTo(0, 0);
+        }
     }
     
     @Override
@@ -1009,11 +1050,12 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         // 检查是否包含电影的动态信息
         if (mDynamicMoviePOI.isExist()) {
             mDynamicMoviePOI.queryStart(mDynamicMoviePOI.buildQuery(poi));
+            addLoadingView();
         }
         //判断是否存在hotel信息
         if (mDynamicHotelPOI.isExist()) {
-            mDynamicHotelPOI.initDate();
             mDynamicHotelPOI.queryStart(mDynamicHotelPOI.generateQuery(mPOI));
+            addLoadingView();
         }
 
         Hashtable<String, String> criteria = new Hashtable<String, String>();
@@ -1030,12 +1072,12 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             }
             mTkAsyncTasking = mSphinx.queryStart(baseQueryList);
             mBaseQuerying = baseQueryList;
-            mLoadingView.setVisibility(View.VISIBLE);
+            addLoadingView();
         } else {
             if (position >= 0) {
                 mSphinx.queryStart(feedbackUpload);
             }
-            mLoadingView.setVisibility(View.GONE);
+            resetLoadingView();
         }
         
         String category = poi.getCategory().trim();
@@ -1279,7 +1321,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
-        mLoadingView.setVisibility(View.GONE);
+        minusLoadingView();
         List<BaseQuery> baseQueryList = tkAsyncTask.getBaseQueryList();
         for(BaseQuery baseQuery : baseQueryList) {
             if (BaseActivity.checkReLogin(baseQuery, mSphinx, mSphinx.uiStackContains(R.id.view_user_home), getId(), getId(), getId(), mCancelLoginListener)) {
@@ -1316,7 +1358,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             }
                         }
                     } else {
-                        mLoadingView.setVisibility(View.GONE);
                         if (BaseActivity.checkResponseCode(baseQuery, mSphinx, new int[]{603}, false, this, false)) {
                             if (response != null) {
                                 int responseCode = response.getResponseCode();
@@ -1339,13 +1380,12 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                             if (mDynamicHotelPOI.isExist()) {
                                 mDynamicHotelPOI.initDate();
                                 mDynamicHotelPOI.queryStart(mDynamicHotelPOI.generateQuery(mPOI));
+                                addLoadingView();
                             }
                             if (mDynamicMoviePOI.isExist()) {
                                 mDynamicMoviePOI.queryStart(mDynamicMoviePOI.buildQuery(poi));
+                                addLoadingView();
                             }
-//                                    if (list.size() > 0) {
-//                                        mLoadingView.setVisibility(View.VISIBLE);
-//                                    }
                         }
                     }
                     

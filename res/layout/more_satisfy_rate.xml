@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:background="@color/gray_dark" >
+    
+    <include android:id="@+id/title_view"
+        layout="@layout/title" 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        />
+    <Button android:id="@+id/submit_btn"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/submit"
+        android:textColor="@color/black_light"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/bg_bottom_control"
+        android:enabled="false"
+        />
+    <ScrollView android:id="@+id/body_scv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/title_view"
+        android:layout_above="@id/submit_btn"
+        >
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="8dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            >
+            <TextView 
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/satisfy_note"
+                android:textSize="16sp"
+                android:paddingBottom="8dp"
+                />
+            <LinearLayout android:id="@+id/satisfy_1_lly" 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:gravity="left|center_vertical"
+                >
+                <TextView 
+                    android:layout_width="86dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/satisfy_a"
+                    android:layout_gravity="left|center_vertical"
+                    />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <RatingBar android:id="@+id/satisfy_1_rbt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        style="@style/RatingBar.Middle"
+                        android:numStars="5"
+                        android:rating="0" 
+                        android:stepSize="1" />
+                </LinearLayout>  
+                <TextView android:id="@+id/rate_1_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/satisfy_0"
+                    android:layout_gravity="left|center_vertical"
+                    android:layout_marginLeft="4dp"
+                    />
+            </LinearLayout>
+            <LinearLayout android:id="@+id/satisfy_2_lly" 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:gravity="left|center_vertical"
+                >
+                <TextView 
+                    android:layout_width="86dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/satisfy_b"
+                    android:layout_gravity="left|center_vertical"
+                    />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <RatingBar android:id="@+id/satisfy_2_rbt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        style="@style/RatingBar.Middle"
+                        android:numStars="5"
+                        android:rating="0" 
+                        android:stepSize="1" />
+                </LinearLayout>  
+                <TextView android:id="@+id/rate_2_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/satisfy_0"
+                    android:layout_gravity="left|center_vertical"
+                    android:layout_marginLeft="4dp"
+                    />
+            </LinearLayout>
+            <LinearLayout android:id="@+id/satisfy_3_lly" 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:gravity="left|center_vertical"
+                >
+                <TextView 
+                    android:layout_width="86dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/satisfy_c"
+                    android:layout_gravity="left|center_vertical"
+                    />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <RatingBar android:id="@+id/satisfy_3_rbt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        style="@style/RatingBar.Middle"
+                        android:numStars="5"
+                        android:rating="0" 
+                        android:stepSize="1" />
+                </LinearLayout>  
+                <TextView android:id="@+id/rate_3_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/satisfy_0"
+                    android:layout_gravity="left|center_vertical"
+                    android:layout_marginLeft="4dp"
+                    />
+            </LinearLayout>
+            <LinearLayout android:id="@+id/satisfy_4_lly" 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:gravity="left|center_vertical"
+                >
+                <TextView 
+                    android:layout_width="86dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/satisfy_d"
+                    android:layout_gravity="left|center_vertical"
+                    />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <RatingBar android:id="@+id/satisfy_4_rbt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        style="@style/RatingBar.Middle"
+                        android:numStars="5"
+                        android:rating="0" 
+                        android:stepSize="1" />
+                </LinearLayout>  
+                <TextView android:id="@+id/rate_4_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/satisfy_0"
+                    android:layout_gravity="left|center_vertical"
+                    android:layout_marginLeft="4dp"
+                    />
+            </LinearLayout>
+            <LinearLayout android:id="@+id/satisfy_5_lly" 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:gravity="left|center_vertical"
+                >
+                <TextView 
+                    android:layout_width="86dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/satisfy_e"
+                    android:layout_gravity="left|center_vertical"
+                    />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <RatingBar android:id="@+id/satisfy_5_rbt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        style="@style/RatingBar.Middle"
+                        android:numStars="5"
+                        android:rating="0" 
+                        android:stepSize="1" />
+                </LinearLayout>  
+                <TextView android:id="@+id/rate_5_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/satisfy_0"
+                    android:layout_gravity="left|center_vertical"
+                    android:layout_marginLeft="4dp"
+                    />
+            </LinearLayout>
+            <LinearLayout android:id="@+id/satisfy_6_lly" 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:gravity="left|center_vertical"
+                >
+                <TextView 
+                    android:layout_width="86dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/satisfy_f"
+                    android:layout_gravity="left|center_vertical"
+                    />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <RatingBar android:id="@+id/satisfy_6_rbt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        style="@style/RatingBar.Middle"
+                        android:numStars="5"
+                        android:rating="0" 
+                        android:stepSize="1" />
+                </LinearLayout>  
+                <TextView android:id="@+id/rate_6_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/satisfy_0"
+                    android:layout_gravity="left|center_vertical"
+                    android:layout_marginLeft="4dp"
+                    />
+            </LinearLayout>
+            <LinearLayout android:id="@+id/satisfy_7_lly" 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:gravity="left|center_vertical"
+                >
+                <TextView 
+                    android:layout_width="86dp"
+                    android:layout_height="wrap_content"
+                    android:text="@string/satisfy_g"
+                    android:layout_gravity="left|center_vertical"
+                    />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <RatingBar android:id="@+id/satisfy_7_rbt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        style="@style/RatingBar.Middle"
+                        android:numStars="5"
+                        android:rating="0" 
+                        android:stepSize="1" />
+                </LinearLayout>  
+                <TextView android:id="@+id/rate_7_txv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/satisfy_0"
+                    android:layout_gravity="left|center_vertical"
+                    android:layout_marginLeft="4dp"
+                    />
+            </LinearLayout>
+        </LinearLayout>
+        
+    </ScrollView>
+</RelativeLayout>

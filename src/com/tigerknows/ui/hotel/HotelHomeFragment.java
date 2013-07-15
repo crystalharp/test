@@ -68,7 +68,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     
     boolean mRefreshFilterArea = false;
     
-    boolean mQueryFilter = false;
+    Response mResponse = null;
     
     List<Filter> mFilterList = new ArrayList<DataQuery.Filter>();
 
@@ -127,7 +127,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         findViews();
         setListener();
         
-        DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_HOTEL, MapEngine.SW_ID_QUANGUO);
+        DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_HOTEL, MapEngine.SW_ID_QUANGUO, mSphinx);
         return mRootView;
     }
 
@@ -147,7 +147,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             refreshFilterArea(false);
         }
         
-        if (mQueryFilter) {
+        if (mResponse == null) {
             queryFilter();
         }
         
@@ -252,8 +252,10 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 
             case R.id.query_btn:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQuerySubmit);
-                mRefreshFilterArea = true;
-                submit();
+                if (isSupportHotelQuery()) {
+                    mRefreshFilterArea = true;
+                    submit();
+                }
                 break;
                 
             case R.id.dingdan_btn:
@@ -320,11 +322,11 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
         Globals.setHotelCityInfo(cityInfo);
         mCityBtn.setText(cityInfo.getCName());
 
-        DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_HOTEL, cityInfo.getId());
+        DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_HOTEL, cityInfo.getId(), mSphinx);
         
         refreshFilterCategory();
         
-        mQueryFilter = true;
+        mResponse = null;
         mSelectedLocation = false;
         mRefreshFilterArea = true;
         refreshFilterArea(true);
@@ -339,7 +341,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
     void refreshFilterCategory() {
         synchronized (mFilterList) {
             if (checkFilter(mFilterList, FilterCategoryOrder.FIELD_LIST_CATEGORY) == false) {
-                FilterCategoryOrder filterCategory = DataQuery.getHoteFilterCategoryOrder();
+                FilterCategoryOrder filterCategory = DataQuery.getHotelFilterCategoryOrder();
                 if (filterCategory != null) {
                     List<FilterOption> filterOptionList = filterCategory.getCategoryFilterOption();
                     List<Long> indexList = new ArrayList<Long>();
@@ -452,6 +454,12 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             }
         }
         
+        if (mSphinx.getPickLocationFragment().getPOI() != null) {
+            Filter filter = getFilter(mFilterList, FilterArea.FIELD_LIST);
+            if (filter != null) {
+                FilterListView.selectedFilter(filter, -1);
+            }
+        }
         mSphinx.getPickLocationFragment().setData(mFilterList);
         refreshFilterAreaView();
     }
@@ -494,26 +502,11 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             return;
         } else {
             Response response = baseQuery.getResponse();
-            mQueryFilter = false;
+            mResponse = response;
             if (response == null) {
-                mQueryFilter = true;
                 queryFilter();
                 return;
-            } else if (response.getResponseCode() != Response.RESPONSE_CODE_OK) {
-                int responseCode = response.getResponseCode();
-                if (responseCode == 702) {
-                    
-                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                        dismissProgressDialog();
-                    }
-                    Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.response_code_702));
-                } else if (responseCode == 703) {
-                    
-                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                        dismissProgressDialog();
-                    }
-                    Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.response_code_703));
-                }
+            } else if (isSupportHotelQuery() == false) {
                 return;
             }
             List<Filter> filterList = ((DataQuery) baseQuery).getFilterList();
@@ -575,6 +568,34 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 }
             }
         }
+    }
+    
+    boolean isSupportHotelQuery() {
+        boolean result = true;
+        Response response = mResponse;
+        if (response != null && response.getResponseCode() != Response.RESPONSE_CODE_OK) {
+            int responseCode = response.getResponseCode();
+            if (responseCode == 702) {
+                
+                if (mSphinx.uiStackPeek() == getId()) {
+                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                        dismissProgressDialog();
+                    }
+                    Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.response_code_702));
+                }
+                result = false;
+            } else if (responseCode == 703) {
+                if (mSphinx.uiStackPeek() == getId()) {
+                    if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                        dismissProgressDialog();
+                    }
+                    Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.response_code_703));
+                }
+                result = false;
+            }
+        }
+        
+        return result;
     }
     
     /**

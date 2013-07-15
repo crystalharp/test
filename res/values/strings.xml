@@ -38,6 +38,8 @@
     <string name="me">我</string>
     <string name="distanceA">距地标</string>
     <string name="double_bracket">（%1$s个）</string>
+    <string name="year">年</string>
+    <string name="month">月</string>
     
     <string name="start_text">起点：%1$s</string>
     <string name="end_text">终点：%1$s</string>
@@ -145,8 +147,8 @@
     <string name="busline_non_tip">目前找不到你要的公交线路信息！</string>
     <string name="busline_not_support">本城市暂不支持公交线路查询！</string>
     <string name="forget_all_tip">你忘记输入起点和终点啦！</string>
-    <string name="forget_start_tip">你忘记输入起点啦！</string>
-    <string name="forget_end_tip">你忘记输入终点啦！</string>
+    <string name="forget_start_tip">请输入起点！</string>
+    <string name="forget_end_tip">请输入终点！</string>
     <string name="input_valid_tip">没有找到起点或终点，你可以换一个词或在地图上选点试试！</string>
     <string name="start_equal_to_end">起点与终点相同, 请重新输入!</string>
     <string name="start_equal_to_end_select">起点与终点相同, 请重新选择!</string>
@@ -254,7 +256,7 @@
     <string name="come_here">到这里去</string>
     <string name="detail">详情</string>
     <string name="comment">点评</string>
-    <string name="address">地址：</string>   
+    <string name="address_colon">地址：</string>   
     <string name="name_">名称：</string>   
     <string name="source_">来源：%1$s</string> 
     <string name="reserve_tel">预定电话：</string> 
@@ -433,9 +435,13 @@
     <string name="city_list">添加城市</string>
     <string name="not_find_city">未找到匹配城市</string>
     <string name="favorite_long_click_tip">长按可以删除或重命名</string>
+    <string name="favorite_rename_empty_tip">请输入重命名内容！</string>
+    <string name="favorite_rename_success">重命名成功！</string>
 
     <string name="snap_current_map">截屏当前地图?</string>
     <string name="are_you_view_url">你确认要查看网页%1$s?</string>
+    
+    <string name="zhi">至</string>
 
 <!--  =======================    Share Part    =========================== -->
 <!-- Share Module SinaWeibo Start -->
@@ -510,6 +516,7 @@
     
     <!-- POI Weibo Share Start -->
     <string name="share_weibo_poi_topic">#老虎宝典分享#</string>
+    <string name="share_weibo_ivecome">我来过：</string>
     <string name="share_poi_pingfen">评分:\u0020%1$s分</string>
     <string name="share_poi_caixi">菜系:\u0020%1$s</string>
     <string name="share_poi_junjia">均价:\u0020%1$s元</string>
@@ -640,9 +647,6 @@
     <string name="station_position_error">站点位置错误</string>
     <string name="station_line_error">路线错误</string>
     <string name="staion_no_line">%1$s无%2$s</string>
-    <string name="errorrecovery_description">请输入问题详述或其他信息(选填)</string>
-    <string name="errorrecovery_user_phone">请输入你的手机号码(选填)</string>
-    <string name="errorrecovery_empty">你尚未输入任何纠错信息</string>
     <string name="poi_base_info_error">基本信息错误</string>
     <string name="poi_name_error">名称错误</string>
     <string name="poi_address_error">地址错误</string>
@@ -744,23 +748,24 @@
     <string name="comment_grade">满意度</string>
     <string name="comment_publishing_and_wait">发表中，请稍候</string>
     <string name="go_comment_hit">搜索你去过的商家发表点评...</string>
-    <string name="poi_comment_override_tip">确定覆盖你之前的点评？</string>
+    <string name="poi_comment_override_tip">确定覆盖你之前的点评吗？</string>
     <string name="poi_comment_poi_invalid_not_create">该地点已失效，你无法对其进行点评。</string>
     <string name="poi_comment_poi_invalid_not_update">该地点已失效，你无法修改点评内容。</string>
     <string name="poi_invalid">该地点已失效。</string>
     <string name="poi_comment_publish_success">点评发表成功！</string>
     <string name="poi_comment_update_success">点评修改成功！</string>
-    <!-- 文字：#老虎宝典分享#我来过：XXXX（poi名称）+空格+我觉得XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+www.tigerknows.com（网址之前的内容如果超出120字，截断成119个字+“…”（半个省略号“……”） -->
-    <string name="poi_comment_share_sina">#老虎宝典分享#我来过：%1$s 我觉得%2$s%3$s %4$s</string>
+    <!-- ：#老虎宝典分享#我来过：XXXX（poi 名称）+空格+我觉得 XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+来自@老虎宝典+空格+www.tigerknows.com （“来自@老虎宝典” 之前的内容如果超出 123 字，截断成 122 个字+“…”（半个省略号“……”））；图片为地图图片（同 poi 分享的图片一样） -->
+    <string name="poi_comment_share_sina">#老虎宝典分享#我来过：%1$s 我觉得%2$s%3$s%4$s</string>
+    <string name="poi_comment_share_sina_source">来自@老虎宝典 http://www.tigerknows.com</string>
     <string name="poi_comment_intput_hit">请输入你的点评！（30字以上）</string>
     <string name="poi_comment_share_grade1">太差啦！</string>
     <string name="poi_comment_share_grade2">不咋地！</string>
     <string name="poi_comment_share_grade3">一般般！</string>
     <string name="poi_comment_share_grade4">还不错！</string>
     <string name="poi_comment_share_grade5">太赞啦！</string>
-    <!-- 文字：我来过：XXXX（poi名称）+空格+我觉得XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+空格+来自@老虎宝典+空格+#老虎宝典分享#（“来自@老虎宝典”之前的内容如果超出123字，截断成122个字+“…”（半个省略号“……”）） -->
-    <string name="poi_comment_share_qzone">我来过：%1$s 我觉得%2$s%3$s %4$s </string>
-    <string name="poi_comment_share_qzone_source">来自@老虎宝典 #老虎宝典分享# </string>
+    <!-- 我来过：XXXX（poi 名称）+空格+我觉得 XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+空格+#老虎宝典分享#（“网址之前的内容如果超出 123 字，截断成 122 个字+“…”（半个省略号“……”）），没有图片显示 -->
+    <string name="poi_comment_share_qzone">我来过：%1$s 我觉得%2$s%3$s%4$s </string>
+    <string name="poi_comment_share_qzone_source">#老虎宝典分享#</string>
     <string name="publish">发表</string>
     <string name="publish_comment">发表点评</string>
     <string name="publish_comment_failed">发表点评失败！</string>
@@ -837,15 +842,40 @@
     <string name="discover_no_support_tip">%1$s市暂无发现内容\n去搜索频道逛逛吧！</string>
     
     <string name="add_merchant">添加商户</string>
+    <string name="address">地址</string>
     <string name="need_star">*</string>
-    <string name="shanghumingcheng">名称</string>
-    <string name="shanghuleixing">类型</string>
-    <string name="suozaichengshi">所在城市</string>
-    <string name="shanghudizhi">地址</string>
-    <string name="shanghudianhua">电话号码</string>
-    <string name="yingyeshijian">营业时间</string>
-    <string name="renjunjiawei">人均价位</string>
-    <string name="ningdedianhua">你的电话</string>
+    <string name="merchant_name">商户名称</string>
+    <string name="merchant_type">商户类型</string>
+    <string name="please_select_merchant_type">请选择商户类型</string>
+    <string name="add_merchant_address">地&#160;&#160;址</string>
+    <string name="add_merchant_address_hint">如：海淀区中关村北大街116号</string>
+    <string name="merchant_telephone">商户电话</string>
+    <string name="merchant_telephone_hint">可输入座机或手机号</string>
+    <string name="address_description">位置描述</string>
+    <string name="add_merchant_address_description_hint">如：北大东门向北200米路东</string>
+    <string name="business_hours">营业时间</string>
+    <string name="select_business_hours_day">选择营业日期</string>
+    <string name="select_business_hours_time">选择营业时段</string>
+    <string name="storefront_photo">门面照片</string>
+    <string name="add_merchant_upload_photo">上传商户门面照片</string>
+    <string name="add_merchant_upload_photo_not_added">上传后将极大提高申请通过率</string>
+    <string name="add_merchant_upload_photo_added">已添加商户门面照片</string>
+    <string name="wait_submit">等待提交</string>
+    <string name="contact">联系方式</string>
+    <string name="please_input_your_telephone">请输入您的电话</string>
+    <string name="add_merchant_thanks">感谢您帮助我们完善商户信息。请认真填写联系方式，以便我们将处理后的结果及时反馈给您。 </string>
+    <string name="capture_photo">拍照上传</string>
+    <string name="pick_photo">从手机相册选择</string>
+    <string name="start_time">开始时间</string>
+    <string name="end_time">结束时间</string>
+    <string name="add_merchant_image_upload_falied_tip">图片上传失败，是否重试？</string>
+    <string name="add_merchant_text_upload_falied_tip">提交失败，请重试</string>
+   <string name="add_merchant_delete_photo_tip">确定要删除该图片吗？</string>
+   <string name="poi_list_item_add_merchant">没有找到想要的商户</string>
+    
+    <string name="every_day">每天</string>
+    <string name="weekend">周末</string>
+    <string name="working_days">工作日</string>
     
     <string name="bitian">必填</string>
     <string name="xuantian">选填</string>
@@ -892,7 +922,7 @@
     <string name="response_code_407">数据异常，请稍后重试。</string>
     <string name="response_code_410">抱歉，该信息已过期。</string>
     <string name="response_code_503">短信传输失败,请稍后重试。</string>
-    <string name="response_code_601">你确定覆盖之前的点评吗？</string>
+    <string name="response_code_601">确定覆盖你之前的点评吗？</string>
     <string name="response_code_602">抱歉，该点评不存在。</string>
     <string name="response_code_603">抱歉，该地址不存在或已失效。</string>
     <string name="response_code_702">目前暂时无法提供酒店预订功能</string>
@@ -965,7 +995,7 @@
     <string name="pictures">%1$s张</string>
     <string name="fold">收起</string>
     <string name="hotel_no_room_left">该房型已经订满，建议换个房型吧！</string>
-    <string name="hotel_click_to_reload">网络状况不好,点击此处重新加载</string>
+    <string name="hotel_click_to_reload">网络状况不好,点击此处&lt;font color="#ff6c00"&gt;&lt;U&gt;重新加载&lt;/U&gt;&lt;/font&gt;</string>
     <string name="summary">简介</string>
     <string name="hotel_room_title">订单填写</string>
     <string name="hotel_room_howmany">房间数</string>
@@ -979,7 +1009,7 @@
     <string name="hotel_mobile_format">请正确输入手机号，手机号为1开头的11位数字</string>
     <string name="submit_order">提交订单</string>
     <string name="hotel_room_date">入住：%1$d月%2$d日&#8195;离店：%3$d月%4$d日</string>
-    <string name="hotel_room_credit_note">因酒店房间紧张，需信用卡担保，以便保留房间</string>
+    <string name="hotel_room_credit_note">（因酒店房间紧张，需信用卡担保，以便保留房间）</string>
     <string name="hotel_room_person_empty_tip">请填写入住人</string>
     <string name="hotel_room_mobile_empty_tip">请填写手机号</string>
     <string name="hotel_room_idcard_empty_tip">请填写身份证号</string>
@@ -1029,6 +1059,7 @@
     <string name="credit_validity_empty_tip">请选择信用卡有效期</string>
     <string name="credit_cert_type_empty_tip">请选择证件类型</string>
     <string name="credit_cert_code_empty_tip">请输入证件号码</string>
+    <string name="mainland_id_card">身份证</string>
     
     <string name="seveninn_regist_title">注册7天会员</string>
     <string name="seveninn_note">发现您的手机号%1$s非7天会员号，如继续预定需要准确填写以下信息进行验证，该号码会自动注册为7天会员手机号。</string>
@@ -1108,6 +1139,7 @@
     <string name="night">晚</string>
     <string name="can_not_reserve">订满</string>
     <string name="hotel_hot_line">4009-333-333</string>
+    <string name="picture_detail">图片详情</string>
     
     <string name="coupon_list">优惠券列表</string>
     <string name="coupon_detail">优惠券详情</string>
@@ -1117,4 +1149,67 @@
     <string name="coupon_no_result">使用须知</string>
     <string name="qrimg_verify">二维码验证</string>
     <string name="qrimg_title">请将二维码交给店员验证</string>
+    
+    
+<!-- Traffic Error Recovery Start -->
+    <string name="errorrecovery_description">请输入问题详述或其他信息(选填)</string>
+    <string name="errorrecovery_user_phone">请输入你的手机号码(选填)</string>
+    <string name="errorrecovery_empty">你尚未输入任何纠错信息</string>
+<!-- Traffic Error Recovery End -->
+
+    <string name="tel_or_mobile">可输入座机或手机</string>
+    <string name="next_procedure">下一步</string>
+
+<!-- POI Error Recovery Start -->
+    <string name="erreport_title">我来报错</string>
+    <string name="erreport_note">感谢您帮助我们完善商户信息。请认真填写联系方式，以便我们将处理后的结果及时反馈给您。</string>
+    <string name="erreport_mobile_hint">请输入您的手机号</string>
+    <string name="erreport_contact">联系方式：</string>
+    <string name="erreport_name_error">名称错误</string>
+    <string name="erreport_tel_error">电话错误</string>
+    <string name="erreport_tel_add">添加电话</string>
+    <string name="erreport_address_error">地址错误</string>
+    <string name="erreport_not_exist">地点不存在</string>
+    <string name="erreport_redundancy">地点重复</string>
+    <string name="erreport_location_error">地图标注错误</string>
+    <string name="erreport_other_error">其他错误</string>
+    <string name="erreport_redundancy_confirm">确认提交地点重复的错误？</string>
+    <string name="erreport_tel_empty">你忘记输入商户电话了</string>
+    <string name="erreport_tel_empty_2">请描述电话错误类型，或直接填写新的正确电话。</string>
+    <string name="erreport_tel_error_type">电话错误类型：</string>
+    <string name="erreport_if_you_know_tel">如果您知晓正确电话，请填写：</string>
+    <string name="erreport_description_hint">请详细描述报错内容</string>
+    <string name="erreport_description_empty">请填写报错内容</string>
+    <string name="erreport_location_confirm">确认提交地图标注错误？</string>
+    <string name="erreport_tel_error_connect">打不通</string>
+    <string name="erreport_tel_error_notthis">不是此商户</string>
+    <string name="erreport_merchant_stop">停业中</string>
+    <string name="erreport_merchant_chai">已拆迁</string>
+    <string name="erreport_merchant_move">已搬迁</string>
+    <string name="erreport_merchant_find">没找到</string>
+    <string name="erreport_merchant_tel">添加电话：</string>
+    <string name="erreport_address">地　　址：</string>
+    <string name="erreport_merchant_name">商户名称：</string>
+    <string name="erreport_merchant_type">商户类型：</string>
+    <string name="erreport_xuantian">（选填）</string>
+    <string name="erreport_abandon">确定放弃报错吗？</string>
+    <string name="erreport_address_hint">请输入正确商户地址</string>
+    <string name="erreport_name_hint">请输入正确商户名称</string>
+<!-- POI Error Recovery End -->
+
+<!-- Satisfy Rate Start -->
+    <string name="satisfy_rate">满意度评分</string>
+    <string name="satisfy_note">你对老虎宝典的满意度评分是：</string>
+    <string name="satisfy_a">搜索结果</string>
+    <string name="satisfy_b">定位准确性</string>
+    <string name="satisfy_c">操作流畅性</string>
+    <string name="satisfy_d">功能满足需求</string>
+    <string name="satisfy_e">功能操作简单</string>
+    <string name="satisfy_f">应用反应速度</string>
+    <string name="satisfy_g">整体满意度</string>
+    <string name="satisfy_0">　</string>
+    <string name="satisfy_abandon">确定放弃满意度评分吗？</string>
+    <string name="satisfy_success">谢谢您对我们的评价</string>
+    
+<!-- Satisfy Rate End -->
 </resources>

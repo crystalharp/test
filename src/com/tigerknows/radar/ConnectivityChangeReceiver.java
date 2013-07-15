@@ -1,11 +1,21 @@
 package com.tigerknows.radar;
 
+import java.util.Calendar;
+
 import com.decarta.android.util.LogWrapper;
+import com.tigerknows.TKConfig;
+import com.tigerknows.service.PullService;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
+
+/**
+ * 推送服务的联网触发
+ * @author xupeng
+ * 联网触发的说明见PullService.java
+ */
 
 public class ConnectivityChangeReceiver extends BroadcastReceiver{
 
@@ -15,14 +25,17 @@ public class ConnectivityChangeReceiver extends BroadcastReceiver{
     @Override
     public void onReceive(Context context, Intent intent) {
 
-        if(intent.getAction().equals(netACTION)){
+        if(intent.getAction().equals(netACTION)) {
             // Intent中ConnectivityManager.EXTRA_NO_CONNECTIVITY这个关键字表示着当前是否连接上了网络
             // true 代表网络断开   false 代表网络没有断开
             boolean noConnectivity = intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false);
             LogWrapper.d("NetCheckReceiver", "onReceive() noConnectivity="+noConnectivity);
-            if (noConnectivity == false) {
-//                Intent service = new Intent(context, PullService.class);
-//                context.startService(service);
+            if (noConnectivity == false &&
+                PullService.TRIGGER_MODE_NET.equals(PullService.getTriggerMode(context))) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(System.currentTimeMillis());
+                cal = Alarms.alarmAddMinutes(cal, TKConfig.PullServiceNetTriggerDelayTime);
+                Alarms.enableAlarm(context, cal, PullService.alarmAction);
             }
         }
     }

@@ -69,6 +69,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private Button mFavoriteBtn;
     private Button mHistoryBrowseBtn;
     private Button mSettingsBtn;
+    private Button mSatisfyRateBtn;
     private Button mFeedbackBtn;
     private Button mAddMerchantBtn;
     private Button mHelpBtn;
@@ -140,11 +141,14 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mLeftBtn.setVisibility(View.INVISIBLE);
         mTitleBtn.setText(R.string.more);
         mRightBtn.setVisibility(View.INVISIBLE);
-        mListLsv.setSelection(0);
+        if (mDismissed) {
+            mListLsv.setSelection(0);
+        }
 
         mMenuFragment.display();
         
         refreshUserEntrance();
+        refreshSatisfyRate();
         refreshMoreBtn();
         refreshCity(Globals.getCurrentCityInfo().getCName());
     }
@@ -218,6 +222,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             setFragmentMessage(MoreHomeFragment.MESSAGE_TYPE_COMMENT);
             return;
         }
+        
+        //满意度评分(不是button)
+        if(TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
+        	mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
+        	return;
+        }
     }
 
     @Override
@@ -237,6 +247,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mFavoriteBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
         mHistoryBrowseBtn = (Button)mRootView.findViewById(R.id.history_browse_btn);
         mSettingsBtn = (Button)mRootView.findViewById(R.id.settings_btn);
+        mSatisfyRateBtn = (Button)mRootView.findViewById(R.id.satisfy_btn);
         mFeedbackBtn = (Button)mRootView.findViewById(R.id.feedback_btn);
         mAddMerchantBtn = (Button)mRootView.findViewById(R.id.add_merchant_btn);
         mHelpBtn = (Button)mRootView.findViewById(R.id.help_btn);
@@ -254,6 +265,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mFavoriteBtn.setOnClickListener(this);
         mHistoryBrowseBtn.setOnClickListener(this);
         mSettingsBtn.setOnClickListener(this);
+        mSatisfyRateBtn.setOnClickListener(this);
         mFeedbackBtn.setOnClickListener(this);
         mAddMerchantBtn.setOnClickListener(this);
         mHelpBtn.setOnClickListener(this);
@@ -328,6 +340,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 mActionLog.addAction(mActionTag +  ActionLog.MoreSetting);
                 mSphinx.showView(R.id.activity_more_setting);
                 break;
+            case R.id.satisfy_btn:
+            	mActionLog.addAction(mActionTag +  ActionLog.MoreSatisfyRate);
+            	mSphinx.showView(R.id.activity_more_satisfy);
+            	break;
             case R.id.feedback_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreFeedback);
                 mSphinx.showView(R.id.activity_more_feedback);
@@ -397,6 +413,18 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	mUserBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
         	mUserNameTxv.setVisibility(View.GONE);
         }
+    }
+    
+    private void refreshSatisfyRate() {
+    	if (TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
+    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
+    		drawables[2] = mContext.getResources().getDrawable(R.drawable.ic_satisfy_new);
+    		drawables[2].setBounds(0, 0, drawables[2].getIntrinsicWidth(), drawables[2].getIntrinsicHeight());
+    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
+    	}else{
+    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
+    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], null, drawables[3]);
+    	}
     }
     
     private void setFragmentMessage(int messageType) {

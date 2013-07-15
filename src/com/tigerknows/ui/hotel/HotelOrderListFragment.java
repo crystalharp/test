@@ -30,7 +30,6 @@ import android.widget.TextView;
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
-import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -41,6 +40,7 @@ import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.HotelOrder;
 import com.tigerknows.model.HotelOrderOperation;
+import com.tigerknows.model.HotelOrderOperation.HotelOrderSyncResponse;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.HotelOrderOperation.HotelOrderStatesResponse;
 import com.tigerknows.provider.HotelOrderTable;
@@ -113,7 +113,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {  
-        LogWrapper.d(TAG, "onCreateView()"+mActionTag);
+        logd("onCreateView()"+mActionTag);
         
         mRootView = mLayoutInflater.inflate(R.layout.hotel_order_list, container, false);
 
@@ -205,14 +205,10 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     
     @Override
     public void onResume() {
-        super.onResume();
+    	super.onResume();
         mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(mContext.getString(R.string.hotel_ordered));
-        
-//       if (mResultLsv.isFooterSpringback()) {
-//       	mSphinx.getHandler().postDelayed(mTurnPageRun, 1000);
-//       }
-        
+
 //        fillOrderDb();
 
         /**
@@ -223,8 +219,43 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         	reloadOrders();
         }
         
+        if(couldAnomalyExists()){
+        	logi("Anomaly could exists. Send list sync query.");
+        	sendOrderSyncQuery();
+        }
+        
+    }
+
+    /**
+     * Check the preference to see whether there's possibility
+     * that an anomaly exists.
+     * @return
+     */
+    private boolean couldAnomalyExists(){
+    	String orderSubmited = TKConfig.getPref(mContext, TKConfig.PREFS_HOTEL_ORDER_COULD_ANOMALY_EXISTS, "no");
+    	logi("orderSubmited: " + orderSubmited);
+		return "yes".equals(orderSubmited);
     }
     
+	private void sendOrderSyncQuery(){
+		
+		String ids = null;
+		HotelOrderTable table = new HotelOrderTable(mContext);
+		ids = table.getAllIds();
+		table.close();
+    	logi("send order sync query for: " + ids + "$");
+    	
+    	Hashtable<String, String> criteria = new Hashtable<String, String>();
+    	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_SYNC);
+    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_ID_FILTER, ids);
+    	criteria.put(BaseQuery.SERVER_PARAMETER_NEED_FIELD, HotelOrder.NEED_FIELDS);
+    	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
+    	hotelOrderOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.query_loading_tip));
+    	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
+    	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
+		
+	}
+	
     public void removeOrder(HotelOrder order){
     	orders.remove(order);
     	if(hotelOrderAdapter!=null){
@@ -237,9 +268,11 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	HotelOrderTable table = new HotelOrderTable(mContext);
     	try {
     		long start = System.currentTimeMillis();
+    		int totalCount = table.count();
     		List<HotelOrder> list = table.read(0, maxDbSize);
     		System.out.println("Time used for read: " + (System.currentTimeMillis()-start)/1000.0);
     		System.out.println("OrderDB count: " + list.size());
+    		System.out.println("Total count: " + totalCount);
     		
     		if(list.size() < maxDbSize){
     			HotelOrder order = new HotelOrder("11111", System.currentTimeMillis(), 1, "0F2B4330-906A-11E2-A511-06973B18DA73", "HotelName", "hotelAddress", new Position(39.88, 116.3), "13581704277", 
@@ -247,6 +280,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     					System.currentTimeMillis(), System.currentTimeMillis(), System.currentTimeMillis(),2, 
     					"GuestName", "13581704277");
     			for (int i = list.size(); i < maxDbSize; i++) {
+    				System.out.println("I: " + i);
     				order.setId("" + i + i + i + i);
     				order.setHotelPoiUUID("0F2B4330-906A-11E2-A511-06973B18DA73");
     				table.write(order);
@@ -349,7 +383,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     @Override
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
-        LogWrapper.i(TAG, "onCancelled");
+        logi("onCancelled");
     }
     
     Handler mLoadOrderHandler = new Handler(){
@@ -366,7 +400,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 				orders.addAll(ordersLoaded);
 				ordersSize = orders.size();
 			}
-			
+			logi("OrderTotal: " + orderTotal);
+			logi("OrdersSize: " + ordersSize);
 			if(orderTotal > ordersSize){
 				mResultLsv.changeHeaderViewByState(false, SpringbackListView.PULL_TO_REFRESH);
 				mResultLsv.setFooterSpringback(true);
@@ -442,7 +477,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	System.out.println("launchStateQuery");
     	
     	String ids = prepareIds();
-    	LogWrapper.i(TAG, "Ids: " + ids);
+    	logi("Ids: " + ids);
     	sendStateQuery(ids);
         
     }
@@ -455,7 +490,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	if(TextUtils.isEmpty(ids)){
     		return;
     	}
-    	LogWrapper.i(TAG, "send state query for: " + ids);
+    	logi("send state query for: " + ids);
     	Hashtable<String, String> criteria = new Hashtable<String, String>();
     	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_QUERY);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS, ids);
@@ -493,8 +528,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     			orderTotal = table.count();
     			
 				ordersLoaded = table.read(startIndex, loadCount);
-    			LogWrapper.i(TAG, "Order total: " + orderTotal);
-    			LogWrapper.i(TAG, "Orders loaded: " + ordersLoaded.size());
+    			logi("Order total: " + orderTotal);
+    			logi("Orders loaded: " + ordersLoaded.size());
     			checkOrderStateForQuery(ordersLoaded);
  
 			} catch (IOException e) {
@@ -564,18 +599,61 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         
 
-        if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_NO, this, true)) {
+        if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, true)) {
             return;
         }
         
         final HotelOrderOperation hotelOrderOperation = (HotelOrderOperation)(tkAsyncTask.getBaseQuery());
-        HotelOrderStatesResponse response = (HotelOrderStatesResponse) hotelOrderOperation.getResponse();
-        List<Long> states = response.getStates();
+        String opCode = hotelOrderOperation.getCriteria().get(HotelOrderOperation.SERVER_PARAMETER_OPERATION_CODE);
+        if(opCode.equals(HotelOrderOperation.OPERATION_CODE_SYNC)){
+        	// Get the orders loaded from server
+        	HotelOrderSyncResponse response = (HotelOrderSyncResponse) hotelOrderOperation.getResponse();
+        	List<HotelOrder> orders = response.getOrders();
+        	
+        	// If there exists orders to sync
+        	if(orders!=null){
+        		logi("Orders got: " + orders.size());
+        		// write to database
+        		boolean isExceptExists = false;
+        		
+        		if(orders.size()!=0){
+        			
+        			HotelOrderTable table = null;
+        			try {
+        				table = new HotelOrderTable(mContext);
+        				for (HotelOrder hotelOrder : orders) {
+        					logi("Write A Order. Id: " + hotelOrder.getId());
+        					table.write(hotelOrder);
+        				}
+        				
+        				// update the UI
+        				clearOrders();
+        				reloadOrders();
+        				
+        			} catch (Exception e) {
+        				isExceptExists = true;
+        				e.printStackTrace();
+        			}finally{
+        				if(table !=null){
+        					table.close();
+        				}
+        			}
+        		}
+        		
+        		if(!isExceptExists){
+        			//clear the anomaly exists flag
+        			TKConfig.setPref(mContext, TKConfig.PREFS_HOTEL_ORDER_COULD_ANOMALY_EXISTS, "no");
+        		}
+        		
+        	}
+        	
+        }else if(opCode.equals(HotelOrderOperation.OPERATION_CODE_QUERY)){
+        	HotelOrderStatesResponse response = (HotelOrderStatesResponse) hotelOrderOperation.getResponse();
+        	List<Long> states = response.getStates();
+        	String ids = baseQuery.getCriteria().get(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS);
+        	updateOrderState(states, ids, ordersQuerying);
+        }
         
-        LogWrapper.i(TAG, "Number of states get: " + states.size());
-        
-        String ids = baseQuery.getCriteria().get(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS);
-        updateOrderState(states, ids, ordersQuerying);
         
         /**
          * Query remaining orders～
@@ -676,7 +754,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 		public void run() {
 			
 			if(ordersToStorage !=null){
-				LogWrapper.i(TAG, "Update thread");
+				logi("Update thread");
 				synchronized (ordersToStorage) {
 					updateOrderStorage(ordersToStorage);
 					ordersToStorage.clear();

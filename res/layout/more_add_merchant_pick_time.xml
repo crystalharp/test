@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+       
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@color/black_transparent_half"
+    >
+    
+    <RelativeLayout
+        android:id="@+id/body_view"
+        android:layout_width="fill_parent"
+        android:layout_height="204dp"
+        android:padding="8dp"
+        android:layout_alignParentBottom="true"
+        android:background="@drawable/list_selector_background_gray_light" >
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            >
+            <RelativeLayout
+                android:id="@+id/parent_view"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingRight="24dp"
+                android:layout_weight="1">
+                <com.tigerknows.widget.TimeListView android:id="@+id/start_tlv"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:padding="0dp"
+                    android:dividerHeight="0dp"
+                    android:divider="@drawable/bg_line_split"
+                    android:drawSelectorOnTop="false"
+                    android:scrollingCache="false"
+                    android:footerDividersEnabled="false"
+                    android:fadingEdge="none"
+                    >
+                </com.tigerknows.widget.TimeListView>
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/child_view"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="24dp"
+                android:layout_weight="1">
+                <com.tigerknows.widget.TimeListView android:id="@+id/end_tlv"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:padding="0dp"
+                    android:dividerHeight="0dp"
+                    android:divider="@drawable/bg_line_split"
+                    android:drawSelectorOnTop="false"
+                    android:scrollingCache="false"
+                    android:footerDividersEnabled="false"
+                    android:fadingEdge="none"
+                    >
+                 </com.tigerknows.widget.TimeListView>
+            </RelativeLayout>
+        </LinearLayout>
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/zhi"/>
+    </RelativeLayout>
+    
+    
+    <RelativeLayout android:id="@+id/control_view"
+        android:padding="0dp"
+        android:layout_width="fill_parent"
+        android:layout_above="@id/body_view"
+        android:layout_height="48dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:background="@color/white"
+        android:gravity="center"
+        android:orientation="horizontal"
+        >
+        <TextView
+            android:id="@+id/title_txv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/select_business_hours_time"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:paddingLeft="12dp"
+            android:textSize="18sp"
+            />
+        <Button
+            android:id="@+id/time_confirm_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:layout_marginRight="4dp"
+            android:background="@drawable/btn_confirm_hotel_normal"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            />
+    </RelativeLayout>
+</RelativeLayout>

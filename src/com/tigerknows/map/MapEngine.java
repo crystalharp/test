@@ -5,6 +5,7 @@
 package com.tigerknows.map;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -14,6 +15,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.Parcel;
@@ -54,7 +56,12 @@ public class MapEngine {
     public static int SW_ID_QUANGUO = 9999;
     
     private int matrixSize;
-    private byte[] bitmapBuffer;
+    /**
+     * int数组
+     * 大小是 tile_size*tile_size
+     * 用于Bitmap的setPixels方法
+     */
+    private int[] bitmapIntBuffer;
     private byte[] pngBuffer;
     private boolean isClosed = true;
     
@@ -180,9 +187,9 @@ public class MapEngine {
     private void initEngine(Context context, String mapPath) {
         synchronized (this) {
         if (this.isClosed) {
-        if (bitmapBuffer == null) {
+        if (bitmapIntBuffer == null) {
         matrixSize = Ca.tk_get_matrix_size(CONFIG.TILE_SIZE, CONFIG.TILE_SIZE);
-        bitmapBuffer = new byte[matrixSize];
+        bitmapIntBuffer = new int[matrixSize];
         if (BMP2PNG) {
             pngBuffer = new byte[matrixSize];
         }
@@ -198,7 +205,7 @@ public class MapEngine {
             }
         }
         readLastRegionIdList(context);
-        int status = Ca.tk_init_engine(TKConfig.getDataPath(false), this.mapPath, CONFIG.TILE_SIZE, CONFIG.TILE_SIZE, bitmapBuffer, 1);
+        int status = Ca.tk_init_engine(TKConfig.getDataPath(false), this.mapPath, CONFIG.TILE_SIZE, CONFIG.TILE_SIZE, bitmapIntBuffer, 1);
         if (status == 0) {
             int icon_num = MapWord.Icon.RESOURCE_ID.length;
             Ca.tk_init_icon_num(icon_num);
@@ -802,12 +809,8 @@ public class MapEngine {
                 if (ret == 0) {
                     start=System.nanoTime();
                     Bitmap bm;
-                    if (BMP2PNG) {
-                        int size = bmp2Png(bitmapBuffer, pngBuffer);
-                        bm= BitmapFactory.decodeByteArray(pngBuffer, 0, size);
-                    } else {
-                        bm= BitmapFactory.decodeByteArray(bitmapBuffer, 0, matrixSize);
-                    }
+                    bm = Bitmap.createBitmap(CONFIG.TILE_SIZE, CONFIG.TILE_SIZE, Config.ARGB_8888);
+                    bm.setPixels(bitmapIntBuffer, 0, CONFIG.TILE_SIZE, 0, 0, CONFIG.TILE_SIZE, CONFIG.TILE_SIZE);
                     loadTime=System.nanoTime()-start;    
                     Profile.decodeByteArrayInc(loadTime);
 
@@ -1377,5 +1380,38 @@ public class MapEngine {
             return true;
         }
         return false;
+    }
+    
+    /**
+     * 获取城市的电话区号
+     * @param cityId
+     * @return
+     */
+    public static String getAreaCodeByCityId(int cityId) {
+        String result = null;
+        String token = String.valueOf(cityId);
+        String path = TKConfig.getDataPath(false);
+        if (TextUtils.isEmpty(path)) {
+            return result;
+        }
+        File file = new File(path+"areacode");
+        if (file.exists()) {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                String text = Utility.readFile(fis);
+                fis.close();
+                String[] lines = text.split("\n");
+                for(int i = lines.length-1; i >= 0; i--) {
+                    String[] line = lines[i].split(" ");
+                    if (line[0].equals(token)) {
+                        result = line[1];
+                    }
+                }
+            } catch (Exception e) {
+                
+            }
+        }
+        
+        return result;
     }
 }

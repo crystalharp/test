@@ -23,6 +23,8 @@ public class HotelOrderOperation extends BaseQuery {
     // orderids	 String	 true	 订单id的列表字符串，id间以下划线间隔
     public static final String SERVER_PARAMETER_ORDER_IDS = "orderids";
     
+    public static final String SERVER_PARAMETER_ORDER_ID_FILTER = "idfilter";
+    
     // orderid  String  true    订单id
     public static final String SERVER_PARAMETER_ORDER_ID = "orderid";
     
@@ -108,6 +110,9 @@ public class HotelOrderOperation extends BaseQuery {
     // 删除 d
     public static final String OPERATION_CODE_DELETE = "d";
     
+    // 查询 r
+    public static final String OPERATION_CODE_SYNC= "s";
+    
     public HotelOrderOperation(Context context) {
         super(context, API_TYPE_HOTEL_ORDER);
     }
@@ -154,6 +159,8 @@ public class HotelOrderOperation extends BaseQuery {
             }
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
             addParameter(new String[] {SERVER_PARAMETER_UPDATE_ACTION, SERVER_PARAMETER_ORDER_ID});
+        } else if (OPERATION_CODE_SYNC.equals(operationCode)) {
+            addParameter(new String[] {SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_ORDER_ID_FILTER});
         } else {
             throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
         }
@@ -180,6 +187,8 @@ public class HotelOrderOperation extends BaseQuery {
             response = new HotelOrderCreateResponse(responseXMap);
         } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
             response = new Response(responseXMap);
+        }else if( OPERATION_CODE_SYNC.equals(operationCode)){
+            response = new HotelOrderSyncResponse(responseXMap);
         }
     }
 
@@ -222,6 +231,28 @@ public class HotelOrderOperation extends BaseQuery {
 
         public List<Long> getStates() {
             return states;
+        }
+
+    }
+
+    public static class HotelOrderSyncResponse extends Response {
+        
+        // 0x02 x_map   单个POI数据   
+        public static final byte FIELD_LIST = 0x02;
+        
+        private List<HotelOrder> orders;
+        
+        @SuppressWarnings("unchecked")
+        public HotelOrderSyncResponse(XMap data) throws APIException {
+            super(data);
+            
+            if (this.data.containsKey(FIELD_LIST)) {
+            	orders = getListFromData(FIELD_LIST, HotelOrder.InitializerServerData);;
+            }
+        }
+
+		public List<HotelOrder> getOrders() {
+			return orders;
 		}
 
     }
