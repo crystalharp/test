@@ -202,7 +202,7 @@ public class LocationQuery extends BaseQuery {
 //                parameters.add("n8b_ss[]", String.valueOf(neighboringCellInfo.getRssi())));
 //            }
 //        }
-        requestParameters.add("radio_type", TKConfig.getRadioType(context));
+        requestParameters.add("radio_type", TKConfig.getRadioType());
     }
 
     @Override
