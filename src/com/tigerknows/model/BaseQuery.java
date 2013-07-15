@@ -584,7 +584,7 @@ public abstract class BaseQuery {
         addUUIDParameter();
         
         requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
-        requestParameters.addAll(hashtableToParameters(criteria));
+        requestParameters.addAll(generateParameters(criteria));
     }
     
     protected void createHttpClient() {
@@ -890,6 +890,28 @@ public abstract class BaseQuery {
         }
     }
     
+    /**
+     * 参数添加接口，使用这个函数来添加参数，不与实际存储方式产生交集。
+     * @param key
+     * @param value
+     */
+    public final void addParameter(String key, String value) {
+        if (key != null) {
+            criteria.put(key, value);
+        }
+    }
+    
+    /**
+     * 获取参数接口，使用这个函数来获取参数Value，不与实际存储方式产生交集。
+     * @param key
+     * @return
+     */
+    public final String getParameter(String key) {
+        if (key != null) {
+            return criteria.get(key);
+        }
+        return null;
+    }
     //TODO:删掉这个系列函数
     /**
      * 根据keys从criteria中获取参数值，将其值添加到requestParameters
@@ -972,7 +994,12 @@ public abstract class BaseQuery {
         }
     }
     
-    WeiboParameters hashtableToParameters(Hashtable<String, String> criteria) {
+    /**
+     * 把存储请求参数的哈希表变成请求参数
+     * @param criteria
+     * @return
+     */
+    private WeiboParameters generateParameters(Hashtable<String, String> criteria) {
         WeiboParameters parameters = new WeiboParameters();
         if (criteria != null && !criteria.isEmpty()) {
             Enumeration<String> e = criteria.keys();
@@ -985,7 +1012,12 @@ public abstract class BaseQuery {
         
     }
     
-    private void checkParameter(String key) throws APIException {
+    /**
+     * 检查一个参数是否存在，不存在则抛出异常
+     * @param key
+     * @throws APIException
+     */
+    private final void checkParameter(String key) throws APIException {
         if (checkCriteria != null && checkCriteria.containsKey(key)) {
             String result = checkCriteria.get(key);
             if (result == null) {
@@ -1017,7 +1049,22 @@ public abstract class BaseQuery {
         }
         
         if (!checkCriteria.isEmpty()) {
-            throw APIException.wrapToUnwantedRequestParameterException(checkCriteria.keys().toString());
+            String unwantedParameters = "";
+            Enumeration<String> unwantedKeys = checkCriteria.keys();
+            while (unwantedKeys.hasMoreElements()) {
+                unwantedParameters += unwantedKeys.nextElement() + ",";
+            }
+            unwantedParameters = unwantedParameters.substring(0, unwantedParameters.length() - 1);
+            throw APIException.wrapToUnwantedRequestParameterException(unwantedParameters);
         }
+    }
+    
+    /**
+     * 检查一个请求的参数，只检查必选参数，无可选参数。
+     * @param essentialKeys
+     * @throws APIException
+     */
+    protected void checkParameters(String[] essentialKeys) throws APIException {
+        checkParameters(essentialKeys, null);
     }
 }
