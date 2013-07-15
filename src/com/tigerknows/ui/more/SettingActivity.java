@@ -60,6 +60,8 @@ public class SettingActivity extends BaseActivity {
     private Dialog mProgressDialog;
     private ScrollView mBodyScv;
     
+    private boolean mRefreshed;
+    
     private static final int[] LIST_BACKGROUND = {R.drawable.list_header,
     	R.drawable.list_middle,
     	R.drawable.list_middle,
@@ -80,6 +82,7 @@ public class SettingActivity extends BaseActivity {
         mContext = getBaseContext();
         mTitleBtn.setText(R.string.system_settings);
         mRightBtn.setVisibility(View.GONE);
+        mRefreshed = false;
         
         mHandler = new Handler(){
         	public void handleMessage(Message msg){
@@ -280,10 +283,11 @@ public class SettingActivity extends BaseActivity {
 						return;
 					}
 	                int type = dataBean.type;
+	                Intent intent;
 	                switch (type) {
 	                    case DataBean.TYPE_GPS:
 	                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingGPS, checkGPS());
-	                        Intent intent = new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
+	                        intent = new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
 	                        startActivityForResult(intent, R.id.activity_setting_location);
 	                        break;
 	                    case DataBean.TYPE_WAKELOCK:
@@ -301,6 +305,14 @@ public class SettingActivity extends BaseActivity {
 	                    case DataBean.TYPE_CLEARCACHE:
 	                    	mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingClearCache);
 	                    	showClearCacheDialog();
+	                    	break;
+	                    case DataBean.TYPE_HELP:
+	                    	intent = new Intent(SettingActivity.this, HelpActivity.class);
+	                    	startActivityForResult(intent, 0);
+	                    	break;
+	                    case DataBean.TYPE_ABOUT:
+	                    	intent = new Intent(SettingActivity.this, AboutUsActivity.class);
+	                    	startActivityForResult(intent, 0);
 	                    	break;
 	                    default:
 	                        break;
@@ -358,9 +370,9 @@ public class SettingActivity extends BaseActivity {
         	descriptionTxv.setVisibility(View.GONE);
         	titleTxv.setGravity(Gravity.CENTER_VERTICAL);
         	titleTxv.setPadding(titleTxv.getPaddingLeft(), 
-        			titleTxv.getPaddingTop()+Utility.dip2px(mThis, 5), 
+        			titleTxv.getPaddingTop()+ (mRefreshed ? Utility.dip2px(mThis, 5) : 0), 
         			titleTxv.getPaddingRight(), 
-        			titleTxv.getPaddingBottom()+Utility.dip2px(mThis, 5));
+        			titleTxv.getPaddingBottom()+ (mRefreshed ? Utility.dip2px(mThis, 10): 0));
         }
         descriptionTxv.setText(data.description);
         LogWrapper.d("conan", "data:" + data.title +  "checked:" + data.checked);
