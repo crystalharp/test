@@ -187,7 +187,7 @@ public class HttpManager {
 			throw new WeiboException(e);
 		} finally {
 		    if (apiType != null && uuid != null) {
-		        ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getRadioType(), false, uuid);
+		        ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getRadioType(context), false, uuid);
 		    }
 		}
 	}

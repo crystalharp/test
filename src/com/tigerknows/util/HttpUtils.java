@@ -392,7 +392,7 @@ public class HttpUtils {
                         networkInfoDetail = networkInfo.getDetailedState().toString();
                     }
                     String uuid = this.parameters.getValue(BaseQuery.SERVER_PARAMETER_UUID);
-                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getRadioType(), isStop, uuid);
+                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getRadioType(context), isStop, uuid);
                 }
                 if (!keepAlive) {
                     close();

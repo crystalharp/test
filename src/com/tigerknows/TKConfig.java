@@ -881,7 +881,17 @@ public class TKConfig {
      * 获取设备连接的数据网络类型
      * @return
      */
-    public static String getRadioType() {
+    public static String getRadioType(Context context) {
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            if (networkInfo != null) {
+                int type = networkInfo.getType();
+                if (type == ConnectivityManager.TYPE_WIFI) {
+                    return "WIFI";
+                }
+            }
+        }
         String radioType = "UNKN";
         if (sTelephonyManager != null) {
             int networkType = sTelephonyManager.getNetworkType(); 
