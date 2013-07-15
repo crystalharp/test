@@ -26,6 +26,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
@@ -50,7 +51,7 @@ import java.util.List;
 public class SettingActivity extends BaseActivity {
 
     private View[] mViewList;
-    private static final int NUM_OF_SETTINGS = 4;
+    private static final int NUM_OF_SETTINGS = 6;
     
     private ArrayList<DataBean> mBeans;
     
@@ -58,6 +59,15 @@ public class SettingActivity extends BaseActivity {
     private Handler mHandler;
     private Dialog mProgressDialog;
     private ScrollView mBodyScv;
+    
+    private static final int[] LIST_BACKGROUND = {R.drawable.list_header,
+    	R.drawable.list_middle,
+    	R.drawable.list_middle,
+    	R.drawable.list_footer,
+    	R.drawable.list_header,
+    	R.drawable.list_footer
+    };
+
     
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,23 +146,23 @@ public class SettingActivity extends BaseActivity {
         mBeans.add(radarPushBean);
         
         // 一键清理缓存
-        final DataBean clearCacheBean = new DataBean(mThis.getString(R.string.settings_clear_cache), mThis.getString(R.string.settings_clear_cache_description));
-//        clearCacheBean.onClickListener = new OnClickListener() {
-//			
-//			@Override
-//			public void onClick(View v) {
-//				mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingClearCache);
-//				showClearCacheDialog();
-//
-//			}
-//		};
+        final DataBean clearCacheBean = new DataBean(mThis.getString(R.string.settings_clear_cache), "");
+
 		clearCacheBean.showIcon = false;
 		clearCacheBean.type = DataBean.TYPE_CLEARCACHE;
 		mBeans.add(clearCacheBean);
-        
-//        mSettingAdatpter = new SimpleAdapter(mThis, mBeans);
-//        mViewList.setAdapter(mSettingAdatpter);
 
+		// 帮助
+		final DataBean helpBean = new DataBean(mThis.getString(R.string.help), "");
+		helpBean.showIcon = true;
+		helpBean.type = DataBean.TYPE_HELP;
+		mBeans.add(helpBean);
+		
+		// 关于我们
+		final DataBean aboutBean = new DataBean(mThis.getString(R.string.about_us), "");
+		aboutBean.showIcon = true;
+		aboutBean.type = DataBean.TYPE_HELP;
+		mBeans.add(aboutBean);		
 
         refreshDataSetChanged();
         mBodyScv.smoothScrollTo(0, 0);
@@ -251,6 +261,8 @@ public class SettingActivity extends BaseActivity {
         mViewList[1] = (View)findViewById(R.id.wake_view);
         mViewList[2] = (View)findViewById(R.id.radar_view);
         mViewList[3] = (View)findViewById(R.id.clear_cache_view);
+        mViewList[4] = (View)findViewById(R.id.help_view);
+        mViewList[5] = (View)findViewById(R.id.about_view);
         
     }
     
@@ -340,10 +352,16 @@ public class SettingActivity extends BaseActivity {
         TextView descriptionTxv = (TextView)view.findViewById(R.id.description_txv);
         ImageView iconImv = (ImageView)view.findViewById(R.id.icon_imv);
         CheckBox selectChb = (CheckBox)view.findViewById(R.id.select_chb);
-        if(position == 0)view.setBackgroundDrawable(getResources().getDrawable(R.drawable.list_header));
-        else if(position == NUM_OF_SETTINGS - 1)view.setBackgroundDrawable(getResources().getDrawable(R.drawable.list_footer));
-        else view.setBackgroundDrawable(getResources().getDrawable(R.drawable.list_middle));
+        view.setBackgroundDrawable(getResources().getDrawable(LIST_BACKGROUND[position]));
         titleTxv.setText(data.title);
+        if(TextUtils.isEmpty(data.description)){
+        	descriptionTxv.setVisibility(View.GONE);
+        	titleTxv.setGravity(Gravity.CENTER_VERTICAL);
+        	titleTxv.setPadding(titleTxv.getPaddingLeft(), 
+        			titleTxv.getPaddingTop()+Utility.dip2px(mThis, 5), 
+        			titleTxv.getPaddingRight(), 
+        			titleTxv.getPaddingBottom()+Utility.dip2px(mThis, 5));
+        }
         descriptionTxv.setText(data.description);
         LogWrapper.d("conan", "data:" + data.title +  "checked:" + data.checked);
         if (data.onClickListener != null) {
@@ -356,7 +374,7 @@ public class SettingActivity extends BaseActivity {
         if (data.showIcon) {
             iconImv.setVisibility(View.VISIBLE);
         } else {
-            iconImv.setVisibility(View.GONE);
+            iconImv.setVisibility(View.INVISIBLE);
         }
 
     }
@@ -388,6 +406,8 @@ public class SettingActivity extends BaseActivity {
         static final int TYPE_WAKELOCK = 2;
         static final int TYPE_RADARPUSH = 3;
         static final int TYPE_CLEARCACHE = 4;
+        static final int TYPE_HELP = 5;
+        static final int TYPE_ABOUT = 6;
         
         protected int type;
         
