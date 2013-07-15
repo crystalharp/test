@@ -29,11 +29,14 @@ import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewTreeObserver;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
@@ -46,14 +49,15 @@ import java.util.List;
  */
 public class SettingActivity extends BaseActivity {
 
-    private ListView mListView = null;
+    private View[] mViewList;
+    private static final int NUM_OF_SETTINGS = 4;
     
     private ArrayList<DataBean> mBeans;
-    private SimpleAdapter mSettingAdatpter;
     
     private Context mContext;
     private Handler mHandler;
     private Dialog mProgressDialog;
+    private ScrollView mBodyScv;
     
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,10 +150,12 @@ public class SettingActivity extends BaseActivity {
 		clearCacheBean.type = DataBean.TYPE_CLEARCACHE;
 		mBeans.add(clearCacheBean);
         
-        mSettingAdatpter = new SimpleAdapter(mThis, mBeans);
-        mListView.setAdapter(mSettingAdatpter);
+//        mSettingAdatpter = new SimpleAdapter(mThis, mBeans);
+//        mViewList.setAdapter(mSettingAdatpter);
 
-        mSettingAdatpter.notifyDataSetChanged();
+
+        refreshDataSetChanged();
+        mBodyScv.smoothScrollTo(0, 0);
     }
     
     private void switchWakeLock() {
@@ -239,46 +245,58 @@ public class SettingActivity extends BaseActivity {
 
     protected void findViews() {
         super.findViews();
-        mListView = (ListView)findViewById(R.id.listview);
+        mBodyScv = (ScrollView)findViewById(R.id.body_scv);
+        mViewList = new View[NUM_OF_SETTINGS];
+        mViewList[0] = (View)findViewById(R.id.gps_view);
+        mViewList[1] = (View)findViewById(R.id.wake_view);
+        mViewList[2] = (View)findViewById(R.id.radar_view);
+        mViewList[3] = (View)findViewById(R.id.clear_cache_view);
+        
     }
     
     protected void setListener() {
         super.setListener();
-        mListView.setOnItemClickListener(new OnItemClickListener() {
+        for(int i=0; i<NUM_OF_SETTINGS; i++){
+        	final int j = i;
+        	mViewList[i].setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO Auto-generated method stub
+					DataBean dataBean = mBeans.get(j);
+					if (dataBean == null){
+						return;
+					}
+	                int type = dataBean.type;
+	                switch (type) {
+	                    case DataBean.TYPE_GPS:
+	                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingGPS, checkGPS());
+	                        Intent intent = new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
+	                        startActivityForResult(intent, R.id.activity_setting_location);
+	                        break;
+	                    case DataBean.TYPE_WAKELOCK:
+	                        dataBean.checked = !dataBean.checked;
+	                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingWakeLock, dataBean.checked);
+	                        refreshDataSetChanged(type-1);
+	                        switchWakeLock();
+	                        break;
+	                    case DataBean.TYPE_RADARPUSH:
+	                        dataBean.checked = !dataBean.checked;
+	                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingRadar, dataBean.checked);
+	                        refreshDataSetChanged(type-1);
+	                        switchRadarPush();
+	                        break;
+	                    case DataBean.TYPE_CLEARCACHE:
+	                    	mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingClearCache);
+	                    	showClearCacheDialog();
+	                    	break;
+	                    default:
+	                        break;
+	                }
+	            }
+			});
+        }
 
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
-                DataBean dataBean = mBeans.get(index);
-                if (dataBean == null) {
-                    return;
-                }
-                int type = dataBean.type;
-                switch (type) {
-                    case DataBean.TYPE_GPS:
-                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingGPS, checkGPS());
-                        Intent intent = new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
-                        startActivityForResult(intent, R.id.activity_setting_location);
-                        break;
-                    case DataBean.TYPE_WAKELOCK:
-                        dataBean.checked = !dataBean.checked;
-                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingWakeLock, dataBean.checked);
-                        mSettingAdatpter.notifyDataSetChanged();
-                        switchWakeLock();
-                        break;
-                    case DataBean.TYPE_RADARPUSH:
-                        dataBean.checked = !dataBean.checked;
-                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingRadar, dataBean.checked);
-                        mSettingAdatpter.notifyDataSetChanged();
-                        switchRadarPush();
-                        break;
-                    case DataBean.TYPE_CLEARCACHE:
-                    	mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingClearCache);
-                    	showClearCacheDialog();
-                    	break;
-                    default:
-                        break;
-                }
-            }});
     }
 
     @Override
@@ -304,51 +322,45 @@ public class SettingActivity extends BaseActivity {
         if (dataBean != null) {
             dataBean.checked = radarOn(mThis);
         }
-        mSettingAdatpter.notifyDataSetChanged();
+        refreshDataSetChanged();
+
+
     }
     
-    private class SimpleAdapter extends ArrayAdapter<DataBean>{
-        private static final int sResource = R.layout.more_setting_list_item;
-
-        public SimpleAdapter(Context context, List<DataBean> apps) {
-            super(context, sResource, apps);
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            View view;
-            if (convertView == null) {
-                view = mLayoutInflater.inflate(sResource, parent, false);
-            } else {
-                view = convertView;
-            }
-
-            DataBean data = getItem(position);
-            
-            TextView titleTxv = (TextView)view.findViewById(R.id.title_txv);
-            TextView descriptionTxv = (TextView)view.findViewById(R.id.description_txv);
-            ImageView iconImv = (ImageView)view.findViewById(R.id.icon_imv);
-            CheckBox selectChb = (CheckBox)view.findViewById(R.id.select_chb);
-            
-            titleTxv.setText(data.title);
-            descriptionTxv.setText(data.description);
-            LogWrapper.d("conan", "data:" + data.title +  "checked:" + data.checked);
-            if (data.onClickListener != null) {
-                selectChb.setOnClickListener(data.onClickListener);
-                selectChb.setChecked(data.checked);
-                selectChb.setVisibility(View.VISIBLE);
-            } else {
-                selectChb.setVisibility(View.INVISIBLE);
-            }
-            if (data.showIcon) {
-                iconImv.setVisibility(View.VISIBLE);
-            } else {
-                iconImv.setVisibility(View.GONE);
-            }
-
-            return view;
-        }
+    private void refreshDataSetChanged(){
+    	for (int i=0; i<NUM_OF_SETTINGS; i++){
+    		refreshDataSetChanged(i);
+    	}
     }
+    
+    private void refreshDataSetChanged(final int position){
+        DataBean data = mBeans.get(position);
+        View view = mViewList[position];
+        TextView titleTxv = (TextView)view.findViewById(R.id.title_txv);
+        TextView descriptionTxv = (TextView)view.findViewById(R.id.description_txv);
+        ImageView iconImv = (ImageView)view.findViewById(R.id.icon_imv);
+        CheckBox selectChb = (CheckBox)view.findViewById(R.id.select_chb);
+        if(position == 0)view.setBackgroundDrawable(getResources().getDrawable(R.drawable.list_header));
+        else if(position == NUM_OF_SETTINGS - 1)view.setBackgroundDrawable(getResources().getDrawable(R.drawable.list_footer));
+        else view.setBackgroundDrawable(getResources().getDrawable(R.drawable.list_middle));
+        titleTxv.setText(data.title);
+        descriptionTxv.setText(data.description);
+        LogWrapper.d("conan", "data:" + data.title +  "checked:" + data.checked);
+        if (data.onClickListener != null) {
+            selectChb.setOnClickListener(data.onClickListener);
+            selectChb.setChecked(data.checked);
+            selectChb.setVisibility(View.VISIBLE);
+        } else {
+            selectChb.setVisibility(View.INVISIBLE);
+        }
+        if (data.showIcon) {
+            iconImv.setVisibility(View.VISIBLE);
+        } else {
+            iconImv.setVisibility(View.GONE);
+        }
+
+    }
+
     
     private boolean checkGPS() {
         boolean enableGps = false;            
@@ -368,6 +380,7 @@ public class SettingActivity extends BaseActivity {
         }
         return null;
     }
+    
 
     private class DataBean {
         
