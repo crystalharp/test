@@ -606,7 +606,6 @@ public class TrafficQueryEventHelper {
 			private void performSelectFavorite() {
 				LogWrapper.d("eric", "performSelectFavorite()");
 
-				mQueryFragment.mSphinx.getFetchFavoriteFragment().setData(mQueryFragment);
 				mQueryFragment.mSphinx.showView(R.id.view_traffic_fetch_favorite_poi);
 			}
 }
