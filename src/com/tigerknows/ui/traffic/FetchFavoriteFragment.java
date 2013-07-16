@@ -50,7 +50,7 @@ public class FetchFavoriteFragment extends BaseFragment {
     
     private TextView mEmptyView;
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private Comparator mComparator = new Comparator() {
 
         @Override

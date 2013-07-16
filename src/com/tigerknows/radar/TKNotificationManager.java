@@ -16,7 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.text.TextUtils;
-import android.widget.RemoteViews;
 
 public class TKNotificationManager {
 

@@ -1,6 +1,5 @@
 package com.tigerknows.map;
 
-import android.content.Context;
 import android.os.Handler;
 
 import com.decarta.android.event.EventSource;

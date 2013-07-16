@@ -130,7 +130,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         }
     };
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private Comparator mComparator = new Comparator() {
 
         @Override

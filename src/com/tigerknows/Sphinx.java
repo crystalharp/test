@@ -2037,7 +2037,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public void showPOI(List dataList, int index) {
         try {
         clearMap();

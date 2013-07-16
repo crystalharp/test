@@ -2,7 +2,6 @@ package com.decarta.android.map;
 
 import static android.opengl.GLES10.GL_ALIASED_LINE_WIDTH_RANGE;
 import static android.opengl.GLES10.GL_FLOAT;
-import static android.opengl.GLES10.GL_LINE_STRIP;
 import static android.opengl.GLES10.GL_TEXTURE_2D;
 
 import java.nio.ByteBuffer;
@@ -18,7 +17,6 @@ import java.util.Map;
 import javax.microedition.khronos.opengles.GL10;
 
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Paint;
 
 import com.decarta.CONFIG;

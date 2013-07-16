@@ -29,7 +29,6 @@ import com.tigerknows.model.xobject.XObject;
 import com.tigerknows.model.xobject.XString;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.provider.Tigerknows;
-import com.tigerknows.provider.Tigerknows.POI;
 import com.tigerknows.radar.Alarms;
 import com.tigerknows.service.LocationService;
 import com.tigerknows.service.PullService;

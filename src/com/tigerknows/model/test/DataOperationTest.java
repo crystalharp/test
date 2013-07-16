@@ -12,10 +12,8 @@ import com.tigerknows.model.DataOperation.TuangouQueryResponse;
 import com.tigerknows.model.DataOperation.YanchuQueryResponse;
 import com.tigerknows.model.DataOperation.YingxunQueryResponse;
 import com.tigerknows.model.DataOperation.ZhanlanQueryResponse;
-import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XMap;
 
-import android.R.integer;
 import android.content.Context;
 
 public class DataOperationTest {

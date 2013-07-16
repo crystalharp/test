@@ -174,7 +174,8 @@ public class XmlUtils
      * @see #writeValueXml
      * @see #readMapXml
      */
-    public static final void writeMapXml(Map val, OutputStream out)
+    @SuppressWarnings("rawtypes")
+	public static final void writeMapXml(Map val, OutputStream out)
             throws XmlPullParserException, java.io.IOException {
         XmlSerializer serializer = new FastXmlSerializer();
         serializer.setOutput(out, "utf-8");
@@ -196,7 +197,8 @@ public class XmlUtils
      * @see #writeValueXml
      * @see #readListXml
      */
-    public static final void writeListXml(List val, OutputStream out)
+    @SuppressWarnings("rawtypes")
+	public static final void writeListXml(List val, OutputStream out)
     throws XmlPullParserException, java.io.IOException
     {
         XmlSerializer serializer = Xml.newSerializer();
@@ -221,7 +223,8 @@ public class XmlUtils
      * @see #writeValueXml
      * @see #readMapXml
      */
-    public static final void writeMapXml(Map val, String name, XmlSerializer out)
+    @SuppressWarnings("rawtypes")
+	public static final void writeMapXml(Map val, String name, XmlSerializer out)
     throws XmlPullParserException, java.io.IOException
     {
         if (val == null) {
@@ -260,7 +263,8 @@ public class XmlUtils
      * @see #writeValueXml
      * @see #readListXml
      */
-    public static final void writeListXml(List val, String name, XmlSerializer out)
+    @SuppressWarnings("rawtypes")
+	public static final void writeListXml(List val, String name, XmlSerializer out)
     throws XmlPullParserException, java.io.IOException
     {
         if (val == null) {
@@ -384,7 +388,8 @@ public class XmlUtils
      * @see #writeListXml
      * @see #readValueXml
      */
-    public static final void writeValueXml(Object v, String name, XmlSerializer out)
+    @SuppressWarnings("rawtypes")
+	public static final void writeValueXml(Object v, String name, XmlSerializer out)
     throws XmlPullParserException, java.io.IOException
     {
         String typeStr;
@@ -461,7 +466,8 @@ public class XmlUtils
      * @see #readThisMapXml
      * #see #writeMapXml
      */
-    public static final HashMap readMapXml(InputStream in)
+    @SuppressWarnings("rawtypes")
+	public static final HashMap readMapXml(InputStream in)
     throws XmlPullParserException, java.io.IOException
     {
         XmlPullParser   parser = Xml.newPullParser();
@@ -482,7 +488,8 @@ public class XmlUtils
      * @see #readThisListXml
      * @see #writeListXml
      */
-    public static final ArrayList readListXml(InputStream in)
+    @SuppressWarnings("rawtypes")
+	public static final ArrayList readListXml(InputStream in)
     throws XmlPullParserException, java.io.IOException
     {
         XmlPullParser   parser = Xml.newPullParser();
@@ -504,7 +511,8 @@ public class XmlUtils
      * 
      * @see #readMapXml
      */
-    public static final HashMap readThisMapXml(XmlPullParser parser, String endTag, String[] name)
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static final HashMap readThisMapXml(XmlPullParser parser, String endTag, String[] name)
     throws XmlPullParserException, java.io.IOException
     {
         HashMap map = new HashMap();
@@ -548,7 +556,8 @@ public class XmlUtils
      * 
      * @see #readListXml
      */
-    public static final ArrayList readThisListXml(XmlPullParser parser, String endTag, String[] name)
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static final ArrayList readThisListXml(XmlPullParser parser, String endTag, String[] name)
     throws XmlPullParserException, java.io.IOException
     {
         ArrayList list = new ArrayList();

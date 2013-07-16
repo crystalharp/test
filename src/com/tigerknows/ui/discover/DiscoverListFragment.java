@@ -299,7 +299,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         return mRootView;
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     @Override
     public void dismiss() {
         super.dismiss();
@@ -461,7 +461,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     @Override
     public void onResume() {
         super.onResume();
@@ -1212,7 +1212,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         return false;
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private List getList() {
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             return mTuangouList;
@@ -1226,7 +1226,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         return null;
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private ArrayAdapter getAdapter() {
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             return mTuangouAdapter;

@@ -39,7 +39,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.zip.GZIPInputStream;
 
 /**
  * @author Peng Wenyue

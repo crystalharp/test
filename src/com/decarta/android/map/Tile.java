@@ -5,9 +5,7 @@
  */
 package com.decarta.android.map;
 
-import com.decarta.android.location.Position;
 import com.decarta.android.map.MapLayer.MapLayerProperty;
-import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYZ;
 
 public class Tile implements Comparable<Tile>{

@@ -11,14 +11,11 @@ import java.util.List;
 
 import android.graphics.Color;
 
-import com.decarta.CONFIG;
 import com.decarta.android.exception.APIException;
-import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYDouble;
 import com.decarta.android.util.XYInteger;
-import com.decarta.android.util.XYZ;
 
 public class ItemizedOverlay {
 	/**

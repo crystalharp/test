@@ -4,7 +4,6 @@
 
 package com.tigerknows.ui.more;
 
-import java.util.Calendar;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -33,7 +32,6 @@ import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.ui.more.MapDownloadActivity.DownloadCity;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserLoginActivity;
-import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 
 /**
@@ -84,7 +82,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	mDiaoyanQueryResponse = diaoyanQueryResponse;
     }
     
-    private Runnable mLoadedDrawableRun = new Runnable() {
+    @SuppressWarnings("unused")
+	private Runnable mLoadedDrawableRun = new Runnable() {
         
         @Override
         public void run() {

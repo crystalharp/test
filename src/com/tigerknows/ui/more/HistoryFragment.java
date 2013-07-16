@@ -121,7 +121,7 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         }
     };
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private Comparator mComparator = new Comparator() {
 
         @Override
@@ -200,7 +200,6 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         return mRootView;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public void onResume() {
         super.onResume();
