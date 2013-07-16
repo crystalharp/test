@@ -1856,6 +1856,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (baseFragment != null) {
             baseFragment.onPause();
         }
+        if (mTitleFragment != null) {
+            mTitleFragment.dismissPopupWindow();
+        }
 
         if (null != mMapView && null != mMapEngine) {
             Position position = mMapView.getCenterPosition();
