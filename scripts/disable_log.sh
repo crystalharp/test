@@ -8,7 +8,7 @@ set -x
 
 yes=$2
 comment_tag="by_xp"
-file_filter=(ActionLog.java PullService.java Alarms.java)
+file_filter=(AAA.java)
 cd $1
 
 usage(){
@@ -32,8 +32,8 @@ process_dir(){
 				sed -i "s|^\s*e.printStack|//$comment_tag\0|" $i;
 			elif [ $yes = "-n" ]
 			then
-				sed -i "s|^\( *\)//$comment_tag\(\s*LogWrapper\)|\1\2|" $i;
-				sed -i "s|^\( *\)//$comment_tag\(.*e.printStack\)|\1\2|" $i;
+				sed -i "s|^\( *\)//$comment_tag\(\s*LogWrapper\.\)|\1\2|" $i;
+				sed -i "s|^\( *\)//$comment_tag\(\s*e.printStack\)|\1\2|" $i;
 			fi
 		fi
 	done

@@ -28,6 +28,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -42,6 +43,8 @@ import java.util.List;
 /**
  * Custom time listview. */
 public class TimeListView extends LinearLayout {
+    
+    static final int WHITE_LINE = 2;
     
     private ListView hourLsv;
     private ListView minuteLsv;
@@ -81,22 +84,18 @@ public class TimeListView extends LinearLayout {
         this.context = context;
         
         hourList = new ArrayList<String>();
-        hourList.add("");
-        hourList.add("");
+        makeWhiteLines(hourList);
         for(int i = 1, size = 25; i < size; i++) {
             hourList.add(toTwoChar(i));
         }
-        hourList.add("");
-        hourList.add("");
+        makeWhiteLines(hourList);
         
         minuteList = new ArrayList<String>();
-        minuteList.add("");
-        minuteList.add("");
-        for(int i = 0, size = 12; i < size; i++) {
-            minuteList.add(toTwoChar(i*5));
+        makeWhiteLines(minuteList);
+        for(int i = 0, size = 6; i < size; i++) {
+            minuteList.add(toTwoChar(i*10));
         }
-        minuteList.add("");
-        minuteList.add("");
+        makeWhiteLines(minuteList);
         
         findViews();
         setListener();
@@ -106,6 +105,16 @@ public class TimeListView extends LinearLayout {
         minuteAdapter = new MyAdapter(context, minuteList);
         minuteAdapter.isParent = false;
     }
+    
+    void makeWhiteLines(List<String> list) {
+        if (list == null) {
+            return;
+        }
+        
+        for(int i = 0; i < WHITE_LINE; i++) {
+            list.add("");
+        }
+    }
 
     protected void findViews() {
         hourLsv = (ListView) findViewById(R.id.parent_lsv);
@@ -113,6 +122,27 @@ public class TimeListView extends LinearLayout {
     }
     
     protected void setListener() {
+        
+        hourLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                hourPosition = arg2;
+                hourAdapter.notifyDataSetChanged();
+                hourLsv.setSelectionFromTop(arg2-2, 0);
+                
+            }
+        });
+        
+        minuteLsv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                minutePosition = arg2;
+                minuteAdapter.notifyDataSetChanged();
+                minuteLsv.setSelectionFromTop(arg2-2, 0);
+            }
+        });
         
         hourLsv.setOnScrollListener(new OnScrollListener() {
             
@@ -203,15 +233,6 @@ public class TimeListView extends LinearLayout {
             
             view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
             textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
-            if ((isParent == true && position == hourPosition) ||
-                    (isParent == false && position == minutePosition)) {
-                view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
-                textTxv.setTextColor(TKConfig.COLOR_ORANGE);
-            } else {
-                view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
-                textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
-            }
-
             
             textTxv.setText(name);
             

@@ -10,7 +10,7 @@
     <RelativeLayout
         android:id="@+id/body_view"
         android:layout_width="fill_parent"
-        android:layout_height="210dp"
+        android:layout_height="204dp"
         android:padding="8dp"
         android:layout_alignParentBottom="true"
         android:background="@drawable/list_selector_background_gray_light" >
@@ -28,7 +28,7 @@
                 android:layout_weight="1">
                 <com.tigerknows.widget.TimeListView android:id="@+id/start_tlv"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="fill_parent"
                     android:padding="0dp"
                     android:dividerHeight="0dp"
                     android:divider="@drawable/bg_line_split"
@@ -47,7 +47,7 @@
                 android:layout_weight="1">
                 <com.tigerknows.widget.TimeListView android:id="@+id/end_tlv"
                     android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="fill_parent"
                     android:padding="0dp"
                     android:dividerHeight="0dp"
                     android:divider="@drawable/bg_line_split"
@@ -82,7 +82,7 @@
             android:id="@+id/title_txv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/business_hours"
+            android:text="@string/select_business_hours_time"
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
             android:paddingLeft="12dp"

@@ -527,15 +527,15 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
         DiscoverCategoryList discoverCategoryList = response.getDiscoverCategoryList();
         if (discoverCategoryList != null && discoverCategoryList.getList() != null && discoverCategoryList.getList().size() > 0) {
             List<DiscoverCategory> list = discoverCategoryList.getList();
-            try {
-                for(int i = 0, size = mDiscoverCategoryAdapter.getList().size(); i < size; i++) {
+            for(int i = 0, size = mDiscoverCategoryAdapter.getList().size(); i < size; i++) {
+                try {
                     DiscoverCategory discoverCategory = mDiscoverCategoryAdapter.getList().get(i);
                     DiscoverCategory discoverCategoryNow = getDiscoverCategoryByType(list, discoverCategory.getType());
                     discoverCategory.init(discoverCategoryNow.getData());
                     mDiscoverCategoryAdapter.getListView().get(i).setData(discoverCategory);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         }
         mDataQuery = dataQuery;

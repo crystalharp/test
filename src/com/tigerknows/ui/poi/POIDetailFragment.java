@@ -425,6 +425,10 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
     }
     
+    public DynamicHotelPOI getDynamicHotelPOI() {
+        return mDynamicHotelPOI;
+    }
+    
 	//*************DynamicPOI code end*******************
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -147,8 +147,8 @@
     <string name="busline_non_tip">目前找不到你要的公交线路信息！</string>
     <string name="busline_not_support">本城市暂不支持公交线路查询！</string>
     <string name="forget_all_tip">你忘记输入起点和终点啦！</string>
-    <string name="forget_start_tip">你忘记输入起点啦！</string>
-    <string name="forget_end_tip">你忘记输入终点啦！</string>
+    <string name="forget_start_tip">请输入起点！</string>
+    <string name="forget_end_tip">请输入终点！</string>
     <string name="input_valid_tip">没有找到起点或终点，你可以换一个词或在地图上选点试试！</string>
     <string name="start_equal_to_end">起点与终点相同, 请重新输入!</string>
     <string name="start_equal_to_end_select">起点与终点相同, 请重新选择!</string>
@@ -252,7 +252,7 @@
     <string name="come_here">到这里去</string>
     <string name="detail">详情</string>
     <string name="comment">点评</string>
-    <string name="address">地址：</string>   
+    <string name="address_colon">地址：</string>   
     <string name="name_">名称：</string>   
     <string name="source_">来源：%1$s</string> 
     <string name="reserve_tel">预定电话：</string> 
@@ -838,6 +838,7 @@
     <string name="discover_no_support_tip">%1$s市暂无发现内容\n去搜索频道逛逛吧！</string>
     
     <string name="add_merchant">添加商户</string>
+    <string name="address">地址</string>
     <string name="need_star">*</string>
     <string name="merchant_name">商户名称</string>
     <string name="merchant_type">商户类型</string>
@@ -850,11 +851,11 @@
     <string name="add_merchant_address_description_hint">如：北大东门向北200米路东</string>
     <string name="business_hours">营业时间</string>
     <string name="select_business_hours_day">选择营业日期</string>
-    <string name="select_business_hours_time">选择营业时间</string>
+    <string name="select_business_hours_time">选择营业时段</string>
     <string name="storefront_photo">门面照片</string>
     <string name="add_merchant_upload_photo">上传商户门面照片</string>
     <string name="add_merchant_upload_photo_not_added">上传后将极大提高申请通过率</string>
-    <string name="add_merchant_upload_photo_added">已添加商户门面图片</string>
+    <string name="add_merchant_upload_photo_added">已添加商户门面照片</string>
     <string name="wait_submit">等待提交</string>
     <string name="contact">联系方式</string>
     <string name="please_input_your_telephone">请输入您的电话</string>
@@ -1188,6 +1189,8 @@
     <string name="erreport_merchant_type">商户类型：</string>
     <string name="erreport_xuantian">（选填）</string>
     <string name="erreport_abandon">确定放弃报错吗？</string>
+    <string name="erreport_address_hint">请输入正确商户地址</string>
+    <string name="erreport_name_hint">请输入正确商户名称</string>
 <!-- POI Error Recovery End -->
 
 <!-- Satisfy Rate Start -->
@@ -1200,7 +1203,7 @@
     <string name="satisfy_e">功能操作简单</string>
     <string name="satisfy_f">应用反应速度</string>
     <string name="satisfy_g">整体满意度</string>
-    <string name="satisfy_0">请选择</string>
+    <string name="satisfy_0">　</string>
     <string name="satisfy_abandon">确定放弃满意度评分吗？</string>
     <string name="satisfy_success">谢谢您对我们的评价</string>
     

@@ -617,6 +617,11 @@ public class TKConfig {
     public static final String PREFS_HOTEL_LAST_MOBILE="prefs_hotel_last_mobile";
     
     /**
+     * 用户是否打开过满意度评分
+     */
+    public static final String PREFS_SATISFY_RATE_OPENED="prefs_satisfy_rate_opened";
+    
+    /**
      * 发现分类图片尺寸的Key
      */
     public static final int PICTURE_DISCOVER_HOME = 1;
@@ -870,6 +875,24 @@ public class TKConfig {
             list = sTelephonyManager.getNeighboringCellInfo();
         }
         return list;
+    }
+    
+    public static String getConnectivityType(Context context) {
+        String result = "none";
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            if (networkInfo != null) {
+                int type = networkInfo.getType();
+                if (type == ConnectivityManager.TYPE_WIFI) {
+                    return "WIFI";
+                } else {
+                    result = getRadioType();
+                }
+            }
+        }
+        
+        return result;
     }
     
     /**

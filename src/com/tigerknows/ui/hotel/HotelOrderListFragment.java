@@ -30,7 +30,6 @@ import android.widget.TextView;
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
-import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -114,7 +113,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {  
-        LogWrapper.d(TAG, "onCreateView()"+mActionTag);
+        logd("onCreateView()"+mActionTag);
         
         mRootView = mLayoutInflater.inflate(R.layout.hotel_order_list, container, false);
 
@@ -244,7 +243,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 		HotelOrderTable table = new HotelOrderTable(mContext);
 		ids = table.getAllIds();
 		table.close();
-    	LogWrapper.i(TAG, "send order sync query for: " + ids);
+    	logi("send order sync query for: " + ids + "$");
     	
     	Hashtable<String, String> criteria = new Hashtable<String, String>();
     	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_SYNC);
@@ -384,7 +383,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     @Override
     public void onCancelled(TKAsyncTask tkAsyncTask) {
         super.onCancelled(tkAsyncTask);
-        LogWrapper.i(TAG, "onCancelled");
+        logi("onCancelled");
     }
     
     Handler mLoadOrderHandler = new Handler(){
@@ -401,7 +400,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 				orders.addAll(ordersLoaded);
 				ordersSize = orders.size();
 			}
-			
+			logi("OrderTotal: " + orderTotal);
+			logi("OrdersSize: " + ordersSize);
 			if(orderTotal > ordersSize){
 				mResultLsv.changeHeaderViewByState(false, SpringbackListView.PULL_TO_REFRESH);
 				mResultLsv.setFooterSpringback(true);
@@ -477,7 +477,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	System.out.println("launchStateQuery");
     	
     	String ids = prepareIds();
-    	LogWrapper.i(TAG, "Ids: " + ids);
+    	logi("Ids: " + ids);
     	sendStateQuery(ids);
         
     }
@@ -490,7 +490,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	if(TextUtils.isEmpty(ids)){
     		return;
     	}
-    	LogWrapper.i(TAG, "send state query for: " + ids);
+    	logi("send state query for: " + ids);
     	Hashtable<String, String> criteria = new Hashtable<String, String>();
     	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_QUERY);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS, ids);
@@ -528,8 +528,8 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     			orderTotal = table.count();
     			
 				ordersLoaded = table.read(startIndex, loadCount);
-    			LogWrapper.i(TAG, "Order total: " + orderTotal);
-    			LogWrapper.i(TAG, "Orders loaded: " + ordersLoaded.size());
+    			logi("Order total: " + orderTotal);
+    			logi("Orders loaded: " + ordersLoaded.size());
     			checkOrderStateForQuery(ordersLoaded);
  
 			} catch (IOException e) {
@@ -612,6 +612,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         	
         	// If there exists orders to sync
         	if(orders!=null){
+        		logi("Orders got: " + orders.size());
         		// write to database
         		boolean isExceptExists = false;
         		
@@ -621,6 +622,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         			try {
         				table = new HotelOrderTable(mContext);
         				for (HotelOrder hotelOrder : orders) {
+        					logi("Write A Order. Id: " + hotelOrder.getId());
         					table.write(hotelOrder);
         				}
         				
@@ -752,7 +754,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
 		public void run() {
 			
 			if(ordersToStorage !=null){
-				LogWrapper.i(TAG, "Update thread");
+				logi("Update thread");
 				synchronized (ordersToStorage) {
 					updateOrderStorage(ordersToStorage);
 					ordersToStorage.clear();

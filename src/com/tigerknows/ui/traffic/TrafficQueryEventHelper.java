@@ -224,19 +224,6 @@ public class TrafficQueryEventHelper {
 //                mQueryEdt.getEdt().setSelectAllOnFocus(false);
             }
 			
-			if (mQueryFragment.mStart == mQueryEdt) {
-			    if (mQueryFragment.isEditTextEmpty(mQueryFragment.mStart.mEdt) == false) {
-			        mQueryFragment.mEnd.mEdt.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
-			    } else {
-			        mQueryFragment.mEnd.mEdt.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-			    }
-			} else {
-			    if (mQueryFragment.isEditTextEmpty(mQueryFragment.mEnd.mEdt) == false) {
-                    mQueryFragment.mStart.mEdt.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
-                } else {
-                    mQueryFragment.mStart.mEdt.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-                }
-			}
 		}
 		
 	}
@@ -486,7 +473,6 @@ public class TrafficQueryEventHelper {
 
 		@Override
 		public void onClick(View v) {
-			mQueryFragment.mRadioGroup.setOnCheckedChangeListener(null);
 //			onBack();
 			synchronized (mQueryFragment.mSphinx.mUILock) {
                 if (!mQueryFragment.mSphinx.mUIProcessing) {
@@ -541,11 +527,7 @@ public class TrafficQueryEventHelper {
 		    listView.setAdapter(adapter);
             final Dialog dialog = Utility.showNormalDialog(mQueryFragment.mSphinx,
                     title,
-                    null,
-                    listView,
-                    null,
-                    null,
-                    null);
+                    listView);
             
             dialog.setCancelable(true);
             listView.setOnItemClickListener(new OnItemClickListener() {
@@ -624,7 +606,6 @@ public class TrafficQueryEventHelper {
 			private void performSelectFavorite() {
 				LogWrapper.d("eric", "performSelectFavorite()");
 
-				mQueryFragment.mSphinx.getFetchFavoriteFragment().setData(mQueryFragment);
 				mQueryFragment.mSphinx.showView(R.id.view_traffic_fetch_favorite_poi);
 			}
 }

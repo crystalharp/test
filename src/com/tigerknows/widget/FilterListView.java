@@ -163,6 +163,15 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         } else {
             childLsv.setSelectionFromTop(0, 0);
         }
+        
+        if (selectedParentPosition == -1) {
+            selectedParentPosition = 0;
+            parentAdapter.notifyDataSetChanged();
+            
+            childFilterList.clear();
+            childFilterList.addAll(this.filter.getChidrenFilterList().get(0).getChidrenFilterList());
+            childAdapter.notifyDataSetChanged();
+        }
     }
         
     public FilterListView(Context context) {

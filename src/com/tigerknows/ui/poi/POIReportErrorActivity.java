@@ -1,3 +1,7 @@
+/*
+ * Copyright (C) 2013 fengtianxiao@tigerknows.com
+ * 2013.06
+ */
 package com.tigerknows.ui.poi;
 
 import java.io.UnsupportedEncodingException;
@@ -11,6 +15,7 @@ import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputFilter;
 import android.text.InputType;
 import android.text.Selection;
 import android.text.TextUtils;
@@ -31,6 +36,7 @@ import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.util.Utility;
+import com.tigerknows.widget.FilterListView;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
@@ -38,12 +44,16 @@ import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.model.POI;
-/*
- * author fengtianxiao@tigerknows.com
- */
-public class POIReportErrorActivity extends BaseActivity implements View.OnClickListener{
+import com.tigerknows.model.DataQuery.Filter;
+import com.tigerknows.model.DataQuery.FilterCategoryOrder;
+import com.tigerknows.model.DataQuery.FilterOption;
+import com.tigerknows.model.DataQuery.FilterResponse;
+
+
+public class POIReportErrorActivity extends BaseActivity implements View.OnClickListener, FilterListView.CallBack {
     
     private static final int HOME_PAGE = 1;
     private static final int DETAIL_PAGE = 2;
@@ -90,6 +100,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     
     private LinearLayout mBodyLly;
     private LinearLayout mTelLly;
+    private RadioGroup mTelRgp;
     private RadioGroup mNotExistRgp;
     private LinearLayout mMainLly;
     private LinearLayout mTypeLly;
@@ -115,7 +126,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     
     private TextView mMainTxv;
     private EditText mMainEdt;
-    private EditText mTypeEdt;
+    private Button mTypeBtn;
     private EditText mDescriptionEdt;
     private EditText mContactEdt;
     
@@ -130,6 +141,9 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
 
     private POI mPOI;
     
+    private FilterListView mFilterListView;
+    private List<Filter> mFilterList;
+    
     private static List<Object> sTargetList = new ArrayList<Object>();
 
     private static final String TAG = "ErrorRecovery";
@@ -137,7 +151,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        mActionTag = ActionLog.POIErrorRecovery;
+        mActionTag = ActionLog.POIReportError;
         vErreportMain = this.getLayoutInflater().inflate(R.layout.poi_report_error, null);
         vErreportDetail = this.getLayoutInflater().inflate(R.layout.poi_report_error_detail, null);
         setContentView(vErreportMain);
@@ -145,7 +159,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         findViewsMain();
         setListenerMain();
 
-        mTitleBtn.setText(R.string.erreport_title);
         mChecked = HOME_PAGE;
         mPage = HOME_PAGE;
         
@@ -160,7 +173,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
                 }
             }
         }
-        
     }
     
     /**
@@ -182,6 +194,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         mBodyLly = (LinearLayout) findViewById(R.id.body_lly);
         mTelLly = (LinearLayout) findViewById(R.id.tel_lly);
         mNotExistRgp = (RadioGroup) findViewById(R.id.notexist_rgp);
+        mTelRgp = (RadioGroup) findViewById(R.id.tel_rgp);
         mMainLly = (LinearLayout) findViewById(R.id.main_lly);
         mTypeLly = (LinearLayout) findViewById(R.id.type_lly);
         mDescriptionLly = (LinearLayout) findViewById(R.id.description_lly);
@@ -195,10 +208,72 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         mNeOtherRbt = (RadioButton) findViewById(R.id.ne_other_rbt);
         mMainTxv = (TextView) findViewById(R.id.main_txv);
         mMainEdt = (EditText) findViewById(R.id.main_edt);
-        mTypeEdt = (EditText) findViewById(R.id.type_edt);
+        mTypeBtn = (Button) findViewById(R.id.type_btn);
         mDescriptionEdt = (EditText) findViewById(R.id.description_edt);
         mContactEdt = (EditText) findViewById(R.id.contact_edt);
         mSubmitBtn = (Button) findViewById(R.id.submit_detail_btn);
+        mTelConnectRbt.setChecked(false);
+        mTelNotthisRbt.setChecked(false);
+        mNotExistRgp.clearCheck();
+        mTelRgp.clearCheck();
+        mTypeBtn.setText("");
+        mDescriptionEdt.setText("");
+        mContactEdt.setText("");
+        mSubmitBtn.setEnabled(false);
+        mRbtChecked = 0;
+        mFilterListView = (FilterListView) findViewById(R.id.filter_list_view);
+        mFilterListView.findViewById(R.id.body_view).setPadding(0, 0, 0, 0);
+        
+        if (mFilterList != null) {
+            FilterListView.selectedFilter(mFilterList.get(0), -1);
+        } else {
+            DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo().getId(), mThis);
+            FilterCategoryOrder filterCategory = DataQuery.getPOIFilterCategoryOrder();
+            if (filterCategory != null) {
+                List<FilterOption> filterOptionList = new ArrayList<DataQuery.FilterOption>();
+                List<FilterOption> online = filterCategory.getCategoryFilterOption();
+                if (online != null) {
+                    for(int i = 0, size = online.size(); i < size; i++) {
+                        filterOptionList.add(online.get(i).clone());
+                    }
+                }
+                List<Long> indexList = new ArrayList<Long>();
+                indexList.add(0l);
+                for(int i = 0, size = filterOptionList.size(); i < size; i++) {
+                    long id = filterOptionList.get(i).getId();
+                    indexList.add(id);
+                }
+                
+                // 每个分类下面添加其他
+                String otherText = getString(R.string.poi_ohter_error);
+                
+                Filter categoryFitler = DataQuery.makeFilterResponse(mThis, indexList, filterCategory.getVersion(), filterOptionList, FilterCategoryOrder.FIELD_LIST_CATEGORY, false);
+                Filter other = categoryFitler.getChidrenFilterList().remove(0);
+                other.getFilterOption().setName(otherText);
+                
+                List<Filter> list = categoryFitler.getChidrenFilterList();
+                int endId = Integer.MIN_VALUE;
+                for(int i = 0, size = list.size(); i < size; i++) {
+                    Filter filter = list.get(i);
+                    List<Filter> chidrenList = filter.getChidrenFilterList();
+                    if (chidrenList.size() > 0) {
+                        Filter end = chidrenList.get(chidrenList.size()-1);
+                        Filter other1 = end.clone();
+                        FilterOption filterOption = other1.getFilterOption();
+                        filterOption.setName(otherText);
+                        filterOption.setId(endId+i+1);
+                        chidrenList.add(other1);
+                    }
+                }
+                
+                other.setSelected(false);
+                list.add(other);
+                
+                mFilterList = new ArrayList<Filter>();
+                mFilterList.add(categoryFitler);
+            }
+            mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+        }
     }
 
     /**
@@ -223,7 +298,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    postHideSoftInput();
+                    hideSoftInput();
                 }
                 return true;
             }
@@ -259,14 +334,43 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         };
         mMainEdt.addTextChangedListener(textWatcher);
         mDescriptionEdt.addTextChangedListener(textWatcher);
+        OnTouchListener edtTouchListener = new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				if(event.getAction() == MotionEvent.ACTION_UP){
+					switch (v.getId()){
+					case R.id.main_edt:
+						mActionLog.addAction(mActionTag + ActionLog.POIErrorDetailMain);
+						break;
+					case R.id.description_edt:
+						mActionLog.addAction(mActionTag + ActionLog.POIErrorDetailMain);
+						break;
+					case R.id.contact_edt:
+						mActionLog.addAction(mActionTag + ActionLog.POIErrorDetailContact);
+						break;
+					}
+				}
+				return false;
+			}
+		};
+		mMainEdt.setOnTouchListener(edtTouchListener);
+		mDescriptionEdt.setOnTouchListener(edtTouchListener);
+		mContactEdt.setOnTouchListener(edtTouchListener);
+		mTypeBtn.setOnClickListener(this);
     }
     
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (mPage == DETAIL_PAGE && mFilterListView.getVisibility() == View.VISIBLE) {
+                backHome();
+                return true;
+            }
             if (showDiscardDialog() == false) {
                 mActionLog.addAction(ActionLog.KeyCodeBack);
-                finish();
+                if(mPage == HOME_PAGE)finish();
+                else jumpToMain();
                 return true;
             }
         }
@@ -281,7 +385,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             public void onClick(DialogInterface dialog, int which) {
                 // TODO Auto-generated method stub
                 if (which == DialogInterface.BUTTON_POSITIVE){
-                    finish();
+                    jumpToMain();
                 }
                 
             }
@@ -289,7 +393,16 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         });
         return show;
     }
-    
+    protected void jumpToMain(){
+    	mActionTag = ActionLog.POIReportError;
+    	setContentView(vErreportMain);
+    	findViewsMain();
+    	setListenerMain();
+        mChecked = HOME_PAGE;
+        mPage = HOME_PAGE;
+    	setDataMain();
+    	refreshDataMain();
+    }
     protected void jumpToDetail(){
         setContentView(vErreportDetail);
         mPage = DETAIL_PAGE;
@@ -309,6 +422,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         if(mPage == HOME_PAGE)setDataMain();
     }
     private void setDataMain(){
+        mTitleBtn.setText(R.string.erreport_title);
         mHasTel = ( mPOI.getTelephone() != null && !TextUtils.isEmpty(mPOI.getTelephone())) ? true : false;
         mTelBtn.setText(mHasTel ? getString(R.string.erreport_tel_error) : getString(R.string.erreport_tel_add));
     }
@@ -334,35 +448,66 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         mDescriptionLly.setVisibility(((mChecked & DESCRIPTION_LLY) !=0) ? View.VISIBLE : View.GONE);
         mContactLly.setVisibility(((mChecked & CONTACT_LLY) !=0) ? View.VISIBLE : View.GONE);
         mTitleBtn.setText(mNextTitle);
+        InputFilter[] phoneFilter = {new InputFilter.LengthFilter(15)};
+        InputFilter[] normalFilter = {new InputFilter.LengthFilter(80)};
         switch(mChecked){
         case TEL_ERR:
+        	mActionTag = ActionLog.POITelError;
+        	mMainEdt.clearFocus();
+        	mMainEdt.clearComposingText();
+        	mMainEdt.setInputType(InputType.TYPE_CLASS_PHONE);
+        	mMainEdt.setFilters(phoneFilter);
             mMainTxv.setText(getString(R.string.erreport_merchant_tel));
             mOrigin = MapEngine.getAreaCodeByCityId(MapEngine.getInstance().getCityId(mPOI.getPosition())) + '-';
-            mMainEdt.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED);
             mMainEdt.setHint(getString(R.string.tel_or_mobile));
             break;
         case ADDRESS_ERR:
+        	mActionTag = ActionLog.POIAddressError;
+        	mMainEdt.clearFocus();
+        	mMainEdt.clearComposingText();
+        	mMainEdt.setInputType(InputType.TYPE_CLASS_TEXT);
+        	mMainEdt.setFilters(normalFilter);
             mMainTxv.setText(getString(R.string.erreport_address));
+            mMainEdt.setHint(getString(R.string.erreport_address_hint));
             mOrigin = mPOI.getAddress();
             break;
         case NAME_ERR:
+        	mActionTag = ActionLog.POINameError;
+        	mMainEdt.clearFocus();
+        	mMainEdt.clearComposingText();
+        	mMainEdt.setInputType(InputType.TYPE_CLASS_TEXT);
+        	mMainEdt.setFilters(normalFilter);
             mMainTxv.setText(getString(R.string.erreport_merchant_name));
+            mMainEdt.setHint(getString(R.string.erreport_name_hint));
             mMainLly.setBackgroundDrawable(getResources().getDrawable(R.drawable.list_header));
+            mTypeBtn.setText( TextUtils.isEmpty(mPOI.getCategory()) ? getString(R.string.erreport_xuantian) : mPOI.getCategory());
             mOrigin = mPOI.getName();
             break;
         case TEL_ADD:
+        	mActionTag = ActionLog.POIAddTel;
+        	mMainEdt.clearFocus();
+        	mMainEdt.clearComposingText();
+        	mMainEdt.setInputType(InputType.TYPE_CLASS_PHONE);
+        	mMainEdt.setFilters(phoneFilter);
             mMainTxv.setText(getString(R.string.erreport_merchant_tel));
             mOrigin = MapEngine.getAreaCodeByCityId(MapEngine.getInstance().getCityId(mPOI.getPosition())) + '-';
-            mMainEdt.setInputType(InputType.TYPE_NUMBER_FLAG_SIGNED);
             mMainEdt.setHint(getString(R.string.tel_or_mobile));
             break;
+        case NOT_EXIST:
+        case NE_OTHER:
+        	mActionTag = ActionLog.POINotExist;
+        	break;
+        case OTHER_ERR:
+        	mActionTag = ActionLog.POIOtherError;
         }
         if(mMainLly.getVisibility() == View.VISIBLE){
             mMainEdt.setText(mOrigin);
-            if(mChecked != TEL_ERR){
-                mMainEdt.requestFocus();
+            if(mChecked == TEL_ERR){
+            	mMainEdt.setSelection(mMainEdt.length());
+            }else{
+            	mMainEdt.requestFocus();
                 Selection.setSelection(mMainEdt.getText(), mMainEdt.length());
-                showSoftInput();
+                showSoftInput(mMainEdt);
             }
         }
         if(mDescriptionLly.getVisibility() == View.VISIBLE){
@@ -377,13 +522,25 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             mDescriptionLly.setVisibility(View.VISIBLE);
         }else if (mChecked == NOT_EXIST){
             mDescriptionEdt.clearFocus();
-            postHideSoftInput();
+            hideSoftInput();
             mDescriptionLly.setVisibility(View.GONE);
         }
         refreshSubmitBtn();
         mSubmitBtn.setTextColor(mSubmitBtn.isEnabled() 
                 ? getResources().getColor(R.color.orange) 
                 : getResources().getColor(R.color.black_light));
+        refreshTypeBtn();
+    }
+    
+    public void refreshTypeBtn(){
+        if(TextUtils.isEmpty(mTypeBtn.getText())){
+        	mTypeBtn.setText(getString(R.string.erreport_xuantian));
+        	mTypeBtn.setTextColor(getResources().getColor(R.color.black_light));
+        }else if(TextUtils.equals(mTypeBtn.getText(), getString(R.string.erreport_xuantian))){
+        	mTypeBtn.setTextColor(getResources().getColor(R.color.black_light));
+        }else{
+        	mTypeBtn.setTextColor(getResources().getColor(R.color.black_dark));
+        }
     }
     public void refreshSubmitBtn(){
         if(mPage == HOME_PAGE) return;
@@ -414,97 +571,145 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         // TODO Auto-generated method stub
         switch(v.getId()){
         case R.id.left_btn:
-            mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
+            if (mFilterListView.getVisibility() == View.VISIBLE) {
+                backHome();
+                return;
+            }
             if (showDiscardDialog() == false) {
-                finish();
+            	mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
+                if(mPage == HOME_PAGE)finish();
+                else {
+                	hideSoftInput();
+                	jumpToMain();
+                }
             }
             break;
         case R.id.name_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.POIReportErrorName);
             mChecked = NAME_ERR;
             mNextTitle = mNameBtn.getText().toString();
             refreshDataMain();
             break;
         case R.id.tel_btn:
+        	mActionLog.addAction(mActionTag + (mHasTel ? ActionLog.POIReportErrorTel : ActionLog.POIReportErrorTelAdd));
             mChecked = mHasTel ? TEL_ERR : TEL_ADD;
             mNextTitle = mTelBtn.getText().toString();
             refreshDataMain();
             break;
         case R.id.notexist_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.POIReportErrorNotExist);
             mChecked = NOT_EXIST;
             mNextTitle = mNotexistBtn.getText().toString();
             refreshDataMain();
             break;
         case R.id.address_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.POIReportErrorAddress);
             mChecked = ADDRESS_ERR;
             mNextTitle = mAddressBtn.getText().toString();
             refreshDataMain();
             break;
         case R.id.redundancy_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.POIReportErrorRedundancy);
             mChecked = REDUNDANCY;
             refreshDataMain();
             break;
         case R.id.location_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.POIReportErrorLocation);
             mChecked = LOCATION_ERR;
             refreshDataMain();
             break;
         case R.id.other_btn:
+        	mActionLog.addAction(mActionTag + ActionLog.POIReportErrorOther);
             mChecked = OTHER_ERR;
             mNextTitle = mOtherBtn.getText().toString();
             refreshDataMain();
             break;
         case R.id.submit_btn:
-            if((mChecked & DIRECT_SUBMIT) == 0) submit();
-            else jumpToDetail();
+        	mActionLog.addAction(mActionTag + ((mPage == HOME_PAGE) ? ActionLog.POIReportErrorSubmit : ActionLog.POIReportErrorNext) );
+            if((mChecked & DIRECT_SUBMIT) == 0) submitDetail();
+            else {
+            	submitMain();
+            	jumpToDetail();
+            }
             break;
         case R.id.submit_detail_btn:
-            submit();
+        	mActionLog.addAction(mActionTag + ActionLog.POIErrorDetailSubmit);
+            submitDetail();
             break;
         case R.id.ne_stop_rbt:
+        	mActionLog.addAction(mActionTag + ActionLog.POINotExistStop);
             mChecked = NOT_EXIST;
             mRbtChecked = NE_STOP;
+            hideSoftInput(mDescriptionEdt);
             refreshDataDetail();
-            hideSoftInput();
             break;
         case R.id.ne_chai_rbt:
+        	mActionLog.addAction(mActionTag + ActionLog.POINotExistChai);
             mChecked = NOT_EXIST;
             mRbtChecked = NE_CHAI;
+            hideSoftInput(mDescriptionEdt);
             refreshDataDetail();
-            hideSoftInput();
             break;
         case R.id.ne_move_rbt:
+        	mActionLog.addAction(mActionTag + ActionLog.POINotExistMove);
             mChecked = NOT_EXIST;
             mRbtChecked = NE_MOVE;
+            hideSoftInput(mDescriptionEdt);
             refreshDataDetail();
-            hideSoftInput();
             break;
         case R.id.ne_find_rbt:
+        	mActionLog.addAction(mActionTag + ActionLog.POINotExistFind);
             mChecked = NOT_EXIST;
             mRbtChecked = NE_FIND;
+            hideSoftInput(mDescriptionEdt);
             refreshDataDetail();
-            hideSoftInput();
             break;
         case R.id.ne_other_rbt:
+        	mActionLog.addAction(mActionTag + ActionLog.POINotExistOther);
             mChecked = NE_OTHER;
             mRbtChecked = NE_OTHER_CHECK;
             mDescriptionEdt.requestFocus();
             refreshDataDetail();
-            showSoftInput();
+            showSoftInput(mDescriptionEdt);
             break;
         case R.id.tel_connect_rbt:
+        	mActionLog.addAction(mActionTag + ActionLog.POITelErrorConnect);
             mRbtChecked = TEL_CONNECT;
             refreshDataDetail();
             hideSoftInput();
             break;
         case R.id.tel_notthis_rbt:
+        	mActionLog.addAction(mActionTag + ActionLog.POITelErrorNotthis);
             mRbtChecked = TEL_NOTTHIS;
             refreshDataDetail();
             hideSoftInput();
+            break;
+        case R.id.type_btn:
+            mActionLog.addAction(mActionTag + ActionLog.POINameErrorType);
+            hideSoftInput();
+            mTitleBtn.setText(R.string.merchant_type);
+            mFilterListView.setData(mFilterList, FilterResponse.FIELD_FILTER_CATEGORY_INDEX, this, false, false, mActionTag);
+            mFilterListView.setVisibility(View.VISIBLE);
             break;
         default:
             break;
         }
     }
-    private void submit(){
+    private void submitMain(){
+    	StringBuilder s = new StringBuilder();
+    	s.append(mPOI.getUUID());
+    	s.append('_');
+    	int errcode = 510 + (mChecked >> 6)*10;
+    	s.append(errcode + "");
+        Hashtable<String, String> criteria = new Hashtable<String, String>();
+        criteria.put(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, s.toString());
+        criteria.put(FeedbackUpload.LOCAL_PARAMETER_POIERROR_IGNORE, "true");
+        FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
+        feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId());
+        queryStart(feedbackUpload);
+    }
+
+    private void submitDetail(){
         StringBuilder s = new StringBuilder();
         try{
             s.append(mPOI.getUUID());
@@ -515,9 +720,9 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
                 s.append('-');
                 s.append(URLEncoder.encode(mMainEdt.getText().toString(), TKConfig.getEncoding()));
             }
-            if( (mChecked & TYPE_LLY) != 0 && !TextUtils.isEmpty(mTypeEdt.getText())){
+            if( (mChecked & TYPE_LLY) != 0 && !TextUtils.isEmpty(mTypeBtn.getText())){
                 s.append('-');
-                s.append(URLEncoder.encode(mTypeEdt.getText().toString(), TKConfig.getEncoding()));
+                s.append(URLEncoder.encode(mTypeBtn.getText().toString(), TKConfig.getEncoding()));
             }
             if( (mChecked & DESCRIPTION_LLY) != 0){
                 s.append('-');
@@ -544,11 +749,15 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         if (BaseActivity.checkReLogin(baseQuery, mThis, mSourceUserHome, mId, mId, mId, mCancelLoginListener)) {
             isReLogin = true;
             return;
-        } else if (BaseActivity.checkResponseCode(baseQuery, mThis, null, true, this, false)) {
-            return;
         }
-        Toast.makeText(mThis, R.string.error_recovery_success, Toast.LENGTH_LONG).show();
-        finish();
+        
+        if(! baseQuery.getCriteria().containsKey(FeedbackUpload.LOCAL_PARAMETER_POIERROR_IGNORE)){
+        	if (BaseActivity.checkResponseCode(baseQuery, mThis, null, true, this, false)) {
+        		return;
+        	}
+        	Toast.makeText(mThis, R.string.error_recovery_success, Toast.LENGTH_LONG).show();
+        	finish();
+        }
     }
     
     public void finish() {
@@ -559,6 +768,40 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             }
         }
         super.finish();
+    }
+
+    @Override
+    public void doFilter(String name) {
+        backHome();
+        Filter categoryFitler = mFilterList.get(0);
+        List<Filter> list = categoryFitler.getChidrenFilterList();
+        for(int i = 0, size = list.size(); i < size; i++) {
+            Filter filter = list.get(i);
+            if (filter.isSelected()) {
+                mTypeBtn.setText(filter.getFilterOption().getName());
+                refreshTypeBtn();
+                return;
+            }
+            List<Filter> chidrenList = filter.getChidrenFilterList();
+            for(int j = 0, count = chidrenList.size(); j < count; j++) {
+                Filter chidren = chidrenList.get(j);
+                if (chidren.isSelected()) {
+                    mTypeBtn.setText(filter.getFilterOption().getName()+"-"+chidren.getFilterOption().getName());
+                    refreshTypeBtn();
+                    return;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void cancelFilter() {
+        backHome();
+    }
+    
+    void backHome() {
+        mFilterListView.setVisibility(View.GONE);
+        mTitleBtn.setText(R.string.erreport_name_error);
     }
 
 }

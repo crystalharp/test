@@ -220,11 +220,7 @@ public class ShareAPI {
         
         final Dialog dialog = Utility.showNormalDialog(activity, 
                 activity.getString(R.string.share), 
-                null,
-                listView,
-                null,
-                null,
-                null);
+                listView);
         
         final ActionLog actionLog = ActionLog.getInstance(activity);
         actionLog.addAction(actionTag + ActionLog.Share);

@@ -544,6 +544,10 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         mSoftInputManager.showSoftInput(view);
     }
     
+    public void hideSoftInput(boolean clearFocus) {
+        mSoftInputManager.hideSoftInput(clearFocus);
+    }
+    
     public void hideSoftInput() {
         mSoftInputManager.hideSoftInput();
     }

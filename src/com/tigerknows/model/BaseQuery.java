@@ -112,7 +112,7 @@ public abstract class BaseQuery {
     public static final String API_TYPE_HOTEL_ORDER = "hotelOrder";
     
     // 图片上传
-    public static final String API_TYPE_IMAGE_UPLOAD = "imageUpload";
+    public static final String API_TYPE_FILE_UPLOAD = "fileUpload";
     
     protected static final String VERSION = "13";
     
@@ -574,7 +574,7 @@ public abstract class BaseQuery {
      */
     protected void makeRequestParameters() {
         requestParameters.clear();
-        if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false) {
+        if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false && API_TYPE_FILE_UPLOAD.equals(apiType) == false) {
             requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
             requestParameters.add(SERVER_PARAMETER_VERSION, version);
         }

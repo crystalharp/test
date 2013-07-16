@@ -993,11 +993,7 @@ public class Utility {
             
             final Dialog dialog = showNormalDialog(activity,
                     activity.getString(R.string.call_telephone),
-                    null,
-                    listView,
-                    null,
-                    null,
-                    null);
+                    listView);
             
             listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -1027,11 +1023,7 @@ public class Utility {
         
         final Dialog dialog = Utility.showNormalDialog(sphinx, 
                 sphinx.getString(R.string.come_here), 
-                null,
-                listView,
-                null,
-                null,
-                null);
+                listView);
         
         ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere);
         listView.setOnItemClickListener(new OnItemClickListener() {
@@ -1232,7 +1224,7 @@ public class Utility {
     	});
     }
 
-    public static void showTakePhotoDialog(final Activity activity, final int pickRequestCode,
+    public static void showTakePhotoDialog(final String actionTag, final Activity activity, final int pickRequestCode,
             final int captureRequestCode, final Uri captureUri) {
         final List<String> textList = new ArrayList<String>();
         textList.add(activity.getString(R.string.capture_photo));
@@ -1250,9 +1242,12 @@ public class Utility {
 
             @Override
             public void onItemClick(AdapterView<?> adapterView, View arg1, int which, long arg3) {
+                ActionLog actionLog = ActionLog.getInstance(activity);
                 if (which == 0) {
+                    actionLog.addAction(actionTag+ActionLog.CameraPhoto);
                     capturePicture(activity, captureRequestCode, captureUri);
                 } else if (which == 1) {
+                    actionLog.addAction(actionTag+ActionLog.PickPhoto);
                     pickPicture(activity, pickRequestCode);
                 }
                 dialog.dismiss();
@@ -1597,7 +1592,7 @@ public class Utility {
     }
     
     private static final char HEX_DIGITS[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-        'A', 'B', 'C', 'D', 'E', 'F' };
+        'a', 'b', 'c', 'd', 'e', 'f' };
           
     public static String toHexString(byte[] b) {
         StringBuilder sb = new StringBuilder(b.length * 2);

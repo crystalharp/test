@@ -74,7 +74,8 @@
                         android:button="@drawable/rdb_recovery"
                         android:paddingLeft="40dp"
                         />
-                </RadioGroup>
+
+                    </RadioGroup>
                 
                 <TextView 
                     android:layout_width="wrap_content"
@@ -98,7 +99,7 @@
                 >
                 
                 <RadioButton android:id="@+id/ne_stop_rbt"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/erreport_merchant_stop"
                     android:textColor="@color/black_dark"
@@ -107,7 +108,7 @@
                     android:layout_marginBottom="8dp"
                     />
                 <RadioButton android:id="@+id/ne_chai_rbt"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/erreport_merchant_chai"
                     android:textColor="@color/black"
@@ -116,7 +117,7 @@
                     android:layout_marginBottom="8dp"
                     />
                 <RadioButton android:id="@+id/ne_move_rbt"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/erreport_merchant_move"
                     android:textColor="@color/black"
@@ -125,7 +126,7 @@
                     android:layout_marginBottom="8dp"
                     />
                 <RadioButton android:id="@+id/ne_find_rbt"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/erreport_merchant_find"
                     android:textColor="@color/black"
@@ -134,7 +135,7 @@
                     android:layout_marginBottom="8dp"
                     />
                 <RadioButton android:id="@+id/ne_other_rbt"
-                    android:layout_width="wrap_content"
+                    android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:text="@string/poi_ohter_error"
                     android:textColor="@color/black"
@@ -200,20 +201,17 @@
                         android:paddingLeft="16dp"
                         android:layout_gravity="left|center_vertical"
                         />
-                    <EditText android:id="@+id/type_edt"
+                    <Button
+                        android:id="@+id/type_btn"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:maxLength="80"
-                        android:textSize="16sp"
-                        android:hint="@string/erreport_xuantian"
-                        android:layout_marginTop="2dp"
-                        android:layout_marginBottom="2dp"
-                        android:focusable="true"
-                        android:focusableInTouchMode="true"
-                        android:singleLine="true"
-                        android:ellipsize="end"
                         android:background="@color/transparent"
-                        />
+                        android:drawableRight="@drawable/ic_view_all_comment"
+                        android:gravity="left|center_vertical"
+                        android:layout_gravity="left|center_vertical"
+                        android:padding="8dp"
+                        android:text="@string/erreport_xuantian"
+                        android:textSize="16sp" />
                 </LinearLayout>                
             </LinearLayout>
 
@@ -228,6 +226,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:minLines="5"
+                    android:maxLength="800"
                     android:singleLine="false"
                     android:hint="@string/erreport_description_hint"
                     android:gravity="top|left"
@@ -272,7 +271,7 @@
                     <EditText android:id="@+id/contact_edt"
                         android:layout_width="fill_parent"
                         android:layout_height="wrap_content"
-                        android:maxLength="80"
+                        android:maxLength="11"
                         android:textSize="16sp"
                         android:hint="@string/erreport_mobile_hint"
                         android:layout_marginTop="2dp"
@@ -283,7 +282,8 @@
                         android:ellipsize="end"
                         android:background="@color/transparent"
                         android:layout_gravity="left|center_vertical"
-                        android:inputType="number"
+                        android:inputType="phone"
+                        android:digits="0123456789"
                         />        
                 </LinearLayout>
                 
@@ -292,4 +292,11 @@
         
     </ScrollView>
     
+    <com.tigerknows.widget.FilterListView
+            android:id="@+id/filter_list_view"
+            android:layout_width="fill_parent" 
+            android:layout_height="fill_parent" 
+            android:layout_below="@id/title_view"
+            android:visibility="gone"
+            ></com.tigerknows.widget.FilterListView>
 </RelativeLayout>

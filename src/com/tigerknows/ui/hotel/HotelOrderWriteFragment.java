@@ -523,11 +523,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         listView.setAdapter(adapter);
         final Dialog dialog = Utility.showNormalDialog(mSphinx, 
                 mSphinx.getString(R.string.choose_room_howmany), 
-                null,
-                listView,
-                null,
-                null,
-                null);
+                listView);
         listView.setOnItemClickListener(new OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
@@ -549,11 +545,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
         final Dialog dialog = Utility.showNormalDialog(mSphinx, 
                 mSphinx.getString(R.string.choose_room_reserve), 
-                null,
-                listView,
-                null,
-                null,
-                null);
+                listView);
         listView.setOnItemClickListener(new OnItemClickListener(){
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){

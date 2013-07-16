@@ -46,14 +46,13 @@ public class SpringbackListView extends ListView {
     private boolean isRecoredHeader = false; 
     private boolean isRecoredFooter = false;   
   
-    private int headerContentWidth;  
     private int headerContentHeight;  
   
-    private int footerContentWidth;  
-    private int footerContentHeight;  
+    private int footerContentHeight = 0;  
     
     private boolean headerSpringback = false;
     private boolean footerSpringback = false;
+    private boolean normalFooterView = true;
   
     private int startY;  
     private int stateHeader = DONE;  
@@ -78,7 +77,6 @@ public class SpringbackListView extends ListView {
         measureView(headerView);  
   
         headerContentHeight = headerView.getMeasuredHeight();  
-        headerContentWidth = headerView.getMeasuredWidth();  
   
         headerView.setPadding(0, 0, 0, 0);  
         headerView.invalidate();  
@@ -95,12 +93,13 @@ public class SpringbackListView extends ListView {
     public void addFooterView(View v, boolean footerSpringback) {
         this.footerView = v;
         this.footerSpringback = footerSpringback;
+        this.normalFooterView = !footerSpringback;
         super.addFooterView(footerView); 
         if (this.footerSpringback) {
-            measureView(footerView);  
+            measureView(footerView);
+            footerView.setPadding(0, 0, 0, 0);
+            footerView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
             footerContentHeight = footerView.getMeasuredHeight();  
-            footerContentWidth = footerView.getMeasuredWidth();  
-            
             footerView.setPadding(0, -1 * footerContentHeight, 0, 0);  
             footerView.invalidate();  
             footerLoadintTxv = (TextView)footerView.findViewById(R.id.loading_txv);
@@ -126,7 +125,7 @@ public class SpringbackListView extends ListView {
                 startY = (int) event.getY();  
                 isRecoredHeader = true;  
             }
-            if ((footerSpringback && getLastVisiblePosition() == getCount()-1) && !isRecoredFooter) {  
+            if ((footerSpringback && getLastVisiblePosition() == getCount()-1) && !isRecoredFooter && normalFooterView == false) {  
                 startY = (int) event.getY();  
                 isRecoredFooter = true;  
             }
@@ -143,13 +142,13 @@ public class SpringbackListView extends ListView {
                     }  
                     if (stateHeader == PULL_TO_REFRESH) {  
     //                    stateHeader = DONE;  
-                        changeHeaderViewByState();  
+                        refreshViews();  
       
                         LogWrapper.d(TAG, "由下拉刷新状态到刷新完成状态");  
                     }  
                     if (stateHeader == RELEASE_TO_REFRESH) {  
                         stateHeader = REFRESHING;  
-                        changeHeaderViewByState();  
+                        refreshViews();  
                         onRefresh(true);  
       
                         LogWrapper.d(TAG, "由松开刷新状态，到刷新完成状态");  
@@ -158,20 +157,20 @@ public class SpringbackListView extends ListView {
       
                 isRecoredHeader = false;  
             }
-            if (footerSpringback && isRecoredFooter) {
+            if (footerSpringback && isRecoredFooter && normalFooterView == false) {
                 if (stateFooter != REFRESHING) {  
                     if (stateFooter == DONE) {  
                         LogWrapper.d(TAG, "什么都不做");  
                     }  
                     if (stateFooter == PULL_TO_REFRESH) {  
 //                        stateFooter = DONE;  
-                        changeHeaderViewByState();  
+                        refreshViews();  
       
                         LogWrapper.d(TAG, "由下拉刷新状态到刷新完成状态");  
                     }  
                     if (stateFooter == RELEASE_TO_REFRESH) {  
                         stateFooter = REFRESHING;  
-                        changeHeaderViewByState();  
+                        refreshViews();  
                         onRefresh(false);  
       
                         LogWrapper.d(TAG, "由松开刷新状态，到刷新完成状态");  
@@ -190,7 +189,7 @@ public class SpringbackListView extends ListView {
                 startY = tempY;  
                 isRecoredHeader = true;  
             }
-            if ((footerSpringback && getLastVisiblePosition() == getCount()-1) && !isRecoredFooter) {  
+            if ((footerSpringback && getLastVisiblePosition() == getCount()-1) && !isRecoredFooter && normalFooterView == false) {  
                 startY = tempY;  
                 isRecoredFooter = true;  
             }  
@@ -201,14 +200,14 @@ public class SpringbackListView extends ListView {
                     if ((tempY - startY < headerContentHeight)  
                             && (tempY - startY) > 0) {  
                         stateHeader = PULL_TO_REFRESH;  
-                        changeHeaderViewByState();  
+                        refreshViews();  
   
                         LogWrapper.d(TAG, "由松开刷新状态转变到下拉刷新状态");  
                     }  
                     // 一下子推到顶   
                     else if (tempY - startY <= 0) {  
                         stateHeader = DONE;  
-                        changeHeaderViewByState();  
+                        refreshViews();  
   
                         LogWrapper.d(TAG, "由松开刷新状态转变到done状态");  
                     }  
@@ -223,14 +222,14 @@ public class SpringbackListView extends ListView {
                     if (tempY - startY >= headerContentHeight) {  
                         stateHeader = RELEASE_TO_REFRESH;  
                         isBack = true;  
-                        changeHeaderViewByState();  
+                        refreshViews();  
   
                         LogWrapper.d(TAG, "由done或者下拉刷新状态转变到松开刷新");  
                     }  
                     // 上推到顶了   
                     else if (tempY - startY <= 0) {  
                         stateHeader = DONE;  
-                        changeHeaderViewByState();  
+                        refreshViews();  
   
                         LogWrapper.d(TAG, "由Done或者下拉刷新状态转变到done状态");  
                     }  
@@ -240,7 +239,7 @@ public class SpringbackListView extends ListView {
                 if (stateHeader == DONE) {  
                     if (tempY - startY > 0) {  
                         stateHeader = PULL_TO_REFRESH;  
-                        changeHeaderViewByState();  
+                        refreshViews();  
                         LogWrapper.d(TAG, "由Done状态转变到下拉刷新状态");  
                     }  
                 }  
@@ -259,7 +258,7 @@ public class SpringbackListView extends ListView {
                     headerView.invalidate();  
                 }  
             }
-            if (footerSpringback && stateFooter != REFRESHING && isRecoredFooter && tempY > 0 && tempY - startY < 0 && tempY - startY > -MaxSpace && footerView != null){
+            if (footerSpringback && stateFooter != REFRESHING && isRecoredFooter && tempY > 0 && tempY - startY < 0 && tempY - startY > -MaxSpace && footerView != null && normalFooterView == false){
                 
                 // 可以松开刷新了   
                 if (stateFooter == RELEASE_TO_REFRESH) {  
@@ -267,14 +266,14 @@ public class SpringbackListView extends ListView {
                     if ((tempY - startY > -footerContentHeight)  
                             && (tempY - startY) < 0) {  
                         stateFooter = PULL_TO_REFRESH;  
-                        changeHeaderViewByState();  
+                        refreshViews();  
   
                         LogWrapper.d(TAG, "由松开刷新状态转变到下拉刷新状态");  
                     }  
                     // 一下子推到顶   
                     else if (tempY - startY >= 0) {  
                         stateFooter = DONE;  
-                        changeHeaderViewByState();  
+                        refreshViews();  
   
                         LogWrapper.d(TAG, "由松开刷新状态转变到done状态");  
                     }  
@@ -289,14 +288,14 @@ public class SpringbackListView extends ListView {
                     if (tempY - startY <= -footerContentHeight) {  
                         stateFooter = RELEASE_TO_REFRESH;  
                         isBack = true;  
-                        changeHeaderViewByState();  
+                        refreshViews();  
   
                         LogWrapper.d(TAG, "由done或者下拉刷新状态转变到松开刷新");  
                     }  
                     // 上推到顶了   
                     else if (tempY - startY >= 0) {  
                         stateFooter = DONE;  
-                        changeHeaderViewByState();  
+                        refreshViews();  
   
                         LogWrapper.d(TAG, "由Done或者下拉刷新状态转变到done状态");  
                     }  
@@ -306,7 +305,7 @@ public class SpringbackListView extends ListView {
                 if (stateFooter == DONE) {  
                     if (tempY - startY < 0) {  
                         stateFooter = PULL_TO_REFRESH;  
-                        changeHeaderViewByState();  
+                        refreshViews();  
                     }  
                 }  
   
@@ -335,12 +334,11 @@ public class SpringbackListView extends ListView {
         } else {
             stateFooter = state;
         }
-        changeHeaderViewByState();
+        refreshViews();
     }
   
     // 当状态改变时候，调用该方法，以更新界面   
-    private void changeHeaderViewByState() {  
-        
+    private void refreshViews() {  
         if (headerView != null) {
         	LogWrapper.d(TAG,"Current header state: " + stateHeader);
             switch (stateHeader) {  
@@ -372,6 +370,10 @@ public class SpringbackListView extends ListView {
         	
         }
         if (footerView != null) {
+            if (this.normalFooterView) {
+                return;
+            }
+            
             switch (stateFooter) {  
                 case RELEASE_TO_REFRESH:  
                     if (footerLoadintTxv != null && footerProgressBar != null) {
@@ -433,7 +435,7 @@ public class SpringbackListView extends ListView {
         } else {
             stateFooter = DONE;
         }
-        changeHeaderViewByState();  
+        refreshViews();  
     }  
   
     private void onRefresh(boolean isHeader) {  
@@ -470,10 +472,10 @@ public class SpringbackListView extends ListView {
         this.footerSpringback = footerSpringback;
         if (footerSpringback) {
             this.stateFooter = PULL_TO_REFRESH;
-            changeHeaderViewByState();  
+            refreshViews();  
         } else {
             this.stateFooter = DONE;
-            changeHeaderViewByState();  
+            refreshViews();  
         }
     }
 

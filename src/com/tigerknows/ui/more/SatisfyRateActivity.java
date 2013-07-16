@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2010 pengwenyue@tigerknows.com
+ * Copyright (C) 2013 fengtianxiao@tigerknows.com
+ * 2013.07
  */
-
 package com.tigerknows.ui.more;
 
 import java.util.ArrayList;
@@ -9,12 +9,15 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.Toast;
@@ -24,6 +27,7 @@ import android.widget.TextView;
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
+import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseQuery;
@@ -31,9 +35,7 @@ import com.tigerknows.model.FeedbackUpload;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.util.Utility;
 
-/**
- * @author Feng TianXiao
- */
+
 public class SatisfyRateActivity extends BaseActivity implements View.OnClickListener{
     
 	private static final int NUM_OF_RATINGBAR = 7;
@@ -55,6 +57,7 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
 	    R.id.rate_6_txv,
 	    R.id.rate_7_txv
 	};
+	private Context mContext;
 
 	private RatingBar[] mSatisfyRbt;
 	private TextView[] mRateTxv;
@@ -65,6 +68,8 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
 	protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.SatisfyRate;
+        mContext = getBaseContext();
+        TKConfig.setPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, "yes");
         setContentView(R.layout.more_satisfy_rate);
     	mSatisfyRbt = new RatingBar[NUM_OF_RATINGBAR];
     	mRateTxv = new TextView[NUM_OF_RATINGBAR];
@@ -96,7 +101,6 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     	mLeftBtn.setOnClickListener(this);
     	for (int i=0; i<NUM_OF_RATINGBAR; i++){
     		final int j=i;
-    		LogWrapper.d("Trap", j+"");
     		mSatisfyRbt[j].setOnRatingBarChangeListener(new OnRatingBarChangeListener(){
 
 				@Override
@@ -113,6 +117,19 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
 					}
 				}
     		});
+    		mSatisfyRbt[j].setOnTouchListener(new OnTouchListener() {
+				
+				@Override
+				public boolean onTouch(View v, MotionEvent event) {
+					final int action = event.getAction();
+					switch (action & MotionEvent.ACTION_MASK){
+					case MotionEvent.ACTION_UP:
+						mActionLog.addAction(mActionTag + ActionLog.SatisfyRatingBar[j]);
+						break;
+					}
+					return false;
+				}
+			});
     	}
     }
     
@@ -122,7 +139,6 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     	for (int i=0; i<NUM_OF_RATINGBAR; i++){
     		if (Math.round(mSatisfyRbt[i].getRating())== 0){
     			status = false;
-    			break;
     		}else mChanged = true;
     	}
     	mSubmitBtn.setEnabled(status);
@@ -157,9 +173,10 @@ public class SatisfyRateActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onClick(View view) {
     	if(view.getId() == R.id.submit_btn){
+    		mActionLog.addAction(mActionTag + ActionLog.SatisfyRateSubmit);
     		submit();
     	}else if(view.getId() == R.id.left_btn){
-    		mActionLog.addAction(mActionTag, ActionLog.TitleLeftButton);
+    		mActionLog.addAction(mActionTag + ActionLog.TitleLeftButton);
     		if (showDiscardDialog() == false){
     			finish();
     		}

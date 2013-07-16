@@ -702,10 +702,7 @@ public class TrafficQueryFragment extends BaseFragment {
 		String start = mStart.getEdt().getText().toString().trim();
 		String end = mEnd.getEdt().getText().toString().trim();
 		
-		if (TextUtils.isEmpty(start) && TextUtils.isEmpty(end) ) {
-            mSphinx.showTip(R.string.forget_all_tip, Toast.LENGTH_SHORT);
-            return true;
-        } else if (TextUtils.isEmpty(start)) {
+        if (TextUtils.isEmpty(start)) {
             mSphinx.showTip(R.string.forget_start_tip, Toast.LENGTH_SHORT);
             return true;
         } else if (TextUtils.isEmpty(end)) {
@@ -1017,11 +1014,7 @@ public class TrafficQueryFragment extends BaseFragment {
         mActionLog.addAction(ActionLog.TrafficAlternative);
         final Dialog dialog = Utility.showNormalDialog(mSphinx,
                 mSphinx.getString(start ? R.string.select_start_station : R.string.select_end_station),
-                null,
-                listView,
-                null,
-                null,
-                null);
+                listView);
         
         listView.setOnItemClickListener(new OnItemClickListener() {
 
