@@ -14,6 +14,7 @@ import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.TKLocationManager;
 import com.tigerknows.model.response.Appendix;
 import com.tigerknows.model.response.PositionCake;
 import com.tigerknows.model.response.ResponseCode;
@@ -278,6 +279,9 @@ public class LocationQuery extends BaseQuery {
      * @return
      */
     public Location getLocation() {
+        if (TKLocationManager.UnallowedLocation) {
+            return null;
+        }
         synchronized (this) {
             LocationParameter locationParameter = makeLocationParameter();
     

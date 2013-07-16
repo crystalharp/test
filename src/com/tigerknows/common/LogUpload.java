@@ -180,23 +180,13 @@ public class LogUpload {
                 return;
             }
             
-            boolean upload = false;
-            if (mLogFileLength > WRITE_FILE_SIZE) {
-                upload = true;
-            }
-            
-            if (upload == false) {
-                File file = new File(mLogFilePath);
-                long lastModified = file.lastModified();
-                long current = System.currentTimeMillis();
-                if (current - lastModified >= TIME_DAY) {
-                    upload = true;
-                } 
-            }
-            
-            if (upload) {
+            File file = new File(mLogFilePath);
+            long lastModified = file.lastModified();
+            long current = System.currentTimeMillis();
+            if (current - lastModified >= TIME_DAY) {
                 upload();
-            }
+            } 
+            
         }
     }
     

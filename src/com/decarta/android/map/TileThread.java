@@ -34,9 +34,13 @@ public class TileThread extends Thread {
 	public static void stopAllThreads(){
 		stop=true;
 	}
+    
+    public static boolean isStop() {
+        return stop;
+    }
 	
 	private int sequence;
-	private TilesView tilesView;
+	TilesView tilesView;
 	private boolean blocked=true;
 	
 	public TileThread(int sequence,TilesView tilesView) {

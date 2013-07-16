@@ -1134,6 +1134,12 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 		    mMapView.refreshMap();
 		}
 		interceptTouchEnd();
+		
+		boolean ensureThreadsRunning = mMapView.ensureThreadRunning();
+		// TODO mTrafficQueryFragment实例的成员变量在地图的背景线程被重新生成后会造成丢失的问题
+		if (ensureThreadsRunning) {
+		    mTrafficQueryFragment = null;
+		}
 
         Globals.setConnectionFast(Utility.isConnectionFast(this));
         Globals.getAsyncImageLoader().onResume();
@@ -1849,6 +1855,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         BaseFragment baseFragment = getFragment(id);
         if (baseFragment != null) {
             baseFragment.onPause();
+        }
+        if (mTitleFragment != null) {
+            mTitleFragment.dismissPopupWindow();
         }
 
         if (null != mMapView && null != mMapEngine) {
@@ -4206,17 +4215,23 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             mHandler.removeCallbacks(mLocationResponseRun);
             mHandler.postDelayed(mLocationResponseRun, 20000);
         } else {
-            if (mMyLocation.mode == MyLocation.MODE_NONE || mMyLocation.mode == MyLocation.MODE_NORMAL) {
-                showTip(getString(R.string.location_success, Utility.formatMeterString((int)myLocationCityInfo.getPosition().getAccuracy())), 3000);
-                updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
-                int zoomLevel = (int)mMapView.getZoomLevel();
-                mMapView.zoomTo(zoomLevel < TKConfig.ZOOM_LEVEL_LOCATION ? TKConfig.ZOOM_LEVEL_LOCATION : zoomLevel, myLocationCityInfo.getPosition());
+            try {
+                if (mMyLocation.mode == MyLocation.MODE_NONE || mMyLocation.mode == MyLocation.MODE_NORMAL) {
+                    showTip(getString(R.string.location_success, Utility.formatMeterString((int)myLocationCityInfo.getPosition().getAccuracy())), 3000);
+                    updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
+                    int zoomLevel = (int)mMapView.getZoomLevel();
+                    mMapView.zoomTo(zoomLevel < TKConfig.ZOOM_LEVEL_LOCATION ? TKConfig.ZOOM_LEVEL_LOCATION : zoomLevel, myLocationCityInfo.getPosition());
+                } else if (mMyLocation.mode == MyLocation.MODE_NAVIGATION && mSensorOrientation) {
+                    updateLoactionButtonState(MyLocation.MODE_ROTATION);
+                    mMapView.centerOnPosition(myLocationCityInfo.getPosition());
+                } else if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
+                    updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
+                    mMapView.centerOnPosition(myLocationCityInfo.getPosition());
+                }
                 mMapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, true);
-            } else if (mMyLocation.mode == MyLocation.MODE_NAVIGATION && mSensorOrientation) {
-                updateLoactionButtonState(MyLocation.MODE_ROTATION);
-            } else if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
-                updateLoactionButtonState(MyLocation.MODE_NAVIGATION);
-                mMapView.showOverlay(ItemizedOverlay.MY_LOCATION_OVERLAY, true);
+            } catch (APIException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
             }
         }
     }
@@ -4242,15 +4257,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             }
             mLocationBtn.setImageDrawable(null);
             
-            if (mMyLocation.mode == MyLocation.MODE_NORMAL) {
-                compass.setVisible(false);
-                if (uiStackSize() > 0)
-                    mCompassView.setVisibility(View.VISIBLE);
-                mMapView.refreshMap();
-                resid = R.drawable.btn_location_location;
-                rotateZ = 365;
-                mMapView.rotateZToDegree(0);
-            } else if (mMyLocation.mode == MyLocation.MODE_NAVIGATION) {
+            if (mMyLocation.mode == MyLocation.MODE_NAVIGATION) {
                 compass.setVisible(false);
                 if (uiStackSize() > 0)
                     mCompassView.setVisibility(View.VISIBLE);
@@ -4259,7 +4266,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 mMapView.rotateZToDegree(0);
                 resid = R.drawable.btn_location_navigation;
                 showInfoWindow(mMyLocation);
-            } else {
+            } else if (mMyLocation.mode == MyLocation.MODE_ROTATION) {
             	//只有这种情况下要指南针。
                 compass.setVisible(true);
                 if (uiStackSize() > 0)
@@ -4269,6 +4276,14 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 rotateZ = 365;
                 mMapView.refreshMap();
                 resid = R.drawable.btn_location_compass;
+            } else {
+                compass.setVisible(false);
+                if (uiStackSize() > 0)
+                    mCompassView.setVisibility(View.VISIBLE);
+                mMapView.refreshMap();
+                resid = R.drawable.btn_location_location;
+                rotateZ = 365;
+                mMapView.rotateZToDegree(0);
             }
             mLocationBtn.setBackgroundResource(resid);
         }

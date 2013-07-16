@@ -359,6 +359,11 @@ public class InfoWindow implements com.decarta.android.event.EventSource{
     		}
     		
     		ViewGroup ivg=viewGroup;
+            if (backgroundColor == BACKGROUND_COLOR_CLICKED) {
+                ivg.setBackgroundResource(R.drawable.btn_bubble_focused);
+            } else {
+                ivg.setBackgroundResource(R.drawable.btn_bubble_normal);
+            }
     		ivg.measure(MeasureSpec.UNSPECIFIED, MeasureSpec.UNSPECIFIED);
     		float infoWindowWidth=ivg.getMeasuredWidth()+2*InfoWindow.INFO_BORDER_SIZE;
     		float infoWindowHeight=ivg.getMeasuredHeight()+2*InfoWindow.INFO_BORDER_SIZE;

@@ -1133,4 +1133,8 @@ public class MapView extends RelativeLayout implements
         public ItemizedOverlay itemizedOverlay;
         public Shape shape;
     }
+    
+    public boolean ensureThreadRunning() {
+        return tilesView.ensureThreadsRunning();
+    }
 }

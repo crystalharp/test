@@ -674,7 +674,6 @@ public class BaseQueryTest {
         lunchTestLayout.setVisibility(TKConfig.LaunchTest ? View.VISIBLE : View.GONE);
         
         locationChb.setText("Specific Location(lat,lon,accuracy)");
-        locationChb.setChecked(TKLocationManager.UnallowedLocation);
         locationChb.setOnClickListener(new OnClickListener() {
             
             @Override
@@ -682,8 +681,15 @@ public class BaseQueryTest {
                 locationEdt.setVisibility(locationChb.isChecked() ? View.VISIBLE : View.GONE);
             }
         });
-        locationEdt.setText("39.904156,116.397764,1000");
-        locationEdt.setVisibility(View.GONE);
+        if (LocationService.LOCATION_FOR_TEST != null) {
+            locationChb.setChecked(true);
+            locationEdt.setText(LocationService.LOCATION_FOR_TEST.getLatitude() + "," + LocationService.LOCATION_FOR_TEST.getLongitude()  + "," + LocationService.LOCATION_FOR_TEST.getAccuracy());
+            locationEdt.setVisibility(View.VISIBLE);
+        } else {
+            locationChb.setChecked(false);
+            locationEdt.setText("39.904156,116.397764,1000");
+            locationEdt.setVisibility(View.GONE);
+        }
         
         updateSoftTip.setText("clear updateSoftTip");
         updateSoftTip.setOnClickListener(new OnClickListener() {

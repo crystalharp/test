@@ -368,6 +368,12 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     }
     
     @Override
+    protected void onPause() {
+        super.onPause();
+        dismissPopupWindow();
+    }
+    
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK
                 && event.getAction() == KeyEvent.ACTION_DOWN) {
@@ -852,7 +858,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
 
                     String areaCode = MapEngine.getAreaCodeByCityId(cityInfo.getId())+"-";
                     String lastAreaCode = mTelephoneEdt.getEditableText().toString();
-                    if (lastAreaCode.equals(mLastAreaCode)) {
+                    if (lastAreaCode.equals(mLastAreaCode) || TextUtils.isEmpty(lastAreaCode)) {
                         mTelephoneEdt.setText(areaCode);
                         mTelephoneEdt.setSelection(areaCode.length());
                         mLastAreaCode = areaCode;

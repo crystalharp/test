@@ -1404,7 +1404,7 @@ public class MapEngine {
                 for(int i = lines.length-1; i >= 0; i--) {
                     String[] line = lines[i].split(" ");
                     if (line[0].equals(token)) {
-                        result = line[1];
+                        result = line[1].trim();
                     }
                 }
             } catch (Exception e) {

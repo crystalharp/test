@@ -241,6 +241,7 @@ public class BaseFragment extends LinearLayout {
         if (id != R.id.view_invalid
                 && id != R.id.view_title
                 && id != R.id.view_menu) {
+            dismissPopupWindow();
             mSphinx.hideSoftInput();
             if (!TextUtils.isEmpty(mActionTag)) {
                 mActionLog.addAction(mActionTag + ActionLog.Dismiss);

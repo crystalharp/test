@@ -31,8 +31,12 @@ public class MapTextThread extends Thread {
 	public static void stopThread(){
 		stop=true;
 	}
+    
+    public static boolean isStop() {
+        return stop;
+    }
 	
-	private TilesView tilesView;
+	TilesView tilesView;
 	private boolean blocked=true;
 	
 	public MapTextThread(TilesView tilesView) {

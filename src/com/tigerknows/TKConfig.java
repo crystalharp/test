@@ -877,6 +877,24 @@ public class TKConfig {
         return list;
     }
     
+    public static String getConnectivityType(Context context) {
+        String result = "none";
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            if (networkInfo != null) {
+                int type = networkInfo.getType();
+                if (type == ConnectivityManager.TYPE_WIFI) {
+                    return "WIFI";
+                } else {
+                    result = getRadioType();
+                }
+            }
+        }
+        
+        return result;
+    }
+    
     /**
      * 获取设备连接的数据网络类型
      * @return
