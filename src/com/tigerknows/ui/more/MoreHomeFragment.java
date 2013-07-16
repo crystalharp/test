@@ -9,7 +9,6 @@ import java.util.Calendar;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -24,7 +23,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -49,7 +47,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     
     public MoreHomeFragment(Sphinx sphinx) {
         super(sphinx);
-        // TODO Auto-generated constructor stub
     }
 
     static final String TAG = "MoreFragment";
@@ -93,6 +90,22 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	mDiaoyanQueryResponse = diaoyanQueryResponse;
     }
     
+    private Runnable mLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+            mSphinx.getHandler().removeCallbacks(mActualLoadedDrawableRun);
+            mSphinx.getHandler().post(mActualLoadedDrawableRun);
+        }
+    };
+    
+    private Runnable mActualLoadedDrawableRun = new Runnable() {
+        
+        @Override
+        public void run() {
+        	// TODO: 
+        }
+    };
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -139,7 +152,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mTitleBtn.setText(R.string.more);
         mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setEnabled(true);
-        mRightBtn.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_setting));
+        mRightBtn.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_settings));
         if (mDismissed) {
             mListLsv.setSelection(0);
         }
@@ -175,7 +188,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             calendar.set(Integer.parseInt(strs[0]), Integer.parseInt(strs[1])-1, Integer.parseInt(strs[2]));
             out = CalendarUtil.compareDate(calendar, Calendar.getInstance(), 0);
             } catch (Exception e) {
-                // TODO: handle exception
             }
         }
         

@@ -5,8 +5,6 @@ import java.util.regex.Pattern;
 
 public class ValidateUtil {
 
-	private static final String TAG = "ValidateUtil";
-	
 	// 电话号码格式: 11个数字
 	public static boolean isValidPhone(String phone) {
         Pattern pattern = Pattern.compile("^\\d{11}$");

@@ -129,7 +129,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         return mRootView;
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public void dismiss() {
         super.dismiss();

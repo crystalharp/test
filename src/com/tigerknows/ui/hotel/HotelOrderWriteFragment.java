@@ -12,7 +12,6 @@ import java.util.List;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -59,7 +58,6 @@ import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.provider.HotelOrderTable;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.user.UserLoginActivity;
 import com.tigerknows.util.CalendarUtil;
 import com.tigerknows.util.Utility;
 import com.tigerknows.util.ValidateUtil;
@@ -69,7 +67,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
     public HotelOrderWriteFragment(Sphinx sphinx) {
         super(sphinx);
-        // TODO Auto-generated constructor stub
+        // Auto-generated constructor stub
     }
     
     static final String TAG = "HotelOrderWriteFragment";
@@ -393,7 +391,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
     }
 
     private void exit() {
-        // TODO Auto-generated method stub
+        // Auto-generated method stub
         
     }
     
@@ -453,7 +451,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
         public HotelRoomHowmanyAdapter(Context context, List<String> list) {
             super(context, list);
-            // TODO Auto-generated constructor stub
+            // Auto-generated constructor stub
         }
         @Override
         public View getView(final int position, View convertView, ViewGroup parent){
@@ -488,8 +486,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
 
             ImageView roomHowmanyIconImv = (ImageView) view.findViewById(R.id.room_reserve_icon_imv);
             TextView roomReserveTxv = (TextView) view.findViewById(R.id.room_reserve_txv);
-            TextView needCreditTxv = (TextView) view.findViewById(R.id.need_credit_txv);
-            
             RetentionTime rt = getItem(position);
             //roomReserveTxv.setText(rt.getTime());
             if(rt.getNeed() == 1){
@@ -653,10 +649,10 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             try {
                 hotelOrderTable.write(mHotelOrder);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
+                // Auto-generated catch block
                 e.printStackTrace();
             } catch (APIException e) {
-                // TODO Auto-generated catch block
+                // Auto-generated catch block
                 e.printStackTrace();
             } finally {
                 hotelOrderTable.close();
@@ -759,7 +755,6 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
                 RetentionTime rt = new RetentionTime(data);
                 list.add(rt);
             } catch (APIException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }

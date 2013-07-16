@@ -2,7 +2,6 @@ package com.tigerknows.ui.hotel;
 
 import java.util.Hashtable;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.Selection;
 import android.text.TextUtils;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;

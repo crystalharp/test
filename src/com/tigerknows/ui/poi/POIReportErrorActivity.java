@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -23,7 +22,6 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,7 +31,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
@@ -96,8 +93,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     private View vErreportMain = null;
     private View vErreportDetail = null;
     
-    private Context mContext;
-    
     private LinearLayout mBodyLly;
     private LinearLayout mTelLly;
     private RadioGroup mTelRgp;
@@ -146,8 +141,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     
     private static List<Object> sTargetList = new ArrayList<Object>();
 
-    private static final String TAG = "ErrorRecovery";
-    
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -162,7 +155,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         mChecked = HOME_PAGE;
         mPage = HOME_PAGE;
         
-        mContext = getBaseContext();
+        getBaseContext();
         
         synchronized (sTargetList) {
             int size = sTargetList.size();
