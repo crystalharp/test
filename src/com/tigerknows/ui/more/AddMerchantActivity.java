@@ -368,6 +368,12 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
     }
     
     @Override
+    protected void onPause() {
+        super.onPause();
+        dismissPopupWindow();
+    }
+    
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK
                 && event.getAction() == KeyEvent.ACTION_DOWN) {
