@@ -143,6 +143,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mMenuFragment.updateMenuStatus(R.id.more_btn);
         mLeftBtn.setVisibility(View.INVISIBLE);
         mTitleBtn.setText(R.string.more);
+        mRightBtn = mSphinx.getTitleFragment().getRightTxv();
+        mRightBtn.setOnClickListener(this);
         mRightBtn.setVisibility(View.VISIBLE);
         mRightBtn.setEnabled(true);
         mRightBtn.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_settings));
