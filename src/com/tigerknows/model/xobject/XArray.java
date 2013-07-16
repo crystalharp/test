@@ -70,7 +70,7 @@ public class XArray<T> extends XObject {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     protected static XArray readContent(ByteReader reader) throws IOException {
         int itemSize = (int) reader.readInt();
         XArray xArray = new XArray();
@@ -121,7 +121,7 @@ public class XArray<T> extends XObject {
         return xarray;
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({ "rawtypes" })
     public boolean equals(Object object) {
         if (this == object) {
             return true;

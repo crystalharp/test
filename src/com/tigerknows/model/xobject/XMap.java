@@ -74,8 +74,8 @@ public class XMap extends XObject {
         return objects.get(key);
     }
     
-    @SuppressWarnings("unchecked")
-    public XArray getXArray(byte key){
+    @SuppressWarnings("rawtypes")
+	public XArray getXArray(byte key){
         checkKey(key);
         return objects.get(key).toXArray();
     }
