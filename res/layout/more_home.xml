@@ -45,9 +45,10 @@
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/list_header"
-                    android:padding="8dp"
-                    android:drawablePadding="8dp"
-                    android:drawableLeft="@drawable/ic_about_us"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingRight="8dp"
+                    android:paddingLeft="16dp"
                     android:textColor="@color/black_dark"
                     android:textSize="16sp"
                     android:text="@string/login_or_regist"
@@ -62,7 +63,7 @@
                     android:paddingRight="26dp"
                     android:singleLine="true"
                     android:ellipsize="end"
-                    android:textColor="@color/blue"
+                    android:textColor="@color/orange"
                     android:gravity="center"
                     />
             </RelativeLayout>
@@ -74,17 +75,16 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/traffic_btn"
-                android:layout_centerInParent="true"
                 >
                 <Button
                     android:id="@+id/change_city_btn"
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/list_middle"
-                    android:padding="8dp"
-                    android:drawablePadding="8dp"
-                    android:drawableLeft="@drawable/ic_change_city"
+                    android:paddingTop="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingRight="8dp"
+                    android:paddingLeft="16dp"
                     android:textColor="@color/black_dark"
                     android:textSize="16sp"
                     android:text="@string/change_city"
@@ -99,7 +99,7 @@
                     android:paddingRight="26dp"
                     android:singleLine="true"
                     android:ellipsize="end"
-                    android:textColor="@color/blue"
+                    android:textColor="@color/orange"
                     android:gravity="center"
                     />
             </RelativeLayout>
@@ -109,39 +109,19 @@
                 android:background="@drawable/bg_line_split"
                 />
             <Button
-                android:id="@+id/settings_btn"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_footer"
-                android:padding="8dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_setting"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
-                android:text="@string/system_settings"
-                android:gravity="left|center_vertical"
-                />
-        </LinearLayout>
-                
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="4dp"
-            >
-            <Button
-                android:id="@+id/download_map_btn"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_header"
-                android:drawablePadding="8dp"
-                android:padding="8dp"
-                android:drawableLeft="@drawable/ic_download_map"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
-                android:text="@string/download_map"
-                android:gravity="left|center_vertical"
-                />
+	            android:id="@+id/download_map_btn"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:background="@drawable/list_middle"
+	            android:paddingTop="8dp"
+	            android:paddingBottom="8dp"
+	            android:paddingRight="8dp"
+	            android:paddingLeft="16dp"
+	            android:textColor="@color/black_dark"
+	            android:textSize="16sp"
+	            android:text="@string/download_map"
+	            android:gravity="left|center_vertical"
+	            />
             <ImageView
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -152,9 +132,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/list_middle"
-                android:padding="8dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_favorite_more"
+	            android:paddingTop="8dp"
+	            android:paddingBottom="8dp"
+	            android:paddingRight="8dp"
+	            android:paddingLeft="16dp"
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"
                 android:text="@string/favorite"
@@ -170,9 +151,10 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/list_middle"
-                android:padding="8dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_history"
+	            android:paddingTop="8dp"
+	            android:paddingBottom="8dp"
+	            android:paddingRight="8dp"
+	            android:paddingLeft="16dp"
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"
                 android:text="@string/history_browse"
@@ -189,85 +171,36 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:background="@drawable/list_footer"
-                android:padding="8dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_add_merchant"
+	            android:paddingTop="8dp"
+	            android:paddingBottom="8dp"
+	            android:paddingRight="8dp"
+	            android:paddingLeft="16dp"
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"
                 android:text="@string/add_merchant"
                 android:gravity="left|center_vertical"
                 />
         </LinearLayout>
+
                 
         <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
+            android:layout_marginBottom="8dp"
             >
-            <Button
-                android:id="@+id/app_recommend_btn"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_header"
-                android:padding="8dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_app_recommend"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
-                android:text="@string/app_recommend"
-                android:gravity="left|center_vertical"
-                />
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                />
             <Button
                 android:id="@+id/satisfy_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_middle"
-                android:padding="8dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_satisfy_rate"
+                android:background="@drawable/list_header"
+	            android:paddingTop="8dp"
+	            android:paddingBottom="8dp"
+	            android:paddingRight="8dp"
+	            android:paddingLeft="16dp"
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"
-                android:text="@string/satisfy_rate"
-                android:gravity="left|center_vertical"/>
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                />
-            <Button
-                android:id="@+id/feedback_btn"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_middle"
-                android:padding="8dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_feedback"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
-                android:text="@string/feedback"
-                android:gravity="left|center_vertical"/>
-            <ImageView
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_line_split"
-                />
-
-            <Button
-                android:id="@+id/about_btn"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_middle"
-                android:padding="8dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_about_us"
-                android:textColor="@color/black_dark"
-                android:textSize="16sp"
-                android:text="@string/about_us"
+                android:text="@string/satisfy_rate_more"
                 android:gravity="left|center_vertical"
                 />
             <ImageView
@@ -280,35 +213,66 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/list_middle"
-                android:padding="8dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_give_favourable_comment"
+	            android:paddingTop="8dp"
+	            android:paddingBottom="8dp"
+	            android:paddingRight="8dp"
+	            android:paddingLeft="16dp"
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"
                 android:text="@string/give_favourable_comment"
                 android:gravity="left|center_vertical"
                 />
-            <ImageView
-                android:id="@+id/give_favourable_comment_imv"
+
+            <ImageView android:id="@+id/give_favourable_comment_imv"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_line_split"
                 />
             <Button
-                android:id="@+id/help_btn"
+                android:id="@+id/feedback_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_footer"
+	            android:paddingTop="8dp"
+	            android:paddingBottom="8dp"
+	            android:paddingRight="8dp"
+	            android:paddingLeft="16dp"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/feedback"
+                android:gravity="left|center_vertical"/>
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            >
+            <LinearLayout 
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/list_header"
+                >
+            </LinearLayout>       
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                />
+            <Button
+                android:id="@+id/app_recommend_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:background="@drawable/list_footer"
                 android:padding="8dp"
-                android:layout_marginBottom="4dp"
-                android:drawablePadding="8dp"
-                android:drawableLeft="@drawable/ic_help"
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"
-                android:text="@string/help"
-                android:gravity="left|center_vertical"
+                android:text="@string/app_recommend_more"
+                android:gravity="center"
                 />
         </LinearLayout>
+
         
     </LinearLayout>
 </RelativeLayout>

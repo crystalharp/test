@@ -204,6 +204,7 @@
     <string name="upgrade_manual">手动更新</string>
     <string name="download_map">下载地图</string>
     <string name="app_recommend">你可能喜欢的应用</string>
+    <string name="app_recommend_more">更多应用</string>
     <string name="feedback">意见反馈</string>
     <string name="help">帮助</string>
     <string name="about_us">关于我们</string>
@@ -211,7 +212,7 @@
     <string name="recommend_tencent">腾讯应用宝</string>
     <string name="login_or_regist">登录/注册</string>
     <string name="user_home">个人中心</string>
-    <string name="give_favourable_comment">给个好评鼓励我们</string>
+    <string name="give_favourable_comment">给个好评吧！</string>
     
     <string name="settings_open_gps">开启GPS（卫星定位）</string>
     <string name="settings_close_gps">关闭GPS（卫星定位）</string>
@@ -1198,6 +1199,7 @@
 <!-- POI Error Recovery End -->
 
 <!-- Satisfy Rate Start -->
+    <string name="satisfy_rate_more">对我们满意吗？</string>
     <string name="satisfy_rate">满意度评分</string>
     <string name="satisfy_note">你对老虎宝典的满意度评分是：</string>
     <string name="satisfy_a">搜索结果</string>

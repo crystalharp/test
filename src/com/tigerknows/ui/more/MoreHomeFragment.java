@@ -68,12 +68,9 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private Button mAppRecommendBtn;
     private Button mFavoriteBtn;
     private Button mHistoryBrowseBtn;
-    private Button mSettingsBtn;
     private Button mSatisfyRateBtn;
     private Button mFeedbackBtn;
     private Button mAddMerchantBtn;
-    private Button mHelpBtn;
-    private Button mAboutBtn;
     private Button mGiveFavourableCommentBtn;
     private View mGiveFavourableCommentImv;
     
@@ -112,7 +109,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         View headerview = mLayoutInflater.inflate(R.layout.more_home, mListLsv, false);
         mListLsv.addHeaderView(headerview);
         mListLsv.setAdapter(null);
-        
+    	mRightBtn = mSphinx.getTitleFragment().getRightTxv();        
         findViews();        
 
         setListener();
@@ -120,7 +117,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         if (TKConfig.sSPREADER.startsWith(TKConfig.SPREADER_TENCENT)) {
             mAppRecommendBtn.setText(R.string.recommend_tencent);
         } else {
-            mAppRecommendBtn.setText(R.string.app_recommend);
+            mAppRecommendBtn.setText(R.string.app_recommend_more);
         }
         
         if (mSphinx.getPackageManager().queryIntentActivities(makeGiveFavourableIntent(), PackageManager.MATCH_DEFAULT_ONLY).size() > 0) {
@@ -140,7 +137,9 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mMenuFragment.updateMenuStatus(R.id.more_btn);
         mLeftBtn.setVisibility(View.INVISIBLE);
         mTitleBtn.setText(R.string.more);
-        mRightBtn.setVisibility(View.INVISIBLE);
+        mRightBtn.setVisibility(View.VISIBLE);
+        mRightBtn.setEnabled(true);
+        mRightBtn.setBackgroundDrawable(getResources().getDrawable(R.drawable.ic_setting));
         if (mDismissed) {
             mListLsv.setSelection(0);
         }
@@ -148,7 +147,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mMenuFragment.display();
         
         refreshUserEntrance();
-        refreshSatisfyRate();
         refreshMoreBtn();
         refreshCity(Globals.getCurrentCityInfo().getCName());
     }
@@ -240,23 +238,20 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mUserNameTxv = (TextView) mRootView.findViewById(R.id.user_name_txv);
         mMessageBtn = (Button)mRootView.findViewById(R.id.message_btn);
         mUserBtn = (Button)mRootView.findViewById(R.id.user_btn);
-
         mChangeCityBtn = (Button)mRootView.findViewById(R.id.change_city_btn);
         mDownloadMapBtn = (Button)mRootView.findViewById(R.id.download_map_btn);
         mAppRecommendBtn = (Button)mRootView.findViewById(R.id.app_recommend_btn);
         mFavoriteBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
         mHistoryBrowseBtn = (Button)mRootView.findViewById(R.id.history_browse_btn);
-        mSettingsBtn = (Button)mRootView.findViewById(R.id.settings_btn);
         mSatisfyRateBtn = (Button)mRootView.findViewById(R.id.satisfy_btn);
         mFeedbackBtn = (Button)mRootView.findViewById(R.id.feedback_btn);
         mAddMerchantBtn = (Button)mRootView.findViewById(R.id.add_merchant_btn);
-        mHelpBtn = (Button)mRootView.findViewById(R.id.help_btn);
-        mAboutBtn = (Button)mRootView.findViewById(R.id.about_btn);
         mGiveFavourableCommentBtn = (Button)mRootView.findViewById(R.id.give_favourable_comment_btn);
         mGiveFavourableCommentImv = mRootView.findViewById(R.id.give_favourable_comment_imv);
     }
     
     protected void setListener() {
+    	mRightBtn.setOnClickListener(this);
         mMessageBtn.setOnClickListener(this);
         mUserBtn.setOnClickListener(this);
         mChangeCityBtn.setOnClickListener(this);
@@ -264,12 +259,9 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mAppRecommendBtn.setOnClickListener(this);
         mFavoriteBtn.setOnClickListener(this);
         mHistoryBrowseBtn.setOnClickListener(this);
-        mSettingsBtn.setOnClickListener(this);
         mSatisfyRateBtn.setOnClickListener(this);
         mFeedbackBtn.setOnClickListener(this);
         mAddMerchantBtn.setOnClickListener(this);
-        mHelpBtn.setOnClickListener(this);
-        mAboutBtn.setOnClickListener(this);
         mGiveFavourableCommentBtn.setOnClickListener(this);
     }
 
@@ -336,7 +328,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 mActionLog.addAction(mActionTag +  ActionLog.MoreHistory);
                 mSphinx.showView(R.id.view_more_history);
                 break;
-            case R.id.settings_btn:
+            case R.id.right_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreSetting);
                 mSphinx.showView(R.id.activity_more_setting);
                 break;
@@ -352,15 +344,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 mActionLog.addAction(mActionTag +  ActionLog.MoreAddMerchant);
                 mSphinx.showView(R.id.activity_more_add_merchant);
                 break;
-            case R.id.help_btn:
-                mActionLog.addAction(mActionTag +  ActionLog.MoreHelp);
-                mSphinx.showView(R.id.activity_more_help);
-                break;
-            case R.id.about_btn:
-                mActionLog.addAction(mActionTag +  ActionLog.MoreAboutUs);
-                mSphinx.showView(R.id.activity_more_about_us);
-                break;
-                
             case R.id.give_favourable_comment_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreGiveFavourableComment);
                 mSphinx.startActivity(makeGiveFavourableIntent());  
@@ -389,17 +372,11 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private void refreshUserEntrance() {
     	if (TextUtils.isEmpty(Globals.g_Session_Id) == false) {
         	mUserBtn.setText(mContext.getString(R.string.user_home));
-        	Drawable[] drawables = mUserBtn.getCompoundDrawables();
-        	drawables[0] = mContext.getResources().getDrawable(R.drawable.ic_user_home);
-        	drawables[0].setBounds(0, 0, drawables[0].getIntrinsicWidth(), drawables[0].getIntrinsicHeight());
-        	mUserBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
-        	mUserBtn.setCompoundDrawablePadding(Utility.dip2px(mContext, 10));
         	mUserNameTxv.setMaxWidth(mContext.getResources().getDisplayMetrics().widthPixels -
         			mUserBtn.getPaddingLeft() -
         			mUserBtn.getPaddingRight() -
-        			drawables[0].getIntrinsicWidth() - 
         			(int)mUserBtn.getTextSize() * 4 -
-        			Utility.dip2px(mContext, 28));
+        			Utility.dip2px(mContext, 8));
         	if (Globals.g_User != null) {
         		String nickNameText = Globals.g_User.getNickName();
             	mUserNameTxv.setText(nickNameText);
@@ -407,25 +384,11 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	}
         } else {
         	mUserBtn.setText(mContext.getString(R.string.login_or_regist));
-        	Drawable[] drawables = mUserBtn.getCompoundDrawables();
-        	drawables[0] = mContext.getResources().getDrawable(R.drawable.ic_login_regist);
-        	drawables[0].setBounds(0, 0, drawables[0].getIntrinsicWidth(), drawables[0].getIntrinsicHeight());
-        	mUserBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
         	mUserNameTxv.setVisibility(View.GONE);
         }
     }
     
-    private void refreshSatisfyRate() {
-    	if (TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
-    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
-    		drawables[2] = mContext.getResources().getDrawable(R.drawable.ic_satisfy_new);
-    		drawables[2].setBounds(0, 0, drawables[2].getIntrinsicWidth(), drawables[2].getIntrinsicHeight());
-    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
-    	}else{
-    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
-    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], null, drawables[3]);
-    	}
-    }
+
     
     private void setFragmentMessage(int messageType) {
         if (messageType == MESSAGE_TYPE_NONE) {
