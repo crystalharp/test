@@ -232,6 +232,11 @@ public class TKConfig {
     public static boolean ENABLE_TALKINGDATA = false;
     
     /**
+     * 是否在客户端检测发送请求的参数（各个Query中的checkParameter函数）
+     */
+    public static boolean CheckParameters = true;
+    
+    /**
      * IMSI(International Mobile Subscriber Identity)，国际移动用户标识号，是TD系统分给用户的唯一标识号，它存储在SIM卡、HLR/VLR中，最多由15个数字组成
      * 当前数据网络连接的是wifi时，则在IMSI后加上后缀@wifi
      */

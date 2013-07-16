@@ -524,12 +524,14 @@ public abstract class BaseQuery {
     public void query() {
         statusCode = STATUS_CODE_NONE;
         appendice.clear();
-        try {
-            checkRequestParameters();
-        } catch (APIException e) {
-            e.printStackTrace();
-            statusCode = STATUS_CODE_MISSING_REQUEST_PARAMETER;
-            return;
+        if (TKConfig.CheckParameters) {
+            try {
+                checkRequestParameters();
+            } catch (APIException e) {
+                e.printStackTrace();
+                statusCode = STATUS_CODE_MISSING_REQUEST_PARAMETER;
+                return;
+            }
         }
         
         makeRequestParameters();
@@ -899,9 +901,11 @@ public abstract class BaseQuery {
      * @param key
      * @param value
      */
-    public final void addParameter(String key, String value) {
-        if (key != null) {
+    public final void addParameter(String key, String value) throws APIException {
+        if (key != null && !key.equals("")) {
             criteria.put(key, value);
+        } else {
+            throw APIException.wrapToMissingRequestParameterException(key);
         }
     }
     
