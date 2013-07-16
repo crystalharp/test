@@ -514,7 +514,7 @@ public final class DataQuery extends BaseQuery {
             if (criteria.containsKey(SERVER_PARAMETER_UUID) && criteria.containsKey(SERVER_PARAMETER_INDEX)) {
                 String index = criteria.get(SERVER_PARAMETER_INDEX);
                 String uuid = criteria.get(SERVER_PARAMETER_UUID);
-                replaceParameter(SERVER_PARAMETER_UUID, uuid+"_"+index);
+                addParameter(SERVER_PARAMETER_UUID, uuid+"_"+index);
             }
         }
     }

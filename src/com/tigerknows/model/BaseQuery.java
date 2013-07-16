@@ -901,11 +901,10 @@ public abstract class BaseQuery {
      * @param key
      * @param value
      */
-    public final void addParameter(String key, String value) throws APIException {
+    public final void addParameter(String key, String value) {
         if (key != null && !key.equals("")) {
+            criteria.remove(key);
             criteria.put(key, value);
-        } else {
-            throw APIException.wrapToMissingRequestParameterException(key);
         }
     }
     
@@ -927,12 +926,6 @@ public abstract class BaseQuery {
         }
     }
     
-    public final void replaceParameter(String key, String value) {
-        if (key != null && value != null) {
-            criteria.remove(key);
-            criteria.put(key, value);
-        }
-    }
     //TODO:删掉这个系列函数
     /**
      * 根据keys从criteria中获取参数值，将其值添加到requestParameters
