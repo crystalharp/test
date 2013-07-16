@@ -123,6 +123,8 @@ public class HttpManager {
         long revTime = 0;
         long resTime = 0;
         String fail = "";
+        long reqSize = 0;
+        long revSize = 0;
 		try {
 			HttpUriRequest request = null;
 			ByteArrayOutputStream bos = null;
@@ -159,6 +161,7 @@ public class HttpManager {
 					bos.write(data);
 				}
 				data = bos.toByteArray();
+				reqSize = data.length;
 				bos.close();
 				ByteArrayEntity formEntity = new ByteArrayEntity(data);
 				post.setEntity(formEntity);
@@ -173,6 +176,7 @@ public class HttpManager {
 			
 			if (statusCode != 200) {
 				result = readHttpResponse(response);
+				revSize = result.length;
 				throw new WeiboException(new String(result), statusCode);
 			}
 			result = readHttpResponse(response);
@@ -187,7 +191,7 @@ public class HttpManager {
 			throw new WeiboException(e);
 		} finally {
 		    if (apiType != null && uuid != null) {
-		        ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getConnectivityType(context), false, uuid);
+		        ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getConnectivityType(context), false, uuid, reqSize, revSize);
 		    }
 		}
 	}

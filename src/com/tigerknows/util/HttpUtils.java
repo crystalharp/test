@@ -225,6 +225,8 @@ public class HttpUtils {
             long revTime = 0;
             long resTime = 0;
             String fail = "";
+            long reqSize = 0;
+            long revSize = 0;
             try {
                 HttpPost post = new HttpPost(url);
                 
@@ -239,8 +241,6 @@ public class HttpUtils {
                         
                     HttpEntity reqEntity;
                     byte[] data = null;
-                    ByteArrayOutputStream bos = null;
-                    bos = new ByteArrayOutputStream(1024 * 50);
                     String postParam;
                     if (isEncrypt) {
                         // 服务器接收加密的数据时不需要URLEncoder
@@ -261,13 +261,12 @@ public class HttpUtils {
                         data = postParam.getBytes(TKConfig.getEncoding());
                         data = ZLibUtils.compress(data);
                         DataEncryptor.getInstance().encrypt(data);
-                        
                     } else {
                         post.addHeader(CONTENT_TYPE, APPLICATION_FORM_CONTENT_TYPE_VALUE);
                         postParam = encodeParameters(parameters, TKConfig.getEncoding());
                         data = postParam.getBytes(TKConfig.getEncoding());
-                        bos.write(data);
                     }
+                    reqSize = data.length;
                     reqEntity = new ByteArrayEntity(data);
                     
                     post.setEntity(reqEntity);
@@ -313,6 +312,7 @@ public class HttpUtils {
                     try {
                         // 从联想词汇服务器返回来的数据其长度总是-1，尽管其实是有实际数据内容的
                         long size = entity.getContentLength();
+                        revSize = size;
                         if (size > 0) {
                             DataInputStream dis = new DataInputStream(entity.getContent());
                             try {
@@ -392,7 +392,7 @@ public class HttpUtils {
                         networkInfoDetail = networkInfo.getDetailedState().toString();
                     }
                     String uuid = this.parameters.getValue(BaseQuery.SERVER_PARAMETER_UUID);
-                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getConnectivityType(context), isStop, uuid);
+                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getConnectivityType(context), isStop, uuid, reqSize, revSize);
                 }
                 if (!keepAlive) {
                     close();
