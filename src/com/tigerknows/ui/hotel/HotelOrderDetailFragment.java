@@ -598,8 +598,6 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             	// 一个数据操作的情况是： 再订一单。跳转到酒店POI详情界面。
             	POIQueryResponse response = (POIQueryResponse) baseQuery.getResponse();
             	POI hotelPoi = response.getPOI();
-            	HotelHomeFragment hotelFragment = mSphinx.getHotelHomeFragment();
-            	mSphinx.getPOIDetailFragment().getDynamicHotelPOI().initDate(hotelFragment.getCheckin(), hotelFragment.getCheckout());
                 mSphinx.getPOIDetailFragment().setData(hotelPoi, mPosition);
                 mSphinx.showView(R.id.view_poi_detail);
 

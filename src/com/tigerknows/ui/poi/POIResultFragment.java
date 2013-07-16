@@ -359,12 +359,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         
         updateView();
         
-        if (mSphinx.uiStackContains(R.id.view_hotel_home)) {
-            HotelHomeFragment hotelFragment = mSphinx.getHotelHomeFragment();
-            mSphinx.getPOIDetailFragment().getDynamicHotelPOI().initDate(hotelFragment.getCheckin(), hotelFragment.getCheckout());
-        } else {
-            mSphinx.getPOIDetailFragment().getDynamicHotelPOI().initDate();
-        }
     }
 
     @Override
