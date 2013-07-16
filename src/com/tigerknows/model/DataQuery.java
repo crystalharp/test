@@ -262,7 +262,7 @@ public final class DataQuery extends BaseQuery {
         this.cityId = cityId;
         this.isTurnPage = isTurnpage;
         this.needReconntection = needReconntection;
-        initStaticField(this.criteria.get(SERVER_PARAMETER_DATA_TYPE), this.criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE), this.cityId);
+        initStaticField(getParameter(SERVER_PARAMETER_DATA_TYPE), getParameter(SERVER_PARAMETER_SUB_DATA_TYPE), this.cityId);
     }
     
     public static boolean checkDiscoveryCity(int cityId) {
@@ -478,9 +478,9 @@ public final class DataQuery extends BaseQuery {
     @Override
     protected void addMyLocationParameters() {
         if (isTurnPage == false) {
-            String dataType = this.criteria.get(SERVER_PARAMETER_DATA_TYPE);
+            String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
             if (DATA_TYPE_FENDIAN.equals(dataType) || DATA_TYPE_YINGXUN.equals(dataType) ||
-                    (SUB_DATA_TYPE_HOTEL.equals(this.criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE)) && criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY))) {
+                    (SUB_DATA_TYPE_HOTEL.equals(getParameter(SERVER_PARAMETER_SUB_DATA_TYPE)) && hasParameter(SERVER_PARAMETER_LOCATION_CITY))) {
 //                if (criteria.containsKey(SERVER_PARAMETER_LOCATION_CITY)
 //                        && criteria.containsKey(SERVER_PARAMETER_LOCATION_LONGITUDE)
 //                        && criteria.containsKey(SERVER_PARAMETER_LOCATION_LATITUDE)) {
@@ -511,9 +511,9 @@ public final class DataQuery extends BaseQuery {
             delParameter(SERVER_PARAMETER_UUID);
             super.addUUIDParameter();
         } else {
-            if (criteria.containsKey(SERVER_PARAMETER_UUID) && criteria.containsKey(SERVER_PARAMETER_INDEX)) {
-                String index = criteria.get(SERVER_PARAMETER_INDEX);
-                String uuid = criteria.get(SERVER_PARAMETER_UUID);
+            if (hasParameter(SERVER_PARAMETER_UUID) && hasParameter(SERVER_PARAMETER_INDEX)) {
+                String index = getParameter(SERVER_PARAMETER_INDEX);
+                String uuid = getParameter(SERVER_PARAMETER_UUID);
                 addParameter(SERVER_PARAMETER_UUID, uuid+"_"+index);
             }
         }
@@ -523,9 +523,9 @@ public final class DataQuery extends BaseQuery {
     protected void checkRequestParameters() throws APIException {
         addCommonParameters(cityId);
         
-        if (criteria == null) {
-            throw new APIException(APIException.CRITERIA_IS_NULL);
-        }
+//        if (criteria == null) {
+//            throw new APIException(APIException.CRITERIA_IS_NULL);
+//        }
         
         // 默认分页数目为TKConfig.getPageSize()
         String pageSize = addParameter(SERVER_PARAMETER_SIZE, false);
@@ -741,7 +741,7 @@ public final class DataQuery extends BaseQuery {
             addParameter(SERVER_PARAMETER_NATION_FILTER_VERSION, nfv);
         }
         //TODO:不要这样写
-        if (!criteria.containsKey(SERVER_PARAMETER_INDEX)) {
+        if (!hasParameter(SERVER_PARAMETER_INDEX)) {
 //            requestParameters.add(SERVER_PARAMETER_INDEX, criteria.get(SERVER_PARAMETER_INDEX));
 //        } else {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_INDEX);
@@ -758,8 +758,8 @@ public final class DataQuery extends BaseQuery {
     @Override
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
-        String dataType = this.criteria.get(SERVER_PARAMETER_DATA_TYPE);
-        String subDataType = this.criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
+        String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
         if (DATA_TYPE_POI.equals(dataType)) {
 
             FilterResponse filterResponse = null;
@@ -2446,9 +2446,9 @@ public final class DataQuery extends BaseQuery {
     
     protected void launchTest() {
         super.launchTest();
-        String dataType = this.criteria.get(SERVER_PARAMETER_DATA_TYPE);
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
         if (DATA_TYPE_POI.equals(dataType)) {
-            String subDataType = this.criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
+            String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
             if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                 responseXMap = DataQueryTest.launchPOIResponse(168, "launchPOIResponse");
             } if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {

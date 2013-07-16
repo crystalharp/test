@@ -60,9 +60,9 @@ public class DataOperation extends BaseQuery {
     protected void checkRequestParameters() throws APIException {
         addCommonParameters(cityId);
         
-        if (criteria == null) {
-            throw new APIException(APIException.CRITERIA_IS_NULL);
-        }
+//        if (criteria == null) {
+//            throw new APIException(APIException.CRITERIA_IS_NULL);
+//        }
         
         String dataType = addParameter(SERVER_PARAMETER_DATA_TYPE);
         String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
@@ -105,8 +105,8 @@ public class DataOperation extends BaseQuery {
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
 
-        String dataType = criteria.get(SERVER_PARAMETER_DATA_TYPE);
-        String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
+        String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
         
         if (OPERATION_CODE_QUERY.equals(operationCode)) {
             if (DATA_TYPE_POI.equals(dataType)) {
@@ -412,9 +412,9 @@ public class DataOperation extends BaseQuery {
     
     protected void launchTest() {
         super.launchTest();
-        String dataType = this.criteria.get(SERVER_PARAMETER_DATA_TYPE);
-        if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE)) {
-            String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
+        if (hasParameter(SERVER_PARAMETER_OPERATION_CODE)) {
+            String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
             
             if (OPERATION_CODE_CREATE.equals(operationCode)) {
                 if (DATA_TYPE_DINGDAN.equals(dataType)) {
@@ -424,7 +424,7 @@ public class DataOperation extends BaseQuery {
                 }
             } if (OPERATION_CODE_QUERY.equals(operationCode)) {
                 if (DATA_TYPE_POI.equals(dataType)) {
-                    String subDataType = criteria.get(SERVER_PARAMETER_SUB_DATA_TYPE);
+                    String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
                     if (SUB_DATA_TYPE_POI.equals(subDataType)) {
                         responseXMap = DataOperationTest.launchPOIQueryResponse();
                     }else if(SUB_DATA_TYPE_HOTEL.equals(subDataType)){

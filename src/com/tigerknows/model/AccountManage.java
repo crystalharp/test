@@ -71,9 +71,9 @@ public class AccountManage extends BaseQuery {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CITY);
         }
         addCommonParameters(cityId);
-        if (criteria == null) {
-            throw new APIException(APIException.CRITERIA_IS_NULL);
-        }
+//        if (criteria == null) {
+//            throw new APIException(APIException.CRITERIA_IS_NULL);
+//        }
         boolean needSessionId = false;
         String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
         if (OPERATION_CODE_BIND_TELEPHONE.equals(operationCode)) {
@@ -125,7 +125,7 @@ public class AccountManage extends BaseQuery {
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
 
-        String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+        String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
         if (OPERATION_CODE_CREATE.equals(operationCode)) {
             UserRespnose userResponse = new UserRespnose(responseXMap);
             this.response = userResponse;
@@ -210,12 +210,12 @@ public class AccountManage extends BaseQuery {
     }
     
     public String getOperationCode() {
-    	return criteria.get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
+    	return getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
     }
     
     protected void launchTest() {
         super.launchTest();
-        String operationCode = this.criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+        String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
         if (OPERATION_CODE_CREATE.equals(operationCode)) {
             responseXMap = AccountManageTest.launchUserRespnose(context);
         } else if (OPERATION_CODE_LOGIN.equals(operationCode)) {

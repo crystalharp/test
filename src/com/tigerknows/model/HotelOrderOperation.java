@@ -121,9 +121,9 @@ public class HotelOrderOperation extends BaseQuery {
     protected void checkRequestParameters() throws APIException {
         addCommonParameters(cityId);
         
-        if (criteria == null) {
-            throw new APIException(APIException.CRITERIA_IS_NULL);
-        }
+//        if (criteria == null) {
+//            throw new APIException(APIException.CRITERIA_IS_NULL);
+//        }
         
         String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
         if (OPERATION_CODE_QUERY.equals(operationCode)) {
@@ -178,7 +178,7 @@ public class HotelOrderOperation extends BaseQuery {
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
 
-        String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+        String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
         
         if (OPERATION_CODE_QUERY.equals(operationCode)) {
             response = new HotelOrderStatesResponse(responseXMap);
@@ -258,13 +258,13 @@ public class HotelOrderOperation extends BaseQuery {
     
     protected void launchTest() {
         super.launchTest();
-        if (criteria.containsKey(SERVER_PARAMETER_OPERATION_CODE)) {
-            String operationCode = criteria.get(SERVER_PARAMETER_OPERATION_CODE);
+        if (hasParameter(SERVER_PARAMETER_OPERATION_CODE)) {
+            String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
             
             if (OPERATION_CODE_CREATE.equals(operationCode)) {
                 responseXMap = HotelOrderOperationTest.launchHotelOrderCreateResponse(context);
             } if (OPERATION_CODE_QUERY.equals(operationCode)) {
-                responseXMap = HotelOrderOperationTest.launchHotelOrderStateResponse(context, criteria.get(SERVER_PARAMETER_ORDER_IDS));
+                responseXMap = HotelOrderOperationTest.launchHotelOrderStateResponse(context, getParameter(SERVER_PARAMETER_ORDER_IDS));
             } if (OPERATION_CODE_UPDATE.equals(operationCode)) {
                 responseXMap = new XMap();
                 responseXMap = BaseQueryTest.launchResponse(responseXMap);

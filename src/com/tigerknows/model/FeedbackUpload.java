@@ -44,11 +44,11 @@ public class FeedbackUpload extends BaseQuery {
     protected void checkRequestParameters() throws APIException {
         addCommonParameters(cityId);
         
-        if (criteria == null) {
-            throw new APIException(APIException.CRITERIA_IS_NULL);
-        }
-        if (criteria.containsKey(SERVER_PARAMETER_FEEDBACK)) {
-            addParameter(SERVER_PARAMETER_FEEDBACK, criteria.get(SERVER_PARAMETER_FEEDBACK));
+//        if (criteria == null) {
+//            throw new APIException(APIException.CRITERIA_IS_NULL);
+//        }
+        if (hasParameter(SERVER_PARAMETER_FEEDBACK)) {
+            addParameter(SERVER_PARAMETER_FEEDBACK, getParameter(SERVER_PARAMETER_FEEDBACK));
         } else {
             // TODO 这个参数必须要，那怕是空？！
             addParameter(SERVER_PARAMETER_FEEDBACK, "");

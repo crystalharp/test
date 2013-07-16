@@ -392,7 +392,7 @@ public abstract class BaseQuery {
     
     protected int targetViewId = -1;
     
-    protected Hashtable<String, String> criteria = null;
+    private Hashtable<String, String> criteria = new Hashtable<String, String>();
     
     protected Hashtable<String, String> checkCriteria = null;
     
@@ -926,6 +926,12 @@ public abstract class BaseQuery {
         }
     }
     
+    public final boolean hasParameter(String key) {
+        if (key != null) {
+            return criteria.containsKey(key);
+        }
+        return false;
+    }
     //TODO:删掉这个系列函数
     /**
      * 根据keys从criteria中获取参数值，将其值添加到requestParameters

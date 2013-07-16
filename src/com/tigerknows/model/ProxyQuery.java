@@ -78,9 +78,9 @@ public class ProxyQuery extends BaseQuery {
     @Override
     protected void checkRequestParameters() throws APIException {
         addCommonParameters(cityId);
-        if (criteria == null) {
-            throw new APIException(APIException.CRITERIA_IS_NULL);
-        }
+//        if (criteria == null) {
+//            throw new APIException(APIException.CRITERIA_IS_NULL);
+//        }
         String task = getParameter(SERVER_PARAMETER_TASK);
         if (task.equals(TASK_ROOM_TYPE_DYNAMIC)) {
             checkParameters(ROOM_TYPE_DYNAMIC_EKEYS, ROOM_TYPE_DYNAMIC_OKEYS);
@@ -103,7 +103,7 @@ public class ProxyQuery extends BaseQuery {
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
 
-        String taskType = this.criteria.get(SERVER_PARAMETER_TASK);
+        String taskType = getParameter(SERVER_PARAMETER_TASK);
         if (taskType.equals(TASK_ROOM_TYPE_DYNAMIC)) {
             response = new RoomTypeDynamic(responseXMap);
         } else if (taskType.equals(TASK_REGISTER_7_DAY_MEMBER)) {
@@ -115,7 +115,7 @@ public class ProxyQuery extends BaseQuery {
 
     protected void launchTest() {
         super.launchTest();
-        String task = this.criteria.get(SERVER_PARAMETER_TASK);
+        String task = getParameter(SERVER_PARAMETER_TASK);
         if (task.equals(TASK_ROOM_TYPE_DYNAMIC)) {
             responseXMap = ProxyQueryTest.launchRoomTypeDynamicRespnose(context);
         } else if (task.equals(TASK_REGISTER_7_DAY_MEMBER)) {
