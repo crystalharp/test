@@ -674,7 +674,6 @@ public class BaseQueryTest {
         lunchTestLayout.setVisibility(TKConfig.LaunchTest ? View.VISIBLE : View.GONE);
         
         locationChb.setText("Specific Location(lat,lon,accuracy)");
-        locationChb.setChecked(TKLocationManager.UnallowedLocation);
         locationChb.setOnClickListener(new OnClickListener() {
             
             @Override
