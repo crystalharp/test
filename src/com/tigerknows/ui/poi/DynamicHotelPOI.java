@@ -97,6 +97,9 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     
     private DateListView mDateListView = null;
     
+    //记录现在缓存的日期所属的POI的id
+    public String mInitDatePOIid;
+    
     BlockRefresher mUpperBlockRefresher = new BlockRefresher() {
 
         @Override
@@ -371,6 +374,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     final public void initDate() {
+        mInitDatePOIid = mPOI.getUUID();
         checkin = Calendar.getInstance();
         checkin.setTimeInMillis(System.currentTimeMillis());
         checkout = (Calendar) checkin.clone();
@@ -379,6 +383,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     final public void initDate(Calendar in, Calendar out) {
+        mInitDatePOIid = mPOI.getUUID();
         checkout = out;
         checkin = in;
         refreshDate();

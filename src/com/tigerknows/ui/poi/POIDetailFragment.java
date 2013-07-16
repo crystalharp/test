@@ -69,6 +69,7 @@ import com.tigerknows.share.ShareAPI;
 import com.tigerknows.share.TKWeixin;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.util.Utility;
 
 /**
@@ -1054,6 +1055,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         //判断是否存在hotel信息
         if (mDynamicHotelPOI.isExist()) {
+            if (!poi.getUUID().equals(mDynamicHotelPOI.mInitDatePOIid)) {
+                if (mSphinx.uiStackContains(R.id.view_hotel_home)) {
+                    HotelHomeFragment hotelFragment = mSphinx.getHotelHomeFragment();
+                    mDynamicHotelPOI.initDate(hotelFragment.getCheckin(), hotelFragment.getCheckout());
+                } else {
+                    mDynamicHotelPOI.initDate();
+                }
+            }
             mDynamicHotelPOI.queryStart(mDynamicHotelPOI.generateQuery(mPOI));
             addLoadingView();
         }
