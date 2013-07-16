@@ -164,7 +164,7 @@ public class SettingActivity extends BaseActivity {
 		// 关于我们
 		final DataBean aboutBean = new DataBean(mThis.getString(R.string.about_us), "");
 		aboutBean.showIcon = true;
-		aboutBean.type = DataBean.TYPE_HELP;
+		aboutBean.type = DataBean.TYPE_ABOUT;
 		mBeans.add(aboutBean);		
 
         refreshDataSetChanged();
@@ -355,6 +355,7 @@ public class SettingActivity extends BaseActivity {
     	for (int i=0; i<NUM_OF_SETTINGS; i++){
     		refreshDataSetChanged(i);
     	}
+        mRefreshed = true;
     }
     
     private void refreshDataSetChanged(final int position){
@@ -368,11 +369,12 @@ public class SettingActivity extends BaseActivity {
         titleTxv.setText(data.title);
         if(TextUtils.isEmpty(data.description)){
         	descriptionTxv.setVisibility(View.GONE);
-        	titleTxv.setGravity(Gravity.CENTER_VERTICAL);
+        	// 保持Top/Bottom的Padding距离一致
         	titleTxv.setPadding(titleTxv.getPaddingLeft(), 
-        			titleTxv.getPaddingTop()+ (mRefreshed ? Utility.dip2px(mThis, 5) : 0), 
+        			titleTxv.getPaddingTop()+ (mRefreshed ? 0 : Utility.dip2px(mThis, 8)), 
         			titleTxv.getPaddingRight(), 
-        			titleTxv.getPaddingBottom()+ (mRefreshed ? Utility.dip2px(mThis, 10): 0));
+        			titleTxv.getPaddingTop()+ (mRefreshed ? 0 : Utility.dip2px(mThis, 8)));
+        	titleTxv.setGravity(Gravity.CENTER_VERTICAL);
         }
         descriptionTxv.setText(data.description);
         LogWrapper.d("conan", "data:" + data.title +  "checked:" + data.checked);
