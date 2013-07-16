@@ -159,14 +159,14 @@ public class LocationQuery extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
-        addCommonParameters(requestParameters, Globals.getCurrentCityInfo(false).getId(), true);
+        addCommonParameters(Globals.getCurrentCityInfo(false).getId(), true);
         
         if (wifiManager != null) {
             List<ScanResult> scanResults = wifiManager.getScanResults();
             if (scanResults != null) {
                 for (ScanResult sr : scanResults) {
-                    requestParameters.add("wifi_mac[]", sr.BSSID);
-                    requestParameters.add("wifi_ss[]", String.valueOf(sr.level));
+                    addParameter("wifi_mac[]", sr.BSSID);
+                    addParameter("wifi_ss[]", String.valueOf(sr.level));
                 }
             }
         }
@@ -178,9 +178,9 @@ public class LocationQuery extends BaseQuery {
                 lac = cellInfo.getLac();
                 cid = cellInfo.getCid();
                 if (Utility.lacCidValid(lac, cid)) {
-                    requestParameters.add("n8b_lac[]", String.valueOf(lac));
-                    requestParameters.add("n8b_ci[]", String.valueOf(cid));
-                    requestParameters.add("n8b_ss[]", String.valueOf(Utility.asu2dbm(cellInfo.getRssi())));
+                    addParameter("n8b_lac[]", String.valueOf(lac));
+                    addParameter("n8b_ci[]", String.valueOf(cid));
+                    addParameter("n8b_ss[]", String.valueOf(Utility.asu2dbm(cellInfo.getRssi())));
                 }
             }
         }
@@ -198,7 +198,7 @@ public class LocationQuery extends BaseQuery {
 //                parameters.add("n8b_ss[]", String.valueOf(neighboringCellInfo.getRssi())));
 //            }
 //        }
-        requestParameters.add("radio_type", TKConfig.getRadioType());
+        addParameter("radio_type", TKConfig.getRadioType());
     }
 
     @Override

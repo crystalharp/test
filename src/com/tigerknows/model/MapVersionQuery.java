@@ -61,9 +61,9 @@ public class MapVersionQuery extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
-        requestParameters.add("vs", TKConfig.getClientSoftVersion());
+        addParameter("vs", TKConfig.getClientSoftVersion());
         for (Integer regionId : regionIdList) {
-            requestParameters.add("rid", String.valueOf(regionId));
+            addParameter("rid", String.valueOf(regionId));
         }
     }
 

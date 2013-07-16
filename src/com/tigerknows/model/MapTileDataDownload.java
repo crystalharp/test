@@ -102,8 +102,8 @@ public class MapTileDataDownload extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
-        requestParameters.add("rid", String.valueOf(rid));
-        requestParameters.add("vs", TKConfig.getClientSoftVersion());
+        addParameter("rid", String.valueOf(rid));
+        addParameter("vs", TKConfig.getClientSoftVersion());
         String version = null;
         int count = 0;
         
@@ -115,8 +115,8 @@ public class MapTileDataDownload extends BaseQuery {
                 String currentVersion = tileDownload.getVersion();
                 if ((version != null && version.equals(currentVersion)) || (version == null && currentVersion == null)) {
                     count++;
-                    requestParameters.add("off", String.valueOf(tileDownload.getOffset()));
-                    requestParameters.add("len", String.valueOf(tileDownload.getLength()));
+                    addParameter("off", String.valueOf(tileDownload.getOffset()));
+                    addParameter("len", String.valueOf(tileDownload.getLength()));
                 }
             }
         }
@@ -124,7 +124,7 @@ public class MapTileDataDownload extends BaseQuery {
             throw APIException.wrapToMissingRequestParameterException("off,len");
         }
         if (version != null) {
-            requestParameters.add("vd", version);
+            addParameter("vd", version);
         } else {
             throw APIException.wrapToMissingRequestParameterException("vd");
         }
@@ -132,14 +132,10 @@ public class MapTileDataDownload extends BaseQuery {
 
     @Override
     protected void createHttpClient() {
-        if (httpClient == null) {
-            httpClient = new TKHttpClient();
-            httpClient.setKeepAlive(true);
-        }
-        httpClient.setApiType(apiType);
+        super.createHttpClient(false);
+        httpClient.setKeepAlive(true);
         String url = String.format(TKConfig.getDownloadMapUrl(), TKConfig.getDownloadHost());
         httpClient.setURL(url);
-        httpClient.setParameters(requestParameters);
         
         httpClient.setRealTimeRecive(realTimeRecive);
         httpClient.setProgressUpdate(progressUpdate);

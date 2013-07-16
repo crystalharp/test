@@ -70,7 +70,7 @@ public class AccountManage extends BaseQuery {
         if (cityId < MapEngine.CITY_ID_BEIJING) {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CITY);
         }
-        addCommonParameters(requestParameters, cityId);
+        addCommonParameters(cityId);
         if (criteria == null) {
             throw new APIException(APIException.CRITERIA_IS_NULL);
         }

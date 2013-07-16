@@ -333,16 +333,16 @@ public abstract class BaseQuery {
         sCommonParameters.add("vp", TKConfig.getVersionOfPlatform());
     }
     
-    protected static void addCommonParameters(WeiboParameters parameters, int cityId, boolean isLocateMe) {
-        parameters.addAll(sCommonParameters);
+    protected void addCommonParameters(int cityId, boolean isLocateMe) {
+        requestParameters.addAll(sCommonParameters);
 
         if (cityId < MapEngine.CITY_ID_BEIJING && isLocateMe == false) {
             cityId = MapEngine.CITY_ID_BEIJING;
         }
-        parameters.add("c", String.valueOf(cityId));
+        requestParameters.add("c", String.valueOf(cityId));
 
-        parameters.add("e", TKConfig.getIMEI());
-        parameters.add("d", TKConfig.getIMSI());
+        requestParameters.add("e", TKConfig.getIMEI());
+        requestParameters.add("d", TKConfig.getIMSI());
         boolean simAvailably = true;
         TKCellLocation tkCellLocation = TKConfig.getCellLocation();
         int mcc = TKConfig.getMCC();
@@ -354,20 +354,20 @@ public abstract class BaseQuery {
         }
         
         if (simAvailably) {
-            parameters.add("mcc", String.valueOf(mcc));
-            parameters.add("mnc", String.valueOf(mnc));
-            parameters.add("lac", String.valueOf(lac));
-            parameters.add("ci", String.valueOf(cid));
-            parameters.add("ss", String.valueOf(TKConfig.getSignalStrength()));
+            requestParameters.add("mcc", String.valueOf(mcc));
+            requestParameters.add("mnc", String.valueOf(mnc));
+            requestParameters.add("lac", String.valueOf(lac));
+            requestParameters.add("ci", String.valueOf(cid));
+            requestParameters.add("ss", String.valueOf(TKConfig.getSignalStrength()));
         }
     }
     
-    protected static void addCommonParameters(WeiboParameters parameters) {
-        addCommonParameters(parameters, MapEngine.CITY_ID_BEIJING, false);
+    protected void addCommonParameters() {
+        addCommonParameters(MapEngine.CITY_ID_BEIJING, false);
     }
     
-    protected static void addCommonParameters(WeiboParameters parameters, int cityId) {
-        addCommonParameters(parameters, cityId, false);
+    protected void addCommonParameters(int cityId) {
+        addCommonParameters(cityId, false);
     }
     
     /**
@@ -399,7 +399,7 @@ public abstract class BaseQuery {
     protected String tipText = null;
     
     //FIXME:使用private变量
-    protected WeiboParameters requestParameters = new WeiboParameters();
+    private WeiboParameters requestParameters = new WeiboParameters();
 
     protected HttpUtils.TKHttpClient httpClient;
 
@@ -542,11 +542,11 @@ public abstract class BaseQuery {
         if (myLocationCityInfo != null) {
             final Position myLocationPosition = myLocationCityInfo.getPosition();
             if (myLocationPosition != null) {
-                if (criteria != null) {
-                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_CITY, String.valueOf(myLocationCityInfo.getId()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(myLocationPosition.getLon()));
-                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(myLocationPosition.getLat()));
-                }
+//                if (criteria != null) {
+//                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_CITY, String.valueOf(myLocationCityInfo.getId()));
+//                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(myLocationPosition.getLon()));
+//                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(myLocationPosition.getLat()));
+//                }
                 requestParameters.add(SERVER_PARAMETER_LOCATION_CITY, String.valueOf(myLocationCityInfo.getId()));
                 requestParameters.add(SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(myLocationPosition.getLon()));
                 requestParameters.add(SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(myLocationPosition.getLat()));
@@ -557,9 +557,9 @@ public abstract class BaseQuery {
     
     protected void addUUIDParameter() {
         String uuid = UUID.randomUUID().toString();
-        if (criteria != null) {
-            criteria.put(SERVER_PARAMETER_UUID, uuid);
-        }
+//        if (criteria != null) {
+//            criteria.put(SERVER_PARAMETER_UUID, uuid);
+//        }
         requestParameters.add(SERVER_PARAMETER_UUID, uuid);
     }
     
@@ -588,9 +588,13 @@ public abstract class BaseQuery {
     }
     
     protected void createHttpClient() {
+        createHttpClient(true);
+    }
+    
+    protected void createHttpClient(boolean needEncrypt) {
         httpClient = new HttpUtils.TKHttpClient();
         httpClient.setApiType(apiType);
-        httpClient.setIsEncrypt(true);
+        httpClient.setIsEncrypt(needEncrypt);
         httpClient.setParameters(requestParameters);
     }
     
@@ -911,6 +915,19 @@ public abstract class BaseQuery {
             return criteria.get(key);
         }
         return null;
+    }
+    
+    public final void delParameter(String key) {
+        if (key != null) {
+            criteria.remove(key);
+        }
+    }
+    
+    public final void replaceParameter(String key, String value) {
+        if (key != null && value != null) {
+            criteria.remove(key);
+            criteria.put(key, value);
+        }
     }
     //TODO:删掉这个系列函数
     /**
