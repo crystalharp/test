@@ -852,7 +852,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
 
                     String areaCode = MapEngine.getAreaCodeByCityId(cityInfo.getId())+"-";
                     String lastAreaCode = mTelephoneEdt.getEditableText().toString();
-                    if (lastAreaCode.equals(mLastAreaCode)) {
+                    if (lastAreaCode.equals(mLastAreaCode) || TextUtils.isEmpty(lastAreaCode)) {
                         mTelephoneEdt.setText(areaCode);
                         mTelephoneEdt.setSelection(areaCode.length());
                         mLastAreaCode = areaCode;
