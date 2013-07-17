@@ -169,7 +169,12 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             parentAdapter.notifyDataSetChanged();
             
             childFilterList.clear();
-            childFilterList.addAll(this.filter.getChidrenFilterList().get(0).getChidrenFilterList());
+            if (this.filter != null &&
+                    this.filter.getChidrenFilterList() != null &&
+                    this.filter.getChidrenFilterList().size() > 0 &&
+                    this.filter.getChidrenFilterList().get(0) != null) {
+                childFilterList.addAll(this.filter.getChidrenFilterList().get(0).getChidrenFilterList());
+            }
             childAdapter.notifyDataSetChanged();
         }
     }

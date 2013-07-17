@@ -355,9 +355,10 @@ public final class DataQuery extends BaseQuery {
                     String path = MapEngine.cityId2Floder(MapEngine.SW_ID_QUANGUO) + name;
                     File file = new File(path);
 
+                    // 硬编码酒店的分类筛选项
                     if (file.exists() == false) {
                         if (DATA_TYPE_POI.equals(dataType) &&
-                                SUB_DATA_TYPE_POI.equals(subDataType) &&
+                                SUB_DATA_TYPE_HOTEL.equals(subDataType) &&
                                 context != null) {
                             AssetManager am = context.getAssets();
                             String mapPath = TKConfig.getDataPath(true);
@@ -390,21 +391,18 @@ public final class DataQuery extends BaseQuery {
                 
                 if (filterDataArea == null || filterDataArea.cityId != cityId){
                     filterDataArea = null;
-                    String path;
-                    String name = null;
-                	if (cityId == MapEngine.SW_ID_QUANGUO) {
-                	    name = String.format(TKConfig.FILTER_FILE, "0", cityId);
-                		path = MapEngine.cityId2Floder(cityId) + name;
-                	} else {
-                		path = MapEngine.cityId2Floder(cityId) + String.format(TKConfig.FILTER_FILE, DATA_TYPE_POI, cityId);
-                	}
+                    String path = MapEngine.cityId2Floder(cityId) + String.format(TKConfig.FILTER_FILE, DATA_TYPE_POI, cityId);
                     File file = new File(path);
 
+                    // 硬编码部分区域筛选项（全部区域、我的当前位置、指定位置）
                     if (file.exists() == false) {
-                        if (context != null && name != null) {
+                        String quanguo = String.format(TKConfig.FILTER_FILE, "0", MapEngine.SW_ID_QUANGUO);
+                        path = MapEngine.cityId2Floder(MapEngine.SW_ID_QUANGUO) + quanguo;
+                        file = new File(path);
+                        if (context != null && file.exists() == false) {
                             AssetManager am = context.getAssets();
                             String mapPath = TKConfig.getDataPath(true);
-                            Utility.unZipFile(am, "tigermap.zip", mapPath, name);
+                            Utility.unZipFile(am, "tigermap.zip", mapPath, quanguo);
                         }
                     }
                     

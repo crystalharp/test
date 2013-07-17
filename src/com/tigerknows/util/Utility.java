@@ -360,7 +360,7 @@ public class Utility {
                      }
                  } else if (specifyFileName == null) {
                      saveFile(zipFile.getInputStream(entry), entry.getName(), path);
-                 } else if (entry.getName().equals(specifyFileName)) {
+                 } else if (entry.getName().endsWith(specifyFileName)) {
                      saveFile(zipFile.getInputStream(entry), entry.getName(), path);
                      break;
                  }
