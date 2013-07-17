@@ -1128,6 +1128,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mOnPause = false;
 		Log.i(TAG,"onResume()");
 		mActionLog.onResume();
 		if (uiStackSize() > 0) {
@@ -1851,6 +1852,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     protected void onPause() {
         LogWrapper.i(TAG, "onPause");
         mActionLog.onPause();
+        mOnPause = true;
         int id = uiStackPeek();
         BaseFragment baseFragment = getFragment(id);
         if (baseFragment != null) {
@@ -4101,6 +4103,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     };
     
     private boolean mActivityResult = false;
+    private boolean mOnPause = true;
+    public boolean isOnPause() {
+        return mOnPause;
+    }
 
     protected boolean mSensorOrientation = false;
     private SensorManager mSensorManager=null;
