@@ -324,7 +324,7 @@ public class TKConfig {
     /**
      * 图片上传服务访问URL路径
      */
-    private static String IMAGE_UPLOAD_URL = "http://%s/fileupload/13";
+    private static String IMAGE_UPLOAD_URL = "http://%s/hornet/upload";
 
     /**
      * 默认下载服务器Host
@@ -354,7 +354,7 @@ public class TKConfig {
     /** 
      * 默认图片上传服务器的Host
      */
-    private static String IMAGE_UPLOAD_HOST = "search.tigerknows.net";
+    private static String IMAGE_UPLOAD_HOST = "up.tigerknows.net";
 
     /**
      * 软件登录服务推送用于动态负载均衡的下载服务器Host
