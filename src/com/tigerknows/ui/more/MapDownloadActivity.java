@@ -1002,9 +1002,11 @@ public class MapDownloadActivity extends BaseActivity implements View.OnClickLis
                     operateDownloadCity(downloadCity.cityInfo, MapDownloadService.OPERATION_CODE_ADD);
                 } else if (str.equals(mThis.getString(R.string.pause_download))) {
                     mActionLog.addAction(mActionTag +  ActionLog.MapDownloadOpertorPause);
-                    downloadCity.state = DownloadCity.STATE_STOPPED;
-                    notifyDataSetChanged();      
-                    operateDownloadCity(downloadCity.cityInfo, MapDownloadService.OPERATION_CODE_REMOVE);
+                    if (downloadCity.state == DownloadCity.STATE_WAITING || downloadCity.state == DownloadCity.STATE_DOWNLOADING) {
+                        downloadCity.state = DownloadCity.STATE_STOPPED;
+                        notifyDataSetChanged();      
+                        operateDownloadCity(downloadCity.cityInfo, MapDownloadService.OPERATION_CODE_REMOVE);
+                    }
                 } else if (str.equals(mThis.getString(R.string.delete_map))) {
                     mActionLog.addAction(mActionTag +  ActionLog.MapDownloadOpertorDelete);
                     Utility.showNormalDialog(mThis,
