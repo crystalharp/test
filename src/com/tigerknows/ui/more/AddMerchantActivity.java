@@ -364,6 +364,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mNameEdt.setOnTouchListener(onTouchListener);
         mAddressEdt.setOnTouchListener(onTouchListener);
         mTelephoneEdt.setOnTouchListener(onTouchListener);
+        mAddressDescriptionEdt.setOnTouchListener(onTouchListener);
         mYourTelephoneEdt.setOnTouchListener(onTouchListener);
     }
     
