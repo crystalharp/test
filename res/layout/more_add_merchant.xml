@@ -362,7 +362,7 @@
                             android:layout_height="wrap_content"
                             android:gravity="left|center_vertical"
                             android:text="@string/add_merchant_upload_photo_not_added"
-                            android:textSize="16sp"
+                            android:textSize="14sp"
                             android:textColor="@color/black_light" />
                     </LinearLayout>
                 </RelativeLayout>
