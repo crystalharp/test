@@ -166,7 +166,11 @@ public abstract class BaseQuery {
     // pic string  true 图片们的宽高信息，格式为key0:width_height_[(0|1)+];key1:width_height_[(0|1)+];... 
     public static final String SERVER_PARAMETER_PICTURE = "pic";
 
+    // 自定义 某个 response error code 时对应错误字符串的时候使用的前缀
 	public static final String RESPONSE_CODE_ERROR_MSG_PREFIX = "resp_code_err_msg";
+	
+	// 定义如果response为空的时候的字符串消息
+	public static final String RESPONSE_NULL_ERROR_MSG= "resp_null_err_msg";
 
 	// dsrc	 string	 false	 data request source，该请求的来源（指客户端的不同“频道”
     public static final String SERVER_PARAMETER_REQUSET_SOURCE_TYPE = "dsrc";
