@@ -746,6 +746,7 @@ public class ActionLog extends LogUpload {
             mStringBuilder = new StringBuilder();
             mStringBuilder.append(getLogOutToken());
             mStringBuilder.append(s);
+            LogWrapper.d(TAG, LogOut);
         }
     }
     

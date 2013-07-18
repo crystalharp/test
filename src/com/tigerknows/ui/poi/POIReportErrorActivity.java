@@ -507,6 +507,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             mDescriptionEdt.requestFocus();
             showSoftInput();
         }
+        mActionLog.addAction(mActionTag);
         refreshDataDetail();
     }
     
@@ -618,7 +619,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             refreshDataMain();
             break;
         case R.id.submit_btn:
-        	mActionLog.addAction(mActionTag + ((mPage == HOME_PAGE) ? ActionLog.POIReportErrorSubmit : ActionLog.POIReportErrorNext) );
+        	mActionLog.addAction(mActionTag + ((mPage == DETAIL_PAGE && ((mChecked & DIRECT_SUBMIT) == 0)) ? ActionLog.POIReportErrorSubmit : ActionLog.POIReportErrorNext) );
             if((mChecked & DIRECT_SUBMIT) == 0) submitDetail();
             else {
             	submitMain();
