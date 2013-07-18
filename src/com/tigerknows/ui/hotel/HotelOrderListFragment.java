@@ -26,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
@@ -598,7 +599,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         
-
         if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, false)) {
             return;
         }
@@ -638,6 +638,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         					table.close();
         				}
         			}
+        			Toast.makeText(mContext, mContext.getString(R.string.hotel_order_sync_success), Toast.LENGTH_SHORT).show();
         		}
         		
         		if(!isExceptExists){
