@@ -51,10 +51,11 @@
                 android:gravity="left|center_vertical"
                 >
                 <TextView 
-                    android:layout_width="86dp"
+                    android:layout_width="84dp"
                     android:layout_height="wrap_content"
                     android:text="@string/satisfy_a"
                     android:layout_gravity="left|center_vertical"
+                    android:textSize="12sp"
                     />
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -75,7 +76,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/satisfy_0"
                     android:layout_gravity="left|center_vertical"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginLeft="6dp"
+                    android:textSize="12sp"
                     />
             </LinearLayout>
             <LinearLayout android:id="@+id/satisfy_2_lly" 
@@ -87,10 +89,11 @@
                 android:gravity="left|center_vertical"
                 >
                 <TextView 
-                    android:layout_width="86dp"
+                    android:layout_width="84dp"
                     android:layout_height="wrap_content"
                     android:text="@string/satisfy_b"
                     android:layout_gravity="left|center_vertical"
+                    android:textSize="12sp"
                     />
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -111,7 +114,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/satisfy_0"
                     android:layout_gravity="left|center_vertical"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginLeft="6dp"
+                    android:textSize="12sp"
                     />
             </LinearLayout>
             <LinearLayout android:id="@+id/satisfy_3_lly" 
@@ -123,10 +127,11 @@
                 android:gravity="left|center_vertical"
                 >
                 <TextView 
-                    android:layout_width="86dp"
+                    android:layout_width="84dp"
                     android:layout_height="wrap_content"
                     android:text="@string/satisfy_c"
                     android:layout_gravity="left|center_vertical"
+                    android:textSize="12sp"
                     />
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -147,7 +152,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/satisfy_0"
                     android:layout_gravity="left|center_vertical"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginLeft="6dp"
+                    android:textSize="12sp"
                     />
             </LinearLayout>
             <LinearLayout android:id="@+id/satisfy_4_lly" 
@@ -159,10 +165,11 @@
                 android:gravity="left|center_vertical"
                 >
                 <TextView 
-                    android:layout_width="86dp"
+                    android:layout_width="84dp"
                     android:layout_height="wrap_content"
                     android:text="@string/satisfy_d"
                     android:layout_gravity="left|center_vertical"
+                    android:textSize="12sp"
                     />
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -183,7 +190,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/satisfy_0"
                     android:layout_gravity="left|center_vertical"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginLeft="6dp"
+                    android:textSize="12sp"
                     />
             </LinearLayout>
             <LinearLayout android:id="@+id/satisfy_5_lly" 
@@ -195,10 +203,11 @@
                 android:gravity="left|center_vertical"
                 >
                 <TextView 
-                    android:layout_width="86dp"
+                    android:layout_width="84dp"
                     android:layout_height="wrap_content"
                     android:text="@string/satisfy_e"
                     android:layout_gravity="left|center_vertical"
+                    android:textSize="12sp"
                     />
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -219,7 +228,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/satisfy_0"
                     android:layout_gravity="left|center_vertical"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginLeft="6dp"
+                    android:textSize="12sp"
                     />
             </LinearLayout>
             <LinearLayout android:id="@+id/satisfy_6_lly" 
@@ -231,10 +241,11 @@
                 android:gravity="left|center_vertical"
                 >
                 <TextView 
-                    android:layout_width="86dp"
+                    android:layout_width="84dp"
                     android:layout_height="wrap_content"
                     android:text="@string/satisfy_f"
                     android:layout_gravity="left|center_vertical"
+                    android:textSize="12sp"
                     />
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -255,7 +266,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/satisfy_0"
                     android:layout_gravity="left|center_vertical"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginLeft="6dp"
+                    android:textSize="12sp"
                     />
             </LinearLayout>
             <LinearLayout android:id="@+id/satisfy_7_lly" 
@@ -267,10 +279,11 @@
                 android:gravity="left|center_vertical"
                 >
                 <TextView 
-                    android:layout_width="86dp"
+                    android:layout_width="84dp"
                     android:layout_height="wrap_content"
                     android:text="@string/satisfy_g"
                     android:layout_gravity="left|center_vertical"
+                    android:textSize="12sp"
                     />
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -291,7 +304,8 @@
                     android:layout_height="wrap_content"
                     android:text="@string/satisfy_0"
                     android:layout_gravity="left|center_vertical"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginLeft="6dp"
+                    android:textSize="12sp"
                     />
             </LinearLayout>
         </LinearLayout>
