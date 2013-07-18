@@ -354,16 +354,24 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         protected List<BaseQuery> mBaseQuerying;
         protected TKAsyncTask mTkAsyncTasking;
 
-        void queryStart(List<BaseQuery> list) {
+        void queryStart(List<BaseQuery> list, boolean cancelable) {
             mBaseQuerying = list; 
-            mTkAsyncTasking = new TKAsyncTask(mSphinx, mBaseQuerying, this, null);
+            mTkAsyncTasking = new TKAsyncTask(mSphinx, mBaseQuerying, this, null, cancelable);
             mTkAsyncTasking.execute();
+        }
+        
+        void queryStart(List<BaseQuery> list) {
+            queryStart(list, true);
         }
 
         void queryStart(BaseQuery baseQuery) {
+            queryStart(baseQuery, true);
+        }
+        
+        void queryStart(BaseQuery baseQuery, boolean cancelable) {
             List<BaseQuery> list = new ArrayList<BaseQuery>();
             list.add(baseQuery);
-            queryStart(list);
+            queryStart(list, cancelable);
         }
 
         //这个函数一般情况下不需要关心,会在页面setData的时候在检测动态POI时被调到
