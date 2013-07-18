@@ -82,7 +82,7 @@ public class POI extends BaseData {
                 Description.FIELD_SERVICE_QUALITY, Description.FIELD_RECOMMEND_SCENERY, Description.FIELD_POPEDOM_SCENERY,
                 Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
                 Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO, Description.FIELD_FEATURE_SPECIALTY,
-                Description.FIELD_PRODUCT_ATTITUDE);
+                Description.FIELD_PRODUCT_ATTITUDE, Description.FIELD_SUBWAY_PRESET_TIMES, Description.FIELD_SUBWAY_EXITS);
                 
         public static String[] Name_List = null;
         
@@ -259,6 +259,12 @@ public class POI extends BaseData {
 
         // 0x3a x_string    产品评价
         public static final byte FIELD_PRODUCT_ATTITUDE = 0x3a;
+        
+        // 0x3b x_array<x_map>  地铁首末车时间
+        public static final byte FIELD_SUBWAY_PRESET_TIMES = 0x3b;
+        
+        // 0x3c x_array<x_map>  地铁出口信息
+        public static final byte FIELD_SUBWAY_EXITS = 0X3C;
     }
 
     // 0x07 x_string 电话
@@ -1530,4 +1536,12 @@ public class POI extends BaseData {
             return new POI(data);
         }
     };
+    
+    public class SubwayPresetTime {
+        
+    }
+    
+    public class SubwayExit {
+        
+    }
 }
