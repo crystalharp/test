@@ -337,7 +337,8 @@
                             android:layout_height="wrap_content" 
                             android:layout_alignParentTop="true"
                             android:layout_alignParentRight="true"
-                            android:background="@drawable/del_pic"
+                            android:background="@drawable/btn_delete_photo_add_merchant"
+                            
                             />
                     </RelativeLayout>
                     <LinearLayout 
@@ -371,7 +372,7 @@
                     android:layout_margin="8dp"
                     android:gravity="left|center_vertical"
                     android:text="@string/add_merchant_thanks"
-                    android:textSize="16sp"
+                    android:textSize="12sp"
                     android:textColor="@color/black_light"/>
                 <LinearLayout 
                     android:layout_width="fill_parent" 
@@ -415,8 +416,8 @@
             android:background="@color/black" >
             <ImageView  
                 android:id="@+id/image_imv"
-                android:layout_width="wrap_content" 
-                android:layout_height="wrap_content" 
+                android:layout_width="fill_parent" 
+                android:layout_height="fill_parent" 
                 android:layout_centerInParent="true"
                 />
             <LinearLayout 
