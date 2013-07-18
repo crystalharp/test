@@ -248,6 +248,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_SYNC);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_ID_FILTER, ids);
     	criteria.put(BaseQuery.SERVER_PARAMETER_NEED_FIELD, HotelOrder.NEED_FIELDS);
+        criteria.put(BaseQuery.RESPONSE_NULL_ERROR_MSG, ""+R.string.response_null_hotel_order_sync);
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
     	hotelOrderOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.query_loading_tip));
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);

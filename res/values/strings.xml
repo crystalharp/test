@@ -936,6 +936,8 @@
     
     <string name="response_code_410_pulled">抱歉,原信息已过期\n欢迎发现更多身边的精彩!</string>
     
+    <string name="response_null_hotel_order_sync">酒店订单更新失败！</string>
+    
     <string name="retry">重试</string>
     <string name="location_city">定位城市</string>
     <string name="all_city">全部城市</string>
@@ -1116,6 +1118,8 @@
     <string name="simple_month_format">M月</string>
     
     <string name="no_order">暂无订单\n&#8194;快去预订酒店吧！</string>
+    
+    <string name="hotel_order_sync_success">酒店订单更新成功！</string>
     
     <string name="hotel_order_cancel_confirm">是否取消订单？\n取消后本次预订将失效</string>
     <string name="hotel_order_cancel_failed">订单取消失败</string>
