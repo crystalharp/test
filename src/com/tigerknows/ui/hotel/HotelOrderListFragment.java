@@ -599,7 +599,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         
-        if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, false)) {
+        if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, this, false)) {
             return;
         }
         
