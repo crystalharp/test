@@ -547,6 +547,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void dismiss() {
         super.dismiss();
+        mDynamicHotelPOI.clearDateCache();
     }
     
     public void refreshDetail() {
