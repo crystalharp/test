@@ -389,6 +389,10 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         refreshDate();
     }
     
+    final public void clearDateCache() {
+        mInitDatePOIid = null;
+    }
+    
     final public void refreshDate() {
         getDateListView().refresh(checkin, checkout);
         mCheckInDat.setCalendar(checkin);
