@@ -174,7 +174,7 @@ public class TKTencentOpenAPI {
         intent.putExtra(TAuthView.TARGET, "_self");
         intent.putExtra(TAuthView.CALLBACK, CALLBACK);
         
-        activity.startActivity(intent);
+        activity.startActivityForResult(intent, R.id.activity_tencent);
         
     }
     

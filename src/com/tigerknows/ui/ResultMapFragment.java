@@ -75,6 +75,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                         mTitleBtn.setText(mSphinx.getString(R.string.title_busline_line_popup, 
                                 TrafficQuery.numToStr(mSphinx, mSphinx.getBuslineDetailFragment().getCurLine() + 1)));
                         BuslineOverlayHelper.panToViewWholeOverlay(line, mSphinx.getMapView(), (Activity)mSphinx);
+                        mSphinx.filterAutoZoom = true;
                         break;
                     }
                 }
@@ -91,6 +92,7 @@ public class ResultMapFragment extends BaseFragment implements View.OnClickListe
                         mTitleBtn.setText(mSphinx.getString(R.string.title_transfer_plan_popup, 
                                 TrafficQuery.numToStr(mSphinx, mSphinx.getTrafficDetailFragment().getCurLine() + 1)));
                         TrafficOverlayHelper.panToViewWholeOverlay(plan, mSphinx.getMapView(), (Activity)mSphinx);
+                        mSphinx.filterAutoZoom = true;
                         break;
                     }
                 }

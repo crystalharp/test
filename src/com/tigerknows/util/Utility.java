@@ -360,7 +360,7 @@ public class Utility {
                      }
                  } else if (specifyFileName == null) {
                      saveFile(zipFile.getInputStream(entry), entry.getName(), path);
-                 } else if (entry.getName().equals(specifyFileName)) {
+                 } else if (entry.getName().endsWith(specifyFileName)) {
                      saveFile(zipFile.getInputStream(entry), entry.getName(), path);
                      break;
                  }
@@ -1367,33 +1367,38 @@ public class Utility {
     }
 
     public static Matrix resizeSqareMatrix(int width, int height, int maxLength) {
-        int min = Math.min(width, height);
-        float scale = ((float) maxLength) / min;
+        int max = Math.max(width, height);
+        float scale = ((float) maxLength) / max;
         Matrix matrix = new Matrix();
         matrix.postScale(scale, scale);
         float dx = 0, dy = 0;
-        if (scale * width > maxLength) {
+        if (scale * width > width) {
             dx = (scale * width - maxLength) / 2;
         }
-        if (scale * height > maxLength) {
+        if (scale * height > height) {
             dy = (scale * height - maxLength) / 2;
         }
         matrix.postTranslate(-dx, -dy);
         return matrix;
     }
 
-    public static Matrix resizeMaxWidthMatrix(int width, int height, int maxWidth) {
-        float scale = ((float) maxWidth) / width;
+    public static Matrix resizeMaxWidthMatrix(int width, int height, int maxWidth, int maxHeight) {
+        Matrix matrix = new Matrix();
+        float maxWidthScale = ((float) maxWidth) / width;
+        float maxHeightScale = ((float) maxHeight) / height;
+        float scale = maxWidthScale;
+        if (maxWidthScale > maxHeightScale) {
+            scale = maxHeightScale;
+        }
         float dx = 0, dy = 0;
-        if (scale * width > maxWidth) {
+        if (scale * width > width) {
             dx = (scale * width - maxWidth) / 2;
         }
         if (scale * height > height) {
-            dy = (scale * height - height) / 2;
+            dy = (scale * height - maxHeight) / 2;
         }
-        Matrix matrix = new Matrix();
         matrix.postScale(scale, scale);
-        matrix.postTranslate(-dx/2, -dy);
+        matrix.postTranslate(-dx, -dy);
         return matrix;
     }
 
@@ -1414,7 +1419,7 @@ public class Utility {
                 }
             }
             fout = new FileOutputStream(file, true);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fout);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, TKConfig.Photo_Compress_Ratio, fout);
             return true;
         } catch (IOException e) {
             e.printStackTrace();

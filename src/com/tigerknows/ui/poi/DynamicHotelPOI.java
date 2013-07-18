@@ -372,7 +372,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     final public void initDate() {
-        mInitDatePOIid = mPOI.getUUID();
+        mInitDatePOIid = (mPOI != null ? mPOI.getUUID() : null);
         checkin = Calendar.getInstance();
         checkin.setTimeInMillis(System.currentTimeMillis());
         checkout = (Calendar) checkin.clone();
@@ -381,10 +381,14 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     final public void initDate(Calendar in, Calendar out) {
-        mInitDatePOIid = mPOI.getUUID();
+        mInitDatePOIid = (mPOI != null ? mPOI.getUUID() : null);
         checkout = out;
         checkin = in;
         refreshDate();
+    }
+    
+    final public void clearDateCache() {
+        mInitDatePOIid = null;
     }
     
     final public void refreshDate() {

@@ -394,9 +394,9 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
                 for(int i = 0; i < count; i++) {
                     ImageView imageView = (ImageView) mIndicationView.getChildAt(i);
                     if (i == curPos) {
-                        imageView.setBackgroundResource(R.drawable.ic_learn_dot_selected);
+                        imageView.setBackgroundResource(R.drawable.ic_viewpage_indicator_selected);
                     } else {
-                        imageView.setBackgroundResource(R.drawable.ic_learn_dot_normal);
+                        imageView.setBackgroundResource(R.drawable.ic_viewpage_indicator_normal);
                     }
                 }
             }

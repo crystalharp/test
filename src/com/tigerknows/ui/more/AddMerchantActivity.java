@@ -3,6 +3,7 @@ package com.tigerknows.ui.more;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -364,6 +365,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         mNameEdt.setOnTouchListener(onTouchListener);
         mAddressEdt.setOnTouchListener(onTouchListener);
         mTelephoneEdt.setOnTouchListener(onTouchListener);
+        mAddressDescriptionEdt.setOnTouchListener(onTouchListener);
         mYourTelephoneEdt.setOnTouchListener(onTouchListener);
     }
     
@@ -885,10 +887,11 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             
             @Override
             public void run() {
-                Utility.copyFile(Utility.imageUri2FilePath(mThis, uri), mCacheFilePath);
+                final String imagePath = URLDecoder.decode(Utility.imageUri2FilePath(mThis, uri));
+                Utility.copyFile(imagePath, mCacheFilePath);
                 final File cacheFile = new File(mCacheFilePath);
                 Uri cache = Uri.fromFile(cacheFile);
-                Bitmap bm = Utility.getBitmapByUri(mThis, cache, 800, 800);
+                Bitmap bm = Utility.getBitmapByUri(mThis, cache, TKConfig.Photo_Max_Width_Height, TKConfig.Photo_Max_Width_Height);
                 try {
                     String path = Utility.imageUri2FilePath(mThis, cache);
                     ExifInterface exifInterface = new ExifInterface(path);
@@ -927,7 +930,9 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                                     mRightBtn.setVisibility(View.GONE);
                                     mImageView.setVisibility(View.VISIBLE);
                                     mImageImv.setScaleType(ScaleType.MATRIX);
-                                    mImageImv.setImageMatrix(Utility.resizeMaxWidthMatrix(resultBitmap.getWidth(), resultBitmap.getHeight(), Globals.g_metrics.widthPixels));
+                                    mTitleView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+                                    int h = mTitleView.getMeasuredHeight();
+                                    mImageImv.setImageMatrix(Utility.resizeMaxWidthMatrix(resultBitmap.getWidth(), resultBitmap.getHeight(), Globals.g_metrics.widthPixels, Globals.g_metrics.heightPixels-h));
                                     mImageImv.setImageBitmap(resultBitmap);
                                 }
                             } else {

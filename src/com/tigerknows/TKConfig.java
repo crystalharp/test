@@ -324,7 +324,7 @@ public class TKConfig {
     /**
      * 图片上传服务访问URL路径
      */
-    private static String IMAGE_UPLOAD_URL = "http://%s/fileupload/13";
+    private static String IMAGE_UPLOAD_URL = "http://%s/hornet/upload";
 
     /**
      * 默认下载服务器Host
@@ -354,7 +354,7 @@ public class TKConfig {
     /** 
      * 默认图片上传服务器的Host
      */
-    private static String IMAGE_UPLOAD_HOST = "search.tigerknows.net";
+    private static String IMAGE_UPLOAD_HOST = "up.tigerknows.net";
 
     /**
      * 软件登录服务推送用于动态负载均衡的下载服务器Host
@@ -1351,6 +1351,16 @@ public class TKConfig {
     }
     
     /**
+     * 上传图片的最大高/宽
+     */
+    public static int Photo_Max_Width_Height = 800;
+    
+    /**
+     * 图片的压缩比率
+     */
+    public static int Photo_Compress_Ratio = 80;
+    
+    /**
      * 读取配置文件(地图数据文件存储路径/config.txt)
      * 设置参数
      */
@@ -1502,6 +1512,18 @@ public class TKConfig {
                 if (start > -1 && end > -1) {
                     start += "imageUploadUrl=".length();
                     TKConfig.IMAGE_UPLOAD_URL = text.substring(start, end);
+                }
+                start = text.indexOf("Photo_Max_Width_Height=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "Photo_Max_Width_Height=".length();
+                    TKConfig.Photo_Max_Width_Height = Integer.valueOf(text.substring(start, end));
+                }
+                start = text.indexOf("Photo_Compress_Ratio=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "Photo_Compress_Ratio=".length();
+                    TKConfig.Photo_Compress_Ratio = Integer.valueOf(text.substring(start, end));
                 }
                 
                 BaseQuery.initCommonParameters();

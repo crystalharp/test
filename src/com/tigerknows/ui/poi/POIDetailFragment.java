@@ -354,16 +354,24 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         protected List<BaseQuery> mBaseQuerying;
         protected TKAsyncTask mTkAsyncTasking;
 
-        void queryStart(List<BaseQuery> list) {
+        void queryStart(List<BaseQuery> list, boolean cancelable) {
             mBaseQuerying = list; 
-            mTkAsyncTasking = new TKAsyncTask(mSphinx, mBaseQuerying, this, null);
+            mTkAsyncTasking = new TKAsyncTask(mSphinx, mBaseQuerying, this, null, cancelable);
             mTkAsyncTasking.execute();
+        }
+        
+        void queryStart(List<BaseQuery> list) {
+            queryStart(list, true);
         }
 
         void queryStart(BaseQuery baseQuery) {
+            queryStart(baseQuery, true);
+        }
+        
+        void queryStart(BaseQuery baseQuery, boolean cancelable) {
             List<BaseQuery> list = new ArrayList<BaseQuery>();
             list.add(baseQuery);
-            queryStart(list);
+            queryStart(list, cancelable);
         }
 
         //这个函数一般情况下不需要关心,会在页面setData的时候在检测动态POI时被调到
@@ -547,6 +555,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void dismiss() {
         super.dismiss();
+        mDynamicHotelPOI.clearDateCache();
     }
     
     public void refreshDetail() {
@@ -1001,10 +1010,12 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi.getName() == null && poi.getUUID() != null) {
             return;
         }
-        if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_DETAIL) == null) {
-            mSphinx.showHint(new String[]{TKConfig.PREFS_HINT_POI_DETAIL, TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN}, new int[] {R.layout.hint_poi_detail, R.layout.hint_poi_detail_weixin});
-        } else {
-            mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN, R.layout.hint_poi_detail_weixin);
+        if (mSphinx.isOnPause() == false) {
+            if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_DETAIL) == null) {
+                mSphinx.showHint(new String[]{TKConfig.PREFS_HINT_POI_DETAIL, TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN}, new int[] {R.layout.hint_poi_detail, R.layout.hint_poi_detail_weixin});
+            } else {
+                mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN, R.layout.hint_poi_detail_weixin);
+            }
         }
         mRootView.setVisibility(View.VISIBLE);
         if (mStampAnimation != null) {

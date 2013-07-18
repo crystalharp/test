@@ -297,7 +297,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
      * overlay.isShowInPreferZoom算是个全局变量,用来标记点击下一个的时候是进行缩放操作
      * 还是进行直接移动操作.
      */
-    private boolean firstEnterMap = false;
+    public boolean filterAutoZoom = false;
     
     private Dialog mDialog = null;
     public void setDialog(Dialog dialog) {
@@ -714,8 +714,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                         @Override
                         public void run() {
                             //过滤掉viewMap的时候引起的非手动的第一次缩放
-                            if (firstEnterMap) {
-                                firstEnterMap = false;
+                            if (filterAutoZoom) {
+                                filterAutoZoom = false;
                             } else {
                                 ItemizedOverlay overlay = mMapView.getCurrentOverlay();
                                 if (overlay != null) {
@@ -919,7 +919,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         checkCitySupportDiscover(Globals.getCurrentCityInfo().getId());
         initWeibo(false, false);
-        initQZone();
 	}
 	
 	private void sendFirstStartupBroadcast() {
@@ -1128,6 +1127,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 	@Override
 	protected void onResume() {
 		super.onResume();
+		mOnPause = false;
 		Log.i(TAG,"onResume()");
 		mActionLog.onResume();
 		if (uiStackSize() > 0) {
@@ -1851,6 +1851,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     protected void onPause() {
         LogWrapper.i(TAG, "onPause");
         mActionLog.onPause();
+        mOnPause = true;
         int id = uiStackPeek();
         BaseFragment baseFragment = getFragment(id);
         if (baseFragment != null) {
@@ -3162,7 +3163,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 if (overlay != null) {
                     overlay.isShowInPreferZoom = true;
                 }
-                firstEnterMap = true;
+                filterAutoZoom = true;
             }
             mUIProcessing = false;
             return show;
@@ -4101,6 +4102,10 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     };
     
     private boolean mActivityResult = false;
+    private boolean mOnPause = true;
+    public boolean isOnPause() {
+        return mOnPause;
+    }
 
     protected boolean mSensorOrientation = false;
     private SensorManager mSensorManager=null;

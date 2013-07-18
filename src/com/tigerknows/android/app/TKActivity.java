@@ -202,7 +202,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
     /**
      * 是否开启飞行模式
      */
-    private boolean mAirPlaneModeOn = false;
+    protected boolean mAirPlaneModeOn = false;
     
     /**
      * 开启飞机模式的广播接收器
@@ -310,6 +310,8 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         mIAuthorizeCallback = iAuthorizeCallback;
         mAuthorizeType = ShareAPI.TYPE_TENCENT;
         TKTencentOpenAPI.login(this);
+
+        initQZone();
     }
     
     protected void initWeibo(boolean showProgressDialog, boolean finishActivity) {
@@ -318,8 +320,10 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
     }
     
     protected void initQZone() {
-        mTencentAuthReceiver = new AuthReceiver(this, getThirdPartyAuthorizeCallBack());
-        registerIntentReceivers();
+        if (mTencentAuthReceiver == null) {
+            mTencentAuthReceiver = new AuthReceiver(this, getThirdPartyAuthorizeCallBack());
+            registerIntentReceivers();
+        }
     }
 
     private void registerIntentReceivers() {
@@ -328,8 +332,11 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
         registerReceiver(mTencentAuthReceiver, filter);
     }
     
-    private void unregisterIntentReceivers() {
-        unregisterReceiver(mTencentAuthReceiver);
+    public void unregisterIntentReceivers() {
+        if (mTencentAuthReceiver != null) {
+            unregisterReceiver(mTencentAuthReceiver);
+            mTencentAuthReceiver = null;
+        }
     }
     
     protected ShareAPI.IAuthorizeCallBack mThirdPartyAuthorizeCallBack;
@@ -846,7 +853,12 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                     break;
             }
         } else {
-            resId = R.string.network_failed;
+            String responseStringRes = baseQuery.getCriteria().get(BaseQuery.RESPONSE_NULL_ERROR_MSG);
+            if(responseStringRes!=null){
+            	resId = Integer.parseInt(responseStringRes);
+            }else{
+            	resId = R.string.network_failed;
+            }
         }
         
         return resId;
@@ -917,6 +929,10 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
          */
         if (mSsoHandler != null) {
             mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
+        }
+        
+        if (requestCode == R.id.activity_tencent) {
+            unregisterIntentReceivers();
         }
     }    
     
