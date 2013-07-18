@@ -919,7 +919,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         
         checkCitySupportDiscover(Globals.getCurrentCityInfo().getId());
         initWeibo(false, false);
-        initQZone();
 	}
 	
 	private void sendFirstStartupBroadcast() {
