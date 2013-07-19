@@ -146,7 +146,12 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                 List<Filter> filterList2 = filter1.getChidrenFilterList();
                 if (filter1.isSelected()) {
                     selectedParentPosition = i;
-                    this.childFilterList.addAll(filterList2);
+                    if( i == 0){
+                    	selectedParentPosition = 0;
+                    	selectedChiledPosition = 0;
+                    }else{
+                    	this.childFilterList.addAll(filterList2);
+                    }
                 } else {
                 	
                 	if(isAreaFilter){
@@ -173,6 +178,9 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             	sortFilterList(allChildFilter);
             	allChildFilter.add(0, parentFilterList.get(0));
             	this.parentFilterList.get(0).getChidrenFilterList().addAll(allChildFilter);
+            	if(selectedParentPosition==0){
+            		childFilterList.addAll(allChildFilter);
+            	}
             }
         }
 
@@ -211,7 +219,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         }
         
         // 如果是区域筛选，并且当前选择的父筛选项位置是全部区域，即第0个， 则列表设置为pinnedMode。
-       	childLsv.setData(childFilterList, isAreaFilter&&selectedParentPosition == 0);
+       	childLsv.setData(childFilterList, isAreaFilter&&selectedParentPosition == 0, isAreaFilter&&selectedParentPosition == 0);
        	
     }
 
@@ -256,7 +264,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         parentAdapter.isParent = true;
         
         parentLsv.setAdapter(parentAdapter);
-        childLsv.setData(childFilterList, false);
+        childLsv.setData(childFilterList, false, false);
     }
 
     protected void findViews() {
@@ -309,9 +317,9 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                     childFilterList.clear();
                     childFilterList.addAll(filterList);
                     if(position == 0 && lastSelectedParentPosition != 0){
-                    	childLsv.setData(childFilterList, true);
+                    	childLsv.setData(childFilterList, true, true);
                     }else if(position!=0 && lastSelectedParentPosition == 0){
-                    	childLsv.setData(childFilterList, false);
+                    	childLsv.setData(childFilterList, false, false);
                     }else{
                     	childLsv.getAdapter().notifyDataSetChanged();
                     }
@@ -337,7 +345,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
-            	System.out.println("On item clicked. Position: " + position);
                 if (position >= childFilterList.size()) {
                     return;
                 }

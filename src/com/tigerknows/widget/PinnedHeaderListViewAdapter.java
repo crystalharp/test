@@ -28,14 +28,16 @@ public class PinnedHeaderListViewAdapter extends BaseAdapter implements SectionI
 	private List<Integer> mFriendsPositions;
 	private LayoutInflater inflater;
 	private boolean mPinnedMode;
+	private boolean mNotPinFirst;
 
 	public PinnedHeaderListViewAdapter(Context context, List<Filter> datas, List<String> friendsSections,
-			List<Integer> friendsPositions, boolean pinnedMode) {
+			List<Integer> friendsPositions, boolean pinnedMode, boolean notPinFirst) {
 		inflater = LayoutInflater.from(context);
 		mDatas = datas;
 		mFriendsSections = friendsSections;
 		mFriendsPositions = friendsPositions;
 		mPinnedMode = pinnedMode;
+		mNotPinFirst = notPinFirst;
 	}
 
 	@Override
@@ -62,8 +64,9 @@ public class PinnedHeaderListViewAdapter extends BaseAdapter implements SectionI
 		LinearLayout mHeaderParent = (LinearLayout) convertView
 				.findViewById(R.id.item_header_parent);
 		
-		if(mPinnedMode){
-			
+		if(!mPinnedMode || (mPinnedMode && mNotPinFirst && position==0)){
+			mHeaderParent.setVisibility(View.GONE);
+		}else{
 			int section = getSectionForPosition(position);
 			TextView mHeaderText = (TextView) convertView
 					.findViewById(R.id.item_header_text);
@@ -73,8 +76,6 @@ public class PinnedHeaderListViewAdapter extends BaseAdapter implements SectionI
 			} else {
 				mHeaderParent.setVisibility(View.GONE);
 			}
-		}else{
-			mHeaderParent.setVisibility(View.GONE);
 		}
 		TextView textView = (TextView) convertView
 				.findViewById(R.id.text_item);
@@ -110,6 +111,9 @@ public class PinnedHeaderListViewAdapter extends BaseAdapter implements SectionI
 		}
 		mLocationPosition = -1;
 		int section = getSectionForPosition(realPosition);
+		if(section==0 && mNotPinFirst){
+			return PINNED_HEADER_GONE;
+		}
 		int nextSectionPosition = getPositionForSection(section + 1);
 		if (nextSectionPosition != -1
 				&& realPosition == nextSectionPosition - 1) {
@@ -122,9 +126,12 @@ public class PinnedHeaderListViewAdapter extends BaseAdapter implements SectionI
 	public void configurePinnedHeader(View header, int position, int alpha) {
 		int realPosition = position;
 		int section = getSectionForPosition(realPosition);
+		if(section == -1){
+			return;
+		}
 		String title = (String) getSections()[section];
 		((TextView) header.findViewById(R.id.friends_list_header_text))
-				.setText(title);
+		.setText(title);
 	}
 
 	@Override

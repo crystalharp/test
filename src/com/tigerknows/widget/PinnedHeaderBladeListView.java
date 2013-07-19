@@ -75,7 +75,7 @@ public class PinnedHeaderBladeListView extends LinearLayout {
 	
 	private List<Filter> mData;
 
-	public void setData(List<Filter> data, boolean pinnedMode) {
+	public void setData(List<Filter> data, boolean pinnedMode, boolean notPinFirst) {
 		this.mData = data;
 		
 		mBladeView.setVisibility(pinnedMode?View.VISIBLE:View.GONE);
@@ -87,7 +87,15 @@ public class PinnedHeaderBladeListView extends LinearLayout {
 			mPositions = new ArrayList<Integer>();
 			mIndexer = new HashMap<String, Integer>();
 			
-			for (int i = 0, size=mData.size(); i < size; i++) {
+			if(notPinFirst && mData.size()>0){
+				String itemStr = mData.get(0).getFilterOption().getName();
+				List<String> list = new ArrayList<String>();
+				list.add(itemStr);
+				mSections.add("#");
+				mFirstChar2ItemsMap.put("#", list);
+			}
+			
+			for (int i = notPinFirst?1:0, size=mData.size(); i < size; i++) {
 				
 				String itemStr = mData.get(i).getFilterOption().getName();
 				String firstChar = String.valueOf( HanziUtil.getFirstPinYinChar(itemStr));
@@ -104,6 +112,7 @@ public class PinnedHeaderBladeListView extends LinearLayout {
 			
 			Collections.sort(mSections);
 			int position = 0;
+			
 			for (int i = 0; i < mSections.size(); i++) {
 				mIndexer.put(mSections.get(i), position);// 存入map中，key为首字母字符串，value为首字母在listview中位置
 				mPositions.add(position);// 首字母在listview中位置，存入list中
@@ -112,7 +121,7 @@ public class PinnedHeaderBladeListView extends LinearLayout {
 			
 		}
 		
-		mAdapter = new PinnedHeaderListViewAdapter(myContext, mData, mSections, mPositions, pinnedMode);
+		mAdapter = new PinnedHeaderListViewAdapter(myContext, mData, mSections, mPositions, pinnedMode, true);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnScrollListener(mAdapter);
 		mListView.setPinnedHeaderView(mPinnedHeaderView);
