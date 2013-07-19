@@ -622,7 +622,7 @@ public class ActionLog extends LogUpload {
     public static final String HotelOrderWriteReserve = "BC";
     public static final String HotelOrderWriteBookName = "BD";
     public static final String HotelOrderWriteMobile = "BE";
-    public static final String HotelOrderWriteIdCard = "BF";
+    //public static final String HotelOrderWriteIdCard = "BF";
     public static final String HOTELOrderWriteSubmit = "BG";
 
     // 信用卡担保页
@@ -638,13 +638,6 @@ public class ActionLog extends LogUpload {
     public static final String HotelOrderCreditCertCode = "BI";
     public static final String HotelOrderCreditSubmit = "BJ";
     
-    // 7天酒店注册页
-    public static final String HotelSeveninnRegist = "GG";
-    public static final String HotelSeveninnRegistName = "BA";
-    public static final String HotelSeveninnRegistPhone = "BB";
-    public static final String HotelSeveninnRegistIdcard = "BC";
-    public static final String HotelSeveninnRegistSubmit = "BD";
-
     // 订单列表页
     public static final String HotelOrderList = "GH";
     public static final String HotelOrderListGoThere = "BA";
