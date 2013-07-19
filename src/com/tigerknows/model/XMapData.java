@@ -59,6 +59,9 @@ public class XMapData {
         
     }
     
+    <T> List<T> getListFromData(byte filedKey, XMapInitializer<T> initer, List<T> defaultValue) throws APIException{
+        return getListFromData(data, filedKey, initer, defaultValue);
+    }
     /**
      * 根据key从data中获取List<T>类型的值
      * @param filedKey
@@ -66,7 +69,7 @@ public class XMapData {
      * @return
      * @throws APIException
      */
-    <T> List<T> getListFromData(byte filedKey, XMapInitializer<T> initer, List<T> defaultValue) throws APIException{
+    <T> List<T> getListFromData(XMap data, byte filedKey, XMapInitializer<T> initer, List<T> defaultValue) throws APIException{
 
         List<T> result = null;
         if (data.containsKey(filedKey)) {
