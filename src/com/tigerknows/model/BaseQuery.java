@@ -273,6 +273,9 @@ public abstract class BaseQuery {
     
     // 优惠券 22
     public static final String DATA_TYPE_COUPON = "22";
+    
+    // 默认筛选项等配置文件 23
+    public static final String DATA_TYPE_FILTER = "23";
 
     // 发现首页动态数据统计 100
     public static final String DATA_TYPE_DISCOVER = "100";
