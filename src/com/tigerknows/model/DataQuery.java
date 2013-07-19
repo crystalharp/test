@@ -1136,6 +1136,8 @@ public final class DataQuery extends BaseQuery {
         private String name;
 
         private int parent;
+        
+        public char firstChar = 0;
 
         public FilterOption() {
         }
