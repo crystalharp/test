@@ -621,29 +621,9 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
                mSphinx.showView(R.id.view_hotel_credit_assure);
                break;
         case Response.RESPONSE_CODE_HOTEL_OTHER_ERROR:
-            String[] a = analysisElongRequest(response.getDescription()).split("#");
-            LogWrapper.d("Trap", a[0]);
-            switch(Integer.parseInt(a[0])){
-            case 1:
-                mTotalPrice = Double.parseDouble(a[1]);
-                submit(false);
-                break;
-            default:
-                Utility.showNormalDialog(mSphinx, a[1]);
-                break;
-            }
+            Utility.showNormalDialog(mSphinx, response.getDescription().split("!")[0].split("！")[0]);
             break;
         }
-    }
-    private String analysisElongRequest(String description){
-        String ResponseStr = description.split("!")[0].split("！")[0];
-        int ResponseInt = 0;
-        String[] strArray = description.split("sdafdsagfsdwwwwwwwwwwwwwwwwww");
-        if(strArray.length > 1){
-            ResponseInt = 1;
-            ResponseStr = strArray[1];
-        }
-        return ResponseInt+"#"+ResponseStr;
     }
 
     private void destroyFragments(boolean seven, boolean credit){
@@ -677,7 +657,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
         }
         if(list.isEmpty()){
             XMap data = new XMap();
-            data.put(RetentionTime.FIELD_TIME, "23:59之前");
+            data.put(RetentionTime.FIELD_TIME, mSphinx.getString(R.string.before_23_59));
             data.put(RetentionTime.FIELD_NEED, 0);
             data.put(RetentionTime.FIELD_TYPE, 0);
             data.put(RetentionTime.FIELD_TIME_DETAIL, SIMPLE_DATE_FORMAT.format(mCheckIn.getTime()) + " 23:59:00");
