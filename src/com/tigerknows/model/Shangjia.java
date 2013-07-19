@@ -223,7 +223,7 @@ public class Shangjia extends BaseData implements Parcelable {
                 if (exist == false) {
                     XMap xmap = new XMap();
                     xmap.put(FIELD_SOURCE, SOURCE_WOWOTUAN);
-                    xmap.put(FIELD_SERVICE_TEL, "4000155555");
+                    xmap.put(FIELD_SERVICE_TEL, "4001055555");
                     xmap.put(FIELD_MARKER, Utility.getDrawableResource(sphinx, R.drawable.ic_wowotuan_marker));
                     xmap.put(FIELD_NAME, sphinx.getString(R.string.wowotuan_name));
                     

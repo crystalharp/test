@@ -751,6 +751,11 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                 }
             }
             resId = getResponseResId(baseQuery);
+        }else {
+            String responseStringRes = baseQuery.getCriteria().get(BaseQuery.RESPONSE_NULL_ERROR_MSG);
+            if(responseStringRes!=null){
+            	resId = Integer.parseInt(responseStringRes);
+            }
         }
         
         result = (resId != R.string.response_code_200);
