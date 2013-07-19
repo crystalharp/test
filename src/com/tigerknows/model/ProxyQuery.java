@@ -2,7 +2,6 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
-import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.test.ProxyQueryTest;
 import com.tigerknows.model.xobject.XMap;
 

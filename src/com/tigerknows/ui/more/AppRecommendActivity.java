@@ -16,10 +16,7 @@ import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.BootstrapModel.Recommend;
 import com.tigerknows.model.BootstrapModel.Recommend.RecommendApp;
 import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.util.Utility;
-
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
