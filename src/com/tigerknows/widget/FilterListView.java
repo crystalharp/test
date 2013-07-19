@@ -545,4 +545,32 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     	}
         return result;
     }
+    
+    public static Filter[] getSelectedFilter(Filter filter) {
+        Filter[] result = null;
+        if (filter != null) {
+            List<Filter> chidrenFilterList = filter.getChidrenFilterList();
+            if (chidrenFilterList != null) {
+                for(int i = 0, size = chidrenFilterList.size(); i < size; i++) {
+                    Filter chidrenFilter = chidrenFilterList.get(i);
+                    if (chidrenFilter.isSelected()) {
+                        result = new Filter[1];
+                        result[0] = chidrenFilter;
+                        return result;
+                    }
+                    List<Filter> chidrenFilterList1 = chidrenFilter.getChidrenFilterList();
+                    for(int j = 0, count = chidrenFilterList1.size(); j < count; j++) {
+                        Filter chidrenFilter1 = chidrenFilterList1.get(j);
+                        if (chidrenFilter1.isSelected()) {
+                            result = new Filter[2];
+                            result[0] = chidrenFilter;
+                            result[1] = chidrenFilter1;
+                            return result;
+                        }
+                    }
+                }
+            }
+        }
+        return result;
+    }
 }
