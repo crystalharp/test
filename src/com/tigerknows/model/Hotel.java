@@ -184,9 +184,10 @@ public class Hotel extends XMapData {
             if (service != null) {
                 data.put(FIELD_SERVICE, service);
             }
-            if (canReserve != 0) {
-                data.put(FIELD_CAN_RESERVE, canReserve);
-            }
+            // TODO 是否可预订状态只在第一次初始化时赋值，后续不能被更新
+//            if (canReserve != 0) {
+//                data.put(FIELD_CAN_RESERVE, canReserve);
+//            }
             if (longDescription != null) {
                 data.put(FIELD_LONG_DESCRIPTION, longDescription);
             }

@@ -503,6 +503,10 @@ public class POI extends BaseData {
     
     private Hotel hotel = new Hotel();
     
+    private List<SubwayPresetTime> subwayPresetTimes;
+    
+    private List<SubwayExit> subwayExits;
+    
     public void updateData(Context context, XMap data) {
         try {
             BaseData baseData = checkStore(context, storeType, -1, false);
@@ -752,6 +756,14 @@ public class POI extends BaseData {
     public List<Dianying> getDynamicDianyingList() {
         return dynamicDianyingList;
     }
+    
+    public List<SubwayExit> getSubwayExitList() {
+        return subwayExits;
+    }
+    
+    public List<SubwayPresetTime> getSubwayPresetTimeList() {
+        return subwayPresetTimes;
+    }
 
     public void setDynamicDianyingList(List<Dianying> dynamicDianyingList) {
         this.dynamicDianyingList = dynamicDianyingList;
@@ -833,6 +845,13 @@ public class POI extends BaseData {
                 this.service = service;
                 
                 this.envrionment = getStringFromData(this.description, Description.FIELD_ENVIRONMENT, reset ? null : this.envrionment);
+                
+                if (this.description.containsKey(Description.FIELD_SUBWAY_EXITS)) {
+                    this.subwayExits = getListFromData(this.description, Description.FIELD_SUBWAY_EXITS, SubwayExit.Initializer, reset ? null : this.subwayExits);
+                }
+                if (this.description.containsKey(Description.FIELD_SUBWAY_PRESET_TIMES)) {
+                    this.subwayPresetTimes = getListFromData(this.description, Description.FIELD_SUBWAY_PRESET_TIMES, SubwayPresetTime.Initializer, reset ? null : this.subwayPresetTimes);
+                }
                 
                 //购物POI中的产品信息，4.30 ALPHA3中暂未添加
                 //目前暂无其他代码调用此段信息，仅作为预留
@@ -1537,11 +1556,129 @@ public class POI extends BaseData {
         }
     };
     
-    public class SubwayPresetTime {
+    public static class SubwayPresetTime extends XMapData {
+        public final static byte FEILD_SUBWAY_NAME = 0x01;
+        public final static byte FEILD_PRESET_TIME = 0x02;
+        private String name;
+        private List<PresetTime> presetTimes;
         
+        public String getName() {
+            return name;
+        }
+        
+        public List<PresetTime> getPresetTimes() {
+            return presetTimes;
+        }
+        
+        public SubwayPresetTime(XMap data) throws APIException {
+            super(data);
+            this.name = getStringFromData(FEILD_SUBWAY_NAME);
+            this.presetTimes = getListFromData(FEILD_PRESET_TIME, PresetTime.Initializer);
+        }
+        
+        public final static XMapInitializer<SubwayPresetTime> Initializer = new XMapInitializer<SubwayPresetTime>() {
+
+            @Override
+            public SubwayPresetTime init(XMap data) throws APIException {
+                return new SubwayPresetTime(data);
+            }
+            
+        };
     }
     
-    public class SubwayExit {
+    public static class PresetTime extends XMapData {
+        public final static byte FEILD_DIRECTION = 0x01;
+        public final static byte FEILD_START_TIME = 0x02;
+        public final static byte FEILD_END_TIME = 0x03;
+        private String direction;
+        private String startTime;
+        private String endTime;
         
+        public String getDirection() {
+            return direction;
+        }
+        
+        public String getStartTime() {
+            return startTime;
+        }
+        
+        public String getEndTime() {
+            return endTime; 
+        }
+        
+        public PresetTime(XMap data) throws APIException {
+            super(data);
+            this.direction = getStringFromData(FEILD_DIRECTION);
+            this.startTime = getStringFromData(FEILD_START_TIME);
+            this.endTime = getStringFromData(FEILD_END_TIME);
+        }
+        
+        public final static XMapInitializer<PresetTime> Initializer = new XMapInitializer<PresetTime>() {
+
+            @Override
+            public PresetTime init(XMap data) throws APIException {
+                return new PresetTime(data);
+            }
+            
+        };
+    }
+    
+    public static class SubwayExit extends XMapData {
+        public final static byte FEILD_SUBWAY_EXIT = 0x01;
+        public final static byte FEILD_LANDMARK = 0x02;
+        public final static byte FEILD_STATIONS = 0x03;
+        private String exit;
+        private String landmark;
+        private List<Station> stations;
+        
+        public String getExit() {
+            return exit;
+        }
+        
+        public String getLandmark() {
+            return landmark;
+        }
+        
+        public List<Station> getStations() {
+            return stations;
+        }
+        
+        public SubwayExit(XMap data) throws APIException {
+            super(data);
+            this.exit = getStringFromData(FEILD_SUBWAY_EXIT);
+            this.landmark = getStringFromData(FEILD_LANDMARK);
+            this.stations = getListFromData(FEILD_STATIONS, Station.Initializer);
+        }
+        
+        public final static XMapInitializer<SubwayExit> Initializer = new XMapInitializer<SubwayExit>() {
+
+            @Override
+            public SubwayExit init(XMap data) throws APIException {
+                return new SubwayExit(data);
+            }
+        };
+    }
+    
+    public static class Station extends XMapData {
+        public final static byte FEILD_STATION = 0x01;
+        private String station;
+        
+        public String getStation() {
+            return station;
+        }
+        
+        public Station(XMap data) throws APIException {
+            super(data);
+            this.station = getStringFromData(FEILD_STATION);
+        }
+        
+        public final static XMapInitializer<Station> Initializer = new XMapInitializer<Station>() {
+
+            @Override
+            public Station init(XMap data) throws APIException {
+                return new Station(data);
+            }
+            
+        };
     }
 }
