@@ -864,7 +864,7 @@
     <string name="add_merchant_upload_photo_added">已添加商户门面照片</string>
     <string name="wait_submit">等待提交</string>
     <string name="contact">联系方式</string>
-    <string name="please_input_your_telephone">请输入您的电话</string>
+    <string name="please_input_your_telephone">请输入您的手机号</string>
     <string name="add_merchant_thanks">感谢您帮助我们完善商户信息。请认真填写联系方式，以便我们将处理后的结果及时反馈给您。 </string>
     <string name="capture_photo">拍照上传</string>
     <string name="pick_photo">从手机相册选择</string>
