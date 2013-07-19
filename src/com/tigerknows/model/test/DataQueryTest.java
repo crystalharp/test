@@ -11,6 +11,7 @@ import com.tigerknows.model.DataQuery.AlternativeResponse;
 import com.tigerknows.model.DataQuery.AlternativeResponse.Alternative;
 import com.tigerknows.model.DataQuery.CouponResponse;
 import com.tigerknows.model.DataQuery.CouponResponse.CouponList;
+import com.tigerknows.model.DataQuery.FilterConfigResponse;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.Hotel;
@@ -313,6 +314,15 @@ public class DataQueryTest {
             list.add(XInt.valueOf(i));
         }
         return list;
+    }
+    
+    public static XMap launchFilterConfigResponse() {
+        XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        XMap configResult = new XMap();
+        configResult.put(FilterConfigResponse.FIELD_AREA_FILTER, launchFilterArea());
+        data.put(FilterConfigResponse.FIELD_RESULT, configResult);
+        return data;
     }
 
     protected static XMap launchFilterArea() {

@@ -2,7 +2,6 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
-import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.test.ProxyQueryTest;
 import com.tigerknows.model.xobject.XMap;
 
@@ -38,18 +37,6 @@ public class ProxyQuery extends BaseQuery {
     // checkoutdate string true 离开日期，格式如2013-04-22
     public static final String SERVER_PARAMETER_CHECKOUT_DATE = "checkoutdate";
 
-    // 2 注册七天酒店会员
-    public static final String TASK_REGISTER_7_DAY_MEMBER = "2";
-
-    // username string true 用户姓名，不支持标点符号
-    public static final String SERVER_PARAMETER_USERNAME = "username";
-
-    // mobile string true 用户手机号
-    public static final String SERVER_PARAMETER_MOBILE = "mobile";
-
-    // idcardno string true 用于注册酒店会员的身份证号
-    public static final String SERVER_PARAMETER_IDCARDNO = "idcardno";
-
     static final String TAG = "TaskQuery";
 
     public ProxyQuery(Context context) {
@@ -71,12 +58,6 @@ public class ProxyQuery extends BaseQuery {
                     SERVER_PARAMETER_CHECKIN_DATE,
                     SERVER_PARAMETER_CHECKOUT_DATE
             });
-        } else if (task.equals(TASK_REGISTER_7_DAY_MEMBER)) {
-            addParameter(new String[] {
-                    SERVER_PARAMETER_USERNAME,
-                    SERVER_PARAMETER_MOBILE,
-                    SERVER_PARAMETER_IDCARDNO
-            });
         } else {
             throw APIException.wrapToMissingRequestParameterException("task type invalid.");
         }
@@ -97,8 +78,6 @@ public class ProxyQuery extends BaseQuery {
         String taskType = this.criteria.get(SERVER_PARAMETER_TASK);
         if (taskType.equals(TASK_ROOM_TYPE_DYNAMIC)) {
             response = new RoomTypeDynamic(responseXMap);
-        } else if (taskType.equals(TASK_REGISTER_7_DAY_MEMBER)) {
-            response = new Response(responseXMap);
         } else {
             throw APIException.wrapToMissingRequestParameterException("task type invalid.");
         }
@@ -109,8 +88,6 @@ public class ProxyQuery extends BaseQuery {
         String task = this.criteria.get(SERVER_PARAMETER_TASK);
         if (task.equals(TASK_ROOM_TYPE_DYNAMIC)) {
             responseXMap = ProxyQueryTest.launchRoomTypeDynamicRespnose(context);
-        } else if (task.equals(TASK_REGISTER_7_DAY_MEMBER)) {
-            responseXMap = BaseQueryTest.launchResponse("123456890");
         }
     }
 

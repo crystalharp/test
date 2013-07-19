@@ -145,7 +145,6 @@ import com.tigerknows.ui.hotel.HotelOrderCreditFragment;
 import com.tigerknows.ui.hotel.HotelOrderDetailFragment;
 import com.tigerknows.ui.hotel.HotelOrderListFragment;
 import com.tigerknows.ui.hotel.HotelOrderWriteFragment;
-import com.tigerknows.ui.hotel.HotelSeveninnRegistFragment;
 import com.tigerknows.ui.hotel.PickLocationFragment;
 import com.tigerknows.ui.more.AboutUsActivity;
 import com.tigerknows.ui.more.AddMerchantActivity;
@@ -3386,7 +3385,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
     private PickLocationFragment mPickLocationFragment;
     private HotelOrderWriteFragment mHotelOrderWriteFragment;
     private HotelOrderCreditFragment mHotelOrderCreditFragment;
-    private HotelSeveninnRegistFragment mHotelSeveninnRegistFragment;
     
     private HotelOrderDetailFragment mHotelOrderDetailFragment;
     private HotelOrderListFragment mHotelOrderListFragment;
@@ -3521,10 +3519,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 baseFragment = getHotelOrderCreditFragment();
                 break;
 
-            case R.id.view_hotel_seveninn_regist:
-            	baseFragment = getHotelSeveninnRegistFragment();
-            	break;
-            	
             case R.id.view_hotel_order_list:
             	baseFragment = getHotelOrderListFragment();
             	break;
@@ -3955,18 +3949,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         }
     }
 
-    public HotelSeveninnRegistFragment getHotelSeveninnRegistFragment() {
-        synchronized (mUILock) {
-            if (mHotelSeveninnRegistFragment == null) {
-            	HotelSeveninnRegistFragment fragment = new HotelSeveninnRegistFragment(Sphinx.this);
-                fragment.setId(R.id.view_hotel_seveninn_regist);
-                fragment.onCreate(null);
-                mHotelSeveninnRegistFragment = fragment;
-            }
-            return mHotelSeveninnRegistFragment;
-        }
-    }
-
     public HotelOrderListFragment getHotelOrderListFragment() {
         synchronized (mUILock) {
             if (mHotelOrderListFragment == null) {
@@ -4046,10 +4028,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
 
     public void destroyHotelOrderCreditFragment(){
     	mHotelOrderCreditFragment = null;
-    }
-    
-    public void destroyHotelSeveninnRegistFragment(){
-    	mHotelSeveninnRegistFragment = null;
     }
     
     // TODO: get fragment end

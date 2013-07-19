@@ -1020,6 +1020,7 @@
     <string name="choose_room_howmany">选择房间数</string>
     <string name="room_howmany_item">%1$d间/%2$s元</string>
     <string name="choose_room_reserve">房间保留到</string>
+    <string name="before_23_59">23:59之前</string>
     
     <string name="hotel_service_title">酒店服务</string>
     <string name="hotel_room_description_title">房间设施</string>

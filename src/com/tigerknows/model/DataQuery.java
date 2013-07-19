@@ -64,6 +64,9 @@ public final class DataQuery extends BaseQuery {
 
     // flt String  false   筛选选项，格式为key:id;key:id;key:id(key是对应筛选项在xmap中的key，目前有11,12,13)
     public static final String SERVER_PARAMETER_FILTER = "flt";
+
+    // flt_s    String  false   筛选选项字符串，格式为key:str;key:str;key:str(key同上，str指的是筛选选项对应的字符串，且如有父级也需提交，如"我的当前位置_附近xx米") 
+    public static final String SERVER_PARAMETER_FILTER_STRING = "flt_s";
     
     // cfv string  false   城市地片筛选版本号，每个城市不同
     public static final String SERVER_PARAMETER_CITY_FILTER_VERSION = "cfv";
@@ -127,6 +130,9 @@ public final class DataQuery extends BaseQuery {
     
     // appendaction    string  false   目前支持nosearch（表示不做搜索，只返回筛选项） 
     public static final String SERVER_PARAMETER_APPENDACTION = "appendaction";
+    
+    // configinfo   String  true    JSON字符串，key标识config的类型，value标识版本号,具体定义见默认筛选项参数定义
+    public static final String SERVER_PARAMETER_CONFIGINFO = "configinfo";
     
     // 评论版本 
     public static final String COMMENT_VERSION = "1";
@@ -703,6 +709,19 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_COUPON.equals(dataType)) {
         	addParameter(SERVER_PARAMETER_POI_ID);
         	addParameter(SERVER_PARAMETER_NEED_FIELD);
+        } else if (DATA_TYPE_FILTER.equals(dataType)) {
+            addParameter(SERVER_PARAMETER_CONFIGINFO);
+            
+            String cfv = null;
+            if (Filter_Area != null && Filter_Area.cityId == cityId) {
+                cfv = Filter_Area.version;
+            }
+            String nfv = null;
+            if (Filter_Category_Order_POI != null) {
+                nfv = Filter_Category_Order_POI.version;
+            }
+            addFilterParameters(criteria, requestParameters, cfv, nfv, false);
+
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
@@ -723,8 +742,15 @@ public final class DataQuery extends BaseQuery {
     }
     
     private void addFilterParameters(Hashtable<String, String> criteria, WeiboParameters requestParameters, String cfv, String nfv) throws APIException {
+        addFilterParameters(criteria, requestParameters, cfv, nfv, true);
+    }
+    
+    private void addFilterParameters(Hashtable<String, String> criteria, WeiboParameters requestParameters, String cfv, String nfv, boolean needIndex) throws APIException {
         if (criteria.containsKey(SERVER_PARAMETER_FILTER)) {
             requestParameters.add(SERVER_PARAMETER_FILTER, criteria.get(SERVER_PARAMETER_FILTER));
+        }
+        if (criteria.containsKey(SERVER_PARAMETER_FILTER_STRING)) {
+            requestParameters.add(SERVER_PARAMETER_FILTER_STRING, criteria.get(SERVER_PARAMETER_FILTER_STRING));
         }
         if (TextUtils.isEmpty(cfv) == false) {
             requestParameters.add(SERVER_PARAMETER_CITY_FILTER_VERSION, cfv);
@@ -734,7 +760,7 @@ public final class DataQuery extends BaseQuery {
         }
         if (criteria.containsKey(SERVER_PARAMETER_INDEX)) {
             requestParameters.add(SERVER_PARAMETER_INDEX, criteria.get(SERVER_PARAMETER_INDEX));
-        } else {
+        } else if (needIndex) {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_INDEX);
         }
     }
@@ -799,6 +825,10 @@ public final class DataQuery extends BaseQuery {
             this.response = new AlternativeResponse(responseXMap);
         } else if (DATA_TYPE_COUPON.equals(dataType)) {
             this.response = new CouponResponse(responseXMap);
+        } else if (DATA_TYPE_FILTER.equals(dataType)) {
+            FilterConfigResponse response = new FilterConfigResponse(responseXMap);
+            translateFilter(response.getFilterResponse(), dataType, subDataType, filterList);
+            this.response = response;
         }
     }
     
@@ -829,6 +859,8 @@ public final class DataQuery extends BaseQuery {
                 } else if (DATA_TYPE_ZHANLAN.equals(dataType)) {
                     staticFilterDataArea = Filter_Area;
                     staticFilterDataCategoryOrder = Filter_Category_Order_Zhanlan;
+                } else if (DATA_TYPE_FILTER.equals(dataType)) {
+                    staticFilterDataArea = Filter_Area;
                 }
                 // 将城市区域筛选数据写入相应文件夹
                 FilterArea filterDataArea = baseResponse.getFilterDataArea();
@@ -897,6 +929,8 @@ public final class DataQuery extends BaseQuery {
                 } else if (DATA_TYPE_ZHANLAN.equals(dataType)) {
                     Filter_Area = staticFilterDataArea;
                     Filter_Category_Order_Zhanlan = staticFilterDataCategoryOrder;
+                } else if (DATA_TYPE_FILTER.equals(dataType)) {
+                    Filter_Area = staticFilterDataArea;
                 }
             } catch (Exception e) {
                 throw new APIException(e);
@@ -1905,6 +1939,35 @@ public final class DataQuery extends BaseQuery {
             
         }
     }
+    
+    public static class FilterConfigResponse extends Response {
+        // 0x02     x_map<x_map>    配置文件的返回结果
+        public static final byte FIELD_RESULT = 0x02;
+        
+        // 0x00    x_map   根据城市id获取的地片筛选项 
+        public static final byte FIELD_AREA_FILTER = 0x0;
+        
+        private FilterResponse filterResponse;
+
+        public FilterConfigResponse(XMap data) throws APIException {
+            super(data);
+            
+            if (this.data.containsKey(FIELD_RESULT)) {
+                XMap xmap = this.data.getXMap(FIELD_RESULT);
+                if (xmap.containsKey(FIELD_AREA_FILTER)) {
+                    XMap filterArea = xmap.getXMap(FIELD_AREA_FILTER);
+                    xmap.remove(FIELD_AREA_FILTER);
+                    xmap.put(FilterResponse.FIELD_FILTER_AREA, filterArea);
+                    filterResponse = new FilterResponse(xmap);
+                }
+            }
+        }
+
+        public FilterResponse getFilterResponse() {
+            return filterResponse;
+        }
+    }
+    
     public static class ShangjiaResponse extends Response {
         // 0x02 x_map   商家结果
         public static final byte FIELD_LIST = 0x02;
@@ -2470,6 +2533,8 @@ public final class DataQuery extends BaseQuery {
             responseXMap = DataQueryTest.launchAlternativeResponse(168, "launchAlternativeResponse");
         } else if (DATA_TYPE_COUPON.equals(dataType)){
         	responseXMap = DataQueryTest.launchCouponResponse(168, "launchCouponResponse");
+        } else if (DATA_TYPE_FILTER.equals(dataType)){
+            responseXMap = DataQueryTest.launchFilterConfigResponse();
         }
     }
 }
