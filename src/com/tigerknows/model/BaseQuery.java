@@ -1037,7 +1037,7 @@ public abstract class BaseQuery {
      * @param key
      * @throws APIException
      */
-    private final void checkParameter(String key) throws APIException {
+    private final void debugCheckParameter(String key) throws APIException {
         if (checkCriteria != null && checkCriteria.containsKey(key)) {
             String result = checkCriteria.get(key);
             if (result == null) {
@@ -1057,10 +1057,10 @@ public abstract class BaseQuery {
      * @throws APIException
      */
     @SuppressWarnings("unchecked")
-    protected void checkParameters(String[] essentialKeys, String[] optionalKeys) throws APIException{
+    protected void debugCheckParameters(String[] essentialKeys, String[] optionalKeys) throws APIException{
         checkCriteria = (Hashtable<String, String>) criteria.clone();
         for (int i = 0; i < essentialKeys.length; i++) {
-            checkParameter(essentialKeys[i]);
+            debugCheckParameter(essentialKeys[i]);
             checkCriteria.remove(essentialKeys[i]);
         }
         
@@ -1084,7 +1084,7 @@ public abstract class BaseQuery {
      * @param essentialKeys
      * @throws APIException
      */
-    protected void checkParameters(String[] essentialKeys) throws APIException {
-        checkParameters(essentialKeys, null);
+    protected void debugCheckParameters(String[] essentialKeys) throws APIException {
+        debugCheckParameters(essentialKeys, null);
     }
 }

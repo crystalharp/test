@@ -83,9 +83,9 @@ public class ProxyQuery extends BaseQuery {
 //        }
         String task = getParameter(SERVER_PARAMETER_TASK);
         if (task.equals(TASK_ROOM_TYPE_DYNAMIC)) {
-            checkParameters(ROOM_TYPE_DYNAMIC_EKEYS, ROOM_TYPE_DYNAMIC_OKEYS);
+            debugCheckParameters(ROOM_TYPE_DYNAMIC_EKEYS, ROOM_TYPE_DYNAMIC_OKEYS);
         } else if (task.equals(TASK_REGISTER_7_DAY_MEMBER)) {
-            checkParameters(REGISTER_7_DAY_MEMBER_EKEYS, REGISTER_7_DAY_MEMBER_OKEYS);
+            debugCheckParameters(REGISTER_7_DAY_MEMBER_EKEYS, REGISTER_7_DAY_MEMBER_OKEYS);
         } else {
             throw APIException.wrapToMissingRequestParameterException("task type invalid.");
         }
