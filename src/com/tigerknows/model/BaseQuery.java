@@ -13,7 +13,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import android.app.Activity;
@@ -208,8 +212,8 @@ public abstract class BaseQuery {
      */
     public boolean isPulledDynamicPOIRequest() {
         boolean result = false;
-        if (criteria != null && criteria.containsKey(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {
-            String sourceType = criteria.get(SERVER_PARAMETER_REQUSET_SOURCE_TYPE);
+        if (requestParameters.containsKey(SERVER_PARAMETER_REQUSET_SOURCE_TYPE)) {
+            String sourceType = requestParameters.getValue(SERVER_PARAMETER_REQUSET_SOURCE_TYPE);
             if (REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI.equals(sourceType)) {
                 result = true;
             }
@@ -309,14 +313,16 @@ public abstract class BaseQuery {
 
     public static final int KEEP_ALIVE_TIME = 30 * 1000;
     
-    private static WeiboParameters sCommonParameters;
+//    private static WeiboParameters sCommonParameters;
+    
+    private static RequestParameters sCommonParameters;
     
     /**
      * 设置网络请求中的公共参数
      */
     public static void initCommonParameters() {
         
-        sCommonParameters = new WeiboParameters();
+        sCommonParameters = new RequestParameters();
         
         // 下列参数都是固定值，兼容旧版本服务的公共请求参数约定
         sCommonParameters.add("dv", "1");
@@ -392,14 +398,16 @@ public abstract class BaseQuery {
     
     protected int targetViewId = -1;
     
-    private Hashtable<String, String> criteria = new Hashtable<String, String>();
+//    private Hashtable<String, String> criteria = new Hashtable<String, String>();
     
-    protected Hashtable<String, String> checkCriteria = null;
+    private RequestParameters checkParameter = null;
     
     protected String tipText = null;
     
+    private RequestParameters requestParameters = new RequestParameters();
+    
     //FIXME:使用private变量
-    private WeiboParameters requestParameters = new WeiboParameters();
+//    private WeiboParameters requestParameters = new WeiboParameters();
 
     protected HttpUtils.TKHttpClient httpClient;
 
@@ -449,9 +457,9 @@ public abstract class BaseQuery {
         return this.apiType;
     }
     
-    public Hashtable<String, String> getCriteria() {
-        return criteria;
-    }
+//    public Hashtable<String, String> getCriteria() {
+//        return criteria;
+//    }
 
     public void setTipText(String tipText) {
 		this.tipText = tipText;
@@ -513,7 +521,8 @@ public abstract class BaseQuery {
     }
     
     public void setup(Hashtable<String, String> criteria, int cityId, int sourceViewId, int targetViewId, String tipText, boolean needReconntection) {
-        this.criteria = criteria;
+        //FIXME:把所有的参数添加全部变成BaseQuery的addParameter
+//        this.criteria = criteria;
         this.cityId = cityId;
         this.sourceViewId = sourceViewId;
         this.targetViewId = targetViewId;
@@ -575,7 +584,7 @@ public abstract class BaseQuery {
      * 这个函数只管把criteria中的值添加为参数,其他什么都不管.
      */
     protected void makeRequestParameters() {
-        requestParameters.clear();
+//        requestParameters.clear();
         if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false && API_TYPE_FILE_UPLOAD.equals(apiType) == false) {
             requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
             requestParameters.add(SERVER_PARAMETER_VERSION, version);
@@ -586,7 +595,7 @@ public abstract class BaseQuery {
         addUUIDParameter();
         
         requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
-        requestParameters.addAll(generateParameters(criteria));
+//        requestParameters.addAll(generateParameters(criteria));
     }
     
     protected void createHttpClient() {
@@ -597,7 +606,8 @@ public abstract class BaseQuery {
         httpClient = new HttpUtils.TKHttpClient();
         httpClient.setApiType(apiType);
         httpClient.setIsEncrypt(needEncrypt);
-        httpClient.setParameters(requestParameters);
+        //FIXME:修改httpClient中对于参数的操作
+//        httpClient.setParameters(requestParameters);
     }
     
     protected void launchTest() {
@@ -903,8 +913,8 @@ public abstract class BaseQuery {
      */
     public final void addParameter(String key, String value) {
         if (key != null && !key.equals("")) {
-            criteria.remove(key);
-            criteria.put(key, value);
+            requestParameters.remove(key);
+            requestParameters.add(key, value);
         }
     }
     
@@ -915,20 +925,20 @@ public abstract class BaseQuery {
      */
     public final String getParameter(String key) {
         if (key != null) {
-            return criteria.get(key);
+            return requestParameters.getValue(key);
         }
         return null;
     }
     
     public final void delParameter(String key) {
         if (key != null) {
-            criteria.remove(key);
+            requestParameters.remove(key);
         }
     }
     
     public final boolean hasParameter(String key) {
         if (key != null) {
-            return criteria.containsKey(key);
+            return requestParameters.containsKey(key);
         }
         return false;
     }
@@ -1019,18 +1029,18 @@ public abstract class BaseQuery {
      * @param criteria
      * @return
      */
-    private WeiboParameters generateParameters(Hashtable<String, String> criteria) {
-        WeiboParameters parameters = new WeiboParameters();
-        if (criteria != null && !criteria.isEmpty()) {
-            Enumeration<String> e = criteria.keys();
-            while (e.hasMoreElements()) {
-                String s = e.nextElement();
-                parameters.add(s, criteria.get(s));
-            }
-        }
-        return parameters;
-        
-    }
+//    private WeiboParameters generateParameters(Hashtable<String, String> criteria) {
+//        WeiboParameters parameters = new WeiboParameters();
+//        if (criteria != null && !criteria.isEmpty()) {
+//            Enumeration<String> e = criteria.keys();
+//            while (e.hasMoreElements()) {
+//                String s = e.nextElement();
+//                parameters.add(s, criteria.get(s));
+//            }
+//        }
+//        return parameters;
+//        
+//    }
     
     /**
      * 检查一个参数是否存在，不存在则抛出异常
@@ -1038,8 +1048,8 @@ public abstract class BaseQuery {
      * @throws APIException
      */
     private final void debugCheckParameter(String key) throws APIException {
-        if (checkCriteria != null && checkCriteria.containsKey(key)) {
-            String result = checkCriteria.get(key);
+        if (checkParameter != null && checkParameter.containsKey(key)) {
+            String result = checkParameter.getValue(key);
             if (result == null) {
                 throw APIException.wrapToMissingRequestParameterException(key);
             }
@@ -1058,21 +1068,22 @@ public abstract class BaseQuery {
      */
     @SuppressWarnings("unchecked")
     protected void debugCheckParameters(String[] essentialKeys, String[] optionalKeys) throws APIException{
-        checkCriteria = (Hashtable<String, String>) criteria.clone();
+        checkParameter = requestParameters.clone();
         for (int i = 0; i < essentialKeys.length; i++) {
             debugCheckParameter(essentialKeys[i]);
-            checkCriteria.remove(essentialKeys[i]);
+            checkParameter.remove(essentialKeys[i]);
         }
         
         for (int i = 0; i < optionalKeys.length; i++) {
-            checkCriteria.remove(optionalKeys[i]);
+            checkParameter.remove(optionalKeys[i]);
         }
         
-        if (!checkCriteria.isEmpty()) {
+        if (!checkParameter.isEmpty()) {
             String unwantedParameters = "";
-            Enumeration<String> unwantedKeys = checkCriteria.keys();
-            while (unwantedKeys.hasMoreElements()) {
-                unwantedParameters += unwantedKeys.nextElement() + ",";
+//            Enumeration<String> unwantedKeys = checkParameter.keys();
+            Iterator<String> unwantedKeys = checkParameter.keySet().iterator();
+            while (unwantedKeys.hasNext()) {
+                unwantedParameters += unwantedKeys.next() + ",";
             }
             unwantedParameters = unwantedParameters.substring(0, unwantedParameters.length() - 1);
             throw APIException.wrapToUnwantedRequestParameterException(unwantedParameters);
@@ -1086,5 +1097,54 @@ public abstract class BaseQuery {
      */
     protected void debugCheckParameters(String[] essentialKeys) throws APIException {
         debugCheckParameters(essentialKeys, null);
+    }
+    
+    public static class RequestParameters implements Cloneable{
+        LinkedHashMap<String, String> parameters;
+        
+        public RequestParameters() {
+            parameters = new LinkedHashMap<String, String>();
+        }
+        
+        public RequestParameters(LinkedHashMap<String, String> parameters) {
+            this.parameters = parameters; 
+        }
+        
+        private Map<String, String> getParameters() {
+            return parameters;
+        }
+        
+        public String getValue(String key) {
+            return parameters.get(key);
+        }
+        
+        public void add(String key, String value) {
+            parameters.put(key, value);
+        }
+        
+        public boolean containsKey(String key) {
+            return parameters.containsKey(key);
+        }
+        
+        public void remove(String key) {
+            parameters.remove(key);
+        }
+        
+        public boolean isEmpty() {
+            return parameters.isEmpty();
+        }
+        
+        public Set<String> keySet() {
+            return parameters.keySet();
+        }
+        
+        @SuppressWarnings("unchecked")
+        public RequestParameters clone() {
+            return new RequestParameters((LinkedHashMap<String, String>) parameters.clone());
+        }
+        
+        public void addAll(RequestParameters param) {
+            parameters.putAll(param.getParameters());
+        }
     }
 }
