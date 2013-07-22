@@ -521,35 +521,229 @@ public final class DataQuery extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
-        addCommonParameters(cityId);
-        
-//        if (criteria == null) {
-//            throw new APIException(APIException.CRITERIA_IS_NULL);
-//        }
+//        addCommonParameters(cityId);
         
         // 默认分页数目为TKConfig.getPageSize()
-        String pageSize = addParameter(SERVER_PARAMETER_SIZE, false);
+//        String pageSize = addParameter(SERVER_PARAMETER_SIZE, false);
+//        if (pageSize == null) {
+//            addParameter(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize()));
+//        }
+        
+//        String dataType = addParameter(SERVER_PARAMETER_DATA_TYPE);
+//        if (DATA_TYPE_POI.equals(dataType)) {     
+//            String subDataType = addParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
+//            if (SUB_DATA_TYPE_POI.equals(subDataType)) {
+//                String idList = addParameter(SERVER_PARAMETER_ID_LIST, false);
+//                if (idList == null) {
+//                    addParameter(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
+//                    addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
+//                    String bias = addParameter(SERVER_PARAMETER_BIAS, false);
+//                    if (bias == null) {
+//                        addParameter(new String[]{SERVER_PARAMETER_KEYWORD});
+//                        addParameter(new String[]{SERVER_PARAMETER_INFO}, false);
+//                    }
+//                    addParameter(SERVER_PARAMETER_POI_ID, false);
+//                }
+//            } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+//                String appendaction = addParameter(SERVER_PARAMETER_APPENDACTION, false);
+//                if (appendaction == null) {
+//                    addParameter(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD+Hotel.NEED_FILED_LIST);
+//                    addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
+//                    addParameter(SERVER_PARAMETER_PICTURE, 
+//                            Util.byteToHexString(Hotel.FIELD_IMAGE_THUMB)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)+"_[10000000000000000000]" + ";" +
+//                            Util.byteToHexString(Hotel.FIELD_IMAGE_LIST)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_DETAIL)+"_[00000000000000000000]");
+//                }
+//                addParameter(new String[]{SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
+//            }
+//            
+//            String cfv = null;
+//            if (Filter_Area != null && Filter_Area.cityId == cityId) {
+//                cfv = Filter_Area.version;
+//            }
+//            String nfv = null;
+//            if (Filter_Category_Order_POI != null) {
+//                nfv = Filter_Category_Order_POI.version;
+//            }
+//            addFilterParameters(cfv, nfv);
+//
+//        } else if (DATA_TYPE_DISCOVER.equals(dataType)) { 
+//            addParameter(SERVER_PARAMETER_NEED_FIELD, DiscoverCategory.NEED_FILED);
+//            String pic = "";
+//            String cdv = "";
+//            if (Discover_Config_List != null) {
+//                cdv = Discover_Config_List.getVersion();
+//                List<DiscoverConfig> list = Discover_Config_List.getList();
+//                if (list != null) {
+//                    for(int i = 0, size = list.size(); i < size; i++) {
+//                        DiscoverConfig discoverConfig = list.get(i);
+//                        if (discoverConfig.getSeqId() == cityId) {
+//                            List<Long> values = discoverConfig.getList();
+//                            for(int j = 0, count = values.size(); j < count; j++) {
+//                                long value = values.get(j);
+//                                if (DATA_TYPE_TUANGOU.equals(String.valueOf(value))) {
+//                                    pic += "0";
+//                                } else if (DATA_TYPE_DIANYING.equals(String.valueOf(value))) {
+//                                    pic += "0";
+//                                } else if (DATA_TYPE_YANCHU.equals(String.valueOf(value))) {
+//                                    pic += "0";
+//                                } else if (DATA_TYPE_ZHANLAN.equals(String.valueOf(value))) {
+//                                    pic += "0";
+//                                }
+//                            }
+//                            break;
+//                        }
+//                    }
+//                }
+//            }
+//            addParameter(SERVER_PARAMETER_DISCOVER_SUPPORT_DATATYPE, 
+//                    DATA_TYPE_TUANGOU+":"+DATA_TYPE_DIANYING+":"+DATA_TYPE_ZHANLAN+":"+DATA_TYPE_YANCHU);
+//            if (TextUtils.isEmpty(cdv) == false) {
+//                addParameter(SERVER_PARAMETER_DISCOVER_POI_VERSION, cdv);
+//            }
+//            if (TextUtils.isEmpty(pic) == false) {
+//                addParameter(SERVER_PARAMETER_PICTURE, 
+//                        Util.byteToHexString(DiscoverCategory.FIELD_DATA)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DISCOVER_HOME)+"_["+pic+"]");
+//            }
+//        } else if (DATA_TYPE_TUANGOU.equals(dataType)) { 
+//            addParameter(new String[]{SERVER_PARAMETER_INFO}, false);
+//            addParameter(SERVER_PARAMETER_NEED_FIELD, Tuangou.NEED_FIELD);
+//            addParameter(SERVER_PARAMETER_PICTURE, 
+//                    Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[10000000000000000000]" + ";" +
+//                    Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[00000000000000000000]");
+//            addDiscoverCategoryParameters();
+//            String cfv = null;
+//            if (Filter_Area != null && Filter_Area.cityId == cityId) {
+//                cfv = Filter_Area.version;
+//            }
+//            String nfv = null;
+//            if (Filter_Category_Order_Tuangou != null) {
+//                nfv = Filter_Category_Order_Tuangou.version;
+//            }
+//            addFilterParameters(cfv, nfv);
+//        } else if (DATA_TYPE_FENDIAN.equals(dataType)) { 
+//            addParameter(SERVER_PARAMETER_NEED_FIELD, Fendian.NEED_FIELD);
+//            addDiscoverCategoryParameters();
+//            addParameter(SERVER_PARAMETER_TUANGOU_UUID);
+//            String cfv = null;
+//            if (Filter_Area != null && Filter_Area.cityId == cityId) {
+//                cfv = Filter_Area.version;
+//            }
+//            String nfv = null;
+//            if (Filter_Category_Order_Tuangou != null) {
+//                nfv = Filter_Category_Order_Tuangou.version;
+//            }
+//            addFilterParameters(cfv, nfv);
+//        } else if (DATA_TYPE_DIANYING.equals(dataType)) { 
+//            addParameter(new String[]{SERVER_PARAMETER_DIANYING_UUID, SERVER_PARAMETER_POI_ID}, false);
+//            addParameter(SERVER_PARAMETER_NEED_FIELD, Dianying.NEED_FIELD);
+//            addParameter(SERVER_PARAMETER_PICTURE, 
+//                    Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
+//                    Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
+//            addDiscoverCategoryParameters();
+//            String cfv = null;
+//            if (Filter_Area != null && Filter_Area.cityId == cityId) {
+//                cfv = Filter_Area.version;
+//            }
+//            String nfv = null;
+//            if (Filter_Category_Order_Dianying != null) {
+//                nfv = Filter_Category_Order_Dianying.version;
+//            }
+//            addFilterParameters(cfv, nfv);
+//        } else if (DATA_TYPE_YINGXUN.equals(dataType)) { 
+//            addParameter(SERVER_PARAMETER_NEED_FIELD, Yingxun.NEED_FIELD);
+//            addDiscoverCategoryParameters();
+//            addParameter(SERVER_PARAMETER_DIANYING_UUID);
+//            String cfv = null;
+//            if (Filter_Area != null && Filter_Area.cityId == cityId) {
+//                cfv = Filter_Area.version;
+//            }
+//            String nfv = null;
+//            if (Filter_Category_Order_Dianying != null) {
+//                nfv = Filter_Category_Order_Dianying.version;
+//            }
+//            addFilterParameters(cfv, nfv);
+//        } else if (DATA_TYPE_YANCHU.equals(dataType)) { 
+//            addParameter(SERVER_PARAMETER_NEED_FIELD, Yanchu.NEED_FIELD);
+//            addParameter(SERVER_PARAMETER_PICTURE, 
+//                    Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
+//                    Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
+//            addDiscoverCategoryParameters();
+//            String cfv = null;
+//            if (Filter_Area != null && Filter_Area.cityId == cityId) {
+//                cfv = Filter_Area.version;
+//            }
+//            String nfv = null;
+//            if (Filter_Category_Order_Yanchu != null) {
+//                nfv = Filter_Category_Order_Yanchu.version;
+//            }
+//            addFilterParameters(cfv, nfv);
+//        } else if (DATA_TYPE_SHANGJIA.equals(dataType)) { 
+//            addParameter(SERVER_PARAMETER_NEED_FIELD, TextUtils.isEmpty(Globals.g_Session_Id) ? Shangjia.NEED_FIELD_NO_LOGON : Shangjia.NEED_FIELD);
+//        } else if (DATA_TYPE_ZHANLAN.equals(dataType)) { 
+//            addParameter(SERVER_PARAMETER_NEED_FIELD, Zhanlan.NEED_FIELD);
+//            addParameter(SERVER_PARAMETER_PICTURE, 
+//                    Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
+//                    Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
+//            addDiscoverCategoryParameters();
+//            String cfv = null;
+//            if (Filter_Area != null && Filter_Area.cityId == cityId) {
+//                cfv = Filter_Area.version;
+//            }
+//            String nfv = null;
+//            if (Filter_Category_Order_Zhanlan != null) {
+//                nfv = Filter_Category_Order_Zhanlan.version;
+//            }
+//            addFilterParameters(cfv, nfv);
+//        } else if (DATA_TYPE_DIANPING.equals(dataType)) {
+//            addParameter(SERVER_PARAMETER_NEED_FIELD, Comment.NEED_FIELD);
+//            addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
+//            addParameter(new String[]{SERVER_PARAMETER_REFER});
+//            addParameter(new String[]{SERVER_PARAMETER_TIME, SERVER_PARAMETER_DIRECTION, SERVER_PARAMETER_POI_ID}, false);
+//        } else if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
+//            addParameter(new String[]{SERVER_PARAMETER_LOCATION_CITY, SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE, SERVER_PARAMETER_LOCATION_LONGITUDE, SERVER_PARAMETER_LOCATION_LATITUDE});
+//            addParameter(new String[]{SERVER_PARAMETER_MESSAGE_ID_LIST, SERVER_PARAMETER_LAST_PULL_DATE}, false);
+//        } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
+//            addParameter(new String[]{SERVER_PARAMETER_KEYWORD});
+//        } else if (DATA_TYPE_COUPON.equals(dataType)) {
+//        	addParameter(SERVER_PARAMETER_POI_ID);
+//        	addParameter(SERVER_PARAMETER_NEED_FIELD);
+//        } else {
+//            throw APIException.wrapToMissingRequestParameterException("invalid data type.");
+//        }
+
+//        addParameter(SERVER_PARAMETER_TIME_STAMP, TIME_STAMP_FORMAT.format(Calendar.getInstance().getTime()));
+//        addParameter(new String[]{SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE}, false);
+//        
+//        addSessionId(false);
+    }
+    
+    @Override
+    protected void addCommonParameters() throws APIException {
+        super.addCommonParameters();
+        addCommonParameters(cityId);
+        // 默认分页数目为TKConfig.getPageSize()
+        String pageSize = getParameter(SERVER_PARAMETER_SIZE);
         if (pageSize == null) {
             addParameter(SERVER_PARAMETER_SIZE, String.valueOf(TKConfig.getPageSize()));
         }
-        
-        String dataType = addParameter(SERVER_PARAMETER_DATA_TYPE);
+        String dataType = getParameter(SERVER_PARAMETER_DATA_TYPE);
         if (DATA_TYPE_POI.equals(dataType)) {     
-            String subDataType = addParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
+            String subDataType = getParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
             if (SUB_DATA_TYPE_POI.equals(subDataType)) {
-                String idList = addParameter(SERVER_PARAMETER_ID_LIST, false);
+                String idList = getParameter(SERVER_PARAMETER_ID_LIST);
                 if (idList == null) {
                     addParameter(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
                     addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
-                    String bias = addParameter(SERVER_PARAMETER_BIAS, false);
-                    if (bias == null) {
-                        addParameter(new String[]{SERVER_PARAMETER_KEYWORD});
-                        addParameter(new String[]{SERVER_PARAMETER_INFO}, false);
-                    }
-                    addParameter(SERVER_PARAMETER_POI_ID, false);
+                    //TODO:what the fuck?
+//                    String bias = addParameter(SERVER_PARAMETER_BIAS);
+//                    if (bias == null) {
+//                        addParameter(new String[]{SERVER_PARAMETER_KEYWORD});
+//                        addParameter(new String[]{SERVER_PARAMETER_INFO}, false);
+//                    }
+//                    addParameter(SERVER_PARAMETER_POI_ID, false);
                 }
             } else if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
-                String appendaction = addParameter(SERVER_PARAMETER_APPENDACTION, false);
+                String appendaction = getParameter(SERVER_PARAMETER_APPENDACTION);
                 if (appendaction == null) {
                     addParameter(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD+Hotel.NEED_FILED_LIST);
                     addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
@@ -557,7 +751,6 @@ public final class DataQuery extends BaseQuery {
                             Util.byteToHexString(Hotel.FIELD_IMAGE_THUMB)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)+"_[10000000000000000000]" + ";" +
                             Util.byteToHexString(Hotel.FIELD_IMAGE_LIST)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_DETAIL)+"_[00000000000000000000]");
                 }
-                addParameter(new String[]{SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
             }
             
             String cfv = null;
@@ -568,6 +761,7 @@ public final class DataQuery extends BaseQuery {
             if (Filter_Category_Order_POI != null) {
                 nfv = Filter_Category_Order_POI.version;
             }
+            //gao mao a?
             addFilterParameters(cfv, nfv);
 
         } else if (DATA_TYPE_DISCOVER.equals(dataType)) { 
@@ -609,7 +803,6 @@ public final class DataQuery extends BaseQuery {
                         Util.byteToHexString(DiscoverCategory.FIELD_DATA)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DISCOVER_HOME)+"_["+pic+"]");
             }
         } else if (DATA_TYPE_TUANGOU.equals(dataType)) { 
-            addParameter(new String[]{SERVER_PARAMETER_INFO}, false);
             addParameter(SERVER_PARAMETER_NEED_FIELD, Tuangou.NEED_FIELD);
             addParameter(SERVER_PARAMETER_PICTURE, 
                     Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[10000000000000000000]" + ";" +
@@ -627,7 +820,6 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_FENDIAN.equals(dataType)) { 
             addParameter(SERVER_PARAMETER_NEED_FIELD, Fendian.NEED_FIELD);
             addDiscoverCategoryParameters();
-            addParameter(SERVER_PARAMETER_TUANGOU_UUID);
             String cfv = null;
             if (Filter_Area != null && Filter_Area.cityId == cityId) {
                 cfv = Filter_Area.version;
@@ -638,7 +830,6 @@ public final class DataQuery extends BaseQuery {
             }
             addFilterParameters(cfv, nfv);
         } else if (DATA_TYPE_DIANYING.equals(dataType)) { 
-            addParameter(new String[]{SERVER_PARAMETER_DIANYING_UUID, SERVER_PARAMETER_POI_ID}, false);
             addParameter(SERVER_PARAMETER_NEED_FIELD, Dianying.NEED_FIELD);
             addParameter(SERVER_PARAMETER_PICTURE, 
                     Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
@@ -656,7 +847,6 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_YINGXUN.equals(dataType)) { 
             addParameter(SERVER_PARAMETER_NEED_FIELD, Yingxun.NEED_FIELD);
             addDiscoverCategoryParameters();
-            addParameter(SERVER_PARAMETER_DIANYING_UUID);
             String cfv = null;
             if (Filter_Area != null && Filter_Area.cityId == cityId) {
                 cfv = Filter_Area.version;
@@ -701,23 +891,11 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_DIANPING.equals(dataType)) {
             addParameter(SERVER_PARAMETER_NEED_FIELD, Comment.NEED_FIELD);
             addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
-            addParameter(new String[]{SERVER_PARAMETER_REFER});
-            addParameter(new String[]{SERVER_PARAMETER_TIME, SERVER_PARAMETER_DIRECTION, SERVER_PARAMETER_POI_ID}, false);
-        } else if (DATA_TYPE_PULL_MESSAGE.equals(dataType)) {
-            addParameter(new String[]{SERVER_PARAMETER_LOCATION_CITY, SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE, SERVER_PARAMETER_LOCATION_LONGITUDE, SERVER_PARAMETER_LOCATION_LATITUDE});
-            addParameter(new String[]{SERVER_PARAMETER_MESSAGE_ID_LIST, SERVER_PARAMETER_LAST_PULL_DATE}, false);
-        } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
-            addParameter(new String[]{SERVER_PARAMETER_KEYWORD});
-        } else if (DATA_TYPE_COUPON.equals(dataType)) {
-        	addParameter(SERVER_PARAMETER_POI_ID);
-        	addParameter(SERVER_PARAMETER_NEED_FIELD);
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
-
-        addParameter(SERVER_PARAMETER_TIME_STAMP, TIME_STAMP_FORMAT.format(Calendar.getInstance().getTime()));
-        addParameter(new String[]{SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE}, false);
         
+        addParameter(SERVER_PARAMETER_TIME_STAMP, TIME_STAMP_FORMAT.format(Calendar.getInstance().getTime()));
         addSessionId(false);
     }
     

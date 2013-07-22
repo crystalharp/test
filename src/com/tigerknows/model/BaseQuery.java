@@ -368,7 +368,7 @@ public abstract class BaseQuery {
         }
     }
     
-    protected void addCommonParameters() {
+    protected void addCommonParameters() throws APIException {
         addCommonParameters(MapEngine.CITY_ID_BEIJING, false);
     }
     
@@ -942,66 +942,66 @@ public abstract class BaseQuery {
         }
         return false;
     }
-    //TODO:删掉这个系列函数
-    /**
-     * 根据keys从criteria中获取参数值，将其值添加到requestParameters
-     * @param keys
-     * @throws APIException
-     */
-    void addParameter(String[] keys) throws APIException {
-        addParameter(keys, true);
-    }
-    
-    /**
-     * 根据keys从criteria中获取参数值，将其值添加到requestParameters
-     * @param keys
-     * @param need
-     * @throws APIException
-     */
-    void addParameter(String[] keys, boolean need) throws APIException {
-        if (keys == null) {
-            return;
-        }
-        for(int i = 0, length = keys.length; i < length; i++) {
-            addParameter(keys[i], need);
-        }
-    }
-    
-    /**
-     * 根据key从criteria中获取参数值，将其值添加到requestParameters
-     * @param key
-     * @return
-     * @throws APIException
-     */
-    String addParameter(String key) throws APIException {
-        return addParameter(key, true);
-    }
-    
-    /**
-     * 根据key从criteria中获取参数值，将其值添加到requestParameters
-     * @param key
-     * @param need
-     * @return
-     * @throws APIException
-     */
-    String addParameter(String key, boolean need) throws APIException {
-        String result = null;
-        if (key == null) {
-            return result;
-        }
-        if (criteria != null && criteria.containsKey(key)) {
-            result = criteria.get(key);
-            if (result != null) {
-                requestParameters.add(key, result);
-            } else {
-                throw APIException.wrapToMissingRequestParameterException(key);
-            }
-        } else if (need){
-            throw APIException.wrapToMissingRequestParameterException(key);
-        }
-        
-        return result;
-    }
+//    //TODO:删掉这个系列函数
+//    /**
+//     * 根据keys从criteria中获取参数值，将其值添加到requestParameters
+//     * @param keys
+//     * @throws APIException
+//     */
+//    void addParameter(String[] keys) throws APIException {
+//        addParameter(keys, true);
+//    }
+//    
+//    /**
+//     * 根据keys从criteria中获取参数值，将其值添加到requestParameters
+//     * @param keys
+//     * @param need
+//     * @throws APIException
+//     */
+//    void addParameter(String[] keys, boolean need) throws APIException {
+//        if (keys == null) {
+//            return;
+//        }
+//        for(int i = 0, length = keys.length; i < length; i++) {
+//            addParameter(keys[i], need);
+//        }
+//    }
+//    
+//    /**
+//     * 根据key从criteria中获取参数值，将其值添加到requestParameters
+//     * @param key
+//     * @return
+//     * @throws APIException
+//     */
+//    String addParameter(String key) throws APIException {
+//        return addParameter(key, true);
+//    }
+//    
+//    /**
+//     * 根据key从criteria中获取参数值，将其值添加到requestParameters
+//     * @param key
+//     * @param need
+//     * @return
+//     * @throws APIException
+//     */
+//    String addParameter(String key, boolean need) throws APIException {
+//        String result = null;
+//        if (key == null) {
+//            return result;
+//        }
+//        if (criteria != null && criteria.containsKey(key)) {
+//            result = criteria.get(key);
+//            if (result != null) {
+//                requestParameters.add(key, result);
+//            } else {
+//                throw APIException.wrapToMissingRequestParameterException(key);
+//            }
+//        } else if (need){
+//            throw APIException.wrapToMissingRequestParameterException(key);
+//        }
+//        
+//        return result;
+//    }
     
     /**
      * 添加SessionId和ClientId

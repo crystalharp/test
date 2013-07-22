@@ -67,49 +67,60 @@ public class AccountManage extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
-        if (cityId < MapEngine.CITY_ID_BEIJING) {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CITY);
-        }
-        addCommonParameters(cityId);
-//        if (criteria == null) {
-//            throw new APIException(APIException.CRITERIA_IS_NULL);
+//        if (cityId < MapEngine.CITY_ID_BEIJING) {
+//            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CITY);
 //        }
+//        addCommonParameters(cityId);
+//        boolean needSessionId = false;
+//        String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
+//        if (OPERATION_CODE_BIND_TELEPHONE.equals(operationCode)) {
+//            addParameter(SERVER_PARAMETER_TELEPHONE);
+//        } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
+//            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
+//                    SERVER_PARAMETER_PASSWORD,
+//                    SERVER_PARAMETER_VALIDATE_CODE});
+//            addParameter(SERVER_PARAMETER_NICKNAME, false);
+//        } else if (OPERATION_CODE_UPDATE_NICKNAME.equals(operationCode)) {
+//            needSessionId = true;
+//            addParameter(new String[] {SERVER_PARAMETER_NICKNAME});
+//        } else if (OPERATION_CODE_UPDATE_PASSWORD.equals(operationCode)) {
+//            needSessionId = true;
+//            addParameter(new String[] {SERVER_PARAMETER_OLD_PASSWORD,
+//                    SERVER_PARAMETER_PASSWORD});
+//        } else if (OPERATION_CODE_UPDATE_TELEPHONE.equals(operationCode)) {
+//            needSessionId = true;
+//            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
+//                    SERVER_PARAMETER_VALIDATE_CODE,
+//                    SERVER_PARAMETER_PASSWORD});
+//        } else if (OPERATION_CODE_GET_VALIDATE_CODE.equals(operationCode)) {
+//            addParameter(SERVER_PARAMETER_TELEPHONE);
+//        } else if (OPERATION_CODE_RESET_PASSWORD.equals(operationCode)) {
+//            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
+//                    SERVER_PARAMETER_VALIDATE_CODE,
+//                    SERVER_PARAMETER_PASSWORD});
+//        } else if (OPERATION_CODE_LOGIN.equals(operationCode)) {
+//            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
+//                    SERVER_PARAMETER_PASSWORD});
+//        } else if (OPERATION_CODE_LOGOUT.equals(operationCode)) {
+//            needSessionId = true;
+//        } else if ("du".equals(operationCode)) {
+//            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE});
+//        } else {
+//            throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
+//        }
+//        addSessionId(needSessionId);
+    }
+    
+    @Override
+    protected void addCommonParameters() throws APIException {
+        super.addCommonParameters(cityId);
         boolean needSessionId = false;
-        String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
-        if (OPERATION_CODE_BIND_TELEPHONE.equals(operationCode)) {
-            addParameter(SERVER_PARAMETER_TELEPHONE);
-        } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
-                    SERVER_PARAMETER_PASSWORD,
-                    SERVER_PARAMETER_VALIDATE_CODE});
-            addParameter(SERVER_PARAMETER_NICKNAME, false);
-        } else if (OPERATION_CODE_UPDATE_NICKNAME.equals(operationCode)) {
+        String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);
+        if (OPERATION_CODE_LOGOUT.equals(operationCode) || 
+                OPERATION_CODE_UPDATE_TELEPHONE.equals(operationCode) ||
+                OPERATION_CODE_UPDATE_PASSWORD.equals(operationCode) ||
+                OPERATION_CODE_UPDATE_NICKNAME.equals(operationCode)) {
             needSessionId = true;
-            addParameter(new String[] {SERVER_PARAMETER_NICKNAME});
-        } else if (OPERATION_CODE_UPDATE_PASSWORD.equals(operationCode)) {
-            needSessionId = true;
-            addParameter(new String[] {SERVER_PARAMETER_OLD_PASSWORD,
-                    SERVER_PARAMETER_PASSWORD});
-        } else if (OPERATION_CODE_UPDATE_TELEPHONE.equals(operationCode)) {
-            needSessionId = true;
-            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
-                    SERVER_PARAMETER_VALIDATE_CODE,
-                    SERVER_PARAMETER_PASSWORD});
-        } else if (OPERATION_CODE_GET_VALIDATE_CODE.equals(operationCode)) {
-            addParameter(SERVER_PARAMETER_TELEPHONE);
-        } else if (OPERATION_CODE_RESET_PASSWORD.equals(operationCode)) {
-            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
-                    SERVER_PARAMETER_VALIDATE_CODE,
-                    SERVER_PARAMETER_PASSWORD});
-        } else if (OPERATION_CODE_LOGIN.equals(operationCode)) {
-            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE,
-                    SERVER_PARAMETER_PASSWORD});
-        } else if (OPERATION_CODE_LOGOUT.equals(operationCode)) {
-            needSessionId = true;
-        } else if ("du".equals(operationCode)) {
-            addParameter(new String[] {SERVER_PARAMETER_TELEPHONE});
-        } else {
-            throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
         }
         addSessionId(needSessionId);
     }

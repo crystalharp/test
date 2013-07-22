@@ -119,51 +119,53 @@ public class HotelOrderOperation extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
-        addCommonParameters(cityId);
-        
-//        if (criteria == null) {
-//            throw new APIException(APIException.CRITERIA_IS_NULL);
+//        addCommonParameters(cityId);
+//        
+//        String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
+//        if (OPERATION_CODE_QUERY.equals(operationCode)) {
+//            addParameter(SERVER_PARAMETER_ORDER_IDS);
+//        } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
+//            addParameter(SERVER_PARAMETER_HOTEL_ID);
+//            addParameter(SERVER_PARAMETER_BRAND,false);
+//            addParameter(new String[]{
+//                    SERVER_PARAMETER_ROOMTYPE,
+//                    SERVER_PARAMETER_PKGID,
+//                    SERVER_PARAMETER_CHECKIN_DATE,
+//                    SERVER_PARAMETER_CHECKOUT_DATE,
+//                    SERVER_PARAMETER_RESERVE_TIME,
+//                    SERVER_PARAMETER_NUMROOMS,
+//                    SERVER_PARAMETER_TOTAL_PRICE,
+//                    SERVER_PARAMETER_USERNAME,
+//                    SERVER_PARAMETER_MOBILE,
+//                    SERVER_PARAMETER_GUESTS,
+//                    SERVER_PARAMETER_GUESTTYPE
+//            });
+//            addParameter(SERVER_PARAMETER_MEMBERNUM, false);
+//            String creditCardNo = addParameter(SERVER_PARAMETER_CREDIT_CARD_NO, false);
+//            if (creditCardNo != null) {
+//                addParameter(new String[]{
+//                        SERVER_PARAMETER_VERIFY_CODE,
+//                        SERVER_PARAMETER_VALID_YEAR,
+//                        SERVER_PARAMETER_VALID_MONTH,
+//                        SERVER_PARAMETER_CARD_HOLDER_NAME,
+//                        SERVER_PARAMETER_IDCARD_TYPE,
+//                        SERVER_PARAMETER_IDCARD_NO
+//                });
+//            }
+//        } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
+//            addParameter(new String[] {SERVER_PARAMETER_UPDATE_ACTION, SERVER_PARAMETER_ORDER_ID});
+//        } else if (OPERATION_CODE_SYNC.equals(operationCode)) {
+//            addParameter(new String[] {SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_ORDER_ID_FILTER});
+//        } else {
+//            throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
 //        }
-        
-        String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
-        if (OPERATION_CODE_QUERY.equals(operationCode)) {
-            addParameter(SERVER_PARAMETER_ORDER_IDS);
-        } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-            addParameter(SERVER_PARAMETER_HOTEL_ID);
-            addParameter(SERVER_PARAMETER_BRAND,false);
-            addParameter(new String[]{
-                    SERVER_PARAMETER_ROOMTYPE,
-                    SERVER_PARAMETER_PKGID,
-                    SERVER_PARAMETER_CHECKIN_DATE,
-                    SERVER_PARAMETER_CHECKOUT_DATE,
-                    SERVER_PARAMETER_RESERVE_TIME,
-                    SERVER_PARAMETER_NUMROOMS,
-                    SERVER_PARAMETER_TOTAL_PRICE,
-                    SERVER_PARAMETER_USERNAME,
-                    SERVER_PARAMETER_MOBILE,
-                    SERVER_PARAMETER_GUESTS,
-                    SERVER_PARAMETER_GUESTTYPE
-            });
-            addParameter(SERVER_PARAMETER_MEMBERNUM, false);
-            String creditCardNo = addParameter(SERVER_PARAMETER_CREDIT_CARD_NO, false);
-            if (creditCardNo != null) {
-                addParameter(new String[]{
-                        SERVER_PARAMETER_VERIFY_CODE,
-                        SERVER_PARAMETER_VALID_YEAR,
-                        SERVER_PARAMETER_VALID_MONTH,
-                        SERVER_PARAMETER_CARD_HOLDER_NAME,
-                        SERVER_PARAMETER_IDCARD_TYPE,
-                        SERVER_PARAMETER_IDCARD_NO
-                });
-            }
-        } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
-            addParameter(new String[] {SERVER_PARAMETER_UPDATE_ACTION, SERVER_PARAMETER_ORDER_ID});
-        } else if (OPERATION_CODE_SYNC.equals(operationCode)) {
-            addParameter(new String[] {SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_ORDER_ID_FILTER});
-        } else {
-            throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
-        }
-
+//
+//        addSessionId(false);
+    }
+    
+    @Override
+    protected void addCommonParameters() throws APIException {
+        super.addCommonParameters(cityId);
         addSessionId(false);
     }
 

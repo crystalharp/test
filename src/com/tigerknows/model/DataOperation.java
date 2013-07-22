@@ -58,39 +58,41 @@ public class DataOperation extends BaseQuery {
 
     @Override
     protected void checkRequestParameters() throws APIException {
-        addCommonParameters(cityId);
-        
-//        if (criteria == null) {
-//            throw new APIException(APIException.CRITERIA_IS_NULL);
+//        addCommonParameters(cityId);
+//        
+//        String dataType = addParameter(SERVER_PARAMETER_DATA_TYPE);
+//        String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
+//        if (OPERATION_CODE_QUERY.equals(operationCode)) {
+//            if(DATA_TYPE_POI.equals(dataType)){
+//                String subDataType = addParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
+//                if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+//                    addParameter(new String[] {SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
+//                }
+//            }
+//            
+//        	if(dataType.equals(DATA_TYPE_DIAOYAN) == false){
+//        		addParameter(new String[] {SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_DATA_UID});
+//            }
+//        	
+//        	// 部分查询需要提交pic信息和dsrc信息，据说上一个写这行代码的人懒得用一堆if判断于是就直接用这行代码了
+//        	// fengtianxiao 2013.05.10
+//        	addParameter(new String[] {SERVER_PARAMETER_PICTURE}, false);
+//        } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
+//            addParameter(SERVER_PARAMETER_ENTITY);
+//        } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
+//            addParameter(new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY});
+//        } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
+//            addParameter(SERVER_PARAMETER_DATA_UID);
+//        } else {
+//            throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
 //        }
-        
-        String dataType = addParameter(SERVER_PARAMETER_DATA_TYPE);
-        String operationCode = addParameter(SERVER_PARAMETER_OPERATION_CODE);
-        if (OPERATION_CODE_QUERY.equals(operationCode)) {
-            if(DATA_TYPE_POI.equals(dataType)){
-                String subDataType = addParameter(SERVER_PARAMETER_SUB_DATA_TYPE);
-                if (SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
-                    addParameter(new String[] {SERVER_PARAMETER_CHECKIN, SERVER_PARAMETER_CHECKOUT});
-                }
-            }
-            
-        	if(dataType.equals(DATA_TYPE_DIAOYAN) == false){
-        		addParameter(new String[] {SERVER_PARAMETER_NEED_FIELD, SERVER_PARAMETER_DATA_UID});
-            }
-        	
-        	// 部分查询需要提交pic信息和dsrc信息，据说上一个写这行代码的人懒得用一堆if判断于是就直接用这行代码了
-        	// fengtianxiao 2013.05.10
-        	addParameter(new String[] {SERVER_PARAMETER_PICTURE}, false);
-        } else if (OPERATION_CODE_CREATE.equals(operationCode)) {
-            addParameter(SERVER_PARAMETER_ENTITY);
-        } else if (OPERATION_CODE_UPDATE.equals(operationCode)) {
-            addParameter(new String[] {SERVER_PARAMETER_DATA_UID, SERVER_PARAMETER_ENTITY});
-        } else if (OPERATION_CODE_DELETE.equals(operationCode)) {
-            addParameter(SERVER_PARAMETER_DATA_UID);
-        } else {
-            throw APIException.wrapToMissingRequestParameterException("operationCode invalid.");
-        }
-
+//
+//        addSessionId(false);
+    }
+    
+    @Override
+    protected void addCommonParameters() throws APIException {
+        super.addCommonParameters(cityId);
         addSessionId(false);
     }
 
