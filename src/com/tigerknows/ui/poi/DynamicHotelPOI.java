@@ -531,12 +531,26 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mPOI = poi;
         mHotel = mPOI.getHotel();
         List<BaseQuery> baseQueryList = new LinkedList<BaseQuery>();
+        Calendar checkinInHoteHome = mSphinx.getHotelHomeFragment().getCheckin();
+        Calendar checkoutInHoteHome = mSphinx.getHotelHomeFragment().getCheckout();
+        boolean updateCanReserve = false;
+        if (this.checkin.equals(checkinInHoteHome) && this.checkout.equals(checkoutInHoteHome)) {
+            updateCanReserve = true;
+        }
+        String nf = Hotel.NEED_FILED_DETAIL;
         if (mHotel.getUuid() != null && mHotel.getRoomTypeList() == null) {
-            BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Util.byteToHexString(Hotel.FIELD_CAN_RESERVE));
+            if (updateCanReserve) {
+                nf += Util.byteToHexString(Hotel.FIELD_CAN_RESERVE);
+            }
+            BaseQuery baseQuery = buildHotelQuery(this.checkin, this.checkout, poi, nf);
             baseQueryList.add(baseQuery);
             LogWrapper.i(TAG, "hotel.roomtype is null, generate Query:" + baseQueryList);
         } else {
-            BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Hotel.NEED_FILED_LIST);
+            nf += "50515253";
+            if (updateCanReserve) {
+                nf += Util.byteToHexString(Hotel.FIELD_CAN_RESERVE);
+            }
+            BaseQuery baseQuery = buildHotelQuery(this.checkin, this.checkout, poi, nf);
             baseQueryList.add(baseQuery);
             LogWrapper.i(TAG, "hotel is null, generate Query:" + baseQueryList);
         }
