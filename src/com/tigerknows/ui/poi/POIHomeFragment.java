@@ -277,17 +277,18 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             List<Long> indexList = new ArrayList<Long>();
             for(int i = 0, size = filterOptionList.size(); i < size; i++) {
                 long id = filterOptionList.get(i).getId();
-                if (id <= 10) {
+                if (id > 0 && id <= 10) {
                     continue;
                 }
                 indexList.add(id);
             }
 
             if (indexList.size() > 0) {
+                indexList.add(0, Long.MIN_VALUE);
                 HotelHomeFragment.deleteFilter(mFilterList, FilterArea.FIELD_LIST);
                 Filter filter = DataQuery.makeFilterResponse(mSphinx, indexList, filterArea.getVersion(), filterOptionList, FilterArea.FIELD_LIST);
                 mFilterList.add(filter);
-                
+
                 mSphinx.getPickLocationFragment().setData(mFilterList);
             }
         }
