@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginBottom="8dp"
+        >
+
+        <TextView
+            android:id="@+id/subway_title_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/subway_preset_time" />
+        
+	    <ImageView
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" />
+	    
+	    <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="match_parent"
+	        android:orientation="vertical"
+	        android:id="subway_time_lst"
+	        >
+	        
+	    </LinearLayout>
+    
+    </LinearLayout>
+	    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        >
+
+        <TextView
+            android:id="@+id/subway_title_exit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/subway_exits" />
+        
+	    <ImageView
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" />
+	    
+	    <LinearLayout
+	        android:layout_width="fill_parent"
+	        android:layout_height="match_parent"
+	        android:orientation="vertical"
+	        android:id="subway_exit_lst"
+	        >
+	        
+	    </LinearLayout>
+        
+    </LinearLayout>
+    
+
+</LinearLayout>
