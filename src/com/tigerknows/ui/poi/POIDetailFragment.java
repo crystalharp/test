@@ -385,8 +385,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         //这个函数是一个动态POI的刷新主函数,刷新策略在其中实现.但是具体的刷新行为在BlockRefresher中实现
         public abstract void refresh();
 
-        //初始化的时候会在checkAndAddDynamicPOIView中把这个变量初始化完毕,不用关心
-        final public boolean isExist() {
+        //普通动态POI初始化的时候会在checkAndAddDynamicPOIView中把这个变量初始化完毕,不用关心
+        public boolean isExist() {
             return mExist;
         }
 
