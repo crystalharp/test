@@ -4,9 +4,13 @@
 
 package com.tigerknows.ui.more;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,19 +18,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.Bootstrap;
 import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
+import com.tigerknows.model.BootstrapModel.Recommend;
 import com.tigerknows.model.BootstrapModel.SoftwareUpdate;
+import com.tigerknows.model.BootstrapModel.Recommend.RecommendApp;
+import com.tigerknows.model.TKDrawable;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.BrowserActivity;
 import com.tigerknows.ui.more.MapDownloadActivity.DownloadCity;
@@ -46,6 +58,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     static final String TAG = "MoreFragment";
     
     public static final int SHOW_COMMENT_TIP_TIMES = 3;
+    private static final int NUM_APP_RECOMMEND = 5;
     
     private ListView mListLsv;
     private TextView mUserNameTxv;
@@ -62,6 +75,16 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private Button mAddMerchantBtn;
     private Button mGiveFavourableCommentBtn;
     private View mGiveFavourableCommentImv;
+    private View[] mAppRecommendView;
+    private ImageView[] mAppRecommendImv;
+    private TextView[] mAppRecommendTxv;
+    private static final int[] APP_RECOMMEND_ID = {R.id.app_item_1,
+    	R.id.app_item_2,
+    	R.id.app_item_3,
+    	R.id.app_item_4,
+    	R.id.app_item_5
+    };
+    private List<RecommendApp> mRecommendAppList = new ArrayList<RecommendApp>();
     
     private String mCityName;
     
@@ -82,8 +105,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	mDiaoyanQueryResponse = diaoyanQueryResponse;
     }
     
-    @SuppressWarnings("unused")
-	private Runnable mLoadedDrawableRun = new Runnable() {
+    private Runnable mLoadedDrawableRun = new Runnable() {
         
         @Override
         public void run() {
@@ -96,13 +118,14 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         
         @Override
         public void run() {
-        	// TODO: 
+        	// do nothing
         }
     };
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mActionTag = ActionLog.More;
+
     }
 
     @Override
@@ -161,10 +184,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     
     public void refreshMoreBtn() {
         
+    	refreshMoreData();
+    	// 你可能喜欢的应用
+        BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
         setFragmentMessage(MESSAGE_TYPE_NONE);
         
-        //软件更新
-        BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
+        // 软件更新
         if (bootstrapModel != null) {            
             SoftwareUpdate softwareUpdate = bootstrapModel.getSoftwareUpdate();
             if (softwareUpdate != null) {
@@ -173,7 +198,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             }
         }
 
-        //地图更新
+        // 地图更新
 
         boolean upgrade = false;
         DownloadCity currentDownloadCity = CurrentDownloadCity;
@@ -187,7 +212,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             return;
         }
         
-        //用户调研
+        // 用户调研
         if (mDiaoyanQueryResponse != null) {
         	if(mDiaoyanQueryResponse.getHasSurveyed() == 0 && mDiaoyanQueryResponse.getUrl() != null){
                 setFragmentMessage(MESSAGE_TYPE_USER_SURVEY);
@@ -195,7 +220,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	}
         }
 
-        //点评
+        // 点评
         int showCommentTipTimes = 0;
         String commentTip = TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP);
         if (!TextUtils.isEmpty(commentTip)) {
@@ -217,11 +242,36 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             return;
         }
         
-        //满意度评分(不是button)
+        // 满意度评分(不是button)
         if(TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
         	mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
         	return;
         }
+    }
+    
+    private void refreshMoreData(){
+    	BootstrapModel bootstrapModel = Globals.g_Bootstrap_Model;
+        if (bootstrapModel != null) {
+            Recommend recommend = bootstrapModel.getRecommend();
+            if (recommend != null) {
+                if (recommend.getRecommendAppList() == null) {
+                    return;
+                }
+                mRecommendAppList.clear();
+                mRecommendAppList.addAll(recommend.getRecommendAppList());
+                final int len = Math.min(mRecommendAppList.size(), NUM_APP_RECOMMEND);
+                for (int i=0; i<NUM_APP_RECOMMEND && i<len; i++){
+                	refreshDrawable(mRecommendAppList.get(i).getIcon(), mAppRecommendImv[i]);
+                	mAppRecommendTxv[i].setText(mRecommendAppList.get(i).getName());
+                }
+            }
+        }else{
+            Bootstrap bootstrap = new Bootstrap(mSphinx);
+            bootstrap.setup(null, Globals.getCurrentCityInfo().getId());
+            mSphinx.queryStart(bootstrap);        	
+        }
+
+
     }
 
     @Override
@@ -244,6 +294,14 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mAddMerchantBtn = (Button)mRootView.findViewById(R.id.add_merchant_btn);
         mGiveFavourableCommentBtn = (Button)mRootView.findViewById(R.id.give_favourable_comment_btn);
         mGiveFavourableCommentImv = mRootView.findViewById(R.id.give_favourable_comment_imv);
+        mAppRecommendView = new View[NUM_APP_RECOMMEND];
+        mAppRecommendImv = new ImageView[NUM_APP_RECOMMEND];
+        mAppRecommendTxv = new TextView[NUM_APP_RECOMMEND];
+        for (int i=0; i < NUM_APP_RECOMMEND; i++){
+        	mAppRecommendView[i] = (View)mRootView.findViewById(APP_RECOMMEND_ID[i]);
+        	mAppRecommendImv[i] = (ImageView)mAppRecommendView[i].findViewById(R.id.app_icon_imv);
+        	mAppRecommendTxv[i] = (TextView)mAppRecommendView[i].findViewById(R.id.app_name_txv);
+        }
     }
     
     protected void setListener() {
@@ -259,6 +317,26 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mFeedbackBtn.setOnClickListener(this);
         mAddMerchantBtn.setOnClickListener(this);
         mGiveFavourableCommentBtn.setOnClickListener(this);
+        for (int i=0; i < NUM_APP_RECOMMEND; i++){
+        	final int position=i;
+        	mAppRecommendImv[i].setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					final int len = mRecommendAppList.size();
+					if(position > len)return;
+	                final RecommendApp recommendApp = mRecommendAppList.get(position);
+	                if (recommendApp != null) {
+	                    //mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, recommendApp.getName());
+	                    final String uri = recommendApp.getUrl();
+	                    if (!TextUtils.isEmpty(uri)) {
+	                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+	                        mSphinx.startActivity(intent);
+	                    }
+	                }
+				}
+			});
+        }
     }
 
     @Override
@@ -461,5 +539,26 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                     }
                 });
     }
-    
+    private void refreshDrawable(TKDrawable tkDrawable, ImageView imageView){
+    	boolean result = false;
+    	if (tkDrawable != null) {
+    		Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, MoreHomeFragment.this.toString());
+    		if(drawable != null){
+    			result = true;
+    			imageView.setBackgroundDrawable(drawable);
+    		}
+    	}
+    }
+    @Override
+    public void onPostExecute(TKAsyncTask tkAsyncTask) {
+        super.onPostExecute(tkAsyncTask);
+        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
+        if (baseQuery instanceof Bootstrap) {
+            BootstrapModel bootstrapModel = ((Bootstrap) baseQuery).getBootstrapModel();
+            if (bootstrapModel != null) {
+                Globals.g_Bootstrap_Model = bootstrapModel;
+                refreshMoreData();
+            }
+        }
+    }
 }
