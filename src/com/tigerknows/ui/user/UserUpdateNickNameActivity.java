@@ -124,6 +124,9 @@ public class UserUpdateNickNameActivity extends UserBaseActivity {
 						
 					});
 					return;
+				}else if(TextUtils.equals(nickNameEdt.getText().toString().trim(), getString(R.string.default_nick_name))){
+					dealWith401();
+					return;
 				}
 				
 				requestChangeNickName();
