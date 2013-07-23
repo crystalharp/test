@@ -166,6 +166,25 @@
                 android:background="@drawable/bg_line_split"
                 />
             <Button
+                android:id="@+id/go_comment_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_middle"
+	            android:paddingTop="8dp"
+	            android:paddingBottom="8dp"
+	            android:paddingRight="8dp"
+	            android:paddingLeft="16dp"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/go_comment"
+                android:gravity="left|center_vertical"
+                />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                />
+            <Button
                 android:id="@+id/add_merchant_btn"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

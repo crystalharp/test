@@ -70,6 +70,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private Button mAppRecommendBtn;
     private Button mFavoriteBtn;
     private Button mHistoryBrowseBtn;
+    private Button mGoCommentBtn;
     private Button mSatisfyRateBtn;
     private Button mFeedbackBtn;
     private Button mAddMerchantBtn;
@@ -289,6 +290,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mAppRecommendBtn = (Button)mRootView.findViewById(R.id.app_recommend_btn);
         mFavoriteBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
         mHistoryBrowseBtn = (Button)mRootView.findViewById(R.id.history_browse_btn);
+        mGoCommentBtn = (Button)mRootView.findViewById(R.id.go_comment_btn);
         mSatisfyRateBtn = (Button)mRootView.findViewById(R.id.satisfy_btn);
         mFeedbackBtn = (Button)mRootView.findViewById(R.id.feedback_btn);
         mAddMerchantBtn = (Button)mRootView.findViewById(R.id.add_merchant_btn);
@@ -312,6 +314,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mDownloadMapBtn.setOnClickListener(this);
         mAppRecommendBtn.setOnClickListener(this);
         mFavoriteBtn.setOnClickListener(this);
+        mGoCommentBtn.setOnClickListener(this);
         mHistoryBrowseBtn.setOnClickListener(this);
         mSatisfyRateBtn.setOnClickListener(this);
         mFeedbackBtn.setOnClickListener(this);
@@ -401,6 +404,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             case R.id.history_browse_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreHistory);
                 mSphinx.showView(R.id.view_more_history);
+                break;
+            case R.id.go_comment_btn:
+            	mActionLog.addAction(mActionTag +  ActionLog.MoreMessageComment);
+                mSphinx.showView(R.id.view_more_go_comment);
                 break;
             case R.id.right_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreSetting);
