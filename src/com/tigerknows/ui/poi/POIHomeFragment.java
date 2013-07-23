@@ -165,14 +165,14 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     public void setSelectedLocation(boolean selectedLocation) {
         mSelectedLocation = selectedLocation;
         mPOI = null;
-        mMyLoactionTxv.setText(FilterListView.getFilterTitle(mSphinx, HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST)));
+        mMyLoactionTxv.setText(mSphinx.getString(R.string.appoint_area) + FilterListView.getFilterTitle(mSphinx, HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST)));
         mMyLoactionTxv.setVisibility(View.VISIBLE);
         mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
     }
     
     public void setPOI(POI poi) {
         mPOI = poi;
-        mMyLoactionTxv.setText(mPOI.getName());
+        mMyLoactionTxv.setText(mSphinx.getString(R.string.appoint_location) + mPOI.getName());
         mMyLoactionTxv.setVisibility(View.VISIBLE);
         mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
     }
