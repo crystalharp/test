@@ -1080,6 +1080,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
 
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(FeedbackUpload.SERVER_PARAMETER_POI_RANK, String.valueOf(position));
+        criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
         criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
         criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, mDynamicHotelPOI.isExist() ? BaseQuery.SUB_DATA_TYPE_HOTEL : BaseQuery.SUB_DATA_TYPE_POI);
         criteria.put(DataQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, mActionTag);
