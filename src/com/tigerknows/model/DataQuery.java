@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -21,6 +23,7 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
+import com.tendcloud.tenddata.al;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.map.MapEngine;
@@ -33,6 +36,7 @@ import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XInt;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
+import com.tigerknows.util.HanziUtil;
 import com.tigerknows.util.Utility;
 import com.weibo.sdk.android.WeiboParameters;
 
@@ -996,12 +1000,15 @@ public final class DataQuery extends BaseQuery {
         Filter filter = new Filter();
         filter.version = version;
         filter.key = key;
+        boolean isAreaFilter = (key == POIResponse.FIELD_FILTER_AREA_INDEX);
         if (indexList != null && filterOptionList != null) {
             Filter parentFilter = null;            
             FilterOption filterOption;
             
             long selectedId = indexList.get(0);
             
+            Filter allArea = null;
+            // 从1开始，是因为第0个值，是选中项的ID，特殊用途。
             for(int i = 1, size = indexList.size(); i < size; i++) {
                 long index = indexList.get(i);
                 if (index < filterOptionList.size()) {
@@ -1020,14 +1027,45 @@ public final class DataQuery extends BaseQuery {
                     } else if (parentFilter != null){
                         parentFilter.chidrenFilterList.add(tempFilter);
                     }
+                    
+                    if (isAreaFilter && tempFilter.getFilterOption().getId() == 0) {
+                    	allArea = tempFilter;
+                    }
                 }
+            }
+            
+            // 将子筛选项，加入到全部区域下边。
+            if (allArea != null) {
+            	List<Filter> list = allArea.getChidrenFilterList();
+            	List<Filter> chidrenFilterList = filter.getChidrenFilterList();
+                for(Filter chidrenFilter : chidrenFilterList) {
+                    if (chidrenFilter.getChidrenFilterList().size() > 0 && chidrenFilter.getFilterOption().id > 10) {
+                    	list.addAll(chidrenFilter.getChidrenFilterList());
+                    }
+                }
+                sortFilterList(list);
+                
+                FilterOption dupAllAreaFilterOpt = new FilterOption();
+                dupAllAreaFilterOpt.setName(allArea.getFilterOption().getName());
+                
+                int id = allArea.getFilterOption().getId();
+                dupAllAreaFilterOpt.setId(id);
+//                dupAllAreaFilterOpt.setParent(id);
+                
+                Filter filter1 = new Filter();
+                filter1.filterOption = dupAllAreaFilterOpt;
+                filter1.selected = false;
+                
+                list.add(0, filter1);
+                
             }
             
             if (addAllAnyone) {
                 // 增加全部
                 List<Filter> chidrenFilterList = filter.getChidrenFilterList();
                 for(Filter chidrenFilter : chidrenFilterList) {
-                    if (chidrenFilter.getChidrenFilterList().size() > 0 &&
+                    if (chidrenFilter.getFilterOption().getId() != 0 &&
+                    		chidrenFilter.getChidrenFilterList().size() > 0 &&
                             chidrenFilter.getFilterOption().getParent() == -1) {
                         FilterOption filterOption1 = new FilterOption();
                         filterOption1.setName(context.getString(R.string.all_anyone, ""));
@@ -1048,6 +1086,25 @@ public final class DataQuery extends BaseQuery {
         return filter;
     }
 
+    /**
+     * 按照拼音对Filter列表进行排序
+     * @param filters
+     */
+    private static void sortFilterList(List<Filter> filters){
+    	Collections.sort(filters, new Comparator<Filter>() {
+
+			@Override
+			public int compare(Filter lhs, Filter rhs) {
+				if(lhs.getFilterOption().firstChar==0){
+					lhs.getFilterOption().firstChar = HanziUtil.getFirstPinYinChar(lhs.getFilterOption().getName());
+				}
+				if(rhs.getFilterOption().firstChar==0){
+					rhs.getFilterOption().firstChar = HanziUtil.getFirstPinYinChar(rhs.getFilterOption().getName());
+				}
+				return lhs.getFilterOption().firstChar-rhs.getFilterOption().firstChar;
+			}
+		});
+    }
     public static class Filter {        
         byte key;
         boolean selected = false;
