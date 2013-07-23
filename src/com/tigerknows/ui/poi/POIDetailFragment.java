@@ -667,6 +667,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
+        mBodyScv.smoothScrollTo(0, 0);
         int resId = Integer.MIN_VALUE;
         if (poi.isGoldStamp()) {
             resId = R.drawable.ic_stamp_gold_big;
