@@ -1139,7 +1139,7 @@
     <string name="hotel_select_location">选择位置</string>
     <string name="hotel_please_select_location">请选择位置</string>
     <string name="hotel_not_limit">不限</string>
-    <string name="hotel_query">查找酒店</string>
+    <string name="hotel_query">查找可预订酒店</string>
     <string name="hotel_category_title">星级/品牌/价格</string>
     <string name="hotel_checkin_">入住</string>
     <string name="hotel_checkout_">离店</string>
