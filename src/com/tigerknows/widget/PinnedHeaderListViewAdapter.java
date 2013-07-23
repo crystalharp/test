@@ -15,6 +15,7 @@ import android.widget.SectionIndexer;
 import android.widget.TextView;
 
 import com.tigerknows.R;
+import com.tigerknows.TKConfig;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.widget.PinnedHeaderListView.PinnedHeaderAdapter;
 
@@ -30,14 +31,17 @@ public class PinnedHeaderListViewAdapter extends BaseAdapter implements SectionI
 	private boolean mPinnedMode;
 	private boolean mNotPinFirst;
 
+	private int selectedPosition = -1;
+	
 	public PinnedHeaderListViewAdapter(Context context, List<Filter> datas, List<String> friendsSections,
-			List<Integer> friendsPositions, boolean pinnedMode, boolean notPinFirst) {
+			List<Integer> friendsPositions, boolean pinnedMode, boolean notPinFirst, int selectedPosition) {
 		inflater = LayoutInflater.from(context);
 		mDatas = datas;
 		mFriendsSections = friendsSections;
 		mFriendsPositions = friendsPositions;
 		mPinnedMode = pinnedMode;
 		mNotPinFirst = notPinFirst;
+		this.selectedPosition = selectedPosition;
 	}
 
 	@Override
@@ -79,8 +83,14 @@ public class PinnedHeaderListViewAdapter extends BaseAdapter implements SectionI
 		}
 		TextView textView = (TextView) convertView
 				.findViewById(R.id.text_item);
-//		textView.setClickable(false);
 		textView.setText(mDatas.get(position).getFilterOption().getName());
+
+		if(selectedPosition!=-1 && position == selectedPosition){
+			textView.setTextColor(TKConfig.COLOR_ORANGE);
+		}else{
+			textView.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+		}
+		
 		return convertView;
 	}
 
