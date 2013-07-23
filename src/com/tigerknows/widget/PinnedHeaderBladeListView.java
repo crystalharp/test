@@ -77,9 +77,10 @@ public class PinnedHeaderBladeListView extends LinearLayout {
 	}
 	
 	private List<Filter> mData;
-
-	public void setData(List<Filter> data, boolean pinnedMode, boolean notPinFirst) {
+	private int selectedPosition = -1;
+	public void setData(List<Filter> data, boolean pinnedMode, boolean notPinFirst, int selectedPosition) {
 		this.mData = data;
+		this.selectedPosition = selectedPosition;
 		
 		mBladeView.setVisibility(pinnedMode?View.VISIBLE:View.GONE);
 		
@@ -124,7 +125,7 @@ public class PinnedHeaderBladeListView extends LinearLayout {
 			
 		}
 		
-		mAdapter = new PinnedHeaderListViewAdapter(myContext, mData, mSections, mPositions, pinnedMode, true);
+		mAdapter = new PinnedHeaderListViewAdapter(myContext, mData, mSections, mPositions, pinnedMode, true, selectedPosition);
 		mListView.setAdapter(mAdapter);
 		mListView.setOnScrollListener(mAdapter);
 		mListView.setPinnedHeaderView(mPinnedHeaderView);

@@ -1050,12 +1050,11 @@ public final class DataQuery extends BaseQuery {
                 
                 int id = allArea.getFilterOption().getId();
                 dupAllAreaFilterOpt.setId(id);
-//                dupAllAreaFilterOpt.setParent(id);
                 
                 Filter filter1 = new Filter();
                 filter1.filterOption = dupAllAreaFilterOpt;
-                filter1.selected = false;
-                
+                filter1.selected = allArea.selected;
+                allArea.selected = false;
                 list.add(0, filter1);
                 
             }
