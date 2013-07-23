@@ -8,18 +8,17 @@ import java.util.Map;
 
 import android.content.Context;
 import android.util.AttributeSet;
-import android.util.MonthDisplayHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.model.DataQuery.Filter;
 import com.tigerknows.util.HanziUtil;
 import com.tigerknows.widget.BladeView.OnBladeItemClickListener;
-import com.tigerknows.widget.PinnedHeaderListView.PinnedHeaderAdapter;
 
 public class PinnedHeaderBladeListView extends LinearLayout {
 
@@ -51,11 +50,15 @@ public class PinnedHeaderBladeListView extends LinearLayout {
         setListeners();
 	}
 
+	private TextView indicatorTxv;
+	
 	private void findViews() {
 		
 		mListView = (PinnedHeaderListView) findViewById(R.id.pinned_header_list_view);
         mPinnedHeaderView = LayoutInflater.from(myContext).inflate(R.layout.pinned_header_listview_head, mListView, false);
 		mBladeView = (BladeView) findViewById(R.id.blade_view);
+		indicatorTxv = (TextView) findViewById(R.id.slide_indicator);
+		mBladeView.setPopupText(indicatorTxv);
 		
 	}
 	

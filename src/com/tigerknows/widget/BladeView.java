@@ -1,6 +1,7 @@
 package com.tigerknows.widget;
 
 import com.tigerknows.R;
+import com.tigerknows.Sphinx;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -28,7 +29,6 @@ public class BladeView extends View {
 	int choose = -1;
 	Paint paint = new Paint();
 	boolean showBkg = false;
-	private PopupWindow mPopupWindow;
 	private TextView mPopupText;
 	private Handler handler = new Handler();
 
@@ -109,18 +109,6 @@ public class BladeView extends View {
 	}
 
 	private void showPopup(int item) {
-		if (mPopupWindow == null) {
-			handler.removeCallbacks(dismissRunnable);
-
-            View view  = LayoutInflater.from(getContext()).inflate(R.layout.pinned_header_blade_list_view_indicator, null, false);
-			mPopupText = (TextView) view.findViewById(R.id.content_tv);
-			mPopupText.setBackgroundColor(Color.GRAY);
-			mPopupText.setTextColor(Color.CYAN);
-			mPopupText.setTextSize(50);	
-			mPopupText.setGravity(Gravity.CENTER);
-            mPopupWindow = new PopupWindow(view);
-            mPopupWindow.setWindowLayoutMode(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-		}
 
 		String text = "";
 		if (item == 0) {
@@ -130,12 +118,7 @@ public class BladeView extends View {
 		}
 		mPopupText.setText(text);
 		
-		if (mPopupWindow.isShowing()) {
-			mPopupWindow.update();
-		} else {
-			mPopupWindow.showAtLocation(getRootView(),
-					Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
-		}
+		mPopupText.setVisibility(View.VISIBLE);
 	}
 
 	private void dismissPopup() {
@@ -146,10 +129,7 @@ public class BladeView extends View {
 
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
-			if (mPopupWindow != null) {
-				mPopupWindow.dismiss();
-			}
+			mPopupText.setVisibility(View.GONE);
 		}
 	};
 
@@ -172,4 +152,12 @@ public class BladeView extends View {
 		void onItemClick(String s);
 	}
 
+	private Context context;
+	public void setSphinx(Context context){
+		this.context = context;
+	}
+
+	public void setPopupText(TextView popupText){
+		this.mPopupText = popupText;
+	}
 }

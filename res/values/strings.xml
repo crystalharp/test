@@ -1220,4 +1220,5 @@
     <string name="satisfy_success">谢谢您对我们的评价</string>
     
 <!-- Satisfy Rate End -->
+    <string name="loading_zhong">加载中..</string>
 </resources>
