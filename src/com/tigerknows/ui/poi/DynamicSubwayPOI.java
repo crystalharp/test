@@ -18,6 +18,7 @@ import com.tigerknows.model.POI.SubwayPresetTime;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIView;
 import com.tigerknows.ui.poi.POIDetailFragment.DynamicPOIViewBlock;
+import com.tigerknows.ui.traffic.TrafficQueryFragment;
 import com.tigerknows.widget.LinearListView;
 import com.tigerknows.widget.LinearListView.ItemInitializer;
 
@@ -83,10 +84,21 @@ public class DynamicSubwayPOI extends DynamicPOIView {
             
             TextView exitTxv = (TextView) v.findViewById(R.id.exit_name_txv);
             TextView landmarkTxv = (TextView) v.findViewById(R.id.landmark_txv);
-            TextView stationTxv = (TextView) v.findViewById(R.id.station_txv);
+            final TextView stationTxv = (TextView) v.findViewById(R.id.station_txv);
             
             exitTxv.setText(exit.getExit());
             landmarkTxv.setText(exit.getLandmark());
+            stationTxv.setText(exit.getStations().get(0).getStation());
+            
+            stationTxv.setOnClickListener(new View.OnClickListener() {
+                
+                @Override
+                public void onClick(View v) {
+                    // TODO Auto-generated method stub
+                    TrafficQueryFragment.submitBuslineQuery(mSphinx, stationTxv.getText().toString());
+                    
+                }
+            });
             
         }
         
@@ -102,7 +114,6 @@ public class DynamicSubwayPOI extends DynamicPOIView {
         mSubwayExitView = (LinearLayout) mSubwayView.findViewById(R.id.subway_exit_lst);
         mSubwayBlock.mOwnLayout = mSubwayView;
         
-        
         mSubwayTimeLsv = new LinearListView(mSphinx, mSubwayTimeView, timeInit, R.layout.poi_dynamic_subway_time_item);
         mSubwayExitLsv = new LinearListView(mSphinx, mSubwayExitView, exitInit, R.layout.poi_dynamic_subway_exit_item);
         
@@ -110,13 +121,11 @@ public class DynamicSubwayPOI extends DynamicPOIView {
     
     @Override
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
-        // TODO Auto-generated method stub
 
     }
 
     @Override
     public void onCancelled(TKAsyncTask tkAsyncTask) {
-        // TODO Auto-generated method stub
 
     }
 
