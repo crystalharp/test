@@ -1225,4 +1225,7 @@
     
 <!-- Satisfy Rate End -->
     <string name="loading_zhong">加载中..</string>
+    
+    <string name="appoint_location">指定地点：</string>
+    <string name="appoint_area">指定商区：</string>
 </resources>
