@@ -13,6 +13,7 @@ import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.PresetTime;
+import com.tigerknows.model.POI.Station;
 import com.tigerknows.model.POI.SubwayExit;
 import com.tigerknows.model.POI.SubwayPresetTime;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
@@ -88,17 +89,24 @@ public class DynamicSubwayPOI extends DynamicPOIView {
             
             exitTxv.setText(exit.getExit());
             landmarkTxv.setText(exit.getLandmark());
-            stationTxv.setText(exit.getStations().get(0).getStation());
             
-            stationTxv.setOnClickListener(new View.OnClickListener() {
-                
-                @Override
-                public void onClick(View v) {
-                    // TODO Auto-generated method stub
-                    TrafficQueryFragment.submitBuslineQuery(mSphinx, stationTxv.getText().toString());
-                    
-                }
-            });
+            View stationView = v.findViewById(R.id.station_view);
+            List<Station> s = exit.getStations();
+            if (s != null && s.size() > 0) {
+                stationView.setVisibility(View.VISIBLE);
+                stationTxv.setText(exit.getStations().get(0).getStation());
+                stationTxv.setOnClickListener(new View.OnClickListener() {
+
+                    @Override
+                    public void onClick(View v) {
+                        // TODO Auto-generated method stub
+                        TrafficQueryFragment.submitBuslineQuery(mSphinx, stationTxv.getText().toString());
+
+                    }
+                });
+            } else {
+                stationView.setVisibility(View.GONE);
+            }
             
         }
         
