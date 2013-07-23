@@ -679,6 +679,24 @@ public class TrafficQueryFragment extends BaseFragment {
         
         sphinx.queryStart(trafficQuery);
     }
+    
+    public static void submitBuslineQuery(Sphinx sphinx, String key) {
+        
+        if (key == null) {
+            return;
+        }
+        
+        int cityId = Globals.getCurrentCityInfo().getId();
+        POI poi = new POI();
+        poi.setName(key);
+        sphinx.getTrafficQueryFragment().addHistoryWord(poi, HistoryWordTable.TYPE_BUSLINE);
+        BuslineQuery buslineQuery = new BuslineQuery(sphinx);
+        buslineQuery.setup(cityId, key, 0, false, R.id.view_traffic_home, sphinx.getString(R.string.doing_and_wait));
+        
+//        mActionLog.addAction(mActionTag +  ActionLog.TrafficBuslineBtn, key);
+        sphinx.queryStart(buslineQuery);
+
+    }
 	
 	public static String getMyLocationName(Sphinx mSphinx, Position position) {
 		String mLocationName = mSphinx.getMapEngine().getPositionName(position);
