@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="8dp"
     android:orientation="vertical" >
     
     <LinearLayout
@@ -10,16 +11,20 @@
         android:orientation="vertical"
         android:padding="8dp"
         android:layout_marginBottom="8dp"
+        android:background="@drawable/list_single"
         >
 
         <TextView
             android:id="@+id/subway_title_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="16sp"
             android:text="@string/subway_preset_time" />
         
 	    <ImageView
 	        android:background="@drawable/bg_broken_line"
+	        android:layout_marginTop="8dp"
+	        android:layout_marginBottom="16dp"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content" />
 	    
@@ -38,6 +43,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:background="@drawable/list_single"
         android:padding="8dp"
         >
 
@@ -45,10 +51,13 @@
             android:id="@+id/subway_title_exit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:textSize="16sp"
             android:text="@string/subway_exits" />
         
 	    <ImageView
 	        android:background="@drawable/bg_broken_line"
+	        android:layout_marginBottom="16dp"
+	        android:layout_marginTop="8dp"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content" />
 	    

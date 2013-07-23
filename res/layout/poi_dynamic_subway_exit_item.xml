@@ -6,7 +6,8 @@
     
     <ImageView
         android:id="@+id/head_icon"
-        android:src="@drawable/ic_drive"
+        android:src="@drawable/ic_subway_exit"
+        android:paddingRight="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     
@@ -18,19 +19,46 @@
         
         <TextView
             android:id="@+id/exit_name_txv"
+            android:textSize="14sp"
+            android:textColor="@color/black"
+            android:layout_marginBottom="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         
         <TextView
             android:id="@+id/landmark_txv"
+            android:textSize="14sp"
+            android:textColor="@color/text_gray"
+            android:layout_marginBottom="16dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         
-        
-        <TextView
-            android:id="@+id/station_txv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <RelativeLayout 
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_marginBottom="24dp"
+		    android:gravity="left"
+            >
+           
+	        <TextView
+	            android:id="@+id/station_title"
+	            android:textSize="14sp"
+	            android:textColor="@color/text_gray"
+	            android:layout_marginRight="8dp"
+	            android:text="@string/subway_station_nearby"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content" /> 
+	            
+	        <TextView
+	            android:id="@+id/station_txv"
+	            android:textSize="14sp"
+	            android:layout_toRightOf="@id/station_title"
+	            android:textColor="@color/black"
+	            android:drawableRight="@drawable/ic_subway_busstop"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content" />
+	       
+        </RelativeLayout> 
         
     </LinearLayout>
 

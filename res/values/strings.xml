@@ -778,6 +778,7 @@
     
     <string name="subway_preset_time">本站点首末车时间</string>
     <string name="subway_exits">出口附近信息</string>
+    <string name="subway_station_nearby">最近车站</string>
     
     <string name="nearby_">附近%1$s个</string>
     <string name="entire_city_">全市%1$s个</string>

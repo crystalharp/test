@@ -2,12 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="16dp"
     android:layout_gravity="left"
     >
     
     <ImageView
         android:id="@+id/head_icon"
-        android:src="@drawable/ic_bus"
+        android:src="@drawable/ic_subway_name"
+        android:paddingRight="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     
@@ -19,11 +21,15 @@
         
         <TextView
             android:id="@+id/line_name_txv"
+            android:textSize="14sp"
+            android:textColor="@color/black"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         
         <TextView
             android:id="@+id/time_detail_txv"
+            android:textSize="14sp"
+            android:textColor="@color/text_gray"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         
