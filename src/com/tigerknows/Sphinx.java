@@ -900,10 +900,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         TKConfig.setPref(mContext, TKConfig.PREFS_VERSION_NAME, TKConfig.getClientSoftVersion());
         bootstrap.setup(criteria);
         list.add(bootstrap);
-
-        NoticeQuery noticeQuery = new NoticeQuery(mContext);
-        noticeQuery.setup(criteria);
-        list.add(noticeQuery);
         
         queryStart(list);
         

@@ -219,7 +219,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     
     public void refreshMoreData(NoticeResultResponse noticeResultResponse) {
     	
-    	if(mNoticeResultResponse != null){
+    	if(mNoticeResultResponse == null){
         	mNoticeResultResponse = noticeResultResponse;
         	if(mNoticeResultResponse != null){
         		mNoticeResult = mNoticeResultResponse.getNoticeResult();
@@ -227,13 +227,13 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         			mPagecount = (int)mNoticeResult.getNum();
         			mNoticeList = mNoticeResult.getNoticeList();
         		}
+        	}else{
+             	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
+                Hashtable<String, String> criteria = new Hashtable<String, String>();
+                noticeQuery.setup(criteria, Globals.getCurrentCityInfo().getId());
+                mSphinx.queryStart(noticeQuery);        		
         	}
-    	}else{
-//         	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
-//            Hashtable<String, String> criteria = new Hashtable<String, String>();
-//            noticeQuery.setup(criteria, Globals.getCurrentCityInfo().getId());
-//            mSphinx.queryStart(noticeQuery);
-        }
+    	}
         
     	refreshAppRecommendData();
         
