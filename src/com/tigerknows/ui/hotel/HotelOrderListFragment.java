@@ -204,13 +204,24 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         	new LoadThread(0, TKConfig.getPageSize()).start();
     }
     
+    private boolean toSync = false;
+    
+    /**
+     * Set a flag, 
+     * So that it will sync orders 
+     * if orders could be out of sync with the server 
+     */
+    public void syncOrder(){
+    	toSync = true;
+    }
+    
     @Override
     public void onResume() {
     	super.onResume();
         mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(mContext.getString(R.string.hotel_ordered));
 
-//        fillOrderDb();
+        fillOrderDb();
 
         /**
          * if fragment is previously closed, size of orders will be 0
@@ -220,11 +231,11 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         	reloadOrders();
         }
         
-        if(couldAnomalyExists()){
+        if(couldAnomalyExists() && toSync){
         	logi("Anomaly could exists. Send list sync query.");
         	sendOrderSyncQuery();
         }
-        
+        toSync = false;
     }
 
     /**
