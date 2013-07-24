@@ -112,6 +112,9 @@ public abstract class BaseQuery {
     // 图片上传
     public static final String API_TYPE_FILE_UPLOAD = "fileUpload";
     
+    // 消息通知
+    public static final String API_TYPE_NOTICE = "notice";
+    
     protected static final String VERSION = "13";
     
     // at string true api type，固定为d
