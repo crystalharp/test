@@ -281,8 +281,8 @@ public class ActionLog extends LogUpload {
     public static final String MoreHistory = "BG";
     public static final String MoreSetting = "BH";
     public static final String MoreFeedback = "BI";
-    public static final String MoreHelp = "BJ";
-    public static final String MoreAboutUs = "BK";
+    //public static final String MoreHelp = "BJ";
+    //public static final String MoreAboutUs = "BK";
     public static final String MoreMessageMap = "BL";
     public static final String MoreUserHome = "BM";
     public static final String MoreMessageSoft = "BN";
@@ -290,6 +290,7 @@ public class ActionLog extends LogUpload {
     public static final String MoreMessageUserSurvey = "BP";
     public static final String MoreAddMerchant = "BQ";
     public static final String MoreSatisfyRate = "BR";
+    public static final String MoreAppDownload = "BS";
 
     // 切换城市页
     public static final String ChangeCity = "CB";

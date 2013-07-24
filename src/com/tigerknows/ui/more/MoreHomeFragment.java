@@ -327,7 +327,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 					if(position > len)return;
 	                final RecommendApp recommendApp = mRecommendAppList.get(position);
 	                if (recommendApp != null) {
-	                    //mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, recommendApp.getName());
+	                    mActionLog.addAction(mActionTag + ActionLog.MoreAppDownload, position, recommendApp.getName());
 	                    final String uri = recommendApp.getUrl();
 	                    if (!TextUtils.isEmpty(uri)) {
 	                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
