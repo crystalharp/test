@@ -2,10 +2,12 @@ package com.tigerknows.model;
 
 import java.util.List;
 
+import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
 import com.tigerknows.model.test.NoticeQueryTest;
 import com.tigerknows.model.xobject.XMap;
+import com.tigerknows.util.Utility;
 
 import android.content.Context;
 
@@ -51,6 +53,10 @@ public class NoticeQuery extends BaseQuery {
 			this.noticeResult = getObjectFromData(FIELD_NOTICE_RESULT, NoticeResult.Initializer);
 		}
 		
+		public NoticeResult getNoticeResult() {
+			return noticeResult;
+		}
+		
 		public static class NoticeResult extends XMapData {
 			
 			// 0x01 x_int 总数
@@ -64,7 +70,7 @@ public class NoticeQuery extends BaseQuery {
 			
 			private long num;
 			
-			private List<Notice> notice;
+			private List<Notice> noticeList;
 			
 			private String note;
 			
@@ -72,8 +78,8 @@ public class NoticeQuery extends BaseQuery {
 				return num;
 			}
 			
-			public List<Notice> getNotice() {
-				return notice;
+			public List<Notice> getNoticeList() {
+				return noticeList;
 			}
 			
 			public String getNote() {
@@ -83,7 +89,7 @@ public class NoticeQuery extends BaseQuery {
 			public NoticeResult(XMap data) throws APIException {
 				super(data);
 				num = getLongFromData(FIELD_NUM);
-				notice = getListFromData(FIELD_NOTICE, Notice.Initializer);
+				noticeList = getListFromData(FIELD_NOTICE, Notice.Initializer);
 				note = getStringFromData(FIELD_NOTE);
 			}
 			
@@ -108,6 +114,8 @@ public class NoticeQuery extends BaseQuery {
 				private String url;
 				
 				private String picUrl;
+				
+				private TKDrawable picTKDrawable;
 
 				public long getOperationType() {
 					return operationType;
@@ -125,12 +133,24 @@ public class NoticeQuery extends BaseQuery {
 					return picUrl;
 				}
 				
+				public TKDrawable getpicTkDrawable() {
+					return picTKDrawable;
+				}
 				public Notice(XMap data) throws APIException{
 					super(data);
-					operationType = getLongFromData(FIELD_OPERATION_TYPE);
-					noticeDescription = getStringFromData(FIELD_NOTICE_DESCRIPTION);
-					url = getStringFromData(FIELD_URL);
-					picUrl = getStringFromData(FIELD_PIC_URL);
+					init(data, false);
+				}
+				public void init(XMap data, boolean reset) throws APIException{
+					super.init(data, reset);
+					this.operationType = getLongFromData(FIELD_OPERATION_TYPE);
+					this.noticeDescription = getStringFromData(FIELD_NOTICE_DESCRIPTION);
+					this.url = getStringFromData(FIELD_URL);
+					this.picUrl = getStringFromData(FIELD_PIC_URL);
+					if(this.picUrl != null){
+						TKDrawable tkDrawable = new TKDrawable();
+						tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(this.picUrl, Globals.getPicWidthHeight(TKConfig.PICTURE_MORE_NOTICE)));
+						picTKDrawable = tkDrawable;
+					}
 				}
 				
 				public static XMapInitializer<Notice> Initializer = new XMapInitializer<Notice>() {

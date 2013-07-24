@@ -569,7 +569,7 @@ public abstract class BaseQuery {
     
     protected void makeRequestParameters() throws APIException {
         requestParameters.clear();
-        if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false && API_TYPE_FILE_UPLOAD.equals(apiType) == false) {
+        if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false && API_TYPE_FILE_UPLOAD.equals(apiType) == false && API_TYPE_NOTICE.equals(apiType) == false) {
             requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
             requestParameters.add(SERVER_PARAMETER_VERSION, version);
         }
@@ -602,7 +602,8 @@ public abstract class BaseQuery {
                             || apiType.equals(API_TYPE_DATA_OPERATION)
                             || apiType.equals(API_TYPE_ACCOUNT_MANAGE)
                             || apiType.equals(API_TYPE_PROXY)
-                            || apiType.equals(API_TYPE_HOTEL_ORDER)) {
+                            || apiType.equals(API_TYPE_HOTEL_ORDER)
+                            || apiType.equals(API_TYPE_NOTICE)) {
                         try {
                             httpClient.execute(context);
                         } catch (Exception e) {

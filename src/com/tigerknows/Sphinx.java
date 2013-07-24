@@ -98,14 +98,14 @@ import com.tigerknows.map.MapView.MapScene;
 import com.tigerknows.map.MapView.SnapMap;
 import com.tigerknows.map.MapView.ZoomEndEventListener;
 import com.tigerknows.model.BaseQuery;
-import com.tigerknows.model.DataOperation;
-import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Hotel;
+import com.tigerknows.model.NoticeQuery.NoticeResultResponse;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.PullMessage.Message.PulledDynamicPOI;
 import com.tigerknows.model.LocationQuery;
+import com.tigerknows.model.NoticeQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.TKDrawable;
@@ -901,12 +901,9 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         bootstrap.setup(criteria);
         list.add(bootstrap);
 
-        DataOperation diaoyanQuery = new DataOperation(mContext);
-        criteria = new Hashtable<String, String>();
-        criteria.put(BaseQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_DIAOYAN);
-        criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-        diaoyanQuery.setup(criteria, Globals.getCurrentCityInfo().getId());	//
-        list.add(diaoyanQuery);
+        NoticeQuery noticeQuery = new NoticeQuery(mContext);
+        noticeQuery.setup(criteria);
+        list.add(noticeQuery);
         
         queryStart(list);
         
@@ -972,7 +969,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         mUIStack.clear();
         getTitleFragment();
         getMenuFragment();
-        getMoreFragment().refreshMoreBtn();
+        getMoreFragment().refreshMoreData();
         showView(R.id.view_poi_home);
         
         mMenuView.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
@@ -1299,7 +1296,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         public void onReceive(Context context, Intent intent) { 
             if (intent != null
                     && intent.hasExtra(MapStatsService.EXTRA_DOWNLOAD_CITY)) {
-                getMoreFragment().refreshMoreBtn();
+                //getMoreFragment().refreshMoreData();
             }
         }
     };
@@ -1749,8 +1746,6 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
         if (intent != null) {
             int sourceViewId = intent.getIntExtra(BaseActivity.SOURCE_VIEW_ID, R.id.view_invalid);
             if (sourceViewId == R.id.activity_poi_edit_comment) {
-                TKConfig.setPref(this, TKConfig.PREFS_SHOW_UPGRADE_COMMENT_TIP, String.valueOf(MoreHomeFragment.SHOW_COMMENT_TIP_TIMES));
-                getMoreFragment().refreshMoreBtn();
                 mHandler.post(mOnNewIntentStamp);
             
             // 登录之后的返回
@@ -2023,15 +2018,15 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 BootstrapModel bootstrapModel = ((Bootstrap) baseQuery).getBootstrapModel();
                 if (bootstrapModel != null) {
                     Globals.g_Bootstrap_Model = bootstrapModel;
+                    getMoreFragment().refreshAppRecommendData();
                 }
-                getMoreFragment().refreshMoreBtn();
-            } else if (baseQuery instanceof DataOperation) {
+                getMoreFragment().refreshMoreData();
+            } else if (baseQuery instanceof NoticeQuery) {
             	Response response = baseQuery.getResponse();
-            	if (response instanceof DiaoyanQueryResponse) {
-            		DiaoyanQueryResponse diaoyanQueryResponse = (DiaoyanQueryResponse) response;
-            		if (diaoyanQueryResponse.getHasSurveyed() != 1) {
-            			getMoreFragment().setDiaoyanQueryResponse(diaoyanQueryResponse);
-            			getMoreFragment().refreshMoreBtn();
+            	if (response instanceof NoticeResultResponse) {
+            		NoticeResultResponse noticeResultResponse = (NoticeResultResponse) response;
+            		if(noticeResultResponse != null){
+            			getMoreFragment().refreshMoreData(noticeResultResponse);
             		}
             	}
             }

@@ -695,6 +695,11 @@ public class TKConfig {
      * 优惠券二维码尺寸的Key
      */
     public static final int PICTURE_COUPON_QRIMG = 13;
+    
+    /**
+     * 活动通知栏尺寸的Key
+     */
+    public static final int PICTURE_MORE_NOTICE = 14;
 
     /**
      * 黑色
@@ -1557,6 +1562,7 @@ public class TKConfig {
                     start += "noticeUrl=".length();
                     TKConfig.sNOTICE_URL = text.substring(start, end);
                 }
+                start = text.indexOf("noticeHost=");
                 end = text.indexOf(";", start);
                 if (start > -1 && end > -1) {
                     start += "noticeHost=".length();
