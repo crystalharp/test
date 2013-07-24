@@ -80,6 +80,10 @@ public class BaseQueryTest {
     
     static final String TAG = "BaseQueryTest";
     
+    public static final String URL = "http://www.tigerknows.com";
+    
+    public static final String PIC_URL = "http://wap.tigerknows.com/images/logo_back.png";
+    
     private static Activity sActivity;
     
     public static void setActivity(Activity activity) {
