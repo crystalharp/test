@@ -800,7 +800,7 @@
     <string name="tuangou_shop_list">订单查询</string>
     
     <string name="dianying_list">电影列表</string>
-    <string name="dianying_no_length_now">暂无时间</string>
+    <string name="dianying_no_length_now">暂无时长</string>
     <string name="dianying_detail_nearest">最近影院 %1$s</string>
     <string name="dianying_detail_distance_to_me">%1$s</string>
     <string name="dianying_detail">电影详情</string>
@@ -859,7 +859,7 @@
     <string name="add_merchant_upload_photo_added">已添加商户门面照片</string>
     <string name="wait_submit">等待提交</string>
     <string name="contact">联系方式</string>
-    <string name="please_input_your_telephone">请输入您的电话</string>
+    <string name="please_input_your_telephone">请输入您的手机号</string>
     <string name="add_merchant_thanks">感谢您帮助我们完善商户信息。请认真填写联系方式，以便我们将处理后的结果及时反馈给您。 </string>
     <string name="capture_photo">拍照上传</string>
     <string name="pick_photo">从手机相册选择</string>
@@ -1134,7 +1134,7 @@
     <string name="hotel_select_location">选择位置</string>
     <string name="hotel_please_select_location">请选择位置</string>
     <string name="hotel_not_limit">不限</string>
-    <string name="hotel_query">查找酒店</string>
+    <string name="hotel_query">查找可预订酒店</string>
     <string name="hotel_category_title">星级/品牌/价格</string>
     <string name="hotel_checkin_">入住</string>
     <string name="hotel_checkout_">离店</string>
