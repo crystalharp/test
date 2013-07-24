@@ -405,6 +405,7 @@ public class ActionLog extends LogUpload {
     public static final String MapInfoWindowTraffic = Map + "BJ";
     public static final String MapInfoWindowStart = Map + "BK";
     public static final String MapInfoWindowEnd = Map + "BL";
+    public static final String MapMultiTouchZoom = Map + "BM";
     
     // 微博发送界面    
     public static final String WeiboSend = "FC";

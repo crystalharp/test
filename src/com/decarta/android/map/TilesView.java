@@ -1194,6 +1194,7 @@ public class TilesView extends GLSurfaceView {
                 		zoomingRecord.zoomCenterXY.x=lastCenterConv.x;
                 		zoomingRecord.zoomCenterXY.y=lastCenterConv.y;
                 		zoomingRecord.listener=null;
+                        mParentMapView.executeMultiTouchZoomListeners(newZoomLevel);
                 	}
         			refreshMap();
         		}
