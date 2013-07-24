@@ -896,7 +896,7 @@ public class DataQueryTest {
         data.put(Coupon.FIELD_DETAIL_PIC, BaseQueryTest.PIC_URL);
         data.put(Coupon.FIELD_DETAIL, "FIELD_DETAIL,FIELD_DETAIL,FIELD_DETAIL");
         data.put(Coupon.FIELD_2D_CODE, BaseQueryTest.PIC_URL);
-        data.put(Coupon.FIELD_LOGO, "丁丁优惠");
+        data.put(Coupon.FIELD_LOGO, BaseQueryTest.PIC_URL);
         data.put(Coupon.FIELD_HINT_PIC, "FIELD_HINT_PIC");
         data.put(Coupon.FIELD_REMARK, "FIELD_REMARK");
         return data;
