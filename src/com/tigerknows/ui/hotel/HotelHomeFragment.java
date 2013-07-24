@@ -264,6 +264,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             case R.id.dingdan_btn:
                 mActionLog.addAction(mActionTag + ActionLog.HotelQueryOrder);
             	mSphinx.getHotelOrderListFragment().clearOrders();
+            	mSphinx.getHotelOrderListFragment().syncOrder();
                 mSphinx.showView(R.id.view_hotel_order_list);
             	break;
                 
