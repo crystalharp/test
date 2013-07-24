@@ -734,7 +734,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             }
             if( (mChecked & DIRECT_SUBMIT) != 0 && !TextUtils.isEmpty(mContactEdt.getText())){
                 s.append('-');
-                s.append(getString(R.string.erreport_contact)));
+                s.append(getString(R.string.erreport_contact));
                 s.append(URLEncoder.encode(mContactEdt.getText().toString(), TKConfig.getEncoding()));
             }
         }catch (UnsupportedEncodingException e) {
