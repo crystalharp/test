@@ -508,7 +508,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
-        queryCount = 0;
         
         // Ugly
         if (mPOI.getHotel().getUuid() != null) {
@@ -1059,6 +1058,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         refreshDetail();
         refreshComment();
         // DynamicPOI检测区域
+        // 重置查询计数
+        queryCount = 0;
         // 检查是否包含电影的动态信息
         if (mDynamicMoviePOI.isExist()) {
             mDynamicMoviePOI.queryStart(mDynamicMoviePOI.buildQuery(poi));
