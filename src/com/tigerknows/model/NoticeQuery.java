@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.decarta.android.exception.APIException;
 import com.tigerknows.TKConfig;
+import com.tigerknows.model.test.NoticeQueryTest;
 import com.tigerknows.model.xobject.XMap;
 
 import android.content.Context;
@@ -31,11 +32,11 @@ public class NoticeQuery extends BaseQuery {
 	@Override
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
-        // TODO: 
+        response = new NoticeResultResponse(responseXMap);
     }
     protected void launchTest() {
         super.launchTest();
-        // TODO:
+        responseXMap = NoticeQueryTest.launchNoticeResultResponse(context);
     }
     
     public static class NoticeResultResponse extends Response {
@@ -48,7 +49,6 @@ public class NoticeQuery extends BaseQuery {
 			super(data);
 			
 			this.noticeResult = getObjectFromData(FIELD_NOTICE_RESULT, NoticeResult.Initializer);
-			// TODO Auto-generated constructor stub
 		}
 		
 		public static class NoticeResult extends XMapData {
