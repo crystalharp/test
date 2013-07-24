@@ -657,11 +657,11 @@ public class DataQueryTest {
             subwayExit.put(SubwayExit.FEILD_SUBWAY_EXIT, "Exit " + i);
             subwayExit.put(SubwayExit.FEILD_LANDMARK, "Landmark " + i);
             XArray<XMap> stationList = new XArray<XMap>();
-            for (int j = 0; j < 3; j++) {
+//            for (int j = 0; j < 3; j++) {
                 XMap station = new XMap();
-                station.put(Station.FEILD_STATION, "Station " + i);
+                station.put(Station.FEILD_STATION, "中关园北站");
                 stationList.add(station);
-            }
+//            }
             subwayExit.put(SubwayExit.FEILD_STATIONS, stationList);
             dataList.add(subwayExit);
         }

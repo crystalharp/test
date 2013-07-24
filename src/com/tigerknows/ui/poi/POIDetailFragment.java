@@ -198,6 +198,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     DynamicMoviePOI mDynamicMoviePOI;
     
+    DynamicSubwayPOI mDynamicSubwayPOI;
+    
     private Button mCommentTipEdt;
     
     private View mLoadingView;
@@ -385,8 +387,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         //这个函数是一个动态POI的刷新主函数,刷新策略在其中实现.但是具体的刷新行为在BlockRefresher中实现
         public abstract void refresh();
 
-        //初始化的时候会在checkAndAddDynamicPOIView中把这个变量初始化完毕,不用关心
-        final public boolean isExist() {
+        //普通动态POI初始化的时候会在checkAndAddDynamicPOIView中把这个变量初始化完毕,不用关心
+        public boolean isExist() {
             return mExist;
         }
 
@@ -483,6 +485,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         mDynamicHotelPOI = new DynamicHotelPOI(this, mLayoutInflater);
         
         mDynamicMoviePOI = new DynamicMoviePOI(this, mLayoutInflater);
+        
+        mDynamicSubwayPOI = new DynamicSubwayPOI(this, mLayoutInflater);
         
         return mRootView;
     }
@@ -1001,7 +1005,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         //这两个函数放在前面初始化动态POI信息
         clearDynamicPOI(DPOIViewBlockList);
+        //初始化和动态POI信息无关的动态布局，执行addToParent的顺序决定出现的顺序
+        DPOIViewBlockList.add(mDynamicSubwayPOI.mSubwayBlock);
+        //初始化和动态POI信息相关的动态布局
         initDynamicPOIView(mPOI);
+        mDynamicSubwayPOI.initData(poi);
+        if (mDynamicSubwayPOI.isExist()) {
+            mDynamicSubwayPOI.refresh();
+        }
         if (poi.getHotel().getUuid() != null) {
             mNavigationWidget.setVisibility(View.VISIBLE);
         } else {
