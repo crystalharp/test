@@ -719,18 +719,22 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             s.append(errcode + "");
             if( (mChecked & MAIN_LLY) != 0 && !TextUtils.isEmpty(mMainEdt.getText()) && !TextUtils.equals(mMainEdt.getText(), mOrigin)){
                 s.append('-');
+                s.append(mMainTxv.getText());
                 s.append(URLEncoder.encode(mMainEdt.getText().toString(), TKConfig.getEncoding()));
             }
             if( (mChecked & TYPE_LLY) != 0 && !TextUtils.isEmpty(mTypeBtn.getText())){
                 s.append('-');
+                s.append(getString(R.string.erreport_merchant_type));
                 s.append(URLEncoder.encode(mTypeBtn.getText().toString(), TKConfig.getEncoding()));
             }
             if( (mChecked & DESCRIPTION_LLY) != 0){
                 s.append('-');
+                s.append(getString(R.string.other_colon));
                 s.append(URLEncoder.encode(mDescriptionEdt.getText().toString(), TKConfig.getEncoding()));
             }
             if( (mChecked & DIRECT_SUBMIT) != 0 && !TextUtils.isEmpty(mContactEdt.getText())){
                 s.append('-');
+                s.append(getString(R.string.erreport_contact)));
                 s.append(URLEncoder.encode(mContactEdt.getText().toString(), TKConfig.getEncoding()));
             }
         }catch (UnsupportedEncodingException e) {
