@@ -479,7 +479,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	        	
 	        	int msgType = TKActivity.SHOW_ERROR_MSG_TOAST;
 	        	if(BaseQuery.API_TYPE_HOTEL_ORDER.equals(tkAsyncTask.getBaseQuery().getAPIType()) &&
-	        			HotelOrderOperation.OPERATION_CODE_QUERY.equals(tkAsyncTask.getBaseQuery().getCriteria().get(HotelOrderOperation.SERVER_PARAMETER_OPERATION_CODE))){
+	        			HotelOrderOperation.OPERATION_CODE_QUERY.equals(tkAsyncTask.getBaseQuery().getParameter(HotelOrderOperation.SERVER_PARAMETER_OPERATION_CODE))){
 	        		msgType = TKActivity.SHOW_ERROR_MSG_NO;					// 状态查询不需要提示。
 	        	}
 	        	
@@ -497,7 +497,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
         		
 				String at = baseQuery.getAPIType();
 
-            	String dty = baseQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+            	String dty = baseQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
             	
 	        	if(BaseQuery.API_TYPE_DATA_QUERY.equals(at)){			//数据操作
 	            	
@@ -548,7 +548,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             if(BaseQuery.API_TYPE_HOTEL_ORDER.equals(at)){
             	
             	HotelOrderOperation hotelOrderOperation = (HotelOrderOperation)baseQuery;
-            	String opCode = hotelOrderOperation.getCriteria().get(HotelOrderOperation.SERVER_PARAMETER_OPERATION_CODE);
+            	String opCode = hotelOrderOperation.getParameter(HotelOrderOperation.SERVER_PARAMETER_OPERATION_CODE);
             	
             	if(HotelOrderOperation.OPERATION_CODE_QUERY.equals(opCode)){	// Query operation corresponds to state query
             		HotelOrderStatesResponse response = (HotelOrderStatesResponse) hotelOrderOperation.getResponse();
@@ -569,7 +569,7 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
             		
             	}else if( HotelOrderOperation.OPERATION_CODE_UPDATE.equals(opCode) ){
             		
-            		String action = baseQuery.getCriteria().get(HotelOrderOperation.SERVER_PARAMETER_UPDATE_ACTION);
+            		String action = baseQuery.getParameter(HotelOrderOperation.SERVER_PARAMETER_UPDATE_ACTION);
             		if(HotelOrderOperation.ORDER_UPDATE_ACTION_CANCEL.equals(action)){
             			Response response = hotelOrderOperation.getResponse();
             			if(response.getResponseCode() == 200){

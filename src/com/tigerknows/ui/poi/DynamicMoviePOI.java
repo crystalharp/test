@@ -282,8 +282,7 @@ public class DynamicMoviePOI extends POIDetailFragment.DynamicPOIView{
                 mPOIDetailFragment.isReLogin = true;
                 return;
             }
-            Hashtable<String, String> criteria = baseQuery.getCriteria();
-            String dataType = criteria.get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
+            String dataType = baseQuery.getParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE);
             Response response = baseQuery.getResponse();
             if (baseQuery instanceof DataQuery) {
                 if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, false, this, false)) {

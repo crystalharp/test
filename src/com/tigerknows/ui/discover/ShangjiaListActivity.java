@@ -117,7 +117,7 @@ public class ShangjiaListActivity extends BaseActivity {
             finish();
             return;
         }
-        if (mDataQuery == null || mDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SESSION_ID).equals(sessionId) == false) {
+        if (mDataQuery == null || mDataQuery.getParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID).equals(sessionId) == false) {
             DataQuery dataQuery = new DataQuery(mThis);
             Hashtable<String, String> criteria = new Hashtable<String, String>();
             criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_SHANGJIA);

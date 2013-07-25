@@ -235,7 +235,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             return;
         }
         if (lastDataQuery.getSourceViewId() != getId()
-                || lastDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE).equals(mDataType) == false) {
+                || lastDataQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE).equals(mDataType) == false) {
             mDataQuery = null;
             mFilterControlView.setVisibility(View.GONE);
             mFilterList.clear();
@@ -244,7 +244,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         String str = mContext.getString(R.string.loading);
         mQueryingTxv.setText(str);
         
-        mDataType = lastDataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+        mDataType = lastDataQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
         if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
             if (mTuangouAdapter == null) {
                 mTuangouAdapter = new TuangouAdapter(mSphinx, mTuangouList);

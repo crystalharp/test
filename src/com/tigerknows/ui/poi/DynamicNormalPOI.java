@@ -256,7 +256,7 @@ public class DynamicNormalPOI extends POIDetailFragment.DynamicPOIView{
                 return;
             }
             Response response = baseQuery.getResponse();
-            String dataType = baseQuery.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
+            String dataType = baseQuery.getParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE);
             if (BaseQuery.DATA_TYPE_TUANGOU.equals(dataType)) {
                 tuangou = ((TuangouQueryResponse) response).getTuangou();
 

@@ -431,7 +431,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
             Dianying dianying = null;
             
             for (BaseQuery baseQuery : baseQueryList) {
-                String dataType = baseQuery.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
+                String dataType = baseQuery.getParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE);
                 if(BaseQuery.DATA_TYPE_DIANYING.equals(dataType)){
                     // Dianying query response
                     DianyingQueryResponse dianyingQueryResponse = (DianyingQueryResponse) baseQuery.getResponse();
@@ -450,7 +450,7 @@ public class DianyingDetailView extends BaseDetailView implements View.OnClickLi
         } else {
             DianyingQueryResponse targetResponse = (DianyingQueryResponse) response;
             Dianying target = targetResponse.getDianying();
-            if (target != null && dataOperation.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_UID).equals(mData.getUid())) {
+            if (target != null && dataOperation.getParameter(DataOperation.SERVER_PARAMETER_DATA_UID).equals(mData.getUid())) {
                 try {
                     mData.init(target.getData(), false);
                     refreshDescription(false);

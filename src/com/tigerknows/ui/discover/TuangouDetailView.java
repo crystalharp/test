@@ -240,9 +240,8 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             if (mBaseQuerying != null && mBaseQuerying.size() > 0) {
                 BaseQuery baseQuery = mBaseQuerying.get(0);
                 if (BaseQuery.API_TYPE_DATA_OPERATION.equals(baseQuery.getAPIType())) {
-                    Hashtable<String, String> criteria = baseQuery.getCriteria();
-                    if (criteria != null && criteria.containsKey(BaseQuery.SERVER_PARAMETER_DATA_TYPE)) {
-                        String dataType = criteria.get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+                    if (baseQuery.hasParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE)) {
+                        String dataType = baseQuery.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
                         if (DataOperation.DATA_TYPE_DINGDAN.equals(dataType)) {
                             mBaseQuerying = null;
                         }
@@ -749,7 +748,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         }
 
         final Response response = dataOperation.getResponse();
-        String dataType = dataOperation.getCriteria().get(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
+        String dataType = dataOperation.getParameter(BaseQuery.SERVER_PARAMETER_DATA_TYPE);
         if (BaseQuery.DATA_TYPE_DINGDAN.equals(dataType)) {
             if (BaseActivity.checkResponseCode(dataOperation, mSphinx, null, true, mParentFragment, false)) {
                 return true;
@@ -770,7 +769,7 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
             }
             TuangouQueryResponse targetResponse = (TuangouQueryResponse) response;
             Tuangou target = targetResponse.getTuangou();
-            if (target != null && dataOperation.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_UID).equals(mData.getUid())) {
+            if (target != null && dataOperation.getParameter(DataOperation.SERVER_PARAMETER_DATA_UID).equals(mData.getUid())) {
                 try {
                     mData.init(target.getData(), false);
                     refreshDescription(false);

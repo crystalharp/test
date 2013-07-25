@@ -406,7 +406,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         } else {
             DataQuery dataQuery = mDataQuery;
             if (dataQuery != null &&
-                    BaseQuery.SUB_DATA_TYPE_HOTEL.equals(dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE)) &&
+                    BaseQuery.SUB_DATA_TYPE_HOTEL.equals(dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE)) &&
                     mPOIList.size() > 0) {
                 int bottom = Util.dip2px(Globals.g_metrics.density, 32);
                 mResultLsv.setPadding(0, 0, 0, bottom);
@@ -861,7 +861,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     public void onPostExecute(TKAsyncTask tkAsyncTask) {
         super.onPostExecute(tkAsyncTask);
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
-        String subDataType = dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
+        String subDataType = dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
         mResultAdapter.setSubDataType(subDataType);
         if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
             mRetryView.setText(R.string.can_not_found_result_and_retry, false);

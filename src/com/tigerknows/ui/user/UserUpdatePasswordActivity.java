@@ -137,7 +137,7 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 
 	@Override
 	protected void responseCodeAction(AccountManage accountManage) {
-		String operationCode = accountManage.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
+		String operationCode = accountManage.getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
 		if (AccountManage.OPERATION_CODE_UPDATE_PASSWORD.equals(operationCode)) {
 			//  200, 405
 			switch(accountManage.getResponse().getResponseCode()){

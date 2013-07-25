@@ -1328,8 +1328,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
                 isReLogin = true;
                 return;
             }
-            Hashtable<String, String> criteria = baseQuery.getCriteria();
-            String dataType = criteria.get(DataOperation.SERVER_PARAMETER_DATA_TYPE);
+            String dataType = baseQuery.getParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE);
             Response response = baseQuery.getResponse();
             
             // 查询点评的结果

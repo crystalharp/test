@@ -419,8 +419,8 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
         DataQuery dataQuery = ((DataQuery)tkAsyncTask.getBaseQuery());
 
         boolean exit = true;
-        if (dataQuery.getCriteria().containsKey(BaseQuery.SERVER_PARAMETER_INDEX)) {
-            int index = Integer.parseInt(dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_INDEX));
+        if (dataQuery.hasParameter(BaseQuery.SERVER_PARAMETER_INDEX)) {
+            int index = Integer.parseInt(dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_INDEX));
             if (index > 0) {
                 mPOILsv.onRefreshComplete(false);
                 mPOILsv.setFooterSpringback(true);

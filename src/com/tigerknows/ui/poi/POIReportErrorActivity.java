@@ -751,7 +751,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             return;
         }
         
-        if(! baseQuery.getCriteria().containsKey(FeedbackUpload.LOCAL_PARAMETER_POIERROR_IGNORE)){
+        if(! baseQuery.hasParameter(FeedbackUpload.LOCAL_PARAMETER_POIERROR_IGNORE)){
         	if (BaseActivity.checkResponseCode(baseQuery, mThis, null, true, this, false)) {
         		return;
         	}

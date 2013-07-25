@@ -604,7 +604,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         }
         
         final HotelOrderOperation hotelOrderOperation = (HotelOrderOperation)(tkAsyncTask.getBaseQuery());
-        String opCode = hotelOrderOperation.getCriteria().get(HotelOrderOperation.SERVER_PARAMETER_OPERATION_CODE);
+        String opCode = hotelOrderOperation.getParameter(HotelOrderOperation.SERVER_PARAMETER_OPERATION_CODE);
         if(opCode.equals(HotelOrderOperation.OPERATION_CODE_SYNC)){
         	// Get the orders loaded from server
         	HotelOrderSyncResponse response = (HotelOrderSyncResponse) hotelOrderOperation.getResponse();
@@ -650,7 +650,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         }else if(opCode.equals(HotelOrderOperation.OPERATION_CODE_QUERY)){
         	HotelOrderStatesResponse response = (HotelOrderStatesResponse) hotelOrderOperation.getResponse();
         	List<Long> states = response.getStates();
-        	String ids = baseQuery.getCriteria().get(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS);
+        	String ids = baseQuery.getParameter(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS);
         	updateOrderState(states, ids, ordersQuerying);
         }
         

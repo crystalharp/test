@@ -120,7 +120,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             mFendianAdapter.notifyDataSetChanged();
 
             DataQuery fendianQuery = mTuangou.getFendianQuery();
-            if (fendianQuery != null && mSphinx.getDiscoverListFragment().getCriteria().get(DataQuery.SERVER_PARAMETER_FILTER).equals(fendianQuery.getCriteria().get(DataQuery.SERVER_PARAMETER_FILTER))) {
+            if (fendianQuery != null && mSphinx.getDiscoverListFragment().getCriteria().get(DataQuery.SERVER_PARAMETER_FILTER).equals(fendianQuery.getParameter(DataQuery.SERVER_PARAMETER_FILTER))) {
                 setDataQuery(fendianQuery, true);
                 return;
             }
@@ -141,7 +141,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             mYingxunAdapter.notifyDataSetChanged();
             
             DataQuery yingxunQuery = mDianying.getYingxunQuery();
-            if (yingxunQuery != null && mSphinx.getDiscoverListFragment().getCriteria().get(DataQuery.SERVER_PARAMETER_FILTER).equals(yingxunQuery.getCriteria().get(DataQuery.SERVER_PARAMETER_FILTER))) {
+            if (yingxunQuery != null && mSphinx.getDiscoverListFragment().getCriteria().get(DataQuery.SERVER_PARAMETER_FILTER).equals(yingxunQuery.getParameter(DataQuery.SERVER_PARAMETER_FILTER))) {
                 setDataQuery(yingxunQuery, true);
                 return;
             }
@@ -273,8 +273,9 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
 
         DataQuery dataQuery = new DataQuery(mContext);
         int cityId = lastDataQuery.getCityId();
+        //FIXME:获取参数，修改，然后重新请求。加个函数
         Hashtable<String, String> criteria = lastDataQuery.getCriteria();
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(getList().size()));
+        lastDataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(getList().size()));
         dataQuery.setup(criteria, cityId, getId(), getId(), null, true, true, dataQuery.getPOI());
         mSphinx.queryStart(dataQuery);
         }
@@ -884,8 +885,8 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
 
         boolean exit = true;
-        if (dataQuery.getCriteria().containsKey(BaseQuery.SERVER_PARAMETER_INDEX)) {
-            int index = Integer.parseInt(dataQuery.getCriteria().get(BaseQuery.SERVER_PARAMETER_INDEX));
+        if (dataQuery.hasParameter(BaseQuery.SERVER_PARAMETER_INDEX)) {
+            int index = Integer.parseInt(dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_INDEX));
             if (index > 0) {
                 mResultLsv.onRefreshComplete(false);
                 mResultLsv.setFooterSpringback(true);

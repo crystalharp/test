@@ -263,7 +263,7 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
                 mParentFragment.dismiss();
             }
         } else {
-            if (data != null && dataOperation.getCriteria().get(DataOperation.SERVER_PARAMETER_DATA_UID).equals(mData.getUid())) {
+            if (data != null && dataOperation.getParameter(DataOperation.SERVER_PARAMETER_DATA_UID).equals(mData.getUid())) {
                 try {
                     mData.init(data.getData(), false);
                     refreshDescription(false);

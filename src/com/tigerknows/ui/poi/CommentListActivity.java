@@ -270,9 +270,8 @@ public class CommentListActivity extends BaseActivity {
         }
         if (dataQuery.isTurnPage()) {
             boolean isHeader = true;
-            Hashtable<String, String> criteria = mCommentQuery.getCriteria();
-            if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {
-                String direction = criteria.get(DataQuery.SERVER_PARAMETER_DIRECTION);
+            if (mCommentQuery.hasParameter(DataQuery.SERVER_PARAMETER_DIRECTION)) {
+                String direction = mCommentQuery.getParameter(DataQuery.SERVER_PARAMETER_DIRECTION);
                 if (DataQuery.DIRECTION_AFTER.equals(direction)) {
                     mTurnPageHeader = false;
                     isHeader = true;
@@ -485,9 +484,8 @@ public class CommentListActivity extends BaseActivity {
         }
         
         boolean isHeader = true;
-        Hashtable<String, String> criteria = dataQuery.getCriteria();
-        if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {
-            String direction = criteria.get(DataQuery.SERVER_PARAMETER_DIRECTION);
+        if (dataQuery.hasParameter(DataQuery.SERVER_PARAMETER_DIRECTION)) {
+            String direction = dataQuery.getParameter(DataQuery.SERVER_PARAMETER_DIRECTION);
             if (DataQuery.DIRECTION_AFTER.equals(direction)) {
                 mTurnPageHeader = false;
                 isHeader = true;
@@ -506,9 +504,8 @@ public class CommentListActivity extends BaseActivity {
         super.onCancelled(tkAsyncTask);
         DataQuery commentQuery = (DataQuery)(tkAsyncTask.getBaseQuery());
         boolean isHeader = true;
-        Hashtable<String, String> criteria = commentQuery.getCriteria();
-        if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {
-            String direction = criteria.get(DataQuery.SERVER_PARAMETER_DIRECTION);
+        if (commentQuery.hasParameter(DataQuery.SERVER_PARAMETER_DIRECTION)) {
+            String direction = commentQuery.getParameter(DataQuery.SERVER_PARAMETER_DIRECTION);
             if (DataQuery.DIRECTION_AFTER.equals(direction)) {
                 mTurnPageHeader = false;
                 isHeader = true;

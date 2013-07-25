@@ -332,7 +332,7 @@ public class MyCommentListFragment extends BaseFragment {
         } else if (baseQuery instanceof DataQuery) { 
 
             boolean exit = true;
-            if (baseQuery.getCriteria().containsKey(DataQuery.SERVER_PARAMETER_TIME)) {
+            if (baseQuery.hasParameter(DataQuery.SERVER_PARAMETER_TIME)) {
                 mCommentLsv.onRefreshComplete(false);
                 mCommentLsv.setFooterSpringback(true);
                 exit = false;
@@ -345,9 +345,8 @@ public class MyCommentListFragment extends BaseFragment {
             if (dataQuery.isTurnPage() == false) {
                 mCommentLsv.onRefreshComplete(false);
             } else {
-                Hashtable<String, String> criteria = dataQuery.getCriteria();
-                if (criteria.containsKey(DataQuery.SERVER_PARAMETER_DIRECTION)) {
-                    String direction = criteria.get(DataQuery.SERVER_PARAMETER_DIRECTION);
+                if (dataQuery.hasParameter(DataQuery.SERVER_PARAMETER_DIRECTION)) {
+                    String direction = dataQuery.getParameter(DataQuery.SERVER_PARAMETER_DIRECTION);
                     if (DataQuery.DIRECTION_AFTER.equals(direction)) {
                         isHeader = true;
                     } else if (DataQuery.DIRECTION_BEFORE.equals(direction)) {

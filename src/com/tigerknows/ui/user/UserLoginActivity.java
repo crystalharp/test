@@ -260,7 +260,7 @@ public class UserLoginActivity extends UserBaseActivity {
 	@Override
 	protected void responseCodeAction(AccountManage accountManage) {
 		// TODO Auto-generated method stub
-		String operationCode = accountManage.getCriteria().get(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
+		String operationCode = accountManage.getParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE);
 		if (AccountManage.OPERATION_CODE_LOGIN.equals(operationCode)){
 			// 200, 403, 404(, 500)
 			switch(accountManage.getResponse().getResponseCode()){
