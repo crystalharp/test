@@ -869,6 +869,7 @@
     <string name="add_merchant_text_upload_falied_tip">提交失败，请重试</string>
    <string name="add_merchant_delete_photo_tip">确定要删除该图片吗？</string>
    <string name="poi_list_item_add_merchant">没有找到想要的商户</string>
+   <string name="get_photo_failed">获取图片失败:</string>
     
     <string name="every_day">每天</string>
     <string name="weekend">周末</string>
