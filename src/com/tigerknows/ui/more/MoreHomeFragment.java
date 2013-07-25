@@ -549,16 +549,4 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     		}
     	}
     }
-    @Override
-    public void onPostExecute(TKAsyncTask tkAsyncTask) {
-        super.onPostExecute(tkAsyncTask);
-        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
-        if (baseQuery instanceof Bootstrap) {
-            BootstrapModel bootstrapModel = ((Bootstrap) baseQuery).getBootstrapModel();
-            if (bootstrapModel != null) {
-                Globals.g_Bootstrap_Model = bootstrapModel;
-                refreshMoreData();
-            }
-        }
-    }
 }
