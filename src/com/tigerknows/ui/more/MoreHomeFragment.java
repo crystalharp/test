@@ -464,6 +464,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     	}
     }
 
+
     public View getView(int position) {
     	position = position % mPagecount;
         if (viewMap.containsKey(position)) {

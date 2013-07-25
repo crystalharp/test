@@ -21,7 +21,7 @@ public class BaseData extends XMapData {
 
     protected long parentId = -1;
 
-    protected int storeType = -1;
+    protected int storeType = Tigerknows.STORE_TYPE_HISTORY;
 
     protected long dateTime = -1;
     
@@ -72,8 +72,10 @@ public class BaseData extends XMapData {
             com.tigerknows.model.Favorite favorite = new com.tigerknows.model.Favorite();
             uri = favorite.writeToDatabases(context, type);
             if (uri != null) {
-                parentId = favorite.id;
-                values.put(Tigerknows.TransitPlan.PARENT_ID, parentId);
+                if (this.storeType == storeType) {
+                    parentId = favorite.id;
+                }
+                values.put(Tigerknows.TransitPlan.PARENT_ID, favorite.id);
             } else {
                 isFailed = true;
             }
@@ -82,8 +84,10 @@ public class BaseData extends XMapData {
             History history = new History();
             uri = history.writeToDatabases(context, type);
             if (uri != null) {
-                parentId = history.id;
-                values.put(Tigerknows.TransitPlan.PARENT_ID, parentId);
+                if (this.storeType == storeType) {
+                    parentId = history.id;
+                }
+                values.put(Tigerknows.TransitPlan.PARENT_ID, history.id);
             } else {
                 isFailed = true;
             }
@@ -93,13 +97,8 @@ public class BaseData extends XMapData {
         if (!isFailed) {
             uri = SqliteWrapper.insert(context, context.getContentResolver(), insertUri, values);
             if (uri != null) {
-                id = Integer.parseInt(uri.getPathSegments().get(1));
-            } else {
-                if (storeType == Tigerknows.STORE_TYPE_FAVORITE) {
-                    SqliteWrapper.delete(context, context.getContentResolver(), Tigerknows.Favorite.CONTENT_URI, "_id="+parentId, null);
-                } else if (storeType == Tigerknows.STORE_TYPE_HISTORY) {
-                    SqliteWrapper.delete(context, context.getContentResolver(), Tigerknows.History.CONTENT_URI, "_id="+parentId, null);
-                    
+                if (this.storeType == storeType) {
+                    id = Integer.parseInt(uri.getPathSegments().get(1));
                 }
             }
         }
