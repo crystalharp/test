@@ -21,17 +21,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
-import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Bootstrap;
 import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
