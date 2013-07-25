@@ -522,7 +522,7 @@ public class POI extends BaseData {
                     e.printStackTrace();
                 }
             } else {
-                writeToDatabases(context, -1, com.tigerknows.provider.Tigerknows.STORE_TYPE_HISTORY);
+                writeToDatabases(context, -1, storeType);
             }
         } catch (APIException e1) {
             e1.printStackTrace();
@@ -1112,32 +1112,33 @@ public class POI extends BaseData {
      * @param favoriteType
      */
     public Uri writeToDatabases(Context context, long parentId, int storeType) {
-        this.storeType = storeType;
-        this.parentId = parentId;
         ContentValues values = new ContentValues();
-        boolean availably = initContetValues(this, values);
+        boolean availably = initContetValues(this, values, storeType);
 
         Uri uri = null;
         if (availably) {
             uri = SqliteWrapper.insert(context, context.getContentResolver(),
                     Tigerknows.POI.CONTENT_URI, values);
-            id = Long.parseLong(uri.getPathSegments().get(1));
+            if (this.storeType == storeType) {
+                id = Long.parseLong(uri.getPathSegments().get(1));
+                this.parentId = parentId;
+            }
         }
         return uri;
     }
     
-    private static boolean initContetValues(POI poi, ContentValues values) {
+    private static boolean initContetValues(POI poi, ContentValues values, int storeType) {
         if (poi == null || values == null) {
             return false;
         }
-        values.put(Tigerknows.POI.STORE_TYPE, poi.storeType);
+        values.put(Tigerknows.POI.STORE_TYPE, storeType);
         values.put(Tigerknows.POI.PARENT_ID, poi.parentId);
         if (!TextUtils.isEmpty(poi.name)) {
             values.put(Tigerknows.POI.POI_NAME, poi.name);
         } else {
             return false;
         }
-        if (TextUtils.isEmpty(poi.uuid) && (poi.storeType == Tigerknows.STORE_TYPE_FAVORITE || poi.storeType == Tigerknows.STORE_TYPE_HISTORY)) {
+        if (TextUtils.isEmpty(poi.uuid) && (storeType == Tigerknows.STORE_TYPE_FAVORITE || storeType == Tigerknows.STORE_TYPE_HISTORY)) {
             return false;
         }
         if (!TextUtils.isEmpty(poi.alise)) {
@@ -1335,7 +1336,7 @@ public class POI extends BaseData {
         BaseData baseData = checkStore(context, storyType, -1, false);
         if (baseData != null) {
             ContentValues values = new ContentValues();
-            boolean availably = initContetValues((POI) baseData, values);
+            boolean availably = initContetValues((POI) baseData, values, storeType);
             if (availably) {
                 count = SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
             }
