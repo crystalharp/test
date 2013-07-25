@@ -22,12 +22,14 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
@@ -61,6 +63,7 @@ import com.tigerknows.ui.more.MapDownloadActivity.DownloadCity;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserLoginActivity;
 import com.tigerknows.util.Utility;
+import com.tigerknows.widget.ExtScrollView;
 
 /**
  * @author Peng Wenyue
@@ -79,7 +82,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     public static final int SHOW_COMMENT_TIP_TIMES = 3;
     private static final int NUM_APP_RECOMMEND = 5;
     
-//    private ListView mListLsv;
+    private ExtScrollView mMoreBodyScv;
     private TextView mUserNameTxv;
     private TextView mCurrentCityTxv;
     private Button mUserBtn;
@@ -122,7 +125,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private int mPagecount = -1;
     private ViewPager mViewPager;
     private HashMap<Integer, View> viewMap = new HashMap<Integer, View>();
-    private ViewGroup mPageIndicatorView;    
+    private ViewGroup mPageIndicatorView;
+    
+    private float mMoveX;
+    private float mMoveY;
+    private float xLast;
+    private float yLast;
 
     private Runnable mLoadedDrawableRun = new Runnable() {
         
@@ -345,7 +353,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 			});
         }
         mViewPager.setAdapter(new MyAdapter());
-
     }
 
     @Override
@@ -407,11 +414,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 mSphinx.showView(R.id.activity_more_feedback);
                 break;
             case R.id.add_merchant_btn:
-                //mActionLog.addAction(mActionTag +  ActionLog.MoreAddMerchant);
-                //mSphinx.showView(R.id.activity_more_add_merchant);
-            	if(mPagecount > 0){
-            		mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1, true);
-            	}
+                mActionLog.addAction(mActionTag +  ActionLog.MoreAddMerchant);
+                mSphinx.showView(R.id.activity_more_add_merchant);
                 break;
             case R.id.give_favourable_comment_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreGiveFavourableComment);
