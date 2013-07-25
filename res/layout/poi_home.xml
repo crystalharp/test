@@ -131,7 +131,6 @@
 		        
 	        </RelativeLayout>
 	        
-	        
         </RelativeLayout>
         
         <ImageView 
@@ -151,7 +150,7 @@
             android:paddingLeft="6dp"
             android:text="@string/location_doing"
             android:textColor="@color/white"
-            android:background="#88000000"
+            android:background="@drawable/btn_my_location"
             android:gravity="left"
             android:scrollHorizontally="true"
             android:singleLine="true"
