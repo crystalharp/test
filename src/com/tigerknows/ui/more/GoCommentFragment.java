@@ -281,7 +281,7 @@ public class GoCommentFragment extends BaseFragment implements View.OnClickListe
                     POI requestPOI = dataQuery.getPOI();
                     int cityId = dataQuery.getCityId();
                     poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(poiList.getList().size()));
-                    BaseQuery.passLocationToCriteria(dataQuery.getLastQuery(), criteria);
+                    poiQuery.copyLocationParameter(dataQuery);
                     poiQuery.setup(cityId, getId(), getId(), null, true, true, requestPOI);
                     mSphinx.queryStart(poiQuery); 
                 }

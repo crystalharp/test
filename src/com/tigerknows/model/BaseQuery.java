@@ -894,28 +894,27 @@ public abstract class BaseQuery {
         }
     }
     
-    //TODO:删掉这个函数
-    public static void passLocationToCriteria(Hashtable<String, String> source, Hashtable<String, String> target) {
-        if (source == null || target == null) {
+    public void copyLocationParameter(BaseQuery query) {
+        if (query == null) {
             return;
         }
-        if (source.containsKey(DataQuery.SERVER_PARAMETER_LOCATION_CITY)
-                && source.containsKey(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE)
-                && source.containsKey(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE)) {
-            target.put(DataQuery.SERVER_PARAMETER_LOCATION_CITY, source.get(SERVER_PARAMETER_LOCATION_CITY));
-            target.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, source.get(SERVER_PARAMETER_LOCATION_LONGITUDE));
-            target.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, source.get(SERVER_PARAMETER_LOCATION_LATITUDE));
+        if (query.hasParameter(DataQuery.SERVER_PARAMETER_LOCATION_CITY)
+                && query.hasParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE)
+                && query.hasParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE)) {
+            addParameter(DataQuery.SERVER_PARAMETER_LOCATION_CITY, query.getParameter(SERVER_PARAMETER_LOCATION_CITY));
+            addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, query.getParameter(SERVER_PARAMETER_LOCATION_LONGITUDE));
+            addParameter(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, query.getParameter(SERVER_PARAMETER_LOCATION_LATITUDE));
         }
-        if (source.containsKey(DataQuery.SERVER_PARAMETER_CITY)) {
-            target.put(DataQuery.SERVER_PARAMETER_CITY, source.get(SERVER_PARAMETER_CITY));
+        if (query.hasParameter(DataQuery.SERVER_PARAMETER_CITY)) {
+            addParameter(DataQuery.SERVER_PARAMETER_CITY, query.getParameter(SERVER_PARAMETER_CITY));
         }
-        if (source.containsKey(DataQuery.SERVER_PARAMETER_LONGITUDE)
-                && source.containsKey(DataQuery.SERVER_PARAMETER_LATITUDE)) {
-            target.put(DataQuery.SERVER_PARAMETER_LONGITUDE, source.get(DataQuery.SERVER_PARAMETER_LONGITUDE));
-            target.put(DataQuery.SERVER_PARAMETER_LATITUDE, source.get(DataQuery.SERVER_PARAMETER_LATITUDE));
+        if (query.hasParameter(DataQuery.SERVER_PARAMETER_LONGITUDE)
+                && query.hasParameter(DataQuery.SERVER_PARAMETER_LATITUDE)) {
+            addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, query.getParameter(DataQuery.SERVER_PARAMETER_LONGITUDE));
+            addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, query.getParameter(DataQuery.SERVER_PARAMETER_LATITUDE));
         }
-        if (source.containsKey(DataQuery.SERVER_PARAMETER_FILTER)) {
-            target.put(DataQuery.SERVER_PARAMETER_FILTER, source.get(DataQuery.SERVER_PARAMETER_FILTER));
+        if (query.hasParameter(DataQuery.SERVER_PARAMETER_FILTER)) {
+            addParameter(DataQuery.SERVER_PARAMETER_FILTER, query.getParameter(DataQuery.SERVER_PARAMETER_FILTER));
         }
     }
     
