@@ -597,6 +597,7 @@ public class HotelOrderWriteFragment extends BaseFragment implements View.OnClic
             }
             //订单列表已经发生了变化，在此处清除列表界面的内容，列表页onResume时会重新加载订单。
             mSphinx.getHotelOrderListFragment().clearOrders();
+            mSphinx.getHotelOrderListFragment().syncOrder();
             mSphinx.showView(R.id.view_hotel_order_detail);
             destroyFragments(true, true);
             dismiss();

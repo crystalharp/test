@@ -281,8 +281,6 @@ public class ActionLog extends LogUpload {
     public static final String MoreHistory = "BG";
     public static final String MoreSetting = "BH";
     public static final String MoreFeedback = "BI";
-    public static final String MoreHelp = "BJ";
-    public static final String MoreAboutUs = "BK";
     public static final String MoreMessageMap = "BL";
     public static final String MoreUserHome = "BM";
     public static final String MoreMessageSoft = "BN";
@@ -290,6 +288,7 @@ public class ActionLog extends LogUpload {
     public static final String MoreMessageUserSurvey = "BP";
     public static final String MoreAddMerchant = "BQ";
     public static final String MoreSatisfyRate = "BR";
+    public static final String MoreAppDownload = "BS";
 
     // 切换城市页
     public static final String ChangeCity = "CB";
@@ -335,6 +334,8 @@ public class ActionLog extends LogUpload {
     public static final String SettingWakeLock = "BB";
     public static final String SettingRadar = "BC";
     public static final String SettingClearCache = "BD";
+    public static final String SettingHelp = "BE";
+    public static final String SettingAboutMe = "BF";
 
     // 意见反馈页 
     public static final String Feedback = "CG";
@@ -405,6 +406,7 @@ public class ActionLog extends LogUpload {
     public static final String MapInfoWindowTraffic = Map + "BJ";
     public static final String MapInfoWindowStart = Map + "BK";
     public static final String MapInfoWindowEnd = Map + "BL";
+    public static final String MapMultiTouchZoom = Map + "BM";
     
     // 微博发送界面    
     public static final String WeiboSend = "FC";

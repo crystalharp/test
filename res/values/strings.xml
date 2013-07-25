@@ -1206,6 +1206,7 @@
     <string name="erreport_abandon">确定放弃报错吗？</string>
     <string name="erreport_address_hint">请输入正确商户地址</string>
     <string name="erreport_name_hint">请输入正确商户名称</string>
+    <string name="other_colon">其他：</string>
 <!-- POI Error Recovery End -->
 
 <!-- Satisfy Rate Start -->
