@@ -73,6 +73,9 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 
     static final String TAG = "MoreFragment";
     
+    public static final int VIEW_PAGE_LEFT = 500;
+    public static final int VIEW_PAGE_MULTIPLIER = 10;
+    
     public static final int SHOW_COMMENT_TIP_TIMES = 3;
     private static final int NUM_APP_RECOMMEND = 5;
     
@@ -116,7 +119,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private NoticeResultResponse mNoticeResultResponse;
     private NoticeResult mNoticeResult;
     private List<Notice> mNoticeList;
-    private int mPagecount = 0;
+    private int mPagecount = -1;
     private ViewPager mViewPager;
     private HashMap<Integer, View> viewMap = new HashMap<Integer, View>();
     private ViewGroup mPageIndicatorView;    
@@ -215,12 +218,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	        if(mPagecount > 0){
         	        	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
         	        	mNoticeRly.setVisibility(View.VISIBLE);
-        	        	mViewPager.setAdapter(new MyAdapter());
+        	        	mViewPager.setCurrentItem(mPagecount * VIEW_PAGE_LEFT);
         	        	mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
         	        		
         	        		@Override
         	        		public void onPageSelected(int index) {
-        	        				index = index % mPagecount;
+        	        			index = index % mPagecount;
         	        			Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, index, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
         	        			mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, index);
         	        		}
@@ -231,13 +234,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	        		
         	        		@Override
         	        		public void onPageScrollStateChanged(int index) {
-        	        				index = (index % mPagecount);
+        	        			index = index % mPagecount;
         	        		}
         	        	});
-        	        	if(mPagecount > 0) mViewPager.setCurrentItem(mPagecount * 500);
         	        }
         		}
-        	}else{
+        	}else if(mPagecount < 0){
              	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
                 Hashtable<String, String> criteria = new Hashtable<String, String>();
                 noticeQuery.setup(criteria, Globals.getCurrentCityInfo().getId());
@@ -307,8 +309,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         }
         mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
         mPageIndicatorView = (ViewGroup) mRootView.findViewById(R.id.page_indicator_view);
-        LogWrapper.d("Trap", "Page:"+mPagecount);
-
     }
     
     protected void setListener() {
@@ -344,6 +344,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 				}
 			});
         }
+        mViewPager.setAdapter(new MyAdapter());
 
     }
 
@@ -406,8 +407,11 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 mSphinx.showView(R.id.activity_more_feedback);
                 break;
             case R.id.add_merchant_btn:
-                mActionLog.addAction(mActionTag +  ActionLog.MoreAddMerchant);
-                mSphinx.showView(R.id.activity_more_add_merchant);
+                //mActionLog.addAction(mActionTag +  ActionLog.MoreAddMerchant);
+                //mSphinx.showView(R.id.activity_more_add_merchant);
+            	if(mPagecount > 0){
+            		mViewPager.setCurrentItem(mViewPager.getCurrentItem()+1, true);
+            	}
                 break;
             case R.id.give_favourable_comment_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreGiveFavourableComment);
@@ -460,6 +464,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     		Drawable drawable = tkDrawable.loadDrawable(mSphinx, mLoadedDrawableRun, MoreHomeFragment.this.toString());
     		if(drawable != null){
     			imageView.setBackgroundDrawable(drawable);
+    		}else{
+    			imageView.setBackgroundDrawable(mSphinx.getResources().getDrawable(defaultResId));
     		}
     	}
     }
@@ -495,7 +501,8 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	    
 	    @Override
 	    public int getCount() {
-	        return mPagecount*1000;
+	    	if(mPagecount < 0) return 0;
+	        return mPagecount*VIEW_PAGE_LEFT*VIEW_PAGE_MULTIPLIER;
 	    }
 	
 	    @Override
@@ -510,13 +517,31 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	
 	    @Override
 	    public void destroyItem(View contain, int position, Object arg2) {
+	    	LogWrapper.d("Trap", "Remove:"+position);
 	         ((ViewPager) contain).removeView(getView(position));
 	    }
 	
 	    @Override
 	    public Object instantiateItem(ViewGroup contain, int position) {
 	        View view = getView(position);
-	        contain.addView(getView(position), new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+	        LogWrapper.d("Trap", "Pos:"+position);
+	        final int fPosition = position;
+	        view.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					// TODO mActionLog.addAction(mActionTag + ActionLog.?????);
+					Notice notice = mNoticeList.get(fPosition % mPagecount);
+                    String uri = notice.getUrl();
+                    if (!TextUtils.isEmpty(uri)) {
+                        Intent intent = new Intent();
+                        intent.putExtra(BrowserActivity.TITLE, notice.getWebTitle());
+                        intent.putExtra(BrowserActivity.URL, uri);
+                        mSphinx.showView(R.id.activity_browser, intent);
+                    }
+				}
+			});
+	        contain.addView(view, new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
 	        return view;
 	    }
 	

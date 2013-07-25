@@ -101,11 +101,14 @@ public class NoticeQuery extends BaseQuery {
 				// 0x02 x_string 文字描述
 				public static final byte FIELD_NOTICE_DESCRIPTION = 0x02;
 				
-				// 0x03 x_string url
-				public static final byte FIELD_URL = 0x03;
+				// 0x03 x_string 图片url
+				public static final byte FIELD_PIC_URL = 0x03;
 				
-				// 0x04 x_string 图片url
-				public static final byte FIELD_PIC_URL = 0x04;
+				// 0x04 x_string url
+				public static final byte FIELD_URL = 0x04;
+				
+				// 0x05 x_string web页标题
+				public static final byte FIELD_WEB_TITLE = 0x05;
 				
 				private long operationType;
 				
@@ -114,6 +117,8 @@ public class NoticeQuery extends BaseQuery {
 				private String url;
 				
 				private String picUrl;
+				
+				private String webTitle;
 				
 				private TKDrawable picTKDrawable;
 
@@ -133,6 +138,10 @@ public class NoticeQuery extends BaseQuery {
 					return picUrl;
 				}
 				
+				public String getWebTitle() {
+					return webTitle;
+				}
+				
 				public TKDrawable getpicTkDrawable() {
 					return picTKDrawable;
 				}
@@ -140,12 +149,14 @@ public class NoticeQuery extends BaseQuery {
 					super(data);
 					init(data, false);
 				}
+				
 				public void init(XMap data, boolean reset) throws APIException{
 					super.init(data, reset);
 					this.operationType = getLongFromData(FIELD_OPERATION_TYPE);
 					this.noticeDescription = getStringFromData(FIELD_NOTICE_DESCRIPTION);
 					this.url = getStringFromData(FIELD_URL);
 					this.picUrl = getStringFromData(FIELD_PIC_URL);
+					this.webTitle = getStringFromData(FIELD_WEB_TITLE);
 					if(this.picUrl != null){
 						TKDrawable tkDrawable = new TKDrawable();
 						tkDrawable.setUrl(Utility.getPictureUrlByWidthHeight(this.picUrl, Globals.getPicWidthHeight(TKConfig.PICTURE_MORE_NOTICE)));
