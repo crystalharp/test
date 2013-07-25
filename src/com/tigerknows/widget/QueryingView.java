@@ -17,18 +17,12 @@
 package com.tigerknows.widget;
 
 import com.tigerknows.R;
-import com.tigerknows.util.Utility;
-
 import android.content.Context;
-import android.graphics.drawable.AnimationDrawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 
 public class QueryingView extends LinearLayout {
     

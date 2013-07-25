@@ -28,7 +28,6 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
-import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
@@ -39,7 +38,6 @@ import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.model.POI;
-import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.model.ProxyQuery.RoomTypeDynamic;
 import com.tigerknows.model.ProxyQuery;
 import com.tigerknows.model.Response;
@@ -96,6 +94,9 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     private DateWidget mCheckOutDat;
     
     private DateListView mDateListView = null;
+    
+    //记录现在缓存的日期所属的POI的id
+    public String mInitDatePOIid;
     
     BlockRefresher mUpperBlockRefresher = new BlockRefresher() {
 
@@ -371,6 +372,7 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     final public void initDate() {
+        mInitDatePOIid = (mPOI != null ? mPOI.getUUID() : null);
         checkin = Calendar.getInstance();
         checkin.setTimeInMillis(System.currentTimeMillis());
         checkout = (Calendar) checkin.clone();
@@ -379,9 +381,14 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
     }
     
     final public void initDate(Calendar in, Calendar out) {
+        mInitDatePOIid = (mPOI != null ? mPOI.getUUID() : null);
         checkout = out;
         checkin = in;
         refreshDate();
+    }
+    
+    final public void clearDateCache() {
+        mInitDatePOIid = null;
     }
     
     final public void refreshDate() {
@@ -522,12 +529,26 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
         mPOI = poi;
         mHotel = mPOI.getHotel();
         List<BaseQuery> baseQueryList = new LinkedList<BaseQuery>();
+        Calendar checkinInHoteHome = mSphinx.getHotelHomeFragment().getCheckin();
+        Calendar checkoutInHoteHome = mSphinx.getHotelHomeFragment().getCheckout();
+        boolean updateCanReserve = false;
+        if (this.checkin.equals(checkinInHoteHome) && this.checkout.equals(checkoutInHoteHome)) {
+            updateCanReserve = true;
+        }
+        String nf = Hotel.NEED_FILED_DETAIL;
         if (mHotel.getUuid() != null && mHotel.getRoomTypeList() == null) {
-            BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Util.byteToHexString(Hotel.FIELD_CAN_RESERVE));
+            if (updateCanReserve) {
+                nf += Util.byteToHexString(Hotel.FIELD_CAN_RESERVE);
+            }
+            BaseQuery baseQuery = buildHotelQuery(this.checkin, this.checkout, poi, nf);
             baseQueryList.add(baseQuery);
             LogWrapper.i(TAG, "hotel.roomtype is null, generate Query:" + baseQueryList);
         } else {
-            BaseQuery baseQuery = buildHotelQuery(checkin, checkout, poi, Hotel.NEED_FILED_DETAIL+Hotel.NEED_FILED_LIST);
+            nf += "50515253";
+            if (updateCanReserve) {
+                nf += Util.byteToHexString(Hotel.FIELD_CAN_RESERVE);
+            }
+            BaseQuery baseQuery = buildHotelQuery(this.checkin, this.checkout, poi, nf);
             baseQueryList.add(baseQuery);
             LogWrapper.i(TAG, "hotel is null, generate Query:" + baseQueryList);
         }

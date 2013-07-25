@@ -82,7 +82,6 @@ public class TrafficQueryStateHelper {
             if (oldState == State.Input) {
                 mQueryFragment.mSphinx.clearMap();
                 
-                mQueryFragment.getContentView().setVisibility(View.GONE);
                 mQueryFragment.mCityView.setVisibility(View.VISIBLE);
                 mQueryFragment.mShadowWhite.setVisibility(View.GONE);
                 mQueryFragment.mSphinx.getControlView().setPadding(0, 0, 0, 0);
@@ -263,6 +262,8 @@ public class TrafficQueryStateHelper {
         mQueryFragment.mBackBtn.setVisibility(View.VISIBLE);
         mQueryFragment.enableQueryBtn(mQueryFragment.mTrafficQueryBtn, false);
         mQueryFragment.enableQueryBtn(mQueryFragment.mBuslineQueryBtn, false);
+        //clearCheck会触发RadioCheckedChangedListener，导致输入框又重现，所以这个要放在clearCheck后面
+        mQueryFragment.getContentView().setVisibility(View.GONE);
         mQueryFragment.mSphinx.layoutTopViewPadding(0, Util.dip2px(Globals.g_metrics.density, 78), 0, 0);
     }
     

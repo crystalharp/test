@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -21,6 +23,7 @@ import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
+import com.tendcloud.tenddata.al;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.map.MapEngine;
@@ -33,6 +36,7 @@ import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XInt;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
+import com.tigerknows.util.HanziUtil;
 import com.tigerknows.util.Utility;
 import com.weibo.sdk.android.WeiboParameters;
 
@@ -64,6 +68,9 @@ public final class DataQuery extends BaseQuery {
 
     // flt String  false   筛选选项，格式为key:id;key:id;key:id(key是对应筛选项在xmap中的key，目前有11,12,13)
     public static final String SERVER_PARAMETER_FILTER = "flt";
+
+    // flt_s    String  false   筛选选项字符串，格式为key:str;key:str;key:str(key同上，str指的是筛选选项对应的字符串，且如有父级也需提交，如"我的当前位置_附近xx米") 
+    public static final String SERVER_PARAMETER_FILTER_STRING = "flt_s";
     
     // cfv string  false   城市地片筛选版本号，每个城市不同
     public static final String SERVER_PARAMETER_CITY_FILTER_VERSION = "cfv";
@@ -127,6 +134,9 @@ public final class DataQuery extends BaseQuery {
     
     // appendaction    string  false   目前支持nosearch（表示不做搜索，只返回筛选项） 
     public static final String SERVER_PARAMETER_APPENDACTION = "appendaction";
+    
+    // configinfo   String  true    JSON字符串，key标识config的类型，value标识版本号,具体定义见默认筛选项参数定义
+    public static final String SERVER_PARAMETER_CONFIGINFO = "configinfo";
     
     // 评论版本 
     public static final String COMMENT_VERSION = "1";
@@ -355,9 +365,10 @@ public final class DataQuery extends BaseQuery {
                     String path = MapEngine.cityId2Floder(MapEngine.SW_ID_QUANGUO) + name;
                     File file = new File(path);
 
+                    // 硬编码酒店的分类筛选项
                     if (file.exists() == false) {
                         if (DATA_TYPE_POI.equals(dataType) &&
-                                SUB_DATA_TYPE_POI.equals(subDataType) &&
+                                SUB_DATA_TYPE_HOTEL.equals(subDataType) &&
                                 context != null) {
                             AssetManager am = context.getAssets();
                             String mapPath = TKConfig.getDataPath(true);
@@ -390,21 +401,18 @@ public final class DataQuery extends BaseQuery {
                 
                 if (filterDataArea == null || filterDataArea.cityId != cityId){
                     filterDataArea = null;
-                    String path;
-                    String name = null;
-                	if (cityId == MapEngine.SW_ID_QUANGUO) {
-                	    name = String.format(TKConfig.FILTER_FILE, "0", cityId);
-                		path = MapEngine.cityId2Floder(cityId) + name;
-                	} else {
-                		path = MapEngine.cityId2Floder(cityId) + String.format(TKConfig.FILTER_FILE, DATA_TYPE_POI, cityId);
-                	}
+                    String path = MapEngine.cityId2Floder(cityId) + String.format(TKConfig.FILTER_FILE, DATA_TYPE_POI, cityId);
                     File file = new File(path);
 
+                    // 硬编码部分区域筛选项（全部区域、我的当前位置、指定位置）
                     if (file.exists() == false) {
-                        if (context != null && name != null) {
+                        String quanguo = String.format(TKConfig.FILTER_FILE, "0", MapEngine.SW_ID_QUANGUO);
+                        path = MapEngine.cityId2Floder(MapEngine.SW_ID_QUANGUO) + quanguo;
+                        file = new File(path);
+                        if (context != null && file.exists() == false) {
                             AssetManager am = context.getAssets();
                             String mapPath = TKConfig.getDataPath(true);
-                            Utility.unZipFile(am, "tigermap.zip", mapPath, name);
+                            Utility.unZipFile(am, "tigermap.zip", mapPath, quanguo);
                         }
                     }
                     
@@ -891,6 +899,18 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_DIANPING.equals(dataType)) {
             addParameter(SERVER_PARAMETER_NEED_FIELD, Comment.NEED_FIELD);
             addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
+        } else if (DATA_TYPE_FILTER.equals(dataType)) {
+            
+            String cfv = null;
+            if (Filter_Area != null && Filter_Area.cityId == cityId) {
+                cfv = Filter_Area.version;
+            }
+            String nfv = null;
+            if (Filter_Category_Order_POI != null) {
+                nfv = Filter_Category_Order_POI.version;
+            }
+            addFilterParameters(criteria, requestParameters, cfv, nfv, false);
+
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
@@ -909,8 +929,15 @@ public final class DataQuery extends BaseQuery {
     }
     
     private void addFilterParameters(String cfv, String nfv) throws APIException {
+        addFilterParameters(criteria, requestParameters, cfv, nfv, true);
+    }
+    
+    private void addFilterParameters(String cfv, String nfv, boolean needIndex) throws APIException {
 //        if (criteria.containsKey(SERVER_PARAMETER_FILTER)) {
 //            requestParameters.add(SERVER_PARAMETER_FILTER, criteria.get(SERVER_PARAMETER_FILTER));
+//        }
+//        if (criteria.containsKey(SERVER_PARAMETER_FILTER_STRING)) {
+//            requestParameters.add(SERVER_PARAMETER_FILTER_STRING, criteria.get(SERVER_PARAMETER_FILTER_STRING));
 //        }
         if (TextUtils.isEmpty(cfv) == false) {
             addParameter(SERVER_PARAMETER_CITY_FILTER_VERSION, cfv);
@@ -919,9 +946,9 @@ public final class DataQuery extends BaseQuery {
             addParameter(SERVER_PARAMETER_NATION_FILTER_VERSION, nfv);
         }
         //TODO:不要这样写
-        if (!hasParameter(SERVER_PARAMETER_INDEX)) {
+        if (hasParameter(SERVER_PARAMETER_INDEX)) {
 //            requestParameters.add(SERVER_PARAMETER_INDEX, criteria.get(SERVER_PARAMETER_INDEX));
-//        } else {
+        } else if (needIndex) {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_INDEX);
         }
     }
@@ -986,6 +1013,10 @@ public final class DataQuery extends BaseQuery {
             this.response = new AlternativeResponse(responseXMap);
         } else if (DATA_TYPE_COUPON.equals(dataType)) {
             this.response = new CouponResponse(responseXMap);
+        } else if (DATA_TYPE_FILTER.equals(dataType)) {
+            FilterConfigResponse response = new FilterConfigResponse(responseXMap);
+            translateFilter(response.getFilterResponse(), dataType, subDataType, filterList);
+            this.response = response;
         }
     }
     
@@ -1016,6 +1047,8 @@ public final class DataQuery extends BaseQuery {
                 } else if (DATA_TYPE_ZHANLAN.equals(dataType)) {
                     staticFilterDataArea = Filter_Area;
                     staticFilterDataCategoryOrder = Filter_Category_Order_Zhanlan;
+                } else if (DATA_TYPE_FILTER.equals(dataType)) {
+                    staticFilterDataArea = Filter_Area;
                 }
                 // 将城市区域筛选数据写入相应文件夹
                 FilterArea filterDataArea = baseResponse.getFilterDataArea();
@@ -1084,6 +1117,8 @@ public final class DataQuery extends BaseQuery {
                 } else if (DATA_TYPE_ZHANLAN.equals(dataType)) {
                     Filter_Area = staticFilterDataArea;
                     Filter_Category_Order_Zhanlan = staticFilterDataCategoryOrder;
+                } else if (DATA_TYPE_FILTER.equals(dataType)) {
+                    Filter_Area = staticFilterDataArea;
                 }
             } catch (Exception e) {
                 throw new APIException(e);
@@ -1149,12 +1184,15 @@ public final class DataQuery extends BaseQuery {
         Filter filter = new Filter();
         filter.version = version;
         filter.key = key;
+        boolean isAreaFilter = (key == POIResponse.FIELD_FILTER_AREA_INDEX);
         if (indexList != null && filterOptionList != null) {
             Filter parentFilter = null;            
             FilterOption filterOption;
             
             long selectedId = indexList.get(0);
             
+            Filter allArea = null;
+            // 从1开始，是因为第0个值，是选中项的ID，特殊用途。
             for(int i = 1, size = indexList.size(); i < size; i++) {
                 long index = indexList.get(i);
                 if (index < filterOptionList.size()) {
@@ -1173,14 +1211,44 @@ public final class DataQuery extends BaseQuery {
                     } else if (parentFilter != null){
                         parentFilter.chidrenFilterList.add(tempFilter);
                     }
+                    
+                    if (isAreaFilter && tempFilter.getFilterOption().getId() == 0) {
+                    	allArea = tempFilter;
+                    }
                 }
+            }
+            
+            // 将子筛选项，加入到全部区域下边。
+            if (allArea != null) {
+            	List<Filter> list = allArea.getChidrenFilterList();
+            	List<Filter> chidrenFilterList = filter.getChidrenFilterList();
+                for(Filter chidrenFilter : chidrenFilterList) {
+                    if (chidrenFilter.getChidrenFilterList().size() > 0 && chidrenFilter.getFilterOption().id > 10) {
+                    	list.addAll(chidrenFilter.getChidrenFilterList());
+                    }
+                }
+                sortFilterList(list);
+                
+                FilterOption dupAllAreaFilterOpt = new FilterOption();
+                dupAllAreaFilterOpt.setName(allArea.getFilterOption().getName());
+                
+                int id = allArea.getFilterOption().getId();
+                dupAllAreaFilterOpt.setId(id);
+                
+                Filter filter1 = new Filter();
+                filter1.filterOption = dupAllAreaFilterOpt;
+                filter1.selected = allArea.selected;
+                allArea.selected = false;
+                list.add(0, filter1);
+                
             }
             
             if (addAllAnyone) {
                 // 增加全部
                 List<Filter> chidrenFilterList = filter.getChidrenFilterList();
                 for(Filter chidrenFilter : chidrenFilterList) {
-                    if (chidrenFilter.getChidrenFilterList().size() > 0 &&
+                    if (chidrenFilter.getFilterOption().getId() != 0 &&
+                    		chidrenFilter.getChidrenFilterList().size() > 0 &&
                             chidrenFilter.getFilterOption().getParent() == -1) {
                         FilterOption filterOption1 = new FilterOption();
                         filterOption1.setName(context.getString(R.string.all_anyone, ""));
@@ -1201,6 +1269,25 @@ public final class DataQuery extends BaseQuery {
         return filter;
     }
 
+    /**
+     * 按照拼音对Filter列表进行排序
+     * @param filters
+     */
+    private static void sortFilterList(List<Filter> filters){
+    	Collections.sort(filters, new Comparator<Filter>() {
+
+			@Override
+			public int compare(Filter lhs, Filter rhs) {
+				if(lhs.getFilterOption().firstChar==0){
+					lhs.getFilterOption().firstChar = HanziUtil.getFirstPinYinChar(lhs.getFilterOption().getName());
+				}
+				if(rhs.getFilterOption().firstChar==0){
+					rhs.getFilterOption().firstChar = HanziUtil.getFirstPinYinChar(rhs.getFilterOption().getName());
+				}
+				return lhs.getFilterOption().firstChar-rhs.getFilterOption().firstChar;
+			}
+		});
+    }
     public static class Filter {        
         byte key;
         boolean selected = false;
@@ -1289,6 +1376,8 @@ public final class DataQuery extends BaseQuery {
         private String name;
 
         private int parent;
+        
+        public char firstChar = 0;
 
         public FilterOption() {
         }
@@ -2092,6 +2181,35 @@ public final class DataQuery extends BaseQuery {
             
         }
     }
+    
+    public static class FilterConfigResponse extends Response {
+        // 0x02     x_map<x_map>    配置文件的返回结果
+        public static final byte FIELD_RESULT = 0x02;
+        
+        // 0x00    x_map   根据城市id获取的地片筛选项 
+        public static final byte FIELD_AREA_FILTER = 0x0;
+        
+        private FilterResponse filterResponse;
+
+        public FilterConfigResponse(XMap data) throws APIException {
+            super(data);
+            
+            if (this.data.containsKey(FIELD_RESULT)) {
+                XMap xmap = this.data.getXMap(FIELD_RESULT);
+                if (xmap.containsKey(FIELD_AREA_FILTER)) {
+                    XMap filterArea = xmap.getXMap(FIELD_AREA_FILTER);
+                    xmap.remove(FIELD_AREA_FILTER);
+                    xmap.put(FilterResponse.FIELD_FILTER_AREA, filterArea);
+                    filterResponse = new FilterResponse(xmap);
+                }
+            }
+        }
+
+        public FilterResponse getFilterResponse() {
+            return filterResponse;
+        }
+    }
+    
     public static class ShangjiaResponse extends Response {
         // 0x02 x_map   商家结果
         public static final byte FIELD_LIST = 0x02;
@@ -2657,6 +2775,8 @@ public final class DataQuery extends BaseQuery {
             responseXMap = DataQueryTest.launchAlternativeResponse(168, "launchAlternativeResponse");
         } else if (DATA_TYPE_COUPON.equals(dataType)){
         	responseXMap = DataQueryTest.launchCouponResponse(168, "launchCouponResponse");
+        } else if (DATA_TYPE_FILTER.equals(dataType)){
+            responseXMap = DataQueryTest.launchFilterConfigResponse();
         }
     }
 }

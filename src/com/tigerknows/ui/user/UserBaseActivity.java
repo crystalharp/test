@@ -6,28 +6,21 @@ import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnClickListener;
-import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
-import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
-import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.AccountManage;
-import com.tigerknows.model.AccountManage.UserRespnose;
 import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.ui.BaseActivity;
@@ -292,7 +285,7 @@ public abstract class UserBaseActivity extends BaseActivity {
 	}
 	
 	protected void showToast(int resId) {
-		Toast.makeText(this, resId, 2000).show();
+		Toast.makeText(this, resId, Toast.LENGTH_SHORT).show();
 	}
     
     @Override

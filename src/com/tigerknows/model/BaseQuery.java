@@ -37,7 +37,6 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.crypto.DataEncryptor;
-import com.tigerknows.crypto.DataDecode;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.LocationQuery.TKCellLocation;
@@ -171,7 +170,11 @@ public abstract class BaseQuery {
     // pic string  true 图片们的宽高信息，格式为key0:width_height_[(0|1)+];key1:width_height_[(0|1)+];... 
     public static final String SERVER_PARAMETER_PICTURE = "pic";
 
+    // 自定义 某个 response error code 时对应错误字符串的时候使用的前缀
 	public static final String RESPONSE_CODE_ERROR_MSG_PREFIX = "resp_code_err_msg";
+	
+	// 定义如果response为空的时候的字符串消息
+	public static final String RESPONSE_NULL_ERROR_MSG= "resp_null_err_msg";
 
 	// dsrc	 string	 false	 data request source，该请求的来源（指客户端的不同“频道”
     public static final String SERVER_PARAMETER_REQUSET_SOURCE_TYPE = "dsrc";
@@ -275,6 +278,9 @@ public abstract class BaseQuery {
     
     // 优惠券 22
     public static final String DATA_TYPE_COUPON = "22";
+    
+    // 默认筛选项等配置文件 23
+    public static final String DATA_TYPE_FILTER = "23";
 
     // 发现首页动态数据统计 100
     public static final String DATA_TYPE_DISCOVER = "100";

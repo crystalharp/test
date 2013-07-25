@@ -178,7 +178,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         return mRootView;
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     @Override
     public void dismiss() {
         super.dismiss();
@@ -980,7 +980,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         }
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private List getList() {
         if (BaseQuery.DATA_TYPE_FENDIAN.equals(mDataType)) {
             return mFendianList;
@@ -990,7 +990,7 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         return null;
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     private ArrayAdapter getAdapter() {
         if (BaseQuery.DATA_TYPE_FENDIAN.equals(mDataType)) {
             return mFendianAdapter;

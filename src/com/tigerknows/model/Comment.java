@@ -430,7 +430,7 @@ public class Comment extends BaseData {
         return false;
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public static Comparator COMPARATOR = new Comparator() {
 
         @Override
@@ -447,7 +447,7 @@ public class Comment extends BaseData {
         };
     };
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public static Comparator COMPARATOR_ONLY_TIME = new Comparator() {
 
         @Override
@@ -490,7 +490,7 @@ public class Comment extends BaseData {
         return attr;
     }
     
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings("rawtypes")
     public static Comparator COMPARATOR_DATETIME = new Comparator() {
 
         @Override

@@ -69,6 +69,7 @@ import com.tigerknows.share.ShareAPI;
 import com.tigerknows.share.TKWeixin;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.util.Utility;
 
 /**
@@ -196,6 +197,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     DynamicHotelPOI mDynamicHotelPOI;
     
     DynamicMoviePOI mDynamicMoviePOI;
+    
+    DynamicSubwayPOI mDynamicSubwayPOI;
     
     private Button mCommentTipEdt;
     
@@ -353,16 +356,24 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         protected List<BaseQuery> mBaseQuerying;
         protected TKAsyncTask mTkAsyncTasking;
 
-        void queryStart(List<BaseQuery> list) {
+        void queryStart(List<BaseQuery> list, boolean cancelable) {
             mBaseQuerying = list; 
-            mTkAsyncTasking = new TKAsyncTask(mSphinx, mBaseQuerying, this, null);
+            mTkAsyncTasking = new TKAsyncTask(mSphinx, mBaseQuerying, this, null, cancelable);
             mTkAsyncTasking.execute();
+        }
+        
+        void queryStart(List<BaseQuery> list) {
+            queryStart(list, true);
         }
 
         void queryStart(BaseQuery baseQuery) {
+            queryStart(baseQuery, true);
+        }
+        
+        void queryStart(BaseQuery baseQuery, boolean cancelable) {
             List<BaseQuery> list = new ArrayList<BaseQuery>();
             list.add(baseQuery);
-            queryStart(list);
+            queryStart(list, cancelable);
         }
 
         //这个函数一般情况下不需要关心,会在页面setData的时候在检测动态POI时被调到
@@ -376,8 +387,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         //这个函数是一个动态POI的刷新主函数,刷新策略在其中实现.但是具体的刷新行为在BlockRefresher中实现
         public abstract void refresh();
 
-        //初始化的时候会在checkAndAddDynamicPOIView中把这个变量初始化完毕,不用关心
-        final public boolean isExist() {
+        //普通动态POI初始化的时候会在checkAndAddDynamicPOIView中把这个变量初始化完毕,不用关心
+        public boolean isExist() {
             return mExist;
         }
 
@@ -475,6 +486,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         mDynamicMoviePOI = new DynamicMoviePOI(this, mLayoutInflater);
         
+        mDynamicSubwayPOI = new DynamicSubwayPOI(this, mLayoutInflater);
+        
         return mRootView;
     }
 
@@ -499,7 +512,6 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
-        queryCount = 0;
         
         // Ugly
         if (mPOI.getHotel().getUuid() != null) {
@@ -546,6 +558,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     @Override
     public void dismiss() {
         super.dismiss();
+        mDynamicHotelPOI.clearDateCache();
     }
     
     public void refreshDetail() {
@@ -657,6 +670,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi == null) {
             return;
         }
+        mBodyScv.smoothScrollTo(0, 0);
         int resId = Integer.MIN_VALUE;
         if (poi.isGoldStamp()) {
             resId = R.drawable.ic_stamp_gold_big;
@@ -990,7 +1004,14 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         //这两个函数放在前面初始化动态POI信息
         clearDynamicPOI(DPOIViewBlockList);
+        //初始化和动态POI信息无关的动态布局，执行addToParent的顺序决定出现的顺序
+        DPOIViewBlockList.add(mDynamicSubwayPOI.mSubwayBlock);
+        //初始化和动态POI信息相关的动态布局
         initDynamicPOIView(mPOI);
+        mDynamicSubwayPOI.initData(poi);
+        if (mDynamicSubwayPOI.isExist()) {
+            mDynamicSubwayPOI.refresh();
+        }
         if (poi.getHotel().getUuid() != null) {
             mNavigationWidget.setVisibility(View.VISIBLE);
         } else {
@@ -1000,10 +1021,12 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi.getName() == null && poi.getUUID() != null) {
             return;
         }
-        if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_DETAIL) == null) {
-            mSphinx.showHint(new String[]{TKConfig.PREFS_HINT_POI_DETAIL, TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN}, new int[] {R.layout.hint_poi_detail, R.layout.hint_poi_detail_weixin});
-        } else {
-            mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN, R.layout.hint_poi_detail_weixin);
+        if (mSphinx.isOnPause() == false) {
+            if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_DETAIL) == null) {
+                mSphinx.showHint(new String[]{TKConfig.PREFS_HINT_POI_DETAIL, TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN}, new int[] {R.layout.hint_poi_detail, R.layout.hint_poi_detail_weixin});
+            } else {
+                mSphinx.showHint(TKConfig.PREFS_HINT_POI_DETAIL_WEIXIN, R.layout.hint_poi_detail_weixin);
+            }
         }
         mRootView.setVisibility(View.VISIBLE);
         if (mStampAnimation != null) {
@@ -1047,6 +1070,8 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         refreshDetail();
         refreshComment();
         // DynamicPOI检测区域
+        // 重置查询计数
+        queryCount = 0;
         // 检查是否包含电影的动态信息
         if (mDynamicMoviePOI.isExist()) {
             mDynamicMoviePOI.queryStart(mDynamicMoviePOI.buildQuery(poi));
@@ -1054,12 +1079,21 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         }
         //判断是否存在hotel信息
         if (mDynamicHotelPOI.isExist()) {
+            if (!poi.getUUID().equals(mDynamicHotelPOI.mInitDatePOIid)) {
+                if (mSphinx.uiStackContains(R.id.view_hotel_home)) {
+                    HotelHomeFragment hotelFragment = mSphinx.getHotelHomeFragment();
+                    mDynamicHotelPOI.initDate(hotelFragment.getCheckin(), hotelFragment.getCheckout());
+                } else {
+                    mDynamicHotelPOI.initDate();
+                }
+            }
             mDynamicHotelPOI.queryStart(mDynamicHotelPOI.generateQuery(mPOI));
             addLoadingView();
         }
 
         Hashtable<String, String> criteria = new Hashtable<String, String>();
         criteria.put(FeedbackUpload.SERVER_PARAMETER_POI_RANK, String.valueOf(position));
+        criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
         criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
         criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, mDynamicHotelPOI.isExist() ? BaseQuery.SUB_DATA_TYPE_HOTEL : BaseQuery.SUB_DATA_TYPE_POI);
         criteria.put(DataQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, mActionTag);

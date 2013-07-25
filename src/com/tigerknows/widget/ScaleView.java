@@ -3,8 +3,6 @@ package com.tigerknows.widget;
 
 import com.decarta.CONFIG;
 import com.tigerknows.R;
-import com.tigerknows.util.Utility;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;

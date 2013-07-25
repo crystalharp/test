@@ -4,48 +4,64 @@
 
 package com.tigerknows.ui.more;
 
+import com.decarta.Globals;
+import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
-import com.tigerknows.R.id;
-import com.tigerknows.R.layout;
-import com.tigerknows.R.string;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.radar.AlarmInitReceiver;
 import com.tigerknows.radar.Alarms;
-import com.tigerknows.radar.RadarReceiver;
 import com.tigerknows.service.PullService;
 import com.tigerknows.ui.BaseActivity;
+import com.tigerknows.util.Utility;
 
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Peng Wenyue
  */
 public class SettingActivity extends BaseActivity {
 
-    private ListView mListView = null;
+    private View[] mViewList;
+    private static final int NUM_OF_SETTINGS = 6;
     
     private ArrayList<DataBean> mBeans;
-    private SimpleAdapter mSettingAdatpter;
+    
+    private Context mContext;
+    private Handler mHandler;
+    private Dialog mProgressDialog;
+    private ScrollView mBodyScv;
+    
+    private boolean mRefreshed;
+    
+    private static final int[] LIST_BACKGROUND = {R.drawable.list_header,
+    	R.drawable.list_middle,
+    	R.drawable.list_middle,
+    	R.drawable.list_footer,
+    	R.drawable.list_header,
+    	R.drawable.list_footer
+    };
+
     
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,10 +71,30 @@ public class SettingActivity extends BaseActivity {
         setContentView(R.layout.more_setting);
         findViews();
         setListener();
-        
+        mContext = getBaseContext();
         mTitleBtn.setText(R.string.system_settings);
         mRightBtn.setVisibility(View.GONE);
-
+        mRefreshed = false;
+        
+        mHandler = new Handler(){
+        	public void handleMessage(Message msg){
+        		switch (msg.what){
+        		case HandlerMessage.CLEAR_CACHE_SUCCESS:
+        			Toast.makeText(mContext, getString(R.string.settings_clear_cache_success), Toast.LENGTH_LONG).show();
+        			break;
+        		case HandlerMessage.BEFORE_CLEAR_CACHE:
+        			showProgressDialog();
+        			break;
+        		case HandlerMessage.AFTER_CLEAR_CACHE:
+        			dismissProgressDialog();
+        			break;
+        		default:
+        		    break;
+        		}
+        	}
+        };
+        
+        // 是否开启GPS
         mBeans = new ArrayList<DataBean>();
         DataBean dataBean = null;
         dataBean = new DataBean(mThis.getString(R.string.settings_open_gps), mThis.getString(R.string.settings_gps_description_open));
@@ -66,6 +102,7 @@ public class SettingActivity extends BaseActivity {
         dataBean.type = DataBean.TYPE_GPS;
         mBeans.add(dataBean);
         
+        // 保持屏幕常亮
         final DataBean wakeLockBean = new DataBean(mThis.getString(R.string.settings_acquire_wakelock), mThis.getString(R.string.settings_acquire_wakelock_description));
         wakeLockBean.onClickListener = new OnClickListener() {
             
@@ -84,6 +121,7 @@ public class SettingActivity extends BaseActivity {
         wakeLockBean.type = DataBean.TYPE_WAKELOCK;
         mBeans.add(wakeLockBean);
         
+        //雷达推送
         final DataBean radarPushBean = new DataBean(mThis.getString(R.string.settings_radar_push), mThis.getString(R.string.settings_radar_push_description));
         radarPushBean.onClickListener = new OnClickListener() {
             
@@ -102,10 +140,27 @@ public class SettingActivity extends BaseActivity {
         radarPushBean.type = DataBean.TYPE_RADARPUSH;
         mBeans.add(radarPushBean);
         
-        mSettingAdatpter = new SimpleAdapter(mThis, mBeans);
-        mListView.setAdapter(mSettingAdatpter);
+        // 一键清理缓存
+        final DataBean clearCacheBean = new DataBean(mThis.getString(R.string.settings_clear_cache), "");
 
-        mSettingAdatpter.notifyDataSetChanged();
+		clearCacheBean.showIcon = false;
+		clearCacheBean.type = DataBean.TYPE_CLEARCACHE;
+		mBeans.add(clearCacheBean);
+
+		// 帮助
+		final DataBean helpBean = new DataBean(mThis.getString(R.string.help), "");
+		helpBean.showIcon = true;
+		helpBean.type = DataBean.TYPE_HELP;
+		mBeans.add(helpBean);
+		
+		// 关于我们
+		final DataBean aboutBean = new DataBean(mThis.getString(R.string.about_us), "");
+		aboutBean.showIcon = true;
+		aboutBean.type = DataBean.TYPE_ABOUT;
+		mBeans.add(aboutBean);		
+
+        refreshDataSetChanged();
+        mBodyScv.smoothScrollTo(0, 0);
     }
     
     private void switchWakeLock() {
@@ -129,48 +184,136 @@ public class SettingActivity extends BaseActivity {
         LogWrapper.d("conan", "Radar status:" + TKConfig.getPref(mThis, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, "on"));
     }
     
+    private void showClearCacheDialog(){
+		Utility.showNormalDialog(mThis, mThis.getString(R.string.settings_clear_cache_confirm),
+				new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						// TODO Auto-generated method stub
+						if (which == DialogInterface.BUTTON_POSITIVE){
+			                new Thread(new Runnable(){
+
+								@Override
+								public void run() {
+									// TODO Auto-generated method stub
+									try {
+										Globals.getImageCache().init(mContext);
+									} catch (APIException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+									Message msg[] = new Message[3];
+									for (int i=0; i<msg.length; i++){
+										msg[i] = new Message();
+									}
+									msg[0].what = HandlerMessage.BEFORE_CLEAR_CACHE;
+									msg[1].what = HandlerMessage.AFTER_CLEAR_CACHE;
+									msg[2].what = HandlerMessage.CLEAR_CACHE_SUCCESS;
+									mHandler.sendMessage(msg[0]);
+									if(Globals.getImageCache() != null){
+										Globals.getImageCache().clearImages();
+									}
+									mHandler.sendMessage(msg[1]);
+									mHandler.sendMessage(msg[2]);
+								}
+			                	
+			                }).start();
+						}
+					}
+				});
+    }
+    void showProgressDialog() {
+        if (mProgressDialog == null) {
+            View custom = mThis.getLayoutInflater().inflate(R.layout.loading, null);
+            TextView loadingTxv = (TextView)custom.findViewById(R.id.loading_txv);
+            loadingTxv.setText(mThis.getString(R.string.doing_and_wait));
+            mProgressDialog = Utility.showNormalDialog(mThis, custom);
+            mProgressDialog.setCancelable(true);
+            mProgressDialog.setCanceledOnTouchOutside(false);
+        }
+        if (mProgressDialog.isShowing() == false) {
+            mProgressDialog.show();
+        }
+        
+    }    
+
+    void dismissProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+    }
+    
     public static boolean radarOn(Context context) {
         return TextUtils.isEmpty(TKConfig.getPref(context, TKConfig.PREFS_RADAR_PULL_SERVICE_SWITCH, ""));
     }
 
     protected void findViews() {
         super.findViews();
-        mListView = (ListView)findViewById(R.id.listview);
+        mBodyScv = (ScrollView)findViewById(R.id.body_scv);
+        mViewList = new View[NUM_OF_SETTINGS];
+        mViewList[0] = (View)findViewById(R.id.gps_view);
+        mViewList[1] = (View)findViewById(R.id.wake_view);
+        mViewList[2] = (View)findViewById(R.id.radar_view);
+        mViewList[3] = (View)findViewById(R.id.clear_cache_view);
+        mViewList[4] = (View)findViewById(R.id.help_view);
+        mViewList[5] = (View)findViewById(R.id.about_view);
+        
     }
     
     protected void setListener() {
         super.setListener();
-        mListView.setOnItemClickListener(new OnItemClickListener() {
+        for(int i=0; i<NUM_OF_SETTINGS; i++){
+        	final int j = i;
+        	mViewList[i].setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+					DataBean dataBean = mBeans.get(j);
+					if (dataBean == null){
+						return;
+					}
+	                int type = dataBean.type;
+	                Intent intent;
+	                switch (type) {
+	                    case DataBean.TYPE_GPS:
+	                        mActionLog.addAction(mActionTag + ActionLog.SettingGPS, checkGPS());
+	                        intent = new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
+	                        startActivityForResult(intent, R.id.activity_setting_location);
+	                        break;
+	                    case DataBean.TYPE_WAKELOCK:
+	                        dataBean.checked = !dataBean.checked;
+	                        mActionLog.addAction(mActionTag + ActionLog.SettingWakeLock, dataBean.checked);
+	                        refreshDataSetChanged(type-1);
+	                        switchWakeLock();
+	                        break;
+	                    case DataBean.TYPE_RADARPUSH:
+	                        dataBean.checked = !dataBean.checked;
+	                        mActionLog.addAction(mActionTag + ActionLog.SettingRadar, dataBean.checked);
+	                        refreshDataSetChanged(type-1);
+	                        switchRadarPush();
+	                        break;
+	                    case DataBean.TYPE_CLEARCACHE:
+	                    	mActionLog.addAction(mActionTag + ActionLog.SettingClearCache);
+	                    	showClearCacheDialog();
+	                    	break;
+	                    case DataBean.TYPE_HELP:
+	                    	mActionLog.addAction(mActionTag + ActionLog.SettingHelp);
+	                    	intent = new Intent(SettingActivity.this, HelpActivity.class);
+	                    	startActivityForResult(intent, 0);
+	                    	break;
+	                    case DataBean.TYPE_ABOUT:
+	                    	mActionLog.addAction(mActionTag + ActionLog.SettingAboutMe);
+	                    	intent = new Intent(SettingActivity.this, AboutUsActivity.class);
+	                    	startActivityForResult(intent, 0);
+	                    	break;
+	                    default:
+	                        break;
+	                }
+	            }
+			});
+        }
 
-            @Override
-            public void onItemClick(AdapterView<?> arg0, View arg1, int index, long arg3) {
-                DataBean dataBean = mBeans.get(index);
-                if (dataBean == null) {
-                    return;
-                }
-                int type = dataBean.type;
-                switch (type) {
-                    case DataBean.TYPE_GPS:
-                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingGPS, checkGPS());
-                        Intent intent = new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
-                        startActivityForResult(intent, R.id.activity_setting_location);
-                        break;
-                    case DataBean.TYPE_WAKELOCK:
-                        dataBean.checked = !dataBean.checked;
-                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingWakeLock, dataBean.checked);
-                        mSettingAdatpter.notifyDataSetChanged();
-                        switchWakeLock();
-                        break;
-                    case DataBean.TYPE_RADARPUSH:
-                        dataBean.checked = !dataBean.checked;
-                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingRadar, dataBean.checked);
-                        mSettingAdatpter.notifyDataSetChanged();
-                        switchRadarPush();
-                        break;
-                    default:
-                        break;
-                }
-            }});
     }
 
     @Override
@@ -196,51 +339,53 @@ public class SettingActivity extends BaseActivity {
         if (dataBean != null) {
             dataBean.checked = radarOn(mThis);
         }
-        mSettingAdatpter.notifyDataSetChanged();
+        refreshDataSetChanged();
+
+
     }
     
-    private class SimpleAdapter extends ArrayAdapter<DataBean>{
-        private static final int sResource = R.layout.more_setting_list_item;
-
-        public SimpleAdapter(Context context, List<DataBean> apps) {
-            super(context, sResource, apps);
-        }
-
-        @Override
-        public View getView(final int position, View convertView, ViewGroup parent) {
-            View view;
-            if (convertView == null) {
-                view = mLayoutInflater.inflate(sResource, parent, false);
-            } else {
-                view = convertView;
-            }
-
-            DataBean data = getItem(position);
-            
-            TextView titleTxv = (TextView)view.findViewById(R.id.title_txv);
-            TextView descriptionTxv = (TextView)view.findViewById(R.id.description_txv);
-            ImageView iconImv = (ImageView)view.findViewById(R.id.icon_imv);
-            CheckBox selectChb = (CheckBox)view.findViewById(R.id.select_chb);
-            
-            titleTxv.setText(data.title);
-            descriptionTxv.setText(data.description);
-            LogWrapper.d("conan", "data:" + data.title +  "checked:" + data.checked);
-            if (data.onClickListener != null) {
-                selectChb.setOnClickListener(data.onClickListener);
-                selectChb.setChecked(data.checked);
-                selectChb.setVisibility(View.VISIBLE);
-            } else {
-                selectChb.setVisibility(View.INVISIBLE);
-            }
-            if (data.showIcon) {
-                iconImv.setVisibility(View.VISIBLE);
-            } else {
-                iconImv.setVisibility(View.GONE);
-            }
-
-            return view;
-        }
+    private void refreshDataSetChanged(){
+    	for (int i=0; i<NUM_OF_SETTINGS; i++){
+    		refreshDataSetChanged(i);
+    	}
+        mRefreshed = true;
     }
+    
+    private void refreshDataSetChanged(final int position){
+        DataBean data = mBeans.get(position);
+        View view = mViewList[position];
+        TextView titleTxv = (TextView)view.findViewById(R.id.title_txv);
+        TextView descriptionTxv = (TextView)view.findViewById(R.id.description_txv);
+        ImageView iconImv = (ImageView)view.findViewById(R.id.icon_imv);
+        CheckBox selectChb = (CheckBox)view.findViewById(R.id.select_chb);
+        view.setBackgroundDrawable(getResources().getDrawable(LIST_BACKGROUND[position]));
+        titleTxv.setText(data.title);
+        if(TextUtils.isEmpty(data.description)){
+        	descriptionTxv.setVisibility(View.GONE);
+        	// 保持Top/Bottom的Padding距离一致
+        	titleTxv.setPadding(titleTxv.getPaddingLeft(), 
+        			titleTxv.getPaddingTop()+ (mRefreshed ? 0 : Utility.dip2px(mThis, 8)), 
+        			titleTxv.getPaddingRight(), 
+        			titleTxv.getPaddingTop()+ (mRefreshed ? 0 : Utility.dip2px(mThis, 8)));
+        	titleTxv.setGravity(Gravity.CENTER_VERTICAL);
+        }
+        descriptionTxv.setText(data.description);
+        LogWrapper.d("conan", "data:" + data.title +  "checked:" + data.checked);
+        if (data.onClickListener != null) {
+            selectChb.setOnClickListener(data.onClickListener);
+            selectChb.setChecked(data.checked);
+            selectChb.setVisibility(View.VISIBLE);
+        } else {
+            selectChb.setVisibility(View.INVISIBLE);
+        }
+        if (data.showIcon) {
+            iconImv.setVisibility(View.VISIBLE);
+        } else {
+            iconImv.setVisibility(View.INVISIBLE);
+        }
+
+    }
+
     
     private boolean checkGPS() {
         boolean enableGps = false;            
@@ -260,12 +405,16 @@ public class SettingActivity extends BaseActivity {
         }
         return null;
     }
+    
 
     private class DataBean {
         
         static final int TYPE_GPS = 1;
         static final int TYPE_WAKELOCK = 2;
         static final int TYPE_RADARPUSH = 3;
+        static final int TYPE_CLEARCACHE = 4;
+        static final int TYPE_HELP = 5;
+        static final int TYPE_ABOUT = 6;
         
         protected int type;
         
@@ -284,5 +433,12 @@ public class SettingActivity extends BaseActivity {
             this.description = description;
         }
 
-    }    
+    }
+    
+    private class HandlerMessage{
+    	
+    	static final int BEFORE_CLEAR_CACHE = 10;
+    	static final int AFTER_CLEAR_CACHE = 11;
+    	static final int CLEAR_CACHE_SUCCESS = 12;
+    }
 }

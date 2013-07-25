@@ -36,12 +36,10 @@ import com.decarta.android.map.Compass;
 import com.decarta.android.map.Icon;
 import com.decarta.android.map.InfoWindow;
 import com.decarta.android.map.ItemizedOverlay;
-import com.decarta.android.map.MapLayer;
 import com.decarta.android.map.MapText;
 import com.decarta.android.map.Shape;
 import com.decarta.android.map.TilesView;
 import com.decarta.android.map.Compass.PlaceLocation;
-import com.decarta.android.map.Compass.TouchEventListener;
 import com.decarta.android.map.MapLayer.MapLayerType;
 import com.decarta.android.map.TilesView.MapPreference;
 import com.decarta.android.util.LogWrapper;
@@ -226,6 +224,7 @@ public class MapView extends RelativeLayout implements
         public static int DOWNLOAD = 10;
 
         public static int TOUCHDOWN = 11;
+        public static int MULTITOUCHZOOM = 12;
 	}
 	
 	/**
@@ -282,6 +281,15 @@ public class MapView extends RelativeLayout implements
 		public void onDoubleClickEvent(MapView mapView, Position position);
 	}
 
+    /**
+     * define multi touch zoom listener of map
+     * 
+     */
+    public interface MultiTouchZoomEventListener extends
+            com.decarta.android.event.EventListener {
+        public void onMultiTouchZoomEvent(MapView mapView, int newZoomLevel);
+    }
+
 	/**
 	 * define long click listener of map
 	 * 
@@ -336,6 +344,8 @@ public class MapView extends RelativeLayout implements
 				&& (listener instanceof TiltEndEventListener)
 				|| eventType == EventType.TOUCHDOWN
 				&& (listener instanceof TouchDownEventListener)
+                || eventType == EventType.MULTITOUCHZOOM
+                && (listener instanceof MultiTouchZoomEventListener)
 				)
 			return true;
 		else
@@ -437,6 +447,17 @@ public class MapView extends RelativeLayout implements
 			}
 		}
 	}
+
+    public void executeMultiTouchZoomListeners(int zoomLevel) {
+        if (eventListeners.containsKey(EventType.MULTITOUCHZOOM)) {
+            ArrayList<EventListener> listeners = eventListeners
+                    .get(EventType.MULTITOUCHZOOM);
+            for (int i = 0; i < listeners.size(); i++) {
+                ((MultiTouchZoomEventListener) (listeners.get(i)))
+                        .onMultiTouchZoomEvent(this, zoomLevel);
+            }
+        }
+    }
 
 	public void executeLongClickListeners(Position position) {
 		if (eventListeners.containsKey(EventType.LONGCLICK)) {

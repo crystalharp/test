@@ -64,6 +64,7 @@
     <string name="delete_map">删除地图</string>
     <string name="pause_download">暂停下载</string>
     <string name="upgrade_map">升级地图</string>
+    <string name="deleteing_map">正在删除旧版地图数据，请稍候</string>
     
     <string name="at_where_search">在“%1$s”周边</string>    
     <string name="select_where_as_start">选择\u0020%1$s\u0020作为起点</string>  
@@ -204,6 +205,7 @@
     <string name="upgrade_manual">手动更新</string>
     <string name="download_map">下载地图</string>
     <string name="app_recommend">你可能喜欢的应用</string>
+    <string name="app_recommend_more">更多应用</string>
     <string name="feedback">意见反馈</string>
     <string name="help">帮助</string>
     <string name="about_us">关于我们</string>
@@ -211,7 +213,7 @@
     <string name="recommend_tencent">腾讯应用宝</string>
     <string name="login_or_regist">登录/注册</string>
     <string name="user_home">个人中心</string>
-    <string name="give_favourable_comment">给个好评鼓励我们</string>
+    <string name="give_favourable_comment">给个好评吧！</string>
     
     <string name="settings_open_gps">开启GPS（卫星定位）</string>
     <string name="settings_close_gps">关闭GPS（卫星定位）</string>
@@ -223,6 +225,10 @@
     <string name="settings_radar_push_description">开启后可接收老虎推荐信息，嗷呜！</string>
     <string name="settings_map_home">设置地图为首页</string>
     <string name="settings_map_home_description">在本软件打开时直接显示地图</string>
+    <string name="settings_clear_cache">一键清理缓存</string>
+    <string name="settings_clear_cache_description">可以清除图片缓存</string>
+    <string name="settings_clear_cache_confirm">确定清空缓存数据吗？</string>
+    <string name="settings_clear_cache_success">缓存清理成功！</string>
     
     <string name="delete_city_map_tip">确认删除该城市地图包？</string>
     <string name="cancel_favorite_tip">是否取消收藏？</string>
@@ -770,6 +776,10 @@
     <string name="poi_comment_must">还需%1$s字</string>
     <string name="poi_comment_sum">共%1$s字</string>
     
+    <string name="subway_preset_time">本站点首末车时间</string>
+    <string name="subway_exits">出口附近信息</string>
+    <string name="subway_station_nearby">最近车站</string>
+    
     <string name="nearby_">附近%1$s个</string>
     <string name="entire_city_">全市%1$s个</string>
     
@@ -799,7 +809,7 @@
     <string name="tuangou_shop_list">订单查询</string>
     
     <string name="dianying_list">电影列表</string>
-    <string name="dianying_no_length_now">暂无时间</string>
+    <string name="dianying_no_length_now">暂无时长</string>
     <string name="dianying_detail_nearest">最近影院 %1$s</string>
     <string name="dianying_detail_distance_to_me">%1$s</string>
     <string name="dianying_detail">电影详情</string>
@@ -858,7 +868,7 @@
     <string name="add_merchant_upload_photo_added">已添加商户门面照片</string>
     <string name="wait_submit">等待提交</string>
     <string name="contact">联系方式</string>
-    <string name="please_input_your_telephone">请输入您的电话</string>
+    <string name="please_input_your_telephone">请输入您的手机号</string>
     <string name="add_merchant_thanks">感谢您帮助我们完善商户信息。请认真填写联系方式，以便我们将处理后的结果及时反馈给您。 </string>
     <string name="capture_photo">拍照上传</string>
     <string name="pick_photo">从手机相册选择</string>
@@ -929,6 +939,8 @@
     <string name="response_code_831">取消失败。</string>
     
     <string name="response_code_410_pulled">抱歉,原信息已过期\n欢迎发现更多身边的精彩!</string>
+    
+    <string name="response_null_hotel_order_sync">酒店订单更新失败！</string>
     
     <string name="retry">重试</string>
     <string name="location_city">定位城市</string>
@@ -1012,6 +1024,7 @@
     <string name="choose_room_howmany">选择房间数</string>
     <string name="room_howmany_item">%1$d间/%2$s元</string>
     <string name="choose_room_reserve">房间保留到</string>
+    <string name="before_23_59">23:59之前</string>
     
     <string name="hotel_service_title">酒店服务</string>
     <string name="hotel_room_description_title">房间设施</string>
@@ -1111,6 +1124,8 @@
     
     <string name="no_order">暂无订单\n&#8194;快去预订酒店吧！</string>
     
+    <string name="hotel_order_sync_success">酒店订单更新成功！</string>
+    
     <string name="hotel_order_cancel_confirm">是否取消订单？\n取消后本次预订将失效</string>
     <string name="hotel_order_cancel_failed">订单取消失败</string>
     <string name="hotel_order_cancel_success">订单取消成功</string>
@@ -1128,7 +1143,7 @@
     <string name="hotel_select_location">选择位置</string>
     <string name="hotel_please_select_location">请选择位置</string>
     <string name="hotel_not_limit">不限</string>
-    <string name="hotel_query">查找酒店</string>
+    <string name="hotel_query">查找可预订酒店</string>
     <string name="hotel_category_title">星级/品牌/价格</string>
     <string name="hotel_checkin_">入住</string>
     <string name="hotel_checkout_">离店</string>
@@ -1191,9 +1206,11 @@
     <string name="erreport_abandon">确定放弃报错吗？</string>
     <string name="erreport_address_hint">请输入正确商户地址</string>
     <string name="erreport_name_hint">请输入正确商户名称</string>
+    <string name="other_colon">其他：</string>
 <!-- POI Error Recovery End -->
 
 <!-- Satisfy Rate Start -->
+    <string name="satisfy_rate_more">对我们满意吗？</string>
     <string name="satisfy_rate">满意度评分</string>
     <string name="satisfy_note">你对老虎宝典的满意度评分是：</string>
     <string name="satisfy_a">搜索结果</string>
@@ -1208,4 +1225,8 @@
     <string name="satisfy_success">谢谢您对我们的评价</string>
     
 <!-- Satisfy Rate End -->
+    <string name="loading_zhong">加载中..</string>
+    
+    <string name="appoint_location">指定地点：</string>
+    <string name="appoint_area">指定商区：</string>
 </resources>

@@ -17,7 +17,6 @@ import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
-import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.AccountManage;

@@ -127,6 +127,11 @@ public class TimeListView extends LinearLayout {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                if (arg2 < 2) {
+                    arg2 = 2;
+                } else if (arg2 > hourList.size()-3) {
+                    arg2 = hourList.size()-3;
+                }
                 hourPosition = arg2;
                 hourAdapter.notifyDataSetChanged();
                 hourLsv.setSelectionFromTop(arg2-2, 0);
@@ -138,6 +143,11 @@ public class TimeListView extends LinearLayout {
 
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                if (arg2 < 2) {
+                    arg2 = 2;
+                } else if (arg2 > minuteList.size()-3) {
+                    arg2 = minuteList.size()-3;
+                }
                 minutePosition = arg2;
                 minuteAdapter.notifyDataSetChanged();
                 minuteLsv.setSelectionFromTop(arg2-2, 0);
@@ -232,7 +242,12 @@ public class TimeListView extends LinearLayout {
             String name = getItem(position);
             
             view.setBackgroundResource(R.drawable.list_selector_background_gray_dark);
-            textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+            
+            if ((isParent && hourPosition == position) || (isParent == false && minutePosition == position)) {
+                textTxv.setTextColor(TKConfig.COLOR_BLACK_DARK);
+            } else {
+                textTxv.setTextColor(TKConfig.COLOR_BLACK_LIGHT);
+            }
             
             textTxv.setText(name);
             

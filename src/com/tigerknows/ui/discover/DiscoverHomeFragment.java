@@ -27,7 +27,6 @@ import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine.CityInfo;
@@ -395,9 +394,9 @@ public class DiscoverHomeFragment extends DiscoverBaseFragment {
                 for(int i = 0; i < count; i++) {
                     ImageView imageView = (ImageView) mIndicationView.getChildAt(i);
                     if (i == curPos) {
-                        imageView.setBackgroundResource(R.drawable.ic_learn_dot_selected);
+                        imageView.setBackgroundResource(R.drawable.ic_viewpage_indicator_selected);
                     } else {
-                        imageView.setBackgroundResource(R.drawable.ic_learn_dot_normal);
+                        imageView.setBackgroundResource(R.drawable.ic_viewpage_indicator_normal);
                     }
                 }
             }

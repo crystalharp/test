@@ -237,8 +237,6 @@ public class BuslineModel extends XMapData {
         
         public Uri writeToDatabases(Context context, long parentId, int storeType) {
             boolean isFailed = false;
-            this.storeType = storeType;
-            this.parentId = parentId;
             ContentValues values = new ContentValues();
             if (!TextUtils.isEmpty(name)) {
                 values.put(Tigerknows.Busline.BUSLINE_NAME, name);
@@ -312,8 +310,8 @@ public class BuslineModel extends XMapData {
         }
 
         @Override
-        public BaseData checkStore(Context context, int store_Type) {
-            BaseData baseData = null;
+        public Line checkStore(Context context, int store_Type) {
+            Line line = null;
             //运营时间是否也要判断?
             Cursor c = SqliteWrapper.query(context, context.getContentResolver(),
                     Tigerknows.Busline.CONTENT_URI, null, "(" + Tigerknows.Busline.BUSLINE_NAME
@@ -329,7 +327,7 @@ public class BuslineModel extends XMapData {
                         Line other = readFormCursor(context, c);
                         if((null != other && !other.equals(this)) || (null == other && other != this)) {
                         } else {
-                            baseData = other;
+                            line = other;
                             break;
                         }
                         c.moveToNext();
@@ -337,7 +335,7 @@ public class BuslineModel extends XMapData {
                 }
                 c.close();
             }
-            return baseData;
+            return line;
         }
         
         public boolean equals(Object object) {
@@ -521,84 +519,6 @@ public class BuslineModel extends XMapData {
             }
             
             return this.data;
-        }
-        
-        public Uri writeToDatabases(Context context, long parentId, int storeType) {
-            boolean isFailed = false;
-            this.storeType = storeType;
-            this.parentId = parentId;
-            if (storeType == Tigerknows.STORE_TYPE_FAVORITE && checkFavorite(context)) {
-                return ContentUris.withAppendedId(Tigerknows.Busline.CONTENT_URI, id);
-            }
-            ContentValues values = new ContentValues();
-            if (!TextUtils.isEmpty(name)) {
-                values.put(Tigerknows.Busline.BUSLINE_NAME, name);
-            }
-            values.put(Tigerknows.Busline.TOTAL_LENGTH, TOTAL_LENGTH);
-            values.put(Tigerknows.Busline.BUSLINE_NUM, this.lineList.size());
-            try {
-                byte[] data = ByteUtil.xobjectToByte(getData());
-                if (data.length > 0) {
-                    values.put(Tigerknows.Busline.DATA, data);
-                }
-            } catch (Exception e) {
-                isFailed = true;
-            }
-            
-            Uri uri = null;
-            if (!isFailed) {
-                uri = writeToDatabasesInternal(context, Tigerknows.Busline.CONTENT_URI, values, storeType, 
-                        (storeType == Tigerknows.STORE_TYPE_FAVORITE) ? Favorite.FAVORITE_BUSLINE : History.HISTORY_BUSLINE);
-            }
-            
-            return uri;
-        }
-
-        /**
-         * 从数据库中读取Line
-         * 
-         * @param id
-         */
-        public static List<Station> readFormDatabases(Context context, long parentId, int storeType) {
-            List<Station> lineList = new ArrayList<Station>();
-            Cursor c = SqliteWrapper.query(context, context.getContentResolver(),
-                    Tigerknows.Busline.CONTENT_URI, null, "(" + Tigerknows.Busline.PARENT_ID + "="
-                            + parentId + ") AND (" + Tigerknows.Busline.STORE_TYPE + "="
-                            + storeType + ")", null, null);
-            if (c != null) {
-                if (c.getCount() > 0) {
-                    c.moveToFirst();
-                    for (int i = 0; i < c.getCount(); i++) {
-                        lineList.add(readFormCursor(context, c));
-                        c.moveToNext();
-                    }
-                }
-                c.close();
-            }
-            return lineList;
-        }
-
-        public static Station readFormCursor(Context context, Cursor c) {
-            Station station = new Station();
-            String str;
-            if (c != null) {
-                station.id = c.getLong(c.getColumnIndex(Tigerknows.TransitPlan._ID));
-                station.parentId = c.getLong(c.getColumnIndex(Tigerknows.TransitPlan.PARENT_ID));
-                station.storeType = c.getInt(c.getColumnIndex(Tigerknows.TransitPlan.STORE_TYPE));
-                str = c.getString(c.getColumnIndex(Tigerknows.Busline.BUSLINE_NAME));
-                if (!TextUtils.isEmpty(str)) {
-                    station.setName(str);
-                }
-                byte[] data = c.getBlob(c.getColumnIndex(Tigerknows.Busline.DATA));
-                try {
-                    XMap xmap = (XMap) ByteUtil.byteToXObject(data);
-                    station.init(xmap, true);
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-            return station;
         }
         
         public String getSMSString(Context context) {

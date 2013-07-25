@@ -16,10 +16,7 @@ import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.BootstrapModel.Recommend;
 import com.tigerknows.model.BootstrapModel.Recommend.RecommendApp;
 import com.tigerknows.ui.BaseActivity;
-import com.tigerknows.util.Utility;
-
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -111,21 +108,12 @@ public class AppRecommendActivity extends BaseActivity {
                     mActionLog.addAction(mActionTag + ActionLog.ListViewItem, postion, recommendApp.getName());
                     final String uri = recommendApp.getUrl();
                     if (!TextUtils.isEmpty(uri)) {
-                        Utility.showNormalDialog(mThis, mThis.getString(R.string.prompt), 
-                                mThis.getString(R.string.are_you_sure_download_this_software), 
-                                new DialogInterface.OnClickListener() {
-
-                                    @Override
-                                    public void onClick(DialogInterface arg0, int which) {
-                                        if (which == DialogInterface.BUTTON_POSITIVE) {
-                                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
-                                            mThis.startActivity(intent);
-                                        }
-                                    }
-                        });
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(uri));
+                        mThis.startActivity(intent);
                     }
                 }
-            }});
+            }
+        });
     }
     
     private void initRecommendAppList(List<RecommendApp> recommendApps) {

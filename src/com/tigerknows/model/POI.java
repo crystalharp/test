@@ -82,7 +82,7 @@ public class POI extends BaseData {
                 Description.FIELD_SERVICE_QUALITY, Description.FIELD_RECOMMEND_SCENERY, Description.FIELD_POPEDOM_SCENERY,
                 Description.FIELD_NEARBY_INFO, Description.FIELD_COMPANY_WEB, Description.FIELD_COMPANY_TYPE,
                 Description.FIELD_COMPANY_SCOPE, Description.FIELD_INDUSTRY_INFO, Description.FIELD_FEATURE_SPECIALTY,
-                Description.FIELD_PRODUCT_ATTITUDE);
+                Description.FIELD_PRODUCT_ATTITUDE, Description.FIELD_SUBWAY_PRESET_TIMES, Description.FIELD_SUBWAY_EXITS);
                 
         public static String[] Name_List = null;
         
@@ -259,6 +259,12 @@ public class POI extends BaseData {
 
         // 0x3a x_string    产品评价
         public static final byte FIELD_PRODUCT_ATTITUDE = 0x3a;
+        
+        // 0x3b x_array<x_map>  地铁首末车时间
+        public static final byte FIELD_SUBWAY_PRESET_TIMES = 0x3b;
+        
+        // 0x3c x_array<x_map>  地铁出口信息
+        public static final byte FIELD_SUBWAY_EXITS = 0X3C;
     }
 
     // 0x07 x_string 电话
@@ -497,6 +503,10 @@ public class POI extends BaseData {
     
     private Hotel hotel = new Hotel();
     
+    private List<SubwayPresetTime> subwayPresetTimes;
+    
+    private List<SubwayExit> subwayExits;
+    
     public void updateData(Context context, XMap data) {
         try {
             BaseData baseData = checkStore(context, storeType, -1, false);
@@ -512,7 +522,7 @@ public class POI extends BaseData {
                     e.printStackTrace();
                 }
             } else {
-                writeToDatabases(context, -1, com.tigerknows.provider.Tigerknows.STORE_TYPE_HISTORY);
+                writeToDatabases(context, -1, storeType);
             }
         } catch (APIException e1) {
             e1.printStackTrace();
@@ -746,6 +756,14 @@ public class POI extends BaseData {
     public List<Dianying> getDynamicDianyingList() {
         return dynamicDianyingList;
     }
+    
+    public List<SubwayExit> getSubwayExitList() {
+        return subwayExits;
+    }
+    
+    public List<SubwayPresetTime> getSubwayPresetTimeList() {
+        return subwayPresetTimes;
+    }
 
     public void setDynamicDianyingList(List<Dianying> dynamicDianyingList) {
         this.dynamicDianyingList = dynamicDianyingList;
@@ -827,6 +845,13 @@ public class POI extends BaseData {
                 this.service = service;
                 
                 this.envrionment = getStringFromData(this.description, Description.FIELD_ENVIRONMENT, reset ? null : this.envrionment);
+                
+                if (this.description.containsKey(Description.FIELD_SUBWAY_EXITS)) {
+                    this.subwayExits = getListFromData(this.description, Description.FIELD_SUBWAY_EXITS, SubwayExit.Initializer, reset ? null : this.subwayExits);
+                }
+                if (this.description.containsKey(Description.FIELD_SUBWAY_PRESET_TIMES)) {
+                    this.subwayPresetTimes = getListFromData(this.description, Description.FIELD_SUBWAY_PRESET_TIMES, SubwayPresetTime.Initializer, reset ? null : this.subwayPresetTimes);
+                }
                 
                 //购物POI中的产品信息，4.30 ALPHA3中暂未添加
                 //目前暂无其他代码调用此段信息，仅作为预留
@@ -1087,32 +1112,33 @@ public class POI extends BaseData {
      * @param favoriteType
      */
     public Uri writeToDatabases(Context context, long parentId, int storeType) {
-        this.storeType = storeType;
-        this.parentId = parentId;
         ContentValues values = new ContentValues();
-        boolean availably = initContetValues(this, values);
+        boolean availably = initContetValues(this, values, storeType);
 
         Uri uri = null;
         if (availably) {
             uri = SqliteWrapper.insert(context, context.getContentResolver(),
                     Tigerknows.POI.CONTENT_URI, values);
-            id = Long.parseLong(uri.getPathSegments().get(1));
+            if (this.storeType == storeType) {
+                id = Long.parseLong(uri.getPathSegments().get(1));
+                this.parentId = parentId;
+            }
         }
         return uri;
     }
     
-    private static boolean initContetValues(POI poi, ContentValues values) {
+    private static boolean initContetValues(POI poi, ContentValues values, int storeType) {
         if (poi == null || values == null) {
             return false;
         }
-        values.put(Tigerknows.POI.STORE_TYPE, poi.storeType);
+        values.put(Tigerknows.POI.STORE_TYPE, storeType);
         values.put(Tigerknows.POI.PARENT_ID, poi.parentId);
         if (!TextUtils.isEmpty(poi.name)) {
             values.put(Tigerknows.POI.POI_NAME, poi.name);
         } else {
             return false;
         }
-        if (TextUtils.isEmpty(poi.uuid) && (poi.storeType == Tigerknows.STORE_TYPE_FAVORITE || poi.storeType == Tigerknows.STORE_TYPE_HISTORY)) {
+        if (TextUtils.isEmpty(poi.uuid) && (storeType == Tigerknows.STORE_TYPE_FAVORITE || storeType == Tigerknows.STORE_TYPE_HISTORY)) {
             return false;
         }
         if (!TextUtils.isEmpty(poi.alise)) {
@@ -1310,7 +1336,7 @@ public class POI extends BaseData {
         BaseData baseData = checkStore(context, storyType, -1, false);
         if (baseData != null) {
             ContentValues values = new ContentValues();
-            boolean availably = initContetValues((POI) baseData, values);
+            boolean availably = initContetValues((POI) baseData, values, storeType);
             if (availably) {
                 count = SqliteWrapper.update(context, context.getContentResolver(), ContentUris.withAppendedId(Tigerknows.POI.CONTENT_URI, baseData.id), values, null, null);
             }
@@ -1530,4 +1556,130 @@ public class POI extends BaseData {
             return new POI(data);
         }
     };
+    
+    public static class SubwayPresetTime extends XMapData {
+        public final static byte FEILD_SUBWAY_NAME = 0x01;
+        public final static byte FEILD_PRESET_TIME = 0x02;
+        private String name;
+        private List<PresetTime> presetTimes;
+        
+        public String getName() {
+            return name;
+        }
+        
+        public List<PresetTime> getPresetTimes() {
+            return presetTimes;
+        }
+        
+        public SubwayPresetTime(XMap data) throws APIException {
+            super(data);
+            this.name = getStringFromData(FEILD_SUBWAY_NAME);
+            this.presetTimes = getListFromData(FEILD_PRESET_TIME, PresetTime.Initializer);
+        }
+        
+        public final static XMapInitializer<SubwayPresetTime> Initializer = new XMapInitializer<SubwayPresetTime>() {
+
+            @Override
+            public SubwayPresetTime init(XMap data) throws APIException {
+                return new SubwayPresetTime(data);
+            }
+            
+        };
+    }
+    
+    public static class PresetTime extends XMapData {
+        public final static byte FEILD_DIRECTION = 0x01;
+        public final static byte FEILD_START_TIME = 0x02;
+        public final static byte FEILD_END_TIME = 0x03;
+        private String direction;
+        private String startTime;
+        private String endTime;
+        
+        public String getDirection() {
+            return direction;
+        }
+        
+        public String getStartTime() {
+            return startTime;
+        }
+        
+        public String getEndTime() {
+            return endTime; 
+        }
+        
+        public PresetTime(XMap data) throws APIException {
+            super(data);
+            this.direction = getStringFromData(FEILD_DIRECTION);
+            this.startTime = getStringFromData(FEILD_START_TIME);
+            this.endTime = getStringFromData(FEILD_END_TIME);
+        }
+        
+        public final static XMapInitializer<PresetTime> Initializer = new XMapInitializer<PresetTime>() {
+
+            @Override
+            public PresetTime init(XMap data) throws APIException {
+                return new PresetTime(data);
+            }
+            
+        };
+    }
+    
+    public static class SubwayExit extends XMapData {
+        public final static byte FEILD_SUBWAY_EXIT = 0x01;
+        public final static byte FEILD_LANDMARK = 0x02;
+        public final static byte FEILD_STATIONS = 0x03;
+        private String exit;
+        private String landmark;
+        private List<Station> stations;
+        
+        public String getExit() {
+            return exit;
+        }
+        
+        public String getLandmark() {
+            return landmark;
+        }
+        
+        public List<Station> getStations() {
+            return stations;
+        }
+        
+        public SubwayExit(XMap data) throws APIException {
+            super(data);
+            this.exit = getStringFromData(FEILD_SUBWAY_EXIT);
+            this.landmark = getStringFromData(FEILD_LANDMARK);
+            this.stations = getListFromData(FEILD_STATIONS, Station.Initializer);
+        }
+        
+        public final static XMapInitializer<SubwayExit> Initializer = new XMapInitializer<SubwayExit>() {
+
+            @Override
+            public SubwayExit init(XMap data) throws APIException {
+                return new SubwayExit(data);
+            }
+        };
+    }
+    
+    public static class Station extends XMapData {
+        public final static byte FEILD_STATION = 0x01;
+        private String station;
+        
+        public String getStation() {
+            return station;
+        }
+        
+        public Station(XMap data) throws APIException {
+            super(data);
+            this.station = getStringFromData(FEILD_STATION);
+        }
+        
+        public final static XMapInitializer<Station> Initializer = new XMapInitializer<Station>() {
+
+            @Override
+            public Station init(XMap data) throws APIException {
+                return new Station(data);
+            }
+            
+        };
+    }
 }

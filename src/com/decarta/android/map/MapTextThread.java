@@ -6,7 +6,6 @@
 package com.decarta.android.map;
 
 import com.decarta.CONFIG;
-import com.decarta.Profile;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;

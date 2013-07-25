@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -23,7 +22,6 @@ import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
@@ -33,7 +31,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
@@ -96,8 +93,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     private View vErreportMain = null;
     private View vErreportDetail = null;
     
-    private Context mContext;
-    
     private LinearLayout mBodyLly;
     private LinearLayout mTelLly;
     private RadioGroup mTelRgp;
@@ -146,8 +141,6 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     
     private static List<Object> sTargetList = new ArrayList<Object>();
 
-    private static final String TAG = "ErrorRecovery";
-    
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
@@ -162,7 +155,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         mChecked = HOME_PAGE;
         mPage = HOME_PAGE;
         
-        mContext = getBaseContext();
+        getBaseContext();
         
         synchronized (sTargetList) {
             int size = sTargetList.size();
@@ -514,6 +507,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             mDescriptionEdt.requestFocus();
             showSoftInput();
         }
+        mActionLog.addAction(mActionTag);
         refreshDataDetail();
     }
     
@@ -625,7 +619,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             refreshDataMain();
             break;
         case R.id.submit_btn:
-        	mActionLog.addAction(mActionTag + ((mPage == HOME_PAGE) ? ActionLog.POIReportErrorSubmit : ActionLog.POIReportErrorNext) );
+        	mActionLog.addAction(mActionTag + ((mPage == DETAIL_PAGE && ((mChecked & DIRECT_SUBMIT) == 0)) ? ActionLog.POIReportErrorSubmit : ActionLog.POIReportErrorNext) );
             if((mChecked & DIRECT_SUBMIT) == 0) submitDetail();
             else {
             	submitMain();
@@ -718,18 +712,22 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             s.append(errcode + "");
             if( (mChecked & MAIN_LLY) != 0 && !TextUtils.isEmpty(mMainEdt.getText()) && !TextUtils.equals(mMainEdt.getText(), mOrigin)){
                 s.append('-');
+                s.append(mMainTxv.getText());
                 s.append(URLEncoder.encode(mMainEdt.getText().toString(), TKConfig.getEncoding()));
             }
             if( (mChecked & TYPE_LLY) != 0 && !TextUtils.isEmpty(mTypeBtn.getText())){
                 s.append('-');
+                s.append(getString(R.string.erreport_merchant_type));
                 s.append(URLEncoder.encode(mTypeBtn.getText().toString(), TKConfig.getEncoding()));
             }
             if( (mChecked & DESCRIPTION_LLY) != 0){
                 s.append('-');
+                s.append(getString(R.string.other_colon));
                 s.append(URLEncoder.encode(mDescriptionEdt.getText().toString(), TKConfig.getEncoding()));
             }
             if( (mChecked & DIRECT_SUBMIT) != 0 && !TextUtils.isEmpty(mContactEdt.getText())){
                 s.append('-');
+                s.append(getString(R.string.erreport_contact));
                 s.append(URLEncoder.encode(mContactEdt.getText().toString(), TKConfig.getEncoding()));
             }
         }catch (UnsupportedEncodingException e) {

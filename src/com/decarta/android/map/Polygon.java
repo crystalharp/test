@@ -6,7 +6,6 @@ import static android.opengl.GLES10.GL_TEXTURE_2D;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.List;
 
 import javax.microedition.khronos.opengles.GL10;
@@ -18,7 +17,6 @@ import android.graphics.Path;
 
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
-import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.decarta.android.util.XYDouble;
 

@@ -281,8 +281,6 @@ public class ActionLog extends LogUpload {
     public static final String MoreHistory = "BG";
     public static final String MoreSetting = "BH";
     public static final String MoreFeedback = "BI";
-    public static final String MoreHelp = "BJ";
-    public static final String MoreAboutUs = "BK";
     public static final String MoreMessageMap = "BL";
     public static final String MoreUserHome = "BM";
     public static final String MoreMessageSoft = "BN";
@@ -290,6 +288,7 @@ public class ActionLog extends LogUpload {
     public static final String MoreMessageUserSurvey = "BP";
     public static final String MoreAddMerchant = "BQ";
     public static final String MoreSatisfyRate = "BR";
+    public static final String MoreAppDownload = "BS";
 
     // 切换城市页
     public static final String ChangeCity = "CB";
@@ -334,6 +333,9 @@ public class ActionLog extends LogUpload {
     public static final String SettingGPS = "BA";
     public static final String SettingWakeLock = "BB";
     public static final String SettingRadar = "BC";
+    public static final String SettingClearCache = "BD";
+    public static final String SettingHelp = "BE";
+    public static final String SettingAboutMe = "BF";
 
     // 意见反馈页 
     public static final String Feedback = "CG";
@@ -404,6 +406,7 @@ public class ActionLog extends LogUpload {
     public static final String MapInfoWindowTraffic = Map + "BJ";
     public static final String MapInfoWindowStart = Map + "BK";
     public static final String MapInfoWindowEnd = Map + "BL";
+    public static final String MapMultiTouchZoom = Map + "BM";
     
     // 微博发送界面    
     public static final String WeiboSend = "FC";
@@ -622,7 +625,7 @@ public class ActionLog extends LogUpload {
     public static final String HotelOrderWriteReserve = "BC";
     public static final String HotelOrderWriteBookName = "BD";
     public static final String HotelOrderWriteMobile = "BE";
-    public static final String HotelOrderWriteIdCard = "BF";
+    //public static final String HotelOrderWriteIdCard = "BF";
     public static final String HOTELOrderWriteSubmit = "BG";
 
     // 信用卡担保页
@@ -638,13 +641,6 @@ public class ActionLog extends LogUpload {
     public static final String HotelOrderCreditCertCode = "BI";
     public static final String HotelOrderCreditSubmit = "BJ";
     
-    // 7天酒店注册页
-    public static final String HotelSeveninnRegist = "GG";
-    public static final String HotelSeveninnRegistName = "BA";
-    public static final String HotelSeveninnRegistPhone = "BB";
-    public static final String HotelSeveninnRegistIdcard = "BC";
-    public static final String HotelSeveninnRegistSubmit = "BD";
-
     // 订单列表页
     public static final String HotelOrderList = "GH";
     public static final String HotelOrderListGoThere = "BA";
@@ -745,12 +741,13 @@ public class ActionLog extends LogUpload {
             mStringBuilder = new StringBuilder();
             mStringBuilder.append(getLogOutToken());
             mStringBuilder.append(s);
+            LogWrapper.d(TAG, LogOut);
         }
     }
     
-    public void addNetworkAction(String apiType, long reqTime, long revTime, long resTime, String fail, String detail, int signal, String radioType, boolean isStop, String uuid) {
+    public void addNetworkAction(String apiType, long reqTime, long revTime, long resTime, String fail, String detail, int signal, String radioType, boolean isStop, String uuid, long reqSize, long revSize) {
         try {
-            addAction(NetworkAction, apiType, String.valueOf(reqTime - mStartMillis), String.valueOf(revTime - mStartMillis), String.valueOf(resTime-mStartMillis), fail, detail, signal, radioType, isStop, uuid);
+            addAction(NetworkAction, apiType, String.valueOf(reqTime - mStartMillis), String.valueOf(revTime - mStartMillis), String.valueOf(resTime-mStartMillis), fail, detail, signal, radioType, isStop, uuid, reqSize, revSize);
         } catch (Exception e) {
             LogWrapper.e(TAG, e.getMessage());
             e.printStackTrace();

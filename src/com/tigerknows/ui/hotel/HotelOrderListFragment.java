@@ -26,6 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
@@ -129,7 +130,6 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         return mRootView;
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public void dismiss() {
         super.dismiss();
@@ -144,7 +144,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         if (orders != null) {
         	orders.clear();
             if (hotelOrderAdapter != null) {
-                hotelOrderAdapter.notifyDataSetChanged();
+                hotelOrderAdapter.notifyDataSetChanged(); 
             }
         }
     }
@@ -203,6 +203,17 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         	new LoadThread(0, TKConfig.getPageSize()).start();
     }
     
+    private boolean toSync = false;
+    
+    /**
+     * Set a flag, 
+     * So that it will sync orders 
+     * if orders could be out of sync with the server 
+     */
+    public void syncOrder(){
+    	toSync = true;
+    }
+    
     @Override
     public void onResume() {
     	super.onResume();
@@ -219,11 +230,11 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         	reloadOrders();
         }
         
-        if(couldAnomalyExists()){
+        if(couldAnomalyExists() && toSync){
         	logi("Anomaly could exists. Send list sync query.");
         	sendOrderSyncQuery();
         }
-        
+        toSync = false;
     }
 
     /**
@@ -249,6 +260,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
     	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_SYNC);
     	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_ID_FILTER, ids);
     	criteria.put(BaseQuery.SERVER_PARAMETER_NEED_FIELD, HotelOrder.NEED_FIELDS);
+        criteria.put(BaseQuery.RESPONSE_NULL_ERROR_MSG, ""+R.string.response_null_hotel_order_sync);
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
     	hotelOrderOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.query_loading_tip));
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
@@ -598,8 +610,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         
         BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
         
-
-        if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_DIALOG, this, true)) {
+        if (BaseActivity.checkResponseCode(baseQuery, mSphinx, null, BaseActivity.SHOW_ERROR_MSG_TOAST, this, false)) {
             return;
         }
         
@@ -638,6 +649,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         					table.close();
         				}
         			}
+        			Toast.makeText(mContext, mContext.getString(R.string.hotel_order_sync_success), Toast.LENGTH_SHORT).show();
         		}
         		
         		if(!isExceptExists){

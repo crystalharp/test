@@ -1,7 +1,6 @@
 package com.tigerknows.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import android.content.Context;
@@ -9,9 +8,6 @@ import android.text.Spannable;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
-
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.model.TrafficQuery;
 import com.tigerknows.model.TrafficModel.Plan;

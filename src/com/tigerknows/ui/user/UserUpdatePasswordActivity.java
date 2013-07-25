@@ -7,9 +7,7 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnTouchListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -28,15 +26,12 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 	
 	private EditText newPasswordEdt;
 
-	private EditText newRePasswordEdt;
-	
 	private TextView forgetPasswordTxt;
 	
 	private Button confirmBtn;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 
 		mActionTag = ActionLog.UserUpdatePassword;
@@ -54,7 +49,6 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 		
 		oldPasswordEdt = (EditText)findViewById(R.id.old_password_edt);
 		newPasswordEdt = (EditText)findViewById(R.id.new_password_edt);
-		newRePasswordEdt = (EditText)findViewById(R.id.new_re_password_edt);
 		forgetPasswordTxt = (TextView)findViewById(R.id.forget_password_txt);
 		confirmBtn = (Button)findViewById(R.id.confirm_btn);
 	}
@@ -66,7 +60,7 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO 跳转到重置密码页面
+				// 跳转到重置密码页面
 				mActionLog.addAction(mActionTag +  ActionLog.UserCommonForgetPasswordBtn);
 				startActivity(new Intent(UserUpdatePasswordActivity.this, UserResetPasswordActivity.class));
 			}
@@ -76,7 +70,7 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 
 			@Override
 			public void onClick(View v) {
-				// TODO 发出请求, 若成功中转到帐户管理页面
+				// 发出请求, 若成功中转到帐户管理页面
 			    mActionLog.addAction(mActionTag +  ActionLog.UserCommonConfirmBtn);
 				if (!mForm.isValid()) {
 					doAction(mForm.getErrorSource());
@@ -118,7 +112,6 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
 				if (which == DialogInterface.BUTTON_POSITIVE) {
 					if (source.validErrorType == ExtValidationEditText.ValidErrorType.PasswordFormatError
 							|| source.validErrorType == ExtValidationEditText.ValidErrorType.UnionDifferentError) {
@@ -162,7 +155,6 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 			@Override
 			public void onClick(DialogInterface dialog,
 					int which) {
-				// TODO Auto-generated method stub
 				if (which == DialogInterface.BUTTON_POSITIVE) {
 					oldPasswordEdt.setText("");
 					oldPasswordEdt.clearFocus();

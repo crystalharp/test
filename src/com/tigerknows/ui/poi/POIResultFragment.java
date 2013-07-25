@@ -24,7 +24,6 @@ import com.tigerknows.model.DataQuery.POIResponse.POIList;
 import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
-import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.NavigationWidget;
 import com.tigerknows.ui.more.AddMerchantActivity;
 import com.tigerknows.util.Utility;
@@ -359,12 +358,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         
         updateView();
         
-        if (mSphinx.uiStackContains(R.id.view_hotel_home)) {
-            HotelHomeFragment hotelFragment = mSphinx.getHotelHomeFragment();
-            mSphinx.getPOIDetailFragment().getDynamicHotelPOI().initDate(hotelFragment.getCheckin(), hotelFragment.getCheckout());
-        } else {
-            mSphinx.getPOIDetailFragment().getDynamicHotelPOI().initDate();
-        }
     }
 
     @Override
@@ -863,6 +856,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
         String subDataType = dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
         mResultAdapter.setSubDataType(subDataType);
+        dataQuery.delParameter(DataQuery.SERVER_PARAMETER_FILTER_STRING);
         if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
             mRetryView.setText(R.string.can_not_found_result_and_retry, false);
         }

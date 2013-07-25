@@ -1,9 +1,7 @@
 package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
-import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.model.test.BaseQueryTest;
 import com.tigerknows.model.test.ProxyQueryTest;
 import com.tigerknows.model.xobject.XMap;
 
@@ -39,18 +37,6 @@ public class ProxyQuery extends BaseQuery {
     // checkoutdate string true 离开日期，格式如2013-04-22
     public static final String SERVER_PARAMETER_CHECKOUT_DATE = "checkoutdate";
 
-    // 2 注册七天酒店会员
-    public static final String TASK_REGISTER_7_DAY_MEMBER = "2";
-
-    // username string true 用户姓名，不支持标点符号
-    public static final String SERVER_PARAMETER_USERNAME = "username";
-
-    // mobile string true 用户手机号
-    public static final String SERVER_PARAMETER_MOBILE = "mobile";
-
-    // idcardno string true 用于注册酒店会员的身份证号
-    public static final String SERVER_PARAMETER_IDCARDNO = "idcardno";
-    
     //动态房型信息查询必选参数key
     private static final String[] ROOM_TYPE_DYNAMIC_EKEYS = new String[] {
         SERVER_PARAMETER_HOTELID, SERVER_PARAMETER_ROOMID,
@@ -61,14 +47,6 @@ public class ProxyQuery extends BaseQuery {
     //动态房型信息查询可选参数key
     private static final String[] ROOM_TYPE_DYNAMIC_OKEYS = null;
     
-    //7天会员注册必选参数key
-    private static final String[] REGISTER_7_DAY_MEMBER_EKEYS = new String[] {
-        SERVER_PARAMETER_USERNAME, SERVER_PARAMETER_MOBILE, 
-        SERVER_PARAMETER_IDCARDNO, SERVER_PARAMETER_TASK};
-    
-    //7天会员注册可选参数key
-    private static final String[] REGISTER_7_DAY_MEMBER_OKEYS = null;
-
     static final String TAG = "TaskQuery";
 
     public ProxyQuery(Context context) {
@@ -84,8 +62,6 @@ public class ProxyQuery extends BaseQuery {
         String task = getParameter(SERVER_PARAMETER_TASK);
         if (task.equals(TASK_ROOM_TYPE_DYNAMIC)) {
             debugCheckParameters(ROOM_TYPE_DYNAMIC_EKEYS, ROOM_TYPE_DYNAMIC_OKEYS);
-        } else if (task.equals(TASK_REGISTER_7_DAY_MEMBER)) {
-            debugCheckParameters(REGISTER_7_DAY_MEMBER_EKEYS, REGISTER_7_DAY_MEMBER_OKEYS);
         } else {
             throw APIException.wrapToMissingRequestParameterException("task type invalid.");
         }
@@ -106,8 +82,6 @@ public class ProxyQuery extends BaseQuery {
         String taskType = getParameter(SERVER_PARAMETER_TASK);
         if (taskType.equals(TASK_ROOM_TYPE_DYNAMIC)) {
             response = new RoomTypeDynamic(responseXMap);
-        } else if (taskType.equals(TASK_REGISTER_7_DAY_MEMBER)) {
-            response = new Response(responseXMap);
         } else {
             throw APIException.wrapToMissingRequestParameterException("task type invalid.");
         }
@@ -118,8 +92,6 @@ public class ProxyQuery extends BaseQuery {
         String task = getParameter(SERVER_PARAMETER_TASK);
         if (task.equals(TASK_ROOM_TYPE_DYNAMIC)) {
             responseXMap = ProxyQueryTest.launchRoomTypeDynamicRespnose(context);
-        } else if (task.equals(TASK_REGISTER_7_DAY_MEMBER)) {
-            responseXMap = BaseQueryTest.launchResponse("123456890");
         }
     }
 
@@ -226,10 +198,6 @@ public class ProxyQuery extends BaseQuery {
                 
                 public static final byte FIELD_TIME_DETAIL = 0x04;
                 
-                private static final String defaultTime = "24点之前";
-                private static final long defaultNeed = 0;
-                private static final long defaultType = 0;
-
                 private String time;
 
                 private long need;

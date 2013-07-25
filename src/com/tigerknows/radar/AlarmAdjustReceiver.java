@@ -1,7 +1,6 @@
 package com.tigerknows.radar;
 
 import com.decarta.android.util.LogWrapper;
-import com.tigerknows.TKConfig;
 import com.tigerknows.service.PullService;
 
 import android.content.BroadcastReceiver;
@@ -10,8 +9,6 @@ import android.content.Intent;
 import android.os.SystemClock;
 import android.text.TextUtils;
 
-import java.text.ParseException;
-import java.util.Calendar;
 import java.util.Date;
 
 /**

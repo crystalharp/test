@@ -67,9 +67,6 @@ public class HotelOrderOperation extends BaseQuery {
     // 宾客类型代码
     public static final String SERVER_PARAMETER_GUESTTYPE = "guesttype";
     
-    // 7天酒店会员卡号
-    public static final String SERVER_PARAMETER_MEMBERNUM = "membernum";
-    
     // 信用卡号
     public static final String SERVER_PARAMETER_CREDIT_CARD_NO = "creditcardno";
 
@@ -243,7 +240,6 @@ public class HotelOrderOperation extends BaseQuery {
         
         private List<HotelOrder> orders;
         
-        @SuppressWarnings("unchecked")
         public HotelOrderSyncResponse(XMap data) throws APIException {
             super(data);
             

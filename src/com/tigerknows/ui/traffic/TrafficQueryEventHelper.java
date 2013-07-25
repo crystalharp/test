@@ -38,7 +38,6 @@ import com.tigerknows.model.TKWord;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.traffic.TrafficQueryFragment.QueryEditText;
 import com.tigerknows.ui.traffic.TrafficViewSTT.Event;
-import com.tigerknows.ui.traffic.TrafficViewSTT.State;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.StringArrayAdapter;
 import com.tigerknows.widget.SuggestArrayAdapter;

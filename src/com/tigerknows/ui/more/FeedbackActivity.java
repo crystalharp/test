@@ -5,9 +5,6 @@
 package com.tigerknows.ui.more;
 
 import com.tigerknows.R;
-import com.tigerknows.R.id;
-import com.tigerknows.R.layout;
-import com.tigerknows.R.string;
 import com.tigerknows.android.os.TKAsyncTask;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;

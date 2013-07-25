@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.decarta.CONFIG;
-import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.BoundingBox;
 import com.decarta.android.location.Position;
@@ -30,10 +29,8 @@ import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Bitmap.CompressFormat;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
-import android.telephony.TelephonyManager;
 import android.util.TypedValue;
 
 public class Util {

@@ -16,7 +16,6 @@ import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -1404,7 +1403,7 @@ public class MapEngine {
                 for(int i = lines.length-1; i >= 0; i--) {
                     String[] line = lines[i].split(" ");
                     if (line[0].equals(token)) {
-                        result = line[1];
+                        result = line[1].trim();
                     }
                 }
             } catch (Exception e) {

@@ -11,12 +11,17 @@ import com.tigerknows.model.DataQuery.AlternativeResponse;
 import com.tigerknows.model.DataQuery.AlternativeResponse.Alternative;
 import com.tigerknows.model.DataQuery.CouponResponse;
 import com.tigerknows.model.DataQuery.CouponResponse.CouponList;
+import com.tigerknows.model.DataQuery.FilterConfigResponse;
 import com.tigerknows.model.Dianying;
 import com.tigerknows.model.Fendian;
 import com.tigerknows.model.Hotel;
 import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.POI;
+import com.tigerknows.model.POI.PresetTime;
+import com.tigerknows.model.POI.Station;
+import com.tigerknows.model.POI.SubwayExit;
+import com.tigerknows.model.POI.SubwayPresetTime;
 import com.tigerknows.model.PullMessage;
 import com.tigerknows.model.Shangjia;
 import com.tigerknows.model.TKDrawable;
@@ -309,6 +314,15 @@ public class DataQueryTest {
             list.add(XInt.valueOf(i));
         }
         return list;
+    }
+    
+    public static XMap launchFilterConfigResponse() {
+        XMap data = new XMap();
+        BaseQueryTest.launchResponse(data);
+        XMap configResult = new XMap();
+        configResult.put(FilterConfigResponse.FIELD_AREA_FILTER, launchFilterArea());
+        data.put(FilterConfigResponse.FIELD_RESULT, configResult);
+        return data;
     }
 
     protected static XMap launchFilterArea() {
@@ -631,7 +645,48 @@ public class DataQueryTest {
         data.put(Description.FIELD_PER_CAPITA, 168);
         data.put(Description.FIELD_MOODS, "FIELD_MOODS");
         data.put(Description.FIELD_STAR, "FIELD_STAR");
+        data.put(Description.FIELD_SUBWAY_EXITS, launchSubwayExit());
+        data.put(Description.FIELD_SUBWAY_PRESET_TIMES, launchSubwayPresetTime());
         return data;
+    }
+    
+    protected static XArray<XMap> launchSubwayExit() {
+        XArray<XMap> dataList = new XArray<XMap>();
+        for (int i = 0; i < 4; i++) {
+            XMap subwayExit = new XMap();
+            subwayExit.put(SubwayExit.FEILD_SUBWAY_EXIT, "Exit " + i);
+            subwayExit.put(SubwayExit.FEILD_LANDMARK, "Landmark " + i);
+            XArray<XMap> stationList = new XArray<XMap>();
+//            for (int j = 0; j < 3; j++) {
+                XMap station = new XMap();
+                station.put(Station.FEILD_STATION, "中关园北站");
+                stationList.add(station);
+//            }
+            subwayExit.put(SubwayExit.FEILD_STATIONS, stationList);
+            dataList.add(subwayExit);
+        }
+        
+        return dataList;
+    }
+    
+    protected static XArray<XMap> launchSubwayPresetTime() {
+        XArray<XMap> dataList = new XArray<XMap>();
+        for (int i = 0; i < 2; i++) {
+            XMap subwayPresetTime = new XMap();
+            subwayPresetTime.put(SubwayPresetTime.FEILD_SUBWAY_NAME, "Line " + i);
+            XArray<XMap> presetTimeList = new XArray<XMap>();
+            for (int j = 0; j < 3; j++) {
+                XMap presetTime = new XMap();
+                presetTime.put(PresetTime.FEILD_DIRECTION, "Direction");
+                presetTime.put(PresetTime.FEILD_END_TIME, "EndTime");
+                presetTime.put(PresetTime.FEILD_START_TIME, "StartTime");
+                presetTimeList.add(presetTime);
+            }
+            subwayPresetTime.put(SubwayPresetTime.FEILD_PRESET_TIME, presetTimeList);
+            dataList.add(subwayPresetTime);
+        }
+        
+        return dataList;
     }
 
     protected static XMap launchDynamicPOI(int type) {
