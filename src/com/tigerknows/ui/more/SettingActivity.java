@@ -269,7 +269,6 @@ public class SettingActivity extends BaseActivity {
 				
 				@Override
 				public void onClick(View v) {
-					// TODO Auto-generated method stub
 					DataBean dataBean = mBeans.get(j);
 					if (dataBean == null){
 						return;
@@ -278,31 +277,33 @@ public class SettingActivity extends BaseActivity {
 	                Intent intent;
 	                switch (type) {
 	                    case DataBean.TYPE_GPS:
-	                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingGPS, checkGPS());
+	                        mActionLog.addAction(mActionTag + ActionLog.SettingGPS, checkGPS());
 	                        intent = new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
 	                        startActivityForResult(intent, R.id.activity_setting_location);
 	                        break;
 	                    case DataBean.TYPE_WAKELOCK:
 	                        dataBean.checked = !dataBean.checked;
-	                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingWakeLock, dataBean.checked);
+	                        mActionLog.addAction(mActionTag + ActionLog.SettingWakeLock, dataBean.checked);
 	                        refreshDataSetChanged(type-1);
 	                        switchWakeLock();
 	                        break;
 	                    case DataBean.TYPE_RADARPUSH:
 	                        dataBean.checked = !dataBean.checked;
-	                        mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingRadar, dataBean.checked);
+	                        mActionLog.addAction(mActionTag + ActionLog.SettingRadar, dataBean.checked);
 	                        refreshDataSetChanged(type-1);
 	                        switchRadarPush();
 	                        break;
 	                    case DataBean.TYPE_CLEARCACHE:
-	                    	mActionLog.addAction(mActionTag + ActionLog.ListViewItem, ActionLog.SettingClearCache);
+	                    	mActionLog.addAction(mActionTag + ActionLog.SettingClearCache);
 	                    	showClearCacheDialog();
 	                    	break;
 	                    case DataBean.TYPE_HELP:
+	                    	mActionLog.addAction(mActionTag + ActionLog.SettingHelp);
 	                    	intent = new Intent(SettingActivity.this, HelpActivity.class);
 	                    	startActivityForResult(intent, 0);
 	                    	break;
 	                    case DataBean.TYPE_ABOUT:
+	                    	mActionLog.addAction(mActionTag + ActionLog.SettingAboutMe);
 	                    	intent = new Intent(SettingActivity.this, AboutUsActivity.class);
 	                    	startActivityForResult(intent, 0);
 	                    	break;
