@@ -9,34 +9,41 @@
     android:orientation="vertical"
     android:background="@drawable/bg_discover"
     >
+    <RelativeLayout android:id="@+id/notice_rly"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:visibility="gone"
+        >
+        <android.support.v4.view.ViewPager  
+            android:id="@+id/view_pager"
+            android:layout_width="fill_parent"
+            android:layout_height="48dp"
+            android:focusable="true"
+            />
+        <LinearLayout
+            android:id="@+id/page_indicator_view"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            />
+    </RelativeLayout>
+    <ScrollView 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/notice_rly"
+        >
+        
     <LinearLayout 
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="8dp"
         >
         
-	    <RelativeLayout
-	        android:layout_width="fill_parent"
-	        android:layout_height="wrap_content"
-	        >
-	        <android.support.v4.view.ViewPager  
-	            android:id="@+id/view_pager"
-	            android:layout_width="fill_parent"
-	            android:layout_height="48dp"
-	            android:focusable="true"
-	            />
-	        <LinearLayout
-	            android:id="@+id/page_indicator_view"
-	            android:layout_width="fill_parent"
-	            android:layout_height="wrap_content"
-	            android:layout_marginBottom="16dp"
-	            android:orientation="horizontal"
-	            android:gravity="center_horizontal"
-	            />
-	    </RelativeLayout>                
-        <LinearLayout
+	    <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -348,4 +355,5 @@
 
         
     </LinearLayout>
+    </ScrollView>            
 </RelativeLayout>

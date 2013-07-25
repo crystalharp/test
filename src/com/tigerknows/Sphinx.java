@@ -2022,7 +2022,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             	if (response instanceof NoticeResultResponse) {
             		NoticeResultResponse noticeResultResponse = (NoticeResultResponse) response;
             		if(noticeResultResponse != null){
-            			getMoreFragment().refreshMoreData(noticeResultResponse);
+            			getMoreFragment().refreshMoreNotice(noticeResultResponse);
             		}
             	}
             }
@@ -2516,7 +2516,7 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
             POI poi = (POI) infoWindow.getAssociatedOverlayItem().getAssociatedObject();
             getTrafficQueryFragment().setDataForSelectPoint(poi, TrafficQueryFragment.SELECTED);
         } else if(touchMode.equals(TouchMode.LONG_CLICK)){
-            // TODO: 什么也不用做
+            // 什么也不用做
             return;
         } else if (overlayItem != null) {
             infoWindow.setVisible(false);

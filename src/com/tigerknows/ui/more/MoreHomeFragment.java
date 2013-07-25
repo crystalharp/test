@@ -27,12 +27,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
 import android.widget.LinearLayout.LayoutParams;
 
 import com.decarta.Globals;
+import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -74,7 +76,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     public static final int SHOW_COMMENT_TIP_TIMES = 3;
     private static final int NUM_APP_RECOMMEND = 5;
     
-    private ListView mListLsv;
+//    private ListView mListLsv;
     private TextView mUserNameTxv;
     private TextView mCurrentCityTxv;
     private Button mUserBtn;
@@ -110,6 +112,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     
     public static DownloadCity CurrentDownloadCity;
     
+    private RelativeLayout mNoticeRly;
     private NoticeResultResponse mNoticeResultResponse;
     private NoticeResult mNoticeResult;
     private List<Notice> mNoticeList;
@@ -145,12 +148,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         
-        mRootView = mLayoutInflater.inflate(R.layout.list_view, container, false);
-        mListLsv = (ListView) mRootView.findViewById(R.id.list_lsv);
-        
-        View headerview = mLayoutInflater.inflate(R.layout.more_home, mListLsv, false);
-        mListLsv.addHeaderView(headerview);
-        mListLsv.setAdapter(null);
+        mRootView = mLayoutInflater.inflate(R.layout.more_home, container, false);
+//        mListLsv = (ListView) mRootView.findViewById(R.id.list_lsv);
+//        
+//        View headerview = mLayoutInflater.inflate(R.layout.more_home, mListLsv, false);
+//        mListLsv.addHeaderView(headerview);
+//        mListLsv.setAdapter(null);
     	mRightBtn = mSphinx.getTitleFragment().getRightTxv();        
         findViews();        
 
@@ -169,7 +172,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             mGiveFavourableCommentBtn.setVisibility(View.GONE);
             mGiveFavourableCommentImv.setVisibility(View.GONE);
         }
-        
+
         return mRootView;
     }
 
@@ -185,39 +188,22 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mRightBtn.setEnabled(true);
         mRightBtn.setBackgroundDrawable(getResources().getDrawable(R.drawable.btn_settings));
         if (mDismissed) {
-            mListLsv.setSelection(0);
+            //mListLsv.setSelection(0);
         }
 
         mMenuFragment.display();
         
         refreshUserEntrance();
-        refreshMoreData(mNoticeResultResponse);
+        refreshMoreData();
         refreshCity(Globals.getCurrentCityInfo().getCName());
-        if(mViewPager != null){
-        	mViewPager.setAdapter(new MyAdapter());
-        	mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
-        		
-        		@Override
-        		public void onPageSelected(int index) {
-        			Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, index, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
-        			mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, index);
-        		}
-        		
-        		@Override
-        		public void onPageScrolled(int arg0, float arg1, int arg2) {
-        		}
-        		
-        		@Override
-        		public void onPageScrollStateChanged(int arg0) {
-        		}
-        	});
-        }
+
     }
     public void refreshMoreData() {
-    	refreshMoreData(null);
+    	refreshMoreNotice(null);
+    	refreshAppRecommendData();
     }
     
-    public void refreshMoreData(NoticeResultResponse noticeResultResponse) {
+    public void refreshMoreNotice(NoticeResultResponse noticeResultResponse) {
     	
     	if(mNoticeResultResponse == null){
         	mNoticeResultResponse = noticeResultResponse;
@@ -226,6 +212,30 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         		if(mNoticeResult != null){
         			mPagecount = (int)mNoticeResult.getNum();
         			mNoticeList = mNoticeResult.getNoticeList();
+        	        if(mPagecount > 0){
+        	        	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
+        	        	mNoticeRly.setVisibility(View.VISIBLE);
+        	        	mViewPager.setAdapter(new MyAdapter());
+        	        	mViewPager.setOnPageChangeListener(new OnPageChangeListener() {
+        	        		
+        	        		@Override
+        	        		public void onPageSelected(int index) {
+        	        				index = index % mPagecount;
+        	        			Utility.pageIndicatorChanged(mSphinx, mPageIndicatorView, index, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
+        	        			mActionLog.addAction(mActionTag+ActionLog.ViewPageSelected, index);
+        	        		}
+        	        		
+        	        		@Override
+        	        		public void onPageScrolled(int arg0, float arg1, int arg2) {
+        	        		}
+        	        		
+        	        		@Override
+        	        		public void onPageScrollStateChanged(int index) {
+        	        				index = (index % mPagecount);
+        	        		}
+        	        	});
+        	        	if(mPagecount > 0) mViewPager.setCurrentItem(mPagecount * 500);
+        	        }
         		}
         	}else{
              	NoticeQuery noticeQuery = new NoticeQuery(mSphinx);
@@ -234,8 +244,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 mSphinx.queryStart(noticeQuery);        		
         	}
     	}
-        
-    	refreshAppRecommendData();
+    	LogWrapper.d("Trap", "size:"+(mNoticeList == null ? -1 : mNoticeList.size()));
         
         // 满意度评分(不是button)
         if(TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
@@ -265,8 +274,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             bootstrap.setup(null, Globals.getCurrentCityInfo().getId());
             mSphinx.queryStart(bootstrap);        	
         }
-        
-
     }
 
     @Override
@@ -275,6 +282,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     }
     
     protected void findViews() {
+    	mNoticeRly = (RelativeLayout) mRootView.findViewById(R.id.notice_rly);
         mCurrentCityTxv = (TextView) mRootView.findViewById(R.id.current_city_txv);
         mUserNameTxv = (TextView) mRootView.findViewById(R.id.user_name_txv);
         mUserBtn = (Button)mRootView.findViewById(R.id.user_btn);
@@ -297,11 +305,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	mAppRecommendImv[i] = (ImageView)mAppRecommendView[i].findViewById(R.id.app_icon_imv);
         	mAppRecommendTxv[i] = (TextView)mAppRecommendView[i].findViewById(R.id.app_name_txv);
         }
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        mPageIndicatorView = (ViewGroup) findViewById(R.id.page_indicator_view);
-        if(mPagecount > 0){
-        	Utility.pageIndicatorInit(mSphinx, mPageIndicatorView, mPagecount, 0, R.drawable.ic_learn_dot_normal, R.drawable.ic_learn_dot_selected);
-        }
+        mViewPager = (ViewPager) mRootView.findViewById(R.id.view_pager);
+        mPageIndicatorView = (ViewGroup) mRootView.findViewById(R.id.page_indicator_view);
+        LogWrapper.d("Trap", "Page:"+mPagecount);
+
     }
     
     protected void setListener() {
@@ -458,6 +465,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     }
 
     public View getView(int position) {
+    	position = position % mPagecount;
         if (viewMap.containsKey(position)) {
             return viewMap.get(position);
         }
@@ -486,7 +494,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	    
 	    @Override
 	    public int getCount() {
-	        return mPagecount;
+	        return mPagecount*1000;
 	    }
 	
 	    @Override
@@ -532,6 +540,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	        // TODO Auto-generated method stub
 	    }
 	
-	}    
+	}
 
 }
