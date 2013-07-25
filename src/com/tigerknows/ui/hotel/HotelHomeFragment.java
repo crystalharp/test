@@ -508,7 +508,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
             Response response = baseQuery.getResponse();
             mResponse = response;
             if (response == null) {
-                queryFilter();
+//                queryFilter();
                 return;
             } else if (isSupportHotelQuery() == false) {
                 return;

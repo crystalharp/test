@@ -257,7 +257,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         } else {
             FilterArea filterArea = DataQuery.getFilterArea();
             if (filterArea == null || filterArea.getVersion().equals("0.0.0")) {
-                queryFilter();
+//                queryFilter();
                 return;
             }
                 
