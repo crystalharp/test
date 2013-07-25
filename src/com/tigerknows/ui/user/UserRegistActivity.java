@@ -117,11 +117,10 @@ public class UserRegistActivity extends UserBaseActivity {
 
 		String phone = phoneEdt.getText().toString().trim();
 		
-		Hashtable<String, String> criteria = new Hashtable<String, String>();
-		criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_BIND_TELEPHONE);
-		criteria.put(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
+		accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_BIND_TELEPHONE);
+		accountManage.addParameter(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
 		
-		sendRequest(accountManage, criteria);
+		sendRequest(accountManage);
 	}
 
 	/**
@@ -136,13 +135,12 @@ public class UserRegistActivity extends UserBaseActivity {
 		String password = passwordEdt.getText().toString().trim();
 		String valiNum = valiNumEdt.getText().toString().trim();
 		
-		Hashtable<String, String> criteria = new Hashtable<String, String>();
-		criteria.put(AccountManage.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_CREATE);
-		criteria.put(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
-		criteria.put(AccountManage.SERVER_PARAMETER_PASSWORD, Utility.encryptWithSHA1(password));
-		criteria.put(AccountManage.SERVER_PARAMETER_VALIDATE_CODE, valiNum);
+		accountManage.addParameter(AccountManage.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_CREATE);
+		accountManage.addParameter(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
+		accountManage.addParameter(AccountManage.SERVER_PARAMETER_PASSWORD, Utility.encryptWithSHA1(password));
+		accountManage.addParameter(AccountManage.SERVER_PARAMETER_VALIDATE_CODE, valiNum);
 		
-		sendRequest(accountManage, criteria);
+		sendRequest(accountManage);
 	}
 	
 	private void validationAction(final ExtValidationEditText source) {

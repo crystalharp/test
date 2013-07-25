@@ -94,13 +94,12 @@ public class UserUpdatePasswordActivity extends UserBaseActivity {
 		String newPassword = newPasswordEdt.getText().toString().trim();
 		
 		if (TextUtils.isEmpty(Globals.g_Session_Id) == false) {
-			Hashtable<String, String> criteria = new Hashtable<String, String>();
-			criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_UPDATE_PASSWORD);
-			criteria.put(AccountManage.SERVER_PARAMETER_OLD_PASSWORD, Utility.encryptWithSHA1(oldPassword));
-			criteria.put(AccountManage.SERVER_PARAMETER_PASSWORD, Utility.encryptWithSHA1(newPassword));
-			criteria.put(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_UPDATE_PASSWORD);
+			accountManage.addParameter(AccountManage.SERVER_PARAMETER_OLD_PASSWORD, Utility.encryptWithSHA1(oldPassword));
+			accountManage.addParameter(AccountManage.SERVER_PARAMETER_PASSWORD, Utility.encryptWithSHA1(newPassword));
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
 			
-			sendRequest(accountManage, criteria);
+			sendRequest(accountManage);
 		} 
 	}
 	

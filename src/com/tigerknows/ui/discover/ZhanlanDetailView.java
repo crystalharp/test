@@ -164,12 +164,11 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
         		mDescriptionTxv.setVisibility(View.GONE);
         		mLoadingView.setVisibility(View.VISIBLE);
         		DataOperation dataOperation = new DataOperation(mSphinx);
-        		Hashtable<String, String> criteria = new Hashtable<String, String>();
-        		criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_ZHANLAN);
-        		criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-        		criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
-        		criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
-        		dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
+        		dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_ZHANLAN);
+        		dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+        		dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
+        		dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
+        		dataOperation.setup(Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
         		mTKAsyncTasking = mSphinx.queryStart(dataOperation);
         		mAsyncTaskExecuting = true;
         		mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
@@ -284,18 +283,17 @@ public class ZhanlanDetailView extends BaseDetailView implements View.OnClickLis
         mParentFragment.setViewsVisibility(View.INVISIBLE);
         
         DataOperation dataOperation = new DataOperation(mSphinx);
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(BaseQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI);
-        criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_ZHANLAN);
-        criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUID());
-        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD,
+        dataOperation.addParameter(BaseQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, BaseQuery.REQUSET_SOURCE_TYPE_PULLED_DYNAMIC_POI);
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_ZHANLAN);
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, dynamicPOI.getMasterUID());
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD,
                 Zhanlan.NEED_FIELD + Util.byteToHexString(Zhanlan.FIELD_DESCRIPTION));
-        criteria.put(DataOperation.SERVER_PARAMETER_PICTURE,
+        dataOperation.addParameter(DataOperation.SERVER_PARAMETER_PICTURE,
                 Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
                 Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
-        criteria.put(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + 410, ""+R.string.response_code_410_pulled);
-        dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+        dataOperation.addParameter(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + 410, ""+R.string.response_code_410_pulled);
+        dataOperation.setup(Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
         mTKAsyncTasking = mSphinx.queryStart(dataOperation);
         mAsyncTaskExecuting = true;
         mBaseQuerying = mTKAsyncTasking.getBaseQueryList();

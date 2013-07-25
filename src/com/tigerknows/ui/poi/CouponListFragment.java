@@ -172,11 +172,10 @@ public class CouponListFragment extends BaseFragment implements RetryView.CallBa
             updateView();
             
             dataQuery = new DataQuery(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_COUPON);
-            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
-            criteria.put(DataQuery.SERVER_PARAMETER_NEED_FIELD, Coupon.NEED_FIELD);
-            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_COUPON);
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_NEED_FIELD, Coupon.NEED_FIELD);
+            dataQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
             mSphinx.queryStart(dataQuery);
         }
     }

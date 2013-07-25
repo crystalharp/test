@@ -111,12 +111,11 @@ public class CommentListActivity extends BaseActivity {
             mCommentLsv.setFooterSpringback(false);
             DataQuery dataQuery = mPOI.getCommentQuery();
             if (dataQuery == null) {
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
-                criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
-                criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
                 dataQuery = new DataQuery(mThis);
-                dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
+                dataQuery.setup(Globals.getCurrentCityInfo().getId(), mId, mId, null, false, false, mPOI);
                 mCommentLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
                 queryStart(dataQuery);
             } else {
@@ -230,30 +229,29 @@ public class CommentListActivity extends BaseActivity {
 
         mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
 
-        DataQuery dataQuery = new DataQuery(mThis);
+        DataQuery dataQuery = new DataQuery(mCommentQuery);
         POI requestPOI = mCommentQuery.getPOI();
         int cityId = mCommentQuery.getCityId();
-        Hashtable<String, String> criteria = mCommentQuery.getCriteria();
         if (mCommentArrayList.size() > 0) {
             mCommentLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
             if (isHeader) {
                 Comment comment = mCommentArrayList.get(0);
                 if (Comment.isAuthorMe(comment) > 0) {
                     if (mCommentArrayList.size() > 1) {
-                        criteria.put(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(1).getTime());
+                        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(1).getTime());
                     } else {
-                        criteria.put(DataQuery.SERVER_PARAMETER_TIME, comment.getTime());
+                        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_TIME, comment.getTime());
                     }
                 } else {
-                    criteria.put(DataQuery.SERVER_PARAMETER_TIME, comment.getTime());
+                    dataQuery.addParameter(DataQuery.SERVER_PARAMETER_TIME, comment.getTime());
                 }
-                criteria.put(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_AFTER);
-                dataQuery.setup(criteria, cityId, -1, -1, null, true, true, requestPOI);
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_AFTER);
+                dataQuery.setup(cityId, -1, -1, null, true, true, requestPOI);
                 queryStart(dataQuery);
             } else {
-                criteria.put(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(mCommentArrayList.size()-1).getTime());
-                criteria.put(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_BEFORE);
-                dataQuery.setup(criteria, cityId, -1, -1, null, true, true, requestPOI);
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_TIME, mCommentArrayList.get(mCommentArrayList.size()-1).getTime());
+                dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DIRECTION, DataQuery.DIRECTION_BEFORE);
+                dataQuery.setup(cityId, -1, -1, null, true, true, requestPOI);
                 queryStart(dataQuery);
             }
         } else {

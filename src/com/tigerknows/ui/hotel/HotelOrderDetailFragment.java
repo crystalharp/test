@@ -210,12 +210,11 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
 	
 	private void sendCancelRequest(){
 
-		Hashtable<String, String> criteria = new Hashtable<String, String>();
-		criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_UPDATE);
-		criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_ID, mOrder.getId());
-		criteria.put(HotelOrderOperation.SERVER_PARAMETER_UPDATE_ACTION, HotelOrderOperation.ORDER_UPDATE_ACTION_CANCEL);
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
-    	hotelOrderOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.query_loading_tip));
+    	hotelOrderOperation.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_UPDATE);
+    	hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_ORDER_ID, mOrder.getId());
+    	hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_UPDATE_ACTION, HotelOrderOperation.ORDER_UPDATE_ACTION_CANCEL);
+    	hotelOrderOperation.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.query_loading_tip));
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
     	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
 
@@ -223,13 +222,12 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     
 	private DataQuery createCommentQuery(){
 
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
-        criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, mOrder.getHotelPoiUUID());
-        criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
-        criteria.put(DataQuery.SERVER_PARAMETER_SIZE, "1");
         DataQuery commentQuery = new DataQuery(mSphinx);
-        commentQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.query_loading_tip), false);
+        commentQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+        commentQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, mOrder.getHotelPoiUUID());
+        commentQuery.addParameter(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
+        commentQuery.addParameter(DataQuery.SERVER_PARAMETER_SIZE, "1");
+        commentQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), mContext.getString(R.string.query_loading_tip), false);
         
 		return commentQuery;
         
@@ -347,11 +345,10 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     		return;
     	}
     	LogWrapper.i(TAG, "send state query for: " + ids);
-    	Hashtable<String, String> criteria = new Hashtable<String, String>();
-    	criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_QUERY);
-    	criteria.put(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS, ids);
     	HotelOrderOperation hotelOrderOperation = new HotelOrderOperation(mSphinx);
-    	hotelOrderOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
+    	hotelOrderOperation.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, HotelOrderOperation.OPERATION_CODE_QUERY);
+    	hotelOrderOperation.addParameter(HotelOrderOperation.SERVER_PARAMETER_ORDER_IDS, ids);
+    	hotelOrderOperation.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), null);
     	mTkAsyncTasking = mSphinx.queryStart(hotelOrderOperation);
     	mBaseQuerying = mTkAsyncTasking.getBaseQueryList();
     }
@@ -607,21 +604,20 @@ public class HotelOrderDetailFragment extends BaseFragment implements View.OnCli
     public static final SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     
     private DataOperation createPOIQuery(){
-    	Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
-        criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
-        criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-        criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mOrder.getHotelPoiUUID());
-        criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
+        DataOperation poiQuery = new DataOperation(mSphinx);
+        poiQuery.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, DataQuery.SUB_DATA_TYPE_HOTEL);
+        poiQuery.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+        poiQuery.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, mOrder.getHotelPoiUUID());
+        poiQuery.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
         Calendar today = Calendar.getInstance();
         Calendar tomorrow = Calendar.getInstance();
         tomorrow.add(Calendar.DAY_OF_YEAR, 1);
-        criteria.put(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(today.getTime()));
-        criteria.put(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(tomorrow.getTime()));
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKIN, SIMPLE_DATE_FORMAT.format(today.getTime()));
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_CHECKOUT, SIMPLE_DATE_FORMAT.format(tomorrow.getTime()));
         
         int cityId= MapEngine.getInstance().getCityId(mOrder.getPosition());
-        DataOperation poiQuery = new DataOperation(mSphinx);
-        poiQuery.setup(criteria, cityId, getId(), getId(), mContext.getString(R.string.query_loading_tip));
+        poiQuery.setup(cityId, getId(), getId(), mContext.getString(R.string.query_loading_tip));
         return poiQuery;
     }
     

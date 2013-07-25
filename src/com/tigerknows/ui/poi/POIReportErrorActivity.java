@@ -695,11 +695,10 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     	s.append('_');
     	int errcode = 510 + (mChecked >> 6)*10;
     	s.append(errcode + "");
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, s.toString());
-        criteria.put(FeedbackUpload.LOCAL_PARAMETER_POIERROR_IGNORE, "true");
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
-        feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId());
+        feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, s.toString());
+        feedbackUpload.addParameter(FeedbackUpload.LOCAL_PARAMETER_POIERROR_IGNORE, "true");
+        feedbackUpload.setup(Globals.getCurrentCityInfo().getId());
         queryStart(feedbackUpload);
     }
 
@@ -734,10 +733,9 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             e.printStackTrace();
         }
         hideSoftInput();
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, s.toString());
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
-        feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+        feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, s.toString());
+        feedbackUpload.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
         queryStart(feedbackUpload);
     }
     @Override

@@ -154,10 +154,9 @@ public class FeedbackActivity extends BaseActivity implements View.OnClickListen
             }
             hideSoftInput();
 
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(FeedbackUpload.SERVER_PARAMETER_FEEDBACK, feedContent);
             FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
-            feedbackUpload.setup(criteria, -1, -1, -1, mThis.getString(R.string.doing_and_wait));
+            feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_FEEDBACK, feedContent);
+            feedbackUpload.setup(-1, -1, -1, mThis.getString(R.string.doing_and_wait));
             queryStart(feedbackUpload);
         } else {
             Toast.makeText(mThis, R.string.feedback_no_content_tip, Toast.LENGTH_SHORT).show();

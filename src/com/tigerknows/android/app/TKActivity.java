@@ -178,8 +178,6 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                 if (Globals.g_My_Location_City_Info != null) {
                     ActionLog.getInstance(activity).addAction(ActionLog.LifecycleFirstLocationSuccess, Globals.g_My_Location_City_Info.getCName());
                     final FeedbackUpload feedbackUpload = new FeedbackUpload(activity);
-                    Hashtable<String, String> criteria = new Hashtable<String, String>();
-                    feedbackUpload.setup(criteria);
                     new Thread(new Runnable() {
                         
                         @Override
@@ -752,7 +750,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
             }
             resId = getResponseResId(baseQuery);
         }else {
-            String responseStringRes = baseQuery.getCriteria().get(BaseQuery.RESPONSE_NULL_ERROR_MSG);
+            String responseStringRes = baseQuery.getParameter(BaseQuery.RESPONSE_NULL_ERROR_MSG);
             if(responseStringRes!=null){
             	resId = Integer.parseInt(responseStringRes);
             }
@@ -858,7 +856,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                     break;
             }
         } else {
-            String responseStringRes = baseQuery.getCriteria().get(BaseQuery.RESPONSE_NULL_ERROR_MSG);
+            String responseStringRes = baseQuery.getParameter(BaseQuery.RESPONSE_NULL_ERROR_MSG);
             if(responseStringRes!=null){
             	resId = Integer.parseInt(responseStringRes);
             }else{

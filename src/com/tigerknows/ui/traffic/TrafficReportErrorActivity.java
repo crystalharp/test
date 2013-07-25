@@ -157,10 +157,9 @@ public class TrafficReportErrorActivity extends BaseActivity {
 //				String result = "T" + stationError + lineError + descript + phone;
 				LogWrapper.d(TAG, "errorrecovery: " + result);
 				mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
-				Hashtable<String, String> criteria = new Hashtable<String, String>();
-                criteria.put(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, result.toString());
                 FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
-                feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+                feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, result.toString());
+                feedbackUpload.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
                 queryStart(feedbackUpload);
 			}
 		});

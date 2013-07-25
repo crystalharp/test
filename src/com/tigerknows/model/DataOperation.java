@@ -56,6 +56,10 @@ public class DataOperation extends BaseQuery {
         super(context, API_TYPE_DATA_OPERATION);
     }
 
+    public DataOperation(BaseQuery query) {
+        super(query);
+    }
+
     @Override
     protected void checkRequestParameters() throws APIException {
 //        addCommonParameters(cityId);

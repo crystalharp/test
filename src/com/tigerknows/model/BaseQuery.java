@@ -412,9 +412,6 @@ public abstract class BaseQuery {
     
     private RequestParameters requestParameters = new RequestParameters();
     
-    //FIXME:使用private变量
-//    private WeiboParameters requestParameters = new WeiboParameters();
-
     protected HttpUtils.TKHttpClient httpClient;
 
     protected boolean isTranslatePart = false;
@@ -441,6 +438,17 @@ public abstract class BaseQuery {
         this.context = context;
         this.apiType = apiType;
         this.version = version;
+    }
+    
+    public BaseQuery(BaseQuery query) {
+        this.context = query.context;
+        this.apiType = query.apiType;
+        this.version = query.version;
+        this.targetViewId = query.targetViewId;
+        this.sourceViewId = query.sourceViewId;
+        this.tipText = query.tipText;
+        this.needReconntection = query.needReconntection;
+        this.requestParameters = query.requestParameters.clone();
     }
     
     public int getTargetViewId() {
@@ -510,25 +518,23 @@ public abstract class BaseQuery {
         public void onReportStateCode(int stateCode);
     }
 
-    public void setup(Hashtable<String, String> criteria) {
-        setup(criteria, -1, -1, -1);
-    }
+//    public void setup(Hashtable<String, String> criteria) {
+//        setup(criteria, -1, -1, -1);
+//    }
 
-    public void setup(Hashtable<String, String> criteria, int cityId) {
-        setup(criteria, cityId, -1, -1);
+    public void setup(int cityId) {
+        setup(cityId, -1, -1);
     }
     
-    public void setup(Hashtable<String, String> criteria, int cityId, int sourceViewId, int targetViewId) {
-        setup(criteria, cityId, sourceViewId, targetViewId, null);
+    public void setup(int cityId, int sourceViewId, int targetViewId) {
+        setup(cityId, sourceViewId, targetViewId, null);
     }
     
-    public void setup(Hashtable<String, String> criteria, int cityId, int sourceViewId, int targetViewId, String tipText) {
-        setup(criteria, cityId, sourceViewId, targetViewId, tipText, false);
+    public void setup(int cityId, int sourceViewId, int targetViewId, String tipText) {
+        setup(cityId, sourceViewId, targetViewId, tipText, false);
     }
     
-    public void setup(Hashtable<String, String> criteria, int cityId, int sourceViewId, int targetViewId, String tipText, boolean needReconntection) {
-        //FIXME:把所有的参数添加全部变成BaseQuery的addParameter
-//        this.criteria = criteria;
+    public void setup(int cityId, int sourceViewId, int targetViewId, String tipText, boolean needReconntection) {
         this.cityId = cityId;
         this.sourceViewId = sourceViewId;
         this.targetViewId = targetViewId;
@@ -888,6 +894,7 @@ public abstract class BaseQuery {
         }
     }
     
+    //TODO:删掉这个函数
     public static void passLocationToCriteria(Hashtable<String, String> source, Hashtable<String, String> target) {
         if (source == null || target == null) {
             return;
@@ -919,7 +926,13 @@ public abstract class BaseQuery {
      */
     public final void addParameter(String key, String value) {
         if (key != null && !key.equals("")) {
-            requestParameters.remove(key);
+            requestParameters.add(key, value);
+        }
+    }
+    
+    public final void setParameter(String key, String value) {
+        if (key != null && !key.equals("")) {
+//            requestParameters.remove(key);
             requestParameters.add(key, value);
         }
     }

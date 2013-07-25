@@ -521,20 +521,19 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         if (poi.getName() == null && poi.getUUID() != null) {
             mActionLog.addAction(mActionTag + ActionLog.POIDetailFromWeixin);
             List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
-            criteria.put(DataOperation.SERVER_PARAMETER_SUB_DATA_TYPE, DataOperation.SUB_DATA_TYPE_POI);
-            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
-            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
+            DataOperation poiQuery = new DataOperation(mSphinx);
+            poiQuery.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
+            poiQuery.addParameter(DataOperation.SERVER_PARAMETER_SUB_DATA_TYPE, DataOperation.SUB_DATA_TYPE_POI);
+            poiQuery.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+            poiQuery.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, poi.getUUID());
+            poiQuery.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
             int cityId = Globals.getCurrentCityInfo().getId();
             if (poi.ciytId != 0) {
                 cityId = poi.ciytId;
             } else if (poi.getPosition() != null){
                 cityId = MapEngine.getInstance().getCityId(poi.getPosition());
             }
-            DataOperation poiQuery = new DataOperation(mSphinx);
-            poiQuery.setup(criteria, cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
+            poiQuery.setup(cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait));
             baseQueryList.add(poiQuery);
             mSphinx.queryStart(baseQueryList);
             mNavigationWidget.setVisibility(View.GONE);
@@ -1037,30 +1036,28 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         List<BaseQuery> baseQueryList = new ArrayList<BaseQuery>();
         String uuid = poi.getUUID();
         if (poi.getFrom() == POI.FROM_LOCAL && TextUtils.isEmpty(uuid) == false) {
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
-            criteria.put(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
-            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, uuid);
-            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
+            DataOperation poiQuery = new DataOperation(mSphinx);
+            poiQuery.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_POI);
+            poiQuery.addParameter(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+            poiQuery.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+            poiQuery.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, uuid);
+            poiQuery.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD);
             int cityId = Globals.getCurrentCityInfo().getId();
             if (poi.ciytId != 0) {
                 cityId = poi.ciytId;
             } else if (poi.getPosition() != null){
                 cityId = MapEngine.getInstance().getCityId(poi.getPosition());
             }
-            DataOperation poiQuery = new DataOperation(mSphinx);
-            poiQuery.setup(criteria, cityId, getId(), getId(), null);
+            poiQuery.setup(cityId, getId(), getId(), null);
             baseQueryList.add(poiQuery);
         }
         
         if (poi.getCommentQuery() == null || poi.getFrom() == POI.FROM_LOCAL) {
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
-            criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
-            criteria.put(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
             DataQuery commentQuery = new DataQuery(mSphinx);
-            commentQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), getId(), getId(), null, false, false, poi);
+            commentQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_DIANPING);
+            commentQuery.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
+            commentQuery.addParameter(DataQuery.SERVER_PARAMETER_REFER, DataQuery.REFER_POI);
+            commentQuery.setup(Globals.getCurrentCityInfo().getId(), getId(), getId(), null, false, false, poi);
             baseQueryList.add(commentQuery);
             mCommentTipView.setVisibility(View.GONE);
         } else {
@@ -1091,15 +1088,13 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
             addLoadingView();
         }
 
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(FeedbackUpload.SERVER_PARAMETER_POI_RANK, String.valueOf(position));
-        criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
-        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
-        criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, mDynamicHotelPOI.isExist() ? BaseQuery.SUB_DATA_TYPE_HOTEL : BaseQuery.SUB_DATA_TYPE_POI);
-        criteria.put(DataQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, mActionTag);
-        
         FeedbackUpload feedbackUpload = new FeedbackUpload(mSphinx);
-        feedbackUpload.setup(criteria);
+        feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_POI_RANK, String.valueOf(position));
+        feedbackUpload.addParameter(DataQuery.SERVER_PARAMETER_POI_ID, poi.getUUID());
+        feedbackUpload.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, DataQuery.DATA_TYPE_POI);
+        feedbackUpload.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, mDynamicHotelPOI.isExist() ? BaseQuery.SUB_DATA_TYPE_HOTEL : BaseQuery.SUB_DATA_TYPE_POI);
+        feedbackUpload.addParameter(DataQuery.SERVER_PARAMETER_REQUSET_SOURCE_TYPE, mActionTag);
+        
         if (baseQueryList.isEmpty() == false) {
             if (position >= 0) {
                 baseQueryList.add(feedbackUpload);

@@ -263,7 +263,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             }
         }else{
             Bootstrap bootstrap = new Bootstrap(mSphinx);
-            bootstrap.setup(null, Globals.getCurrentCityInfo().getId());
+            bootstrap.setup(Globals.getCurrentCityInfo().getId());
             mSphinx.queryStart(bootstrap);        	
         }
 

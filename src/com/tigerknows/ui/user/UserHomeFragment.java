@@ -233,11 +233,10 @@ public class UserHomeFragment extends UserBaseFragment {
 		AccountManage accountManage = new AccountManage(mContext);
 		
 		if (TextUtils.isEmpty(Globals.g_Session_Id) == false) {
-			Hashtable<String, String> criteria = new Hashtable<String, String>();
-			criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_LOGOUT);
-			criteria.put(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, AccountManage.OPERATION_CODE_LOGOUT);
+			accountManage.addParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID, Globals.g_Session_Id);
 			
-			sendRequest(accountManage, criteria);
+			sendRequest(accountManage);
 		} 
 	}
 

@@ -556,10 +556,9 @@ public class BaseQueryTest {
             public void onClick(View arg0) {
                 AccountManage accountManage = new AccountManage(activity);
                 String phone = deleteMobileNumEdt.getText().toString().trim();
-                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                criteria.put(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, "du");
-                criteria.put(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
-                accountManage.setup(criteria, Globals.getCurrentCityInfo().getId());
+                accountManage.addParameter(BaseQuery.SERVER_PARAMETER_OPERATION_CODE, "du");
+                accountManage.addParameter(BaseQuery.SERVER_PARAMETER_TELEPHONE, phone);
+                accountManage.setup(Globals.getCurrentCityInfo().getId());
                 accountManage.setTipText(activity.getString(R.string.query_loading_tip));
                 if (activity instanceof BaseActivity) {
                     ((BaseActivity)(activity)).queryStart(accountManage, false);

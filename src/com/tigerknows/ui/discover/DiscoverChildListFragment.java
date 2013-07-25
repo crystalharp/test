@@ -105,7 +105,6 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         
         DataQuery dataQuery = new DataQuery(mContext);
         int cityId = Globals.getCurrentCityInfo().getId();
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
         
         if (object instanceof Tuangou) {
             mTuangou = (Tuangou) object;
@@ -120,13 +119,13 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             mFendianAdapter.notifyDataSetChanged();
 
             DataQuery fendianQuery = mTuangou.getFendianQuery();
-            if (fendianQuery != null && mSphinx.getDiscoverListFragment().getCriteria().get(DataQuery.SERVER_PARAMETER_FILTER).equals(fendianQuery.getParameter(DataQuery.SERVER_PARAMETER_FILTER))) {
+            if (fendianQuery != null && mSphinx.getDiscoverListFragment().getLastQuery().getParameter(DataQuery.SERVER_PARAMETER_FILTER).equals(fendianQuery.getParameter(DataQuery.SERVER_PARAMETER_FILTER))) {
                 setDataQuery(fendianQuery, true);
                 return;
             }
             
             mTuangou.setFendianQuery(null);
-            criteria.put(DataQuery.SERVER_PARAMETER_TUANGOU_UUID, mTuangou.getUid());
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_TUANGOU_UUID, mTuangou.getUid());
             
         } else if (object instanceof Dianying) {
             mDianying = (Dianying) object;
@@ -141,19 +140,19 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
             mYingxunAdapter.notifyDataSetChanged();
             
             DataQuery yingxunQuery = mDianying.getYingxunQuery();
-            if (yingxunQuery != null && mSphinx.getDiscoverListFragment().getCriteria().get(DataQuery.SERVER_PARAMETER_FILTER).equals(yingxunQuery.getParameter(DataQuery.SERVER_PARAMETER_FILTER))) {
+            if (yingxunQuery != null && mSphinx.getDiscoverListFragment().getLastQuery().getParameter(DataQuery.SERVER_PARAMETER_FILTER).equals(yingxunQuery.getParameter(DataQuery.SERVER_PARAMETER_FILTER))) {
                 setDataQuery(yingxunQuery, true);
                 return;
             }
             
             mDianying.setYingxunQuery(null);
-            criteria.put(DataQuery.SERVER_PARAMETER_DIANYING_UUID, mDianying.getUid());
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DIANYING_UUID, mDianying.getUid());
         }
         
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(0));
-        criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, mDataType);
-        BaseQuery.passLocationToCriteria(mSphinx.getDiscoverListFragment().getCriteria(), criteria);
-        dataQuery.setup(criteria, cityId, getId(), getId(), null, false, true, null);
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(0));
+        dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, mDataType);
+        BaseQuery.passLocationToCriteria(mSphinx.getDiscoverListFragment().getLastQuery(), criteria);
+        dataQuery.setup(cityId, getId(), getId(), null, false, true, null);
         
         mSphinx.queryStart(dataQuery);
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
@@ -271,12 +270,11 @@ public class DiscoverChildListFragment extends DiscoverBaseFragment implements V
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
         mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
 
-        DataQuery dataQuery = new DataQuery(mContext);
+        DataQuery dataQuery = new DataQuery(lastDataQuery);
         int cityId = lastDataQuery.getCityId();
         //FIXME:获取参数，修改，然后重新请求。加个函数
-        Hashtable<String, String> criteria = lastDataQuery.getCriteria();
-        lastDataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(getList().size()));
-        dataQuery.setup(criteria, cityId, getId(), getId(), null, true, true, dataQuery.getPOI());
+        dataQuery.setParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(getList().size()));
+        dataQuery.setup(cityId, getId(), getId(), null, true, true, dataQuery.getPOI());
         mSphinx.queryStart(dataQuery);
         }
     }

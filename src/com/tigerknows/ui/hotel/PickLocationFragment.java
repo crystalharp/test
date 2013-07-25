@@ -326,11 +326,10 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             HistoryWordTable.addHistoryWord(mSphinx, new TKWord(TKWord.ATTRIBUTE_HISTORY, word, null), Globals.getCurrentCityInfo().getId(), HistoryWordTable.TYPE_TRAFFIC);
             DataQuery poiQuery = new DataQuery(mContext);
             int cityId = Globals.getCurrentCityInfo().getId();
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_ALTERNATIVE);
-            criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, word);
-            poiQuery.setup(criteria, cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait), false, false, null);
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_ALTERNATIVE);
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, word);
+            poiQuery.setup(cityId, getId(), getId(), mSphinx.getString(R.string.doing_and_wait), false, false, null);
             mSphinx.queryStart(poiQuery);
         }
     }

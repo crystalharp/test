@@ -183,10 +183,9 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             
             //Build the query
             DataQuery dataQuery = new DataQuery(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, discoverCategory.getType());
-            criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(),
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, discoverCategory.getType());
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+            dataQuery.setup(Globals.getCurrentCityInfo().getId(),
                     R.id.view_discover_home, R.id.view_discover_list, null, false, false,
                     mSphinx.getPOI());
             mSphinx.queryStart(dataQuery);
@@ -596,14 +595,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
         mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
 
-        DataQuery dataQuery = new DataQuery(mContext);
-        Hashtable<String, String> criteria = lastDataQuery.getCriteria();
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(getList().size()));
+        DataQuery dataQuery = new DataQuery(lastDataQuery);
+        dataQuery.setParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(getList().size()));
         int dianyingSize = mDianyingList.size();
         if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType) && dianyingSize > 0) {
-            criteria.put(DataQuery.SERVER_PARAMETER_DIANYING_UUID, mDianyingList.get(dianyingSize-1).getUid());
+            dataQuery.setParameter(DataQuery.SERVER_PARAMETER_DIANYING_UUID, mDianyingList.get(dianyingSize-1).getUid());
         }
-        dataQuery.setup(criteria, lastDataQuery.getCityId(), getId(), getId(), tip, true, true, lastDataQuery.getPOI());
+        dataQuery.setup(lastDataQuery.getCityId(), getId(), getId(), tip, true, true, lastDataQuery.getPOI());
         mSphinx.queryStart(dataQuery);
         }
     }
@@ -665,14 +663,13 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             return;
         }
 
-        DataQuery dataQuery = new DataQuery(mContext);
+        DataQuery dataQuery = new DataQuery(lastDataQuery);
 
         POI requestPOI = lastDataQuery.getPOI();
         int cityId = lastDataQuery.getCityId();
-        Hashtable<String, String> criteria = lastDataQuery.getCriteria();
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
-        dataQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
+        dataQuery.setParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+        dataQuery.setParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
+        dataQuery.setup(cityId, getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(dataQuery);
         setup();
         
@@ -1196,7 +1193,7 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     private void makeFilterArea(DataQuery dataQuery) {
         if (dataQuery.isTurnPage() == false) {
-            dataQuery.getCriteria().put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
+            dataQuery.setParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
             if (mFilterList.size() > 0) {
                 mFilterArea = FilterListView.getFilterTitle(mSphinx, mFilterList.get(0));
             }
@@ -1240,12 +1237,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
         return null;
     }    
     
-    public Hashtable<String, String> getCriteria() {
-        DataQuery lastDataQuery = mDataQuery;
-        if (lastDataQuery == null) {
-            return null;
-        }
-        return lastDataQuery.getCriteria();
+    public DataQuery getLastQuery() {
+        return mDataQuery;
     }
     
     private void showFilterListView(View parent) {

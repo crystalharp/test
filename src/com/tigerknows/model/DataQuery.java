@@ -266,8 +266,12 @@ public final class DataQuery extends BaseQuery {
         super(context, API_TYPE_DATA_QUERY);
     }
     
-    public void setup(Hashtable<String, String> criteria, int cityId, int sourceViewId, int targetViewId, String tipText, boolean isTurnpage, boolean needReconntection, POI poi) {
-        super.setup(criteria, cityId, sourceViewId, targetViewId, tipText);
+    public DataQuery(DataQuery lastDataQuery) {
+        super(lastDataQuery);
+    }
+
+    public void setup(int cityId, int sourceViewId, int targetViewId, String tipText, boolean isTurnpage, boolean needReconntection, POI poi) {
+        super.setup(cityId, sourceViewId, targetViewId, tipText);
         this.poi = poi;
         this.cityId = cityId;
         this.isTurnPage = isTurnpage;
@@ -909,7 +913,7 @@ public final class DataQuery extends BaseQuery {
             if (Filter_Category_Order_POI != null) {
                 nfv = Filter_Category_Order_POI.version;
             }
-            addFilterParameters(criteria, requestParameters, cfv, nfv, false);
+            addFilterParameters(cfv, nfv, false);
 
         } else {
             throw APIException.wrapToMissingRequestParameterException("invalid data type.");
@@ -929,7 +933,7 @@ public final class DataQuery extends BaseQuery {
     }
     
     private void addFilterParameters(String cfv, String nfv) throws APIException {
-        addFilterParameters(criteria, requestParameters, cfv, nfv, true);
+        addFilterParameters(cfv, nfv, true);
     }
     
     private void addFilterParameters(String cfv, String nfv, boolean needIndex) throws APIException {

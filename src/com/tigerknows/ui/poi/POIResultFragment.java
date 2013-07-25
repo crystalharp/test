@@ -459,12 +459,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         mResultLsv.changeHeaderViewByState(false, SpringbackListView.REFRESHING);
         mActionLog.addAction(mActionTag+ActionLog.ListViewItemMore);
 
-        DataQuery poiQuery = new DataQuery(mContext);
+        DataQuery poiQuery = new DataQuery(lastDataQuery);
         POI requestPOI = lastDataQuery.getPOI();
         int cityId = lastDataQuery.getCityId();
-        Hashtable<String, String> criteria = lastDataQuery.getCriteria();
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mPOIList.size() - (mShowAPOI ? 1 : 0)));
-        poiQuery.setup(criteria, cityId, getId(), getId(), null, true, true, requestPOI);
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mPOIList.size() - (mShowAPOI ? 1 : 0)));
+        poiQuery.setup(cityId, getId(), getId(), null, true, true, requestPOI);
         mSphinx.queryStart(poiQuery);
         }
     }
@@ -508,14 +507,13 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             return;
         }
 
-        DataQuery poiQuery = new DataQuery(mContext);
+        DataQuery poiQuery = new DataQuery(lastDataQuery);
 
         POI requestPOI = lastDataQuery.getPOI();
         int cityId = lastDataQuery.getCityId();
-        Hashtable<String, String> criteria = lastDataQuery.getCriteria();
-        criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
-        criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
-        poiQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
+        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
+        poiQuery.setup(cityId, getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(poiQuery);
         setup(mInputText);
         dismissPopupWindow();

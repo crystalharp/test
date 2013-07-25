@@ -119,9 +119,8 @@ public class ShangjiaListActivity extends BaseActivity {
         }
         if (mDataQuery == null || mDataQuery.getParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID).equals(sessionId) == false) {
             DataQuery dataQuery = new DataQuery(mThis);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_SHANGJIA);
-            dataQuery.setup(criteria, Globals.getCurrentCityInfo().getId(), mId, mId, mThis.getString(R.string.doing_and_wait));
+            dataQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_SHANGJIA);
+            dataQuery.setup(Globals.getCurrentCityInfo().getId(), mId, mId, mThis.getString(R.string.doing_and_wait));
             queryStart(dataQuery);
         } else {
             setData(mDataQuery);
@@ -137,7 +136,7 @@ public class ShangjiaListActivity extends BaseActivity {
             List<Shangjia> shangjiaArrayList = shangjiaList.getList();
             if (shangjiaArrayList != null && shangjiaArrayList.size() > 0) {
                 mDataQuery = dataQuery;
-                mDataQuery.getCriteria().put(BaseQuery.SERVER_PARAMETER_SESSION_ID, sessionId);
+                mDataQuery.setParameter(BaseQuery.SERVER_PARAMETER_SESSION_ID, sessionId);
                 mResultList.addAll(shangjiaArrayList);
                 mResultAdapter.notifyDataSetChanged();
             }

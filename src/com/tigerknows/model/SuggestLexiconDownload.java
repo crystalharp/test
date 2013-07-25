@@ -56,7 +56,7 @@ public class SuggestLexiconDownload extends BaseQuery {
     }
 
     // 设置下载城市，并初始化文件目录等信息
-    private boolean setup(int cityId) {
+    private boolean setupCityId(int cityId) {
 
         oldversion = 0;
         revision = 0;
@@ -156,7 +156,7 @@ public class SuggestLexiconDownload extends BaseQuery {
 
     @Override
     public void query() {
-        if (setup(cityId) == false) {
+        if (setupCityId(cityId) == false) {
             return;
         }
         super.query();

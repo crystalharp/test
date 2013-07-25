@@ -723,10 +723,9 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         
         hideSoftInput(false);
         List<BaseQuery> list = new ArrayList<BaseQuery>();
-        Hashtable<String, String> criteria = new Hashtable<String, String>();
-        criteria.put(FeedbackUpload.SERVER_PARAMETER_ADD_MERCHANT, s.toString());
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
-        feedbackUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
+        feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_ADD_MERCHANT, s.toString());
+        feedbackUpload.setup(Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
         list.add(feedbackUpload);
         
         if (mUploadUri != null && mPhotoMD5 != null) {

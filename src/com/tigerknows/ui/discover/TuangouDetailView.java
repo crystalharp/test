@@ -481,15 +481,14 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         	if(!mAsyncTaskExecuting){
 	            mLoadingView.setVisibility(View.VISIBLE);
 	            DataOperation dataOperation = new DataOperation(mSphinx);
-	            Hashtable<String, String> criteria = new Hashtable<String, String>();
-	            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_TUANGOU);
-	            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
-	            criteria.put(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
-	            criteria.put(DataOperation.SERVER_PARAMETER_NEED_FIELD, needFiled.toString());
+	            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_TUANGOU);
+	            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_QUERY);
+	            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_UID, mData.getUid());
+	            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_NEED_FIELD, needFiled.toString());
 	            if (pic.length() > 0) {
-	                criteria.put(DataOperation.SERVER_PARAMETER_PICTURE, pic.toString());
+	                dataOperation.addParameter(DataOperation.SERVER_PARAMETER_PICTURE, pic.toString());
 	            }
-	            dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
+	            dataOperation.setup(Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), null, true);
 	            mAsyncTaskExecuting = true;
 	            mTKAsyncTasking = mSphinx.queryStart(dataOperation);
 	            mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
@@ -725,11 +724,10 @@ public class TuangouDetailView extends BaseDetailView implements View.OnClickLis
         }
         if (s != null) {
             DataOperation dataOperation = new DataOperation(mSphinx);
-            Hashtable<String, String> criteria = new Hashtable<String, String>();
-            criteria.put(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_DINGDAN);
-            criteria.put(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
-            criteria.put(DataOperation.SERVER_PARAMETER_ENTITY, s.toString());
-            dataOperation.setup(criteria, Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
+            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_DATA_TYPE, DataOperation.DATA_TYPE_DINGDAN);
+            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_OPERATION_CODE, DataOperation.OPERATION_CODE_CREATE);
+            dataOperation.addParameter(DataOperation.SERVER_PARAMETER_ENTITY, s.toString());
+            dataOperation.setup(Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
             mTKAsyncTasking = mSphinx.queryStart(dataOperation);
             mBaseQuerying = mTKAsyncTasking.getBaseQueryList();
         }
