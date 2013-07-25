@@ -525,7 +525,9 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     }
     
     private void readPOI(List<POI> list, long maxId, long minId, boolean next){
-        Cursor c = SqliteWrapper.query(mContext, mContext.getContentResolver(), Tigerknows.POI.CONTENT_URI, null, mPOIWhere + " AND (" + com.tigerknows.provider.Tigerknows.POI._ID + ">" + minId+")" + " AND (" + com.tigerknows.provider.Tigerknows.POI._ID + "<" + maxId+")", null, "_id DESC");
+        String where = mPOIWhere + " AND (" + com.tigerknows.provider.Tigerknows.POI._ID + ">" + minId+")" + " AND (" + com.tigerknows.provider.Tigerknows.POI._ID + "<" + maxId+")";
+        LogWrapper.d(TAG, "where="+where);
+        Cursor c = SqliteWrapper.query(mContext, mContext.getContentResolver(), Tigerknows.POI.CONTENT_URI, null, where, null, "_id DESC");
         int count = 0;
         if (c != null) {
             count = c.getCount();
@@ -803,7 +805,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             mTrafficBtn.setTextColor(mColorNormal);
 
             if (mPOIList.size() > 0) {
-                readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getDateTime(), true);
+                readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getId(), true);
             } else {
                 readPOI(mPOIList, Long.MAX_VALUE, 0, false);
             }
