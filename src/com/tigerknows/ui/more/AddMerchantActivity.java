@@ -269,11 +269,12 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                     }
                 }
                 if (TextUtils.isEmpty(intputText) == false) {
-                    mNameEdt.setText(intputText);
-                    mNameEdt.setSelection(intputText.length());
+                    mNameEdt.append(intputText);
                 }
             }
         }
+        
+        showSoftInput(mNameEdt);
     }
     
     /**
@@ -737,7 +738,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             criteria.put(FileUpload.SERVER_PARAMETER_CHECKSUM, mPhotoMD5);
             criteria.put(FileUpload.SERVER_PARAMETER_FILENAME, mPhotoMD5+filePath.substring(filePath.lastIndexOf(".")));
             criteria.put(FileUpload.SERVER_PARAMETER_UPFILE, filePath);
-            fileUpload.setup(criteria);
+            fileUpload.setup(criteria, Globals.getCurrentCityInfo().getId(), -1, -1, mThis.getString(R.string.doing_and_wait));
             list.add(fileUpload);
         }
         queryStart(list);
@@ -816,6 +817,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             finish();
         } else if (textUploadSuccess) {
             final BaseQuery finalImageUpload = imageUpload;
+            imageUpload.setResponse(null);
             Utility.showNormalDialog(mThis,
                     getString(R.string.prompt),
                     getString(R.string.add_merchant_image_upload_falied_tip),
