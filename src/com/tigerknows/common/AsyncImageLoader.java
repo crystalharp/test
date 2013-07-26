@@ -11,6 +11,7 @@ import org.apache.http.client.HttpClient;
 
 import java.io.ByteArrayInputStream;
 import java.lang.ref.SoftReference;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -189,12 +190,21 @@ public class AsyncImageLoader {
             }
             
             try {
-                byte[] data = HttpManager.openUrl(context, mHttpClient, imageUrl.url, "GET", new WeiboParameters());
-                ImageCache imageCache1 = Globals.getImageCache();
-                final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
-                imageCache1.putImage(name, data);
-                LogWrapper.d("AsyncImageLoader", "imageUrl.url="+imageUrl.url);
-                BitmapDrawable bm = (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(data), "image.png");
+            	long start = System.currentTimeMillis();
+            	LogWrapper.d("AsyncImageLoader", "imageUrl.url="+imageUrl.url);
+				byte[] data = HttpManager.openUrl(context, mHttpClient, imageUrl.url, "GET", new WeiboParameters());
+				ImageCache imageCache1 = Globals.getImageCache();
+				final String name = imageUrl.url.substring(imageUrl.url.lastIndexOf("/")+1);
+				imageCache1.putImage(name, data);
+				BitmapDrawable bm = (BitmapDrawable) BitmapDrawable.createFromStream(new ByteArrayInputStream(data), "image.png");
+            	
+//				URL url = new URL(imageUrl.url);
+//				BitmapDrawable bm = (BitmapDrawable) BitmapDrawable.createFromStream(url.openConnection().getInputStream(), "image.png");
+
+                LogWrapper.d("AsyncImageLoader", "Downloaded imageUrl.url="+imageUrl.url);
+                
+                LogWrapper.d("AsyncImageLoader", "Downloaded Time: " + (System.currentTimeMillis()-start)/1000.0);
+                
                 bm.setTargetDensity(Globals.g_metrics);
                 return bm;
             } catch (Exception e) {
@@ -224,7 +234,7 @@ public class AsyncImageLoader {
     
     public void onResume() {
         if (executorService == null || executorService.isShutdown()) {
-            executorService = Executors.newFixedThreadPool(1); // 固定五个线程来执行任务
+            executorService = Executors.newFixedThreadPool(3); // 固定五个线程来执行任务
         }
     }
     
