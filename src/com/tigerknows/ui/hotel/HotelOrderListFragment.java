@@ -221,7 +221,7 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(mContext.getString(R.string.hotel_ordered));
 
-        fillOrderDb();
+//        fillOrderDb();
 
         /**
          * if fragment is previously closed, size of orders will be 0
