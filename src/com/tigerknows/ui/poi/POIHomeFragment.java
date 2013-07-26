@@ -168,6 +168,12 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         mMyLoactionTxv.setText(mSphinx.getString(R.string.appoint_area) + FilterListView.getFilterTitle(mSphinx, HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST)));
         mMyLoactionTxv.setVisibility(View.VISIBLE);
         mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
+        if (mSelectedLocation == false) {
+            Filter filter = HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST);
+            if (filter != null) {
+                FilterListView.selectedFilter(filter, Integer.MIN_VALUE);
+            }
+        }
     }
     
     public void setPOI(POI poi) {
@@ -257,7 +263,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         } else {
             FilterArea filterArea = DataQuery.getFilterArea();
             if (filterArea == null || filterArea.getVersion().equals("0.0.0")) {
-                queryFilter();
+//                queryFilter();
                 return;
             }
                 
@@ -549,6 +555,10 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         mPOI = null;
         refreshLocationView(true);
         refreshFilterArea();
+        Filter filter = HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST);
+        if (filter != null) {
+            FilterListView.selectedFilter(filter, Integer.MIN_VALUE);
+        }
     }
     
     public void refreshLocationView() {

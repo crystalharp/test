@@ -547,7 +547,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         case NAME_ERR:
         case ADDRESS_ERR:
         case TEL_ADD:
-            if(TextUtils.isEmpty(mMainEdt.getText()) || TextUtils.equals(mMainEdt.getText(), mOrigin) )
+            if(TextUtils.isEmpty(mMainEdt.getText().toString().trim()) || TextUtils.equals(mMainEdt.getText().toString().trim(), mOrigin) )
                 mSubmitBtn.setEnabled(false);
             else mSubmitBtn.setEnabled(true);
             break;
@@ -556,7 +556,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             break;
         case NE_OTHER:
         case OTHER_ERR:
-            mSubmitBtn.setEnabled( (!TextUtils.isEmpty(mDescriptionEdt.getText()) ? true : false));
+            mSubmitBtn.setEnabled( (!TextUtils.isEmpty(mDescriptionEdt.getText().toString().trim()) ? true : false));
             break;
         }
     }
@@ -713,7 +713,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             if( (mChecked & MAIN_LLY) != 0 && !TextUtils.isEmpty(mMainEdt.getText()) && !TextUtils.equals(mMainEdt.getText(), mOrigin)){
                 s.append('-');
                 s.append(mMainTxv.getText());
-                s.append(URLEncoder.encode(mMainEdt.getText().toString(), TKConfig.getEncoding()));
+                s.append(URLEncoder.encode(mMainEdt.getText().toString().trim(), TKConfig.getEncoding()));
             }
             if( (mChecked & TYPE_LLY) != 0 && !TextUtils.isEmpty(mTypeBtn.getText())){
                 s.append('-');
@@ -723,7 +723,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             if( (mChecked & DESCRIPTION_LLY) != 0){
                 s.append('-');
                 s.append(getString(R.string.other_colon));
-                s.append(URLEncoder.encode(mDescriptionEdt.getText().toString(), TKConfig.getEncoding()));
+                s.append(URLEncoder.encode(mDescriptionEdt.getText().toString().trim(), TKConfig.getEncoding()));
             }
             if( (mChecked & DIRECT_SUBMIT) != 0 && !TextUtils.isEmpty(mContactEdt.getText())){
                 s.append('-');
