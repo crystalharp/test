@@ -9,8 +9,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
@@ -22,34 +20,22 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ImageView.ScaleType;
-import android.widget.LinearLayout.LayoutParams;
-
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
-import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
-import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.map.MapEngine;
-import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Bootstrap;
 import com.tigerknows.model.BootstrapModel;
-import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
 import com.tigerknows.model.BootstrapModel.Recommend;
-import com.tigerknows.model.BootstrapModel.SoftwareUpdate;
 import com.tigerknows.model.BootstrapModel.Recommend.RecommendApp;
 import com.tigerknows.model.NoticeQuery;
 import com.tigerknows.model.NoticeQuery.NoticeResultResponse;
@@ -58,12 +44,10 @@ import com.tigerknows.model.NoticeQuery.NoticeResultResponse.NoticeResult.Notice
 import com.tigerknows.model.TKDrawable;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.BrowserActivity;
-import com.tigerknows.ui.more.HelpActivity.MyAdapter;
 import com.tigerknows.ui.more.MapDownloadActivity.DownloadCity;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserLoginActivity;
 import com.tigerknows.util.Utility;
-import com.tigerknows.widget.ExtScrollView;
 
 /**
  * @author Peng Wenyue
@@ -82,7 +66,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     public static final int SHOW_COMMENT_TIP_TIMES = 3;
     private static final int NUM_APP_RECOMMEND = 5;
     
-    private ExtScrollView mMoreBodyScv;
     private TextView mUserNameTxv;
     private TextView mCurrentCityTxv;
     private Button mUserBtn;
@@ -126,11 +109,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private ViewPager mViewPager;
     private HashMap<Integer, View> viewMap = new HashMap<Integer, View>();
     private ViewGroup mPageIndicatorView;
-    
-    private float mMoveX;
-    private float mMoveY;
-    private float xLast;
-    private float yLast;
 
     private Runnable mLoadedDrawableRun = new Runnable() {
         
@@ -551,23 +529,19 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
 	
 	    @Override
 	    public void restoreState(Parcelable arg0, ClassLoader arg1) {
-	        // TODO Auto-generated method stub
 	    }
 	
 	    @Override
 	    public Parcelable saveState() {
-	        // TODO Auto-generated method stub
 	        return null;
 	    }
 	
 	    @Override
 	    public void startUpdate(View arg0) {
-	        // TODO Auto-generated method stub
 	    }
 	
 	    @Override
 	    public void finishUpdate(View arg0) {
-	        // TODO Auto-generated method stub
 	    }
 	
 	}
