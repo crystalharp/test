@@ -215,8 +215,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         
         // 如果是区域筛选，并且当前选择的父筛选项位置是全部区域，即第0个， 则列表设置为pinnedMode。
        	childLsv.setData(childFilterList, pinnedMode, pinnedMode, selectedChiledPosition);
-       	System.out.println("selectedParentPosition: " + selectedParentPosition);
-       	System.out.println("selectedChiledPosition: " + selectedChiledPosition);
     }
     
     public FilterListView(Context context) {
