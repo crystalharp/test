@@ -864,8 +864,6 @@ public class TrafficModel extends XMapData {
         
         public Uri writeToDatabases(Context context, long parentId, int storeType) {
             boolean isFailed = false;
-            this.storeType = storeType;
-            this.parentId = parentId;
             ContentValues values = new ContentValues();
             if (stepList != null) {
                 values.put(Tigerknows.TransitPlan.TIMES, stepList.size());
@@ -973,13 +971,13 @@ public class TrafficModel extends XMapData {
         }
             
         @Override
-        public BaseData checkStore(Context context, int store_Type) {
-            BaseData baseData = null;
+        public Plan checkStore(Context context, int storeType) {
+            Plan path = null;
             Cursor c = SqliteWrapper.query(context, context.getContentResolver(),
                     Tigerknows.TransitPlan.CONTENT_URI, null, "(" + Tigerknows.TransitPlan.TOTAL_LENGTH + "="
                             + length + ") AND (" + Tigerknows.TransitPlan.TYPE + "="
                             + type + ") AND (" + Tigerknows.TransitPlan.STORE_TYPE + "="
-                            + store_Type + ")", null, null);
+                            + storeType + ")", null, null);
             if (c != null) {
                 int count = c.getCount();
                 if (count > 0) {
@@ -988,7 +986,7 @@ public class TrafficModel extends XMapData {
                         Plan other = readFormCursor(context, c);
                         if((null != other && !other.equals(this)) || (null == other && other != this)) {
                         } else {
-                            baseData = other;
+                            path = other;
                             break;
                         }
                         c.moveToNext();
@@ -996,7 +994,7 @@ public class TrafficModel extends XMapData {
                 }
                 c.close();
             }
-            return baseData;
+            return path;
         }
         
         public boolean equals(Object object) {

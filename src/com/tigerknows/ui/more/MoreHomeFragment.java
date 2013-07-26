@@ -21,17 +21,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.decarta.Globals;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
-import com.tigerknows.android.os.TKAsyncTask;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.map.MapEngine;
-import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.Bootstrap;
 import com.tigerknows.model.BootstrapModel;
 import com.tigerknows.model.DataOperation.DiaoyanQueryResponse;
@@ -548,17 +544,5 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     			imageView.setBackgroundDrawable(drawable);
     		}
     	}
-    }
-    @Override
-    public void onPostExecute(TKAsyncTask tkAsyncTask) {
-        super.onPostExecute(tkAsyncTask);
-        BaseQuery baseQuery = tkAsyncTask.getBaseQuery();
-        if (baseQuery instanceof Bootstrap) {
-            BootstrapModel bootstrapModel = ((Bootstrap) baseQuery).getBootstrapModel();
-            if (bootstrapModel != null) {
-                Globals.g_Bootstrap_Model = bootstrapModel;
-                refreshMoreData();
-            }
-        }
     }
 }

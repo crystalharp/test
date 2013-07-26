@@ -2023,8 +2023,8 @@ public class Sphinx extends TKActivity implements TKAsyncTask.EventListener {
                 BootstrapModel bootstrapModel = ((Bootstrap) baseQuery).getBootstrapModel();
                 if (bootstrapModel != null) {
                     Globals.g_Bootstrap_Model = bootstrapModel;
+                    getMoreFragment().refreshMoreBtn();
                 }
-                getMoreFragment().refreshMoreBtn();
             } else if (baseQuery instanceof DataOperation) {
             	Response response = baseQuery.getResponse();
             	if (response instanceof DiaoyanQueryResponse) {

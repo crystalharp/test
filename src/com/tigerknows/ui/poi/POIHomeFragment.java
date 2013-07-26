@@ -168,6 +168,12 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         mMyLoactionTxv.setText(mSphinx.getString(R.string.appoint_area) + FilterListView.getFilterTitle(mSphinx, HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST)));
         mMyLoactionTxv.setVisibility(View.VISIBLE);
         mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
+        if (mSelectedLocation == false) {
+            Filter filter = HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST);
+            if (filter != null) {
+                FilterListView.selectedFilter(filter, Integer.MIN_VALUE);
+            }
+        }
     }
     
     public void setPOI(POI poi) {
@@ -257,7 +263,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         } else {
             FilterArea filterArea = DataQuery.getFilterArea();
             if (filterArea == null || filterArea.getVersion().equals("0.0.0")) {
-                queryFilter();
+//                queryFilter();
                 return;
             }
                 
@@ -545,17 +551,27 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         }
         mCityBtn.setText(cityName);
 
-        setSelectedLocation(false);
+        mSelectedLocation = false;
+        mPOI = null;
+        refreshLocationView(true);
         refreshFilterArea();
+        Filter filter = HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST);
+        if (filter != null) {
+            FilterListView.selectedFilter(filter, Integer.MIN_VALUE);
+        }
     }
     
     public void refreshLocationView() {
+        refreshLocationView(false);
+    }
+    
+    public void refreshLocationView(boolean isUpdate) {
         CityInfo currentCityInfo = Globals.getCurrentCityInfo();
         CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
         int categoryTop = mCategoryTop;
         if (myLocationCityInfo != null) {
             if (myLocationCityInfo.getId() == currentCityInfo.getId()) {
-                refreshLoactionTxv();
+                refreshLoactionTxv(isUpdate);
                 mMyLoactionTxv.setVisibility(View.VISIBLE);
                 mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
             } else {
@@ -578,7 +594,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         mSphinx.getDiscoverFragment().refreshLocationView(mLocationName, myLocationCityInfo);
     }
     
-    private void refreshLoactionTxv() {
+    private void refreshLoactionTxv(boolean isUpdate) {
         Location myLocation = null;
         Position myLocationPosition = null;
         CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
@@ -591,7 +607,6 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 
         String name = mSphinx.getMapEngine().getPositionName(myLocationPosition);
         
-        boolean isUpdate = false;
         if (!TextUtils.isEmpty(name) && name.length() > 1) {
             if ((myLocation != null && myLocation.getProvider().equals(LocationManager.GPS_PROVIDER) && distance > 100)) {
                 isUpdate = true;
