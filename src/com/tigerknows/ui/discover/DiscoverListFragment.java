@@ -281,8 +281,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mActionTag = ActionLog.DianyingList;
+        super.onCreate(savedInstanceState);
     }
 
     @Override
