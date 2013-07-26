@@ -917,12 +917,20 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                         Utility.bitmapToFile(bm, cacheFile);
                         
                         final Bitmap resultBitmap = bm;
+
+
+                        if (resultBitmap != null && Utility.bitmapToFile(resultBitmap, cacheFile)) {
+                            mPhotoUri = Uri.fromFile(cacheFile);
+                        }
+                        
+
                         mThis.runOnUiThread(new Runnable() {
                             
                             @Override
                             public void run() {
-                                if (resultBitmap != null && Utility.bitmapToFile(resultBitmap, cacheFile)) {
-                                    mPhotoUri = Uri.fromFile(cacheFile);
+
+                                if (resultBitmap != null) {
+
                                     if (isPick == false) {
                                         confrimUploadUri(new BitmapDrawable(resultBitmap));
                                     } else {
