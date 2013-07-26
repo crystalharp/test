@@ -1,8 +1,5 @@
 package com.tigerknows.widget;
 
-import com.tigerknows.R;
-import com.tigerknows.Sphinx;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -10,13 +7,9 @@ import android.graphics.Paint;
 import android.graphics.Typeface;
 import android.os.Handler;
 import android.util.AttributeSet;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.PopupWindow;
 import android.widget.TextView;
-import android.widget.LinearLayout.LayoutParams;
 
 public class BladeView extends View {
 	
