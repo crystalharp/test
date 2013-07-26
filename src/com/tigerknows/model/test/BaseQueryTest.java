@@ -16,6 +16,7 @@ import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.map.MapEngine.RegionMetaVersion;
 import com.tigerknows.model.AccountManage;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.BaseQuery.RequestParameters;
 import com.tigerknows.model.LocationQuery;
 import com.tigerknows.model.Response;
 import com.tigerknows.model.TKWord;
@@ -74,7 +75,9 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.Calendar;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 
 public class BaseQueryTest {
     
@@ -123,19 +126,21 @@ public class BaseQueryTest {
         return  data;
     }
     
-    public static ViewGroup getViewByWeiboParameters(final Activity activity, final WeiboParameters parameters) {
+    public static ViewGroup genViewToModifyParam(final Activity activity, final RequestParameters parameters) {
         final LinearLayout layout = new LinearLayout(activity);
         layout.setOrientation(LinearLayout.VERTICAL);
         layout.setBackgroundResource(R.drawable.list_single);
-        for (int loc = 0; loc < parameters.size(); loc++) {
-            final String key = parameters.getKey(loc);
+        for (Iterator<Entry<String, String>> i = parameters.getEntryIterator();
+                i.hasNext(); ) {
+            Entry<String, String> e = i.next();
+            final String key = e.getKey();
             TextView keyTxv = new TextView(activity);
             layout.addView(keyTxv);
             keyTxv.setBackgroundResource(R.drawable.btn_default);
             keyTxv.setText(key);
             final EditText valueEdt = new EditText(activity);
             layout.addView(valueEdt);
-            valueEdt.setText(parameters.getValue(key));
+            valueEdt.setText(e.getValue());
             keyTxv.setOnClickListener(new OnClickListener() {
                 
                 @Override
@@ -158,7 +163,7 @@ public class BaseQueryTest {
             public void onClick(View v) {
                 parameters.remove(removeEdt.getEditableText().toString().trim());
                 layout.removeAllViews();
-                layout.addView(getViewByWeiboParameters(activity, parameters));
+                layout.addView(genViewToModifyParam(activity, parameters));
             }
         });
         
@@ -179,7 +184,7 @@ public class BaseQueryTest {
                         parameters.add(input.substring(0, index), input.substring(index+1));
                     }
                     layout.removeAllViews();
-                    layout.addView(getViewByWeiboParameters(activity, parameters));
+                    layout.addView(genViewToModifyParam(activity, parameters));
 
                 } catch (Exception e) {
                     e.printStackTrace();

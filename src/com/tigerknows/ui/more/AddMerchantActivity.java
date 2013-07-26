@@ -731,12 +731,10 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
         if (mUploadUri != null && mPhotoMD5 != null) {
             String filePath = Utility.imageUri2FilePath(mThis, mUploadUri);
             FileUpload fileUpload = new FileUpload(mThis);
-            criteria = new Hashtable<String, String>();
-            criteria.put(FileUpload.SERVER_PARAMETER_FILE_TYPE, FileUpload.FILE_TYPE_IMAGE);
-            criteria.put(FileUpload.SERVER_PARAMETER_CHECKSUM, mPhotoMD5);
-            criteria.put(FileUpload.SERVER_PARAMETER_FILENAME, mPhotoMD5+filePath.substring(filePath.lastIndexOf(".")));
-            criteria.put(FileUpload.SERVER_PARAMETER_UPFILE, filePath);
-            fileUpload.setup(criteria);
+            fileUpload.addParameter(FileUpload.SERVER_PARAMETER_FILE_TYPE, FileUpload.FILE_TYPE_IMAGE);
+            fileUpload.addParameter(FileUpload.SERVER_PARAMETER_CHECKSUM, mPhotoMD5);
+            fileUpload.addParameter(FileUpload.SERVER_PARAMETER_FILENAME, mPhotoMD5+filePath.substring(filePath.lastIndexOf(".")));
+            fileUpload.addParameter(FileUpload.SERVER_PARAMETER_UPFILE, filePath);
             list.add(fileUpload);
         }
         queryStart(list);

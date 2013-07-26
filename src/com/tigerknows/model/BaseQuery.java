@@ -9,6 +9,8 @@
 package com.tigerknows.model;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -605,6 +607,11 @@ public abstract class BaseQuery {
 //        addParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE, false);
         addMyLocationParameters();
         addUUIDParameter();
+        try {
+            addCommonParameters();
+        } catch (APIException e) {
+            e.printStackTrace();
+        }
         
         requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
 //        requestParameters.addAll(generateParameters(criteria));
@@ -619,7 +626,7 @@ public abstract class BaseQuery {
         httpClient.setApiType(apiType);
         httpClient.setIsEncrypt(needEncrypt);
         //FIXME:修改httpClient中对于参数的操作
-//        httpClient.setParameters(requestParameters);
+        httpClient.setParameters(requestParameters);
     }
     
     protected void launchTest() {
@@ -960,6 +967,14 @@ public abstract class BaseQuery {
         }
         return false;
     }
+    
+    /**
+     * 返回该query的参数对象
+     * @return
+     */
+    public final RequestParameters getParameters() {
+        return requestParameters;
+    }
 //    //TODO:删掉这个系列函数
 //    /**
 //     * 根据keys从criteria中获取参数值，将其值添加到requestParameters
@@ -1099,9 +1114,9 @@ public abstract class BaseQuery {
         if (!checkParameter.isEmpty()) {
             String unwantedParameters = "";
 //            Enumeration<String> unwantedKeys = checkParameter.keys();
-            Iterator<String> unwantedKeys = checkParameter.keySet().iterator();
+            Iterator<Map.Entry<String, String>> unwantedKeys = checkParameter.getEntryIterator();
             while (unwantedKeys.hasNext()) {
-                unwantedParameters += unwantedKeys.next() + ",";
+                unwantedParameters += unwantedKeys.next().getKey() + ",";
             }
             unwantedParameters = unwantedParameters.substring(0, unwantedParameters.length() - 1);
             throw APIException.wrapToUnwantedRequestParameterException(unwantedParameters);
@@ -1119,6 +1134,8 @@ public abstract class BaseQuery {
     
     public static class RequestParameters implements Cloneable{
         LinkedHashMap<String, String> parameters;
+        public static final String PARAMETER_SEPARATOR = "&";
+        public static final String NAME_VALUE_SEPARATOR = "=";
         
         public RequestParameters() {
             parameters = new LinkedHashMap<String, String>();
@@ -1152,8 +1169,8 @@ public abstract class BaseQuery {
             return parameters.isEmpty();
         }
         
-        public Set<String> keySet() {
-            return parameters.keySet();
+        public Iterator<Map.Entry<String, String>> getEntryIterator() {
+            return parameters.entrySet().iterator();
         }
         
         @SuppressWarnings("unchecked")
@@ -1163,6 +1180,34 @@ public abstract class BaseQuery {
         
         public void addAll(RequestParameters param) {
             parameters.putAll(param.getParameters());
+        }
+        
+        public String getPostParam() {
+            Set<String> keys;
+            StringBuilder buf = new StringBuilder();
+            keys = parameters.keySet();
+            for (String key : keys) {
+                buf.append(key).append(NAME_VALUE_SEPARATOR).append(parameters.get(key));
+                buf.append(PARAMETER_SEPARATOR);
+            }
+            
+            return buf.substring(0, buf.length() - 1);
+        }
+        
+        public String getEncodedPostParam(String enc) {
+            Set<String> keys;
+            StringBuilder buf = new StringBuilder();
+            keys = parameters.keySet();
+            for (String key : keys) {
+                try {
+                    buf.append(URLEncoder.encode(key, enc)).append(NAME_VALUE_SEPARATOR).append(URLEncoder.encode(parameters.get(key)));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+                buf.append(PARAMETER_SEPARATOR);
+            }
+            
+            return buf.substring(0, buf.length() - 1);
         }
     }
 }

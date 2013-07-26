@@ -9,6 +9,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.crypto.DataEncryptor;
 import com.tigerknows.model.BaseQuery;
+import com.tigerknows.model.BaseQuery.RequestParameters;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.weibo.sdk.android.WeiboParameters;
 
@@ -99,7 +100,7 @@ public class HttpUtils {
         
         private String apiType;
         
-        private WeiboParameters parameters;
+        private RequestParameters parameters;
         
         private ProgressUpdate progressUpdate;
         
@@ -142,7 +143,7 @@ public class HttpUtils {
             this.apiType = apiType;
         }
         
-        public void setParameters(WeiboParameters parameters) {
+        public void setParameters(RequestParameters parameters) {
             this.parameters = parameters;
         }
         
@@ -169,7 +170,7 @@ public class HttpUtils {
             this.statusCode = statusCode;
         }
         
-        public static void modifyRequestData(final WeiboParameters parameters) {
+        public static void modifyRequestData(final RequestParameters parameters) {
             final Activity activity = BaseQueryTest.getActivity();
             if (TKConfig.ModifyRequestData && activity != null) {
                 activity.runOnUiThread(new Runnable() {
@@ -177,7 +178,7 @@ public class HttpUtils {
                     @Override
                     public void run() {
 
-                        ViewGroup viewGroup = BaseQueryTest.getViewByWeiboParameters(activity, parameters);
+                        ViewGroup viewGroup = BaseQueryTest.genViewToModifyParam(activity, parameters);
                         ScrollView scrollView = new ScrollView(activity);
                         scrollView.addView(viewGroup);
                         
@@ -243,26 +244,27 @@ public class HttpUtils {
                     String postParam;
                     if (isEncrypt) {
                         // 服务器接收加密的数据时不需要URLEncoder
-                        StringBuilder buf = new StringBuilder();
-                        int j = 0;
-                        for (int loc = 0; loc < parameters.size(); loc++) {
-                            String key = parameters.getKey(loc);
-                            if (j != 0) {
-                                buf.append(PARAMETER_SEPARATOR);
-                            }
-                            buf.append(key).append(NAME_VALUE_SEPARATOR).append(parameters.getValue(loc));
-                            j++;
-                        }
+//                        StringBuilder buf = new StringBuilder();
+//                        int j = 0;
+//                        for (int loc = 0; loc < parameters.size(); loc++) {
+//                            String key = parameters.getKey(loc);
+//                            if (j != 0) {
+//                                buf.append(PARAMETER_SEPARATOR);
+//                            }
+//                            buf.append(key).append(NAME_VALUE_SEPARATOR).append(parameters.getValue(loc));
+//                            j++;
+//                        }
                         /* A flag to indicate the interface version. */
                         post.addHeader(TK_SERVICE_TYPE, TK_SERVICE_TYPE_VALUE);
                         post.addHeader(CONTENT_TYPE, MULTIPART_FORM_CONTENT_TYPE);
-                        postParam = buf.toString();
+                        postParam = parameters.getPostParam();
                         data = postParam.getBytes(TKConfig.getEncoding());
                         data = ZLibUtils.compress(data);
                         DataEncryptor.getInstance().encrypt(data);
                     } else {
                         post.addHeader(CONTENT_TYPE, APPLICATION_FORM_CONTENT_TYPE_VALUE);
-                        postParam = encodeParameters(parameters, TKConfig.getEncoding());
+//                        postParam = encodeParameters(parameters, TKConfig.getEncoding());
+                        postParam = parameters.getEncodedPostParam(TKConfig.getEncoding());
                         data = postParam.getBytes(TKConfig.getEncoding());
                     }
                     reqSize = data.length;
@@ -406,27 +408,27 @@ public class HttpUtils {
      * @param enc
      * @return
      */
-    public static String encodeParameters(WeiboParameters httpParams, String enc) {
-        if (null == httpParams || com.weibo.sdk.android.util.Utility.isBundleEmpty(httpParams)) {
-            return "";
-        }
-        StringBuilder buf = new StringBuilder();
-        int j = 0;
-        for (int loc = 0; loc < httpParams.size(); loc++) {
-            String key = httpParams.getKey(loc);
-            if (j != 0) {
-                buf.append(PARAMETER_SEPARATOR);
-            }
-            try {
-                buf.append(URLEncoder.encode(key, enc)).append(NAME_VALUE_SEPARATOR)
-                        .append(URLEncoder.encode(httpParams.getValue(loc), enc));
-            } catch (java.io.UnsupportedEncodingException neverHappen) {
-            }
-            j++;
-        }
-        return buf.toString();
-
-    }
+//    public static String encodeParameters(RequestParameters httpParams, String enc) {
+//        if (null == httpParams || httpParams.isEmpty()) {
+//            return "";
+//        }
+//        StringBuilder buf = new StringBuilder();
+//        int j = 0;
+//        for (int loc = 0; loc < httpParams.size(); loc++) {
+//            String key = httpParams.getKey(loc);
+//            if (j != 0) {
+//                buf.append(PARAMETER_SEPARATOR);
+//            }
+//            try {
+//                buf.append(URLEncoder.encode(key, enc)).append(NAME_VALUE_SEPARATOR)
+//                        .append(URLEncoder.encode(httpParams.getValue(loc), enc));
+//            } catch (java.io.UnsupportedEncodingException neverHappen) {
+//            }
+//            j++;
+//        }
+//        return buf.toString();
+//
+//    }
 
     private static AndroidHttpClient createHttpClient(Context context) {
         String userAgent = TKConfig.getUserAgent();

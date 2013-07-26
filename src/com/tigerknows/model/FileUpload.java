@@ -51,36 +51,31 @@ public final class FileUpload extends BaseQuery {
     public void query() {
         statusCode = STATUS_CODE_NONE;
 
-        if (criteria != null) {
+//        if (criteria != null) {
             try {
                 makeRequestParameters();
 
-                addParameter(new String[] {
-                        SERVER_PARAMETER_FILE_TYPE, SERVER_PARAMETER_CHECKSUM,
-                        SERVER_PARAMETER_FILENAME, SERVER_PARAMETER_UPFILE
-                });
-
-                HttpUtils.TKHttpClient.modifyRequestData(requestParameters);
+                HttpUtils.TKHttpClient.modifyRequestData(getParameters());
                 
                 // 服务器接收加密的数据时不需要URLEncoder
-                StringBuilder buf = new StringBuilder();
-                int j = 0;
-                for (int loc = 0; loc < requestParameters.size(); loc++) {
-                    String key = requestParameters.getKey(loc);
-
-                    if (key.equals(FileUpload.SERVER_PARAMETER_FILENAME) ||
-                            key.equals(FileUpload.SERVER_PARAMETER_UPFILE)) {
-                        continue;
-                    }
-                    
-                    if (j != 0) {
-                        buf.append(HttpUtils.PARAMETER_SEPARATOR);
-                    }
-                    buf.append(key).append(HttpUtils.NAME_VALUE_SEPARATOR)
-                            .append(requestParameters.getValue(loc));
-                    j++;
-                }
-                String postParam = buf.toString();
+//                StringBuilder buf = new StringBuilder();
+//                int j = 0;
+//                for (int loc = 0; loc < requestParameters.size(); loc++) {
+//                    String key = requestParameters.getKey(loc);
+//
+//                    if (key.equals(FileUpload.SERVER_PARAMETER_FILENAME) ||
+//                            key.equals(FileUpload.SERVER_PARAMETER_UPFILE)) {
+//                        continue;
+//                    }
+//                    
+//                    if (j != 0) {
+//                        buf.append(HttpUtils.PARAMETER_SEPARATOR);
+//                    }
+//                    buf.append(key).append(HttpUtils.NAME_VALUE_SEPARATOR)
+//                            .append(requestParameters.getValue(loc));
+//                    j++;
+//                }
+                String postParam = getParameters().getPostParam();
                 byte[] data = postParam.getBytes("UTF-8");
                 data = ZLibUtils.compress(data);
                 DataEncryptor.getInstance().encrypt(data);
@@ -88,9 +83,9 @@ public final class FileUpload extends BaseQuery {
                 WeiboParameters parameters = new WeiboParameters();
                 parameters.add(SERVER_PARAMETER_PARAMS, Utility.toHexString(data));
                 parameters.add(SERVER_PARAMETER_UPFILE,
-                        requestParameters.getValue(SERVER_PARAMETER_UPFILE));
+                        getParameter(SERVER_PARAMETER_UPFILE));
                 parameters.add(SERVER_PARAMETER_FILENAME,
-                        requestParameters.getValue(SERVER_PARAMETER_FILENAME));
+                        getParameter(SERVER_PARAMETER_FILENAME));
 
                 HttpClient client = HttpManager.getNewHttpClient();
                 String url = String.format(TKConfig.getImageUploadUrl(),
@@ -100,19 +95,25 @@ public final class FileUpload extends BaseQuery {
                 LogWrapper.i("HttpUtils", "TKHttpClient->sendAndRecive():apiType="+apiType+", parameters="+postParam+", TKConfig.getEncoding()="+TKConfig.getEncoding());
                 
                 byte result[] = HttpManager.openUrl(context, client, url,
-                        HttpManager.HTTPMETHOD_POST, parameters, apiType, requestParameters.getValue(SERVER_PARAMETER_UUID));
+                        HttpManager.HTTPMETHOD_POST, parameters, apiType, getParameter(SERVER_PARAMETER_UUID));
                 statusCode = STATUS_CODE_NETWORK_OK;
                 
                 translate(result);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
+//        }
     }
 
     @Override
     protected void translateResponse(byte[] data) throws APIException {
         super.translateResponse(data);
         this.response = new Response(responseXMap);
+    }
+
+    @Override
+    protected void checkRequestParameters() throws APIException {
+        // TODO Auto-generated method stub
+        
     }
 }
