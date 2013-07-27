@@ -192,8 +192,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mActionTag = ActionLog.POIList;
+        super.onCreate(savedInstanceState);
     }
 
     @Override
