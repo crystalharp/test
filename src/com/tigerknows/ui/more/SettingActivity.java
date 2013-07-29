@@ -277,19 +277,19 @@ public class SettingActivity extends BaseActivity {
 	                Intent intent;
 	                switch (type) {
 	                    case DataBean.TYPE_GPS:
-	                        mActionLog.addAction(mActionTag + ActionLog.SettingGPS, checkGPS());
+	                        mActionLog.addAction(mActionTag + ActionLog.SettingGPS, String.valueOf(checkGPS()));
 	                        intent = new Intent("android.settings.LOCATION_SOURCE_SETTINGS");
 	                        startActivityForResult(intent, R.id.activity_setting_location);
 	                        break;
 	                    case DataBean.TYPE_WAKELOCK:
 	                        dataBean.checked = !dataBean.checked;
-	                        mActionLog.addAction(mActionTag + ActionLog.SettingWakeLock, dataBean.checked);
+	                        mActionLog.addAction(mActionTag + ActionLog.SettingWakeLock, String.valueOf(dataBean.checked));
 	                        refreshDataSetChanged(type-1);
 	                        switchWakeLock();
 	                        break;
 	                    case DataBean.TYPE_RADARPUSH:
 	                        dataBean.checked = !dataBean.checked;
-	                        mActionLog.addAction(mActionTag + ActionLog.SettingRadar, dataBean.checked);
+	                        mActionLog.addAction(mActionTag + ActionLog.SettingRadar, String.valueOf(dataBean.checked));
 	                        refreshDataSetChanged(type-1);
 	                        switchRadarPush();
 	                        break;
