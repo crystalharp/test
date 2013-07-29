@@ -429,8 +429,8 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             } else {
                 view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
             }
-            
-            if (filter.isSelected()) {
+
+            if (filter.isSelected() && (filter.getChidrenFilterList()==null || filter.getChidrenFilterList().size()==0)) {
                 textTxv.setTextColor(TKConfig.COLOR_ORANGE);
             } else {
                 if (isParent) {
