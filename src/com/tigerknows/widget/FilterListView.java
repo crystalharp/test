@@ -68,7 +68,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     
     private CallBack callBack;
     private int selectedParentPosition = -1;
-    private int selectedChiledPosition = -1;
+    private int selectedChildPosition = -1;
     
     private List<Filter> filterList;
     private Filter filter = null;
@@ -83,8 +83,9 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     
     String actionTag;
     Handler handler;
-    
+
     boolean isAreaFilter = false;
+    boolean isLastAreaFilter = true;
     
     public boolean isTurnPaging() {
         return isTurnPaging;
@@ -99,6 +100,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             return;
         }
         this.actionTag = actionTag;
+        isLastAreaFilter = isAreaFilter;
         isAreaFilter = false;
         if (key == POIResponse.FIELD_FILTER_AREA_INDEX) {
             ActionLog.getInstance(getContext()).addAction(this.actionTag+ActionLog.FilterArea);
@@ -145,7 +147,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                 List<Filter> childFilterList2 = tempParentFilter.getChidrenFilterList();
                 if (tempParentFilter.isSelected()) {
                     selectedParentPosition = i;
-                    selectedChiledPosition = 0;
+                    selectedChildPosition = 0;
                     this.childFilterList.addAll(childFilterList2);
                 } else {
                 	
@@ -156,11 +158,11 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                         	
                         	if(tempParentFilter.getFilterOption().getId()!=0){
 	                            selectedParentPosition = i;
-	                            selectedChiledPosition = j;
+	                            selectedChildPosition = j;
 	                            this.childFilterList.addAll(childFilterList2);
-                        	}else if(j==0){ //说明当前选中的是“全部区域”
+                        	}else if(j==0){ //说明当前选中的是“全部区域”下的“全部区域”
 	                            selectedParentPosition = i;
-	                            selectedChiledPosition = j;
+	                            selectedChildPosition = j;
 	                            this.childFilterList.addAll(childFilterList2);
                         	}
                         	
@@ -173,26 +175,8 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
 
         parentAdapter.notifyDataSetChanged();
         
-        final int finalselectedChiledPosition = selectedChiledPosition;
-        handler.post(new Runnable() {
-            
-            @Override
-            public void run() {
-                if (selectedParentPosition > 0 ) {
-                	int topPosition = selectedParentPosition-1;
-                    parentLsv.setSelectionFromTop(topPosition, 0);
-                } else {
-                    parentLsv.setSelectionFromTop(0, 0);
-                }
-                
-                if (finalselectedChiledPosition > 0) {
-                	int topPosition = finalselectedChiledPosition-1;
-                    childLsv.getBaseListView().setSelectionFromTop(topPosition, 0);
-                } else {
-                    childLsv.getBaseListView().setSelectionFromTop(0, 0);
-                }
-            }
-        });
+        final int finalselectedChildPosition = selectedChildPosition;
+        updateSelection(finalselectedChildPosition);
         
         // 如果没有被选中的filter，则默认高亮显示 “全部区域”
         if (selectedParentPosition == -1) {
@@ -215,8 +199,32 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         }
         
         // 如果是区域筛选，并且当前选择的父筛选项位置是全部区域，即第0个， 则列表设置为pinnedMode。
-       	childLsv.setData(childFilterList, pinnedMode, pinnedMode, selectedChiledPosition);
+       	childLsv.setData(childFilterList, pinnedMode, pinnedMode, selectedChildPosition);
     }
+    
+    private void updateSelection(final int finalselectedChiledPosition){
+
+        handler.post(new Runnable() {
+            
+            @Override
+            public void run() {
+                if (selectedParentPosition > 0 ) {
+                	int topPosition = selectedParentPosition-1;
+                    parentLsv.setSelectionFromTop(topPosition, 0);
+                } else {
+                    parentLsv.setSelectionFromTop(0, 0);
+                }
+                
+                if (finalselectedChiledPosition > 0) {
+                	int topPosition = finalselectedChiledPosition-1;
+                    childLsv.getBaseListView().setSelectionFromTop(topPosition, 0);
+                } else {
+                    childLsv.getBaseListView().setSelectionFromTop(0, 0);
+                }
+            }
+        });
+    }
+    
     
     public FilterListView(Context context) {
         this(context, null);
@@ -281,14 +289,14 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                 if (position >= parentFilterList.size()) {
                     return;
                 }
-                Filter filter = parentFilterList.get(position);
-                ActionLog.getInstance(getContext()).addAction(actionTag + ActionLog.PopupWindowFilterGroup, position, filter.getFilterOption().getName());
-                List<Filter> filterList = filter.getChidrenFilterList();
+                Filter parentFilterCliced = parentFilterList.get(position);
+                ActionLog.getInstance(getContext()).addAction(actionTag + ActionLog.PopupWindowFilterGroup, position, parentFilterCliced.getFilterOption().getName());
+                List<Filter> filterList = parentFilterCliced.getChidrenFilterList();
                 
                 if (filterList.size() == 0) {
                     childFilterList.clear();
                     childLsv.getAdapter().notifyDataSetChanged();
-                    doFilter(filter);
+                    doFilter(parentFilterCliced);
                 } else {
                 	int lastSelectedParentPosition = selectedParentPosition;
                     selectedParentPosition = position;
@@ -296,35 +304,46 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                     childFilterList.clear();
                     childFilterList.addAll(filterList);
                     
+                    int selectedChildPosition = -1;
+                    for(int j = childFilterList.size()-1; j >= 0; j--) {
+                    	Filter filter2 = childFilterList.get(j);
+                    	if (filter2.isSelected()) {
+                    		selectedChildPosition = j;
+                    		break;
+                    	}
+                    }
+                    
+                    boolean isCurParentSelected;
+                    if(selectedChildPosition == -1 ){
+                    	isCurParentSelected = false;
+                    }else{
+                    	isCurParentSelected = childFilterList.get(selectedChildPosition).getFilterOption().getParent() == parentFilterList.get(selectedParentPosition).getFilterOption().getId();
+                    }
+                    
+                    
                     if(isAreaFilter){
                     	//此处多做判断目的是减少setData里边的重复计算
                     	int lastId = parentFilterList.get(lastSelectedParentPosition).getFilterOption().getId();
                     	int curId = parentFilterList.get(position).getFilterOption().getId();
-                    	if(curId == 0 && lastId != 0){
-                    		childLsv.setData(childFilterList, true, true, -1);
-                    	}else if(curId !=0 && lastId == 0){
-                    		childLsv.setData(childFilterList, false, false, -1);
-                    	}else{
-                    		childLsv.getAdapter().notifyDataSetChanged();
+                    	if(curId == 0){
+                    		if(lastId != 0){
+                    			childLsv.setData(childFilterList, true, true, selectedChildPosition != 0 ? -1 : selectedChildPosition);
+                    		}
+                    	}else if(curId !=0){
+                			childLsv.setData(childFilterList, false, false, isCurParentSelected?selectedChildPosition:-1);
                     	}
+                    	
                     }else{
-                		childLsv.getAdapter().notifyDataSetChanged();
+                    	if (isLastAreaFilter) {
+							childLsv.setData(childFilterList, false, false, isCurParentSelected?selectedChildPosition:-1);
+						}else{
+							childLsv.getAdapter().setSelectedPosition(isCurParentSelected?selectedChildPosition:-1);
+							childLsv.getAdapter().notifyDataSetChanged();
+						}
                     }
                     
-                    int selectedChiledPosition = -1;
-                    for(int j = childFilterList.size()-1; j >= 0; j--) {
-                        Filter filter2 = childFilterList.get(j);
-                        if (filter2.isSelected()) {
-                            selectedChiledPosition = j;
-                            break;
-                        }
-                    }
+                    updateSelection(selectedChildPosition);
                     
-                    if (selectedParentPosition!=0 && selectedChiledPosition > -1) {
-                        childLsv.getBaseListView().setSelectionFromTop(selectedChiledPosition, 0);
-                    } else {
-                        childLsv.getBaseListView().setSelectionFromTop(0, 0);
-                    }
                 }
             }
         });
@@ -413,8 +432,8 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             } else {
                 view.setBackgroundResource(R.drawable.list_selector_background_gray_light);
             }
-            
-            if (filter.isSelected()) {
+
+            if (filter.isSelected() && (filter.getChidrenFilterList()==null || filter.getChidrenFilterList().size()==0)) {
                 textTxv.setTextColor(TKConfig.COLOR_ORANGE);
             } else {
                 if (isParent) {
