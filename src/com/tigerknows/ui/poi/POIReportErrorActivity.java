@@ -370,7 +370,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
         return super.onKeyDown(keyCode, event);
     }
     private boolean showDiscardDialog(){
-        boolean show = mSubmitBtn.isEnabled();
+        boolean show = mSubmitBtn.isEnabled() || (mPage == DETAIL_PAGE && (mChecked & MAIN_LLY)!=0 && TextUtils.isEmpty(mMainEdt.getText().toString().trim()) && !TextUtils.isEmpty(mOrigin.trim()));
         if (mPage == HOME_PAGE || show == false)return false;
         Utility.showNormalDialog(mThis, getString(R.string.erreport_abandon), new DialogInterface.OnClickListener(){
 
