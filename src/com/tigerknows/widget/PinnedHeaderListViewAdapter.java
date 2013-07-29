@@ -167,4 +167,12 @@ public class PinnedHeaderListViewAdapter extends BaseAdapter implements SectionI
 		return index >= 0 ? index : -index - 2;
 	}
 
+	public int getSelectedPosition() {
+		return selectedPosition;
+	}
+
+	public void setSelectedPosition(int selectedPosition) {
+		this.selectedPosition = selectedPosition;
+	}
+
 }
