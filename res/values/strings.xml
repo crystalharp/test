@@ -154,7 +154,6 @@
     <string name="start_equal_to_end">起点与终点相同, 请重新输入!</string>
     <string name="start_equal_to_end_select">起点与终点相同, 请重新选择!</string>
     <string name="busline_name_">请输入线路名或站点名</string>
-    <string name="input_busline_name_tip">请输入线路名称！</string>
     <string name="transfer_operation_time">运营时间:\u0020\u0020%1$s</string>
     <string name="bus_index_station">%1$d. %2$s</string>
     <string name="favorite_poi_empty">你还没有任何收藏</string>
@@ -353,7 +352,7 @@
     <string name="about_bbs">论坛 \u0020 http://bbs.tigerknows.com</string>
     <string name="about_email">邮件 \u0020 support@tigerknows.com</string>
     <string name="about_msn">MSN \u0020 tigerknows@live.com</string>
-    <string name="about_qq">Q 群 \u0020 63930376 \u0020 88839837 \n\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u002035416996 \u0020 88722138 \n\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u002086492534 \u0020 44190592</string>
+    <string name="about_qq">qq群 \u0020 63930376 \u0020 88839837 \n\u2003\u2003 \u0020 \u200a35416996 \u0020 88722138 \n\u2003\u2003 \u0020 \u200a86492534 \u0020 44190592</string>
     <string name="about_telephone">电话 \u0020 010-58874009</string>
     <string name="telephone_num">010-58874009</string>
     <string name="about_copyright">北京老虎宝典科技有限责任公司版权所有\n</string>

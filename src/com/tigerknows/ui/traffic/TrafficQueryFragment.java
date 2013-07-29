@@ -591,7 +591,7 @@ public class TrafficQueryFragment extends BaseFragment {
 		
 		String searchword = mBusline.getEdt().getText().toString().trim();
 		if (TextUtils.isEmpty(searchword)){
-			mSphinx.showTip(R.string.input_busline_name_tip, Toast.LENGTH_SHORT);
+			mSphinx.showTip(R.string.busline_name_, Toast.LENGTH_SHORT);
 			return;
 		}
 
