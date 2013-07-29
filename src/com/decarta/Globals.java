@@ -19,7 +19,6 @@ import com.tigerknows.common.ImageCache;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.BootstrapModel;
-import com.tigerknows.model.NoticeQuery;
 import com.tigerknows.model.Session;
 import com.tigerknows.model.User;
 import com.tigerknows.model.AccountManage.UserRespnose;
