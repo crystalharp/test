@@ -153,7 +153,7 @@ public class DynamicSubwayPOI extends DynamicPOIView {
     
     @Override
     public boolean isExist() {
-        if (mPOI.getXDescription().containsKey(Description.FIELD_SUBWAY_EXITS)) {
+        if (mPOI.getXDescription() != null && mPOI.getXDescription().containsKey(Description.FIELD_SUBWAY_EXITS)) {
             return true;
         }
         return false;
