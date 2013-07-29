@@ -1,8 +1,6 @@
 
 package com.tigerknows.common;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 
 import com.tigerknows.TKConfig;
@@ -57,8 +55,6 @@ public class LocationUpload extends LogUpload {
     
     private long sdt = 0;
     
-    public static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss");
-    
     private LocationUpload(Context context, String logFileName, String serverParameterKey) {
         super(context, logFileName, serverParameterKey);
         this.wifiManager = (WifiManager)mContext.getSystemService(Context.WIFI_SERVICE);
@@ -82,21 +78,26 @@ public class LocationUpload extends LogUpload {
             if (lastLocation == null || lastLocation.distanceTo(location) > MIN_DISTANCE) {
                 lastLocation = location;
                 
+                if (sdx == 0 || sdy == 0 || sdt == 0) {
+                    sdx = (long)(Utility.doubleKeep(lastLocation.getLatitude(), 5)*100000);
+                    sdy = (long)(Utility.doubleKeep(lastLocation.getLatitude(), 5)*100000);
+                    sdt = System.currentTimeMillis();
+                }
+                
                 mcc = TKConfig.getMCC();
                 mnc = TKConfig.getMNC();
                 
-                StringBuilder address = new StringBuilder();
-
+                StringBuilder info = new StringBuilder();
+                
                 TKCellLocation tkCellLocation = TKConfig.getCellLocation();
                 int lac = tkCellLocation.lac;
                 int cid = tkCellLocation.cid;
                 
                 // 记录当前基站
                 if (Utility.mccMncLacCidValid(mcc, mnc, lac, cid)) {
-                    address.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
-                    address.append("@");
-                    address.append(Utility.asu2dbm(TKConfig.getSignalStrength()));
-                    address.append(";");
+                    info.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
+                    info.append("@");
+                    info.append(Utility.asu2dbm(TKConfig.getSignalStrength()));
                 }
                 
                 // 记录当前wifi队列
@@ -104,16 +105,17 @@ public class LocationUpload extends LogUpload {
                     List<ScanResult> scanResultList = wifiManager.getScanResults();
                     if (scanResultList != null) {
                         for (ScanResult scanResult : scanResultList) {
-                            
+                            if (info.length() > 0) {
+                                info.append(";");
+                            }
                             String bssid = scanResult.BSSID;
-                            address.append(bssid);
-                            address.append("@");
-                            address.append(scanResult.level);
-                            address.append(";");
+                            info.append(bssid);
+                            info.append("@");
+                            info.append(scanResult.level);
                         }
                     }
                 }
-
+                
                 // 记录邻近基站队列
                 List<NeighboringCellInfo> neighboringCellInfoList = TKConfig.getNeighboringCellList();
                 if (neighboringCellInfoList != null) {
@@ -121,120 +123,50 @@ public class LocationUpload extends LogUpload {
                         lac = neighboringCellInfo.getLac();
                         cid = neighboringCellInfo.getCid();
                         if (Utility.lacCidValid(lac, cid)) {
-                            address.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
-                            address.append("@");
-                            address.append(Utility.asu2dbm(neighboringCellInfo.getRssi()));
-                            address.append(";");
+                            if (info.length() > 0) {
+                                info.append(";");
+                            }
+                            info.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
+                            info.append("@");
+                            info.append(Utility.asu2dbm(neighboringCellInfo.getRssi()));
                         }
                     }
                 }
                 
-                if (address.length() > 1) {
-                    if (mStringBuilder.length() > 0) {
+                if (info.length() > 0) {
+                    if (mLogFileLength > 0) {
                         mStringBuilder.append("|");
                     }
-                    mStringBuilder.append(SIMPLE_DATE_FORMAT.format(Calendar.getInstance().getTime()));
-                    mStringBuilder.append(",");
-                    mStringBuilder.append(Utility.doubleKeep(location.getLatitude(), 6));
-                    mStringBuilder.append(",");
-                    mStringBuilder.append(Utility.doubleKeep(location.getLongitude(), 6));
-                    mStringBuilder.append(",");
-                    mStringBuilder.append(location.getAccuracy());
+                    long current = System.currentTimeMillis();
+                    long sdx = (long)(Utility.doubleKeep(lastLocation.getLatitude(), 5)*100000);
+                    long sdy = (long)(Utility.doubleKeep(lastLocation.getLongitude(), 5)*100000);
+                    if (Math.abs(current - sdt) > LOGOUT_TIME ||
+                            Math.abs(this.sdx-sdx) > LOGOUT_DISTANCE ||
+                            Math.abs(this.sdy-sdy) > LOGOUT_DISTANCE) {
+                        this.sdx = sdx;
+                        this.sdy = sdy;
+                        this.sdt = current;
+                        mStringBuilder.append("sdt:");
+                        mStringBuilder.append(this.sdt);
+                        mStringBuilder.append(",sdx:");
+                        mStringBuilder.append(this.sdx);
+                        mStringBuilder.append(",sdy:");
+                        mStringBuilder.append(this.sdy);
+                        mStringBuilder.append(",");
+                    } else {
+                        mStringBuilder.append(current-sdt);
+                        mStringBuilder.append(",");
+                        mStringBuilder.append(sdx-this.sdx);
+                        mStringBuilder.append(",");
+                        mStringBuilder.append(sdy-this.sdy);
+                        mStringBuilder.append(",");
+                    }
+                    mStringBuilder.append(((int) lastLocation.getAccuracy()));
                     mStringBuilder.append(","); 
-                    mStringBuilder.append(address.substring(0, address.length()-1));
+                    mStringBuilder.append(info);
                     
                     tryUpload();
                 }
-                
-//                if (sdx == 0 || sdy == 0 || sdt == 0) {
-//                    sdx = (long)(Utility.doubleKeep(lastLocation.getLatitude(), 5)*100000);
-//                    sdy = (long)(Utility.doubleKeep(lastLocation.getLatitude(), 5)*100000);
-//                    sdt = System.currentTimeMillis();
-//                }
-//                
-//                mcc = TKConfig.getMCC();
-//                mnc = TKConfig.getMNC();
-//                
-//                StringBuilder info = new StringBuilder();
-//                
-//                TKCellLocation tkCellLocation = TKConfig.getCellLocation();
-//                int lac = tkCellLocation.lac;
-//                int cid = tkCellLocation.cid;
-//                
-//                // 记录当前基站
-//                if (Utility.mccMncLacCidValid(mcc, mnc, lac, cid)) {
-//                    info.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
-//                    info.append("@");
-//                    info.append(Utility.asu2dbm(TKConfig.getSignalStrength()));
-//                }
-//                
-//                // 记录当前wifi队列
-//                if (wifiManager != null) {
-//                    List<ScanResult> scanResultList = wifiManager.getScanResults();
-//                    if (scanResultList != null) {
-//                        for (ScanResult scanResult : scanResultList) {
-//                            if (info.length() > 0) {
-//                                info.append(";");
-//                            }
-//                            String bssid = scanResult.BSSID;
-//                            info.append(bssid);
-//                            info.append("@");
-//                            info.append(scanResult.level);
-//                        }
-//                    }
-//                }
-//                
-//                // 记录邻近基站队列
-//                List<NeighboringCellInfo> neighboringCellInfoList = TKConfig.getNeighboringCellList();
-//                if (neighboringCellInfoList != null) {
-//                    for (NeighboringCellInfo neighboringCellInfo : neighboringCellInfoList) {
-//                        lac = neighboringCellInfo.getLac();
-//                        cid = neighboringCellInfo.getCid();
-//                        if (Utility.lacCidValid(lac, cid)) {
-//                            if (info.length() > 0) {
-//                                info.append(";");
-//                            }
-//                            info.append(String.format("%d.%d.%d.%d", mcc, mnc, lac, cid));
-//                            info.append("@");
-//                            info.append(Utility.asu2dbm(neighboringCellInfo.getRssi()));
-//                        }
-//                    }
-//                }
-//                
-//                if (info.length() > 0) {
-//                    if (mLogFileLength > 0) {
-//                        mStringBuilder.append("|");
-//                    }
-//                    long current = System.currentTimeMillis();
-//                    long sdx = (long)(Utility.doubleKeep(lastLocation.getLatitude(), 5)*100000);
-//                    long sdy = (long)(Utility.doubleKeep(lastLocation.getLongitude(), 5)*100000);
-//                    if (Math.abs(current - sdt) > LOGOUT_TIME ||
-//                            Math.abs(this.sdx-sdx) > LOGOUT_DISTANCE ||
-//                            Math.abs(this.sdy-sdy) > LOGOUT_DISTANCE) {
-//                        this.sdx = sdx;
-//                        this.sdy = sdy;
-//                        this.sdt = current;
-//                        mStringBuilder.append("sdt:");
-//                        mStringBuilder.append(this.sdt);
-//                        mStringBuilder.append(",sdx:");
-//                        mStringBuilder.append(this.sdx);
-//                        mStringBuilder.append(",sdy:");
-//                        mStringBuilder.append(this.sdy);
-//                        mStringBuilder.append(",");
-//                    } else {
-//                        mStringBuilder.append(current-this.sdt);
-//                        mStringBuilder.append(",");
-//                        mStringBuilder.append(sdx-this.sdx);
-//                        mStringBuilder.append(",");
-//                        mStringBuilder.append(sdy-this.sdy);
-//                        mStringBuilder.append(",");
-//                    }
-//                    mStringBuilder.append(((int) lastLocation.getAccuracy()));
-//                    mStringBuilder.append(","); 
-//                    mStringBuilder.append(info);
-//                    
-//                    tryUpload();
-//                }
             }
             
                 
