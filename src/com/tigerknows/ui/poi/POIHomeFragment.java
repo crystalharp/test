@@ -169,15 +169,19 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         mMyLoactionTxv.setVisibility(View.VISIBLE);
         mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
         if (mSelectedLocation == false) {
+            mMyLoactionTxv.setBackgroundResource(R.drawable.btn_my_location);
             Filter filter = HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST);
             if (filter != null) {
                 FilterListView.selectedFilter(filter, Integer.MIN_VALUE);
             }
+        } else {
+            mMyLoactionTxv.setBackgroundResource(R.drawable.btn_appointed_area);
         }
     }
     
     public void setPOI(POI poi) {
         mPOI = poi;
+        mMyLoactionTxv.setBackgroundResource(R.drawable.btn_appointed_area);
         mMyLoactionTxv.setText(mSphinx.getString(R.string.appoint_location) + mPOI.getName());
         mMyLoactionTxv.setVisibility(View.VISIBLE);
         mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
@@ -528,6 +532,12 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             mSphinx.getPOIQueryFragment().reset();
             mSphinx.showView(R.id.view_poi_input_search);
         } else if (id == R.id.my_location_txv) {
+            if (mPOI != null || mSelectedLocation) {
+                setSelectedLocation(false);
+                refreshLocationView(true);
+                return;
+            }
+            
             mSphinx.getPickLocationFragment().setInvoker(this);
             mSphinx.getPickLocationFragment().reset();
             DataQuery.initStaticField(BaseQuery.DATA_TYPE_POI, BaseQuery.SUB_DATA_TYPE_POI, Globals.getCurrentCityInfo(false).getId());
