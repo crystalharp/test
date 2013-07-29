@@ -26,6 +26,7 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.model.DataQuery.AlternativeResponse.Alternative;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverConfigList;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList.DiscoverCategory;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverConfigList.DiscoverConfig;
@@ -708,6 +709,7 @@ public final class DataQuery extends BaseQuery {
             addParameter(new String[]{SERVER_PARAMETER_LOCATION_CITY, SERVER_PARAMETER_LONGITUDE, SERVER_PARAMETER_LATITUDE, SERVER_PARAMETER_LOCATION_LONGITUDE, SERVER_PARAMETER_LOCATION_LATITUDE});
             addParameter(new String[]{SERVER_PARAMETER_MESSAGE_ID_LIST, SERVER_PARAMETER_LAST_PULL_DATE}, false);
         } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
+            requestParameters.add(SERVER_PARAMETER_NEED_FIELD, Alternative.NEED_FIELD);
             addParameter(new String[]{SERVER_PARAMETER_KEYWORD});
         } else if (DATA_TYPE_COUPON.equals(dataType)) {
         	addParameter(SERVER_PARAMETER_POI_ID);
@@ -2505,6 +2507,8 @@ public final class DataQuery extends BaseQuery {
             public static final byte FIELD_NAME = 0x05;
             // 0x09    x_string    地址 
             public static final byte FIELD_ADDRESS = 0x09;
+            
+            public static final String NEED_FIELD = "0103040509";
             
             protected String uuid;
             protected Position position;
