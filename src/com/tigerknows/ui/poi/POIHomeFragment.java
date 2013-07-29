@@ -1055,6 +1055,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     	   criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
         }
        if (mPOI != null) {
+           requestPOI = mPOI;
            position = mPOI.getPosition();
            criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
            criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
