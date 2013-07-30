@@ -533,10 +533,12 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             mSphinx.showView(R.id.view_poi_input_search);
         } else if (id == R.id.my_location_txv) {
             if (mPOI != null || mSelectedLocation) {
+                mActionLog.addAction(mActionTag + ActionLog.POIHomeAppointedArea);
                 setSelectedLocation(false);
                 refreshLocationView(true);
                 return;
             }
+            mActionLog.addAction(mActionTag + ActionLog.POIHomeMyLocation);
             
             mSphinx.getPickLocationFragment().setInvoker(this);
             mSphinx.getPickLocationFragment().reset();
@@ -564,6 +566,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         mSelectedLocation = false;
         mPOI = null;
         refreshLocationView(true);
+        HotelHomeFragment.deleteFilter(mFilterList, FilterArea.FIELD_LIST);
         refreshFilterArea();
         Filter filter = HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST);
         if (filter != null) {

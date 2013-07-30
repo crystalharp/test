@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.PresetTime;
@@ -99,7 +100,7 @@ public class DynamicSubwayPOI extends DynamicPOIView {
 
                     @Override
                     public void onClick(View v) {
-                        // TODO Auto-generated method stub
+                        mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailStation, stationTxv.getText().toString());
                         TrafficQueryFragment.submitBuslineQuery(mSphinx, stationTxv.getText().toString());
 
                     }
