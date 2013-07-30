@@ -19,7 +19,7 @@ import com.tigerknows.model.Hotel.HotelTKDrawable;
 import com.tigerknows.model.Hotel.RoomType;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.POI.PresetTime;
-import com.tigerknows.model.POI.Station;
+import com.tigerknows.model.POI.Busstop;
 import com.tigerknows.model.POI.SubwayExit;
 import com.tigerknows.model.POI.SubwayPresetTime;
 import com.tigerknows.model.PullMessage;
@@ -659,10 +659,10 @@ public class DataQueryTest {
             XArray<XMap> stationList = new XArray<XMap>();
 //            for (int j = 0; j < 3; j++) {
                 XMap station = new XMap();
-                station.put(Station.FEILD_STATION, "中关园北站");
+                station.put(Busstop.FEILD_STATION, "中关园北站");
                 stationList.add(station);
 //            }
-            subwayExit.put(SubwayExit.FEILD_STATIONS, stationList);
+            subwayExit.put(SubwayExit.FEILD_BUSSTOP, stationList);
             dataList.add(subwayExit);
         }
         
