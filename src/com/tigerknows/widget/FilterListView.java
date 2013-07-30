@@ -626,14 +626,14 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             if (chidrenFilterList != null) {
                 for(int i = 0, size = chidrenFilterList.size(); i < size; i++) {
                     Filter chidrenFilter = chidrenFilterList.get(i);
-                    if (filter.getKey() == FilterArea.FIELD_LIST &&
-                            chidrenFilter.getFilterOption().getId() == 0) {
-                        continue;
-                    }
                     if (chidrenFilter.isSelected()) {
                         result = new Filter[1];
                         result[0] = chidrenFilter;
                         return result;
+                    }
+                    if (filter.getKey() == FilterArea.FIELD_LIST &&
+                            chidrenFilter.getFilterOption().getId() == 0) {
+                        continue;
                     }
                     List<Filter> chidrenFilterList1 = chidrenFilter.getChidrenFilterList();
                     for(int j = 0, count = chidrenFilterList1.size(); j < count; j++) {
