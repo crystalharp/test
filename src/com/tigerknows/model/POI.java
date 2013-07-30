@@ -1627,10 +1627,10 @@ public class POI extends BaseData {
     public static class SubwayExit extends XMapData {
         public final static byte FEILD_SUBWAY_EXIT = 0x01;
         public final static byte FEILD_LANDMARK = 0x02;
-        public final static byte FEILD_STATIONS = 0x03;
+        public final static byte FEILD_BUSSTOP = 0x03;
         private String exit;
         private String landmark;
-        private List<Station> stations;
+        private List<Busstop> busstops;
         
         public String getExit() {
             return exit;
@@ -1640,15 +1640,15 @@ public class POI extends BaseData {
             return landmark;
         }
         
-        public List<Station> getStations() {
-            return stations;
+        public List<Busstop> getBusstops() {
+            return busstops;
         }
         
         public SubwayExit(XMap data) throws APIException {
             super(data);
             this.exit = getStringFromData(FEILD_SUBWAY_EXIT);
             this.landmark = getStringFromData(FEILD_LANDMARK);
-            this.stations = getListFromData(FEILD_STATIONS, Station.Initializer);
+            this.busstops = getListFromData(FEILD_BUSSTOP, Busstop.Initializer);
         }
         
         public final static XMapInitializer<SubwayExit> Initializer = new XMapInitializer<SubwayExit>() {
@@ -1660,24 +1660,24 @@ public class POI extends BaseData {
         };
     }
     
-    public static class Station extends XMapData {
+    public static class Busstop extends XMapData {
         public final static byte FEILD_STATION = 0x01;
-        private String station;
+        private String busstop;
         
-        public String getStation() {
-            return station;
+        public String getBusstop() {
+            return busstop;
         }
         
-        public Station(XMap data) throws APIException {
+        public Busstop(XMap data) throws APIException {
             super(data);
-            this.station = getStringFromData(FEILD_STATION);
+            this.busstop = getStringFromData(FEILD_STATION);
         }
         
-        public final static XMapInitializer<Station> Initializer = new XMapInitializer<Station>() {
+        public final static XMapInitializer<Busstop> Initializer = new XMapInitializer<Busstop>() {
 
             @Override
-            public Station init(XMap data) throws APIException {
-                return new Station(data);
+            public Busstop init(XMap data) throws APIException {
+                return new Busstop(data);
             }
             
         };
