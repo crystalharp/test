@@ -265,16 +265,22 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             isReLogin = true;
             return;
         } else {
+            boolean result = true;
             FilterArea filterArea = DataQuery.getFilterArea();
             if (filterArea == null || filterArea.getVersion().equals("0.0.0")) {
 //                queryFilter();
-                return;
+//                return;
+                result = false;
             }
                 
-            setDataToPickLocationFragment();
+            if (result) {
+                setDataToPickLocationFragment();
+            }
             
             if (mProgressDialog != null && mProgressDialog.isShowing()) {
-                mSphinx.showView(R.id.view_hotel_pick_location);
+                if (result) {
+                    mSphinx.showView(R.id.view_hotel_pick_location);
+                }
                 dismissProgressDialog();
             }
         }
