@@ -100,6 +100,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             return;
         }
         this.actionTag = actionTag;
+        bladeView.setActionTag(this.actionTag);
         isLastAreaFilter = isAreaFilter;
         isAreaFilter = false;
         if (key == POIResponse.FIELD_FILTER_AREA_INDEX) {
@@ -255,7 +256,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         parentLsv = (ListView) findViewById(R.id.parent_lsv);
         childLsv = (PinnedHeaderBladeListView) findViewById(R.id.child_lsv);
         bladeView = (BladeView) findViewById(R.id.blade_view);
-        bladeView.setSphinx(getContext());
         
     }
     

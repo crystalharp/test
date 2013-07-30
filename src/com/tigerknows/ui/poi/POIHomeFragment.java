@@ -533,10 +533,12 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             mSphinx.showView(R.id.view_poi_input_search);
         } else if (id == R.id.my_location_txv) {
             if (mPOI != null || mSelectedLocation) {
+                mActionLog.addAction(mActionTag + ActionLog.POIHomeAppointedArea);
                 setSelectedLocation(false);
                 refreshLocationView(true);
                 return;
             }
+            mActionLog.addAction(mActionTag + ActionLog.POIHomeMyLocation);
             
             mSphinx.getPickLocationFragment().setInvoker(this);
             mSphinx.getPickLocationFragment().reset();

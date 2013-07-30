@@ -132,6 +132,7 @@ public class ActionLog extends LogUpload {
     
     public static final String PickPhoto = "YD";
     public static final String CameraPhoto = "YF";
+    public static final String FilterAreaChar = "YG";
     
     // POI主页 
     public static final String POIHome = "AA";
@@ -144,6 +145,8 @@ public class ActionLog extends LogUpload {
     public static final String POIHomeSubcategoryClosedOnFling = "BG";
     public static final String POIHomeSubcategoryClosedOnClick = "BH";
     public static final String POIHomeSubcategoryClosedOnBack = "BI";
+    public static final String POIHomeMyLocation = "BK";
+    public static final String POIHomeAppointedArea = "BL";
 
     
     // POI输入查询页
@@ -179,6 +182,7 @@ public class ActionLog extends LogUpload {
     public static final String POIDetailHotelFailRetry = "BZ";
     public static final String POIDetailCouponSingle = "CA";
     public static final String POIDetailCouponMulti = "CB";
+    public static final String POIDetailStation = "CD";
 
     // POI点评列表页
     public static final String POICommentList = "AE";
