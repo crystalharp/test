@@ -10,6 +10,7 @@
         android:id="@+id/head_icon"
         android:src="@drawable/ic_subway_name"
         android:paddingRight="8dp"
+        android:paddingTop="2dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     
@@ -23,6 +24,7 @@
             android:id="@+id/line_name_txv"
             android:textSize="14sp"
             android:textColor="@color/black"
+            android:layout_marginBottom="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         

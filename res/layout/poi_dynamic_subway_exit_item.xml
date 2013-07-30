@@ -7,6 +7,7 @@
     <ImageView
         android:id="@+id/head_icon"
         android:src="@drawable/ic_subway_exit"
+        android:paddingTop="2dp"
         android:paddingRight="8dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -29,14 +30,14 @@
             android:id="@+id/landmark_txv"
             android:textSize="14sp"
             android:textColor="@color/text_gray"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         
         <RelativeLayout 
 		    android:layout_width="wrap_content"
 		    android:layout_height="wrap_content"
-		    android:layout_marginBottom="24dp"
+		    android:layout_marginBottom="16dp"
 		    android:id="@+id/station_view"
 		    android:gravity="left"
             >
@@ -46,6 +47,7 @@
 	            android:textSize="14sp"
 	            android:textColor="@color/text_gray"
 	            android:layout_marginRight="8dp"
+	            android:paddingTop="8dp"
 	            android:text="@string/subway_station_nearby"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content" /> 
@@ -53,9 +55,13 @@
 	        <TextView
 	            android:id="@+id/station_txv"
 	            android:textSize="14sp"
+                android:paddingTop="8dp"
+                android:paddingBottom="8dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
 	            android:layout_toRightOf="@id/station_title"
 	            android:textColor="@color/black"
-	            android:drawableRight="@drawable/ic_subway_busstop"
+	            android:background="@drawable/btn_subway_busstop"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content" />
 	       

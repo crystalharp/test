@@ -198,7 +198,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     
     DynamicMoviePOI mDynamicMoviePOI;
     
-    DynamicSubwayPOI mDynamicSubwayPOI;
+    ExtraSubwayPOI mExtraSubwayPOI;
     
     private Button mCommentTipEdt;
     
@@ -451,7 +451,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
     private List<DynamicPOIView> mExtraPOIInfoList = new LinkedList<DynamicPOIView>();
     
     private void initExtraViewEnv() {
-        mExtraPOIInfoList.add(mDynamicSubwayPOI);
+        mExtraPOIInfoList.add(mExtraSubwayPOI);
     }
     
     private void initExtraView() {
@@ -510,7 +510,7 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         
         mDynamicMoviePOI = new DynamicMoviePOI(this, mLayoutInflater);
         
-        mDynamicSubwayPOI = new DynamicSubwayPOI(this, mLayoutInflater);
+        mExtraSubwayPOI = new ExtraSubwayPOI(this, mLayoutInflater);
         
         return mRootView;
     }
@@ -1029,13 +1029,13 @@ public class POIDetailFragment extends BaseFragment implements View.OnClickListe
         //这两个函数放在前面初始化动态POI信息
         clearDynamicView(DPOIViewBlockList);
         //初始化和动态POI信息无关的动态布局，执行addToParent的顺序决定出现的顺序
-        mExtraViewList.addAll(mDynamicSubwayPOI.getViewList());
+        mExtraViewList.addAll(mExtraSubwayPOI.getViewList());
         //初始化和动态POI信息相关的动态布局
         initDynamicPOIView(mPOI);
         initExtraView();
-        mDynamicSubwayPOI.initData(poi);
-        if (mDynamicSubwayPOI.isExist()) {
-            mDynamicSubwayPOI.refresh();
+        mExtraSubwayPOI.initData(poi);
+        if (mExtraSubwayPOI.isExist()) {
+            mExtraSubwayPOI.refresh();
         }
         if (poi.getHotel().getUuid() != null) {
             mNavigationWidget.setVisibility(View.VISIBLE);
