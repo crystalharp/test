@@ -17,7 +17,7 @@ import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.model.DataQuery.Filter;
-import com.tigerknows.util.HanziUtil;
+import com.tigerknows.util.PinyinUtil;
 import com.tigerknows.widget.BladeView.OnBladeItemClickListener;
 
 public class PinnedHeaderBladeListView extends LinearLayout {
@@ -102,7 +102,7 @@ public class PinnedHeaderBladeListView extends LinearLayout {
 			for (int i = notPinFirst?1:0, size=mData.size(); i < size; i++) {
 				
 				String itemStr = mData.get(i).getFilterOption().getName();
-				String firstChar = String.valueOf( HanziUtil.getFirstPinYinChar(itemStr));
+				String firstChar = String.valueOf(Character.toUpperCase( mData.get(i).getFilterOption().pinyin.charAt(0)));
 				
 				if (mSections.contains(firstChar)) {
 					mFirstChar2ItemsMap.get(firstChar).add(itemStr);
