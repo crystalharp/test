@@ -319,7 +319,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
      */
     private void submit() {
         TKWord tkWord = mTKWord;
-        String word = tkWord.word;
+        String word = tkWord.word.trim();
         if (TextUtils.isEmpty(word)) {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
             return;
