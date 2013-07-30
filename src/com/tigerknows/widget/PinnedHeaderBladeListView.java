@@ -17,7 +17,6 @@ import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.model.DataQuery.Filter;
-import com.tigerknows.util.HanziUtil;
 import com.tigerknows.util.PinyinUtil;
 import com.tigerknows.widget.BladeView.OnBladeItemClickListener;
 

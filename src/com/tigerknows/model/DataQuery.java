@@ -36,7 +36,6 @@ import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XInt;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
-import com.tigerknows.util.HanziUtil;
 import com.tigerknows.util.PinyinUtil;
 import com.tigerknows.util.Utility;
 import com.weibo.sdk.android.WeiboParameters;
