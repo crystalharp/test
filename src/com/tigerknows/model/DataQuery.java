@@ -1044,6 +1044,9 @@ public final class DataQuery extends BaseQuery {
                     	list.addAll(chidrenFilter.getChidrenFilterList());
                     }
                 }
+                for (int i = 0; i < list.size(); i++) {
+					list.get(i).getFilterOption().pinyin = PinyinUtil.toPinyin(context, list.get(i).getFilterOption().getName());
+				}
                 sortFilterList(context, list);
                 
                 FilterOption dupAllAreaFilterOpt = new FilterOption();
@@ -1054,6 +1057,7 @@ public final class DataQuery extends BaseQuery {
                 
                 Filter filter1 = new Filter();
                 filter1.filterOption = dupAllAreaFilterOpt;
+                filter1.filterOption.pinyin = PinyinUtil.toPinyin(context, filter1.filterOption.getName());
                 filter1.selected = allArea.selected;
                 allArea.selected = false;
                 list.add(0, filter1);
@@ -1235,6 +1239,7 @@ public final class DataQuery extends BaseQuery {
             filterOption.id = id;
             filterOption.name = name;
             filterOption.parent = parent;
+            filterOption.pinyin = pinyin;
             return filterOption;
         }
         
