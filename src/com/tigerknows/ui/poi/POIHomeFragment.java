@@ -540,10 +540,10 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             mSphinx.showView(R.id.view_poi_input_search);
         } else if (id == R.id.my_location_txv) {
             CityInfo myLoaction = Globals.g_My_Location_City_Info;
-            if (myLoaction == null || Globals.getCurrentCityInfo(false).getId() != myLoaction.getId()) {
-                return;
-            }
-            if (mPOI != null || mSelectedLocation) {
+            if (myLoaction == null ||
+                    Globals.getCurrentCityInfo(false).getId() != myLoaction.getId() ||
+                    mPOI != null ||
+                    mSelectedLocation) {
                 mActionLog.addAction(mActionTag + ActionLog.POIHomeAppointedArea);
                 setSelectedLocation(false);
                 refreshLocationView(true);
@@ -609,6 +609,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         } else {
             mLastTime = 0;
             if (mSelectedLocation == false) {
+                mMyLoactionTxv.setBackgroundResource(R.drawable.bg_location);
                 mMyLoactionTxv.setText(mContext.getString(R.string.location_doing));
                 mMyLoactionTxv.setVisibility(View.VISIBLE);
                 mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
@@ -648,6 +649,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         if (isUpdate) {
             mLocationName = name;
             if (mSelectedLocation == false) {
+                mMyLoactionTxv.setBackgroundResource(R.drawable.btn_my_location);
                 mMyLoactionTxv.setText(mContext.getString(R.string.current_location, mLocationName.substring(1)));
             }
             mLastPosition = myLocationPosition;
