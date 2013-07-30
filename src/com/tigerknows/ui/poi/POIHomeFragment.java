@@ -187,6 +187,10 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         mCategoryTop = mMyLocationViewHeight+mCategoryPadding;
     }
     
+    public POI getPOI() {
+        return mPOI;
+    }
+    
     Response mResponse = null;
 	
     List<Filter> mFilterList = new ArrayList<DataQuery.Filter>();
@@ -1061,6 +1065,9 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 	private void jumpToPOIResult(String keyWord){
        DataQuery poiQuery = new DataQuery(mContext);
        POI requestPOI = mSphinx.getPOI();
+       if (mPOI != null) {
+           requestPOI = mPOI;
+       }
        int cityId = Globals.getCurrentCityInfo().getId();
        Hashtable<String, String> criteria = getCriteria();
        criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, keyWord);
