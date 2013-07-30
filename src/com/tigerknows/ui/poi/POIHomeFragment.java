@@ -566,6 +566,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         mSelectedLocation = false;
         mPOI = null;
         refreshLocationView(true);
+        HotelHomeFragment.deleteFilter(mFilterList, FilterArea.FIELD_LIST);
         refreshFilterArea();
         Filter filter = HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST);
         if (filter != null) {
