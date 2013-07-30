@@ -183,7 +183,7 @@ public class ActionLog extends LogUpload {
     public static final String POIDetailHotelFailRetry = "BZ";
     public static final String POIDetailCouponSingle = "CA";
     public static final String POIDetailCouponMulti = "CB";
-    public static final String POIDetailStation = "CD";
+    public static final String POIDetailBusstop = "CD";
 
     // POI点评列表页
     public static final String POICommentList = "AE";

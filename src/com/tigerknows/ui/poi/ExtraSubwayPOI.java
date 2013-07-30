@@ -15,7 +15,7 @@ import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.PresetTime;
-import com.tigerknows.model.POI.Station;
+import com.tigerknows.model.POI.Busstop;
 import com.tigerknows.model.POI.SubwayExit;
 import com.tigerknows.model.POI.SubwayPresetTime;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
@@ -87,27 +87,27 @@ public class ExtraSubwayPOI extends DynamicPOIView {
             
             TextView exitTxv = (TextView) v.findViewById(R.id.exit_name_txv);
             TextView landmarkTxv = (TextView) v.findViewById(R.id.landmark_txv);
-            final TextView stationTxv = (TextView) v.findViewById(R.id.station_txv);
+            final TextView busstopTxv = (TextView) v.findViewById(R.id.busstop_txv);
             
             exitTxv.setText(exit.getExit());
             landmarkTxv.setText(exit.getLandmark());
             
-            View stationView = v.findViewById(R.id.station_view);
-            List<Station> s = exit.getStations();
-            if (s != null && s.size() > 0 && !TextUtils.isEmpty(s.get(0).getStation())) {
-                stationView.setVisibility(View.VISIBLE);
-                stationTxv.setText(s.get(0).getStation());
-                stationTxv.setOnClickListener(new View.OnClickListener() {
+            View busstopView = v.findViewById(R.id.busstop_view);
+            List<Busstop> s = exit.getBusstops();
+            if (s != null && s.size() > 0 && !TextUtils.isEmpty(s.get(0).getBusstop())) {
+                busstopView.setVisibility(View.VISIBLE);
+                busstopTxv.setText(s.get(0).getBusstop());
+                busstopTxv.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
-                        mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailStation, stationTxv.getText().toString());
-                        TrafficQueryFragment.submitBuslineQuery(mSphinx, stationTxv.getText().toString());
+                        mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailBusstop, busstopTxv.getText().toString());
+                        TrafficQueryFragment.submitBuslineQuery(mSphinx, busstopTxv.getText().toString());
 
                     }
                 });
             } else {
-                stationView.setVisibility(View.GONE);
+                busstopView.setVisibility(View.GONE);
             }
             
         }
