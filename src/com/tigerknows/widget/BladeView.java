@@ -1,5 +1,7 @@
 package com.tigerknows.widget;
 
+import com.tigerknows.common.ActionLog;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,6 +16,8 @@ import android.widget.TextView;
 public class BladeView extends View {
 	
 	private OnBladeItemClickListener mOnItemClickListener;
+	
+	private String mActionTag;
 	
 	String[] b = { "#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
 			"L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X",
@@ -136,6 +140,7 @@ public class BladeView extends View {
 
 	private void performItemClicked(int item) {
 		if (mOnItemClickListener != null) {
+		    ActionLog.getInstance(getContext()).addAction(mActionTag + ActionLog.FilterAreaChar, b[item]);
 			mOnItemClickListener.onItemClick(b[item]);
 			showPopup(item);
 		}
@@ -145,9 +150,8 @@ public class BladeView extends View {
 		void onItemClick(String s);
 	}
 
-	private Context context;
-	public void setSphinx(Context context){
-		this.context = context;
+	public void setActionTag(String actionTag){
+		this.mActionTag = actionTag;
 	}
 
 	public void setPopupText(TextView popupText){
