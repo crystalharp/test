@@ -37,6 +37,7 @@ import com.tigerknows.model.xobject.XInt;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
 import com.tigerknows.util.HanziUtil;
+import com.tigerknows.util.PinyinUtil;
 import com.tigerknows.util.Utility;
 import com.weibo.sdk.android.WeiboParameters;
 
@@ -1044,7 +1045,7 @@ public final class DataQuery extends BaseQuery {
                     	list.addAll(chidrenFilter.getChidrenFilterList());
                     }
                 }
-                sortFilterList(list);
+                sortFilterList(context, list);
                 
                 FilterOption dupAllAreaFilterOpt = new FilterOption();
                 dupAllAreaFilterOpt.setName(allArea.getFilterOption().getName());
@@ -1090,18 +1091,18 @@ public final class DataQuery extends BaseQuery {
      * 按照拼音对Filter列表进行排序
      * @param filters
      */
-    private static void sortFilterList(List<Filter> filters){
+    private static void sortFilterList(final Context context, List<Filter> filters){
     	Collections.sort(filters, new Comparator<Filter>() {
 
 			@Override
 			public int compare(Filter lhs, Filter rhs) {
-				if(lhs.getFilterOption().firstChar==0){
-					lhs.getFilterOption().firstChar = HanziUtil.getFirstPinYinChar(lhs.getFilterOption().getName());
+				if(lhs.getFilterOption().pinyin==null){
+					lhs.getFilterOption().pinyin = PinyinUtil.toPinyin(context, lhs.getFilterOption().getName());
 				}
-				if(rhs.getFilterOption().firstChar==0){
-					rhs.getFilterOption().firstChar = HanziUtil.getFirstPinYinChar(rhs.getFilterOption().getName());
+				if(rhs.getFilterOption().pinyin==null){
+					rhs.getFilterOption().pinyin = PinyinUtil.toPinyin(context, rhs.getFilterOption().getName());
 				}
-				return lhs.getFilterOption().firstChar-rhs.getFilterOption().firstChar;
+				return lhs.getFilterOption().pinyin.compareTo( rhs.getFilterOption().pinyin );
 			}
 		});
     }
@@ -1194,7 +1195,7 @@ public final class DataQuery extends BaseQuery {
 
         private int parent;
         
-        public char firstChar = 0;
+        public String pinyin = null;
 
         public FilterOption() {
         }
