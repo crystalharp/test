@@ -279,6 +279,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             
             if (mProgressDialog != null && mProgressDialog.isShowing()) {
                 if (result) {
+                    mSphinx.getPickLocationFragment().setTitle(mSphinx.getString(R.string.poi_change_location));
                     mSphinx.showView(R.id.view_hotel_pick_location);
                 }
                 dismissProgressDialog();
@@ -538,6 +539,10 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
             mSphinx.getPOIQueryFragment().reset();
             mSphinx.showView(R.id.view_poi_input_search);
         } else if (id == R.id.my_location_txv) {
+            CityInfo myLoaction = Globals.g_My_Location_City_Info;
+            if (myLoaction == null || Globals.getCurrentCityInfo(false).getId() != myLoaction.getId()) {
+                return;
+            }
             if (mPOI != null || mSelectedLocation) {
                 mActionLog.addAction(mActionTag + ActionLog.POIHomeAppointedArea);
                 setSelectedLocation(false);
@@ -558,6 +563,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
                 if (filter == null) {
                     setDataToPickLocationFragment();
                 }
+                mSphinx.getPickLocationFragment().setTitle(mSphinx.getString(R.string.poi_change_location));
                 mSphinx.showView(R.id.view_hotel_pick_location);
             }
         }
@@ -571,6 +577,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 
         mSelectedLocation = false;
         mPOI = null;
+        mMyLoactionTxv.setBackgroundResource(R.drawable.btn_my_location);
         refreshLocationView(true);
         HotelHomeFragment.deleteFilter(mFilterList, FilterArea.FIELD_LIST);
         refreshFilterArea();
@@ -1053,36 +1060,8 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
        DataQuery poiQuery = new DataQuery(mContext);
        POI requestPOI = mSphinx.getPOI();
        int cityId = Globals.getCurrentCityInfo().getId();
-       Hashtable<String, String> criteria = new Hashtable<String, String>();
-       criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
-       criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
-       criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
+       Hashtable<String, String> criteria = getCriteria();
        criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, keyWord);
-       Position position = requestPOI.getPosition();
-       if (position != null) {
-    	   criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-    	   criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
-        }
-       if (mPOI != null) {
-           requestPOI = mPOI;
-           position = mPOI.getPosition();
-           criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-           criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
-       } else if (mSelectedLocation) {
-           Filter[] filters = FilterListView.getSelectedFilter(HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST));
-           if (filters != null) {
-               StringBuilder s = new StringBuilder();
-               s.append(Util.byteToHexString(FilterArea.FIELD_LIST));
-               s.append(':');
-               for(int i = 0, length = filters.length; i < length; i++) {
-                   if (i > 0) {
-                       s.append('_');
-                   }
-                   s.append(filters[i].getFilterOption().getName());
-               }
-               criteria.put(DataQuery.SERVER_PARAMETER_FILTER_STRING, s.toString());
-           }
-       }
        criteria.put(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
        poiQuery.setup(criteria, cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
        BaseFragment baseFragment = mSphinx.getFragment(poiQuery.getTargetViewId());
@@ -1092,6 +1071,41 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     	   ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup();
     	   mSphinx.showView(poiQuery.getTargetViewId());
        	}
+	}
+	
+	public Hashtable<String, String> getCriteria() {
+	       POI requestPOI = mSphinx.getPOI();
+	       Hashtable<String, String> criteria = new Hashtable<String, String>();
+	       criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+	       criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+	       criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
+	       Position position = requestPOI.getPosition();
+	       if (position != null) {
+	           criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+	           criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+	        }
+	       if (mPOI != null) {
+	           requestPOI = mPOI;
+	           position = mPOI.getPosition();
+	           criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+	           criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+	       } else if (mSelectedLocation) {
+	           Filter[] filters = FilterListView.getSelectedFilter(HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST));
+	           if (filters != null) {
+	               StringBuilder s = new StringBuilder();
+	               s.append(Util.byteToHexString(FilterArea.FIELD_LIST));
+	               s.append(':');
+	               for(int i = 0, length = filters.length; i < length; i++) {
+	                   if (i > 0) {
+	                       s.append('_');
+	                   }
+	                   s.append(filters[i].getFilterOption().getName());
+	               }
+	               criteria.put(DataQuery.SERVER_PARAMETER_FILTER_STRING, s.toString());
+	           }
+	       }
+	       
+	       return criteria;
 	}
 	
 	boolean animation = false;

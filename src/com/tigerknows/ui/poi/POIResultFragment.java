@@ -464,6 +464,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         int cityId = lastDataQuery.getCityId();
         Hashtable<String, String> criteria = lastDataQuery.getCriteria();
         criteria.put(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mPOIList.size() - (mShowAPOI ? 1 : 0)));
+        if (criteria.containsKey(DataQuery.SERVER_PARAMETER_FILTER) == false) {
+            criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
+        }
         poiQuery.setup(criteria, cityId, getId(), getId(), null, true, true, requestPOI);
         mSphinx.queryStart(poiQuery);
         }

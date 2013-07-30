@@ -79,6 +79,8 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
 
     private ViewPager mViewPager;
     
+    private String mTitle;
+    
     private List<View> mViewList = new ArrayList<View>();
     
     private FilterListView mFilterListView = null;
@@ -163,7 +165,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText(R.string.hotel_select_location);
+        mTitleBtn.setText(mTitle);
         mRightBtn.setVisibility(View.INVISIBLE);
     }
 
@@ -403,6 +405,10 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     
     public void setData(List<Filter> filterList) {
         mFilterListView.setData(filterList, FilterResponse.FIELD_FILTER_AREA_INDEX, this, false, false, mActionTag);
+    }
+    
+    public void setTitle(String title) {
+        mTitle = title;
     }
 
     @Override
