@@ -490,7 +490,11 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         }
         
         if (result == false) {
-            Toast.makeText(mSphinx, R.string.can_not_found_target_location, Toast.LENGTH_LONG).show();
+            if (response != null) {
+                Toast.makeText(mSphinx, R.string.can_not_found_target_location, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(mSphinx, R.string.network_failed, Toast.LENGTH_LONG).show();
+            }
         }
     }
     
