@@ -140,6 +140,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             }
         }
 
+        selectedChildPosition = -1;
         if (this.filter != null) {
             List<Filter> parentFilterList2 = this.filter.getChidrenFilterList();
             this.parentFilterList.addAll(parentFilterList2);
@@ -148,7 +149,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                 List<Filter> childFilterList2 = tempParentFilter.getChidrenFilterList();
                 if (tempParentFilter.isSelected()) {
                     selectedParentPosition = i;
-                    selectedChildPosition = 0;
+                    selectedChildPosition = -1;
                     this.childFilterList.addAll(childFilterList2);
                 } else {
                 	
@@ -346,7 +347,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
 						}
                     }
                     
-                    updateSelection(selectedChildPosition);
                     
                 }
             }
