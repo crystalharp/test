@@ -52,10 +52,11 @@ public class BladeView extends View {
 		int width = getWidth();
 		int singleHeight = height / b.length;
 		for (int i = 0; i < b.length; i++) {
-			paint.setColor(Color.BLACK);
-			paint.setTypeface(Typeface.DEFAULT_BOLD);
+			paint.setColor(Color.rgb(0x32, 0x32, 0x32));
+//			paint.setTypeface(Typeface.DEFAULT_BOLD);
 			paint.setFakeBoldText(true);
 			paint.setAntiAlias(true);
+			paint.setTextSize(16);
 			if (i == choose) {
 				paint.setColor(Color.parseColor("#3399ff"));
 			}
