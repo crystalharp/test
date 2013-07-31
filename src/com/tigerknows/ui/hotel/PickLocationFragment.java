@@ -113,6 +113,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             mSuggestWordListManager.refresh();
             mTKWord.word = s.toString();
             mTKWord.position = null;
+            mSuggestLsv.setVisibility(View.VISIBLE);
             mAlternativeLsv.setVisibility(View.GONE);
         }
 
@@ -348,6 +349,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mViewPager.setCurrentItem(0);
 //        mQueryBtn.setEnabled(false);
         mViewPager.requestFocus();
+        mSuggestLsv.setVisibility(View.VISIBLE);
         mAlternativeLsv.setVisibility(View.GONE);
         mFilterListView.setData(mInvoker.getFilterList(), FilterResponse.FIELD_FILTER_AREA_INDEX, this, false, false, mActionTag);
     }
@@ -482,6 +484,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             if (list != null && list.size() > 0) {
                 mAlternativeList.clear();
                 mAlternativeList.addAll(list);
+                mSuggestLsv.setVisibility(View.GONE);
                 mAlternativeLsv.setVisibility(View.VISIBLE);
                 mAlternativeAdapter.notifyDataSetChanged();
                 mAlternativeLsv.setSelectionFromTop(0, 0);
