@@ -282,13 +282,10 @@ public class DynamicHotelPOI extends DynamicPOIView implements DateListView.Call
             @Override
             public void onClick(View v) {
                 mPOIDetailFragment.mActionLog.addAction(ActionLog.POIDetail + ActionLog.POIDetailHotelFailRetry);
-                if (mBaseQuerying != null) {
-                    for(int i = 0, size = mBaseQuerying.size(); i < size; i++) {
-                        mBaseQuerying.get(i).setResponse(null);
-                        mBaseQuerying.get(0).setTipText(mSphinx.getString(R.string.doing_and_wait));
-                    }
-                    queryStart(mBaseQuerying);
-                }
+                //不能直接重发上一个请求，否则无网络的时候进详情页，再改个日期，所发的请求nf字段就只有房态信息了。
+                BaseQuery baseQuery = buildHotelQuery(checkin, checkout, mPOI, Hotel.NEED_FILED_DETAIL + Hotel.NEED_FILED_LIST);
+                baseQuery.setTipText(mSphinx.getString(R.string.doing_and_wait));
+                queryStart(baseQuery);
             }
         };
         mRetryView.setOnClickListener(retryListener);
