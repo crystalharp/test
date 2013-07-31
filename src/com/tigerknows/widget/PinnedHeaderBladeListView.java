@@ -84,6 +84,7 @@ public class PinnedHeaderBladeListView extends LinearLayout {
 		this.selectedPosition = selectedPosition;
 		
 		mBladeView.setVisibility(pinnedMode?View.VISIBLE:View.GONE);
+		indicatorTxv.setVisibility(View.GONE);
 		
 		if(pinnedMode){
 			
