@@ -13,8 +13,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -59,7 +57,6 @@ import com.tigerknows.util.HttpUtils;
 import com.tigerknows.util.ParserUtil;
 import com.tigerknows.util.ZLibUtils;
 import com.tigerknows.util.HttpUtils.TKHttpClient.ProgressUpdate;
-import com.weibo.sdk.android.WeiboParameters;
 
 /**
  *本类是所有联网搜索类的公共父类.
@@ -321,8 +318,6 @@ public abstract class BaseQuery {
 
     public static final int KEEP_ALIVE_TIME = 30 * 1000;
     
-//    private static WeiboParameters sCommonParameters;
-    
     private static RequestParameters sCommonParameters;
     
     /**
@@ -406,8 +401,6 @@ public abstract class BaseQuery {
     
     protected int targetViewId = -1;
     
-//    private Hashtable<String, String> criteria = new Hashtable<String, String>();
-    
     private RequestParameters checkParameter = null;
     
     protected String tipText = null;
@@ -473,10 +466,6 @@ public abstract class BaseQuery {
         return this.apiType;
     }
     
-//    public Hashtable<String, String> getCriteria() {
-//        return criteria;
-//    }
-
     public void setTipText(String tipText) {
 		this.tipText = tipText;
 	}
@@ -519,10 +508,6 @@ public abstract class BaseQuery {
     public interface ReportState {
         public void onReportStateCode(int stateCode);
     }
-
-//    public void setup(Hashtable<String, String> criteria) {
-//        setup(criteria, -1, -1, -1);
-//    }
 
     public void setup(int cityId) {
         setup(cityId, -1, -1);
@@ -567,11 +552,6 @@ public abstract class BaseQuery {
         if (myLocationCityInfo != null) {
             final Position myLocationPosition = myLocationCityInfo.getPosition();
             if (myLocationPosition != null) {
-//                if (criteria != null) {
-//                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_CITY, String.valueOf(myLocationCityInfo.getId()));
-//                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(myLocationPosition.getLon()));
-//                    criteria.put(DataQuery.SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(myLocationPosition.getLat()));
-//                }
                 requestParameters.add(SERVER_PARAMETER_LOCATION_CITY, String.valueOf(myLocationCityInfo.getId()));
                 requestParameters.add(SERVER_PARAMETER_LOCATION_LONGITUDE, String.valueOf(myLocationPosition.getLon()));
                 requestParameters.add(SERVER_PARAMETER_LOCATION_LATITUDE, String.valueOf(myLocationPosition.getLat()));
@@ -582,9 +562,6 @@ public abstract class BaseQuery {
     
     protected void addUUIDParameter() {
         String uuid = UUID.randomUUID().toString();
-//        if (criteria != null) {
-//            criteria.put(SERVER_PARAMETER_UUID, uuid);
-//        }
         requestParameters.add(SERVER_PARAMETER_UUID, uuid);
     }
     
@@ -598,13 +575,11 @@ public abstract class BaseQuery {
      * 这个函数只管把criteria中的值添加为参数,其他什么都不管.
      */
     protected void makeRequestParameters() {
-//        requestParameters.clear();
         if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false && API_TYPE_FILE_UPLOAD.equals(apiType) == false) {
             requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
             requestParameters.add(SERVER_PARAMETER_VERSION, version);
         }
 
-//        addParameter(SERVER_PARAMETER_REQUSET_SOURCE_TYPE, false);
         addMyLocationParameters();
         addUUIDParameter();
         try {
@@ -614,7 +589,6 @@ public abstract class BaseQuery {
         }
         
         requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
-//        requestParameters.addAll(generateParameters(criteria));
     }
     
     protected void createHttpClient() {
@@ -625,7 +599,6 @@ public abstract class BaseQuery {
         httpClient = new HttpUtils.TKHttpClient();
         httpClient.setApiType(apiType);
         httpClient.setIsEncrypt(needEncrypt);
-        //FIXME:修改httpClient中对于参数的操作
         httpClient.setParameters(requestParameters);
     }
     
@@ -975,66 +948,6 @@ public abstract class BaseQuery {
     public final RequestParameters getParameters() {
         return requestParameters;
     }
-//    //TODO:删掉这个系列函数
-//    /**
-//     * 根据keys从criteria中获取参数值，将其值添加到requestParameters
-//     * @param keys
-//     * @throws APIException
-//     */
-//    void addParameter(String[] keys) throws APIException {
-//        addParameter(keys, true);
-//    }
-//    
-//    /**
-//     * 根据keys从criteria中获取参数值，将其值添加到requestParameters
-//     * @param keys
-//     * @param need
-//     * @throws APIException
-//     */
-//    void addParameter(String[] keys, boolean need) throws APIException {
-//        if (keys == null) {
-//            return;
-//        }
-//        for(int i = 0, length = keys.length; i < length; i++) {
-//            addParameter(keys[i], need);
-//        }
-//    }
-//    
-//    /**
-//     * 根据key从criteria中获取参数值，将其值添加到requestParameters
-//     * @param key
-//     * @return
-//     * @throws APIException
-//     */
-//    String addParameter(String key) throws APIException {
-//        return addParameter(key, true);
-//    }
-//    
-//    /**
-//     * 根据key从criteria中获取参数值，将其值添加到requestParameters
-//     * @param key
-//     * @param need
-//     * @return
-//     * @throws APIException
-//     */
-//    String addParameter(String key, boolean need) throws APIException {
-//        String result = null;
-//        if (key == null) {
-//            return result;
-//        }
-//        if (criteria != null && criteria.containsKey(key)) {
-//            result = criteria.get(key);
-//            if (result != null) {
-//                requestParameters.add(key, result);
-//            } else {
-//                throw APIException.wrapToMissingRequestParameterException(key);
-//            }
-//        } else if (need){
-//            throw APIException.wrapToMissingRequestParameterException(key);
-//        }
-//        
-//        return result;
-//    }
     
     /**
      * 添加SessionId和ClientId
@@ -1056,25 +969,7 @@ public abstract class BaseQuery {
             throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CLIENT_ID);
         }
     }
-    
-    /**
-     * 把存储请求参数的哈希表变成请求参数
-     * @param criteria
-     * @return
-     */
-//    private WeiboParameters generateParameters(Hashtable<String, String> criteria) {
-//        WeiboParameters parameters = new WeiboParameters();
-//        if (criteria != null && !criteria.isEmpty()) {
-//            Enumeration<String> e = criteria.keys();
-//            while (e.hasMoreElements()) {
-//                String s = e.nextElement();
-//                parameters.add(s, criteria.get(s));
-//            }
-//        }
-//        return parameters;
-//        
-//    }
-    
+        
     /**
      * 检查一个参数是否存在，不存在则抛出异常
      * @param key
@@ -1113,7 +1008,6 @@ public abstract class BaseQuery {
         
         if (!checkParameter.isEmpty()) {
             String unwantedParameters = "";
-//            Enumeration<String> unwantedKeys = checkParameter.keys();
             Iterator<Map.Entry<String, String>> unwantedKeys = checkParameter.getEntryIterator();
             while (unwantedKeys.hasNext()) {
                 unwantedParameters += unwantedKeys.next().getKey() + ",";
