@@ -899,7 +899,7 @@ public abstract class BaseQuery {
     }
     
     /**
-     * 参数添加接口，使用这个函数来添加参数，不与实际存储方式产生交集。
+     * 以下是此次查询的相关参数操作接口，使用这些函数来添加参数，不与实际参数类产生交集。
      * @param key
      * @param value
      */
@@ -911,16 +911,10 @@ public abstract class BaseQuery {
     
     public final void setParameter(String key, String value) {
         if (key != null && !key.equals("")) {
-//            requestParameters.remove(key);
             requestParameters.add(key, value);
         }
     }
     
-    /**
-     * 获取参数接口，使用这个函数来获取参数Value，不与实际存储方式产生交集。
-     * @param key
-     * @return
-     */
     public final String getParameter(String key) {
         if (key != null) {
             return requestParameters.getValue(key);
