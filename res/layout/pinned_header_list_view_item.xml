@@ -10,7 +10,7 @@
         android:id="@+id/item_header_parent"
         android:layout_width="fill_parent"
         android:layout_height="32dip"
-        android:background="#ffdedede"
+        android:background="#ffebebeb"
         android:orientation="horizontal" >
 
         <TextView
@@ -22,7 +22,7 @@
             android:paddingTop="2dip"
             android:textColor="#323232"
             android:textSize="16sp" 
-            android:text="@string/app_name"/>
+            android:text="asdf"/>
     </LinearLayout>
 
     <TextView
