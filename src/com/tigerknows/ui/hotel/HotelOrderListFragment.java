@@ -57,6 +57,8 @@ import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 public class HotelOrderListFragment extends BaseFragment implements View.OnClickListener {
     
     static final String TAG = "HotelOrderListFragment";
+    
+    public static boolean Test_Pull_Order_List = false;
 
     public HotelOrderListFragment(Sphinx sphinx) {
         super(sphinx);
@@ -220,7 +222,9 @@ public class HotelOrderListFragment extends BaseFragment implements View.OnClick
         mRightBtn.setVisibility(View.GONE);
         mTitleBtn.setText(mContext.getString(R.string.hotel_ordered));
 
-//        fillOrderDb();
+        if (Test_Pull_Order_List) {
+            fillOrderDb();
+        }
 
         /**
          * if fragment is previously closed, size of orders will be 0
