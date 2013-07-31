@@ -860,9 +860,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         Hashtable<String, String> criteria = dataQuery.getCriteria();
         String subDataType = criteria.get(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
         mResultAdapter.setSubDataType(subDataType);
-        if (criteria.containsKey(DataQuery.SERVER_PARAMETER_FILTER_STRING)) {
-            dataQuery.getCriteria().remove(DataQuery.SERVER_PARAMETER_FILTER_STRING);
-        }
         if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
             mRetryView.setText(R.string.can_not_found_result_and_retry, false);
         }
@@ -904,6 +901,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     mState = STATE_ERROR;
                     updateView();
                     return;
+                } else {
+                    if (criteria.containsKey(DataQuery.SERVER_PARAMETER_FILTER_STRING)) {
+                        dataQuery.getCriteria().remove(DataQuery.SERVER_PARAMETER_FILTER_STRING);
+                    }
                 }
             } else {
                 if (dataQuery.isTurnPage()) {
