@@ -134,7 +134,7 @@ public class LocationUpload extends LogUpload {
                 }
                 
                 if (info.length() > 0) {
-                    if (mLogFileLength > 0) {
+                    if (mLogFileLength > 0 || mStringBuilder.length() > 0) {
                         mStringBuilder.append("|");
                     }
                     long current = System.currentTimeMillis();
@@ -152,7 +152,8 @@ public class LocationUpload extends LogUpload {
                         mStringBuilder.append(this.sdx);
                         mStringBuilder.append(",sdy:");
                         mStringBuilder.append(this.sdy);
-                        mStringBuilder.append(",");
+                        mStringBuilder.append("|");
+                        mStringBuilder.append("0,0,0,");
                     } else {
                         mStringBuilder.append(current-sdt);
                         mStringBuilder.append(",");
