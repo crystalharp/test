@@ -554,6 +554,9 @@ public abstract class BaseQuery {
     public void query() {
         statusCode = STATUS_CODE_NONE;
         appendice.clear();
+        
+        addCommonParameters();
+        
         if (TKConfig.CheckParameters) {
             try {
                 checkRequestParameters();
@@ -564,8 +567,6 @@ public abstract class BaseQuery {
             }
         }
         
-        //FIXME:添加公共参数和检查参数哪个在前？
-        addCommonParameters();
         createHttpClient();
         execute();
     }
@@ -592,6 +593,10 @@ public abstract class BaseQuery {
         requestParameters.add(SERVER_PARAMETER_UUID, uuid);
     }
     
+    //FIXME:确定一下这些参数哪些必须哪些可选
+    String[] CommonEssentialKeys = new String[]{"c", "e", "d", "m", "vs", "pk", "clientuid", "uuid"};
+    String[] CommonOptionalKeys = new String[]{"lc", "lx", "ly", "lt", "mcc", "mnc", "lac", "ci", "ss"};
+     
     /**
      * 这个函数用来检测参数,顺便可以兼容以前添加公共参数的行为.
      * @throws APIException
@@ -1004,9 +1009,16 @@ public abstract class BaseQuery {
             debugCheckParameter(essentialKeys[i]);
             checkParameter.remove(essentialKeys[i]);
         }
+        for (int i = 0; i < CommonEssentialKeys.length; i++) {
+            debugCheckParameter(CommonEssentialKeys[i]);
+            checkParameter.remove(CommonEssentialKeys[i]);
+        }
         
         for (int i = 0; i < optionalKeys.length; i++) {
             checkParameter.remove(optionalKeys[i]);
+        }
+        for (int i = 0; i < CommonOptionalKeys.length; i++) {
+            checkParameter.remove(CommonOptionalKeys[i]);
         }
         
         if (!checkParameter.isEmpty()) {
