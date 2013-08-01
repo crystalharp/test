@@ -591,7 +591,7 @@ public class TrafficQueryFragment extends BaseFragment {
 		
 		String searchword = mBusline.getEdt().getText().toString().trim();
 		if (TextUtils.isEmpty(searchword)){
-			mSphinx.showTip(R.string.input_busline_name_tip, Toast.LENGTH_SHORT);
+			mSphinx.showTip(R.string.busline_name_, Toast.LENGTH_SHORT);
 			return;
 		}
 
@@ -681,12 +681,15 @@ public class TrafficQueryFragment extends BaseFragment {
     }
     
     public static void submitBuslineQuery(Sphinx sphinx, String key) {
+        submitBuslineQuery(sphinx, key, Globals.getCurrentCityInfo().getId());
+    }
+    
+    public static void submitBuslineQuery(Sphinx sphinx, String key, int cityId) {
         
         if (key == null) {
             return;
         }
         
-        int cityId = Globals.getCurrentCityInfo().getId();
         POI poi = new POI();
         poi.setName(key);
         sphinx.getTrafficQueryFragment().addHistoryWord(poi, HistoryWordTable.TYPE_BUSLINE);

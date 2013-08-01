@@ -132,6 +132,7 @@ public class ActionLog extends LogUpload {
     
     public static final String PickPhoto = "YD";
     public static final String CameraPhoto = "YF";
+    public static final String FilterAreaChar = "YG";
     
     // POI主页 
     public static final String POIHome = "AA";
@@ -144,7 +145,10 @@ public class ActionLog extends LogUpload {
     public static final String POIHomeSubcategoryClosedOnFling = "BG";
     public static final String POIHomeSubcategoryClosedOnClick = "BH";
     public static final String POIHomeSubcategoryClosedOnBack = "BI";
-
+    // BG_{dataType}
+    public static final String POIHomeDynamicButtonClick = "BJ";
+    public static final String POIHomeMyLocation = "BK";
+    public static final String POIHomeAppointedArea = "BL";
     
     // POI输入查询页
     public static final String POIHomeInputQuery = "AB";
@@ -179,6 +183,7 @@ public class ActionLog extends LogUpload {
     public static final String POIDetailHotelFailRetry = "BZ";
     public static final String POIDetailCouponSingle = "CA";
     public static final String POIDetailCouponMulti = "CB";
+    public static final String POIDetailBusstop = "CD";
 
     // POI点评列表页
     public static final String POICommentList = "AE";
@@ -238,6 +243,11 @@ public class ActionLog extends LogUpload {
     // 优惠券详情页
     public static final String CouponDetail = "AN";
     public static final String CouponQrimg = "BA";
+
+    // 更多分类页
+    public static final String POIMoreCategory = "AO";
+    public static final String POIMoreCategoryLevelOne = "BA";
+    public static final String POIMoreCategoryLevelTwo = "BB";
     
     // POI纠错详情页-公共部分
     public static final String POIErrorDetailMain = "BA";
@@ -281,6 +291,8 @@ public class ActionLog extends LogUpload {
     public static final String MoreHistory = "BG";
     public static final String MoreSetting = "BH";
     public static final String MoreFeedback = "BI";
+    public static final String MoreHelp = "BJ";
+    public static final String MoreAboutUs = "BK";
     public static final String MoreMessageMap = "BL";
     public static final String MoreUserHome = "BM";
     public static final String MoreMessageSoft = "BN";
