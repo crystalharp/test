@@ -97,6 +97,7 @@ public class BladeView extends View {
 			}
 			break;
 		case MotionEvent.ACTION_UP:
+		case MotionEvent.ACTION_CANCEL:
 			showBkg = false;
 			choose = -1;
 			dismissPopup();

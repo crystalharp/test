@@ -112,11 +112,11 @@ public class Polyline extends Shape implements EventSource{
         int idxLevel=GENERALIZE_ZOOM_LEVEL[zoomLevel][1];
         double scale=Math.pow(2, idxLevel-ZOOM_LEVEL);
         
-        if(genLevel==CONFIG.ZOOM_UPPER_BOUND){
+        if(genLevel==20){
 			if(pointIdxs[idxLevel]==null){
 				HashMap<XYZ, ArrayList<Short>> pointIdx=new HashMap<XYZ,ArrayList<Short>>();
 		        
-		        for(int i=0;i<positions.size();i++){
+		        for(int i=0;i<mercXYs.length;i++){
 		        	XYDouble mercXY=new XYDouble(mercXYs[i].x*scale,mercXYs[i].y*scale);
 					XYInteger ne = Util.mercXYToNE(mercXY);
 					//String key=idxLevel+"_"+ne.x+"_"+ne.y;
@@ -135,9 +135,9 @@ public class Polyline extends Shape implements EventSource{
 	            ArrayList<Short> genIdx=new ArrayList<Short>();
 	            double lastX=0;
 	            double lastY=0;
-	            for (int i = 0; i < positions.size(); i++){
+	            for (int i = 0; i < mercXYs.length; i++){
 	               double dist=(mercXYs[i].x-lastX)*(mercXYs[i].x-lastX)+(mercXYs[i].y-lastY)*(mercXYs[i].y-lastY);
-	               if(i==0 || dist>minDist || i==positions.size()-1){
+	               if(i==0 || dist>minDist || i==mercXYs.length-1){
 	                	genIdx.add((short)i);
 	                	lastX=mercXYs[i].x;
 	    	        	lastY=mercXYs[i].y;
@@ -233,7 +233,7 @@ public class Polyline extends Shape implements EventSource{
 		
 		int genLevel=GENERALIZE_ZOOM_LEVEL[mapLayerZoomlevel][0];
 		
-		if(genLevel!=CONFIG.ZOOM_UPPER_BOUND){
+		if(genLevel!=20){
 			//Log.i("Polyline","render posSize,genPosSize,pointIdxSize zoomLevel:"+positions.size()+","+generalizedPosIdxs[genLevel].size()+","+pointIdx.size()+","+mapLayerZoomlevel);
 		}else{
 			//Log.i("Polyline","render posSize,pointIdxSize zoomLevel:"+positions.size()+","+pointIdx.size()+","+mapLayerZoomlevel);
@@ -242,7 +242,7 @@ public class Polyline extends Shape implements EventSource{
 		double zoomScale=(float)Math.pow(2,zoomLevel-Shape.ZOOM_LEVEL);
 		for(int m=0;m<pointIdx.size();m++){
 			double xx=0,yy=0;
-			if(genLevel==CONFIG.ZOOM_UPPER_BOUND){
+			if(genLevel==20){
 				xx=mercXYs[0x0000FFFF & pointIdx.get(m)].x;
 				yy=mercXYs[0X0000FFFF & pointIdx.get(m)].y;
 				
@@ -255,7 +255,7 @@ public class Polyline extends Shape implements EventSource{
 			
 			if((m==0 && pointIdx.get(m)!=0) || (m!=0 && broken) ){
 				double preXX=0,preYY=0;
-				if(genLevel==CONFIG.ZOOM_UPPER_BOUND){
+				if(genLevel==20){
 					preXX=mercXYs[0x0000FFFF & pointIdx.get(m)-1].x;
 					preYY=mercXYs[0x0000FFFF & pointIdx.get(m)-1].y;
 				}else{
@@ -275,11 +275,11 @@ public class Polyline extends Shape implements EventSource{
 			//canvas.drawCircle(x, y, 10, pointP);
 			
 			broken=false;
-			int genSize=(genLevel==CONFIG.ZOOM_UPPER_BOUND)?positions.size():generalizedPosIdxs[genLevel].size();
+			int genSize=(genLevel==20)?mercXYs.length:generalizedPosIdxs[genLevel].size();
 			if((m!=pointIdx.size()-1 && (0x0000FFFF & pointIdx.get(m))+1!=(0x0000FFFF & pointIdx.get(m+1)))
 					|| (m==pointIdx.size()-1 && (0x0000FFFF & pointIdx.get(m))!=genSize-1)){
 				double nextXX=0, nextYY=0;
-				if(genLevel==CONFIG.ZOOM_UPPER_BOUND){
+				if(genLevel==20){
 					nextXX=mercXYs[0x0000FFFF & pointIdx.get(m)+1].x;
 					nextYY=mercXYs[0x0000FFFF & pointIdx.get(m)+1].y;
 				}else{
@@ -369,7 +369,7 @@ public class Polyline extends Shape implements EventSource{
 		
 		int genLevel=GENERALIZE_ZOOM_LEVEL[mapLayerZoomlevel][0];
 		
-		if(genLevel!=CONFIG.ZOOM_UPPER_BOUND){
+		if(genLevel!=20){
 			//Log.i("Polyline","render posSize,genPosSize,pointIdxSize zoomLevel:"+positions.size()+","+generalizedPosIdxs[genLevel].size()+","+pointIdx.size()+","+mapLayerZoomlevel);
 		}else{
 			//Log.i("Polyline","render posSize,pointIdxSize zoomLevel:"+positions.size()+","+pointIdx.size()+","+mapLayerZoomlevel);
@@ -395,7 +395,7 @@ public class Polyline extends Shape implements EventSource{
 		double zoomScale=(float)Math.pow(2,zoomLevel-Shape.ZOOM_LEVEL);
 		for(int m=0;m<pointIdx.size();m++){
 			double xx=0,yy=0;
-			if(genLevel==CONFIG.ZOOM_UPPER_BOUND){
+			if(genLevel==20){
 				xx=mercXYs[0x0000FFFF & pointIdx.get(m)].x;
 				yy=mercXYs[0X0000FFFF & pointIdx.get(m)].y;
 				
@@ -408,7 +408,7 @@ public class Polyline extends Shape implements EventSource{
 			
 			if((m==0 && pointIdx.get(m)!=0) || (m!=0 && broken) ){
 				double preXX=0,preYY=0;
-				if(genLevel==CONFIG.ZOOM_UPPER_BOUND){
+				if(genLevel==20){
 					preXX=mercXYs[0x0000FFFF & pointIdx.get(m)-1].x;
 					preYY=mercXYs[0x0000FFFF & pointIdx.get(m)-1].y;
 				}else{
@@ -425,11 +425,11 @@ public class Polyline extends Shape implements EventSource{
 			}
 			
 			broken=false;
-			int genSize=(genLevel==CONFIG.ZOOM_UPPER_BOUND)?positions.size():generalizedPosIdxs[genLevel].size();
+			int genSize=(genLevel==20)?mercXYs.length:generalizedPosIdxs[genLevel].size();
 			if((m!=pointIdx.size()-1 && (0x0000FFFF & pointIdx.get(m))+1!=(0x0000FFFF & pointIdx.get(m+1)))
 					|| (m==pointIdx.size()-1 && (0x0000FFFF & pointIdx.get(m))!=genSize-1)){
 				double nextXX=0, nextYY=0;
-				if(genLevel==CONFIG.ZOOM_UPPER_BOUND){
+				if(genLevel==20){
 					nextXX=mercXYs[0x0000FFFF & pointIdx.get(m)+1].x;
 					nextYY=mercXYs[0x0000FFFF & pointIdx.get(m)+1].y;
 				}else{
@@ -476,7 +476,69 @@ public class Polyline extends Shape implements EventSource{
 				mercXYs=null;
 				throw e;
 			}
+			XYDouble prev = null;
+			ArrayList<XYDouble> list = new ArrayList<XYDouble>();
+			for(int i = 0, size = mercXYs.length; i < size; i++) {
+			    if (prev == null) {
+			        prev = mercXYs[i];
+			        list.add(prev);
+			        continue;
+			    }
+			    
+			    int min = 32;
+			    double x = Math.abs(mercXYs[i].x - prev.x);
+			    double y = Math.abs(mercXYs[i].y - prev.y);
+			    if (x > min || y > min) {
+			        double hypotenuse = Math.sqrt(Math.pow(x, 2)+Math.pow(y, 2));
+			        prev = new XYDouble(prev.x, prev.y);
+			        for(;(Math.abs(prev.x - mercXYs[i].x) > min || Math.abs(prev.y - mercXYs[i].y) > min);) {
+			            if (Math.abs(prev.x - mercXYs[i].x) > min) {
+			                if (prev.x < mercXYs[i].x) {
+			                    prev.x += (min/hypotenuse*Math.abs(mercXYs[i].x - prev.x));
+			                    if (prev.y < mercXYs[i].y) {
+	                                prev.y += (min/hypotenuse*Math.abs(mercXYs[i].y - prev.y));
+	                            } else {
+	                                prev.y -= (min/hypotenuse*Math.abs(mercXYs[i].y - prev.y));
+	                            }
+			                } else {
+			                    prev.x -= (min/hypotenuse*Math.abs(mercXYs[i].x - prev.x));
+                                if (prev.y < mercXYs[i].y) {
+                                    prev.y += (min/hypotenuse*Math.abs(mercXYs[i].y - prev.y));
+                                } else {
+                                    prev.y -= (min/hypotenuse*Math.abs(mercXYs[i].y - prev.y));
+                                }
+			                }
+			            } else if (Math.abs(prev.y - mercXYs[i].y) > min) {
+                            if (prev.y < mercXYs[i].y) {
+                                prev.y += (min/hypotenuse*Math.abs(mercXYs[i].y - prev.y));
+                                if (prev.x < mercXYs[i].x) {
+                                    prev.x += (min/hypotenuse*Math.abs(mercXYs[i].x - prev.x));
+                                } else {
+                                    prev.x -= (min/hypotenuse*Math.abs(mercXYs[i].x - prev.x));
+                                }
+                            } else {
+                                prev.y -= (min/hypotenuse*Math.abs(mercXYs[i].y - prev.y));
+                                if (prev.x < mercXYs[i].x) {
+                                    prev.x += (min/hypotenuse*Math.abs(mercXYs[i].x - prev.x));
+                                } else {
+                                    prev.x -= (min/hypotenuse*Math.abs(mercXYs[i].x - prev.x));
+                                }
+                            }
+                        }
+			            list.add(prev);
+			            prev = new XYDouble(prev.x, prev.y);
+			        }
+			    }
+                prev = mercXYs[i];
+                list.add(prev);
+			}
 			
+			if (mercXYs.length != list.size()) {
+			    mercXYs = new XYDouble[list.size()];
+			    for(int i = 0, size = list.size(); i < size; i++) {
+			        mercXYs[i] = list.get(i);
+			    }
+			}
 		}
 		
 		// 生成三角形顶点连接次序
