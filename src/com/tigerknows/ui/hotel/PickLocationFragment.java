@@ -79,6 +79,8 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
 
     private ViewPager mViewPager;
     
+    private String mTitle;
+    
     private List<View> mViewList = new ArrayList<View>();
     
     private FilterListView mFilterListView = null;
@@ -111,6 +113,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             mSuggestWordListManager.refresh();
             mTKWord.word = s.toString();
             mTKWord.position = null;
+            mSuggestLsv.setVisibility(View.VISIBLE);
             mAlternativeLsv.setVisibility(View.GONE);
         }
 
@@ -163,7 +166,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-        mTitleBtn.setText(R.string.hotel_select_location);
+        mTitleBtn.setText(mTitle);
         mRightBtn.setVisibility(View.INVISIBLE);
     }
 
@@ -317,7 +320,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
      */
     private void submit() {
         TKWord tkWord = mTKWord;
-        String word = tkWord.word;
+        String word = tkWord.word.trim();
         if (TextUtils.isEmpty(word)) {
             mSphinx.showTip(R.string.search_input_keyword, Toast.LENGTH_SHORT);
             return;
@@ -346,6 +349,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         mViewPager.setCurrentItem(0);
 //        mQueryBtn.setEnabled(false);
         mViewPager.requestFocus();
+        mSuggestLsv.setVisibility(View.VISIBLE);
         mAlternativeLsv.setVisibility(View.GONE);
         mFilterListView.setData(mInvoker.getFilterList(), FilterResponse.FIELD_FILTER_AREA_INDEX, this, false, false, mActionTag);
     }
@@ -403,6 +407,10 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
     
     public void setData(List<Filter> filterList) {
         mFilterListView.setData(filterList, FilterResponse.FIELD_FILTER_AREA_INDEX, this, false, false, mActionTag);
+    }
+    
+    public void setTitle(String title) {
+        mTitle = title;
     }
 
     @Override
@@ -476,6 +484,7 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
             if (list != null && list.size() > 0) {
                 mAlternativeList.clear();
                 mAlternativeList.addAll(list);
+                mSuggestLsv.setVisibility(View.GONE);
                 mAlternativeLsv.setVisibility(View.VISIBLE);
                 mAlternativeAdapter.notifyDataSetChanged();
                 mAlternativeLsv.setSelectionFromTop(0, 0);
@@ -484,7 +493,11 @@ public class PickLocationFragment extends BaseFragment implements View.OnClickLi
         }
         
         if (result == false) {
-            Toast.makeText(mSphinx, R.string.can_not_found_target_location, Toast.LENGTH_LONG).show();
+            if (response != null) {
+                Toast.makeText(mSphinx, R.string.can_not_found_target_location, Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(mSphinx, R.string.network_failed, Toast.LENGTH_LONG).show();
+            }
         }
     }
     

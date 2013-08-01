@@ -35,6 +35,7 @@ import com.tigerknows.service.PullService;
 import com.tigerknows.service.TigerknowsLocationManager;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.hotel.HotelOrderListFragment;
 import com.tigerknows.ui.more.MoreHomeFragment;
 import com.tigerknows.ui.poi.POIResultFragment;
 import com.tigerknows.ui.traffic.BuslineResultLineFragment;
@@ -487,6 +488,8 @@ public class BaseQueryTest {
         
         final Button deleteAnOrderBtn = new Button(activity);
         layout.addView(deleteAnOrderBtn, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+        final CheckBox fullOrderChb = new CheckBox(activity);
+        layout.addView(fullOrderChb);
         
         editConfigBtn.setText("View or Modify config.txt");
         editConfigBtn.setOnClickListener(new View.OnClickListener() {
@@ -802,6 +805,16 @@ public class BaseQueryTest {
             @Override
             public void onClick(View arg0) {
             	
+            }
+        });
+        
+        fullOrderChb.setText("launch fake hotel order list");
+        fullOrderChb.setChecked(HotelOrderListFragment.Test_Pull_Order_List);
+        fullOrderChb.setOnClickListener(new OnClickListener() {
+            
+            @Override
+            public void onClick(View arg0) {
+                HotelOrderListFragment.Test_Pull_Order_List = fullOrderChb.isChecked();
             }
         });
         

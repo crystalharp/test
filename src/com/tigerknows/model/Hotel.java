@@ -124,7 +124,7 @@ public class Hotel extends XMapData {
         } else if (reset) {
             this.imageThumb = null;
         }
-        this.originalHotelTKDrawableList = getListFromData(FIELD_IMAGE_LIST, HotelTKDrawable.Initializer, reset ? null : this.hotelTKDrawableList);
+        this.originalHotelTKDrawableList = getListFromData(FIELD_IMAGE_LIST, HotelTKDrawable.Initializer, reset ? null : this.originalHotelTKDrawableList);
         if (originalHotelTKDrawableList == null) {
             hotelTKDrawableList = null;
         } else {

@@ -100,6 +100,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             return;
         }
         this.actionTag = actionTag;
+        bladeView.setActionTag(this.actionTag);
         isLastAreaFilter = isAreaFilter;
         isAreaFilter = false;
         if (key == POIResponse.FIELD_FILTER_AREA_INDEX) {
@@ -139,6 +140,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             }
         }
 
+        selectedChildPosition = -1;
         if (this.filter != null) {
             List<Filter> parentFilterList2 = this.filter.getChidrenFilterList();
             this.parentFilterList.addAll(parentFilterList2);
@@ -147,7 +149,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                 List<Filter> childFilterList2 = tempParentFilter.getChidrenFilterList();
                 if (tempParentFilter.isSelected()) {
                     selectedParentPosition = i;
-                    selectedChildPosition = 0;
+                    selectedChildPosition = -1;
                     this.childFilterList.addAll(childFilterList2);
                 } else {
                 	
@@ -170,36 +172,40 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
                     }
                 }
             }
-            
-        }
 
-        parentAdapter.notifyDataSetChanged();
-        
-        final int finalselectedChildPosition = selectedChildPosition;
-        updateSelection(finalselectedChildPosition);
-        
-        // 如果没有被选中的filter，则默认高亮显示 “全部区域”
-        if (selectedParentPosition == -1) {
-            selectedParentPosition = 0;
+
             parentAdapter.notifyDataSetChanged();
             
-            childFilterList.clear();
-            if (this.filter != null &&
-                    this.filter.getChidrenFilterList() != null &&
-                    this.filter.getChidrenFilterList().size() > 0 &&
-                    this.filter.getChidrenFilterList().get(0) != null) {
-                childFilterList.addAll(this.filter.getChidrenFilterList().get(0).getChidrenFilterList());
+            final int finalselectedChildPosition = selectedChildPosition;
+            updateSelection(finalselectedChildPosition);
+            
+            // 如果没有被选中的filter，则默认高亮显示 “全部区域”
+            if (selectedParentPosition == -1) {
+                selectedParentPosition = 0;
+                parentAdapter.notifyDataSetChanged();
+                
+                childFilterList.clear();
+                if (this.filter != null &&
+                        this.filter.getChidrenFilterList() != null &&
+                        this.filter.getChidrenFilterList().size() > 0 &&
+                        this.filter.getChidrenFilterList().get(0) != null) {
+                    childFilterList.addAll(this.filter.getChidrenFilterList().get(0).getChidrenFilterList());
+                }
             }
+            
+            // 如果父筛选项选中的是全部区域(id=0)，并且当权筛选项是位置筛选项的时候，设置pinnedModed为true
+            boolean pinnedMode = false;
+            int size = parentFilterList.size();
+            if (size > 0 &&
+                    size > selectedParentPosition &&
+                    selectedParentPosition >= 0 &&
+                    parentFilterList.get(selectedParentPosition).getFilterOption().getId() == 0  && isAreaFilter){
+                pinnedMode = true;
+            }
+            
+            // 如果是区域筛选，并且当前选择的父筛选项位置是全部区域，即第0个， 则列表设置为pinnedMode。
+            childLsv.setData(childFilterList, pinnedMode, pinnedMode, selectedChildPosition);
         }
-        
-        // 如果父筛选项选中的是全部区域(id=0)，并且当权筛选项是位置筛选项的时候，设置pinnedModed为true
-        boolean pinnedMode = false;
-        if ( parentFilterList.get(selectedParentPosition).getFilterOption().getId() == 0  && isAreaFilter){
-        	pinnedMode = true;
-        }
-        
-        // 如果是区域筛选，并且当前选择的父筛选项位置是全部区域，即第0个， 则列表设置为pinnedMode。
-       	childLsv.setData(childFilterList, pinnedMode, pinnedMode, selectedChildPosition);
     }
     
     private void updateSelection(final int finalselectedChiledPosition){
@@ -255,7 +261,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         parentLsv = (ListView) findViewById(R.id.parent_lsv);
         childLsv = (PinnedHeaderBladeListView) findViewById(R.id.child_lsv);
         bladeView = (BladeView) findViewById(R.id.blade_view);
-        bladeView.setSphinx(getContext());
         
     }
     
@@ -342,7 +347,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
 						}
                     }
                     
-                    updateSelection(selectedChildPosition);
                     
                 }
             }
@@ -622,14 +626,14 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             if (chidrenFilterList != null) {
                 for(int i = 0, size = chidrenFilterList.size(); i < size; i++) {
                     Filter chidrenFilter = chidrenFilterList.get(i);
-                    if (filter.getKey() == FilterArea.FIELD_LIST &&
-                            chidrenFilter.getFilterOption().getId() == 0) {
-                        continue;
-                    }
                     if (chidrenFilter.isSelected()) {
                         result = new Filter[1];
                         result[0] = chidrenFilter;
                         return result;
+                    }
+                    if (filter.getKey() == FilterArea.FIELD_LIST &&
+                            chidrenFilter.getFilterOption().getId() == 0) {
+                        continue;
                     }
                     List<Filter> chidrenFilterList1 = chidrenFilter.getChidrenFilterList();
                     for(int j = 0, count = chidrenFilterList1.size(); j < count; j++) {

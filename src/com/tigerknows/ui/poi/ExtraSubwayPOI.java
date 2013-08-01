@@ -3,6 +3,7 @@ package com.tigerknows.ui.poi;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -10,10 +11,11 @@ import android.widget.TextView;
 
 import com.tigerknows.R;
 import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.POI;
 import com.tigerknows.model.POI.Description;
 import com.tigerknows.model.POI.PresetTime;
-import com.tigerknows.model.POI.Station;
+import com.tigerknows.model.POI.Busstop;
 import com.tigerknows.model.POI.SubwayExit;
 import com.tigerknows.model.POI.SubwayPresetTime;
 import com.tigerknows.ui.poi.POIDetailFragment.BlockRefresher;
@@ -23,7 +25,7 @@ import com.tigerknows.ui.traffic.TrafficQueryFragment;
 import com.tigerknows.widget.LinearListView;
 import com.tigerknows.widget.LinearListView.ItemInitializer;
 
-public class DynamicSubwayPOI extends DynamicPOIView {
+public class ExtraSubwayPOI extends DynamicPOIView {
 
     List<DynamicPOIViewBlock> blockList = new ArrayList<DynamicPOIViewBlock>();
     LinearListView lsv;
@@ -85,34 +87,35 @@ public class DynamicSubwayPOI extends DynamicPOIView {
             
             TextView exitTxv = (TextView) v.findViewById(R.id.exit_name_txv);
             TextView landmarkTxv = (TextView) v.findViewById(R.id.landmark_txv);
-            final TextView stationTxv = (TextView) v.findViewById(R.id.station_txv);
+            final TextView busstopTxv = (TextView) v.findViewById(R.id.busstop_txv);
             
             exitTxv.setText(exit.getExit());
             landmarkTxv.setText(exit.getLandmark());
             
-            View stationView = v.findViewById(R.id.station_view);
-            List<Station> s = exit.getStations();
-            if (s != null && s.size() > 0) {
-                stationView.setVisibility(View.VISIBLE);
-                stationTxv.setText(exit.getStations().get(0).getStation());
-                stationTxv.setOnClickListener(new View.OnClickListener() {
+            View busstopView = v.findViewById(R.id.busstop_view);
+            List<Busstop> s = exit.getBusstops();
+            if (s != null && s.size() > 0 && !TextUtils.isEmpty(s.get(0).getBusstop())) {
+                busstopView.setVisibility(View.VISIBLE);
+                busstopTxv.setText(s.get(0).getBusstop());
+                busstopTxv.setOnClickListener(new View.OnClickListener() {
 
                     @Override
                     public void onClick(View v) {
-                        // TODO Auto-generated method stub
-                        TrafficQueryFragment.submitBuslineQuery(mSphinx, stationTxv.getText().toString());
+                        mPOIDetailFragment.mActionLog.addAction(mPOIDetailFragment.mActionTag+ActionLog.POIDetailBusstop, busstopTxv.getText().toString());
+                        int cityId = mSphinx.getMapEngine().getCityId(mPOI.getPosition());
+                        TrafficQueryFragment.submitBuslineQuery(mSphinx, busstopTxv.getText().toString(), cityId);
 
                     }
                 });
             } else {
-                stationView.setVisibility(View.GONE);
+                busstopView.setVisibility(View.GONE);
             }
             
         }
         
     };
     
-    public DynamicSubwayPOI(POIDetailFragment poiFragment, LayoutInflater inflater) {
+    public ExtraSubwayPOI(POIDetailFragment poiFragment, LayoutInflater inflater) {
         mPOIDetailFragment = poiFragment;
         mSphinx = poiFragment.mSphinx;
         mInflater = inflater;
@@ -153,7 +156,7 @@ public class DynamicSubwayPOI extends DynamicPOIView {
     
     @Override
     public boolean isExist() {
-        if (mPOI.getXDescription().containsKey(Description.FIELD_SUBWAY_EXITS)) {
+        if (mPOI.getXDescription() != null && mPOI.getXDescription().containsKey(Description.FIELD_SUBWAY_EXITS)) {
             return true;
         }
         return false;

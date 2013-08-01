@@ -1,8 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity" >
+    android:layout_height="match_parent" >
 
     <com.tigerknows.widget.PinnedHeaderListView
         android:id="@+id/pinned_header_list_view"
@@ -11,8 +10,9 @@
         android:cacheColorHint="#00000000"
         android:footerDividersEnabled="false"
         android:headerDividersEnabled="false" 
+        android:dividerHeight="1px" 
+        android:divider="@color/gray_light"
         android:padding="0dp"
-        android:divider="@color/transparent"
         android:drawSelectorOnTop="false"
         android:scrollingCache="false"
         android:fadingEdge="none"/>
