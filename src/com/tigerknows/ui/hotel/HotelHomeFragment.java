@@ -238,6 +238,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                     queryFilter();
                     showProgressDialog();
                 } else {
+                    mSphinx.getPickLocationFragment().setTitle(mSphinx.getString(R.string.hotel_select_location));
                     mSphinx.showView(R.id.view_hotel_pick_location);
                 }
                 break;
@@ -566,6 +567,7 @@ public class HotelHomeFragment extends BaseFragment implements View.OnClickListe
                 }
                 
                 if (mProgressDialog != null && mProgressDialog.isShowing()) {
+                    mSphinx.getPickLocationFragment().setTitle(mSphinx.getString(R.string.hotel_select_location));
                     mSphinx.showView(R.id.view_hotel_pick_location);
                     dismissProgressDialog();
                 }

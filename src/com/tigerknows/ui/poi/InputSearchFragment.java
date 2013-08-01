@@ -204,16 +204,13 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
 
             DataQuery poiQuery = new DataQuery(mContext);
             POI requestPOI = mSphinx.getPOI();
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
-            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
-            Position position = requestPOI.getPosition();
-            if (position != null) {
-                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-                poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+            POI poi = mSphinx.getPOIHomeFragment().getPOI();
+            if (poi != null) {
+                requestPOI = poi;
             }
-            poiQuery.setup(cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
+            Hashtable<String, String> criteria = mSphinx.getPOIHomeFragment().getCriteria();
+            criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+            poiQuery.setup(criteria, cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
             mSphinx.queryStart(poiQuery);
             ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup(keyword);
             mSphinx.showView(poiQuery.getTargetViewId());

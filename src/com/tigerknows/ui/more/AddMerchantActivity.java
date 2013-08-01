@@ -639,7 +639,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             char splitChar = '~';
             String nullStr = "null";
             
-            String name = mNameEdt.getText().toString();
+            String name = mNameEdt.getText().toString().trim();
             
             if (!TextUtils.isEmpty(name)) {
                 s.append(URLEncoder.encode(name, TKConfig.getEncoding()));
@@ -651,7 +651,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 return;
             }
             
-            String type = mType.getText().toString();
+            String type = mType.getText().toString().trim();
             if (!TextUtils.isEmpty(type)) {
                 s.append(splitChar);
                 s.append(URLEncoder.encode(type.toString(), TKConfig.getEncoding()));
@@ -661,7 +661,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
                 return;
             }
 
-            String address = mAddressEdt.getText().toString();
+            String address = mAddressEdt.getText().toString().trim();
             if (!TextUtils.isEmpty(address)) {
                 s.append(splitChar);
                 s.append(URLEncoder.encode(mCityBtn.getText()+address, TKConfig.getEncoding()));
@@ -673,7 +673,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             }
             
             s.append(splitChar);
-            String str = mTelephoneEdt.getText().toString();
+            String str = mTelephoneEdt.getText().toString().trim();
             if (!TextUtils.isEmpty(str)) {
                 s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
             } else {
@@ -681,7 +681,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             }
             
             s.append(splitChar);
-            str = mAddressDescriptionEdt.getText().toString();
+            str = mAddressDescriptionEdt.getText().toString().trim();
             if (!TextUtils.isEmpty(str)) {
                 s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
             } else {
@@ -689,7 +689,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             }
             
             s.append(splitChar);
-            str = mDateBtn.getText().toString();
+            str = mDateBtn.getText().toString().trim();
             if (!TextUtils.isEmpty(str)) {
                 s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
             } else {
@@ -697,7 +697,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             }
             
             s.append(splitChar);
-            str = mTimeBtn.getText().toString();
+            str = mTimeBtn.getText().toString().trim();
             if (!TextUtils.isEmpty(str)) {
                 s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
             } else {
@@ -712,7 +712,7 @@ public class AddMerchantActivity extends BaseActivity implements View.OnClickLis
             }
             
             s.append(splitChar);
-            str = mYourTelephoneEdt.getEditableText().toString();
+            str = mYourTelephoneEdt.getEditableText().toString().trim();
             if (!TextUtils.isEmpty(str)) {
                 s.append(URLEncoder.encode(str, TKConfig.getEncoding()));
             } else {

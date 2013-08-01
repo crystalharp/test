@@ -463,6 +463,9 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         POI requestPOI = lastDataQuery.getPOI();
         int cityId = lastDataQuery.getCityId();
         poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, String.valueOf(mPOIList.size() - (mShowAPOI ? 1 : 0)));
+        if (poiQuery.hasParameter(DataQuery.SERVER_PARAMETER_FILTER) == false) {
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
+        }
         poiQuery.setup(cityId, getId(), getId(), null, true, true, requestPOI);
         mSphinx.queryStart(poiQuery);
         }
@@ -854,7 +857,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         DataQuery dataQuery = (DataQuery) tkAsyncTask.getBaseQuery();
         String subDataType = dataQuery.getParameter(BaseQuery.SERVER_PARAMETER_SUB_DATA_TYPE);
         mResultAdapter.setSubDataType(subDataType);
-        dataQuery.delParameter(DataQuery.SERVER_PARAMETER_FILTER_STRING);
         if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
             mRetryView.setText(R.string.can_not_found_result_and_retry, false);
         }
@@ -896,6 +898,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     mState = STATE_ERROR;
                     updateView();
                     return;
+                } else {
+                    if (criteria.containsKey(DataQuery.SERVER_PARAMETER_FILTER_STRING)) {
+                        dataQuery.getCriteria().remove(DataQuery.SERVER_PARAMETER_FILTER_STRING);
+                    }
                 }
             } else {
                 if (dataQuery.isTurnPage()) {

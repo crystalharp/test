@@ -1,5 +1,7 @@
 package com.tigerknows.widget;
 
+import com.tigerknows.common.ActionLog;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -14,6 +16,8 @@ import android.widget.TextView;
 public class BladeView extends View {
 	
 	private OnBladeItemClickListener mOnItemClickListener;
+	
+	private String mActionTag;
 	
 	String[] b = { "#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K",
 			"L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X",
@@ -48,10 +52,11 @@ public class BladeView extends View {
 		int width = getWidth();
 		int singleHeight = height / b.length;
 		for (int i = 0; i < b.length; i++) {
-			paint.setColor(Color.BLACK);
-			paint.setTypeface(Typeface.DEFAULT_BOLD);
+			paint.setColor(Color.rgb(0x32, 0x32, 0x32));
+//			paint.setTypeface(Typeface.DEFAULT_BOLD);
 			paint.setFakeBoldText(true);
 			paint.setAntiAlias(true);
+			paint.setTextSize(16);
 			if (i == choose) {
 				paint.setColor(Color.parseColor("#3399ff"));
 			}
@@ -136,6 +141,7 @@ public class BladeView extends View {
 
 	private void performItemClicked(int item) {
 		if (mOnItemClickListener != null) {
+		    ActionLog.getInstance(getContext()).addAction(mActionTag + ActionLog.FilterAreaChar, b[item]);
 			mOnItemClickListener.onItemClick(b[item]);
 			showPopup(item);
 		}
@@ -145,9 +151,8 @@ public class BladeView extends View {
 		void onItemClick(String s);
 	}
 
-	private Context context;
-	public void setSphinx(Context context){
-		this.context = context;
+	public void setActionTag(String actionTag){
+		this.mActionTag = actionTag;
 	}
 
 	public void setPopupText(TextView popupText){

@@ -26,6 +26,7 @@ import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.TKConfig;
 import com.tigerknows.map.MapEngine;
+import com.tigerknows.model.DataQuery.AlternativeResponse.Alternative;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverConfigList;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverCategoryList.DiscoverCategory;
 import com.tigerknows.model.DataQuery.DiscoverResponse.DiscoverConfigList.DiscoverConfig;
@@ -35,7 +36,7 @@ import com.tigerknows.model.xobject.XArray;
 import com.tigerknows.model.xobject.XInt;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.util.ByteUtil;
-import com.tigerknows.util.HanziUtil;
+import com.tigerknows.util.PinyinUtil;
 import com.tigerknows.util.Utility;
 import com.weibo.sdk.android.WeiboParameters;
 
@@ -759,7 +760,7 @@ public final class DataQuery extends BaseQuery {
                     addParameter(SERVER_PARAMETER_NEED_FIELD, POI.NEED_FIELD+Hotel.NEED_FILED_LIST);
                     addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
                     addParameter(SERVER_PARAMETER_PICTURE, 
-                            Util.byteToHexString(Hotel.FIELD_IMAGE_THUMB)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)+"_[10000000000000000000]" + ";" +
+                            Util.byteToHexString(Hotel.FIELD_IMAGE_THUMB)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_LIST)+"_[11000000000000000000]" + ";" +
                             Util.byteToHexString(Hotel.FIELD_IMAGE_LIST)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_HOTEL_DETAIL)+"_[00000000000000000000]");
                 }
             }
@@ -816,7 +817,7 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_TUANGOU.equals(dataType)) { 
             addParameter(SERVER_PARAMETER_NEED_FIELD, Tuangou.NEED_FIELD);
             addParameter(SERVER_PARAMETER_PICTURE, 
-                    Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[10000000000000000000]" + ";" +
+                    Util.byteToHexString(Tuangou.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_LIST)+"_[11000000000000000000]" + ";" +
                     Util.byteToHexString(Tuangou.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_TUANGOU_DETAIL)+"_[00000000000000000000]");
             addDiscoverCategoryParameters();
             String cfv = null;
@@ -843,7 +844,7 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_DIANYING.equals(dataType)) { 
             addParameter(SERVER_PARAMETER_NEED_FIELD, Dianying.NEED_FIELD);
             addParameter(SERVER_PARAMETER_PICTURE, 
-                    Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
+                    Util.byteToHexString(Dianying.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[11000000000000000000]" + ";" +
                     Util.byteToHexString(Dianying.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
             addDiscoverCategoryParameters();
             String cfv = null;
@@ -870,7 +871,7 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_YANCHU.equals(dataType)) { 
             addParameter(SERVER_PARAMETER_NEED_FIELD, Yanchu.NEED_FIELD);
             addParameter(SERVER_PARAMETER_PICTURE, 
-                    Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
+                    Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[11000000000000000000]" + ";" +
                     Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
             addDiscoverCategoryParameters();
             String cfv = null;
@@ -887,7 +888,7 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_ZHANLAN.equals(dataType)) { 
             addParameter(SERVER_PARAMETER_NEED_FIELD, Zhanlan.NEED_FIELD);
             addParameter(SERVER_PARAMETER_PICTURE, 
-                    Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[10000000000000000000]" + ";" +
+                    Util.byteToHexString(Zhanlan.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[11000000000000000000]" + ";" +
                     Util.byteToHexString(Zhanlan.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[00000000000000000000]");
             addDiscoverCategoryParameters();
             String cfv = null;
@@ -902,6 +903,8 @@ public final class DataQuery extends BaseQuery {
         } else if (DATA_TYPE_DIANPING.equals(dataType)) {
             addParameter(SERVER_PARAMETER_NEED_FIELD, Comment.NEED_FIELD);
             addParameter(SERVER_PARAMETER_COMMENT_VERSION, COMMENT_VERSION);
+        } else if (DATA_TYPE_ALTERNATIVE.equals(dataType)) {
+            addParameter(SERVER_PARAMETER_NEED_FIELD, Alternative.NEED_FIELD);
         } else if (DATA_TYPE_FILTER.equals(dataType)) {
             
             String cfv = null;
@@ -1223,7 +1226,10 @@ public final class DataQuery extends BaseQuery {
                     	list.addAll(chidrenFilter.getChidrenFilterList());
                     }
                 }
-                sortFilterList(list);
+                for (int i = 0; i < list.size(); i++) {
+					list.get(i).getFilterOption().pinyin = PinyinUtil.toPinyin(context, list.get(i).getFilterOption().getName());
+				}
+                sortFilterList(context, list);
                 
                 FilterOption dupAllAreaFilterOpt = new FilterOption();
                 dupAllAreaFilterOpt.setName(allArea.getFilterOption().getName());
@@ -1233,6 +1239,7 @@ public final class DataQuery extends BaseQuery {
                 
                 Filter filter1 = new Filter();
                 filter1.filterOption = dupAllAreaFilterOpt;
+                filter1.filterOption.pinyin = PinyinUtil.toPinyin(context, filter1.filterOption.getName());
                 filter1.selected = allArea.selected;
                 allArea.selected = false;
                 list.add(0, filter1);
@@ -1269,18 +1276,18 @@ public final class DataQuery extends BaseQuery {
      * 按照拼音对Filter列表进行排序
      * @param filters
      */
-    private static void sortFilterList(List<Filter> filters){
+    private static void sortFilterList(final Context context, List<Filter> filters){
     	Collections.sort(filters, new Comparator<Filter>() {
 
 			@Override
 			public int compare(Filter lhs, Filter rhs) {
-				if(lhs.getFilterOption().firstChar==0){
-					lhs.getFilterOption().firstChar = HanziUtil.getFirstPinYinChar(lhs.getFilterOption().getName());
+				if(lhs.getFilterOption().pinyin==null){
+					lhs.getFilterOption().pinyin = PinyinUtil.toPinyin(context, lhs.getFilterOption().getName());
 				}
-				if(rhs.getFilterOption().firstChar==0){
-					rhs.getFilterOption().firstChar = HanziUtil.getFirstPinYinChar(rhs.getFilterOption().getName());
+				if(rhs.getFilterOption().pinyin==null){
+					rhs.getFilterOption().pinyin = PinyinUtil.toPinyin(context, rhs.getFilterOption().getName());
 				}
-				return lhs.getFilterOption().firstChar-rhs.getFilterOption().firstChar;
+				return lhs.getFilterOption().pinyin.compareTo( rhs.getFilterOption().pinyin );
 			}
 		});
     }
@@ -1373,7 +1380,7 @@ public final class DataQuery extends BaseQuery {
 
         private int parent;
         
-        public char firstChar = 0;
+        public String pinyin = null;
 
         public FilterOption() {
         }
@@ -1414,6 +1421,7 @@ public final class DataQuery extends BaseQuery {
             filterOption.id = id;
             filterOption.name = name;
             filterOption.parent = parent;
+            filterOption.pinyin = pinyin;
             return filterOption;
         }
         
@@ -2686,6 +2694,8 @@ public final class DataQuery extends BaseQuery {
             public static final byte FIELD_NAME = 0x05;
             // 0x09    x_string    地址 
             public static final byte FIELD_ADDRESS = 0x09;
+            
+            public static final String NEED_FIELD = "0103040509";
             
             protected String uuid;
             protected Position position;
