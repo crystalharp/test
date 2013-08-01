@@ -374,7 +374,7 @@ public abstract class BaseQuery {
         }
     }
     
-    protected void addCommonParameters() throws APIException {
+    protected void addCommonParameters() {
         addCommonParameters(MapEngine.CITY_ID_BEIJING, false);
     }
     
@@ -585,11 +585,7 @@ public abstract class BaseQuery {
 
         addMyLocationParameters();
         addUUIDParameter();
-        try {
-            addCommonParameters();
-        } catch (APIException e) {
-            e.printStackTrace();
-        }
+        addCommonParameters();
         
         requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
     }
@@ -952,19 +948,20 @@ public abstract class BaseQuery {
      * @param need
      * @throws APIException
      */
-    void addSessionId(boolean need) throws APIException {
+    //FIXME:去掉这个参数，在别的地方添加上检测的key
+    void addSessionId(boolean need) {
         String sessionId = Globals.g_Session_Id;
         if (!TextUtils.isEmpty(sessionId)) {
             requestParameters.add(SERVER_PARAMETER_SESSION_ID, sessionId);
         } else if (need) {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
+//            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_SESSION_ID);
         }
         
         String clientId = Globals.g_ClientUID;
         if (!TextUtils.isEmpty(clientId)) {
             requestParameters.add(SERVER_PARAMETER_CLIENT_ID, clientId);
         } else {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CLIENT_ID);
+//            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_CLIENT_ID);
         }
     }
         

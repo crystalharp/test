@@ -112,7 +112,7 @@ public class AccountManage extends BaseQuery {
     }
     
     @Override
-    protected void addCommonParameters() throws APIException {
+    protected void addCommonParameters() {
         super.addCommonParameters(cityId);
         boolean needSessionId = false;
         String operationCode = getParameter(SERVER_PARAMETER_OPERATION_CODE);

@@ -161,7 +161,7 @@ public class HotelOrderOperation extends BaseQuery {
     }
     
     @Override
-    protected void addCommonParameters() throws APIException {
+    protected void addCommonParameters() {
         super.addCommonParameters(cityId);
         addSessionId(false);
     }

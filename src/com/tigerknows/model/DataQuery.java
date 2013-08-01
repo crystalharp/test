@@ -729,7 +729,7 @@ public final class DataQuery extends BaseQuery {
     }
     
     @Override
-    protected void addCommonParameters() throws APIException {
+    protected void addCommonParameters() {
         super.addCommonParameters();
         addCommonParameters(cityId);
         // 默认分页数目为TKConfig.getPageSize()
@@ -912,10 +912,11 @@ public final class DataQuery extends BaseQuery {
             if (Filter_Category_Order_POI != null) {
                 nfv = Filter_Category_Order_POI.version;
             }
+            //FIXME:add some check for addFilterParameter
             addFilterParameters(cfv, nfv, false);
 
-        } else {
-            throw APIException.wrapToMissingRequestParameterException("invalid data type.");
+//        } else {
+//            throw APIException.wrapToMissingRequestParameterException("invalid data type.");
         }
         
         addParameter(SERVER_PARAMETER_TIME_STAMP, TIME_STAMP_FORMAT.format(Calendar.getInstance().getTime()));
@@ -931,29 +932,21 @@ public final class DataQuery extends BaseQuery {
         }
     }
     
-    private void addFilterParameters(String cfv, String nfv) throws APIException {
+    private void addFilterParameters(String cfv, String nfv) {
         addFilterParameters(cfv, nfv, true);
     }
     
-    private void addFilterParameters(String cfv, String nfv, boolean needIndex) throws APIException {
-//        if (criteria.containsKey(SERVER_PARAMETER_FILTER)) {
-//            requestParameters.add(SERVER_PARAMETER_FILTER, criteria.get(SERVER_PARAMETER_FILTER));
-//        }
-//        if (criteria.containsKey(SERVER_PARAMETER_FILTER_STRING)) {
-//            requestParameters.add(SERVER_PARAMETER_FILTER_STRING, criteria.get(SERVER_PARAMETER_FILTER_STRING));
-//        }
+    private void addFilterParameters(String cfv, String nfv, boolean needIndex) {
         if (TextUtils.isEmpty(cfv) == false) {
             addParameter(SERVER_PARAMETER_CITY_FILTER_VERSION, cfv);
         }
         if (TextUtils.isEmpty(nfv) == false) {
             addParameter(SERVER_PARAMETER_NATION_FILTER_VERSION, nfv);
         }
-        //TODO:不要这样写
-        if (hasParameter(SERVER_PARAMETER_INDEX)) {
-//            requestParameters.add(SERVER_PARAMETER_INDEX, criteria.get(SERVER_PARAMETER_INDEX));
-        } else if (needIndex) {
-            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_INDEX);
-        }
+        
+//        if (!hasParameter(SERVER_PARAMETER_INDEX) && needIndex) {
+//            throw APIException.wrapToMissingRequestParameterException(SERVER_PARAMETER_INDEX);
+//        }
     }
 
     @Override
