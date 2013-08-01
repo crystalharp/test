@@ -84,12 +84,12 @@
                 android:ellipsize="end"
                 android:textSize="18sp"
                 android:maxLength="16"
-                android:hint="@string/please_input_old_password"
+                android:hint="@string/please_input_password"
                 android:background="@drawable/list_single_normal"
                 flag="2"
                 validateType="password"
                 formatErrorTip="@string/password_format_error_tip"
-                emptyErrorTip="@string/old_password_empty_tip" />
+                emptyErrorTip="@string/password_empty_tip" />
             
             <Button
                 android:id="@+id/confirm_btn"
