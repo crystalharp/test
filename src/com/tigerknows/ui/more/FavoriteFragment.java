@@ -809,7 +809,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             } else {
                 readPOI(mPOIList, Long.MAX_VALUE, 0, false);
             }
-            mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
+//            mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
             Collections.sort(mPOIList, mComparator);
             mPOIAdapter.notifyDataSetChanged();
         } else {
@@ -823,7 +823,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             } else {
                 readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
             }
-            mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize());
+//            mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize());
             Collections.sort(mTrafficList, mComparator);
             mTrafficAdapter.notifyDataSetChanged();
         }

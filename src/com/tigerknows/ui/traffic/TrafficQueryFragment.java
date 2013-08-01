@@ -681,12 +681,15 @@ public class TrafficQueryFragment extends BaseFragment {
     }
     
     public static void submitBuslineQuery(Sphinx sphinx, String key) {
+        submitBuslineQuery(sphinx, key, Globals.getCurrentCityInfo().getId());
+    }
+    
+    public static void submitBuslineQuery(Sphinx sphinx, String key, int cityId) {
         
         if (key == null) {
             return;
         }
         
-        int cityId = Globals.getCurrentCityInfo().getId();
         POI poi = new POI();
         poi.setName(key);
         sphinx.getTrafficQueryFragment().addHistoryWord(poi, HistoryWordTable.TYPE_BUSLINE);

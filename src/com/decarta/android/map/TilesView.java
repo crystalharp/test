@@ -2751,10 +2751,10 @@ public class TilesView extends GLSurfaceView {
 	                    //Log.i("TilesView","onDraw mapLayerLevel,zoomLevel,LRTB:"+centerXYZ.z+","+zoomLevel+","+leftDist+","+rightDist+","+topDist+","+bottomDist);
 	                    if(bottomDist>=topDist && rightDist>=leftDist){
 	                    	//Log.i("TilesView.onDraw","zoomScale,moveX,moveY:"+zoomScale+","+mapLayer.tilesMove.x+","+mapLayer.tilesMove.y);
-	                    	for (int i = topDist-4; i <= bottomDist+4; i++) { // -4,+4 暴力：为了避免绘制线路或气泡在屏幕边缘时不能被判断为屏幕之内的问题
+	                    	for (int i = topDist; i <= bottomDist; i++) {
 	                    		int yi = centerXYZ.y - i;
                                 int yiTK = centerXYZTK.y + i;
-	                    		for (int j = leftDist-4; j <= rightDist+4; j++) { // -4,+4暴力：为了避免绘制线路或气泡在屏幕边缘时不能被判断为屏幕之内的问题
+	                    		for (int j = leftDist; j <= rightDist; j++) {
 	                    			int xi = centerXYZ.x + j;
                                     int xiTK = centerXYZTK.x + j;
 	                    			Tile requestTile = mapLayer.createTile();
@@ -2766,14 +2766,6 @@ public class TilesView extends GLSurfaceView {
                                     requestTile.xyzTK.y = yiTK;
                                     requestTile.xyzTK.z = centerXYZ.z;
 	                    			if(!haveDrawingTiles) drawingTiles.add(requestTile);
-	                    			// tigerknows begin -4,+4暴力：为了避免绘制线路或气泡在屏幕边缘时不能被判断为屏幕之内的问题
-	                    			if (i < topDist
-                                            || i > bottomDist
-                                            || j < leftDist
-                                            || j > rightDist) {
-	                    			    continue;
-	                    			}
-	                    			// tigerknows end -4,+4暴力：为了避免绘制线路或气泡在屏幕边缘时不能被判断为屏幕之内的问题
 
 	                    			//long availTime=0;
 	                    			int textureRef=0;

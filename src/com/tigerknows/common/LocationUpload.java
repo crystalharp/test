@@ -79,8 +79,8 @@ public class LocationUpload extends LogUpload {
                 lastLocation = location;
                 
                 if (sdx == 0 || sdy == 0 || sdt == 0) {
-                    sdx = (long)(Utility.doubleKeep(lastLocation.getLatitude(), 5)*100000);
-                    sdy = (long)(Utility.doubleKeep(lastLocation.getLatitude(), 5)*100000);
+                    sdx = (long)(Utility.doubleKeep(lastLocation.getLatitude(), 6)*100000);
+                    sdy = (long)(Utility.doubleKeep(lastLocation.getLatitude(), 6)*100000);
                     sdt = System.currentTimeMillis();
                 }
                 
@@ -138,8 +138,8 @@ public class LocationUpload extends LogUpload {
                         mStringBuilder.append("|");
                     }
                     long current = System.currentTimeMillis();
-                    long sdx = (long)(Utility.doubleKeep(lastLocation.getLatitude(), 5)*100000);
-                    long sdy = (long)(Utility.doubleKeep(lastLocation.getLongitude(), 5)*100000);
+                    long sdx = (long)(Utility.doubleKeep(lastLocation.getLatitude(), 6)*100000);
+                    long sdy = (long)(Utility.doubleKeep(lastLocation.getLongitude(), 6)*100000);
                     if (Math.abs(current - sdt) > LOGOUT_TIME ||
                             Math.abs(this.sdx-sdx) > LOGOUT_DISTANCE ||
                             Math.abs(this.sdy-sdy) > LOGOUT_DISTANCE) {
