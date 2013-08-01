@@ -60,6 +60,12 @@ import com.tigerknows.util.HttpUtils.TKHttpClient.ProgressUpdate;
 
 /**
  *本类是所有联网搜索类的公共父类.
+ *
+ * 使用方法：
+ * 业务代码只需要给这个Query进行addParameter操作，setup后进行查询。
+ * 
+ * 继承自此类的查询类若需要添加该类的公共参数，只需要override掉addCommonPatameter，然后在继承的函数中
+ * 调用以下父类的addCommonParameter。注意addCommonParameter的参数。
  * 
  * @author pengwenyue
  * @version
@@ -345,6 +351,17 @@ public abstract class BaseQuery {
         sCommonParameters.add("vp", TKConfig.getVersionOfPlatform());
     }
     
+    /**
+     * 添加Query的公共参数，继承自此类的Query可以override这个函数
+     */
+    protected void addCommonParameters() {
+        addCommonParameters(MapEngine.CITY_ID_BEIJING, false);
+    }
+    
+    protected void addCommonParameters(int cityId) {
+        addCommonParameters(cityId, false);
+    }
+    
     protected void addCommonParameters(int cityId, boolean isLocateMe) {
         requestParameters.addAll(sCommonParameters);
 
@@ -372,14 +389,16 @@ public abstract class BaseQuery {
             requestParameters.add("ci", String.valueOf(cid));
             requestParameters.add("ss", String.valueOf(TKConfig.getSignalStrength()));
         }
-    }
-    
-    protected void addCommonParameters() {
-        addCommonParameters(MapEngine.CITY_ID_BEIJING, false);
-    }
-    
-    protected void addCommonParameters(int cityId) {
-        addCommonParameters(cityId, false);
+        
+        //FIXME:为什么这些请求不能发at？
+        if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false && API_TYPE_FILE_UPLOAD.equals(apiType) == false && API_TYPE_NOTICE.equals(apiType) == false) {
+            requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
+            requestParameters.add(SERVER_PARAMETER_VERSION, version);
+        }
+
+        addMyLocationParameters();
+        addUUIDParameter();
+        requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
     }
     
     /**
@@ -545,11 +564,16 @@ public abstract class BaseQuery {
             }
         }
         
-        makeRequestParameters();
+        //FIXME:添加公共参数和检查参数哪个在前？
+        addCommonParameters();
         createHttpClient();
         execute();
     }
     
+    /**
+     * 这个是添加位置参数的函数，但是有些特殊情况，比如说翻页所需要提交的位置
+     * 和当前定位并不一样，那些查询可以Override掉这个函数。
+     */
     protected void addMyLocationParameters() {
         final CityInfo myLocationCityInfo = Globals.g_My_Location_City_Info;
         if (myLocationCityInfo != null) {
@@ -573,22 +597,6 @@ public abstract class BaseQuery {
      * @throws APIException
      */
     abstract protected void checkRequestParameters() throws APIException;
-    
-    /**
-     * 这个函数只管把criteria中的值添加为参数,其他什么都不管.
-     */
-    protected void makeRequestParameters() {
-        if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false && API_TYPE_FILE_UPLOAD.equals(apiType) == false && API_TYPE_NOTICE.equals(apiType) == false) {
-            requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
-            requestParameters.add(SERVER_PARAMETER_VERSION, version);
-        }
-
-        addMyLocationParameters();
-        addUUIDParameter();
-        addCommonParameters();
-        
-        requestParameters.add(SERVER_PARAMETER_CLIENT_STATUS, sClentStatus);
-    }
     
     protected void createHttpClient() {
         createHttpClient(true);

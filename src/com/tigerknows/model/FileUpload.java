@@ -53,7 +53,7 @@ public final class FileUpload extends BaseQuery {
 
 //        if (criteria != null) {
             try {
-                makeRequestParameters();
+                addCommonParameters();
 
                 HttpUtils.TKHttpClient.modifyRequestData(getParameters());
                 
