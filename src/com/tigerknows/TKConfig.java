@@ -324,13 +324,18 @@ public class TKConfig {
     /**
      * 软件登录服务访问URL路径
      */
-    private static String BOOTSTRAP_URL = "http://%s/bootstrap/local";
+    private static String sBOOTSTRAP_URL = "http://%s/bootstrap/local";
     
     /**
      * 图片上传服务访问URL路径
      */
-    private static String IMAGE_UPLOAD_URL = "http://%s/hornet/upload";
+    private static String sIMAGE_UPLOAD_URL = "http://%s/hornet/upload";
 
+    /**
+     * 消息通知服务访问URL路径
+     */
+    private static String sNOTICE_URL = "http://%s/notice/13";
+    
     /**
      * 默认下载服务器Host
      */
@@ -354,12 +359,17 @@ public class TKConfig {
     /** 
      * 默认软件登录服务器的Host列表
      */
-    private static String[] BOOTSTRAP_HOST_LIST = new String[]{"init.tigerknows.net", "chshh.tigerknows.com", "csh.laohubaodian.net"};
+    private static String[] sBOOTSTRAP_HOST_LIST = new String[]{"init.tigerknows.net", "chshh.tigerknows.com", "csh.laohubaodian.net"};
     
     /** 
      * 默认图片上传服务器的Host
      */
-    private static String IMAGE_UPLOAD_HOST = "up.tigerknows.net";
+    private static String sIMAGE_UPLOAD_HOST = "up.tigerknows.net";
+    
+    /**
+     * 默认消息通知的Host
+     */
+    private static String sNOTICE_HOST = "notice.tigerknows.net";
 
     /**
      * 软件登录服务推送用于动态负载均衡的下载服务器Host
@@ -690,6 +700,11 @@ public class TKConfig {
      * 优惠券二维码尺寸的Key
      */
     public static final int PICTURE_COUPON_QRIMG = 13;
+    
+    /**
+     * 活动通知栏尺寸的Key
+     */
+    public static final int PICTURE_MORE_NOTICE = 14;
 
     /**
      * 黑色
@@ -981,7 +996,7 @@ public class TKConfig {
      * @return
      */
     public static String getBootstarpUrl() {
-        return BOOTSTRAP_URL;
+        return sBOOTSTRAP_URL;
     }
     
     /**
@@ -989,7 +1004,23 @@ public class TKConfig {
      * @return
      */
     public static String getImageUploadUrl() {
-        return IMAGE_UPLOAD_URL;
+        return sIMAGE_UPLOAD_URL;
+    }
+    
+    /**
+     * 获取消息通知服务的URL
+     * @return
+     */
+    public static String getNoticeUrl() {
+    	return sNOTICE_URL;
+    }
+    
+    /**
+     * 获取消息通知服务的Host
+     * @return
+     */
+    public static String getNoticeHost() {
+    	return sNOTICE_HOST;
     }
     
     /**
@@ -997,7 +1028,7 @@ public class TKConfig {
      * @return
      */
     public static String[] getBootStrapHostList() {
-        return BOOTSTRAP_HOST_LIST;
+        return sBOOTSTRAP_HOST_LIST;
     }
     
     /**
@@ -1005,7 +1036,7 @@ public class TKConfig {
      * @return
      */
     public static String getImageUploadHost() {
-        return IMAGE_UPLOAD_HOST;
+        return sIMAGE_UPLOAD_HOST;
     }
     
     /**
@@ -1468,13 +1499,13 @@ public class TKConfig {
                 end = text.indexOf(";", start);
                 if (start > -1 && end > -1) {
                     start += "bootstrapUrl=".length();
-                    BOOTSTRAP_URL = text.substring(start, end);
+                    sBOOTSTRAP_URL = text.substring(start, end);
                 }
                 start = text.indexOf("bootstrapHostList=");
                 end = text.indexOf(";", start);
                 if (start > -1 && end > -1) {
                     start += "bootstrapHostList=".length();
-                    BOOTSTRAP_HOST_LIST = text.substring(start, end).split(",");
+                    sBOOTSTRAP_HOST_LIST = text.substring(start, end).split(",");
                 }
                 start = text.indexOf("pageSize=");
                 end = text.indexOf(";", start);
@@ -1510,13 +1541,13 @@ public class TKConfig {
                 end = text.indexOf(";", start);
                 if (start > -1 && end > -1) {
                     start += "imageUploadHost=".length();
-                    TKConfig.IMAGE_UPLOAD_HOST = text.substring(start, end);
+                    TKConfig.sIMAGE_UPLOAD_HOST = text.substring(start, end);
                 }
                 start = text.indexOf("imageUploadUrl=");
                 end = text.indexOf(";", start);
                 if (start > -1 && end > -1) {
                     start += "imageUploadUrl=".length();
-                    TKConfig.IMAGE_UPLOAD_URL = text.substring(start, end);
+                    TKConfig.sIMAGE_UPLOAD_URL = text.substring(start, end);
                 }
                 start = text.indexOf("Photo_Max_Width_Height=");
                 end = text.indexOf(";", start);
@@ -1530,7 +1561,18 @@ public class TKConfig {
                     start += "Photo_Compress_Ratio=".length();
                     TKConfig.Photo_Compress_Ratio = Integer.valueOf(text.substring(start, end));
                 }
-                
+                start = text.indexOf("noticeUrl=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "noticeUrl=".length();
+                    TKConfig.sNOTICE_URL = text.substring(start, end);
+                }
+                start = text.indexOf("noticeHost=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "noticeHost=".length();
+                    TKConfig.sNOTICE_HOST = text.substring(start, end);
+                }
                 BaseQuery.initCommonParameters();
             } catch (Exception e) {
                 e.printStackTrace();

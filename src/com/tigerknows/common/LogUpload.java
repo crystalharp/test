@@ -170,7 +170,7 @@ public class LogUpload {
     }
     
     protected void onLogOut() {
-        
+        mLogFileLength = 0;
     }
     
     public void onCreate() {

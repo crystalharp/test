@@ -9,27 +9,41 @@
     android:orientation="vertical"
     android:background="@drawable/bg_discover"
     >
+
+    <com.tigerknows.widget.ExtScrollView android:id="@+id/more_body_scv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        
+        >
+        
     <LinearLayout 
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
         android:padding="8dp"
         >
-        
-        <Button android:id="@+id/message_btn"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:padding="8dp"
-            android:text="@string/app_name"
-            android:textColor="@color/white"
-            android:textSize="14sp"
-            android:background="@drawable/btn_update"
-            android:layout_marginBottom="8dp"
-            android:visibility="gone"
-            />
-                
-        <LinearLayout
+	    <RelativeLayout android:id="@+id/notice_rly"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_marginBottom="8dp"
+	        android:visibility="gone"
+	        >
+	        <android.support.v4.view.ViewPager  
+	            android:id="@+id/view_pager"
+	            android:layout_width="fill_parent"
+	            android:layout_height="48dp"
+	            android:focusable="true"
+	            />
+	        <LinearLayout
+	            android:id="@+id/page_indicator_view"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"
+	            android:orientation="horizontal"
+	            android:gravity="center_horizontal"
+	            />
+	    </RelativeLayout>        
+	    <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -158,6 +172,25 @@
                 android:textColor="@color/black_dark"
                 android:textSize="16sp"
                 android:text="@string/history_browse"
+                android:gravity="left|center_vertical"
+                />
+            <ImageView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_line_split"
+                />
+            <Button
+                android:id="@+id/go_comment_btn"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_middle"
+	            android:paddingTop="8dp"
+	            android:paddingBottom="8dp"
+	            android:paddingRight="8dp"
+	            android:paddingLeft="16dp"
+                android:textColor="@color/black_dark"
+                android:textSize="16sp"
+                android:text="@string/go_comment"
                 android:gravity="left|center_vertical"
                 />
             <ImageView
@@ -322,4 +355,5 @@
 
         
     </LinearLayout>
+    </com.tigerknows.widget.ExtScrollView>            
 </RelativeLayout>

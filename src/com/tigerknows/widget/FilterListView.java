@@ -47,6 +47,7 @@ import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.DataQuery;
 import com.tigerknows.model.DataQuery.Filter;
+import com.tigerknows.model.DataQuery.FilterArea;
 import com.tigerknows.model.DataQuery.POIResponse;
 
 
@@ -215,8 +216,6 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         
         // 如果是区域筛选，并且当前选择的父筛选项位置是全部区域，即第0个， 则列表设置为pinnedMode。
        	childLsv.setData(childFilterList, pinnedMode, pinnedMode, selectedChiledPosition);
-       	System.out.println("selectedParentPosition: " + selectedParentPosition);
-       	System.out.println("selectedChiledPosition: " + selectedChiledPosition);
     }
     
     public FilterListView(Context context) {
@@ -604,6 +603,10 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
             if (chidrenFilterList != null) {
                 for(int i = 0, size = chidrenFilterList.size(); i < size; i++) {
                     Filter chidrenFilter = chidrenFilterList.get(i);
+                    if (filter.getKey() == FilterArea.FIELD_LIST &&
+                            chidrenFilter.getFilterOption().getId() == 0) {
+                        continue;
+                    }
                     if (chidrenFilter.isSelected()) {
                         result = new Filter[1];
                         result[0] = chidrenFilter;

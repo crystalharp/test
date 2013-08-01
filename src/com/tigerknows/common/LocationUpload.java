@@ -156,9 +156,9 @@ public class LocationUpload extends LogUpload {
                     } else {
                         mStringBuilder.append(current-sdt);
                         mStringBuilder.append(",");
-                        mStringBuilder.append(this.sdx-sdx);
+                        mStringBuilder.append(sdx-this.sdx);
                         mStringBuilder.append(",");
-                        mStringBuilder.append(this.sdy-sdy);
+                        mStringBuilder.append(sdy-this.sdy);
                         mStringBuilder.append(",");
                     }
                     mStringBuilder.append(((int) lastLocation.getAccuracy()));

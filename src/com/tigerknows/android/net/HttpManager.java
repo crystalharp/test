@@ -74,7 +74,7 @@ public class HttpManager {
 	public static final String HTTPMETHOD_POST = "POST";
 	public static final String HTTPMETHOD_GET = "GET";
 
-	private static final int SET_CONNECTION_TIMEOUT = 5 * 1000;
+	private static final int SET_CONNECTION_TIMEOUT = 30 * 1000;
 	private static final int SET_SOCKET_TIMEOUT = 20 * 1000;
 	/**
 	 * 
@@ -205,9 +205,6 @@ public class HttpManager {
 			sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 
 			HttpParams params = new BasicHttpParams();
-
-			HttpConnectionParams.setConnectionTimeout(params, 10000);
-			HttpConnectionParams.setSoTimeout(params, 10000);
 
 			HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
 			HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);

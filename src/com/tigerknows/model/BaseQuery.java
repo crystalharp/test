@@ -116,6 +116,9 @@ public abstract class BaseQuery {
     // 图片上传
     public static final String API_TYPE_FILE_UPLOAD = "fileUpload";
     
+    // 消息通知
+    public static final String API_TYPE_NOTICE = "notice";
+    
     protected static final String VERSION = "13";
     
     // at string true api type，固定为d
@@ -575,7 +578,7 @@ public abstract class BaseQuery {
      * 这个函数只管把criteria中的值添加为参数,其他什么都不管.
      */
     protected void makeRequestParameters() {
-        if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false && API_TYPE_FILE_UPLOAD.equals(apiType) == false) {
+        if (API_TYPE_PROXY.equals(apiType) == false && API_TYPE_HOTEL_ORDER.equals(apiType) == false && API_TYPE_FILE_UPLOAD.equals(apiType) == false && API_TYPE_NOTICE.equals(apiType) == false) {
             requestParameters.add(SERVER_PARAMETER_API_TYPE, apiType);
             requestParameters.add(SERVER_PARAMETER_VERSION, version);
         }
@@ -616,7 +619,8 @@ public abstract class BaseQuery {
                             || apiType.equals(API_TYPE_DATA_OPERATION)
                             || apiType.equals(API_TYPE_ACCOUNT_MANAGE)
                             || apiType.equals(API_TYPE_PROXY)
-                            || apiType.equals(API_TYPE_HOTEL_ORDER)) {
+                            || apiType.equals(API_TYPE_HOTEL_ORDER)
+                            || apiType.equals(API_TYPE_NOTICE)) {
                         try {
                             httpClient.execute(context);
                         } catch (Exception e) {

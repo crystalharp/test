@@ -118,7 +118,6 @@ public class SpringbackListView extends ListView {
     }
   
     public boolean onTouchEvent(MotionEvent event) {
-    	LogWrapper.i(TAG, "OnTouch action: " + event.getAction() + " stateHeader: " + stateHeader + " stateFooter: " + stateFooter);
         switch (event.getAction()) {  
         case MotionEvent.ACTION_DOWN:  
             if ((headerSpringback && getFirstVisiblePosition() == 0) && !isRecoredHeader) {  

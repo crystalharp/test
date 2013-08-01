@@ -546,7 +546,6 @@ public class Util {
         int fixedSeedColumnIdx = (int) Math.floor((double) pixX / CONFIG.TILE_SIZE);
         int fixedSeedRowIdx = (int) Math.floor((double) (pixY) / CONFIG.TILE_SIZE);
         XYZ xyz = new XYZ(fixedSeedColumnIdx, fixedSeedRowIdx, zoomLevel);
-        LogWrapper.d("TilesView", "mercPixToTKXYZ(), mercPix="+mercPix+","+xyz);
         return xyz;
     }
 
