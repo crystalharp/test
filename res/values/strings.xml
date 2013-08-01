@@ -1229,4 +1229,12 @@
     
     <string name="appoint_location">指定地点：</string>
     <string name="appoint_area">指定商区：</string>
+
+<!-- IAlixpay Start -->
+    <string name="alipay_app_name">移动快捷支付DEMO</string>
+    <string name="alipay_remote_call_failed">Failure calling remote service</string>
+    <string name="alipay_confirm_install_hint">"安装提示"</string>
+    <string name="alipay_confirm_install">"为保证您的交易安全，需要您安装移动快捷支付，才能进行付款。\n\n点击确定，立即安装。"</string>
+    <string name="alipay_check_sign_failed">您的订单信息已被非法篡改。</string>
+<!-- IAlixpay End -->
 </resources>
