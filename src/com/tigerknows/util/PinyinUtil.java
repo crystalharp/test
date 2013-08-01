@@ -95,15 +95,23 @@ public abstract class PinyinUtil {
                     sb.append(ch);
                     continue;
                 }
+                if (ch >= '0' && ch <= '9') {
+                    sb.append(ch);
+                    continue;
+                }
                 if (ch == 0x3007) {
                     sb.append("ling").append(' ');
-                } else if (ch >= 0x4E00 || ch <= 0x9FA5) {
+                } else if (ch >= 0x4E00 && ch <= 0x9FA5) {
                     long sp = (ch - 0x4E00) * 6;
                     is.seek(sp);
                     byte[] buf = new byte[6];
                     is.read(buf);
                     sb.append(new String(buf).trim()).append(' ');
+                }else{
+                    sb.append(ch);
+                    continue;
                 }
+                
             }
         } catch (IOException e) {
             //
