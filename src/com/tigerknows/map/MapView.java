@@ -226,6 +226,7 @@ public class MapView extends RelativeLayout implements
         public static int DOWNLOAD = 10;
 
         public static int TOUCHDOWN = 11;
+        public static int MULTITOUCHZOOM = 12;
 	}
 	
 	/**
@@ -282,6 +283,15 @@ public class MapView extends RelativeLayout implements
 		public void onDoubleClickEvent(MapView mapView, Position position);
 	}
 
+    /**
+     * define multi touch zoom listener of map
+     * 
+     */
+    public interface MultiTouchZoomEventListener extends
+            com.decarta.android.event.EventListener {
+        public void onMultiTouchZoomEvent(MapView mapView, int newZoomLevel);
+    }
+
 	/**
 	 * define long click listener of map
 	 * 
@@ -336,6 +346,8 @@ public class MapView extends RelativeLayout implements
 				&& (listener instanceof TiltEndEventListener)
 				|| eventType == EventType.TOUCHDOWN
 				&& (listener instanceof TouchDownEventListener)
+                || eventType == EventType.MULTITOUCHZOOM
+                && (listener instanceof MultiTouchZoomEventListener)
 				)
 			return true;
 		else
@@ -437,6 +449,17 @@ public class MapView extends RelativeLayout implements
 			}
 		}
 	}
+
+    public void executeMultiTouchZoomListeners(int zoomLevel) {
+        if (eventListeners.containsKey(EventType.MULTITOUCHZOOM)) {
+            ArrayList<EventListener> listeners = eventListeners
+                    .get(EventType.MULTITOUCHZOOM);
+            for (int i = 0; i < listeners.size(); i++) {
+                ((MultiTouchZoomEventListener) (listeners.get(i)))
+                        .onMultiTouchZoomEvent(this, zoomLevel);
+            }
+        }
+    }
 
 	public void executeLongClickListeners(Position position) {
 		if (eventListeners.containsKey(EventType.LONGCLICK)) {
@@ -1132,5 +1155,9 @@ public class MapView extends RelativeLayout implements
         public int zoomLevel;
         public ItemizedOverlay itemizedOverlay;
         public Shape shape;
+    }
+    
+    public boolean ensureThreadRunning() {
+        return tilesView.ensureThreadsRunning();
     }
 }

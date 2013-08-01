@@ -68,6 +68,7 @@ public class TrafficViewSTT {
 	    }
     	setStateTrans(State.Normal, Event.ClickSelectStartEndBtn, State.Input);
     	setStateTrans(State.Normal, Event.ClickEditText, State.Input);
+    	setStateTrans(State.Normal, Event.ClickRadioGroup, State.Input);
     	setStateTrans(State.Normal, Event.TouchMap, State.Map);
     	setStateTrans(State.Normal, Event.ClicktoSelectPoint, State.SelectPoint);
     	setStateTrans(State.Map, Event.ClickRadioGroup, State.Input);

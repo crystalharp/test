@@ -1,12 +1,22 @@
 #!/bin/sh 
-ndk-build -b -C ${projectpath}
+#/home/zhouwentao/tk/android-ndk-r4/ndk-build -b -C ${projectpath}
 /home/zhouwentao/tk/android-ndk-r4/build/prebuilt/linux-x86/arm-eabi-4.4.0/bin/arm-eabi-strip -g  --strip-unneeded ${projectpath}/libs/armeabi/libtkengine.so
 for spreader in TigerMapTest
 do
-	sed -i 's/sSPREADER = ".*"/sSPREADER = "'${spreader}'"/g' ${projectpath}/src/com/tigerknows/TKConfig.java
-	sed -i 's/RecommendAPI\.init(.*)/RecommendAPI\.init(mSphinx, "800109436", "'${spreader}'")/g' src/com/tigerknows/view/AppRecommendDialog.java
-	ant clean -f ${projectpath}/build.xml
-	ant release -f ${projectpath}/build.xml
-cp ${projectpath}/bin/Sphinx-release.apk  ${releasepath}/TigerMap-3.20.20120720A-$spreader.apk
+#    if [ `echo $spreader | grep "-"` ]
+#    then
+#        sed -i 's/sSPREADER = ".*"/sSPREADER = "'${spreader%-*}'"/g' ${projectpath}/src/com/tigerknows/TKConfig.java
+#        sed -i 's/RecommendAPI\.init(.*)/RecommendAPI\.init(mThis, "800109436", "'${spreader%-*}'")/g' ${projectpath}/src/com/tigerknows/AppRecommend.java
+#        sed -i 's/meta-data android:name="TD_CHANNEL_ID" android:value=".*"/meta-data android:name="TD_CHANNEL_ID" android:value="'${spreader##*-}'"/g' ${projectpath}/AndroidManifest.xml
+#        ant clean -f ${projectpath}/build.xml
+#        ant release -f ${projectpath}/build.xml
+#        cp ${projectpath}/bin/Sphinx-release.apk  ${releasepath}/TigerKnows-${tkversion}-$spreader.apk
+#    else
+        sed -i 's/sSPREADER = ".*"/sSPREADER = "'${spreader}'"/g' ${projectpath}/src/com/tigerknows/TKConfig.java
+        sed -i 's/RecommendAPI\.init(.*)/RecommendAPI\.init(mThis, "800109436", "'${spreader}'")/g' ${projectpath}/src/com/tigerknows/AppRecommend.java
+        sed -i 's/meta-data android:name="TD_CHANNEL_ID" android:value=".*"/meta-data android:name="TD_CHANNEL_ID" android:value="'${spreader}'"/g' ${projectpath}/AndroidManifest.xml
+        ant clean -f ${projectpath}/build.xml
+        ant release -f ${projectpath}/build.xml
+        cp ${projectpath}/bin/Sphinx-release.apk  ${releasepath}/TigerKnows-${tkversion}-$spreader.apk
+#    fi
 done
-

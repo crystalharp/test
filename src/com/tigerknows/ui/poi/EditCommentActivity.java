@@ -7,11 +7,11 @@ package com.tigerknows.ui.poi;
 import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.Util;
-import com.tencent.tauth.TAuthView;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
 import com.tigerknows.android.os.TKAsyncTask;
+import com.tigerknows.android.app.TKActivity;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.Comment;
@@ -26,26 +26,18 @@ import com.tigerknows.model.DataQuery.CommentResponse;
 import com.tigerknows.model.DataQuery.CommentResponse.CommentList;
 import com.tigerknows.model.xobject.XMap;
 import com.tigerknows.share.ShareAPI;
-import com.tigerknows.share.TKTencentOpenAPI;
-import com.tigerknows.share.TKWeibo;
 import com.tigerknows.share.UserAccessIdenty;
-import com.tigerknows.share.ShareAPI.LoginCallBack;
-import com.tigerknows.share.TKTencentOpenAPI.AuthReceiver;
-import com.tigerknows.share.TKWeibo.AuthDialogListener;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.user.UserBaseActivity;
 import com.tigerknows.ui.user.UserCommentAfterActivity;
 import com.tigerknows.ui.user.UserUpdateNickNameActivity;
 import com.tigerknows.util.Utility;
+import com.tigerknows.widget.MultichoiceArrayAdapter;
 
 import android.app.Activity;
-import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.DialogInterface.OnDismissListener;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.InputFilter;
@@ -84,7 +76,7 @@ import java.util.List;
 /**
  * @author Peng Wenyue
  */
-public class EditCommentActivity extends BaseActivity implements View.OnClickListener {
+public class EditCommentActivity extends BaseActivity implements View.OnClickListener, TKActivity.IAuthorizeCallback {
     
     static final String TAG = "POIComment";
     
@@ -167,53 +159,24 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
     
     private int mFromViewId;
     
-    private class MyLoginCallBack implements LoginCallBack {
-
-        String type;
-        
-        public MyLoginCallBack(String type) {
-            this.type = type;
-        }
-        
-        @Override
-        public void onSuccess() {
-            EditCommentActivity.this.runOnUiThread(new Runnable() {
-                
-                @Override
-                public void run() {
-                    if (ShareAPI.TYPE_WEIBO.equals(type)) {
-                        UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_WEIBO);
-                        if (userAccessIdenty != null) {
-                            mSyncSinaChb.setChecked(true);
-                        } else {
-                            mSyncSinaChb.setChecked(false);
-                        }
-                    } if (ShareAPI.TYPE_TENCENT.equals(type)) {
-                        UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_TENCENT);
-                        if (userAccessIdenty != null) {
-                            mSyncQZoneChb.setChecked(true);
-                        } else {
-                            mSyncQZoneChb.setChecked(false);
-                        }
-                    }
-                }
-            });
-        }
-
-        @Override
-        public void onFailed() {
-        }
-
-        @Override
-        public void onCancel() {
+    @Override
+    public void onSuccess(String type) {
+        if (ShareAPI.TYPE_WEIBO.equals(type)) {
+            UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_WEIBO);
+            if (userAccessIdenty != null) {
+                mSyncSinaChb.setChecked(true);
+            } else {
+                mSyncSinaChb.setChecked(false);
+            }
+        } if (ShareAPI.TYPE_TENCENT.equals(type)) {
+            UserAccessIdenty userAccessIdenty = ShareAPI.readIdentity(mThis, ShareAPI.TYPE_TENCENT);
+            if (userAccessIdenty != null) {
+                mSyncQZoneChb.setChecked(true);
+            } else {
+                mSyncQZoneChb.setChecked(false);
+            }
         }
     }
-    
-    TKWeibo mTKWeibo = null;
-    
-    private AuthDialogListener mSinaAuthDialogListener;
-    
-    private AuthReceiver mTencentAuthReceiver;
     
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -238,10 +201,8 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         findViews();
         setListener();
         
-        mTKWeibo = new TKWeibo(mThis, true, false);
-        mSinaAuthDialogListener = new AuthDialogListener(mTKWeibo, new MyLoginCallBack(ShareAPI.TYPE_WEIBO));
-        mTencentAuthReceiver = new AuthReceiver(mThis, new MyLoginCallBack(ShareAPI.TYPE_TENCENT));
-        registerIntentReceivers();
+        initWeibo(true, false);
+        initQZone();
         
         mTitleBtn.setText(mStatus == STATUS_NEW ? R.string.publish_comment : R.string.modify_comment);
         mRightBtn.setBackgroundResource(R.drawable.btn_submit_comment);
@@ -442,26 +403,6 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             mComment.setUserId(-1);
         }
         mComment.setClientUid(Globals.g_ClientUID);
-    }
-    
-    @Override
-	protected void onDestroy() {
-		// TODO Auto-generated method stub
-		super.onDestroy();
-		if (mTencentAuthReceiver != null) {
-            unregisterIntentReceivers();
-        }
-    }
-    
-    
-    private void registerIntentReceivers() {
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(TAuthView.AUTH_BROADCAST);
-        registerReceiver(mTencentAuthReceiver, filter);
-    }
-    
-    private void unregisterIntentReceivers() {
-        unregisterReceiver(mTencentAuthReceiver);
     }
 
 	protected void findViews() {
@@ -710,27 +651,6 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
     }
 
     @Override
-    protected Dialog onCreateDialog(int id) {
-        Dialog dialog = null;
-        switch (id) {
-        case R.id.dialog_share_doing:
-            dialog = new ProgressDialog(this);
-            dialog.setCancelable(false);
-            ((ProgressDialog)dialog).setMessage(getString(R.string.doing_and_wait));
-            dialog.setOnDismissListener(new OnDismissListener() {
-                
-                @Override
-                public void onDismiss(DialogInterface arg0) {
-                    mActionLog.addAction(ActionLog.Dialog + ActionLog.Dismiss);
-                }
-            });
-            break;
-        }
-        
-        return dialog;
-    }
-
-    @Override
     public void onClick(View view) {
         int viewId = view.getId();
         if (R.id.right_btn == viewId) {
@@ -787,7 +707,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                 }
             }
             
-            final MultichoiceArrayAdapter multichoiceArrayAdapter = new MultichoiceArrayAdapter(mThis, mRestairArray);
+            final MultichoiceArrayAdapter multichoiceArrayAdapter = new MultichoiceArrayAdapter(mThis, mRestairArray, mRestairChecked);
             ListView listView = Utility.makeListView(mThis);
             listView.setAdapter(multichoiceArrayAdapter);
             listView.setOnItemClickListener(new OnItemClickListener() {
@@ -834,7 +754,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                     mSyncQZoneChb.setChecked(true);
                 } else {
                     mSyncQZoneChb.setChecked(false);
-                    TKTencentOpenAPI.login(mThis);
+                    authorizeTencent(this);
                 }
             } else {
                 mSyncQZoneChb.setChecked(false);
@@ -847,7 +767,7 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
                     mSyncSinaChb.setChecked(true);
                 } else {
                     mSyncSinaChb.setChecked(false);
-                    TKWeibo.authorize(mTKWeibo, mSinaAuthDialogListener);
+                    authorizeWeibo(this);
                 }
             } else {
                 mSyncSinaChb.setChecked(false);
@@ -1010,22 +930,24 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
         if (mSyncSinaChb.isChecked()) {
             // http://open.weibo.com/wiki/2/statuses/update
             // status  true  string  要发布的微博文本内容，必须做URLencode，内容不超过140个汉字。   
+            // #老虎宝典分享#我来过：XXXX（poi 名称）+空格+我觉得 XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+来自@老虎宝典+空格+www.tigerknows.com （“来自@老虎宝典” 之前的内容如果超出 123 字，截断成 122 个字+“…”（半个省略号“……”））；图片为地图图片（同 poi 分享的图片一样）
             String shareSina = "";
             shareSina = mThis.getString(R.string.poi_comment_share_sina, mPOI.getName(), shareGrade, content, TextUtils.isEmpty(recommendCook) ? "" : mThis.getString(R.string.recommend_cooking, recommendCook));
-            if (shareSina.length() > 115) {
-                shareSina = shareSina.subSequence(0, 112) + "...";
+            if (shareSina.length() > 107) {
+                shareSina = shareSina.subSequence(0, 104) + "...";
             }
-            shareSina = shareSina + "http://www.tigerknows.com";   // 25个 TODO: 但是这个网址被微博删除了
+            shareSina = shareSina + mThis.getString(R.string.poi_comment_share_sina_source); // TODO: 但是这个网址被微博删除了
             criteria.put(DataOperation.SERVER_PARAMETER_SHARE_SINA, shareSina);
         }
         
         if (mSyncQZoneChb.isChecked()) {
             // http://wiki.opensns.qq.com/wiki/%E3%80%90QQ%E7%99%BB%E5%BD%95%E3%80%91add_share
-            // summary   string  所分享的网页资源的摘要内容，或者是网页的概要描述，对应上文接口说明的3。最长80个中文字，超出部分会被截断。  
+            // summary   string  所分享的网页资源的摘要内容，或者是网页的概要描述，对应上文接口说明的3。最长80个中文字，超出部分会被截断。
+            // 我来过：XXXX（poi 名称）+空格+我觉得 XXX！（整体评价：太差啦！/不咋地！/一般般！/还不错！/太赞啦！）+XXXX（文字点评内容）+推荐菜：XXX，XXX（推荐菜）+空格+#老虎宝典分享#（“网址之前的内容如果超出 123 字，截断成 122 个字+“…”（半个省略号“……”）），没有图片显示
             String shareQzone = "";
             shareQzone = mThis.getString(R.string.poi_comment_share_qzone, mPOI.getName(), shareGrade, content, TextUtils.isEmpty(recommendCook) ? "" : mThis.getString(R.string.recommend_cooking, recommendCook));
-            if (shareQzone.length() > 63) {
-                shareQzone = shareQzone.subSequence(0, 60) + "...";
+            if (shareQzone.length() > 72) {
+                shareQzone = shareQzone.subSequence(0, 69) + "...";
             }
             shareQzone = shareQzone + mThis.getString(R.string.poi_comment_share_qzone_source); // 17个
             criteria.put(DataOperation.SERVER_PARAMETER_SHARE_QZONE, shareQzone);
@@ -1349,30 +1271,5 @@ public class EditCommentActivity extends BaseActivity implements View.OnClickLis
             }
         }
         return false;
-    }
-    
-    class MultichoiceArrayAdapter extends ArrayAdapter<String> {
-        
-        static final int RESOURCE_ID = R.layout.select_dialog_multichoice;
-        
-        public MultichoiceArrayAdapter(Context context, String[] list) {
-            super(context, RESOURCE_ID, list);
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            View view;
-            if (convertView == null) {
-                view = mLayoutInflater.inflate(RESOURCE_ID, parent, false);
-            } else {
-                view = convertView;
-            }
-            
-            CheckedTextView textView = (CheckedTextView)view.findViewById(R.id.text1);
-            textView.setText(mRestairArray[position]);
-            textView.setChecked(mRestairChecked[position]);
-
-            return view;
-        }
     }
 }

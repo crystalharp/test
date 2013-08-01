@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2013 fengtianxiao@tigerknows.com
+ * 2013.05
  */
 package com.tigerknows.ui.hotel;
 
@@ -98,53 +99,53 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
     }
     
     protected void findViews() {
-    	mCreditAssureScv = (ScrollView) mRootView.findViewById(R.id.credit_assure_scv);
-    	mCreditBankBtn = (Button) mRootView.findViewById(R.id.credit_bank_btn);
-    	mCreditCodeEdt = (EditText) mRootView.findViewById(R.id.credit_code_edt);
-    	mCreditOwnerEdt = (EditText) mRootView.findViewById(R.id.credit_owner_edt);
-    	mCreditVerifyEdt = (EditText) mRootView.findViewById(R.id.credit_verify_edt);
-    	mCreditValidityBtn = (Button) mRootView.findViewById(R.id.credit_validity_btn);
-    	mCreditCertTypeBtn = (Button) mRootView.findViewById(R.id.credit_cert_type_btn);
-    	mCreditCertCodeEdt = (EditText) mRootView.findViewById(R.id.credit_cert_code_edt);
-    	mCreditConfirmBtn = (Button) mRootView.findViewById(R.id.credit_confirm_btn);
-    	mCreditAssurePriceTxv = (TextView) mRootView.findViewById(R.id.credit_assure_price_txv);
-    	mCreditNoteTxv = (TextView) mRootView.findViewById(R.id.credit_note_txv);
+        mCreditAssureScv = (ScrollView) mRootView.findViewById(R.id.credit_assure_scv);
+        mCreditBankBtn = (Button) mRootView.findViewById(R.id.credit_bank_btn);
+        mCreditCodeEdt = (EditText) mRootView.findViewById(R.id.credit_code_edt);
+        mCreditOwnerEdt = (EditText) mRootView.findViewById(R.id.credit_owner_edt);
+        mCreditVerifyEdt = (EditText) mRootView.findViewById(R.id.credit_verify_edt);
+        mCreditValidityBtn = (Button) mRootView.findViewById(R.id.credit_validity_btn);
+        mCreditCertTypeBtn = (Button) mRootView.findViewById(R.id.credit_cert_type_btn);
+        mCreditCertCodeEdt = (EditText) mRootView.findViewById(R.id.credit_cert_code_edt);
+        mCreditConfirmBtn = (Button) mRootView.findViewById(R.id.credit_confirm_btn);
+        mCreditAssurePriceTxv = (TextView) mRootView.findViewById(R.id.credit_assure_price_txv);
+        mCreditNoteTxv = (TextView) mRootView.findViewById(R.id.credit_note_txv);
     }
 
     protected void setListener() {
-    	mCreditAssureScv.setOnClickListener(this);
-    	mCreditBankBtn.setOnClickListener(this);
-    	mCreditValidityBtn.setOnClickListener(this);
-    	mCreditCertTypeBtn.setOnClickListener(this);
-    	mCreditConfirmBtn.setOnClickListener(this);
+        mCreditAssureScv.setOnClickListener(this);
+        mCreditBankBtn.setOnClickListener(this);
+        mCreditValidityBtn.setOnClickListener(this);
+        mCreditCertTypeBtn.setOnClickListener(this);
+        mCreditConfirmBtn.setOnClickListener(this);
         OnTouchListener edtTouchListener = new OnTouchListener() {
-			
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				if(event.getAction() == MotionEvent.ACTION_UP){
-					switch (v.getId()){
-					case R.id.credit_code_edt:
-						mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditCode);
-						break;
-					case R.id.credit_owner_edt:
-						mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditOwner);
-						break;
-					case R.id.credit_verify_edt:
-						mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditVerify);
-						break;
-					case R.id.credit_cert_code_edt:
-						mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditCertCode);
-						break;
-					}
-				}
-				return false;
-			}
-		};
-		mCreditCodeEdt.setOnTouchListener(edtTouchListener);
-		mCreditOwnerEdt.setOnTouchListener(edtTouchListener);
-		mCreditVerifyEdt.setOnTouchListener(edtTouchListener);    
-		mCreditCertCodeEdt.setOnTouchListener(edtTouchListener);    
-	}
+            
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(event.getAction() == MotionEvent.ACTION_UP){
+                    switch (v.getId()){
+                    case R.id.credit_code_edt:
+                        mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditCode);
+                        break;
+                    case R.id.credit_owner_edt:
+                        mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditOwner);
+                        break;
+                    case R.id.credit_verify_edt:
+                        mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditVerify);
+                        break;
+                    case R.id.credit_cert_code_edt:
+                        mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditCertCode);
+                        break;
+                    }
+                }
+                return false;
+            }
+        };
+        mCreditCodeEdt.setOnTouchListener(edtTouchListener);
+        mCreditOwnerEdt.setOnTouchListener(edtTouchListener);
+        mCreditVerifyEdt.setOnTouchListener(edtTouchListener);    
+        mCreditCertCodeEdt.setOnTouchListener(edtTouchListener);    
+    }
     
     @Override
     public void onClick(View view){
@@ -153,128 +154,128 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         case R.id.left_btn:
             break;
         case R.id.credit_bank_btn:
-        	mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditBank);
-        	showCreditBankDialog();
-        	break;
+            mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditBank);
+            showCreditBankDialog();
+            break;
         case R.id.credit_validity_btn:
-        	mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditValidate);
-        	showValidDialog();
-        	break;
+            mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditValidate);
+            showValidDialog();
+            break;
         case R.id.credit_cert_type_btn:
-        	mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditCertType);
-        	showCertTypeDialog();
-        	break;
+            mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditCertType);
+            showCertTypeDialog();
+            break;
         case R.id.credit_confirm_btn:
-        	mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditSubmit);
-        	String str = mCreditBankBtn.getText().toString();
-        	List<String> list = new ArrayList<String>();
-        	// 判断选择银行
-        	if(TextUtils.isEmpty(str) || TextUtils.equals(str, mSphinx.getString(R.string.credit_bank_hint))){
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_bank_empty_tip));
-        		return;
-        	}
-        	
-        	// 判断银行卡号
-        	str = mCreditCodeEdt.getText().toString();
-        	if(TextUtils.isEmpty(str)){
-        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_code_empty_tip), mCreditCodeEdt);
-        		return;
-        	}else if(!ValidateUtil.isValidCreditCard(str)){
-        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_code_format), mCreditCodeEdt);
-        		return;
-        	}
-        	list.add(str);
-        	
-        	// 判断持卡人姓名
-        	str = mCreditOwnerEdt.getText().toString().trim();
-        	if(TextUtils.isEmpty(str)){
-        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_owner_empty_tip), mCreditOwnerEdt);
-        		return;
-    		}else if(!ValidateUtil.isValidElongName(str)){
-    			Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format), mCreditOwnerEdt);
-    			return;
-        	}
-        	list.add(str);
-        	
-        	// 判断信用卡验证码
-        	str = mCreditVerifyEdt.getText().toString();
-        	if(TextUtils.isEmpty(str)){
-        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_verify_empty_tip), mCreditVerifyEdt);
-        		return;
-        	}else if(!ValidateUtil.isValidCreditCardVerify(str)){
-        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_verify_format), mCreditVerifyEdt);
-        		return;
-        	}
-        	list.add(str);
-        	
-        	// 判断信用卡有效期
-        	if(mDate == null){
-        		Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_validity_empty_tip));
-        		return;
-        	}
-        	list.add(mDate.get(Calendar.YEAR) + "");
-        	list.add(1+mDate.get(Calendar.MONTH) + "");
-        	
-        	// 判断证件类型(这个不用判断)
-        	str = mCreditCertTypeBtn.getText().toString();
-        	list.add(str);
-        	
-        	// 判断证件号码
-        	str = mCreditCertCodeEdt.getText().toString();
-        	if(TextUtils.isEmpty(str)){
-        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_cert_code_empty_tip), mCreditCertCodeEdt);
-        		return;
-        	}else if(mCreditCertTypeBtn.getText().toString().contains("身份证") && !ValidateUtil.isValidIdCardCode(str)){
-        		Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_idcard_code_format), mCreditCertCodeEdt);
-        		return;
-        	}
-        	list.add(str);
-        	
-        	mSphinx.getHotelOrderWriteFragment().setCredit(list);
-        	break;
+            mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditSubmit);
+            String str = mCreditBankBtn.getText().toString();
+            List<String> list = new ArrayList<String>();
+            // 判断选择银行
+            if(TextUtils.isEmpty(str) || TextUtils.equals(str, mSphinx.getString(R.string.credit_bank_hint))){
+                Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_bank_empty_tip));
+                return;
+            }
+            
+            // 判断银行卡号
+            str = mCreditCodeEdt.getText().toString();
+            if(TextUtils.isEmpty(str)){
+                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_code_empty_tip), mCreditCodeEdt);
+                return;
+            }else if(!ValidateUtil.isValidCreditCard(str)){
+                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_code_format), mCreditCodeEdt);
+                return;
+            }
+            list.add(str);
+            
+            // 判断持卡人姓名
+            str = mCreditOwnerEdt.getText().toString().trim();
+            if(TextUtils.isEmpty(str)){
+                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_owner_empty_tip), mCreditOwnerEdt);
+                return;
+            }else if(!ValidateUtil.isValidElongName(str)){
+                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_person_name_format), mCreditOwnerEdt);
+                return;
+            }
+            list.add(str);
+            
+            // 判断信用卡验证码
+            str = mCreditVerifyEdt.getText().toString();
+            if(TextUtils.isEmpty(str)){
+                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_verify_empty_tip), mCreditVerifyEdt);
+                return;
+            }else if(!ValidateUtil.isValidCreditCardVerify(str)){
+                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_verify_format), mCreditVerifyEdt);
+                return;
+            }
+            list.add(str);
+            
+            // 判断信用卡有效期
+            if(mDate == null){
+                Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.credit_validity_empty_tip));
+                return;
+            }
+            list.add(mDate.get(Calendar.YEAR) + "");
+            list.add(1+mDate.get(Calendar.MONTH) + "");
+            
+            // 判断证件类型(这个不用判断)
+            str = mCreditCertTypeBtn.getText().toString();
+            list.add(str);
+            
+            // 判断证件号码
+            str = mCreditCertCodeEdt.getText().toString();
+            if(TextUtils.isEmpty(str)){
+                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.credit_cert_code_empty_tip), mCreditCertCodeEdt);
+                return;
+            }else if(mCreditCertTypeBtn.getText().toString().contains(mSphinx.getString(R.string.mainland_id_card)) && !ValidateUtil.isValidIdCardCode(str)){
+                Utility.showEdittextErrorDialog(mSphinx, mSphinx.getString(R.string.hotel_idcard_code_format), mCreditCertCodeEdt);
+                return;
+            }
+            list.add(str);
+            
+            mSphinx.getHotelOrderWriteFragment().setCredit(list);
+            break;
         default:
             break;
         }
     }
     
     public class CreditBankAdapter extends SingleChoiceArrayAdapter{
-    	
-		public CreditBankAdapter(Context context, List<String> list) {
-			super(context, list);
-			// TODO Auto-generated constructor stub
-			// 招商银行 中国建设银行 中国工商银行 中国银行 交通银行 中信银行 广发银行 中国民生银行 兴业银行 上海浦东发展银行 中国光大银行     中国农业银行 平安银行 深圳发展银行 北京银行 上海银行 华夏银行 中国邮政储蓄银行 宁波银行
-		}
-		@Override
-		public View getView(final int position, View convertView, ViewGroup parent){
-			View view = super.getView(position, convertView, parent);
-			ImageView singleIconImv = (ImageView)view.findViewById(R.id.single_icon_imv);
-			if(position == (int)mGetBankPosition){
-				singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_checked));
-			}else{
-				singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_default));
-			}
-			return view;
-		}
-		
+        
+        public CreditBankAdapter(Context context, List<String> list) {
+            super(context, list);
+            // TODO Auto-generated constructor stub
+            // 招商银行 中国建设银行 中国工商银行 中国银行 交通银行 中信银行 广发银行 中国民生银行 兴业银行 上海浦东发展银行 中国光大银行     中国农业银行 平安银行 深圳发展银行 北京银行 上海银行 华夏银行 中国邮政储蓄银行 宁波银行
+        }
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent){
+            View view = super.getView(position, convertView, parent);
+            ImageView singleIconImv = (ImageView)view.findViewById(R.id.single_icon_imv);
+            if(position == (int)mGetBankPosition){
+                singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_checked));
+            }else{
+                singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_default));
+            }
+            return view;
+        }
+        
     }
     
     public class CertTypeAdapter extends SingleChoiceArrayAdapter{
-    	
-		public CertTypeAdapter(Context context, List<String> list) {
-			super(context, list);
-			// TODO Auto-generated constructor stub
-		}
-		@Override
-		public View getView(final int position, View convertView, ViewGroup parent){
-			View view = super.getView(position, convertView, parent);
-			ImageView singleIconImv = (ImageView)view.findViewById(R.id.single_icon_imv);
-			if(position == (int)mGetCreditCertPosition){
-				singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_checked));
-			}else{
-				singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_default));
-			}
-			return view;
-		}
+        
+        public CertTypeAdapter(Context context, List<String> list) {
+            super(context, list);
+            // TODO Auto-generated constructor stub
+        }
+        @Override
+        public View getView(final int position, View convertView, ViewGroup parent){
+            View view = super.getView(position, convertView, parent);
+            ImageView singleIconImv = (ImageView)view.findViewById(R.id.single_icon_imv);
+            if(position == (int)mGetCreditCertPosition){
+                singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_checked));
+            }else{
+                singleIconImv.setImageDrawable(getResources().getDrawable(R.drawable.rdb_recovery_default));
+            }
+            return view;
+        }
     }
     
     public void showCreditBankDialog(){
@@ -282,18 +283,18 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         final ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(adapter);
         //TODO: ActionLog
-        final Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_credit_bank), null, listView, null, null, null);
+        final Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_credit_bank), listView);
         listView.setOnItemClickListener(new OnItemClickListener() {
-        	@Override
-        	public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
-            	listView.setAdapter(adapter);
-        		mGetBankPosition = which;
-        		mCreditBankBtn.setText(mBankList.get(which));
-            	mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditBankChoose, mBankList.get(which));
-        		mCreditBankBtn.setTextColor(getResources().getColor(R.color.black_dark));
-        		dialog.dismiss();
-        	}
-		});
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
+                listView.setAdapter(adapter);
+                mGetBankPosition = which;
+                mCreditBankBtn.setText(mBankList.get(which));
+                mActionLog.addAction(mActionTag + ActionLog.HotelOrderCreditBankChoose, mBankList.get(which));
+                mCreditBankBtn.setTextColor(getResources().getColor(R.color.black_dark));
+                dialog.dismiss();
+            }
+        });
     }
 
     public void showValidDialog() {
@@ -302,88 +303,86 @@ public class HotelOrderCreditFragment extends BaseFragment implements View.OnCli
         }
         
         if (mValidityDialog == null) {
-            mValidityDialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_credit_validity), null, mValidityListView, null, null, null);
+            mValidityDialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_credit_validity), mValidityListView);
             mValidityDialog.setCancelable(true);
-            mValidityDialog.setCanceledOnTouchOutside(false);
+            mValidityDialog.setCanceledOnTouchOutside(true);
         }else if(mValidityDialog.isShowing() == false){
-        	mValidityDialog.show();
+            mValidityDialog.show();
         }
         
         mValidityListView.setData(mDate, this, mActionTag);
     }
     
     public void showCertTypeDialog(){
-    	final List<String> list = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
+        final List<String> list = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
         final ArrayAdapter<String> adapter = new CertTypeAdapter(mSphinx, list);
         final ListView listView = Utility.makeListView(mSphinx);
         listView.setAdapter(adapter);
         //TODO: ActionLog
-        final Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_cert_type), null, listView, null, null, null);
+        final Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(R.string.choose_cert_type), listView);
         listView.setOnItemClickListener(new OnItemClickListener() {
-        	@Override
-        	public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
-            	listView.setAdapter(adapter);
-        		mGetCreditCertPosition = which;
-        		mCreditCertTypeBtn.setText(list.get(which));
-        		mCreditCertTypeBtn.setTextColor(getResources().getColor(R.color.black_dark));
-        		dialog.dismiss();
-        	}
-		});
+            @Override
+            public void onItemClick(AdapterView<?> arg0, View arg1, int which, long arg3){
+                listView.setAdapter(adapter);
+                mGetCreditCertPosition = which;
+                mCreditCertTypeBtn.setText(list.get(which));
+                mCreditCertTypeBtn.setTextColor(getResources().getColor(R.color.black_dark));
+                dialog.dismiss();
+            }
+        });
     }
-	public void setData(String additionMessage, String oneNightPrice, String sumPrice, int assureType, String name) {
-		mSumPrice = sumPrice;
-		int assureTypeFromServer = 0;
+    public void setData(String additionMessage, String oneNightPrice, String sumPrice, int assureType, String name) {
+        mSumPrice = sumPrice;
+        int assureTypeFromServer = 0;
         mCreditOwnerEdt.setText(name);
         mCreditOwnerEdt.requestFocus();
         Selection.setSelection(mCreditOwnerEdt.getText(), mCreditOwnerEdt.length());
-		String[] sArray = additionMessage.split("#");
-		if(sArray[0].length() < 2){
-			assureType = Integer.parseInt(sArray[0]);
-			assureTypeFromServer = 1;
-		}
-		mOrderModifyDeadline = sArray[assureTypeFromServer];
-		mBankList = new ArrayList<String>();
-		for (int i = assureTypeFromServer + 1; i < sArray.length; i++){
-			mBankList.add(sArray[i]);
-		}
-		if(mBankList.isEmpty()){
-			mBankList.addAll(Arrays.asList(getResources().getStringArray(R.array.default_bank_list)));
-		}
-		mGetBankPosition = -1;
-		mCertTypeList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
-		mCreditCertTypeBtn.setText(mCertTypeList.get(0));
-		mGetCreditCertPosition = 0;
+        String[] sArray = additionMessage.split("#");
+        if(sArray[0].length() < 2){
+            assureType = Integer.parseInt(sArray[0]);
+            assureTypeFromServer = 1;
+        }
+        mOrderModifyDeadline = sArray[assureTypeFromServer];
+        mBankList = new ArrayList<String>();
+        for (int i = assureTypeFromServer + 1; i < sArray.length; i++){
+            mBankList.add(sArray[i]);
+        }
+        if(mBankList.isEmpty()){
+            mBankList.addAll(Arrays.asList(getResources().getStringArray(R.array.default_bank_list)));
+        }
+        mGetBankPosition = -1;
+        mCertTypeList = new ArrayList<String>(Arrays.asList(getResources().getStringArray(R.array.cert_type)));
+        mCreditCertTypeBtn.setText(mCertTypeList.get(0));
+        mGetCreditCertPosition = 0;
         mCreditAssurePriceTxv.setText(mSphinx.getString(R.string.credit_assure_price, (assureType == 2 ) ? mSumPrice : oneNightPrice));
         Calendar c1 = Calendar.getInstance();
         try {
-			c1.setTime(CalendarUtil.ymd8c_hm4.parse(mOrderModifyDeadline));
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			// do nothing
-		}
+            c1.setTime(CalendarUtil.ymd8c_hm4.parse(mOrderModifyDeadline));
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            // do nothing
+        }
         Calendar c2 = Calendar.getInstance();
-        c2.set(2013, 0, 1);
         if(c1.after(c2) == false){
-        	mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
-        			R.color.orange,
-        			mSphinx.getString(R.string.credit_note_detail_2, mSphinx.getString(R.string.credit_cannot_cancel)),
-        			mSphinx.getString(R.string.credit_cannot_cancel)));
+            mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
+                    R.color.orange,
+                    mSphinx.getString(R.string.credit_note_detail_2, mSphinx.getString(R.string.credit_cannot_cancel)),
+                    mSphinx.getString(R.string.credit_cannot_cancel)));
         }else{
-        	mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
-        			R.color.orange,
-        			mSphinx.getString(R.string.credit_note_detail, mOrderModifyDeadline).trim(),
-        			mOrderModifyDeadline));
+            mCreditNoteTxv.setText(Utility.renderColorToPartOfString(mContext,
+                    R.color.orange,
+                    mSphinx.getString(R.string.credit_note_detail, mOrderModifyDeadline).trim(),
+                    mOrderModifyDeadline));
         }
         mCreditAssureScv.smoothScrollTo(0, 0);
-	}
+    }
 
     @Override
     public void selected(Calendar calendar) {
-        // TODO 设置选择的日期
-    	mDate = Calendar.getInstance();
-    	mDate.setTime(calendar.getTime());
-    	mCreditValidityBtn.setText(CalendarUtil.y4mc.format(mDate.getTime()));
-    	mCreditValidityBtn.setTextColor(getResources().getColor(R.color.black_dark));
+        mDate = Calendar.getInstance();
+        mDate.setTime(calendar.getTime());
+        mCreditValidityBtn.setText(CalendarUtil.y4mc.format(mDate.getTime()));
+        mCreditValidityBtn.setTextColor(getResources().getColor(R.color.black_dark));
         if (mValidityDialog != null && mValidityDialog.isShowing()) {
             mValidityDialog.dismiss();
         }

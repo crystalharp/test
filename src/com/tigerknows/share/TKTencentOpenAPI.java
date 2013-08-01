@@ -8,7 +8,7 @@ import com.tencent.tauth.http.Callback;
 import com.tigerknows.R;
 import android.widget.Toast;
 import com.tigerknows.common.ActionLog;
-import com.tigerknows.share.ShareAPI.LoginCallBack;
+import com.tigerknows.share.ShareAPI.IAuthorizeCallBack;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -61,11 +61,11 @@ public class TKTencentOpenAPI {
     public static class AuthReceiver extends BroadcastReceiver {
         
         Activity activity;
-        LoginCallBack loginCallBack;
+        IAuthorizeCallBack loginCallBack;
         
         private static final String TAG="AuthReceiver";
         
-        public AuthReceiver(Activity activity, LoginCallBack loginCallBack) {
+        public AuthReceiver(Activity activity, IAuthorizeCallBack loginCallBack) {
             this.activity = activity;
             this.loginCallBack = loginCallBack;
         }
@@ -174,7 +174,7 @@ public class TKTencentOpenAPI {
         intent.putExtra(TAuthView.TARGET, "_self");
         intent.putExtra(TAuthView.CALLBACK, CALLBACK);
         
-        activity.startActivity(intent);
+        activity.startActivityForResult(intent, R.id.activity_tencent);
         
     }
     

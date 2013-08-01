@@ -492,7 +492,7 @@ public class ShareTextUtil {
             str = poi.getAddress();
             if (!TextUtils.isEmpty(str)) {
                 s.append(context.getString(R.string.comma));
-                s.append(context.getString(R.string.address));
+                s.append(context.getString(R.string.address_colon));
                 s.append(str);
             }
             
@@ -558,7 +558,7 @@ public class ShareTextUtil {
             str = poi.getAddress();
             if (!TextUtils.isEmpty(str)) {
                 s.append(context.getString(R.string.comma));
-                s.append(context.getString(R.string.address));
+                s.append(context.getString(R.string.address_colon));
                 s.append(str);
             }
             
@@ -623,7 +623,7 @@ public class ShareTextUtil {
             str = poi.getAddress();
             if (!TextUtils.isEmpty(str)) {
                 s.append(context.getString(R.string.comma));
-                s.append(context.getString(R.string.address));
+                s.append(context.getString(R.string.address_colon));
                 s.append(str);
             }
             

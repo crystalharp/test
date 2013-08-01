@@ -281,8 +281,8 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mActionTag = ActionLog.DianyingList;
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -562,12 +562,12 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
             mEmptyView.setVisibility(View.GONE);
             mResultLsv.setVisibility(View.VISIBLE);
             if (mRightBtn != null) {
-                if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType)) {
-                    if( mSphinx.uiStackPeek() == R.id.view_discover_list){
-                    	mRightBtn.setVisibility(View.GONE);
+                if (getList().size() > 0) {
+                    if (BaseQuery.DATA_TYPE_DIANYING.equals(mDataType) && mSphinx.uiStackPeek() == R.id.view_discover_list) {
+                        mRightBtn.setVisibility(View.GONE);
+                    }else{
+                    	mRightBtn.setVisibility(View.VISIBLE);
                     }
-                } else if (getList().size() > 0) {
-                    mRightBtn.setVisibility(View.VISIBLE);
                     if (BaseQuery.DATA_TYPE_TUANGOU.equals(mDataType)) {
                         if (TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_LIST) == null) {
                             TKConfig.setPref(mSphinx, TKConfig.PREFS_HINT_POI_LIST, "1");
@@ -1046,7 +1046,10 @@ public class DiscoverListFragment extends DiscoverBaseFragment implements View.O
                     });
                 }
                 
-                refreshFilter(mDataQuery.getFilterList());
+                List<Filter> filterList = mDataQuery.getFilterList();
+                if (filterList != null && filterList.size() > 0) {
+                    refreshFilter(filterList);
+                }
                 makeFilterArea(dataQuery);
                 
                 List<Tuangou> list = tuangouResponse.getList().getList();

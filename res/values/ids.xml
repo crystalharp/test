@@ -19,6 +19,7 @@
     <item type="id" name="view_result_map" />
     <item type="id" name="activity_browser" />
     <item type="id" name="activity_hint" />
+    <item type="id" name="activity_tencent"/>
     
     <item type="id" name="view_poi_home" />
     <item type="id" name="view_poi_input_search" />
@@ -40,6 +41,7 @@
     <item type="id" name="activity_more_change_city" />
     <item type="id" name="activity_more_map_download" />
     <item type="id" name="activity_more_about_us" />
+    <item type="id" name="activity_more_satisfy" />
     <item type="id" name="activity_more_feedback" />
     <item type="id" name="activity_more_setting" />
     <item type="id" name="activity_more_app_recommend" />
@@ -78,7 +80,6 @@
     <item type="id" name="view_hotel_order_write" />
     <item type="id" name="view_hotel_credit_assure" />
     <item type="id" name="view_hotel_order_detail" />
-    <item type="id" name="view_hotel_seveninn_regist"/>
     <item type="id" name="view_hotel_order_list"/>
     <item type="id" name="view_hotel_image_grid"/>
     <item type="id" name="view_hotel_intro"/>

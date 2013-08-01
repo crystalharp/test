@@ -195,7 +195,7 @@ public class HistoryWordTable {
      * @param providerList
      * @throws SQLException
      */
-    public void optimize(int cityId, int type) throws SQLException {
+    public void optimize(int type) throws SQLException {
         if(!mDb.isOpen())
             return;
         Cursor mCursor = mDb.query(true, TABLE_NAME,
@@ -204,7 +204,7 @@ public class HistoryWordTable {
         int count = mCursor.getCount();
         if (count > MAX_COUNT) {
             mCursor.moveToFirst();
-            mCursor.move(count-MAX_COUNT);
+            mCursor.move(count-MAX_COUNT-1);
             mDb.delete(TABLE_NAME, ID + " <= " + mCursor.getInt(0), null);
         }
         if(mCursor!=null){
@@ -256,7 +256,7 @@ public class HistoryWordTable {
         list.add(0, tkWord);
         HistoryWordTable historyWordTable = new HistoryWordTable(context);
         historyWordTable.write(tkWord, cityId, type);
-        historyWordTable.optimize(cityId, type);
+        historyWordTable.optimize(type);
         historyWordTable.close();
     }
     

@@ -2,6 +2,7 @@
 package com.tigerknows.model;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import com.decarta.Globals;
 import com.decarta.android.exception.APIException;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
+import com.tigerknows.android.location.TKLocationManager;
 import com.tigerknows.model.response.Appendix;
 import com.tigerknows.model.response.PositionCake;
 import com.tigerknows.model.response.ResponseCode;
@@ -70,6 +72,8 @@ public class LocationQuery extends BaseQuery {
      * 定位失败的状态响应码，并且表示不用重试（注意此值不是网络状态响应）
      */
     static final int LOCATION_RESPONSE_CODE_FAILED = 404;
+    
+    public static SimpleDateFormat SIMPLE_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss");
 
     /**
      * 单实例模式
@@ -275,6 +279,9 @@ public class LocationQuery extends BaseQuery {
      * @return
      */
     public Location getLocation() {
+        if (TKLocationManager.UnallowedLocation) {
+            return null;
+        }
         synchronized (this) {
             LocationParameter locationParameter = makeLocationParameter();
     
@@ -403,7 +410,7 @@ public class LocationQuery extends BaseQuery {
         private volatile int hashCode = 0;
         
         public LocationParameter() {
-            time = LocationUpload.SIMPLE_DATE_FORMAT.format(Calendar.getInstance().getTime());
+            time = SIMPLE_DATE_FORMAT.format(Calendar.getInstance().getTime());
         }
         
         /**

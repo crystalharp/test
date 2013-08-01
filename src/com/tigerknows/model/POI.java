@@ -408,6 +408,8 @@ public class POI extends BaseData {
 
     public static final int SOURCE_TYPE_LONG_CLICK_SELECT_POINT = 13;
 
+    public static final int SOURCE_TYPE_HOTEL = 14;
+
     public static final int FROM_ONLINE = 0;
 
     public static final int FROM_LOCAL = 1;
@@ -1399,7 +1401,9 @@ public class POI extends BaseData {
 //            XMap otherData = other.data;
 //            if((null != otherData && !otherData.equals(data)) || (null == otherData && otherData != data)) {
 //                return false;
-            if((null != other.name && !other.name.equals(this.name)) || (null == other.name && other.name != this.name)) {
+            if(null != uuid && null != other.uuid && uuid.equals(other.uuid)) {
+                return true;
+            } else if((null != other.name && !other.name.equals(this.name)) || (null == other.name && other.name != this.name)) {
                 return false;
             } else if((null != other.position && !other.position.equals(this.position)) || (null == other.position && other.position != this.position)) {
                 return false;

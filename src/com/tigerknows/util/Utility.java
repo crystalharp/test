@@ -12,12 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.net.URI;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Formatter;
 import java.util.LinkedList;
@@ -28,6 +26,7 @@ import java.util.zip.ZipFile;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -37,11 +36,16 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.AssetManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.telephony.NeighboringCellInfo;
 import android.telephony.TelephonyManager;
@@ -68,7 +72,6 @@ import android.widget.TextView;
 
 import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
-import com.decarta.android.util.XYInteger;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 import com.tigerknows.TKConfig;
@@ -328,6 +331,10 @@ public class Utility {
     }
 
     public static void unZipFile(AssetManager am, String fileName, String path) {
+        unZipFile(am, fileName, path, null);
+    }
+
+    public static void unZipFile(AssetManager am, String fileName, String path, String specifyFileName) {
 
         try {
             File file = new File(path + fileName);
@@ -351,8 +358,11 @@ public class Utility {
                              LogWrapper.e(TAG, "Unable to create new folder: " + filePath);
                          }
                      }
-                 } else {
+                 } else if (specifyFileName == null) {
                      saveFile(zipFile.getInputStream(entry), entry.getName(), path);
+                 } else if (entry.getName().endsWith(specifyFileName)) {
+                     saveFile(zipFile.getInputStream(entry), entry.getName(), path);
+                     break;
                  }
             }
             if (file.exists()) {
@@ -642,7 +652,7 @@ public class Utility {
     }
     
     public static Dialog showNormalDialog(Activity activity, String title, View custom) {
-        return showNormalDialog(activity, title, null, custom, activity.getString(R.string.confirm), activity.getString(R.string.cancel), null);
+        return showNormalDialog(activity, title, null, custom, null, null, null);
     }
     
     public static Dialog showNormalDialog(Activity activity, String title, View custom, DialogInterface.OnClickListener onClickListener) {
@@ -666,16 +676,24 @@ public class Utility {
     }
 
     public static Dialog showNormalDialog(Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener) {
+        return showNormalDialog(activity, title, message, custom, leftButtonText, rightButtonText, onClickListener, true);
+    }
+    
+    public static Dialog showNormalDialog(Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener, boolean dismiss) {
         if (title != null || message != null) {
             ActionLog.getInstance(activity).addAction(ActionLog.Dialog, title, message);
         }
-        Dialog dialog = getDialog(activity, title, message, custom, leftButtonText, rightButtonText, onClickListener);
+        Dialog dialog = getDialog(activity, title, message, custom, leftButtonText, rightButtonText, onClickListener, dismiss);
         dialog.show();
         
         return dialog;
     }
-
+    
     public static Dialog getDialog(final Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener) {
+        return getDialog(activity, title, message, custom, leftButtonText, rightButtonText, onClickListener, true);
+    }
+
+    public static Dialog getDialog(final Activity activity, String title, String message, View custom, String leftButtonText, String rightButtonText, final DialogInterface.OnClickListener onClickListener, final boolean dismiss) {
         
         LayoutInflater layoutInflater = (LayoutInflater)activity.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         
@@ -725,7 +743,9 @@ public class Utility {
                 
                 @Override
                 public void onClick(View view) {
-                    dialog.dismiss();
+                    if (dismiss) {
+                        dialog.dismiss();
+                    }
                     if (onClickListener != null) {
                         if (view.getId() == R.id.button1) {
                             ActionLog.getInstance(activity).addAction(ActionLog.DialogLeftBtn, leftBtn.getText());
@@ -919,14 +939,18 @@ public class Utility {
     }
     
     public static void pageIndicatorInit(Context context, ViewGroup viewPoints, int size) {
+        pageIndicatorInit(context, viewPoints, size, 0, R.drawable.ic_viewpage_indicator_normal, R.drawable.ic_viewpage_indicator_selected);
+    }
+    
+    public static void pageIndicatorInit(Context context, ViewGroup viewPoints, int size, int selectedIndex, int normalResId, int selectedResId) {
         int margin = (int)(Globals.g_metrics.density * 2);
         for(int i=0;i<size;i++){
             ImageView imageView = new ImageView(context);            
             //默认选中的是第一张图片，此时第一个小圆点是选中状态，其他不是
-            if(i==0){
-                imageView.setBackgroundResource(R.drawable.ic_learn_dot_selected);
+            if(i==selectedIndex){
+                imageView.setBackgroundResource(selectedResId);
             }else{
-                imageView.setBackgroundResource(R.drawable.ic_learn_dot_normal);
+                imageView.setBackgroundResource(normalResId);
             }
             
             //将imageviews添加到小圆点视图组
@@ -938,15 +962,19 @@ public class Utility {
 
     }
     
-    public static void pageIndicatorChanged(Context context, ViewGroup viewPoints, int index) {
+    public static void pageIndicatorChanged(Context context, ViewGroup viewPoints, int selectedIndex) {
+        pageIndicatorChanged(context, viewPoints, selectedIndex, R.drawable.ic_viewpage_indicator_normal, R.drawable.ic_viewpage_indicator_selected);
+    }
+    
+    public static void pageIndicatorChanged(Context context, ViewGroup viewPoints, int selectedIndex, int normalResId, int selectedResId) {
         for(int i=0, size = viewPoints.getChildCount();i<size;i++){
             ImageView imageView = (ImageView) viewPoints.getChildAt(i);
             
             //默认选中的是第一张图片，此时第一个小圆点是选中状态，其他不是
-            if(i==index){
-                imageView.setBackgroundResource(R.drawable.ic_learn_dot_selected);
+            if(i==selectedIndex){
+                imageView.setBackgroundResource(selectedResId);
             }else{
-                imageView.setBackgroundResource(R.drawable.ic_learn_dot_normal);
+                imageView.setBackgroundResource(normalResId);
             }
         }
 
@@ -965,11 +993,7 @@ public class Utility {
             
             final Dialog dialog = showNormalDialog(activity,
                     activity.getString(R.string.call_telephone),
-                    null,
-                    listView,
-                    null,
-                    null,
-                    null);
+                    listView);
             
             listView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -999,11 +1023,7 @@ public class Utility {
         
         final Dialog dialog = Utility.showNormalDialog(sphinx, 
                 sphinx.getString(R.string.come_here), 
-                null,
-                listView,
-                null,
-                null,
-                null);
+                listView);
         
         ActionLog.getInstance(sphinx).addAction(actionTag + ActionLog.GotoHere);
         listView.setOnItemClickListener(new OnItemClickListener() {
@@ -1202,5 +1222,407 @@ public class Utility {
 						activity.showSoftInput(source);
 					}
     	});
+    }
+
+    public static void showTakePhotoDialog(final String actionTag, final Activity activity, final int pickRequestCode,
+            final int captureRequestCode, final Uri captureUri) {
+        final List<String> textList = new ArrayList<String>();
+        textList.add(activity.getString(R.string.capture_photo));
+        textList.add(activity.getString(R.string.pick_photo));
+        final ArrayAdapter<String> adapter = new StringArrayAdapter(activity, textList,
+                null);
+
+        ListView listView = Utility.makeListView(activity);
+        listView.setAdapter(adapter);
+
+        final Dialog dialog = Utility.showNormalDialog(activity,
+                activity.getString(R.string.storefront_photo), null, listView, null, null, null);
+
+        listView.setOnItemClickListener(new OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View arg1, int which, long arg3) {
+                ActionLog actionLog = ActionLog.getInstance(activity);
+                if (which == 0) {
+                    actionLog.addAction(actionTag+ActionLog.CameraPhoto);
+                    capturePicture(activity, captureRequestCode, captureUri);
+                } else if (which == 1) {
+                    actionLog.addAction(actionTag+ActionLog.PickPhoto);
+                    pickPicture(activity, pickRequestCode);
+                }
+                dialog.dismiss();
+            }
+        });
+    }
+
+    public static void capturePicture(Activity activity, int requestCode, Uri uri) {
+        try {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            // intent.putExtra("crop", "circle");
+            if (uri != null) {
+                intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
+            }
+            activity.startActivityForResult(intent, requestCode);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void pickPicture(Activity activity, int requestCode) {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        activity.startActivityForResult(intent, requestCode);
+    }
+
+    public static String imageUri2FilePath(Activity activity, Uri uri) {
+        String[] projection = {
+            MediaStore.Images.Media.DATA
+        };
+        Cursor actualImageCursor = activity.managedQuery(uri, projection, null, null, null);
+        if (actualImageCursor != null && actualImageCursor.getCount() == 1) {
+            actualImageCursor.moveToFirst();
+            int actualImageColumnIndex = actualImageCursor
+                    .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            String imagePath = actualImageCursor.getString(actualImageColumnIndex);
+            return imagePath;
+        } else {
+            return uri.toString().replace("file://", "");
+        }
+    }
+
+    public static Bitmap imageUri2Bitmap(Activity activity, Uri uri) {
+        ContentResolver contentResolver = activity.getContentResolver();
+        try {
+            LogWrapper.d("Utils", "imageUri2Bitmap() uri=" + uri);
+            Bitmap bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uri));
+            return bitmap;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static Uri compressPhoto(Activity activity, Uri uri) {
+        Bitmap bitmap = imageUri2Bitmap(activity, uri);
+        File file = new File(imageUri2FilePath(activity, uri));
+        FileOutputStream fout = null;
+        try {
+            if (file.exists()) {
+                if (file.delete()) {
+                    if (!file.createNewFile()) {
+                        Log.e("Utils", "Unable to create new file: " + file.toString());
+                    }
+                }
+            }
+            fout = new FileOutputStream(file, true);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fout);
+            uri = Uri.fromFile(file);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (null != fout) {
+                try {
+                    fout.close();
+                } catch (IOException e) {
+                    // Ignore
+                    Log.e("Utils", "IOException caught while closing stream", e);
+                }
+            }
+        }
+
+        return uri;
+    }
+
+    public static Bitmap getBitmapByUri(Activity activity, Uri uri, int width, int height) {
+        String imageFilePath = imageUri2FilePath(activity, uri);
+        if (TextUtils.isEmpty(imageFilePath)) {
+            return null;
+        }
+        // Load up the image's dimensions not the image itself
+        BitmapFactory.Options bmpFactoryOptions = new BitmapFactory.Options();
+        bmpFactoryOptions.inJustDecodeBounds = true;
+        Bitmap bmp = BitmapFactory.decodeFile(imageFilePath, bmpFactoryOptions);
+
+        int heightRatio = (int) Math.ceil(bmpFactoryOptions.outHeight / (float) height);
+        int widthRatio = (int) Math.ceil(bmpFactoryOptions.outWidth / (float) width);
+
+        // If both of the ratios are greater than 1,
+        // one of the sides of the image is greater than the screen
+        if ((heightRatio > 1) || (widthRatio > 1)) {
+            if (heightRatio > widthRatio) {
+                // Height ratio is larger, scale according to it
+                bmpFactoryOptions.inSampleSize = heightRatio;
+            } else {
+                // Width ratio is larger, scale according to it
+                bmpFactoryOptions.inSampleSize = widthRatio;
+            }
+        }
+
+        // Decode it for real
+        bmpFactoryOptions.inJustDecodeBounds = false;
+        bmp = BitmapFactory.decodeFile(imageFilePath, bmpFactoryOptions);
+        return bmp;
+    }
+
+    public static Matrix resizeSqareMatrix(int width, int height, int maxLength) {
+        int max = Math.max(width, height);
+        float scale = ((float) maxLength) / max;
+        Matrix matrix = new Matrix();
+        matrix.postScale(scale, scale);
+        float dx = 0, dy = 0;
+        if (scale * width > width) {
+            dx = (scale * width - maxLength) / 2;
+        }
+        if (scale * height > height) {
+            dy = (scale * height - maxLength) / 2;
+        }
+        matrix.postTranslate(-dx, -dy);
+        return matrix;
+    }
+
+    public static Matrix resizeMaxWidthMatrix(int width, int height, int maxWidth, int maxHeight) {
+        Matrix matrix = new Matrix();
+        float maxWidthScale = ((float) maxWidth) / width;
+        float maxHeightScale = ((float) maxHeight) / height;
+        float scale = maxWidthScale;
+        if (maxWidthScale > maxHeightScale) {
+            scale = maxHeightScale;
+        }
+        float dx = 0, dy = 0;
+        if (scale * width > width) {
+            dx = (scale * width - maxWidth) / 2;
+        }
+        if (scale * height > height) {
+            dy = (scale * height - maxHeight) / 2;
+        }
+        matrix.postScale(scale, scale);
+        matrix.postTranslate(-dx, -dy);
+        return matrix;
+    }
+
+    public static boolean bitmapToFile(Bitmap bitmap, File file) {
+        if (bitmap == null || file == null) {
+            return false;
+        }
+        FileOutputStream fout = null;
+        try {
+            if (file.exists()) {
+                if (file.delete()) {
+                    if (!file.createNewFile()) {
+                        Log.e("Utils", "Unable to create new file: " + file.toString());
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            }
+            fout = new FileOutputStream(file, true);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, TKConfig.Photo_Compress_Ratio, fout);
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (null != fout) {
+                try {
+                    fout.close();
+                } catch (IOException e) {
+                    // Ignore
+                    Log.e("Utils", "IOException caught while closing stream", e);
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean copyFile(URI source, URI target) {
+        return copyFile(new File(source), new File(target), true);
+    }
+    
+    public static boolean copyFile(String source, String target) {
+        return copyFile(new File(source), new File(target), true);
+    }
+
+    public static boolean copyFile(File sourceFile, File targetFile, boolean rewrite) {
+        boolean result = false;
+        if (sourceFile == null || targetFile == null) {
+            return result;
+        }
+        if (!sourceFile.exists()) {
+            return result;
+        }
+
+        if (!sourceFile.isFile()) {
+            return result;
+        }
+
+        if (!sourceFile.canRead()) {
+            return result;
+        }
+
+        if (!targetFile.getParentFile().exists()) {
+            targetFile.getParentFile().mkdirs();
+        }
+        
+        if (sourceFile.getAbsolutePath().equals(targetFile.getAbsolutePath())) {
+            result = true;
+            return result;
+        }
+
+        if (targetFile.exists() && rewrite) {
+            targetFile.delete();
+        }
+        
+        try {
+            if (targetFile.createNewFile()) {
+                java.io.FileInputStream fosfrom = new java.io.FileInputStream(sourceFile);
+                java.io.FileOutputStream fosto = new FileOutputStream(targetFile);
+                byte bt[] = new byte[1024];
+                int c;
+                while ((c = fosfrom.read(bt)) > 0) {
+                   fosto.write(bt, 0, c); //将内容写到新文件当中
+                }
+                fosfrom.close();
+                fosto.close();
+                result = true;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+    
+    /**
+     * Creates a centered bitmap of the desired size. Recycles the input.
+     * 
+     * @param source
+     */
+    public static Bitmap extractMiniThumb(Bitmap source, int width, int height) {
+        return extractMiniThumb(source, width, height, true);
+    }
+
+    public static Bitmap extractMiniThumb(Bitmap source, int width, int height,
+            boolean recycle) {
+        if (source == null) {
+            return null;
+        }
+
+        float scale;
+        if (source.getWidth() < source.getHeight()) {
+            scale = width / (float) source.getWidth();
+        } else {
+            scale = height / (float) source.getHeight();
+        }
+        Matrix matrix = new Matrix();
+        matrix.setScale(scale, scale);
+        Bitmap miniThumbnail = transform(matrix, source, width, height, false);
+
+        if (recycle && miniThumbnail != source) {
+            source.recycle();
+        }
+        return miniThumbnail;
+    }
+
+    public static Bitmap transform(Matrix scaler, Bitmap source,
+            int targetWidth, int targetHeight, boolean scaleUp) {
+        int deltaX = source.getWidth() - targetWidth;
+        int deltaY = source.getHeight() - targetHeight;
+        if (!scaleUp && (deltaX < 0 || deltaY < 0)) {
+            /*
+             * In this case the bitmap is smaller, at least in one dimension,
+             * than the target. Transform it by placing as much of the image as
+             * possible into the target and leaving the top/bottom or left/right
+             * (or both) black.
+             */
+            Bitmap b2 = Bitmap.createBitmap(targetWidth, targetHeight,
+                    Bitmap.Config.ARGB_8888);
+            Canvas c = new Canvas(b2);
+
+            int deltaXHalf = Math.max(0, deltaX / 2);
+            int deltaYHalf = Math.max(0, deltaY / 2);
+            Rect src = new Rect(deltaXHalf, deltaYHalf, deltaXHalf
+                    + Math.min(targetWidth, source.getWidth()), deltaYHalf
+                    + Math.min(targetHeight, source.getHeight()));
+            int dstX = (targetWidth - src.width()) / 2;
+            int dstY = (targetHeight - src.height()) / 2;
+            Rect dst = new Rect(dstX, dstY, targetWidth - dstX, targetHeight
+                    - dstY);
+            c.drawBitmap(source, src, dst, null);
+            return b2;
+        }
+        float bitmapWidthF = source.getWidth();
+        float bitmapHeightF = source.getHeight();
+
+        float bitmapAspect = bitmapWidthF / bitmapHeightF;
+        float viewAspect = (float) targetWidth / targetHeight;
+
+        if (bitmapAspect > viewAspect) {
+            float scale = targetHeight / bitmapHeightF;
+            if (scale < .9F || scale > 1F) {
+                scaler.setScale(scale, scale);
+            } else {
+                scaler = null;
+            }
+        } else {
+            float scale = targetWidth / bitmapWidthF;
+            if (scale < .9F || scale > 1F) {
+                scaler.setScale(scale, scale);
+            } else {
+                scaler = null;
+            }
+        }
+
+        Bitmap b1;
+        if (scaler != null) {
+            // this is used for minithumb and crop, so we want to filter here.
+            b1 = Bitmap.createBitmap(source, 0, 0, source.getWidth(),
+                    source.getHeight(), scaler, true);
+        } else {
+            b1 = source;
+        }
+
+        int dx1 = Math.max(0, b1.getWidth() - targetWidth);
+        int dy1 = Math.max(0, b1.getHeight() - targetHeight);
+
+        Bitmap b2 = Bitmap.createBitmap(b1, dx1 / 2, dy1 / 2, targetWidth,
+                targetHeight);
+
+        if (b1 != source) {
+            b1.recycle();
+        }
+
+        return b2;
+    }
+    
+    private static final char HEX_DIGITS[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+        'a', 'b', 'c', 'd', 'e', 'f' };
+          
+    public static String toHexString(byte[] b) {
+        StringBuilder sb = new StringBuilder(b.length * 2);
+        for (int i = 0; i < b.length; i++) {
+            sb.append(HEX_DIGITS[(b[i] & 0xf0) >>> 4]);
+            sb.append(HEX_DIGITS[b[i] & 0x0f]);
+        }
+        return sb.toString();
+    }
+          
+    public static String md5sum(String filename) {
+        InputStream fis;
+        byte[] buffer = new byte[1024];
+        int numRead = 0;
+        MessageDigest md5;
+        try{
+            fis = new FileInputStream(filename);
+            md5 = MessageDigest.getInstance("MD5");
+            while((numRead=fis.read(buffer)) > 0) {
+                md5.update(buffer,0,numRead);
+            }
+            fis.close();
+            return toHexString(md5.digest());   
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

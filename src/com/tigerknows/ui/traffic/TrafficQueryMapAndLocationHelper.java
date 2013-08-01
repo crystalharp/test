@@ -7,7 +7,6 @@ import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
-import com.tigerknows.TKConfig;
 import com.tigerknows.map.MapEngine;
 import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.POI;
@@ -19,7 +18,7 @@ import com.tigerknows.model.POI;
  */
 public class TrafficQueryMapAndLocationHelper {
 
-	private final int QUAN_GUO_ZOOM = 7;
+	private final int ZOOM_LEVEL_QUANGUO = 7;
 	
 	private TrafficQueryFragment mQueryFragment;
 	
@@ -30,21 +29,32 @@ public class TrafficQueryMapAndLocationHelper {
 		this.mQueryFragment = queryFragment;
 	}
 
-	/*
+	/**
 	 * 记录交通首页显示的地图中心点
 	 * 改变的三个点:
-	 * 1. 该页面首次被创建时
-	 * 2. 切换城市时
-	 * 3. 从全屏地图返回时(若返回时与离开时的城市不变)
+	 * 1. 交通查询页面onResume()时
+	 * 2. 从全屏地图状态返回时
+	 * 3. 从地图选点状态返回时
 	 */
 	private CityInfo mMapCityInfo = new CityInfo();
 	
+	/**
+	 * 到这里去的POI的所在城市
+	 */
 	public CityInfo mTargetCityInfo = null;
 
 	public CityInfo getQueryCityInfo() {
-        return Globals.getCurrentCityInfo();
+	    if (mTargetCityInfo != null) {
+	        return mTargetCityInfo;
+	    } else {
+            return Globals.getCurrentCityInfo();
+	    }
 	}
 	
+	/**
+	 * 检查定位城市与查询城市是否一致
+	 * @return
+	 */
 	public boolean isMyLocationLocateCurrentCity() {
     	int currentCityId = MapEngine.CITY_ID_INVALID;
     	int myPositionCityId = MapEngine.CITY_ID_INVALID - 1;
@@ -53,7 +63,9 @@ public class TrafficQueryMapAndLocationHelper {
     		myPositionCityId = Globals.g_My_Location_City_Info.getId();
     	}
     	
-    	if (Globals.getCurrentCityInfo() != null) {
+    	if (mTargetCityInfo != null) {
+    	    currentCityId = mTargetCityInfo.getId();
+        } else if (Globals.getCurrentCityInfo() != null) {
     		currentCityId = Globals.getCurrentCityInfo(false).getId();
     	}
     	
@@ -62,6 +74,10 @@ public class TrafficQueryMapAndLocationHelper {
     	return currentCityId == myPositionCityId;
 	}
 	
+	/**
+	 * 获取当前位置的POI
+	 * @return
+	 */
 	public POI getMyLocation() {
     	
     	POI myLocationPOI = null;
@@ -78,34 +94,20 @@ public class TrafficQueryMapAndLocationHelper {
     	
     	return myLocationPOI;
     }
-	
-	/**
-     * 得到当前地图中心点城市信息, 并设置当前地图中心点为交通首页显示中心点及交通查询中心点
-     */
-    public void getCurrentMapInfo() {
-    	resetCurrentMapInfo(mQueryFragment.mSphinx.getMapView().getCenterPosition(), 
-    			(int)mQueryFragment.mSphinx.getMapView().getZoomLevel());
-    }
-
-	public void resetCurrentMapInfo(Position position, int zoomLevel) {
-    	if (mQueryFragment.mSphinx != null && mQueryFragment.mSphinx.getMapEngine() != null && Util.inChina(position)) {
-        	mMapCityInfo.setPosition(position);
-        	mMapCityInfo.setId(mQueryFragment.mSphinx.getMapEngine().getCityId(position));
-        	mMapCityInfo.setLevel(zoomLevel);
-        	
-        	CityInfo cityInfo = mQueryFragment.mSphinx.getMapEngine().getCityInfo(mMapCityInfo.getId());
-        	if (cityInfo != null)
-        		mMapCityInfo.setCName(cityInfo.getCName());
-        	
-        	mQueryFragment.setCurrentCity(mMapCityInfo.getCName());
-        }
-    }
     
     /**
-     * 第一次进入交通首页时, 若得到了定位点, 且当前所选城市为定位城市, 将地图移动到定位点
+     * 设置地图的中心
+     * 
+     * 定位城市   当前城市或到这里去的POI所在城市   上一次地图城市   地图中心
+     * 1   1   1   我的当前位置
+     * 1   2   1   当前城市中心
+     * 1   2   2   上一次地图中心
+     * 0   1   1   上一次地图中心
+     * 0   2   1   当前城市中心
      */
     public void resetMapCenter() {
     	
+        mQueryFragment.mSphinx.resetLoactionButtonState();
         CityInfo currentCityInfo = Globals.getCurrentCityInfo();
     	CityInfo locationCityInfo = Globals.g_My_Location_City_Info;
     	CityInfo lastCityInfo = mMapCityInfo;
@@ -153,7 +155,7 @@ public class TrafficQueryMapAndLocationHelper {
     }
     
     /**
-     * 地图移动时根据当前地图中心点设置当前城市名, 并设置交通查询中心点
+     * 地图移动时根据当前地图中心点设置当前城市名
      * @param newCenter
      */
     public void onMapCenterChanged(CityInfo cityInfo) {
@@ -163,7 +165,7 @@ public class TrafficQueryMapAndLocationHelper {
     	/*
     	 * 显示"全国"
     	 */
-    	if (zoomLevel <= QUAN_GUO_ZOOM) {
+    	if (zoomLevel <= ZOOM_LEVEL_QUANGUO) {
     		mQueryFragment.setCurrentCity(mQueryFragment.mContext.getString(R.string.quanguo));
     	} else {
         	if (cityInfo != null && !TextUtils.isEmpty(cityInfo.getCName())) {
@@ -172,37 +174,6 @@ public class TrafficQueryMapAndLocationHelper {
     	}
 
     }
-    
-    /**
-     * 得到某城市中心坐标点
-     * Util Method
-     * @param cityInfo
-     * @return
-     */
-	private Position getCityCenterPosition(CityInfo cityInfo) {
-    	return cityInfo.getPosition();
-    }
-    
-    private boolean isEqualsToMapCenter(CityInfo cityInfo) {
-    	Position center = getCityCenterPosition(cityInfo);
-    	
-    	if (mQueryFragment.mSphinx != null && mQueryFragment.mSphinx.getMapEngine() != null 
-        		&& Util.inChina(center)
-        		&& ((center != null && !center.equals(mQueryFragment.mSphinx.getMapView().getCenterPosition()))
-        		|| (int)mQueryFragment.mSphinx.getMapView().getZoomLevel() != cityInfo.getLevel())) {
-    		return false;
-    	}
-    	
-    	return true;
-    }
-    
-    public void showNormalStateMap() {
-		if (!isEqualsToMapCenter(mMapCityInfo)) {
-			mQueryFragment.mSphinx.getMapView().zoomTo(mMapCityInfo.getLevel(), getCityCenterPosition(mMapCityInfo));
-    	}
-		
-		mQueryFragment.mSphinx.resetLoactionButtonState();
-	}
 	
 	/**
 	 * 返回交通首页时, 若当前地图中心点的城市 与 之前离开交通首页时的城市 不同
@@ -211,10 +182,8 @@ public class TrafficQueryMapAndLocationHelper {
 	public void checkMapCenterInCity() {
 		int curCityId = mQueryFragment.mSphinx.getMapView().getCenterCityId();
     	if (mMapCityInfo.getId() != curCityId) {
-    		LogWrapper.d(TAG, "Return from city " + curCityId + " to " + mMapCityInfo.getId());
     		mQueryFragment.mSphinx.getMapView().centerOnPosition(mMapCityInfo.getPosition(), mMapCityInfo.getLevel());
     	} else {
-    		LogWrapper.d(TAG, "Stay same city");
     		mMapCityInfo.setPosition(mQueryFragment.mSphinx.getMapView().getCenterPosition());
     		mMapCityInfo.setLevel((int)mQueryFragment.mSphinx.getMapView().getZoomLevel());
     	}

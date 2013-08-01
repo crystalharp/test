@@ -4,7 +4,6 @@
 
 package com.tigerknows.ui.more;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -17,14 +16,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.decarta.Globals;
-import com.decarta.android.util.LogWrapper;
 import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
@@ -56,8 +51,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     
     public static final int SHOW_COMMENT_TIP_TIMES = 3;
     
-    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
     private ListView mListLsv;
     private TextView mUserNameTxv;
     private TextView mCurrentCityTxv;
@@ -69,6 +62,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
     private Button mFavoriteBtn;
     private Button mHistoryBrowseBtn;
     private Button mSettingsBtn;
+    private Button mSatisfyRateBtn;
     private Button mFeedbackBtn;
     private Button mAddMerchantBtn;
     private Button mHelpBtn;
@@ -140,11 +134,14 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mLeftBtn.setVisibility(View.INVISIBLE);
         mTitleBtn.setText(R.string.more);
         mRightBtn.setVisibility(View.INVISIBLE);
-        mListLsv.setSelection(0);
+        if (mDismissed) {
+            mListLsv.setSelection(0);
+        }
 
         mMenuFragment.display();
         
         refreshUserEntrance();
+        refreshSatisfyRate();
         refreshMoreBtn();
         refreshCity(Globals.getCurrentCityInfo().getCName());
     }
@@ -164,19 +161,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         }
 
         //地图更新
-        String upgradeMapTip = TKConfig.getPref(mContext, TKConfig.PREFS_SHOW_UPGRADE_MAP_TIP);
-        int out = 8;
-        if (!TextUtils.isEmpty(upgradeMapTip)) {
-            try {
-            Calendar calendar = Calendar.getInstance();
-            String[] strs = upgradeMapTip.split("-");
-            calendar.set(Integer.parseInt(strs[0]), Integer.parseInt(strs[1])-1, Integer.parseInt(strs[2]));
-            out = CalendarUtil.compareDate(calendar, Calendar.getInstance(), 0);
-            } catch (Exception e) {
-                // TODO: handle exception
-            }
-        }
-        
         boolean upgrade = false;
         DownloadCity currentDownloadCity = CurrentDownloadCity;
         if (currentDownloadCity != null
@@ -184,7 +168,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 && currentDownloadCity.cityInfo.getId() != MapEngine.CITY_ID_QUANGUO) {
             upgrade = true;
         }
-        if (upgrade && out >= 7) {
+        if (upgrade) {
             setFragmentMessage(MoreHomeFragment.MESSAGE_TYPE_MAP_UPDATE);
             return;
         }
@@ -218,6 +202,12 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
             setFragmentMessage(MoreHomeFragment.MESSAGE_TYPE_COMMENT);
             return;
         }
+        
+        //满意度评分(不是button)
+        if(TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
+        	mSphinx.getMenuFragment().setFragmentMessage(View.VISIBLE);
+        	return;
+        }
     }
 
     @Override
@@ -237,6 +227,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mFavoriteBtn = (Button)mRootView.findViewById(R.id.favorite_btn);
         mHistoryBrowseBtn = (Button)mRootView.findViewById(R.id.history_browse_btn);
         mSettingsBtn = (Button)mRootView.findViewById(R.id.settings_btn);
+        mSatisfyRateBtn = (Button)mRootView.findViewById(R.id.satisfy_btn);
         mFeedbackBtn = (Button)mRootView.findViewById(R.id.feedback_btn);
         mAddMerchantBtn = (Button)mRootView.findViewById(R.id.add_merchant_btn);
         mHelpBtn = (Button)mRootView.findViewById(R.id.help_btn);
@@ -254,6 +245,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         mFavoriteBtn.setOnClickListener(this);
         mHistoryBrowseBtn.setOnClickListener(this);
         mSettingsBtn.setOnClickListener(this);
+        mSatisfyRateBtn.setOnClickListener(this);
         mFeedbackBtn.setOnClickListener(this);
         mAddMerchantBtn.setOnClickListener(this);
         mHelpBtn.setOnClickListener(this);
@@ -270,7 +262,7 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                     showDownloadSoftwareDialog();
                 } else if (mMessageType == MESSAGE_TYPE_MAP_UPDATE) {
                     mActionLog.addAction(mActionTag +  ActionLog.MoreMessageMap);
-                    showUpgradeMapDialog();
+                    mSphinx.showView(R.id.activity_more_map_download);
                 } else if (mMessageType == MESSAGE_TYPE_USER_SURVEY) {
                 	String url=mDiaoyanQueryResponse.getUrl();
                 	if(url != null){               		
@@ -328,6 +320,10 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                 mActionLog.addAction(mActionTag +  ActionLog.MoreSetting);
                 mSphinx.showView(R.id.activity_more_setting);
                 break;
+            case R.id.satisfy_btn:
+            	mActionLog.addAction(mActionTag +  ActionLog.MoreSatisfyRate);
+            	mSphinx.showView(R.id.activity_more_satisfy);
+            	break;
             case R.id.feedback_btn:
                 mActionLog.addAction(mActionTag +  ActionLog.MoreFeedback);
                 mSphinx.showView(R.id.activity_more_feedback);
@@ -397,6 +393,18 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
         	mUserBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
         	mUserNameTxv.setVisibility(View.GONE);
         }
+    }
+    
+    private void refreshSatisfyRate() {
+    	if (TextUtils.isEmpty(TKConfig.getPref(mContext, TKConfig.PREFS_SATISFY_RATE_OPENED, ""))){
+    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
+    		drawables[2] = mContext.getResources().getDrawable(R.drawable.ic_satisfy_new);
+    		drawables[2].setBounds(0, 0, drawables[2].getIntrinsicWidth(), drawables[2].getIntrinsicHeight());
+    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], drawables[2], drawables[3]);
+    	}else{
+    		Drawable[] drawables = mSatisfyRateBtn.getCompoundDrawables();
+    		mSatisfyRateBtn.setCompoundDrawables(drawables[0], drawables[1], null, drawables[3]);
+    	}
     }
     
     private void setFragmentMessage(int messageType) {
@@ -471,38 +479,6 @@ public class MoreHomeFragment extends BaseFragment implements View.OnClickListen
                             default:
                                 break;
                         }
-                    }
-                });
-    }
-    
-    private void showUpgradeMapDialog() {
-        final String oldUpgradeMapTip = TKConfig.getPref(mSphinx, TKConfig.PREFS_SHOW_UPGRADE_MAP_TIP);
-        View view = mLayoutInflater.inflate(R.layout.alert_upgrade_map, null, false);
-        
-        final CheckBox checkChb = (CheckBox) view.findViewById(R.id.check_chb);
-        checkChb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            
-            @Override
-            public void onCheckedChanged(CompoundButton arg0, boolean checked) {
-                TKConfig.setPref(mSphinx, TKConfig.PREFS_SHOW_UPGRADE_MAP_TIP, checked ? simpleDateFormat.format(Calendar.getInstance().getTime()) : oldUpgradeMapTip);
-            }
-        });
-        
-        Utility.showNormalDialog(mSphinx,
-                mSphinx.getString(R.string.prompt),
-                null,
-                view,
-                mSphinx.getString(R.string.upgrade_all),
-                mSphinx.getString(R.string.upgrade_manual),
-                new DialogInterface.OnClickListener() {
-                    
-                    @Override
-                    public void onClick(DialogInterface arg0, int id) {
-                        Intent intent = new Intent();
-                        if (id == DialogInterface.BUTTON_POSITIVE) {
-                            intent.putExtra(MapDownloadActivity.EXTRA_UPGRADE_ALL, true);
-                        }
-                        mSphinx.showView(R.id.activity_more_map_download, intent);
                     }
                 });
     }

@@ -28,6 +28,7 @@ import com.tigerknows.model.DataQuery.POIResponse;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.TypedValue;
@@ -77,6 +78,7 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
     private boolean isTurnPaging = false;
     
     String actionTag;
+    Handler handler;
     
     public boolean isTurnPaging() {
         return isTurnPaging;
@@ -152,16 +154,37 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         }
         parentAdapter.notifyDataSetChanged();
         childAdapter.notifyDataSetChanged();
-        if (selectedParentPosition > -1) {
-            parentLsv.setSelectionFromTop(selectedParentPosition, 0);
-        } else {
-            parentLsv.setSelectionFromTop(0, 0);
-        }
+        final int finalselectedChiledPosition = selectedChiledPosition;
+        handler.post(new Runnable() {
+            
+            @Override
+            public void run() {
+                if (selectedParentPosition > -1) {
+                    parentLsv.setSelectionFromTop(selectedParentPosition, 0);
+                } else {
+                    parentLsv.setSelectionFromTop(0, 0);
+                }
+                
+                if (finalselectedChiledPosition > -1) {
+                    childLsv.setSelectionFromTop(finalselectedChiledPosition, 0);
+                } else {
+                    childLsv.setSelectionFromTop(0, 0);
+                }
+            }
+        });
         
-        if (selectedChiledPosition > -1) {
-            childLsv.setSelectionFromTop(selectedChiledPosition, 0);
-        } else {
-            childLsv.setSelectionFromTop(0, 0);
+        if (selectedParentPosition == -1) {
+            selectedParentPosition = 0;
+            parentAdapter.notifyDataSetChanged();
+            
+            childFilterList.clear();
+            if (this.filter != null &&
+                    this.filter.getChidrenFilterList() != null &&
+                    this.filter.getChidrenFilterList().size() > 0 &&
+                    this.filter.getChidrenFilterList().get(0) != null) {
+                childFilterList.addAll(this.filter.getChidrenFilterList().get(0).getChidrenFilterList());
+            }
+            childAdapter.notifyDataSetChanged();
         }
     }
         
@@ -180,7 +203,8 @@ public class FilterListView extends LinearLayout implements View.OnClickListener
         
         findViews();
         setListener();
-        
+
+        handler = new Handler();
         parentAdapter = new MyAdapter(context, parentFilterList);
         parentAdapter.isParent = true;
         childAdapter = new MyAdapter(context, childFilterList);

@@ -12,6 +12,7 @@ import com.tigerknows.common.ActionLog;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -91,7 +92,17 @@ public class TitleFragment extends BaseFragment implements View.OnClickListener 
         if (mPopupWindow == null) {
             View view  = mLayoutInflater.inflate(R.layout.title_popup_list, this, false);
             popupLsv = (ListView) view.findViewById(R.id.listview);
-            
+            //在padding区域点击关掉窗口
+            View titlePopupView = view.findViewById(R.id.title_popup_view);
+            titlePopupView.setOnTouchListener(new View.OnTouchListener() {
+
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    dismissPopupWindow();
+                    return true;
+                }
+            });
+
             mPopupWindow = new PopupWindow(view);
             mPopupWindow.setWindowLayoutMode(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
             mPopupWindow.setFocusable(true);

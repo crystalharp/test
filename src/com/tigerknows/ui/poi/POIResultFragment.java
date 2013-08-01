@@ -24,7 +24,9 @@ import com.tigerknows.model.DataQuery.POIResponse.POIList;
 import com.tigerknows.model.POI.DynamicPOI;
 import com.tigerknows.ui.BaseActivity;
 import com.tigerknows.ui.BaseFragment;
+import com.tigerknows.ui.hotel.HotelHomeFragment;
 import com.tigerknows.ui.hotel.NavigationWidget;
+import com.tigerknows.ui.more.AddMerchantActivity;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.FilterListView;
 import com.tigerknows.widget.QueryingView;
@@ -33,9 +35,8 @@ import com.tigerknows.widget.SpringbackListView;
 import com.tigerknows.widget.SpringbackListView.OnRefreshListener;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
@@ -78,6 +79,16 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
 
     private QueryingView mQueryingView = null;
     
+    private View mLoadingView = null;
+    
+    private View mAddMerchantFootView = null;
+    
+    private View mCurrentFootView;
+    
+    private View mAddMerchantView = null;
+    
+    private View mAddMerchantItemView = null;
+    
     private TextView mQueryingTxv = null;
     
     private View mEmptyView = null;
@@ -93,6 +104,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     private DataQuery mDataQuery;
     
     private List<POI> mPOIList = new ArrayList<POI>();
+    
+    private String mInputText;
     
     private long mATotal;
     
@@ -139,7 +152,17 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
     };
     
+    public List<POI> getPOIList() {
+        return mPOIList;
+    }
+    
     public void setup() {
+        setup(null);
+    }
+    
+    public void setup(String inputText) {
+        mInputText = inputText;
+        
         DataQuery lastDataQuerying = (DataQuery) this.mTkAsyncTasking.getBaseQuery();
         if (lastDataQuerying == null) {
             return;
@@ -170,8 +193,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         mActionTag = ActionLog.POIList;
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -202,8 +225,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
     protected void findViews() {
         mFilterControlView = (ViewGroup)mRootView.findViewById(R.id.filter_control_view);
         mResultLsv = (SpringbackListView)mRootView.findViewById(R.id.result_lsv);
-        View v = mLayoutInflater.inflate(R.layout.loading, null);
-        mResultLsv.addFooterView(v);
+        mLoadingView = mLayoutInflater.inflate(R.layout.loading, null);
+        mResultLsv.addFooterView(mLoadingView);
+        mCurrentFootView = mLoadingView;
+        mAddMerchantFootView = mLayoutInflater.inflate(R.layout.poi_list_item_add_merchant, null);
+        mAddMerchantView = mRootView.findViewById(R.id.add_merchant_view);
+        mAddMerchantItemView = mRootView.findViewById(R.id.add_merchant_item_view);
         mQueryingView = (QueryingView)mRootView.findViewById(R.id.querying_view);
         mEmptyView = mRootView.findViewById(R.id.empty_view);
         mEmptyTxv = (TextView) mEmptyView.findViewById(R.id.empty_txv);
@@ -224,8 +251,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         mActionLog.addAction(mActionTag + ActionLog.ListViewItem, position, poi.getUUID(), poi.getName());
                         mSphinx.showView(R.id.view_poi_detail);
                         mSphinx.getPOIDetailFragment().setData(poi, position);
+                    } else if (mResultLsv.isFooterSpringback() == false) {
+                        showAddMerchant();
                     }
-                }
+                } 
             }
             
         });
@@ -240,6 +269,17 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 turnPage();
             }
         });
+        
+        mAddMerchantItemView.setOnClickListener(this);
+    }
+    
+    void showAddMerchant() {
+        mActionLog.addAction(mActionTag + ActionLog.POIListAddMerchanty);
+        Intent intent = new Intent();
+        if (TextUtils.isEmpty(mInputText) == false) {
+            intent.putExtra(AddMerchantActivity.EXTRA_INPUT_TEXT, mInputText);
+        }
+        mSphinx.showView(R.id.activity_more_add_merchant, intent);
     }
     
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -318,6 +358,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         }
         
         updateView();
+        
     }
 
     @Override
@@ -334,6 +375,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mNavigationWidget.setVisibility(View.GONE);
             if (mRightBtn != null)
                 mRightBtn.setVisibility(View.GONE);
+            mAddMerchantView.setVisibility(View.GONE);
         } else if (mState == STATE_ERROR) {
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.VISIBLE);
@@ -341,6 +383,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mResultLsv.setVisibility(View.GONE);
             if (mRightBtn != null)
                 mRightBtn.setVisibility(View.GONE);
+            mAddMerchantView.setVisibility(View.GONE);
         } else if (mState == STATE_EMPTY){
             mQueryingView.setVisibility(View.GONE);
             mRetryView.setVisibility(View.GONE);
@@ -348,6 +391,12 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             mResultLsv.setVisibility(View.GONE);
             if (mRightBtn != null)
                 mRightBtn.setVisibility(View.GONE);
+            
+            if (BaseQuery.SUB_DATA_TYPE_POI.equals(mResultAdapter.getSubDataType())) {
+                mAddMerchantView.setVisibility(View.VISIBLE);
+            } else {
+                mAddMerchantView.setVisibility(View.GONE);
+            }
         } else {
             DataQuery dataQuery = mDataQuery;
             if (dataQuery != null &&
@@ -368,6 +417,35 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 mRightBtn.setVisibility(mPOIList.size() > 0 ? View.VISIBLE : View.GONE);
             
             mSphinx.showHint(TKConfig.PREFS_HINT_POI_LIST, R.layout.hint_poi_list);
+            
+            boolean footerSpringback = mResultLsv.isFooterSpringback();
+            View v = mCurrentFootView;
+            boolean addMerchant = false;
+            if (BaseQuery.SUB_DATA_TYPE_POI.equals(mResultAdapter.getSubDataType())) {
+                if (footerSpringback == false) {
+                    if (v != mAddMerchantFootView) {
+                        mResultLsv.removeFooterView(mAddMerchantFootView);
+                        mResultLsv.removeFooterView(mLoadingView);
+                        mResultLsv.addFooterView(mAddMerchantFootView, false);
+                        mCurrentFootView = mAddMerchantFootView;
+                    }
+                    addMerchant = true;
+                }
+            }
+            
+            if (addMerchant == false) {
+                if (v != mLoadingView) {
+                    int state = mResultLsv.getState(false);
+                    mResultLsv.removeFooterView(mAddMerchantFootView);
+                    mResultLsv.removeFooterView(mLoadingView);
+                    mResultLsv.addFooterView(mLoadingView);
+                    mResultLsv.setFooterSpringback(footerSpringback);
+                    mResultLsv.changeHeaderViewByState(false, state);
+                    mCurrentFootView = mLoadingView;
+                }
+            }
+            mAddMerchantView.setVisibility(View.GONE);
+            
         }
         refreshResultTitleText(null);
     }
@@ -440,7 +518,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         criteria.put(DataQuery.SERVER_PARAMETER_FILTER, DataQuery.makeFilterRequest(mFilterList));
         poiQuery.setup(criteria, cityId, getId(), getId(), null, false, false, requestPOI);
         mSphinx.queryStart(poiQuery);
-        setup();
+        setup(mInputText);
         dismissPopupWindow();
     }
     
@@ -460,6 +538,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                 }
                 mActionLog.addAction(mActionTag + ActionLog.TitleRightButton);
                 viewMap(mResultLsv.getFirstVisiblePosition(), mResultLsv.getLastVisiblePosition());
+                break;
+                
+            case R.id.add_merchant_item_view:
+                showAddMerchant();
                 break;
                 
             default:
@@ -811,16 +893,7 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                         int resid = BaseActivity.getResponseResId(dataQuery);
                         mRetryView.setText(resid, true);
                     } else {
-
-                        Dialog dialog = Utility.showNormalDialog(mSphinx, mSphinx.getString(resId));
                         mRetryView.setText(resId, false);
-                        dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                            
-                            @Override
-                            public void onDismiss(DialogInterface dialog) {
-                                POIResultFragment.this.dismiss();
-                            }
-                        });
                     }
                     mState = STATE_ERROR;
                     updateView();
@@ -895,6 +968,11 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
 
             if (bPOIList != null) {
+                if (BaseQuery.SUB_DATA_TYPE_HOTEL.equals(subDataType)) {
+                    for(int i = bPOIList.size()-1; i >= 0; i--) {
+                        bPOIList.get(i).setSourceType(POI.SOURCE_TYPE_HOTEL);
+                    }
+                }
                 mPOIList.addAll(bPOIList);
             }
 
@@ -912,7 +990,10 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
             }
 
             mResultLsv.setFooterSpringback(canTurnPage());
-            refreshFilter(mDataQuery.getFilterList());
+            List<Filter> filterList = mDataQuery.getFilterList();
+            if (filterList != null && filterList.size() > 0) {
+                refreshFilter(filterList);
+            }
         } else {
             if (dataQuery.isTurnPage()) {
                 return;
@@ -980,6 +1061,6 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
         	}
             mSphinx.queryStart(mBaseQuerying);
         }
-        setup();
+        setup(mInputText);
     }
 }

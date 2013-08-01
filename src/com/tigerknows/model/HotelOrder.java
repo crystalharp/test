@@ -3,6 +3,7 @@ package com.tigerknows.model;
 
 import com.decarta.android.exception.APIException;
 import com.decarta.android.location.Position;
+import com.tigerknows.model.XMapData.XMapInitializer;
 import com.tigerknows.model.xobject.XMap;
 
 /**
@@ -22,6 +23,8 @@ public class HotelOrder extends XMapData{
 	public static final int STATE_CANCELED = 3;
 	public static final int STATE_POST_DUE = 4;
 	public static final int STATE_CHECKED_IN = 5;
+	
+	public static final String NEED_FIELDS = "0102030405060708090A0B0C0E0F1011121320";
 	
 	// identification info
 	/**
@@ -139,6 +142,19 @@ public class HotelOrder extends XMapData{
 	 * @throws APIException
 	 */
 	public HotelOrder(XMap data) throws APIException{
+		this(data, false);
+	}
+	
+
+	/**
+	 * 使用XMap构建酒店订单
+	 * XMap必须存在所有的域否则报APIException
+	 * 此处为了兼容服务的位置信息的xmap格式和本地的xmap格式不一样的问题
+	 * 由于历史原因，服务器的位置信息是用xInt，而本地是使用xDouble的
+	 * @param data
+	 * @throws APIException
+	 */
+	public HotelOrder(XMap data, boolean isFromServer) throws APIException{
 		super(data);
 		id = data.getString(FIELD_ID);
 		createTime = data.getInt(FIELD_CREATE_TIME);
@@ -147,7 +163,11 @@ public class HotelOrder extends XMapData{
 		hotelPoiUUID = data.getString(FIELD_POIUUID);
 		hotelName = data.getString(FIELD_HOTEL_NAME);
 		hotelAddress = data.getString(FIELD_HOTEL_ADDRESS);
-		position = new Position(data.getDouble(FIELD_POSITION_Y), data.getDouble(FIELD_POSITION_X));
+		if(isFromServer){
+			position = new XMapData(data).getPositionFromData(FIELD_POSITION_X, FIELD_POSITION_Y);
+		}else{
+			position = new Position(data.getDouble(FIELD_POSITION_Y), data.getDouble(FIELD_POSITION_X));
+		}
 		hotelTel = data.getString(FIELD_HOTEL_TEL);
 		roomType = data.getString(FIELD_ROOM_TYPE);
 		roomNum = data.getInt(FIELD_ROOM_NUM);
@@ -435,5 +455,12 @@ public class HotelOrder extends XMapData{
 		return mPoi;
 	}
 
+    public static XMapInitializer<HotelOrder> InitializerServerData = new XMapInitializer<HotelOrder>() {
+
+        @Override
+        public HotelOrder init(XMap data) throws APIException {
+            return new HotelOrder(data, true);
+        }
+    };
 	
 }

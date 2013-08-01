@@ -320,6 +320,11 @@ public class TKConfig {
      * 软件登录服务访问URL路径
      */
     private static String BOOTSTRAP_URL = "http://%s/bootstrap/local";
+    
+    /**
+     * 图片上传服务访问URL路径
+     */
+    private static String IMAGE_UPLOAD_URL = "http://%s/hornet/upload";
 
     /**
      * 默认下载服务器Host
@@ -345,6 +350,11 @@ public class TKConfig {
      * 默认软件登录服务器的Host列表
      */
     private static String[] BOOTSTRAP_HOST_LIST = new String[]{"init.tigerknows.net", "chshh.tigerknows.com", "csh.laohubaodian.net"};
+    
+    /** 
+     * 默认图片上传服务器的Host
+     */
+    private static String IMAGE_UPLOAD_HOST = "up.tigerknows.net";
 
     /**
      * 软件登录服务推送用于动态负载均衡的下载服务器Host
@@ -541,6 +551,10 @@ public class TKConfig {
      * 是否已显示搜索首页界面的酒店预订引导
      */
     public static final String PREFS_HINT_POI_HOME_HOTEL_RESERVE = "prefs_hint_poi_home_hotel_reserve";
+    /**
+     * 是否已显示搜索首页界面的酒店预订引导
+     */
+    public static final String PREFS_HOTEL_ORDER_COULD_ANOMALY_EXISTS = "prefs_hotel_order_could_anomaly_exists";
     
     /**
      * 推送服务绝对启动时间
@@ -586,7 +600,11 @@ public class TKConfig {
      * 推送在一天中的失败次数
      */
     public static final String PREFS_RADAR_PULL_FAILED_TIMES = "prefs_radar_pull_failed_times";
-
+    
+    /**
+     * 推送的触发模式
+     */
+    public static final String PREFS_RADAR_PULL_TRIGGER_MODE = "prefs_radar_pull_trigger_mode";
     
     /**
      * 最近一次成功提交订单所保留的姓名
@@ -597,6 +615,11 @@ public class TKConfig {
      * 最近一次成功提交订单所保留的手机号
      */
     public static final String PREFS_HOTEL_LAST_MOBILE="prefs_hotel_last_mobile";
+    
+    /**
+     * 用户是否打开过满意度评分
+     */
+    public static final String PREFS_SATISFY_RATE_OPENED="prefs_satisfy_rate_opened";
     
     /**
      * 发现分类图片尺寸的Key
@@ -687,6 +710,11 @@ public class TKConfig {
      * 无效定时器被重置的延迟时间（单位：分钟）
      */
     public static int AlarmCheckDelayTime=60;
+    
+    /**
+     * 推送在网络触发模式下检测到网络变化所设置定时器的延迟时间(单位:分钟)
+     */
+    public static int PullServiceNetTriggerDelayTime = 5;
 
     /**
      * 初始化ClientUid、共用的网络请求参数（imsi、imsi、mcc、mnc）
@@ -849,6 +877,24 @@ public class TKConfig {
         return list;
     }
     
+    public static String getConnectivityType(Context context) {
+        String result = "none";
+        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+            if (networkInfo != null) {
+                int type = networkInfo.getType();
+                if (type == ConnectivityManager.TYPE_WIFI) {
+                    return "WIFI";
+                } else {
+                    result = getRadioType();
+                }
+            }
+        }
+        
+        return result;
+    }
+    
     /**
      * 获取设备连接的数据网络类型
      * @return
@@ -934,11 +980,27 @@ public class TKConfig {
     }
     
     /**
+     * 获取图片上传服务访问的URL
+     * @return
+     */
+    public static String getImageUploadUrl() {
+        return IMAGE_UPLOAD_URL;
+    }
+    
+    /**
      * 获取引导服务器Host列表
      * @return
      */
     public static String[] getBootStrapHostList() {
         return BOOTSTRAP_HOST_LIST;
+    }
+    
+    /**
+     * 获取图片上传服务器Host
+     * @return
+     */
+    public static String getImageUploadHost() {
+        return IMAGE_UPLOAD_HOST;
     }
     
     /**
@@ -1289,6 +1351,16 @@ public class TKConfig {
     }
     
     /**
+     * 上传图片的最大高/宽
+     */
+    public static int Photo_Max_Width_Height = 800;
+    
+    /**
+     * 图片的压缩比率
+     */
+    public static int Photo_Compress_Ratio = 80;
+    
+    /**
      * 读取配置文件(地图数据文件存储路径/config.txt)
      * 设置参数
      */
@@ -1428,6 +1500,30 @@ public class TKConfig {
                 if (start > -1 && end > -1) {
                     start += "hotelOrderUrl=".length();
                     TKConfig.sHOTEL_ORDER_URL = text.substring(start, end);
+                }
+                start = text.indexOf("imageUploadHost=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "imageUploadHost=".length();
+                    TKConfig.IMAGE_UPLOAD_HOST = text.substring(start, end);
+                }
+                start = text.indexOf("imageUploadUrl=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "imageUploadUrl=".length();
+                    TKConfig.IMAGE_UPLOAD_URL = text.substring(start, end);
+                }
+                start = text.indexOf("Photo_Max_Width_Height=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "Photo_Max_Width_Height=".length();
+                    TKConfig.Photo_Max_Width_Height = Integer.valueOf(text.substring(start, end));
+                }
+                start = text.indexOf("Photo_Compress_Ratio=");
+                end = text.indexOf(";", start);
+                if (start > -1 && end > -1) {
+                    start += "Photo_Compress_Ratio=".length();
+                    TKConfig.Photo_Compress_Ratio = Integer.valueOf(text.substring(start, end));
                 }
                 
                 BaseQuery.initCommonParameters();

@@ -19,20 +19,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
-import com.decarta.Globals;
 import com.decarta.android.location.Position;
 import com.decarta.android.util.LogWrapper;
-import com.decarta.android.util.Util;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
 
@@ -49,7 +45,6 @@ import com.tigerknows.share.ShareAPI;
 import com.tigerknows.ui.BaseFragment;
 import com.tigerknows.ui.ResultMapFragment.TitlePopupArrayAdapter;
 import com.tigerknows.util.Utility;
-import com.tigerknows.util.ShareTextUtil;
 
 public class BuslineDetailFragment extends BaseFragment implements View.OnClickListener {
 
@@ -60,7 +55,9 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
     
     private int curLineNum = -1;
 
-    private ListAdapter mResultAdapter;
+    private StringListAdapter mResultAdapter;
+    
+    private List<CharSequence> mStrList = new ArrayList<CharSequence>();
    
     private TextView mNameTxv = null;
     
@@ -93,7 +90,8 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
             	return;
             } else {
             	setData(clickedLine, position);
-            	onResume();            	
+            	onResume();           
+                setSelectionFromTop();
             }
 
         }
@@ -115,6 +113,9 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         setListener();
         
         mTitlePopupArrayAdapter = new TitlePopupArrayAdapter(mSphinx, mTitlePopupList);
+        
+        mResultAdapter = new StringListAdapter(mContext);
+        mResultLsv.setAdapter(mResultAdapter);
 
         return mRootView;
     }
@@ -125,9 +126,6 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
         mRightBtn.setBackgroundResource(R.drawable.btn_view_map);
         mRightBtn.setOnClickListener(this);
-
-        mResultAdapter = new StringListAdapter(mContext);
-        mResultLsv.setAdapter(mResultAdapter);
 
         mLengthTxv.setText(mSphinx.getString(R.string.length_str_title, line.getLengthStr(mSphinx)));
         mNameTxv.setText(line.getName());
@@ -157,6 +155,21 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         setFavoriteState(mFavorateBtn, line.checkFavorite(mContext));
 
         history();
+
+        if (mDismissed) {
+            setSelectionFromTop();
+        }
+    }
+    
+    void setSelectionFromTop() {
+      //TODO: 这 里为什么要用posDelayed来调用setSelectionFromTop
+        mSphinx.getHandler().postDelayed(new Runnable() {
+            
+            @Override
+            public void run() {
+                mResultLsv.setSelectionFromTop(0, 0);
+            }
+        }, 200);
     }
 
     @Override
@@ -211,6 +224,13 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
                 mTitlePopupList.add(mSphinx.getString(R.string.title_popup_content,i + 1, mLineList.get(i).getName()));
             }
         }
+        
+        mStrList.clear();
+        List<Station> stationList = line.getStationList();
+        for(int i = 0, size = stationList.size(); i < size; i++) {
+            mStrList.add(stationList.get(i).getName());
+        }
+        mResultAdapter.notifyDataSetChanged();
     }
 
     public static class StationViewHolder {
@@ -223,23 +243,15 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
         public RelativeLayout share;
     }
 
-    class StringListAdapter extends BaseAdapter{
-    	        
-        private List<CharSequence> strList = new ArrayList<CharSequence>();
+    class StringListAdapter extends BaseAdapter {
 
         public StringListAdapter(Context context) {
         	super();
-        	
-        	List<Station> stationList = line.getStationList();
-            for(Station station : stationList) {
-                strList.add(station.getName());
-            }
-
         }
 
         @Override
         public int getCount() {
-            return strList.size();
+            return mStrList.size();
         }
 
 		@Override
@@ -269,7 +281,7 @@ public class BuslineDetailFragment extends BaseFragment implements View.OnClickL
 
 		@Override
 		public Object getItem(int position) {
-			return strList.get(position);
+			return mStrList.get(position);
 		}
 
 		@Override

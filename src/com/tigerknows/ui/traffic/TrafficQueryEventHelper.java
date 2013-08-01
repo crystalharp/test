@@ -38,6 +38,7 @@ import com.tigerknows.model.TKWord;
 import com.tigerknows.provider.HistoryWordTable;
 import com.tigerknows.ui.traffic.TrafficQueryFragment.QueryEditText;
 import com.tigerknows.ui.traffic.TrafficViewSTT.Event;
+import com.tigerknows.ui.traffic.TrafficViewSTT.State;
 import com.tigerknows.util.Utility;
 import com.tigerknows.widget.StringArrayAdapter;
 import com.tigerknows.widget.SuggestArrayAdapter;
@@ -46,6 +47,9 @@ import com.tigerknows.widget.SuggestArrayAdapter;
  * 负责“交通频道首页”TrafficQueryFragment的[[控件事件处理]]
  * @author linqingzu
  * TODO:重新整理一下所有的listener
+ *   RadioButton的触发不再用onCheckedChangedListener,改为使用OnClickedListener.
+ * 使用RadioGroup的CheckedChanged触发会导致一些不期望的触发,比如进入到地图模式时
+ * 取消上面button被check的状态
  */
 public class TrafficQueryEventHelper {
 	
@@ -56,51 +60,28 @@ public class TrafficQueryEventHelper {
 	InputEditTextSuggestWordTextWatcher startSuggestWatcher;
 	InputEditTextSuggestWordTextWatcher endSuggestWatcher;
 	InputEditTextSuggestWordTextWatcher buslineSuggestWatcher;
+	OnClickListener mNormalRadioOnClickedListener;
+	OnClickListener mInputRadioOnClickedListener;
+	OnClickListener mMapRadioOnClickedListener; 
 	
 	public TrafficQueryEventHelper(TrafficQueryFragment queryFragment) {
 		this.mQueryFragment = queryFragment;
 		startSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mStart, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC);
 		endSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mEnd, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC);
 		buslineSuggestWatcher = new InputEditTextSuggestWordTextWatcher(mQueryFragment.mBusline, TrafficQuerySuggestWordHelper.TYPE_BUSLINE);
+        mNormalRadioOnClickedListener = new NormalRadioOnClickedListener();
+		mInputRadioOnClickedListener = null;
+		mMapRadioOnClickedListener = new MapRadioOnClickedListener();
 		
 		mQueryFragment.mStart.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mStart, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC));
 		mQueryFragment.mEnd.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mEnd, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC));
 		mQueryFragment.mBusline.getEdt().setOnFocusChangeListener(new TrafficEditFocusListener(mQueryFragment.mBusline, TrafficQuerySuggestWordHelper.TYPE_BUSLINE));
-//	}
-	
-	/*
-	 * Do not remove common Listeners
-	 */
-//	public void clearListenersFromTargets() {
-//		mQueryFragment.mStart.getEdt().setOnClickListener(null);
-//		mQueryFragment.mEnd.getEdt().setOnClickListener(null);
-//		mQueryFragment.mBusline.getEdt().setOnClickListener(null);
-//		
-//		mQueryFragment.mStart.getEdt().setOnTouchListener(null);
-//		mQueryFragment.mEnd.getEdt().setOnTouchListener(null);
-//		mQueryFragment.mBusline.getEdt().setOnTouchListener(null);
-//		
-//		clearSuggestWatcherInInputState();
-//		
-//		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(null);
-//		mQueryFragment.mSelectStartBtn.setOnClickListener(null);
-//		mQueryFragment.mSelectEndBtn.setOnClickListener(null);
-//		mQueryFragment.mBackBtn.setOnClickListener(null);
-//		mQueryFragment.mTrafficQueryBtn.setOnClickListener(null);
-//		mQueryFragment.mBuslineQueryBtn.setOnClickListener(null);
-//		mQueryFragment.mSuggestLsv.setOnItemClickListener(null);
-//		mQueryFragment.mSuggestLsv.setOnTouchListener(null);
-//		mQueryFragment.mSuggestLnl.setOnTouchListener(null);
-//		mQueryFragment.mRootView.setOnTouchListener(null);
-//	}
+		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new RadioCheckedChangedListener());
 		
-//  public void addSuggestWatcherInInputState() {
         mQueryFragment.mStart.getEdt().addTextChangedListener(startSuggestWatcher);
         mQueryFragment.mEnd.getEdt().addTextChangedListener(endSuggestWatcher);
         mQueryFragment.mBusline.getEdt().addTextChangedListener(buslineSuggestWatcher);
-//  }
-	
-//	public void applyCommonListeners() {
+        
 		mQueryFragment.mStart.getEdt().addTextChangedListener(new EditTextContentTextWatcher(mQueryFragment.mStart));
 		mQueryFragment.mEnd.getEdt().addTextChangedListener(new EditTextContentTextWatcher(mQueryFragment.mEnd));
 		mQueryFragment.mBusline.getEdt().addTextChangedListener(new EditTextContentTextWatcher(mQueryFragment.mBusline));
@@ -109,8 +90,6 @@ public class TrafficQueryEventHelper {
 		mQueryFragment.mEnd.getEdt().setOnEditorActionListener(new StartEndEdtClickListener());
 		mQueryFragment.mBusline.getEdt().setOnEditorActionListener(new EditorActionListener(mQueryFragment.mBusline));
 
-//		mQueryFragment.mRootView.setOnTouchListener(new RootViewTouchListener());
-		
 		mQueryFragment.mStart.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mStart, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC));
 		mQueryFragment.mEnd.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mEnd, TrafficQuerySuggestWordHelper.TYPE_TRAFFIC));
 		mQueryFragment.mBusline.getEdt().setOnTouchListener(new EditTextTouchListener(mQueryFragment.mBusline, TrafficQuerySuggestWordHelper.TYPE_BUSLINE));
@@ -121,51 +100,38 @@ public class TrafficQueryEventHelper {
 	public void applyListenersInNormalState() {
 		LogWrapper.d("eric", "applyListenersInNormalState");
 		
-//		clearListenersFromTargets();
-//		applyCommonListeners();
-		
-		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new NormalOnCheckedChangeListener());
+		for (int i = 0; i < mQueryFragment.mRadioGroup.getChildCount(); i++) {
+		    mQueryFragment.mRadioGroup.getChildAt(i).setOnClickListener(mNormalRadioOnClickedListener);
+		}
 	}
-//	
+	
 	public void applyListenersInInputState() {
 		LogWrapper.d("eric", "applyListenersInInputState");
 		
-//		clearListenersFromTargets();
-//		applyCommonListeners();
-		
 		mQueryFragment.mBackBtn.setOnClickListener(new InputBackClickListener());
-		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new InputOnCheckedChangeListener());
 		mQueryFragment.mTrafficQueryBtn.setOnClickListener(new InputQueryClickListener());
 		mQueryFragment.mBuslineQueryBtn.setOnClickListener(new InputQueryClickListener());
 		mQueryFragment.mSuggestLsv.setOnItemClickListener(new InputSuggestOnItemClickListener());
 		mQueryFragment.mSuggestLsv.setOnTouchListener(new InputSuggestOnTouchListener());
 		mQueryFragment.mSuggestLnl.setOnTouchListener(new InputSuggestOnTouchListener());
+		for (int i = 0; i < mQueryFragment.mRadioGroup.getChildCount(); i++) {
+		    mQueryFragment.mRadioGroup.getChildAt(i).setOnClickListener(mInputRadioOnClickedListener);
+		}
 		
-//		addSuggestWatcherInInputState();
 	}
 	
 	public void applyListenersInMapState() {
 		LogWrapper.d("eric", "applyListenersInMapState");
 		
-//		clearListenersFromTargets();
-//		applyCommonListeners();
-		
 		mQueryFragment.mBackBtn.setOnClickListener(new MapBackClickListener());
-		mQueryFragment.mRadioGroup.setOnCheckedChangeListener(new MapRadioOnCheckedChangeListener());
-//		mQueryFragment.mRootView.setOnTouchListener(new RootViewTouchListener());
+		for (int i = 0; i < mQueryFragment.mRadioGroup.getChildCount(); i++) {
+		    mQueryFragment.mRadioGroup.getChildAt(i).setOnClickListener(mMapRadioOnClickedListener);
+		}
 	}
-//	
+	
 	public void applyListenersInSelectPointState() {
 		mQueryFragment.mLeftBtn.setOnClickListener(new SelectPointLeftBtnOnClickListener());
 	}
-//	
-//	public void clearSuggestWatcherInInputState() {
-//		mQueryFragment.mStart.getEdt().removeTextChangedListener(startSuggestWatcher);
-//		mQueryFragment.mEnd.getEdt().removeTextChangedListener(endSuggestWatcher);
-//		mQueryFragment.mBusline.getEdt().removeTextChangedListener(buslineSuggestWatcher);
-//		//清除显示的历史词和建议词
-//		mQueryFragment.mSuggestHistoryHelper.refresh(mQueryFragment.mSphinx, null, 0);
-//	}
 	
 	protected class StartEndEdtClickListener implements OnEditorActionListener {
 		
@@ -173,17 +139,25 @@ public class TrafficQueryEventHelper {
 			if (actionId == EditorInfo.IME_ACTION_NEXT
                     || actionId == EditorInfo.IME_ACTION_SEARCH 
 			        || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-				if (!mQueryFragment.mStart.isEmpty() && !mQueryFragment.mEnd.isEmpty()) {
-					//都有内容，搜索
-					mQueryFragment.query();
-					return true;
-				} else if (mQueryFragment.mSelectedEdt == mQueryFragment.mStart) {
+//				if (!mQueryFragment.mStart.isEmpty() && !mQueryFragment.mEnd.isEmpty()) {
+//					//都有内容，搜索
+//					mQueryFragment.query();
+//					return true;
+//				} else if (mQueryFragment.mSelectedEdt == mQueryFragment.mStart) {
+//				    mQueryFragment.mSelectedEdt = mQueryFragment.mEnd;
+//				    mQueryFragment.mEnd.mEdt.requestFocus();
+//                    return true;
+//				} else if (mQueryFragment.mSelectedEdt == mQueryFragment.mEnd) {
+//				    mQueryFragment.mSelectedEdt = mQueryFragment.mStart;
+//                    mQueryFragment.mStart.mEdt.requestFocus();
+//                    return true;
+//				}
+			    if (mQueryFragment.mSelectedEdt == mQueryFragment.mStart) {
 				    mQueryFragment.mSelectedEdt = mQueryFragment.mEnd;
 				    mQueryFragment.mEnd.mEdt.requestFocus();
                     return true;
 				} else if (mQueryFragment.mSelectedEdt == mQueryFragment.mEnd) {
-				    mQueryFragment.mSelectedEdt = mQueryFragment.mStart;
-                    mQueryFragment.mStart.mEdt.requestFocus();
+				    mQueryFragment.query();
                     return true;
 				}
 			}
@@ -250,19 +224,6 @@ public class TrafficQueryEventHelper {
 //                mQueryEdt.getEdt().setSelectAllOnFocus(false);
             }
 			
-			if (mQueryFragment.mStart == mQueryEdt) {
-			    if (mQueryFragment.isEditTextEmpty(mQueryFragment.mStart.mEdt) == false) {
-			        mQueryFragment.mEnd.mEdt.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
-			    } else {
-			        mQueryFragment.mEnd.mEdt.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-			    }
-			} else {
-			    if (mQueryFragment.isEditTextEmpty(mQueryFragment.mEnd.mEdt) == false) {
-                    mQueryFragment.mStart.mEdt.setImeOptions(EditorInfo.IME_ACTION_SEARCH);
-                } else {
-                    mQueryFragment.mStart.mEdt.setImeOptions(EditorInfo.IME_ACTION_NEXT);
-                }
-			}
 		}
 		
 	}
@@ -277,7 +238,7 @@ public class TrafficQueryEventHelper {
         @Override
         public boolean onEditorAction(TextView arg0, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH || (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
-            	mQueryFragment.mSphinx.hideSoftInput();
+//            	mQueryFragment.mSphinx.hideSoftInput();
             	mQueryFragment.submitBuslineQuery();
                 return true;
             }
@@ -285,45 +246,53 @@ public class TrafficQueryEventHelper {
         }
     }
 	
-//	protected class RootViewTouchListener implements OnTouchListener {
-//
-//		@Override
-//		public boolean onTouch(View v, MotionEvent event) {
-//			return true;
-//		}
-//		
-//	}
+	void checkRadioButton(int checkedId) {
+	    switch(checkedId){
+        case R.id.traffic_transfer_rbt:
+            if (mQueryFragment.mLogHelper.logForTabChange)
+                mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficTransferTab);
+            mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
+            break;
+        case R.id.traffic_drive_rbt:
+            if (mQueryFragment.mLogHelper.logForTabChange)
+                mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficDriveTab);
+            mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
+            break;
+        case R.id.traffic_walk_rbt:
+            if (mQueryFragment.mLogHelper.logForTabChange)
+                mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficWalkTab);
+            mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
+            break;
+        case R.id.traffic_busline_rbt:
+            if (mQueryFragment.mLogHelper.logForTabChange)
+                mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficBusLineTab);
+            mQueryFragment.changeToMode(TrafficQueryFragment.BUSLINE_MODE);
+        default:
+            break;
+        }
+    	mQueryFragment.checkQueryState();
+	}
+	
+	protected class NormalRadioOnClickedListener implements View.OnClickListener {
 
-	protected class NormalOnCheckedChangeListener implements RadioGroup.OnCheckedChangeListener {
-    	
+        @Override
+        public void onClick(View v) {
+            mQueryFragment.mStateTransitionTable.event(Event.ClickRadioGroup);
+            mQueryFragment.mSphinx.showSoftInput(mQueryFragment.mSelectedEdt.getEdt().getInput());
+        }
+	    
+	}
+	
+	protected class RadioCheckedChangedListener implements RadioGroup.OnCheckedChangeListener {
+
         @Override
         public void onCheckedChanged(RadioGroup group, int checkedId) {
-        	switch(checkedId){
-            case R.id.traffic_transfer_rbt:
-            	if (mQueryFragment.mLogHelper.logForTabChange)
-            		mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficTransferTab);
-            	mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
-                break;
-            case R.id.traffic_drive_rbt:
-            	if (mQueryFragment.mLogHelper.logForTabChange)
-                    mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficDriveTab);
-            	mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
-                break;
-            case R.id.traffic_walk_rbt:
-            	if (mQueryFragment.mLogHelper.logForTabChange)
-                    mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficWalkTab);
-            	mQueryFragment.changeToMode(TrafficQueryFragment.TRAFFIC_MODE);
-                break;
-            case R.id.traffic_busline_rbt:
-            	if (mQueryFragment.mLogHelper.logForTabChange)
-                    mQueryFragment.mActionLog.addAction(mQueryFragment.mActionTag +  ActionLog.TrafficBusLineTab);
-            	mQueryFragment.changeToMode(TrafficQueryFragment.BUSLINE_MODE);
-            default:
-                break;
+            if (checkedId != -1) {
+                checkRadioButton(checkedId);
             }
-        	mQueryFragment.checkQueryState();
         }
-    }
+	    
+	}
 
 	protected class EditTextTouchListener implements OnTouchListener {
 		
@@ -394,20 +363,19 @@ public class TrafficQueryEventHelper {
 		
 	}
 	
-	protected class InputOnCheckedChangeListener extends NormalOnCheckedChangeListener {
-    	
+	protected class InputRadioOnClickedListener implements View.OnClickListener {
+
         @Override
-        public void onCheckedChanged(RadioGroup group, int checkedId) {
-        	super.onCheckedChanged(group, checkedId);
-        	
-			/*
-			 * 切换TAB时, 若三个输入框都没有获得焦点, 则隐藏输入法
-			 */
-			if (!mQueryFragment.mStart.getEdt().isFocused() && !mQueryFragment.mEnd.getEdt().isFocused() 
-					&& !mQueryFragment.mBusline.getEdt().isFocused()) {
-				mQueryFragment.mSphinx.hideSoftInput();
-			}
+        public void onClick(View v) {
+        	/*
+        	 * 切换TAB时, 若三个输入框都没有获得焦点, 则隐藏输入法
+        	 */
+//			if (!mQueryFragment.mStart.getEdt().isFocused() && !mQueryFragment.mEnd.getEdt().isFocused() 
+//					&& !mQueryFragment.mBusline.getEdt().isFocused()) {
+//				mQueryFragment.mSphinx.hideSoftInput();
+//			}
         }
+	    
 	}
 
 	protected class InputQueryClickListener implements OnClickListener {
@@ -466,7 +434,6 @@ public class TrafficQueryEventHelper {
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {
-//			LogWrapper.d("eric", "SuggestLsv.onTouch");
 			if (event.getAction() == MotionEvent.ACTION_DOWN) {
 				mQueryFragment.mSphinx.hideSoftInput();
             }
@@ -506,7 +473,6 @@ public class TrafficQueryEventHelper {
 
 		@Override
 		public void onClick(View v) {
-			mQueryFragment.mRadioGroup.setOnCheckedChangeListener(null);
 //			onBack();
 			synchronized (mQueryFragment.mSphinx.mUILock) {
                 if (!mQueryFragment.mSphinx.mUIProcessing) {
@@ -517,16 +483,14 @@ public class TrafficQueryEventHelper {
 		
 	}
 	
-	protected class MapRadioOnCheckedChangeListener extends NormalOnCheckedChangeListener {
-		
-		@Override
-        public void onCheckedChanged(RadioGroup group, int checkedId) {
-        	super.onCheckedChanged(group, checkedId);
-        	LogWrapper.d("conan", "RadioGroup checkedid:" + checkedId);
-        	if (checkedId != -1) {
-        	    mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.ClickRadioGroup);
-        	}
+	protected class MapRadioOnClickedListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            mQueryFragment.mStateTransitionTable.event(TrafficViewSTT.Event.ClickRadioGroup);
+            mQueryFragment.mSphinx.showSoftInput(mQueryFragment.mSelectedEdt.getEdt().getInput());
         }
+	    
 	}
 
 	protected class SelectPointLeftBtnOnClickListener implements OnClickListener {
@@ -563,11 +527,7 @@ public class TrafficQueryEventHelper {
 		    listView.setAdapter(adapter);
             final Dialog dialog = Utility.showNormalDialog(mQueryFragment.mSphinx,
                     title,
-                    null,
-                    listView,
-                    null,
-                    null,
-                    null);
+                    listView);
             
             dialog.setCancelable(true);
             listView.setOnItemClickListener(new OnItemClickListener() {
@@ -589,7 +549,6 @@ public class TrafficQueryEventHelper {
                         break;
                     case 1:
                         //地图选点
-                        mQueryFragment.mMapLocationHelper.checkMapCenterInCity();
                         performMapSelectPoint(queryEdt);
                         break;
                     case 2:
@@ -608,13 +567,10 @@ public class TrafficQueryEventHelper {
 			
 		    private void performSwitchStartEnd() {
 		        mQueryFragment.mSuggestWordHelper.clearSuggestList();
-//                clearSuggestWatcherInInputState();
                 POI temp = mQueryFragment.mStart.getPOI();
                 mQueryFragment.mStart.setPOI(mQueryFragment.mEnd.getPOI());
                 mQueryFragment.mEnd.setPOI(temp);
                 mQueryFragment.mSuggestWordHelper.clearSuggestList();
-//                addSuggestWatcherInInputState();
-//                mQueryFragment.mBlock.requestFocus();
 		    }
 		    
 			private void performSelectMyLocation() {
@@ -650,7 +606,6 @@ public class TrafficQueryEventHelper {
 			private void performSelectFavorite() {
 				LogWrapper.d("eric", "performSelectFavorite()");
 
-				mQueryFragment.mSphinx.getFetchFavoriteFragment().setData(mQueryFragment);
 				mQueryFragment.mSphinx.showView(R.id.view_traffic_fetch_favorite_poi);
 			}
 }

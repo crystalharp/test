@@ -3,42 +3,34 @@
  */
 package com.tigerknows.common;
 
-import com.decarta.Globals;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
-import com.tigerknows.map.MapEngine;
-import com.tigerknows.map.MapEngine.CityInfo;
 import com.tigerknows.model.FeedbackUpload;
-import com.tigerknows.util.Utility;
 
 import android.content.Context;
 import android.text.TextUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Hashtable;
 
 /**
  * 用户行为日志类
  * @author pengwenyue
  *
  */
-public class ActionLog {
+public class ActionLog extends LogUpload {
 
+    static final String TAG = "ActionLog";
+    
     public static final String SEPARATOR_STAET = "_";
     public static final String SEPARATOR_MIDDLE = "-";
-    private static final int UPLOAD_LENGTH = 10 * 1024;
-    private static final int WRITE_FILE_SIZE = 1024;
     
-    private SimpleDateFormat simpleDateFormat;
+    private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
     
     private static ActionLog sActionLog;
     public static ActionLog getInstance(Context context) {
         if (sActionLog == null) {
-            sActionLog = new ActionLog(context);
+            sActionLog = new ActionLog(context, "action.log", FeedbackUpload.SERVER_PARAMETER_ACTION_LOG);
         }
         return sActionLog;
     }
@@ -125,11 +117,6 @@ public class ActionLog {
     public static final String LogOut = "ZW";
     
     public static final String HistoryWordInput = "ZX";
-
-    public static final String HotelDate = "ZY";
-    public static final String HotelDateDone = HotelDate+"BA";
-    public static final String HotelDateCheckin = HotelDate+"BB";
-    public static final String HotelDateCheckout = HotelDate+"BC";
     
     // == 共用 ==
     public static final String CommonAddress = "ZX";
@@ -137,6 +124,14 @@ public class ActionLog {
     public static final String CommonFavorite = "ZZ";
     public static final String CommonShare = "YA";
     public static final String CommonErrorRecovery = "YB";
+
+    public static final String HotelDate = "YC";
+    public static final String HotelDateDone = HotelDate+"BA";
+    public static final String HotelDateCheckin = HotelDate+"BB";
+    public static final String HotelDateCheckout = HotelDate+"BC";
+    
+    public static final String PickPhoto = "YD";
+    public static final String CameraPhoto = "YF";
     
     // POI主页 
     public static final String POIHome = "AA";
@@ -157,6 +152,7 @@ public class ActionLog {
 
     // POI结果列表页
     public static final String POIList = "AC";
+    public static final String POIListAddMerchanty = "BA";
     
     // Poi详情页
     public static final String POIDetail = "AD";
@@ -210,7 +206,17 @@ public class ActionLog {
     public static final String POINearbySearchInput = "BC";
     
     // POI纠错页
-    public static final String POIErrorRecovery = "AH";
+    public static final String POIReportError = "AH";
+    public static final String POIReportErrorName = "BA";
+    public static final String POIReportErrorTelAdd = "BB";
+    public static final String POIReportErrorTel = "BC";
+    public static final String POIReportErrorNotExist = "BD";
+    public static final String POIReportErrorAddress = "BE";
+    public static final String POIReportErrorRedundancy = "BF";
+    public static final String POIReportErrorLocation = "BG";
+    public static final String POIReportErrorOther = "BH";
+    public static final String POIReportErrorSubmit = "BI";
+    public static final String POIReportErrorNext = "BJ";
     
     // 我的点评页
     public static final String MyComment = "AI";
@@ -232,6 +238,37 @@ public class ActionLog {
     // 优惠券详情页
     public static final String CouponDetail = "AN";
     public static final String CouponQrimg = "BA";
+    
+    // POI纠错详情页-公共部分
+    public static final String POIErrorDetailMain = "BA";
+    public static final String POIErrorDetailContact = "BB";
+    public static final String POIErrorDetailSubmit = "BC";
+    
+    // POI纠错-名称错误页
+    public static final String POINameError = "AO";
+    public static final String POINameErrorType = "BD";
+
+    // POI纠错-地址错误页
+    public static final String POIAddressError = "AP";
+
+    // POI纠错-添加电话页
+    public static final String POIAddTel = "AQ";
+
+    // POI纠错-电话错误页
+    public static final String POITelError = "AR";
+    public static final String POITelErrorConnect = "BD";
+    public static final String POITelErrorNotthis = "BE";
+    // POI纠错-地点不存在页
+    
+    public static final String POINotExist = "AS";
+    public static final String POINotExistStop = "BD";
+    public static final String POINotExistChai = "BE";
+    public static final String POINotExistMove = "BF";
+    public static final String POINotExistFind = "BG";
+    public static final String POINotExistOther = "BH";
+
+    // POI纠错-其他错误页
+    public static final String POIOtherError = "AT";
 
     // 更多频道
     public static final String More = "CA";
@@ -252,6 +289,7 @@ public class ActionLog {
     public static final String MoreGiveFavourableComment = "BO";
     public static final String MoreMessageUserSurvey = "BP";
     public static final String MoreAddMerchant = "BQ";
+    public static final String MoreSatisfyRate = "BR";
 
     // 切换城市页
     public static final String ChangeCity = "CB";
@@ -297,7 +335,7 @@ public class ActionLog {
     public static final String SettingWakeLock = "BB";
     public static final String SettingRadar = "BC";
 
-    // 意见反馈页 AL
+    // 意见反馈页 
     public static final String Feedback = "CG";
     public static final String FeedBackContent = "BA";
     public static final String FeedbackMobile = "BB";
@@ -324,6 +362,20 @@ public class ActionLog {
     public static final String AddMerchantTelephone = "BD";
     public static final String AddMerchantTime = "BE";
     public static final String AddMerchantMobile = "BF";
+    public static final String AddMerchantAddressDescription = "BG";
+    public static final String AddMerchantDate = "BH";
+    public static final String AddMerchantPhoto = "BI";
+    public static final String AddMerchantDeletePhoto = "BJ";
+    public static final String AddMerchantConfirmPhoto = "BK";
+    public static final String AddMerchantCancelPhoto = "BL";
+    public static final String AddMerchantConfirmTime = "BM";
+    public static final String AddMerchantCity = "BN";
+    public static final String AddMerchantBackPhoto = "BO";
+    
+    // 满意度评分页
+    public static final String SatisfyRate = "CL";
+    public static final String[] SatisfyRatingBar = {"BA", "BB", "BC", "BD", "BE", "BF", "BG"};
+    public static final String SatisfyRateSubmit = "BH";
 
     // 软件生命周期  AO
     public static final String Lifecycle = "FA";
@@ -352,6 +404,7 @@ public class ActionLog {
     public static final String MapInfoWindowTraffic = Map + "BJ";
     public static final String MapInfoWindowStart = Map + "BK";
     public static final String MapInfoWindowEnd = Map + "BL";
+    public static final String MapMultiTouchZoom = Map + "BM";
     
     // 微博发送界面    
     public static final String WeiboSend = "FC";
@@ -570,7 +623,7 @@ public class ActionLog {
     public static final String HotelOrderWriteReserve = "BC";
     public static final String HotelOrderWriteBookName = "BD";
     public static final String HotelOrderWriteMobile = "BE";
-    public static final String HotelOrderWriteIdCard = "BF";
+    //public static final String HotelOrderWriteIdCard = "BF";
     public static final String HOTELOrderWriteSubmit = "BG";
 
     // 信用卡担保页
@@ -586,13 +639,6 @@ public class ActionLog {
     public static final String HotelOrderCreditCertCode = "BI";
     public static final String HotelOrderCreditSubmit = "BJ";
     
-    // 7天酒店注册页
-    public static final String HotelSeveninnRegist = "GG";
-    public static final String HotelSeveninnRegistName = "BA";
-    public static final String HotelSeveninnRegistPhone = "BB";
-    public static final String HotelSeveninnRegistIdcard = "BC";
-    public static final String HotelSeveninnRegistSubmit = "BD";
-
     // 订单列表页
     public static final String HotelOrderList = "GH";
     public static final String HotelOrderListGoThere = "BA";
@@ -612,39 +658,11 @@ public class ActionLog {
     public static final String HotelOrderDetailIssueComment = "BI";
     public static final String HotelOrderDetailOrderAgain= "BJ";
     
-    
-    private Context mContext;
     private long mStartMillis = 0;
-    private int mFileLength = 0;
-    private String mPath;
-    private Object mLock = new Object();
-    private StringBuilder mStringBuilder = null;
     private String lastAction = null;
     
-    private ActionLog(Context context) {
-        synchronized (mLock) {
-            mContext = context;
-            mPath = TKConfig.getDataPath(false) + "action.log";
-            mFileLength = 0;
-            
-            try {
-                simpleDateFormat = new SimpleDateFormat("yyyyMMddHHmmss");
-                File file = new File(mPath);
-                if (!file.exists()) {
-                    if (!file.createNewFile()) {
-                        LogWrapper.e("ActionLog", "ActionLog() Unable to create new file: " + mPath);
-                        return;
-                    }
-                }
-                FileInputStream fis = new FileInputStream(file);
-                mFileLength = fis.available();
-                fis.close();
-    
-                mStringBuilder = new StringBuilder();
-            } catch (Exception e) {
-                LogWrapper.e("ActionLog", "ActionLog() "+e.getMessage());
-            }
-        }
+    private ActionLog(Context context, String logFileName, String serverParameterKey) {
+        super(context, logFileName, serverParameterKey);
     }
     
     public void addAction(String actionLog, Object... args) {
@@ -670,7 +688,6 @@ public class ActionLog {
             addAction(String.format(actionLog, str), true);
         } catch (Exception e) {
             e.printStackTrace();
-            LogWrapper.e("ActionLog", "addAction() actionLog="+actionLog);
         }
         }
     }
@@ -693,89 +710,51 @@ public class ActionLog {
                     lastAction = actionLog;
                 }
                 mStringBuilder.append(actionLog);
-                LogWrapper.d("ActionLog", actionLog);
+                LogWrapper.d(TAG, actionLog);
     
-                // 判断是否要写入文件
-                if (mStringBuilder.length() > WRITE_FILE_SIZE) {
-                    write();
-                    
-                    // 判断是否要上传
-                    if (mFileLength > UPLOAD_LENGTH) {
-                        upload();
-                    }
-                }
+                tryUpload();
                 
             } catch (Exception e) {
-                LogWrapper.e("ActionLog", "addAction() e="+e.getMessage());
+                LogWrapper.e(TAG, e.getMessage());
+                e.printStackTrace();
             }
         }
     }
     
-    private void upload() {
-        synchronized (mLock) {
-            try {
-                if (mStringBuilder == null) {
-                    return;
-                }
-                File file = new File(mPath);
-                FileInputStream fis = new FileInputStream(file);
-                final String str = Utility.readFile(fis)+SEPARATOR_STAET+(simpleDateFormat.format(Calendar.getInstance().getTime()))+SEPARATOR_MIDDLE+LogOut;
-                fis.close();
-                
-                if (file.delete()) {
-                    if (!file.createNewFile()) {
-                        LogWrapper.e("ActionLog", "ActionLog() Unable to create new file: " + mPath);
-                        return;
-                    }
-                    mFileLength = 0;
-                    mStringBuilder = new StringBuilder();
-                    mStringBuilder.append(SEPARATOR_STAET);
-                    mStringBuilder.append(simpleDateFormat.format(Calendar.getInstance().getTime()));
-                    mStringBuilder.append(SEPARATOR_MIDDLE);
-                    mStringBuilder.append(LogOut);
-                    
-                    if (TKConfig.getUserActionTrack().equals("on")) {
-                        new Thread(new Runnable() {
-                            
-                            @Override
-                            public void run() {
-                                FeedbackUpload feedbackUpload = new FeedbackUpload(mContext);
-                                Hashtable<String, String> criteria = new Hashtable<String, String>();
-                                criteria.put(FeedbackUpload.SERVER_PARAMETER_ACTION_LOG, str);
-                                CityInfo cityInfo = Globals.getCurrentCityInfo();
-                                int cityId = MapEngine.CITY_ID_BEIJING;
-                                if (cityInfo != null) {
-                                    cityId = cityInfo.getId();
-                                }
-                                feedbackUpload.setup(criteria, cityId);
-                                feedbackUpload.query();
-                            }
-                        }).start();
-                    }
-                }
-            } catch (Exception e) {
-                LogWrapper.e("ActionLog", "addAction() e="+e.getMessage());
-            }
-        }
+    protected boolean canUpload() {
+        return TKConfig.getUserActionTrack().equals("on");
     }
     
-    public void addNetworkAction(String apiType, long reqTime, long revTime, long resTime, String fail, String detail, int signal, String radioType, boolean isStop) {
-        try {
-            addAction(NetworkAction, apiType, String.valueOf(reqTime - mStartMillis), String.valueOf(revTime - mStartMillis), String.valueOf(resTime-mStartMillis), fail, detail, signal, radioType, isStop);
-        } catch (Exception e) {
-            LogWrapper.e("ActionLog", "addNetworkAction() e="+e.getMessage());
-        }
+    protected String getLogOutToken() {
+        return SEPARATOR_STAET+(simpleDateFormat.format(Calendar.getInstance().getTime()))+SEPARATOR_MIDDLE+LogOut;
     }
     
-    public void onCreate() {
+    protected void onLogOut() {
+        super.onLogOut();
         synchronized (mLock) {
             if (mStringBuilder == null) {
                 return;
             }
-            if (mFileLength > WRITE_FILE_SIZE) {
-                upload();
-            }
-
+            StringBuilder s = mStringBuilder;
+            mStringBuilder = new StringBuilder();
+            mStringBuilder.append(getLogOutToken());
+            mStringBuilder.append(s);
+            LogWrapper.d(TAG, LogOut);
+        }
+    }
+    
+    public void addNetworkAction(String apiType, long reqTime, long revTime, long resTime, String fail, String detail, int signal, String radioType, boolean isStop, String uuid, long reqSize, long revSize) {
+        try {
+            addAction(NetworkAction, apiType, String.valueOf(reqTime - mStartMillis), String.valueOf(revTime - mStartMillis), String.valueOf(resTime-mStartMillis), fail, detail, signal, radioType, isStop, uuid, reqSize, revSize);
+        } catch (Exception e) {
+            LogWrapper.e(TAG, e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    public void onCreate() {
+        super.onCreate();
+        synchronized (mLock) {
             mStartMillis = System.currentTimeMillis();
             addAction(SEPARATOR_STAET+simpleDateFormat.format(Calendar.getInstance().getTime())+SEPARATOR_MIDDLE+LifecycleCreate+SEPARATOR_MIDDLE+TKConfig.getClientSoftVersion(), false);
         }
@@ -794,43 +773,7 @@ public class ActionLog {
     }
     
     public void onDestroy() {
-        synchronized (mLock) {
-            if (mStringBuilder == null) {
-                return;
-            }
-            addAction(SEPARATOR_STAET+simpleDateFormat.format(Calendar.getInstance().getTime())+SEPARATOR_MIDDLE+LifecycleDestroy, false);
-            write();
-        }
-    }
-    
-    public void onTerminate() {
-        synchronized (mLock) {
-            write();
-            mFileLength = 0;
-            lastAction = null;
-        }
-    }
-    
-    private void write() {
-        synchronized (mLock) {
-            if (mStringBuilder == null) {
-                return;
-            }
-            if (mStringBuilder.length() > 0) {
-                try {
-                    File file = new File(mPath); 
-                    FileOutputStream fileOutputStream = new FileOutputStream(file, true);
-                    byte[] data = mStringBuilder.toString().getBytes();
-                    fileOutputStream.write(data);
-                    fileOutputStream.flush();
-                    fileOutputStream.close();
-                    mStringBuilder = new StringBuilder();
-                    mFileLength += data.length;
-                } catch (Exception e) {
-                    mStringBuilder = null;
-                    e.printStackTrace();
-                }
-            }
-        }
+        addAction(SEPARATOR_STAET+simpleDateFormat.format(Calendar.getInstance().getTime())+SEPARATOR_MIDDLE+LifecycleDestroy, false);
+        super.onDestroy();
     }
 }

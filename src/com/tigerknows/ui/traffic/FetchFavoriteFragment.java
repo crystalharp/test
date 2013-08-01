@@ -44,8 +44,6 @@ public class FetchFavoriteFragment extends BaseFragment {
     
     private List<POI> mTempFavoriteList = new ArrayList<POI>();
 
-    TrafficQueryFragment queryBaseView = null;
-    //
     private boolean mFavoriteCanTurnPage = true;
     //
     private View mFavoriteLoadingView = null;
@@ -120,7 +118,7 @@ public class FetchFavoriteFragment extends BaseFragment {
                 int mPosition = arg2;
                 if (getPOI(mPosition) != null) {
                 	mActionLog.addAction(mActionTag + ActionLog.ListViewItem, mPosition);
-                	queryBaseView.setData(getPOI(mPosition), TrafficQueryFragment.SELECTED);
+                	mSphinx.getTrafficQueryFragment().setData(getPOI(mPosition), TrafficQueryFragment.SELECTED);
                 	dismiss();
                 }
             }
@@ -148,10 +146,6 @@ public class FetchFavoriteFragment extends BaseFragment {
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 // TODO Auto-generated method stub
             }});
-	}
-	
-	public void setData(TrafficQueryFragment queryBaseView) {
-		this.queryBaseView = queryBaseView;
 	}
 	
 	private POI getPOI(int location) {

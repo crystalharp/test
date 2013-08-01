@@ -147,6 +147,7 @@ public class TilesView extends GLSurfaceView {
     private XYZ centerXYZTK=new XYZ(0,0,-1);
     private TileThread tileRunners[]=new TileThread[CONFIG.TILE_THREAD_COUNT];
     private DownloadThread downloadRunners[]=new DownloadThread[CONFIG.TILE_THREAD_COUNT];
+    private MapTextThread mapTextThread;
     private LinkedList<TileDownload> tilesWaitForDownloading = new LinkedList<TileDownload>();  
     
     float tkZRotation;
@@ -510,7 +511,7 @@ public class TilesView extends GLSurfaceView {
             downloadRunners[i].start();
         }
         MapTextThread.startThread();
-        MapTextThread mapTextThread = new MapTextThread(this);
+        mapTextThread = new MapTextThread(this);
         mapTextThread.start();
         
         mapText.canvasSize.x=displaySize.x;
@@ -533,6 +534,65 @@ public class TilesView extends GLSurfaceView {
         drawMyLocationTimer.schedule(timerTask, 0, 1000);
         // tigerknows add end
     }
+	
+	/**
+	 * 若背景线程已经被其它的运行实例停止，则重新生成背景线程
+	 * @return 否重新生成背景线程
+	 */
+	public boolean ensureThreadsRunning() {
+	    boolean result = false;
+	    
+	    boolean restart = false;
+	    for(int i=0;i<tileRunners.length;i++){
+            if (tileRunners[i].tilesView != this) {
+                restart = true;
+                break;
+            }
+        }
+	    
+	    if (TileThread.isStop() || restart) {
+            TileThread.startAllThreads();
+            for(int i=0;i<tileRunners.length;i++){
+                tileRunners[i]=new TileThread(i,this);
+                tileRunners[i].start();
+            }
+            
+            result = true;
+	    }
+	    
+	    restart = false;
+        for(int i=0;i<downloadRunners.length;i++){
+            if (downloadRunners[i].tilesView != this) {
+                restart = true;
+                break;
+            }
+        }
+        
+        if (DownloadThread.isStop() || restart) {
+            DownloadThread.startAllThreads();
+            for(int i=0;i<downloadRunners.length;i++){
+                downloadRunners[i]=new DownloadThread(i,this);
+                downloadRunners[i].start();
+            }
+            
+            result = true;
+        }
+        
+        restart = false;
+        if (mapTextThread.tilesView != this) {
+            restart = true;
+        }
+        
+        if (MapTextThread.isStop() || restart) {
+            MapTextThread.startThread();
+            mapTextThread = new MapTextThread(this);
+            mapTextThread.start();
+            
+            result = true;
+        }
+        
+        return result;
+	}
 	
 	/**
 	 * to make the orientation change work, we need to reset the coordinate of each tile and pin.
@@ -1134,6 +1194,7 @@ public class TilesView extends GLSurfaceView {
                 		zoomingRecord.zoomCenterXY.x=lastCenterConv.x;
                 		zoomingRecord.zoomCenterXY.y=lastCenterConv.y;
                 		zoomingRecord.listener=null;
+                        mParentMapView.executeMultiTouchZoomListeners(newZoomLevel);
                 	}
         			refreshMap();
         		}

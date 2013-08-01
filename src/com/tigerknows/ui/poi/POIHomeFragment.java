@@ -840,7 +840,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
     	   criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
     	   criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
         }
-       criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD_TYPE, DataQuery.KEYWORD_TYPE_TAG);
+       criteria.put(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
        poiQuery.setup(criteria, cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
        BaseFragment baseFragment = mSphinx.getFragment(poiQuery.getTargetViewId());
        

@@ -6,8 +6,8 @@ package com.tigerknows.android.location;
 
 
 import com.tigerknows.TKConfig;
+import com.tigerknows.common.LocationUpload;
 import com.tigerknows.model.LocationQuery;
-import com.tigerknows.model.LocationUpload;
 import com.tigerknows.model.LocationQuery.TKCellLocation;
 import com.tigerknows.service.TigerknowsLocationManager;
 
@@ -49,13 +49,15 @@ public class TKLocationManager {
     private TKLocation lastGpsTKLocation = null;
     private TKLocation lastNetworkTKLocation = null;
     private TKLocation lastTigerknowsTKLocation = null;
-    private LocationUpload locationUpload;
+    private LocationUpload gpsLocationUpload;
+    private LocationUpload networkLocationUpload;
     private LocationQuery locationQuery;
     private ArrayList<TKLocationListener> locationListenerList = new ArrayList<TKLocationListener>();
     private Object locationChangeLock = new Object();
     
     public TKLocationManager(Context context) {
-        locationUpload = LocationUpload.getInstance(context);
+        gpsLocationUpload = LocationUpload.getGpsInstance(context);
+        networkLocationUpload = LocationUpload.getNetworkInstance(context);
         locationQuery = LocationQuery.getInstance(context);
         
         networkLocationManager = new TigerknowsLocationManager(context); 
@@ -102,12 +104,14 @@ public class TKLocationManager {
     }
     
     public void onCreate() {
-        locationUpload.onCreate();
+        gpsLocationUpload.onCreate();
+        networkLocationUpload.onCreate();
         locationQuery.onCreate();
     }
     
     public void onDestroy() {
-        locationUpload.onDestroy();
+        gpsLocationUpload.onDestroy();
+        networkLocationUpload.onDestroy();
         locationQuery.onDestory();
     }
     
@@ -177,12 +181,12 @@ public class TKLocationManager {
             if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) { 
                 lastGpsTKLocation = new TKLocation(location, lac, cid, System.currentTimeMillis());   
                 locationChanged(LOCATION_GPS);
-                locationUpload.recordLocation(location);
+                gpsLocationUpload.recordLocation(location);
             } else if (location.getProvider().equals(LocationManager.NETWORK_PROVIDER)) { 
                 lastNetworkTKLocation = new TKLocation(location, lac, cid, -1); 
                 if (lastTigerknowsTKLocation == null || lastTigerknowsTKLocation.location.getProvider().equals("error")) {
                     locationChanged(LOCATION_NETWORK);
-                    locationUpload.recordLocation(location);
+                    networkLocationUpload.recordLocation(location);
                 }
             }
         }

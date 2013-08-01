@@ -8,6 +8,7 @@ import com.decarta.android.util.LogWrapper;
 import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.crypto.DataEncryptor;
+import com.tigerknows.model.BaseQuery;
 import com.tigerknows.model.test.BaseQueryTest;
 import com.weibo.sdk.android.WeiboParameters;
 
@@ -63,8 +64,8 @@ public class HttpUtils {
     /** Tigerknows服务器接口定义的用于s的v13的Header */
     public static final String TK_SERVICE_TYPE_VALUE = "lakers";
     
-    private static final String PARAMETER_SEPARATOR = "&";
-    private static final String NAME_VALUE_SEPARATOR = "=";
+    public static final String PARAMETER_SEPARATOR = "&";
+    public static final String NAME_VALUE_SEPARATOR = "=";
 
     private HttpUtils() {
         // To forbidden instantiate this class.
@@ -169,7 +170,7 @@ public class HttpUtils {
             this.statusCode = statusCode;
         }
         
-        public void execute(Context context) throws IOException {
+        public static void modifyRequestData(final WeiboParameters parameters) {
             final Activity activity = BaseQueryTest.getActivity();
             if (TKConfig.ModifyRequestData && activity != null) {
                 activity.runOnUiThread(new Runnable() {
@@ -204,6 +205,11 @@ public class HttpUtils {
                     }
                 }
             }
+        }
+        
+        public void execute(Context context) throws IOException {
+            
+            modifyRequestData(parameters);
             
             receivedAllData = false;
             statusCode = 0;
@@ -219,6 +225,8 @@ public class HttpUtils {
             long revTime = 0;
             long resTime = 0;
             String fail = "";
+            long reqSize = 0;
+            long revSize = 0;
             try {
                 HttpPost post = new HttpPost(url);
                 
@@ -233,8 +241,6 @@ public class HttpUtils {
                         
                     HttpEntity reqEntity;
                     byte[] data = null;
-                    ByteArrayOutputStream bos = null;
-                    bos = new ByteArrayOutputStream(1024 * 50);
                     String postParam;
                     if (isEncrypt) {
                         // 服务器接收加密的数据时不需要URLEncoder
@@ -255,13 +261,12 @@ public class HttpUtils {
                         data = postParam.getBytes(TKConfig.getEncoding());
                         data = ZLibUtils.compress(data);
                         DataEncryptor.getInstance().encrypt(data);
-                        
                     } else {
                         post.addHeader(CONTENT_TYPE, APPLICATION_FORM_CONTENT_TYPE_VALUE);
                         postParam = encodeParameters(parameters, TKConfig.getEncoding());
                         data = postParam.getBytes(TKConfig.getEncoding());
-                        bos.write(data);
                     }
+                    reqSize = data.length;
                     reqEntity = new ByteArrayEntity(data);
                     
                     post.setEntity(reqEntity);
@@ -307,6 +312,7 @@ public class HttpUtils {
                     try {
                         // 从联想词汇服务器返回来的数据其长度总是-1，尽管其实是有实际数据内容的
                         long size = entity.getContentLength();
+                        revSize = size;
                         if (size > 0) {
                             DataInputStream dis = new DataInputStream(entity.getContent());
                             try {
@@ -385,7 +391,8 @@ public class HttpUtils {
                     if (networkInfo != null) {
                         networkInfoDetail = networkInfo.getDetailedState().toString();
                     }
-                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getRadioType(), isStop);
+                    String uuid = this.parameters.getValue(BaseQuery.SERVER_PARAMETER_UUID);
+                    ActionLog.getInstance(context).addNetworkAction(apiType, reqTime, revTime, resTime, fail, networkInfoDetail, TKConfig.getSignalStrength(), TKConfig.getConnectivityType(context), isStop, uuid, reqSize, revSize);
                 }
                 if (!keepAlive) {
                     close();
