@@ -202,15 +202,14 @@ public class InputSearchFragment extends BaseFragment implements View.OnClickLis
             mKeywordEdt.setText(null);
             mActionLog.addAction(mActionTag +  ActionLog.POIHomeInputQueryBtn, keyword);
 
-            DataQuery poiQuery = new DataQuery(mContext);
             POI requestPOI = mSphinx.getPOI();
             POI poi = mSphinx.getPOIHomeFragment().getPOI();
             if (poi != null) {
                 requestPOI = poi;
             }
-            Hashtable<String, String> criteria = mSphinx.getPOIHomeFragment().getCriteria();
-            criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
-            poiQuery.setup(criteria, cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
+            DataQuery poiQuery = mSphinx.getPOIHomeFragment().getDataQuery();
+            poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyword);
+            poiQuery.setup(cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
             mSphinx.queryStart(poiQuery);
             ((POIResultFragment)mSphinx.getFragment(poiQuery.getTargetViewId())).setup(keyword);
             mSphinx.showView(poiQuery.getTargetViewId());

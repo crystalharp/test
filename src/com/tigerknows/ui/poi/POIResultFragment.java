@@ -899,8 +899,8 @@ public class POIResultFragment extends BaseFragment implements View.OnClickListe
                     updateView();
                     return;
                 } else {
-                    if (criteria.containsKey(DataQuery.SERVER_PARAMETER_FILTER_STRING)) {
-                        dataQuery.getCriteria().remove(DataQuery.SERVER_PARAMETER_FILTER_STRING);
+                    if (dataQuery.hasParameter(DataQuery.SERVER_PARAMETER_FILTER_STRING)) {
+                        dataQuery.delParameter(DataQuery.SERVER_PARAMETER_FILTER_STRING);
                     }
                 }
             } else {

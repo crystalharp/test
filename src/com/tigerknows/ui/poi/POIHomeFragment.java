@@ -1062,14 +1062,13 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 	};
 	
 	private void jumpToPOIResult(String keyWord){
-       DataQuery poiQuery = new DataQuery(mContext);
        POI requestPOI = mSphinx.getPOI();
        if (mPOI != null) {
            requestPOI = mPOI;
        }
        int cityId = Globals.getCurrentCityInfo().getId();
-       Hashtable<String, String> criteria = getCriteria();
-       criteria.put(DataQuery.SERVER_PARAMETER_KEYWORD, keyWord);
+       DataQuery poiQuery = getDataQuery();
+       poiQuery.addParameter(DataQuery.SERVER_PARAMETER_KEYWORD, keyWord);
        poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INFO, DataQuery.INFO_TYPE_TAG);
        poiQuery.setup(cityId, getId(), mSphinx.getPOIResultFragmentID(), null, false, false, requestPOI);
        BaseFragment baseFragment = mSphinx.getFragment(poiQuery.getTargetViewId());
@@ -1081,22 +1080,22 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
        	}
 	}
 	
-	public Hashtable<String, String> getCriteria() {
+	public DataQuery getDataQuery() {
 	       POI requestPOI = mSphinx.getPOI();
-	       Hashtable<String, String> criteria = new Hashtable<String, String>();
-	       criteria.put(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
-	       criteria.put(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
-	       criteria.put(DataQuery.SERVER_PARAMETER_INDEX, "0");
+	       DataQuery poiQuery = new DataQuery(mContext);
+	       poiQuery.addParameter(DataQuery.SERVER_PARAMETER_DATA_TYPE, BaseQuery.DATA_TYPE_POI);
+	       poiQuery.addParameter(DataQuery.SERVER_PARAMETER_SUB_DATA_TYPE, BaseQuery.SUB_DATA_TYPE_POI);
+	       poiQuery.addParameter(DataQuery.SERVER_PARAMETER_INDEX, "0");
 	       Position position = requestPOI.getPosition();
 	       if (position != null) {
-	           criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-	           criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+	           poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+	           poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
 	        }
 	       if (mPOI != null) {
 	           requestPOI = mPOI;
 	           position = mPOI.getPosition();
-	           criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
-	           criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+	           poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
+	           poiQuery.addParameter(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
 	       } else if (mSelectedLocation) {
 	           Filter[] filters = FilterListView.getSelectedFilter(HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST));
 	           if (filters != null) {
@@ -1109,11 +1108,11 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 	                   }
 	                   s.append(filters[i].getFilterOption().getName());
 	               }
-	               criteria.put(DataQuery.SERVER_PARAMETER_FILTER_STRING, s.toString());
+	               poiQuery.addParameter(DataQuery.SERVER_PARAMETER_FILTER_STRING, s.toString());
 	           }
 	       }
 	       
-	       return criteria;
+	       return poiQuery;
 	}
 	
 	boolean animation = false;
