@@ -22,6 +22,7 @@ public class NoticeQuery extends BaseQuery {
 	@Override
 	protected void makeRequestParameters() {
 		super.makeRequestParameters();
+		addCommonParameters(requestParameters, cityId);
 	}
 	
 	@Override
