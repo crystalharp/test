@@ -174,10 +174,21 @@ public class LocationUpload extends LogUpload {
         }
     }
     
+    public void onCreate() {
+        synchronized (mLock) {
+            super.onCreate();
+            sdx = 0;
+            sdy = 0;
+            sdt = 0;
+        }
+    }
+    
     protected void onLogOut() {
-        super.onLogOut();
-        sdx = 0;
-        sdy = 0;
-        sdt = 0;
+        synchronized (mLock) {
+            super.onLogOut();
+            sdx = 0;
+            sdy = 0;
+            sdt = 0;
+        }
     }
 }
