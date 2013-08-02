@@ -35,6 +35,8 @@ public class Tigerknows {
         public static final int HISTORY_WALK = 5;
         
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/history");
+        
+        public static final Uri CONTENT_URI_COUNT = Uri.parse("content://" + AUTHORITY + "/history_count");
 
         public static final String DEFAULT_SORT_ORDER = "_datetime DESC";
 
@@ -57,6 +59,8 @@ public class Tigerknows {
         public static final int FAVORITE_WALK = 5;
         
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/favorite");
+        
+        public static final Uri CONTENT_URI_COUNT = Uri.parse("content://" + AUTHORITY + "/favorite_count");
 
         public static final String DEFAULT_SORT_ORDER = "_id ASC";
 
@@ -71,6 +75,8 @@ public class Tigerknows {
     public interface POI extends BaseColumns {
         
         public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/poi");
+        
+        public static final Uri CONTENT_URI_COUNT = Uri.parse("content://" + AUTHORITY + "/poi_count");
         
         public static final String DEFAULT_SORT_ORDER = "_id ASC";
         
