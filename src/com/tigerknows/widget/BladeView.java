@@ -1,5 +1,6 @@
 package com.tigerknows.widget;
 
+import com.decarta.Globals;
 import com.tigerknows.common.ActionLog;
 
 import android.content.Context;
@@ -51,12 +52,13 @@ public class BladeView extends View {
 		int height = getHeight();
 		int width = getWidth();
 		int singleHeight = height / b.length;
+		float fontSize =  singleHeight/Globals.g_metrics.scaledDensity;
 		for (int i = 0; i < b.length; i++) {
 			paint.setColor(Color.rgb(0x32, 0x32, 0x32));
 //			paint.setTypeface(Typeface.DEFAULT_BOLD);
-			paint.setFakeBoldText(true);
+//			paint.setFakeBoldText(true);
 			paint.setAntiAlias(true);
-			paint.setTextSize(16);
+			paint.setTextSize(fontSize);
 			if (i == choose) {
 				paint.setColor(Color.parseColor("#3399ff"));
 			}
