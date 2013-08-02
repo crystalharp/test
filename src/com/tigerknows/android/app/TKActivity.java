@@ -750,7 +750,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
             }
             resId = getResponseResId(baseQuery);
         }else {
-            String responseStringRes = baseQuery.getParameter(BaseQuery.RESPONSE_NULL_ERROR_MSG);
+            String responseStringRes = baseQuery.getLocalParameter(BaseQuery.RESPONSE_NULL_ERROR_MSG);
             if(responseStringRes!=null){
             	resId = Integer.parseInt(responseStringRes);
             }
@@ -856,7 +856,7 @@ public class TKActivity extends MapActivity implements TKAsyncTask.EventListener
                     break;
             }
         } else {
-            String responseStringRes = baseQuery.getParameter(BaseQuery.RESPONSE_NULL_ERROR_MSG);
+            String responseStringRes = baseQuery.getLocalParameter(BaseQuery.RESPONSE_NULL_ERROR_MSG);
             if(responseStringRes!=null){
             	resId = Integer.parseInt(responseStringRes);
             }else{

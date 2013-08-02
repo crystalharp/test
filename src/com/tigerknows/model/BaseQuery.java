@@ -429,6 +429,9 @@ public abstract class BaseQuery {
     
     private RequestParameters requestParameters = new RequestParameters();
     
+    //用于该Query的本地控制参数
+    private RequestParameters localParameters = new RequestParameters();
+    
     protected HttpUtils.TKHttpClient httpClient;
 
     protected boolean isTranslatePart = false;
@@ -911,6 +914,25 @@ public abstract class BaseQuery {
         }
     }
     
+    public final void addLocalParameter(String key, String value) {
+        if (key != null && !key.equals("")) {
+            localParameters.add(key, value);
+        }
+    }
+    
+    public final String getLocalParameter(String key) {
+        if (key != null && !key.equals("")) {
+            return localParameters.getValue(key);
+        }
+        return null;
+    }
+    
+    public final boolean hasLocalParameter(String key) {
+        if (key != null && !key.equals("")) {
+            return localParameters.containsKey(key);
+        }
+        return false;
+    }
     /**
      * 以下是此次查询的相关参数操作接口，使用这些函数来添加参数，不与实际参数类产生交集。
      * @param key

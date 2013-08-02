@@ -697,7 +697,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
     	s.append(errcode + "");
         FeedbackUpload feedbackUpload = new FeedbackUpload(mThis);
         feedbackUpload.addParameter(FeedbackUpload.SERVER_PARAMETER_ERROR_RECOVERY, s.toString());
-        feedbackUpload.addParameter(FeedbackUpload.LOCAL_PARAMETER_POIERROR_IGNORE, "true");
+        feedbackUpload.addLocalParameter(FeedbackUpload.LOCAL_PARAMETER_POIERROR_IGNORE, "true");
         feedbackUpload.setup(Globals.getCurrentCityInfo().getId());
         queryStart(feedbackUpload);
     }
@@ -747,7 +747,7 @@ public class POIReportErrorActivity extends BaseActivity implements View.OnClick
             return;
         }
         
-        if(! baseQuery.hasParameter(FeedbackUpload.LOCAL_PARAMETER_POIERROR_IGNORE)){
+        if(! baseQuery.hasLocalParameter(FeedbackUpload.LOCAL_PARAMETER_POIERROR_IGNORE)){
         	if (BaseActivity.checkResponseCode(baseQuery, mThis, null, true, this, false)) {
         		return;
         	}

@@ -205,7 +205,7 @@ public class YanchuDetailView extends BaseDetailView implements View.OnClickList
         dataOperation.addParameter(DataOperation.SERVER_PARAMETER_PICTURE,
                Util.byteToHexString(Yanchu.FIELD_PICTURES)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_LIST)+"_[0]" + ";" +
                Util.byteToHexString(Yanchu.FIELD_PICTURES_DETAIL)+":"+Globals.getPicWidthHeight(TKConfig.PICTURE_DIANYING_DETAIL)+"_[0]");
-        dataOperation.addParameter(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + 410, ""+R.string.response_code_410_pulled);
+        dataOperation.addLocalParameter(BaseQuery.RESPONSE_CODE_ERROR_MSG_PREFIX + 410, ""+R.string.response_code_410_pulled);
         dataOperation.setup(Globals.getCurrentCityInfo().getId(), mParentFragment.getId(), mParentFragment.getId(), mSphinx.getString(R.string.doing_and_wait));
         mTKAsyncTasking = mSphinx.queryStart(dataOperation);
         mAsyncTaskExecuting = true;
