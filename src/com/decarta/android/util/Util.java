@@ -486,10 +486,10 @@ public class Util {
             double pixelsX = Util.lon2pix(boundingBox.getCenterPosition().getLon(), scale);
 
             double maxlat = Util.pix2lat((int) pixelsY + (screenY - padding), scale);
-            double maxlon = Util.pix2lon((int) pixelsX + (screenX - padding), scale);
+            double maxlon = Util.pix2lon((int) pixelsX + (screenX), scale);
 
-            double minlat = Util.pix2lat((int) pixelsY - (screenY - padding), scale);
-            double minlon = Util.pix2lon((int) pixelsX - (screenX - padding), scale);
+            double minlat = Util.pix2lat((int) pixelsY - (screenY), scale);
+            double minlon = Util.pix2lon((int) pixelsX - (screenX), scale);
 
             BoundingBox gxbbox = new BoundingBox(new Position(minlat, minlon),new Position(maxlat, maxlon));
 
