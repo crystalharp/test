@@ -41,9 +41,11 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.RotateAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -716,16 +718,31 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
         	ImageView icon = (ImageView) convertView.findViewById(R.id.hotel_tip_reserve_imv);
         	if (position == HOTEL_INDEX && TKConfig.getPref(mSphinx, TKConfig.PREFS_HINT_POI_HOME_HOTEL_RESERVE) == null) {
         	    icon.setVisibility(View.VISIBLE);
+        	    setHotelOrderAnimation(icon);
         	} else {
+        		icon.setAnimation(null);
         	    icon.setVisibility(View.GONE);
         	}
+        	
         	//Id will be used in setupDragView.
         	convertView.setId(position);
         	return convertView;
         }
     }
-    
 
+    private RotateAnimation anim;
+    
+    private void setHotelOrderAnimation(ImageView icon){
+    	if(anim == null){
+    		anim = new RotateAnimation(-20, 30, 12, 9);
+    		anim.setDuration(1000);
+    		anim.setRepeatCount(Integer.MAX_VALUE);
+    		anim.setRepeatMode(Animation.REVERSE);
+    		anim.setInterpolator(new AccelerateDecelerateInterpolator());
+    	}
+    	icon.startAnimation(anim);
+    }
+    
     private boolean mIsSubCategoryExpanded = false;
     
     public boolean isSubCategoryExpanded(){
