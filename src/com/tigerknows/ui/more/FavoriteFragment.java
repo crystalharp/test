@@ -217,11 +217,12 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         mRightBtn.setOnClickListener(this);
         mRightBtn.setBackgroundResource(R.drawable.btn_delete_all);
 
+        int total = 0;
         if (mDismissed) {
-            readPOI(mPOIList, Long.MAX_VALUE, 0, false);
-            mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
-            readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
-            mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize());
+            total = readPOI(mPOIList, Long.MAX_VALUE, 0, false);
+            mPOILsv.setFooterSpringback(total > mPOIList.size());
+            total = readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
+            mTrafficLsv.setFooterSpringback(total > mTrafficList.size());
             if (mPOIList.isEmpty() && mTrafficList.isEmpty() == false) {
                 mLayerType = ItemizedOverlay.TRAFFIC_OVERLAY;
             }
@@ -524,7 +525,8 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
         }
     }
     
-    private void readPOI(List<POI> list, long maxId, long minId, boolean next){
+    private int readPOI(List<POI> list, long maxId, long minId, boolean next){
+        int total = 0;
         String where = mPOIWhere + " AND (" + com.tigerknows.provider.Tigerknows.POI._ID + ">" + minId+")" + " AND (" + com.tigerknows.provider.Tigerknows.POI._ID + "<" + maxId+")";
         LogWrapper.d(TAG, "where="+where);
         Cursor c = SqliteWrapper.query(mContext, mContext.getContentResolver(), Tigerknows.POI.CONTENT_URI, null, where, null, "_id DESC");
@@ -544,14 +546,22 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                     maxId = poi.getId();
                     c.moveToNext();
                 }
-                if (next)
+                if (next) {
                     readPOI(list, maxId, minId, next);
+                }
+                Cursor c1 = SqliteWrapper.query(mContext, mContext.getContentResolver(), Tigerknows.POI.CONTENT_URI_COUNT, null, mPOIWhere, null, null);
+                if (c1 != null) {
+                    total = c1.getCount();
+                    c1.close();
+                }
             }
             c.close();
         }
+        return total;
     }
     
-    private void readTraffic(List<Favorite> list, long maxId, long minId, boolean next){
+    private int readTraffic(List<Favorite> list, long maxId, long minId, boolean next){
+        int total = 0;
         int count;
         Cursor c = SqliteWrapper.query(mContext, mContext.getContentResolver(), Tigerknows.Favorite.CONTENT_URI, null, "(" + com.tigerknows.provider.Tigerknows.Favorite._ID + ">" + minId+")" + " AND (" + com.tigerknows.provider.Tigerknows.Favorite._ID + "<" + maxId+")", null, "_id DESC");
         if (c != null) {
@@ -571,11 +581,18 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                     }
                     c.moveToNext();
                 }
-                if (next)
+                if (next) {
                     readTraffic(list, maxId, minId, next);
+                }
+                Cursor c1 = SqliteWrapper.query(mContext, mContext.getContentResolver(), Tigerknows.Favorite.CONTENT_URI_COUNT, null, null, null, null);
+                if (c1 != null) {
+                    total = c1.getCount();
+                    c1.close();
+                }
             }
             c.close();
         }
+        return total;
     }
     
     public class TrafficAdapter extends ArrayAdapter<Favorite>{
@@ -687,7 +704,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                     }
                     Collections.sort(mPOIList, mComparator);
                     mPOIAdapter.notifyDataSetChanged();
-                    mPOILsv.setFooterSpringback(poiList.size() >= TKConfig.getPageSize());
+                    mPOILsv.setFooterSpringback(msg.arg1 > mPOIList.size());
                     if (mPOILsv.isFooterSpringback()) {
                         mSphinx.getHandler().postDelayed(mTurnPageRunPOI, 1000);
                     }
@@ -708,7 +725,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
                     }
                     Collections.sort(mTrafficList, mComparator);
                     mTrafficAdapter.notifyDataSetChanged();
-                    mTrafficLsv.setFooterSpringback(trafficList.size() >= TKConfig.getPageSize());
+                    mTrafficLsv.setFooterSpringback(msg.arg1 > mTrafficList.size());
                     if (mTrafficLsv.isFooterSpringback()) {
                         mSphinx.getHandler().postDelayed(mTurnPageRunTraffic, 1000);
                     }
@@ -731,14 +748,16 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             int type;
             if (layerType.equals(ItemizedOverlay.POI_OVERLAY)) {
                 List<POI> poiList = new ArrayList<POI>();
-                readPOI(poiList, maxId, 0, false);
+                int total = readPOI(poiList, maxId, 0, false);
                 type = 0;
                 msg.obj = poiList;
+                msg.arg1 = total;
             } else {
                 List<Favorite> trafficList = new ArrayList<Favorite>();
-                readTraffic(trafficList, maxId, 0, false);
+                int total = readTraffic(trafficList, maxId, 0, false);
                 type = 1;
                 msg.obj = trafficList;
+                msg.arg1 = total;
             }
             msg.what = type;
             mHandler.sendMessage(msg);
@@ -798,6 +817,7 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
     private void changeTab(String layerType) {
 
         mLayerType = layerType;
+        int total = 0;
         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
             mPOIBtn.setBackgroundResource(R.drawable.btn_tab_selected);
             mPOIBtn.setTextColor(mColorSelect);
@@ -807,9 +827,9 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             if (mPOIList.size() > 0) {
                 readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getId(), true);
             } else {
-                readPOI(mPOIList, Long.MAX_VALUE, 0, false);
+                total = readPOI(mPOIList, Long.MAX_VALUE, 0, false);
+                mPOILsv.setFooterSpringback(total > mPOIList.size());
             }
-            mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize());
             Collections.sort(mPOIList, mComparator);
             mPOIAdapter.notifyDataSetChanged();
         } else {
@@ -821,9 +841,9 @@ public class FavoriteFragment extends BaseFragment implements View.OnClickListen
             if (mTrafficList.size() > 0) {
                 readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getDateTime(), true);
             } else {
-                readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
+                total = readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
+                mTrafficLsv.setFooterSpringback(total > mTrafficList.size());
             }
-            mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize());
             Collections.sort(mTrafficList, mComparator);
             mTrafficAdapter.notifyDataSetChanged();
         }

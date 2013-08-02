@@ -85,7 +85,7 @@ public class TimeListView extends LinearLayout {
         
         hourList = new ArrayList<String>();
         makeWhiteLines(hourList);
-        for(int i = 1, size = 25; i < size; i++) {
+        for(int i = 0, size = 24; i < size; i++) {
             hourList.add(toTwoChar(i));
         }
         makeWhiteLines(hourList);
@@ -214,7 +214,7 @@ public class TimeListView extends LinearLayout {
     
     class MyAdapter extends ArrayAdapter<String> {
         
-        private static final int TEXTVIEW_RESOURCE_ID = R.layout.filter_list_item;
+        private static final int TEXTVIEW_RESOURCE_ID = R.layout.time_list_item;
         
         private LayoutInflater mLayoutInflater;
         

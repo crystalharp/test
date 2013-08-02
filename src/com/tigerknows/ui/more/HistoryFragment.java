@@ -8,7 +8,6 @@ import com.decarta.android.map.ItemizedOverlay;
 import com.decarta.android.util.LogWrapper;
 import com.tigerknows.R;
 import com.tigerknows.Sphinx;
-import com.tigerknows.TKConfig;
 import com.tigerknows.common.ActionLog;
 import com.tigerknows.model.BaseData;
 import com.tigerknows.model.History;
@@ -206,12 +205,12 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         mTitleBtn.setText(R.string.history_browse);
         mRightBtn.setOnClickListener(this);
         mRightBtn.setBackgroundResource(R.drawable.btn_delete_all);
-
+        int total = 0;
         if (mDismissed) {
-            readPOI(mPOIList, Long.MAX_VALUE, 0, false);
-            mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize() && mPOIList.size() < Tigerknows.HISTORY_MAX_SIZE);
-            readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
-            mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize() && mTrafficList.size() < Tigerknows.HISTORY_MAX_SIZE);
+            total = readPOI(mPOIList, Long.MAX_VALUE, 0, false);
+            mPOILsv.setFooterSpringback(total > mPOIList.size());
+            total = readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
+            mTrafficLsv.setFooterSpringback(total > mTrafficList.size());
             if (mPOIList.isEmpty() && mTrafficList.isEmpty() == false) {
                 mLayerType = ItemizedOverlay.TRAFFIC_OVERLAY;
             }
@@ -408,21 +407,9 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                                         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
                                             POI poi = mPOIList.remove(mSelectIndex);
                                             poi.deleteHistory(mSphinx);
-                                            long max = 0;
-                                            if (mPOIList.size() == Tigerknows.HISTORY_MAX_SIZE-1) {
-                                                max = mPOIList.get(mPOIList.size()-1).getDateTime();
-                                            }
-                                            readPOI(mPOIList, max, 0, true);
-                                            Utility.keepListSize(mPOIList, Tigerknows.HISTORY_MAX_SIZE);
                                         } else {
                                             History traffic = mTrafficList.remove(mSelectIndex);
                                             SqliteWrapper.delete(mContext, mContext.getContentResolver(), Tigerknows.History.CONTENT_URI, "_id="+traffic.getId(), null);
-                                            long max = 0;
-                                            if (mTrafficList.size() == Tigerknows.HISTORY_MAX_SIZE-1) {
-                                                max = mTrafficList.get(mTrafficList.size()-1).getDateTime();
-                                            }
-                                            readTraffic(mTrafficList, max, 0, true);
-                                            Utility.keepListSize(mTrafficList, Tigerknows.HISTORY_MAX_SIZE);
                                         }
                                         refreshContent();
                                         if (mLayerType.equals(ItemizedOverlay.POI_OVERLAY)) {
@@ -519,7 +506,8 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
         }
     }
     
-    private void readPOI(List<POI> list, long maxId, long minId, boolean next){
+    private int readPOI(List<POI> list, long maxId, long minId, boolean next){
+        int total = 0;
         Cursor c = SqliteWrapper.query(mContext, mContext.getContentResolver(), Tigerknows.POI.CONTENT_URI, null, mPOIWhere + " AND (" + com.tigerknows.provider.Tigerknows.POI.DATETIME + ">" + minId+")" + " AND (" + com.tigerknows.provider.Tigerknows.POI.DATETIME + "<" + maxId+")", null, "_datetime DESC");
         int count = 0;
         if (c != null) {
@@ -537,14 +525,23 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                     maxId = poi.getDateTime();
                     c.moveToNext();
                 }
-                if (next)
+                if (next) {
                     readPOI(list, maxId, minId, next);
+                }
+                Cursor c1 = SqliteWrapper.query(mContext, mContext.getContentResolver(), Tigerknows.POI.CONTENT_URI_COUNT, null, mPOIWhere, null, null);
+                if (c1 != null) {
+                    total = c1.getCount();
+                    c1.close();
+                }
             }
             c.close();
         }
+        
+        return total;
     }
     
-    private void readTraffic(List<History> list, long maxId, long minId, boolean next){
+    private int readTraffic(List<History> list, long maxId, long minId, boolean next){
+        int total = 0;
         int count;
         Cursor c = SqliteWrapper.query(mContext, mContext.getContentResolver(), Tigerknows.History.CONTENT_URI, null, "(" + com.tigerknows.provider.Tigerknows.History.DATETIME + ">" + minId+")" + " AND (" + com.tigerknows.provider.Tigerknows.History.DATETIME + "<" + maxId+")", null, "_datetime DESC");
         if (c != null) {
@@ -564,11 +561,19 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                     }
                     c.moveToNext();
                 }
-                if (next)
+                if (next) {
                     readTraffic(list, maxId, minId, next);
+                }
+                Cursor c1 = SqliteWrapper.query(mContext, mContext.getContentResolver(), Tigerknows.History.CONTENT_URI_COUNT, null, null, null, null);
+                if (c1 != null) {
+                    total = c1.getCount();
+                    c1.close();
+                }
             }
             c.close();
         }
+        
+        return total;
     }
     
     public class TrafficAdapter extends ArrayAdapter<History>{
@@ -670,9 +675,8 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                         mPOIList.add(poi);
                     }
                     Collections.sort(mPOIList, mComparator);
-                    Utility.keepListSize(mPOIList, Tigerknows.HISTORY_MAX_SIZE);
                     mPOIAdapter.notifyDataSetChanged();
-                    mPOILsv.setFooterSpringback(poiList.size() >= TKConfig.getPageSize() && mPOIList.size() < Tigerknows.HISTORY_MAX_SIZE);
+                    mPOILsv.setFooterSpringback(msg.arg1 > mPOIList.size());
                     if (mPOILsv.isFooterSpringback()) {
                         mSphinx.getHandler().postDelayed(mTurnPageRunPOI, 1000);
                     }
@@ -692,9 +696,8 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
                         mTrafficList.add(traffic);
                     }
                     Collections.sort(mTrafficList, mComparator);
-                    Utility.keepListSize(mTrafficList, Tigerknows.HISTORY_MAX_SIZE);
                     mTrafficAdapter.notifyDataSetChanged();
-                    mTrafficLsv.setFooterSpringback(trafficList.size() >= TKConfig.getPageSize() && mTrafficList.size() < Tigerknows.HISTORY_MAX_SIZE);
+                    mTrafficLsv.setFooterSpringback(msg.arg1 > mTrafficList.size());
                     if (mTrafficLsv.isFooterSpringback()) {
                         mSphinx.getHandler().postDelayed(mTurnPageRunTraffic, 1000);
                     }
@@ -717,14 +720,16 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             int type;
             if (layerType.equals(ItemizedOverlay.POI_OVERLAY)) {
                 List<POI> poiList = new ArrayList<POI>();
-                readPOI(poiList, maxId, 0, false);
+                int total = readPOI(poiList, maxId, 0, false);
                 type = 0;
                 msg.obj = poiList;
+                msg.arg1 = total;
             } else {
                 List<History> trafficList = new ArrayList<History>();
-                readTraffic(trafficList, maxId, 0, false);
+                int total = readTraffic(trafficList, maxId, 0, false);
                 type = 1;
                 msg.obj = trafficList;
+                msg.arg1 = total;
             }
             msg.what = type;
             mHandler.sendMessage(msg);
@@ -791,11 +796,10 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             if (mPOIList.size() > 0) {
                 readPOI(mPOIList, Long.MAX_VALUE, mPOIList.get(0).getDateTime(), true);
             } else {
-                readPOI(mPOIList, Long.MAX_VALUE, 0, false);
+                int total = readPOI(mPOIList, Long.MAX_VALUE, 0, false);
+                mPOILsv.setFooterSpringback(total > mPOIList.size());
             }
-            mPOILsv.setFooterSpringback(mPOIList.size() >= TKConfig.getPageSize() && mPOIList.size() < Tigerknows.HISTORY_MAX_SIZE);
             Collections.sort(mPOIList, mComparator);
-            Utility.keepListSize(mPOIList, Tigerknows.HISTORY_MAX_SIZE);
             mPOIAdapter.notifyDataSetChanged();
         } else {
             mPOIBtn.setBackgroundResource(R.drawable.btn_tab);
@@ -806,11 +810,10 @@ public class HistoryFragment extends BaseFragment implements View.OnClickListene
             if (mTrafficList.size() > 0) {
                 readTraffic(mTrafficList, Long.MAX_VALUE, mTrafficList.get(0).getDateTime(), true);
             } else {
-                readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
+                int total = readTraffic(mTrafficList, Long.MAX_VALUE, 0, false);
+                mTrafficLsv.setFooterSpringback(total > mTrafficList.size());
             }
-            mTrafficLsv.setFooterSpringback(mTrafficList.size() >= TKConfig.getPageSize() && mTrafficList.size() < Tigerknows.HISTORY_MAX_SIZE);
             Collections.sort(mTrafficList, mComparator);
-            Utility.keepListSize(mTrafficList, Tigerknows.HISTORY_MAX_SIZE);
             mTrafficAdapter.notifyDataSetChanged();
         }
         refreshContent();

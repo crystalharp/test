@@ -1098,6 +1098,7 @@ public class POIHomeFragment extends BaseFragment implements View.OnClickListene
 	           position = mPOI.getPosition();
 	           criteria.put(DataQuery.SERVER_PARAMETER_LONGITUDE, String.valueOf(position.getLon()));
 	           criteria.put(DataQuery.SERVER_PARAMETER_LATITUDE, String.valueOf(position.getLat()));
+               criteria.put(DataQuery.SERVER_PARAMETER_POI_ID, mPOI.getUUID());
 	       } else if (mSelectedLocation) {
 	           Filter[] filters = FilterListView.getSelectedFilter(HotelHomeFragment.getFilter(mFilterList, FilterArea.FIELD_LIST));
 	           if (filters != null) {
